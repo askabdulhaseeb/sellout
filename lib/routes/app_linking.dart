@@ -16,20 +16,20 @@ class AppNavigator {
   Stream<Uri>? get linkSubscription => _appLinks.uriLinkStream;
 
   // Constructor
-  init() {
-    _appLinks.uriLinkStream.listen((Uri uri) {
-      openAppLink(uri);
+  void init() {
+    _appLinks.uriLinkStream.listen((Uri uri) async {
+      await openAppLink(uri);
     });
   }
 
-  void openAppLink(Uri uri) {
+  Future<void> openAppLink(Uri uri) async {
     final String routeName = AppRoutes.fromUriToRouteName(uri);
     log('Moving to $routeName');
-    pushNamed(routeName);
+    await pushNamed(routeName);
     log('Nav key: ${_navigatorKey.currentState}');
   }
 
-  void pushNamed(String routeName, {Object? arguments}) async {
+  Future<void> pushNamed(String routeName, {Object? arguments}) async {
     try {
       log('New Path is: $routeName');
       final Object? result = await _navigatorKey.currentState
@@ -40,7 +40,7 @@ class AppNavigator {
     }
   }
 
-  void pushNamedAndRemoveUntil(
+  Future<void> pushNamedAndRemoveUntil(
     String routeName, {
     bool Function(Route<dynamic>)? predicate,
     Object? arguments,
