@@ -40,18 +40,48 @@ dev_dependencies:
 
   flutter_lints: ^4.0.0
 
+  build_runner: ^2.4.11
+  hive_generator: ^2.0.1
+
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.4.0
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  web:
+    generate: true
+  image_path: "assets/icons/icon.png"
+
+flutter_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/icons/icon.png"
+
+flutter_native_splash:
+  android: true
+  ios: true
+  color_dark: "#000000"
+  color: "#ffffff"
+  image: "assets/icons/icon.png"
+
 
 flutter:
   uses-material-design: true
   assets:
     - prod.env
     - dev.env
+    - assets/icons/
+    - assets/images/
+    - assets/jsons/
 
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+    - family: AppIcons
+      fonts:
+        - asset: assets/icons/AppIcons.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
