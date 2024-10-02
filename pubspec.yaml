@@ -13,6 +13,8 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.8
+  easy_localization: ^3.0.7
+
   dropdown_button2: ^2.3.9
 
   app_links: ^6.3.2
@@ -77,6 +79,7 @@ flutter:
     - assets/icons/
     - assets/images/
     - assets/jsons/
+    - assets/translations/
 
   # example:
   fonts:

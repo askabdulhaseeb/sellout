@@ -8,8 +8,9 @@ import 'app_routes.dart';
 
 class AppNavigator {
   // Variables
-  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
-  final AppLinks _appLinks = AppLinks();
+  static final GlobalKey<NavigatorState> _navigatorKey =
+      GlobalKey<NavigatorState>();
+  static final AppLinks _appLinks = AppLinks();
 
   // Getters
   GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
@@ -28,8 +29,9 @@ class AppNavigator {
     await pushNamed(routeName);
   }
 
-  Future<void> pushNamed(String routeName, {Object? arguments}) async {
+  static Future<void> pushNamed(String routeName, {Object? arguments}) async {
     try {
+      log('New Path is: $routeName');
       await _navigatorKey.currentState
           ?.pushNamed(routeName, arguments: arguments);
     } catch (e) {
@@ -37,7 +39,7 @@ class AppNavigator {
     }
   }
 
-  Future<void> pushNamedAndRemoveUntil(
+  static Future<void> pushNamedAndRemoveUntil(
     String routeName, {
     bool Function(Route<dynamic>)? predicate,
     Object? arguments,

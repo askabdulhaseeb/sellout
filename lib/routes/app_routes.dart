@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../features/personal/auth/signin/views/screens/sign_in_screen.dart';
 import '../features/personal/auth/signup/views/screens/signup_screen.dart';
-import '../features/personal/dashboard/views/screens/sign_in_screen.dart';
+import '../features/personal/dashboard/views/screens/dasboard_screen.dart';
 
 class AppRoutes {
   static const String baseURL = 'https://tanafos-6baeb.web.app';
