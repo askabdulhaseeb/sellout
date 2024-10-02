@@ -38,7 +38,16 @@
 			<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		</array>
 		<!-- As we are using third-party dependiecies so this will be false -->
-		<key>FlutterDeepLinkingEnabled</key>
-		<false/>
+		<key>CFBundleURLTypes</key>
+		<array>
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>tanafos-6baeb.web.app</string>	<!-- Replace with your custom scheme -->
+				</array>
+			</dict>
+		</array>
 	</dict>
 </plist>

@@ -2,8 +2,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
-import '../features/auth/signin/views/screens/sign_in_screen.dart';
-import '../features/dashboard/views/screens/sign_in_screen.dart';
+import '../features/personal/auth/signin/views/screens/sign_in_screen.dart';
+import '../features/personal/auth/signup/views/screens/signup_screen.dart';
+import '../features/personal/dashboard/views/screens/sign_in_screen.dart';
 
 class AppRoutes {
   static const String baseURL = 'https://tanafos-6baeb.web.app';
@@ -15,12 +16,17 @@ class AppRoutes {
     }
     log('New Path is: ${uri.path}');
     switch (uri.path) {
+      // AUTH
+      case SignInScreen.routeName:
+        return SignInScreen.routeName;
+      case SignupScreen.routeName:
+        return SignupScreen.routeName;
+
+      // DASHBOARD
       case '':
       case '/':
       case '/overview':
         return DashboardScreen.routeName;
-      case SignInScreen.routeName:
-        return SignInScreen.routeName;
       default:
         return SignInScreen.routeName;
     }
@@ -28,7 +34,11 @@ class AppRoutes {
 
   static Map<String, Widget Function(BuildContext)> routes =
       <String, WidgetBuilder>{
-    DashboardScreen.routeName: (_) => const DashboardScreen(),
+    // AUTH
     SignInScreen.routeName: (_) => const SignInScreen(),
+    SignupScreen.routeName: (_) => const SignupScreen(),
+
+    // DAHSBOARD
+    DashboardScreen.routeName: (_) => const DashboardScreen(),
   };
 }
