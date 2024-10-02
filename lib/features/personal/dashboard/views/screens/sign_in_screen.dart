@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../routes/app_linking.dart';
+import '../../../../../routes/app_linking.dart';
 import '../../../auth/signin/views/screens/sign_in_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -15,8 +15,8 @@ class DashboardScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text('Dashboard'),
+          children: <Widget>[
+            const Text('Dashboard'),
             ElevatedButton(
               onPressed: () => AppNavigator().pushNamed(SignInScreen.routeName),
               child: const Text('Sign In'),

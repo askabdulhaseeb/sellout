@@ -26,15 +26,12 @@ class AppNavigator {
     final String routeName = AppRoutes.fromUriToRouteName(uri);
     log('Moving to $routeName');
     await pushNamed(routeName);
-    log('Nav key: ${_navigatorKey.currentState}');
   }
 
   Future<void> pushNamed(String routeName, {Object? arguments}) async {
     try {
-      log('New Path is: $routeName');
-      final Object? result = await _navigatorKey.currentState
+      await _navigatorKey.currentState
           ?.pushNamed(routeName, arguments: arguments);
-      log('Result: $result');
     } catch (e) {
       log('❌ Error in App Navigator - pushNamed: $routeName - Error: $e');
     }
