@@ -17,9 +17,9 @@ class DashboardScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             const Text('Dashboard'),
-            ElevatedButton(
-              onPressed: () => AppNavigator().pushNamed(SignInScreen.routeName),
-              child: const Text('Sign In'),
+            TextButton(
+              onPressed: () => AppNavigator.pushNamed(SignInScreen.routeName),
+              child: const Text('Signin'),
             ),
           ],
         ),
