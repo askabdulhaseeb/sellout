@@ -63,11 +63,7 @@ class PasswordTextFormFieldState extends State<PasswordTextFormField> {
             onFieldSubmitted: widget.onFieldSubmitted,
             decoration: InputDecoration(
               filled: true,
-              fillColor: Theme.of(context)
-                  .textTheme
-                  .bodyLarge!
-                  .color!
-                  .withOpacity(0.05),
+              fillColor: Colors.transparent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 12),
               hintText: '********',
               hintStyle: TextStyle(color: Colors.grey.shade400),
@@ -84,11 +80,11 @@ class PasswordTextFormFieldState extends State<PasswordTextFormField> {
               errorBorder: OutlineInputBorder(
                 borderSide:
                     BorderSide(color: Theme.of(context).colorScheme.error),
-                borderRadius: BorderRadius.circular(4.0),
+                borderRadius: BorderRadius.circular(8.0),
               ),
               border: OutlineInputBorder(
                 borderSide: const BorderSide(color: Colors.transparent),
-                borderRadius: BorderRadius.circular(4.0),
+                borderRadius: BorderRadius.circular(8.0),
               ),
             ),
           ),
