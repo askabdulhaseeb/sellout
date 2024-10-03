@@ -40,8 +40,8 @@ class AppNavigator {
   }
 
   static Future<void> pushNamedAndRemoveUntil(
-    String routeName, {
-    bool Function(Route<dynamic>)? predicate,
+    String routeName,
+    bool Function(Route<dynamic>)? predicate, {
     Object? arguments,
   }) async {
     try {

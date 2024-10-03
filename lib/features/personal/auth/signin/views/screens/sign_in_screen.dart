@@ -33,42 +33,45 @@ class SignInScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Consumer<SigninProvider>(
             builder: (BuildContext context, SigninProvider authPro, _) {
-          return Column(
-            children: <Widget>[
-              const SellOutTitle(),
-              const SizedBox(height: 24),
-              CustomTextFormField(
-                controller: authPro.email,
-                labelText: 'email'.tr(),
-                hint: 'Ex: username@mail.com',
-                keyboardType: TextInputType.emailAddress,
-                validator: (String? value) => AppValidator.email(value),
-              ),
-              PasswordTextFormField(controller: authPro.password),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () async => await authPro.forgotPassword(),
-                  child: Text(
-                    'forgot_password',
-                    style: TextStyle(color: Theme.of(context).dividerColor),
-                  ).tr(),
+          return Form(
+            key: authPro.formKey,
+            child: Column(
+              children: <Widget>[
+                const SellOutTitle(),
+                const SizedBox(height: 24),
+                CustomTextFormField(
+                  controller: authPro.email,
+                  labelText: 'email'.tr(),
+                  hint: 'Ex: username@mail.com',
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (String? value) => AppValidator.email(value),
                 ),
-              ),
-              CustomElevatedButton(
-                title: 'login'.tr(),
-                isLoading: authPro.isLoading,
-                onTap: () async => await authPro.signIn(),
-              ),
-              CustomElevatedButton(
-                title: 'create-account'.tr(),
-                isLoading: false,
-                bgColor: Colors.transparent,
-                border: Border.all(),
-                onTap: () async =>
-                    await AppNavigator.pushNamed(SignupScreen.routeName),
-              ),
-            ],
+                PasswordTextFormField(controller: authPro.password),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () async => await authPro.forgotPassword(),
+                    child: Text(
+                      'forgot_password',
+                      style: TextStyle(color: Theme.of(context).dividerColor),
+                    ).tr(),
+                  ),
+                ),
+                CustomElevatedButton(
+                  title: 'login'.tr(),
+                  isLoading: authPro.isLoading,
+                  onTap: () async => await authPro.signIn(),
+                ),
+                CustomElevatedButton(
+                  title: 'create-account'.tr(),
+                  isLoading: false,
+                  bgColor: Colors.transparent,
+                  border: Border.all(),
+                  onTap: () async =>
+                      await AppNavigator.pushNamed(SignupScreen.routeName),
+                ),
+              ],
+            ),
           );
         }),
       ),
