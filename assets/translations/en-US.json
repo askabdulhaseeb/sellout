@@ -1,4 +1,13 @@
 {
     "sellout": "SellOut",
-    "skip": "Skip"
+    "skip": "Skip",
+    "sign-in": "Sign In",
+    "sign-up": "Sign Up",
+    "login": "Log In",
+    "email": "Email",
+    "password": "Password",
+    "forgot_password": "Forgot Password?",
+    "logout": "Log Out",
+    "dont-have-account": "Don't have an account?",
+    "create-account": "Create an account"
 }

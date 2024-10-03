@@ -1,10 +1,10 @@
-import 'dart:developer';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
 
+import 'app_providers.dart';
 import 'core/utilities/app_localization.dart';
 import 'routes/app_linking.dart';
 import 'routes/app_routes.dart';
@@ -28,19 +28,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      locale: context.locale,
-      supportedLocales: context.supportedLocales,
-      localizationsDelegates: context.localizationDelegates,
-      title: 'Sellout',
-      navigatorKey: AppNavigator().navigatorKey,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
-        useMaterial3: true,
+    const Color primaryColor = Color(0xFFBF1017);
+    return MultiProvider(
+      providers: appProviders,
+      child: MaterialApp(
+        locale: context.locale,
+        supportedLocales: context.supportedLocales,
+        localizationsDelegates: context.localizationDelegates,
+        title: 'Sellout',
+        navigatorKey: AppNavigator().navigatorKey,
+        theme: ThemeData(
+          primaryColor: primaryColor,
+          shadowColor: Colors.black.withOpacity(0.2),
+          colorScheme: ColorScheme.fromSeed(seedColor: primaryColor),
+          useMaterial3: true,
+        ),
+        routes: AppRoutes.routes,
+        // onGenerateRoute: (RouteSettings settings) {},
+        // initialRoute: DashboardScreen.routeName,
       ),
-      routes: AppRoutes.routes,
-      // onGenerateRoute: (RouteSettings settings) {},
-      // initialRoute: DashboardScreen.routeName,
     );
   }
 }
