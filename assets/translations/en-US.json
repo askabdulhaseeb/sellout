@@ -9,5 +9,8 @@
     "forgot_password": "Forgot Password?",
     "logout": "Log Out",
     "dont-have-account": "Don't have an account?",
-    "create-account": "Create an account"
+    "create-account": "Create an account",
+    "something-goes-wrong": "Something Goes Wrong",
+    "error": "Error",
+    "na": "N/A"
 }

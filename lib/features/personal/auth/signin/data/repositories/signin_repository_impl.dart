@@ -8,22 +8,20 @@ class SigninRepositoryImpl implements SigninRepository {
   @override
   Future<DataState<bool>> signin(String email, String password) async {
     try {
-      final bool result = await remoteSource.signin(email, password);
-      return DataSuccess<bool>('', result);
+      final DataState<bool> result = await remoteSource.signin(email, password);
+      return result;
     } catch (e) {
-      print(e);
+      return DataFailer<bool>(CustomException('Signin Error: $e'));
     }
-    return DataFailer<bool>(CustomException('Error'));
   }
 
   @override
   Future<DataState<bool>> forgotPassword(String email) async {
     try {
-      final bool result = await remoteSource.forgotPassword(email);
-      return DataSuccess<bool>('', result);
+      final DataState<bool> result = await remoteSource.forgotPassword(email);
+      return result;
     } catch (e) {
-      print(e);
+      return DataFailer<bool>(CustomException('Forget Password Error: $e'));
     }
-    return DataFailer<bool>(CustomException('Error'));
   }
 }

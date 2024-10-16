@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../../core/sources/data_state.dart';
@@ -20,8 +21,12 @@ class SigninProvider extends ChangeNotifier {
 
   //
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  final TextEditingController email = TextEditingController();
-  final TextEditingController password = TextEditingController();
+  final TextEditingController email = TextEditingController(
+    text: kDebugMode ? 'test@gmail.com' : '',
+  );
+  final TextEditingController password = TextEditingController(
+    text: kDebugMode ? '123' : '',
+  );
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -44,14 +49,17 @@ class SigninProvider extends ChangeNotifier {
         ),
       );
       if (result is DataSuccess<bool>) {
+        debugPrint('Signin Ready');
         await AppNavigator.pushNamedAndRemoveUntil(
           DashboardScreen.routeName,
           (_) => false,
         );
       } else {
+        debugPrint('Signin Error in Provider');
         // Show error message
       }
     } catch (e) {
+      debugPrint(e.toString());
       log(e.toString());
     }
     isLoading = false;

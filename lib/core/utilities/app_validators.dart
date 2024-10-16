@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class AppValidator {
   static String? email(String? value) {
     if (!RegExp(
@@ -9,7 +11,7 @@ class AppValidator {
   }
 
   static String? password(String? value) {
-    if ((value?.trim().length ?? 0) < 6) {
+    if ((value?.trim().length ?? 0) < 6 && !kDebugMode) {
       return 'Password should be greater then 6 digits';
     }
     return null;
