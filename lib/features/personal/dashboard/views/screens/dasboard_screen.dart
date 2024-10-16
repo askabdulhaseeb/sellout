@@ -8,7 +8,6 @@ import '../../../home/views/screens/home_screen.dart';
 import '../../../profile/views/screens/profile_screen.dart';
 import '../../../services/views/screens/services_screen.dart';
 import '../providers/personal_bottom_nav_provider.dart';
-import '../widgets/personal_bottom_nav_bar.dart';
 
 const List<Widget> _screens = <Widget>[
   HomeScreen(),
@@ -31,7 +30,6 @@ class DashboardScreen extends StatelessWidget {
           return _screens[navPro.currentTabIndex];
         },
       ),
-      bottomNavigationBar: const PersonalBottomNavBar(),
     );
   }
 }
