@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/personal_bottom_nav_provider.dart';
+import '../../../../features/personal/dashboard/views/providers/personal_bottom_nav_provider.dart';
 
 class PersonalBottomNavBar extends StatelessWidget {
   const PersonalBottomNavBar({super.key});

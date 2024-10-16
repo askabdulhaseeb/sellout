@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
+import 'core/theme/app_theme.dart';
 import 'services/app_providers.dart';
 import 'core/sources/local/hive_db.dart';
 import 'core/utilities/app_localization.dart';
@@ -32,7 +33,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const Color primaryColor = Color(0xFFBF1017);
     return MultiProvider(
       providers: appProviders,
       child: MaterialApp(
@@ -41,12 +41,7 @@ class MyApp extends StatelessWidget {
         localizationsDelegates: context.localizationDelegates,
         title: 'Sellout',
         navigatorKey: AppNavigator().navigatorKey,
-        theme: ThemeData(
-          primaryColor: primaryColor,
-          shadowColor: Colors.black.withOpacity(0.2),
-          colorScheme: ColorScheme.fromSeed(seedColor: primaryColor),
-          useMaterial3: true,
-        ),
+        theme: AppTheme.light,
         routes: AppRoutes.routes,
         // onGenerateRoute: (RouteSettings settings) {},
         // initialRoute: DashboardScreen.routeName,
