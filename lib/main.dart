@@ -5,15 +5,19 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
 import 'app_providers.dart';
+import 'core/sources/local/hive_db.dart';
 import 'core/utilities/app_localization.dart';
+import 'get_it.dart';
 import 'routes/app_linking.dart';
 import 'routes/app_routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await EasyLocalization.ensureInitialized();
   AppNavigator().init();
+  await HiveDB.init();
   await dotenv.load(fileName: kDebugMode ? 'dev.env' : 'prod.env');
+  setupLocator();
+  await EasyLocalization.ensureInitialized();
   runApp(EasyLocalization(
     supportedLocales: const <Locale>[AppLocalization.en],
     path: AppLocalization.filePath,
@@ -50,3 +54,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+// flutter packages pub run build_runner build --delete-conflicting-outputs
+// flutter packages pub run build_runner build
