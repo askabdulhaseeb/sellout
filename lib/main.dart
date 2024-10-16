@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
-import 'app_providers.dart';
+import 'services/app_providers.dart';
 import 'core/sources/local/hive_db.dart';
 import 'core/utilities/app_localization.dart';
-import 'get_it.dart';
+import 'services/get_it.dart';
 import 'routes/app_linking.dart';
 import 'routes/app_routes.dart';
 
