@@ -1,8 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../../../../../routes/app_linking.dart';
-import '../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../../auth/signin/views/screens/sign_in_screen.dart';
+import '../../../add/views/screens/start_listing_screen.dart';
+import '../../../chats/views/screens/chat_dashboard_screen.dart';
+import '../../../explore/views/screens/explore_screen.dart';
+import '../../../home/views/screens/home_screen.dart';
+import '../../../profile/views/screens/profile_screen.dart';
+import '../../../services/views/screens/services_screen.dart';
+import '../providers/personal_bottom_nav_provider.dart';
+import '../widgets/personal_bottom_nav_bar.dart';
+
+const List<Widget> _screens = <Widget>[
+  HomeScreen(),
+  ExploreScreen(),
+  ServicesScreen(),
+  StartListingScreen(),
+  ChatDashboardScreen(),
+  ProfileScreen(),
+];
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -10,28 +25,13 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final CurrentUserEntity? currentUser = LocalAuth.currentUser;
     return Scaffold(
-      body: SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Text('Current User - ${currentUser?.email}'),
-            currentUser == null
-                ? TextButton(
-                    onPressed: () =>
-                        AppNavigator.pushNamed(SignInScreen.routeName),
-                    child: const Text('Signin'),
-                  )
-                : TextButton(
-                    onPressed: () => LocalAuth().signout(),
-                    child: const Text('Logout'),
-                  ),
-          ],
-        ),
+      body: Consumer<PersonalBottomNavProvider>(
+        builder: (BuildContext context, PersonalBottomNavProvider navPro, _) {
+          return _screens[navPro.currentTabIndex];
+        },
       ),
+      bottomNavigationBar: const PersonalBottomNavBar(),
     );
   }
 }
