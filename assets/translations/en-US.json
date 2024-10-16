@@ -11,6 +11,12 @@
     "dont-have-account": "Don't have an account?",
     "create-account": "Create an account",
     "something-goes-wrong": "Something Goes Wrong",
+    "home":"Home",
+    "explore": "Explore",
+    "services": "Services",
+    "add": "Add",
+    "chats": "Chats",
+    "profile": "Profile",
     "error": "Error",
     "na": "N/A"
 }
