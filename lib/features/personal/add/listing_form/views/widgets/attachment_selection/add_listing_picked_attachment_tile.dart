@@ -14,48 +14,51 @@ class AddListingPickedAttachmentTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(3),
-      child: AspectRatio(
-        aspectRatio: 4 / 4,
-        child: Stack(
-          children: <Widget>[
-            SizedBox(
-              height: double.infinity,
-              width: double.infinity,
-              child: attachment.type == AttachmentType.image
-                  ? Image.asset(
-                      attachment.file.path,
-                      fit: BoxFit.cover,
-                    )
-                  : Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.grey),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: AspectRatio(
+          aspectRatio: 4 / 4,
+          child: Stack(
+            children: <Widget>[
+              SizedBox(
+                height: double.infinity,
+                width: double.infinity,
+                child: attachment.type == AttachmentType.image
+                    ? Image.asset(
+                        attachment.file.path,
+                        fit: BoxFit.cover,
+                      )
+                    : Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.grey),
+                        ),
+                        child: Center(child: Text('videos'.tr())),
                       ),
-                      child: Center(child: Text('videos'.tr())),
+              ),
+              // Remove button
+              Positioned(
+                top: 0,
+                right: 0,
+                child: InkWell(
+                  onTap: () => Provider.of<AddListingFormProvider>(context,
+                          listen: false)
+                      .removeAttachment(attachment),
+                  child: Container(
+                    height: 38,
+                    width: 38,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.8),
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(8),
+                      ),
                     ),
-            ),
-            // Remove button
-            Positioned(
-              top: 0,
-              right: 0,
-              child: InkWell(
-                onTap: () =>
-                    Provider.of<AddListingFormProvider>(context, listen: false)
-                        .removeAttachment(attachment),
-                child: Container(
-                  height: 38,
-                  width: 38,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.8),
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(8),
-                    ),
+                    child: const Icon(Icons.delete, color: Colors.red),
                   ),
-                  child: const Icon(Icons.delete, color: Colors.red),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

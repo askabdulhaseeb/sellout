@@ -19,7 +19,7 @@ class ListingModel extends ListingEntity {
       isActive: json['is_active'] ?? false,
       cid: json['cid'],
       title: json['title'] ?? '',
-      type: ListingType.fromJson(json['list_id']),
+      type: ListingType.fromStrJson(json['list_id']),
     );
   }
 

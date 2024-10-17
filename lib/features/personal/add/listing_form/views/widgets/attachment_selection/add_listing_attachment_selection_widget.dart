@@ -52,15 +52,18 @@ class AddListingAttachmentSelectionWidget extends StatelessWidget {
                   ),
                 )
               : AspectRatio(
-                  aspectRatio: 16 / 8,
-                  child: ListView.builder(
-                    itemCount: attachments.length,
-                    scrollDirection: Axis.horizontal,
-                    primary: false,
-                    shrinkWrap: true,
-                    itemBuilder: (BuildContext context, int index) =>
-                        AddListingPickedAttachmentTile(
-                            attachment: attachments[index]),
+                  aspectRatio: 2 / 1,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: ListView.builder(
+                      itemCount: attachments.length,
+                      scrollDirection: Axis.horizontal,
+                      primary: false,
+                      shrinkWrap: true,
+                      itemBuilder: (BuildContext context, int index) =>
+                          AddListingPickedAttachmentTile(
+                              attachment: attachments[index]),
+                    ),
                   ),
                 ),
         ],

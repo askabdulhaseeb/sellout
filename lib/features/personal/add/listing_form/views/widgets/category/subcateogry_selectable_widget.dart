@@ -86,7 +86,7 @@ class SubCategorySelectableWidget extends StatelessWidget {
                     children: <Widget>[
                       subCategory == null
                           ? Text(
-                              subCategory?.title ?? 'Select-sub-category'.tr(),
+                              subCategory?.title ?? 'select-sub-category'.tr(),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
