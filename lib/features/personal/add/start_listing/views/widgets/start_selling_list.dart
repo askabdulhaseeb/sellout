@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/widgets/scaffold/personal_scaffold.dart';
+import '../../../listing_form/views/providers/add_listing_form_provider.dart';
+import '../../../listing_form/views/screens/add_listing_form_screen.dart';
 
 class StartSellingList extends StatelessWidget {
   const StartSellingList({super.key});
@@ -17,10 +20,15 @@ class StartSellingList extends StatelessWidget {
             (ListingType type) => Padding(
               padding: const EdgeInsets.only(top: 16),
               child: InkWell(
-                onTap: () {},
+                onTap: () {
+                  Provider.of<AddListingFormProvider>(context, listen: false)
+                      .setListingType(type);
+                  Navigator.of(context)
+                      .pushNamed(AddListingFormScreen.routeName);
+                },
                 child: Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(8),

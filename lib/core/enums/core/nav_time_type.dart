@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../utilities/app_icons.dart';
+
 enum NavItemType {
   home('Home', 0, Icons.home_outlined, Icons.home),
   explore('Explore', 1, Icons.explore_outlined, Icons.explore),
-  add('Add', 2, Icons.add_box_outlined, Icons.add_box_rounded),
+  add('Add', 2, AppIcons.add, AppIcons.add),
   chat(
     'Chat',
     3,

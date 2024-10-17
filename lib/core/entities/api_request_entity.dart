@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
@@ -19,6 +21,8 @@ class ApiRequestEntity {
   DateTime? lastRequest;
   @HiveField(2)
   String encodedData;
+
+  dynamic get decodedData => json.decode(encodedData);
 
   bool timesAgo(Duration duration) {
     if (lastRequest == null) return true;

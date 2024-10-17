@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../entities/api_request_entity.dart';
@@ -24,18 +25,25 @@ class LocalRequestHistory {
   Future<void> save(ApiRequestEntity request) async =>
       await _box.put(request.url, request);
 
-  Future<ApiRequestEntity?> request(
-    String value, {
+  Future<ApiRequestEntity?> request({
+    required String endpoint,
+    String? baseURL,
     Duration duration = const Duration(hours: 1),
   }) async {
-    ApiRequestEntity? result = _box.get(value);
+    String url = baseURL ?? dotenv.env['baseURL'] ?? '';
+    if (url.isEmpty) {
+      return null;
+    }
+    url = '$url${endpoint.startsWith('/') ? endpoint : '/$endpoint'}';
+    if (!url.endsWith('/')) url += '/';
+    ApiRequestEntity? result = _box.get(url);
     if (result == null) return null;
     if (!result.timesAgo(duration)) {
-      debugPrint('🟢 Less then ${duration.display()} - $value');
+      debugPrint('🟢 Less then ${duration.display()} - $url');
       return result;
     } else {
-      debugPrint('🔴 More then ${duration.display()} - $value');
-      await delete(value);
+      debugPrint('🔴 More then ${duration.display()} - $url');
+      await delete(url);
       return null;
     }
   }
