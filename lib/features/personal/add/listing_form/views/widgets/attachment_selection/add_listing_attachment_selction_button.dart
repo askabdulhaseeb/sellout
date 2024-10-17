@@ -49,10 +49,12 @@ class AddListingAttachmentSelectionButton extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey),
+            color: Colors.transparent,
             borderRadius: radius,
           ),
           child: Material(
             borderRadius: radius,
+            color: Colors.transparent,
             child: InkWell(
               onTap: onPressed,
               borderRadius: radius,

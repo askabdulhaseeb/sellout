@@ -10,13 +10,14 @@ class ListingAPI {
   Future<List<ListingEntity>> listing() async {
     try {
       ApiRequestEntity? request = await LocalRequestHistory()
-          .request(endpoint: '/category', duration: const Duration(seconds: 1));
+          .request(endpoint: '/category', duration: const Duration(days: 1));
       if (request != null) {
         final List<ListingEntity> local = LocalListing().listings;
         if (local.isNotEmpty) {
           return local;
         }
       }
+
       final DataState<bool> req = await ApiCall<bool>().call(
         endpoint: '/category',
         requestType: ApiRequestType.get,
@@ -59,7 +60,7 @@ class ListingAPI {
 
   Future<List<ListingEntity>> _decodeData(List<dynamic> data) async {
     List<ListingEntity> listings = <ListingEntity>[];
-    for (final Map<String, dynamic> item in data) {
+    for (dynamic item in data) {
       final ListingEntity entity = ListingModel.fromJson(item);
       listings.add(entity);
       await LocalListing().save(entity);

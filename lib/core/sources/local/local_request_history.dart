@@ -36,6 +36,7 @@ class LocalRequestHistory {
     }
     url = '$url${endpoint.startsWith('/') ? endpoint : '/$endpoint'}';
     if (!url.endsWith('/')) url += '/';
+    
     ApiRequestEntity? result = _box.get(url);
     if (result == null) return null;
     if (!result.timesAgo(duration)) {

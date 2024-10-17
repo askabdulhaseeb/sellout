@@ -30,10 +30,12 @@ class PickedMediaProvider extends ChangeNotifier {
 
   // Setters
 
-  void setOption(PickableAttachmentOption value) {
+  void setOption(BuildContext context, PickableAttachmentOption value) {
     _option = value;
     _pickedMedia.addAll(value.selectedMedia ?? <AssetEntity>[]);
-    notifyListeners();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 
   void addMedia(AssetEntity value) {

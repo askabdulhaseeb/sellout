@@ -39,7 +39,7 @@ class _PickableAttachmentScreenState extends State<PickableAttachmentScreen> {
   void initState() {
     super.initState();
     Provider.of<PickedMediaProvider>(context, listen: false)
-        .setOption(widget.option);
+        .setOption(context, widget.option);
     _requestPermissionAndLoad();
   }
 

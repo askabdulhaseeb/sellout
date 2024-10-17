@@ -52,5 +52,10 @@
 		<array>
 			<string>en</string>
 		</array>
+		<!-- Display Photo Gallery -->
+		<key>PHPhotoLibraryPreventAutomaticLimitedAccessAlert</key>
+		<true/>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Sellout need to access your Photo Library to upload your product photo</string>
 	</dict>
 </plist>
