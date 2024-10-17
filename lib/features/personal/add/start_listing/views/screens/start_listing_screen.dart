@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../core/widgets/scaffold/personal_scaffold.dart';
-import '../../../../../core/widgets/searchable_textfield.dart';
-import '../widgets/start_listing/start_selling_list.dart';
+import '../../../../../../core/widgets/scaffold/personal_scaffold.dart';
+import '../../../../../../core/widgets/searchable_textfield.dart';
+import '../widgets/start_selling_list.dart';
 
 class StartListingScreen extends StatelessWidget {
   const StartListingScreen({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppSnackBar {
-  static void call(
+  static void showSnackBar(
     BuildContext context,
     String message, {
     AnimationStyle? snackBarAnimationStyle,
