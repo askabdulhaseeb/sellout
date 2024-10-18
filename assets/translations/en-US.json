@@ -58,6 +58,8 @@
     "please-note-that-delivery-must-be-tracked": "Please note that delivery must be tracked and signed for. Thank You",
     "post": "Post",
     "select-type": "Select Type",
+    "orders": "Orders",
+    "groups": "Groups",
     "error": "Error",
     "na": "N/A"
 }
