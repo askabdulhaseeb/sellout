@@ -27,6 +27,7 @@ class LocalAuth {
 
   static CurrentUserEntity? get currentUser =>
       _box.length == 0 ? null : _box.get(boxTitle);
+
   static String? get token => currentUser?.token;
   static String? get uid => currentUser?.userId;
 

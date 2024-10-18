@@ -6,7 +6,7 @@ import '../../../auth/signin/views/screens/sign_in_screen.dart';
 import '../../../listing/start_listing/views/screens/start_listing_screen.dart';
 import '../../../chats/chat_dashboard/views/screens/chat_dashboard_screen.dart';
 import '../../../explore/views/screens/explore_screen.dart';
-import '../../../home/views/screens/home_screen.dart';
+import '../../../post/feed/views/screens/home_screen.dart';
 import '../../../user/profiles/views/screens/profile_screen.dart';
 import '../../../services/views/screens/services_screen.dart';
 import '../providers/personal_bottom_nav_provider.dart';

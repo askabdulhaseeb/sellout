@@ -31,7 +31,7 @@ class CurrentUserModel extends CurrentUserEntity {
       userName: json['user_name'],
       userId: json['user_id'],
       address: addressList,
-      chatIDs: List<String>.from(json['chat_ids'].map(
+      chatIDs: List<String>.from((json['chat_ids'] ?? <dynamic>[]).map(
         (dynamic x) => x.toString(),
       )),
     );
