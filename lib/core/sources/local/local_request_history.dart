@@ -6,6 +6,8 @@ import '../../entities/api_request_entity.dart';
 import '../../extension/duration_ext.dart';
 import '../../utilities/app_string.dart';
 
+export '../../entities/api_request_entity.dart';
+
 class LocalRequestHistory {
   static final String boxTitle = AppStrings.localRequestHistory;
   static Box<ApiRequestEntity> get _box => Hive.box<ApiRequestEntity>(boxTitle);
@@ -36,7 +38,7 @@ class LocalRequestHistory {
     }
     url = '$url${endpoint.startsWith('/') ? endpoint : '/$endpoint'}';
     if (!url.endsWith('/')) url += '/';
-    
+
     ApiRequestEntity? result = _box.get(url);
     if (result == null) return null;
     if (!result.timesAgo(duration)) {
