@@ -58,4 +58,6 @@ class UserEntity {
   List<AttachmentEntity> profilePic;
   @HiveField(15)
   String userName;
+
+  String? get profilePhotoURL => profilePic.isEmpty ? null : profilePic.first.url;
 }

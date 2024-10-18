@@ -2,6 +2,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/utilities/app_string.dart';
+
 import '../../models/chat/chat_model.dart';
 
 // getOnlineUsers
@@ -9,6 +10,7 @@ import '../../models/chat/chat_model.dart';
 class LocalChat {
   static final String boxTitle = AppStrings.localChatssBox;
   static Box<ChatModel> get _box => Hive.box<ChatModel>(boxTitle);
+  static Box<ChatModel> get boxLive => _box;
 
   static Future<Box<ChatModel>> get openBox async =>
       await Hive.openBox<ChatModel>(boxTitle);
