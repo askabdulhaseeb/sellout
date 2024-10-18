@@ -10,6 +10,8 @@ import '../../../features/personal/listing/listing_form/domain/entities/sub_cate
 import '../../../features/personal/auth/signin/data/models/address_model.dart';
 import '../../../features/personal/auth/signin/data/models/current_user_model.dart';
 import '../../../features/personal/auth/signin/data/sources/local/local_auth.dart';
+import '../../../features/personal/user/profiles/data/models/user_model.dart';
+import '../../../features/personal/user/profiles/data/sources/local/local_user.dart';
 import '../../entities/api_request_entity.dart';
 import '../../enums/listing/core/listing_type.dart';
 import 'local_request_history.dart';
@@ -24,7 +26,7 @@ class HiveDB {
 
     // Hive
     Hive.registerAdapter(CurrentUserEntityAdapter()); // 0
-    // Hive.registerAdapter(MessageEntityAdapter()); // 1
+    Hive.registerAdapter(UserEntityAdapter()); // 1
     // Hive.registerAdapter(MessageSenderTypeAdapter()); // 2
     Hive.registerAdapter(ApiRequestEntityAdapter()); // 3
     Hive.registerAdapter(AttachmentEntityAdapter()); // 4
@@ -39,7 +41,7 @@ class HiveDB {
 
   static Future<void> refresh() async {
     await LocalAuth().refresh();
-    // await LocalUser().refresh();
+    await LocalUser().refresh();
     await LocalRequestHistory().refresh();
     await LocalListing().refresh();
   }
