@@ -11,4 +11,9 @@ enum ChatPageType {
   const ChatPageType(this.code, this.icon);
   final String code;
   final IconData icon;
+
+  static ChatPageType fromJson(String json) => ChatPageType.values.firstWhere(
+        (ChatPageType e) => e.code == json,
+        orElse: () => ChatPageType.orders,
+      );
 }

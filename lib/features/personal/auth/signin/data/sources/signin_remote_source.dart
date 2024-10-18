@@ -26,6 +26,7 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
         debugPrint('Signin Success in Remote Source');
         final CurrentUserModel currentUser =
             CurrentUserModel.fromRawJson(responce.data ?? '');
+        print('Chats: ${currentUser.chatIDs}');
         await LocalAuth().signin(currentUser);
         return responce;
       } else {

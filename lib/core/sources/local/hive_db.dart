@@ -4,16 +4,35 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../features/attachment/domain/entities/attachment_entity.dart';
+import '../../../features/personal/chats/chat_dashboard/data/sources/local/local_chat.dart';
+import '../../../features/personal/chats/chat_dashboard/domain/entities/chat/chat_entity.dart';
+import '../../../features/personal/chats/chat_dashboard/domain/entities/chat/group/group_into_entity.dart';
+import '../../../features/personal/chats/chat_dashboard/domain/entities/chat/participant/chat_participant_entity.dart';
+import '../../../features/personal/chats/chat_dashboard/domain/entities/chat/participant/invitation_entity.dart';
+import '../../../features/personal/chats/chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../features/personal/listing/listing_form/data/sources/local/local_listing.dart';
 import '../../../features/personal/listing/listing_form/domain/entities/listing_entity.dart';
 import '../../../features/personal/listing/listing_form/domain/entities/sub_category_entity.dart';
 import '../../../features/personal/auth/signin/data/models/address_model.dart';
-import '../../../features/personal/auth/signin/data/models/current_user_model.dart';
 import '../../../features/personal/auth/signin/data/sources/local/local_auth.dart';
-import '../../../features/personal/user/profiles/data/models/user_model.dart';
+import '../../../features/personal/post/domain/entities/meetup/availability_entity.dart';
+import '../../../features/personal/post/domain/entities/meetup/meetup_location_entity.dart';
+import '../../../features/personal/post/domain/entities/offer/offer_amount_info_entity.dart';
+import '../../../features/personal/post/domain/entities/offer/offer_detail_entity.dart';
+import '../../../features/personal/post/domain/entities/offer/offer_detail_post_entity.dart';
+import '../../../features/personal/post/domain/entities/size_color/color_entity.dart';
+import '../../../features/personal/post/domain/entities/size_color/discount_entity.dart';
+import '../../../features/personal/post/domain/entities/size_color/size_color_entity.dart';
+import '../../../features/personal/post/domain/entities/visit/visiting_detail_entity.dart';
+import '../../../features/personal/post/domain/entities/visit/visiting_detail_post_entity.dart';
 import '../../../features/personal/user/profiles/data/sources/local/local_user.dart';
-import '../../entities/api_request_entity.dart';
+import '../../enums/chat/chat_participant_role.dart';
+import '../../enums/chat/chat_type.dart';
+import '../../enums/listing/core/delivery_type.dart';
+import '../../enums/listing/core/item_condition_type.dart';
 import '../../enums/listing/core/listing_type.dart';
+import '../../enums/listing/core/privacy_type.dart';
+import '../../enums/message/message_type.dart';
 import 'local_request_history.dart';
 
 class HiveDB {
@@ -35,6 +54,28 @@ class HiveDB {
     Hive.registerAdapter(ListingEntityAdapter()); // 7
     Hive.registerAdapter(SubCategoryEntityAdapter()); // 8
     Hive.registerAdapter(ListingTypeAdapter()); // 9
+    Hive.registerAdapter(ChatEntityAdapter()); // 10
+    Hive.registerAdapter(ChatParticipantEntityAdapter()); // 11
+    Hive.registerAdapter(ChatParticipantRoleTypeAdapter()); // 12
+    Hive.registerAdapter(MessageEntityAdapter()); // 13
+    Hive.registerAdapter(VisitingDetailEntityAdapter()); // 14
+    Hive.registerAdapter(VisitingDetailPostEntityAdapter()); // 15
+    Hive.registerAdapter(AvailabilityEntityAdapter()); // 16
+    Hive.registerAdapter(MeetUpLocationEntityAdapter()); // 17
+    Hive.registerAdapter(MessageTypeAdapter()); // 18
+    Hive.registerAdapter(OfferDetailEntityAdapter()); // 19
+    Hive.registerAdapter(OfferDetailPostEntityAdapter()); // 20
+    Hive.registerAdapter(DiscountEntityAdapter()); // 21
+    Hive.registerAdapter(SizeColorEntityAdapter()); // 22
+    Hive.registerAdapter(ColorEntityAdapter()); // 23
+    Hive.registerAdapter(DeliveryTypeAdapter()); // 24
+    Hive.registerAdapter(ConditionTypeAdapter()); // 25
+    Hive.registerAdapter(PrivacyTypeAdapter()); // 26
+    Hive.registerAdapter(OfferAmountInfoEntityAdapter()); // 27
+    Hive.registerAdapter(ChatTypeAdapter()); // 28
+    Hive.registerAdapter(GroupInfoEntityAdapter()); // 29
+    Hive.registerAdapter(InvitationEntityAdapter()); // 30
+
     // Hive box Open
     await refresh();
   }
@@ -44,5 +85,6 @@ class HiveDB {
     await LocalUser().refresh();
     await LocalRequestHistory().refresh();
     await LocalListing().refresh();
+    await LocalChat().refresh();
   }
 }

@@ -8,6 +8,7 @@ class AppStrings {
   static String get localRequestHistory => 'request_history';
   static String get localReviewBox => 'local-review';
   static String get localListingBox => 'local-listing';
+  static String get localChatssBox => 'local-chats';
   // API
   String get baseURL =>
       kDebugMode ? 'http://192.168.0.181:3200' : dotenv.env['baseURL'] ?? '';

@@ -22,10 +22,10 @@ class SigninProvider extends ChangeNotifier {
   //
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController email = TextEditingController(
-    text: kDebugMode ? 'test@gmail.com' : '',
+    text: kDebugMode ? 'h@gmail.com' : '',
   );
   final TextEditingController password = TextEditingController(
-    text: kDebugMode ? '123' : '',
+    text: kDebugMode ? '123456' : '',
   );
 
   bool _isLoading = false;
