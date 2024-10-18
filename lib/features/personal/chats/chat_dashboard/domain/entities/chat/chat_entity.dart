@@ -7,6 +7,7 @@ import '../messages/message_entity.dart';
 import 'group/group_into_entity.dart';
 import 'participant/chat_participant_entity.dart';
 
+export '../../../../../../../core/enums/chat/chat_type.dart';
 part 'chat_entity.g.dart';
 
 @HiveType(typeId: 10)

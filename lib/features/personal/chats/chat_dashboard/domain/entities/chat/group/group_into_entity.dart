@@ -29,4 +29,6 @@ class GroupInfoEntity {
   final List<AttachmentEntity> imageUrl;
   @HiveField(5)
   final List<ChatParticipantEntity> participants;
+
+  String? get groupThumbnailURL => imageUrl.isEmpty ? null : imageUrl.first.url;
 }
