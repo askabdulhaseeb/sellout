@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
-import '../features/personal/add/listing_form/views/screens/add_listing_form_screen.dart';
+import '../features/personal/listing/listing_form/views/screens/add_listing_form_screen.dart';
 import '../features/personal/auth/signin/views/screens/sign_in_screen.dart';
 import '../features/personal/auth/signup/views/screens/signup_screen.dart';
 import '../features/personal/dashboard/views/screens/dasboard_screen.dart';

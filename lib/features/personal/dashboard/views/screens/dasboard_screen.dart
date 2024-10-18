@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../add/start_listing/views/screens/start_listing_screen.dart';
+import '../../../listing/start_listing/views/screens/start_listing_screen.dart';
 import '../../../chats/chat_dashboard/views/screens/chat_dashboard_screen.dart';
 import '../../../explore/views/screens/explore_screen.dart';
 import '../../../home/views/screens/home_screen.dart';
-import '../../../profile/views/screens/profile_screen.dart';
+import '../../../user/views/screens/profile_screen.dart';
 import '../../../services/views/screens/services_screen.dart';
 import '../providers/personal_bottom_nav_provider.dart';
 
