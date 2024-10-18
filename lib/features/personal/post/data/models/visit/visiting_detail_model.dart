@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import '../../../../../../core/extension/string_ext.dart';
 import '../../../domain/entities/visit/visiting_detail_entity.dart';
 import 'visiting_detail_post_model.dart';
@@ -16,7 +14,6 @@ class VisitingDetailModel extends VisitingDetailEntity {
   });
 
   factory VisitingDetailModel.fromJson(Map<String, dynamic> json) {
-    log('VisitingDetailModel.fromJson - status: ${json['status']}');
     return VisitingDetailModel(
       visitingId: json['visiting_id'],
       post: VisitingDetailPostModel.fromJson(json['post']),

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import '../../../domain/entities/offer/offer_detail_entity.dart';
 import 'offer_detail_post_model.dart';
 
@@ -18,7 +16,6 @@ class OfferDetailModel extends OfferDetailEntity {
   });
 
   factory OfferDetailModel.fromJson(Map<String, dynamic> json) {
-    log('OfferDetailModel.fromJson - Title: ${json['post_title']}');
     return OfferDetailModel(
       postTitle: json['post_title'],
       size: json['size'],

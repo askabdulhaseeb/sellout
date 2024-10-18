@@ -7,6 +7,8 @@ import '../message/message_model.dart';
 import 'group/group_info_model.dart';
 import 'participant/chat_participant_model.dart';
 
+export '../../../domain/entities/chat/chat_entity.dart';
+
 class ChatModel extends ChatEntity {
   ChatModel({
     required super.updatedAt,

@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 
 import '../../../../../../../core/enums/chat/chat_type.dart';
+import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../post/domain/entities/offer/offer_amount_info_entity.dart';
 import '../messages/message_entity.dart';
 import 'group/group_into_entity.dart';
@@ -49,4 +50,9 @@ class ChatEntity {
   final List<dynamic>? deletedBy;
   @HiveField(11)
   final GroupInfoEntity? groupInfo;
+
+  String otherPerson() {
+    final String meID = LocalAuth.uid ?? '';
+    return persons.firstWhere((String e) => e != meID, orElse: () => meID);
+  }
 }
