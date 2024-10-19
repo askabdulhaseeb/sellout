@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import 'loader.dart';
+
 class ProfilePhoto extends StatelessWidget {
   const ProfilePhoto({
     required this.url,
@@ -38,10 +40,19 @@ class ProfilePhoto extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
             child: CachedNetworkImage(
               imageUrl: url ?? '',
-              placeholder: (BuildContext context, String url) =>
-                  const CircularProgressIndicator(),
+              height: size * 2,
+              width: size * 2,
+              fit: BoxFit.cover,
+              placeholder: (BuildContext context, String url) => const Loader(),
               errorWidget: (BuildContext context, String url, Object error) =>
-                  const Icon(Icons.error),
+                  Container(
+                color: Theme.of(context).dividerColor,
+                alignment: Alignment.center,
+                child: Text(
+                  placeholderText.toUpperCase(),
+                  style: const TextStyle(fontWeight: FontWeight.w500),
+                ),
+              ),
             ),
           );
   }

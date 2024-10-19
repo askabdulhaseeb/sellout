@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../../../../../core/utilities/app_string.dart';
-import '../../../data/models/chat/chat_model.dart';
 import '../../../domain/entities/chat/chat_entity.dart';
 import 'tiles/group_chat_dashbord_tile.dart';
 
@@ -14,7 +13,7 @@ class GroupChatListWidget extends StatelessWidget {
     return Expanded(
       child: ValueListenableBuilder<Box<ChatEntity>>(
         valueListenable:
-            Hive.box<ChatModel>(AppStrings.localChatsBox).listenable(),
+            Hive.box<ChatEntity>(AppStrings.localChatsBox).listenable(),
         builder: (BuildContext context, Box<ChatEntity> box, _) {
           final List<ChatEntity> chats = box.values
               .where((ChatEntity e) => e.type == ChatType.group)
