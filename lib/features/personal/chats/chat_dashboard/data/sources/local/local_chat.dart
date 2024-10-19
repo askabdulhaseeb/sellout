@@ -9,31 +9,31 @@ import '../../models/chat/chat_model.dart';
 //
 class LocalChat {
   static final String boxTitle = AppStrings.localChatsBox;
-  static Box<ChatModel> get _box => Hive.box<ChatModel>(boxTitle);
-  static Box<ChatModel> get boxLive => _box;
+  static Box<ChatEntity> get _box => Hive.box<ChatEntity>(boxTitle);
+  static Box<ChatEntity> get boxLive => _box;
 
-  static Future<Box<ChatModel>> get openBox async =>
-      await Hive.openBox<ChatModel>(boxTitle);
+  static Future<Box<ChatEntity>> get openBox async =>
+      await Hive.openBox<ChatEntity>(boxTitle);
 
-  Future<Box<ChatModel>> refresh() async {
+  Future<Box<ChatEntity>> refresh() async {
     final bool isOpen = Hive.isBoxOpen(boxTitle);
     if (isOpen) {
       return _box;
     } else {
-      return await Hive.openBox<ChatModel>(boxTitle);
+      return await Hive.openBox<ChatEntity>(boxTitle);
     }
   }
 
-  Future<void> save(ChatModel value) async =>
+  Future<void> save(ChatEntity value) async =>
       await _box.put(value.chatId, value);
-  ChatModel? chatEntity(String value) => _box.get(value);
+  ChatEntity? chatEntity(String value) => _box.get(value);
 
-  DataState<ChatModel?> chatState(String value) {
-    final ChatModel? entity = _box.get(value);
+  DataState<ChatEntity?> chatState(String value) {
+    final ChatEntity? entity = _box.get(value);
     if (entity != null) {
-      return DataSuccess<ChatModel?>(value, entity);
+      return DataSuccess<ChatEntity?>(value, entity);
     } else {
-      return DataFailer<ChatModel?>(CustomException('Loading...'));
+      return DataFailer<ChatEntity?>(CustomException('Loading...'));
     }
   }
 }

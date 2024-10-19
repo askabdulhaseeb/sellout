@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../../../../core/extension/datetime_ext.dart';
-import '../../../../../../../../core/widgets/circular_profile_photo.dart';
+import '../../../../../../../../core/widgets/profile_photo.dart';
 import '../../../../../../../../core/widgets/shadow_container.dart';
 import '../../../../domain/entities/chat/chat_entity.dart';
 
@@ -16,8 +16,9 @@ class ProductChatDashboardTile extends StatelessWidget {
       child: ShadowContainer(
         child: Row(
           children: <Widget>[
-            CircularProfilePhoto(
+            ProfilePhoto(
               url: null,
+              isCircle: true,
               placeholder: chat.productInfo?.id ?? '',
             ),
             const SizedBox(width: 8),
