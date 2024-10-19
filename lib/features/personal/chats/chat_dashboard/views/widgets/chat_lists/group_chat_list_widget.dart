@@ -14,7 +14,7 @@ class GroupChatListWidget extends StatelessWidget {
     return Expanded(
       child: ValueListenableBuilder<Box<ChatEntity>>(
         valueListenable:
-            Hive.box<ChatModel>(AppStrings.localChatssBox).listenable(),
+            Hive.box<ChatModel>(AppStrings.localChatsBox).listenable(),
         builder: (BuildContext context, Box<ChatEntity> box, _) {
           final List<ChatEntity> chats = box.values
               .where((ChatEntity e) => e.type == ChatType.group)

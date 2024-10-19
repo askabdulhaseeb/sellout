@@ -5,7 +5,7 @@ export '../../../../../core/enums/nav_bar/personal_bottom_nav_bar_type.dart';
 
 class PersonalBottomNavProvider extends ChangeNotifier {
   PersonalBottomNavBarType _currentTab = kDebugMode
-      ? PersonalBottomNavBarType.chats
+      ? PersonalBottomNavBarType.home
       : PersonalBottomNavBarType.home;
 
   PersonalBottomNavBarType get currentTab => _currentTab;

@@ -11,6 +11,11 @@ import '../features/personal/chats/chat_dashboard/data/sources/remote/chat_remot
 import '../features/personal/chats/chat_dashboard/domain/repositories/chat_repository.dart';
 import '../features/personal/chats/chat_dashboard/domain/usecase/get_my_chats_usecase.dart';
 import '../features/personal/chats/chat_dashboard/views/providers/chat_dashboard_provider.dart';
+import '../features/personal/post/data/repositories/post_repository_impl.dart';
+import '../features/personal/post/data/sources/remote/post_remote_api.dart';
+import '../features/personal/post/domain/repositories/post_repository.dart';
+import '../features/personal/post/domain/usecase/get_feed_usecase.dart';
+import '../features/personal/post/feed/views/providers/feed_provider.dart';
 import '../features/personal/user/profiles/data/repositories/user_repository_impl.dart';
 import '../features/personal/user/profiles/data/sources/remote/user_profile_remote_source.dart';
 import '../features/personal/user/profiles/domain/repositories/user_repositories.dart';
@@ -23,6 +28,7 @@ void setupLocator() {
   _auth();
   _profile();
   _chat();
+  _feed();
 }
 
 void _auth() {
@@ -55,4 +61,11 @@ void _chat() {
       .registerFactory<GetMyChatsUsecase>(() => GetMyChatsUsecase(locator()));
   locator.registerLazySingleton<ChatDashboardProvider>(
       () => ChatDashboardProvider(locator()));
+}
+
+void _feed() {
+  locator.registerFactory<PostRemoteApi>(() => PostRemoteApiImpl());
+  locator.registerFactory<PostRepository>(() => PostRepositoryImpl(locator()));
+  locator.registerFactory<GetFeedUsecase>(() => GetFeedUsecase(locator()));
+  locator.registerLazySingleton<FeedProvider>(() => FeedProvider(locator()));
 }

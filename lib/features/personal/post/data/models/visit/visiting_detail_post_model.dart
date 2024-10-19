@@ -2,9 +2,9 @@ import '../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../../core/extension/string_ext.dart';
 import '../../../../../attachment/data/attchment_model.dart';
+import '../../../../location/data/models/location_model.dart';
 import '../../../domain/entities/visit/visiting_detail_post_entity.dart';
 import '../meetup/availability_model.dart';
-import '../meetup/meetup_location_model.dart';
 
 class VisitingDetailPostModel extends VisitingDetailPostEntity {
   VisitingDetailPostModel({
@@ -81,7 +81,7 @@ class VisitingDetailPostModel extends VisitingDetailPostEntity {
         mileageUnit: json['mileage_unit'],
         postId: json['post_id'],
         exteriorColor: json['exterior_color'],
-        meetUpLocation: MeetUpLocationModel.fromJson(json['meet_up_location']),
+        meetUpLocation: LocationModel.fromJson(json['meet_up_location']),
         engineSize: json['engine_size']?.toDouble(),
         accessCode: json['access_code'],
       );

@@ -48,7 +48,7 @@ class VisitingDetailPostEntityAdapter
       mileageUnit: fields[28] as String,
       postId: fields[29] as String,
       exteriorColor: fields[30] as String,
-      meetUpLocation: fields[31] as MeetUpLocationEntity,
+      meetUpLocation: fields[31] as LocationEntity,
       engineSize: fields[32] as double,
       fuelType: fields[19] as String?,
       accessCode: fields[33] as String?,

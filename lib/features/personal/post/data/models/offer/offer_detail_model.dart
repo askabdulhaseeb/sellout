@@ -1,5 +1,5 @@
 import '../../../domain/entities/offer/offer_detail_entity.dart';
-import 'offer_detail_post_model.dart';
+import '../post_model.dart';
 
 class OfferDetailModel extends OfferDetailEntity {
   const OfferDetailModel({
@@ -20,7 +20,7 @@ class OfferDetailModel extends OfferDetailEntity {
       postTitle: json['post_title'],
       size: json['size'],
       color: json['color'],
-      post: OfferDetailPostModel.fromJson(json['post']),
+      post: PostModel.fromJson(json['post']),
       price: int.tryParse(json['price']?.toString() ?? '0') ?? 0,
       minOfferAmount:
           int.tryParse(json['min_offer_amount']?.toString() ?? '0') ?? 0,

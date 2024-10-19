@@ -1,5 +1,7 @@
 import 'package:hive/hive.dart';
 
+import '../../../../../../core/enums/routine/day_type.dart';
+
 part 'availability_entity.g.dart';
 
 @HiveType(typeId: 16)
@@ -12,7 +14,7 @@ class AvailabilityEntity {
   });
 
   @HiveField(0)
-  final String day;
+  final DayType day;
   @HiveField(1)
   final bool isOpen;
   @HiveField(2)

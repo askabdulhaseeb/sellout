@@ -30,6 +30,12 @@ enum MessageType {
   offer('offer', 'offer'),
   @HiveField(11)
   visiting('visiting', 'visiting'),
+  @HiveField(12)
+  acceptInvitation('accept-invitation', 'accept_invitation'),
+  @HiveField(13)
+  removeParticipant('remove-participant', 'remove_participant'),
+  @HiveField(14)
+  leaveGroup('leave-group', 'leave_group'),
   @HiveField(99)
   none('none', 'none');
 

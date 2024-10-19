@@ -17,7 +17,7 @@ class AvailabilityEntityAdapter extends TypeAdapter<AvailabilityEntity> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return AvailabilityEntity(
-      day: fields[0] as String,
+      day: fields[0] as DayType,
       isOpen: fields[1] as bool,
       closingTime: fields[2] as String,
       openingTime: fields[3] as String,

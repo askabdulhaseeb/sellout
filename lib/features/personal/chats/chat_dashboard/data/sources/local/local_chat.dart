@@ -8,7 +8,7 @@ import '../../models/chat/chat_model.dart';
 // getOnlineUsers
 //
 class LocalChat {
-  static final String boxTitle = AppStrings.localChatssBox;
+  static final String boxTitle = AppStrings.localChatsBox;
   static Box<ChatModel> get _box => Hive.box<ChatModel>(boxTitle);
   static Box<ChatModel> get boxLive => _box;
 

@@ -26,7 +26,7 @@ extension StringExt on String {
 
   Color toColor() {
     if (isEmpty) return Colors.transparent;
-    if(startsWith('#')) return Color(int.parse(substring(1), radix: 16));
+    if (startsWith('#')) return Color(int.parse(substring(1), radix: 16));
     return Color(int.parse(this));
   }
 }

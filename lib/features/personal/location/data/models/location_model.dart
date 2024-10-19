@@ -1,7 +1,7 @@
-import '../../../domain/entities/meetup/meetup_location_entity.dart';
+import '../../domain/entities/location_entity.dart';
 
-class MeetUpLocationModel extends MeetUpLocationEntity {
-  MeetUpLocationModel({
+class LocationModel extends LocationEntity {
+  LocationModel({
     required super.address,
     required super.id,
     required super.title,
@@ -10,8 +10,7 @@ class MeetUpLocationModel extends MeetUpLocationEntity {
     required super.longitude,
   });
 
-  factory MeetUpLocationModel.fromJson(Map<String, dynamic> json) =>
-      MeetUpLocationModel(
+  factory LocationModel.fromJson(Map<String, dynamic> json) => LocationModel(
         address: json['address'],
         id: json['id'],
         title: json['title'],

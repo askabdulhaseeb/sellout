@@ -3,8 +3,8 @@ import 'package:hive/hive.dart';
 import '../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
+import '../../../../location/domain/entities/location_entity.dart';
 import '../meetup/availability_entity.dart';
-import '../meetup/meetup_location_entity.dart';
 
 part 'visiting_detail_post_entity.g.dart';
 
@@ -110,7 +110,7 @@ class VisitingDetailPostEntity {
   @HiveField(30)
   final String exteriorColor;
   @HiveField(31)
-  final MeetUpLocationEntity meetUpLocation;
+  final LocationEntity meetUpLocation;
   @HiveField(32)
   final double engineSize;
   @HiveField(33)
