@@ -17,48 +17,50 @@ class HomePostHeaderSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final GetUserByUidUsecase getUserByUidUsecase =
         GetUserByUidUsecase(locator());
-    return FutureBuilder<DataState<UserEntity?>>(
-        future: getUserByUidUsecase(post.createdBy),
-        initialData: LocalUser().userState(post.createdBy),
-        builder: (BuildContext context,
-            AsyncSnapshot<DataState<UserEntity?>> snapshot) {
-          final DataState<UserEntity?>? result = snapshot.data;
-          final UserEntity? user = result?.entity;
-          return snapshot.connectionState == ConnectionState.waiting
-              ? const Loader()
-              : Row(
-                  children: <Widget>[
-                    ProfilePhoto(
-                      url: user?.profilePhotoURL,
-                      isCircle: true,
-                      placeholder: user?.displayName ?? '',
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            user?.displayName ?? 'null',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          Text(
-                            post.createdAt.timeAgo,
-                          ),
-                        ],
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: FutureBuilder<DataState<UserEntity?>>(
+          future: getUserByUidUsecase(post.createdBy),
+          initialData: LocalUser().userState(post.createdBy),
+          builder: (BuildContext context,
+              AsyncSnapshot<DataState<UserEntity?>> snapshot) {
+            final DataState<UserEntity?>? result = snapshot.data;
+            final UserEntity? user = result?.entity;
+            return snapshot.connectionState == ConnectionState.waiting
+                ? const Loader()
+                : Row(
+                    children: <Widget>[
+                      ProfilePhoto(
+                        url: user?.profilePhotoURL,
+                        placeholder: user?.displayName ?? '',
                       ),
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.adaptive.more),
-                    ),
-                  ],
-                );
-        });
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              user?.displayName ?? 'null',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(
+                              post.createdAt.timeAgo,
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(Icons.adaptive.more),
+                      ),
+                    ],
+                  );
+          }),
+    );
   }
 }
