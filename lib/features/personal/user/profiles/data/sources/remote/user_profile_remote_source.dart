@@ -5,14 +5,14 @@ import '../../../../../../../core/sources/local/local_request_history.dart';
 import '../local/local_user.dart';
 
 abstract interface class UserProfileRemoteSource {
-  Future<DataState<UserModel?>> byUID(String value);
+  Future<DataState<UserEntity?>> byUID(String value);
 }
 
 class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
   @override
-  Future<DataState<UserModel?>> byUID(String value) async {
+  Future<DataState<UserEntity?>> byUID(String value) async {
     if (value.isEmpty) {
-      return DataFailer<UserModel?>(CustomException('User ID is null'));
+      return DataFailer<UserEntity?>(CustomException('User ID is null'));
     }
     final String endpoint = '/user/$value';
     try {
@@ -22,8 +22,8 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
               ? const Duration(minutes: 10)
               : const Duration(hours: 1));
       if (request != null) {
-        final DataState<UserModel?> local = LocalUser().userState(value);
-        if (local is DataSuccess<UserModel?> && local.entity != null) {
+        final DataState<UserEntity?> local = LocalUser().userState(value);
+        if (local is DataSuccess<UserEntity?> && local.entity != null) {
           return local;
         }
       }
@@ -38,14 +38,14 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
       //
       if (result is DataSuccess<bool>) {
         final String data = result.data ?? '';
-        final UserModel entity = UserModel.fromRawJson(data);
+        final UserEntity entity = UserModel.fromRawJson(data);
         await LocalUser().save(entity);
-        return DataSuccess<UserModel>(data, entity);
+        return DataSuccess<UserEntity>(data, entity);
       }
-      return DataFailer<UserModel?>(CustomException('User not found'));
+      return DataFailer<UserEntity?>(CustomException('User not found'));
     } catch (e) {
       debugPrint('❌ Error GetUserAPI.user: catch $e');
     }
-    return DataFailer<UserModel?>(CustomException('User not found'));
+    return DataFailer<UserEntity?>(CustomException('User not found'));
   }
 }

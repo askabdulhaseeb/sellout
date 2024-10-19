@@ -30,9 +30,12 @@ class UserModel extends UserEntity {
       UserModel.fromJson(json.decode(str));
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-        mobileNo: json['mobile_no']??'',
-        createdAt: DateTime.tryParse(json['created_at']) ?? DateTime.now(),
-        chatIds: List<String>.from((json['chat_ids']??<dynamic>[]).map((dynamic x) => x)),
+        mobileNo: json['mobile_no'] ?? '',
+        createdAt: json['created_at'] == null
+            ? DateTime.now()
+            : DateTime.tryParse(json['created_at']) ?? DateTime.now(),
+        chatIds: List<String>.from(
+            (json['chat_ids'] ?? <dynamic>[]).map((dynamic x) => x)),
         timestamp:
             DateTime.tryParse(json['timestamp'].toString()) ?? DateTime.now(),
         address: List<AddressModel>.from((json['address'] ?? <dynamic>[])

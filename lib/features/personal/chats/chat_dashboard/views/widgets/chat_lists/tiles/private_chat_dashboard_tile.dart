@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../../../../core/extension/datetime_ext.dart';
 import '../../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../../core/widgets/circular_profile_photo.dart';
+import '../../../../../../../../core/widgets/profile_photo.dart';
 import '../../../../../../../../core/widgets/loader.dart';
 import '../../../../../../../../core/widgets/shadow_container.dart';
 import '../../../../../../../../services/get_it.dart';
@@ -35,8 +35,9 @@ class PrivateChatDashboardTile extends StatelessWidget {
                         'user-not-found'.tr())
                 : Row(
                     children: <Widget>[
-                      CircularProfilePhoto(
+                      ProfilePhoto(
                         url: user.profilePhotoURL,
+                        isCircle: true,
                         placeholder: user.displayName,
                       ),
                       const SizedBox(width: 8),

@@ -1,26 +1,28 @@
 import 'package:hive/hive.dart';
 
 import '../../../../../../core/utilities/app_string.dart';
-import '../../models/post_model.dart';
+import '../../../domain/entities/post_entity.dart';
 
 class LocalPost {
   static final String boxTitle = AppStrings.localPostsBox;
-  static Box<PostModel> get _box => Hive.box<PostModel>(boxTitle);
+  static Box<PostEntity> get _box => Hive.box<PostEntity>(boxTitle);
 
-  static Future<Box<PostModel>> get openBox async =>
-      await Hive.openBox<PostModel>(boxTitle);
+  static Future<Box<PostEntity>> get openBox async =>
+      await Hive.openBox<PostEntity>(boxTitle);
 
-  Future<Box<PostModel>> refresh() async {
+  Future<Box<PostEntity>> refresh() async {
     final bool isOpen = Hive.isBoxOpen(boxTitle);
     if (isOpen) {
       return _box;
     } else {
-      return await Hive.openBox<PostModel>(boxTitle);
+      return await Hive.openBox<PostEntity>(boxTitle);
     }
   }
 
-  Future<void> save(PostModel value) async =>
+  Future<void> save(PostEntity value) async =>
       await _box.put(value.postId, value);
 
-  PostModel? post(String id) => _box.get(id);
+  PostEntity? post(String id) => _box.get(id);
+
+  List<PostEntity> get all => _box.values.toList();
 }

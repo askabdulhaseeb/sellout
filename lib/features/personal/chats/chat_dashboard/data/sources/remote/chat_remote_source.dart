@@ -8,16 +8,16 @@ import '../../models/chat/chat_model.dart';
 import '../local/local_chat.dart';
 
 abstract interface class ChatRemoteSource {
-  Future<DataState<List<ChatModel>>> getChats(List<String>? params);
+  Future<DataState<List<ChatEntity>>> getChats(List<String>? params);
 }
 
 class ChatRemoteSourceImpl implements ChatRemoteSource {
   @override
-  Future<DataState<List<ChatModel>>> getChats(List<String>? params) async {
+  Future<DataState<List<ChatEntity>>> getChats(List<String>? params) async {
     final List<String> chatIDs =
         params ?? LocalAuth.currentUser?.chatIDs ?? <String>[];
     if (chatIDs.isEmpty) {
-      return DataFailer<List<ChatModel>>(CustomException('no-chats'.tr()));
+      return DataFailer<List<ChatEntity>>(CustomException('no-chats'.tr()));
     }
     try {
       final DataState<bool> result = await ApiCall<bool>().call(
@@ -30,27 +30,27 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
       if (result is DataSuccess<bool>) {
         final String rawData = result.data ?? '';
         if (rawData.isEmpty) {
-          return DataFailer<List<ChatModel>>(
+          return DataFailer<List<ChatEntity>>(
               CustomException('something-wrong'.tr()));
         }
         final dynamic mapp = json.decode(rawData);
         final List<dynamic> data = mapp['chats'] as List<dynamic>;
 
         log('⚡️ Raw Chats: ${data.length}');
-        final List<ChatModel> chats = <ChatModel>[];
+        final List<ChatEntity> chats = <ChatEntity>[];
         for (final dynamic element in data) {
-          final ChatModel chat = ChatModel.fromJson(element);
+          final ChatEntity chat = ChatModel.fromJson(element);
           chats.add(chat);
           await LocalChat().save(chat);
         }
         log('⚡️ Chats: ${chats.length}');
-        return DataSuccess<List<ChatModel>>(rawData, chats);
+        return DataSuccess<List<ChatEntity>>(rawData, chats);
       } else {
-        return DataFailer<List<ChatModel>>(
+        return DataFailer<List<ChatEntity>>(
             result.exception ?? CustomException('something-wrong'.tr()));
       }
     } catch (e) {
-      return DataFailer<List<ChatModel>>(CustomException('$e'));
+      return DataFailer<List<ChatEntity>>(CustomException('$e'));
     }
   }
 }
