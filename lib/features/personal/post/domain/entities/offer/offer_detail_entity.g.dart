@@ -20,7 +20,7 @@ class OfferDetailEntityAdapter extends TypeAdapter<OfferDetailEntity> {
       postTitle: fields[0] as String,
       size: fields[1] as String,
       color: fields[2] as String,
-      post: fields[3] as OfferDetailPostEntity,
+      post: fields[3] as PostEntity,
       price: fields[4] as int,
       minOfferAmount: fields[5] as int,
       offerStatus: fields[6] as String,

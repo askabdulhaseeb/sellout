@@ -15,11 +15,12 @@ import '../../../features/personal/listing/listing_form/domain/entities/listing_
 import '../../../features/personal/listing/listing_form/domain/entities/sub_category_entity.dart';
 import '../../../features/personal/auth/signin/data/models/address_model.dart';
 import '../../../features/personal/auth/signin/data/sources/local/local_auth.dart';
+import '../../../features/personal/location/domain/entities/location_entity.dart';
+import '../../../features/personal/post/data/sources/local/local_post.dart';
 import '../../../features/personal/post/domain/entities/meetup/availability_entity.dart';
-import '../../../features/personal/post/domain/entities/meetup/meetup_location_entity.dart';
 import '../../../features/personal/post/domain/entities/offer/offer_amount_info_entity.dart';
 import '../../../features/personal/post/domain/entities/offer/offer_detail_entity.dart';
-import '../../../features/personal/post/domain/entities/offer/offer_detail_post_entity.dart';
+import '../../../features/personal/post/domain/entities/post_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/color_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/discount_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/size_color_entity.dart';
@@ -27,12 +28,13 @@ import '../../../features/personal/post/domain/entities/visit/visiting_detail_en
 import '../../../features/personal/post/domain/entities/visit/visiting_detail_post_entity.dart';
 import '../../../features/personal/user/profiles/data/sources/local/local_user.dart';
 import '../../enums/chat/chat_participant_role.dart';
-import '../../enums/chat/chat_type.dart';
+import '../../enums/listing/core/boolean_status_type.dart';
 import '../../enums/listing/core/delivery_type.dart';
 import '../../enums/listing/core/item_condition_type.dart';
 import '../../enums/listing/core/listing_type.dart';
 import '../../enums/listing/core/privacy_type.dart';
 import '../../enums/message/message_type.dart';
+import '../../enums/routine/day_type.dart';
 import 'local_request_history.dart';
 
 class HiveDB {
@@ -61,10 +63,10 @@ class HiveDB {
     Hive.registerAdapter(VisitingDetailEntityAdapter()); // 14
     Hive.registerAdapter(VisitingDetailPostEntityAdapter()); // 15
     Hive.registerAdapter(AvailabilityEntityAdapter()); // 16
-    Hive.registerAdapter(MeetUpLocationEntityAdapter()); // 17
+    Hive.registerAdapter(LocationEntityAdapter()); // 17
     Hive.registerAdapter(MessageTypeAdapter()); // 18
     Hive.registerAdapter(OfferDetailEntityAdapter()); // 19
-    Hive.registerAdapter(OfferDetailPostEntityAdapter()); // 20
+    Hive.registerAdapter(PostEntityAdapter()); // 20
     Hive.registerAdapter(DiscountEntityAdapter()); // 21
     Hive.registerAdapter(SizeColorEntityAdapter()); // 22
     Hive.registerAdapter(ColorEntityAdapter()); // 23
@@ -75,12 +77,15 @@ class HiveDB {
     Hive.registerAdapter(ChatTypeAdapter()); // 28
     Hive.registerAdapter(GroupInfoEntityAdapter()); // 29
     Hive.registerAdapter(InvitationEntityAdapter()); // 30
+    Hive.registerAdapter(BooleanStatusTypeAdapter()); // 31
+    Hive.registerAdapter(DayTypeAdapter()); // 32
 
     // Hive box Open
     await refresh();
   }
 
   static Future<void> refresh() async {
+    await LocalPost().refresh();
     await LocalAuth().refresh();
     await LocalUser().refresh();
     await LocalRequestHistory().refresh();

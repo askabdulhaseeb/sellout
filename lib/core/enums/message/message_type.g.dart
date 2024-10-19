@@ -37,6 +37,12 @@ class MessageTypeAdapter extends TypeAdapter<MessageType> {
         return MessageType.offer;
       case 11:
         return MessageType.visiting;
+      case 12:
+        return MessageType.acceptInvitation;
+      case 13:
+        return MessageType.removeParticipant;
+      case 14:
+        return MessageType.leaveGroup;
       case 99:
         return MessageType.none;
       default:
@@ -82,6 +88,15 @@ class MessageTypeAdapter extends TypeAdapter<MessageType> {
         break;
       case MessageType.visiting:
         writer.writeByte(11);
+        break;
+      case MessageType.acceptInvitation:
+        writer.writeByte(12);
+        break;
+      case MessageType.removeParticipant:
+        writer.writeByte(13);
+        break;
+      case MessageType.leaveGroup:
+        writer.writeByte(14);
         break;
       case MessageType.none:
         writer.writeByte(99);

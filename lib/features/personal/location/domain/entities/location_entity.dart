@@ -1,10 +1,10 @@
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-part 'meetup_location_entity.g.dart';
+part 'location_entity.g.dart';
 
 @HiveType(typeId: 17)
-class MeetUpLocationEntity {
-  MeetUpLocationEntity({
+class LocationEntity {
+  LocationEntity({
     required this.address,
     required this.id,
     required this.title,
@@ -14,13 +14,13 @@ class MeetUpLocationEntity {
   });
 
   @HiveField(0)
-  final String address;
-  @HiveField(1)
   final String id;
+  @HiveField(1)
+  final String url;
   @HiveField(2)
   final String title;
   @HiveField(3)
-  final String url;
+  final String address;
   @HiveField(4)
   final double latitude;
   @HiveField(5)

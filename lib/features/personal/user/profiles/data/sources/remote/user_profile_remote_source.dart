@@ -19,8 +19,8 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
       ApiRequestEntity? request = await LocalRequestHistory().request(
           endpoint: endpoint,
           duration: kDebugMode
-              ? const Duration(seconds: 10)
-              : const Duration(minutes: 30));
+              ? const Duration(minutes: 10)
+              : const Duration(hours: 1));
       if (request != null) {
         final DataState<UserModel?> local = LocalUser().userState(value);
         if (local is DataSuccess<UserModel?> && local.entity != null) {

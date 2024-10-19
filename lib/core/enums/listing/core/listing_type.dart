@@ -69,14 +69,20 @@ enum ListingType {
   final IconData icon;
   final List<String> cids;
 
-  static ListingType fromJson(String json) {
-    return ListingType.values
-        .firstWhere((ListingType type) => type.json == json);
+  static ListingType fromJson(String? json) {
+    if (json == null) return ListingType.items;
+    return ListingType.values.firstWhere(
+      (ListingType type) => type.json == json,
+      orElse: () => ListingType.items,
+    );
   }
 
-  static ListingType fromStrJson(String json) {
-    return ListingType.values
-        .firstWhere((ListingType type) => type.cids.contains(json));
+  static ListingType fromStrJson(String? json) {
+    if (json == null) return ListingType.items;
+    return ListingType.values.firstWhere(
+      (ListingType type) => type.cids.contains(json),
+      orElse: () => ListingType.items,
+    );
   }
 
   static List<ListingType> get list => ListingType.values;
