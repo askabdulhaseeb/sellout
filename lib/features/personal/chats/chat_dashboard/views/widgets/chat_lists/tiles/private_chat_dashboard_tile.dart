@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../../../../../core/extension/datetime_ext.dart';
 import '../../../../../../../../core/sources/data_state.dart';
@@ -9,6 +10,8 @@ import '../../../../../../../../core/widgets/shadow_container.dart';
 import '../../../../../../../../services/get_it.dart';
 import '../../../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../../../../user/profiles/domain/usecase/get_user_by_uid.dart';
+import '../../../../../chat/views/providers/chat_provider.dart';
+import '../../../../../chat/views/screens/chat_screen.dart';
 import '../../../../domain/entities/chat/chat_entity.dart';
 
 class PrivateChatDashboardTile extends StatelessWidget {
@@ -22,6 +25,10 @@ class PrivateChatDashboardTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: ShadowContainer(
+        onTap: () {
+          Provider.of<ChatProvider>(context, listen: false).chat = chat;
+          Navigator.of(context).pushNamed(ChatScreen.routeName);
+        },
         child: FutureBuilder<DataState<UserEntity?>>(
           future: getUserByUidUsecase.call(chat.otherPerson()),
           initialData: LocalUser().userState(chat.otherPerson()),

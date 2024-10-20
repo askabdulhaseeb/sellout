@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
+import '../features/personal/chats/chat/views/screens/chat_screen.dart';
 import '../features/personal/listing/listing_form/views/screens/add_listing_form_screen.dart';
 import '../features/personal/auth/signin/views/screens/sign_in_screen.dart';
 import '../features/personal/auth/signup/views/screens/signup_screen.dart';
@@ -42,5 +43,7 @@ class AppRoutes {
     // DAHSBOARD
     DashboardScreen.routeName: (_) => const DashboardScreen(),
     AddListingFormScreen.routeName: (_) => const AddListingFormScreen(),
+
+    ChatScreen.routeName: (_) => const ChatScreen(),
   };
 }

@@ -11,4 +11,12 @@ class PostRepositoryImpl implements PostRepository {
   Future<DataState<List<PostEntity>>> getFeed() async {
     return await remoteApi.getFeed();
   }
+
+  @override
+  Future<DataState<PostEntity>> getPost(
+    String id, {
+    bool silentUpdate = false,
+  }) async {
+    return await remoteApi.getPost(id);
+  }
 }

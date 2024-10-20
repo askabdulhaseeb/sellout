@@ -11,6 +11,7 @@ import '../local/local_post.dart';
 
 abstract interface class PostRemoteApi {
   Future<DataState<List<PostEntity>>> getFeed();
+  Future<DataState<PostEntity>> getPost(String id);
 }
 
 class PostRemoteApiImpl implements PostRemoteApi {
@@ -62,6 +63,57 @@ class PostRemoteApiImpl implements PostRemoteApi {
     } catch (e) {
       log('PostRemoteApiImpl.getFeed failed: $e');
       return DataFailer<List<PostEntity>>(CustomException(e.toString()));
+    }
+  }
+
+  @override
+  Future<DataState<PostEntity>> getPost(
+    String id, {
+    bool silentUpdate = true,
+  }) async {
+    log('PostRemoteApiImpl.getPost called');
+    try {
+      if (silentUpdate) {
+        ApiRequestEntity? request = await LocalRequestHistory().request(
+          endpoint: '/post/$id',
+          duration:
+              kDebugMode ? const Duration(days: 1) : const Duration(hours: 1),
+        );
+        if (request != null) {
+          final PostEntity? post = LocalPost().post(id);
+          if (post != null) {
+            return DataSuccess<PostEntity>(request.encodedData, post);
+          }
+        }
+      }
+      //
+      //
+
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: '/post/$id',
+        requestType: ApiRequestType.get,
+        isAuth: false,
+      );
+
+      if (result is DataSuccess) {
+        final String raw = result.data ?? '';
+        if (raw.isEmpty) {
+          return DataFailer<PostEntity>(
+              result.exception ?? CustomException('something-wrong'.tr()));
+        }
+        final dynamic item = json.decode(raw)['response'];
+        final PostEntity post = PostModel.fromJson(item);
+        await LocalPost().save(post);
+        return DataSuccess<PostEntity>(raw, post);
+      } else {
+        log('PostRemoteApiImpl.getPost failed: ${result.exception?.message}');
+        return DataFailer<PostEntity>(
+          result.exception ?? CustomException('something-wrong'.tr()),
+        );
+      }
+    } catch (e) {
+      log('PostRemoteApiImpl.getPost failed: $e');
+      return DataFailer<PostEntity>(CustomException(e.toString()));
     }
   }
 }
