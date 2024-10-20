@@ -92,7 +92,6 @@ class ApiCall<T> {
             url: url,
             encodedData: data,
           );
-          debugPrint('✅ Request Success');
           await LocalRequestHistory().save(apiRequestEntity);
           return DataSuccess<T>(data, null);
         }
