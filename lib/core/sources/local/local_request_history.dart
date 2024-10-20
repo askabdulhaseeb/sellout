@@ -4,6 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../entities/api_request_entity.dart';
 import '../../extension/duration_ext.dart';
+import '../../extension/string_ext.dart';
 import '../../utilities/app_string.dart';
 
 export '../../entities/api_request_entity.dart';
@@ -25,7 +26,7 @@ class LocalRequestHistory {
   }
 
   Future<void> save(ApiRequestEntity request) async =>
-      await _box.put(request.url, request);
+      await _box.put(request.url.toSHA256(), request);
 
   Future<ApiRequestEntity?> request({
     required String endpoint,
@@ -39,7 +40,7 @@ class LocalRequestHistory {
     url = '$url${endpoint.startsWith('/') ? endpoint : '/$endpoint'}';
     if (!url.endsWith('/')) url += '/';
 
-    ApiRequestEntity? result = _box.get(url);
+    ApiRequestEntity? result = _box.get(url.toSHA256());
     if (result == null) return null;
     if (!result.timesAgo(duration)) {
       debugPrint('🟢 Less then ${duration.display()} - $url');
@@ -51,5 +52,5 @@ class LocalRequestHistory {
     }
   }
 
-  Future<void> delete(String value) async => await _box.delete(value);
+  Future<void> delete(String value) async => await _box.delete(value.toSHA256());
 }

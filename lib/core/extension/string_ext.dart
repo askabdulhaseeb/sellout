@@ -1,4 +1,7 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -22,6 +25,12 @@ extension StringExt on String {
     dateTime = dateFormat.tryParseUtc(this);
     if (dateTime != null) return dateTime.toLocal();
     return null;
+  }
+
+  toSHA256() {
+    Uint8List bytes = utf8.encode(this);
+    Digest digest = sha256.convert(bytes);
+    return digest.toString();
   }
 
   Color toColor() {

@@ -35,7 +35,7 @@ class ApiCall<T> {
         return DataFailer<T>(CustomException('Base URL is Empty'));
       }
       url = '$url${endpoint.startsWith('/') ? endpoint : '/$endpoint'}';
-      if (!url.endsWith('/')) url += '/';
+      // if (!url.endsWith('/')) url += '/';
 
       /// Request
       final http.Request request =

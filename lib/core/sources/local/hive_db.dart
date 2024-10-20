@@ -4,6 +4,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../features/attachment/domain/entities/attachment_entity.dart';
+import '../../../features/personal/chats/chat/data/sources/local/local_message.dart';
+import '../../../features/personal/chats/chat/domain/entities/getted_message_entity.dart';
+import '../../../features/personal/chats/chat/domain/entities/message_last_evaluated_key_entity.dart';
 import '../../../features/personal/chats/chat_dashboard/data/sources/local/local_chat.dart';
 import '../../../features/personal/chats/chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../../features/personal/chats/chat_dashboard/domain/entities/chat/group/group_into_entity.dart';
@@ -79,7 +82,8 @@ class HiveDB {
     Hive.registerAdapter(InvitationEntityAdapter()); // 30
     Hive.registerAdapter(BooleanStatusTypeAdapter()); // 31
     Hive.registerAdapter(DayTypeAdapter()); // 32
-
+    Hive.registerAdapter(GettedMessageEntityAdapter()); // 33
+    Hive.registerAdapter(MessageLastEvaluatedKeyEntityAdapter()); // 34
     // Hive box Open
     await refresh();
   }
@@ -91,5 +95,6 @@ class HiveDB {
     await LocalRequestHistory().refresh();
     await LocalListing().refresh();
     await LocalChat().refresh();
+    await LocalChatMessage().refresh();
   }
 }

@@ -132,13 +132,15 @@ class PostModel extends PostEntity {
   factory PostModel.fromJson(Map<String, dynamic> json) {
     final dynamic rawDiscount = json['discount'];
     DiscountModel? disc;
-    if (rawDiscount != null && rawDiscount is Map<String, dynamic>) {
-      disc = DiscountModel.fromJson(rawDiscount);
+    if (rawDiscount != null) {
+      if (rawDiscount is Map<String, dynamic>) {
+        disc = DiscountModel.fromJson(rawDiscount);
+      }
     }
     return PostModel(
       quantity: int.tryParse(json['quantity']?.toString() ?? '0') ?? 0,
-      address: json['address'],
-      isActive: json['is_active'],
+      address: json['address'] ?? '',
+      isActive: json['is_active'] ?? true,
       listId: json['list_id'],
       currentLongitude:
           double.tryParse(json['current_longitude']?.toString() ?? '0.0') ??
@@ -155,10 +157,11 @@ class PostModel extends PostEntity {
       type: ListingType.fromStrJson(json['type']),
       createdBy: json['created_by'],
       acceptOffers: json['accept_offers'],
-      sizeColors:
-          List<SizeColorModel>.from((json['size_colors'] ?? <dynamic>[]).map(
-        (dynamic x) => SizeColorModel.fromJson(x),
-      )),
+      sizeColors: json['size_colors'] == null
+          ? <SizeColorModel>[]
+          : List<SizeColorModel>.from((json['size_colors'] ?? <dynamic>[]).map(
+              (dynamic x) => SizeColorModel.fromJson(x),
+            )),
       currentLatitude:
           double.tryParse(json['current_latitude']?.toString() ?? '0.0') ?? 0.0,
       postId: json['post_id'],
@@ -180,8 +183,10 @@ class PostModel extends PostEntity {
       collectionLocation: json['collection_location'] == null
           ? null
           : LocationModel.fromJson(json['collection_location']),
-      localDelivery: json['local_delivery'],
-      internationalDelivery: json['international_delivery'],
+      localDelivery:
+          int.tryParse(json['local_delivery']?.toString() ?? '0') ?? 0,
+      internationalDelivery:
+          int.tryParse(json['international_delivery']?.toString() ?? '0') ?? 0,
       fuelType: json['fuel_type'],
       doors: json['doors'],
       availability: json['availability'] == null
@@ -190,7 +195,7 @@ class PostModel extends PostEntity {
               .map((dynamic x) => AvailabilityModel.fromJson(x))),
       emission: json['emission'],
       exteriorColor: json['exterior_color'],
-      seats: json['seats'],
+      seats: int.tryParse(json['seats']?.toString() ?? '0') ?? 0,
       vehiclesCategory: json['vehicles_category'],
       meetUpLocation: json['meet_up_location'] == null
           ? null
