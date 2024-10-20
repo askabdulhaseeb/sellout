@@ -71,7 +71,6 @@ class PostRemoteApiImpl implements PostRemoteApi {
     String id, {
     bool silentUpdate = true,
   }) async {
-    log('PostRemoteApiImpl.getPost called');
     try {
       if (silentUpdate) {
         ApiRequestEntity? request = await LocalRequestHistory().request(
@@ -101,7 +100,7 @@ class PostRemoteApiImpl implements PostRemoteApi {
           return DataFailer<PostEntity>(
               result.exception ?? CustomException('something-wrong'.tr()));
         }
-        final dynamic item = json.decode(raw)['response'];
+        final dynamic item = json.decode(raw);
         final PostEntity post = PostModel.fromJson(item);
         await LocalPost().save(post);
         return DataSuccess<PostEntity>(raw, post);
@@ -112,7 +111,7 @@ class PostRemoteApiImpl implements PostRemoteApi {
         );
       }
     } catch (e) {
-      log('PostRemoteApiImpl.getPost failed: $e');
+      log('PostRemoteApiImpl.getPost catch failed: $e');
       return DataFailer<PostEntity>(CustomException(e.toString()));
     }
   }

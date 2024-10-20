@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../../../../core/sources/api_call.dart';
@@ -35,15 +33,13 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
         }
         final dynamic mapp = json.decode(rawData);
         final List<dynamic> data = mapp['chats'] as List<dynamic>;
-
-        log('⚡️ Raw Chats: ${data.length}');
+        //
         final List<ChatEntity> chats = <ChatEntity>[];
         for (final dynamic element in data) {
           final ChatEntity chat = ChatModel.fromJson(element);
           chats.add(chat);
           await LocalChat().save(chat);
         }
-        log('⚡️ Chats: ${chats.length}');
         return DataSuccess<List<ChatEntity>>(rawData, chats);
       } else {
         return DataFailer<List<ChatEntity>>(

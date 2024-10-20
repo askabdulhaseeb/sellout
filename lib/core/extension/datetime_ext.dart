@@ -1,10 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
+
 extension DateTimeExt on DateTime {
   String get dateOnly => DateFormat('dd/MM/yyyy').format(this);
 
   String get timeOnly => DateFormat('hh:mm a').format(this);
 
   String get dateTime => DateFormat('dd/MM/yyyy HH:mm').format(this);
+
+  String get zTypeDateTime =>
+      DateFormat('yyyy-MM-ddTHH:mm:ss.mmmZ').format(this);
 
   String get timeAgo {
     final Duration diff = DateTime.now().difference(this);

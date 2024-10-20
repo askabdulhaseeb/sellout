@@ -25,7 +25,7 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
       value: PickedMediaProvider()),
   ChangeNotifierProvider<ChatDashboardProvider>.value(
       value: ChatDashboardProvider(locator())),
-  ChangeNotifierProvider<ChatProvider>.value(value: ChatProvider()),
+  ChangeNotifierProvider<ChatProvider>.value(value: ChatProvider(locator())),
   ChangeNotifierProvider<ProfileProvider>.value(
       value: ProfileProvider(locator())),
   ChangeNotifierProvider<FeedProvider>.value(value: FeedProvider(locator())),

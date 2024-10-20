@@ -9,6 +9,7 @@ class AppStrings {
   static String get localReviewBox => 'com.sellout.local-review';
   static String get localListingBox => 'com.sellout.local-listing';
   static String get localChatsBox => 'com.sellout.local-chats';
+  static String get localChatMessagesBox => 'local-chat-messages';
   static String get localPostsBox => 'com.sellout.local-posts';
   // API
   String get baseURL =>

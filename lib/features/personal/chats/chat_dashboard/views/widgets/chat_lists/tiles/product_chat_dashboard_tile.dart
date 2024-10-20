@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -8,6 +6,7 @@ import '../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../core/widgets/profile_photo.dart';
 import '../../../../../../../../core/widgets/shadow_container.dart';
 import '../../../../../../../../services/get_it.dart';
+import '../../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../../post/domain/entities/post_entity.dart';
 import '../../../../../../post/domain/usecase/get_specific_post_usecase.dart';
 import '../../../../../chat/views/providers/chat_provider.dart';
@@ -20,7 +19,6 @@ class ProductChatDashboardTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log('PID: ${chat.productInfo?.id}');
     final GetSpecificPostUsecase postUsecase =
         GetSpecificPostUsecase(locator());
     return Padding(
@@ -34,6 +32,7 @@ class ProductChatDashboardTile extends StatelessWidget {
             future: postUsecase(
               GetSpecificPostParam(postId: chat.productInfo?.id ?? ''),
             ),
+            initialData: LocalPost().dataState(chat.productInfo?.id ?? ''),
             builder: (
               BuildContext context,
               AsyncSnapshot<DataState<PostEntity>> snapshot,
