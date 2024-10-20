@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/chat_provider.dart';
 import '../widgets/core/app_bar/chat_app_bar.dart';
-import '../widgets/core/messages_list.dart';
+import '../widgets/message/messages_list.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});

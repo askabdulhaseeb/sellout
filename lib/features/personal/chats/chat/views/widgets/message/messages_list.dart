@@ -7,6 +7,7 @@ import '../../../../chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../domain/entities/getted_message_entity.dart';
 import '../../providers/chat_provider.dart';
+import 'message_tile.dart';
 
 class MessagesList extends StatelessWidget {
   const MessagesList({super.key});
@@ -33,9 +34,9 @@ class MessagesList extends StatelessWidget {
               primary: false,
               shrinkWrap: true,
               itemCount: msgs.length,
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               itemBuilder: (BuildContext context, int index) {
-                final MessageEntity message = msgs[index];
-                return Text(message.displayText);
+                return MessageTile(message: msgs[index]);
               },
             ),
           );
