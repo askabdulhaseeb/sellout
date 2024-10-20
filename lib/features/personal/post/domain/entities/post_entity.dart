@@ -179,4 +179,6 @@ class PostEntity {
   final BooleanStatusType? wormAndFleaTreated;
   @HiveField(53)
   final String? accessCode;
+
+  String get imageURL => fileUrls.isEmpty ? '' : fileUrls.first.url;
 }
