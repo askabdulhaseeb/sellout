@@ -25,7 +25,6 @@ class GroupChatDashbordTile extends StatelessWidget {
           children: <Widget>[
             ProfilePhoto(
               url: chat.groupInfo?.groupThumbnailURL,
-              isCircle: true,
               placeholder: chat.groupInfo?.title ?? '',
             ),
             const SizedBox(width: 8),

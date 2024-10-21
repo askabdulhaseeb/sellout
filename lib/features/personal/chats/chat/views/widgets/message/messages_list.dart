@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
@@ -24,19 +26,35 @@ class MessagesList extends StatelessWidget {
         builder: (BuildContext context, Box<GettedMessageEntity> box, _) {
           final List<GettedMessageEntity> getted = box.values
               .where((GettedMessageEntity e) =>
-                  e.lastEvaluatedKey.chatID == chat?.chatId)
+                  e.chatID == chat?.chatId)
               .toList();
           final GettedMessageEntity? last = getted.isEmpty ? null : getted.last;
-          final List<MessageEntity> msgs = last?.messages ?? <MessageEntity>[];
-
+          final List<MessageEntity> msgs =
+              last?.sortedMessage() ?? <MessageEntity>[];
           return Flexible(
             child: ListView.builder(
               primary: false,
               shrinkWrap: true,
+              reverse: true,
               itemCount: msgs.length,
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               itemBuilder: (BuildContext context, int index) {
-                return MessageTile(message: msgs[index]);
+                if (index == (msgs.length - 1)) {
+                  log('Index: $index - length: ${msgs.length} - msgs: ${msgs[index].text}');
+                }
+                return index == (msgs.length - 1)
+                    ? FutureBuilder<bool>(
+                        future: chatPro.loadMessages(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<bool> snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+                          return MessageTile(message: msgs[index]);
+                        })
+                    : MessageTile(message: msgs[index]);
               },
             ),
           );

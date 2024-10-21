@@ -42,7 +42,6 @@ class ProductChatDashboardTile extends StatelessWidget {
                 children: <Widget>[
                   ProfilePhoto(
                     url: post?.imageURL,
-                    isCircle: true,
                     placeholder: post?.title ?? '',
                   ),
                   const SizedBox(width: 8),

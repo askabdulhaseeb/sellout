@@ -80,8 +80,9 @@ class ApiCall<T> {
 
       /// Send Request
       http.StreamedResponse response = await request.send();
-
-      debugPrint('👉🏻 API Call: url - $url');
+      if (!url.contains('/user/') && !url.contains('/post/')) {
+        debugPrint('👉🏻 API Call: url - $url');
+      }
       if (response.statusCode >= 200 && response.statusCode < 300) {
         final String data = await response.stream.bytesToString();
         if (data.isEmpty) {

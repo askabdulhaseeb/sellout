@@ -20,7 +20,7 @@ class MessageLastEvaluatedKeyEntityAdapter
     return MessageLastEvaluatedKeyEntity(
       chatID: fields[0] as String,
       paginationKey: fields[1] as String?,
-      createdAt: fields[2] as DateTime,
+      createdAt: fields[2] as String,
     );
   }
 
