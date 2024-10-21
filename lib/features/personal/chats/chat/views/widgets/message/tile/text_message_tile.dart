@@ -12,27 +12,30 @@ class TextMessageTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isMe = message.sendBy == LocalAuth.uid;
-    return MessageBgWidget(
-      isMe: isMe,
-      child: Column(
-        crossAxisAlignment:
-            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Text(
-            message.displayText,
-            style: TextStyle(
-              color: isMe ? Colors.white : Colors.black,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+      child: MessageBgWidget(
+        isMe: isMe,
+        child: Column(
+          crossAxisAlignment:
+              isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              message.displayText,
+              style: TextStyle(
+                color: isMe ? Colors.white : Colors.black,
+              ),
             ),
-          ),
-          Opacity(
-            opacity: isMe ? 0.8 : 0.6,
-            child: Text(
-              message.createdAt.timeAgo,
-              style: TextStyle(color: isMe ? Colors.white : null),
-            ),
-          )
-        ],
+            Opacity(
+              opacity: isMe ? 0.8 : 0.6,
+              child: Text(
+                message.createdAt.timeAgo,
+                style: TextStyle(color: isMe ? Colors.white : null),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
