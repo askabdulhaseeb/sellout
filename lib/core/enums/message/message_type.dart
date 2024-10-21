@@ -44,12 +44,20 @@ enum MessageType {
   final String code;
   final String json;
 
-  static MessageType fromJson(String? json) {
-    log('MessageType.fromJson: $json');
-    if (json == null) {
+  static MessageType fromJson(String? value) {
+    if (value != null &&
+        value != 'invitation_participant' &&
+        value != 'accept_invitation' &&
+        value != 'remove_participant' &&
+        value != 'offer' &&
+        value != 'visiting' &&
+        value != 'leave_group') {
+      log('MessageType.fromvalue: $value');
+    }
+    if (value == null) {
       return MessageType.text;
     }
-    return values.firstWhere((MessageType e) => e.json == json,
+    return values.firstWhere((MessageType e) => e.json == value,
         orElse: () => MessageType.text);
   }
 }

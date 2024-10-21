@@ -17,19 +17,22 @@ class GettedMessageEntityAdapter extends TypeAdapter<GettedMessageEntity> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return GettedMessageEntity(
+      chatID: fields[2] as String,
       messages: (fields[0] as List).cast<MessageEntity>(),
-      lastEvaluatedKey: fields[1] as MessageLastEvaluatedKeyEntity,
+      lastEvaluatedKey: fields[1] as MessageLastEvaluatedKeyEntity?,
     );
   }
 
   @override
   void write(BinaryWriter writer, GettedMessageEntity obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.messages)
       ..writeByte(1)
-      ..write(obj.lastEvaluatedKey);
+      ..write(obj.lastEvaluatedKey)
+      ..writeByte(2)
+      ..write(obj.chatID);
   }
 
   @override

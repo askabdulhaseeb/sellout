@@ -7,7 +7,7 @@ class MessageLastEvaluatedKeyEntity {
   MessageLastEvaluatedKeyEntity({
     required this.chatID,
     required this.paginationKey,
-    required this.createdAt,
+    this.createdAt = 'null',
   });
 
   @HiveField(0)
@@ -15,5 +15,5 @@ class MessageLastEvaluatedKeyEntity {
   @HiveField(1)
   final String? paginationKey;
   @HiveField(2)
-  final DateTime createdAt;
+  final String createdAt;
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../../../../../core/utilities/app_string.dart';
@@ -24,8 +26,8 @@ class LocalChatMessage {
     }
   }
 
-  Future<void> save(GettedMessageEntity value) async {
-    final String id = value.lastEvaluatedKey.chatID;
+  Future<void> save(GettedMessageEntity value, String chatID) async {
+    final String id = value.lastEvaluatedKey?.chatID ?? chatID;
     final GettedMessageEntity? result = entity(id);
     if (result == null) {
       await _put(id, value);
@@ -33,16 +35,19 @@ class LocalChatMessage {
     } else {
       final List<MessageEntity> old = result.messages;
       final List<MessageEntity> neww = value.messages;
-      if (old.length != neww.length) {
-        for (MessageEntity element in neww) {
-          if (old.any((MessageEntity e) => e.messageId == element.messageId)) {
-            continue;
-          } else {
-            old.add(element);
-          }
+      log('New Message - old: ${old.length} - new: ${neww.length}');
+      // if (old.length != neww.length) {
+      for (MessageEntity element in neww) {
+        if (old.any((MessageEntity e) => e.messageId == element.messageId)) {
+          continue;
+        } else {
+          old.add(element);
         }
+        // }
       }
+      log('New Message - updated: ${old.length}');
       final GettedMessageEntity newGettedMessage = GettedMessageEntity(
+        chatID: id,
         messages: old,
         lastEvaluatedKey: value.lastEvaluatedKey,
       );
@@ -58,13 +63,12 @@ class LocalChatMessage {
 
   List<MessageEntity> messages(String value) {
     final List<GettedMessageEntity> getted = _box.values
-        .where((GettedMessageEntity element) =>
-            element.lastEvaluatedKey.chatID == value)
+        .where((GettedMessageEntity element) => element.chatID == value)
         .toList();
     if (getted.isEmpty) return <MessageEntity>[];
     final List<MessageEntity> msgs = getted[0].messages;
     msgs.sort((MessageEntity a, MessageEntity b) =>
-        a.createdAt.compareTo(b.createdAt));
+        b.createdAt.compareTo(a.createdAt));
     return msgs;
   }
 }

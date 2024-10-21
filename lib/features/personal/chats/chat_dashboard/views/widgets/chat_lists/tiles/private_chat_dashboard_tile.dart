@@ -44,7 +44,6 @@ class PrivateChatDashboardTile extends StatelessWidget {
                     children: <Widget>[
                       ProfilePhoto(
                         url: user.profilePhotoURL,
-                        isCircle: true,
                         placeholder: user.displayName,
                       ),
                       const SizedBox(width: 8),

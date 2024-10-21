@@ -39,6 +39,10 @@ dependencies:
   get_it: ^8.0.0
   flutter_html: ^3.0.0-beta.2
   crypto: ^3.0.6
+  
+  social_media_recorder: ^1.1.13
+  audio_waveforms: ^1.1.0
+  video_player: ^2.9.2
 
 dev_dependencies:
   flutter_test:

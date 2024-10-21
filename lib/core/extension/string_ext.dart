@@ -13,11 +13,11 @@ extension StringExt on String {
   }
 
   DateTime? toDateTime() {
-    DateFormat dateFormat = DateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z");
+    DateFormat dateFormat = DateFormat("yyyy-MM-ddTHH:mm:ss.SSS'Z'");
     DateTime? dateTime = dateFormat.tryParseUtc(this);
     if (dateTime != null) return dateTime.toLocal();
     //
-    dateFormat = DateFormat("yyyy-MM-ddTHH:mm:ss.SSS'Z'");
+    dateFormat = DateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z");
     dateTime = dateFormat.tryParseUtc(this);
     if (dateTime != null) return dateTime.toLocal();
     //

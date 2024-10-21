@@ -4,17 +4,18 @@ import 'message_last_evaluated_key.dart';
 
 class GettedMessageModel extends GettedMessageEntity {
   const GettedMessageModel({
+    required super.chatID,
     required super.messages,
     required super.lastEvaluatedKey,
   });
 
   factory GettedMessageModel.fromMap(Map<String, dynamic> map, String chatID) {
     return GettedMessageModel(
+      chatID: chatID,
       messages: List<MessageModel>.from((map['messages'] ?? <dynamic>[])
           ?.map((dynamic x) => MessageModel.fromJson(x))),
       lastEvaluatedKey: map['lastEvaluatedKey'] == null
-          ? MessageLastEvaluatedKeyModel(
-              chatID: chatID, createdAt: DateTime.now())
+          ? null
           : MessageLastEvaluatedKeyModel.fromMap(
               map['lastEvaluatedKey'], chatID),
     );
@@ -25,6 +26,7 @@ class GettedMessageModel extends GettedMessageEntity {
     MessageLastEvaluatedKeyModel? lastEvaluatedKey,
   }) {
     return GettedMessageModel(
+      chatID: chatID,
       messages: messages ?? this.messages,
       lastEvaluatedKey: lastEvaluatedKey ?? this.lastEvaluatedKey,
     );
