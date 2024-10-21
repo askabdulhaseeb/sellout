@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../../../../../core/enums/message/message_type.dart';
 import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import 'tile/alart_message_tile.dart';
+import 'tile/offer_message_tile.dart';
 import 'tile/visiting_message_tile.dart';
 import 'tile/text_message_tile.dart';
 
@@ -18,11 +19,16 @@ class MessageTile extends StatelessWidget {
         : MessageType.text == message.type
             ? TextMessageTile(message: message)
             : MessageType.invitationParticipant == message.type ||
-                    MessageType.acceptInvitation == message.type
+                    MessageType.acceptInvitation == message.type ||
+                    MessageType.removeParticipant == message.type ||
+                    MessageType.leaveGroup == message.type
                 ? AlartMessageTile(message: message)
                 : MessageType.visiting == message.type
                     ? VisitingMessageTile(message: message)
-                    : Text(
-                        '${message.displayText} - ${message.type?.code.tr()}');
+                    : MessageType.offer == message.type
+                        ? OfferMessageTile(message: message)
+                        : Text(
+                            '${message.displayText} - ${message.type?.code.tr()}',
+                          );
   }
 }

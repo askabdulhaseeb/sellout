@@ -73,7 +73,15 @@ class VisitingMessageTile extends StatelessWidget {
                   style: boldStyle,
                 ),
               ],
-            )
+            ),
+            const SizedBox(height: 4),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Opacity(
+                opacity: 0.6,
+                child: Text(message.createdAt.timeAgo),
+              ),
+            ),
           ],
         ),
       ),
