@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/utilities/app_string.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../domain/entities/post_entity.dart';
 
 class LocalPost {
@@ -36,4 +37,19 @@ class LocalPost {
   }
 
   List<PostEntity> get all => _box.values.toList();
+
+  DataState<List<PostEntity>> postbyUid(String? value) {
+    final String id = value ?? LocalAuth.uid ?? '';
+    if (id.isEmpty) {
+      return DataFailer<List<PostEntity>>(CustomException('userId is empty'));
+    }
+    final List<PostEntity> posts = _box.values.where((PostEntity post) {
+      return post.createdBy == id;
+    }).toList();
+    if (posts.isEmpty) {
+      return DataFailer<List<PostEntity>>(CustomException('No post found'));
+    } else {
+      return DataSuccess<List<PostEntity>>('', posts);
+    }
+  }
 }

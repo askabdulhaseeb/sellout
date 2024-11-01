@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../../data/models/user_model.dart';
+
 class ProfileFilterSection extends StatelessWidget {
-  const ProfileFilterSection({super.key});
+  const ProfileFilterSection({required this.user, super.key});
+  final UserEntity? user;
 
   @override
   Widget build(BuildContext context) {
