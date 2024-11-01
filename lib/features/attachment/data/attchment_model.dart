@@ -1,3 +1,4 @@
+import '../../../core/extension/string_ext.dart';
 import '../domain/entities/attachment_entity.dart';
 
 class AttachmentModel extends AttachmentEntity {
@@ -20,7 +21,7 @@ class AttachmentModel extends AttachmentEntity {
 
   factory AttachmentModel.fromJson(Map<String, dynamic> json) =>
       AttachmentModel(
-        createdAt: DateTime.tryParse(json['created_at']) ?? DateTime.now(),
+        createdAt: (json['created_at']?.toString().toDateTime()) ?? DateTime.now(),
         type: AttachmentType.fromString(json['type']),
         url: json['url'] ?? '',
         fileId: json['file_id'] ?? '',

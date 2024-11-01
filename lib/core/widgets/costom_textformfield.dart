@@ -95,7 +95,7 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
                     ? TextInputType.multiline
                     : widget.keyboardType ?? TextInputType.text,
             textInputAction: widget.maxLines! > 1
-                ? TextInputAction.newline
+                ? TextInputAction.unspecified
                 : widget.textInputAction ?? TextInputAction.next,
             autofocus: widget.autoFocus,
             textAlign: widget.textAlign,

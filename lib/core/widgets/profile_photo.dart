@@ -38,22 +38,33 @@ class ProfilePhoto extends StatelessWidget {
           )
         : ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: CachedNetworkImage(
-              imageUrl: url ?? '',
-              height: size * 2,
-              width: size * 2,
-              fit: BoxFit.cover,
-              placeholder: (BuildContext context, String url) => const Loader(),
-              errorWidget: (BuildContext context, String url, Object error) =>
-                  Container(
-                color: Theme.of(context).dividerColor,
-                alignment: Alignment.center,
-                child: Text(
-                  placeholderText.toUpperCase(),
-                  style: const TextStyle(fontWeight: FontWeight.w500),
-                ),
-              ),
-            ),
+            child: (url ?? '').startsWith('https://') ||
+                    (url ?? '').startsWith('http://')
+                ? CachedNetworkImage(
+                    imageUrl: url ?? '',
+                    height: size * 2,
+                    width: size * 2,
+                    fit: BoxFit.cover,
+                    placeholder: (BuildContext context, String url) =>
+                        const Loader(),
+                    errorWidget:
+                        (BuildContext context, String url, Object error) =>
+                            placeholderWidget(context, placeholderText),
+                  )
+                : placeholderWidget(context, placeholderText),
           );
+  }
+
+  Widget placeholderWidget(BuildContext context, String placeholderText) {
+    return Container(
+      height: size * 2,
+      width: size * 2,
+      color: Theme.of(context).dividerColor,
+      alignment: Alignment.center,
+      child: Text(
+        placeholderText.toUpperCase(),
+        style: const TextStyle(fontWeight: FontWeight.w500),
+      ),
+    );
   }
 }

@@ -30,7 +30,9 @@ import '../../../features/personal/post/domain/entities/size_color/size_color_en
 import '../../../features/personal/post/domain/entities/visit/visiting_detail_entity.dart';
 import '../../../features/personal/post/domain/entities/visit/visiting_detail_post_entity.dart';
 import '../../../features/personal/user/profiles/data/sources/local/local_user.dart';
+import '../../../features/personal/user/profiles/domain/entities/supporter_detail_entity.dart';
 import '../../enums/chat/chat_participant_role.dart';
+import '../../enums/core/status_type.dart';
 import '../../enums/listing/core/boolean_status_type.dart';
 import '../../enums/listing/core/delivery_type.dart';
 import '../../enums/listing/core/item_condition_type.dart';
@@ -84,6 +86,8 @@ class HiveDB {
     Hive.registerAdapter(DayTypeAdapter()); // 32
     Hive.registerAdapter(GettedMessageEntityAdapter()); // 33
     Hive.registerAdapter(MessageLastEvaluatedKeyEntityAdapter()); // 34
+    Hive.registerAdapter(StatusTypeAdapter()); // 35
+    Hive.registerAdapter(SupporterDetailEntityAdapter()); // 36
     // Hive box Open
     await refresh();
   }

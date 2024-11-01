@@ -6,7 +6,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 import '../../features/attachment/domain/entities/picked_attachment.dart';
-import '../entities/api_request_entity.dart';
 import '../enums/core/api_request_type.dart';
 import 'data_state.dart';
 import '../../features/personal/auth/signin/data/sources/local/local_auth.dart';
