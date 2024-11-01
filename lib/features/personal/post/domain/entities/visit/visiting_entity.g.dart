@@ -1,22 +1,22 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'visiting_detail_entity.dart';
+part of 'visiting_entity.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class VisitingDetailEntityAdapter extends TypeAdapter<VisitingDetailEntity> {
+class VisitingEntityAdapter extends TypeAdapter<VisitingEntity> {
   @override
   final int typeId = 14;
 
   @override
-  VisitingDetailEntity read(BinaryReader reader) {
+  VisitingEntity read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return VisitingDetailEntity(
+    return VisitingEntity(
       visitingID: fields[0] as String,
       visiterID: fields[1] as String,
       businessID: fields[2] as String?,
@@ -30,7 +30,7 @@ class VisitingDetailEntityAdapter extends TypeAdapter<VisitingDetailEntity> {
   }
 
   @override
-  void write(BinaryWriter writer, VisitingDetailEntity obj) {
+  void write(BinaryWriter writer, VisitingEntity obj) {
     writer
       ..writeByte(9)
       ..writeByte(0)
@@ -59,7 +59,7 @@ class VisitingDetailEntityAdapter extends TypeAdapter<VisitingDetailEntity> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is VisitingDetailEntityAdapter &&
+      other is VisitingEntityAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

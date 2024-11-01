@@ -1,11 +1,11 @@
 import 'package:hive/hive.dart';
 
 import '../../../../../../core/enums/core/status_type.dart';
-part 'visiting_detail_entity.g.dart';
+part 'visiting_entity.g.dart';
 
 @HiveType(typeId: 14)
-class VisitingDetailEntity {
-  const VisitingDetailEntity({
+class VisitingEntity {
+  const VisitingEntity({
     required this.visitingID,
     required this.visiterID,
     required this.businessID,

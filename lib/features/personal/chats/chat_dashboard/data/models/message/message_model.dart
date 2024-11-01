@@ -2,7 +2,7 @@ import '../../../../../../../core/enums/message/message_type.dart';
 import '../../../../../../../core/extension/string_ext.dart';
 import '../../../../../../attachment/data/attchment_model.dart';
 import '../../../../../post/data/models/offer/offer_detail_model.dart';
-import '../../../../../post/data/models/visit/visiting_detail_model.dart';
+import '../../../../../post/data/models/visit/visiting_model.dart';
 import '../../../domain/entities/messages/message_entity.dart';
 
 class MessageModel extends MessageEntity {
@@ -42,7 +42,7 @@ class MessageModel extends MessageEntity {
           (json['updated_at']?.toString() ?? '').toDateTime() ?? DateTime.now(),
       visitingDetail: json['visiting_detail'] == null
           ? null
-          : VisitingDetailModel.fromJson(json['visiting_detail']),
+          : VisitingModel.fromJson(json['visiting_detail']),
       createdAt:
           (json['created_at']?.toString() ?? '').toDateTime() ?? DateTime.now(),
       messageId: json['message_id'],

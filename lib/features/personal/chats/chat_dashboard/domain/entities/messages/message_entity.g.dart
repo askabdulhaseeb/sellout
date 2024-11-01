@@ -26,7 +26,7 @@ class MessageEntityAdapter extends TypeAdapter<MessageEntity> {
       displayText: fields[8] as String,
       sendBy: fields[9] as String,
       chatId: fields[10] as String,
-      visitingDetail: fields[3] as VisitingDetailEntity?,
+      visitingDetail: fields[3] as VisitingEntity?,
       type: fields[7] as MessageType?,
       source: fields[11] as String?,
       offerDetail: fields[12] as OfferDetailEntity?,

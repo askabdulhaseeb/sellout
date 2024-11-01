@@ -1,9 +1,9 @@
 import '../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../core/extension/string_ext.dart';
-import '../../../domain/entities/visit/visiting_detail_entity.dart';
+import '../../../domain/entities/visit/visiting_entity.dart';
 
-class VisitingDetailModel extends VisitingDetailEntity {
-  VisitingDetailModel({
+class VisitingModel extends VisitingEntity {
+  VisitingModel({
     required super.visitingID,
     required super.visiterID,
     required super.businessID,
@@ -15,9 +15,9 @@ class VisitingDetailModel extends VisitingDetailEntity {
     required super.createdAt,
   });
 
-  factory VisitingDetailModel.fromJson(Map<String, dynamic> json) {
+  factory VisitingModel.fromJson(Map<String, dynamic> json) {
     final String postID = json['post_id'] ?? json['post']['post_id'] ?? '';
-    return VisitingDetailModel(
+    return VisitingModel(
       visitingID: json['visiting_id'] ?? '',
       visiterID: json['visiter_id'] ?? '',
       businessID: json['business_id'] ?? '',

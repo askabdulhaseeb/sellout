@@ -27,8 +27,9 @@ import '../../../features/personal/post/domain/entities/post_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/color_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/discount_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/size_color_entity.dart';
-import '../../../features/personal/post/domain/entities/visit/visiting_detail_entity.dart';
+import '../../../features/personal/post/domain/entities/visit/visiting_entity.dart';
 import '../../../features/personal/user/profiles/data/sources/local/local_user.dart';
+import '../../../features/personal/user/profiles/data/sources/local/local_visits.dart';
 import '../../../features/personal/user/profiles/domain/entities/supporter_detail_entity.dart';
 import '../../enums/chat/chat_participant_role.dart';
 import '../../enums/core/status_type.dart';
@@ -64,8 +65,8 @@ class HiveDB {
     Hive.registerAdapter(ChatParticipantEntityAdapter()); // 11
     Hive.registerAdapter(ChatParticipantRoleTypeAdapter()); // 12
     Hive.registerAdapter(MessageEntityAdapter()); // 13
-    Hive.registerAdapter(VisitingDetailEntityAdapter()); // 14
-    // Hive.registerAdapter(VisitingDetailPostEntityAdapter()); // 15
+    Hive.registerAdapter(VisitingEntityAdapter()); // 14
+    // Hive.registerAdapter(VisitingPostEntityAdapter()); // 15
     Hive.registerAdapter(AvailabilityEntityAdapter()); // 16
     Hive.registerAdapter(LocationEntityAdapter()); // 17
     Hive.registerAdapter(MessageTypeAdapter()); // 18
@@ -99,5 +100,6 @@ class HiveDB {
     await LocalListing().refresh();
     await LocalChat().refresh();
     await LocalChatMessage().refresh();
+    await LocalVisit().refresh();
   }
 }
