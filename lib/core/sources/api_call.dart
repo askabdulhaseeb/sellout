@@ -21,7 +21,7 @@ class ApiCall<T> {
     required ApiRequestType requestType,
     String? baseURL,
     String? body,
-    Map<String, String>? fielsMap,
+    Map<String, String>? fieldsMap,
     List<PickedAttachment>? attachments,
     Map<String, String>? extraHeader,
     bool isConnectType = true,
@@ -41,8 +41,8 @@ class ApiCall<T> {
           http.Request(requestType.json, Uri.parse(url));
 
       /// Request Fields
-      if (fielsMap != null && fielsMap.isNotEmpty) {
-        request.bodyFields = fielsMap;
+      if (fieldsMap != null && fieldsMap.isNotEmpty) {
+        request.bodyFields = fieldsMap;
       }
 
       if (attachments != null && attachments.isNotEmpty) {
@@ -113,9 +113,10 @@ class ApiCall<T> {
   }
 
   Future<DataState<T>> callFormData({
-    required String url,
+    required String endpoint,
     required ApiRequestType requestType,
-    Map<String, String>? fielsMap,
+    String? baseURL,
+    Map<String, String>? fieldsMap,
     List<PickedAttachment>? attachments,
     Map<String, String>? extraHeader,
     bool isConnectType = true,
@@ -123,12 +124,18 @@ class ApiCall<T> {
     int count = 0,
   }) async {
     try {
+      String url = baseURL ?? dotenv.env['baseURL'] ?? '';
+      if (url.isEmpty) {
+        return DataFailer<T>(CustomException('Base URL is Empty'));
+      }
+      url = '$url${endpoint.startsWith('/') ? endpoint : '/$endpoint'}';
+
       /// Request
       http.MultipartRequest request =
           http.MultipartRequest(requestType.json, Uri.parse(url));
 
-      if (fielsMap != null && fielsMap.isNotEmpty) {
-        request.fields.addAll(fielsMap);
+      if (fieldsMap != null && fieldsMap.isNotEmpty) {
+        request.fields.addAll(fieldsMap);
       }
 
       if (attachments != null && attachments.isNotEmpty) {
@@ -158,14 +165,15 @@ class ApiCall<T> {
             token.startsWith('Bearer') ? token : 'Bearer $token';
         headers.addAll(<String, String>{'Authorization': tokenStr});
       }
+
       request.headers.addAll(headers);
       // debugPrint('👉🏻 API Call: header - $headers');
 
       /// Send Request
       http.StreamedResponse response = await request.send();
 
-      debugPrint('👉🏻 API Call: url - $url');
       if (response.statusCode >= 200 && response.statusCode < 300) {
+        debugPrint('👉🏻 API Call: url - $url');
         final String data = await response.stream.bytesToString();
         debugPrint('✅ Request Success');
         if (data.isEmpty) {
@@ -180,16 +188,19 @@ class ApiCall<T> {
           return DataSuccess<T>(data, null);
         }
       } else {
+        debugPrint('🔴 Status Code - ${response.statusCode}');
         // Unauthorized
         // Failer
         final String data = await response.stream.bytesToString();
         final Map<String, dynamic> decoded = jsonDecode(data);
 
-        log('❌ ERROR: ${response.statusCode} - API: message -> ${decoded['message']}');
-        log('❌ ERROR: ${response.statusCode} - API: detail -> ${decoded['details']}');
+        log('❌ ApiCall.callFormData - else ERROR: ${response.statusCode} - API: message -> ${decoded['message']}');
+        log('❌ ApiCall.callFormData - else ERROR: ${response.statusCode} - API: detail -> ${decoded['details']}');
         return DataFailer<T>(CustomException('ERROR: ${decoded['message']}'));
       }
     } catch (e) {
+      debugPrint('🔴 ERROR: $fieldsMap');
+      log('❌ ApiCall.callFormData - Catch ERROR: ${e.toString()}');
       return DataFailer<T>(CustomException(e.toString()));
     }
   }

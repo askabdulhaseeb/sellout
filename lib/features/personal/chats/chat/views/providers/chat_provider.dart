@@ -1,18 +1,23 @@
 import 'dart:developer';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../../core/sources/data_state.dart';
+import '../../../../../../core/widgets/app_snakebar.dart';
 import '../../../chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../data/models/message_last_evaluated_key.dart';
 import '../../domain/entities/getted_message_entity.dart';
 import '../../domain/entities/message_last_evaluated_key_entity.dart';
+import '../../domain/params/send_message_param.dart';
 import '../../domain/usecase/get_messages_usecase.dart';
+import '../../domain/usecase/send_message_usecase.dart';
 
 class ChatProvider extends ChangeNotifier {
-  ChatProvider(this._getMessagesUsecase);
+  ChatProvider(this._getMessagesUsecase, this._sendMessageUsecase);
   final GetMessagesUsecase _getMessagesUsecase;
+  final SendMessageUsecase _sendMessageUsecase;
 
   ChatEntity? _chat;
   ChatEntity? get chat => _chat;
@@ -89,5 +94,25 @@ class ChatProvider extends ChangeNotifier {
       return true;
     }
     return await getMessages();
+  }
+
+  Future<void> sendMessage(BuildContext context) async {
+    final SendMessageParam param = SendMessageParam(
+      chatID: _chat?.chatId ?? _key?.chatID ?? '',
+      text: _message.text,
+      persons: _chat?.persons ?? <String>[],
+      files: [],
+      source: 'postman',
+    );
+    final DataState<bool> result = await _sendMessageUsecase(param);
+    if (result is DataSuccess) {
+      _message.clear();
+      notifyListeners();
+    } else {
+      AppSnackBar.showSnackBar(
+          // ignore: use_build_context_synchronously
+          context,
+          result.exception?.message ?? 'something-wrong'.tr());
+    }
   }
 }

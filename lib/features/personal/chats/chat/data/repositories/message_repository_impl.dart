@@ -1,6 +1,6 @@
 import '../../../../../../core/sources/data_state.dart';
-import '../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../domain/entities/getted_message_entity.dart';
+import '../../domain/params/send_message_param.dart';
 import '../../domain/repositories/message_reposity.dart';
 import '../sources/remote/messages_remote_source.dart';
 
@@ -22,8 +22,7 @@ class MessageRepositoryImpl implements MessageRepository {
   }
 
   @override
-  Future<void> sendMessage(MessageEntity msg) {
-    // TODO: implement sendMessage
-    throw UnimplementedError();
+  Future<DataState<bool>> sendMessage(SendMessageParam msg) async {
+    return await remoteSource.sendMessage(msg);
   }
 }

@@ -46,7 +46,8 @@ class ChatInputField extends StatelessWidget {
                         )
                       : IconButton(
                           icon: const Icon(Icons.send),
-                          onPressed: () {},
+                          onPressed: () async =>
+                              await chatPro.sendMessage(context),
                         ),
                   hoverColor: Theme.of(context).scaffoldBackgroundColor,
                   fillColor: Theme.of(context).scaffoldBackgroundColor,

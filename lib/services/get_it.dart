@@ -10,6 +10,7 @@ import '../features/personal/chats/chat/data/repositories/message_repository_imp
 import '../features/personal/chats/chat/data/sources/remote/messages_remote_source.dart';
 import '../features/personal/chats/chat/domain/repositories/message_reposity.dart';
 import '../features/personal/chats/chat/domain/usecase/get_messages_usecase.dart';
+import '../features/personal/chats/chat/domain/usecase/send_message_usecase.dart';
 import '../features/personal/chats/chat/views/providers/chat_provider.dart';
 import '../features/personal/chats/chat_dashboard/data/repositories/chat_repository_impl.dart';
 import '../features/personal/chats/chat_dashboard/data/sources/remote/chat_remote_source.dart';
@@ -78,7 +79,9 @@ void _message() {
       () => MessageRepositoryImpl(locator()));
   locator
       .registerFactory<GetMessagesUsecase>(() => GetMessagesUsecase(locator()));
-  locator.registerLazySingleton(() => ChatProvider(locator()));
+  locator
+      .registerFactory<SendMessageUsecase>(() => SendMessageUsecase(locator()));
+  locator.registerLazySingleton(() => ChatProvider(locator(), locator()));
 }
 
 void _feed() {
