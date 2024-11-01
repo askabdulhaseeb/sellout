@@ -2,8 +2,8 @@ import 'dart:developer';
 
 import '../../../../../../../core/sources/api_call.dart';
 import '../../../../../../../core/widgets/scaffold/personal_scaffold.dart';
-import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../domain/entities/getted_message_entity.dart';
+import '../../../domain/params/send_message_param.dart';
 import '../../models/getted_message_model.dart';
 import '../local/local_message.dart';
 
@@ -13,7 +13,7 @@ abstract interface class MessagesRemoteSource {
     required String? key,
     required String createdAt,
   });
-  Future<void> sendMessage(MessageEntity msg);
+  Future<DataState<bool>> sendMessage(SendMessageParam msg);
 }
 
 class MessagesRemoteSourceImpl implements MessagesRemoteSource {
@@ -55,9 +55,28 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
   }
 
   @override
-  Future<void> sendMessage(MessageEntity msg) {
-    // TODO: implement sendMessage
-    throw UnimplementedError();
+  Future<DataState<bool>> sendMessage(SendMessageParam msg) async {
+    try {
+      const String endpoint = '/chat/message/send';
+      final Map<String, String> body = msg.fieldMap();
+      final DataState<bool> result = await ApiCall<bool>().callFormData(
+        endpoint: endpoint,
+        requestType: ApiRequestType.post,
+        fieldsMap: body,
+        attachments: msg.files,
+        isConnectType: false,
+      );
+
+      if (result is DataSuccess) {
+        return DataSuccess<bool>(result.data ?? '', true);
+      } else {
+        return DataFailer<bool>(
+          result.exception ?? CustomException('something-wrong'.tr()),
+        );
+      }
+    } catch (e) {
+      return DataFailer<bool>(CustomException(e.toString()));
+    }
   }
 
   GettedMessageEntity? _local(String chatID) {

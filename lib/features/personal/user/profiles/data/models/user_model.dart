@@ -44,9 +44,9 @@ class UserModel extends UserEntity {
             (json['timestamp']?.toString().toDateTime()) ?? DateTime.now(),
         address: List<AddressModel>.from((json['address'] ?? <dynamic>[])
             .map((dynamic x) => AddressModel.fromJson(x))),
-        email: json['email'],
-        uid: json['uid'],
-        displayName: json['display_name'],
+        email: json['email'] ?? '',
+        uid: json['uid'] ?? '',
+        displayName: json['display_name'] ?? '',
         interest: List<dynamic>.from(
             (json['interest'] ?? <dynamic>[]).map((dynamic x) => x)),
         date: (json['date']?.toString().toDateTime()) ?? DateTime.now(),
@@ -63,7 +63,7 @@ class UserModel extends UserEntity {
         profilePic: List<AttachmentModel>.from(
             (json['profile_pic'] ?? <dynamic>[])
                 .map((dynamic x) => AttachmentModel.fromJson(x))),
-        userName: json['user_name'],
+        userName: json['user_name'] ?? '',
         profileType: PrivacyType.fromJson(json['profile_type']),
       );
 }
