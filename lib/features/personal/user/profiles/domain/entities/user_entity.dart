@@ -1,7 +1,9 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
+import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../auth/signin/data/models/address_model.dart';
+import 'supporter_detail_entity.dart';
 
 part 'user_entity.g.dart';
 
@@ -24,6 +26,7 @@ class UserEntity {
     required this.listOfReviews,
     required this.profilePic,
     required this.userName,
+    required this.profileType,
   });
 
   @HiveField(0)
@@ -51,13 +54,16 @@ class UserEntity {
   @HiveField(11)
   List<String> businessIds;
   @HiveField(12)
-  List<String> supporters;
+  List<SupporterDetailEntity> supporters;
   @HiveField(13)
   List<double> listOfReviews;
   @HiveField(14)
   List<AttachmentEntity> profilePic;
   @HiveField(15)
   String userName;
+  @HiveField(16)
+  final PrivacyType profileType;
 
-  String? get profilePhotoURL => profilePic.isEmpty ? null : profilePic.first.url;
+  String? get profilePhotoURL =>
+      profilePic.isEmpty ? null : profilePic.first.url;
 }

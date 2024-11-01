@@ -22,6 +22,9 @@ class ChatProvider extends ChangeNotifier {
   GettedMessageEntity? _gettedMessage;
   GettedMessageEntity? get gettedMessage => _gettedMessage;
 
+  final TextEditingController _message = TextEditingController();
+  TextEditingController get message => _message;
+
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
@@ -30,6 +33,15 @@ class ChatProvider extends ChangeNotifier {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });
+  }
+
+  onTextChange(String value) {
+    if (value.isEmpty) {
+      notifyListeners();
+    } else if (value.length == 1) {
+      notifyListeners();
+    }
+    return;
   }
 
   set chat(ChatEntity? value) {

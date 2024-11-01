@@ -29,17 +29,18 @@ class UserEntityAdapter extends TypeAdapter<UserEntity> {
       date: fields[9] as DateTime,
       otpExpiry: fields[10] as DateTime,
       businessIds: (fields[11] as List).cast<String>(),
-      supporters: (fields[12] as List).cast<String>(),
+      supporters: (fields[12] as List).cast<SupporterDetailEntity>(),
       listOfReviews: (fields[13] as List).cast<double>(),
       profilePic: (fields[14] as List).cast<AttachmentEntity>(),
       userName: fields[15] as String,
+      profileType: fields[16] as PrivacyType,
     );
   }
 
   @override
   void write(BinaryWriter writer, UserEntity obj) {
     writer
-      ..writeByte(16)
+      ..writeByte(18)
       ..writeByte(0)
       ..write(obj.mobileNo)
       ..writeByte(1)
@@ -71,7 +72,10 @@ class UserEntityAdapter extends TypeAdapter<UserEntity> {
       ..writeByte(14)
       ..write(obj.profilePic)
       ..writeByte(15)
-      ..write(obj.userName);
+      ..write(obj.userName)
+      ..writeByte(16)
+      ..write(obj.profileType)
+      ..writeByte(17);
   }
 
   @override

@@ -1,9 +1,12 @@
 import 'dart:convert';
 
+import '../../../../../../core/enums/listing/core/privacy_type.dart';
+import '../../../../../../core/extension/string_ext.dart';
 import '../../../../../attachment/data/attchment_model.dart';
 import '../../../../auth/signin/data/models/address_model.dart';
 
 import '../../domain/entities/user_entity.dart';
+import 'supporter_detail_model.dart';
 export '../../domain/entities/user_entity.dart';
 
 class UserModel extends UserEntity {
@@ -24,6 +27,7 @@ class UserModel extends UserEntity {
     required super.listOfReviews,
     required super.profilePic,
     required super.userName,
+    required super.profileType,
   });
 
   factory UserModel.fromRawJson(String str) =>
@@ -33,11 +37,11 @@ class UserModel extends UserEntity {
         mobileNo: json['mobile_no'] ?? '',
         createdAt: json['created_at'] == null
             ? DateTime.now()
-            : DateTime.tryParse(json['created_at']) ?? DateTime.now(),
+            : (json['created_at']?.toString().toDateTime()) ?? DateTime.now(),
         chatIds: List<String>.from(
             (json['chat_ids'] ?? <dynamic>[]).map((dynamic x) => x)),
         timestamp:
-            DateTime.tryParse(json['timestamp'].toString()) ?? DateTime.now(),
+            (json['timestamp']?.toString().toDateTime()) ?? DateTime.now(),
         address: List<AddressModel>.from((json['address'] ?? <dynamic>[])
             .map((dynamic x) => AddressModel.fromJson(x))),
         email: json['email'],
@@ -45,13 +49,14 @@ class UserModel extends UserEntity {
         displayName: json['display_name'],
         interest: List<dynamic>.from(
             (json['interest'] ?? <dynamic>[]).map((dynamic x) => x)),
-        date: DateTime.tryParse(json['date']) ?? DateTime.now(),
+        date: (json['date']?.toString().toDateTime()) ?? DateTime.now(),
         otpExpiry:
-            DateTime.tryParse(json['otp_expiry'].toString()) ?? DateTime.now(),
+            (json['otp_expiry']?.toString().toDateTime()) ?? DateTime.now(),
         businessIds: List<String>.from(
             (json['business_ids'] ?? <dynamic>[]).map((dynamic x) => x)),
-        supporters: List<String>.from(
-            (json['supporters'] ?? <dynamic>[]).map((dynamic x) => x)),
+        supporters: List<SupporterDetailModel>.from(
+            (json['supporters'] ?? <dynamic>[])
+                .map((dynamic x) => SupporterDetailModel.fromMap(x))),
         listOfReviews: List<double>.from(
             (json['list_of_reviews'] ?? <dynamic>[])
                 .map((dynamic x) => x?.toDouble())),
@@ -59,5 +64,6 @@ class UserModel extends UserEntity {
             (json['profile_pic'] ?? <dynamic>[])
                 .map((dynamic x) => AttachmentModel.fromJson(x))),
         userName: json['user_name'],
+        profileType: PrivacyType.fromJson(json['profile_type']),
       );
 }

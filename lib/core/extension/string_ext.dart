@@ -21,6 +21,10 @@ extension StringExt on String {
     dateTime = dateFormat.tryParseUtc(this);
     if (dateTime != null) return dateTime.toLocal();
     //
+    dateFormat = DateFormat("EEE MMM dd yyyy HH:mm:ss GMT'Z");
+    dateTime = dateFormat.tryParseUtc(this);
+    if (dateTime != null) return dateTime.toLocal();
+    //
     dateFormat = DateFormat('hh:mm a yyyy-MM-dd');
     dateTime = dateFormat.tryParseUtc(this);
     if (dateTime != null) return dateTime.toLocal();
@@ -37,5 +41,49 @@ extension StringExt on String {
     if (isEmpty) return Colors.transparent;
     if (startsWith('#')) return Color(int.parse(substring(1), radix: 16));
     return Color(int.parse(this));
+  }
+}
+
+extension NullableStringExt on String? {
+  DateTime? toLocalDate() {
+    if (this == null) return null;
+    final DateFormat dateFormat = DateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z");
+    DateTime dateTime = dateFormat.parse(this!, true).toLocal();
+    return dateTime;
+  }
+
+  DateTime? toDateTime() {
+    if (this == null) return null;
+    DateFormat dateFormat = DateFormat("yyyy-MM-ddTHH:mm:ss.SSS'Z'");
+    DateTime? dateTime = dateFormat.tryParseUtc(this!);
+    if (dateTime != null) return dateTime.toLocal();
+    //
+    dateFormat = DateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z");
+    dateTime = dateFormat.tryParseUtc(this!);
+    if (dateTime != null) return dateTime.toLocal();
+    //
+    dateFormat = DateFormat("EEE MMM dd yyyy HH:mm:ss GMT'Z");
+    dateTime = dateFormat.tryParseUtc(this!);
+    if (dateTime != null) return dateTime.toLocal();
+    //
+    dateFormat = DateFormat('hh:mm a yyyy-MM-dd');
+    dateTime = dateFormat.tryParseUtc(this!);
+    if (dateTime != null) return dateTime.toLocal();
+    return null;
+  }
+
+  String? toSHA256() {
+    if (this == null) return null;
+    Uint8List bytes = utf8.encode(this!);
+    Digest digest = sha256.convert(bytes);
+    return digest.toString();
+  }
+
+  Color? toColor() {
+    if (this == null || this!.isEmpty) return Colors.transparent;
+    if (this!.startsWith('#')) {
+      return Color(int.parse(this!.substring(1), radix: 16));
+    }
+    return Color(int.parse(this!));
   }
 }
