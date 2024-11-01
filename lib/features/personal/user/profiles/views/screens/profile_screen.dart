@@ -5,7 +5,6 @@ import '../../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../auth/signin/domain/repositories/signin_repository.dart';
 import '../../data/sources/local/local_user.dart';
-import '../../domain/entities/user_entity.dart';
 import '../providers/profile_provider.dart';
 import '../widgets/profile_filter_section.dart';
 import '../widgets/profile_grid_section.dart';
@@ -26,14 +25,15 @@ class ProfileScreen extends StatelessWidget {
           initialData: LocalUser().userState(LocalAuth.uid ?? ''),
           builder: (BuildContext context,
               AsyncSnapshot<DataState<UserEntity?>?> snapshot) {
-            return const SingleChildScrollView(
+            final UserEntity? user = snapshot.data?.entity;
+            return SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  ProfileHeaderSection(),
-                  ProfileScoreSection(),
-                  ProfileGridTypeSelectionSection(),
-                  ProfileFilterSection(),
-                  ProfileGridSection(),
+                  ProfileHeaderSection(user: user),
+                  ProfileScoreSection(user: user),
+                  ProfileGridTypeSelectionSection(user: user),
+                  ProfileFilterSection(user: user),
+                  ProfileGridSection(user: user),
                 ],
               ),
             );

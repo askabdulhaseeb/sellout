@@ -24,8 +24,10 @@ import '../features/personal/post/domain/usecase/get_feed_usecase.dart';
 import '../features/personal/post/domain/usecase/get_specific_post_usecase.dart';
 import '../features/personal/post/feed/views/providers/feed_provider.dart';
 import '../features/personal/user/profiles/data/repositories/user_repository_impl.dart';
+import '../features/personal/user/profiles/data/sources/remote/post_by_user_remote.dart';
 import '../features/personal/user/profiles/data/sources/remote/user_profile_remote_source.dart';
 import '../features/personal/user/profiles/domain/repositories/user_repositories.dart';
+import '../features/personal/user/profiles/domain/usecase/get_post_by_id_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/get_user_by_uid.dart';
 import '../features/personal/user/profiles/views/providers/profile_provider.dart';
 
@@ -54,12 +56,15 @@ void _auth() {
 void _profile() {
   locator.registerFactory<UserProfileRemoteSource>(
       () => UserProfileRemoteSourceImpl());
+  locator.registerFactory<PostByUserRemote>(() => PostByUserRemoteImpl());
   locator.registerFactory<UserProfileRepository>(
-      () => UserProfileRepositoryImpl(locator()));
+      () => UserProfileRepositoryImpl(locator(), locator()));
   locator.registerFactory<GetUserByUidUsecase>(
       () => GetUserByUidUsecase(locator()));
   locator
-      .registerLazySingleton<ProfileProvider>(() => ProfileProvider(locator()));
+      .registerFactory<GetPostByIdUsecase>(() => GetPostByIdUsecase(locator()));
+  locator.registerLazySingleton<ProfileProvider>(
+      () => ProfileProvider(locator(), locator()));
 }
 
 void _chat() {

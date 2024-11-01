@@ -32,6 +32,7 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
   ChangeNotifierProvider<AudioProvider>.value(value: AudioProvider()),
   //
   ChangeNotifierProvider<ProfileProvider>.value(
-      value: ProfileProvider(locator())),
+      value: ProfileProvider(locator(), locator())),
+
   ChangeNotifierProvider<FeedProvider>.value(value: FeedProvider(locator())),
 ];

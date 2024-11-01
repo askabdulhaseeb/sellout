@@ -181,4 +181,5 @@ class PostEntity {
   final String? accessCode;
 
   String get imageURL => fileUrls.isEmpty ? '' : fileUrls.first.url;
+  String get priceStr => '$currency $price'.toUpperCase();
 }
