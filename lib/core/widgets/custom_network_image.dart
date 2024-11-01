@@ -11,7 +11,7 @@ class CustomNetworkImage extends StatelessWidget {
     this.timeLimit = const Duration(days: 2),
     super.key,
   });
-  final String imageURL;
+  final String? imageURL;
   final String placeholder;
   final BoxFit? fit;
   final Duration? timeLimit;
@@ -23,14 +23,19 @@ class CustomNetworkImage extends StatelessWidget {
         : placeholder.length > 1
             ? placeholder.substring(0, 2)
             : placeholder;
-    return CachedNetworkImage(
-      imageUrl: imageURL,
-      fit: fit,
-      placeholder: (BuildContext context, String url) => const Loader(),
-      errorWidget: (BuildContext context, String url, _) => Text(
-        placeholderText.toUpperCase(),
-        style: const TextStyle(fontWeight: FontWeight.w500),
-      ),
-    );
+    return imageURL == null || (imageURL ?? '').isEmpty
+        ? Text(
+            placeholderText.toUpperCase(),
+            style: const TextStyle(fontWeight: FontWeight.w500),
+          )
+        : CachedNetworkImage(
+            imageUrl: imageURL ?? '',
+            fit: fit,
+            placeholder: (BuildContext context, String url) => const Loader(),
+            errorWidget: (BuildContext context, String url, _) => Text(
+              placeholderText.toUpperCase(),
+              style: const TextStyle(fontWeight: FontWeight.w500),
+            ),
+          );
   }
 }

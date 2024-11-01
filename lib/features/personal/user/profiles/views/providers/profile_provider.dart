@@ -1,7 +1,6 @@
 import 'dart:developer';
 
-import 'package:flutter/material.dart';
-
+import 'package:flutter/foundation.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../post/domain/entities/post_entity.dart';
@@ -17,7 +16,7 @@ class ProfileProvider extends ChangeNotifier {
   DataState<UserEntity?>? _user;
   UserEntity? get user => _user?.entity;
 
-  int _displayType = 0;
+  int _displayType = kDebugMode ? 2 : 0;
   int get displayType => _displayType;
 
   set displayType(int value) {
@@ -28,7 +27,7 @@ class ProfileProvider extends ChangeNotifier {
   Future<DataState<UserEntity?>?> getUserByUid({String? uid}) async {
     _user = await _getUserByUidUsecase(uid ?? LocalAuth.uid ?? '');
     log('Profile Provider: User loaded: ${_user?.entity?.displayName}');
-    displayType = 0;
+    displayType = kDebugMode ? 2 : 0;
     return _user;
   }
 

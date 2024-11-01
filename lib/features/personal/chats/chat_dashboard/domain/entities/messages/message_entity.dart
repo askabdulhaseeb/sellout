@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 import '../../../../../../../core/enums/message/message_type.dart';
 import '../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../post/domain/entities/offer/offer_detail_entity.dart';
-import '../../../../../post/domain/entities/visit/visiting_detail_entity.dart';
+import '../../../../../post/domain/entities/visit/visiting_entity.dart';
 
 part 'message_entity.g.dart';
 
@@ -32,7 +32,7 @@ class MessageEntity {
   @HiveField(2)
   final DateTime updatedAt;
   @HiveField(3)
-  final VisitingDetailEntity? visitingDetail;
+  final VisitingEntity? visitingDetail;
   @HiveField(4)
   final DateTime createdAt;
   @HiveField(5)

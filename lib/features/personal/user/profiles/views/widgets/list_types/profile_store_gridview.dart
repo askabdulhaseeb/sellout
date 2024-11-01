@@ -22,6 +22,8 @@ class ProfileStoreGridview extends StatelessWidget {
       builder: (BuildContext context,
           AsyncSnapshot<DataState<List<PostEntity>>> snapshot) {
         final List<PostEntity> posts = snapshot.data?.entity ?? <PostEntity>[];
+        posts.sort(
+            (PostEntity a, PostEntity b) => b.createdAt.compareTo(a.createdAt));
         return posts.isEmpty
             ? const Center(child: Text('No posts found'))
             : GridView.builder(
