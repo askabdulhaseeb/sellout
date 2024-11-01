@@ -52,9 +52,5 @@ class MessageEntity {
   @HiveField(12)
   final OfferDetailEntity? offerDetail;
 
-  String? get postImage => (offerDetail?.post.imageURL.isEmpty ?? true)
-      ? ((visitingDetail?.post.fileUrls.isEmpty ?? true)
-          ? null
-          : visitingDetail?.post.fileUrls.first.url)
-      : offerDetail?.post.imageURL;
+  String? get postImage => offerDetail?.post.imageURL;
 }

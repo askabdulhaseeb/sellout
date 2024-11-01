@@ -28,7 +28,6 @@ import '../../../features/personal/post/domain/entities/size_color/color_entity.
 import '../../../features/personal/post/domain/entities/size_color/discount_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/size_color_entity.dart';
 import '../../../features/personal/post/domain/entities/visit/visiting_detail_entity.dart';
-import '../../../features/personal/post/domain/entities/visit/visiting_detail_post_entity.dart';
 import '../../../features/personal/user/profiles/data/sources/local/local_user.dart';
 import '../../../features/personal/user/profiles/domain/entities/supporter_detail_entity.dart';
 import '../../enums/chat/chat_participant_role.dart';
@@ -66,7 +65,7 @@ class HiveDB {
     Hive.registerAdapter(ChatParticipantRoleTypeAdapter()); // 12
     Hive.registerAdapter(MessageEntityAdapter()); // 13
     Hive.registerAdapter(VisitingDetailEntityAdapter()); // 14
-    Hive.registerAdapter(VisitingDetailPostEntityAdapter()); // 15
+    // Hive.registerAdapter(VisitingDetailPostEntityAdapter()); // 15
     Hive.registerAdapter(AvailabilityEntityAdapter()); // 16
     Hive.registerAdapter(LocationEntityAdapter()); // 17
     Hive.registerAdapter(MessageTypeAdapter()); // 18

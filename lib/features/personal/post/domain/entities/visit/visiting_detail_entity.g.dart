@@ -17,34 +17,40 @@ class VisitingDetailEntityAdapter extends TypeAdapter<VisitingDetailEntity> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return VisitingDetailEntity(
-      visitingId: fields[0] as String,
-      post: fields[1] as VisitingDetailPostEntity,
-      dateTime: fields[2] as DateTime,
-      visiterId: fields[3] as String,
-      visitingTime: fields[4] as String,
-      hostId: fields[5] as String,
-      status: fields[6] as String,
+      visitingID: fields[0] as String,
+      visiterID: fields[1] as String,
+      businessID: fields[2] as String?,
+      hostID: fields[3] as String,
+      postID: fields[4] as String,
+      status: fields[5] as StatusType,
+      visitingTime: fields[6] as String,
+      dateTime: fields[7] as DateTime,
+      createdAt: fields[8] as DateTime?,
     );
   }
 
   @override
   void write(BinaryWriter writer, VisitingDetailEntity obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(9)
       ..writeByte(0)
-      ..write(obj.visitingId)
+      ..write(obj.visitingID)
       ..writeByte(1)
-      ..write(obj.post)
+      ..write(obj.visiterID)
       ..writeByte(2)
-      ..write(obj.dateTime)
+      ..write(obj.businessID)
       ..writeByte(3)
-      ..write(obj.visiterId)
+      ..write(obj.hostID)
       ..writeByte(4)
-      ..write(obj.visitingTime)
+      ..write(obj.postID)
       ..writeByte(5)
-      ..write(obj.hostId)
+      ..write(obj.status)
       ..writeByte(6)
-      ..write(obj.status);
+      ..write(obj.visitingTime)
+      ..writeByte(7)
+      ..write(obj.dateTime)
+      ..writeByte(8)
+      ..write(obj.createdAt);
   }
 
   @override

@@ -3,8 +3,10 @@ import 'package:hive/hive.dart';
 
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/utilities/app_string.dart';
+import '../../../../../../services/get_it.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../domain/entities/post_entity.dart';
+import '../../../domain/usecase/get_specific_post_usecase.dart';
 
 class LocalPost {
   static final String boxTitle = AppStrings.localPostsBox;
@@ -33,6 +35,24 @@ class LocalPost {
       return DataFailer<PostEntity>(CustomException('loading...'.tr()));
     } else {
       return DataSuccess<PostEntity>('', po);
+    }
+  }
+
+  Future<PostEntity?> getPost(String id) async {
+    final PostEntity? po = post(id);
+    if (po == null) {
+      final GetSpecificPostUsecase getSpecificPostUsecase =
+          GetSpecificPostUsecase(locator());
+      final DataState<PostEntity> result = await getSpecificPostUsecase(
+        GetSpecificPostParam(postId: id, silentUpdate: true),
+      );
+      if (result is DataSuccess) {
+        return result.entity;
+      } else {
+        return null;
+      }
+    } else {
+      return po;
     }
   }
 
