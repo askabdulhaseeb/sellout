@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../domain/entities/user_entity.dart';
 import '../providers/profile_provider.dart';
 
@@ -11,6 +12,7 @@ class ProfileGridTypeSelectionSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isMe = (LocalAuth.uid ?? '') == (user?.uid ?? '-');
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: Consumer<ProfileProvider>(
@@ -23,7 +25,7 @@ class ProfileGridTypeSelectionSection extends StatelessWidget {
                 child: _IconButton(
                   isSelected: userPro.displayType == 0,
                   icon: Icons.grid_on,
-                  title: 'my-store'.tr(),
+                  title: isMe ? 'my-store'.tr() : 'store'.tr(),
                   onPressed: () => userPro.displayType = 0,
                 ),
               ),
@@ -31,26 +33,28 @@ class ProfileGridTypeSelectionSection extends StatelessWidget {
                 child: _IconButton(
                   isSelected: userPro.displayType == 1,
                   icon: Icons.video_collection_outlined,
-                  title: 'my-promos'.tr(),
+                  title: isMe ? 'my-promos'.tr() : 'promos'.tr(),
                   onPressed: () => userPro.displayType = 1,
                 ),
               ),
-              Expanded(
-                child: _IconButton(
-                  icon: Icons.calendar_month_outlined,
-                  isSelected: userPro.displayType == 2,
-                  title: 'my-viewing'.tr(),
-                  onPressed: () => userPro.displayType = 2,
+              if (isMe)
+                Expanded(
+                  child: _IconButton(
+                    icon: Icons.calendar_month_outlined,
+                    isSelected: userPro.displayType == 2,
+                    title: 'my-viewing'.tr(),
+                    onPressed: () => userPro.displayType = 2,
+                  ),
                 ),
-              ),
-              Expanded(
-                child: _IconButton(
-                  icon: Icons.bookmark_border,
-                  isSelected: userPro.displayType == 3,
-                  title: 'my-saved'.tr(),
-                  onPressed: () => userPro.displayType = 3,
+              if (isMe)
+                Expanded(
+                  child: _IconButton(
+                    icon: Icons.bookmark_border,
+                    isSelected: userPro.displayType == 3,
+                    title: 'my-saved'.tr(),
+                    onPressed: () => userPro.displayType = 3,
+                  ),
                 ),
-              ),
             ],
           ),
         );

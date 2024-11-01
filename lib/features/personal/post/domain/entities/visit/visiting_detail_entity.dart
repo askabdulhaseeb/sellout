@@ -1,33 +1,38 @@
 import 'package:hive/hive.dart';
 
-import 'visiting_detail_post_entity.dart';
-
+import '../../../../../../core/enums/core/status_type.dart';
 part 'visiting_detail_entity.g.dart';
 
 @HiveType(typeId: 14)
 class VisitingDetailEntity {
   const VisitingDetailEntity({
-    required this.visitingId,
-    required this.post,
-    required this.dateTime,
-    required this.visiterId,
-    required this.visitingTime,
-    required this.hostId,
+    required this.visitingID,
+    required this.visiterID,
+    required this.businessID,
+    required this.hostID,
+    required this.postID,
     required this.status,
+    required this.visitingTime,
+    required this.dateTime,
+    required this.createdAt,
   });
 
   @HiveField(0)
-  final String visitingId;
+  final String visitingID;
   @HiveField(1)
-  final VisitingDetailPostEntity post;
+  final String visiterID;
   @HiveField(2)
-  final DateTime dateTime;
+  final String? businessID;
   @HiveField(3)
-  final String visiterId;
+  final String hostID;
   @HiveField(4)
-  final String visitingTime;
+  final String postID;
   @HiveField(5)
-  final String hostId;
+  final StatusType status;
   @HiveField(6)
-  final String status;
+  final String visitingTime;
+  @HiveField(7)
+  final DateTime dateTime;
+  @HiveField(8)
+  final DateTime? createdAt;
 }

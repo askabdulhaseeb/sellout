@@ -28,7 +28,7 @@ class ProfileProvider extends ChangeNotifier {
   Future<DataState<UserEntity?>?> getUserByUid({String? uid}) async {
     _user = await _getUserByUidUsecase(uid ?? LocalAuth.uid ?? '');
     log('Profile Provider: User loaded: ${_user?.entity?.displayName}');
-    notifyListeners();
+    displayType = 0;
     return _user;
   }
 
