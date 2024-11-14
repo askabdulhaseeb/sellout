@@ -13,6 +13,7 @@ class CurrentUserEntity {
     required this.userId,
     required this.chatIDs,
     required this.address,
+    this.businessIDs = const <String>[],
   });
 
   @HiveField(0)
@@ -29,4 +30,6 @@ class CurrentUserEntity {
   final List<String> chatIDs;
   @HiveField(6)
   final List<AddressEntity> address;
+  @HiveField(7, defaultValue: <String>[])
+  final List<String> businessIDs;
 }

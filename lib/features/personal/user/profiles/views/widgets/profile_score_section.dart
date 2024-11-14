@@ -26,14 +26,14 @@ class ProfileScoreSection extends StatelessWidget {
               Expanded(
                 child: _ScoreButton(
                   title: 'supporting'.tr(),
-                  count: '0',
+                  count: (user?.supporters.length ?? 0).toString(),
                   onPressed: () {},
                 ),
               ),
               Expanded(
                 child: _ScoreButton(
                   title: 'supporters'.tr(),
-                  count: '0',
+                  count: (user?.supporters.length ?? 0).toString(),
                   onPressed: () {},
                 ),
               ),
