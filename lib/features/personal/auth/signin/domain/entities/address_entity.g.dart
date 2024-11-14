@@ -17,19 +17,40 @@ class AddressEntityAdapter extends TypeAdapter<AddressEntity> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return AddressEntity(
-      city: fields[0] as String,
-      country: fields[1] as String,
+      addressID: fields[0] as String,
+      phoneNumber: fields[1] as String,
+      recipientName: fields[2] as String,
+      address: fields[3] as String,
+      category: fields[4] as String,
+      postalCode: fields[5] as String,
+      townCity: fields[6] as String,
+      country: fields[7] as String,
+      isDefault: fields[8] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, AddressEntity obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(9)
       ..writeByte(0)
-      ..write(obj.city)
+      ..write(obj.addressID)
       ..writeByte(1)
-      ..write(obj.country);
+      ..write(obj.phoneNumber)
+      ..writeByte(2)
+      ..write(obj.recipientName)
+      ..writeByte(3)
+      ..write(obj.address)
+      ..writeByte(4)
+      ..write(obj.category)
+      ..writeByte(5)
+      ..write(obj.postalCode)
+      ..writeByte(6)
+      ..write(obj.townCity)
+      ..writeByte(7)
+      ..write(obj.country)
+      ..writeByte(8)
+      ..write(obj.isDefault);
   }
 
   @override

@@ -34,13 +34,14 @@ class UserEntityAdapter extends TypeAdapter<UserEntity> {
       profilePic: (fields[14] as List).cast<AttachmentEntity>(),
       userName: fields[15] as String,
       profileType: fields[16] as PrivacyType,
+      saved: fields[17] == null ? [] : (fields[17] as List).cast<String>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, UserEntity obj) {
     writer
-      ..writeByte(17)
+      ..writeByte(18)
       ..writeByte(0)
       ..write(obj.mobileNo)
       ..writeByte(1)
@@ -74,7 +75,9 @@ class UserEntityAdapter extends TypeAdapter<UserEntity> {
       ..writeByte(15)
       ..write(obj.userName)
       ..writeByte(16)
-      ..write(obj.profileType);
+      ..write(obj.profileType)
+      ..writeByte(17)
+      ..write(obj.saved);
   }
 
   @override

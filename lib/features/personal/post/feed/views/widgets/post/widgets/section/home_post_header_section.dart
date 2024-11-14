@@ -7,6 +7,7 @@ import '../../../../../../../../../core/widgets/profile_photo.dart';
 import '../../../../../../../../../services/get_it.dart';
 import '../../../../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../../../../../user/profiles/domain/usecase/get_user_by_uid.dart';
+import '../../../../../../../user/profiles/views/screens/user_profile_screen.dart';
 import '../../../../../../domain/entities/post_entity.dart';
 
 class HomePostHeaderSection extends StatelessWidget {
@@ -28,37 +29,44 @@ class HomePostHeaderSection extends StatelessWidget {
             final UserEntity? user = result?.entity;
             return snapshot.connectionState == ConnectionState.waiting
                 ? const Loader()
-                : Row(
-                    children: <Widget>[
-                      ProfilePhoto(
-                        url: user?.profilePhotoURL,
-                        placeholder: user?.displayName ?? '',
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              user?.displayName ?? 'null',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                            Text(
-                              post.createdAt.timeAgo,
-                            ),
-                          ],
+                : GestureDetector(
+                    onTap: () => Navigator.of(context)
+                        .push(MaterialPageRoute<UserProfileScreen>(
+                      builder: (BuildContext context) =>
+                          UserProfileScreen(uid: post.createdBy),
+                    )),
+                    child: Row(
+                      children: <Widget>[
+                        ProfilePhoto(
+                          url: user?.profilePhotoURL,
+                          placeholder: user?.displayName ?? '',
                         ),
-                      ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(Icons.adaptive.more),
-                      ),
-                    ],
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                user?.displayName ?? 'null',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              Text(
+                                post.createdAt.timeAgo,
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.adaptive.more),
+                        ),
+                      ],
+                    ),
                   );
           }),
     );

@@ -28,6 +28,7 @@ class UserModel extends UserEntity {
     required super.profilePic,
     required super.userName,
     required super.profileType,
+    required super.saved,
   });
 
   factory UserModel.fromRawJson(String str) =>
@@ -65,5 +66,7 @@ class UserModel extends UserEntity {
                 .map((dynamic x) => AttachmentModel.fromJson(x))),
         userName: json['user_name'] ?? '',
         profileType: PrivacyType.fromJson(json['profile_type']),
+        saved: List<String>.from(
+            (json['saved'] ?? <dynamic>[]).map((dynamic x) => x)),
       );
 }

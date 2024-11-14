@@ -56,11 +56,16 @@ class SigninProvider extends ChangeNotifier {
         );
       } else {
         debugPrint('Signin Error in Provider');
+        log(
+          'Signin Error in Provider',
+          name: 'SigninProvider.signIn - Else',
+          error: result,
+        );
         // Show error message
       }
     } catch (e) {
       debugPrint(e.toString());
-      log(e.toString());
+      log(e.toString(), name: 'SigninProvider.signIn - Catch', error: e);
     }
     isLoading = false;
   }

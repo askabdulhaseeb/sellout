@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../../core/widgets/profile_photo.dart';
 import '../../../../../../core/widgets/rating_display_widget.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../domain/entities/user_entity.dart';
 
 class ProfileHeaderSection extends StatelessWidget {
@@ -11,6 +12,7 @@ class ProfileHeaderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isMe = user?.uid == (LocalAuth.uid ?? '-');
     return AspectRatio(
       aspectRatio: 3 / 1,
       child: Padding(
@@ -40,11 +42,12 @@ class ProfileHeaderSection extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      TextButton(
-                        onPressed: () {},
-                        child: const Text('edit').tr(),
-                      ),
+                      if (isMe) const SizedBox(width: 8),
+                      if (isMe)
+                        TextButton(
+                          onPressed: () {},
+                          child: const Text('edit').tr(),
+                        ),
                     ],
                   ),
                   RatingDisplayWidget(

@@ -27,6 +27,7 @@ class UserEntity {
     required this.profilePic,
     required this.userName,
     required this.profileType,
+    required this.saved,
   });
 
   @HiveField(0)
@@ -63,6 +64,8 @@ class UserEntity {
   String userName;
   @HiveField(16)
   final PrivacyType profileType;
+  @HiveField(17, defaultValue: <String>[])
+  final List<String> saved;
 
   String? get profilePhotoURL =>
       profilePic.isEmpty ? null : profilePic.first.url;

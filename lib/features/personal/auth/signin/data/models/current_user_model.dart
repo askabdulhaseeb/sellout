@@ -13,6 +13,7 @@ class CurrentUserModel extends CurrentUserEntity {
     required super.userId,
     required super.address,
     required super.chatIDs,
+    required super.businessIDs,
   });
 
   factory CurrentUserModel.fromRawJson(String str) =>
@@ -32,6 +33,9 @@ class CurrentUserModel extends CurrentUserEntity {
       userId: json['user_id'],
       address: addressList,
       chatIDs: List<String>.from((json['chat_ids'] ?? <dynamic>[]).map(
+        (dynamic x) => x.toString(),
+      )),
+      businessIDs: List<String>.from((json['business_ids'] ?? <dynamic>[]).map(
         (dynamic x) => x.toString(),
       )),
     );
