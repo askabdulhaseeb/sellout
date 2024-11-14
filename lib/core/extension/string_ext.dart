@@ -39,8 +39,7 @@ extension StringExt on String {
 
   Color toColor() {
     if (isEmpty) return Colors.transparent;
-    if (startsWith('#')) return Color(int.parse(substring(1), radix: 16));
-    return Color(int.parse(this));
+    return Color(int.parse(startsWith('#') ? replaceAll('#', '0xFF') : this));
   }
 }
 
@@ -79,11 +78,10 @@ extension NullableStringExt on String? {
     return digest.toString();
   }
 
-  Color? toColor() {
-    if (this == null || this!.isEmpty) return Colors.transparent;
-    if (this!.startsWith('#')) {
-      return Color(int.parse(this!.substring(1), radix: 16));
-    }
-    return Color(int.parse(this!));
+  Color toColor() {
+    if (this == null || (this ?? '').isEmpty) return Colors.transparent;
+    final String coo = this ?? '';
+    return Color(
+        int.parse(coo.startsWith('#') ? coo.replaceAll('#', '0xFF') : coo));
   }
 }

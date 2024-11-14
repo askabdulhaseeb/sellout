@@ -37,7 +37,7 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       price: fields[17] as double,
       minOfferAmount: fields[18] as double,
       condition: fields[19] as ConditionType,
-      sizeChartUrl: fields[20] as String?,
+      sizeChartUrl: fields[20] as AttachmentEntity?,
       currency: fields[21] as String?,
       privacy: fields[22] as PrivacyType,
       brand: fields[23] as String?,

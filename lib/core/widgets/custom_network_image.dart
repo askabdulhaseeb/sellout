@@ -9,12 +9,14 @@ class CustomNetworkImage extends StatelessWidget {
     this.placeholder = '/',
     this.fit = BoxFit.cover,
     this.timeLimit = const Duration(days: 2),
+    this.size,
     super.key,
   });
   final String? imageURL;
   final String placeholder;
   final BoxFit? fit;
   final Duration? timeLimit;
+  final double? size;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +33,8 @@ class CustomNetworkImage extends StatelessWidget {
         : CachedNetworkImage(
             imageUrl: imageURL ?? '',
             fit: fit,
+            height: size,
+            width: size,
             placeholder: (BuildContext context, String url) => const Loader(),
             errorWidget: (BuildContext context, String url, _) => Text(
               placeholderText.toUpperCase(),

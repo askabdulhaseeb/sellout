@@ -4,6 +4,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../features/attachment/domain/entities/attachment_entity.dart';
+import '../../../features/personal/cart/data/sources/local_cart.dart';
+import '../../../features/personal/cart/domain/entities/cart_entity.dart';
 import '../../../features/personal/chats/chat/data/sources/local/local_message.dart';
 import '../../../features/personal/chats/chat/domain/entities/getted_message_entity.dart';
 import '../../../features/personal/chats/chat/domain/entities/message_last_evaluated_key_entity.dart';
@@ -88,6 +90,8 @@ class HiveDB {
     Hive.registerAdapter(MessageLastEvaluatedKeyEntityAdapter()); // 34
     Hive.registerAdapter(StatusTypeAdapter()); // 35
     Hive.registerAdapter(SupporterDetailEntityAdapter()); // 36
+    Hive.registerAdapter(CartEntityAdapter()); // 37
+    Hive.registerAdapter(CartItemEntityAdapter()); // 38
     // Hive box Open
     await refresh();
   }
@@ -101,5 +105,6 @@ class HiveDB {
     await LocalChat().refresh();
     await LocalChatMessage().refresh();
     await LocalVisit().refresh();
+    await LocalCart().refresh();
   }
 }

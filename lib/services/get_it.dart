@@ -6,6 +6,11 @@ import '../features/personal/auth/signin/domain/repositories/signin_repository.d
 import '../features/personal/auth/signin/domain/usecase/forgot_password_usecase.dart';
 import '../features/personal/auth/signin/domain/usecase/login_usecase.dart';
 import '../features/personal/auth/signin/views/providers/signin_provider.dart';
+import '../features/personal/cart/data/repositories/cart_repository_impl.dart';
+import '../features/personal/cart/data/sources/cart_remote_api.dart';
+import '../features/personal/cart/domain/repositories/cart_repository.dart';
+import '../features/personal/cart/domain/usecase/get_cart_usecase.dart';
+import '../features/personal/cart/views/providers/cart_provider.dart';
 import '../features/personal/chats/chat/data/repositories/message_repository_impl.dart';
 import '../features/personal/chats/chat/data/sources/remote/messages_remote_source.dart';
 import '../features/personal/chats/chat/domain/repositories/message_reposity.dart';
@@ -43,6 +48,7 @@ void setupLocator() {
   _chat();
   _feed();
   _post();
+  _cart();
 }
 
 void _auth() {
@@ -106,4 +112,11 @@ void _feed() {
 void _post() {
   locator.registerFactory<GetSpecificPostUsecase>(
       () => GetSpecificPostUsecase(locator()));
+}
+
+void _cart() {
+  locator.registerFactory<CartRemoteAPI>(() => CartRemoteAPIImpl());
+  locator.registerFactory<CartRepository>(() => CartRepositoryImpl(locator()));
+  locator.registerFactory<GetCartUsecase>(() => GetCartUsecase(locator()));
+  locator.registerLazySingleton<CartProvider>(() => CartProvider(locator()));
 }
