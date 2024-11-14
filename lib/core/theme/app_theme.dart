@@ -15,6 +15,12 @@ class AppTheme {
       ),
       dividerColor: Colors.grey[200],
       useMaterial3: true,
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        elevation: 0,
+        iconTheme: IconThemeData(color: Colors.black),
+      ),
     );
   }
 

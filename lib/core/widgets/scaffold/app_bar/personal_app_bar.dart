@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../features/personal/auth/signin/data/sources/local/local_auth.dart';
+import '../../../../features/personal/setting/setting_dashboard/views/screens/personal_setting_screen.dart';
 import '../../../utilities/app_icons.dart';
 
 personalAppbar(BuildContext context) {
@@ -8,11 +8,13 @@ personalAppbar(BuildContext context) {
     centerTitle: false,
     surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+    shadowColor: Theme.of(context).dividerColor,
     title: Row(
       children: <Widget>[
         _IconButton(
           icon: AppIcons.setting,
-          onPressed: () async => await LocalAuth().signout(),
+          onPressed: () =>
+              Navigator.of(context).pushNamed(PersonalSettingScreen.routeName),
         ),
         _IconButton(icon: AppIcons.search, onPressed: () {}),
       ],
