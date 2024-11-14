@@ -112,7 +112,7 @@ class PostEntity {
   @HiveField(19)
   final ConditionType condition;
   @HiveField(20)
-  final String? sizeChartUrl;
+  final AttachmentEntity? sizeChartUrl;
   @HiveField(21)
   final String? currency;
   @HiveField(22)

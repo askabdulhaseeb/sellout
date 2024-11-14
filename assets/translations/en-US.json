@@ -155,6 +155,12 @@
     "about": "About",
     "deactivate-account": "Deactivate Account",
     "delete-account": "Delete Account",
+    "shopping-basket": "Shopping Basket",
+    "checkout": "Checkout",
+    "payment-options": "Payment Options",
+    "cart": "Cart",
+    "save-later": "Save for Later",
+    "total": "Total",
     "error": "Error",
     "none": "none",
     "na": "N/A"

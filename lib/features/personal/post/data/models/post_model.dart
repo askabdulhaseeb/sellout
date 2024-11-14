@@ -170,7 +170,10 @@ class PostModel extends PostEntity {
       minOfferAmount:
           double.tryParse(json['min_offer_amount']?.toString() ?? '0.0') ?? 0.0,
       condition: ConditionType.fromJson(json['item_condition']),
-      sizeChartUrl: json['size_chart_url'] ?? '',
+      sizeChartUrl: json['size_chart_url'] == null ||
+              json['size_chart_url'].runtimeType == String
+          ? null
+          : AttachmentModel.fromJson(json['size_chart_url']),
       currency: json['currency'],
       privacy: PrivacyType.fromJson(json['post_privacy']),
       brand: json['brand'] ?? '',

@@ -1,6 +1,7 @@
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import '../features/attachment/views/providers/picked_media_provider.dart';
+import '../features/personal/cart/views/providers/cart_provider.dart';
 import '../features/personal/chats/chat/views/providers/audio_provider.dart';
 import '../features/personal/chats/chat/views/providers/chat_provider.dart';
 import '../features/personal/listing/listing_form/views/providers/add_listing_form_provider.dart';
@@ -35,4 +36,5 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
       value: ProfileProvider(locator(), locator())),
 
   ChangeNotifierProvider<FeedProvider>.value(value: FeedProvider(locator())),
+  ChangeNotifierProvider<CartProvider>.value(value: CartProvider(locator())),
 ];

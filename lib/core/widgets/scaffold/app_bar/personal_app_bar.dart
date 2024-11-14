@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../features/personal/cart/views/screens/personal_cart_screen.dart';
 import '../../../../features/personal/setting/setting_dashboard/views/screens/personal_setting_screen.dart';
 import '../../../utilities/app_icons.dart';
 
@@ -21,7 +22,11 @@ personalAppbar(BuildContext context) {
     ),
     actions: <Widget>[
       _IconButton(icon: AppIcons.notification, onPressed: () {}),
-      _IconButton(icon: AppIcons.cart, onPressed: () {}),
+      _IconButton(
+        icon: AppIcons.cart,
+        onPressed: () =>
+            Navigator.of(context).pushNamed(PersonalCartScreen.routeName),
+      ),
       const SizedBox(width: 8),
     ],
   );
