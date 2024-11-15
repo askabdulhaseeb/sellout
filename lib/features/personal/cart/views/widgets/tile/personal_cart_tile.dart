@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../../core/extension/int_ext.dart';
 import '../../../../../../core/extension/string_ext.dart';
 import '../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../core/widgets/scaffold/personal_scaffold.dart';
@@ -8,6 +7,7 @@ import '../../../../../../core/widgets/shadow_container.dart';
 import '../../../../post/data/sources/local/local_post.dart';
 import '../../../../post/domain/entities/post_entity.dart';
 import '../../../domain/entities/cart_item_entity.dart';
+import 'personal_cart_tile_qty_section.dart';
 import 'personal_cart_tile_trailing_section.dart';
 
 class PersonalCartTile extends StatelessWidget {
@@ -78,23 +78,7 @@ class PersonalCartTile extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 4),
-                      Row(
-                        children: <Widget>[
-                          IconButton(
-                            onPressed: item.quantity == 1 ? null : () {},
-                            icon: const Icon(Icons.remove_circle_outline),
-                          ),
-                          Text(
-                            item.quantity.putInStart(sign: '0', length: 2),
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          IconButton(
-                            onPressed:
-                                item.quantity == post?.quantity ? null : () {},
-                            icon: const Icon(Icons.add_circle_outline),
-                          ),
-                        ],
-                      )
+                      PersonalCartTileQtySection(item: item, post: post),
                     ],
                   ),
                 ),

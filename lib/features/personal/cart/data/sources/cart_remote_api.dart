@@ -2,6 +2,7 @@ import '../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/api_call.dart';
 
+import '../../domain/param/cart_item_update_qty_param.dart';
 import '../models/cart_item_model.dart';
 import '../models/cart_model.dart';
 import 'local_cart.dart';
@@ -11,6 +12,7 @@ abstract interface class CartRemoteAPI {
   Future<void> addProductToCart();
   Future<DataState<bool>> removeProductFromCart(String itemID);
   Future<void> clearCart();
+  Future<DataState<bool>> updateQty(CartItemUpdateQtyParam param);
   Future<DataState<bool>> updateStatus(
       CartItemModel params, CartItemType action);
 }
@@ -33,7 +35,7 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
         }
         final CartModel cartModel = CartModel.fromRaw(raw);
         AppLog.info(
-          'CartRemoteAPIImpl.getCart - Cart Item Length: ${cartModel.items.length}',
+          'CartRemoteAPIImpl.getCart - Cart Item: ${cartModel.cartItems.length} - Total: ${cartModel.items.length}',
           name: 'CartRemoteAPIImpl.getCart - Success',
         );
         await LocalCart().save(cartModel);
@@ -128,7 +130,7 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
         endpoint: endpoint,
         requestType: ApiRequestType.post,
         isAuth: true,
-        body: action == CartItemType.cart ? params.moveTocart() : null,
+        // body: action == CartItemType.cart ? params.moveTocart() : null,
       );
       if (result is DataSuccess<bool>) {
         await getCart();
@@ -145,6 +147,38 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
       AppLog.error(
         e.toString(),
         name: 'CartRemoteAPIImpl.updateStatus - Catch',
+        error: e,
+      );
+      return DataFailer<bool>(CustomException(e.toString()));
+    }
+  }
+
+  @override
+  Future<DataState<bool>> updateQty(CartItemUpdateQtyParam param) async {
+    try {
+      final String endpoint =
+          '/cart/update/${param.cartItem.cartItemID}?action=update_qty';
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.post,
+        isAuth: true,
+        body: param.updateQTY(),
+      );
+      if (result is DataSuccess<bool>) {
+        await LocalCart().updateQTY(param.cartItem, param.qty);
+        return result;
+      } else {
+        AppLog.error(
+          'Failed to update QTY',
+          name: 'CartRemoteAPIImpl.updateQty - Else',
+          error: CustomException('Failed to update QTY'),
+        );
+        return DataFailer<bool>(CustomException('Failed to update QTY'));
+      }
+    } catch (e) {
+      AppLog.error(
+        e.toString(),
+        name: 'CartRemoteAPIImpl.updateQty - Catch',
         error: e,
       );
       return DataFailer<bool>(CustomException(e.toString()));

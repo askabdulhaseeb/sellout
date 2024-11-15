@@ -44,6 +44,15 @@ class LocalCart {
     }
   }
 
+  Future<void> updateQTY(CartItemEntity item, int qty) async {
+    final String me = LocalAuth.uid ?? '';
+    final CartEntity currentt = entity(me);
+    final CartItemEntity current = currentt.items.firstWhere(
+        (CartItemEntity element) => element.cartItemID == item.cartItemID);
+    current.quantity = qty;
+    await save(currentt);
+  }
+
   Future<void> removeFromCart(String itemID) async {
     final String me = LocalAuth.uid ?? '';
     final CartEntity currentt = entity(me);
