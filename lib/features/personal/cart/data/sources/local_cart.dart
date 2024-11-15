@@ -4,6 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../domain/entities/cart_entity.dart';
+import '../models/cart_item_model.dart';
 
 export '../../domain/entities/cart_entity.dart';
 
@@ -24,7 +25,10 @@ class LocalCart {
   }
 
   Future<void> save(CartEntity user) async => await _box.put(user.cartID, user);
-  CartEntity? entity(String value) => _box.get(value);
+  CartEntity entity(String value) => _box.values.firstWhere(
+        (CartEntity element) => element.cartID == value,
+        orElse: () => CartModel(),
+      );
 
   DataState<CartEntity?> state(String value) {
     final CartEntity? entity = _box.get(value);

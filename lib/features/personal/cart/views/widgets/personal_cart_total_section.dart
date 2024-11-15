@@ -29,7 +29,7 @@ class PersonalCartTotalSection extends StatelessWidget {
                 visualDensity:
                     const VisualDensity(horizontal: -4, vertical: -4),
                 title: Text(
-                  '${'total'.tr()} (${cart.items.length} ${'items'.tr()})',
+                  '${'total'.tr()} (${cart.cartItems.length} ${'items'.tr()})',
                 ),
                 trailing: Text(
                   cart.cartTotal.toStringAsFixed(2),

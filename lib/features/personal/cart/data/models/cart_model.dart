@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../../domain/entities/cart_item_entity.dart';
 
 class CartItemModel extends CartItemEntity {
@@ -30,4 +32,7 @@ class CartItemModel extends CartItemEntity {
         cartItemID: entity.cartItemID,
         status: entity.status,
       );
+
+  String moveTocart() =>
+      json.encode(<String, dynamic>{'quantity': super.quantity});
 }

@@ -38,12 +38,13 @@ class LocalRequestHistory {
       return null;
     }
     url = '$url${endpoint.startsWith('/') ? endpoint : '/$endpoint'}';
-    if (!url.endsWith('/')) url += '/';
 
     ApiRequestEntity? result = _box.get(url.toSHA256());
     if (result == null) return null;
     if (!result.timesAgo(duration)) {
-      debugPrint('🟢 Less then ${duration.display()} - $url');
+      if (!url.contains('/user/') && !url.contains('/post/')) {
+        debugPrint('🟢 Less then ${duration.display()} - $url');
+      }
       return result;
     } else {
       debugPrint('🔴 More then ${duration.display()} - $url');
@@ -52,5 +53,6 @@ class LocalRequestHistory {
     }
   }
 
-  Future<void> delete(String value) async => await _box.delete(value.toSHA256());
+  Future<void> delete(String value) async =>
+      await _box.delete(value.toSHA256());
 }

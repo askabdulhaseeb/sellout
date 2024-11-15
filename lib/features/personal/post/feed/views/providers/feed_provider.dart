@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import '../../../../../../core/sources/data_state.dart';
@@ -17,7 +15,6 @@ class FeedProvider extends ChangeNotifier {
     final DataState<List<PostEntity>> result = await _getFeedUsecase(null);
     _posts.addAll(result.entity ?? <PostEntity>[]);
     notifyListeners();
-    log('FeedProvider.getFeed: ${result.runtimeType}');
     return result;
   }
 }
