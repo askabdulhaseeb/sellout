@@ -133,7 +133,7 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
         // body: action == CartItemType.cart ? params.moveTocart() : null,
       );
       if (result is DataSuccess<bool>) {
-        await getCart();
+        await LocalCart().updateStatus(params, action);
         return result;
       } else {
         AppLog.error(

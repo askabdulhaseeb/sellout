@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/utilities/app_string.dart';
+import '../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../domain/entities/cart_entity.dart';
 import '../models/cart_item_model.dart';
@@ -50,6 +51,15 @@ class LocalCart {
     final CartItemEntity current = currentt.items.firstWhere(
         (CartItemEntity element) => element.cartItemID == item.cartItemID);
     current.quantity = qty;
+    await save(currentt);
+  }
+
+  Future<void> updateStatus(CartItemEntity item, CartItemType type) async {
+    final String me = LocalAuth.uid ?? '';
+    final CartEntity currentt = entity(me);
+    final CartItemEntity current = currentt.items.firstWhere(
+        (CartItemEntity element) => element.cartItemID == item.cartItemID);
+    current.status = type.json;
     await save(currentt);
   }
 

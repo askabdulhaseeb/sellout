@@ -28,7 +28,7 @@ class CartItemEntity {
   @HiveField(5)
   final String cartItemID;
   @HiveField(6)
-  final String status;
+  String status;
 
   bool get inCart => status == 'cart';
   CartItemType get type => inCart ? CartItemType.cart : CartItemType.saveLater;
