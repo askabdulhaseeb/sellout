@@ -16,7 +16,7 @@ class CartItemEntity {
   });
 
   @HiveField(0)
-  final int quantity;
+  int quantity;
   @HiveField(1)
   final String postID;
   @HiveField(2)

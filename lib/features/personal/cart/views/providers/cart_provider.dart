@@ -5,16 +5,23 @@ import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../data/models/cart_model.dart';
 import '../../domain/entities/cart_entity.dart';
+import '../../domain/param/cart_item_update_qty_param.dart';
 import '../../domain/usecase/cart_item_status_update_usecase.dart';
+import '../../domain/usecase/cart_update_qty_usecase.dart';
 import '../../domain/usecase/get_cart_usecase.dart';
 import '../../domain/usecase/remove_from_cart_usecase.dart';
 
 class CartProvider extends ChangeNotifier {
-  CartProvider(this._getCartUsecase, this._cartItemStatusUpdateUsecase,
-      this._removeFromCartUsecase);
+  CartProvider(
+    this._getCartUsecase,
+    this._cartItemStatusUpdateUsecase,
+    this._removeFromCartUsecase,
+    this._cartUpdateQtyUsecase,
+  );
   final GetCartUsecase _getCartUsecase;
   final CartItemStatusUpdateUsecase _cartItemStatusUpdateUsecase;
   final RemoveFromCartUsecase _removeFromCartUsecase;
+  final CartUpdateQtyUsecase _cartUpdateQtyUsecase;
 
   List<CartItemEntity> _cartItems = <CartItemEntity>[];
   int _page = 1;
@@ -68,6 +75,24 @@ class CartProvider extends ChangeNotifier {
       AppLog.error(
         e.toString(),
         name: 'CartProvider.removeItem - Catch',
+        error: e,
+      );
+      return DataFailer<bool>(CustomException(e.toString()));
+    }
+  }
+
+  Future<DataState<bool>> updateQty(CartItemEntity cartItem, int qty) async {
+    try {
+      return await _cartUpdateQtyUsecase(
+        CartItemUpdateQtyParam(
+          cartItem: cartItem,
+          qty: qty,
+        ),
+      );
+    } catch (e) {
+      AppLog.error(
+        e.toString(),
+        name: 'CartProvider.updateQty - Catch',
         error: e,
       );
       return DataFailer<bool>(CustomException(e.toString()));
