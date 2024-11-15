@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
-import '../features/personal/cart/basket/views/screens/personal_cart_screen.dart';
+import '../features/personal/cart/views/screens/personal_cart_screen.dart';
 import '../features/personal/chats/chat/views/screens/chat_screen.dart';
 import '../features/personal/listing/listing_form/views/screens/add_listing_form_screen.dart';
 import '../features/personal/auth/signin/views/screens/sign_in_screen.dart';

@@ -7,7 +7,7 @@ import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
 import '../../../../../../core/sources/local/local_request_history.dart';
 import '../../../../../../services/get_it.dart';
-import '../../../../cart/basket/domain/usecase/get_cart_usecase.dart';
+import '../../../../cart/domain/usecase/cart/get_cart_usecase.dart';
 import '../../../domain/entities/post_entity.dart';
 import '../../../domain/params/add_to_cart_param.dart';
 import '../../models/post_model.dart';

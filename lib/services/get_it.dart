@@ -6,14 +6,18 @@ import '../features/personal/auth/signin/domain/repositories/signin_repository.d
 import '../features/personal/auth/signin/domain/usecase/forgot_password_usecase.dart';
 import '../features/personal/auth/signin/domain/usecase/login_usecase.dart';
 import '../features/personal/auth/signin/views/providers/signin_provider.dart';
-import '../features/personal/cart/basket/data/repositories/cart_repository_impl.dart';
-import '../features/personal/cart/basket/data/sources/cart_remote_api.dart';
-import '../features/personal/cart/basket/domain/repositories/cart_repository.dart';
-import '../features/personal/cart/basket/domain/usecase/cart_item_status_update_usecase.dart';
-import '../features/personal/cart/basket/domain/usecase/cart_update_qty_usecase.dart';
-import '../features/personal/cart/basket/domain/usecase/get_cart_usecase.dart';
-import '../features/personal/cart/basket/domain/usecase/remove_from_cart_usecase.dart';
-import '../features/personal/cart/basket/views/providers/cart_provider.dart';
+import '../features/personal/cart/data/repositories/cart_repository_impl.dart';
+import '../features/personal/cart/data/repositories/checkout_repository_impl.dart';
+import '../features/personal/cart/data/sources/remote/cart_remote_api.dart';
+import '../features/personal/cart/data/sources/remote/checkout_remote_api.dart';
+import '../features/personal/cart/domain/repositories/cart_repository.dart';
+import '../features/personal/cart/domain/repositories/checkout_repository.dart';
+import '../features/personal/cart/domain/usecase/cart/cart_item_status_update_usecase.dart';
+import '../features/personal/cart/domain/usecase/cart/cart_update_qty_usecase.dart';
+import '../features/personal/cart/domain/usecase/cart/get_cart_usecase.dart';
+import '../features/personal/cart/domain/usecase/cart/remove_from_cart_usecase.dart';
+import '../features/personal/cart/domain/usecase/checkout/get_checkout_usecase.dart';
+import '../features/personal/cart/views/providers/cart_provider.dart';
 import '../features/personal/chats/chat/data/repositories/message_repository_impl.dart';
 import '../features/personal/chats/chat/data/sources/remote/messages_remote_source.dart';
 import '../features/personal/chats/chat/domain/repositories/message_reposity.dart';
@@ -120,6 +124,7 @@ void _post() {
 }
 
 void _cart() {
+  // cart
   locator.registerFactory<CartRemoteAPI>(() => CartRemoteAPIImpl());
   locator.registerFactory<CartRepository>(() => CartRepositoryImpl(locator()));
   locator.registerFactory<GetCartUsecase>(() => GetCartUsecase(locator()));
@@ -129,6 +134,13 @@ void _cart() {
       () => RemoveFromCartUsecase(locator()));
   locator.registerFactory<CartUpdateQtyUsecase>(
       () => CartUpdateQtyUsecase(locator()));
-  locator.registerLazySingleton<CartProvider>(
-      () => CartProvider(locator(), locator(), locator(), locator()));
+  // checkout
+  locator.registerFactory<CheckoutRemoteAPI>(() => CheckoutRemoteAPIImpl());
+  locator.registerFactory<CheckoutRepository>(
+      () => CheckoutRepositoryImpl(locator()));
+  locator
+      .registerFactory<GetCheckoutUsecase>(() => GetCheckoutUsecase(locator()));
+  // provider
+  locator.registerLazySingleton<CartProvider>(() =>
+      CartProvider(locator(), locator(), locator(), locator(), locator()));
 }
