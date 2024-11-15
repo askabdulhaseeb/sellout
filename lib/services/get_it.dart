@@ -11,6 +11,7 @@ import '../features/personal/cart/data/sources/cart_remote_api.dart';
 import '../features/personal/cart/domain/repositories/cart_repository.dart';
 import '../features/personal/cart/domain/usecase/cart_item_status_update_usecase.dart';
 import '../features/personal/cart/domain/usecase/get_cart_usecase.dart';
+import '../features/personal/cart/domain/usecase/remove_from_cart_usecase.dart';
 import '../features/personal/cart/views/providers/cart_provider.dart';
 import '../features/personal/chats/chat/data/repositories/message_repository_impl.dart';
 import '../features/personal/chats/chat/data/sources/remote/messages_remote_source.dart';
@@ -123,6 +124,8 @@ void _cart() {
   locator.registerFactory<GetCartUsecase>(() => GetCartUsecase(locator()));
   locator.registerFactory<CartItemStatusUpdateUsecase>(
       () => CartItemStatusUpdateUsecase(locator()));
+  locator.registerFactory<RemoveFromCartUsecase>(
+      () => RemoveFromCartUsecase(locator()));
   locator.registerLazySingleton<CartProvider>(
-      () => CartProvider(locator(), locator()));
+      () => CartProvider(locator(), locator(), locator()));
 }

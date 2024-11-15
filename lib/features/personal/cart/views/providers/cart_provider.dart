@@ -7,11 +7,14 @@ import '../../data/models/cart_model.dart';
 import '../../domain/entities/cart_entity.dart';
 import '../../domain/usecase/cart_item_status_update_usecase.dart';
 import '../../domain/usecase/get_cart_usecase.dart';
+import '../../domain/usecase/remove_from_cart_usecase.dart';
 
 class CartProvider extends ChangeNotifier {
-  CartProvider(this._getCartUsecase, this._cartItemStatusUpdateUsecase);
+  CartProvider(this._getCartUsecase, this._cartItemStatusUpdateUsecase,
+      this._removeFromCartUsecase);
   final GetCartUsecase _getCartUsecase;
   final CartItemStatusUpdateUsecase _cartItemStatusUpdateUsecase;
+  final RemoveFromCartUsecase _removeFromCartUsecase;
 
   List<CartItemEntity> _cartItems = <CartItemEntity>[];
   int _page = 1;
@@ -52,6 +55,19 @@ class CartProvider extends ChangeNotifier {
       AppLog.error(
         e.toString(),
         name: 'CartProvider.updateStatus - Catch',
+        error: e,
+      );
+      return DataFailer<bool>(CustomException(e.toString()));
+    }
+  }
+
+  Future<DataState<bool>> removeItem(String id) async {
+    try {
+      return await _removeFromCartUsecase(id);
+    } catch (e) {
+      AppLog.error(
+        e.toString(),
+        name: 'CartProvider.removeItem - Catch',
         error: e,
       );
       return DataFailer<bool>(CustomException(e.toString()));

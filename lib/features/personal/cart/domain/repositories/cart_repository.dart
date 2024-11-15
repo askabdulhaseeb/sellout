@@ -5,8 +5,9 @@ import '../entities/cart_entity.dart';
 
 abstract interface class CartRepository {
   Future<void> addProductToCart();
-  Future<void> removeProductFromCart();
+  Future<DataState<bool>> removeProductFromCart(String id);
   Future<void> clearCart();
   Future<DataState<CartEntity>> getCart();
-  Future<DataState<bool>> updateStatus(CartItemModel params, CartItemType action);
+  Future<DataState<bool>> updateStatus(
+      CartItemModel params, CartItemType action);
 }

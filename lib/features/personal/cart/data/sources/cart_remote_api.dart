@@ -9,7 +9,7 @@ import 'local_cart.dart';
 abstract interface class CartRemoteAPI {
   Future<DataState<CartEntity>> getCart();
   Future<void> addProductToCart();
-  Future<void> removeProductFromCart();
+  Future<DataState<bool>> removeProductFromCart(String itemID);
   Future<void> clearCart();
   Future<DataState<bool>> updateStatus(
       CartItemModel params, CartItemType action);
@@ -36,7 +36,7 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
           'CartRemoteAPIImpl.getCart - Cart Item Length: ${cartModel.items.length}',
           name: 'CartRemoteAPIImpl.getCart - Success',
         );
-        LocalCart().save(cartModel);
+        await LocalCart().save(cartModel);
         return DataSuccess<CartEntity>(raw, cartModel);
       } else {
         AppLog.error(
@@ -86,18 +86,34 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
   }
 
   @override
-  Future<void> removeProductFromCart() async {
+  Future<DataState<bool>> removeProductFromCart(String itemID) async {
     try {
-      //
+      final String endpoint = '/cart/remove/$itemID';
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.post,
+        isAuth: true,
+      );
+      if (result is DataSuccess<bool>) {
+        await LocalCart().removeFromCart(itemID);
+        return result;
+      } else {
+        AppLog.error(
+          'Failed to remove product from cart',
+          name: 'CartRemoteAPIImpl.removeProductFromCart - Else',
+          error: CustomException('Failed to remove product from cart'),
+        );
+        return DataFailer<bool>(
+            CustomException('Failed to remove product from cart'));
+      }
     } catch (e) {
       AppLog.error(
         e.toString(),
         name: 'CartRemoteAPIImpl.removeProductFromCart - Catch',
         error: e,
       );
+      return DataFailer<bool>(CustomException(e.toString()));
     }
-    // TODO: implement removeProductFromCart
-    throw UnimplementedError();
   }
 
   @override
