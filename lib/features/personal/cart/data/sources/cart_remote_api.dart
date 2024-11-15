@@ -107,11 +107,12 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
   ) async {
     try {
       final String endpoint =
-          '/cart/update/${params.cartItemID}?action=${action.json}';
+          '/cart/update/${params.cartItemID}?action=${action.action}';
       final DataState<bool> result = await ApiCall<bool>().call(
         endpoint: endpoint,
         requestType: ApiRequestType.post,
         isAuth: true,
+        body: action == CartItemType.cart ? params.moveTocart() : null,
       );
       if (result is DataSuccess<bool>) {
         await getCart();

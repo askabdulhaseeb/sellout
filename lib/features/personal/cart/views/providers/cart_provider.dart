@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../core/enums/cart/cart_item_type.dart';
+import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../data/models/cart_model.dart';
 import '../../domain/entities/cart_entity.dart';
@@ -44,6 +45,16 @@ class CartProvider extends ChangeNotifier {
   }
 
   Future<DataState<bool>> updateStatus(CartItemEntity value) async {
-    return await _cartItemStatusUpdateUsecase(CartItemModel.fromEntity(value));
+    try {
+      return await _cartItemStatusUpdateUsecase(
+          CartItemModel.fromEntity(value));
+    } catch (e) {
+      AppLog.error(
+        e.toString(),
+        name: 'CartProvider.updateStatus - Catch',
+        error: e,
+      );
+      return DataFailer<bool>(CustomException(e.toString()));
+    }
   }
 }

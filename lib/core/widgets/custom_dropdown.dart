@@ -1,4 +1,5 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +10,7 @@ class CustomDropdown<T> extends FormField<bool> {
     required this.selectedItem,
     required this.onChanged,
     required FormFieldValidator<bool> validator,
+    this.hint,
     super.key,
   }) : super(
           validator: validator,
@@ -22,6 +24,7 @@ class CustomDropdown<T> extends FormField<bool> {
                   items: items,
                   selectedItem: selectedItem,
                   onChanged: onChanged,
+                  hint: hint,
                 ),
                 if (state.hasError)
                   Padding(
@@ -40,6 +43,7 @@ class CustomDropdown<T> extends FormField<bool> {
   final void Function(T?)? onChanged;
   final T? selectedItem;
   final List<DropdownMenuItem<T>> items;
+  final String? hint;
 
   Widget build(BuildContext context) {
     // ignore: always_specify_types
@@ -48,6 +52,7 @@ class CustomDropdown<T> extends FormField<bool> {
       items: items,
       selectedItem: selectedItem,
       onChanged: onChanged,
+      hint: hint,
     );
   }
 }
@@ -58,6 +63,7 @@ class _Widget<T> extends StatelessWidget {
     required this.items,
     required this.selectedItem,
     required this.onChanged,
+    this.hint,
     super.key,
   });
   final String title;
@@ -65,6 +71,7 @@ class _Widget<T> extends StatelessWidget {
   final T? selectedItem;
   final List<DropdownMenuItem<T>> items;
   final TextEditingController _search = TextEditingController();
+  final String? hint;
 
   @override
   Widget build(BuildContext context) {
@@ -75,11 +82,12 @@ class _Widget<T> extends StatelessWidget {
         : Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(
-                title,
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(height: 4),
+              if (title.isNotEmpty)
+                Text(
+                  title,
+                  style: const TextStyle(fontWeight: FontWeight.w500),
+                ),
+              if (title.isNotEmpty) const SizedBox(height: 4),
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
@@ -90,7 +98,7 @@ class _Widget<T> extends StatelessWidget {
                   child: DropdownButton2<T>(
                     isExpanded: true,
                     hint: Text(
-                      'Select Item',
+                      hint ?? 'select-item'.tr(),
                       style: TextStyle(
                         fontSize: 14,
                         color: Theme.of(context).hintColor,

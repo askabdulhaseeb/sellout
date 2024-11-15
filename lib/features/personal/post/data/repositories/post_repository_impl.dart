@@ -1,5 +1,6 @@
 import '../../../../../core/sources/data_state.dart';
 import '../../domain/entities/post_entity.dart';
+import '../../domain/params/add_to_cart_param.dart';
 import '../../domain/repositories/post_repository.dart';
 import '../sources/remote/post_remote_api.dart';
 
@@ -18,5 +19,10 @@ class PostRepositoryImpl implements PostRepository {
     bool silentUpdate = false,
   }) async {
     return await remoteApi.getPost(id);
+  }
+
+  @override
+  Future<DataState<bool>> addToCart(AddToCartParam param) async {
+    return await remoteApi.addToCart(param);
   }
 }

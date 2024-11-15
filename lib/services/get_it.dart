@@ -26,6 +26,7 @@ import '../features/personal/chats/chat_dashboard/views/providers/chat_dashboard
 import '../features/personal/post/data/repositories/post_repository_impl.dart';
 import '../features/personal/post/data/sources/remote/post_remote_api.dart';
 import '../features/personal/post/domain/repositories/post_repository.dart';
+import '../features/personal/post/domain/usecase/add_to_cart_usecase.dart';
 import '../features/personal/post/domain/usecase/get_feed_usecase.dart';
 import '../features/personal/post/domain/usecase/get_specific_post_usecase.dart';
 import '../features/personal/post/feed/views/providers/feed_provider.dart';
@@ -107,6 +108,7 @@ void _feed() {
   locator.registerFactory<PostRemoteApi>(() => PostRemoteApiImpl());
   locator.registerFactory<PostRepository>(() => PostRepositoryImpl(locator()));
   locator.registerFactory<GetFeedUsecase>(() => GetFeedUsecase(locator()));
+  locator.registerFactory<AddToCartUsecase>(() => AddToCartUsecase(locator()));
   locator.registerLazySingleton<FeedProvider>(() => FeedProvider(locator()));
 }
 
