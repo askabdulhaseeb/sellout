@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 import '../../../../features/personal/auth/signin/data/sources/local/local_auth.dart';
-import '../../../../features/personal/cart/data/models/cart_item_model.dart';
-import '../../../../features/personal/cart/data/sources/local_cart.dart';
-import '../../../../features/personal/cart/views/screens/personal_cart_screen.dart';
+import '../../../../features/personal/cart/basket/data/models/cart_item_model.dart';
+import '../../../../features/personal/cart/basket/data/sources/local_cart.dart';
+import '../../../../features/personal/cart/basket/views/screens/personal_cart_screen.dart';
 import '../../../../features/personal/setting/setting_dashboard/views/screens/personal_setting_screen.dart';
 import '../../../utilities/app_icons.dart';
 
