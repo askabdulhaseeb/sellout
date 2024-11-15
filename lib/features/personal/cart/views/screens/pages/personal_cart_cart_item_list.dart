@@ -19,9 +19,8 @@ class PersonalCartItemList extends StatelessWidget {
           (CartEntity element) => element.cartID == uid,
           orElse: () => CartModel(),
         );
-        final List<CartItemEntity> items = cart.cartItems
-            .where((CartItemEntity element) => element.inCart)
-            .toList();
+        final List<CartItemEntity> items = cart.cartItems;
+        
         return Expanded(
           child: ListView.builder(
             shrinkWrap: true,

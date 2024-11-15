@@ -1,12 +1,14 @@
+import '../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../domain/entities/cart_entity.dart';
 import '../../domain/repositories/cart_repository.dart';
+import '../models/cart_model.dart';
 import '../sources/cart_remote_api.dart';
 
 class CartRepositoryImpl implements CartRepository {
   const CartRepositoryImpl(this._remoteAPI);
   final CartRemoteAPI _remoteAPI;
-  
+
   @override
   Future<DataState<CartEntity>> getCart() async {
     return await _remoteAPI.getCart();
@@ -27,5 +29,13 @@ class CartRepositoryImpl implements CartRepository {
   Future<void> removeProductFromCart() {
     // TODO: implement removeProductFromCart
     throw UnimplementedError();
+  }
+
+  @override
+  Future<DataState<bool>> updateStatus(
+    CartItemModel params,
+    CartItemType action,
+  ) async {
+    return await _remoteAPI.updateStatus(params, action);
   }
 }

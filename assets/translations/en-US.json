@@ -160,6 +160,8 @@
     "payment-options": "Payment Options",
     "cart": "Cart",
     "save-later": "Save for Later",
+    "move-to-cart": "Move to Cart",
+    "proceed-to-checkout": "Proceed to Checkout",
     "total": "Total",
     "error": "Error",
     "none": "none",

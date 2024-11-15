@@ -20,7 +20,7 @@ class CartEntityAdapter extends TypeAdapter<CartEntity> {
       updatedAt: fields[0] as DateTime,
       createdAt: fields[1] as DateTime,
       cartID: fields[2] as String,
-      cartItems: (fields[3] as List).cast<CartItemEntity>(),
+      items: (fields[3] as List).cast<CartItemEntity>(),
     );
   }
 
@@ -35,7 +35,7 @@ class CartEntityAdapter extends TypeAdapter<CartEntity> {
       ..writeByte(2)
       ..write(obj.cartID)
       ..writeByte(3)
-      ..write(obj.cartItems);
+      ..write(obj.items);
   }
 
   @override

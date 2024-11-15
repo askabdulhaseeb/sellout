@@ -12,7 +12,7 @@ class CartEntity {
     required this.updatedAt,
     required this.createdAt,
     required this.cartID,
-    required this.cartItems,
+    required this.items,
   });
 
   @HiveField(0)
@@ -22,11 +22,17 @@ class CartEntity {
   @HiveField(2)
   final String cartID;
   @HiveField(3)
-  final List<CartItemEntity> cartItems;
+  final List<CartItemEntity> items;
 
+  List<CartItemEntity> get cartItems =>
+      items.where((CartItemEntity item) => item.inCart).toList();
+
+  List<CartItemEntity> get saveLaterItems =>
+      items.where((CartItemEntity item) => !item.inCart).toList();
+      
   double get cartTotal {
     double tt = 0;
-    for (final CartItemEntity item in cartItems) {
+    for (final CartItemEntity item in items) {
       if (item.inCart) {
         tt += (item.quantity * (LocalPost().post(item.postID)?.price ?? 0));
       }
@@ -36,7 +42,7 @@ class CartEntity {
 
   double get saveLaterTotal {
     double tt = 0;
-    for (final CartItemEntity item in cartItems) {
+    for (final CartItemEntity item in items) {
       if (!item.inCart) {
         tt += (item.quantity * (LocalPost().post(item.postID)?.price ?? 0));
       }
@@ -45,7 +51,7 @@ class CartEntity {
   }
 
   int get cartItemsCount =>
-      cartItems.where((CartItemEntity item) => item.inCart).length;
+      items.where((CartItemEntity item) => item.inCart).length;
 
-  int get saveLaterItemsCount => cartItems.length - cartItemsCount;
+  int get saveLaterItemsCount => items.length - cartItemsCount;
 }

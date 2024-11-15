@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../core/sources/data_state.dart';
+import '../../data/models/cart_model.dart';
 import '../../domain/entities/cart_entity.dart';
+import '../../domain/usecase/cart_item_status_update_usecase.dart';
 import '../../domain/usecase/get_cart_usecase.dart';
 
 class CartProvider extends ChangeNotifier {
-  CartProvider(this._getCartUsecase);
+  CartProvider(this._getCartUsecase, this._cartItemStatusUpdateUsecase);
   final GetCartUsecase _getCartUsecase;
+  final CartItemStatusUpdateUsecase _cartItemStatusUpdateUsecase;
 
   List<CartItemEntity> _cartItems = <CartItemEntity>[];
   int _page = 1;
@@ -34,9 +37,13 @@ class CartProvider extends ChangeNotifier {
     }
     final DataState<CartEntity> satte = await _getCartUsecase('');
     if (satte is DataSuccess) {
-      _cartItems = satte.entity?.cartItems ?? <CartItemEntity>[];
+      _cartItems = satte.entity?.items ?? <CartItemEntity>[];
     }
     notifyListeners();
     return true;
+  }
+
+  Future<DataState<bool>> updateStatus(CartItemEntity value) async {
+    return await _cartItemStatusUpdateUsecase(CartItemModel.fromEntity(value));
   }
 }

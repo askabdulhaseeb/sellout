@@ -1,7 +1,9 @@
+import '../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/api_call.dart';
 
 import '../models/cart_item_model.dart';
+import '../models/cart_model.dart';
 import 'local_cart.dart';
 
 abstract interface class CartRemoteAPI {
@@ -9,6 +11,8 @@ abstract interface class CartRemoteAPI {
   Future<void> addProductToCart();
   Future<void> removeProductFromCart();
   Future<void> clearCart();
+  Future<DataState<bool>> updateStatus(
+      CartItemModel params, CartItemType action);
 }
 
 class CartRemoteAPIImpl implements CartRemoteAPI {
@@ -29,7 +33,7 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
         }
         final CartModel cartModel = CartModel.fromRaw(raw);
         AppLog.info(
-          'CartRemoteAPIImpl.getCart - Cart Item Length: ${cartModel.cartItems.length}',
+          'CartRemoteAPIImpl.getCart - Cart Item Length: ${cartModel.items.length}',
           name: 'CartRemoteAPIImpl.getCart - Success',
         );
         LocalCart().save(cartModel);
@@ -94,5 +98,39 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
     }
     // TODO: implement removeProductFromCart
     throw UnimplementedError();
+  }
+
+  @override
+  Future<DataState<bool>> updateStatus(
+    CartItemModel params,
+    CartItemType action,
+  ) async {
+    try {
+      final String endpoint =
+          '/cart/update/${params.cartItemID}?action=${action.json}';
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.post,
+        isAuth: true,
+      );
+      if (result is DataSuccess<bool>) {
+        await getCart();
+        return result;
+      } else {
+        AppLog.error(
+          'Failed to update status',
+          name: 'CartRemoteAPIImpl.updateStatus - Else',
+          error: CustomException('Failed to update status'),
+        );
+        return DataFailer<bool>(CustomException('Failed to update status'));
+      }
+    } catch (e) {
+      AppLog.error(
+        e.toString(),
+        name: 'CartRemoteAPIImpl.updateStatus - Catch',
+        error: e,
+      );
+      return DataFailer<bool>(CustomException(e.toString()));
+    }
   }
 }

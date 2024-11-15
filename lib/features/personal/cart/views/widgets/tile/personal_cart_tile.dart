@@ -8,6 +8,7 @@ import '../../../../../../core/widgets/shadow_container.dart';
 import '../../../../post/data/sources/local/local_post.dart';
 import '../../../../post/domain/entities/post_entity.dart';
 import '../../../domain/entities/cart_item_entity.dart';
+import 'personal_cart_tile_trailing_section.dart';
 
 class PersonalCartTile extends StatelessWidget {
   const PersonalCartTile({required this.item, super.key});
@@ -15,7 +16,6 @@ class PersonalCartTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color primaryColor = Theme.of(context).primaryColor;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
       child: ShadowContainer(
@@ -99,47 +99,7 @@ class PersonalCartTile extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      '${item.quantity * (post?.price ?? 0)} ${post?.currency}'
-                          .toUpperCase(),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    ShadowContainer(
-                      onTap: () {},
-                      padding: const EdgeInsets.all(8),
-                      child: const Icon(Icons.delete, color: Colors.red),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        print('object');
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.only(top: 8),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 4,
-                          horizontal: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: primaryColor.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          'save-later',
-                          style: TextStyle(color: primaryColor, fontSize: 14),
-                        ).tr(),
-                      ),
-                    ),
-                  ],
-                ),
+                PersonalCartTileTrailingSection(item: item, post: post),
               ],
             );
           },

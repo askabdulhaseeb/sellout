@@ -31,7 +31,8 @@ class PersonalCartScreen extends StatelessWidget {
                 cartPro.basketPage == CartItemType.cart
                     ? const PersonalCartItemList()
                     : const PersonalCartSaveLaterItemList(),
-                const PersonalCartTotalSection(),
+                if (cartPro.basketPage == CartItemType.cart)
+                  const PersonalCartTotalSection(),
               ],
             );
           },

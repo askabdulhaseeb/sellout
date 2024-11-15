@@ -20,4 +20,14 @@ class CartItemModel extends CartItemEntity {
         cartItemID: json['cart_item_id'],
         status: json['status'],
       );
+
+  factory CartItemModel.fromEntity(CartItemEntity entity) => CartItemModel(
+        quantity: entity.quantity,
+        postID: entity.postID,
+        listID: entity.listID,
+        color: entity.color,
+        size: entity.size,
+        cartItemID: entity.cartItemID,
+        status: entity.status,
+      );
 }

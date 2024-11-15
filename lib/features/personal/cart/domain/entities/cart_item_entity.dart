@@ -1,4 +1,6 @@
 import 'package:hive/hive.dart';
+
+import '../../../../../core/enums/cart/cart_item_type.dart';
 part 'cart_item_entity.g.dart';
 
 @HiveType(typeId: 38)
@@ -29,4 +31,5 @@ class CartItemEntity {
   final String status;
 
   bool get inCart => status == 'cart';
+  CartItemType get type => inCart ? CartItemType.cart : CartItemType.saveLater;
 }

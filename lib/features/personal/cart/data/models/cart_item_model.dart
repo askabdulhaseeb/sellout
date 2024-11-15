@@ -9,12 +9,12 @@ class CartModel extends CartEntity {
     String? cartID,
     DateTime? updatedAt,
     DateTime? createdAt,
-    List<CartItemModel>? cartItems,
+    List<CartItemModel>? items,
   }) : super(
           cartID: cartID ?? LocalAuth.uid ?? '',
           updatedAt: updatedAt ?? DateTime.now(),
           createdAt: createdAt ?? DateTime.now(),
-          cartItems: cartItems ?? <CartItemModel>[],
+          items: items ?? <CartItemModel>[],
         );
 
   factory CartModel.fromRaw(String value) =>
@@ -24,7 +24,16 @@ class CartModel extends CartEntity {
         updatedAt: DateTime.parse(value['updated_at']),
         createdAt: DateTime.parse(value['created_at']),
         cartID: value['cart_id'],
-        cartItems: List<CartItemModel>.from((value['cart_items'] ?? <dynamic>[])
+        items: List<CartItemModel>.from((value['cart_items'] ?? <dynamic>[])
             .map((dynamic x) => CartItemModel.fromJson(x))),
+      );
+
+  factory CartModel.fromEntity(CartEntity entity) => CartModel(
+        cartID: entity.cartID,
+        updatedAt: entity.updatedAt,
+        createdAt: entity.createdAt,
+        items: entity.items
+            .map((CartItemEntity x) => CartItemModel.fromEntity(x))
+            .toList(),
       );
 }

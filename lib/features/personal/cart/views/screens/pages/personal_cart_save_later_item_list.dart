@@ -19,9 +19,8 @@ class PersonalCartSaveLaterItemList extends StatelessWidget {
           (CartEntity element) => element.cartID == uid,
           orElse: () => CartModel(),
         );
-        final List<CartItemEntity> items = cart.cartItems
-            .where((CartItemEntity element) => !element.inCart)
-            .toList();
+        final List<CartItemEntity> items = cart.saveLaterItems;
+
         return ListView.builder(
           shrinkWrap: true,
           primary: false,
