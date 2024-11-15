@@ -1,11 +1,12 @@
 enum CartItemType {
-  cart('cart', 'cart'),
-  saveLater('save-later', 'save_later');
+  cart('cart', 'cart', 'save-later'),
+  saveLater('save-later', 'save_later', 'move-to-cart');
 
   // Add the following line:
-  const CartItemType(this.code, this.json);
+  const CartItemType(this.code, this.json, this.tileActionCode);
   final String code;
   final String json;
+  final String tileActionCode;
 
   static CartItemType fromJson(String json) {
     return CartItemType.values.firstWhere(
@@ -16,5 +17,6 @@ enum CartItemType {
 
   static List<CartItemType> get list => values.toList();
 
-  static List<String> get codeList => values.map((CartItemType e) => e.code).toList();
+  static List<String> get codeList =>
+      values.map((CartItemType e) => e.code).toList();
 }
