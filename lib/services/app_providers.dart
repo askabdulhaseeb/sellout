@@ -36,5 +36,6 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
       value: ProfileProvider(locator(), locator())),
 
   ChangeNotifierProvider<FeedProvider>.value(value: FeedProvider(locator())),
-  ChangeNotifierProvider<CartProvider>.value(value: CartProvider(locator(),locator())),
+  ChangeNotifierProvider<CartProvider>.value(
+      value: CartProvider(locator(), locator(), locator())),
 ];

@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/utilities/app_string.dart';
+import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../domain/entities/cart_entity.dart';
 import '../models/cart_item_model.dart';
 
@@ -24,7 +25,11 @@ class LocalCart {
     }
   }
 
-  Future<void> save(CartEntity user) async => await _box.put(user.cartID, user);
+  Future<void> save(CartEntity user) async {
+    await _box.clear();
+    await _box.put(user.cartID, user);
+  }
+
   CartEntity entity(String value) => _box.values.firstWhere(
         (CartEntity element) => element.cartID == value,
         orElse: () => CartModel(),
@@ -37,6 +42,14 @@ class LocalCart {
     } else {
       return DataFailer<CartEntity?>(CustomException('Loading...'));
     }
+  }
+
+  Future<void> removeFromCart(String itemID) async {
+    final String me = LocalAuth.uid ?? '';
+    final CartEntity currentt = entity(me);
+    currentt.items
+        .removeWhere((CartItemEntity element) => element.cartItemID == itemID);
+    await save(currentt);
   }
 
   ValueListenable<Box<CartEntity>> listenable() => _box.listenable();
