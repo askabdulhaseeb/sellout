@@ -1,11 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../data/models/cart_item_model.dart';
 import '../../data/sources/local_cart.dart';
+import '../providers/cart_provider.dart';
 
 class PersonalCartTotalSection extends StatelessWidget {
   const PersonalCartTotalSection({super.key});
@@ -42,7 +44,8 @@ class PersonalCartTotalSection extends StatelessWidget {
               CustomElevatedButton(
                 title: 'proceed-to-checkout'.tr(),
                 isLoading: false,
-                onTap: () {},
+                onTap: () =>
+                    Provider.of<CartProvider>(context, listen: false).page = 2,
               ),
               const SizedBox(height: 24),
             ],
