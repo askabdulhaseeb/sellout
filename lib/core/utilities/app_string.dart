@@ -13,6 +13,7 @@ class AppStrings {
   static String get localPostsBox => 'com.sellout.local-posts';
   static String get localVisitingsBox => 'com.sellout.local-visitings';
   static String get localCartBox => 'com.sellout.local-carts';
+  static String get localBusinesssBox => 'com.sellout.local-businesses';
   // API
   String get baseURL =>
       kDebugMode ? 'http://192.168.0.181:3200' : dotenv.env['baseURL'] ?? '';

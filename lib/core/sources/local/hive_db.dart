@@ -4,6 +4,12 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../features/attachment/domain/entities/attachment_entity.dart';
+import '../../../features/business/core/data/sources/local_business.dart';
+import '../../../features/business/core/domain/entity/business_address_entity.dart';
+import '../../../features/business/core/domain/entity/business_employee_entity.dart';
+import '../../../features/business/core/domain/entity/business_entity.dart';
+import '../../../features/business/core/domain/entity/business_travel_detail_entity.dart';
+import '../../../features/business/core/domain/entity/routine_entity.dart';
 import '../../../features/personal/cart/data/sources/local_cart.dart';
 import '../../../features/personal/cart/domain/entities/cart/cart_entity.dart';
 import '../../../features/personal/chats/chat/data/sources/local/local_message.dart';
@@ -92,6 +98,12 @@ class HiveDB {
     Hive.registerAdapter(SupporterDetailEntityAdapter()); // 36
     Hive.registerAdapter(CartEntityAdapter()); // 37
     Hive.registerAdapter(CartItemEntityAdapter()); // 38
+    Hive.registerAdapter(BusinessEntityAdapter()); // 39
+    Hive.registerAdapter(BusinessTravelDetailEntityAdapter()); // 40
+    Hive.registerAdapter(BusinessEmployeeEntityAdapter()); // 41
+    Hive.registerAdapter(RoutineEntityAdapter()); // 42
+    Hive.registerAdapter(BusinessAddressEntityAdapter()); // 43
+
     // Hive box Open
     await refresh();
   }
@@ -106,5 +118,6 @@ class HiveDB {
     await LocalChatMessage().refresh();
     await LocalVisit().refresh();
     await LocalCart().refresh();
+    await LocalBusiness().refresh();
   }
 }
