@@ -68,6 +68,7 @@ class PostModel extends PostEntity {
     required super.readyToLeave,
     required super.wormAndFleaTreated,
     required super.accessCode,
+    required super.businessID,
   });
 
   factory PostModel.fromEntity(PostEntity entity) {
@@ -126,6 +127,7 @@ class PostModel extends PostEntity {
       readyToLeave: entity.readyToLeave,
       wormAndFleaTreated: entity.wormAndFleaTreated,
       accessCode: entity.accessCode,
+      businessID: entity.businessID,
     );
   }
 
@@ -223,6 +225,7 @@ class PostModel extends PostEntity {
       wormAndFleaTreated:
           BooleanStatusType.fromJson(json['worm_and_flea_treated']),
       accessCode: json['access_code'],
+      businessID: json['business_id'],
     );
   }
 }

@@ -71,13 +71,14 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       readyToLeave: fields[51] as String?,
       wormAndFleaTreated: fields[52] as BooleanStatusType?,
       accessCode: fields[53] as String?,
+      businessID: fields[54] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, PostEntity obj) {
     writer
-      ..writeByte(54)
+      ..writeByte(55)
       ..writeByte(0)
       ..write(obj.quantity)
       ..writeByte(1)
@@ -185,7 +186,9 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       ..writeByte(52)
       ..write(obj.wormAndFleaTreated)
       ..writeByte(53)
-      ..write(obj.accessCode);
+      ..write(obj.accessCode)
+      ..writeByte(54)
+      ..write(obj.businessID);
   }
 
   @override

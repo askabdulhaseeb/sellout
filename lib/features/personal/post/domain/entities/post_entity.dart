@@ -69,6 +69,7 @@ class PostEntity {
     this.readyToLeave,
     this.wormAndFleaTreated,
     this.accessCode,
+    this.businessID,
   });
 
   @HiveField(0)
@@ -179,6 +180,8 @@ class PostEntity {
   final BooleanStatusType? wormAndFleaTreated;
   @HiveField(53)
   final String? accessCode;
+  @HiveField(54)
+  final String? businessID;
 
   String get imageURL => fileUrls.isEmpty ? '' : fileUrls.first.url;
   String get priceStr => '$currency $price'.toUpperCase();

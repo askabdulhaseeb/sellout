@@ -26,9 +26,15 @@ class CustomNetworkImage extends StatelessWidget {
             ? placeholder.substring(0, 2)
             : placeholder;
     return imageURL == null || (imageURL ?? '').isEmpty
-        ? Text(
-            placeholderText.toUpperCase(),
-            style: const TextStyle(fontWeight: FontWeight.w500),
+        ? Container(
+            height: size,
+            width: size,
+            color: Theme.of(context).dividerColor,
+            alignment: Alignment.center,
+            child: Text(
+              placeholderText.toUpperCase(),
+              style: const TextStyle(fontWeight: FontWeight.w500),
+            ),
           )
         : CachedNetworkImage(
             imageUrl: imageURL ?? '',

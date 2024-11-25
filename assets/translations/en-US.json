@@ -170,6 +170,11 @@
     "size": "Size",
     "color": "Color",
     "total": "Total",
+    "business": "Business",
+    "details": "Details",
+    "calender": "Calender",
+    "myviewing": "My Viewing",
+    "reviews": "Reviews",
     "error": "Error",
     "none": "none",
     "na": "N/A"
