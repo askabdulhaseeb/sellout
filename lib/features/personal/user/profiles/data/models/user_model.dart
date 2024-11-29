@@ -7,6 +7,8 @@ import '../../../../auth/signin/data/models/address_model.dart';
 
 import '../../domain/entities/user_entity.dart';
 import 'supporter_detail_model.dart';
+import 'user_role_info_business_model.dart';
+import 'user_support_info_model.dart';
 export '../../domain/entities/user_entity.dart';
 
 class UserModel extends UserEntity {
@@ -29,6 +31,12 @@ class UserModel extends UserEntity {
     required super.userName,
     required super.profileType,
     required super.saved,
+    required super.chatIDs,
+    required super.userRoleInfoInBusiness,
+    required super.suppotersInfo,
+    required super.supportingsInfo,
+    required super.phoneNumber,
+    required super.updateAt,
   });
 
   factory UserModel.fromRawJson(String str) =>
@@ -68,5 +76,23 @@ class UserModel extends UserEntity {
         profileType: PrivacyType.fromJson(json['profile_type']),
         saved: List<String>.from(
             (json['saved'] ?? <dynamic>[]).map((dynamic x) => x)),
+        chatIDs: List<String>.from(
+            (json['chat_ids'] ?? <dynamic>[]).map((dynamic x) => x)),
+        userRoleInfoInBusiness: List<UserRoleInfoInBusinessModel>.from(
+            (json['business_map'] ?? <dynamic>[]).map(
+          (dynamic x) => UserRoleInfoInBusinessModel.fromMap(x),
+        )),
+        suppotersInfo: List<UserSupportInfoModel>.from(
+            (json['supporters'] ?? <dynamic>[]).map(
+          (dynamic x) => UserSupportInfoModel.fromMap(x),
+        )),
+        supportingsInfo: List<UserSupportInfoModel>.from(
+            (json['supporting'] ?? <dynamic>[]).map(
+          (dynamic x) => UserSupportInfoModel.fromMap(x),
+        )),
+        phoneNumber: json['phone_number'] ?? '',
+        updateAt: json['update_at'] == null
+            ? DateTime.now()
+            : (json['update_at']?.toString().toDateTime()) ?? DateTime.now(),
       );
 }

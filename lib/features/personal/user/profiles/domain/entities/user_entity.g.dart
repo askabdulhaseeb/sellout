@@ -35,13 +35,25 @@ class UserEntityAdapter extends TypeAdapter<UserEntity> {
       userName: fields[15] as String,
       profileType: fields[16] as PrivacyType,
       saved: fields[17] == null ? [] : (fields[17] as List).cast<String>(),
+      chatIDs: fields[18] == null ? [] : (fields[18] as List).cast<String>(),
+      userRoleInfoInBusiness: fields[19] == null
+          ? []
+          : (fields[19] as List).cast<UserRoleInfoInBusinessEntity>(),
+      suppotersInfo: fields[20] == null
+          ? []
+          : (fields[20] as List).cast<UserSupportInfoEntity>(),
+      supportingsInfo: fields[21] == null
+          ? []
+          : (fields[21] as List).cast<UserSupportInfoEntity>(),
+      phoneNumber: fields[22] == null ? '' : fields[22] as String,
+      updateAt: fields[23] as DateTime,
     );
   }
 
   @override
   void write(BinaryWriter writer, UserEntity obj) {
     writer
-      ..writeByte(18)
+      ..writeByte(24)
       ..writeByte(0)
       ..write(obj.mobileNo)
       ..writeByte(1)
@@ -77,7 +89,19 @@ class UserEntityAdapter extends TypeAdapter<UserEntity> {
       ..writeByte(16)
       ..write(obj.profileType)
       ..writeByte(17)
-      ..write(obj.saved);
+      ..write(obj.saved)
+      ..writeByte(18)
+      ..write(obj.chatIDs)
+      ..writeByte(19)
+      ..write(obj.userRoleInfoInBusiness)
+      ..writeByte(20)
+      ..write(obj.suppotersInfo)
+      ..writeByte(21)
+      ..write(obj.supportingsInfo)
+      ..writeByte(22)
+      ..write(obj.phoneNumber)
+      ..writeByte(23)
+      ..write(obj.updateAt);
   }
 
   @override

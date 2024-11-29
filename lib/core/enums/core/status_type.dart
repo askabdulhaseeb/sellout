@@ -5,7 +5,10 @@ part 'status_type.g.dart';
 @HiveType(typeId: 35)
 enum StatusType {
   @HiveField(0)
-  pending('pending', 'pending');
+  pending('pending', 'pending'),
+  @HiveField(1)
+  accepted('accepted', 'accepted');
+
 
   const StatusType(this.code, this.json);
   final String code;

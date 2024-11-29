@@ -4,6 +4,8 @@ import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../auth/signin/data/models/address_model.dart';
 import 'supporter_detail_entity.dart';
+import 'user_role_info_business.dart';
+import 'user_support_info_entity.dart';
 
 part 'user_entity.g.dart';
 
@@ -28,6 +30,12 @@ class UserEntity {
     required this.userName,
     required this.profileType,
     required this.saved,
+    required this.chatIDs,
+    required this.userRoleInfoInBusiness,
+    required this.suppotersInfo,
+    required this.supportingsInfo,
+    required this.phoneNumber,
+    required this.updateAt,
   });
 
   @HiveField(0)
@@ -66,6 +74,18 @@ class UserEntity {
   final PrivacyType profileType;
   @HiveField(17, defaultValue: <String>[])
   final List<String> saved;
+  @HiveField(18, defaultValue: <String>[])
+  final List<String> chatIDs;
+  @HiveField(19, defaultValue: <String>[])
+  final List<UserRoleInfoInBusinessEntity> userRoleInfoInBusiness;
+  @HiveField(20, defaultValue: <String>[])
+  final List<UserSupportInfoEntity> suppotersInfo;
+  @HiveField(21, defaultValue: <String>[])
+  final List<UserSupportInfoEntity> supportingsInfo;
+  @HiveField(22, defaultValue: '')
+  final String phoneNumber;
+  @HiveField(23)
+  final DateTime updateAt;
 
   String? get profilePhotoURL =>
       profilePic.isEmpty ? null : profilePic.first.url;

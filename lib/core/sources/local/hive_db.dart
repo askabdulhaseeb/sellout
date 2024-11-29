@@ -39,6 +39,8 @@ import '../../../features/personal/post/domain/entities/visit/visiting_entity.da
 import '../../../features/personal/user/profiles/data/sources/local/local_user.dart';
 import '../../../features/personal/user/profiles/data/sources/local/local_visits.dart';
 import '../../../features/personal/user/profiles/domain/entities/supporter_detail_entity.dart';
+import '../../../features/personal/user/profiles/domain/entities/user_role_info_business.dart';
+import '../../../features/personal/user/profiles/domain/entities/user_support_info_entity.dart';
 import '../../enums/chat/chat_participant_role.dart';
 import '../../enums/core/status_type.dart';
 import '../../enums/listing/core/boolean_status_type.dart';
@@ -103,6 +105,8 @@ class HiveDB {
     Hive.registerAdapter(BusinessEmployeeEntityAdapter()); // 41
     Hive.registerAdapter(RoutineEntityAdapter()); // 42
     Hive.registerAdapter(BusinessAddressEntityAdapter()); // 43
+    Hive.registerAdapter(UserRoleInfoInBusinessEntityAdapter()); // 44
+    Hive.registerAdapter(UserSupportInfoEntityAdapter()); // 45
 
     // Hive box Open
     await refresh();

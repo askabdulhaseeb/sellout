@@ -51,8 +51,8 @@ class PostRemoteApiImpl implements PostRemoteApi {
               result.exception ?? CustomException('something-wrong'.tr()));
         }
         final List<dynamic> listt = json.decode(raw)['response'];
-        final List<PostEntity> list = <PostEntity>[];
         log('PostRemoteApiImpl.getFeed: Lenght: ${listt.length}');
+        final List<PostEntity> list = <PostEntity>[];
         for (final dynamic item in listt) {
           final PostEntity post = PostModel.fromJson(item);
           await LocalPost().save(post);
