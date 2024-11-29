@@ -15,12 +15,12 @@ class BusinessEmployeeModel extends BusinessEmployeeEntity {
   factory BusinessEmployeeModel.fromJson(Map<String, dynamic> json) =>
       BusinessEmployeeModel(
         joinAt: json['join_at']?.toString().toDateTime() ?? DateTime.now(),
-        uid: json['uid'],
-        addBy: json['add_by'],
-        role: json['role'],
-        source: json['source'],
+        uid: json['uid'] ?? '',
+        addBy: json['add_by'] ?? '',
+        role: json['role'] ?? '',
+        source: json['source'] ?? '',
         chatAt: json['chat_at']?.toString().toDateTime() ?? DateTime.now(),
-        status: json['status'],
+        status: json['status'] ?? '',
       );
 
   Map<String, dynamic> toJson() => <String, dynamic>{
