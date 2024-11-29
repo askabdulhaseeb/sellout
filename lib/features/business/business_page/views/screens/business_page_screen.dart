@@ -8,6 +8,7 @@ import '../providers/business_page_provider.dart';
 import '../widgets/business_page_header_section.dart';
 import '../widgets/business_page_score_section.dart';
 import '../widgets/business_page_table_section.dart';
+import '../widgets/business_page_tap_page_section.dart';
 
 class BusinessPageScreen extends StatelessWidget {
   const BusinessPageScreen({required this.businessID, super.key});
@@ -25,14 +26,17 @@ class BusinessPageScreen extends StatelessWidget {
           BuildContext context,
           AsyncSnapshot<BusinessEntity?> snapshot,
         ) {
-          final BusinessEntity? business = snapshot.data;
+          final BusinessEntity? business =
+              snapshot.data ?? LocalBusiness().business(businessID);
           return business == null
               ? Center(child: const Text('something-wrong').tr())
               : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     BusinessPageHeaderSection(business: business),
                     BusinessPageScoreSection(business: business),
                     BusinessPageTableSection(business: business),
+                    BusinessPageTapPageSection(business: business),
                   ],
                 );
         },

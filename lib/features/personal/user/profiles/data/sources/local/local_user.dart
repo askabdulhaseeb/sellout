@@ -2,7 +2,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/utilities/app_string.dart';
+import '../../../../../../../services/get_it.dart';
 import '../../../domain/entities/user_entity.dart';
+import '../../../domain/usecase/get_user_by_uid.dart';
 
 export '../../models/user_model.dart';
 
@@ -31,6 +33,22 @@ class LocalUser {
       return DataSuccess<UserEntity?>(value, entity);
     } else {
       return DataFailer<UserEntity?>(CustomException('Loading...'));
+    }
+  }
+
+  Future<UserEntity?> user(String id) async {
+    final UserEntity? entity = userEntity(id);
+    if (entity != null) {
+      final GetUserByUidUsecase getUserByUidUsecase =
+          GetUserByUidUsecase(locator());
+      final DataState<UserEntity?> user = await getUserByUidUsecase(id);
+      if (user is DataSuccess) {
+        return user.entity;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
     }
   }
 }
