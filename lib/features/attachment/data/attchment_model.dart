@@ -21,9 +21,10 @@ class AttachmentModel extends AttachmentEntity {
 
   factory AttachmentModel.fromJson(Map<String, dynamic> json) =>
       AttachmentModel(
-        createdAt: (json['created_at']?.toString().toDateTime()) ?? DateTime.now(),
+        createdAt:
+            (json['created_at']?.toString().toDateTime()) ?? DateTime.now(),
         type: AttachmentType.fromString(json['type']),
-        url: json['url'] ?? '',
+        url: json['url'] ?? json[' url'] ?? '',
         fileId: json['file_id'] ?? '',
         originalName: json['original_name'] ?? '',
       );

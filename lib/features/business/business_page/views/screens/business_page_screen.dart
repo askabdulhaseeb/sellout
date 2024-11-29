@@ -18,28 +18,30 @@ class BusinessPageScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('business').tr(), centerTitle: false),
-      body: FutureBuilder<BusinessEntity?>(
-        future: Provider.of<BusinessPageProvider>(context, listen: false)
-            .getBusinessByID(businessID),
-        initialData: LocalBusiness().business(businessID),
-        builder: (
-          BuildContext context,
-          AsyncSnapshot<BusinessEntity?> snapshot,
-        ) {
-          final BusinessEntity? business =
-              snapshot.data ?? LocalBusiness().business(businessID);
-          return business == null
-              ? Center(child: const Text('something-wrong').tr())
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    BusinessPageHeaderSection(business: business),
-                    BusinessPageScoreSection(business: business),
-                    BusinessPageTableSection(business: business),
-                    BusinessPageTapPageSection(business: business),
-                  ],
-                );
-        },
+      body: SingleChildScrollView(
+        child: FutureBuilder<BusinessEntity?>(
+          future: Provider.of<BusinessPageProvider>(context, listen: false)
+              .getBusinessByID(businessID),
+          initialData: LocalBusiness().business(businessID),
+          builder: (
+            BuildContext context,
+            AsyncSnapshot<BusinessEntity?> snapshot,
+          ) {
+            final BusinessEntity? business =
+                snapshot.data ?? LocalBusiness().business(businessID);
+            return business == null
+                ? Center(child: const Text('something-wrong').tr())
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      BusinessPageHeaderSection(business: business),
+                      BusinessPageScoreSection(business: business),
+                      BusinessPageTableSection(business: business),
+                      BusinessPageTapPageSection(business: business),
+                    ],
+                  );
+          },
+        ),
       ),
     );
   }

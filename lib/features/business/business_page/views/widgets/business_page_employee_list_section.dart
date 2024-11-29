@@ -48,6 +48,7 @@ class _EmployeeTile extends StatelessWidget {
           return Container(
             width: 120,
             padding: const EdgeInsets.all(4),
+            margin: const EdgeInsets.only(right: 8),
             decoration: BoxDecoration(
               color: Colors.grey[200],
               borderRadius: BorderRadius.circular(8),

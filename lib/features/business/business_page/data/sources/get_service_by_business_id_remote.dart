@@ -70,7 +70,7 @@ class GetServiceByBusinessIdRemoteImpl implements GetServiceByBusinessIdRemote {
       }
     } catch (e) {
       AppLog.error(
-        e.toString(),
+        '$businessId - ${e.toString()}',
         name: 'GetServiceByBusinessIdRemoteImpl.services - catch',
         error: e,
       );
