@@ -5,11 +5,13 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../../features/attachment/domain/entities/attachment_entity.dart';
 import '../../../features/business/core/data/sources/local_business.dart';
+import '../../../features/business/core/data/sources/service/local_service.dart';
 import '../../../features/business/core/domain/entity/business_address_entity.dart';
 import '../../../features/business/core/domain/entity/business_employee_entity.dart';
 import '../../../features/business/core/domain/entity/business_entity.dart';
 import '../../../features/business/core/domain/entity/business_travel_detail_entity.dart';
 import '../../../features/business/core/domain/entity/routine_entity.dart';
+import '../../../features/business/core/domain/entity/service/service_entity.dart';
 import '../../../features/personal/cart/data/sources/local_cart.dart';
 import '../../../features/personal/cart/domain/entities/cart/cart_entity.dart';
 import '../../../features/personal/chats/chat/data/sources/local/local_message.dart';
@@ -107,6 +109,7 @@ class HiveDB {
     Hive.registerAdapter(BusinessAddressEntityAdapter()); // 43
     Hive.registerAdapter(UserRoleInfoInBusinessEntityAdapter()); // 44
     Hive.registerAdapter(UserSupportInfoEntityAdapter()); // 45
+    Hive.registerAdapter(ServiceEntityAdapter()); // 46
 
     // Hive box Open
     await refresh();
@@ -123,5 +126,6 @@ class HiveDB {
     await LocalVisit().refresh();
     await LocalCart().refresh();
     await LocalBusiness().refresh();
+    await LocalService().refresh();
   }
 }

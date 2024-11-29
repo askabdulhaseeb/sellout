@@ -1,5 +1,9 @@
 import 'package:get_it/get_it.dart';
 
+import '../features/business/business_page/data/repositories/business_page_services_repository.dart';
+import '../features/business/business_page/data/sources/get_service_by_business_id_remote.dart';
+import '../features/business/business_page/domain/repositories/business_page_services_repository.dart';
+import '../features/business/business_page/domain/usecase/get_services_list_by_business_id_usecase.dart';
 import '../features/business/business_page/views/providers/business_page_provider.dart';
 import '../features/business/core/data/repository/business_repo_impl.dart';
 import '../features/business/core/data/sources/business_remote_api.dart';
@@ -63,6 +67,7 @@ void setupLocator() {
   _post();
   _cart();
   _business();
+  _services();
 }
 
 void _auth() {
@@ -165,5 +170,21 @@ void _business() {
   //
   // Providers
   locator.registerLazySingleton<BusinessPageProvider>(
-      () => BusinessPageProvider(locator()));
+      () => BusinessPageProvider(locator(), locator()));
+}
+
+void _services() {
+  // API
+  locator.registerFactory<GetServiceByBusinessIdRemote>(
+      () => GetServiceByBusinessIdRemoteImpl());
+  //
+  // REPOSITORIES
+  locator.registerFactory<BusinessPageServicesRepository>(
+      () => BusinessPageServicesRepositoryImpl(locator()));
+  //
+  // USECASES
+  locator.registerFactory<GetServicesListByBusinessIdUsecase>(
+      () => GetServicesListByBusinessIdUsecase(locator()));
+  //
+  // Providers
 }
