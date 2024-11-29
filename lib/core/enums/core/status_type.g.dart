@@ -15,6 +15,8 @@ class StatusTypeAdapter extends TypeAdapter<StatusType> {
     switch (reader.readByte()) {
       case 0:
         return StatusType.pending;
+      case 1:
+        return StatusType.accepted;
       default:
         return StatusType.pending;
     }
@@ -25,6 +27,9 @@ class StatusTypeAdapter extends TypeAdapter<StatusType> {
     switch (obj) {
       case StatusType.pending:
         writer.writeByte(0);
+        break;
+      case StatusType.accepted:
+        writer.writeByte(1);
         break;
     }
   }
