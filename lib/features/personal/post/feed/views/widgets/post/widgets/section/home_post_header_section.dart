@@ -13,8 +13,8 @@ import '../../../../../../../user/profiles/domain/usecase/get_user_by_uid.dart';
 import '../../../../../../../user/profiles/views/screens/user_profile_screen.dart';
 import '../../../../../../domain/entities/post_entity.dart';
 
-class HomePostHeaderSection extends StatelessWidget {
-  const HomePostHeaderSection({required this.post, super.key});
+class PostHeaderSection extends StatelessWidget {
+  const PostHeaderSection({required this.post, super.key});
   final PostEntity post;
 
   @override

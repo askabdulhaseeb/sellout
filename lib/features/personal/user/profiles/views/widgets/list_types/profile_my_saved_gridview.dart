@@ -34,7 +34,7 @@ class ProfileMySavedGridview extends StatelessWidget {
                     final PostEntity? post = snapshot.data;
                     return post == null
                         ? const SizedBox.expand()
-                        : ProfilePostGridViewTile(post: post);
+                        : PostGridViewTile(post: post);
                   });
             },
           );
