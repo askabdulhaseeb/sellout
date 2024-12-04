@@ -24,17 +24,17 @@ class PostRemoteApiImpl implements PostRemoteApi {
   Future<DataState<List<PostEntity>>> getFeed() async {
     const String endpoint = '/post';
     try {
-      ApiRequestEntity? request = await LocalRequestHistory().request(
-        endpoint: endpoint,
-        duration:
-            kDebugMode ? const Duration(days: 1) : const Duration(minutes: 30),
-      );
-      if (request != null) {
-        final List<PostEntity> list = LocalPost().all;
-        if (list.isNotEmpty) {
-          return DataSuccess<List<PostEntity>>(request.encodedData, list);
-        }
-      }
+      // ApiRequestEntity? request = await LocalRequestHistory().request(
+      //   endpoint: endpoint,
+      //   duration:
+      //       kDebugMode ? const Duration(days: 1) : const Duration(minutes: 30),
+      // );
+      // if (request != null) {
+      //   final List<PostEntity> list = LocalPost().all;
+      //   if (list.isNotEmpty) {
+      //     return DataSuccess<List<PostEntity>>(request.encodedData, list);
+      //   }
+      // }
       //
       //
       log('PostRemoteApiImpl.getFeed called');

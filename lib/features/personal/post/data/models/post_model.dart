@@ -143,7 +143,7 @@ class PostModel extends PostEntity {
       quantity: int.tryParse(json['quantity']?.toString() ?? '0') ?? 0,
       address: json['address'] ?? '',
       isActive: json['is_active'] ?? true,
-      listId: json['list_id'],
+      listId: json['list_id'] ?? '',
       currentLongitude:
           double.tryParse(json['current_longitude']?.toString() ?? '0.0') ??
               0.0,
@@ -155,10 +155,10 @@ class PostModel extends PostEntity {
           List<AttachmentModel>.from((json['file_urls'] ?? <dynamic>[]).map(
         (dynamic x) => AttachmentModel.fromJson(x),
       )),
-      title: json['title'],
+      title: json['title'] ?? '',
       type: ListingType.fromStrJson(json['type']),
-      createdBy: json['created_by'],
-      acceptOffers: json['accept_offers'],
+      createdBy: json['created_by'] ?? '',
+      acceptOffers: BooleanStatusType.fromJson(json['accept_offers']),
       sizeColors: json['size_colors'] == null
           ? <SizeColorModel>[]
           : List<SizeColorModel>.from((json['size_colors'] ?? <dynamic>[]).map(
@@ -166,7 +166,7 @@ class PostModel extends PostEntity {
             )),
       currentLatitude:
           double.tryParse(json['current_latitude']?.toString() ?? '0.0') ?? 0.0,
-      postId: json['post_id'],
+      postId: json['post_id'] ?? '',
       deliveryType: DeliveryType.fromJson(json['delivery_type']),
       price: double.tryParse(json['price']?.toString() ?? '0.0') ?? 0.0,
       minOfferAmount:

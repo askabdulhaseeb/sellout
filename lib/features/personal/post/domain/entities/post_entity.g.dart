@@ -29,7 +29,7 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       title: fields[9] as String,
       type: fields[10] as ListingType,
       createdBy: fields[11] as String,
-      acceptOffers: fields[12] as String,
+      acceptOffers: fields[12] as BooleanStatusType,
       sizeColors: (fields[13] as List).cast<SizeColorEntity>(),
       currentLatitude: fields[14] as double,
       postId: fields[15] as String,

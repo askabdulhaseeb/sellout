@@ -13,7 +13,6 @@ import '../../../features/business/core/domain/entity/business_travel_detail_ent
 import '../../../features/business/core/domain/entity/routine_entity.dart';
 import '../../../features/business/core/domain/entity/service/service_entity.dart';
 import '../../../features/personal/cart/data/sources/local_cart.dart';
-import '../../../features/personal/cart/domain/entities/cart/cart_entity.dart';
 import '../../../features/personal/chats/chat/data/sources/local/local_message.dart';
 import '../../../features/personal/chats/chat/domain/entities/getted_message_entity.dart';
 import '../../../features/personal/chats/chat/domain/entities/message_last_evaluated_key_entity.dart';

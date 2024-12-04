@@ -7,7 +7,7 @@ class CheckoutAddressTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ShadowContainer(
+    return const ShadowContainer(
       child: Column(
         children: <Widget>[
           //

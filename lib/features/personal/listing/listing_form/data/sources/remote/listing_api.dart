@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import '../../../../../../../core/entities/api_request_entity.dart';
 import '../../../../../../../core/sources/api_call.dart';
 import '../../../../../../../core/sources/local/local_request_history.dart';
 import '../../models/listing_model.dart';

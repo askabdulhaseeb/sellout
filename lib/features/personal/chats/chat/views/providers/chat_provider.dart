@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../data/models/message_last_evaluated_key.dart';
@@ -101,7 +102,7 @@ class ChatProvider extends ChangeNotifier {
       chatID: _chat?.chatId ?? _key?.chatID ?? '',
       text: _message.text,
       persons: _chat?.persons ?? <String>[],
-      files: [],
+      files: <PickedAttachment>[],
       source: 'postman',
     );
     final DataState<bool> result = await _sendMessageUsecase(param);
