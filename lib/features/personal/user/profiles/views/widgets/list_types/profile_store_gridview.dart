@@ -36,7 +36,7 @@ class ProfileStoreGridview extends StatelessWidget {
                   mainAxisSpacing: 6.0,
                 ),
                 itemBuilder: (BuildContext context, int index) {
-                  return ProfilePostGridViewTile(post: posts[index]);
+                  return PostGridViewTile(post: posts[index]);
                 },
               );
       },

@@ -8,6 +8,7 @@ import '../features/personal/listing/listing_form/views/screens/add_listing_form
 import '../features/personal/auth/signin/views/screens/sign_in_screen.dart';
 import '../features/personal/auth/signup/views/screens/signup_screen.dart';
 import '../features/personal/dashboard/views/screens/dasboard_screen.dart';
+import '../features/personal/post/post_detail/views/screens/post_detail_screen.dart';
 import '../features/personal/setting/more_info/views/screens/personal_more_information_setting_screen.dart';
 import '../features/personal/setting/setting_dashboard/views/screens/personal_setting_screen.dart';
 
@@ -46,6 +47,8 @@ class AppRoutes {
     // DAHSBOARD
     DashboardScreen.routeName: (_) => const DashboardScreen(),
     AddListingFormScreen.routeName: (_) => const AddListingFormScreen(),
+    // POST
+    PostDetailScreen.routeName: (_) => const PostDetailScreen(),
 
     ChatScreen.routeName: (_) => const ChatScreen(),
 
