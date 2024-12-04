@@ -1,4 +1,3 @@
-import '../../../../../../../core/enums/chat/chat_type.dart';
 import '../../../../../../../core/extension/string_ext.dart';
 import '../../../../../post/data/models/offer/offer_amount_info_model.dart';
 import '../../../domain/entities/chat/chat_entity.dart';

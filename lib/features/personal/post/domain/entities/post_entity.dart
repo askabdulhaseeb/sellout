@@ -97,7 +97,7 @@ class PostEntity {
   @HiveField(11)
   final String createdBy;
   @HiveField(12)
-  final String acceptOffers;
+  final BooleanStatusType acceptOffers;
   @HiveField(13)
   final List<SizeColorEntity> sizeColors;
   @HiveField(14)
