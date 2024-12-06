@@ -1,0 +1,1 @@
+enum ReviewSortType { topReview, recentReview }

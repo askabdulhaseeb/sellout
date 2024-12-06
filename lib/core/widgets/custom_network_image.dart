@@ -41,7 +41,10 @@ class CustomNetworkImage extends StatelessWidget {
             fit: fit,
             height: size,
             width: size,
-            placeholder: (BuildContext context, String url) => const Loader(),
+            placeholder: (BuildContext context, String url) => Container(
+              color: Theme.of(context).dividerColor,
+              child: const Loader(),
+            ),
             errorWidget: (BuildContext context, String url, _) => Text(
               placeholderText.toUpperCase(),
               style: const TextStyle(fontWeight: FontWeight.w500),

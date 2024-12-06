@@ -34,7 +34,7 @@ class ReviewTile extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      user?.displayName ?? '',
+                      user?.displayName ?? 'na'.tr(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(fontWeight: FontWeight.bold),
@@ -81,6 +81,7 @@ class ReviewTile extends StatelessWidget {
                     ),
                   ),
                 ),
+              const Divider(),
             ],
           ),
         );
