@@ -7,6 +7,8 @@ import '../../../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../../../../../review/data/sources/local_review.dart';
 import '../../../../../review/domain/entities/review_entity.dart';
 import '../../../../../review/domain/param/get_review_param.dart';
+import '../../../../../review/features/reivew_list/views/params/review_list_param.dart';
+import '../../../../../review/features/reivew_list/views/screens/review_list_screen.dart';
 import '../../../../domain/entities/post_entity.dart';
 import '../../providers/post_detail_provider.dart';
 import 'post_detail_review_attachment_list_widget.dart';
@@ -50,7 +52,16 @@ class PostDetailReviewOverviewSection extends StatelessWidget {
                 LinearRatingGraphWidget(
                   reviews: reviews,
                   onTap: (int value) {
-                    // TODO: Display Filtered Reviews
+                    Navigator.of(context).push(
+                      MaterialPageRoute<ReviewListScreen>(
+                        builder: (BuildContext context) => ReviewListScreen(
+                          param: ReviewListScreenParam(
+                            reviews: reviews,
+                            star: value,
+                          ),
+                        ),
+                      ),
+                    );
                   },
                 ),
                 const PostDetailReviewAttachmentListWidget(),

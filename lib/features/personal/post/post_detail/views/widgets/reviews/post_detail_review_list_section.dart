@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../review/domain/entities/review_entity.dart';
+import '../../../../../review/features/reivew_list/views/params/review_list_param.dart';
+import '../../../../../review/features/reivew_list/views/screens/review_list_screen.dart';
 import '../../../../../review/features/reivew_list/views/widgets/review_tile.dart';
 
 class PostDetailReviewListSection extends StatelessWidget {
@@ -31,7 +33,12 @@ class PostDetailReviewListSection extends StatelessWidget {
           bgColor: Colors.transparent,
           title: 'see-all-reviews'.tr(),
           isLoading: false,
-          onTap: () {},
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<ReviewListScreen>(
+              builder: (BuildContext context) => ReviewListScreen(
+                  param: ReviewListScreenParam(reviews: reviews)),
+            ),
+          ),
         ),
       ],
     );
