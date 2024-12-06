@@ -101,7 +101,7 @@ void _profile() {
   locator
       .registerFactory<GetPostByIdUsecase>(() => GetPostByIdUsecase(locator()));
   locator.registerLazySingleton<ProfileProvider>(
-      () => ProfileProvider(locator(), locator()));
+      () => ProfileProvider(locator(), locator(), locator()));
 }
 
 void _chat() {
@@ -175,7 +175,7 @@ void _business() {
   //
   // Providers
   locator.registerLazySingleton<BusinessPageProvider>(
-      () => BusinessPageProvider(locator(), locator()));
+      () => BusinessPageProvider(locator(), locator(), locator()));
 }
 
 void _services() {

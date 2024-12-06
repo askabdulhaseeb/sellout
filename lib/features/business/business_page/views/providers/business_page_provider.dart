@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../core/sources/data_state.dart';
+import '../../../../personal/review/domain/entities/review_entity.dart';
+import '../../../../personal/review/domain/param/get_review_param.dart';
+import '../../../../personal/review/domain/usecase/get_reviews_usecase.dart';
 import '../../../core/domain/entity/business_entity.dart';
 import '../../../core/domain/usecase/get_business_by_id_usecase.dart';
 import '../../domain/entities/services_list_responce_entity.dart';
@@ -9,9 +12,11 @@ import '../../domain/usecase/get_services_list_by_business_id_usecase.dart';
 import '../enum/business_page_tab_type.dart';
 
 class BusinessPageProvider extends ChangeNotifier {
-  BusinessPageProvider(this._byID, this._servicesListUsecase);
+  BusinessPageProvider(
+      this._byID, this._servicesListUsecase, this._getReviewsUsecase);
   final GetBusinessByIdUsecase _byID;
   final GetServicesListByBusinessIdUsecase _servicesListUsecase;
+  final GetReviewsUsecase _getReviewsUsecase;
 
   BusinessEntity? _business;
   BusinessEntity? get business => _business;
@@ -34,6 +39,15 @@ class BusinessPageProvider extends ChangeNotifier {
   set selectedTab(BusinessPageTabType value) {
     _selectedTab = value;
     notifyListeners();
+  }
+
+  Future<List<ReviewEntity>> getReviews(String? id) async {
+    final DataState<List<ReviewEntity>> reviews =
+        await _getReviewsUsecase(GetReviewParam(
+      id: id ?? _business?.businessID ?? '',
+      type: ReviewApiQueryOptionType.businessID,
+    ));
+    return reviews.entity ?? <ReviewEntity>[];
   }
 
   Future<BusinessEntity?> getBusinessByID(String businessID) async {
