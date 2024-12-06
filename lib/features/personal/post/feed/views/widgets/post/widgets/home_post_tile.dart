@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../../../../core/widgets/attachment_slider.dart';
@@ -18,26 +17,28 @@ class HomePostTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: post.businessID == null && kDebugMode
-          ? const SizedBox()
-          : ShadowContainer(
-              onTap: () {
-                Navigator.of(context).pushNamed(
-                  PostDetailScreen.routeName,
-                  arguments: <String, dynamic>{'pid': post.postId},
-                );
-              },
-              padding: const EdgeInsets.all(0),
-              child: Column(
-                children: <Widget>[
-                  PostHeaderSection(post: post),
-                  AttachmentsSlider(urls: post.fileUrls),
-                  HomePostIconBottonSection(post: post),
-                  HomePostTitleSection(post: post),
-                  PostButtonSection(post: post),
-                ],
-              ),
-            ),
+      child:
+          // post.businessID == null && kDebugMode
+          //     ? const SizedBox()
+          //     :
+          ShadowContainer(
+        onTap: () {
+          Navigator.of(context).pushNamed(
+            PostDetailScreen.routeName,
+            arguments: <String, dynamic>{'pid': post.postId},
+          );
+        },
+        padding: const EdgeInsets.all(0),
+        child: Column(
+          children: <Widget>[
+            PostHeaderSection(post: post),
+            AttachmentsSlider(urls: post.fileUrls),
+            HomePostIconBottonSection(post: post),
+            HomePostTitleSection(post: post),
+            PostButtonSection(post: post),
+          ],
+        ),
+      ),
     );
   }
 }

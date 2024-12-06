@@ -6,14 +6,14 @@ part 'privacy_type.g.dart';
 @HiveType(typeId: 26)
 enum PrivacyType {
   @HiveField(0)
-  public('Public', 'public', Icons.public),
+  public('public', 'public', Icons.public),
   @HiveField(1)
-  supporters('Supporters', 'supporters', CupertinoIcons.person_3_fill),
+  supporters('supporters', 'supporters', CupertinoIcons.person_3_fill),
   @HiveField(2)
-  private('Private', 'private', CupertinoIcons.eye_slash);
+  private('private', 'private', CupertinoIcons.eye_slash);
 
-  const PrivacyType(this.title, this.json, this.icon);
-  final String title;
+  const PrivacyType(this.code, this.json, this.icon);
+  final String code;
   final String json;
   final IconData icon;
 

@@ -86,6 +86,7 @@ flutter:
     - dev.env
     - assets/icons/
     - assets/images/
+    - assets/images/payment_methods/
     - assets/jsons/
     - assets/translations/
 

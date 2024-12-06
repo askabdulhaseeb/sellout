@@ -10,8 +10,13 @@ import '../../../feed/views/widgets/post/widgets/section/buttons/home_post_butto
 import '../../../feed/views/widgets/post/widgets/section/home_post_header_section.dart';
 import '../providers/post_detail_provider.dart';
 import '../widgets/post_detail_description_section.dart';
+import '../widgets/post_detail_postage_return_section.dart';
+import '../widgets/reviews/post_detail_review_overview_section.dart';
+import '../widgets/post_detail_tile_list_section.dart';
 import '../widgets/post_detail_title_amount_section.dart';
 import '../widgets/post_rating_section.dart';
+import '../widgets/sellout_bank_guranter_widget.dart';
+import '../widgets/user_meetup_safety_guildline_section.dart';
 
 class PostDetailScreen extends StatelessWidget {
   const PostDetailScreen({super.key});
@@ -22,7 +27,6 @@ class PostDetailScreen extends StatelessWidget {
     final Map<String, dynamic> args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final String postID = args['pid'] ?? '';
-    print('postID: $postID');
     return Scaffold(
       appBar: AppBar(title: const Text('post-details').tr()),
       body: FutureBuilder<DataState<PostEntity>>(
@@ -55,6 +59,12 @@ class PostDetailScreen extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(vertical: 8),
                         ),
                         PostDetailDescriptionSection(post: post),
+                        PostDetailTileListSection(post: post),
+                        PostDetailPostageReturnSection(post: post),
+                        const SelloutBankGuranterWidget(),
+                        const UserMeetupSafetyGuildlineSection(),
+                        PostDetailReviewOverviewSection(post: post),
+                        const SizedBox(height: 200),
                       ],
                     ),
                   ),
