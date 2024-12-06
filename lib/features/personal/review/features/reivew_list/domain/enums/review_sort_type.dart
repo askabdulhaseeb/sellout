@@ -1,1 +1,7 @@
-enum ReviewSortType { topReview, recentReview }
+enum ReviewSortType {
+  topReview('top-review'),
+  recentReview('recent-reviews');
+
+  const ReviewSortType(this.code);
+  final String code;
+}
