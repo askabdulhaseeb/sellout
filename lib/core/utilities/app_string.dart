@@ -15,6 +15,17 @@ class AppStrings {
   static String get localCartBox => 'com.sellout.local-carts';
   static String get localBusinesssBox => 'com.sellout.local-businesses';
   static String get localServicesBox => 'com.sellout.local-services';
+  // [IMAGES]
+  // Payment METHODS
+  static String get amex => 'assets/images/payment_methods/amex.png';
+  static String get applePayBlack =>
+      'assets/images/payment_methods/apple-pay-black.png';
+  static String get dinersClub =>
+      'assets/images/payment_methods/diners-club.png';
+  static String get mastercard =>
+      'assets/images/payment_methods/mastercard.png';
+  static String get paypal => 'assets/images/payment_methods/paypal.png';
+  static String get visa => 'assets/images/payment_methods/visa.png';
   // API
   String get baseURL =>
       kDebugMode ? 'http://192.168.0.181:3200' : dotenv.env['baseURL'] ?? '';

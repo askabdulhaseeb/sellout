@@ -51,7 +51,7 @@ class AddListingConditionOfferSection extends StatelessWidget {
             CustomToggleSwitch<PrivacyType>(
               labels: PrivacyType.list,
               labelStrs: PrivacyType.list
-                  .map<String>((PrivacyType e) => e.title)
+                  .map<String>((PrivacyType e) => e.code.tr())
                   .toList(),
               labelText: 'privacy-type'.tr(),
               initialValue: formPro.privacy,

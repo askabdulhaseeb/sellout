@@ -37,6 +37,8 @@ import '../../../features/personal/post/domain/entities/size_color/color_entity.
 import '../../../features/personal/post/domain/entities/size_color/discount_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/size_color_entity.dart';
 import '../../../features/personal/post/domain/entities/visit/visiting_entity.dart';
+import '../../../features/personal/review/data/sources/local_review.dart';
+import '../../../features/personal/review/domain/entities/review_entity.dart';
 import '../../../features/personal/user/profiles/data/sources/local/local_user.dart';
 import '../../../features/personal/user/profiles/data/sources/local/local_visits.dart';
 import '../../../features/personal/user/profiles/domain/entities/supporter_detail_entity.dart';
@@ -109,6 +111,7 @@ class HiveDB {
     Hive.registerAdapter(UserRoleInfoInBusinessEntityAdapter()); // 44
     Hive.registerAdapter(UserSupportInfoEntityAdapter()); // 45
     Hive.registerAdapter(ServiceEntityAdapter()); // 46
+    Hive.registerAdapter(ReviewEntityAdapter()); // 47
 
     // Hive box Open
     await refresh();
@@ -126,5 +129,6 @@ class HiveDB {
     await LocalCart().refresh();
     await LocalBusiness().refresh();
     await LocalService().refresh();
+    await LocalReview().refresh();
   }
 }

@@ -4,14 +4,14 @@ part 'delivery_type.g.dart';
 @HiveType(typeId: 24)
 enum DeliveryType {
   @HiveField(0)
-  paid('Paid Delivery', 'paid'),
+  paid('paid-delivery', 'paid'),
   @HiveField(1)
-  freeDelivery('Free Delivery', 'free'),
+  freeDelivery('free-delivery', 'free'),
   @HiveField(2)
-  collocation('Collection', 'collection');
+  collocation('collection', 'collection');
 
-  const DeliveryType(this.title, this.json);
-  final String title;
+  const DeliveryType(this.code, this.json);
+  final String code;
   final String json;
 
   static DeliveryType fromJson(String? json) {

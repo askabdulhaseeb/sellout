@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 
@@ -24,20 +22,18 @@ class PostRemoteApiImpl implements PostRemoteApi {
   Future<DataState<List<PostEntity>>> getFeed() async {
     const String endpoint = '/post';
     try {
-      // ApiRequestEntity? request = await LocalRequestHistory().request(
-      //   endpoint: endpoint,
-      //   duration:
-      //       kDebugMode ? const Duration(days: 1) : const Duration(minutes: 30),
-      // );
-      // if (request != null) {
-      //   final List<PostEntity> list = LocalPost().all;
-      //   if (list.isNotEmpty) {
-      //     return DataSuccess<List<PostEntity>>(request.encodedData, list);
-      //   }
-      // }
-      //
-      //
-      log('PostRemoteApiImpl.getFeed called');
+      ApiRequestEntity? request = await LocalRequestHistory().request(
+        endpoint: endpoint,
+        duration:
+            kDebugMode ? const Duration(days: 1) : const Duration(minutes: 30),
+      );
+      if (request != null) {
+        final List<PostEntity> list = LocalPost().all;
+        if (list.isNotEmpty) {
+          return DataSuccess<List<PostEntity>>(request.encodedData, list);
+        }
+      }
+
       final DataState<bool> result = await ApiCall<bool>().call(
         endpoint: endpoint,
         requestType: ApiRequestType.get,
@@ -51,7 +47,10 @@ class PostRemoteApiImpl implements PostRemoteApi {
               result.exception ?? CustomException('something-wrong'.tr()));
         }
         final List<dynamic> listt = json.decode(raw)['response'];
-        log('PostRemoteApiImpl.getFeed: Lenght: ${listt.length}');
+        AppLog.info(
+          'Post length: Lenght: ${listt.length}',
+          name: 'PostRemoteApiImpl.getFeed - if',
+        );
         final List<PostEntity> list = <PostEntity>[];
         for (final dynamic item in listt) {
           final PostEntity post = PostModel.fromJson(item);
@@ -60,13 +59,21 @@ class PostRemoteApiImpl implements PostRemoteApi {
         }
         return DataSuccess<List<PostEntity>>(raw, list);
       } else {
-        log('PostRemoteApiImpl.getFeed failed: ${result.exception?.message}');
+        AppLog.error(
+          '${result.exception?.message}',
+          name: 'PostRemoteApiImpl.getFeed - else',
+          error: result.exception,
+        );
         return DataFailer<List<PostEntity>>(
           result.exception ?? CustomException('something-wrong'.tr()),
         );
       }
     } catch (e) {
-      log('PostRemoteApiImpl.getFeed failed: $e');
+      AppLog.error(
+        e.toString(),
+        name: 'PostRemoteApiImpl.getFeed - catch',
+        error: e,
+      );
       return DataFailer<List<PostEntity>>(CustomException(e.toString()));
     }
   }
@@ -110,13 +117,21 @@ class PostRemoteApiImpl implements PostRemoteApi {
         await LocalPost().save(post);
         return DataSuccess<PostEntity>(raw, post);
       } else {
-        log('PostRemoteApiImpl.getPost failed: ${result.exception?.message}');
+        AppLog.error(
+          '${result.exception?.message} - $id',
+          name: 'PostRemoteApiImpl.getPost - else',
+          error: result.exception,
+        );
         return DataFailer<PostEntity>(
           result.exception ?? CustomException('something-wrong'.tr()),
         );
       }
     } catch (e) {
-      log('PostRemoteApiImpl.getPost catch failed: $e');
+      AppLog.error(
+        '$e - $id',
+        name: 'PostRemoteApiImpl.getPost - catch',
+        error: e,
+      );
       return DataFailer<PostEntity>(CustomException(e.toString()));
     }
   }

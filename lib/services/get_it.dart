@@ -45,6 +45,10 @@ import '../features/personal/post/domain/usecase/add_to_cart_usecase.dart';
 import '../features/personal/post/domain/usecase/get_feed_usecase.dart';
 import '../features/personal/post/domain/usecase/get_specific_post_usecase.dart';
 import '../features/personal/post/feed/views/providers/feed_provider.dart';
+import '../features/personal/review/data/repositories/review_repository_impl.dart';
+import '../features/personal/review/data/sources/review_remote_api.dart';
+import '../features/personal/review/domain/repositories/review_repository.dart';
+import '../features/personal/review/domain/usecase/get_reviews_usecase.dart';
 import '../features/personal/user/profiles/data/repositories/user_repository_impl.dart';
 import '../features/personal/user/profiles/data/sources/remote/my_visting_remote.dart';
 import '../features/personal/user/profiles/data/sources/remote/post_by_user_remote.dart';
@@ -68,6 +72,7 @@ void setupLocator() {
   _cart();
   _business();
   _services();
+  _review();
 }
 
 void _auth() {
@@ -185,6 +190,21 @@ void _services() {
   // USECASES
   locator.registerFactory<GetServicesListByBusinessIdUsecase>(
       () => GetServicesListByBusinessIdUsecase(locator()));
+  //
+  // Providers
+}
+
+void _review() {
+  // API
+  locator.registerFactory<ReviewRemoteApi>(() => ReviewRemoteApiImpl());
+  //
+  // REPOSITORIES
+  locator
+      .registerFactory<ReviewRepository>(() => ReviewRepositoryImpl(locator()));
+  //
+  // USECASES
+  locator
+      .registerFactory<GetReviewsUsecase>(() => GetReviewsUsecase(locator()));
   //
   // Providers
 }
