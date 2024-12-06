@@ -23,8 +23,8 @@ class ReviewListProvider extends ChangeNotifier {
 
   ReviewSortType _sortType = ReviewSortType.topReview;
   ReviewSortType get sortReview => _sortType;
-  void setSortReview(ReviewSortType value) {
-    _sortType = value;
+  void setSortReview(ReviewSortType? value) {
+    _sortType = value ?? ReviewSortType.topReview;
     notifyListeners();
   }
 

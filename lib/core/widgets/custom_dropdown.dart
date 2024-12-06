@@ -10,6 +10,7 @@ class CustomDropdown<T> extends FormField<bool> {
     required this.selectedItem,
     required this.onChanged,
     required FormFieldValidator<bool> validator,
+    this.padding,
     this.hint,
     super.key,
   }) : super(
@@ -44,6 +45,7 @@ class CustomDropdown<T> extends FormField<bool> {
   final T? selectedItem;
   final List<DropdownMenuItem<T>> items;
   final String? hint;
+  final EdgeInsetsGeometry? padding;
 
   Widget build(BuildContext context) {
     // ignore: always_specify_types
@@ -63,6 +65,7 @@ class _Widget<T> extends StatelessWidget {
     required this.items,
     required this.selectedItem,
     required this.onChanged,
+    this.padding,
     this.hint,
     super.key,
   });
@@ -71,6 +74,7 @@ class _Widget<T> extends StatelessWidget {
   final T? selectedItem;
   final List<DropdownMenuItem<T>> items;
   final TextEditingController _search = TextEditingController();
+  final EdgeInsetsGeometry? padding;
   final String? hint;
 
   @override
@@ -99,6 +103,8 @@ class _Widget<T> extends StatelessWidget {
                     isExpanded: true,
                     hint: Text(
                       hint ?? 'select-item'.tr(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 14,
                         color: Theme.of(context).hintColor,
@@ -107,8 +113,9 @@ class _Widget<T> extends StatelessWidget {
                     items: items,
                     value: selectedItem,
                     onChanged: onChanged,
-                    buttonStyleData: const ButtonStyleData(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
+                    buttonStyleData: ButtonStyleData(
+                      padding:
+                          padding ?? const EdgeInsets.symmetric(horizontal: 16),
                     ),
                     dropdownSearchData: DropdownSearchData<T>(
                       searchController: _search,
