@@ -1,10 +1,15 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../../../core/widgets/profile_photo.dart';
 import '../../../../../../core/widgets/rating_display_widget.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../review/domain/entities/review_entity.dart';
+import '../../../../review/features/reivew_list/views/params/review_list_param.dart';
+import '../../../../review/features/reivew_list/views/screens/review_list_screen.dart';
 import '../../domain/entities/user_entity.dart';
+import '../providers/profile_provider.dart';
 
 class ProfileHeaderSection extends StatelessWidget {
   const ProfileHeaderSection({required this.user, super.key});
@@ -52,6 +57,20 @@ class ProfileHeaderSection extends StatelessWidget {
                   ),
                   RatingDisplayWidget(
                     ratingList: user?.listOfReviews ?? <double>[],
+                    onTap: () async {
+                      final List<ReviewEntity> reviews =
+                          await Provider.of<ProfileProvider>(context,
+                                  listen: false)
+                              .getReviews(user?.uid);
+                      // ignore: use_build_context_synchronously
+                      Navigator.of(context).push(
+                        MaterialPageRoute<ReviewListScreenParam>(
+                          builder: (BuildContext context) => ReviewListScreen(
+                            param: ReviewListScreenParam(reviews: reviews),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 8),
                   Text(
