@@ -27,7 +27,7 @@ class CartEntityAdapter extends TypeAdapter<CartEntity> {
   @override
   void write(BinaryWriter writer, CartEntity obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.updatedAt)
       ..writeByte(1)
@@ -35,7 +35,9 @@ class CartEntityAdapter extends TypeAdapter<CartEntity> {
       ..writeByte(2)
       ..write(obj.cartID)
       ..writeByte(3)
-      ..write(obj.items);
+      ..write(obj.items)
+      ..writeByte(4)
+      ..write(obj.inHiveAt);
   }
 
   @override

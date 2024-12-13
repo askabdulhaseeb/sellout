@@ -3,7 +3,7 @@ import '../../../../attachment/data/attchment_model.dart';
 import '../../domain/entities/review_entity.dart';
 
 class ReviewModel extends ReviewEntity {
-  const ReviewModel({
+  ReviewModel({
     required super.postID,
     required super.reviewID,
     required super.sellerID,

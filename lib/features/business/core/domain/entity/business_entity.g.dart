@@ -40,7 +40,7 @@ class BusinessEntityAdapter extends TypeAdapter<BusinessEntity> {
   @override
   void write(BinaryWriter writer, BusinessEntity obj) {
     writer
-      ..writeByte(17)
+      ..writeByte(18)
       ..writeByte(0)
       ..write(obj.businessID)
       ..writeByte(1)
@@ -74,7 +74,9 @@ class BusinessEntityAdapter extends TypeAdapter<BusinessEntity> {
       ..writeByte(15)
       ..write(obj.updatedAt)
       ..writeByte(16)
-      ..write(obj.logo);
+      ..write(obj.logo)
+      ..writeByte(17)
+      ..write(obj.inHiveAt);
   }
 
   @override

@@ -3,7 +3,7 @@ import '../../domain/entities/getted_message_entity.dart';
 import 'message_last_evaluated_key.dart';
 
 class GettedMessageModel extends GettedMessageEntity {
-  const GettedMessageModel({
+  GettedMessageModel({
     required super.chatID,
     required super.messages,
     required super.lastEvaluatedKey,
