@@ -1,9 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../core/widgets/loader.dart';
 import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
@@ -39,7 +38,10 @@ class MessagesList extends StatelessWidget {
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             itemBuilder: (BuildContext context, int index) {
               if (index == (msgs.length - 1)) {
-                log('Index: $index - length: ${msgs.length} - msgs: ${msgs[index].text}');
+                AppLog.info(
+                  'Index: $index - length: ${msgs.length} - msgs: ${msgs[index].text}',
+                  name: 'MessagesList.build - if',
+                );
               }
               return index == (msgs.length - 1)
                   ? FutureBuilder<bool>(

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import '../../../../../../../core/widgets/custom_network_image.dart';
@@ -11,7 +9,6 @@ class BusinessPageServiceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log('service: ${service.attachments.length} - ${service.thumbnailURL}');
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
       child: SizedBox(

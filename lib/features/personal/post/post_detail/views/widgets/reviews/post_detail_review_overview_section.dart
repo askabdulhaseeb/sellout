@@ -45,29 +45,32 @@ class PostDetailReviewOverviewSection extends StatelessWidget {
             final List<ReviewEntity> reviews =
                 snapshot.data?.entity ?? LocalReview().reviewsWithQuery(param);
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                LinearRatingGraphWidget(
-                  reviews: reviews,
-                  onTap: (int value) {
-                    Navigator.of(context).push(
-                      MaterialPageRoute<ReviewListScreen>(
-                        builder: (BuildContext context) => ReviewListScreen(
-                          param: ReviewListScreenParam(
-                            reviews: reviews,
-                            star: value,
+            return SingleChildScrollView(
+              primary: false,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  LinearRatingGraphWidget(
+                    reviews: reviews,
+                    onTap: (int value) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute<ReviewListScreen>(
+                          builder: (BuildContext context) => ReviewListScreen(
+                            param: ReviewListScreenParam(
+                              reviews: reviews,
+                              star: value,
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-                const PostDetailReviewAttachmentListWidget(),
-                const PostDetailReviewButtonSection(),
-                PostDetailReviewListSection(reviews: reviews),
-              ],
+                      );
+                    },
+                  ),
+                  const PostDetailReviewAttachmentListWidget(),
+                  const PostDetailReviewButtonSection(),
+                  PostDetailReviewListSection(reviews: reviews),
+                ],
+              ),
             );
           },
         ),

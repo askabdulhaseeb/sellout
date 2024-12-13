@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 
+import '../core/functions/app_log.dart';
 import 'app_routes.dart';
 
 class AppNavigator {
@@ -25,17 +25,21 @@ class AppNavigator {
 
   Future<void> openAppLink(Uri uri) async {
     final String routeName = AppRoutes.fromUriToRouteName(uri);
-    log('Moving to $routeName');
+    AppLog.info('Moving to $routeName', name: 'AppNavigator.openAppLink');
     await pushNamed(routeName);
   }
 
   static Future<void> pushNamed(String routeName, {Object? arguments}) async {
     try {
-      log('New Path is: $routeName');
+      AppLog.info('New Path is: $routeName', name: 'AppNavigator.pushNamed');
       await _navigatorKey.currentState
           ?.pushNamed(routeName, arguments: arguments);
     } catch (e) {
-      log('❌ Error in App Navigator - pushNamed: $routeName - Error: $e');
+      AppLog.error(
+        'in App Navigator - pushNamed: $routeName - Error: $e',
+        name: 'AppNavigator.pushNamed - catch',
+        error: e,
+      );
     }
   }
 
@@ -45,16 +49,26 @@ class AppNavigator {
     Object? arguments,
   }) async {
     try {
-      log('New Path is: $routeName');
+      AppLog.info(
+        'New Path is: $routeName',
+        name: 'AppNavigator.pushNamedAndRemoveUntil',
+      );
       final Object? result =
           await _navigatorKey.currentState?.pushNamedAndRemoveUntil(
         routeName,
         predicate ?? (_) => true,
         arguments: arguments,
       );
-      log('Result: $result');
+      AppLog.info(
+        'Result: $result',
+        name: 'AppNavigator.pushNamedAndRemoveUntil',
+      );
     } catch (e) {
-      log('❌ Error in App Navigator - pushNamedAndRemoveUntil: $routeName - Error: $e');
+      AppLog.error(
+        'in App Navigator - pushNamedAndRemoveUntil: $routeName - Error: $e',
+        name: 'AppNavigator.pushNamedAndRemoveUntil - catch',
+        error: e,
+      );
     }
   }
 

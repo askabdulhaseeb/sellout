@@ -29,11 +29,11 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
         await LocalAuth().signin(currentUser);
         return responce;
       } else {
-        debugPrint('❌ Signin Faile in Remote Source');
+        debugPrint('Signin Faile in Remote Source');
         return DataFailer<bool>(CustomException('Signin Failed'));
       }
     } catch (e) {
-      debugPrint('❌ Signin Catch in Remote Source - $e');
+      debugPrint('Signin Catch in Remote Source - $e');
       return DataFailer<bool>(CustomException('Signin Failed: $e'));
     }
   }
@@ -43,7 +43,7 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
     try {
       // Forgot Password
     } catch (e) {
-      debugPrint('❌ Forget Password Catch in Remote Source - $e');
+      debugPrint('Forget Password Catch in Remote Source - $e');
       return DataFailer<bool>(CustomException('Forget Password Failed: $e'));
     }
     return DataFailer<bool>(CustomException('Forget Password Failed'));

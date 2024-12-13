@@ -44,7 +44,7 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
       }
       return DataFailer<UserEntity?>(CustomException('User not found'));
     } catch (e) {
-      debugPrint('❌ Error GetUserAPI.user: catch $e - $endpoint');
+      debugPrint('GetUserAPI.user: catch $e - $endpoint');
     }
     return DataFailer<UserEntity?>(CustomException('User not found'));
   }
