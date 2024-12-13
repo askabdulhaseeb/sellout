@@ -1,8 +1,7 @@
-import 'dart:developer';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
@@ -79,11 +78,14 @@ class ChatProvider extends ChangeNotifier {
             ));
     if (result is DataSuccess) {
       _gettedMessage = result.entity;
-      log('New Getter: ${_gettedMessage?.lastEvaluatedKey?.paginationKey} - ${_gettedMessage?.lastEvaluatedKey?.createdAt}');
       _isLoading = false;
       return true;
     } else {
-      log('New Getter: ERROR ${_gettedMessage?.lastEvaluatedKey?.paginationKey}');
+      AppLog.error(
+        'New Getter: ERROR ${_gettedMessage?.lastEvaluatedKey?.paginationKey}',
+        name: 'ChatProvider.getMessages - else',
+        error: result.exception,
+      );
       // Show error message
       _isLoading = false;
       return false;

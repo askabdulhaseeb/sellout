@@ -1,8 +1,8 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../core/functions/app_log.dart';
 import '../../../../core/widgets/loader.dart';
 import '../../domain/entities/picked_attachment_option.dart';
 import '../providers/picked_media_provider.dart';
@@ -46,11 +46,18 @@ class _PickableAttachmentScreenState extends State<PickableAttachmentScreen> {
   Future<void> _requestPermissionAndLoad() async {
     final PermissionState ps = await PhotoManager.requestPermissionExtend();
     if (ps.isAuth) {
-      log('Permission granted');
+      AppLog.info(
+        'Permission granted',
+        name: 'PickableAttachmentScreen._requestPermissionAndLoad - if',
+      );
       _loadMoreMedia();
     } else {
       // TODO: Handle permission denied
-      log('Permission denied');
+      AppLog.error(
+        'Permission denied',
+        name: 'PickableAttachmentScreen._requestPermissionAndLoad - else',
+        error: ps,
+      );
       // Handle permission denied
     }
   }
@@ -58,7 +65,10 @@ class _PickableAttachmentScreenState extends State<PickableAttachmentScreen> {
   Future<void> _loadMoreMedia() async {
     if (_currentPage == _lastPage && !_isLoading) return;
     RequestType type = widget.option.type.requestType;
-    log('Selected type: $type');
+    AppLog.info(
+      'Selected type: $type',
+      name: 'PickableAttachmentScreen._loadMoreMedia',
+    );
     final List<AssetPathEntity> albums = await PhotoManager.getAssetPathList(
       type: type,
       filterOption: FilterOptionGroup(
@@ -81,7 +91,10 @@ class _PickableAttachmentScreenState extends State<PickableAttachmentScreen> {
         ],
       ),
     );
-    log('Step 2 - Load more media');
+    AppLog.info(
+      'Step 2 - Load more media',
+      name: 'PickableAttachmentScreen._loadMoreMedia',
+    );
     try {
       final List<AssetEntity> media = await albums[0]
           .getAssetListPaged(page: _currentPage, size: _pageSize);
@@ -90,7 +103,11 @@ class _PickableAttachmentScreenState extends State<PickableAttachmentScreen> {
       _currentPage++;
       _lastPage = (totalImages / _pageSize).ceil();
     } catch (e) {
-      log('❌ Error - PickableAttachmentScreen:_loadMoreMedia  $e');
+      AppLog.error(
+        'PickableAttachmentScreen:_loadMoreMedia  $e',
+        name: 'PickableAttachmentScreen._loadMoreMedia - catch',
+        error: e,
+      );
     }
     setState(() {
       _isLoading = false;

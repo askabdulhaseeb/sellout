@@ -1,5 +1,4 @@
-import 'dart:developer';
-
+import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/api_call.dart';
 import '../../../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../../../domain/entities/getted_message_entity.dart';
@@ -34,17 +33,24 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
     if (result is DataSuccess) {
       final String raw = result.data ?? '';
       if (raw.isEmpty) {
+        AppLog.info(
+          'New Message - Empty',
+          name: 'MessagesRemoteSourceImpl.getMessages - if',
+        );
         return DataSuccess<GettedMessageEntity>(raw, _local(chatID));
       }
       //
       final dynamic data = json.decode(raw);
       final GettedMessageEntity getted =
           GettedMessageModel.fromMap(data, chatID);
-      log('New Message - is Saving');
       await LocalChatMessage().save(getted, chatID);
       return DataSuccess<GettedMessageEntity>(result.data ?? '', getted);
     } else {
-      log('New Message - ERROR');
+      AppLog.error(
+        'New Message - ERROR',
+        name: 'MessagesRemoteSourceImpl.getMessages - else',
+        error: result.exception,
+      );
       final GettedMessageEntity? getted = _local(chatID);
       return getted == null
           ? DataSuccess<GettedMessageEntity>(result.data ?? '', getted)
@@ -70,11 +76,21 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
       if (result is DataSuccess) {
         return DataSuccess<bool>(result.data ?? '', true);
       } else {
+        AppLog.error(
+          'New Message - ERROR',
+          name: 'MessagesRemoteSourceImpl.sendMessage - else',
+          error: result.exception,
+        );
         return DataFailer<bool>(
           result.exception ?? CustomException('something-wrong'.tr()),
         );
       }
     } catch (e) {
+      AppLog.error(
+        'New Message - ERROR',
+        name: 'MessagesRemoteSourceImpl.sendMessage - catch',
+        error: CustomException(e.toString()),
+      );
       return DataFailer<bool>(CustomException(e.toString()));
     }
   }

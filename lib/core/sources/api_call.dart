@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -7,6 +6,7 @@ import 'package:http/http.dart' as http;
 
 import '../../features/attachment/domain/entities/picked_attachment.dart';
 import '../enums/core/api_request_type.dart';
+import '../functions/app_log.dart';
 import 'data_state.dart';
 import '../../features/personal/auth/signin/data/sources/local/local_auth.dart';
 import 'local/local_request_history.dart';
@@ -85,7 +85,11 @@ class ApiCall<T> {
       if (response.statusCode >= 200 && response.statusCode < 300) {
         final String data = await response.stream.bytesToString();
         if (data.isEmpty) {
-          log('❌ ERROR: ERROR: No Data Found - API: $url');
+          AppLog.error(
+            'No Data Found - API: $url',
+            name: 'ApiCall.call - if - data.isEmpty',
+            error: CustomException('ERROR: No Data Found'),
+          );
           return DataFailer<T>(CustomException('ERROR: No Data Found'));
         } else {
           ApiRequestEntity apiRequestEntity = ApiRequestEntity(
@@ -101,13 +105,19 @@ class ApiCall<T> {
         final String data = await response.stream.bytesToString();
         final Map<String, dynamic> decoded = jsonDecode(data);
 
-        log('❌ ERROR: ${response.statusCode} - API: message -> ${decoded['message']}');
-        log('❌ ERROR: ${response.statusCode} - API: detail -> ${decoded['details']}');
+        AppLog.error(
+          '${response.statusCode} - API: message -> ${decoded['message']} - detail -> ${decoded['details']}',
+          name: 'ApiCall.call - else',
+          error: CustomException('ERROR: ${decoded['message']}'),
+        );
         return DataFailer<T>(CustomException('ERROR: ${decoded['message']}'));
       }
     } catch (e) {
-      debugPrint('❌ ERROR: Catch - call - API: $e');
-      log('❌ ERROR: Catch - call - API: $e');
+      AppLog.error(
+        'Catch - call - API: $e',
+        name: 'ApiCall.call - Catch',
+        error: CustomException(e.toString()),
+      );
       return DataFailer<T>(CustomException(e.toString()));
     }
   }
@@ -177,7 +187,11 @@ class ApiCall<T> {
         final String data = await response.stream.bytesToString();
         debugPrint('✅ Request Success');
         if (data.isEmpty) {
-          log('❌ ERROR: ERROR: No Data Found - API: $url');
+          AppLog.error(
+            'No Data Found - API: $url',
+            name: 'ApiCall.callFormData - if - data.isEmpty',
+            error: CustomException('ERROR: No Data Found'),
+          );
           return DataFailer<T>(CustomException('ERROR: No Data Found'));
         } else {
           ApiRequestEntity apiRequestEntity = ApiRequestEntity(
@@ -194,13 +208,20 @@ class ApiCall<T> {
         final String data = await response.stream.bytesToString();
         final Map<String, dynamic> decoded = jsonDecode(data);
 
-        log('❌ ApiCall.callFormData - else ERROR: ${response.statusCode} - API: message -> ${decoded['message']}');
-        log('❌ ApiCall.callFormData - else ERROR: ${response.statusCode} - API: detail -> ${decoded['details']}');
+        AppLog.error(
+          'ApiCall.callFormData - else ERROR: ${response.statusCode} - API: message -> ${decoded['message']} -  detail -> ${decoded['details']}',
+          name: 'ApiCall.callFormData - else',
+          error: CustomException('ERROR: ${decoded['message']}'),
+        );
         return DataFailer<T>(CustomException('ERROR: ${decoded['message']}'));
       }
     } catch (e) {
       debugPrint('🔴 ERROR: $fieldsMap');
-      log('❌ ApiCall.callFormData - Catch ERROR: ${e.toString()}');
+      AppLog.error(
+        'ApiCall.callFormData - Catch ERROR: ${e.toString()}',
+        name: 'ApiCall.callFormData - Catch',
+        error: CustomException(e.toString()),
+      );
       return DataFailer<T>(CustomException(e.toString()));
     }
   }

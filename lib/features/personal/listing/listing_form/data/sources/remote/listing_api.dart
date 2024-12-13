@@ -1,5 +1,4 @@
-import 'dart:developer';
-
+import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/api_call.dart';
 import '../../../../../../../core/sources/local/local_request_history.dart';
 import '../../models/listing_model.dart';
@@ -28,14 +27,27 @@ class ListingAPI {
         final List<dynamic> data = json.decode(req.data ?? '');
         return await _decodeData(data);
       } else if (req is DataFailer) {
-        log('❌ Error ListingAPI: DataFailer -> ${req.exception?.message}');
+        AppLog.error(
+          'ListingAPI: DataFailer -> ${req.exception?.message}',
+          name: 'ListingAPI.listing - req is DataFailer',
+          error: req.exception,
+        );
         // Local Hive
         return await _localData('/category');
       } else {
+        AppLog.error(
+          'ListingAPI: DataState -> ${req.runtimeType}',
+          name: 'ListingAPI.listing - req is DataState',
+          error: req.exception,
+        );
         return await _localData('/category');
       }
     } catch (e) {
-      log('❌ Error ListingAPI: catch -> $e');
+      AppLog.error(
+        'ListingAPI: catch -> $e',
+        name: 'ListingAPI.listing - catch',
+        error: e,
+      );
       return await _localData('/category');
     }
   }

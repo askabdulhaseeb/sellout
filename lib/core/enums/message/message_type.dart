@@ -1,6 +1,6 @@
-import 'dart:developer';
-
 import 'package:hive/hive.dart';
+
+import '../../functions/app_log.dart';
 
 part 'message_type.g.dart';
 
@@ -52,7 +52,10 @@ enum MessageType {
         value != 'offer' &&
         value != 'visiting' &&
         value != 'leave_group') {
-      log('MessageType.fromvalue: $value');
+      AppLog.error(
+        'MessageType.fromvalue: $value',
+        name: 'MessageType.fromJson - if',
+      );
     }
     if (value == null) {
       return MessageType.text;

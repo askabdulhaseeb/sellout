@@ -1,6 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/foundation.dart';
+import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../post/domain/entities/post_entity.dart';
@@ -34,7 +33,10 @@ class ProfileProvider extends ChangeNotifier {
 
   Future<DataState<UserEntity?>?> getUserByUid({String? uid}) async {
     _user = await _getUserByUidUsecase(uid ?? LocalAuth.uid ?? '');
-    log('Profile Provider: User loaded: ${_user?.entity?.displayName}');
+    AppLog.info(
+      'Profile Provider: User loaded: ${_user?.entity?.displayName}',
+      name: 'ProfileProvider.getUserByUid',
+    );
     displayType = kDebugMode ? 0 : 0;
     return _user;
   }

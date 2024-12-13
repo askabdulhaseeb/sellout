@@ -1,7 +1,6 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
+import '../core/functions/app_log.dart';
 import '../features/personal/cart/views/screens/personal_cart_screen.dart';
 import '../features/personal/chats/chat/views/screens/chat_screen.dart';
 import '../features/personal/listing/listing_form/views/screens/add_listing_form_screen.dart';
@@ -15,12 +14,14 @@ import '../features/personal/setting/setting_dashboard/views/screens/personal_se
 class AppRoutes {
   static const String baseURL = 'https://tanafos-6baeb.web.app';
   static String fromUriToRouteName(Uri? uri) {
-    log('Starting URI Search.... $uri - Path: ${uri?.path}');
+    AppLog.info(
+      'Starting URI Search.... $uri - Path: ${uri?.path}',
+      name: 'AppRoutes.fromUriToRouteName',
+    );
     if (uri == null) return DashboardScreen.routeName;
     if (uri.origin == baseURL && uri.path.isEmpty && uri.query.isEmpty) {
       return DashboardScreen.routeName;
     }
-    log('New Path is: ${uri.path}');
     switch (uri.path) {
       // AUTH
       case SignInScreen.routeName:

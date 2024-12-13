@@ -1,10 +1,9 @@
-import 'dart:developer';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../../../core/enums/listing/core/listing_type.dart';
+import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../core/widgets/loader.dart';
 
@@ -38,7 +37,11 @@ class SubCategorySelectableWidget extends StatelessWidget {
             return const Loader();
           }
           if (snapshot.hasError && snapshot.data == null) {
-            log('❌ Error: SubCategorySelectableWidget: snapshot -> ${snapshot.error}');
+            AppLog.error(
+              'SubCategorySelectableWidget: snapshot -> ${snapshot.error}',
+              name: 'SubCategorySelectableWidget.build - snapshot',
+              error: snapshot.error,
+            );
             return Center(child: Text('something-wrong'.tr()));
           }
           return Column(

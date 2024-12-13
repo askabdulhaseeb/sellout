@@ -1,7 +1,6 @@
-import 'dart:developer';
-
 import 'package:hive_flutter/hive_flutter.dart';
 
+import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../domain/entities/getted_message_entity.dart';
@@ -35,7 +34,10 @@ class LocalChatMessage {
     } else {
       final List<MessageEntity> old = result.messages;
       final List<MessageEntity> neww = value.messages;
-      log('New Message - old: ${old.length} - new: ${neww.length}');
+      AppLog.info(
+        'New Message - old: ${old.length} - new: ${neww.length}',
+        name: chatID,
+      );
       // if (old.length != neww.length) {
       for (MessageEntity element in neww) {
         if (old.any((MessageEntity e) => e.messageId == element.messageId)) {
@@ -45,7 +47,10 @@ class LocalChatMessage {
         }
         // }
       }
-      log('New Message - updated: ${old.length}');
+      AppLog.info(
+        'New Message - updated: ${old.length}',
+        name: chatID,
+      );
       final GettedMessageEntity newGettedMessage = GettedMessageEntity(
         chatID: id,
         messages: old,
