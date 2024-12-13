@@ -3,7 +3,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../../../../core/utilities/app_string.dart';
 import '../../domain/entities/review_entity.dart';
-import '../../domain/enums/review_query_option_type.dart';
 import '../../domain/param/get_review_param.dart';
 
 class LocalReview {

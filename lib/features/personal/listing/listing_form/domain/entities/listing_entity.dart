@@ -15,7 +15,7 @@ class ListingEntity {
     required this.title,
     required this.type,
     this.address,
-  });
+  }) : inHiveAt = DateTime.now();
 
   @HiveField(0)
   String listId;
@@ -33,4 +33,6 @@ class ListingEntity {
   String title;
   @HiveField(7)
   ListingType type;
+  @HiveField(8)
+  final DateTime inHiveAt;
 }

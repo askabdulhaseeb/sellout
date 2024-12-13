@@ -6,7 +6,7 @@ part 'review_entity.g.dart';
 
 @HiveType(typeId: 47)
 class ReviewEntity {
-  const ReviewEntity({
+  ReviewEntity({
     required this.postID,
     required this.reviewID,
     required this.sellerID,
@@ -20,7 +20,7 @@ class ReviewEntity {
     // required this.comments,
     required this.fileUrls,
     required this.createdAt,
-  });
+  }) : inHiveAt = DateTime.now();
 
   @HiveField(0)
   final String? postID;
@@ -48,6 +48,8 @@ class ReviewEntity {
   final List<AttachmentEntity> fileUrls;
   @HiveField(12)
   final DateTime createdAt;
+  @HiveField(13)
+  final DateTime inHiveAt;
 
   ReviewType get type => ReviewType.fromJson(typeSTR);
 }

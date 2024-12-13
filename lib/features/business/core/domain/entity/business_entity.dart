@@ -29,7 +29,7 @@ class BusinessEntity {
     required this.createdAt,
     required this.updatedAt,
     required this.logo,
-  });
+  }) : inHiveAt = DateTime.now();
 
   @HiveField(0)
   final String businessID;
@@ -65,4 +65,6 @@ class BusinessEntity {
   final DateTime updatedAt;
   @HiveField(16)
   final AttachmentEntity? logo;
+  @HiveField(17)
+  final DateTime inHiveAt;
 }

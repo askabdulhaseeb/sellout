@@ -14,7 +14,7 @@ part 'post_entity.g.dart';
 
 @HiveType(typeId: 20)
 class PostEntity {
-  const PostEntity({
+  PostEntity({
     required this.quantity,
     required this.address,
     required this.isActive,
@@ -70,7 +70,8 @@ class PostEntity {
     this.wormAndFleaTreated,
     this.accessCode,
     this.businessID,
-  });
+    DateTime? inHiveAt,
+  }) : inHiveAt = inHiveAt ?? DateTime.now();
 
   @HiveField(0)
   final int quantity;
@@ -182,6 +183,8 @@ class PostEntity {
   final String? accessCode;
   @HiveField(54)
   final String? businessID;
+  @HiveField(55)
+  final DateTime inHiveAt;
 
   String get imageURL => fileUrls.isEmpty ? '' : fileUrls.first.url;
   String get priceStr => '$currency $price'.toUpperCase();

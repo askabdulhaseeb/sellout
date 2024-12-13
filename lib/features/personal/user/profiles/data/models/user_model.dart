@@ -37,7 +37,7 @@ class UserModel extends UserEntity {
     required super.supportingsInfo,
     required super.phoneNumber,
     required super.updateAt,
-  });
+  }) : super(inHiveAt: DateTime.now());
 
   factory UserModel.fromRawJson(String str) =>
       UserModel.fromJson(json.decode(str));
