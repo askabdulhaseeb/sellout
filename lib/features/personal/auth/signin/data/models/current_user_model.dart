@@ -14,7 +14,7 @@ class CurrentUserModel extends CurrentUserEntity {
     required super.address,
     required super.chatIDs,
     required super.businessIDs,
-  });
+  }) : super(inHiveAt: DateTime.now());
 
   factory CurrentUserModel.fromRawJson(String str) =>
       CurrentUserModel.fromJson(json.decode(str));

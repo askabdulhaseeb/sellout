@@ -36,6 +36,7 @@ class UserEntity {
     required this.supportingsInfo,
     required this.phoneNumber,
     required this.updateAt,
+    required this.inHiveAt,
   });
 
   @HiveField(0)
@@ -86,6 +87,8 @@ class UserEntity {
   final String phoneNumber;
   @HiveField(23)
   final DateTime updateAt;
+  @HiveField(24)
+  final DateTime inHiveAt;
 
   String? get profilePhotoURL =>
       profilePic.isEmpty ? null : profilePic.first.url;

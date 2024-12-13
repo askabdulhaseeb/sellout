@@ -7,11 +7,11 @@ part 'getted_message_entity.g.dart';
 
 @HiveType(typeId: 33)
 class GettedMessageEntity {
-  const GettedMessageEntity({
+  GettedMessageEntity({
     required this.chatID,
     required this.messages,
     required this.lastEvaluatedKey,
-  });
+  }) : inHiveAt = DateTime.now();
 
   @HiveField(0)
   final List<MessageEntity> messages;
@@ -19,6 +19,8 @@ class GettedMessageEntity {
   final MessageLastEvaluatedKeyEntity? lastEvaluatedKey;
   @HiveField(2)
   final String chatID;
+  @HiveField(3)
+  final DateTime inHiveAt;
 
   List<MessageEntity> sortedMessage() {
     messages.sort((MessageEntity a, MessageEntity b) =>

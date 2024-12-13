@@ -69,7 +69,7 @@ class PostModel extends PostEntity {
     required super.wormAndFleaTreated,
     required super.accessCode,
     required super.businessID,
-  });
+  }) : super(inHiveAt: DateTime.now());
 
   factory PostModel.fromEntity(PostEntity entity) {
     return PostModel(

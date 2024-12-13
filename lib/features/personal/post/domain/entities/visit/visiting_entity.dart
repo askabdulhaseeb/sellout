@@ -5,7 +5,7 @@ part 'visiting_entity.g.dart';
 
 @HiveType(typeId: 14)
 class VisitingEntity {
-  const VisitingEntity({
+  VisitingEntity({
     required this.visitingID,
     required this.visiterID,
     required this.businessID,
@@ -15,7 +15,7 @@ class VisitingEntity {
     required this.visitingTime,
     required this.dateTime,
     required this.createdAt,
-  });
+  }) : inHiveAt = DateTime.now();
 
   @HiveField(0)
   final String visitingID;
@@ -35,4 +35,6 @@ class VisitingEntity {
   final DateTime dateTime;
   @HiveField(8)
   final DateTime? createdAt;
+  @HiveField(9)
+  final DateTime? inHiveAt;
 }

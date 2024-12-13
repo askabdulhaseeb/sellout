@@ -23,7 +23,7 @@ class ServiceEntity {
     required this.time,
     required this.createdAt,
     required this.attachments,
-  });
+  }) : inHiveAt = DateTime.now();
 
   @HiveField(0)
   final String businessID;
@@ -57,6 +57,8 @@ class ServiceEntity {
   final DateTime createdAt;
   @HiveField(15, defaultValue: <AttachmentEntity>[])
   final List<AttachmentEntity> attachments;
+  @HiveField(16)
+  final DateTime inHiveAt;
 
   String? get thumbnailURL =>
       attachments.isEmpty ? null : attachments.first.url;

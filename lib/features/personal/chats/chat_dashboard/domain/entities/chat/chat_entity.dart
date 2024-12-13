@@ -12,7 +12,7 @@ part 'chat_entity.g.dart';
 
 @HiveType(typeId: 10)
 class ChatEntity {
-  const ChatEntity({
+  ChatEntity({
     required this.updatedAt,
     required this.createdAt,
     required this.ids,
@@ -25,7 +25,7 @@ class ChatEntity {
     this.participants,
     this.deletedBy,
     this.groupInfo,
-  });
+  }) : inHiveAt = DateTime.now();
 
   @HiveField(0)
   final DateTime updatedAt;
@@ -51,6 +51,8 @@ class ChatEntity {
   final List<dynamic>? deletedBy;
   @HiveField(11)
   final GroupInfoEntity? groupInfo;
+  @HiveField(12)
+  final DateTime inHiveAt;
 
   String otherPerson() {
     final String meID = LocalAuth.uid ?? '';

@@ -21,25 +21,42 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        CustomIconButton(
-          icon: Icons.remove,
-          onPressed: () {},
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Text(
-            quantity.toString(),
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+        Expanded(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              CustomIconButton(
+                icon: Icons.remove,
+                onPressed: () {
+                  if (quantity == 1) return;
+                  setState(() {
+                    quantity--;
+                  });
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text(
+                  quantity.toString(),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              CustomIconButton(
+                icon: Icons.add,
+                onPressed: () {
+                  if (quantity == widget.post.quantity) return;
+                  setState(() {
+                    quantity++;
+                  });
+                },
+              ),
+            ],
           ),
         ),
-        CustomIconButton(
-          icon: Icons.add,
-          onPressed: () {},
-        ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 12),
         Expanded(
           child: CustomElevatedButton(
             onTap: () async {
