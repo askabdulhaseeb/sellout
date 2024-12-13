@@ -31,7 +31,7 @@ class ListingEntityAdapter extends TypeAdapter<ListingEntity> {
   @override
   void write(BinaryWriter writer, ListingEntity obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.listId)
       ..writeByte(1)
@@ -47,7 +47,9 @@ class ListingEntityAdapter extends TypeAdapter<ListingEntity> {
       ..writeByte(6)
       ..write(obj.title)
       ..writeByte(7)
-      ..write(obj.type);
+      ..write(obj.type)
+      ..writeByte(8)
+      ..write(obj.inHiveAt);
   }
 
   @override

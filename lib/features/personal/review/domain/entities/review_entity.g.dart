@@ -35,7 +35,7 @@ class ReviewEntityAdapter extends TypeAdapter<ReviewEntity> {
   @override
   void write(BinaryWriter writer, ReviewEntity obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.postID)
       ..writeByte(1)
@@ -59,7 +59,9 @@ class ReviewEntityAdapter extends TypeAdapter<ReviewEntity> {
       ..writeByte(11)
       ..write(obj.fileUrls)
       ..writeByte(12)
-      ..write(obj.createdAt);
+      ..write(obj.createdAt)
+      ..writeByte(13)
+      ..write(obj.inHiveAt);
   }
 
   @override

@@ -32,7 +32,7 @@ class VisitingEntityAdapter extends TypeAdapter<VisitingEntity> {
   @override
   void write(BinaryWriter writer, VisitingEntity obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.visitingID)
       ..writeByte(1)
@@ -50,7 +50,9 @@ class VisitingEntityAdapter extends TypeAdapter<VisitingEntity> {
       ..writeByte(7)
       ..write(obj.dateTime)
       ..writeByte(8)
-      ..write(obj.createdAt);
+      ..write(obj.createdAt)
+      ..writeByte(9)
+      ..write(obj.inHiveAt);
   }
 
   @override

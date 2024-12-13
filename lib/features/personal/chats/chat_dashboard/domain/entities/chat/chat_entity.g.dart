@@ -35,7 +35,7 @@ class ChatEntityAdapter extends TypeAdapter<ChatEntity> {
   @override
   void write(BinaryWriter writer, ChatEntity obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.updatedAt)
       ..writeByte(1)
@@ -59,7 +59,9 @@ class ChatEntityAdapter extends TypeAdapter<ChatEntity> {
       ..writeByte(10)
       ..write(obj.deletedBy)
       ..writeByte(11)
-      ..write(obj.groupInfo);
+      ..write(obj.groupInfo)
+      ..writeByte(12)
+      ..write(obj.inHiveAt);
   }
 
   @override

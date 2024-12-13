@@ -41,7 +41,7 @@ class ServiceEntityAdapter extends TypeAdapter<ServiceEntity> {
   @override
   void write(BinaryWriter writer, ServiceEntity obj) {
     writer
-      ..writeByte(16)
+      ..writeByte(17)
       ..writeByte(0)
       ..write(obj.businessID)
       ..writeByte(1)
@@ -73,7 +73,9 @@ class ServiceEntityAdapter extends TypeAdapter<ServiceEntity> {
       ..writeByte(14)
       ..write(obj.createdAt)
       ..writeByte(15)
-      ..write(obj.attachments);
+      ..write(obj.attachments)
+      ..writeByte(16)
+      ..write(obj.inHiveAt);
   }
 
   @override

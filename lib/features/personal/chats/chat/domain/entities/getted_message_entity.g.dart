@@ -26,13 +26,15 @@ class GettedMessageEntityAdapter extends TypeAdapter<GettedMessageEntity> {
   @override
   void write(BinaryWriter writer, GettedMessageEntity obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.messages)
       ..writeByte(1)
       ..write(obj.lastEvaluatedKey)
       ..writeByte(2)
-      ..write(obj.chatID);
+      ..write(obj.chatID)
+      ..writeByte(3)
+      ..write(obj.inHiveAt);
   }
 
   @override
