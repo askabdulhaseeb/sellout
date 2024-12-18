@@ -211,6 +211,17 @@
     "see-all-reviews": "See All Reviews",
     "top-review": "Top Review",
     "recent-reviews": "Recent Reviews",
+    "successfull-add-to-basket": "Successfull added to basket",
+    "post-to": "Post to",
+    "address": "Address",
+    "add-address": "Add Address",
+    "edit-address": "Edit Address",
+    "no-address": "No Address",
+    "select-address": "Select Address",
+    "add-a-delivery-or-pickup-address": "Add a delivery or pickup address",
+    "add-a-new-address": "Add a new address",
+    "find-pickup-location-near-you": "Find a pickup location near you",
+    "default": "Default",
     "none": "none",
     "na": "N/A"
 }

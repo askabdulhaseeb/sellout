@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../../../../core/widgets/attachment_slider.dart';
+import '../../../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../../../core/widgets/shadow_container.dart';
 import '../../../../../domain/entities/post_entity.dart';
 import '../../../../../post_detail/views/screens/post_detail_screen.dart';
@@ -32,6 +33,10 @@ class HomePostTile extends StatelessWidget {
         child: Column(
           children: <Widget>[
             PostHeaderSection(post: post),
+            InDevMode(
+                child: Text(
+              post.sizeColors.length.toString(),
+            )),
             AttachmentsSlider(urls: post.fileUrls),
             HomePostIconBottonSection(post: post),
             HomePostTitleSection(post: post),

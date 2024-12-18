@@ -49,8 +49,8 @@ class LocalReview {
         return _box.values
             .where((ReviewEntity review) => review.postID == param.id)
             .toList();
-      default:
-        return <ReviewEntity>[];
+      // default:
+      //   return <ReviewEntity>[];
     }
   }
 

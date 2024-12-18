@@ -48,5 +48,5 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
   ChangeNotifierProvider<ReviewListProvider>.value(value: ReviewListProvider()),
   // Business
   ChangeNotifierProvider<BusinessPageProvider>.value(
-      value: BusinessPageProvider(locator(), locator(), locator())),
+      value: BusinessPageProvider(locator(), locator(), locator(), locator())),
 ];

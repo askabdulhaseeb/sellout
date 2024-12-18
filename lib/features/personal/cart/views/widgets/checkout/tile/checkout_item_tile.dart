@@ -35,7 +35,10 @@ class CheckoutItemTile extends StatelessWidget {
                 Text(
                   item.title,
                   maxLines: 1,
-                  style: Theme.of(context).textTheme.titleLarge,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 Text(item.condition.code.tr()),
                 const SizedBox(height: 2),
@@ -43,6 +46,7 @@ class CheckoutItemTile extends StatelessWidget {
               ],
             ),
           ),
+          const SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
