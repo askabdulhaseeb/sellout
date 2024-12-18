@@ -33,15 +33,13 @@ class TextMessageTile extends StatelessWidget {
             if (message.text.isNotEmpty)
               Text(
                 message.text,
-                style: TextStyle(
-                  color: isMe ? Colors.white : Colors.black,
-                ),
+                style: const TextStyle(color: Colors.black),
               ),
             Opacity(
               opacity: isMe ? 0.8 : 0.6,
               child: Text(
                 message.createdAt.timeAgo,
-                style: TextStyle(color: isMe ? Colors.white : null),
+                // style: TextStyle(color: isMe ? Colors.white : null),
               ),
             )
           ],

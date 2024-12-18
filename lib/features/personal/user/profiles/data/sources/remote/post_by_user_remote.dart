@@ -1,3 +1,4 @@
+import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/api_call.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../post/data/models/post_model.dart';
@@ -41,7 +42,11 @@ class PostByUserRemoteImpl implements PostByUserRemote {
         );
       }
     } catch (e) {
-      print(e);
+      AppLog.error(
+        e.toString(),
+        name: 'PostByUserRemoteImpl.getPostByUser - catch',
+        error: e,
+      );
     }
     return DataFailer<List<PostEntity>>(
       CustomException('Failed to get post by user'),

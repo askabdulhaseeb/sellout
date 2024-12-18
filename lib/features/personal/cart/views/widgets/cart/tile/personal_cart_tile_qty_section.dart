@@ -44,6 +44,8 @@ class _PersonalCartTileQtySectionState
     return Row(
       children: <Widget>[
         IconButton(
+          padding: EdgeInsets.zero,
+          visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
           onPressed: qty == 1
               ? null
               : () async {
@@ -65,6 +67,8 @@ class _PersonalCartTileQtySectionState
           style: Theme.of(context).textTheme.titleMedium,
         ),
         IconButton(
+          padding: EdgeInsets.zero,
+          visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
           onPressed: qty == widget.post?.quantity
               ? null
               : () async {

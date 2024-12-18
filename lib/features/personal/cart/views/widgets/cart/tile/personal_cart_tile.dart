@@ -48,6 +48,7 @@ class PersonalCartTile extends StatelessWidget {
                       Text(
                         post?.title ?? '',
                         maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                       const SizedBox(height: 4),

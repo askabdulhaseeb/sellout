@@ -28,7 +28,9 @@ class MessageBgWidget extends StatelessWidget {
         ),
         decoration: BoxDecoration(
             color: color ??
-                (isMe ? Theme.of(context).primaryColor : Colors.grey[200]),
+                (isMe
+                    ? Theme.of(context).primaryColor.withOpacity(0.2)
+                    : Colors.grey[200]),
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(isMe ? 16 : 0),
               topRight: Radius.circular(isMe ? 0 : 16),

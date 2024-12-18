@@ -21,8 +21,8 @@ class AddToCartParam {
     return json.encode(<String, dynamic>{
       'list_id': post.listId,
       'post_id': post.postId,
-      'color': color?.code,
-      'size': size?.id,
+      if (color != null) 'color': color?.code,
+      if (size != null) 'size': size?.id,
       'quantity': quantity,
     });
   }

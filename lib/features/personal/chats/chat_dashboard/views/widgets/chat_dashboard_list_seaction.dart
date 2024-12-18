@@ -20,8 +20,8 @@ class ChatDashboardListSeaction extends StatelessWidget {
             return const ServicesChatListWidget();
           case ChatPageType.groups:
             return const GroupChatListWidget();
-          default:
-            return const Center(child: Text('No Chat List'));
+          // default:
+          //   return const Center(child: Text('No Chat List'));
         }
       },
     );

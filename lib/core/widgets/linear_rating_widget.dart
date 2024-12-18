@@ -29,37 +29,47 @@ class LinearRatingGraphWidget extends StatelessWidget {
         _LinearProgressTile(
           onTap: () => onTap(5),
           star: 5,
-          percent: reviews.where((ReviewEntity e) => e.rating == 5).length *
-              100 ~/
-              reviews.length,
+          percent: reviews.isEmpty
+              ? 0
+              : reviews.where((ReviewEntity e) => e.rating == 5).length *
+                  100 ~/
+                  reviews.length,
         ),
         _LinearProgressTile(
           onTap: () => onTap(4),
           star: 4,
-          percent: reviews.where((ReviewEntity e) => e.rating == 4).length *
-              100 ~/
-              reviews.length,
+          percent: reviews.isEmpty
+              ? 0
+              : reviews.where((ReviewEntity e) => e.rating == 4).length *
+                  100 ~/
+                  reviews.length,
         ),
         _LinearProgressTile(
           onTap: () => onTap(3),
           star: 3,
-          percent: reviews.where((ReviewEntity e) => e.rating == 3).length *
-              100 ~/
-              reviews.length,
+          percent: reviews.isEmpty
+              ? 0
+              : reviews.where((ReviewEntity e) => e.rating == 3).length *
+                  100 ~/
+                  reviews.length,
         ),
         _LinearProgressTile(
           onTap: () => onTap(2),
           star: 2,
-          percent: reviews.where((ReviewEntity e) => e.rating == 2).length *
-              100 ~/
-              reviews.length,
+          percent: reviews.isEmpty
+              ? 0
+              : reviews.where((ReviewEntity e) => e.rating == 2).length *
+                  100 ~/
+                  reviews.length,
         ),
         _LinearProgressTile(
           onTap: () => onTap(1),
           star: 1,
-          percent: reviews.where((ReviewEntity e) => e.rating == 1).length *
-              100 ~/
-              reviews.length,
+          percent: reviews.isEmpty
+              ? 0
+              : reviews.where((ReviewEntity e) => e.rating == 1).length *
+                  100 ~/
+                  reviews.length,
         ),
       ],
     );

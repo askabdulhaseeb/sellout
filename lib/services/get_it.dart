@@ -175,7 +175,7 @@ void _business() {
   //
   // Providers
   locator.registerLazySingleton<BusinessPageProvider>(
-      () => BusinessPageProvider(locator(), locator(), locator()));
+      () => BusinessPageProvider(locator(), locator(), locator(), locator()));
 }
 
 void _services() {

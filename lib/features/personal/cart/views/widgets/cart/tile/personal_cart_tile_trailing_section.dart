@@ -40,7 +40,7 @@ class _PersonalCartTileTrailingSectionState
               .toUpperCase(),
           style: const TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 18,
+            fontSize: 16,
           ),
         ),
         const SizedBox(height: 4),
@@ -101,7 +101,7 @@ class _PersonalCartTileTrailingSectionState
               ),
               child: Text(
                 widget.item.type.tileActionCode.tr(),
-                style: TextStyle(color: primaryColor, fontSize: 14),
+                style: TextStyle(color: primaryColor, fontSize: 12),
               ).tr(),
             ),
           ),

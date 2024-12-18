@@ -102,7 +102,7 @@ class _Tile extends StatelessWidget {
 }
 
 class _PaymentTile extends StatelessWidget {
-  const _PaymentTile({required this.image, this.bgColor, super.key});
+  const _PaymentTile({required this.image, this.bgColor});
   final String image;
   final Color? bgColor;
 

@@ -36,6 +36,21 @@ class CartProvider extends ChangeNotifier {
   CartItemType _basketPage = CartItemType.cart;
   CartItemType get basketPage => _basketPage;
 
+  AddressEntity? _address = (LocalAuth.currentUser?.address != null &&
+          LocalAuth.currentUser!.address
+              .where((AddressEntity element) => element.isDefault)
+              .isNotEmpty)
+      ? LocalAuth.currentUser!.address
+          .where((AddressEntity element) => element.isDefault)
+          .first
+      : null;
+  AddressEntity? get address => _address;
+
+  set address(AddressEntity? value) {
+    _address = value;
+    notifyListeners();
+  }
+
   set basketPage(CartItemType value) {
     _basketPage = value;
     notifyListeners();
@@ -63,10 +78,16 @@ class CartProvider extends ChangeNotifier {
   Future<DataState<CheckOutEntity>> checkout() async {
     try {
       if ((LocalAuth.currentUser?.address ?? <AddressEntity>[]).isEmpty) {
-        return DataFailer(CustomException('message'));
+        return DataFailer<CheckOutEntity>(CustomException('message'));
+      }
+      _address ??= LocalAuth.currentUser?.address
+          .where((AddressEntity element) => element.isDefault)
+          .first;
+      if (_address == null) {
+        return DataFailer<CheckOutEntity>(CustomException('message'));
       }
       final DataState<CheckOutEntity> state =
-          await _getCheckoutUsecase(LocalAuth.currentUser!.address.first);
+          await _getCheckoutUsecase(_address!);
       return state;
     } catch (e) {
       AppLog.error(

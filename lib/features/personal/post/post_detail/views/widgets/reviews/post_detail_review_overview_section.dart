@@ -21,7 +21,7 @@ class PostDetailReviewOverviewSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final param = GetReviewParam(
+    final GetReviewParam param = GetReviewParam(
       id: post.createdBy,
       type: ReviewApiQueryOptionType.sellerID,
     );

@@ -72,4 +72,19 @@ class LocalPost {
       return DataSuccess<List<PostEntity>>('', posts);
     }
   }
+
+  DataState<List<PostEntity>> postbyBusinessID(String? value) {
+    final String id = value ?? '';
+    if (id.isEmpty) {
+      return DataFailer<List<PostEntity>>(CustomException('userId is empty'));
+    }
+    final List<PostEntity> posts = _box.values.where((PostEntity post) {
+      return post.businessID == id;
+    }).toList();
+    if (posts.isEmpty) {
+      return DataFailer<List<PostEntity>>(CustomException('No post found'));
+    } else {
+      return DataSuccess<List<PostEntity>>('', posts);
+    }
+  }
 }
