@@ -9,13 +9,15 @@ enum StatusType {
   @HiveField(1)
   accepted('accepted', 'accepted');
 
-
   const StatusType(this.code, this.json);
   final String code;
   final String json;
 
   static StatusType fromJson(String? map) {
     if (map == null) return StatusType.pending;
-    return StatusType.values.firstWhere((StatusType e) => e.code == map);
+    return StatusType.values.firstWhere(
+      (StatusType e) => e.code == map.trim(),
+      orElse: () => StatusType.pending,
+    );
   }
 }

@@ -43,6 +43,8 @@ dependencies:
   social_media_recorder: ^1.1.13
   audio_waveforms: ^1.1.0
   video_player: ^2.9.2
+  
+  syncfusion_flutter_calendar: ^28.1.33
 
 dev_dependencies:
   flutter_test:

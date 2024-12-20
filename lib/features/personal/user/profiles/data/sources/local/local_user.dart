@@ -39,6 +39,8 @@ class LocalUser {
   Future<UserEntity?> user(String id) async {
     final UserEntity? entity = userEntity(id);
     if (entity != null) {
+      return entity;
+    } else {
       final GetUserByUidUsecase getUserByUidUsecase =
           GetUserByUidUsecase(locator());
       final DataState<UserEntity?> user = await getUserByUidUsecase(id);
@@ -47,8 +49,6 @@ class LocalUser {
       } else {
         return null;
       }
-    } else {
-      return null;
     }
   }
 }

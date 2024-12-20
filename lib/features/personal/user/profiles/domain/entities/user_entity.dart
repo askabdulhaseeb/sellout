@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../auth/signin/data/models/address_model.dart';
+import 'business_profile_detail_entity.dart';
 import 'supporter_detail_entity.dart';
 import 'user_role_info_business.dart';
 import 'user_support_info_entity.dart';
@@ -37,6 +38,8 @@ class UserEntity {
     required this.phoneNumber,
     required this.updateAt,
     required this.inHiveAt,
+    required this.currency,
+    required this.businessDetail,
   });
 
   @HiveField(0)
@@ -89,6 +92,10 @@ class UserEntity {
   final DateTime updateAt;
   @HiveField(24)
   final DateTime inHiveAt;
+  @HiveField(25)
+  final String currency;
+  @HiveField(26)
+  final List<ProfileBusinessDetailEntity> businessDetail;
 
   String? get profilePhotoURL =>
       profilePic.isEmpty ? null : profilePic.first.url;

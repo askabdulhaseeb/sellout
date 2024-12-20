@@ -48,13 +48,15 @@ class UserEntityAdapter extends TypeAdapter<UserEntity> {
       phoneNumber: fields[22] == null ? '' : fields[22] as String,
       updateAt: fields[23] as DateTime,
       inHiveAt: fields[24] as DateTime,
+      currency: fields[25] as String,
+      businessDetail: (fields[26] as List).cast<ProfileBusinessDetailEntity>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, UserEntity obj) {
     writer
-      ..writeByte(25)
+      ..writeByte(27)
       ..writeByte(0)
       ..write(obj.mobileNo)
       ..writeByte(1)
@@ -104,7 +106,11 @@ class UserEntityAdapter extends TypeAdapter<UserEntity> {
       ..writeByte(23)
       ..write(obj.updateAt)
       ..writeByte(24)
-      ..write(obj.inHiveAt);
+      ..write(obj.inHiveAt)
+      ..writeByte(25)
+      ..write(obj.currency)
+      ..writeByte(26)
+      ..write(obj.businessDetail);
   }
 
   @override

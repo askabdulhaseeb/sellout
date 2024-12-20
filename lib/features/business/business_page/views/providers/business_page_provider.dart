@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/data_state.dart';
+import '../../../../personal/bookings/domain/entity/booking_entity.dart';
 import '../../../../personal/post/domain/entities/post_entity.dart';
 import '../../../../personal/review/domain/entities/review_entity.dart';
 import '../../../../personal/review/domain/param/get_review_param.dart';
@@ -10,7 +11,9 @@ import '../../../../personal/user/profiles/domain/usecase/get_post_by_id_usecase
 import '../../../core/domain/entity/business_entity.dart';
 import '../../../core/domain/usecase/get_business_by_id_usecase.dart';
 import '../../domain/entities/services_list_responce_entity.dart';
+import '../../domain/params/get_business_bookings_params.dart';
 import '../../domain/params/get_business_serives_param.dart';
+import '../../domain/usecase/get_business_bookings_list_usecase.dart';
 import '../../domain/usecase/get_services_list_by_business_id_usecase.dart';
 import '../enum/business_page_tab_type.dart';
 
@@ -20,11 +23,13 @@ class BusinessPageProvider extends ChangeNotifier {
     this._servicesListUsecase,
     this._getReviewsUsecase,
     this._getPostByIdUsecase,
+    this._getBookingsListUsecase,
   );
   final GetBusinessByIdUsecase _byID;
   final GetServicesListByBusinessIdUsecase _servicesListUsecase;
   final GetReviewsUsecase _getReviewsUsecase;
   final GetPostByIdUsecase _getPostByIdUsecase;
+  final GetBusinessBookingsListUsecase _getBookingsListUsecase;
 
   BusinessEntity? _business;
   BusinessEntity? get business => _business;
@@ -140,5 +145,12 @@ class BusinessPageProvider extends ChangeNotifier {
       return DataFailer<List<PostEntity>>(
           CustomException('Failed to get post list'));
     }
+  }
+
+  Future<DataState<List<BookingEntity>>> getBookings(String businessID) async {
+    final DataState<List<BookingEntity>> result = await _getBookingsListUsecase(
+      GetBusinessBookingsParams(businessID: businessID),
+    );
+    return result;
   }
 }

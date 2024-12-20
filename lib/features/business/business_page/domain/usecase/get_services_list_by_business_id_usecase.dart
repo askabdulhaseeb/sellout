@@ -6,7 +6,7 @@ import '../repositories/business_page_services_repository.dart';
 class GetServicesListByBusinessIdUsecase
     implements UseCase<ServicesListResponceEntity, GetBusinessSerivesParam> {
   GetServicesListByBusinessIdUsecase(this._repository);
-  final BusinessPageServicesRepository _repository;
+  final BusinessPageRepository _repository;
 
   @override
   Future<DataState<ServicesListResponceEntity>> call(

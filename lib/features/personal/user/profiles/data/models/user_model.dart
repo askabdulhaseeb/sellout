@@ -5,7 +5,9 @@ import '../../../../../../core/extension/string_ext.dart';
 import '../../../../../attachment/data/attchment_model.dart';
 import '../../../../auth/signin/data/models/address_model.dart';
 
+import '../../domain/entities/business_profile_detail_entity.dart';
 import '../../domain/entities/user_entity.dart';
+import 'business_profile_detail_model.dart';
 import 'supporter_detail_model.dart';
 import 'user_role_info_business_model.dart';
 import 'user_support_info_model.dart';
@@ -37,6 +39,8 @@ class UserModel extends UserEntity {
     required super.supportingsInfo,
     required super.phoneNumber,
     required super.updateAt,
+    required super.currency,
+    required super.businessDetail,
   }) : super(inHiveAt: DateTime.now());
 
   factory UserModel.fromRawJson(String str) =>
@@ -94,5 +98,11 @@ class UserModel extends UserEntity {
         updateAt: json['update_at'] == null
             ? DateTime.now()
             : (json['update_at']?.toString().toDateTime()) ?? DateTime.now(),
+        currency: json['currency'] ?? '',
+        businessDetail: json['business_map'] == null
+            ? <ProfileBusinessDetailModel>[]
+            : List<ProfileBusinessDetailEntity>.from((json['business_map'] ??
+                    <dynamic>[])
+                .map((dynamic e) => ProfileBusinessDetailModel.fromJson(e))),
       );
 }

@@ -23,6 +23,8 @@ class HomePostListSection extends StatelessWidget {
           final List<PostEntity> posts =
               snapshot.data?.entity ?? <PostEntity>[];
           return ListView.builder(
+            primary: false,
+            shrinkWrap: true,
             itemCount: posts.length,
             itemBuilder: (BuildContext context, int index) =>
                 HomePostTile(post: posts[index]),
