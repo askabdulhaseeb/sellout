@@ -28,6 +28,10 @@ extension StringExt on String {
     dateFormat = DateFormat('hh:mm a yyyy-MM-dd');
     dateTime = dateFormat.tryParseUtc(this);
     if (dateTime != null) return dateTime.toLocal();
+    //
+    dateFormat = DateFormat('hh:mm a yyyy-MM-dd');
+    dateTime = dateFormat.tryParseUtc(this);
+    if (dateTime != null) return dateTime.toLocal();
     return null;
   }
 

@@ -1,8 +1,10 @@
 import 'package:get_it/get_it.dart';
 
 import '../features/business/business_page/data/repositories/business_page_services_repository.dart';
+import '../features/business/business_page/data/sources/business_booking_remote.dart';
 import '../features/business/business_page/data/sources/get_service_by_business_id_remote.dart';
 import '../features/business/business_page/domain/repositories/business_page_services_repository.dart';
+import '../features/business/business_page/domain/usecase/get_business_bookings_list_usecase.dart';
 import '../features/business/business_page/domain/usecase/get_services_list_by_business_id_usecase.dart';
 import '../features/business/business_page/views/providers/business_page_provider.dart';
 import '../features/business/core/data/repository/business_repo_impl.dart';
@@ -71,6 +73,7 @@ void setupLocator() {
   _post();
   _cart();
   _business();
+  _booking();
   _services();
   _review();
 }
@@ -174,8 +177,9 @@ void _business() {
       () => GetBusinessByIdUsecase(locator()));
   //
   // Providers
-  locator.registerLazySingleton<BusinessPageProvider>(
-      () => BusinessPageProvider(locator(), locator(), locator(), locator()));
+  locator.registerLazySingleton<BusinessPageProvider>(() =>
+      BusinessPageProvider(
+          locator(), locator(), locator(), locator(), locator()));
 }
 
 void _services() {
@@ -184,12 +188,26 @@ void _services() {
       () => GetServiceByBusinessIdRemoteImpl());
   //
   // REPOSITORIES
-  locator.registerFactory<BusinessPageServicesRepository>(
-      () => BusinessPageServicesRepositoryImpl(locator()));
+  locator.registerFactory<BusinessPageRepository>(
+      () => BusinessPageRepositoryImpl(locator(), locator()));
   //
   // USECASES
   locator.registerFactory<GetServicesListByBusinessIdUsecase>(
       () => GetServicesListByBusinessIdUsecase(locator()));
+  //
+  // Providers
+}
+
+void _booking() {
+  // API
+  locator.registerFactory<BusinessBookingRemote>(
+      () => BusinessBookingRemoteImpl());
+  //
+  // REPOSITORIES
+  //
+  // USECASES
+  locator.registerFactory<GetBusinessBookingsListUsecase>(
+      () => GetBusinessBookingsListUsecase(locator()));
   //
   // Providers
 }

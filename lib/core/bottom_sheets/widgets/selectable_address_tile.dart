@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../../features/personal/address/add_address/views/screens/add_address_screen.dart';
 import '../../../features/personal/auth/signin/domain/entities/address_entity.dart';
 
 class SelectableAddressTile extends StatelessWidget {
@@ -65,16 +64,16 @@ class SelectableAddressTile extends StatelessWidget {
                         const Text('  •  '),
                         InkWell(
                           onTap: () async {
-                            final AddressEntity? newAddress =
-                                await Navigator.of(context)
-                                    .push<AddressEntity?>(
-                              MaterialPageRoute<AddressEntity?>(
-                                builder: (BuildContext context) {
-                                  return AddEditAddressScreen(
-                                      initAddress: address);
-                                },
-                              ),
-                            );
+                            // final AddressEntity? newAddress =
+                            //     await Navigator.of(context)
+                            //         .push<AddressEntity?>(
+                            //   MaterialPageRoute<AddressEntity?>(
+                            //     builder: (BuildContext context) {
+                            //       return AddEditAddressScreen(
+                            //           initAddress: address);
+                            //     },
+                            //   ),
+                            // );
                           },
                           child: Container(
                             padding: const EdgeInsets.symmetric(

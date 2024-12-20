@@ -46,7 +46,16 @@ class GetServiceByBusinessIdRemoteImpl implements GetServiceByBusinessIdRemote {
         final dynamic data = json.decode(raw);
         final List<dynamic> list = data['items'];
         final List<ServiceEntity> servicesList = <ServiceEntity>[];
-
+        if (list.isEmpty) {
+          return DataSuccess<ServicesListResponceEntity>(
+            raw,
+            ServicesListResponceModel(
+              message: data['message'] ?? '',
+              nextKey: data['nextKey'],
+              services: servicesList,
+            ),
+          );
+        }
         for (dynamic element in list) {
           final ServiceEntity service = ServiceModel.fromJson(element);
           await LocalService().save(service);

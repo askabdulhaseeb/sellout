@@ -12,6 +12,9 @@ import '../../../features/business/core/domain/entity/business_entity.dart';
 import '../../../features/business/core/domain/entity/business_travel_detail_entity.dart';
 import '../../../features/business/core/domain/entity/routine_entity.dart';
 import '../../../features/business/core/domain/entity/service/service_entity.dart';
+import '../../../features/personal/bookings/data/sources/local_booking.dart';
+import '../../../features/personal/bookings/domain/entity/booking_entity.dart';
+import '../../../features/personal/bookings/domain/entity/booking_payment_detail_entity.dart';
 import '../../../features/personal/cart/data/sources/local_cart.dart';
 import '../../../features/personal/chats/chat/data/sources/local/local_message.dart';
 import '../../../features/personal/chats/chat/domain/entities/getted_message_entity.dart';
@@ -41,6 +44,7 @@ import '../../../features/personal/review/data/sources/local_review.dart';
 import '../../../features/personal/review/domain/entities/review_entity.dart';
 import '../../../features/personal/user/profiles/data/sources/local/local_user.dart';
 import '../../../features/personal/user/profiles/data/sources/local/local_visits.dart';
+import '../../../features/personal/user/profiles/domain/entities/business_profile_detail_entity.dart';
 import '../../../features/personal/user/profiles/domain/entities/supporter_detail_entity.dart';
 import '../../../features/personal/user/profiles/domain/entities/user_role_info_business.dart';
 import '../../../features/personal/user/profiles/domain/entities/user_support_info_entity.dart';
@@ -112,6 +116,9 @@ class HiveDB {
     Hive.registerAdapter(UserSupportInfoEntityAdapter()); // 45
     Hive.registerAdapter(ServiceEntityAdapter()); // 46
     Hive.registerAdapter(ReviewEntityAdapter()); // 47
+    Hive.registerAdapter(ProfileBusinessDetailEntityAdapter()); // 48
+    Hive.registerAdapter(BookingEntityAdapter()); // 49
+    Hive.registerAdapter(BookingPaymentDetailEntityAdapter()); // 50
 
     // Hive box Open
     await refresh();
@@ -130,5 +137,6 @@ class HiveDB {
     await LocalBusiness().refresh();
     await LocalService().refresh();
     await LocalReview().refresh();
+    await LocalBooking().refresh();
   }
 }
