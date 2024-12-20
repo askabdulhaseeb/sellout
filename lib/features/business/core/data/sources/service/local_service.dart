@@ -3,7 +3,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/utilities/app_string.dart';
 import '../../../../../../core/widgets/scaffold/personal_scaffold.dart';
+import '../../../../../../services/get_it.dart';
 import '../../../domain/entity/service/service_entity.dart';
+import '../../../domain/usecase/get_service_by_id_usecase.dart';
 
 class LocalService {
   static final String boxTitle = AppStrings.localServicesBox;
@@ -42,21 +44,21 @@ class LocalService {
     return list;
   }
 
-  // Future<ServiceEntity?> getService(String id) async {
-  //   final ServiceEntity? po = business(id);
-  //   if (po == null) {
-  //     final GetServiceByIdUsecase getUsercase =
-  //         GetServiceByIdUsecase(locator());
-  //     final DataState<ServiceEntity?> result = await getUsercase(id);
-  //     if (result is DataSuccess) {
-  //       return result.entity;
-  //     } else {
-  //       return null;
-  //     }
-  //   } else {
-  //     return po;
-  //   }
-  // }
+  Future<ServiceEntity?> getService(String id) async {
+    final ServiceEntity? po = business(id);
+    if (po == null) {
+      final GetServiceByIdUsecase getUsercase =
+          GetServiceByIdUsecase(locator());
+      final DataState<ServiceEntity?> result = await getUsercase(id);
+      if (result is DataSuccess) {
+        return result.entity;
+      } else {
+        return null;
+      }
+    } else {
+      return po;
+    }
+  }
 
   List<ServiceEntity> get all => _box.values.toList();
 }
