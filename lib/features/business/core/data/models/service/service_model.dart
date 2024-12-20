@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../../../../../../core/extension/string_ext.dart';
 import '../../../../../attachment/data/attchment_model.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
@@ -54,4 +56,7 @@ class ServiceModel extends ServiceEntity {
         // serviceReports: List<ServiceReport>.from(
         //     json['service_reports'].map((dynamic x) => ServiceReport.fromJson(x))),
       );
+
+  factory ServiceModel.fromRawJson(String str) =>
+      ServiceModel.fromJson(json.decode(str));
 }

@@ -1,9 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
+import '../../../features/business/core/data/sources/service/local_service.dart';
+import '../../../features/business/core/domain/entity/service/service_entity.dart';
 import '../../../features/personal/bookings/domain/entity/booking_entity.dart';
 import '../../../features/personal/user/profiles/data/sources/local/local_user.dart';
 import '../../enums/core/status_type.dart';
+import '../../extension/datetime_ext.dart';
+import '../../theme/colors.dart';
 
 class CalenderBookingTile extends StatefulWidget {
   const CalenderBookingTile({required this.booking, super.key});
@@ -27,39 +31,65 @@ class _CalenderBookingTileState extends State<CalenderBookingTile> {
     final Color color =
         widget.booking.status == StatusType.pending ? Colors.red : Colors.green;
     const TextStyle boldStyle = TextStyle(fontWeight: FontWeight.w700);
-
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(width: 6, color: color),
-          Expanded(
-            child: FutureBuilder<void>(
-              future: init(),
-              builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-                return Container(
-                  padding: const EdgeInsets.all(8),
-                  color: color.withValues(
-                      alpha: 0.3, red: 0.8, green: 0.5, blue: 0.1),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        '${customer?.displayName} ${'with'.tr()}: ${employee?.displayName}',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: boldStyle,
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints buiilder) {
+        return buiilder.maxWidth > 100
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(width: 6, color: color),
+                    Expanded(
+                      child: FutureBuilder<void>(
+                        future: init(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<void> snapshot) {
+                          return Container(
+                            padding: const EdgeInsets.all(8),
+                            color: myLightPrimaryColor,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  '${customer?.displayName} ${'with'.tr()}: ${employee?.displayName}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: boldStyle,
+                                ),
+                                const SizedBox(height: 4),
+                                FutureBuilder<ServiceEntity?>(
+                                  future: LocalService().getService(
+                                      widget.booking.serviceID ?? ''),
+                                  builder: (
+                                    BuildContext context,
+                                    AsyncSnapshot<ServiceEntity?> snapshot,
+                                  ) {
+                                    final ServiceEntity? service =
+                                        snapshot.data;
+                                    return Text(
+                                      '${service?.name} • ${widget.booking.bookedAt.timeOnly} ',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    );
+                                  },
+                                ),
+                                const Divider(),
+                                Text(
+                                  '${'status'.tr()}: ${widget.booking.status.code.tr()}',
+                                  style: boldStyle.copyWith(color: color),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
-                      
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+                    ),
+                  ],
+                ),
+              )
+            : CircleAvatar(backgroundColor: color, radius: 10);
+      },
     );
   }
 }
