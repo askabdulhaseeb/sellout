@@ -8,6 +8,7 @@ import '../../../features/personal/user/profiles/data/sources/local/local_user.d
 import '../../enums/core/status_type.dart';
 import '../../extension/datetime_ext.dart';
 import '../../theme/colors.dart';
+import '../custom_network_image.dart';
 
 class CalenderBookingTile extends StatefulWidget {
   const CalenderBookingTile({required this.booking, super.key});
@@ -45,41 +46,43 @@ class _CalenderBookingTileState extends State<CalenderBookingTile> {
                         future: init(),
                         builder: (BuildContext context,
                             AsyncSnapshot<void> snapshot) {
-                          return Container(
-                            padding: const EdgeInsets.all(8),
-                            color: myLightPrimaryColor,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  '${customer?.displayName} ${'with'.tr()}: ${employee?.displayName}',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: boldStyle,
-                                ),
-                                const SizedBox(height: 4),
-                                FutureBuilder<ServiceEntity?>(
-                                  future: LocalService().getService(
-                                      widget.booking.serviceID ?? ''),
-                                  builder: (
-                                    BuildContext context,
-                                    AsyncSnapshot<ServiceEntity?> snapshot,
-                                  ) {
-                                    final ServiceEntity? service =
-                                        snapshot.data;
-                                    return Text(
-                                      '${service?.name} • ${widget.booking.bookedAt.timeOnly} ',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    );
-                                  },
-                                ),
-                                const Divider(),
-                                Text(
-                                  '${'status'.tr()}: ${widget.booking.status.code.tr()}',
-                                  style: boldStyle.copyWith(color: color),
-                                ),
-                              ],
+                          return SingleChildScrollView(
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              color: myLightPrimaryColor,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    '${customer?.displayName} ${'with'.tr()}: ${employee?.displayName}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: boldStyle,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  FutureBuilder<ServiceEntity?>(
+                                    future: LocalService().getService(
+                                        widget.booking.serviceID ?? ''),
+                                    builder: (
+                                      BuildContext context,
+                                      AsyncSnapshot<ServiceEntity?> snapshot,
+                                    ) {
+                                      final ServiceEntity? service =
+                                          snapshot.data;
+                                      return Text(
+                                        '${service?.name} • ${widget.booking.bookedAt.timeOnly} ',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      );
+                                    },
+                                  ),
+                                  const Divider(),
+                                  Text(
+                                    '${'status'.tr()}: ${widget.booking.status.code.tr()}',
+                                    style: boldStyle.copyWith(color: color),
+                                  ),
+                                ],
+                              ),
                             ),
                           );
                         },
@@ -88,7 +91,26 @@ class _CalenderBookingTileState extends State<CalenderBookingTile> {
                   ],
                 ),
               )
-            : CircleAvatar(backgroundColor: color, radius: 10);
+            : FutureBuilder<ServiceEntity?>(
+                future:
+                    LocalService().getService(widget.booking.serviceID ?? ''),
+                builder: (
+                  BuildContext context,
+                  AsyncSnapshot<ServiceEntity?> snapshot,
+                ) {
+                  final ServiceEntity? service = snapshot.data;
+                  return CircleAvatar(
+                    backgroundColor: color,
+                    backgroundImage: service?.thumbnailURL != null
+                        ? NetworkImage(service!.thumbnailURL!)
+                        : null,
+                    child: CustomNetworkImage(
+                      imageURL: service?.thumbnailURL,
+                      color: Colors.transparent,
+                    ),
+                  );
+                },
+              );
       },
     );
   }

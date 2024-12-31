@@ -10,6 +10,7 @@ class CustomNetworkImage extends StatelessWidget {
     this.fit = BoxFit.cover,
     this.timeLimit = const Duration(days: 2),
     this.size,
+    this.color,
     super.key,
   });
   final String? imageURL;
@@ -17,6 +18,7 @@ class CustomNetworkImage extends StatelessWidget {
   final BoxFit? fit;
   final Duration? timeLimit;
   final double? size;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,7 @@ class CustomNetworkImage extends StatelessWidget {
         ? Container(
             height: size,
             width: size,
-            color: Theme.of(context).dividerColor,
+            color: color ?? Theme.of(context).dividerColor,
             alignment: Alignment.center,
             child: Text(
               placeholderText.toUpperCase(),
@@ -42,7 +44,7 @@ class CustomNetworkImage extends StatelessWidget {
             height: size,
             width: size,
             placeholder: (BuildContext context, String url) => Container(
-              color: Theme.of(context).dividerColor,
+              color: color ?? Theme.of(context).dividerColor,
               child: const Loader(),
             ),
             errorWidget: (BuildContext context, String url, _) => Text(

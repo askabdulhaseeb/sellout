@@ -42,7 +42,7 @@ class ReviewRemoteApiImpl implements ReviewRemoteApi {
         endpoint: endpoint,
         requestType: ApiRequestType.get,
       );
-      if (response is DataSuccess<bool>) {
+      if (response is DataSuccess) {
         final String raw = response.data ?? '';
         if (raw.isEmpty) {
           AppLog.error(

@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../../core/sources/data_state.dart';
-import '../../../../../../core/widgets/loader.dart';
-import '../../../../core/data/sources/service/local_service.dart';
-import '../../../../core/domain/entity/business_entity.dart';
-import '../../../../core/domain/entity/service/service_entity.dart';
-import '../../../domain/entities/services_list_responce_entity.dart';
-import '../../providers/business_page_provider.dart';
-import '../business_page_employee_list_section.dart';
-import 'empty_lists/business_page_empty_service_widget.dart';
-import 'tile/business_page_service_tile.dart';
+import '../../../../../../../core/sources/data_state.dart';
+import '../../../../../../../core/widgets/loader.dart';
+import '../../../../../core/data/sources/service/local_service.dart';
+import '../../../../../core/domain/entity/business_entity.dart';
+import '../../../../../core/domain/entity/service/service_entity.dart';
+import '../../../../domain/entities/services_list_responce_entity.dart';
+import '../../../providers/business_page_provider.dart';
+import '../../business_page_employee_list_section.dart';
+import '../empty_lists/business_page_empty_service_widget.dart';
+import '../tile/business_page_service_tile.dart';
+import 'business_page_service_filter_section.dart';
 
 class BusinessPageServiceSection extends StatelessWidget {
   const BusinessPageServiceSection({required this.business, super.key});
@@ -50,6 +51,7 @@ class BusinessPageServiceSection extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
+                        BusinessPageServiceFilterSection(business: business),
                         BusinessPageEmployeeListSection(business: business),
                         const SizedBox(height: 10),
                         ListView.builder(

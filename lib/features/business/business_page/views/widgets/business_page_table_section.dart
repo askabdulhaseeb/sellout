@@ -60,6 +60,8 @@ class _Tab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color selectedColor = Theme.of(context).textTheme.bodyLarge!.color ??
+        Theme.of(context).primaryColor;
     return Padding(
       padding: const EdgeInsets.only(right: 16),
       child: GestureDetector(
@@ -70,14 +72,15 @@ class _Tab extends StatelessWidget {
             Text(
               tab.code.tr(),
               style: TextStyle(
-                color: isSelected ? Colors.black : Colors.grey,
+                color:
+                    isSelected ? selectedColor : Theme.of(context).dividerColor,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),
             Container(
               height: 2,
               width: 60,
-              color: isSelected ? Colors.black : Colors.transparent,
+              color: isSelected ? selectedColor : Colors.transparent,
             ),
           ],
         ),

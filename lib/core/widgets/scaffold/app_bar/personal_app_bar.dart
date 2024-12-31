@@ -27,44 +27,44 @@ personalAppbar(BuildContext context) {
     ),
     actions: <Widget>[
       _IconButton(icon: AppIcons.notification, onPressed: () {}),
-      if(me.isNotEmpty)
+      if (me.isNotEmpty)
         ValueListenableBuilder<Box<CartEntity>>(
-          valueListenable: LocalCart().listenable(),
-          builder: (BuildContext context, Box<CartEntity> cartBox, __) {
-            final CartEntity cart = cartBox.values.firstWhere(
-              (CartEntity element) => element.cartID == me,
-              orElse: () => CartModel(),
-            );
-            return Stack(
-              clipBehavior: Clip.none,
-              children: <Widget>[
-                _IconButton(
-                  icon: AppIcons.cart,
-                  onPressed: () => Navigator.of(context)
-                      .pushNamed(PersonalCartScreen.routeName),
-                ),
-                if (cart.cartItemsCount > 0)
-                  Positioned(
-                    right: 0,
-                    top: -8,
-                    child: Container(
-                      height: 24,
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        shape: BoxShape.circle,
-                      ),
-                      child: FittedBox(
-                        child: Text(
-                          cart.cartItemsCount.toString(),
-                          style: const TextStyle(color: Colors.white),
+            valueListenable: LocalCart().listenable(),
+            builder: (BuildContext context, Box<CartEntity> cartBox, __) {
+              final CartEntity cart = cartBox.values.firstWhere(
+                (CartEntity element) => element.cartID == me,
+                orElse: () => CartModel(),
+              );
+              return Stack(
+                clipBehavior: Clip.none,
+                children: <Widget>[
+                  _IconButton(
+                    icon: AppIcons.cart,
+                    onPressed: () => Navigator.of(context)
+                        .pushNamed(PersonalCartScreen.routeName),
+                  ),
+                  if (cart.cartItemsCount > 0)
+                    Positioned(
+                      right: 0,
+                      top: -8,
+                      child: Container(
+                        height: 24,
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor,
+                          shape: BoxShape.circle,
+                        ),
+                        child: FittedBox(
+                          child: Text(
+                            cart.cartItemsCount.toString(),
+                            style: const TextStyle(color: Colors.white),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-              ],
-            );
-          }),
+                ],
+              );
+            }),
       const SizedBox(width: 8),
     ],
   );
@@ -77,16 +77,19 @@ class _IconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onPressed,
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        padding: const EdgeInsets.all(6),
-        decoration: BoxDecoration(
-          color: Theme.of(context).dividerColor,
-          borderRadius: BorderRadius.circular(10),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: Theme.of(context).dividerColor,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: FittedBox(child: Icon(icon)),
         ),
-        child: FittedBox(child: Icon(icon)),
       ),
     );
   }

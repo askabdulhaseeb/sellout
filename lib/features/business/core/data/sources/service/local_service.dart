@@ -24,12 +24,12 @@ class LocalService {
   }
 
   Future<void> save(ServiceEntity value) async =>
-      await _box.put(value.businessID, value);
+      await _box.put(value.serviceID, value);
 
-  ServiceEntity? business(String id) => _box.get(id);
+  ServiceEntity? service(String id) => _box.get(id);
 
   DataState<ServiceEntity> dataState(String id) {
-    final ServiceEntity? po = business(id);
+    final ServiceEntity? po = service(id);
     if (po == null) {
       return DataFailer<ServiceEntity>(CustomException('loading...'.tr()));
     } else {
@@ -45,7 +45,7 @@ class LocalService {
   }
 
   Future<ServiceEntity?> getService(String id) async {
-    final ServiceEntity? po = business(id);
+    final ServiceEntity? po = service(id);
     if (po == null) {
       final GetServiceByIdUsecase getUsercase =
           GetServiceByIdUsecase(locator());
