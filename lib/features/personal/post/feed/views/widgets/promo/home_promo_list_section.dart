@@ -15,7 +15,7 @@ class HomePromoListSection extends StatelessWidget {
             width: 200,
             margin: const EdgeInsets.only(right: 10),
             decoration: BoxDecoration(
-              color: Colors.grey[300],
+              color: Theme.of(context).dividerColor,
               borderRadius: BorderRadius.circular(10),
             ),
           );

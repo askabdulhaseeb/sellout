@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../core/widgets/profile_photo.dart';
+import '../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../../../../personal/user/profiles/data/sources/local/local_user.dart';
 import '../../../core/domain/entity/business_employee_entity.dart';
 import '../../../core/domain/entity/business_entity.dart';
@@ -34,45 +35,52 @@ class _EmployeeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        // TODO: SELECT EMPLOYEE
-      },
-      child: FutureBuilder<UserEntity?>(
-        future: LocalUser().user(employee.uid),
-        builder: (
-          BuildContext context,
-          AsyncSnapshot<UserEntity?> snapshot,
-        ) {
-          final UserEntity? user = snapshot.data;
-          return Container(
-            width: 120,
-            padding: const EdgeInsets.all(4),
-            margin: const EdgeInsets.only(right: 8),
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                AspectRatio(
-                  aspectRatio: 1 / 1,
-                  child: ProfilePhoto(url: user?.profilePhotoURL),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    user?.displayName ?? 'na',
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                ),
-              ],
-            ),
-          );
+    final BorderRadius borderRadius = BorderRadius.circular(8);
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: InkWell(
+        borderRadius: borderRadius,
+        onTap: () {
+          // TODO: SELECT EMPLOYEE
         },
+        child: FutureBuilder<UserEntity?>(
+          future: LocalUser().user(employee.uid),
+          builder: (
+            BuildContext context,
+            AsyncSnapshot<UserEntity?> snapshot,
+          ) {
+            final UserEntity? user = snapshot.data;
+            return Container(
+              width: 120,
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: Theme.of(context).dividerColor,
+                borderRadius: borderRadius,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  AspectRatio(
+                    aspectRatio: 1 / 1,
+                    child: ProfilePhoto(
+                      url: user?.profilePhotoURL,
+                      placeholder: user?.displayName ?? '/',
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      user?.displayName ?? 'na'.tr(),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

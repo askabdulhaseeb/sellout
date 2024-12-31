@@ -39,7 +39,10 @@ class _Button extends StatelessWidget {
         decoration: BoxDecoration(
           color: color,
           borderRadius: borderRadius,
-          border: Border.all(width: 0.2),
+          border: Border.all(
+            // width: 0.2,
+            color: Theme.of(context).disabledColor,
+          ),
         ),
         child: Material(
           borderRadius: borderRadius,

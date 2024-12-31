@@ -56,11 +56,17 @@ class BusinessPageProvider extends ChangeNotifier {
 
   set business(BusinessEntity? value) {
     _business = value;
+    reset();
+  }
+
+  reset() {
+    _selectedTab = BusinessPageTabType.services;
     _servicesListParam = null;
+    _posts.clear();
     notifyListeners();
   }
 
-  BusinessPageTabType _selectedTab = BusinessPageTabType.calender;
+  BusinessPageTabType _selectedTab = BusinessPageTabType.services;
   BusinessPageTabType get selectedTab => _selectedTab;
   set selectedTab(BusinessPageTabType value) {
     _selectedTab = value;

@@ -87,16 +87,21 @@ class _Widget<T> extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               if (title.isNotEmpty)
-                Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.w500),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Text(
+                    title,
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                  ),
                 ),
-              if (title.isNotEmpty) const SizedBox(height: 4),
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(6),
-                  border: Border.all(width: 0.5),
+                  border: Border.all(
+                    width: 0.5,
+                    color: Theme.of(context).hintColor,
+                  ),
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton2<T>(
@@ -167,9 +172,7 @@ class _Widget<T> extends StatelessWidget {
                             .contains(searchValue.toLowerCase().trim());
                       },
                     ),
-                    menuItemStyleData: const MenuItemStyleData(
-                      height: 40,
-                    ),
+                    menuItemStyleData: const MenuItemStyleData(height: 40),
                   ),
                 ),
               ),
