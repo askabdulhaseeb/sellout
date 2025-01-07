@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../../../core/domain/entity/business_entity.dart';
+import 'section_details/score/business_page_score_bottom_sheet.dart';
 
 class BusinessPageScoreSection extends StatelessWidget {
   const BusinessPageScoreSection({required this.business, super.key});
@@ -13,7 +14,17 @@ class BusinessPageScoreSection extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: <Widget>[
-          _Button(title: 'details'.tr(), onTap: () {}),
+          _Button(
+            title: 'details'.tr(),
+            onTap: () async {
+              await showModalBottomSheet<void>(
+                context: context,
+                builder: (BuildContext context) {
+                  return BusinessPageScoreBottomSheet(business: business);
+                },
+              );
+            },
+          ),
           const SizedBox(width: 8),
           _Button(title: 'supporting'.tr(), onTap: () {}),
           const SizedBox(width: 8),
