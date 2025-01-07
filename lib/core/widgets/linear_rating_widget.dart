@@ -31,7 +31,7 @@ class LinearRatingGraphWidget extends StatelessWidget {
           star: 5,
           percent: reviews.isEmpty
               ? 0
-              : reviews.where((ReviewEntity e) => e.rating == 5).length *
+              : reviews.where((ReviewEntity e) => e.rating > 4).length *
                   100 ~/
                   reviews.length,
         ),
@@ -40,7 +40,9 @@ class LinearRatingGraphWidget extends StatelessWidget {
           star: 4,
           percent: reviews.isEmpty
               ? 0
-              : reviews.where((ReviewEntity e) => e.rating == 4).length *
+              : reviews
+                      .where((ReviewEntity e) => e.rating > 3 && e.rating <= 4)
+                      .length *
                   100 ~/
                   reviews.length,
         ),
@@ -49,7 +51,9 @@ class LinearRatingGraphWidget extends StatelessWidget {
           star: 3,
           percent: reviews.isEmpty
               ? 0
-              : reviews.where((ReviewEntity e) => e.rating == 3).length *
+              : reviews
+                      .where((ReviewEntity e) => e.rating > 2 && e.rating <= 3)
+                      .length *
                   100 ~/
                   reviews.length,
         ),
@@ -58,7 +62,9 @@ class LinearRatingGraphWidget extends StatelessWidget {
           star: 2,
           percent: reviews.isEmpty
               ? 0
-              : reviews.where((ReviewEntity e) => e.rating == 2).length *
+              : reviews
+                      .where((ReviewEntity e) => e.rating > 1 && e.rating <= 2)
+                      .length *
                   100 ~/
                   reviews.length,
         ),
@@ -67,7 +73,7 @@ class LinearRatingGraphWidget extends StatelessWidget {
           star: 1,
           percent: reviews.isEmpty
               ? 0
-              : reviews.where((ReviewEntity e) => e.rating == 1).length *
+              : reviews.where((ReviewEntity e) => e.rating <= 1).length *
                   100 ~/
                   reviews.length,
         ),

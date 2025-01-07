@@ -13,6 +13,11 @@ import '../features/business/core/data/sources/service/service_remote_api.dart';
 import '../features/business/core/domain/repository/business_repository.dart';
 import '../features/business/core/domain/usecase/get_business_by_id_usecase.dart';
 import '../features/business/core/domain/usecase/get_service_by_id_usecase.dart';
+import '../features/business/service/data/repositories/add_service_repository_impl.dart';
+import '../features/business/service/data/sources/add_service_remote_api.dart';
+import '../features/business/service/domain/repositories/add_service_repository.dart';
+import '../features/business/service/domain/usecase/add_service_usecase.dart';
+import '../features/business/service/views/providers/add_service_provider.dart';
 import '../features/personal/auth/signin/data/repositories/signin_repository_impl.dart';
 import '../features/personal/auth/signin/data/sources/signin_remote_source.dart';
 import '../features/personal/auth/signin/domain/repositories/signin_repository.dart';
@@ -189,18 +194,25 @@ void _services() {
   locator.registerFactory<GetServiceByBusinessIdRemote>(
       () => GetServiceByBusinessIdRemoteImpl());
   locator.registerFactory<ServiceRemoteApi>(() => ServiceRemoteApiImpl());
+  locator.registerFactory<AddServiceRemoteApi>(() => AddServiceRemoteApiImpl());
+
   //
   // REPOSITORIES
   locator.registerFactory<BusinessPageRepository>(
       () => BusinessPageRepositoryImpl(locator(), locator()));
+  locator.registerFactory<AddServiceRepository>(
+      () => AddServiceRepositoryImpl(locator()));
   //
   // USECASES
   locator.registerFactory<GetServicesListByBusinessIdUsecase>(
       () => GetServicesListByBusinessIdUsecase(locator()));
   locator.registerFactory<GetServiceByIdUsecase>(
       () => GetServiceByIdUsecase(locator()));
+  locator.registerFactory(() => AddServiceUsecase(locator()));
   //
   // Providers
+  locator.registerLazySingleton<AddServiceProvider>(
+      () => AddServiceProvider(locator()));
 }
 
 void _booking() {
