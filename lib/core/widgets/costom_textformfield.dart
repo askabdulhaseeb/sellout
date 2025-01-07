@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CustomTextFormField extends StatefulWidget {
   const CustomTextFormField({
@@ -9,6 +10,7 @@ class CustomTextFormField extends StatefulWidget {
     this.onChanged,
     this.validator,
     this.onFieldSubmitted,
+    this.inputFormatters,
     this.initialValue,
     this.hint = '',
     this.labelText = '',
@@ -29,12 +31,14 @@ class CustomTextFormField extends StatefulWidget {
     this.border,
     super.key,
   }) : _controller = controller;
+
   final TextEditingController? _controller;
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
   final void Function(String)? onChanged;
   final String? Function(String? value)? validator;
   final void Function(String)? onFieldSubmitted;
+  final List<TextInputFormatter>? inputFormatters;
   final String? prefixText;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
@@ -59,9 +63,20 @@ class CustomTextFormField extends StatefulWidget {
 
 class CustomTextFormFieldState extends State<CustomTextFormField> {
   void _onListen() => setState(() {});
+  final List<TextInputFormatter> inputFormatters = [];
   @override
   void initState() {
     widget._controller!.addListener(_onListen);
+    inputFormatters.addAll(widget.inputFormatters ?? <TextInputFormatter>[]);
+    if (widget.maxLength != null) {
+      inputFormatters.add(LengthLimitingTextInputFormatter(widget.maxLength));
+    }
+    if (widget.keyboardType == TextInputType.number ||
+        widget.keyboardType ==
+            const TextInputType.numberWithOptions(decimal: true) ||
+        widget.keyboardType == TextInputType.phone) {
+      inputFormatters.add(FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')));
+    }
     super.initState();
   }
 
@@ -89,6 +104,7 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
             initialValue: widget.initialValue,
             controller: widget._controller,
             readOnly: widget.readOnly,
+            inputFormatters: inputFormatters,
             keyboardType: widget.keyboardType == TextInputType.number
                 ? const TextInputType.numberWithOptions(decimal: true)
                 : widget.maxLines! > 1
@@ -106,7 +122,7 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
                 : (widget._controller!.text.isEmpty)
                     ? 1
                     : widget.maxLines,
-            maxLength: widget.maxLength,
+            maxLength: widget.isExpanded ? widget.maxLength : null,
             style: widget.style,
             validator: (String? value) =>
                 widget.validator == null ? null : widget.validator!(value),
@@ -131,7 +147,22 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
                           !widget.showSuffixIcon ||
                           widget.showSuffixIcon == false ||
                           widget.readOnly)
-                      ? null
+                      ? (widget.maxLength == null
+                          ? null
+                          : widget.isExpanded
+                              ? null
+                              : Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(
+                                      '${widget._controller!.text.length}/${widget.maxLength}',
+                                      style: TextStyle(
+                                        color: Theme.of(context).disabledColor,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ],
+                                ))
                       : IconButton(
                           splashRadius: 16,
                           onPressed: () => setState(() {

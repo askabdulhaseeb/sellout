@@ -46,7 +46,7 @@ class BusinessPageServiceSection extends StatelessWidget {
                   services.isEmpty
               ? const Center(child: Loader())
               : services.isEmpty
-                  ? const BusinessPageEmptyServiceWidget()
+                  ? BusinessPageEmptyServiceWidget(business: business)
                   : Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,

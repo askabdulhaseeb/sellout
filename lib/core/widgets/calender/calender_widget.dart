@@ -21,6 +21,33 @@ class CalenderWidget extends StatefulWidget {
 
 class _CalenderWidgetState extends State<CalenderWidget> {
   final CalendarController _controller = CalendarController();
+  double startingHour() {
+    try {
+      return widget.bookings.where((BookingEntity booking) {
+        return booking.bookedAt.day == DateTime.now().day &&
+            booking.bookedAt.month == DateTime.now().month &&
+            booking.bookedAt.year == DateTime.now().year;
+      }).map<double>((BookingEntity booking) {
+        return booking.bookedAt.hour.toDouble();
+      }).reduce((double a, double b) => a < b ? a : b);
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  double endingHour() {
+    try {
+      return widget.bookings.where((BookingEntity booking) {
+        return booking.bookedAt.day == DateTime.now().day &&
+            booking.bookedAt.month == DateTime.now().month &&
+            booking.bookedAt.year == DateTime.now().year;
+      }).map<double>((BookingEntity booking) {
+        return booking.bookedAt.hour.toDouble();
+      }).reduce((double a, double b) => a > b ? a : b);
+    } catch (e) {
+      return 24;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +58,9 @@ class _CalenderWidgetState extends State<CalenderWidget> {
       showTodayButton: false,
       viewHeaderHeight: 0,
       dataSource: BookingDataSource(widget.bookings),
-      timeSlotViewSettings: const TimeSlotViewSettings(
-        startHour: 0,
-        endHour: 24,
+      timeSlotViewSettings: TimeSlotViewSettings(
+        startHour: startingHour(),
+        endHour: endingHour(),
         timeIntervalHeight: 100,
       ),
       appointmentBuilder: (
