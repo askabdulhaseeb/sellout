@@ -37,14 +37,14 @@ class ReviewListProvider extends ChangeNotifier {
 
   List<ReviewEntity> reviews() {
     List<ReviewEntity> fake = <ReviewEntity>[];
-    for (ReviewEntity element in _reviews) {
-      if (_star != null) {
-        if (element.rating == _star) {
+    if (_star != null) {
+      for (ReviewEntity element in _reviews) {
+        if (element.rating.ceil() == _star) {
           fake.add(element);
         }
-      } else {
-        fake.add(element);
       }
+    } else {
+      fake.addAll(_reviews);
     }
     if (_sortType == ReviewSortType.topReview) {
       fake.sort(
