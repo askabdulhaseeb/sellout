@@ -329,7 +329,10 @@
     "membership": "Membership",
     "subscription": "Subscription",
     "status": "Status",
+    "staff": "Staff",
+    "business_hours": "Business Hours",
     "with": "with",
+    "closed": "Closed",
     "default": "Default",
     "none": "none",
     "na": "N/A"
