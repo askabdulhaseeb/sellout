@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../widgets/post/home_post_list_section.dart';
 import '../widgets/promo/home_promo_list_section.dart';
@@ -13,7 +14,7 @@ class HomeScreen extends StatelessWidget {
     return const PersonalScaffold(
       body: Column(
         children: <Widget>[
-          HomePromoListSection(),
+          InDevMode(child: HomePromoListSection()),
           HomePostListSection(),
         ],
       ),

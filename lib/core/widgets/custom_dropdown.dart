@@ -54,6 +54,7 @@ class CustomDropdown<T> extends FormField<bool> {
       items: items,
       selectedItem: selectedItem,
       onChanged: onChanged,
+      padding: padding,
       hint: hint,
     );
   }
@@ -120,7 +121,7 @@ class _Widget<T> extends StatelessWidget {
                     onChanged: onChanged,
                     buttonStyleData: ButtonStyleData(
                       padding:
-                          padding ?? const EdgeInsets.symmetric(horizontal: 16),
+                          padding ?? const EdgeInsets.symmetric(horizontal: 12),
                     ),
                     dropdownSearchData: DropdownSearchData<T>(
                       searchController: _search,

@@ -26,7 +26,7 @@ class BusinessPageTableSection extends StatelessWidget {
           return Container(
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: ListView.builder(
-              padding: const EdgeInsets.only(left: 16),
+              // padding: const EdgeInsets.only(left: 16),
               scrollDirection: Axis.horizontal,
               shrinkWrap: true,
               primary: false,

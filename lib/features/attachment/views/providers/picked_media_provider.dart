@@ -3,25 +3,36 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 
-import '../../../../core/enums/core/attachment_type.dart';
+import '../../../../core/functions/app_log.dart';
 import '../../domain/entities/picked_attachment.dart';
 import '../../domain/entities/picked_attachment_option.dart';
 
 class PickedMediaProvider extends ChangeNotifier {
   Future<void> onSubmit(BuildContext context) async {
     final List<PickedAttachment> attachmentss = <PickedAttachment>[];
-    for (final AssetEntity media in _pickedMedia) {
-      final File? file = await media.file;
-      if (file == null) continue;
-      final AttachmentType type = media.type == AssetType.image
-          ? AttachmentType.image
-          : AttachmentType.video;
-      final PickedAttachment attachment = PickedAttachment(
-        file: file,
-        type: type,
-        selectedMedia: media,
+    try {
+      for (final AssetEntity media in _pickedMedia) {
+        final File? file = await media.file;
+        if (file == null) continue;
+        final AttachmentType type = media.type == AssetType.image
+            ? AttachmentType.image
+            : AttachmentType.video;
+        final PickedAttachment attachment = PickedAttachment(
+          file: file,
+          type: type,
+          selectedMedia: media,
+        );
+        if (!(_option.selectedMedia ?? <AssetEntity>[])
+            .any((AssetEntity e) => e.id == media.id)) {
+          attachmentss.add(attachment);
+        }
+      }
+    } catch (e) {
+      AppLog.error(
+        'Error submitting picked media',
+        name: 'PickedMediaProvider.onSubmit',
+        error: e,
       );
-      attachmentss.add(attachment);
     }
     clearMedia();
     // ignore: use_build_context_synchronously

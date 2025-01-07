@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../core/functions/app_log.dart';
+import '../features/business/service/views/screens/add_service_screen.dart';
 import '../features/personal/cart/views/screens/personal_cart_screen.dart';
 import '../features/personal/chats/chat/views/screens/chat_screen.dart';
 import '../features/personal/listing/listing_form/views/screens/add_listing_form_screen.dart';
@@ -59,5 +60,8 @@ class AppRoutes {
     PersonalSettingScreen.routeName: (_) => const PersonalSettingScreen(),
     PersonalSettingMoreInformationScreen.routeName: (_) =>
         const PersonalSettingMoreInformationScreen(),
+
+    // BUSSINESS
+    AddServiceScreen.routeName: (_) => const AddServiceScreen(),
   };
 }

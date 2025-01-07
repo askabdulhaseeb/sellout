@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:photo_manager/photo_manager.dart';
 
 import '../../../../core/enums/core/attachment_type.dart';
+export '../../../../core/enums/core/attachment_type.dart';
 
 class PickedAttachment {
   const PickedAttachment({
