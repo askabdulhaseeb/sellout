@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'app_bar/personal_app_bar.dart';
 import 'bottom_bar/personal_bottom_nav_bar.dart';
 
-export 'package:easy_localization/easy_localization.dart';
+// export 'package:easy_localization/easy_localization.dart';
 
 class PersonalScaffold extends StatelessWidget {
   const PersonalScaffold({

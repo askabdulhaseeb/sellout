@@ -1,8 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../../../core/extension/string_ext.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
-import '../../../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../../../../../../../core/widgets/shadow_container.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../post/domain/entities/post_entity.dart';

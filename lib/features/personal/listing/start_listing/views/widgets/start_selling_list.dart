@@ -1,8 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../core/enums/listing/core/listing_type.dart';
-import '../../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../../../../../../core/widgets/shadow_container.dart';
 import '../../../listing_form/views/providers/add_listing_form_provider.dart';
 import '../../../listing_form/views/screens/add_listing_form_screen.dart';

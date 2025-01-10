@@ -1,8 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/utilities/app_string.dart';
-import '../../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../domain/entity/service/service_entity.dart';
 import '../../../domain/usecase/get_service_by_id_usecase.dart';

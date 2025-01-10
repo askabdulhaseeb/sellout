@@ -58,6 +58,11 @@ import '../features/personal/review/data/repositories/review_repository_impl.dar
 import '../features/personal/review/data/sources/review_remote_api.dart';
 import '../features/personal/review/domain/repositories/review_repository.dart';
 import '../features/personal/review/domain/usecase/get_reviews_usecase.dart';
+import '../features/personal/services/data/repositories/personal_services_repository_impl.dart';
+import '../features/personal/services/data/sources/services_explore_api.dart';
+import '../features/personal/services/domain/repositories/personal_services_repository.dart';
+import '../features/personal/services/domain/usecase/get_special_offer_usecase.dart';
+import '../features/personal/services/views/providers/services_page_provider.dart';
 import '../features/personal/user/profiles/data/repositories/user_repository_impl.dart';
 import '../features/personal/user/profiles/data/sources/remote/my_visting_remote.dart';
 import '../features/personal/user/profiles/data/sources/remote/post_by_user_remote.dart';
@@ -74,6 +79,7 @@ final GetIt locator = GetIt.instance;
 void setupLocator() {
   _auth();
   _profile();
+  _servicePage();
   _message();
   _chat();
   _feed();
@@ -94,6 +100,16 @@ void _auth() {
       () => ForgotPasswordUsecase(locator()));
   locator.registerLazySingleton<SigninProvider>(
       () => SigninProvider(locator(), locator()));
+}
+
+void _servicePage() {
+  locator.registerFactory<ServicesExploreApi>(() => ServicesExploreApiImpl());
+  locator.registerFactory<PersonalServicesRepository>(
+      () => PersonalServicesRepositoryImpl(locator()));
+  locator.registerFactory<GetSpecialOfferUsecase>(
+      () => GetSpecialOfferUsecase(locator())); 
+  locator.registerLazySingleton<ServicesPageProvider>(
+      () => ServicesPageProvider(locator()));
 }
 
 void _profile() {

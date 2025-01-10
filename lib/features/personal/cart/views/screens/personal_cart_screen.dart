@@ -1,8 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/enums/cart/cart_item_type.dart';
-import '../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import 'checkout/personal_checkout_screen.dart';
 import '../providers/cart_provider.dart';
 import '../widgets/cart/cart_save_later_toggle_section.dart';

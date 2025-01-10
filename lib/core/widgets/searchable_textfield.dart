@@ -1,7 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../utilities/app_icons.dart';
-import 'scaffold/personal_scaffold.dart';
 
 class SearchableTextfield extends StatelessWidget {
   const SearchableTextfield({

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../features/personal/address/add_address/views/screens/add_address_screen.dart';
@@ -5,7 +6,6 @@ import '../../../features/personal/auth/signin/data/models/address_model.dart';
 import '../../../features/personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../widgets/custom_elevated_button.dart';
 import '../../widgets/in_dev_mode.dart';
-import '../../widgets/scaffold/personal_scaffold.dart';
 import '../widgets/bottom_sheet_top_bar.dart';
 import '../widgets/selectable_address_tile.dart';
 

@@ -1,8 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../../core/widgets/custom_dropdown.dart';
-import '../../../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../../../../domain/entities/review_entity.dart';
 import '../../domain/enums/review_sort_type.dart';
 import '../params/review_list_param.dart';

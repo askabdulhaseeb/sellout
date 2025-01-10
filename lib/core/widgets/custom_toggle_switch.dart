@@ -29,11 +29,13 @@ class CustomToggleSwitch<T> extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           if (labelText.isNotEmpty)
-            Text(
-              labelText,
-              style: const TextStyle(fontWeight: FontWeight.w500),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 2),
+              child: Text(
+                labelText,
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
             ),
-          if (labelText.isNotEmpty) const SizedBox(height: 2),
           Wrap(
             spacing: labels.length == 2 ? 16 : 8,
             runSpacing: 16,

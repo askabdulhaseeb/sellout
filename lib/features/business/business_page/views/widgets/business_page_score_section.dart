@@ -1,6 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../../../core/domain/entity/business_entity.dart';
 import 'section_details/score/business_page_score_bottom_sheet.dart';
 

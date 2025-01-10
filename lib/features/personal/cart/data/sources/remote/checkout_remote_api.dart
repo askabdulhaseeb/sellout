@@ -1,6 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
+
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
-import '../../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../../../../auth/signin/data/models/address_model.dart';
 import '../../../domain/entities/checkout/check_out_entity.dart';
 import '../../models/checkout/check_out_model.dart';
