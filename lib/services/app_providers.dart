@@ -1,5 +1,6 @@
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
+import '../core/widgets/appointment/providers/appointment_tile_provider.dart';
 import '../features/attachment/views/providers/picked_media_provider.dart';
 import '../features/business/business_page/views/providers/business_page_provider.dart';
 import '../features/business/service/views/providers/add_service_provider.dart';
@@ -45,12 +46,15 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
       value: PostDetailProvider(locator(), locator())),
   //
   ChangeNotifierProvider<ServicesPageProvider>.value(
-      value: ServicesPageProvider(locator())),
+      value: ServicesPageProvider(locator(), locator())),
 
   ChangeNotifierProvider<CartProvider>.value(
       value:
           CartProvider(locator(), locator(), locator(), locator(), locator())),
   ChangeNotifierProvider<ReviewListProvider>.value(value: ReviewListProvider()),
+  //
+  ChangeNotifierProvider<AppointmentTileProvider>.value(
+      value: AppointmentTileProvider(locator())),
   // Business
   ChangeNotifierProvider<BusinessPageProvider>.value(
       value: BusinessPageProvider(

@@ -1,5 +1,10 @@
 import 'package:get_it/get_it.dart';
 
+import '../core/widgets/appointment/data/repository/appointment_repository.dart';
+import '../core/widgets/appointment/data/services/appointment_api.dart';
+import '../core/widgets/appointment/domain/repository/appointment_repository.dart';
+import '../core/widgets/appointment/domain/usecase/update_appointment_usecase.dart';
+import '../core/widgets/appointment/providers/appointment_tile_provider.dart';
 import '../features/business/business_page/data/repositories/business_page_services_repository.dart';
 import '../features/business/business_page/data/sources/business_booking_remote.dart';
 import '../features/business/business_page/data/sources/get_service_by_business_id_remote.dart';
@@ -88,6 +93,7 @@ void setupLocator() {
   _business();
   _booking();
   _services();
+  _appointment();
   _review();
 }
 
@@ -107,9 +113,9 @@ void _servicePage() {
   locator.registerFactory<PersonalServicesRepository>(
       () => PersonalServicesRepositoryImpl(locator()));
   locator.registerFactory<GetSpecialOfferUsecase>(
-      () => GetSpecialOfferUsecase(locator())); 
+      () => GetSpecialOfferUsecase(locator()));
   locator.registerLazySingleton<ServicesPageProvider>(
-      () => ServicesPageProvider(locator()));
+      () => ServicesPageProvider(locator(), locator()));
 }
 
 void _profile() {
@@ -239,10 +245,27 @@ void _booking() {
   // REPOSITORIES
   //
   // USECASES
-  locator.registerFactory<GetBusinessBookingsListUsecase>(
-      () => GetBusinessBookingsListUsecase(locator()));
+  locator.registerFactory<GetBookingsListUsecase>(
+      () => GetBookingsListUsecase(locator()));
   //
   // Providers
+}
+
+void _appointment() {
+  // API
+  //
+  locator.registerFactory<AppointmentApi>(() => AppointmentApiImpl());
+  // REPOSITORIES
+  //
+  locator.registerFactory<AppointmentRepository>(
+      () => AppointmentRepositoryImpl(locator()));
+  // USECASES
+  //
+  locator.registerFactory<UpdateAppointmentUsecase>(
+      () => UpdateAppointmentUsecase(locator()));
+  // Providers
+  locator.registerLazySingleton<AppointmentTileProvider>(
+      () => AppointmentTileProvider(locator()));
 }
 
 void _review() {

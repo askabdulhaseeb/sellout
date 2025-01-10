@@ -26,17 +26,18 @@ class BookingEntityAdapter extends TypeAdapter<BookingEntity> {
       status: fields[6] as StatusType,
       paymentDetail: fields[7] as BookingPaymentDetailEntity?,
       bookedAt: fields[8] as DateTime,
-      cancelledAt: fields[9] as DateTime?,
-      createdAt: fields[10] as DateTime,
-      updatedAt: fields[11] as DateTime,
-      notes: fields[13] as String,
+      endAt: fields[9] as DateTime,
+      cancelledAt: fields[10] as DateTime?,
+      createdAt: fields[11] as DateTime,
+      updatedAt: fields[12] as DateTime,
+      notes: fields[14] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, BookingEntity obj) {
     writer
-      ..writeByte(14)
+      ..writeByte(15)
       ..writeByte(0)
       ..write(obj.businessID)
       ..writeByte(1)
@@ -56,14 +57,16 @@ class BookingEntityAdapter extends TypeAdapter<BookingEntity> {
       ..writeByte(8)
       ..write(obj.bookedAt)
       ..writeByte(9)
-      ..write(obj.cancelledAt)
+      ..write(obj.endAt)
       ..writeByte(10)
-      ..write(obj.createdAt)
+      ..write(obj.cancelledAt)
       ..writeByte(11)
-      ..write(obj.updatedAt)
+      ..write(obj.createdAt)
       ..writeByte(12)
-      ..write(obj.inHiveAt)
+      ..write(obj.updatedAt)
       ..writeByte(13)
+      ..write(obj.inHiveAt)
+      ..writeByte(14)
       ..write(obj.notes);
   }
 

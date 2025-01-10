@@ -39,4 +39,10 @@ class LocalBooking {
   }
 
   List<BookingEntity> get all => _box.values.toList();
+
+  List<BookingEntity> userBooking(String value) {
+    return _box.values
+        .where((BookingEntity element) => element.customerID == value)
+        .toList();
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 
 import '../../../../../core/enums/core/status_type.dart';
+import '../../../auth/signin/data/sources/local/local_auth.dart';
 import 'booking_payment_detail_entity.dart';
 part 'booking_entity.g.dart';
 
@@ -16,6 +17,7 @@ class BookingEntity {
     required this.status,
     required this.paymentDetail,
     required this.bookedAt,
+    required this.endAt,
     required this.cancelledAt,
     required this.createdAt,
     required this.updatedAt,
@@ -41,13 +43,21 @@ class BookingEntity {
   @HiveField(8)
   final DateTime bookedAt;
   @HiveField(9)
-  final DateTime? cancelledAt;
+  final DateTime endAt;
   @HiveField(10)
-  final DateTime createdAt;
+  final DateTime? cancelledAt;
   @HiveField(11)
-  final DateTime updatedAt;
+  final DateTime createdAt;
   @HiveField(12)
-  final DateTime inHiveAt;
+  final DateTime updatedAt;
   @HiveField(13)
+  final DateTime inHiveAt;
+  @HiveField(14)
   final String notes;
+
+  bool get amICustomer => customerID == LocalAuth.uid;
+  bool get isCompleted =>
+      status == StatusType.completed ||
+      status == StatusType.cancelled ||
+      status == StatusType.rejected;
 }

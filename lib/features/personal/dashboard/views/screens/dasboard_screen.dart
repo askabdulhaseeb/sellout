@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../../core/functions/app_log.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../auth/signin/views/screens/sign_in_screen.dart';
 import '../../../listing/start_listing/views/screens/start_listing_screen.dart';
@@ -18,6 +19,7 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final CurrentUserEntity? uid = LocalAuth.currentUser;
+    AppLog.info('Current User ID: ${uid?.userId}');
     final List<Widget> screens = <Widget>[
       const HomeScreen(),
       const ExploreScreen(),
@@ -26,7 +28,7 @@ class DashboardScreen extends StatelessWidget {
       uid == null ? const SignInScreen() : const ChatDashboardScreen(),
       uid == null ? const SignInScreen() : const ProfileScreen(),
     ];
-    
+
     return Scaffold(
       body: Consumer<PersonalBottomNavProvider>(
         builder: (BuildContext context, PersonalBottomNavProvider navPro, _) {
