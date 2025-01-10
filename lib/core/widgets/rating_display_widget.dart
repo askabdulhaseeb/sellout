@@ -4,6 +4,7 @@ class RatingDisplayWidget extends StatelessWidget {
   const RatingDisplayWidget({
     required this.ratingList,
     this.displayPrefix = true,
+    this.displayStars = true,
     this.maxRating = 5,
     this.size = 16,
     this.onTap,
@@ -13,6 +14,7 @@ class RatingDisplayWidget extends StatelessWidget {
   final double size;
   final List<double> ratingList;
   final bool displayPrefix;
+  final bool displayStars;
   final VoidCallback? onTap;
 
   @override
@@ -27,38 +29,43 @@ class RatingDisplayWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           if (displayPrefix)
-            Text(
-              rating.toStringAsFixed(1),
-              style: TextStyle(color: Theme.of(context).primaryColor),
+            Padding(
+              padding: const EdgeInsets.only(right: 3),
+              child: Text(
+                rating.toStringAsFixed(1),
+                style: TextStyle(color: Theme.of(context).primaryColor),
+              ),
             ),
-          if (displayPrefix) const SizedBox(width: 4),
           if (displayPrefix)
-            Text(
-              '(${ratingList.length})',
-              style: TextStyle(color: Theme.of(context).primaryColor),
+            Padding(
+              padding: const EdgeInsets.only(right: 4),
+              child: Text(
+                '(${ratingList.length})',
+                style: TextStyle(color: Theme.of(context).primaryColor),
+              ),
             ),
-          if (displayPrefix) const SizedBox(width: 4),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: List<Widget>.generate(
-              maxRating,
-              (int index) {
-                final bool isFilled = index < rating;
-                final bool isHalf = index == rating.floor();
-                final bool isHalfStar = rating % 1 != 0 && isHalf;
-                return Icon(
-                  isFilled && !isHalf
-                      ? Icons.star
-                      : isHalfStar
-                          ? Icons.star_half
-                          : Icons.star_border,
-                  size: size,
-                  color:
-                      isFilled ? Theme.of(context).primaryColor : Colors.grey,
-                );
-              },
+          if (displayStars)
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: List<Widget>.generate(
+                maxRating,
+                (int index) {
+                  final bool isFilled = index < rating;
+                  final bool isHalf = index == rating.floor();
+                  final bool isHalfStar = rating % 1 != 0 && isHalf;
+                  return Icon(
+                    isFilled && !isHalf
+                        ? Icons.star
+                        : isHalfStar
+                            ? Icons.star_half
+                            : Icons.star_border,
+                    size: size,
+                    color:
+                        isFilled ? Theme.of(context).primaryColor : Colors.grey,
+                  );
+                },
+              ),
             ),
-          ),
         ],
       ),
     );

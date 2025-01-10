@@ -11,6 +11,7 @@ class ServiceModel extends ServiceEntity {
     required super.businessID,
     required super.serviceID,
     required super.name,
+    required super.description,
     required super.employeesID,
     required super.employees,
     required super.currency,
@@ -24,12 +25,15 @@ class ServiceModel extends ServiceEntity {
     required super.time,
     required super.createdAt,
     required super.attachments,
+    required super.excluded,
+    required super.included,
   });
 
   factory ServiceModel.fromJson(Map<String, dynamic> json) => ServiceModel(
         businessID: json['business_id'] ?? '',
         serviceID: json['service_id'] ?? '',
         name: json['service_name'] ?? '',
+        description: json['description'] ?? '',
         currency: json['currency'] ?? '',
         createdAt:
             json['created_at']?.toString().toDateTime() ?? DateTime.now(),
@@ -42,7 +46,8 @@ class ServiceModel extends ServiceEntity {
         startAt: json['start_at'] ?? false,
         model: json['service_model'] ?? '',
         employeesID: List<String>.from(
-            (json['employees_id'] ?? <dynamic>[]).map((dynamic x) => x)),
+            (json['employees_ids'] ?? json['employees_id'] ?? <dynamic>[])
+                .map((dynamic x) => x)),
         type: json['service_type'] ?? '',
         price: double.tryParse(json['price']?.toString() ?? '0.0') ?? 0.0,
         listOfReviews: List<double>.from(
@@ -50,9 +55,11 @@ class ServiceModel extends ServiceEntity {
               .map((dynamic x) => double.tryParse(x.toString()) ?? 0.0),
         ),
         attachments: List<AttachmentEntity>.from(
-          (json['file_url'] ?? <dynamic>[])
+          (json['file_url'] ?? json['file_urls'] ?? <dynamic>[])
               .map((dynamic x) => AttachmentModel.fromJson(x)),
         ),
+        excluded: json['not_included_in_service']?.toString() ?? '',
+        included: json['included_in_service']?.toString() ?? '',
         // serviceReports: List<ServiceReport>.from(
         //     json['service_reports'].map((dynamic x) => ServiceReport.fromJson(x))),
       );

@@ -1,10 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../../core/sources/api_call.dart';
 import '../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../core/widgets/loader.dart';
-import '../../../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../../../../../../../core/widgets/shadow_container.dart';
 import '../../../../../post/domain/entities/post_entity.dart';
 import '../../../../data/sources/local_cart.dart';

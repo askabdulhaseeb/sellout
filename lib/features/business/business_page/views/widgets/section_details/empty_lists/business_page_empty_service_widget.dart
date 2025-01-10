@@ -1,6 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../../../../../core/domain/entity/business_entity.dart';
 import '../service/business_page_service_filter_section.dart';
 

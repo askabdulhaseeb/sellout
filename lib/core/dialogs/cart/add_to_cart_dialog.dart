@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../features/personal/post/domain/entities/post_entity.dart';
@@ -13,7 +14,6 @@ import '../../widgets/app_snakebar.dart';
 import '../../widgets/custom_dropdown.dart';
 import '../../widgets/custom_elevated_button.dart';
 import '../../widgets/custom_network_image.dart';
-import '../../widgets/scaffold/personal_scaffold.dart';
 
 class AddToCartDialog extends StatefulWidget {
   const AddToCartDialog({required this.post, super.key});

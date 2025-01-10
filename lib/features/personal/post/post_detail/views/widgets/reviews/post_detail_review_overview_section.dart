@@ -1,9 +1,9 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/widgets/linear_rating_widget.dart';
-import '../../../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../../../../../review/data/sources/local_review.dart';
 import '../../../../../review/domain/entities/review_entity.dart';
 import '../../../../../review/domain/param/get_review_param.dart';

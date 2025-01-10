@@ -1,6 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
+
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/api_call.dart';
-import '../../../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../../../domain/entities/getted_message_entity.dart';
 import '../../../domain/params/send_message_param.dart';
 import '../../models/getted_message_model.dart';

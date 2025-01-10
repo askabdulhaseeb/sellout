@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -6,7 +7,6 @@ import '../../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_toggle_switch.dart';
-import '../../../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../../../data/sources/remote/get_access_code_api.dart';
 import '../../providers/add_listing_form_provider.dart';
 

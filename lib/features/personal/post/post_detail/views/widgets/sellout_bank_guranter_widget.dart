@@ -1,6 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
-import '../../../../../../core/widgets/scaffold/personal_scaffold.dart';
 
 class SelloutBankGuranterWidget extends StatelessWidget {
   const SelloutBankGuranterWidget({super.key});

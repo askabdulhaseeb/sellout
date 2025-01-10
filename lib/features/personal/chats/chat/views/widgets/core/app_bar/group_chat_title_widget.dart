@@ -1,8 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../../../core/widgets/profile_photo.dart';
-import '../../../../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../../../../../chat_dashboard/domain/entities/chat/group/group_into_entity.dart';
 import '../../../providers/chat_provider.dart';
 

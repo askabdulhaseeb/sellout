@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class LocationInputButton extends FormField<bool> {
@@ -44,7 +45,7 @@ class _Widget extends StatelessWidget {
                 Icon(Icons.location_on, color: Theme.of(context).disabledColor),
                 const SizedBox(width: 8),
                 Text(
-                  'Select Location',
+                  'select_location'.tr(),
                   style: TextStyle(color: Theme.of(context).disabledColor),
                 ),
               ],

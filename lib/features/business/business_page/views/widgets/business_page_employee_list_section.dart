@@ -1,7 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../core/widgets/profile_photo.dart';
-import '../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../../../../personal/user/profiles/data/sources/local/local_user.dart';
 import '../../../core/domain/entity/business_employee_entity.dart';
 import '../../../core/domain/entity/business_entity.dart';
