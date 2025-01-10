@@ -14,6 +14,7 @@ class BookingModel extends BookingEntity {
     required super.status,
     required super.paymentDetail,
     required super.bookedAt,
+    required super.endAt,
     required super.cancelledAt,
     required super.createdAt,
     required super.updatedAt,
@@ -31,6 +32,7 @@ class BookingModel extends BookingEntity {
       status: StatusType.fromJson(map['status']),
       paymentDetail: BookingPaymentDetailModel.fromMap(map['payment_detail']),
       bookedAt: map['book_at']?.toString().toDateTime() ?? DateTime.now(),
+      endAt: map['end_time']?.toString().toDateTime() ?? DateTime.now(),
       cancelledAt: map['cancellation_time'] == null
           ? null
           : map['cancellation_time']?.toString().toDateTime() ?? DateTime.now(),

@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 extension DateTimeExt on DateTime {
   String get dateOnly => DateFormat('dd/MM/yyyy').format(this);
   String get dateWithFullMonth => DateFormat('MMMM dd, yyyy').format(this);
+  String get monthFullName => DateFormat('MMMM').format(this);
 
   String get dateWithMonthOnly {
     // Use DateFormat to format the date

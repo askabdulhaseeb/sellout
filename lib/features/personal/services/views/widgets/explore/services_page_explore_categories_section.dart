@@ -46,7 +46,7 @@ class ServicesPageExploreCategoriesSection extends StatelessWidget {
                     Expanded(
                       child: Image.asset(AppImages.logo, fit: BoxFit.cover),
                     ),
-                    Text(category.category),
+                    Text(category.code, maxLines: 1).tr(),
                   ],
                 ),
               );

@@ -8,14 +8,13 @@ import '../../../../personal/bookings/domain/entity/booking_entity.dart';
 import '../../domain/params/get_business_bookings_params.dart';
 
 abstract interface class BusinessBookingRemote {
-  Future<DataState<List<BookingEntity>>> getBookings(
-      GetBusinessBookingsParams params);
+  Future<DataState<List<BookingEntity>>> getBookings(GetBookingsParams params);
 }
 
 class BusinessBookingRemoteImpl implements BusinessBookingRemote {
   @override
   Future<DataState<List<BookingEntity>>> getBookings(
-    GetBusinessBookingsParams params,
+    GetBookingsParams params,
   ) async {
     try {
       final String endpoint = '/booking/get/query?${params.query}';

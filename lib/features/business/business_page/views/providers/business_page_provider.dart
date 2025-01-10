@@ -29,7 +29,7 @@ class BusinessPageProvider extends ChangeNotifier {
   final GetServicesListByBusinessIdUsecase _servicesListUsecase;
   final GetReviewsUsecase _getReviewsUsecase;
   final GetPostByIdUsecase _getPostByIdUsecase;
-  final GetBusinessBookingsListUsecase _getBookingsListUsecase;
+  final GetBookingsListUsecase _getBookingsListUsecase;
 
   BusinessEntity? _business;
   BusinessEntity? get business => _business;
@@ -155,7 +155,7 @@ class BusinessPageProvider extends ChangeNotifier {
 
   Future<DataState<List<BookingEntity>>> getBookings(String businessID) async {
     final DataState<List<BookingEntity>> result = await _getBookingsListUsecase(
-      GetBusinessBookingsParams(businessID: businessID),
+      GetBookingsParams(businessID: businessID),
     );
     return result;
   }

@@ -8,6 +8,5 @@ abstract interface class BusinessPageRepository {
   Future<DataState<ServicesListResponceEntity>> businessServices(
       GetBusinessSerivesParam param);
 
-  Future<DataState<List<BookingEntity>>> getBookings(
-      GetBusinessBookingsParams params);
+  Future<DataState<List<BookingEntity>>> getBookings(GetBookingsParams params);
 }

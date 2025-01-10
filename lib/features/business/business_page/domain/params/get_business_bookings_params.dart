@@ -1,13 +1,15 @@
-class GetBusinessBookingsParams {
-  GetBusinessBookingsParams({
+class GetBookingsParams {
+  GetBookingsParams({
     this.employeeID,
     this.businessID,
     this.serviceID,
+    this.userID,
   });
 
   final String? employeeID;
   final String? businessID;
   final String? serviceID;
+  final String? userID;
 
   String get query {
     String query = '';
@@ -19,6 +21,9 @@ class GetBusinessBookingsParams {
     }
     if (serviceID != null) {
       query += 'service_id=$serviceID&';
+    }
+    if (userID != null) {
+      query += 'book_by=$userID&';
     }
     return query;
   }

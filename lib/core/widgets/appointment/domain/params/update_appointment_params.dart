@@ -1,0 +1,13 @@
+class UpdateAppointmentParams {
+  UpdateAppointmentParams({required this.bookingID, required this.newStatus});
+
+  final String bookingID;
+  final String newStatus;
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'status': newStatus,
+      'booking_id': bookingID,
+    };
+  }
+}
