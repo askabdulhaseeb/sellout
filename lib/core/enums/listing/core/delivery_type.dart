@@ -4,9 +4,9 @@ part 'delivery_type.g.dart';
 @HiveType(typeId: 24)
 enum DeliveryType {
   @HiveField(0)
-  paid('paid-delivery', 'paid'),
+  paid('paid_delivery', 'paid'),
   @HiveField(1)
-  freeDelivery('free-delivery', 'free'),
+  freeDelivery('free_delivery', 'free'),
   @HiveField(2)
   collocation('collection', 'collection');
 

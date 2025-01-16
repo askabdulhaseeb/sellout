@@ -53,7 +53,7 @@ class AudioProvider extends ChangeNotifier {
     final bool hasPermission =
         await PermissionFun.hasPermission(Permission.microphone);
     if (!hasPermission) {
-      AppSnackBar.showSnackBar(context, 'microphone-permission-issue'.tr());
+      AppSnackBar.showSnackBar(context, 'microphone_permission_issue'.tr());
       return;
     }
     _recoder.refresh();

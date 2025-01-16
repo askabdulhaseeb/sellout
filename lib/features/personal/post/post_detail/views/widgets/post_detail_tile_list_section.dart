@@ -20,7 +20,7 @@ class PostDetailTileListSection extends StatelessWidget {
         divider,
         _Tile(title: 'type', trailingText: post.type.code.tr()),
         divider,
-        _Tile(title: 'delivery-fee', trailingText: post.deliveryType.code.tr()),
+        _Tile(title: 'delivery_fee', trailingText: post.deliveryType.code.tr()),
         divider,
         const SizedBox(height: 16),
       ],

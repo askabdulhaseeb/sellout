@@ -48,7 +48,7 @@ class ReviewTile extends StatelessWidget {
                 ratingList: <double>[review.rating],
                 displayPrefix: false,
               ),
-              Text('${'review-on'.tr()} ${review.createdAt.dateWithFullMonth}'),
+              Text('${'review_on'.tr()} ${review.createdAt.dateWithFullMonth}'),
               const SizedBox(height: 6),
               Text(
                 review.title,

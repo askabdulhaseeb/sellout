@@ -35,14 +35,14 @@ class AddListingAttachmentSelectionWidget extends StatelessWidget {
                     child: Column(
                       children: <Widget>[
                         Text(
-                          'no-item-selected'.tr(),
+                          'no_item_selected'.tr(),
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 16),
                         Opacity(
                           opacity: 0.5,
                           child: Text(
-                            '${'photos'.tr()}: ${formPro.attachments.length}/${formPro.listingType?.noOfPhotos}, ${'videos'.tr()}: 0/1 ${'choose-main-photo-video-to-best-showcase'.tr()}',
+                            '${'photos'.tr()}: ${formPro.attachments.length}/${formPro.listingType?.noOfPhotos}, ${'videos'.tr()}: 0/1 ${'choose_main_photo_video_to_best_showcase'.tr()}',
                             textAlign: TextAlign.center,
                             style: const TextStyle(fontSize: 11),
                           ),

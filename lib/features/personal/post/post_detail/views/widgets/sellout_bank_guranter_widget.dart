@@ -11,7 +11,7 @@ class SelloutBankGuranterWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         const Text(
-          'shop-with-confidence',
+          'shop_with_confidence',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ).tr(),
         const SizedBox(height: 6),
@@ -29,13 +29,13 @@ class SelloutBankGuranterWidget extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   const Text(
-                    'sellout-money-bank-guarantee',
+                    'sellout_money_bank_guarantee',
                     style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
                   ).tr(),
                   Opacity(
                     opacity: 0.7,
                     child: const Text(
-                      'get-the-items-you-ordered',
+                      'get_the_items_you_ordered',
                       style:
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
                     ).tr(),

@@ -15,7 +15,7 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
     final List<String> chatIDs =
         params ?? LocalAuth.currentUser?.chatIDs ?? <String>[];
     if (chatIDs.isEmpty) {
-      return DataFailer<List<ChatEntity>>(CustomException('no-chats'.tr()));
+      return DataFailer<List<ChatEntity>>(CustomException('no_chats'.tr()));
     }
     try {
       final DataState<bool> result = await ApiCall<bool>().call(
@@ -29,7 +29,7 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
         final String rawData = result.data ?? '';
         if (rawData.isEmpty) {
           return DataFailer<List<ChatEntity>>(
-              CustomException('something-wrong'.tr()));
+              CustomException('something_wrong'.tr()));
         }
         final dynamic mapp = json.decode(rawData);
         final List<dynamic> data = mapp['chats'] as List<dynamic>;
@@ -43,7 +43,7 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
         return DataSuccess<List<ChatEntity>>(rawData, chats);
       } else {
         return DataFailer<List<ChatEntity>>(
-            result.exception ?? CustomException('something-wrong'.tr()));
+            result.exception ?? CustomException('something_wrong'.tr()));
       }
     } catch (e) {
       return DataFailer<List<ChatEntity>>(CustomException('$e'));

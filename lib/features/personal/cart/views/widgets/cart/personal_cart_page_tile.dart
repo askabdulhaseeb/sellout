@@ -15,7 +15,7 @@ class PersonalCartPageTile extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           _IconButton(
-            title: 'shopping-basket'.tr(),
+            title: 'shopping_basket'.tr(),
             isActive: cartPro.page == 1,
             onTap: () => cartPro.page = 1,
           ),
@@ -35,7 +35,7 @@ class PersonalCartPageTile extends StatelessWidget {
             color: Theme.of(context).dividerColor,
           ),
           _IconButton(
-            title: 'payment-options'.tr(),
+            title: 'payment_options'.tr(),
             isActive: cartPro.page == 3,
             onTap: () => cartPro.page = 3,
           ),

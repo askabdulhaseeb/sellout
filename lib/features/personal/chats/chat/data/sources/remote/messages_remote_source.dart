@@ -56,7 +56,7 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
       return getted == null
           ? DataSuccess<GettedMessageEntity>(result.data ?? '', getted)
           : DataFailer<GettedMessageEntity>(
-              result.exception ?? CustomException('something-wrong'.tr()),
+              result.exception ?? CustomException('something_wrong'.tr()),
             );
     }
   }
@@ -83,7 +83,7 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
           error: result.exception,
         );
         return DataFailer<bool>(
-          result.exception ?? CustomException('something-wrong'.tr()),
+          result.exception ?? CustomException('something_wrong'.tr()),
         );
       }
     } catch (e) {

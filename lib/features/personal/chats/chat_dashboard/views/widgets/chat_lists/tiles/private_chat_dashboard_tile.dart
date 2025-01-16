@@ -39,7 +39,7 @@ class PrivateChatDashboardTile extends StatelessWidget {
                 ? snapshot.connectionState == ConnectionState.waiting
                     ? const Loader()
                     : Text(snapshot.data?.exception?.message ??
-                        'user-not-found'.tr())
+                        'user_not_found'.tr())
                 : Row(
                     children: <Widget>[
                       ProfilePhoto(

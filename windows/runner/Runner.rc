@@ -93,7 +93,7 @@ BEGIN
             VALUE "FileDescription", "sellout" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "sellout" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2024 com.sellout. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2024 com.selloutweb. All rights reserved." "\0"
             VALUE "OriginalFilename", "sellout.exe" "\0"
             VALUE "ProductName", "sellout" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"

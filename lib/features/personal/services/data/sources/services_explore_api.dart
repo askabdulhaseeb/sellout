@@ -41,7 +41,7 @@ class ServicesExploreApiImpl implements ServicesExploreApi {
         return DataSuccess<List<ServiceEntity>>(raw, services);
       } else {
         return DataFailer<List<ServiceEntity>>(
-          result.exception ?? CustomException('something-wrong'.tr()),
+          result.exception ?? CustomException('something_wrong'.tr()),
         );
       }
     } catch (e) {

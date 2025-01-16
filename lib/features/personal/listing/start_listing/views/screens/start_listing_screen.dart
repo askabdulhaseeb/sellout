@@ -18,11 +18,11 @@ class StartListingScreen extends StatelessWidget {
           child: Column(
             children: <Widget>[
               Text(
-                'start-selling'.tr(),
+                'start_selling'.tr(),
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               SearchableTextfield(
-                hintText: 'search-listing'.tr(),
+                hintText: 'search_listing'.tr(),
                 onChanged: (String p0) {},
               ),
               const StartSellingList(),

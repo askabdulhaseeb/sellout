@@ -21,7 +21,7 @@ class LinearRatingGraphWidget extends StatelessWidget {
         Opacity(
           opacity: 0.6,
           child: Text(
-            '${reviews.length} ${'global-reviews'.tr()}',
+            '${reviews.length} ${'global_reviews'.tr()}',
             style: const TextStyle(fontWeight: FontWeight.w500),
           ),
         ),

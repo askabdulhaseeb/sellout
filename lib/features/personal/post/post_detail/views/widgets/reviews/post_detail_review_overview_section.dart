@@ -30,7 +30,7 @@ class PostDetailReviewOverviewSection extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         const Text(
-          'customer-reviews',
+          'customer_reviews',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ).tr(),
         const SizedBox(height: 6),

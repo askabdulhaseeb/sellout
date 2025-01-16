@@ -15,12 +15,12 @@ class PostDetailPostageReturnSection extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         const Text(
-          'postage-return-and-payment',
+          'postage_return_and_payment',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ).tr(),
         //
         const _Tile(
-          title: 'est-delivery',
+          title: 'est_delivery',
           trailing: Column(
             children: <Widget>[
               //
@@ -30,7 +30,7 @@ class PostDetailPostageReturnSection extends StatelessWidget {
         _Tile(
           title: 'collection',
           trailing: const Text(
-            'click-collect-at-checkout',
+            'click_collect_at_checkout',
             style: TextStyle(fontWeight: FontWeight.w500),
           ).tr(),
         ),
@@ -41,12 +41,12 @@ class PostDetailPostageReturnSection extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               const Text(
-                'accepted-within-30-days',
+                'accepted_within_30_days',
                 style: TextStyle(fontWeight: FontWeight.w500),
               ).tr(),
               Opacity(
                 opacity: 0.7,
-                child: const Text('buyer-pays-return-postage').tr(),
+                child: const Text('buyer_pays_return_postage').tr(),
               ),
             ],
           ),

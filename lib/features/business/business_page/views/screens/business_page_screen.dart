@@ -30,7 +30,7 @@ class BusinessPageScreen extends StatelessWidget {
             final BusinessEntity? business =
                 snapshot.data ?? LocalBusiness().business(businessID);
             return business == null
-                ? Center(child: const Text('something-wrong').tr())
+                ? Center(child: const Text('something_wrong').tr())
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[

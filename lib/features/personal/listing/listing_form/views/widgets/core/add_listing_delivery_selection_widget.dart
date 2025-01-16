@@ -38,7 +38,7 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
             subtitle: CustomTextFormField(
               controller: formPro.deliveryFee,
               keyboardType: TextInputType.number,
-              hint: 'delivery-fee'.tr(),
+              hint: 'delivery_fee'.tr(),
               autoFocus: true,
               // prefixText: LocalState.getCurrency(),
               prefixText: '₹',
@@ -46,7 +46,7 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
               validator: (String? value) =>
                   formPro.deliveryType == DeliveryType.paid &&
                           (value?.isEmpty ?? true)
-                      ? 'delivery-fee-is-required'.tr()
+                      ? 'delivery_fee_is_required'.tr()
                       : null,
             ),
           ),
@@ -59,7 +59,7 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
               validator: (bool? value) =>
                   formPro.deliveryType == DeliveryType.collocation &&
                           (value == null)
-                      ? 'location-is-required'.tr()
+                      ? 'location_is_required'.tr()
                       : null,
             ),
           ),

@@ -8,6 +8,7 @@ import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/password_textformfield.dart';
 import '../../../../../../core/widgets/sellout_title.dart';
 import '../../../../../../routes/app_linking.dart';
+import '../../../../dashboard/views/providers/personal_bottom_nav_provider.dart';
 import '../../../../dashboard/views/screens/dasboard_screen.dart';
 import '../../../signup/views/screens/signup_screen.dart';
 import '../providers/signin_provider.dart';
@@ -24,7 +25,10 @@ class SignInScreen extends StatelessWidget {
         elevation: 0,
         actions: <Widget>[
           TextButton(
-            onPressed: () => AppNavigator.pushNamed(DashboardScreen.routeName),
+            onPressed: () => Navigator.of(context).canPop()
+                ? AppNavigator.pushNamed(DashboardScreen.routeName)
+                : Provider.of<PersonalBottomNavProvider>(context, listen: false)
+                    .setCurrentTab(PersonalBottomNavBarType.home),
             child: const Text('skip').tr(),
           ),
         ],
@@ -63,10 +67,10 @@ class SignInScreen extends StatelessWidget {
                   onTap: () async => await authPro.signIn(),
                 ),
                 CustomElevatedButton(
-                  title: 'create-account'.tr(),
+                  title: 'create_account'.tr(),
                   isLoading: false,
                   bgColor: Colors.transparent,
-                  border: Border.all(),
+                  border: Border.all(color: Theme.of(context).dividerColor),
                   onTap: () async =>
                       await AppNavigator.pushNamed(SignupScreen.routeName),
                 ),

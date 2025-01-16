@@ -12,7 +12,7 @@ class PostBuyNowButto extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomElevatedButton(
       onTap: () {},
-      title: 'buy-now'.tr(),
+      title: 'buy_now'.tr(),
       isLoading: false,
     );
   }

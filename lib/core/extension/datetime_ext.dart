@@ -2,8 +2,10 @@ import 'package:easy_localization/easy_localization.dart';
 
 extension DateTimeExt on DateTime {
   String get dateOnly => DateFormat('dd/MM/yyyy').format(this);
-  String get dateWithFullMonth => DateFormat('MMMM dd, yyyy').format(this);
-  String get monthFullName => DateFormat('MMMM').format(this);
+  String get dateWithFullMonth =>
+      '$monthFullName ${DateFormat('dd, yyyy').format(this)}';
+  String get monthFullName =>
+      DateFormat('MMMM').format(this).toLowerCase().tr();
 
   String get dateWithMonthOnly {
     // Use DateFormat to format the date
@@ -43,11 +45,11 @@ extension DateTimeExt on DateTime {
     } else if (diff.inDays < 7) {
       return DateFormat('EEEE').format(this);
     } else if (diff.inDays < 30) {
-      return '${diff.inDays ~/ 7} ${diff.inDays ~/ 7 == 1 ? 'week-ago'.tr() : 'weeks-ago'.tr()}';
+      return '${diff.inDays ~/ 7} ${diff.inDays ~/ 7 == 1 ? 'week_ago'.tr() : 'weeks_ago'.tr()}';
     } else if (diff.inDays < 365) {
-      return '${diff.inDays ~/ 30} ${diff.inDays ~/ 30 == 1 ? 'month-ago'.tr() : 'months-ago'.tr()}';
+      return '${diff.inDays ~/ 30} ${diff.inDays ~/ 30 == 1 ? 'month_ago'.tr() : 'months_ago'.tr()}';
     } else {
-      return '${diff.inDays ~/ 365} ${diff.inDays ~/ 365 == 1 ? 'year-ago'.tr() : 'years-ago'.tr()}';
+      return '${diff.inDays ~/ 365} ${diff.inDays ~/ 365 == 1 ? 'year_ago'.tr() : 'years_ago'.tr()}';
     }
   }
 }

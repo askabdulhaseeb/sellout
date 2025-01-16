@@ -31,7 +31,7 @@ class PostDetailReviewListSection extends StatelessWidget {
         CustomElevatedButton(
           border: Border.all(color: Theme.of(context).disabledColor),
           bgColor: Colors.transparent,
-          title: 'see-all-reviews'.tr(),
+          title: 'see_all_reviews'.tr(),
           isLoading: false,
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute<ReviewListScreen>(

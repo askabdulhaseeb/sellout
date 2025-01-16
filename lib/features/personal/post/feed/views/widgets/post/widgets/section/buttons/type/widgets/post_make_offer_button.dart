@@ -12,7 +12,7 @@ class PostMakeOfferButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomElevatedButton(
       onTap: () {},
-      title: 'make-an-offer'.tr(),
+      title: 'make_an_offer'.tr(),
       isLoading: false,
     );
   }

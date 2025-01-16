@@ -14,7 +14,7 @@ class AddListingAttachmentSelectionButton extends StatelessWidget {
       children: <Widget>[
         button(
             icon: Icons.photo_outlined,
-            text: 'add-photos'.tr(),
+            text: 'add_photos'.tr(),
             onPressed: () async => await Provider.of<AddListingFormProvider>(
                         context,
                         listen: false)
@@ -25,7 +25,7 @@ class AddListingAttachmentSelectionButton extends StatelessWidget {
         const SizedBox(width: 16),
         button(
             icon: Icons.videocam_outlined,
-            text: 'add-videos'.tr(),
+            text: 'add_videos'.tr(),
             onPressed: () async => await Provider.of<AddListingFormProvider>(
                         context,
                         listen: false)

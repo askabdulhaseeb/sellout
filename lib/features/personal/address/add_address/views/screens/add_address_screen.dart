@@ -22,7 +22,7 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.initAddress == null ? 'add-address'.tr() : 'edit-address'.tr(),
+          widget.initAddress == null ? 'add_address'.tr() : 'edit_address'.tr(),
         ),
       ),
       body: SingleChildScrollView(
@@ -32,7 +32,7 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
           children: <Widget>[
             const Divider(),
             const Text(
-              'add-a-delivery-or-pickup-address',
+              'add_a_delivery_or_pickup_address',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ).tr(),
             const SizedBox(height: 80),

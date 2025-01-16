@@ -32,7 +32,7 @@ class CheckoutRemoteAPIImpl implements CheckoutRemoteAPI {
           error: result.exception,
         );
         return DataFailer<CheckOutEntity>(
-            result.exception ?? CustomException('something-wrong'.tr()));
+            result.exception ?? CustomException('something_wrong'.tr()));
       }
     } catch (e) {
       AppLog.error(
@@ -41,6 +41,6 @@ class CheckoutRemoteAPIImpl implements CheckoutRemoteAPI {
         error: e,
       );
     }
-    return DataFailer<CheckOutEntity>(CustomException('something-wrong'.tr()));
+    return DataFailer<CheckOutEntity>(CustomException('something_wrong'.tr()));
   }
 }

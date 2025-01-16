@@ -36,7 +36,7 @@ class ServiceRemoteApiImpl implements ServiceRemoteApi {
           error: result.exception,
         );
         return DataFailer<ServiceEntity?>(
-            result.exception ?? CustomException('something-wrong'.tr()));
+            result.exception ?? CustomException('something_wrong'.tr()));
       }
     } catch (e) {
       AppLog.error(

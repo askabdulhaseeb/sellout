@@ -25,7 +25,7 @@ class ProfileGridTypeSelectionSection extends StatelessWidget {
                 child: _IconButton(
                   isSelected: userPro.displayType == 0,
                   icon: Icons.grid_on,
-                  title: isMe ? 'my-store'.tr() : 'store'.tr(),
+                  title: isMe ? 'my_store'.tr() : 'store'.tr(),
                   onPressed: () => userPro.displayType = 0,
                 ),
               ),
@@ -33,7 +33,7 @@ class ProfileGridTypeSelectionSection extends StatelessWidget {
                 child: _IconButton(
                   isSelected: userPro.displayType == 1,
                   icon: Icons.video_collection_outlined,
-                  title: isMe ? 'my-promos'.tr() : 'promos'.tr(),
+                  title: isMe ? 'my_promos'.tr() : 'promos'.tr(),
                   onPressed: () => userPro.displayType = 1,
                 ),
               ),
@@ -42,7 +42,7 @@ class ProfileGridTypeSelectionSection extends StatelessWidget {
                   child: _IconButton(
                     icon: Icons.calendar_month_outlined,
                     isSelected: userPro.displayType == 2,
-                    title: 'my-viewing'.tr(),
+                    title: 'my_viewing'.tr(),
                     onPressed: () => userPro.displayType = 2,
                   ),
                 ),
@@ -51,7 +51,7 @@ class ProfileGridTypeSelectionSection extends StatelessWidget {
                   child: _IconButton(
                     icon: Icons.bookmark_border,
                     isSelected: userPro.displayType == 3,
-                    title: 'my-saved'.tr(),
+                    title: 'my_saved'.tr(),
                     onPressed: () => userPro.displayType = 3,
                   ),
                 ),

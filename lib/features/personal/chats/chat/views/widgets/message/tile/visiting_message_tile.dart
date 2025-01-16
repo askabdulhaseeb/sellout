@@ -30,12 +30,12 @@ class VisitingMessageTile extends StatelessWidget {
                   Opacity(
                     opacity: 0.6,
                     child: const Text(
-                      'your-booking-details',
+                      'your_booking_details',
                       style: TextStyle(fontWeight: FontWeight.w700),
                     ).tr(),
                   ),
                   Text(
-                    '${'you-are-booked-in-for-a-visiting-on'.tr()}:',
+                    '${'you_are_booked_in_for_a_visiting_on'.tr()}:',
                     style: boldStyle,
                   ),
                   Text(
@@ -48,7 +48,7 @@ class VisitingMessageTile extends StatelessWidget {
                     style: boldStyle,
                   ),
                   const Text(
-                    'we-looke-forward-to-seeing-you',
+                    'we_looke_forward_to_seeing_you',
                     style: TextStyle(fontWeight: FontWeight.w400),
                   ).tr(),
                   const SizedBox(height: 12),
