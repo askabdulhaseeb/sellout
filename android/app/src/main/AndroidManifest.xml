@@ -7,7 +7,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="tanafos-6baeb.web.app"/>
+                <data android:scheme="https" android:host="selloutweb.com"/>
             </intent-filter> -->
 
             <!-- Deep Link sample -->
@@ -18,7 +18,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <!-- Add optional android:host to distinguish your app
           from others in case of conflicting scheme name -->
-                <data android:scheme="https" android:host="tanafos-6baeb.web.app" />
+                <data android:scheme="https" android:host="selloutweb.com" />
             </intent-filter>
             <!-- <data android:scheme="sample" /> -->
             <!-- / DEEP LINK -->

@@ -42,7 +42,7 @@ class SubCategorySelectableWidget extends StatelessWidget {
               name: 'SubCategorySelectableWidget.build - snapshot',
               error: snapshot.error,
             );
-            return Center(child: Text('something-wrong'.tr()));
+            return Center(child: Text('something_wrong'.tr()));
           }
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,7 +60,7 @@ class SubCategorySelectableWidget extends StatelessWidget {
                           .toList() ??
                       <ListingEntity>[];
                   if (selectedList.isEmpty) {
-                    AppSnackBar.showSnackBar(context, 'something-wrong'.tr());
+                    AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
                     return;
                   }
                   final SubCategoryEntity? selectCat =
@@ -89,7 +89,7 @@ class SubCategorySelectableWidget extends StatelessWidget {
                     children: <Widget>[
                       subCategory == null
                           ? Text(
-                              subCategory?.title ?? 'select-sub-category'.tr(),
+                              subCategory?.title ?? 'select_sub_category'.tr(),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(

@@ -4,6 +4,7 @@ import '../core/widgets/appointment/providers/appointment_tile_provider.dart';
 import '../features/attachment/views/providers/picked_media_provider.dart';
 import '../features/business/business_page/views/providers/business_page_provider.dart';
 import '../features/business/service/views/providers/add_service_provider.dart';
+import '../features/personal/auth/signup/views/providers/signup_provider.dart';
 import '../features/personal/cart/views/providers/cart_provider.dart';
 import '../features/personal/chats/chat/views/providers/audio_provider.dart';
 import '../features/personal/chats/chat/views/providers/chat_provider.dart';
@@ -23,7 +24,8 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
   // Add your providers here
   ChangeNotifierProvider<SigninProvider>.value(
       value: SigninProvider(locator(), locator())),
-
+  ChangeNotifierProvider<SignupProvider>.value(value: SignupProvider()),
+  //
   ChangeNotifierProvider<PersonalBottomNavProvider>.value(
       value: PersonalBottomNavProvider()),
 

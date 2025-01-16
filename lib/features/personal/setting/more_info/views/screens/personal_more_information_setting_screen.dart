@@ -7,49 +7,49 @@ import '../../../setting_dashboard/views/widgets/personal_setting_tile.dart';
 
 class PersonalSettingMoreInformationScreen extends StatelessWidget {
   const PersonalSettingMoreInformationScreen({super.key});
-  static const String routeName = '/personal-more-information';
+  static const String routeName = '/personal-more_information';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('more-information').tr(),
+        title: const Text('more_information').tr(),
       ),
       body: ListView(
         children: <Widget>[
           PersonalSettingTile(
             icon: Icons.privacy_tip_outlined,
-            title: 'privacy-policy'.tr(),
+            title: 'privacy_policy'.tr(),
             onTap: () {},
           ),
           PersonalSettingTile(
             icon: Icons.text_format_sharp,
-            title: 'terms-and-conditions'.tr(),
+            title: 'terms_and_conditions'.tr(),
             onTap: () {},
           ),
           PersonalSettingTile(
             icon: Icons.cookie,
-            title: 'cookies-policy'.tr(),
+            title: 'cookies_policy'.tr(),
             onTap: () {},
           ),
           PersonalSettingTile(
             icon: Icons.lock_person_outlined,
-            title: 'acceptable-use-policy'.tr(),
+            title: 'acceptable_use_policy'.tr(),
             onTap: () {},
           ),
           PersonalSettingTile(
             icon: Icons.display_settings_rounded,
-            title: 'dispute-resolution-procedure'.tr(),
+            title: 'dispute_resolution_procedure'.tr(),
             onTap: () {},
           ),
           PersonalSettingTile(
             icon: Icons.groups_2_outlined,
-            title: 'community-standards'.tr(),
+            title: 'community_standards'.tr(),
             onTap: () {},
           ),
           PersonalSettingTile(
             icon: Icons.timelapse_sharp,
-            title: 'time-away'.tr(),
+            title: 'time_away'.tr(),
             onTap: () {},
           ),
           PersonalSettingTile(
@@ -64,12 +64,12 @@ class PersonalSettingMoreInformationScreen extends StatelessWidget {
           ),
           PersonalSettingTile(
             icon: Icons.no_accounts,
-            title: 'deactivate-account'.tr(),
+            title: 'deactivate_account'.tr(),
             onTap: () {},
           ),
           PersonalSettingTile(
             icon: Icons.delete_outline_outlined,
-            title: 'delete-account'.tr(),
+            title: 'delete_account'.tr(),
             onTap: () {},
           ),
           PersonalSettingTile(

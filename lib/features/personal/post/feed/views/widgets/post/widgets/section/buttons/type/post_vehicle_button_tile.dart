@@ -17,7 +17,7 @@ class PostVehicleButtonTile extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
           child: CustomElevatedButton(
-            title: 'book-visit'.tr(),
+            title: 'book_visit'.tr(),
             bgColor: Colors.transparent,
             border: Border.all(color: Theme.of(context).primaryColor),
             textStyle: TextStyle(

@@ -28,7 +28,7 @@ class PostDetailScreen extends StatelessWidget {
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final String postID = args['pid'] ?? '';
     return Scaffold(
-      appBar: AppBar(title: const Text('post-details').tr()),
+      appBar: AppBar(title: const Text('post_details').tr()),
       body: FutureBuilder<DataState<PostEntity>>(
         future: Provider.of<PostDetailProvider>(context, listen: false)
             .getPost(postID),

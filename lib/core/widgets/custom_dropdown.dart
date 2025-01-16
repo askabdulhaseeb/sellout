@@ -108,7 +108,7 @@ class _Widget<T> extends StatelessWidget {
                   child: DropdownButton2<T>(
                     isExpanded: true,
                     hint: Text(
-                      hint ?? 'select-item'.tr(),
+                      hint ?? 'select_item'.tr(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(

@@ -25,7 +25,7 @@ class PostDetailReviewAttachmentListWidget extends StatelessWidget {
                     Row(
                       children: <Widget>[
                         const Text(
-                          'sell-all-photos-and-video',
+                          'sell_all_photos_and_video',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ).tr(),
                         const SizedBox(width: 8),

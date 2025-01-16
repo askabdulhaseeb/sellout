@@ -11,7 +11,7 @@ class PersonalSettingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('peronsal-settings').tr()),
+      appBar: AppBar(title: const Text('peronsal_settings').tr()),
       body: ListView(
         padding: const EdgeInsets.all(0),
         children: <Widget>[
@@ -47,7 +47,7 @@ class PersonalSettingScreen extends StatelessWidget {
           ),
           PersonalSettingTile(
             icon: Icons.card_membership,
-            title: 'membership-subscription'.tr(),
+            title: 'membership_subscription'.tr(),
             onTap: () {},
           ),
           PersonalSettingTile(
@@ -62,7 +62,7 @@ class PersonalSettingScreen extends StatelessWidget {
           ),
           PersonalSettingTile(
             icon: Icons.checklist_outlined,
-            title: 'order-receipts'.tr(),
+            title: 'order_receipts'.tr(),
             onTap: () {},
           ),
           PersonalSettingTile(
@@ -72,7 +72,7 @@ class PersonalSettingScreen extends StatelessWidget {
           ),
           PersonalSettingTile(
             icon: Icons.info_outline,
-            title: 'more-information'.tr(),
+            title: 'more_information'.tr(),
             onTap: () => Navigator.of(context)
                 .pushNamed(PersonalSettingMoreInformationScreen.routeName),
           ),

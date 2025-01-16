@@ -115,7 +115,7 @@ class ChatProvider extends ChangeNotifier {
       AppSnackBar.showSnackBar(
           // ignore: use_build_context_synchronously
           context,
-          result.exception?.message ?? 'something-wrong'.tr());
+          result.exception?.message ?? 'something_wrong'.tr());
     }
   }
 }

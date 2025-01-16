@@ -36,7 +36,7 @@ class BusinessPageServiceFilterSection extends StatelessWidget {
             //   ),
             // ),
             CustomElevatedButton(
-              title: '+ ${'add-service'.tr()}',
+              title: '+ ${'add_service'.tr()}',
               bgColor: Colors.transparent,
               borderRadius: BorderRadius.circular(12),
               textColor: Theme.of(context).primaryColor,
@@ -51,7 +51,7 @@ class BusinessPageServiceFilterSection extends StatelessWidget {
             const SizedBox(width: 8),
             InDevMode(
               child: CustomElevatedButton(
-                title: 'promotion-boost'.tr(),
+                title: 'promotion_boost'.tr(),
                 bgColor: Colors.transparent,
                 borderRadius: BorderRadius.circular(12),
                 textColor: Theme.of(context).colorScheme.secondary,

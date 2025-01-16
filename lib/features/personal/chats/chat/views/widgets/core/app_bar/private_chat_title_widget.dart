@@ -32,7 +32,7 @@ class PrivateChatTitleWidget extends StatelessWidget {
                 Opacity(
                   opacity: 0.5,
                   child: const Text(
-                    'tap-here-to-open-profile',
+                    'tap_here_to_open_profile',
                     style: TextStyle(fontSize: 12),
                   ).tr(),
                 )

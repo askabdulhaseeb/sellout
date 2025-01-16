@@ -44,7 +44,7 @@ class PostRemoteApiImpl implements PostRemoteApi {
         final String raw = result.data ?? '';
         if (raw.isEmpty) {
           return DataFailer<List<PostEntity>>(
-              result.exception ?? CustomException('something-wrong'.tr()));
+              result.exception ?? CustomException('something_wrong'.tr()));
         }
         final List<dynamic> listt = json.decode(raw)['response'];
         AppLog.info(
@@ -65,7 +65,7 @@ class PostRemoteApiImpl implements PostRemoteApi {
           error: result.exception,
         );
         return DataFailer<List<PostEntity>>(
-          result.exception ?? CustomException('something-wrong'.tr()),
+          result.exception ?? CustomException('something_wrong'.tr()),
         );
       }
     } catch (e) {
@@ -110,7 +110,7 @@ class PostRemoteApiImpl implements PostRemoteApi {
         final String raw = result.data ?? '';
         if (raw.isEmpty) {
           return DataFailer<PostEntity>(
-              result.exception ?? CustomException('something-wrong'.tr()));
+              result.exception ?? CustomException('something_wrong'.tr()));
         }
         final dynamic item = json.decode(raw);
         final PostEntity post = PostModel.fromJson(item);
@@ -123,7 +123,7 @@ class PostRemoteApiImpl implements PostRemoteApi {
           error: result.exception,
         );
         return DataFailer<PostEntity>(
-          result.exception ?? CustomException('something-wrong'.tr()),
+          result.exception ?? CustomException('something_wrong'.tr()),
         );
       }
     } catch (e) {
@@ -157,7 +157,7 @@ class PostRemoteApiImpl implements PostRemoteApi {
           error: result.exception,
         );
         return DataFailer<bool>(
-          result.exception ?? CustomException('something-wrong'.tr()),
+          result.exception ?? CustomException('something_wrong'.tr()),
         );
       }
     } catch (e) {

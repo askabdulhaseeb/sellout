@@ -41,7 +41,7 @@ class GetServiceByBusinessIdRemoteImpl implements GetServiceByBusinessIdRemote {
             error: raw,
           );
           return DataFailer<ServicesListResponceEntity>(
-              CustomException('something-wrong'.tr()));
+              CustomException('something_wrong'.tr()));
         }
         final dynamic data = json.decode(raw);
         final List<dynamic> list = data['items'];
@@ -75,7 +75,7 @@ class GetServiceByBusinessIdRemoteImpl implements GetServiceByBusinessIdRemote {
           error: result.exception?.message,
         );
         return DataFailer<ServicesListResponceEntity>(
-            CustomException('something-wrong'));
+            CustomException('something_wrong'));
       }
     } catch (e) {
       AppLog.error(

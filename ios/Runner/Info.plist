@@ -14,6 +14,10 @@
 		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 		<key>CFBundleInfoDictionaryVersion</key>
 		<string>6.0</string>
+		<key>CFBundleLocalizations</key>
+		<array>
+			<string>en</string>
+		</array>
 		<key>CFBundleName</key>
 		<string>sellout</string>
 		<key>CFBundlePackageType</key>
@@ -22,21 +26,6 @@
 		<string>$(FLUTTER_BUILD_NAME)</string>
 		<key>CFBundleSignature</key>
 		<string>????</string>
-		<key>CFBundleVersion</key>
-		<string>$(FLUTTER_BUILD_NUMBER)</string>
-		<key>LSRequiresIPhoneOS</key>
-		<true/>
-		<key>UIApplicationSupportsIndirectInputEvents</key>
-		<true/>
-		<key>UILaunchStoryboardName</key>
-		<string>LaunchScreen</string>
-		<key>UIMainStoryboardFile</key>
-		<string>Main</string>
-		<key>UISupportedInterfaceOrientations</key>
-		<array>
-			<string>UIInterfaceOrientationPortrait</string>
-			<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		</array>
 		<key>CFBundleURLTypes</key>
 		<array>
 			<dict>
@@ -44,18 +33,46 @@
 				<string>Editor</string>
 				<key>CFBundleURLSchemes</key>
 				<array>
-					<string>tanafos-6baeb.web.app</string>					<!-- Replace with your custom scheme -->
+					<string>selloutweb.com</string>
 				</array>
 			</dict>
 		</array>
-		<key>CFBundleLocalizations</key>
-		<array>
-			<string>en</string>
-		</array>
-		<!-- Display Photo Gallery -->
-		<key>PHPhotoLibraryPreventAutomaticLimitedAccessAlert</key>
+		<key>CFBundleVersion</key>
+		<string>$(FLUTTER_BUILD_NUMBER)</string>
+		<key>LSRequiresIPhoneOS</key>
 		<true/>
+		<key>NSAppleMusicUsageDescription</key>
+		<string>Sellout need to access your Apple Music to play/share your favorite music</string>
+		<key>NSContactsUsageDescription</key>
+		<string>Sellout need to access your Contacts to share your friends with you</string>
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<string>Sellout need to access your Location to improve your user experience</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>Sellout need to access your Location to improve your user experience</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>Sellout need to access your Microphone to record your voice</string>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>Sellout need to access your Photo Library to upload your product photo</string>
+		<key>NSCameraUsageDescription</key>
+		<string>Sellout need to access your Camera to take a photo of your product</string>
+		<key>PHPhotoLibraryPreventAutomaticLimitedAccessAlert</key>
+		<true/>
+		<key>UIApplicationSupportsIndirectInputEvents</key>
+		<true/>
+		<key>UIBackgroundModes</key>
+		<array>
+			<string>remote-notification</string>
+		</array>
+		<key>UILaunchStoryboardName</key>
+		<string>LaunchScreen</string>
+		<key>UIMainStoryboardFile</key>
+		<string>Main</string>
+		<key>UIRequiresFullScreen</key>
+		<true/>
+		<key>UISupportedInterfaceOrientations</key>
+		<array>
+			<string>UIInterfaceOrientationPortrait</string>
+			<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		</array>
 	</dict>
 </plist>

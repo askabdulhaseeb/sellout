@@ -25,17 +25,17 @@ enum MessageType {
   @HiveField(8)
   custom('custom', 'custom'),
   @HiveField(9)
-  invitationParticipant('invitation-participant', 'invitation_participant'),
+  invitationParticipant('invitation_participant', 'invitation_participant'),
   @HiveField(10)
   offer('offer', 'offer'),
   @HiveField(11)
   visiting('visiting', 'visiting'),
   @HiveField(12)
-  acceptInvitation('accept-invitation', 'accept_invitation'),
+  acceptInvitation('accept_invitation', 'accept_invitation'),
   @HiveField(13)
-  removeParticipant('remove-participant', 'remove_participant'),
+  removeParticipant('remove_participant', 'remove_participant'),
   @HiveField(14)
-  leaveGroup('leave-group', 'leave_group'),
+  leaveGroup('leave_group', 'leave_group'),
   @HiveField(99)
   none('none', 'none');
 

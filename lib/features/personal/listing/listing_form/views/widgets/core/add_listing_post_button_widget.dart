@@ -19,7 +19,7 @@ class AddListingPostButtonWidget extends StatelessWidget {
             child: Opacity(
               opacity: 0.5,
               child: Text(
-                'please-note-that-delivery-must-be-tracked'.tr(),
+                'please_note_that_delivery_must_be_tracked'.tr(),
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 12),
               ),

@@ -50,6 +50,7 @@ class SigninProvider extends ChangeNotifier {
       );
       if (result is DataSuccess<bool>) {
         debugPrint('Signin Ready');
+        isLoading = false;
         await AppNavigator.pushNamedAndRemoveUntil(
           DashboardScreen.routeName,
           (_) => false,
@@ -75,6 +76,7 @@ class SigninProvider extends ChangeNotifier {
     try {
       final DataState<bool> result = await forgotPasswordUsecase(email.text);
       if (result is DataSuccess<bool>) {
+        isLoading = false;
         // Show success message
       } else {
         // Show error message

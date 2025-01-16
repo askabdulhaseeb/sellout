@@ -33,7 +33,7 @@ class BusinessPageTapPageSection extends StatelessWidget {
                             : pagePro.selectedTab == BusinessPageTabType.reviews
                                 ? BusinessPageReviewSection(business: business)
                                 : Center(
-                                    child: const Text('something-wrong').tr(),
+                                    child: const Text('something_wrong').tr(),
                                   );
       },
     );

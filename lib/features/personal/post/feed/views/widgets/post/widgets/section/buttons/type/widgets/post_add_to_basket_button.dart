@@ -100,7 +100,7 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
                     AppSnackBar.showSnackBar(
                       // ignore: use_build_context_synchronously
                       context,
-                      'successfull-add-to-basket'.tr(),
+                      'successfull_add_to_basket'.tr(),
                       backgroundColor: Colors.green,
                     );
                   } else {
@@ -112,7 +112,7 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
                     AppSnackBar.showSnackBar(
                       // ignore: use_build_context_synchronously
                       context,
-                      result.exception?.message ?? 'something-wrong'.tr(),
+                      result.exception?.message ?? 'something_wrong'.tr(),
                     );
                   }
                 }
@@ -125,7 +125,7 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
                 );
               }
             },
-            title: 'add-to-basket'.tr(),
+            title: 'add_to_basket'.tr(),
             bgColor: Colors.transparent,
             border: Border.all(color: Theme.of(context).primaryColor),
             textColor: Theme.of(context).primaryColor,

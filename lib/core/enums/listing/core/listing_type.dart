@@ -16,11 +16,11 @@ enum ListingType {
   ),
   @HiveField(1)
   clothAndFoot(
-    'cloth-foot',
-    'cloth-foot',
+    'cloth_foot',
+    'cloth_foot',
     4,
     AppIcons.tShirt,
-    <String>['clothes', 'footwear', 'cloth-foot'],
+    <String>['clothes', 'footwear', 'cloth_foot'],
   ),
   @HiveField(2)
   vehicle(
@@ -32,15 +32,15 @@ enum ListingType {
   ),
   @HiveField(3)
   foodAndDrink(
-    'food-drink',
-    'food-drink',
+    'food_drink',
+    'food_drink',
     4,
     AppIcons.food,
-    <String>['food', 'drink', 'food-drink'],
+    <String>['food', 'drink', 'food_drink'],
   ),
   @HiveField(4)
   property(
-    'property-buy-sell',
+    'property_buy_sell',
     'property',
     4,
     AppIcons.key,

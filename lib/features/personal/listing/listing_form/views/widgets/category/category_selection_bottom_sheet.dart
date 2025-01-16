@@ -34,7 +34,7 @@ class _CategorySelectionBottomSheetState
               ? Opacity(
                   opacity: 0.5,
                   child: const Text(
-                    'select-category',
+                    'select_category',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,

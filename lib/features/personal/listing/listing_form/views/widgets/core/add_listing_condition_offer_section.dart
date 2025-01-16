@@ -33,14 +33,14 @@ class AddListingConditionOfferSection extends StatelessWidget {
             CustomToggleSwitch<bool>(
               labels: const <bool>[true, false],
               labelStrs: <String>['yes'.tr(), 'no'.tr()],
-              labelText: 'accept-offers'.tr(),
+              labelText: 'accept_offers'.tr(),
               initialValue: formPro.acceptOffer,
               onToggle: formPro.setAcceptOffer,
             ),
             if (formPro.acceptOffer)
               CustomTextFormField(
                 controller: formPro.minimumOffer,
-                labelText: 'minimum-offerd-amount'.tr(),
+                labelText: 'minimum_offerd_amount'.tr(),
                 showSuffixIcon: false,
                 // prefixText: LocalState.getCurrency().toUpperCase(),
                 prefixText: '₹',
@@ -53,7 +53,7 @@ class AddListingConditionOfferSection extends StatelessWidget {
               labelStrs: PrivacyType.list
                   .map<String>((PrivacyType e) => e.code.tr())
                   .toList(),
-              labelText: 'privacy-type'.tr(),
+              labelText: 'privacy_type'.tr(),
               initialValue: formPro.privacy,
               onToggle: formPro.setPrivacy,
             ),
@@ -77,7 +77,7 @@ class AddListingConditionOfferSection extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      '${'access-code'.tr()}: ${snapshot.data ?? '...'}',
+                      '${'access_code'.tr()}: ${snapshot.data ?? '...'}',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 18,

@@ -55,7 +55,7 @@ class BusinessBookingRemoteImpl implements BusinessBookingRemote {
           error: result.exception,
         );
         return DataFailer<List<BookingEntity>>(
-          result.exception ?? CustomException('something-wrong'.tr()),
+          result.exception ?? CustomException('something_wrong'.tr()),
         );
       }
       //

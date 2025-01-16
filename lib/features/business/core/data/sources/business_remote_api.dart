@@ -44,7 +44,7 @@ class BusinessRemoteAPIImpl implements BusinessCoreAPI {
             name: 'BusinessRemoteAPIImpl.getBusiness - empty',
           );
           return DataFailer<BusinessEntity?>(
-              CustomException('something-wrong'));
+              CustomException('something_wrong'));
         }
         final BusinessEntity business = BusinessModel.fromRawJson(raw);
         await LocalBusiness().save(business);
@@ -57,7 +57,7 @@ class BusinessRemoteAPIImpl implements BusinessCoreAPI {
           name: 'BusinessRemoteAPIImpl.getBusiness - else',
         );
         return DataFailer<BusinessEntity?>(
-            result.exception ?? CustomException('something-wrong'));
+            result.exception ?? CustomException('something_wrong'));
       }
     } catch (e) {
       AppLog.error(

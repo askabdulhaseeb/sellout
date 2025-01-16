@@ -24,7 +24,7 @@ class AddListingFormScreen extends StatelessWidget {
                   .listingType
                   ?.code
                   .tr() ??
-              'select-type'.tr(),
+              'select_type'.tr(),
         ),
         elevation: 0,
         scrolledUnderElevation: 0,

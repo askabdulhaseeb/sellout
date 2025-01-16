@@ -52,7 +52,7 @@ class ChatInputField extends StatelessWidget {
                   hoverColor: Theme.of(context).scaffoldBackgroundColor,
                   fillColor: Theme.of(context).scaffoldBackgroundColor,
                   focusColor: Theme.of(context).scaffoldBackgroundColor,
-                  hintText: 'your-message-here'.tr(),
+                  hintText: 'your_message_here'.tr(),
                   border: InputBorder.none,
                 ),
               ),

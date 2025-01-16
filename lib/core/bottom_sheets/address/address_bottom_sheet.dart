@@ -42,11 +42,11 @@ class AddressBottomSheet extends StatelessWidget {
             ),
             const Divider(),
             const Text(
-              'add-a-delivery-or-pickup-address',
+              'add_a_delivery_or_pickup_address',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ).tr(),
             CustomElevatedButton(
-              title: 'add-a-new-address'.tr(),
+              title: 'add_a_new_address'.tr(),
               isLoading: false,
               onTap: () async {
                 final AddressEntity? newAddress =
@@ -65,7 +65,7 @@ class AddressBottomSheet extends StatelessWidget {
             ),
             InDevMode(
               child: CustomElevatedButton(
-                title: 'find-pickup-location-near-you'.tr(),
+                title: 'find_pickup_location_near_you'.tr(),
                 isLoading: false,
                 onTap: () {},
               ),

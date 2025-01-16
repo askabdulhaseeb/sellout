@@ -1,6 +1,6 @@
 enum CartItemType {
-  cart('cart', 'cart', 'save-later', 'add_cart'),
-  saveLater('save-later', 'save_later', 'move-to-cart', 'save_later');
+  cart('cart', 'cart', 'save_later', 'add_cart'),
+  saveLater('save_later', 'save_later', 'move_to_cart', 'save_later');
 
   // Add the following line:
   const CartItemType(this.code, this.json, this.tileActionCode, this.action);

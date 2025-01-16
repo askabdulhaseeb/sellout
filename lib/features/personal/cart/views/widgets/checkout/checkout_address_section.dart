@@ -22,14 +22,14 @@ class CheckoutAddressSection extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    const Text('no-address').tr(),
+                    const Text('no_address').tr(),
                     CustomElevatedButton(
                       onTap: () async => onTap(context, cartPro),
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 8,
                       ),
-                      title: 'select-address'.tr(),
+                      title: 'select_address'.tr(),
                       isLoading: false,
                     ),
                   ],

@@ -39,7 +39,7 @@ class _AddToCartDialogState extends State<AddToCartDialog> {
             children: <Widget>[
               const SizedBox(width: 24),
               const Text(
-                'select-size-color',
+                'select_size_color',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -132,14 +132,14 @@ class _AddToCartDialogState extends State<AddToCartDialog> {
                     visualDensity:
                         const VisualDensity(horizontal: -4, vertical: -4),
                     title: const Text(
-                      'size-chart',
+                      'size_chart',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                       ),
                     ).tr(),
                     subtitle: const Text(
-                      'size-chart-subtitle',
+                      'size_chart_subtitle',
                       style: TextStyle(fontSize: 11),
                     ).tr(),
                     trailing: Icon(
@@ -163,7 +163,7 @@ class _AddToCartDialogState extends State<AddToCartDialog> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: CustomElevatedButton(
-              title: 'add-to-basket'.tr(),
+              title: 'add_to_basket'.tr(),
               isLoading: isLoading,
               onTap: () async {
                 try {
@@ -190,7 +190,7 @@ class _AddToCartDialogState extends State<AddToCartDialog> {
                     AppSnackBar.showSnackBar(
                       // ignore: use_build_context_synchronously
                       context,
-                      result.exception?.message ?? 'something-wrong'.tr(),
+                      result.exception?.message ?? 'something_wrong'.tr(),
                     );
                   }
                 } catch (e) {

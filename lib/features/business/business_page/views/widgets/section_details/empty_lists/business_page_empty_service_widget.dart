@@ -25,7 +25,7 @@ class BusinessPageEmptyServiceWidget extends StatelessWidget {
                 SizedBox(
                   height: 40,
                   child: FittedBox(
-                    child: const Text('no-services-available').tr(),
+                    child: const Text('no_services_available').tr(),
                   ),
                 ),
               ],

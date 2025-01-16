@@ -18,7 +18,7 @@ class ProfileScoreSection extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: _ScoreButton(
-                  title: 'my-orders'.tr(),
+                  title: 'my_orders'.tr(),
                   count: '0',
                   onPressed: () {},
                 ),

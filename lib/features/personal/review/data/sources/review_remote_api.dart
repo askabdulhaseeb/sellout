@@ -64,7 +64,7 @@ class ReviewRemoteApiImpl implements ReviewRemoteApi {
         return DataSuccess<List<ReviewEntity>>(raw, reviews);
       } else {
         AppLog.error(
-          response.exception?.message ?? 'something-wrong'.tr(),
+          response.exception?.message ?? 'something_wrong'.tr(),
           name: 'ReviewRemoteApiImpl.getReviews - else',
           error: response.exception,
         );

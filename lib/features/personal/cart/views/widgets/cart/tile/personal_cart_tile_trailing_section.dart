@@ -79,7 +79,7 @@ class _PersonalCartTileTrailingSectionState
                   AppSnackBar.showSnackBar(
                       // ignore: use_build_context_synchronously
                       context,
-                      result.exception?.message ?? 'something-wrong');
+                      result.exception?.message ?? 'something_wrong');
                 }
               } catch (e) {
                 // ignore: use_build_context_synchronously

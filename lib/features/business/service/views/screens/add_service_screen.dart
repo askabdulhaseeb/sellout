@@ -12,7 +12,7 @@ import '../widgets/add_service_time_and_price_section.dart';
 
 class AddServiceScreen extends StatefulWidget {
   const AddServiceScreen({super.key});
-  static const String routeName = '/add-service';
+  static const String routeName = '/add_service';
 
   @override
   State<AddServiceScreen> createState() => _AddServiceScreenState();
@@ -39,7 +39,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('add-service'.tr()), centerTitle: true),
+      appBar: AppBar(title: Text('add_service'.tr()), centerTitle: true),
       body: const Padding(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: SingleChildScrollView(

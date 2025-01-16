@@ -46,10 +46,10 @@ class AddServiceProvider extends ChangeNotifier {
         AppSnackBar.showSnackBar(
           // ignore: use_build_context_synchronously
           context,
-          result.exception?.message ?? 'something-wrong'.tr(),
+          result.exception?.message ?? 'something_wrong'.tr(),
         );
         AppLog.error(
-          result.exception?.message ?? 'something-wrong'.tr(),
+          result.exception?.message ?? 'something_wrong'.tr(),
           name: 'AddServiceProvider.addService - error',
           error: result.exception,
         );

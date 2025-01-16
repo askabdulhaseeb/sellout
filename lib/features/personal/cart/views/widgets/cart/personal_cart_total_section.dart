@@ -42,7 +42,7 @@ class PersonalCartTotalSection extends StatelessWidget {
                 ),
               ),
               CustomElevatedButton(
-                title: 'proceed-to-checkout'.tr(),
+                title: 'proceed_to_checkout'.tr(),
                 isLoading: false,
                 onTap: () =>
                     Provider.of<CartProvider>(context, listen: false).page = 2,

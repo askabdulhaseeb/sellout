@@ -13,14 +13,14 @@ class PostDetailReviewButtonSection extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         const Text(
-          'rate-this-product',
+          'rate_this_product',
           style: TextStyle(fontWeight: FontWeight.bold),
         ).tr(),
-        const Text('share-your-thoughs-with-other-customers').tr(),
+        const Text('share_your_thoughs_with_other_customers').tr(),
         CustomElevatedButton(
           bgColor: Colors.transparent,
           border: Border.all(color: Theme.of(context).disabledColor),
-          title: 'write-a-customer-review'.tr(),
+          title: 'write_a_customer_review'.tr(),
           isLoading: false,
           onTap: () {
             // TODO: Write a review

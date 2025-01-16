@@ -13,7 +13,7 @@ import '../features/personal/setting/more_info/views/screens/personal_more_infor
 import '../features/personal/setting/setting_dashboard/views/screens/personal_setting_screen.dart';
 
 class AppRoutes {
-  static const String baseURL = 'https://tanafos-6baeb.web.app';
+  static const String baseURL = 'https://selloutweb.com';
   static String fromUriToRouteName(Uri? uri) {
     AppLog.info(
       'Starting URI Search.... $uri - Path: ${uri?.path}',

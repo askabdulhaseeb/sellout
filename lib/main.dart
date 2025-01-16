@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
         navigatorKey: AppNavigator().navigatorKey,
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,
-        themeMode: ThemeMode.light,
+        themeMode: ThemeMode.dark,
         routes: AppRoutes.routes,
         // onGenerateRoute: (RouteSettings settings) {},
         // initialRoute: DashboardScreen.routeName,
