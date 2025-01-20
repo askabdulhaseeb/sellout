@@ -13,6 +13,8 @@ import '../../../../../../core/widgets/phone_number/domain/entities/phone_number
 import '../../../../../../routes/app_linking.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../dashboard/views/screens/dasboard_screen.dart';
+import '../../../signin/domain/params/login_params.dart';
+import '../../../signin/domain/usecase/login_usecase.dart';
 import '../../domain/usecase/register_user_usecase.dart';
 import '../../domain/usecase/send_opt_usecase.dart';
 import '../../domain/usecase/verify_opt_usecase.dart';
@@ -30,11 +32,13 @@ class SignupProvider extends ChangeNotifier {
     this._registerUserUsecase,
     this._sendPhoneOtpUsecase,
     this._verifyPhoneOtpUsecase,
+    this._loginUsecase,
   );
 
   final RegisterUserUsecase _registerUserUsecase;
   final SendPhoneOtpUsecase _sendPhoneOtpUsecase;
   final VerifyPhoneOtpUsecase _verifyPhoneOtpUsecase;
+  final LoginUsecase _loginUsecase;
   //
   String? _uid;
   set uid(String? value) {
@@ -118,6 +122,85 @@ class SignupProvider extends ChangeNotifier {
   Timer? _resendCodeTimer;
   Timer? get resendCodeTimer => _resendCodeTimer;
 
+  Widget displayedPage() {
+    switch (currentPage) {
+      case SignupPageType.basicInfo:
+        return const SignupBasicInfoPage();
+      case SignupPageType.otp:
+        return const SignupOtpVerificationPage();
+      case SignupPageType.photoVerification:
+        return const SignupPhotoVerificationPage();
+      case SignupPageType.dateOfBirth:
+        return const SignupDobPage();
+      case SignupPageType.location:
+        return const SignupLocationPage();
+    }
+  }
+
+  Future<bool> isValidBasicInfo(BuildContext context) async {
+    if (!(basicInfoFormKey.currentState?.validate() ?? false)) {
+      return false;
+    }
+    if ((_phoneNumber?.fullNumber.length ?? 0) < 5) {
+      AppSnackBar.showSnackBar(
+        context,
+        '${'invalid_value'.tr()}: ${'phone_number'.tr()}',
+      );
+      return false;
+    }
+    return await basicInfoPushData(context);
+  }
+
+  Future<void> onNext(BuildContext context) async {
+    if (_currentPage == SignupPageType.basicInfo) {
+      if (await isValidBasicInfo(context)) {
+        // ignore: use_build_context_synchronously
+        _moveNext(context);
+      }
+    } else if (_currentPage == SignupPageType.otp) {
+      if (await verifyOtp(context)) {
+        // ignore: use_build_context_synchronously
+        _moveNext(context);
+      }
+    } else {
+      _moveNext(context);
+    }
+  }
+
+  _moveNext(BuildContext context) async {
+    final SignupPageType? page = _currentPage.next();
+    if (page != null) {
+      currentPage = page;
+    }
+    if (_isLoading) {
+      isLoading = false;
+    } else {
+      notifyListeners();
+    }
+    if (page == null) {
+      isLoading = true;
+      await _loginUsecase(LoginParams(
+        email: email.text,
+        password: password.text,
+      ));
+      reset();
+      AppNavigator.pushNamedAndRemoveUntil(
+        DashboardScreen.routeName,
+        (_) => false,
+      );
+    }
+  }
+
+  void onBack(BuildContext context) {
+    final SignupPageType? page = _currentPage.previous();
+    if (page != null) {
+      currentPage = page;
+      notifyListeners();
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
+
   reset() {
     _uid = null;
     _getOTP = null;
@@ -169,80 +252,6 @@ class SignupProvider extends ChangeNotifier {
     } catch (e) {
       // ignore: use_build_context_synchronously
       AppSnackBar.showSnackBar(context, e.toString());
-    }
-  }
-
-  Widget displayedPage() {
-    switch (currentPage) {
-      case SignupPageType.basicInfo:
-        return const SignupBasicInfoPage();
-      case SignupPageType.otp:
-        return const SignupOtpVerificationPage();
-      case SignupPageType.photoVerification:
-        return const SignupPhotoVerificationPage();
-      case SignupPageType.dateOfBirth:
-        return const SignupDobPage();
-      case SignupPageType.location:
-        return const SignupLocationPage();
-    }
-  }
-
-  Future<bool> isValidBasicInfo(BuildContext context) async {
-    if (!(basicInfoFormKey.currentState?.validate() ?? false)) {
-      return false;
-    }
-    if ((_phoneNumber?.fullNumber.length ?? 0) < 5) {
-      AppSnackBar.showSnackBar(
-        context,
-        '${'invalid_value'.tr()}: ${'phone_number'.tr()}',
-      );
-      return false;
-    }
-    return await basicInfoPushData(context);
-  }
-
-  Future<void> onNext(BuildContext context) async {
-    if (_currentPage == SignupPageType.basicInfo) {
-      if (await isValidBasicInfo(context)) {
-        // ignore: use_build_context_synchronously
-        _moveNext(context);
-      }
-    } else if (_currentPage == SignupPageType.otp) {
-      if (await verifyOtp(context)) {
-        // ignore: use_build_context_synchronously
-        _moveNext(context);
-      }
-    } else {
-      _moveNext(context);
-    }
-  }
-
-  _moveNext(BuildContext context) {
-    final SignupPageType? page = _currentPage.next();
-    if (page != null) {
-      currentPage = page;
-    }
-    if (_isLoading) {
-      isLoading = false;
-    } else {
-      notifyListeners();
-    }
-    if (page == null) {
-      reset();
-      AppNavigator.pushNamedAndRemoveUntil(
-        DashboardScreen.routeName,
-        (_) => false,
-      );
-    }
-  }
-
-  void onBack(BuildContext context) {
-    final SignupPageType? page = _currentPage.previous();
-    if (page != null) {
-      currentPage = page;
-      notifyListeners();
-    } else {
-      Navigator.of(context).pop();
     }
   }
 

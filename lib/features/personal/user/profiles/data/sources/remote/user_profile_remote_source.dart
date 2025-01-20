@@ -14,7 +14,7 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
     if (value.isEmpty) {
       return DataFailer<UserEntity?>(CustomException('User ID is null'));
     }
-    final String endpoint = '/user/$value';
+    final String endpoint = '/userAuth/$value';
     try {
       ApiRequestEntity? request = await LocalRequestHistory().request(
           endpoint: endpoint,
@@ -31,7 +31,7 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
       //
       final DataState<bool> result = await ApiCall<bool>().call(
         endpoint: endpoint,
-        isAuth: true,
+        isAuth: false,
         isConnectType: false,
         requestType: ApiRequestType.get,
       );

@@ -143,4 +143,21 @@ class HiveDB {
     await LocalBooking().refresh();
     await LocalCountry().refresh();
   }
+
+  static Future<void> signout() async {
+    await LocalPost().clear();
+    await LocalAuth().signout();
+    await LocalUser().clear();
+    // await LocalRequestHistory().clear();
+    // await LocalListing().clear();
+    await LocalChat().clear();
+    await LocalChatMessage().clear();
+    await LocalVisit().clear();
+    await LocalCart().clear();
+    await LocalBusiness().clear();
+    await LocalService().clear();
+    await LocalReview().clear();
+    await LocalBooking().clear();
+    // await LocalCountry().clear();
+  }
 }

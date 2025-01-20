@@ -26,6 +26,8 @@ class LocalService {
   Future<void> save(ServiceEntity value) async =>
       await _box.put(value.serviceID, value);
 
+  Future<void> clear() async => await _box.clear();
+
   ServiceEntity? service(String id) => _box.get(id);
 
   DataState<ServiceEntity> dataState(String id) {

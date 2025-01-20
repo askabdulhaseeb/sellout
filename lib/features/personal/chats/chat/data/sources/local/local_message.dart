@@ -25,6 +25,8 @@ class LocalChatMessage {
     }
   }
 
+  Future<void> clear() async => await _box.clear();
+
   Future<void> save(GettedMessageEntity value, String chatID) async {
     final String id = value.lastEvaluatedKey?.chatID ?? chatID;
     final GettedMessageEntity? result = entity(id);

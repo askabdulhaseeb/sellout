@@ -24,6 +24,7 @@ class LocalBooking {
     await _box.put(user.bookingID, user);
   }
 
+  Future<void> clear() async => await _box.clear();
   // BookingEntity entity(String value) => _box.values.firstWhere(
   //       (BookingEntity element) => element.cartID == value,
   //       orElse: () => CartModel(),

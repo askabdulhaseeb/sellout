@@ -25,6 +25,8 @@ class LocalReview {
     await _box.put(value.reviewID, value);
   }
 
+  Future<void> clear() async => await _box.clear();
+
   ReviewEntity? entity(String value) => _box.get(value);
 
   List<ReviewEntity> reviewsWithQuery(GetReviewParam param) {

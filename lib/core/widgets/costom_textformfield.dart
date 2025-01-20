@@ -11,6 +11,7 @@ class CustomTextFormField extends StatefulWidget {
     this.validator,
     this.onFieldSubmitted,
     this.inputFormatters,
+    this.autofillHints,
     this.initialValue,
     this.hint = '',
     this.labelText = '',
@@ -39,6 +40,7 @@ class CustomTextFormField extends StatefulWidget {
   final String? Function(String? value)? validator;
   final void Function(String)? onFieldSubmitted;
   final List<TextInputFormatter>? inputFormatters;
+  final Iterable<String>? autofillHints;
   final String? prefixText;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
@@ -113,6 +115,7 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
             textInputAction: widget.maxLines! > 1
                 ? TextInputAction.unspecified
                 : widget.textInputAction ?? TextInputAction.next,
+            autofillHints: widget.autofillHints,
             autofocus: widget.autoFocus,
             textAlign: widget.textAlign,
             onChanged: widget.onChanged,

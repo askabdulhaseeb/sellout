@@ -26,6 +26,7 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         centerTitle: true,
         title: const SellOutTitle(),
@@ -42,6 +43,7 @@ class _SignupScreenState extends State<SignupScreen> {
             return Column(
               children: <Widget>[
                 const SignupPageProgressBarWidget(),
+                const SizedBox(height: 16),
                 Expanded(child: pro.displayedPage()),
               ],
             );

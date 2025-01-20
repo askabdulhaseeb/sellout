@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../../../../core/sources/api_call.dart';
+import '../../../../../../core/sources/local/hive_db.dart';
 import '../models/current_user_model.dart';
 import 'local/local_auth.dart';
 
@@ -24,6 +25,7 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
       );
       if (responce is DataSuccess<bool>) {
         debugPrint('Signin Success in Remote Source');
+        await HiveDB.signout();
         final CurrentUserModel currentUser =
             CurrentUserModel.fromRawJson(responce.data ?? '');
         await LocalAuth().signin(currentUser);

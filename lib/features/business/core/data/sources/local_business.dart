@@ -26,6 +26,8 @@ class LocalBusiness {
   Future<void> save(BusinessEntity value) async =>
       await _box.put(value.businessID, value);
 
+  Future<void> clear() async => await _box.clear();
+
   BusinessEntity? business(String id) => _box.get(id);
 
   DataState<BusinessEntity> dataState(String id) {

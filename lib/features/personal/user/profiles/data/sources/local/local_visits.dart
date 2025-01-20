@@ -23,6 +23,9 @@ class LocalVisit {
 
   Future<void> save(VisitingEntity user) async =>
       await _box.put(user.visitingID, user);
+
+  Future<void> clear() async => await _box.clear();
+
   VisitingEntity? visitingEntity(String value) => _box.get(value);
 
   DataState<VisitingEntity?> visitingState(String value) {
