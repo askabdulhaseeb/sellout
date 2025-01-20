@@ -183,7 +183,7 @@ class PostEntity {
   final String? accessCode;
   @HiveField(54)
   final String? businessID;
-  @HiveField(55)
+  @HiveField(99)
   final DateTime inHiveAt;
 
   String get imageURL => fileUrls.isEmpty ? '' : fileUrls.first.url;

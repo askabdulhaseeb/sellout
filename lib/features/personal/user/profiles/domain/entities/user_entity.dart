@@ -90,12 +90,12 @@ class UserEntity {
   final String phoneNumber;
   @HiveField(23)
   final DateTime updateAt;
-  @HiveField(24)
-  final DateTime inHiveAt;
   @HiveField(25)
   final String currency;
   @HiveField(26)
   final List<ProfileBusinessDetailEntity> businessDetail;
+  @HiveField(99)
+  final DateTime inHiveAt;
 
   String? get profilePhotoURL =>
       profilePic.isEmpty ? null : profilePic.first.url;

@@ -30,7 +30,7 @@ class BookingEntityAdapter extends TypeAdapter<BookingEntity> {
       cancelledAt: fields[10] as DateTime?,
       createdAt: fields[11] as DateTime,
       updatedAt: fields[12] as DateTime,
-      notes: fields[14] as String,
+      notes: fields[99] as String,
     );
   }
 
@@ -66,7 +66,7 @@ class BookingEntityAdapter extends TypeAdapter<BookingEntity> {
       ..write(obj.updatedAt)
       ..writeByte(13)
       ..write(obj.inHiveAt)
-      ..writeByte(14)
+      ..writeByte(99)
       ..write(obj.notes);
   }
 

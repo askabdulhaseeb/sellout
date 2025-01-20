@@ -20,7 +20,7 @@ class ServiceEntityAdapter extends TypeAdapter<ServiceEntity> {
       businessID: fields[0] as String,
       serviceID: fields[1] as String,
       name: fields[2] as String,
-      description: fields[19] as String,
+      description: fields[99] as String,
       employeesID: (fields[3] as List).cast<String>(),
       employees: (fields[4] as List).cast<BusinessEmployeeEntity>(),
       currency: fields[5] as String,
@@ -83,7 +83,7 @@ class ServiceEntityAdapter extends TypeAdapter<ServiceEntity> {
       ..write(obj.excluded)
       ..writeByte(18)
       ..write(obj.included)
-      ..writeByte(19)
+      ..writeByte(99)
       ..write(obj.description);
   }
 

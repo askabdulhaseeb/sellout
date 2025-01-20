@@ -52,7 +52,7 @@ class BookingEntity {
   final DateTime updatedAt;
   @HiveField(13)
   final DateTime inHiveAt;
-  @HiveField(14)
+  @HiveField(99)
   final String notes;
 
   bool get amICustomer => customerID == LocalAuth.uid;

@@ -24,7 +24,7 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       userId: fields[4] as String,
       chatIDs: (fields[5] as List).cast<String>(),
       address: (fields[6] as List).cast<AddressEntity>(),
-      inHiveAt: fields[8] as DateTime,
+      inHiveAt: fields[99] as DateTime,
       businessIDs: fields[7] == null ? [] : (fields[7] as List).cast<String>(),
     );
   }
@@ -49,7 +49,7 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       ..write(obj.address)
       ..writeByte(7)
       ..write(obj.businessIDs)
-      ..writeByte(8)
+      ..writeByte(99)
       ..write(obj.inHiveAt);
   }
 

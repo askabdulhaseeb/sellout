@@ -33,6 +33,6 @@ class ListingEntity {
   String title;
   @HiveField(7)
   ListingType type;
-  @HiveField(8)
+  @HiveField(99)
   final DateTime inHiveAt;
 }

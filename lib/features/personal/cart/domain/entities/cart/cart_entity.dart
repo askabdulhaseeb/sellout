@@ -13,7 +13,7 @@ class CartEntity {
     required this.createdAt,
     required this.cartID,
     required this.items,
-  }):inHiveAt = DateTime.now();
+  }) : inHiveAt = DateTime.now();
 
   @HiveField(0)
   final DateTime updatedAt;
@@ -23,7 +23,7 @@ class CartEntity {
   final String cartID;
   @HiveField(3)
   final List<CartItemEntity> items;
-  @HiveField(4)
+  @HiveField(99)
   final DateTime inHiveAt;
 
   List<CartItemEntity> get cartItems =>
