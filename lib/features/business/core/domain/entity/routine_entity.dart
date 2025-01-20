@@ -20,4 +20,6 @@ class RoutineEntity {
   final String? closing;
   @HiveField(3)
   final String? opening;
+
+  bool get isToday => day.weekday == DateTime.now().weekday;
 }

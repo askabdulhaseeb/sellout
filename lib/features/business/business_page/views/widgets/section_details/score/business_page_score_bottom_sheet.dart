@@ -51,6 +51,7 @@ class BusinessPageScoreBottomSheet extends StatelessWidget {
             //
             Text(business.tagline),
             Text(business.location.address),
+            const SizedBox(height: 16),
             const Text(
               'staff',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
