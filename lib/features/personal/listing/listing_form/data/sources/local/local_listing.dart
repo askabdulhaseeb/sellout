@@ -22,6 +22,8 @@ class LocalListing {
   Future<void> save(ListingEntity value) async =>
       await _box.put(value.listId, value);
 
+  Future<void> clear() async => await _box.clear();
+
   ListingEntity? listingEntity(String value) => _box.get(value);
 
   List<ListingEntity> get listings =>

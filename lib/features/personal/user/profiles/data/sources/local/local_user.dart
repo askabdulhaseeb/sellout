@@ -24,7 +24,12 @@ class LocalUser {
     }
   }
 
-  Future<void> save(UserEntity user) async => await _box.put(user.uid, user);
+  Future<void> save(UserEntity user) async {
+    await _box.put(user.uid, user);
+  }
+
+  Future<void> clear() async => await _box.clear();
+
   UserEntity? userEntity(String value) => _box.get(value);
 
   DataState<UserEntity?> userState(String value) {

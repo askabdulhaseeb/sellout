@@ -9,13 +9,16 @@ class PasswordTextFormField extends StatefulWidget {
     this.labelText = 'Password',
     this.readOnly = false,
     this.onFieldSubmitted,
+    this.autofillHints,
     this.validator,
     super.key,
   }) : _controller = controller;
+
   final TextEditingController _controller;
   final TextInputAction? textInputAction;
   final void Function(String)? onFieldSubmitted;
   final String? Function(String? value)? validator;
+  final Iterable<String>? autofillHints;
   final String labelText;
   final bool readOnly;
 
@@ -57,6 +60,8 @@ class PasswordTextFormFieldState extends State<PasswordTextFormField> {
             keyboardType: TextInputType.visiblePassword,
             textInputAction: widget.textInputAction,
             cursorColor: Theme.of(context).colorScheme.secondary,
+            autofillHints:
+                widget.autofillHints ?? const <String>[AutofillHints.password],
             validator: (String? value) => widget.validator == null
                 ? AppValidator.password(value)
                 : widget.validator!(value),

@@ -31,6 +31,8 @@ class LocalCart {
     await _box.put(user.cartID, user);
   }
 
+  Future<void> clear() async => await _box.clear();
+
   CartEntity entity(String value) => _box.values.firstWhere(
         (CartEntity element) => element.cartID == value,
         orElse: () => CartModel(),

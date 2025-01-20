@@ -28,6 +28,8 @@ class LocalRequestHistory {
   Future<void> save(ApiRequestEntity request) async =>
       await _box.put(request.url.toSHA256(), request);
 
+  Future<void> clear() async => await _box.clear();
+
   Future<ApiRequestEntity?> request({
     required String endpoint,
     String? baseURL,

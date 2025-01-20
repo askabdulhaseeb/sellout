@@ -131,7 +131,7 @@ void _auth() {
   locator.registerFactory<VerifyPhoneOtpUsecase>(
       () => VerifyPhoneOtpUsecase(locator()));
   locator.registerLazySingleton<SignupProvider>(
-      () => SignupProvider(locator(), locator(), locator()));
+      () => SignupProvider(locator(), locator(), locator(), locator()));
 }
 
 void _servicePage() {
