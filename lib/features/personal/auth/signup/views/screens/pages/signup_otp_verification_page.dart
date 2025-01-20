@@ -20,22 +20,28 @@ class SignupOtpVerificationPage extends StatelessWidget {
             'enter_6_digit_code',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ).tr(),
-          Text('${'your_code_was_send_to'.tr()} +1234567890'),
+          Text(
+              '${'your_code_was_send_to'.tr()} ${pro.phoneNumber?.fullNumber}'),
           CustomTextFormField(
             controller: pro.otp,
             autoFocus: true,
             keyboardType: TextInputType.number,
             maxLength: 6,
-            onChanged: kDebugMode ? (String p0) => pro.onNext() : null,
+            onFieldSubmitted: (String p0) =>
+                p0.length == 6 ? pro.onNext(context) : null,
+            onChanged: kDebugMode
+                ? (String p0) => p0.length == 6 ? pro.onNext(context) : null
+                : null,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text('${'resend_code'.tr()}: ${pro.resendCodeTime}s'),
+              Text('${'resend_code'.tr()}: ${pro.resentCodeSeconds}s'),
               TextButton(
-                onPressed: pro.resendCodeTime != 0
-                    ? null
-                    : () async => pro.resendCode(context),
+                onPressed:
+                    (pro.resendCodeTimer?.isActive ?? true) || pro.isLoading
+                        ? null
+                        : () async => pro.sendOtp(context),
                 child: Text('resend_code'.tr()),
               )
             ],

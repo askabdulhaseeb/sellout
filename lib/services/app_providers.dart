@@ -24,7 +24,8 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
   // Add your providers here
   ChangeNotifierProvider<SigninProvider>.value(
       value: SigninProvider(locator(), locator())),
-  ChangeNotifierProvider<SignupProvider>.value(value: SignupProvider()),
+  ChangeNotifierProvider<SignupProvider>.value(
+      value: SignupProvider(locator(), locator(), locator())),
   //
   ChangeNotifierProvider<PersonalBottomNavProvider>.value(
       value: PersonalBottomNavProvider()),

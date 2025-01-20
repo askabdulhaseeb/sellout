@@ -11,13 +11,13 @@ class SignupPageProgressBarWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<SignupProvider>(
         builder: (BuildContext context, SignupProvider pro, _) {
-      int courrentIndex = pro.currentPage.index;
+      int courrentIndex = pro.currentPage.index + 1;
       int totalIndex = SignupPageType.values.length;
       return Row(
         children: <Widget>[
           Expanded(
             child: LinearProgressIndicator(
-              value: pro.currentPage.index / SignupPageType.values.length,
+              value: courrentIndex / totalIndex,
               backgroundColor: Theme.of(context).dividerColor,
               color: Theme.of(context).primaryColor,
             ),

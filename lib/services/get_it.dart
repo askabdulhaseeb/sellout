@@ -5,6 +5,10 @@ import '../core/widgets/appointment/data/services/appointment_api.dart';
 import '../core/widgets/appointment/domain/repository/appointment_repository.dart';
 import '../core/widgets/appointment/domain/usecase/update_appointment_usecase.dart';
 import '../core/widgets/appointment/providers/appointment_tile_provider.dart';
+import '../core/widgets/phone_number/data/repository/phone_number_repository_impl.dart';
+import '../core/widgets/phone_number/data/sources/country_api.dart';
+import '../core/widgets/phone_number/domain/repository/phone_number_repository.dart';
+import '../core/widgets/phone_number/domain/usecase/get_counties_usecase.dart';
 import '../features/business/business_page/data/repositories/business_page_services_repository.dart';
 import '../features/business/business_page/data/sources/business_booking_remote.dart';
 import '../features/business/business_page/data/sources/get_service_by_business_id_remote.dart';
@@ -29,6 +33,13 @@ import '../features/personal/auth/signin/domain/repositories/signin_repository.d
 import '../features/personal/auth/signin/domain/usecase/forgot_password_usecase.dart';
 import '../features/personal/auth/signin/domain/usecase/login_usecase.dart';
 import '../features/personal/auth/signin/views/providers/signin_provider.dart';
+import '../features/personal/auth/signup/data/repositories/signup_repository_impl.dart';
+import '../features/personal/auth/signup/data/sources/signup_api.dart';
+import '../features/personal/auth/signup/domain/repositories/signup_repository.dart';
+import '../features/personal/auth/signup/domain/usecase/register_user_usecase.dart';
+import '../features/personal/auth/signup/domain/usecase/send_opt_usecase.dart';
+import '../features/personal/auth/signup/domain/usecase/verify_opt_usecase.dart';
+import '../features/personal/auth/signup/views/providers/signup_provider.dart';
 import '../features/personal/cart/data/repositories/cart_repository_impl.dart';
 import '../features/personal/cart/data/repositories/checkout_repository_impl.dart';
 import '../features/personal/cart/data/sources/remote/cart_remote_api.dart';
@@ -95,6 +106,7 @@ void setupLocator() {
   _services();
   _appointment();
   _review();
+  _country();
 }
 
 void _auth() {
@@ -106,6 +118,20 @@ void _auth() {
       () => ForgotPasswordUsecase(locator()));
   locator.registerLazySingleton<SigninProvider>(
       () => SigninProvider(locator(), locator()));
+  // Signup
+  locator.registerFactory<SignupApi>(() => SignupApiImpl());
+  locator
+      .registerFactory<SignupRepository>(() => SignupRepositoryImpl(locator()));
+  // locator.registerFactory<GetCountiesUsecase>(
+  //     () => GetCountiesUsecase(locator()));
+  locator.registerFactory<RegisterUserUsecase>(
+      () => RegisterUserUsecase(locator()));
+  locator.registerFactory<SendPhoneOtpUsecase>(
+      () => SendPhoneOtpUsecase(locator()));
+  locator.registerFactory<VerifyPhoneOtpUsecase>(
+      () => VerifyPhoneOtpUsecase(locator()));
+  locator.registerLazySingleton<SignupProvider>(
+      () => SignupProvider(locator(), locator(), locator()));
 }
 
 void _servicePage() {
@@ -279,6 +305,21 @@ void _review() {
   // USECASES
   locator
       .registerFactory<GetReviewsUsecase>(() => GetReviewsUsecase(locator()));
+  //
+  // Providers
+}
+
+void _country() {
+  // API
+  locator.registerFactory<CountryApi>(() => CountryApiImpl());
+  //
+  // REPOSITORIES
+  locator.registerFactory<PhoneNumberRepository>(
+      () => PhoneNumberRepositoryImpl(locator()));
+  //
+  // USECASES
+  locator
+      .registerFactory<GetCountiesUsecase>(() => GetCountiesUsecase(locator()));
   //
   // Providers
 }

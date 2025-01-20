@@ -57,6 +57,8 @@ import '../../enums/listing/core/listing_type.dart';
 import '../../enums/listing/core/privacy_type.dart';
 import '../../enums/message/message_type.dart';
 import '../../enums/routine/day_type.dart';
+import '../../widgets/phone_number/data/sources/local_country.dart';
+import '../../widgets/phone_number/domain/entities/country_entity.dart';
 import 'local_request_history.dart';
 
 class HiveDB {
@@ -119,6 +121,7 @@ class HiveDB {
     Hive.registerAdapter(ProfileBusinessDetailEntityAdapter()); // 48
     Hive.registerAdapter(BookingEntityAdapter()); // 49
     Hive.registerAdapter(BookingPaymentDetailEntityAdapter()); // 50
+    Hive.registerAdapter(CountryEntityAdapter()); // 51
 
     // Hive box Open
     await refresh();
@@ -138,5 +141,6 @@ class HiveDB {
     await LocalService().refresh();
     await LocalReview().refresh();
     await LocalBooking().refresh();
+    await LocalCountry().refresh();
   }
 }

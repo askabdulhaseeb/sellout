@@ -75,7 +75,7 @@ class SignupDobPage extends StatelessWidget {
               isDisable: pro.dob == null,
               onTap: () async {
                 if (pro.dob != null) {
-                  pro.onNext();
+                  pro.onNext(context);
                 }
               },
             ),
