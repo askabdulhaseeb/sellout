@@ -5,23 +5,24 @@ part 'day_type.g.dart';
 @HiveType(typeId: 32)
 enum DayType {
   @HiveField(0)
-  monday('monday', 'monday'),
+  monday('monday', 'monday', 1),
   @HiveField(1)
-  tuesday('tuesday', 'tuesday'),
+  tuesday('tuesday', 'tuesday', 2),
   @HiveField(2)
-  wednesday('wednesday', 'wednesday'),
+  wednesday('wednesday', 'wednesday', 3),
   @HiveField(3)
-  thursday('thursday', 'thursday'),
+  thursday('thursday', 'thursday', 4),
   @HiveField(4)
-  friday('friday', 'friday'),
+  friday('friday', 'friday', 5),
   @HiveField(5)
-  saturday('saturday', 'saturday'),
+  saturday('saturday', 'saturday', 6),
   @HiveField(6)
-  sunday('sunday', 'sunday');
+  sunday('sunday', 'sunday', 7);
 
-  const DayType(this.code, this.json);
+  const DayType(this.code, this.json, this.weekday);
   final String code;
   final String json;
+  final int weekday;
 
   static DayType fromString(String? value) => value == null
       ? DayType.sunday

@@ -43,7 +43,7 @@ extension DateTimeExt on DateTime {
     } else if (diff.inDays < 2) {
       return 'yesterday'.tr();
     } else if (diff.inDays < 7) {
-      return DateFormat('EEEE').format(this);
+      return DateFormat('EEEE').format(this).toLowerCase().tr();
     } else if (diff.inDays < 30) {
       return '${diff.inDays ~/ 7} ${diff.inDays ~/ 7 == 1 ? 'week_ago'.tr() : 'weeks_ago'.tr()}';
     } else if (diff.inDays < 365) {

@@ -9,6 +9,14 @@ class BusinessHoursDisplaySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    dayStyle(RoutineEntity day) => TextStyle(
+          color: day.isOpen
+              ? day.isToday
+                  ? Theme.of(context).colorScheme.secondary
+                  : null
+              : Theme.of(context).primaryColor,
+          fontWeight: day.isOpen && !day.isToday ? null : FontWeight.bold,
+        );
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -23,24 +31,16 @@ class BusinessHoursDisplaySection extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: Text(
-                  day.day.code,
-                  style: TextStyle(
-                    color: day.isOpen ? null : Theme.of(context).primaryColor,
-                    fontWeight: day.isOpen ? null : FontWeight.bold,
-                  ),
-                ).tr(),
+                  day.isToday
+                      ? '${day.day.code.tr()} (${'today'.tr()})'
+                      : day.day.code.tr(),
+                  style: dayStyle(day),
+                ),
               ),
-              if (!day.isOpen)
-                Text(
-                  'closed',
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ).tr(),
-              Text(day.opening?.trim() ?? ''),
-              if (day.isOpen) const Text(' - '),
-              Text(day.closing?.trim() ?? ''),
+              if (!day.isOpen) Text('closed', style: dayStyle(day)).tr(),
+              Text(day.opening?.trim() ?? '', style: dayStyle(day)),
+              if (day.isOpen) Text(' - ', style: dayStyle(day)),
+              Text(day.closing?.trim() ?? '', style: dayStyle(day)),
             ],
           ),
       ],
