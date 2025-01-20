@@ -33,6 +33,6 @@ class CurrentUserEntity {
   final List<AddressEntity> address;
   @HiveField(7, defaultValue: <String>[])
   final List<String> businessIDs;
-  @HiveField(8)
+  @HiveField(99)
   final DateTime inHiveAt;
 }

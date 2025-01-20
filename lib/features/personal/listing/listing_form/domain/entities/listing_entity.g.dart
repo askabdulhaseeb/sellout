@@ -48,7 +48,7 @@ class ListingEntityAdapter extends TypeAdapter<ListingEntity> {
       ..write(obj.title)
       ..writeByte(7)
       ..write(obj.type)
-      ..writeByte(8)
+      ..writeByte(99)
       ..write(obj.inHiveAt);
   }
 

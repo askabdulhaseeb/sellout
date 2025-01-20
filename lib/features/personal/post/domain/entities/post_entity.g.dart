@@ -72,7 +72,7 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       wormAndFleaTreated: fields[52] as BooleanStatusType?,
       accessCode: fields[53] as String?,
       businessID: fields[54] as String?,
-      inHiveAt: fields[55] as DateTime?,
+      inHiveAt: fields[99] as DateTime?,
     );
   }
 
@@ -190,7 +190,7 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       ..write(obj.accessCode)
       ..writeByte(54)
       ..write(obj.businessID)
-      ..writeByte(55)
+      ..writeByte(99)
       ..write(obj.inHiveAt);
   }
 

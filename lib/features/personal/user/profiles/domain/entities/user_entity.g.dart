@@ -47,7 +47,7 @@ class UserEntityAdapter extends TypeAdapter<UserEntity> {
           : (fields[21] as List).cast<UserSupportInfoEntity>(),
       phoneNumber: fields[22] == null ? '' : fields[22] as String,
       updateAt: fields[23] as DateTime,
-      inHiveAt: fields[24] as DateTime,
+      inHiveAt: fields[99] as DateTime,
       currency: fields[25] as String,
       businessDetail: (fields[26] as List).cast<ProfileBusinessDetailEntity>(),
     );
@@ -105,12 +105,12 @@ class UserEntityAdapter extends TypeAdapter<UserEntity> {
       ..write(obj.phoneNumber)
       ..writeByte(23)
       ..write(obj.updateAt)
-      ..writeByte(24)
-      ..write(obj.inHiveAt)
       ..writeByte(25)
       ..write(obj.currency)
       ..writeByte(26)
-      ..write(obj.businessDetail);
+      ..write(obj.businessDetail)
+      ..writeByte(99)
+      ..write(obj.inHiveAt);
   }
 
   @override

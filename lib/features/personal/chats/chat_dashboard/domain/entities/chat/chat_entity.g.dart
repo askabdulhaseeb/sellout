@@ -60,7 +60,7 @@ class ChatEntityAdapter extends TypeAdapter<ChatEntity> {
       ..write(obj.deletedBy)
       ..writeByte(11)
       ..write(obj.groupInfo)
-      ..writeByte(12)
+      ..writeByte(99)
       ..write(obj.inHiveAt);
   }
 

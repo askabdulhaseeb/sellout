@@ -48,7 +48,7 @@ class ReviewEntity {
   final List<AttachmentEntity> fileUrls;
   @HiveField(12)
   final DateTime createdAt;
-  @HiveField(13)
+  @HiveField(99)
   final DateTime inHiveAt;
 
   ReviewType get type => ReviewType.fromJson(typeSTR);

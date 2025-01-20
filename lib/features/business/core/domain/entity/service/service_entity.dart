@@ -66,7 +66,7 @@ class ServiceEntity {
   final String excluded;
   @HiveField(18)
   final String? included;
-  @HiveField(19)
+  @HiveField(99)
   final String description;
 
   String? get thumbnailURL =>

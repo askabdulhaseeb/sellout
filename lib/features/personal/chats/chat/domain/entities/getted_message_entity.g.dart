@@ -33,7 +33,7 @@ class GettedMessageEntityAdapter extends TypeAdapter<GettedMessageEntity> {
       ..write(obj.lastEvaluatedKey)
       ..writeByte(2)
       ..write(obj.chatID)
-      ..writeByte(3)
+      ..writeByte(99)
       ..write(obj.inHiveAt);
   }
 

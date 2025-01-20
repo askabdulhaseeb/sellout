@@ -65,6 +65,6 @@ class BusinessEntity {
   final DateTime updatedAt;
   @HiveField(16)
   final AttachmentEntity? logo;
-  @HiveField(17)
+  @HiveField(99)
   final DateTime inHiveAt;
 }

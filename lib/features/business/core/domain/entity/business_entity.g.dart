@@ -75,7 +75,7 @@ class BusinessEntityAdapter extends TypeAdapter<BusinessEntity> {
       ..write(obj.updatedAt)
       ..writeByte(16)
       ..write(obj.logo)
-      ..writeByte(17)
+      ..writeByte(99)
       ..write(obj.inHiveAt);
   }
 

@@ -51,7 +51,7 @@ class ChatEntity {
   final List<dynamic>? deletedBy;
   @HiveField(11)
   final GroupInfoEntity? groupInfo;
-  @HiveField(12)
+  @HiveField(99)
   final DateTime inHiveAt;
 
   String otherPerson() {

@@ -19,7 +19,7 @@ class GettedMessageEntity {
   final MessageLastEvaluatedKeyEntity? lastEvaluatedKey;
   @HiveField(2)
   final String chatID;
-  @HiveField(3)
+  @HiveField(99)
   final DateTime inHiveAt;
 
   List<MessageEntity> sortedMessage() {

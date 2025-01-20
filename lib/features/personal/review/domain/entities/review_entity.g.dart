@@ -60,7 +60,7 @@ class ReviewEntityAdapter extends TypeAdapter<ReviewEntity> {
       ..write(obj.fileUrls)
       ..writeByte(12)
       ..write(obj.createdAt)
-      ..writeByte(13)
+      ..writeByte(99)
       ..write(obj.inHiveAt);
   }
 

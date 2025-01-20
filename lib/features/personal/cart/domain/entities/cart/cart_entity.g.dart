@@ -36,7 +36,7 @@ class CartEntityAdapter extends TypeAdapter<CartEntity> {
       ..write(obj.cartID)
       ..writeByte(3)
       ..write(obj.items)
-      ..writeByte(4)
+      ..writeByte(99)
       ..write(obj.inHiveAt);
   }
 
