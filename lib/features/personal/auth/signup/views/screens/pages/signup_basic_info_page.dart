@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -6,7 +7,8 @@ import '../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../core/widgets/password_textformfield.dart';
-import '../../../../../../../core/widgets/phone_number_input_field.dart';
+import '../../../../../../../core/widgets/phone_number/domain/entities/phone_number_entity.dart';
+import '../../../../../../../core/widgets/phone_number/views/phone_number_input_field.dart';
 import '../../providers/signup_provider.dart';
 
 class SignupBasicInfoPage extends StatelessWidget {
@@ -17,53 +19,115 @@ class SignupBasicInfoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<SignupProvider>(
       builder: (BuildContext context, SignupProvider pro, _) {
-        return ListView(
-          children: <Widget>[
-            CustomTextFormField(
-              controller: pro.name,
-              autoFocus: true,
-              showSuffixIcon: true,
-              hint: 'Ex. John Snow',
-              labelText: 'full_name'.tr(),
-              validator: (String? value) =>
-                  AppValidator.lessThenDigits(value, 3),
-            ),
-            CustomTextFormField(
-              controller: pro.username,
-              hint: 'Ex. john_snow',
-              labelText: 'username'.tr(),
-              showSuffixIcon: true,
-              validator: (String? value) =>
-                  AppValidator.lessThenDigits(value, 3),
-            ),
-            const PhoneNumberInputField(),
-            CustomTextFormField(
-              controller: pro.email,
-              hint: 'Ex. username@host.com',
-              labelText: 'email'.tr(),
-              showSuffixIcon: true,
-              validator: (String? value) => AppValidator.email(value),
-            ),
-            PasswordTextFormField(
-              controller: pro.password,
-              labelText: 'password'.tr(),
-              textInputAction: TextInputAction.next,
-              validator: (String? value) => AppValidator.password(value),
-            ),
-            PasswordTextFormField(
-              controller: pro.password,
-              labelText: 'confirm_password'.tr(),
-              textInputAction: TextInputAction.done,
-              validator: (String? value) => AppValidator.confirmPassword(
-                  pro.password.text, pro.confirmPassword.text),
-              onFieldSubmitted: (String p0) {},
-            ),
-            CustomElevatedButton(
-              title: 'next'.tr(),
-              isLoading: false,
-              onTap: () => pro.onNext(),
-            ),
-          ],
+        return Form(
+          key: pro.basicInfoFormKey,
+          child: ListView(
+            children: <Widget>[
+              CustomTextFormField(
+                controller: pro.name,
+                autoFocus: true,
+                showSuffixIcon: true,
+                hint: 'Ex. John Snow',
+                labelText: 'full_name'.tr(),
+                validator: (String? value) =>
+                    AppValidator.lessThenDigits(value, 3),
+              ),
+              CustomTextFormField(
+                controller: pro.username,
+                hint: 'Ex. john_snow',
+                labelText: 'username'.tr(),
+                showSuffixIcon: true,
+                validator: (String? value) =>
+                    AppValidator.lessThenDigits(value, 3),
+              ),
+              const SizedBox(height: 8),
+              PhoneNumberInputField(
+                initialValue: pro.phoneNumber,
+                labelText: 'phone_number'.tr(),
+                onChange: (PhoneNumberEntity? value) {
+                  pro.phoneNumber = value;
+                },
+              ),
+              CustomTextFormField(
+                controller: pro.email,
+                hint: 'Ex. username@host.com',
+                labelText: 'email'.tr(),
+                showSuffixIcon: true,
+                validator: (String? value) => AppValidator.email(value),
+              ),
+              PasswordTextFormField(
+                controller: pro.password,
+                labelText: 'password'.tr(),
+                textInputAction: TextInputAction.next,
+              ),
+              PasswordTextFormField(
+                controller: pro.confirmPassword,
+                labelText: 'confirm_password'.tr(),
+                textInputAction: TextInputAction.done,
+                validator: (String? value) => AppValidator.confirmPassword(
+                    pro.password.text, value ?? ''),
+                onFieldSubmitted: (_) => pro.onNext(context),
+              ),
+              const SizedBox(height: 24),
+              RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  children: <TextSpan>[
+                    TextSpan(text: 'already_have_an_account'.tr()),
+                    const TextSpan(text: ' '),
+                    TextSpan(
+                      text: 'sign_in'.tr(),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () => Navigator.of(context).pop(),
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 4),
+              CustomElevatedButton(
+                title: 'next'.tr(),
+                isLoading: false,
+                onTap: () => pro.onNext(context),
+              ),
+              const SizedBox(height: 12),
+              RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  children: <TextSpan>[
+                    TextSpan(text: 'by_registering_you_accept'.tr()),
+                    const TextSpan(text: ' '),
+                    TextSpan(
+                      text: 'customer_agreement_conditions'.tr(),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () => Navigator.of(context).pop(),
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const TextSpan(text: ' '),
+                    TextSpan(text: 'and'.tr()),
+                    const TextSpan(text: ' '),
+                    TextSpan(
+                      text: 'privacy_policy'.tr(),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () => Navigator.of(context).pop(),
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         );
       },
     );

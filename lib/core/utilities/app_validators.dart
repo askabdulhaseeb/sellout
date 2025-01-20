@@ -1,10 +1,13 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
+
+import '../functions/app_log.dart';
 
 class AppValidator {
   static String? email(String? value) {
     if (!RegExp(
             r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-        .hasMatch(value!)) {
+        .hasMatch(value ?? '')) {
       return 'Email is Invalid';
     }
     return null;
@@ -40,9 +43,27 @@ class AppValidator {
   }
 
   static String? confirmPassword(String first, String second) {
-    return first.trim() == second.trim()
+    return first.trim() == second.trim() && first.isNotEmpty
         ? null
         : 'Password & Confirm Password must be same';
+  }
+
+  static String? customRegExp(String formate, String? value,
+      {String? message}) {
+    try {
+      if (formate.isEmpty) return null;
+      if (!RegExp(r'$formate').hasMatch(value ?? '')) {
+        return message ??
+            (kDebugMode ? 'Invlide $value' : 'invalid_value'.tr());
+      }
+    } catch (e) {
+      AppLog.error(
+        e.toString(),
+        name: 'AppValidator.customRegExp - $value',
+        error: e,
+      );
+    }
+    return null;
   }
 
   static String? retaunNull(String? value) => null;

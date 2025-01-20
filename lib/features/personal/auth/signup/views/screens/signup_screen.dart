@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -5,9 +6,22 @@ import '../../../../../../core/widgets/sellout_title.dart';
 import '../providers/signup_provider.dart';
 import '../widgets/signup_page_progress_bar_widget.dart';
 
-class SignupScreen extends StatelessWidget {
+class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
   static const String routeName = '/sign-up';
+
+  @override
+  State<SignupScreen> createState() => _SignupScreenState();
+}
+
+class _SignupScreenState extends State<SignupScreen> {
+  @override
+  void initState() {
+    super.initState();
+    if (!kDebugMode) {
+      Provider.of<SignupProvider>(context, listen: false).reset();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

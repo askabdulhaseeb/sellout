@@ -367,6 +367,8 @@
     "by_registering_you_accept": "By registering, you accept our",
     "customer_agreement_conditions": "Customer Agreement & Conditions",
     "and": "and",
+    "invalid_value": "Invalid value",
+    "otp_requirement": "6 digit code is required",
     "upcoming": "Upcoming",
     "finished": "Finished",
     "january": "January",
