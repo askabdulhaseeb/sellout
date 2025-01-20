@@ -2,13 +2,16 @@ import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
+import '../../../signin/data/sources/local/local_auth.dart';
 import '../../views/params/signup_basic_info_params.dart';
 import '../../views/params/signup_send_opt_params.dart';
+import '../../views/params/signup_update_user_info_params.dart';
 
 abstract interface class SignupApi {
   Future<DataState<String>> signupBasicInfo(SignupBasicInfoParams params);
   Future<DataState<String>> signupSendOTP(SignupOptParams params);
   Future<DataState<bool>> signupVerifyOTP(SignupOptParams params);
+  Future<DataState<bool>> signupUpdateUser(SignupUpdateUserInfoParams params);
 }
 
 class SignupApiImpl implements SignupApi {
@@ -104,6 +107,35 @@ class SignupApiImpl implements SignupApi {
         ));
       }
     } catch (e) {
+      return DataFailer<bool>(CustomException(e.toString()));
+    }
+  }
+
+  @override
+  Future<DataState<bool>> signupUpdateUser(
+      SignupUpdateUserInfoParams params) async {
+    try {
+      //
+      final DataState<bool> response = await ApiCall<bool>().call(
+        endpoint: 'user/update/${LocalAuth.uid}',
+        requestType: ApiRequestType.patch,
+        body: json.encode(params.toMap()),
+        isAuth: true,
+      );
+      if (response is DataFailer) {
+        AppLog.error(
+          '${response.exception?.message}',
+          name: 'SignupApiImpl.signupUpdateUser - DataFailer',
+          error: response.exception,
+        );
+      }
+      return response;
+    } catch (e) {
+      AppLog.error(
+        'Error from signupUpdateUser: $e',
+        name: 'SignupApiImpl.signupUpdateUser - catch',
+        error: e,
+      );
       return DataFailer<bool>(CustomException(e.toString()));
     }
   }

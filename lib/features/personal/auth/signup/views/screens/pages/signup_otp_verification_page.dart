@@ -27,6 +27,7 @@ class SignupOtpVerificationPage extends StatelessWidget {
               autoFocus: true,
               keyboardType: TextInputType.number,
               maxLength: 6,
+              readOnly: pro.isLoading,
               onFieldSubmitted: (String p0) =>
                   p0.length == 6 ? pro.onNext(context) : null,
               onChanged: kDebugMode

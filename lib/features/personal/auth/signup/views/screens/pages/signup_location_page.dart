@@ -66,7 +66,7 @@ class SignupLocationPage extends StatelessWidget {
                 const Spacer(),
                 CustomElevatedButton(
                   title: 'next'.tr(),
-                  isLoading: false,
+                  isLoading: pro.isLoading,
                   onTap: () => pro.onNext(context),
                 ),
                 const SizedBox(height: 32),
