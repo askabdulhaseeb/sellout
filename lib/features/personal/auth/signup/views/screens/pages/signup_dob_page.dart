@@ -24,28 +24,31 @@ class SignupDobPage extends StatelessWidget {
             const Text('birthday_policy').tr(),
             const SizedBox(height: 20),
             InkWell(
-              onTap: () async {
-                // Adaptive date picker
-                final DateTime? date = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime(2000),
-                  firstDate: DateTime(1900),
-                  lastDate: DateTime(DateTime.now().year - 10),
-                  builder: (BuildContext context, Widget? child) {
-                    return Theme(
-                      data: AppTheme.dark.copyWith(
-                        colorScheme: Theme.of(context).colorScheme.copyWith(
-                              primary: Theme.of(context).primaryColor,
+              onTap: pro.isLoading
+                  ? null
+                  : () async {
+                      // Adaptive date picker
+                      final DateTime? date = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime(2000),
+                        firstDate: DateTime(1900),
+                        lastDate: DateTime(DateTime.now().year - 10),
+                        builder: (BuildContext context, Widget? child) {
+                          return Theme(
+                            data: AppTheme.dark.copyWith(
+                              colorScheme:
+                                  Theme.of(context).colorScheme.copyWith(
+                                        primary: Theme.of(context).primaryColor,
+                                      ),
                             ),
-                      ),
-                      child: child ?? const SizedBox(),
-                    );
-                  },
-                );
-                if (date != null) {
-                  pro.dob = date;
-                }
-              },
+                            child: child ?? const SizedBox(),
+                          );
+                        },
+                      );
+                      if (date != null) {
+                        pro.dob = date;
+                      }
+                    },
               borderRadius: BorderRadius.circular(8),
               child: Container(
                 width: double.infinity,
@@ -72,7 +75,7 @@ class SignupDobPage extends StatelessWidget {
             CustomElevatedButton(
               title: 'next'.tr(),
               isLoading: false,
-              isDisable: pro.dob == null,
+              isDisable: pro.dob == null || pro.isLoading,
               onTap: () async {
                 if (pro.dob != null) {
                   pro.onNext(context);

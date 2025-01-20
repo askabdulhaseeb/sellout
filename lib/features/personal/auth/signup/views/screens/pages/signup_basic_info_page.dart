@@ -28,6 +28,7 @@ class SignupBasicInfoPage extends StatelessWidget {
                   controller: pro.name,
                   autoFocus: true,
                   showSuffixIcon: true,
+                  readOnly: pro.isLoading,
                   hint: 'Ex. John Snow',
                   labelText: 'full_name'.tr(),
                   autofillHints: const <String>[AutofillHints.name],
@@ -39,6 +40,7 @@ class SignupBasicInfoPage extends StatelessWidget {
                   hint: 'Ex. john_snow',
                   labelText: 'username'.tr(),
                   showSuffixIcon: true,
+                  readOnly: pro.isLoading,
                   autofillHints: const <String>[AutofillHints.username],
                   validator: (String? value) =>
                       AppValidator.lessThenDigits(value, 3),
@@ -56,12 +58,14 @@ class SignupBasicInfoPage extends StatelessWidget {
                   hint: 'Ex. username@host.com',
                   labelText: 'email'.tr(),
                   showSuffixIcon: true,
+                  readOnly: pro.isLoading,
                   autofillHints: const <String>[AutofillHints.email],
                   validator: (String? value) => AppValidator.email(value),
                 ),
                 PasswordTextFormField(
                   controller: pro.password,
                   labelText: 'password'.tr(),
+                  readOnly: pro.isLoading,
                   autofillHints: const <String>[AutofillHints.newPassword],
                   textInputAction: TextInputAction.next,
                 ),
@@ -69,6 +73,7 @@ class SignupBasicInfoPage extends StatelessWidget {
                   controller: pro.confirmPassword,
                   labelText: 'confirm_password'.tr(),
                   textInputAction: TextInputAction.done,
+                  readOnly: pro.isLoading,
                   autofillHints: const <String>[AutofillHints.newPassword],
                   validator: (String? value) => AppValidator.confirmPassword(
                       pro.password.text, value ?? ''),
@@ -97,7 +102,7 @@ class SignupBasicInfoPage extends StatelessWidget {
                 const SizedBox(height: 4),
                 CustomElevatedButton(
                   title: 'next'.tr(),
-                  isLoading: false,
+                  isLoading: pro.isLoading,
                   onTap: () => pro.onNext(context),
                 ),
                 const SizedBox(height: 12),
