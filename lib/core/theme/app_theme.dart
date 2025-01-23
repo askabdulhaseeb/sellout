@@ -26,7 +26,7 @@ class AppTheme {
       textTheme: const TextTheme(
         titleLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
       ),
-      dividerColor: Colors.grey[300],
+      dividerColor: const Color(0xFFF0F0F0),
       useMaterial3: true,
       appBarTheme: const AppBarTheme(
         backgroundColor: lightScaffldColor,
