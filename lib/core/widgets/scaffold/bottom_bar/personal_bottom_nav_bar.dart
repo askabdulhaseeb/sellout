@@ -5,8 +5,6 @@ import 'package:provider/provider.dart';
 import '../../../../features/personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../../../features/personal/dashboard/views/providers/personal_bottom_nav_provider.dart';
 import '../../../../features/personal/user/profiles/data/sources/local/local_user.dart';
-import '../../../functions/app_log.dart';
-import '../../profile_photo.dart';
 
 class PersonalBottomNavBar extends StatefulWidget {
   const PersonalBottomNavBar({super.key});
@@ -46,44 +44,8 @@ class _PersonalBottomNavBarState extends State<PersonalBottomNavBar> {
           items: PersonalBottomNavBarType.list
               .map((PersonalBottomNavBarType type) {
             return BottomNavigationBarItem(
-              icon: type.code != 'profile'
-                  ? Icon(type.icon)
-                  : user == null
-                      ? Icon(type.icon)
-                      : GestureDetector(
-                          onLongPress: () {
-                            AppLog.info(
-                              'Profile photo long pressed',
-                              name: 'PersonalBottomNavBar',
-                            );
-                          },
-                          child: ProfilePhoto(
-                            url: user?.profilePhotoURL,
-                            isCircle: true,
-                            size: 14,
-                          ),
-                        ),
-              activeIcon: type.code != 'profile'
-                  ? Icon(type.activeIcon)
-                  : user == null
-                      ? Icon(type.activeIcon)
-                      : GestureDetector(
-                          onLongPress: () {
-                            AppLog.info(
-                              'Profile photo long pressed',
-                              name: 'PersonalBottomNavBar',
-                            );
-                          },
-                          child: CircleAvatar(
-                            radius: 16,
-                            backgroundColor: Theme.of(context).primaryColor,
-                            child: ProfilePhoto(
-                              url: user?.profilePhotoURL,
-                              isCircle: true,
-                              size: 14,
-                            ),
-                          ),
-                        ),
+              icon: Icon(type.icon),
+              activeIcon: Icon(type.activeIcon),
               label: type.code.tr(),
             );
           }).toList(),
