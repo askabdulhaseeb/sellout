@@ -12,14 +12,13 @@ class ProfileScoreSection extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SizedBox(
-          height: 64,
+          height: 32,
           child: Row(
             children: <Widget>[
               Expanded(
-                flex: 2,
                 child: _ScoreButton(
                   title: 'my_orders'.tr(),
-                  count: '0',
+                  count: '',
                   onPressed: () {},
                 ),
               ),
@@ -56,30 +55,32 @@ class _ScoreButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 4),
       child: InkWell(
         onTap: onPressed,
         borderRadius: BorderRadius.circular(12),
         child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
           decoration: BoxDecoration(
             border: Border.all(
               color: Theme.of(context).disabledColor,
               width: 0.5,
             ),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(8),
           ),
-          child: Column(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
                 count,
                 style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
               ),
+              const SizedBox(width: 4),
               Text(
                 title,
                 style:
-                    const TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
+                    const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
               ),
             ],
           ),
