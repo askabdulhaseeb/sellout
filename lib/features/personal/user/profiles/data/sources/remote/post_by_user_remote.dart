@@ -19,7 +19,7 @@ class PostByUserRemoteImpl implements PostByUserRemote {
         return DataFailer<List<PostEntity>>(CustomException('userId is empty'));
       }
       final DataState<bool> result = await ApiCall<bool>().call(
-        endpoint: 'post/query??created_by=$id',
+        endpoint: 'post/query?created_by=$id',
         requestType: ApiRequestType.get,
         isAuth: false,
       );

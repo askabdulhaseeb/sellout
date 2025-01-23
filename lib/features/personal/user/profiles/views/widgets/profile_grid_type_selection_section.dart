@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../domain/entities/user_entity.dart';
+import '../enums/profile_page_tab_type.dart';
 import '../providers/profile_provider.dart';
 
 class ProfileGridTypeSelectionSection extends StatelessWidget {
@@ -17,47 +18,74 @@ class ProfileGridTypeSelectionSection extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: Consumer<ProfileProvider>(
           builder: (BuildContext context, ProfileProvider userPro, _) {
+        final List<ProfilePageTabType> list = ProfilePageTabType.list(isMe);
         return SizedBox(
-          height: 64,
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: _IconButton(
-                  isSelected: userPro.displayType == 0,
-                  icon: Icons.grid_on,
-                  title: isMe ? 'my_store'.tr() : 'store'.tr(),
-                  onPressed: () => userPro.displayType = 0,
-                ),
-              ),
-              Expanded(
-                child: _IconButton(
-                  isSelected: userPro.displayType == 1,
-                  icon: Icons.video_collection_outlined,
-                  title: isMe ? 'my_promos'.tr() : 'promos'.tr(),
-                  onPressed: () => userPro.displayType = 1,
-                ),
-              ),
-              if (isMe)
-                Expanded(
-                  child: _IconButton(
-                    icon: Icons.calendar_month_outlined,
-                    isSelected: userPro.displayType == 2,
-                    title: 'my_viewing'.tr(),
-                    onPressed: () => userPro.displayType = 2,
-                  ),
-                ),
-              if (isMe)
-                Expanded(
-                  child: _IconButton(
-                    icon: Icons.bookmark_border,
-                    isSelected: userPro.displayType == 3,
-                    title: 'my_saved'.tr(),
-                    onPressed: () => userPro.displayType = 3,
-                  ),
-                ),
-            ],
+          height: 32,
+          width: double.infinity,
+          child: ListView.builder(
+            shrinkWrap: true,
+            primary: false,
+            scrollDirection: Axis.horizontal,
+            itemCount: list.length,
+            itemBuilder: (BuildContext context, int index) {
+              final ProfilePageTabType type = list[index];
+              return _IconButton(
+                isSelected: userPro.displayType == type,
+                title: type.code.tr(),
+                onPressed: () => userPro.displayType = type,
+              );
+            },
           ),
         );
+        // Expanded(
+        //     child: _IconButton(
+        //       isSelected: userPro.displayType == ProfilePageTabType.orders,
+        //       icon: Icons.grid_on,
+        //       title: isMe ? 'my_store'.tr() : 'store'.tr(),
+        //       onPressed: () => userPro.displayType = 0,
+        //     ),
+        //   ),
+        // return SizedBox(
+        //   height: 64,
+        //   child: Row(
+        //     children: <Widget>[
+        //       Expanded(
+        //         child: _IconButton(
+        //           isSelected: userPro.displayType == ProfilePageTabType.orders,
+        //           icon: Icons.grid_on,
+        //           title: isMe ? 'my_store'.tr() : 'store'.tr(),
+        //           onPressed: () => userPro.displayType = 0,
+        //         ),
+        //       ),
+        //       Expanded(
+        //         child: _IconButton(
+        //           isSelected: userPro.displayType == 1,
+        //           icon: Icons.video_collection_outlined,
+        //           title: isMe ? 'my_promos'.tr() : 'promos'.tr(),
+        //           onPressed: () => userPro.displayType = 1,
+        //         ),
+        //       ),
+        //       if (isMe)
+        //         Expanded(
+        //           child: _IconButton(
+        //             icon: Icons.calendar_month_outlined,
+        //             isSelected: userPro.displayType == 2,
+        //             title: 'my_viewing'.tr(),
+        //             onPressed: () => userPro.displayType = 2,
+        //           ),
+        //         ),
+        //       if (isMe)
+        //         Expanded(
+        //           child: _IconButton(
+        //             icon: Icons.bookmark_border,
+        //             isSelected: userPro.displayType == 3,
+        //             title: 'my_saved'.tr(),
+        //             onPressed: () => userPro.displayType = 3,
+        //           ),
+        //         ),
+        //     ],
+        //   ),
+        // );
       }),
     );
   }
@@ -65,12 +93,10 @@ class ProfileGridTypeSelectionSection extends StatelessWidget {
 
 class _IconButton extends StatelessWidget {
   const _IconButton({
-    required this.icon,
     required this.title,
     required this.isSelected,
     required this.onPressed,
   });
-  final IconData icon;
   final String title;
   final bool isSelected;
   final VoidCallback onPressed;
@@ -83,13 +109,25 @@ class _IconButton extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          Icon(
-            icon,
-            color: isSelected
-                ? Theme.of(context).primaryColor
-                : Theme.of(context).disabledColor,
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 14,
+              color: isSelected
+                  ? Theme.of(context).primaryColor
+                  : Theme.of(context).disabledColor,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            ),
           ),
-          Text(title),
+          Container(
+            height: 2,
+            width: 68,
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? Theme.of(context).primaryColor
+                  : Theme.of(context).dividerColor,
+            ),
+          ),
         ],
       ),
     );

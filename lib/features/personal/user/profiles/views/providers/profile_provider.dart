@@ -9,6 +9,7 @@ import '../../../../review/domain/usecase/get_reviews_usecase.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/usecase/get_post_by_id_usecase.dart';
 import '../../domain/usecase/get_user_by_uid.dart';
+import '../enums/profile_page_tab_type.dart';
 
 class ProfileProvider extends ChangeNotifier {
   ProfileProvider(
@@ -23,10 +24,11 @@ class ProfileProvider extends ChangeNotifier {
   DataState<UserEntity?>? _user;
   UserEntity? get user => _user?.entity;
 
-  int _displayType = kDebugMode ? 0 : 0;
-  int get displayType => _displayType;
+  ProfilePageTabType _displayType =
+      kDebugMode ? ProfilePageTabType.orders : ProfilePageTabType.orders;
+  ProfilePageTabType get displayType => _displayType;
 
-  set displayType(int value) {
+  set displayType(ProfilePageTabType value) {
     _displayType = value;
     notifyListeners();
   }
@@ -37,7 +39,7 @@ class ProfileProvider extends ChangeNotifier {
       'Profile Provider: User loaded: ${_user?.entity?.displayName}',
       name: 'ProfileProvider.getUserByUid',
     );
-    displayType = kDebugMode ? 0 : 0;
+    displayType = ProfilePageTabType.store;
     return _user;
   }
 
