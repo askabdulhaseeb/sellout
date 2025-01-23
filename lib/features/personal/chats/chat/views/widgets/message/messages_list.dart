@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../core/widgets/loader.dart';
 import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
@@ -37,12 +36,20 @@ class MessagesList extends StatelessWidget {
             itemCount: msgs.length,
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             itemBuilder: (BuildContext context, int index) {
-              if (index == (msgs.length - 1)) {
-                AppLog.info(
-                  'Index: $index - length: ${msgs.length} - msgs: ${msgs[index].text}',
-                  name: 'MessagesList.build - if',
-                );
-              }
+              // if (index == (msgs.length - 1)) {
+              //   AppLog.info(
+              //     'Index: $index - length: ${msgs.length} - msgs: ${msgs[index].text}',
+              //     name: 'MessagesList.build - if',
+              //   );
+              // }
+              final int nextIndex = index + 1;
+              Duration? timeDiff = nextIndex < msgs.length
+                  ? msgs[index].sendBy == msgs[nextIndex].sendBy
+                      ? msgs[index]
+                          .createdAt
+                          .difference(msgs[nextIndex].createdAt)
+                      : const Duration(days: 5)
+                  : const Duration(days: 5);
               return index == (msgs.length - 1)
                   ? FutureBuilder<bool>(
                       future: chatPro.loadMessages(),
@@ -52,9 +59,12 @@ class MessagesList extends StatelessWidget {
                             ConnectionState.waiting) {
                           return const Loader();
                         }
-                        return MessageTile(message: msgs[index]);
+                        return MessageTile(
+                          message: msgs[index],
+                          timeDiff: timeDiff,
+                        );
                       })
-                  : MessageTile(message: msgs[index]);
+                  : MessageTile(message: msgs[index], timeDiff: timeDiff);
             },
           ),
         );

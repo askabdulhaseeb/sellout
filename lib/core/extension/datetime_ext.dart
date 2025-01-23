@@ -31,7 +31,7 @@ extension DateTimeExt on DateTime {
 
   String get timeOnly => DateFormat('hh:mm a').format(this);
 
-  String get dateTime => DateFormat('dd/MM/yyyy HH:mm').format(this);
+  String get dateTime => DateFormat('dd/MM/yyyy HH:mm a').format(this);
 
   String get zTypeDateTime =>
       DateFormat('yyyy-MM-ddTHH:mm:ss.mmmZ').format(this);
@@ -50,6 +50,21 @@ extension DateTimeExt on DateTime {
       return '${diff.inDays ~/ 30} ${diff.inDays ~/ 30 == 1 ? 'month_ago'.tr() : 'months_ago'.tr()}';
     } else {
       return '${diff.inDays ~/ 365} ${diff.inDays ~/ 365 == 1 ? 'year_ago'.tr() : 'years_ago'.tr()}';
+    }
+  }
+
+  String get messageTime {
+    final Duration diff = DateTime.now().difference(this);
+    if (diff.inDays < 1) {
+      return timeOnly;
+    } else if (diff.inDays < 2) {
+      return '${'yesterday'.tr()} $timeOnly';
+    } else if (diff.inDays < 7) {
+      return '${DateFormat('EEEE').format(this).toLowerCase().tr()} $timeOnly';
+    } else if (diff.inDays < 365) {
+      return '${DateFormat('dd').format(this)} ${DateFormat('MMM').format(this).toLowerCase().tr()} $timeOnly';
+    } else {
+      return '${DateFormat('dd').format(this)} ${DateFormat('MMM').format(this).toLowerCase().tr()} ${DateFormat('yyyy HH:mm a').format(this).toLowerCase().tr()}';
     }
   }
 }

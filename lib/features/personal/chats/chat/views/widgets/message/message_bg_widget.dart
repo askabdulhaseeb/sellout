@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../../../core/theme/app_theme.dart';
+
 class MessageBgWidget extends StatelessWidget {
   const MessageBgWidget({
     required this.isMe,
@@ -28,9 +30,7 @@ class MessageBgWidget extends StatelessWidget {
         ),
         decoration: BoxDecoration(
             color: color ??
-                (isMe
-                    ? Theme.of(context).primaryColor.withOpacity(0.2)
-                    : Colors.grey[200]),
+                (isMe ? Theme.of(context).dividerColor : AppTheme.lightPrimary),
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(isMe ? 16 : 0),
               topRight: Radius.circular(isMe ? 0 : 16),
