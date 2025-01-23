@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 
 class AlartMessageTile extends StatelessWidget {
@@ -16,7 +17,7 @@ class AlartMessageTile extends StatelessWidget {
         minWidth: 20,
       ),
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor.withOpacity(0.1),
+        color: AppTheme.lightPrimary,
         borderRadius: BorderRadius.circular(16),
       ),
       alignment: Alignment.center,

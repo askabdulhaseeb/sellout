@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../../../../../core/extension/datetime_ext.dart';
 import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../../core/widgets/shadow_container.dart';
 import '../../../../../../post/data/sources/local/local_post.dart';
@@ -93,14 +92,6 @@ class OfferMessageTile extends StatelessWidget {
                         ),
                       ),
                     ],
-                  ),
-                  const SizedBox(height: 8),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Opacity(
-                      opacity: 0.6,
-                      child: Text(message.createdAt.timeAgo),
-                    ),
                   ),
                 ],
               ),
