@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../../../../core/widgets/attachment_slider.dart';
-import '../../../../../../../../core/widgets/shadow_container.dart';
 import '../../../../../domain/entities/post_entity.dart';
 import '../../../../../post_detail/views/screens/post_detail_screen.dart';
 import 'section/buttons/home_post_button_section.dart';
@@ -15,25 +14,26 @@ class HomePostTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: ShadowContainer(
-        onTap: () {
-          Navigator.of(context).pushNamed(
-            PostDetailScreen.routeName,
-            arguments: <String, dynamic>{'pid': post.postId},
-          );
-        },
-        padding: const EdgeInsets.all(0),
-        child: Column(
-          children: <Widget>[
-            PostHeaderSection(post: post),
-            AttachmentsSlider(urls: post.fileUrls),
-            HomePostIconBottonSection(post: post),
-            HomePostTitleSection(post: post),
-            PostButtonSection(post: post),
-          ],
-        ),
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).pushNamed(
+          PostDetailScreen.routeName,
+          arguments: <String, dynamic>{'pid': post.postId},
+        );
+      },
+      child: Column(
+        children: <Widget>[
+          PostHeaderSection(post: post),
+          AttachmentsSlider(urls: post.fileUrls),
+          HomePostIconBottonSection(post: post),
+          HomePostTitleSection(post: post),
+          PostButtonSection(post: post),
+          Container(
+            height: 4,
+            width: double.infinity,
+            color: Theme.of(context).dividerColor,
+          )
+        ],
       ),
     );
   }
