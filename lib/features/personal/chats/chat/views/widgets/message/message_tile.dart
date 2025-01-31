@@ -31,7 +31,7 @@ class MessageTile extends StatelessWidget {
             children: <Widget>[
               if (timeDiff != null && timeDiff!.inMinutes > 1)
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.only(left: 20, right: 20, top: 12),
                   child: FutureBuilder<UserEntity?>(
                     future: LocalUser().user(message.sendBy),
                     initialData: LocalUser().userEntity(message.sendBy),

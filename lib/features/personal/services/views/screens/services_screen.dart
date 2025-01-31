@@ -21,6 +21,7 @@ class ServicesScreen extends StatelessWidget {
                 'services',
                 style: Theme.of(context).textTheme.titleLarge,
               ).tr(),
+              const SizedBox(height: 8),
               const ServicesPageTypeToggleSection(),
             ],
           ),

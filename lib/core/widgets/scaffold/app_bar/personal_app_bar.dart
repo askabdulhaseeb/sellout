@@ -10,6 +10,7 @@ import '../../../../features/personal/cart/views/screens/personal_cart_screen.da
 import '../../../../features/personal/user/profiles/data/sources/local/local_user.dart';
 import '../../../../features/personal/user/profiles/domain/entities/business_profile_detail_entity.dart';
 import '../../../utilities/app_icons.dart';
+import '../../in_dev_mode.dart';
 import '../../profile_photo.dart';
 
 personalAppbar(BuildContext context) {
@@ -67,8 +68,12 @@ personalAppbar(BuildContext context) {
                     );
             }),
     actions: <Widget>[
-      _IconButton(icon: AppIcons.search, onPressed: () {}),
-      _IconButton(icon: AppIcons.notification, onPressed: () {}),
+      InDevMode(
+        child: _IconButton(icon: AppIcons.search, onPressed: () {}),
+      ),
+      InDevMode(
+        child: _IconButton(icon: AppIcons.notification, onPressed: () {}),
+      ),
       if (me.isNotEmpty)
         ValueListenableBuilder<Box<CartEntity>>(
             valueListenable: LocalCart().listenable(),
