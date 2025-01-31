@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../../core/enums/business/services/service_category_type.dart';
-import '../../../../../../core/utilities/app_images.dart';
+import '../../../../../../core/widgets/custom_network_image.dart';
 
 class ServicesPageExploreCategoriesSection extends StatelessWidget {
   const ServicesPageExploreCategoriesSection({super.key});
@@ -36,18 +36,32 @@ class ServicesPageExploreCategoriesSection extends StatelessWidget {
             itemCount: categories.length,
             itemBuilder: (BuildContext context, int index) {
               final ServiceCategoryType category = categories[index];
-              return Container(
-                width: 100,
-                decoration: BoxDecoration(
+              return Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      child: Image.asset(AppImages.logo, fit: BoxFit.cover),
+                  child: Container(
+                    width: 100,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).dividerColor,
                     ),
-                    Text(category.code, maxLines: 1).tr(),
-                  ],
+                    child: Column(
+                      children: <Widget>[
+                        Expanded(
+                          // child: Image.asset(AppImages.logo, fit: BoxFit.cover),
+                          child: CustomNetworkImage(
+                            imageURL: category.imageURL,
+                            size: double.infinity,
+                          ),
+                        ),
+                        Text(
+                          category.code,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ).tr(),
+                      ],
+                    ),
+                  ),
                 ),
               );
             },

@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../../../core/enums/core/attachment_type.dart';
 import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';

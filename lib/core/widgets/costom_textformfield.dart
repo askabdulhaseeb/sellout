@@ -65,7 +65,7 @@ class CustomTextFormField extends StatefulWidget {
 
 class CustomTextFormFieldState extends State<CustomTextFormField> {
   void _onListen() => setState(() {});
-  final List<TextInputFormatter> inputFormatters = [];
+  final List<TextInputFormatter> inputFormatters = <TextInputFormatter>[];
   @override
   void initState() {
     widget._controller!.addListener(_onListen);

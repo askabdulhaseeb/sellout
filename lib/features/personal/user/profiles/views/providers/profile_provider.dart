@@ -25,7 +25,7 @@ class ProfileProvider extends ChangeNotifier {
   UserEntity? get user => _user?.entity;
 
   ProfilePageTabType _displayType =
-      kDebugMode ? ProfilePageTabType.orders : ProfilePageTabType.orders;
+      kDebugMode ? ProfilePageTabType.viewing : ProfilePageTabType.orders;
   ProfilePageTabType get displayType => _displayType;
 
   set displayType(ProfilePageTabType value) {

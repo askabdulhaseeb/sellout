@@ -1,6 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../../../../core/theme/app_theme.dart';
+import '../../../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../post/domain/entities/post_entity.dart';
 import '../../../../../post/domain/entities/visit/visiting_entity.dart';
@@ -34,21 +38,32 @@ class ProfileVisitGridviewTile extends StatelessWidget {
             Row(
               children: <Widget>[
                 Expanded(
-                  child: Text(
-                    post?.title ?? 'n/a',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        post?.title ?? 'n/a',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        post?.priceStr ?? 'n/a',
+                        maxLines: 1,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 8),
-                Text(
-                  post?.priceStr ?? 'n/a',
-                  maxLines: 1,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                InDevMode(
+                  child: CustomIconButton(
+                    icon: CupertinoIcons.calendar,
+                    onPressed: () {},
+                    bgColor: AppTheme.lightPrimary,
+                  ),
                 ),
               ],
-            )
+            ),
           ],
         );
       },

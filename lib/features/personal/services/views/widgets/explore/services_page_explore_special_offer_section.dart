@@ -27,6 +27,7 @@ class ServicesPageExploreSpecialOfferSection extends StatelessWidget {
               'special_offers'.tr(),
               style: Theme.of(context).textTheme.titleMedium,
             ),
+            const SizedBox(height: 8),
             //
             FutureBuilder<List<ServiceEntity>>(
               future: pro.getSpecialOffer(),
@@ -60,45 +61,55 @@ class ServicesPageExploreSpecialOfferSection extends StatelessWidget {
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  ClipRRect(
-                                    borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(8),
-                                      topRight: Radius.circular(8),
+                                  Expanded(
+                                    child: ClipRRect(
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(8),
+                                        topRight: Radius.circular(8),
+                                      ),
+                                      child: CustomNetworkImage(
+                                        size: double.infinity,
+                                        imageURL: service.thumbnailURL,
+                                      ),
                                     ),
-                                    child: CustomNetworkImage(
-                                      imageURL: service.thumbnailURL,
-                                    ),
                                   ),
-                                  Text(
-                                    service.name,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  RatingDisplayWidget(
-                                    ratingList: service.listOfReviews,
-                                    displayStars: false,
-                                  ),
-                                  FutureBuilder<BusinessEntity?>(
-                                    future: LocalBusiness()
-                                        .getBusiness(service.businessID),
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot<BusinessEntity?>
-                                            snapshot) {
-                                      final BusinessEntity? business =
-                                          snapshot.data;
-                                      return business == null
-                                          ? const SizedBox()
-                                          : Opacity(
-                                              opacity: 0.6,
-                                              child: Text(
-                                                business.location.address,
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            );
-                                    },
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        service.name,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      RatingDisplayWidget(
+                                        ratingList: service.listOfReviews,
+                                        displayStars: false,
+                                      ),
+                                      FutureBuilder<BusinessEntity?>(
+                                        future: LocalBusiness()
+                                            .getBusiness(service.businessID),
+                                        builder: (BuildContext context,
+                                            AsyncSnapshot<BusinessEntity?>
+                                                snapshot) {
+                                          final BusinessEntity? business =
+                                              snapshot.data;
+                                          return business == null
+                                              ? const SizedBox()
+                                              : Opacity(
+                                                  opacity: 0.6,
+                                                  child: Text(
+                                                    business.location.address,
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                );
+                                        },
+                                      ),
+                                    ],
                                   ),
                                 ],
                               );
