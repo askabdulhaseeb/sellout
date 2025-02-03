@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:hive/hive.dart';
 
 import '../../../../../core/enums/routine/day_type.dart';
@@ -22,4 +23,5 @@ class RoutineEntity {
   final String? opening;
 
   bool get isToday => day.weekday == DateTime.now().weekday;
+  String get displayStr => isOpen ? '$opening - $closing' : 'closed'.tr();
 }

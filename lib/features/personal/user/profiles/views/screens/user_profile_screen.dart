@@ -23,7 +23,7 @@ class UserProfileScreen extends StatelessWidget {
         shadowColor: Theme.of(context).scaffoldBackgroundColor,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
-        title: Text(LocalUser().userEntity(uid)?.userName.toUpperCase() ?? ''),
+        title: Text(LocalUser().userEntity(uid)?.username.toUpperCase() ?? ''),
       ),
       body: FutureBuilder<DataState<UserEntity?>?>(
           future: Provider.of<ProfileProvider>(context, listen: false)

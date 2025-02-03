@@ -14,7 +14,7 @@ class PostGridViewTile extends StatelessWidget {
       onTap: () {
         Navigator.of(context).pushNamed(
           PostDetailScreen.routeName,
-          arguments: <String, dynamic>{'pid': post.postId},
+          arguments: <String, dynamic>{'pid': post.postID},
         );
       },
       child: Column(

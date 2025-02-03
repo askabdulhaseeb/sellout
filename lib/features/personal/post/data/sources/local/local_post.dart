@@ -25,7 +25,7 @@ class LocalPost {
   }
 
   Future<void> save(PostEntity value) async =>
-      await _box.put(value.postId, value);
+      await _box.put(value.postID, value);
 
   Future<void> clear() async => await _box.clear();
 

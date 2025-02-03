@@ -1,4 +1,3 @@
-import '../../../../../core/enums/listing/core/boolean_status_type.dart';
 import '../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../core/enums/listing/core/listing_type.dart';
@@ -8,177 +7,164 @@ import '../../../../attachment/data/attchment_model.dart';
 import '../../../location/data/models/location_model.dart';
 import '../../domain/entities/post_entity.dart';
 import 'meetup/availability_model.dart';
-import 'size_color/discount_model.dart';
 import 'size_color/size_color_model.dart';
 
 class PostModel extends PostEntity {
   PostModel({
-    required super.quantity,
-    required super.address,
-    required super.isActive,
-    required super.listId,
-    required super.currentLongitude,
-    required super.createdAt,
-    required super.discount,
-    required super.description,
-    required super.fileUrls,
+    required super.listID,
+    required super.postID,
+    required super.businessID,
     required super.title,
-    required super.type,
-    required super.createdBy,
-    required super.acceptOffers,
-    required super.sizeColors,
-    required super.currentLatitude,
-    required super.postId,
-    required super.deliveryType,
+    required super.description,
     required super.price,
-    required super.minOfferAmount,
-    required super.condition,
-    required super.sizeChartUrl,
+    required super.quantity,
     required super.currency,
+    required super.type,
+    required super.acceptOffers,
+    required super.minOfferAmount,
     required super.privacy,
-    required super.brand,
+    required super.condition,
+    required super.deliveryType,
     //
+    required super.currentLongitude,
+    required super.currentLatitude,
     required super.collectionLatitude,
     required super.collectionLongitude,
-    required super.collectionLocation,
+    //
     required super.localDelivery,
     required super.internationalDelivery,
-    required super.fuelType,
+    //
+    required super.address,
+    required super.collectionLocation,
+    //
+    required super.sizeChartUrl,
+    required super.fileUrls,
+    required super.discount,
+    required super.sizeColors,
+    //
+    required super.year,
     required super.doors,
-    required super.availability,
-    required super.emission,
-    required super.exteriorColor,
     required super.seats,
+    required super.mileage,
+    required super.make,
+    required super.model,
+    required super.brand,
+    required super.bodyType,
+    required super.emission,
+    required super.fuelType,
+    required super.engineSize,
+    required super.mileageUnit,
+    required super.transmission,
+    required super.interiorColor,
+    required super.exteriorColor,
     required super.vehiclesCategory,
     required super.meetUpLocation,
-    required super.interiorColor,
-    required super.transmission,
-    required super.mileage,
-    required super.model,
-    required super.engineSize,
-    required super.make,
-    required super.bodyType,
-    required super.mileageUnit,
-    required super.year,
-    required super.petsCategory,
-    required super.healthChecked,
-    required super.breed,
+    required super.availability,
+    //
     required super.age,
-    required super.vaccinationUpToDate,
+    required super.breed,
+    required super.healthChecked,
+    required super.petsCategory,
     required super.readyToLeave,
     required super.wormAndFleaTreated,
+    required super.vaccinationUpToDate,
+    //
+    required super.isActive,
+    required super.createdBy,
+    required super.createdAt,
     required super.accessCode,
-    required super.businessID,
   }) : super(inHiveAt: DateTime.now());
 
   factory PostModel.fromEntity(PostEntity entity) {
     return PostModel(
-      quantity: entity.quantity,
-      address: entity.address,
-      isActive: entity.isActive,
-      listId: entity.listId,
-      currentLongitude: entity.currentLongitude,
-      createdAt: entity.createdAt,
-      discount: entity.discount,
-      description: entity.description,
-      fileUrls: entity.fileUrls,
+      listID: entity.listID,
+      postID: entity.postID,
+      businessID: entity.businessID,
       title: entity.title,
-      type: entity.type,
-      createdBy: entity.createdBy,
-      acceptOffers: entity.acceptOffers,
-      sizeColors: entity.sizeColors,
-      currentLatitude: entity.currentLatitude,
-      postId: entity.postId,
-      deliveryType: entity.deliveryType,
+      description: entity.description,
       price: entity.price,
-      minOfferAmount: entity.minOfferAmount,
-      condition: entity.condition,
-      sizeChartUrl: entity.sizeChartUrl,
+      quantity: entity.quantity,
       currency: entity.currency,
+      type: entity.type,
+      address: entity.address,
+      acceptOffers: entity.acceptOffers,
+      minOfferAmount: entity.minOfferAmount,
       privacy: entity.privacy,
-      brand: entity.brand,
+      condition: entity.condition,
+      deliveryType: entity.deliveryType,
+      //
+      currentLongitude: entity.currentLongitude,
+      currentLatitude: entity.currentLatitude,
       collectionLatitude: entity.collectionLatitude,
       collectionLongitude: entity.collectionLongitude,
       collectionLocation: entity.collectionLocation,
+      //
       localDelivery: entity.localDelivery,
       internationalDelivery: entity.internationalDelivery,
-      fuelType: entity.fuelType,
+      //
+      sizeChartUrl: entity.sizeChartUrl,
+      fileUrls: entity.fileUrls,
+      discount: entity.discount,
+      sizeColors: entity.sizeColors,
+      //
+      year: entity.year,
       doors: entity.doors,
-      availability: entity.availability,
-      emission: entity.emission,
-      exteriorColor: entity.exteriorColor,
       seats: entity.seats,
+      mileage: entity.mileage,
+      make: entity.make,
+      model: entity.model,
+      brand: entity.brand,
+      bodyType: entity.bodyType,
+      emission: entity.emission,
+      fuelType: entity.fuelType,
+      engineSize: entity.engineSize,
+      mileageUnit: entity.mileageUnit,
+      transmission: entity.transmission,
+      interiorColor: entity.interiorColor,
+      exteriorColor: entity.exteriorColor,
       vehiclesCategory: entity.vehiclesCategory,
       meetUpLocation: entity.meetUpLocation,
-      interiorColor: entity.interiorColor,
-      transmission: entity.transmission,
-      mileage: entity.mileage,
-      model: entity.model,
-      engineSize: entity.engineSize,
-      make: entity.make,
-      bodyType: entity.bodyType,
-      mileageUnit: entity.mileageUnit,
-      year: entity.year,
-      petsCategory: entity.petsCategory,
-      healthChecked: entity.healthChecked,
-      breed: entity.breed,
+      availability: entity.availability,
+      //
       age: entity.age,
-      vaccinationUpToDate: entity.vaccinationUpToDate,
+      breed: entity.breed,
+      healthChecked: entity.healthChecked,
+      petsCategory: entity.petsCategory,
       readyToLeave: entity.readyToLeave,
       wormAndFleaTreated: entity.wormAndFleaTreated,
+      vaccinationUpToDate: entity.vaccinationUpToDate,
+      //
+      isActive: entity.isActive,
+      createdBy: entity.createdBy,
+      createdAt: entity.createdAt,
       accessCode: entity.accessCode,
-      businessID: entity.businessID,
     );
   }
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
-    final dynamic rawDiscount = json['discount'];
-    DiscountModel? disc;
-    if (rawDiscount != null) {
-      if (rawDiscount is Map<String, dynamic>) {
-        disc = DiscountModel.fromJson(rawDiscount);
-      }
-    }
     return PostModel(
+      listID: json['list_id']?.toString() ?? '',
+      postID: json['post_id']?.toString() ?? '',
+      businessID: json['business_id']?.toString(),
+      title: json['title']?.toString() ?? '',
+      description: json['description']?.toString() ?? '',
+      price: double.tryParse(json['price']?.toString() ?? '0.0') ?? 0.0,
       quantity: int.tryParse(json['quantity']?.toString() ?? '0') ?? 0,
-      address: json['address'] ?? '',
-      isActive: json['is_active'] ?? true,
-      listId: json['list_id'] ?? '',
+      currency: json['currency']?.toString() ?? 'gbp',
+      type: ListingType.fromJson(json['list_id']),
+      address: json['address'].toString(),
+      acceptOffers: json['accept_offers'] ?? false,
+      minOfferAmount:
+          double.tryParse(json['min_offer_amount']?.toString() ?? '0.0') ?? 0.0,
+      privacy: PrivacyType.fromJson(json['post_privacy']),
+      condition: ConditionType.fromJson(json['item_condition']),
+      deliveryType: DeliveryType.fromJson(json['delivery_type']),
+      //
       currentLongitude:
           double.tryParse(json['current_longitude']?.toString() ?? '0.0') ??
               0.0,
-      createdAt:
-          (json['created_at']?.toString() ?? '').toDateTime() ?? DateTime.now(),
-      discount: disc,
-      description: json['description'] ?? '',
-      fileUrls:
-          List<AttachmentModel>.from((json['file_urls'] ?? <dynamic>[]).map(
-        (dynamic x) => AttachmentModel.fromJson(x),
-      )),
-      title: json['title'] ?? '',
-      type: ListingType.fromStrJson(json['type']),
-      createdBy: json['created_by'] ?? '',
-      acceptOffers: BooleanStatusType.fromJson(json['accept_offers']),
-      sizeColors: json['size_colors'] == null
-          ? <SizeColorModel>[]
-          : List<SizeColorModel>.from((json['size_colors'] ?? <dynamic>[]).map(
-              (dynamic x) => SizeColorModel.fromJson(x),
-            )),
       currentLatitude:
           double.tryParse(json['current_latitude']?.toString() ?? '0.0') ?? 0.0,
-      postId: json['post_id'] ?? '',
-      deliveryType: DeliveryType.fromJson(json['delivery_type']),
-      price: double.tryParse(json['price']?.toString() ?? '0.0') ?? 0.0,
-      minOfferAmount:
-          double.tryParse(json['min_offer_amount']?.toString() ?? '0.0') ?? 0.0,
-      condition: ConditionType.fromJson(json['item_condition']),
-      sizeChartUrl: json['size_chart_url'] == null ||
-              json['size_chart_url'].runtimeType == String
-          ? null
-          : AttachmentModel.fromJson(json['size_chart_url']),
-      currency: json['currency'],
-      privacy: PrivacyType.fromJson(json['post_privacy']),
-      brand: json['brand'] ?? '',
       collectionLatitude:
           double.tryParse(json['collection_latitude']?.toString() ?? '0.0') ??
               0.0,
@@ -188,44 +174,59 @@ class PostModel extends PostEntity {
       collectionLocation: json['collection_location'] == null
           ? null
           : LocationModel.fromJson(json['collection_location']),
+      //
       localDelivery:
           int.tryParse(json['local_delivery']?.toString() ?? '0') ?? 0,
       internationalDelivery:
           int.tryParse(json['international_delivery']?.toString() ?? '0') ?? 0,
-      fuelType: json['fuel_type'],
+      //
+      sizeChartUrl: json['size_chart'] == null
+          ? null
+          : AttachmentModel.fromJson(json['size_chart']),
+      fileUrls: (json['file_urls'] ?? <dynamic>[])
+          ?.map<AttachmentModel>((dynamic e) => AttachmentModel.fromJson(e))
+          .toList(),
+      discount: json['discount'] ?? false,
+      sizeColors: (json['size_colors'] ?? <dynamic>[])
+          ?.map<SizeColorModel>((dynamic e) => SizeColorModel.fromJson(e))
+          .toList(),
+      //
+      year: json['year'],
       doors: json['doors'],
-      availability: json['availability'] == null
-          ? <AvailabilityModel>[]
-          : List<AvailabilityModel>.from((json['availability'] ?? <dynamic>[])
-              .map((dynamic x) => AvailabilityModel.fromJson(x))),
-      emission: json['emission'],
-      exteriorColor: json['exterior_color'],
-      seats: int.tryParse(json['seats']?.toString() ?? '0') ?? 0,
-      vehiclesCategory: json['vehicles_category'],
+      seats: json['seats'],
+      mileage: json['mileage'],
+      make: json['make']?.toString(),
+      model: json['model']?.toString(),
+      brand: json['brand']?.toString(),
+      bodyType: json['body_type']?.toString(),
+      emission: json['emission']?.toString(),
+      fuelType: json['fuel_type']?.toString(),
+      engineSize:
+          double.tryParse(json['engine_size']?.toString() ?? '0.0') ?? 0.0,
+      mileageUnit: json['mileage_unit']?.toString(),
+      transmission: json['transmission']?.toString(),
+      interiorColor: json['interior_color']?.toString(),
+      exteriorColor: json['exterior_color']?.toString(),
+      vehiclesCategory: json['vehicles_category']?.toString(),
       meetUpLocation: json['meet_up_location'] == null
           ? null
           : LocationModel.fromJson(json['meet_up_location']),
-      interiorColor: json['interior_color'],
-      transmission: json['transmission'],
-      mileage: json['mileage'],
-      model: json['model'],
-      engineSize:
-          double.tryParse(json['engine_size']?.toString() ?? '0.0') ?? 0.0,
-      make: json['make'],
-      bodyType: json['body_type'],
-      mileageUnit: json['mileage_unit'],
-      year: json['year'],
-      petsCategory: json['pets_category'],
-      healthChecked: BooleanStatusType.fromJson(json['health_checked']),
-      breed: json['breed'],
-      age: json['age'],
-      vaccinationUpToDate:
-          BooleanStatusType.fromJson(json['vaccination_up_to_date']),
-      readyToLeave: json['ready_to_leave'],
-      wormAndFleaTreated:
-          BooleanStatusType.fromJson(json['worm_and_flea_treated']),
-      accessCode: json['access_code'],
-      businessID: json['business_id'],
+      availability: (json['availability'] ?? <dynamic>[])
+          .map<AvailabilityModel>((dynamic e) => AvailabilityModel.fromJson(e))
+          .toList(),
+      //
+      age: json['age']?.toString(),
+      breed: json['breed']?.toString(),
+      healthChecked: json['health_checked'] ?? false,
+      petsCategory: json['pets_category']?.toString(),
+      readyToLeave: json['ready_to_leave']?.toString(),
+      wormAndFleaTreated: json['worm_and_flea_treated'] ?? false,
+      vaccinationUpToDate: json['vaccination_up_to_date'] ?? false,
+      //
+      isActive: json['is_active'] ?? false,
+      createdBy: json['created_by']?.toString() ?? '',
+      createdAt: json['created_at']?.toString().toDateTime() ?? DateTime.now(),
+      accessCode: json['access_code']?.toString(),
     );
   }
 }

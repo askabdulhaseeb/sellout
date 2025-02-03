@@ -15,9 +15,17 @@ enum BooleanStatusType {
 
   static BooleanStatusType fromJson(String? value) {
     if (value == null) return BooleanStatusType.no;
-    return BooleanStatusType.values.firstWhere(
-      (BooleanStatusType element) => element.json == value,
-      orElse: () => BooleanStatusType.no,
-    );
+    // return BooleanStatusType.values.firstWhere(
+    //   (BooleanStatusType element) => element.json == value,
+    //   orElse: () => BooleanStatusType.no,
+    // );
+    switch (value) {
+      case 'yes' || 'true':
+        return BooleanStatusType.yes;
+      case 'no' || 'false':
+        return BooleanStatusType.no;
+      default:
+        return BooleanStatusType.no;
+    }
   }
 }

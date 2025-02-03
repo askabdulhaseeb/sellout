@@ -15,20 +15,26 @@ class StatusTypeAdapter extends TypeAdapter<StatusType> {
     switch (reader.readByte()) {
       case 0:
         return StatusType.pending;
-      case 1:
+      case 11:
         return StatusType.inprogress;
-      case 2:
-        return StatusType.accepted;
-      case 3:
+      case 12:
+        return StatusType.inActive;
+      case 21:
+        return StatusType.blocked;
+      case 22:
         return StatusType.rejected;
-      case 4:
+      case 23:
         return StatusType.cancelled;
-      case 5:
+      case 31:
+        return StatusType.accepted;
+      case 32:
         return StatusType.completed;
-      case 6:
+      case 33:
         return StatusType.delivered;
-      case 7:
+      case 34:
         return StatusType.shipped;
+      case 35:
+        return StatusType.active;
       default:
         return StatusType.pending;
     }
@@ -41,25 +47,34 @@ class StatusTypeAdapter extends TypeAdapter<StatusType> {
         writer.writeByte(0);
         break;
       case StatusType.inprogress:
-        writer.writeByte(1);
+        writer.writeByte(11);
         break;
-      case StatusType.accepted:
-        writer.writeByte(2);
+      case StatusType.inActive:
+        writer.writeByte(12);
+        break;
+      case StatusType.blocked:
+        writer.writeByte(21);
         break;
       case StatusType.rejected:
-        writer.writeByte(3);
+        writer.writeByte(22);
         break;
       case StatusType.cancelled:
-        writer.writeByte(4);
+        writer.writeByte(23);
+        break;
+      case StatusType.accepted:
+        writer.writeByte(31);
         break;
       case StatusType.completed:
-        writer.writeByte(5);
+        writer.writeByte(32);
         break;
       case StatusType.delivered:
-        writer.writeByte(6);
+        writer.writeByte(33);
         break;
       case StatusType.shipped:
-        writer.writeByte(7);
+        writer.writeByte(34);
+        break;
+      case StatusType.active:
+        writer.writeByte(35);
         break;
     }
   }

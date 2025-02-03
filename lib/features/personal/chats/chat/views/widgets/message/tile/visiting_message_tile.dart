@@ -18,7 +18,7 @@ class VisitingMessageTile extends StatelessWidget {
         TextStyle(fontWeight: FontWeight.bold, fontSize: 18);
     return FutureBuilder<PostEntity?>(
         future: LocalPost().getPost(message.visitingDetail?.postID ??
-            message.offerDetail?.post.postId ??
+            message.offerDetail?.post.postID ??
             ''),
         builder: (BuildContext context, AsyncSnapshot<PostEntity?> snapshot) {
           final PostEntity? post = snapshot.data;

@@ -74,7 +74,7 @@ class ProfileHeaderSection extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    user?.userName ?? '',
+                    user?.username ?? '',
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,

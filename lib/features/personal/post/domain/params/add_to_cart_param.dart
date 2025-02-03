@@ -19,8 +19,8 @@ class AddToCartParam {
 
   String addToCart() {
     return json.encode(<String, dynamic>{
-      'list_id': post.listId,
-      'post_id': post.postId,
+      'list_id': post.listID,
+      'post_id': post.postID,
       if (color != null) 'color': color?.code,
       if (size != null) 'size': size?.id,
       'quantity': quantity,

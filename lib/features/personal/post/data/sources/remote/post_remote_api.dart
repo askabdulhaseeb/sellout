@@ -29,6 +29,10 @@ class PostRemoteApiImpl implements PostRemoteApi {
       );
       if (request != null) {
         final List<PostEntity> list = LocalPost().all;
+        // AppLog.info(
+        //   'Post length: Lenght: ${list.length}',
+        //   name: 'PostRemoteApiImpl.getFeed - local if',
+        // );
         if (list.isNotEmpty) {
           return DataSuccess<List<PostEntity>>(request.encodedData, list);
         }

@@ -29,7 +29,8 @@ class LocalAuth {
       _box.length == 0 ? null : _box.get(boxTitle);
 
   static String? get token => currentUser?.token;
-  static String? get uid => currentUser?.userId;
+  static String? get uid => currentUser?.userID;
+  static String get currency => currentUser?.currency ?? 'gbp';
 
   Future<void> signout() async => await _box.clear();
 }

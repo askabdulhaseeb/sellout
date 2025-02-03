@@ -7,6 +7,7 @@ import '../../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_toggle_switch.dart';
+import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../data/sources/remote/get_access_code_api.dart';
 import '../../providers/add_listing_form_provider.dart';
 
@@ -42,8 +43,7 @@ class AddListingConditionOfferSection extends StatelessWidget {
                 controller: formPro.minimumOffer,
                 labelText: 'minimum_offerd_amount'.tr(),
                 showSuffixIcon: false,
-                // prefixText: LocalState.getCurrency().toUpperCase(),
-                prefixText: '₹',
+                prefixText:  LocalAuth.currency.toUpperCase(),
                 hint: '8.0',
                 keyboardType: TextInputType.number,
                 validator: (String? value) => AppValidator.isEmpty(value),
