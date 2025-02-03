@@ -37,7 +37,6 @@ import '../../../features/personal/post/domain/entities/offer/offer_amount_info_
 import '../../../features/personal/post/domain/entities/offer/offer_detail_entity.dart';
 import '../../../features/personal/post/domain/entities/post_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/color_entity.dart';
-import '../../../features/personal/post/domain/entities/size_color/discount_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/size_color_entity.dart';
 import '../../../features/personal/post/domain/entities/visit/visiting_entity.dart';
 import '../../../features/personal/review/data/sources/local_review.dart';
@@ -46,8 +45,7 @@ import '../../../features/personal/user/profiles/data/sources/local/local_user.d
 import '../../../features/personal/user/profiles/data/sources/local/local_visits.dart';
 import '../../../features/personal/user/profiles/domain/entities/business_profile_detail_entity.dart';
 import '../../../features/personal/user/profiles/domain/entities/supporter_detail_entity.dart';
-import '../../../features/personal/user/profiles/domain/entities/user_role_info_business.dart';
-import '../../../features/personal/user/profiles/domain/entities/user_support_info_entity.dart';
+import '../../../features/personal/user/profiles/domain/entities/user_stripe_account_entity.dart';
 import '../../enums/chat/chat_participant_role.dart';
 import '../../enums/core/status_type.dart';
 import '../../enums/listing/core/boolean_status_type.dart';
@@ -91,7 +89,7 @@ class HiveDB {
     Hive.registerAdapter(MessageTypeAdapter()); // 18
     Hive.registerAdapter(OfferDetailEntityAdapter()); // 19
     Hive.registerAdapter(PostEntityAdapter()); // 20
-    Hive.registerAdapter(DiscountEntityAdapter()); // 21
+    // Hive.registerAdapter(DiscountEntityAdapter()); // 21
     Hive.registerAdapter(SizeColorEntityAdapter()); // 22
     Hive.registerAdapter(ColorEntityAdapter()); // 23
     Hive.registerAdapter(DeliveryTypeAdapter()); // 24
@@ -114,8 +112,8 @@ class HiveDB {
     Hive.registerAdapter(BusinessEmployeeEntityAdapter()); // 41
     Hive.registerAdapter(RoutineEntityAdapter()); // 42
     Hive.registerAdapter(BusinessAddressEntityAdapter()); // 43
-    Hive.registerAdapter(UserRoleInfoInBusinessEntityAdapter()); // 44
-    Hive.registerAdapter(UserSupportInfoEntityAdapter()); // 45
+    // Hive.registerAdapter(UserRoleInfoInBusinessEntityAdapter()); // 44
+    Hive.registerAdapter(UserStripeAccountEntityAdapter()); // 45
     Hive.registerAdapter(ServiceEntityAdapter()); // 46
     Hive.registerAdapter(ReviewEntityAdapter()); // 47
     Hive.registerAdapter(ProfileBusinessDetailEntityAdapter()); // 48

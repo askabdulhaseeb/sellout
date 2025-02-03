@@ -19,7 +19,7 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final CurrentUserEntity? uid = LocalAuth.currentUser;
-    AppLog.info('Current User ID: ${uid?.userId}');
+    AppLog.info('Current User ID: ${uid?.userID}');
     final List<Widget> screens = <Widget>[
       const HomeScreen(),
       const ExploreScreen(),

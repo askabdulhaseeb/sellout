@@ -17,62 +17,62 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return PostEntity(
-      quantity: fields[0] as int,
-      address: fields[1] as String,
-      isActive: fields[2] as bool,
-      listId: fields[3] as String,
-      currentLongitude: fields[4] as double,
-      createdAt: fields[5] as DateTime,
-      discount: fields[6] as DiscountEntity?,
-      description: fields[7] as String,
-      fileUrls: (fields[8] as List).cast<AttachmentEntity>(),
-      title: fields[9] as String,
-      type: fields[10] as ListingType,
-      createdBy: fields[11] as String,
-      acceptOffers: fields[12] as BooleanStatusType,
-      sizeColors: (fields[13] as List).cast<SizeColorEntity>(),
-      currentLatitude: fields[14] as double,
-      postId: fields[15] as String,
-      deliveryType: fields[16] as DeliveryType,
-      price: fields[17] as double,
-      minOfferAmount: fields[18] as double,
-      condition: fields[19] as ConditionType,
-      sizeChartUrl: fields[20] as AttachmentEntity?,
-      currency: fields[21] as String?,
-      privacy: fields[22] as PrivacyType,
-      brand: fields[23] as String?,
-      collectionLatitude: fields[24] as double?,
-      collectionLongitude: fields[25] as double?,
-      collectionLocation: fields[26] as LocationEntity?,
-      localDelivery: fields[27] as int?,
-      internationalDelivery: fields[28] as int?,
-      fuelType: fields[29] as String?,
-      doors: fields[30] as int?,
-      availability: (fields[31] as List?)?.cast<AvailabilityEntity>(),
-      emission: fields[32] as String?,
-      exteriorColor: fields[33] as String?,
-      seats: fields[34] as int?,
-      vehiclesCategory: fields[35] as String?,
-      meetUpLocation: fields[36] as LocationEntity?,
-      interiorColor: fields[37] as String?,
-      transmission: fields[38] as String?,
-      mileage: fields[39] as int?,
-      model: fields[40] as String?,
-      engineSize: fields[41] as double?,
-      make: fields[42] as String?,
-      bodyType: fields[43] as String?,
-      mileageUnit: fields[44] as String?,
-      year: fields[45] as int?,
-      petsCategory: fields[46] as String?,
-      healthChecked: fields[47] as BooleanStatusType?,
-      breed: fields[48] as String?,
-      age: fields[49] as String?,
-      vaccinationUpToDate: fields[50] as BooleanStatusType?,
-      readyToLeave: fields[51] as String?,
-      wormAndFleaTreated: fields[52] as BooleanStatusType?,
-      accessCode: fields[53] as String?,
-      businessID: fields[54] as String?,
-      inHiveAt: fields[99] as DateTime?,
+      quantity: fields[6] as int,
+      address: fields[50] as String,
+      isActive: fields[190] as bool,
+      listID: fields[0] as String,
+      currentLongitude: fields[30] as double,
+      createdAt: fields[192] as DateTime,
+      discount: fields[70] as bool,
+      description: fields[4] as String,
+      fileUrls: (fields[61] as List).cast<AttachmentEntity>(),
+      title: fields[3] as String,
+      type: fields[8] as ListingType,
+      createdBy: fields[191] as String,
+      acceptOffers: fields[9] as bool,
+      sizeColors: (fields[71] as List).cast<SizeColorEntity>(),
+      currentLatitude: fields[31] as double,
+      postID: fields[1] as String,
+      deliveryType: fields[13] as DeliveryType,
+      price: fields[5] as double,
+      minOfferAmount: fields[10] as double,
+      condition: fields[12] as ConditionType,
+      sizeChartUrl: fields[60] as AttachmentEntity?,
+      currency: fields[7] as String?,
+      privacy: fields[11] as PrivacyType,
+      brand: fields[86] as String?,
+      collectionLatitude: fields[32] as double?,
+      collectionLongitude: fields[33] as double?,
+      collectionLocation: fields[51] as LocationEntity?,
+      localDelivery: fields[40] as int?,
+      internationalDelivery: fields[41] as int?,
+      fuelType: fields[89] as String?,
+      doors: fields[81] as int?,
+      availability: (fields[97] as List?)?.cast<AvailabilityEntity>(),
+      emission: fields[88] as String?,
+      exteriorColor: fields[94] as String?,
+      seats: fields[82] as int?,
+      vehiclesCategory: fields[95] as String?,
+      meetUpLocation: fields[96] as LocationEntity?,
+      interiorColor: fields[93] as String?,
+      transmission: fields[92] as String?,
+      mileage: fields[83] as int?,
+      model: fields[85] as String?,
+      engineSize: fields[90] as double?,
+      make: fields[84] as String?,
+      bodyType: fields[87] as String?,
+      mileageUnit: fields[91] as String?,
+      year: fields[80] as int?,
+      petsCategory: fields[113] as String?,
+      healthChecked: fields[112] as bool?,
+      breed: fields[111] as String?,
+      age: fields[110] as String?,
+      vaccinationUpToDate: fields[116] as bool?,
+      readyToLeave: fields[114] as String?,
+      wormAndFleaTreated: fields[115] as bool?,
+      accessCode: fields[193] as String?,
+      businessID: fields[2] as String?,
+      inHiveAt: fields[199] as DateTime?,
     );
   }
 
@@ -81,116 +81,116 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
     writer
       ..writeByte(56)
       ..writeByte(0)
-      ..write(obj.quantity)
+      ..write(obj.listID)
       ..writeByte(1)
-      ..write(obj.address)
+      ..write(obj.postID)
       ..writeByte(2)
-      ..write(obj.isActive)
-      ..writeByte(3)
-      ..write(obj.listId)
-      ..writeByte(4)
-      ..write(obj.currentLongitude)
-      ..writeByte(5)
-      ..write(obj.createdAt)
-      ..writeByte(6)
-      ..write(obj.discount)
-      ..writeByte(7)
-      ..write(obj.description)
-      ..writeByte(8)
-      ..write(obj.fileUrls)
-      ..writeByte(9)
-      ..write(obj.title)
-      ..writeByte(10)
-      ..write(obj.type)
-      ..writeByte(11)
-      ..write(obj.createdBy)
-      ..writeByte(12)
-      ..write(obj.acceptOffers)
-      ..writeByte(13)
-      ..write(obj.sizeColors)
-      ..writeByte(14)
-      ..write(obj.currentLatitude)
-      ..writeByte(15)
-      ..write(obj.postId)
-      ..writeByte(16)
-      ..write(obj.deliveryType)
-      ..writeByte(17)
-      ..write(obj.price)
-      ..writeByte(18)
-      ..write(obj.minOfferAmount)
-      ..writeByte(19)
-      ..write(obj.condition)
-      ..writeByte(20)
-      ..write(obj.sizeChartUrl)
-      ..writeByte(21)
-      ..write(obj.currency)
-      ..writeByte(22)
-      ..write(obj.privacy)
-      ..writeByte(23)
-      ..write(obj.brand)
-      ..writeByte(24)
-      ..write(obj.collectionLatitude)
-      ..writeByte(25)
-      ..write(obj.collectionLongitude)
-      ..writeByte(26)
-      ..write(obj.collectionLocation)
-      ..writeByte(27)
-      ..write(obj.localDelivery)
-      ..writeByte(28)
-      ..write(obj.internationalDelivery)
-      ..writeByte(29)
-      ..write(obj.fuelType)
-      ..writeByte(30)
-      ..write(obj.doors)
-      ..writeByte(31)
-      ..write(obj.availability)
-      ..writeByte(32)
-      ..write(obj.emission)
-      ..writeByte(33)
-      ..write(obj.exteriorColor)
-      ..writeByte(34)
-      ..write(obj.seats)
-      ..writeByte(35)
-      ..write(obj.vehiclesCategory)
-      ..writeByte(36)
-      ..write(obj.meetUpLocation)
-      ..writeByte(37)
-      ..write(obj.interiorColor)
-      ..writeByte(38)
-      ..write(obj.transmission)
-      ..writeByte(39)
-      ..write(obj.mileage)
-      ..writeByte(40)
-      ..write(obj.model)
-      ..writeByte(41)
-      ..write(obj.engineSize)
-      ..writeByte(42)
-      ..write(obj.make)
-      ..writeByte(43)
-      ..write(obj.bodyType)
-      ..writeByte(44)
-      ..write(obj.mileageUnit)
-      ..writeByte(45)
-      ..write(obj.year)
-      ..writeByte(46)
-      ..write(obj.petsCategory)
-      ..writeByte(47)
-      ..write(obj.healthChecked)
-      ..writeByte(48)
-      ..write(obj.breed)
-      ..writeByte(49)
-      ..write(obj.age)
-      ..writeByte(50)
-      ..write(obj.vaccinationUpToDate)
-      ..writeByte(51)
-      ..write(obj.readyToLeave)
-      ..writeByte(52)
-      ..write(obj.wormAndFleaTreated)
-      ..writeByte(53)
-      ..write(obj.accessCode)
-      ..writeByte(54)
       ..write(obj.businessID)
-      ..writeByte(99)
+      ..writeByte(3)
+      ..write(obj.title)
+      ..writeByte(4)
+      ..write(obj.description)
+      ..writeByte(5)
+      ..write(obj.price)
+      ..writeByte(6)
+      ..write(obj.quantity)
+      ..writeByte(7)
+      ..write(obj.currency)
+      ..writeByte(8)
+      ..write(obj.type)
+      ..writeByte(9)
+      ..write(obj.acceptOffers)
+      ..writeByte(10)
+      ..write(obj.minOfferAmount)
+      ..writeByte(11)
+      ..write(obj.privacy)
+      ..writeByte(12)
+      ..write(obj.condition)
+      ..writeByte(13)
+      ..write(obj.deliveryType)
+      ..writeByte(30)
+      ..write(obj.currentLongitude)
+      ..writeByte(31)
+      ..write(obj.currentLatitude)
+      ..writeByte(32)
+      ..write(obj.collectionLatitude)
+      ..writeByte(33)
+      ..write(obj.collectionLongitude)
+      ..writeByte(40)
+      ..write(obj.localDelivery)
+      ..writeByte(41)
+      ..write(obj.internationalDelivery)
+      ..writeByte(50)
+      ..write(obj.address)
+      ..writeByte(51)
+      ..write(obj.collectionLocation)
+      ..writeByte(60)
+      ..write(obj.sizeChartUrl)
+      ..writeByte(61)
+      ..write(obj.fileUrls)
+      ..writeByte(70)
+      ..write(obj.discount)
+      ..writeByte(71)
+      ..write(obj.sizeColors)
+      ..writeByte(80)
+      ..write(obj.year)
+      ..writeByte(81)
+      ..write(obj.doors)
+      ..writeByte(82)
+      ..write(obj.seats)
+      ..writeByte(83)
+      ..write(obj.mileage)
+      ..writeByte(84)
+      ..write(obj.make)
+      ..writeByte(85)
+      ..write(obj.model)
+      ..writeByte(86)
+      ..write(obj.brand)
+      ..writeByte(87)
+      ..write(obj.bodyType)
+      ..writeByte(88)
+      ..write(obj.emission)
+      ..writeByte(89)
+      ..write(obj.fuelType)
+      ..writeByte(90)
+      ..write(obj.engineSize)
+      ..writeByte(91)
+      ..write(obj.mileageUnit)
+      ..writeByte(92)
+      ..write(obj.transmission)
+      ..writeByte(93)
+      ..write(obj.interiorColor)
+      ..writeByte(94)
+      ..write(obj.exteriorColor)
+      ..writeByte(95)
+      ..write(obj.vehiclesCategory)
+      ..writeByte(96)
+      ..write(obj.meetUpLocation)
+      ..writeByte(97)
+      ..write(obj.availability)
+      ..writeByte(110)
+      ..write(obj.age)
+      ..writeByte(111)
+      ..write(obj.breed)
+      ..writeByte(112)
+      ..write(obj.healthChecked)
+      ..writeByte(113)
+      ..write(obj.petsCategory)
+      ..writeByte(114)
+      ..write(obj.readyToLeave)
+      ..writeByte(115)
+      ..write(obj.wormAndFleaTreated)
+      ..writeByte(116)
+      ..write(obj.vaccinationUpToDate)
+      ..writeByte(190)
+      ..write(obj.isActive)
+      ..writeByte(191)
+      ..write(obj.createdBy)
+      ..writeByte(192)
+      ..write(obj.createdAt)
+      ..writeByte(193)
+      ..write(obj.accessCode)
+      ..writeByte(199)
       ..write(obj.inHiveAt);
   }
 

@@ -51,7 +51,9 @@ class ServicesPageExploreCategoriesSection extends StatelessWidget {
                           // child: Image.asset(AppImages.logo, fit: BoxFit.cover),
                           child: CustomNetworkImage(
                             imageURL: category.imageURL,
+                            placeholder: category.name,
                             size: double.infinity,
+                            fit: BoxFit.cover,
                           ),
                         ),
                         Text(

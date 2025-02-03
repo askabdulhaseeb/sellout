@@ -44,6 +44,10 @@ class SubCategorySelectableWidget extends StatelessWidget {
             );
             return Center(child: Text('something_wrong'.tr()));
           }
+          AppLog.info(
+            'SubCategorySelectableWidget: snapshot -> ${snapshot.data?.length}',
+            name: 'SubCategorySelectableWidget.build - snapshot',
+          );
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -56,7 +60,7 @@ class SubCategorySelectableWidget extends StatelessWidget {
                 onTap: () async {
                   final List<ListingEntity> selectedList = snapshot.data
                           ?.where((ListingEntity element) =>
-                              element.type == listType)
+                              element.type == listType || kDebugMode)
                           .toList() ??
                       <ListingEntity>[];
                   if (selectedList.isEmpty) {

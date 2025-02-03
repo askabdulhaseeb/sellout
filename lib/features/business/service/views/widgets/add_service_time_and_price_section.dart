@@ -6,6 +6,7 @@ import '../../../../../core/extension/int_ext.dart';
 import '../../../../../core/utilities/app_validators.dart';
 import '../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../core/widgets/custom_dropdown.dart';
+import '../../../../personal/auth/signin/data/sources/local/local_auth.dart';
 import '../providers/add_service_provider.dart';
 
 class AddServiceTimeAndPriceSection extends StatelessWidget {
@@ -63,6 +64,7 @@ class AddServiceTimeAndPriceSection extends StatelessWidget {
               controller: pro.price,
               labelText: 'starting_price'.tr(),
               hint: 'Ex. 100',
+              prefixText: LocalAuth.currency.toUpperCase(),
               keyboardType: TextInputType.number,
               validator: (String? value) => AppValidator.isEmpty(value),
             ),

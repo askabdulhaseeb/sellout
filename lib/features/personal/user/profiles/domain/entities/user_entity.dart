@@ -5,95 +5,110 @@ import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../auth/signin/data/models/address_model.dart';
 import 'business_profile_detail_entity.dart';
 import 'supporter_detail_entity.dart';
-import 'user_role_info_business.dart';
-import 'user_support_info_entity.dart';
+import 'user_stripe_account_entity.dart';
 
 part 'user_entity.g.dart';
 
 @HiveType(typeId: 1)
 class UserEntity {
   UserEntity({
-    required this.mobileNo,
-    required this.createdAt,
-    required this.chatIds,
-    required this.timestamp,
-    required this.address,
-    required this.email,
     required this.uid,
+    required this.email,
+    required this.username,
     required this.displayName,
-    required this.interest,
-    required this.date,
-    required this.otpExpiry,
-    required this.businessIds,
-    required this.supporters,
-    required this.listOfReviews,
+    required this.privacyType,
     required this.profilePic,
-    required this.userName,
-    required this.profileType,
-    required this.saved,
-    required this.chatIDs,
-    required this.userRoleInfoInBusiness,
-    required this.suppotersInfo,
-    required this.supportingsInfo,
-    required this.phoneNumber,
-    required this.updateAt,
-    required this.inHiveAt,
+    required this.isImageVerified,
+    required this.verificationPic,
     required this.currency,
+    required this.language,
+    required this.listOfReviews,
+    required this.countryAlpha3,
+    required this.countryCode,
+    required this.phoneNumber,
+    //
+    required this.address,
+    required this.stripeDetails,
+    //
+    required this.chatIDs,
+    required this.businessIds,
+    //
+    required this.saved,
+    required this.interest,
+    required this.supporters,
+    required this.supportings,
     required this.businessDetail,
+    //
+    required this.date,
+    required this.updateAt,
+    required this.otpExpiry,
+    required this.timestamp,
+    required this.createdAt,
+    required this.inHiveAt,
   });
 
   @HiveField(0)
-  String mobileNo;
+  final String uid;
   @HiveField(1)
-  DateTime createdAt;
+  final String email;
   @HiveField(2)
-  List<String> chatIds;
+  final String username;
   @HiveField(3)
-  DateTime timestamp;
+  final String displayName;
   @HiveField(4)
-  List<AddressEntity> address;
+  final PrivacyType privacyType;
   @HiveField(5)
-  String email;
+  final List<AttachmentEntity> profilePic;
   @HiveField(6)
-  String uid;
+  final List<AttachmentEntity> verificationPic;
   @HiveField(7)
-  String displayName;
+  final bool isImageVerified;
   @HiveField(8)
-  List<dynamic> interest;
-  @HiveField(9)
-  DateTime date;
-  @HiveField(10)
-  DateTime otpExpiry;
-  @HiveField(11)
-  List<String> businessIds;
-  @HiveField(12)
-  List<SupporterDetailEntity> supporters;
-  @HiveField(13)
-  List<double> listOfReviews;
-  @HiveField(14)
-  List<AttachmentEntity> profilePic;
-  @HiveField(15)
-  String userName;
-  @HiveField(16)
-  final PrivacyType profileType;
-  @HiveField(17, defaultValue: <String>[])
-  final List<String> saved;
-  @HiveField(18, defaultValue: <String>[])
-  final List<String> chatIDs;
-  @HiveField(19, defaultValue: <String>[])
-  final List<UserRoleInfoInBusinessEntity> userRoleInfoInBusiness;
-  @HiveField(20, defaultValue: <String>[])
-  final List<UserSupportInfoEntity> suppotersInfo;
-  @HiveField(21, defaultValue: <String>[])
-  final List<UserSupportInfoEntity> supportingsInfo;
-  @HiveField(22, defaultValue: '')
-  final String phoneNumber;
-  @HiveField(23)
-  final DateTime updateAt;
-  @HiveField(25)
   final String currency;
-  @HiveField(26)
+  @HiveField(9)
+  final String language;
+  @HiveField(10)
+  final List<double> listOfReviews;
+  @HiveField(11)
+  final String countryAlpha3;
+  @HiveField(12)
+  final String countryCode;
+  @HiveField(13)
+  final String phoneNumber;
+  //
+  @HiveField(30)
+  final List<AddressEntity> address;
+  //
+  @HiveField(40)
+  final UserStripeAccountEntity? stripeDetails;
+  //
+  //
+  @HiveField(50)
+  final List<String> chatIDs;
+  @HiveField(51)
+  final List<String> businessIds;
+  //
+  @HiveField(60)
+  final List<String> saved;
+  @HiveField(61)
+  final List<dynamic> interest;
+  @HiveField(62)
+  final List<SupporterDetailEntity> supporters;
+  @HiveField(63)
+  final List<SupporterDetailEntity> supportings;
+  @HiveField(64)
   final List<ProfileBusinessDetailEntity> businessDetail;
+  //
+  @HiveField(70)
+  final DateTime date;
+  @HiveField(71)
+  final DateTime updateAt;
+  @HiveField(72)
+  final DateTime otpExpiry;
+  @HiveField(73)
+  final DateTime timestamp;
+  @HiveField(74)
+  final DateTime createdAt;
   @HiveField(99)
   final DateTime inHiveAt;
 

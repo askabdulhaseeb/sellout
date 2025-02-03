@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../providers/add_listing_form_provider.dart';
 
 class AddListingPriceAndQuantityWidget extends StatelessWidget {
@@ -23,8 +24,7 @@ class AddListingPriceAndQuantityWidget extends StatelessWidget {
                 hint: '12.0',
                 showSuffixIcon: false,
                 readOnly: isLoading,
-                // prefixText: LocalState.getCurrency().toUpperCase(),
-                prefixText: '₹',
+                prefixText:  LocalAuth.currency.toUpperCase(),
                 keyboardType: TextInputType.number,
                 validator: (String? value) => AppValidator.isEmpty(value),
               ),

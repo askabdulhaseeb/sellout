@@ -17,98 +17,98 @@ class UserEntityAdapter extends TypeAdapter<UserEntity> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return UserEntity(
-      mobileNo: fields[0] as String,
-      createdAt: fields[1] as DateTime,
-      chatIds: (fields[2] as List).cast<String>(),
-      timestamp: fields[3] as DateTime,
-      address: (fields[4] as List).cast<AddressEntity>(),
-      email: fields[5] as String,
-      uid: fields[6] as String,
-      displayName: fields[7] as String,
-      interest: (fields[8] as List).cast<dynamic>(),
-      date: fields[9] as DateTime,
-      otpExpiry: fields[10] as DateTime,
-      businessIds: (fields[11] as List).cast<String>(),
-      supporters: (fields[12] as List).cast<SupporterDetailEntity>(),
-      listOfReviews: (fields[13] as List).cast<double>(),
-      profilePic: (fields[14] as List).cast<AttachmentEntity>(),
-      userName: fields[15] as String,
-      profileType: fields[16] as PrivacyType,
-      saved: fields[17] == null ? [] : (fields[17] as List).cast<String>(),
-      chatIDs: fields[18] == null ? [] : (fields[18] as List).cast<String>(),
-      userRoleInfoInBusiness: fields[19] == null
-          ? []
-          : (fields[19] as List).cast<UserRoleInfoInBusinessEntity>(),
-      suppotersInfo: fields[20] == null
-          ? []
-          : (fields[20] as List).cast<UserSupportInfoEntity>(),
-      supportingsInfo: fields[21] == null
-          ? []
-          : (fields[21] as List).cast<UserSupportInfoEntity>(),
-      phoneNumber: fields[22] == null ? '' : fields[22] as String,
-      updateAt: fields[23] as DateTime,
+      uid: fields[0] as String,
+      email: fields[1] as String,
+      username: fields[2] as String,
+      displayName: fields[3] as String,
+      privacyType: fields[4] as PrivacyType,
+      profilePic: (fields[5] as List).cast<AttachmentEntity>(),
+      isImageVerified: fields[7] as bool,
+      verificationPic: (fields[6] as List).cast<AttachmentEntity>(),
+      currency: fields[8] as String,
+      language: fields[9] as String,
+      listOfReviews: (fields[10] as List).cast<double>(),
+      countryAlpha3: fields[11] as String,
+      countryCode: fields[12] as String,
+      phoneNumber: fields[13] as String,
+      address: (fields[30] as List).cast<AddressEntity>(),
+      stripeDetails: fields[40] as UserStripeAccountEntity?,
+      chatIDs: (fields[50] as List).cast<String>(),
+      businessIds: (fields[51] as List).cast<String>(),
+      saved: (fields[60] as List).cast<String>(),
+      interest: (fields[61] as List).cast<dynamic>(),
+      supporters: (fields[62] as List).cast<SupporterDetailEntity>(),
+      supportings: (fields[63] as List).cast<SupporterDetailEntity>(),
+      businessDetail: (fields[64] as List).cast<ProfileBusinessDetailEntity>(),
+      date: fields[70] as DateTime,
+      updateAt: fields[71] as DateTime,
+      otpExpiry: fields[72] as DateTime,
+      timestamp: fields[73] as DateTime,
+      createdAt: fields[74] as DateTime,
       inHiveAt: fields[99] as DateTime,
-      currency: fields[25] as String,
-      businessDetail: (fields[26] as List).cast<ProfileBusinessDetailEntity>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, UserEntity obj) {
     writer
-      ..writeByte(27)
+      ..writeByte(29)
       ..writeByte(0)
-      ..write(obj.mobileNo)
-      ..writeByte(1)
-      ..write(obj.createdAt)
-      ..writeByte(2)
-      ..write(obj.chatIds)
-      ..writeByte(3)
-      ..write(obj.timestamp)
-      ..writeByte(4)
-      ..write(obj.address)
-      ..writeByte(5)
-      ..write(obj.email)
-      ..writeByte(6)
       ..write(obj.uid)
-      ..writeByte(7)
+      ..writeByte(1)
+      ..write(obj.email)
+      ..writeByte(2)
+      ..write(obj.username)
+      ..writeByte(3)
       ..write(obj.displayName)
-      ..writeByte(8)
-      ..write(obj.interest)
-      ..writeByte(9)
-      ..write(obj.date)
-      ..writeByte(10)
-      ..write(obj.otpExpiry)
-      ..writeByte(11)
-      ..write(obj.businessIds)
-      ..writeByte(12)
-      ..write(obj.supporters)
-      ..writeByte(13)
-      ..write(obj.listOfReviews)
-      ..writeByte(14)
+      ..writeByte(4)
+      ..write(obj.privacyType)
+      ..writeByte(5)
       ..write(obj.profilePic)
-      ..writeByte(15)
-      ..write(obj.userName)
-      ..writeByte(16)
-      ..write(obj.profileType)
-      ..writeByte(17)
-      ..write(obj.saved)
-      ..writeByte(18)
-      ..write(obj.chatIDs)
-      ..writeByte(19)
-      ..write(obj.userRoleInfoInBusiness)
-      ..writeByte(20)
-      ..write(obj.suppotersInfo)
-      ..writeByte(21)
-      ..write(obj.supportingsInfo)
-      ..writeByte(22)
-      ..write(obj.phoneNumber)
-      ..writeByte(23)
-      ..write(obj.updateAt)
-      ..writeByte(25)
+      ..writeByte(6)
+      ..write(obj.verificationPic)
+      ..writeByte(7)
+      ..write(obj.isImageVerified)
+      ..writeByte(8)
       ..write(obj.currency)
-      ..writeByte(26)
+      ..writeByte(9)
+      ..write(obj.language)
+      ..writeByte(10)
+      ..write(obj.listOfReviews)
+      ..writeByte(11)
+      ..write(obj.countryAlpha3)
+      ..writeByte(12)
+      ..write(obj.countryCode)
+      ..writeByte(13)
+      ..write(obj.phoneNumber)
+      ..writeByte(30)
+      ..write(obj.address)
+      ..writeByte(40)
+      ..write(obj.stripeDetails)
+      ..writeByte(50)
+      ..write(obj.chatIDs)
+      ..writeByte(51)
+      ..write(obj.businessIds)
+      ..writeByte(60)
+      ..write(obj.saved)
+      ..writeByte(61)
+      ..write(obj.interest)
+      ..writeByte(62)
+      ..write(obj.supporters)
+      ..writeByte(63)
+      ..write(obj.supportings)
+      ..writeByte(64)
       ..write(obj.businessDetail)
+      ..writeByte(70)
+      ..write(obj.date)
+      ..writeByte(71)
+      ..write(obj.updateAt)
+      ..writeByte(72)
+      ..write(obj.otpExpiry)
+      ..writeByte(73)
+      ..write(obj.timestamp)
+      ..writeByte(74)
+      ..write(obj.createdAt)
       ..writeByte(99)
       ..write(obj.inHiveAt);
   }

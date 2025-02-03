@@ -17,38 +17,71 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return CurrentUserEntity(
-      message: fields[0] as String,
-      email: fields[1] as String,
+      message: fields[1] as String,
       token: fields[2] as String,
-      userName: fields[3] as String,
-      userId: fields[4] as String,
-      chatIDs: (fields[5] as List).cast<String>(),
-      address: (fields[6] as List).cast<AddressEntity>(),
+      userID: fields[3] as String,
+      email: fields[11] as String,
+      username: fields[12] as String,
+      currency: fields[13] as String?,
+      privacy: fields[14] as PrivacyType,
+      countryAlpha3: fields[15] as String,
+      countryCode: fields[16] as String,
+      phoneNumber: fields[17] as String,
+      language: fields[18] as String,
+      address: (fields[21] as List).cast<AddressEntity>(),
+      chatIDs: (fields[31] as List).cast<String>(),
+      businessIDs: (fields[32] as List).cast<String>(),
+      imageVerified: fields[41] as bool,
+      verificationImage: fields[42] as AttachmentEntity?,
+      profileImage: (fields[43] as List).cast<AttachmentEntity>(),
+      lastLoginTime: fields[97] as DateTime,
+      createdAt: fields[98] as DateTime,
       inHiveAt: fields[99] as DateTime,
-      businessIDs: fields[7] == null ? [] : (fields[7] as List).cast<String>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, CurrentUserEntity obj) {
     writer
-      ..writeByte(9)
-      ..writeByte(0)
-      ..write(obj.message)
+      ..writeByte(20)
       ..writeByte(1)
-      ..write(obj.email)
+      ..write(obj.message)
       ..writeByte(2)
       ..write(obj.token)
       ..writeByte(3)
-      ..write(obj.userName)
-      ..writeByte(4)
-      ..write(obj.userId)
-      ..writeByte(5)
-      ..write(obj.chatIDs)
-      ..writeByte(6)
+      ..write(obj.userID)
+      ..writeByte(11)
+      ..write(obj.email)
+      ..writeByte(12)
+      ..write(obj.username)
+      ..writeByte(13)
+      ..write(obj.currency)
+      ..writeByte(14)
+      ..write(obj.privacy)
+      ..writeByte(15)
+      ..write(obj.countryAlpha3)
+      ..writeByte(16)
+      ..write(obj.countryCode)
+      ..writeByte(17)
+      ..write(obj.phoneNumber)
+      ..writeByte(18)
+      ..write(obj.language)
+      ..writeByte(21)
       ..write(obj.address)
-      ..writeByte(7)
+      ..writeByte(31)
+      ..write(obj.chatIDs)
+      ..writeByte(32)
       ..write(obj.businessIDs)
+      ..writeByte(41)
+      ..write(obj.imageVerified)
+      ..writeByte(42)
+      ..write(obj.verificationImage)
+      ..writeByte(43)
+      ..write(obj.profileImage)
+      ..writeByte(97)
+      ..write(obj.lastLoginTime)
+      ..writeByte(98)
+      ..write(obj.createdAt)
       ..writeByte(99)
       ..write(obj.inHiveAt);
   }
