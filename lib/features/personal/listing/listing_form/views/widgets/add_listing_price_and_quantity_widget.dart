@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -20,8 +21,8 @@ class AddListingPriceAndQuantityWidget extends StatelessWidget {
             Expanded(
               child: CustomTextFormField(
                 controller: formPro.price,
-                labelText: 'Price',
-                hint: '12.0',
+                labelText: 'price'.tr(),
+                hint: 'Ex. 12000.0',
                 showSuffixIcon: false,
                 readOnly: isLoading,
                 prefixText:  LocalAuth.currency.toUpperCase(),
@@ -33,7 +34,7 @@ class AddListingPriceAndQuantityWidget extends StatelessWidget {
             Expanded(
               child: CustomTextFormField(
                 controller: formPro.quantity,
-                labelText: 'Quantity',
+                labelText: 'quantity'.tr(),
                 showSuffixIcon: false,
                 hint: '12.0',
                 readOnly: isLoading,

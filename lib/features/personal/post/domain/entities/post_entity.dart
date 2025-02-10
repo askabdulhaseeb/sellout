@@ -6,6 +6,7 @@ import '../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../location/domain/entities/location_entity.dart';
+import 'discount_entity.dart';
 import 'meetup/availability_entity.dart';
 import 'size_color/size_color_entity.dart';
 part 'post_entity.g.dart';
@@ -40,7 +41,8 @@ class PostEntity {
     //
     required this.sizeChartUrl,
     required this.fileUrls,
-    required this.discount,
+    required this.hasDiscount,
+    required this.discounts,
     required this.sizeColors,
     //
     required this.year,
@@ -131,9 +133,11 @@ class PostEntity {
   final List<AttachmentEntity> fileUrls;
   //
   @HiveField(70)
-  final bool discount;
+  final bool hasDiscount;
   @HiveField(71)
   final List<SizeColorEntity> sizeColors;
+  @HiveField(72)
+  final List<DiscountEntity> discounts;
   //
   @HiveField(80)
   final int? year;
@@ -200,4 +204,13 @@ class PostEntity {
 
   String get imageURL => fileUrls.isEmpty ? '' : fileUrls.first.url;
   String get priceStr => '$currency $price'.toUpperCase();
+
+  double get discountedPrice {
+    if (hasDiscount) {
+      if (discounts.isEmpty) return price;
+      final DiscountEntity dis = discounts.last;
+      return price - (price * dis.discount / 100);
+    }
+    return price;
+  }
 }

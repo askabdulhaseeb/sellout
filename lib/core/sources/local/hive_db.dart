@@ -32,6 +32,7 @@ import '../../../features/personal/auth/signin/data/models/address_model.dart';
 import '../../../features/personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../../features/personal/location/domain/entities/location_entity.dart';
 import '../../../features/personal/post/data/sources/local/local_post.dart';
+import '../../../features/personal/post/domain/entities/discount_entity.dart';
 import '../../../features/personal/post/domain/entities/meetup/availability_entity.dart';
 import '../../../features/personal/post/domain/entities/offer/offer_amount_info_entity.dart';
 import '../../../features/personal/post/domain/entities/offer/offer_detail_entity.dart';
@@ -89,7 +90,7 @@ class HiveDB {
     Hive.registerAdapter(MessageTypeAdapter()); // 18
     Hive.registerAdapter(OfferDetailEntityAdapter()); // 19
     Hive.registerAdapter(PostEntityAdapter()); // 20
-    // Hive.registerAdapter(DiscountEntityAdapter()); // 21
+    Hive.registerAdapter(DiscountEntityAdapter()); // 21
     Hive.registerAdapter(SizeColorEntityAdapter()); // 22
     Hive.registerAdapter(ColorEntityAdapter()); // 23
     Hive.registerAdapter(DeliveryTypeAdapter()); // 24

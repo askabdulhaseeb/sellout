@@ -7,10 +7,12 @@ import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../../core/enums/listing/pet/age_time_type.dart';
 import '../../../../../../core/enums/listing/vehicle/transmission_type.dart';
+import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../../attachment/domain/entities/picked_attachment_option.dart';
 import '../../../../../attachment/views/screens/pickable_attachment_screen.dart';
+import '../../../../post/domain/entities/discount_entity.dart';
 import '../../domain/entities/sub_category_entity.dart';
 
 class AddListingFormProvider extends ChangeNotifier {
@@ -73,6 +75,10 @@ class AddListingFormProvider extends ChangeNotifier {
     _acceptOffer = true;
     _privacy = PrivacyType.public;
     _deliveryType = DeliveryType.paid;
+    _isDiscounted = false;
+    for (DiscountEntity element in _discounts) {
+      element.discount = 0;
+    }
     notifyListeners();
   }
 
@@ -154,6 +160,28 @@ class AddListingFormProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setIsDiscount(bool value) {
+    _isDiscounted = value;
+    notifyListeners();
+  }
+
+  void setDiscounts(DiscountEntity value) {
+    try {
+      _discounts
+          .where((DiscountEntity element) {
+            return element.quantity == value.quantity;
+          })
+          .first
+          .discount = value.discount;
+      notifyListeners();
+    } catch (e) {
+      AppLog.error(
+        'Not Discount Found with Quantity: ${value.quantity}',
+        name: 'AddListingFormProvider.setDiscounts - catch',
+      );
+    }
+  }
+
   Future<void> setImages(
     BuildContext context, {
     required AttachmentType type,
@@ -228,6 +256,11 @@ class AddListingFormProvider extends ChangeNotifier {
     _deliveryType = value;
     notifyListeners();
   }
+  // Cloth and Foot
+  void setSelectedClothSubCategory(String value) {
+    _selectedClothSubCategory = value;
+    notifyListeners();
+  }
 
   // Vehicle
   void setTransmissionType(TransmissionType? value) {
@@ -283,12 +316,16 @@ class AddListingFormProvider extends ChangeNotifier {
   /// Getter
   ListingType? get listingType => _listingType ?? ListingType.items;
   SubCategoryEntity? get selectedCategory => _selectedCategory;
+  bool get isDiscounted => _isDiscounted;
+  List<DiscountEntity> get discounts => _discounts;
   //
   List<PickedAttachment> get attachments => _attachments;
   ConditionType get condition => _condition;
   bool get acceptOffer => _acceptOffer;
   PrivacyType get privacy => _privacy;
   DeliveryType get deliveryType => _deliveryType;
+  // Cloth and Foot
+  String get selectedClothSubCategory => _selectedClothSubCategory;
   // Vehicle
   TransmissionType get transmissionType => _transmissionType;
   TextEditingController get engineSize => _engineSize;
@@ -324,12 +361,20 @@ class AddListingFormProvider extends ChangeNotifier {
   /// Controller
   ListingType? _listingType;
   SubCategoryEntity? _selectedCategory;
+  bool _isDiscounted = false;
+  final List<DiscountEntity> _discounts = <DiscountEntity>[
+    DiscountEntity(quantity: 2, discount: 0),
+    DiscountEntity(quantity: 3, discount: 0),
+    DiscountEntity(quantity: 5, discount: 0),
+  ];
   // Selected Category
   // Size and Color
   ConditionType _condition = ConditionType.newC;
   bool _acceptOffer = true;
   PrivacyType _privacy = PrivacyType.public;
   DeliveryType _deliveryType = DeliveryType.paid;
+    // Cloth and Foot
+  String _selectedClothSubCategory = ListingType.clothAndFoot.cids.first;
   // Vehicle
   TransmissionType _transmissionType = TransmissionType.auto;
   final TextEditingController _engineSize = TextEditingController();

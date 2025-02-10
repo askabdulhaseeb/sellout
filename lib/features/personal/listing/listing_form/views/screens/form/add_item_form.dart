@@ -6,6 +6,7 @@ import '../../widgets/category/subcateogry_selectable_widget.dart';
 import '../../widgets/core/add_listing_basic_info_section.dart';
 import '../../widgets/core/add_listing_condition_offer_section.dart';
 import '../../widgets/core/add_listing_delivery_selection_widget.dart';
+import '../../widgets/core/add_listing_discount_section.dart';
 import '../../widgets/core/add_listing_post_button_widget.dart';
 import '../../widgets/add_listing_price_and_quantity_widget.dart';
 
@@ -28,6 +29,7 @@ class AddItemForm extends StatelessWidget {
                 onSelected: formPro.setSelectedCategory,
               ),
               const AddListingPriceAndQuantityWidget(),
+              const AddListingDiscountSection(),
               const AddListingConditionOfferSection(),
               const AddListingDeliverySelectionWidget(),
               const AddListingPostButtonWidget(),

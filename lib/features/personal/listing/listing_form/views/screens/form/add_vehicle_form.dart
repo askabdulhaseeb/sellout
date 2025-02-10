@@ -10,6 +10,7 @@ import '../../widgets/category/subcateogry_selectable_widget.dart';
 import '../../widgets/core/add_listing_basic_info_section.dart';
 import '../../widgets/core/add_listing_condition_offer_section.dart';
 import '../../widgets/core/add_listing_post_button_widget.dart';
+import '../../widgets/vehicle/add_listing_vehicle_basic_info_section.dart';
 import '../../widgets/vehicle/add_listing_vehicle_ternsmission_engine_mileage_section.dart';
 
 class AddVehicleForm extends StatelessWidget {
@@ -31,6 +32,7 @@ class AddVehicleForm extends StatelessWidget {
               onSelected: formPro.setSelectedCategory,
             ),
             // TODO: Category selection widget
+            const AddListingVehicleBasicInfoSection(),
             const AddListingVehicleTernsmissionEngineMileageSection(),
             const AddListingConditionOfferSection(),
             EditableAvailablityWidget(
