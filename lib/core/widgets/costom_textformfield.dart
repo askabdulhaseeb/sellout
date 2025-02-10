@@ -68,7 +68,7 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
   final List<TextInputFormatter> inputFormatters = <TextInputFormatter>[];
   @override
   void initState() {
-    widget._controller!.addListener(_onListen);
+    widget._controller?.addListener(_onListen);
     inputFormatters.addAll(widget.inputFormatters ?? <TextInputFormatter>[]);
     if (widget.maxLength != null) {
       inputFormatters.add(LengthLimitingTextInputFormatter(widget.maxLength));
@@ -84,7 +84,7 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
 
   @override
   void dispose() {
-    widget._controller!.removeListener(_onListen);
+    widget._controller?.removeListener(_onListen);
     super.dispose();
   }
 
@@ -106,7 +106,7 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
             initialValue: widget.initialValue,
             controller: widget._controller,
             readOnly: widget.readOnly,
-            inputFormatters: inputFormatters,
+            inputFormatters: inputFormatters.toSet().toList(),
             keyboardType: widget.keyboardType == TextInputType.number
                 ? const TextInputType.numberWithOptions(decimal: true)
                 : widget.maxLines! > 1
@@ -122,7 +122,7 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
             minLines: widget.isExpanded ? widget.maxLines : widget.minLines,
             maxLines: widget.isExpanded
                 ? widget.maxLines
-                : (widget._controller!.text.isEmpty)
+                : (widget._controller?.text.isEmpty ?? true)
                     ? 1
                     : widget.maxLines,
             maxLength: widget.isExpanded ? widget.maxLength : null,
@@ -146,7 +146,7 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
               prefixIcon: widget.prefixIcon,
               hintStyle: TextStyle(color: Colors.grey.shade400),
               suffixIcon: widget.suffixIcon ??
-                  ((widget._controller!.text.isEmpty ||
+                  (((widget._controller?.text.isEmpty ?? true) ||
                           !widget.showSuffixIcon ||
                           widget.showSuffixIcon == false ||
                           widget.readOnly)
@@ -158,7 +158,7 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
                                     Text(
-                                      '${widget._controller!.text.length}/${widget.maxLength}',
+                                      '${(widget._controller?.text ?? '').length}/${widget.maxLength}',
                                       style: TextStyle(
                                         color: Theme.of(context).disabledColor,
                                         fontSize: 16,
@@ -169,7 +169,7 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
                       : IconButton(
                           splashRadius: 16,
                           onPressed: () => setState(() {
-                            widget._controller!.clear();
+                            widget._controller?.clear();
                           }),
                           icon: const Icon(CupertinoIcons.clear, size: 18),
                         )),

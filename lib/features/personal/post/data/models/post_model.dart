@@ -5,6 +5,7 @@ import '../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../core/extension/string_ext.dart';
 import '../../../../attachment/data/attchment_model.dart';
 import '../../../location/data/models/location_model.dart';
+import '../../domain/entities/discount_entity.dart';
 import '../../domain/entities/post_entity.dart';
 import 'meetup/availability_model.dart';
 import 'size_color/size_color_model.dart';
@@ -39,7 +40,8 @@ class PostModel extends PostEntity {
     //
     required super.sizeChartUrl,
     required super.fileUrls,
-    required super.discount,
+    required super.hasDiscount,
+    required super.discounts,
     required super.sizeColors,
     //
     required super.year,
@@ -104,7 +106,8 @@ class PostModel extends PostEntity {
       //
       sizeChartUrl: entity.sizeChartUrl,
       fileUrls: entity.fileUrls,
-      discount: entity.discount,
+      hasDiscount: entity.hasDiscount,
+      discounts: entity.discounts,
       sizeColors: entity.sizeColors,
       //
       year: entity.year,
@@ -142,6 +145,22 @@ class PostModel extends PostEntity {
   }
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
+    final List<DiscountEntity> discounts = <DiscountEntity>[];
+    final bool hasDiscount = json['discount'] ?? false;
+    if (hasDiscount) {
+      final int d2 = json['discount_2_item'] ?? 0;
+      final int d3 = json['discount_3_item'] ?? 0;
+      final int d5 = json['discount_5_item'] ?? 0;
+      if (d2 > 0) {
+        discounts.add(DiscountEntity(quantity: 2, discount: d2));
+      }
+      if (d3 > 0) {
+        discounts.add(DiscountEntity(quantity: 3, discount: d3));
+      }
+      if (d5 > 0) {
+        discounts.add(DiscountEntity(quantity: 5, discount: d5));
+      }
+    }
     return PostModel(
       listID: json['list_id']?.toString() ?? '',
       postID: json['post_id']?.toString() ?? '',
@@ -186,7 +205,8 @@ class PostModel extends PostEntity {
       fileUrls: (json['file_urls'] ?? <dynamic>[])
           ?.map<AttachmentModel>((dynamic e) => AttachmentModel.fromJson(e))
           .toList(),
-      discount: json['discount'] ?? false,
+      hasDiscount: hasDiscount,
+      discounts: discounts,
       sizeColors: (json['size_colors'] ?? <dynamic>[])
           ?.map<SizeColorModel>((dynamic e) => SizeColorModel.fromJson(e))
           .toList(),

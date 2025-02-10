@@ -17,61 +17,62 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return PostEntity(
-      quantity: fields[6] as int,
-      address: fields[50] as String,
-      isActive: fields[190] as bool,
       listID: fields[0] as String,
-      currentLongitude: fields[30] as double,
-      createdAt: fields[192] as DateTime,
-      discount: fields[70] as bool,
-      description: fields[4] as String,
-      fileUrls: (fields[61] as List).cast<AttachmentEntity>(),
-      title: fields[3] as String,
-      type: fields[8] as ListingType,
-      createdBy: fields[191] as String,
-      acceptOffers: fields[9] as bool,
-      sizeColors: (fields[71] as List).cast<SizeColorEntity>(),
-      currentLatitude: fields[31] as double,
       postID: fields[1] as String,
-      deliveryType: fields[13] as DeliveryType,
+      businessID: fields[2] as String?,
+      title: fields[3] as String,
+      description: fields[4] as String,
       price: fields[5] as double,
-      minOfferAmount: fields[10] as double,
-      condition: fields[12] as ConditionType,
-      sizeChartUrl: fields[60] as AttachmentEntity?,
+      quantity: fields[6] as int,
       currency: fields[7] as String?,
-      privacy: fields[11] as PrivacyType,
-      brand: fields[86] as String?,
+      type: fields[8] as ListingType,
+      address: fields[9] as String,
+      acceptOffers: fields[10] as bool,
+      minOfferAmount: fields[11] as double,
+      privacy: fields[12] as PrivacyType,
+      condition: fields[13] as ConditionType,
+      deliveryType: fields[14] as DeliveryType,
+      currentLongitude: fields[30] as double,
+      currentLatitude: fields[31] as double,
       collectionLatitude: fields[32] as double?,
       collectionLongitude: fields[33] as double?,
-      collectionLocation: fields[51] as LocationEntity?,
+      collectionLocation: fields[34] as LocationEntity?,
       localDelivery: fields[40] as int?,
       internationalDelivery: fields[41] as int?,
-      fuelType: fields[89] as String?,
+      sizeChartUrl: fields[60] as AttachmentEntity?,
+      fileUrls: (fields[61] as List).cast<AttachmentEntity>(),
+      hasDiscount: fields[70] as bool,
+      discounts: (fields[72] as List).cast<DiscountEntity>(),
+      sizeColors: (fields[71] as List).cast<SizeColorEntity>(),
+      year: fields[80] as int?,
       doors: fields[81] as int?,
-      availability: (fields[97] as List?)?.cast<AvailabilityEntity>(),
-      emission: fields[88] as String?,
-      exteriorColor: fields[94] as String?,
       seats: fields[82] as int?,
+      mileage: fields[83] as int?,
+      make: fields[84] as String?,
+      model: fields[85] as String?,
+      brand: fields[86] as String?,
+      bodyType: fields[87] as String?,
+      emission: fields[88] as String?,
+      fuelType: fields[89] as String?,
+      engineSize: fields[90] as double?,
+      mileageUnit: fields[91] as String?,
+      transmission: fields[92] as String?,
+      interiorColor: fields[93] as String?,
+      exteriorColor: fields[94] as String?,
       vehiclesCategory: fields[95] as String?,
       meetUpLocation: fields[96] as LocationEntity?,
-      interiorColor: fields[93] as String?,
-      transmission: fields[92] as String?,
-      mileage: fields[83] as int?,
-      model: fields[85] as String?,
-      engineSize: fields[90] as double?,
-      make: fields[84] as String?,
-      bodyType: fields[87] as String?,
-      mileageUnit: fields[91] as String?,
-      year: fields[80] as int?,
-      petsCategory: fields[113] as String?,
-      healthChecked: fields[112] as bool?,
-      breed: fields[111] as String?,
+      availability: (fields[97] as List?)?.cast<AvailabilityEntity>(),
       age: fields[110] as String?,
-      vaccinationUpToDate: fields[116] as bool?,
+      breed: fields[111] as String?,
+      healthChecked: fields[112] as bool?,
+      petsCategory: fields[113] as String?,
       readyToLeave: fields[114] as String?,
       wormAndFleaTreated: fields[115] as bool?,
+      vaccinationUpToDate: fields[116] as bool?,
+      isActive: fields[190] as bool,
+      createdBy: fields[191] as String,
+      createdAt: fields[192] as DateTime,
       accessCode: fields[193] as String?,
-      businessID: fields[2] as String?,
       inHiveAt: fields[199] as DateTime?,
     );
   }
@@ -79,7 +80,7 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
   @override
   void write(BinaryWriter writer, PostEntity obj) {
     writer
-      ..writeByte(56)
+      ..writeByte(57)
       ..writeByte(0)
       ..write(obj.listID)
       ..writeByte(1)
@@ -99,14 +100,16 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       ..writeByte(8)
       ..write(obj.type)
       ..writeByte(9)
-      ..write(obj.acceptOffers)
+      ..write(obj.address)
       ..writeByte(10)
-      ..write(obj.minOfferAmount)
+      ..write(obj.acceptOffers)
       ..writeByte(11)
-      ..write(obj.privacy)
+      ..write(obj.minOfferAmount)
       ..writeByte(12)
-      ..write(obj.condition)
+      ..write(obj.privacy)
       ..writeByte(13)
+      ..write(obj.condition)
+      ..writeByte(14)
       ..write(obj.deliveryType)
       ..writeByte(30)
       ..write(obj.currentLongitude)
@@ -116,22 +119,22 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       ..write(obj.collectionLatitude)
       ..writeByte(33)
       ..write(obj.collectionLongitude)
+      ..writeByte(34)
+      ..write(obj.collectionLocation)
       ..writeByte(40)
       ..write(obj.localDelivery)
       ..writeByte(41)
       ..write(obj.internationalDelivery)
-      ..writeByte(50)
-      ..write(obj.address)
-      ..writeByte(51)
-      ..write(obj.collectionLocation)
       ..writeByte(60)
       ..write(obj.sizeChartUrl)
       ..writeByte(61)
       ..write(obj.fileUrls)
       ..writeByte(70)
-      ..write(obj.discount)
+      ..write(obj.hasDiscount)
       ..writeByte(71)
       ..write(obj.sizeColors)
+      ..writeByte(72)
+      ..write(obj.discounts)
       ..writeByte(80)
       ..write(obj.year)
       ..writeByte(81)

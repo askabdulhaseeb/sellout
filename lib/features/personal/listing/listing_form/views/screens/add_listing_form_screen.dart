@@ -32,9 +32,10 @@ class AddListingFormScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Consumer<AddListingFormProvider>(
-          builder: (BuildContext context, AddListingFormProvider formPro, _) {
-            switch (formPro.listingType) {
+        child: Selector<AddListingFormProvider, ListingType?>(
+          selector: (_, AddListingFormProvider pro) => pro.listingType,
+          builder: (BuildContext context, ListingType? listingType, _) {
+            switch (listingType) {
               case ListingType.items:
                 return const AddItemForm();
               case ListingType.clothAndFoot:
