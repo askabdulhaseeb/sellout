@@ -72,7 +72,7 @@ class ProfileHeaderSection extends StatelessWidget {
                       );
                     },
                   ),
-                  const SizedBox(height: 8),
+               const Spacer(),
                   Text(
                     user?.username ?? '',
                     style: const TextStyle(

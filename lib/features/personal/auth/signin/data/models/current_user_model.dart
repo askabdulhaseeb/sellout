@@ -39,7 +39,8 @@ class CurrentUserModel extends CurrentUserEntity {
       CurrentUserModel.fromJson(json.decode(str));
 
   factory CurrentUserModel.fromJson(Map<String, dynamic> json) {
-    final List<dynamic> addressData = json['address'] ?? <dynamic>[];
+    final userData = json['item'] ?? {};
+    final List<dynamic> addressData = userData['address'] ?? <dynamic>[];
     final List<AddressEntity> addressList = <AddressEntity>[];
     for (dynamic element in addressData) {
       addressList.add(AddressModel.fromJson(element));
@@ -47,37 +48,39 @@ class CurrentUserModel extends CurrentUserEntity {
     return CurrentUserModel(
       message: json['message'] ?? '',
       token: json['token'] ?? '',
-      userID: json['user_id'] ?? '',
+      userID: userData['user_id'] ?? '',
       //
-      email: json['email'] ?? '',
-      username: json['user_name'] ?? '',
-      currency: json['currency'] ?? 'gbp',
-      privacy: PrivacyType.fromJson(json['profile_type']),
-      countryAlpha3: json['country_alpha_3'] ?? '',
-      countryCode: json['country_code'] ?? '',
-      phoneNumber: json['phone_number'] ?? '',
-      language: json['language'] ?? 'en',
+      email: userData['email'] ?? '',
+      username: userData['user_name'] ?? '',
+      currency: userData['currency'] ?? 'gbp',
+      privacy: PrivacyType.fromJson(userData['profile_type']),
+      countryAlpha3: userData['country_alpha_3'] ?? '',
+      countryCode: userData['country_code'] ?? '',
+      phoneNumber: userData['phone_number'] ?? '',
+      language: userData['language'] ?? 'en',
       //
       address: addressList,
       //
-      chatIDs: List<String>.from((json['chat_ids'] ?? <dynamic>[]).map(
+      chatIDs: List<String>.from((userData['chat_ids'] ?? <dynamic>[]).map(
         (dynamic x) => x.toString(),
       )),
-      businessIDs: List<String>.from((json['business_ids'] ?? <dynamic>[]).map(
+      businessIDs:
+          List<String>.from((userData['business_ids'] ?? <dynamic>[]).map(
         (dynamic x) => x.toString(),
       )),
       //
-      imageVerified: json['image_verified'] ?? false,
-      verificationImage: json['verification_pic'] == null
+      imageVerified: userData['image_verified'] ?? false,
+      verificationImage: userData['verification_pic'] == null
           ? null
-          : AttachmentModel.fromJson(json['verification_pic']),
+          : AttachmentModel.fromJson(userData['verification_pic']),
       profileImage: List<AttachmentModel>.from(
-          (json['profile_pic'] ?? <dynamic>[])
+          (userData['profile_pic'] ?? <dynamic>[])
               .map((dynamic x) => AttachmentModel.fromJson(x))),
       //
-      lastLoginTime:
-          json['last_login_time']?.toString().toDateTime() ?? DateTime.now(),
-      createdAt: json['created_at']?.toString().toDateTime() ?? DateTime.now(),
+      lastLoginTime: userData['last_login_time']?.toString().toDateTime() ??
+          DateTime.now(),
+      createdAt:
+          userData['created_at']?.toString().toDateTime() ?? DateTime.now(),
     );
   }
 }
