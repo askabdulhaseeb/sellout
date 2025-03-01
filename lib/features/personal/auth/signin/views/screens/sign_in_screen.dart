@@ -33,7 +33,7 @@ class SignInScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Consumer<SigninProvider>(
             builder: (BuildContext context, SigninProvider authPro, _) {

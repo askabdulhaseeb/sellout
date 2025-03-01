@@ -21,7 +21,7 @@ class ProfileHeaderSection extends StatelessWidget {
     return AspectRatio(
       aspectRatio: 3 / 1,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
         child: Row(
           children: <Widget>[
             AspectRatio(
@@ -72,7 +72,7 @@ class ProfileHeaderSection extends StatelessWidget {
                       );
                     },
                   ),
-               const Spacer(),
+                  const Spacer(),
                   Text(
                     user?.username ?? '',
                     style: const TextStyle(
