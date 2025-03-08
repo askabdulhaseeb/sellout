@@ -1,5 +1,4 @@
 import 'package:get_it/get_it.dart';
-
 import '../core/widgets/appointment/data/repository/appointment_repository.dart';
 import '../core/widgets/appointment/data/services/appointment_api.dart';
 import '../core/widgets/appointment/domain/repository/appointment_repository.dart';
@@ -27,10 +26,16 @@ import '../features/business/service/data/sources/add_service_remote_api.dart';
 import '../features/business/service/domain/repositories/add_service_repository.dart';
 import '../features/business/service/domain/usecase/add_service_usecase.dart';
 import '../features/business/service/views/providers/add_service_provider.dart';
+import '../features/personal/auth/find_account/data/repository/find_account_repository_impl.dart';
+import '../features/personal/auth/find_account/data/source/find_account_remote_data_source.dart';
+import '../features/personal/auth/find_account/domain/repository/find_account_repository.dart';
+import '../features/personal/auth/find_account/domain/use_cases/find_account_usecase.dart';
+import '../features/personal/auth/find_account/domain/use_cases/newpassword_usecase.dart';
+import '../features/personal/auth/find_account/domain/use_cases/send_otp_usecase.dart';
+import '../features/personal/auth/find_account/view/providers/find_account_provider.dart';
 import '../features/personal/auth/signin/data/repositories/signin_repository_impl.dart';
 import '../features/personal/auth/signin/data/sources/signin_remote_source.dart';
 import '../features/personal/auth/signin/domain/repositories/signin_repository.dart';
-import '../features/personal/auth/signin/domain/usecase/forgot_password_usecase.dart';
 import '../features/personal/auth/signin/domain/usecase/login_usecase.dart';
 import '../features/personal/auth/signin/views/providers/signin_provider.dart';
 import '../features/personal/auth/signup/data/repositories/signup_repository_impl.dart';
@@ -114,10 +119,8 @@ void _auth() {
   locator
       .registerFactory<SigninRepository>(() => SigninRepositoryImpl(locator()));
   locator.registerFactory<LoginUsecase>(() => LoginUsecase(locator()));
-  locator.registerFactory<ForgotPasswordUsecase>(
-      () => ForgotPasswordUsecase(locator()));
   locator.registerLazySingleton<SigninProvider>(
-      () => SigninProvider(locator(), locator()));
+      () => SigninProvider(locator(),));
   // Signup
   locator.registerFactory<SignupApi>(() => SignupApiImpl());
   locator
@@ -132,6 +135,18 @@ void _auth() {
       () => VerifyPhoneOtpUsecase(locator()));
   locator.registerLazySingleton<SignupProvider>(
       () => SignupProvider(locator(), locator(), locator(), locator()));
+  locator.registerFactory<FindAccountRemoteDataSource>(
+      () => FindAccountRemoteDataSourceimpl());
+  locator.registerLazySingleton<FindAccountRepository>(
+      () => FindAccountRepositoryImpl(locator()));
+  locator.registerLazySingleton<FindAccountUsecase>(
+      () => FindAccountUsecase(locator()));
+  locator.registerLazySingleton<SendEmailForOtpUsecase>(
+      () => SendEmailForOtpUsecase(locator()));
+  locator.registerLazySingleton<NewPasswordUsecase>(
+      () => NewPasswordUsecase(locator()));
+  locator.registerFactory<FindAccountProvider>(
+      () => FindAccountProvider(locator(), locator(), locator()));
 }
 
 void _servicePage() {

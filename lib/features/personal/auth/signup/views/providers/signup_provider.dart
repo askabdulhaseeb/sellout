@@ -3,7 +3,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/functions/permission_fun.dart';
 import '../../../../../../core/sources/api_call.dart';
@@ -117,15 +116,6 @@ class SignupProvider extends ChangeNotifier {
     _accountType = accountType;
     notifyListeners();
   }
-
-  // PrivacyType _privacy = PrivacyType.public; // Default value
-
-  // PrivacyType get privacy => _privacy;
-
-  // void setPrivacy(PrivacyType privacy) {
-  //   _privacy = privacy;
-  //   notifyListeners();
-  // }
 
   static const int _codeSendingTime = 60;
   int _resentCodeSeconds = _codeSendingTime;

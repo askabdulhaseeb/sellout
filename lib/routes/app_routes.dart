@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../core/functions/app_log.dart';
 import '../features/business/service/views/screens/add_service_screen.dart';
+import '../features/personal/auth/find_account/view/screens/confirm_email_screen.dart';
+import '../features/personal/auth/find_account/view/screens/enter_code_screen.dart';
+import '../features/personal/auth/find_account/view/screens/find_account_screen.dart';
+import '../features/personal/auth/find_account/view/screens/new_password_screen.dart';
+import '../features/personal/auth/find_account/view/screens/send_code_screen.dart';
 import '../features/personal/cart/views/screens/personal_cart_screen.dart';
 import '../features/personal/chats/chat/views/screens/chat_screen.dart';
 import '../features/personal/listing/listing_form/views/screens/add_listing_form_screen.dart';
@@ -45,6 +50,11 @@ class AppRoutes {
     // AUTH
     SignInScreen.routeName: (_) => const SignInScreen(),
     SignupScreen.routeName: (_) => const SignupScreen(),
+    FindAccountScreen.routeName: (_) => const FindAccountScreen(),
+    ConfirmEmailScreen.routeName: (_) => const ConfirmEmailScreen(),
+    SendCodeScreen.routeName: (_) => const SendCodeScreen(),
+    EnterCodeScreen.routeName: (_) => const EnterCodeScreen(),
+    NewPasswordScreen.routeName: (_) => const NewPasswordScreen(),
 
     // DAHSBOARD
     DashboardScreen.routeName: (_) => const DashboardScreen(),
