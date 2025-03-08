@@ -7,7 +7,6 @@ import 'local/local_auth.dart';
 
 abstract interface class SigninRemoteSource {
   Future<DataState<bool>> signin(String email, String password);
-  Future<DataState<bool>> forgotPassword(String email);
 }
 
 class SigninRemoteSourceImpl implements SigninRemoteSource {
@@ -32,7 +31,7 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
         await LocalAuth().signin(currentUser);
         return responce;
       } else {
-        debugPrint('Signin Faile in Remote Source');
+        debugPrint('Signin Failed in Remote Source');
         return DataFailer<bool>(CustomException('Signin Failed'));
       }
     } catch (e) {
@@ -41,14 +40,4 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
     }
   }
 
-  @override
-  Future<DataState<bool>> forgotPassword(String email) async {
-    try {
-      // Forgot Password
-    } catch (e) {
-      debugPrint('Forget Password Catch in Remote Source - $e');
-      return DataFailer<bool>(CustomException('Forget Password Failed: $e'));
-    }
-    return DataFailer<bool>(CustomException('Forget Password Failed'));
-  }
 }

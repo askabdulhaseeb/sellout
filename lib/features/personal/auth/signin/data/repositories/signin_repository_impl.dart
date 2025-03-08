@@ -14,14 +14,4 @@ class SigninRepositoryImpl implements SigninRepository {
       return DataFailer<bool>(CustomException('Signin Error: $e'));
     }
   }
-
-  @override
-  Future<DataState<bool>> forgotPassword(String email) async {
-    try {
-      final DataState<bool> result = await remoteSource.forgotPassword(email);
-      return result;
-    } catch (e) {
-      return DataFailer<bool>(CustomException('Forget Password Error: $e'));
-    }
-  }
 }
