@@ -17,10 +17,12 @@ enum PrivacyType {
   final String json;
   final IconData icon;
 
-  static PrivacyType fromJson(String? json) => PrivacyType.values.firstWhere(
-        (PrivacyType e) => e.json == json,
-        orElse: () => PrivacyType.public,
-      );
+  static PrivacyType fromJson(String? json) => json == null
+      ? PrivacyType.public
+      : PrivacyType.values.firstWhere(
+          (PrivacyType e) => e.json == json,
+          orElse: () => PrivacyType.public,
+        );
 
   static List<PrivacyType> get list => PrivacyType.values;
 

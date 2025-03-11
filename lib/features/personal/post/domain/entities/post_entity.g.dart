@@ -71,7 +71,9 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       vaccinationUpToDate: fields[116] as bool?,
       isActive: fields[190] as bool,
       createdBy: fields[191] as String,
+      updatedBy: fields[194] == null ? '' : fields[194] as String,
       createdAt: fields[192] as DateTime,
+      updatedAt: fields[195] as DateTime?,
       accessCode: fields[193] as String?,
       inHiveAt: fields[199] as DateTime?,
     );
@@ -80,7 +82,7 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
   @override
   void write(BinaryWriter writer, PostEntity obj) {
     writer
-      ..writeByte(57)
+      ..writeByte(59)
       ..writeByte(0)
       ..write(obj.listID)
       ..writeByte(1)
@@ -193,6 +195,10 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       ..write(obj.createdAt)
       ..writeByte(193)
       ..write(obj.accessCode)
+      ..writeByte(194)
+      ..write(obj.updatedBy)
+      ..writeByte(195)
+      ..write(obj.updatedAt)
       ..writeByte(199)
       ..write(obj.inHiveAt);
   }
