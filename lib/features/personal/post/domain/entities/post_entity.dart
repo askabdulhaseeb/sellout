@@ -74,7 +74,9 @@ class PostEntity {
     //
     required this.isActive,
     required this.createdBy,
+    required this.updatedBy,
     required this.createdAt,
+    required this.updatedAt,
     required this.accessCode,
     DateTime? inHiveAt,
   }) : inHiveAt = inHiveAt ?? DateTime.now();
@@ -199,6 +201,10 @@ class PostEntity {
   final DateTime createdAt;
   @HiveField(193)
   final String? accessCode;
+  @HiveField(194, defaultValue: '')
+  final String updatedBy;
+  @HiveField(195, defaultValue: null)
+  final DateTime? updatedAt;
   @HiveField(199)
   final DateTime inHiveAt;
 

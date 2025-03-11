@@ -14,8 +14,8 @@ class AddListingVehicleBasicInfoSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<AddListingFormProvider>(
         builder: (BuildContext context, AddListingFormProvider formPro, _) {
-      final List<int> years =
-          List<int>.generate(80, (int index) => DateTime.now().year - index);
+      // final List<int> years =
+      //     List<int>.generate(80, (int index) => DateTime.now().year - index);
       return Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
