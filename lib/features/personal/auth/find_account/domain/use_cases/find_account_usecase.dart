@@ -12,7 +12,6 @@ class FindAccountUsecase implements UseCase<Map<String, dynamic>, String> {
       final DataState<Map<String, dynamic>> result = await repository.findAccount(params);
       return result;
     } catch (e) {
-      AppLog.error('❌ FindAccountUsecase - catch Error: $e');
       return DataFailer<Map<String, dynamic>>(CustomException('Error: $e'));
     }
   }

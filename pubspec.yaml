@@ -45,6 +45,7 @@ dependencies:
   video_player: ^2.9.2
   
   syncfusion_flutter_calendar: ^28.1.33
+  google_maps_flutter: ^2.10.1
 
 dev_dependencies:
   flutter_test:

@@ -26,6 +26,9 @@ class PostModel extends PostEntity {
     required super.privacy,
     required super.condition,
     required super.deliveryType,
+    required super.listOfReviews,
+    required super.categoryType,
+
     //
     required super.currentLongitude,
     required super.currentLatitude,
@@ -71,6 +74,10 @@ class PostModel extends PostEntity {
     required super.wormAndFleaTreated,
     required super.vaccinationUpToDate,
     //
+    required super.propertyCategory,
+    required super.propertytype,
+
+    //
     required super.isActive,
     required super.createdBy,
     required super.createdAt,
@@ -94,6 +101,8 @@ class PostModel extends PostEntity {
       privacy: entity.privacy,
       condition: entity.condition,
       deliveryType: entity.deliveryType,
+      listOfReviews: entity.listOfReviews,
+      categoryType: entity.categoryType,
       //
       currentLongitude: entity.currentLongitude,
       currentLatitude: entity.currentLatitude,
@@ -137,6 +146,10 @@ class PostModel extends PostEntity {
       wormAndFleaTreated: entity.wormAndFleaTreated,
       vaccinationUpToDate: entity.vaccinationUpToDate,
       //
+
+      propertyCategory: entity.propertyCategory,
+      propertytype: entity.propertytype,
+      //
       isActive: entity.isActive,
       createdBy: entity.createdBy,
       createdAt: entity.createdAt,
@@ -145,21 +158,24 @@ class PostModel extends PostEntity {
   }
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
+    final Map<String, dynamic> discountData =
+        json['discount'] ?? {}; // Get the discount map
+
     final List<DiscountEntity> discounts = <DiscountEntity>[];
-    final bool hasDiscount = json['discount'] ?? false;
+
+    // Check if any discount exists (e.g., values > 0)
+    final hasDiscount = discountData.isNotEmpty &&
+        discountData.values.any((value) => (value as int? ?? 0) > 0);
+
     if (hasDiscount) {
-      final int d2 = json['discount_2_item'] ?? 0;
-      final int d3 = json['discount_3_item'] ?? 0;
-      final int d5 = json['discount_5_item'] ?? 0;
-      if (d2 > 0) {
-        discounts.add(DiscountEntity(quantity: 2, discount: d2));
-      }
-      if (d3 > 0) {
-        discounts.add(DiscountEntity(quantity: 3, discount: d3));
-      }
-      if (d5 > 0) {
-        discounts.add(DiscountEntity(quantity: 5, discount: d5));
-      }
+      // Extract values from the nested `discount` map
+      final int d2 = discountData['discount_2_item'] as int? ?? 0;
+      final int d3 = discountData['discount_3_item'] as int? ?? 0;
+      final int d5 = discountData['discount_5_item'] as int? ?? 0;
+
+      if (d2 > 0) discounts.add(DiscountEntity(quantity: 2, discount: d2));
+      if (d3 > 0) discounts.add(DiscountEntity(quantity: 3, discount: d3));
+      if (d5 > 0) discounts.add(DiscountEntity(quantity: 5, discount: d5));
     }
     return PostModel(
       listID: json['list_id']?.toString() ?? '',
@@ -171,6 +187,7 @@ class PostModel extends PostEntity {
       quantity: int.tryParse(json['quantity']?.toString() ?? '0') ?? 0,
       currency: json['currency']?.toString() ?? 'gbp',
       type: ListingType.fromJson(json['list_id']),
+      categoryType: json['type']?.toString() ?? '',
       address: json['address'].toString(),
       acceptOffers: json['accept_offers'] ?? false,
       minOfferAmount:
@@ -178,6 +195,10 @@ class PostModel extends PostEntity {
       privacy: PrivacyType.fromJson(json['post_privacy']),
       condition: ConditionType.fromJson(json['item_condition']),
       deliveryType: DeliveryType.fromJson(json['delivery_type']),
+      listOfReviews: (json['list_of_reviews'] as List<dynamic>?)
+              ?.map<int>((e) => int.tryParse(e.toString()) ?? 0)
+              .toList() ??
+          <int>[],
       //
       currentLongitude:
           double.tryParse(json['current_longitude']?.toString() ?? '0.0') ??
@@ -247,6 +268,8 @@ class PostModel extends PostEntity {
       createdBy: json['created_by']?.toString() ?? '',
       createdAt: json['created_at']?.toString().toDateTime() ?? DateTime.now(),
       accessCode: json['access_code']?.toString(),
+      propertyCategory: json['property_category']?.toString(),
+      propertytype: json['property_type']?.toString(),
     );
   }
 }

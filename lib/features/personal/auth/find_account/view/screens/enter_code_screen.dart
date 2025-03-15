@@ -64,11 +64,7 @@ class EnterCodeScreen extends StatelessWidget {
               fontSize: 14,
               pinLength: 6,
             ),
-            TextButton(
-                onPressed: () {
-                  context.read<FindAccountProvider>().sendOtp(context);
-                },
-                child: Text('didnot_get_code'.tr())),
+            TextButton(onPressed: null, child: Text('didnot_get_code'.tr())),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -76,7 +72,7 @@ class EnterCodeScreen extends StatelessWidget {
                   builder:
                       (BuildContext context, FindAccountProvider prov, _) =>
                           TextButton(
-                    onPressed: () => prov.sendOtp(context),
+                    onPressed: () => prov.sendemailforOtp(context),
                     child: Text(
                       'resend_code'.tr(),
                       style: Theme.of(context).textTheme.bodyMedium,
