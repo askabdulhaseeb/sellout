@@ -4,8 +4,8 @@ class CustomPinInputField extends StatefulWidget {
   const CustomPinInputField({
     required this.pinLength,
     required this.onChanged,
-    super.key,
     this.fontSize = 20,
+    super.key,
   });
 
   final int pinLength;
