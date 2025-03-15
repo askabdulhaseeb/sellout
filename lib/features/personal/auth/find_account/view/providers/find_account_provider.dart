@@ -7,21 +7,24 @@ import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../signin/views/screens/sign_in_screen.dart';
+import '../../../signup/domain/usecase/verify_opt_usecase.dart';
 import '../../domain/use_cases/find_account_usecase.dart';
 import '../../domain/use_cases/newpassword_usecase.dart';
 import '../../domain/use_cases/send_otp_usecase.dart';
-import '../params/forgot_params.dart';
+import '../../domain/use_cases/verify_otpUsecase.dart';
 import '../params/new_password_params.dart';
+import '../params/verify_pin_params.dart';
 import '../screens/confirm_email_screen.dart';
 import '../screens/enter_code_screen.dart';
 import '../screens/new_password_screen.dart';
 
 class FindAccountProvider with ChangeNotifier {
   FindAccountProvider(this.findAccountUseCase, this.sendEmailForOtpUsecase,
-      this.newPasswordUsecase);
+      this.newPasswordUsecase, this.verifyOtpUsecase);
   final FindAccountUsecase findAccountUseCase;
   final SendEmailForOtpUsecase sendEmailForOtpUsecase;
   final NewPasswordUsecase newPasswordUsecase;
+  final VerifyOtpUseCase verifyOtpUsecase;
   final TextEditingController _newPassword = TextEditingController();
   final TextEditingController _pin = TextEditingController();
   final TextEditingController _phoneOrEmailController = TextEditingController();
@@ -31,7 +34,7 @@ class FindAccountProvider with ChangeNotifier {
   String? email;
   String? _uid;
 
-  static const int _codeSendingTime = 60;
+  static const int _codeSendingTime = 300;
   int _resentCodeSeconds = _codeSendingTime;
   int get resentCodeSeconds => _resentCodeSeconds;
   set resentCodeSeconds(int value) {
@@ -39,25 +42,18 @@ class FindAccountProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  GlobalKey<FormState> get findAccountFormKey => _findAccountformKey;
+  GlobalKey<FormState> get passwordFormKey => _passwordFormKey;
   Timer? _resendCodeTimer;
   Timer? get resendCodeTimer => _resendCodeTimer;
   set uid(String? value) {
     _uid = value;
   }
 
-  String? _getOTP;
-  set getOTP(String? value) {
-    _getOTP = value;
-    notifyListeners();
-  }
-
   // Getters
   TextEditingController get phoneOrEmailController => _phoneOrEmailController;
   TextEditingController get newPassword => _newPassword;
   TextEditingController get pin => _pin;
-
-  GlobalKey<FormState> get findAccountFormKey => _findAccountformKey;
-  GlobalKey<FormState> get passwordFormKey => _passwordFormKey;
   bool get isLoading => _isLoading;
   //Loading
   set isLoading(bool value) {
@@ -74,36 +70,27 @@ class FindAccountProvider with ChangeNotifier {
       final String phoneOrEmail = _phoneOrEmailController.text.trim();
       final DataState<Map<String, dynamic>> result =
           await findAccountUseCase(phoneOrEmail);
-      // debugPrint('🔹 Provider received result: $result');
-      // debugPrint('🔹 Result Type: ${result.runtimeType}');
-      // debugPrint('🔹 Result Data: ${result.data}');
       if (result is DataSuccess<Map<String, dynamic>>) {
         final String? rawData = result.data;
         if (rawData != null) {
           try {
             final Map<String, dynamic> jsonData = jsonDecode(rawData);
-            //  debugPrint('✅ Decoded JSON Data: $jsonData');
-
             if (jsonData.containsKey('email_exists')) {
               final bool isEmailExists = jsonData['email_exists'] ?? false;
-
               if (isEmailExists) {
-                AppLog.info(
-                    '🔹 Email Exists: Navigating to ConfirmEmailScreen');
                 email = phoneOrEmail;
                 Navigator.of(context).pushNamed(ConfirmEmailScreen.routeName);
               } else {
-                AppLog.info('❌ Email does not exist');
+                AppLog.error('${result.exception}' ?? 'something_wrong'.tr(),
+                    name: 'FindAccountProvider.findAccount - else');
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Email does not exist')),
+                  SnackBar(content: Text('something_wrong'.tr())),
                 );
               }
-            } else {
-              throw Exception(
-                  'Invalid API response format: Missing "email_exists" key');
             }
           } catch (e) {
-            AppLog.error('❌ JSON Decode Error: $e');
+            AppLog.error('something_wrong'.tr(),
+                name: 'FindAccountProvider.findAccount - catch $e');
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Invalid API response format')),
             );
@@ -117,29 +104,22 @@ class FindAccountProvider with ChangeNotifier {
         throw Exception('Unexpected response type: ${result.runtimeType}');
       }
     } catch (e) {
-      AppLog.error('❌ FindAccountProvider - catch Error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
-      );
+      AppLog.error('something_wrong'.tr(),
+          name: ' FindAccountProvider - catch Error: $e');
     } finally {
       isLoading = false;
     }
   }
 
   // Method to send email for Otp
-  Future<bool> sendOtp(BuildContext context) async {
-    if (email == null) {
-      AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
-      return false;
-    }
+  Future<bool> sendemailforOtp(BuildContext context) async {
     isLoading = true;
     try {
       final DataState<String> result = await sendEmailForOtpUsecase(
-        OtpResponseParams(value: email ?? ''),
+        email ?? '',
       );
       if (result is DataSuccess) {
-        getOTP = result.entity;
-        uid = result.data;
+        uid = result.entity;
         startResendCodeTimer();
         AppNavigator.pushNamed(EnterCodeScreen.routeName);
         return true;
@@ -149,74 +129,62 @@ class FindAccountProvider with ChangeNotifier {
           name: 'SignupProvider.sendOtp - else',
           error: result,
         );
-        AppSnackBar.showSnackBar(
-          // ignore: use_build_context_synchronously
-          context,
-          result.exception?.message ?? 'something_wrong'.tr(),
-        );
       }
     } catch (e) {
       AppLog.error(
-        e.toString(),
-        name: 'SignupProvider.sendOtp - catch',
+        'something_wrong'.tr(),
+        name: 'SignupProvider.sendOtp - catch:$e',
         error: e,
       );
-      // ignore: use_build_context_synchronously
-      AppSnackBar.showSnackBar(context, e.toString());
     }
     isLoading = false;
     return false;
   }
 
   Future<bool> verifyOtp(BuildContext context) async {
-    if (_resentCodeSeconds == 0) {
+    if (_uid == null) {
       AppLog.error(
-        'something_wrong',
-        name: 'FindAccountProvider.verifyOtp - timer',
+        'uid_null',
+        name: 'FindAccountProvider.verifyOtp - uid',
       );
-      AppSnackBar.showSnackBar(
-          context, 'OTP has expired. Please request a new one.'.tr());
+      AppSnackBar.showSnackBar(context, 'uid_null'.tr());
       return false;
     }
     if (pin.text.isEmpty) {
       AppLog.error(
-        'something_wrong',
-        name: 'SignupProvider.verifyOtp - otp',
+        'something_wrong'.tr(),
+        name: 'FindAccountProvider.verifyOtp - otp',
       );
       AppSnackBar.showSnackBar(context, 'otp_requirement'.tr());
       return false;
     }
-    if (pin.text != _getOTP) {
-      debugPrint(_getOTP);
-      AppLog.error(
-       'something_wrong',
-        name: 'SignupProvider.verifyOtp - otp',
-      );
-      AppSnackBar.showSnackBar(context, 'otp_not_match'.tr());
-      return false;
-    }
-    if (pin.text == _getOTP) {
-      AppNavigator.pushNamed(NewPasswordScreen.routeName);
-      return true;
-    }
+    isLoading = true;
     try {
-      ();
+      debugPrint('my data$_uid,${pin.text}');
+      final VerifyPinParams params =
+          VerifyPinParams(uid: _uid ?? '', otp: pin.text);
+      final DataState<bool> result = await verifyOtpUsecase(params);
+      if (result is DataSuccess) {
+        Navigator.pushNamed(context, NewPasswordScreen.routeName);
+      } else {
+        AppLog.error(
+          'something_wrong'.tr(),
+          name: 'SignupProvider.verifyOtp - else',
+          error: result,
+        );
+      }
     } catch (e) {
-      AppLog.error(
-        e.toString(),
-        name: 'SignupProvider.verifyOtp - catch',
-        error: e,
-      );
-      // ignore: use_build_context_synchronously
-      AppSnackBar.showSnackBar(context, e.toString());
+      AppLog.error('something_wrong'.tr(),
+          name: 'FindAccountProvider.VerifyOtp - catch $e');
     }
+    isLoading = false;
     return false;
   }
 
   Future<bool> newpassword(BuildContext context) async {
     if (newPassword.text.isEmpty) {
-      AppLog.error('Password is empty',
-          name: 'FindAccountProvider.newpassword');
+      AppLog.error('password_empty',
+          name: 'FindAccountProvider.newpassword - empty password');
       AppSnackBar.showSnackBar(context, 'password_requirement'.tr());
       return false;
     }
@@ -227,22 +195,18 @@ class FindAccountProvider with ChangeNotifier {
         password: newPassword.text.trim(),
       );
 
-      // Call the use case to handle the password update API call
       final DataState<String> result = await newPasswordUsecase(params);
 
       if (result is DataSuccess) {
-        AppLog.info('✅ Password updated successfully');
-        AppSnackBar.showSnackBar(context, 'Password changed successfully');
         AppNavigator.pushNamedAndRemoveUntil(
           SignInScreen.routeName,
           (_) => true,
         );
-        dispose();
         return true;
       } else {
         AppLog.error(
           result.exception?.message ?? 'something_wrong'.tr(),
-          name: 'FindAccountProvider.newpassword - error',
+          name: 'FindAccountProvider.newpassword - else',
           error: result,
         );
         AppSnackBar.showSnackBar(
@@ -276,13 +240,5 @@ class FindAccountProvider with ChangeNotifier {
       }
       notifyListeners();
     });
-  }
-
-  @override
-  void dispose() {
-    _phoneOrEmailController.dispose();
-    _newPassword.dispose();
-    _pin.dispose();
-    super.dispose();
   }
 }

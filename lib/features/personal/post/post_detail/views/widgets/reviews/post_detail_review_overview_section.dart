@@ -67,7 +67,7 @@ class PostDetailReviewOverviewSection extends StatelessWidget {
                     },
                   ),
                   const PostDetailReviewAttachmentListWidget(),
-                  const PostDetailReviewButtonSection(),
+                  PostDetailReviewButtonSection(post: post),
                   PostDetailReviewListSection(reviews: reviews),
                 ],
               ),

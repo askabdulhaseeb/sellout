@@ -82,7 +82,7 @@ class ConfirmEmailScreen extends StatelessWidget {
                       margin: const EdgeInsets.all(10),
                       title: 'confirm'.tr(),
                       isLoading: pro.isLoading,
-                      onTap: () => pro.sendOtp(context)),
+                      onTap: () => pro.sendemailforOtp(context)),
             ),
           ],
         ),

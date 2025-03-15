@@ -32,6 +32,7 @@ import '../features/personal/auth/find_account/domain/repository/find_account_re
 import '../features/personal/auth/find_account/domain/use_cases/find_account_usecase.dart';
 import '../features/personal/auth/find_account/domain/use_cases/newpassword_usecase.dart';
 import '../features/personal/auth/find_account/domain/use_cases/send_otp_usecase.dart';
+import '../features/personal/auth/find_account/domain/use_cases/verify_otpUsecase.dart';
 import '../features/personal/auth/find_account/view/providers/find_account_provider.dart';
 import '../features/personal/auth/signin/data/repositories/signin_repository_impl.dart';
 import '../features/personal/auth/signin/data/sources/signin_remote_source.dart';
@@ -68,6 +69,11 @@ import '../features/personal/chats/chat_dashboard/data/sources/remote/chat_remot
 import '../features/personal/chats/chat_dashboard/domain/repositories/chat_repository.dart';
 import '../features/personal/chats/chat_dashboard/domain/usecase/get_my_chats_usecase.dart';
 import '../features/personal/chats/chat_dashboard/views/providers/chat_dashboard_provider.dart';
+import '../features/personal/explore/data/repository/explore_repository_impl.dart';
+import '../features/personal/explore/data/source/explore_remote_source.dart';
+import '../features/personal/explore/domain/repository/location_name_repo.dart';
+import '../features/personal/explore/domain/usecase/location_name_usecase.dart';
+import '../features/personal/explore/views/providers/explore_provider.dart';
 import '../features/personal/post/data/repositories/post_repository_impl.dart';
 import '../features/personal/post/data/sources/remote/post_remote_api.dart';
 import '../features/personal/post/domain/repositories/post_repository.dart';
@@ -78,7 +84,9 @@ import '../features/personal/post/feed/views/providers/feed_provider.dart';
 import '../features/personal/review/data/repositories/review_repository_impl.dart';
 import '../features/personal/review/data/sources/review_remote_api.dart';
 import '../features/personal/review/domain/repositories/review_repository.dart';
+import '../features/personal/review/domain/usecase/create_review_usecase.dart';
 import '../features/personal/review/domain/usecase/get_reviews_usecase.dart';
+import '../features/personal/review/features/reivew_list/views/providers/review_provider.dart';
 import '../features/personal/services/data/repositories/personal_services_repository_impl.dart';
 import '../features/personal/services/data/sources/services_explore_api.dart';
 import '../features/personal/services/domain/repositories/personal_services_repository.dart';
@@ -112,6 +120,7 @@ void setupLocator() {
   _appointment();
   _review();
   _country();
+  _explore();
 }
 
 void _auth() {
@@ -119,8 +128,9 @@ void _auth() {
   locator
       .registerFactory<SigninRepository>(() => SigninRepositoryImpl(locator()));
   locator.registerFactory<LoginUsecase>(() => LoginUsecase(locator()));
-  locator.registerLazySingleton<SigninProvider>(
-      () => SigninProvider(locator(),));
+  locator.registerLazySingleton<SigninProvider>(() => SigninProvider(
+        locator(),
+      ));
   // Signup
   locator.registerFactory<SignupApi>(() => SignupApiImpl());
   locator
@@ -145,8 +155,10 @@ void _auth() {
       () => SendEmailForOtpUsecase(locator()));
   locator.registerLazySingleton<NewPasswordUsecase>(
       () => NewPasswordUsecase(locator()));
+  locator.registerLazySingleton<VerifyOtpUseCase>(
+      () => VerifyOtpUseCase(locator()));
   locator.registerFactory<FindAccountProvider>(
-      () => FindAccountProvider(locator(), locator(), locator()));
+      () => FindAccountProvider(locator(), locator(), locator(), locator()));
 }
 
 void _servicePage() {
@@ -321,6 +333,10 @@ void _review() {
   locator
       .registerFactory<GetReviewsUsecase>(() => GetReviewsUsecase(locator()));
   //
+  locator.registerFactory<CreateReviewUsecase>(
+      () => CreateReviewUsecase(locator()));
+  locator.registerFactory<ReviewProvider>(() => ReviewProvider(locator()));
+
   // Providers
 }
 
@@ -335,6 +351,15 @@ void _country() {
   // USECASES
   locator
       .registerFactory<GetCountiesUsecase>(() => GetCountiesUsecase(locator()));
-  //
   // Providers
+}
+
+void _explore() {locator.registerFactory<ExploreRemoteSource>(
+      () => ExploreRemoteSourceImpl());
+ locator.registerFactory<ExploreRepository>(
+      () => ExploreRepositoryImpl(locator()));
+  locator.registerFactory<LocationByNameUsecase>(
+      () => LocationByNameUsecase(locator()));
+  locator.registerFactory<ExploreProvider>(
+      () => ExploreProvider(locator(), locator()));
 }

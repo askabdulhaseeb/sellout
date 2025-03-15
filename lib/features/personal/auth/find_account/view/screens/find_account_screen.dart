@@ -10,88 +10,86 @@ import '../providers/find_account_provider.dart';
 class FindAccountScreen extends StatelessWidget {
   const FindAccountScreen({super.key});
   static const String routeName = '/find-account';
-
   @override
   Widget build(BuildContext context) {
-    // Access the provider
+    final FindAccountProvider pro =
+        Provider.of<FindAccountProvider>(context, listen: false);
 
-    return Consumer<FindAccountProvider>(
-        builder: (BuildContext context, FindAccountProvider pro, _) => Scaffold(
-              appBar: AppBar(
-                centerTitle: true,
-                backgroundColor: Colors.transparent,
-                leading: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios_new_rounded),
-                    onPressed: () => Navigator.pop(context)),
-                elevation: 0,
-                title: const SellOutTitle(),
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded),
+            onPressed: () => Navigator.pop(context)),
+        elevation: 0,
+        title: const SellOutTitle(),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Form(
+          key: pro.findAccountFormKey, // Use the provider's form key
+          child: Column(
+            children: <Widget>[
+              const SizedBox(height: 10),
+              Text(
+                'find_account_title'.tr(),
+                style: Theme.of(context).textTheme.titleMedium,
               ),
-              body: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Form(
-                  key: pro.findAccountFormKey, // Use the provider's form key
-                  child: Column(
-                    children: <Widget>[
-                      const SizedBox(height: 10),
-                      Text(
-                        'find_account_title'.tr(),
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      const SizedBox(height: 4),
-                      Text('find_account_description'.tr(),
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(color: Colors.grey)),
-                      const SizedBox(
-                        height: 20,
-                        width: double.infinity,
-                      ),
-                      CustomTextFormField(
-                        controller: pro.phoneOrEmailController,
-                        hint: 'email'.tr(),
-                        autoFocus: true,
-                        autofillHints: const <String>[
-                          AutofillHints.email,
-                          AutofillHints.telephoneNumber
-                        ],
-                        keyboardType: TextInputType.emailAddress,
-                        validator: (String? value) =>
-                            AppValidator.validatePhoneOrEmail(value),
-                      ),
-                    ],
-                  ),
-                ),
+              const SizedBox(height: 4),
+              Text('find_account_description'.tr(),
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall
+                      ?.copyWith(color: Colors.grey)),
+              const SizedBox(
+                height: 20,
+                width: double.infinity,
               ),
-              bottomSheet: Container(
-                color: Colors.white,
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 1,
-                      child: CustomElevatedButton(
-                        margin: const EdgeInsets.all(10),
-                        title: 'cancel'.tr(),
-                        isLoading: false,
-                        bgColor: Colors.transparent,
-                        textColor: Colors.grey,
-                        border:
-                            Border.all(color: Theme.of(context).dividerColor),
-                        onTap: () => Navigator.pop(context),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: CustomElevatedButton(
-                          margin: const EdgeInsets.all(10),
-                          title: 'confirm'.tr(),
-                          isLoading: pro.isLoading,
-                          onTap: () => pro.findAccount(context)),
-                    ),
-                  ],
-                ),
+              CustomTextFormField(
+                controller: pro.phoneOrEmailController,
+                hint: 'email'.tr(),
+                autoFocus: true,
+                autofillHints: const <String>[
+                  AutofillHints.email,
+                  AutofillHints.telephoneNumber
+                ],
+                keyboardType: TextInputType.emailAddress,
+                validator: (String? value) =>
+                    AppValidator.validatePhoneOrEmail(value),
               ),
-            ));
+            ],
+          ),
+        ),
+      ),
+      bottomSheet: Container(
+        color: Colors.white,
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              flex: 1,
+              child: CustomElevatedButton(
+                margin: const EdgeInsets.all(10),
+                title: 'cancel'.tr(),
+                isLoading: false,
+                bgColor: Colors.transparent,
+                textColor: Colors.grey,
+                border: Border.all(color: Theme.of(context).dividerColor),
+                onTap: () => Navigator.pop(context),
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: CustomElevatedButton(
+                  margin: const EdgeInsets.all(10),
+                  title: 'confirm'.tr(),
+                  isLoading: pro.isLoading,
+                  onTap: () => pro.findAccount(context)),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

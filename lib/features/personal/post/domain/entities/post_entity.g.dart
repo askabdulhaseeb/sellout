@@ -32,6 +32,8 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       privacy: fields[12] as PrivacyType,
       condition: fields[13] as ConditionType,
       deliveryType: fields[14] as DeliveryType,
+      listOfReviews: (fields[15] as List).cast<int>(),
+      categoryType: fields[16] as String,
       currentLongitude: fields[30] as double,
       currentLatitude: fields[31] as double,
       collectionLatitude: fields[32] as double?,
@@ -69,6 +71,8 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       readyToLeave: fields[114] as String?,
       wormAndFleaTreated: fields[115] as bool?,
       vaccinationUpToDate: fields[116] as bool?,
+      propertytype: fields[117] as String?,
+      propertyCategory: fields[118] as String?,
       isActive: fields[190] as bool,
       createdBy: fields[191] as String,
       createdAt: fields[192] as DateTime,
@@ -80,7 +84,7 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
   @override
   void write(BinaryWriter writer, PostEntity obj) {
     writer
-      ..writeByte(57)
+      ..writeByte(61)
       ..writeByte(0)
       ..write(obj.listID)
       ..writeByte(1)
@@ -111,6 +115,10 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       ..write(obj.condition)
       ..writeByte(14)
       ..write(obj.deliveryType)
+      ..writeByte(15)
+      ..write(obj.listOfReviews)
+      ..writeByte(16)
+      ..write(obj.categoryType)
       ..writeByte(30)
       ..write(obj.currentLongitude)
       ..writeByte(31)
@@ -185,6 +193,10 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       ..write(obj.wormAndFleaTreated)
       ..writeByte(116)
       ..write(obj.vaccinationUpToDate)
+      ..writeByte(117)
+      ..write(obj.propertytype)
+      ..writeByte(118)
+      ..write(obj.propertyCategory)
       ..writeByte(190)
       ..write(obj.isActive)
       ..writeByte(191)
