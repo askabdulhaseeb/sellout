@@ -197,7 +197,7 @@ class _ExplorePopularScreenState extends State<ExplorePopularScreen> {
                   itemCount: popularPosts.length,
                   itemBuilder: (BuildContext context, int index) {
                     final PostEntity post = popularPosts[index];
-                    
+
                     return PostGridViewTile(post: post);
                   },
                 );

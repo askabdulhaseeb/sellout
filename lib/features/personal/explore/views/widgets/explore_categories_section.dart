@@ -7,6 +7,7 @@ import '../enums/category_types.dart';
 import '../enums/sort_enums.dart';
 import '../providers/explore_provider.dart';
 import '../screens/filter_categories/explore_cloth_foot_screen.dart';
+import '../screens/filter_categories/explore_food_drink_screen.dart';
 import '../screens/filter_categories/explore_pets_screen.dart';
 import '../screens/filter_categories/explore_property_screen.dart';
 import '../screens/filter_categories/explore_vehicles_screen.dart';
@@ -32,7 +33,7 @@ class ExploreCategoriesSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             _buildContainer(
-                '${'location'.tr()} - 10 KM',
+                '${'location'.tr()} - ${Provider.of<ExploreProvider>(context).selectedRadius} Km',
                 CupertinoIcons.location_solid,
                 primaryColor,
                 outlineColor,
@@ -106,7 +107,8 @@ class ExploreCategoriesSection extends StatelessWidget {
                   Navigator.pushNamed(context, ExploreVehiclesScreen.routeName);
                 }
                 if (category.name == 'food_drink') {
-                  Navigator.pushNamed(context, ExplorePopularScreen.routeName);
+                  Navigator.pushNamed(
+                      context, ExploreFoodDrinkScreen.routeName);
                 }
                 if (category.name == 'property') {
                   pro.filterSaleResults();

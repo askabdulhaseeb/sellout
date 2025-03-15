@@ -5,22 +5,8 @@ import 'package:provider/provider.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../providers/explore_provider.dart';
 
-class LocationRadiusBottomSheet extends StatefulWidget {
+class LocationRadiusBottomSheet extends StatelessWidget {
   const LocationRadiusBottomSheet({super.key});
-
-  @override
-  State<LocationRadiusBottomSheet> createState() =>
-      _LocationRadiusBottomSheetState();
-}
-
-class _LocationRadiusBottomSheetState extends State<LocationRadiusBottomSheet> {
-  final TextEditingController searchController = TextEditingController();
-  String radiusType = 'local';
-  LatLng selectedLocation =
-      const LatLng(37.7749, -122.4194); // Default Location
-
-  GoogleMapController? mapController;
-  double selectedRadius = 10.0; // Default radius in km
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +38,7 @@ class _LocationRadiusBottomSheetState extends State<LocationRadiusBottomSheet> {
             ],
           ),
           TextField(
-            controller: searchController,
+            controller: TextEditingController(),
             decoration: InputDecoration(
               hintText: 'search'.tr(),
               prefixIcon: const Icon(Icons.search),
@@ -66,37 +52,31 @@ class _LocationRadiusBottomSheetState extends State<LocationRadiusBottomSheet> {
           Expanded(
             child: GoogleMap(
               initialCameraPosition: CameraPosition(
-                target: selectedLocation,
+                target: provider.selectedLocation,
                 zoom: 12.0, // Default zoom level
               ),
               markers: {
                 Marker(
                   markerId: const MarkerId('selected-location'),
-                  position: selectedLocation,
+                  position: provider.selectedLocation,
                   infoWindow: const InfoWindow(title: "Selected Location"),
                 ),
               },
               circles: {
                 Circle(
                   circleId: const CircleId('radius'),
-                  center: selectedLocation,
-                  radius: (radiusType == 'local' ? selectedRadius : 10000) *
+                  center: provider.selectedLocation,
+                  radius: (provider.radiusType == 'local'
+                          ? provider.selectedRadius
+                          : 10000) *
                       1000, // 10,000 km for worldwide
                   fillColor: Colors.blue.withOpacity(0.3),
                   strokeWidth: 2,
                   strokeColor: Colors.blue,
                 ),
               },
-              onMapCreated: (GoogleMapController controller) {
-                setState(() {
-                  mapController = controller;
-                });
-              },
-              onTap: (LatLng location) {
-                setState(() {
-                  selectedLocation = location;
-                });
-              },
+              onMapCreated: provider.onMapCreated,
+              onTap: provider.onLocationChanged,
             ),
           ),
 
@@ -106,11 +86,13 @@ class _LocationRadiusBottomSheetState extends State<LocationRadiusBottomSheet> {
           Column(
             children: <Widget>[
               _buildRadiusOption(
+                context: context,
                 title: 'worldwide_radius'.tr(),
                 subtitle: 'Show_listings_anywhere'.tr(),
                 value: 'worldwide',
               ),
               _buildRadiusOption(
+                context: context,
                 title: 'local_radius'.tr(),
                 subtitle: 'Show_specific_listings'.tr(),
                 value: 'local',
@@ -119,27 +101,23 @@ class _LocationRadiusBottomSheetState extends State<LocationRadiusBottomSheet> {
           ),
 
           // 🔹 Slider for Radius (Only When Local is Selected)
-          if (radiusType == 'local')
+          if (provider.radiusType == 'local')
             Row(
               children: <Widget>[
                 Expanded(
                   child: Slider(
-                    value: selectedRadius,
+                    value: provider.selectedRadius,
                     min: 1.0,
                     max: 100.0,
                     divisions: 99,
-                    label: '${selectedRadius.toStringAsFixed(1)} km',
+                    label: '${provider.selectedRadius.toStringAsFixed(1)} km',
                     onChanged: (double value) {
-                      if (radiusType == 'local') {
-                        setState(() {
-                          selectedRadius = value;
-                        });
-                      }
+                      provider.selectRadius = value;
                     },
                   ),
                 ),
                 Text(
-                  '${selectedRadius.toStringAsFixed(1)} km',
+                  '${provider.selectedRadius.toStringAsFixed(1)} km',
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ],
@@ -155,9 +133,9 @@ class _LocationRadiusBottomSheetState extends State<LocationRadiusBottomSheet> {
     );
   }
 
-  // 🔹 Reusable Method for Radius Selection
   Widget _buildRadiusOption(
-      {required String title,
+      {required BuildContext context,
+      required String title,
       required String subtitle,
       required String value}) {
     return Row(
@@ -172,16 +150,9 @@ class _LocationRadiusBottomSheetState extends State<LocationRadiusBottomSheet> {
         ),
         Radio<String>(
           value: value,
-          groupValue: radiusType,
+          groupValue: context.read<ExploreProvider>().radiusType,
           onChanged: (String? newValue) {
-            setState(() {
-              radiusType = newValue!;
-              if (radiusType == 'worldwide') {
-                selectedRadius = 10000; // Fixed worldwide radius
-              } else {
-                selectedRadius = 10.0; // Reset to default for local
-              }
-            });
+            context.read<ExploreProvider>().radiusType = newValue!;
           },
         ),
       ],
