@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../core/sources/data_state.dart';
@@ -17,7 +18,6 @@ class ExploreProvider extends ChangeNotifier {
   ExploreProvider(this._getFeedUsecase, this._fetchLocationUseCase);
   final GetFeedUsecase _getFeedUsecase;
   final LocationByNameUsecase _fetchLocationUseCase;
-
   String _selectedPersonalCategory = 'all';
   String _selectedBusinessCategory = 'all';
   String? _selectedfootbrand;
@@ -46,7 +46,6 @@ class ExploreProvider extends ChangeNotifier {
   SortOption _selectedSortOption = SortOption.dateAscending;
   TextEditingController searchController = TextEditingController();
   TextEditingController postodeController = TextEditingController();
-
   CategoryTypes? selectedCategory;
   DeliveryType? selectedDelivery;
   String? _selectedsalePropertytype;
@@ -55,7 +54,6 @@ class ExploreProvider extends ChangeNotifier {
   String? selectedDateFilter;
   double? minPrice;
   double? maxPrice;
-  double _selectedRadius = 10.0;
   List<PostEntity> popularCategoryFilteredList = <PostEntity>[];
   List<PostEntity> footCategoryFilteredList = <PostEntity>[];
   List<PostEntity> clothCategoryFilteredList = <PostEntity>[];
@@ -75,8 +73,14 @@ class ExploreProvider extends ChangeNotifier {
     1000000,
     10000000
   ];
+  double _selectedRadius = 10.0; // Default local radius
   int _selectedfootclothTab = 0;
   int _selectedpropertyTab = 0;
+  String _radiusType = 'local'; // Default radius type (local or worldwide)
+  LatLng _selectedLocation =
+      const LatLng(37.7749, -122.4194); // Default Location
+
+  GoogleMapController? _mapController;
 
 // Getters
   String get selectedPersonalCategory => _selectedPersonalCategory;
@@ -93,6 +97,7 @@ class ExploreProvider extends ChangeNotifier {
   String? get selectedagepet => _selectedagepet;
   String? get selectedreadytoleavepet => _selectedreadytoleavepet;
   String? get selectedcategorypet => _selectedcategorypet;
+  double get selectedRadius => _selectedRadius;
 
   List<ColorEntity> get availablefootColors => _availablefootColors;
   List<ColorEntity> get availableclothColors => _availableclothColors;
@@ -107,18 +112,60 @@ class ExploreProvider extends ChangeNotifier {
   bool get showAll => _showAll;
   List<PostEntity> get posts => _posts;
   SortOption get selectedSortOption => _selectedSortOption;
-  double get selectedRadius => _selectedRadius;
+  String get radiusType => _radiusType;
+  LatLng get selectedLocation => _selectedLocation;
+  GoogleMapController? get mapController => _mapController;
 //
+  set selectRadius(double value) {
+    if (value != _selectedRadius) {
+      _selectedRadius = value;
+      notifyListeners();
+    }
+  }
+
+  set radiusType(String value) {
+    if (value != _radiusType) {
+      _radiusType = value;
+
+      if (_radiusType == 'worldwide') {
+        _selectedRadius = 10000;
+      } else {
+        _selectedRadius = 10.0;
+      }
+
+      // Notify listeners after updating the radiusType
+      notifyListeners();
+    }
+  }
+
+  set selectedLocation(LatLng location) {
+    if (location != _selectedLocation) {
+      _selectedLocation = location;
+      notifyListeners(); // Notify listeners after updating the location
+    }
+  }
+
+  set mapController(GoogleMapController? controller) {
+    if (controller != _mapController) {
+      _mapController = controller;
+      notifyListeners(); // Notify listeners after updating the map controller
+    }
+  }
+
+  // Methods to update state
+  void onMapCreated(GoogleMapController controller) {
+    mapController = controller; // Calls the setter with a non-null controller
+  }
+
+  void onLocationChanged(LatLng location) {
+    selectedLocation = location;
+  }
+
   Future<DataState<List<PostEntity>>> getFeed() async {
     final DataState<List<PostEntity>> result = await _getFeedUsecase(null);
     _posts.addAll(result.entity ?? <PostEntity>[]);
     notifyListeners();
     return result;
-  }
-
-  void updateRadius(double radius) {
-    _selectedRadius = radius;
-    notifyListeners(); // Notifies UI to update
   }
 
   void updatefootclothSelectedTab(int index) {
@@ -137,7 +184,6 @@ class ExploreProvider extends ChangeNotifier {
     return sum / reviews.length;
   }
 
-  // Method to update the condition (new or used)
   void updateCondition(ConditionType? newCondition) {
     _selectedCondition = newCondition;
   }

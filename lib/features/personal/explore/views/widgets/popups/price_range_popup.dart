@@ -1,7 +1,4 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../core/utilities/app_validators.dart';
-import '../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../services/get_it.dart';
 import '../../providers/explore_provider.dart';

@@ -354,9 +354,9 @@ void _country() {
   // Providers
 }
 
-void _explore() {locator.registerFactory<ExploreRemoteSource>(
-      () => ExploreRemoteSourceImpl());
- locator.registerFactory<ExploreRepository>(
+void _explore() {
+  locator.registerFactory<ExploreRemoteSource>(() => ExploreRemoteSourceImpl());
+  locator.registerFactory<ExploreRepository>(
       () => ExploreRepositoryImpl(locator()));
   locator.registerFactory<LocationByNameUsecase>(
       () => LocationByNameUsecase(locator()));

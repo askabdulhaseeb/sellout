@@ -1,8 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/enums/listing/core/delivery_type.dart';
-import '../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../post/domain/entities/post_entity.dart';
 import '../../../../user/profiles/views/widgets/subwidgets/post_grid_view_tile.dart';
