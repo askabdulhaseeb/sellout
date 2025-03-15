@@ -1,3 +1,4 @@
+
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
@@ -24,14 +25,20 @@ class FindAccountRemoteDataSourceimpl implements FindAccountRemoteDataSource {
           try {
             final Map<String, dynamic> jsonData =
                 jsonDecode(response.data as String);
-            return DataSuccess(response.data!, jsonData);
+            return DataSuccess<Map<String, dynamic>>(
+              response.data ?? '',
+              jsonData,
+            );
           } catch (e) {
             return DataFailer<Map<String, dynamic>>(
                 CustomException('Invalid JSON format'));
           }
         } else {
-          AppLog.error('something_wrong'.tr(),
-              name: 'FindAccountRemote.findAccount - else');
+
+          AppLog.error(
+            'something_wrong'.tr(),
+            name: 'FindAccountRemoteDataSourceimpl.findAccount - else',
+          );
           return DataFailer<Map<String, dynamic>>(
               CustomException('Response data is null'));
         }
