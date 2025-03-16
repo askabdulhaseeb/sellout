@@ -19,6 +19,7 @@ import '../features/personal/listing/listing_form/views/screens/add_listing_form
 import '../features/personal/auth/signin/views/screens/sign_in_screen.dart';
 import '../features/personal/auth/signup/views/screens/signup_screen.dart';
 import '../features/personal/dashboard/views/screens/dasboard_screen.dart';
+import '../features/personal/post/book_visit/view/screens/view_booking_screen.dart';
 import '../features/personal/post/post_detail/views/screens/post_detail_screen.dart';
 import '../features/personal/review/features/reivew_list/views/screens/media_picker_screen.dart';
 import '../features/personal/review/features/reivew_list/views/screens/write_review_screen.dart';
@@ -69,8 +70,10 @@ class AppRoutes {
     AddListingFormScreen.routeName: (_) => const AddListingFormScreen(),
     // POST
     PostDetailScreen.routeName: (_) => const PostDetailScreen(),
-
+    //CHAT
     ChatScreen.routeName: (_) => const ChatScreen(),
+    //BOOKING
+    BookingScreen.routeName: (_) =>  BookingScreen(),
 
     // CART
     PersonalCartScreen.routeName: (_) => const PersonalCartScreen(),
