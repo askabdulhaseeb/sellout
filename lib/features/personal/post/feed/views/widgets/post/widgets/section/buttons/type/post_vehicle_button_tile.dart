@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../../../book_visit/view/screens/view_booking_screen.dart';
 import '../../../../../../../../domain/entities/post_entity.dart';
 import 'widgets/post_make_offer_button.dart';
 
@@ -26,7 +27,10 @@ class PostVehicleButtonTile extends StatelessWidget {
               color: Theme.of(context).primaryColor,
             ),
             isLoading: false,
-            onTap: () {},
+            onTap: () {
+              Navigator.pushNamed(context, BookingScreen.routeName,
+                  arguments: <String, dynamic>{'post': post});
+            },
           ),
         ),
       ],

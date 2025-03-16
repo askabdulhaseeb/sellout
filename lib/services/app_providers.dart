@@ -13,6 +13,7 @@ import '../features/personal/explore/views/providers/explore_provider.dart';
 import '../features/personal/listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../features/personal/chats/chat_dashboard/views/providers/chat_dashboard_provider.dart';
 import '../features/personal/dashboard/views/providers/personal_bottom_nav_provider.dart';
+import '../features/personal/post/book_visit/view/provider/view_booking_provider.dart';
 import '../features/personal/post/feed/views/providers/feed_provider.dart';
 import '../features/personal/post/post_detail/views/providers/post_detail_provider.dart';
 import '../features/personal/review/features/reivew_list/views/providers/review_provider.dart';
@@ -60,7 +61,8 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
   ChangeNotifierProvider<CartProvider>.value(
       value:
           CartProvider(locator(), locator(), locator(), locator(), locator())),
-  ChangeNotifierProvider<ReviewProvider>.value(value: ReviewProvider(locator())),
+  ChangeNotifierProvider<ReviewProvider>.value(
+      value: ReviewProvider(locator())),
   //
   ChangeNotifierProvider<AppointmentTileProvider>.value(
       value: AppointmentTileProvider(locator())),
@@ -71,5 +73,12 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
   ChangeNotifierProvider<AddServiceProvider>.value(
       value: AddServiceProvider(locator())),
   ChangeNotifierProvider<ExploreProvider>.value(
-      value: ExploreProvider(locator(),locator(),)),
+      value: ExploreProvider(
+    locator(),
+    locator(),
+  )),
+
+//
+  ChangeNotifierProvider<BookingProvider>.value(
+      value: BookingProvider(locator())),
 ];
