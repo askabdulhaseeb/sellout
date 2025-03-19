@@ -1,5 +1,4 @@
-
-import '../../../../attachment/domain/entities/attachment_entity.dart';
+import '../../../../attachment/domain/entities/picked_attachment.dart';
 
 class CreateReviewParams {
   CreateReviewParams({
@@ -8,22 +7,23 @@ class CreateReviewParams {
     required this.title,
     required this.text,
     required this.reviewType,
-
+    this.attachments = const <PickedAttachment>[],
   });
+
   final String postId;
-  final double rating;
+  final String rating;
   final String title;
   final String text;
   final String reviewType;
+  final List<PickedAttachment> attachments; // Include attachments
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'post_id': postId,
+  Map<String, String>? toMap() {
+    return <String, String>{
+      'post_id': postId.trim(),
       'rating': rating,
-      'title': title,
-      'text': text,
+      'title': title.trim(),
+      'text': text.trim(),
       'review_type': reviewType,
-      
     };
   }
 }

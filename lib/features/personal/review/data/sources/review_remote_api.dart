@@ -2,9 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/api_call.dart';
-import '../../../../../core/sources/local/hive_db.dart';
 import '../../../../../core/sources/local/local_request_history.dart';
-import '../../../auth/signin/data/models/current_user_model.dart';
+import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../domain/entities/review_entity.dart';
 import '../../domain/param/create_review_params.dart';
 import '../../domain/param/get_review_param.dart';
@@ -89,11 +88,13 @@ class ReviewRemoteApiImpl implements ReviewRemoteApi {
   Future<DataState<bool>> postReview(CreateReviewParams params) async {
     try {
       const String endpoints = '/review/create';
-      final DataState<bool> response = await ApiCall<bool>().call(
+      final DataState<bool> response = await ApiCall<bool>().callFormData(
           endpoint: endpoints,
           requestType: ApiRequestType.post,
-          body: json.encode(params.toMap()),
-          isAuth: true);
+          fieldsMap: params.toMap(),
+          attachments: params.attachments,
+          isAuth: true,
+          isConnectType: false);
       debugPrint('API Response: $response');
       if (response is DataSuccess<bool>) {
         AppLog.info(
@@ -101,8 +102,7 @@ class ReviewRemoteApiImpl implements ReviewRemoteApi {
           name: 'ReviewRemoteApiImpl.postReview - Success: ${response.data}',
         );
         return response;
-      } else if (response is DataFailer<bool>) {
-        debugPrint('API Error Data: ${params.toMap()}');
+      } else if (response is DataFailer<ReviewEntity>) {
         AppLog.error(
           'something_wrong'.tr(),
           name:

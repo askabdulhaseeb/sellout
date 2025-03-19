@@ -503,6 +503,8 @@
     "cancel_viewing_description": "Please confirm if you want to cancel the viewing. Ths action cannot be undone.",
     "are_you_sure": "Are you Sure?",
     "book": "Book",
+    "visit_cancelled": "Visit Cancelled Successfully",
+    "visit_updated": "Visit Updated Successfully",
     "all": "All",
     "see_all": "See All",
     "next": "Next",

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../core/functions/app_log.dart';
 import '../features/business/service/views/screens/add_service_screen.dart';
 import '../features/personal/auth/find_account/view/screens/confirm_email_screen.dart';
@@ -73,7 +72,7 @@ class AppRoutes {
     //CHAT
     ChatScreen.routeName: (_) => const ChatScreen(),
     //BOOKING
-    BookingScreen.routeName: (_) =>  BookingScreen(),
+    BookingScreen.routeName: (_) => const BookingScreen(),
 
     // CART
     PersonalCartScreen.routeName: (_) => const PersonalCartScreen(),

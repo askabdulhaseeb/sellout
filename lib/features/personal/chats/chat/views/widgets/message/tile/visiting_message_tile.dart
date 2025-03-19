@@ -28,6 +28,17 @@ class VisitingMessageTile extends StatelessWidget {
             child: ShadowContainer(
               child: Column(
                 children: <Widget>[
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  if (message.visitingDetail?.status == StatusType.pending)
+                    VisitingUpdateButtonsWidget(message: message, post: post)
+                  else
+                    const SizedBox.shrink(),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Divider(),
                   Opacity(
                     opacity: 0.6,
                     child: const Text(
@@ -83,13 +94,6 @@ class VisitingMessageTile extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  if (message.visitingDetail?.status == StatusType.cancelled)
-                    const SizedBox.shrink()
-                  else 
-                    VisitingUpdateButtonsWidget(message: message ,post: post  )
                 ],
               ),
             ),
