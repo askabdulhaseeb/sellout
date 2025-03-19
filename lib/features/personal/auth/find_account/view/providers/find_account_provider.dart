@@ -7,7 +7,6 @@ import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../signin/views/screens/sign_in_screen.dart';
-import '../../../signup/domain/usecase/verify_opt_usecase.dart';
 import '../../domain/use_cases/find_account_usecase.dart';
 import '../../domain/use_cases/newpassword_usecase.dart';
 import '../../domain/use_cases/send_otp_usecase.dart';

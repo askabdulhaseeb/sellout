@@ -46,6 +46,9 @@ import '../features/personal/auth/signup/domain/usecase/register_user_usecase.da
 import '../features/personal/auth/signup/domain/usecase/send_opt_usecase.dart';
 import '../features/personal/auth/signup/domain/usecase/verify_opt_usecase.dart';
 import '../features/personal/auth/signup/views/providers/signup_provider.dart';
+import '../features/personal/book_visit/domain/usecase/cancel_visit_usecase.dart';
+import '../features/personal/book_visit/domain/usecase/update_visit_usecase.dart';
+import '../features/personal/book_visit/view/params/update_visit_params.dart';
 import '../features/personal/cart/data/repositories/cart_repository_impl.dart';
 import '../features/personal/cart/data/repositories/checkout_repository_impl.dart';
 import '../features/personal/cart/data/sources/remote/cart_remote_api.dart';
@@ -74,11 +77,11 @@ import '../features/personal/explore/data/source/explore_remote_source.dart';
 import '../features/personal/explore/domain/repository/location_name_repo.dart';
 import '../features/personal/explore/domain/usecase/location_name_usecase.dart';
 import '../features/personal/explore/views/providers/explore_provider.dart';
-import '../features/personal/post/book_visit/data/repo/visit_book_repo_impl.dart';
-import '../features/personal/post/book_visit/data/source/book_visit_api.dart';
-import '../features/personal/post/book_visit/domain/repo/book_visit_repo.dart';
-import '../features/personal/post/book_visit/domain/usecase/book_visit_usecase.dart';
-import '../features/personal/post/book_visit/view/provider/view_booking_provider.dart';
+import '../features/personal/book_visit/data/repo/visit_book_repo_impl.dart';
+import '../features/personal/book_visit/data/source/book_visit_api.dart';
+import '../features/personal/book_visit/domain/repo/book_visit_repo.dart';
+import '../features/personal/book_visit/domain/usecase/book_visit_usecase.dart';
+import '../features/personal/book_visit/view/provider/view_booking_provider.dart';
 import '../features/personal/post/data/repositories/post_repository_impl.dart';
 import '../features/personal/post/data/sources/remote/post_remote_api.dart';
 import '../features/personal/post/domain/repositories/post_repository.dart';
@@ -373,6 +376,11 @@ void _explore() {
 void _bookvisit() {
   locator.registerFactory<BookVisitApi>(() => BookVisitApiImpl());
   locator.registerFactory<BookVisitRepo>(() => BookVisitRepoImpl(locator()));
+  locator
+      .registerFactory<UpdateVisitUseCase>(() => UpdateVisitUseCase(locator()));
+  locator
+      .registerFactory<CancelVisitUseCase>(() => CancelVisitUseCase(locator()));
   locator.registerFactory<BookVisitUseCase>(() => BookVisitUseCase(locator()));
-  locator.registerFactory<BookingProvider>(() => BookingProvider(locator()));
+  locator.registerFactory<BookingProvider>(
+      () => BookingProvider(locator(), locator(), locator(), locator()));
 }

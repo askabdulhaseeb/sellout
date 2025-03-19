@@ -1,18 +1,15 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../../../../../core/theme/app_theme.dart';
-import '../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../domain/entities/post_entity.dart';
-import '../provider/view_booking_provider.dart';
+import '../../../post/domain/entities/post_entity.dart';
 import '../widgets/booking_calender.dart';
 import '../widgets/booking_product_detail.dart';
 import '../widgets/booking_profile.dart';
+import '../widgets/book_visit_button.dart';
 
 class BookingScreen extends StatelessWidget {
   const BookingScreen({super.key});
   static String routeName = '/book-viewing';
+
   @override
   Widget build(BuildContext context) {
     final Map<String, dynamic> args =
@@ -30,24 +27,11 @@ class BookingScreen extends StatelessWidget {
             ProductImageWidget(
               post: post.imageURL,
             ),
-            BookingCalendarWidget(availabilities: post.availability),
+            BookingCalendarWidget(post: post),
             const SizedBox(),
             BookViewProductDetail(post: post, texttheme: texttheme),
             const SizedBox(),
-            Consumer<BookingProvider>(builder: (BuildContext context,
-                BookingProvider provider, Widget? child) {
-              return CustomElevatedButton(
-                  bgColor: provider.selectedTime != null
-                      ? AppTheme.primaryColor
-                      : AppTheme.darkScaffldColor.withAlpha(100),
-                  title: 'book'.tr(),
-                  isLoading: false,
-                  onTap: () {
-                    provider.setpostId(post.postID);
-                    provider.setbusinessId(post.businessID ?? 'null');
-                    provider.bookVisit(context);
-                  });
-            })
+            BookVisitButton(post: post)
           ],
         ),
       ),

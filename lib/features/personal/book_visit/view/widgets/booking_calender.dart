@@ -2,55 +2,30 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import '../../../../../../core/enums/routine/day_type.dart';
-import '../../../../../../core/theme/app_theme.dart';
-import '../../../domain/entities/meetup/availability_entity.dart';
+import '../../../../../core/enums/routine/day_type.dart';
+import '../../../../../core/theme/app_theme.dart';
+import '../../../post/data/models/meetup/availability_model.dart';
+import '../../../post/domain/entities/meetup/availability_entity.dart';
+import '../../../post/domain/entities/post_entity.dart';
 import '../provider/view_booking_provider.dart';
 
 class BookingCalendarWidget extends StatelessWidget {
-  const BookingCalendarWidget({required this.availabilities, super.key});
-  final List<AvailabilityEntity>? availabilities;
-
-  List<String> _generateTimeSlots(String openingTime, String closingTime) {
-    try {
-      final DateFormat format = DateFormat('hh:mm a');
-
-      openingTime = openingTime.toUpperCase().trim();
-      closingTime = closingTime.toUpperCase().trim();
-      final DateTime open = format.parse(openingTime);
-      final DateTime close = format.parse(closingTime);
-
-      List<String> timeSlots = <String>[];
-      DateTime current = open;
-
-      while (current.isBefore(close) || current.isAtSameMomentAs(close)) {
-        timeSlots.add(format.format(current));
-        current = current.add(const Duration(minutes: 30));
-      }
-
-      return timeSlots;
-    } catch (e) {
-      debugPrint(
-          "Time Parsing Error: $e (Opening: '$openingTime', Closing: '$closingTime')");
-      return <String>[];
-    }
-  }
-
+  const BookingCalendarWidget({required this.post, super.key});
+  final PostEntity post;
   @override
   Widget build(BuildContext context) {
+    final List<AvailabilityEntity>? availabilities = post.availability;
     final BookingProvider provider = Provider.of<BookingProvider>(context);
     String selectedDay =
         DateFormat('EEEE').format(provider.selectedDate).toLowerCase();
-
     final AvailabilityEntity? selectedAvailability = availabilities?.firstWhere(
-      (AvailabilityEntity entry) => entry.day.code == selectedDay,
-      orElse: () => const AvailabilityEntity(
-        day: DayType.sunday,
-        isOpen: false,
-        openingTime: '',
-        closingTime: '',
-      ),
-    );
+        (AvailabilityEntity entry) => entry.day.code == selectedDay,
+        orElse: (() => AvailabilityModel(
+              day: DayType.sunday,
+              isOpen: false,
+              openingTime: '',
+              closingTime: '',
+            )));
     final TextTheme texttheme = Theme.of(context).textTheme;
     return Column(
       children: <Widget>[
@@ -61,8 +36,13 @@ class BookingCalendarWidget extends StatelessWidget {
                 ColorScheme.light(primary: Theme.of(context).primaryColor),
           ),
           child: CalendarDatePicker(
-            initialDate: provider.selectedDate,
-            firstDate: DateTime(2000),
+            selectableDayPredicate: (DateTime date) {
+              return date
+                  .isAfter(DateTime.now().subtract(const Duration(days: 1)));
+            },
+            initialDate:
+            provider.selectedDate,
+            firstDate: DateTime(2025),
             lastDate: DateTime(2100),
             onDateChanged: (DateTime newDate) {
               provider.updateDate(newDate);
@@ -72,15 +52,17 @@ class BookingCalendarWidget extends StatelessWidget {
         const SizedBox(height: 20),
         if (selectedAvailability?.isOpen == true)
           SizedBox(
-            height: 50, // Set a fixed height for horizontal scrolling
+            height: 50,
             child: ListView.builder(
-              scrollDirection: Axis.horizontal, // Enables horizontal scrolling
-              itemCount: _generateTimeSlots(
-                selectedAvailability!.openingTime,
-                selectedAvailability.closingTime,
-              ).length,
+              scrollDirection: Axis.horizontal,
+              itemCount: provider
+                  .generateTimeSlots(
+                    selectedAvailability!.openingTime,
+                    selectedAvailability.closingTime,
+                  )
+                  .length,
               itemBuilder: (BuildContext context, int index) {
-                String time = _generateTimeSlots(
+                String time = provider.generateTimeSlots(
                   selectedAvailability.openingTime,
                   selectedAvailability.closingTime,
                 )[index];

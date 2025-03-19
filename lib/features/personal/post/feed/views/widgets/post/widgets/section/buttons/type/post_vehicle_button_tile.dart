@@ -1,8 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../../../book_visit/view/screens/view_booking_screen.dart';
+import '../../../../../../../../../book_visit/view/provider/view_booking_provider.dart';
+import '../../../../../../../../../book_visit/view/screens/view_booking_screen.dart';
 import '../../../../../../../../domain/entities/post_entity.dart';
 import 'widgets/post_make_offer_button.dart';
 
@@ -12,6 +14,7 @@ class PostVehicleButtonTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final pro = Provider.of<BookingProvider>(context, listen: false);
     return Row(
       children: <Widget>[
         Expanded(child: PostMakeOfferButton(post: post)),
@@ -28,6 +31,7 @@ class PostVehicleButtonTile extends StatelessWidget {
             ),
             isLoading: false,
             onTap: () {
+              pro.disposed();
               Navigator.pushNamed(context, BookingScreen.routeName,
                   arguments: <String, dynamic>{'post': post});
             },

@@ -22,7 +22,9 @@ class PostButtonSection extends StatelessWidget {
         : Padding(
             padding: padding ??
                 const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            child: post.type == ListingType.pets
+            child: (post.type == ListingType.pets ||
+                    post.type == ListingType.vehicle ||
+                    post.type == ListingType.property)
                 ? PostVehicleButtonTile(post: post)
                 : PostItemButtonTile(post: post),
           );

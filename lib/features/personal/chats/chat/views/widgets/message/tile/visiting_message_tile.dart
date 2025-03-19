@@ -1,9 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
+import '../../../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../../../core/extension/datetime_ext.dart';
 import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../../core/widgets/shadow_container.dart';
+import '../../../../../../book_visit/view/widgets/visiting_update_buttons_widget.dart';
 import '../../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../../post/domain/entities/post_entity.dart';
 import '../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
@@ -15,7 +16,7 @@ class VisitingMessageTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const TextStyle boldStyle =
-        TextStyle(fontWeight: FontWeight.bold, fontSize: 18);
+        TextStyle(fontWeight: FontWeight.bold, fontSize: 16);
     return FutureBuilder<PostEntity?>(
         future: LocalPost().getPost(message.visitingDetail?.postID ??
             message.offerDetail?.post.postID ??
@@ -82,6 +83,13 @@ class VisitingMessageTile extends StatelessWidget {
                       ),
                     ],
                   ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  if (message.visitingDetail?.status == StatusType.cancelled)
+                    const SizedBox.shrink()
+                  else 
+                    VisitingUpdateButtonsWidget(message: message ,post: post  )
                 ],
               ),
             ),
