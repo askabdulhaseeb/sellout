@@ -575,12 +575,12 @@ class ExploreProvider extends ChangeNotifier {
     return post.title.toLowerCase().contains(searchText.toLowerCase());
   }
 
-  bool _matchespostcode(PostEntity post, String? postcode) {
-    if (postcode == null || postcode.isEmpty) {
-      return true; // No search text means show all posts
-    }
-    return post.title.toLowerCase().contains(postcode.toLowerCase());
-  }
+  // bool _matchespostcode(PostEntity post, String? postcode) {
+  //   if (postcode == null || postcode.isEmpty) {
+  //     return true; // No search text means show all posts
+  //   }
+  //   return post.title.toLowerCase().contains(postcode.toLowerCase());
+  // }
 
   bool _matchesPrice(PostEntity post, double? minPrice, double? maxPrice) {
     return (minPrice == null || post.price >= minPrice) &&

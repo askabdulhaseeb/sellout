@@ -26,7 +26,6 @@ class ChatProvider extends ChangeNotifier {
 
   GettedMessageEntity? _gettedMessage;
   GettedMessageEntity? get gettedMessage => _gettedMessage;
-
   final TextEditingController _message = TextEditingController();
   TextEditingController get message => _message;
 
