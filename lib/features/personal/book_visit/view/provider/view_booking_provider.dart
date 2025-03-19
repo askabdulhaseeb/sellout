@@ -144,13 +144,12 @@ class BookingProvider extends ChangeNotifier {
 
     final DataState<VisitingEntity> result = await _cancelVisitUseCase(params);
     if (result is DataSuccess) {
-      AppSnackBar.showSnackBar(context, 'Visit cancel successfully');
+      AppSnackBar.showSnackBar(context, 'visit_cancelled'.tr());
       Navigator.pop(context);
     } else {
       AppSnackBar.showSnackBar(
-          context, result.exception?.message ?? 'Error canceling visit');
+          context, result.exception?.message ?? 'something_wrong'.tr());
     }
-
     isLoading = false;
   }
 
@@ -169,7 +168,7 @@ class BookingProvider extends ChangeNotifier {
     );
     final DataState<VisitingEntity> result = await _updateVisitUseCase(params);
     if (result is DataSuccess) {
-      AppSnackBar.showSnackBar(context, 'Visit date updated successfully');
+      AppSnackBar.showSnackBar(context, 'visit_updated'.tr());
       disposed();
       Navigator.pop(context);
     } else {

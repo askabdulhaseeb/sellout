@@ -1,9 +1,7 @@
-import 'dart:typed_data';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import '../../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../providers/review_provider.dart';
 import '../screens/media_picker_screen.dart';
 
@@ -48,42 +46,33 @@ class SelectReviewMediaSection extends StatelessWidget {
                           child: const Center(child: Icon(Icons.add)),
                         ),
                       ),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        itemCount: provider.selectedMedia.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return FutureBuilder<Uint8List?>(
-                            future: provider.selectedMedia[index].thumbnailData,
-                            builder: (BuildContext context,
-                                AsyncSnapshot<Uint8List?> snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const SizedBox(
-                                  width: 80,
-                                  height: 80,
-                                  child: Center(
-                                      child: CircularProgressIndicator()),
-                                );
-                              }
-                              if (!snapshot.hasData || snapshot.data == null) {
-                                return const SizedBox.shrink();
-                              }
-                              return Container(
-                                width: 80,
-                                height: 80,
-                                margin: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  image: DecorationImage(
-                                    image: MemoryImage(snapshot.data!),
-                                    fit: BoxFit.cover,
+                      Consumer<ReviewProvider>(
+                        builder: (BuildContext context, ReviewProvider provider,
+                            Widget? child) {
+                          return provider.selectedattachment.isEmpty
+                              ? const SizedBox.shrink()
+                              : Container(
+                                  height: 100,
+                                  width: 200,
+                                  margin: const EdgeInsets.all(8.0),
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount:
+                                        provider.selectedattachment.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      final PickedAttachment media =
+                                          provider.selectedattachment[index];
+                                      return Padding(
+                                        padding: const EdgeInsets.all(4.0),
+                                        child: Image.file(media.file,
+                                            width: 100,
+                                            height: 100,
+                                            fit: BoxFit.cover),
+                                      );
+                                    },
                                   ),
-                                ),
-                              );
-                            },
-                          );
+                                );
                         },
                       ),
                     ],

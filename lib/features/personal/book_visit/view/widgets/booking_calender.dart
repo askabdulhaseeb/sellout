@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 import '../../../../../core/enums/routine/day_type.dart';
 import '../../../../../core/theme/app_theme.dart';
 import '../../../post/data/models/meetup/availability_model.dart';
@@ -40,8 +39,7 @@ class BookingCalendarWidget extends StatelessWidget {
               return date
                   .isAfter(DateTime.now().subtract(const Duration(days: 1)));
             },
-            initialDate:
-            provider.selectedDate,
+            initialDate: provider.selectedDate,
             firstDate: DateTime(2025),
             lastDate: DateTime(2100),
             onDateChanged: (DateTime newDate) {

@@ -80,7 +80,7 @@ class FindAccountProvider with ChangeNotifier {
                 email = phoneOrEmail;
                 Navigator.of(context).pushNamed(ConfirmEmailScreen.routeName);
               } else {
-                AppLog.error('${result.exception}' ?? 'something_wrong'.tr(),
+                AppLog.error('${result.exception}',
                     name: 'FindAccountProvider.findAccount - else');
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('something_wrong'.tr())),

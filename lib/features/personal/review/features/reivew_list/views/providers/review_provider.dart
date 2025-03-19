@@ -1,8 +1,14 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:video_player/video_player.dart';
+import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/data_state.dart';
+import '../../../../../../attachment/domain/entities/picked_attachment.dart';
+import '../../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../../post/data/sources/local/local_post.dart';
+import '../../../../data/sources/local_review.dart';
 import '../../../../domain/enums/review_sort_type.dart';
 import '../../../../domain/param/create_review_params.dart';
 import '../../../../domain/usecase/create_review_usecase.dart';
@@ -16,15 +22,16 @@ class ReviewProvider extends ChangeNotifier {
   TextEditingController reviewTitle = TextEditingController();
   TextEditingController reviewdescription = TextEditingController();
   String postIdentity = '';
-  List<AssetEntity> _assets = <AssetEntity>[];
-  final List<AssetEntity> _selectedMedia = <AssetEntity>[];
+  final List<PickedAttachment> _attachments = <PickedAttachment>[];
+  final List<PickedAttachment> _selectedattachment = <PickedAttachment>[];
   int _currentIndex = 0;
   VideoPlayerController? _videoController;
-
-  List<AssetEntity> get assets => _assets;
-  List<AssetEntity> get selectedMedia => _selectedMedia;
+  bool _isloading = false;
+  List<PickedAttachment> get attachments => _attachments;
+  List<PickedAttachment> get selectedattachment => _selectedattachment;
   int get currentIndex => _currentIndex;
   VideoPlayerController? get videoController => _videoController;
+  bool get isloading => _isloading;
   init(ReviewListScreenParam param) {
     _reviews = param.reviews;
     _sortType = param.sortType ?? ReviewSortType.topReview;
@@ -32,6 +39,11 @@ class ReviewProvider extends ChangeNotifier {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });
+  }
+
+  set isloading(bool value) {
+    _isloading = value;
+    notifyListeners();
   }
 
   void setReviews(List<ReviewEntity> reviews) {
@@ -81,21 +93,41 @@ class ReviewProvider extends ChangeNotifier {
   }
 
   Future<void> fetchMedia() async {
+    final previousSelection = _selectedattachment.toList();
+    _attachments.clear();
     final PermissionState permission =
         await PhotoManager.requestPermissionExtend();
+    if (!permission.isAuth) return;
+    final List<AssetPathEntity> albums = await PhotoManager.getAssetPathList(
+      onlyAll: true,
+      type: RequestType.image | RequestType.video,
+    );
 
-    if (permission.isAuth) {
-      final List<AssetPathEntity> albums = await PhotoManager.getAssetPathList(
-        onlyAll: true,
-        type: RequestType.common,
-      );
+    if (albums.isNotEmpty) {
+      final List<AssetEntity> mediaAssets =
+          await albums.first.getAssetListPaged(page: 0, size: 50);
 
-      if (albums.isNotEmpty) {
-        _assets = await albums.first.getAssetListPaged(page: 0, size: 50);
+      for (final AssetEntity asset in mediaAssets) {
+        final file = await asset.file;
+        if (file != null) {
+          final newAttachment = PickedAttachment(
+            type: asset.type == AssetType.video
+                ? AttachmentType.video
+                : AttachmentType.image,
+            selectedMedia: asset,
+            file: file,
+          );
+
+          _attachments.add(newAttachment);
+
+          // Restore selection if the media was previously selected
+          if (previousSelection.any((a) => a.file.path == file.path)) {
+            _selectedattachment.add(newAttachment);
+          }
+        }
       }
-    } else {
-      PhotoManager.openSetting();
     }
+    notifyListeners();
   }
 
   /// Load video and play
@@ -112,25 +144,25 @@ class ReviewProvider extends ChangeNotifier {
     }
   }
 
-  /// Toggle selection of an image or video
-  void toggleMediaSelection(AssetEntity asset) {
-    if (_selectedMedia.contains(asset)) {
-      _selectedMedia.remove(asset);
+  void toggleMediaSelection(PickedAttachment asset) {
+    int index =
+        _selectedattachment.indexWhere((a) => a.file.path == asset.file.path);
+    if (index != -1) {
+      _selectedattachment.removeAt(index);
     } else {
-      _selectedMedia.add(asset);
+      _selectedattachment.add(asset);
     }
     notifyListeners();
   }
 
-  /// Set the current preview index
   void setCurrentIndex(int index) {
     _currentIndex = index;
     notifyListeners();
   }
 
-  /// Clear all selected media
   void clearSelection() {
-    _selectedMedia.clear();
+    _selectedattachment.clear();
+    notifyListeners();
   }
 
   double _rating = 0.0;
@@ -146,27 +178,26 @@ class ReviewProvider extends ChangeNotifier {
     debugPrint('this is the post id $postId');
   }
 
-  Future<void> submitReview() async {
+  Future<void> submitReview(context) async {
+    _isloading = true;
     final params = CreateReviewParams(
-      postId: postIdentity,
-      rating: rating,
-      title: reviewTitle.text,
-      text: reviewdescription.text,
-      reviewType: 'post',
-
-    );
-    final result = await createReviewUsecase(params);
-    debugPrint('postId${params.postId},Rating${params.rating}');
-    debugPrint('Title: ${reviewTitle.text}');
-    debugPrint('Review: ${reviewdescription.text}');
+        postId: postIdentity,
+        rating: rating.toString(),
+        title: reviewTitle.text,
+        text: reviewdescription.text,
+        reviewType: 'post',
+        attachments: selectedattachment);
+    final DataState<bool> result = await createReviewUsecase(params);
     if (result is DataSuccess<bool>) {
-      debugPrint(' Review posted successfully');
+      debugPrint('${result.data},${result.entity}');
+      Navigator.pop(context);
     } else {
-      debugPrint(' Error');
+      AppLog.error('something_wrong'.tr(),
+          name: 'ReiewProvider.submitreview - else');
     }
+    isloading = false;
   }
 
-  /// Dispose controllers properly
   @override
   void dispose() {
     _videoController?.dispose();

@@ -56,10 +56,10 @@ class WriteReviewScreen extends StatelessWidget {
               child: CustomElevatedButton(
                 onTap: () {
                   provider.updatePostidentity(post.postID);
-                  provider.submitReview();
+                  provider.submitReview(context);
                 },
                 title: 'submit'.tr(),
-                isLoading: false,
+                isLoading: provider.isloading,
               ),
             ),
           ],
