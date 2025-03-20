@@ -6,9 +6,6 @@ import 'package:video_player/video_player.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../attachment/domain/entities/picked_attachment.dart';
-import '../../../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../../../../post/data/sources/local/local_post.dart';
-import '../../../../data/sources/local_review.dart';
 import '../../../../domain/enums/review_sort_type.dart';
 import '../../../../domain/param/create_review_params.dart';
 import '../../../../domain/usecase/create_review_usecase.dart';
@@ -93,10 +90,16 @@ class ReviewProvider extends ChangeNotifier {
   }
 
   Future<void> fetchMedia() async {
-    final previousSelection = _selectedattachment.toList();
-    _attachments.clear();
+    attachments.clear();
+    selectedattachment.clear();
+    final List<PickedAttachment> previousSelection =
+        _selectedattachment.toList();
     final PermissionState permission =
         await PhotoManager.requestPermissionExtend();
+    if (!permission.hasAccess) {
+      debugPrint('Permission denied');
+      return;
+    }
     if (!permission.isAuth) return;
     final List<AssetPathEntity> albums = await PhotoManager.getAssetPathList(
       onlyAll: true,
@@ -108,9 +111,9 @@ class ReviewProvider extends ChangeNotifier {
           await albums.first.getAssetListPaged(page: 0, size: 50);
 
       for (final AssetEntity asset in mediaAssets) {
-        final file = await asset.file;
+        final File? file = await asset.file;
         if (file != null) {
-          final newAttachment = PickedAttachment(
+          final PickedAttachment newAttachment = PickedAttachment(
             type: asset.type == AssetType.video
                 ? AttachmentType.video
                 : AttachmentType.image,
@@ -119,9 +122,8 @@ class ReviewProvider extends ChangeNotifier {
           );
 
           _attachments.add(newAttachment);
-
-          // Restore selection if the media was previously selected
-          if (previousSelection.any((a) => a.file.path == file.path)) {
+          if (previousSelection
+              .any((PickedAttachment a) => a.file.path == file.path)) {
             _selectedattachment.add(newAttachment);
           }
         }
@@ -131,26 +133,13 @@ class ReviewProvider extends ChangeNotifier {
   }
 
   /// Load video and play
-  Future<void> loadVideo(AssetEntity asset) async {
-    if (asset.type == AssetType.video) {
-      final File? file = await asset.file;
-      if (file != null) {
-        _videoController?.dispose();
-        _videoController = VideoPlayerController.file(file)
-          ..initialize().then((_) {
-            _videoController!.play();
-          });
-      }
-    }
-  }
-
-  void toggleMediaSelection(PickedAttachment asset) {
-    int index =
-        _selectedattachment.indexWhere((a) => a.file.path == asset.file.path);
-    if (index != -1) {
-      _selectedattachment.removeAt(index);
+  void toggleMediaSelection(PickedAttachment media) {
+    if (selectedattachment
+        .any((PickedAttachment m) => m.file.path == media.file.path)) {
+      selectedattachment.removeWhere((PickedAttachment m) =>
+          m.file.path == media.file.path); // Remove if exists
     } else {
-      _selectedattachment.add(asset);
+      selectedattachment.add(media); // Add only if not present
     }
     notifyListeners();
   }
@@ -165,14 +154,14 @@ class ReviewProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  double _rating = 0.0;
+  double _rating = 1.0; // Minimum rating is 1.0
 
   double get rating => _rating;
 
   void updateRating(double newRating) {
-    _rating = newRating;
+    _rating = newRating < 1.0 ? 1.0 : newRating; // Ensure minimum rating is 1
+    notifyListeners(); // Notify UI to update
   }
-
   void updatePostidentity(postId) {
     postIdentity = postId;
     debugPrint('this is the post id $postId');
@@ -180,7 +169,7 @@ class ReviewProvider extends ChangeNotifier {
 
   Future<void> submitReview(context) async {
     _isloading = true;
-    final params = CreateReviewParams(
+    final CreateReviewParams params = CreateReviewParams(
         postId: postIdentity,
         rating: rating.toString(),
         title: reviewTitle.text,
@@ -191,6 +180,7 @@ class ReviewProvider extends ChangeNotifier {
     if (result is DataSuccess<bool>) {
       debugPrint('${result.data},${result.entity}');
       Navigator.pop(context);
+      isloading = false;
     } else {
       AppLog.error('something_wrong'.tr(),
           name: 'ReiewProvider.submitreview - else');
@@ -200,7 +190,11 @@ class ReviewProvider extends ChangeNotifier {
 
   @override
   void dispose() {
+    reviewTitle.clear();
+    reviewdescription.clear();
     _videoController?.dispose();
+    _attachments.clear();
+    _selectedattachment.clear();
     super.dispose();
   }
 }

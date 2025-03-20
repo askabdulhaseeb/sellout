@@ -158,17 +158,21 @@ class PostModel extends PostEntity {
   }
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
+    final dynamic discountRaw = json['discount']; 
+
     final Map<String, dynamic> discountData =
-        json['discount'] ?? {}; // Get the discount map
+        (discountRaw is Map<String, dynamic>)
+            ? discountRaw
+            : <String, dynamic>{};
+
+    final bool hasDiscount = discountRaw is bool
+        ? discountRaw 
+        : discountData.isNotEmpty &&
+            discountData.values.any((value) => (value as int? ?? 0) > 0);
 
     final List<DiscountEntity> discounts = <DiscountEntity>[];
 
-    // Check if any discount exists (e.g., values > 0)
-    final hasDiscount = discountData.isNotEmpty &&
-        discountData.values.any((value) => (value as int? ?? 0) > 0);
-
-    if (hasDiscount) {
-      // Extract values from the nested `discount` map
+    if (discountData.isNotEmpty) {
       final int d2 = discountData['discount_2_item'] as int? ?? 0;
       final int d3 = discountData['discount_3_item'] as int? ?? 0;
       final int d5 = discountData['discount_5_item'] as int? ?? 0;
@@ -177,6 +181,7 @@ class PostModel extends PostEntity {
       if (d3 > 0) discounts.add(DiscountEntity(quantity: 3, discount: d3));
       if (d5 > 0) discounts.add(DiscountEntity(quantity: 5, discount: d5));
     }
+
     return PostModel(
       listID: json['list_id']?.toString() ?? '',
       postID: json['post_id']?.toString() ?? '',

@@ -120,7 +120,7 @@ class FindAccountProvider with ChangeNotifier {
       if (result is DataSuccess) {
         uid = result.entity;
         startResendCodeTimer();
-        AppNavigator.pushNamed(EnterCodeScreen.routeName);
+        Navigator.of(context).pushNamed(EnterCodeScreen.routeName);
         return true;
       } else {
         AppLog.error(
@@ -197,7 +197,7 @@ class FindAccountProvider with ChangeNotifier {
       final DataState<String> result = await newPasswordUsecase(params);
 
       if (result is DataSuccess) {
-        AppNavigator.pushNamedAndRemoveUntil(
+        Navigator.of(context).pushNamedAndRemoveUntil(
           SignInScreen.routeName,
           (_) => true,
         );
