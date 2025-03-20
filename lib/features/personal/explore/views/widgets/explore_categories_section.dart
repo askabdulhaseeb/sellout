@@ -33,6 +33,7 @@ class ExploreCategoriesSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             _buildContainer(
+                context,
                 '${'location'.tr()} - ${Provider.of<ExploreProvider>(context).selectedRadius} Km',
                 CupertinoIcons.location_solid,
                 primaryColor,
@@ -44,6 +45,7 @@ class ExploreCategoriesSection extends StatelessWidget {
                       return const LocationRadiusBottomSheet();
                     })),
             _buildContainer(
+                context,
                 'sort'.tr(),
                 CupertinoIcons.sort_down,
                 primaryColor,
@@ -57,6 +59,7 @@ class ExploreCategoriesSection extends StatelessWidget {
                           },
                         ))),
             _buildContainer(
+                context,
                 'filter'.tr(),
                 Icons.tune,
                 primaryColor,
@@ -156,14 +159,20 @@ class ExploreCategoriesSection extends StatelessWidget {
     );
   }
 
-  Widget _buildContainer(String label, IconData icon, Color iconColor,
-      Color borderColor, TextStyle? textStyle, VoidCallback ontap) {
+  Widget _buildContainer(
+      BuildContext context,
+      String label,
+      IconData icon,
+      Color iconColor,
+      Color borderColor,
+      TextStyle? textStyle,
+      VoidCallback ontap) {
     return InkWell(
       onTap: ontap,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           border: Border.all(width: 1, color: borderColor),
           borderRadius: BorderRadius.circular(5),
         ),
