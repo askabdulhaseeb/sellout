@@ -32,13 +32,9 @@ class WriteReviewScreen extends StatelessWidget {
               post: post,
             ),
             Text('rate_product'.tr()),
-            RatingSelectWidget(
+            const RatingSelectWidget(
               size: 40,
               maxRating: 5,
-              initialRating: 0,
-              onRatingChanged: (double value) {
-                value = value;
-              },
             ),
             CustomTextFormField(
               controller: provider.reviewTitle,

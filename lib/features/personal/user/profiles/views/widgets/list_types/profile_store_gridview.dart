@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../services/get_it.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
@@ -14,31 +13,43 @@ class ProfileStoreGridview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (user?.uid == null) {
+      return const Center(child: Text('User not found'));
+    }
+
     final GetPostByIdUsecase getPostByIdUsecase = GetPostByIdUsecase(locator());
 
     return FutureBuilder<DataState<List<PostEntity>>>(
-      future: getPostByIdUsecase(user?.uid),
-      initialData: LocalPost().postbyUid(user?.uid),
+      future: getPostByIdUsecase(user!.uid),
+      initialData: LocalPost().postbyUid(user!.uid),
       builder: (BuildContext context,
           AsyncSnapshot<DataState<List<PostEntity>>> snapshot) {
-        final List<PostEntity> posts = snapshot.data?.entity ?? <PostEntity>[];
+        if (!snapshot.hasData || snapshot.data?.entity == null) {
+          return const Center(child: Text('No posts found'));
+        }
+
+        final List<PostEntity> posts = snapshot.data!.entity!;
+
+        if (posts.isEmpty) {
+          return const Center(child: Text('No posts found'));
+        }
+
         posts.sort(
             (PostEntity a, PostEntity b) => b.createdAt.compareTo(a.createdAt));
-        return posts.isEmpty
-            ? const Center(child: Text('No posts found'))
-            : GridView.builder(
-                itemCount: posts.length,
-                shrinkWrap: true,
-                primary: false,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 6.0,
-                  mainAxisSpacing: 6.0,
-                ),
-                itemBuilder: (BuildContext context, int index) {
-                  return PostGridViewTile(post: posts[index]);
-                },
-              );
+
+        return GridView.builder(
+          itemCount: posts.length,
+          shrinkWrap: true,
+          primary: false,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 6.0,
+            mainAxisSpacing: 6.0,
+          ),
+          itemBuilder: (BuildContext context, int index) {
+            return PostGridViewTile(post: posts[index]);
+          },
+        );
       },
     );
   }

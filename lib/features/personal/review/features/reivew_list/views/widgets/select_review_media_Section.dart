@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/widgets/video_widget.dart';
 import '../../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../providers/review_provider.dart';
 import '../screens/media_picker_screen.dart';
@@ -65,10 +66,25 @@ class SelectReviewMediaSection extends StatelessWidget {
                                           provider.selectedattachment[index];
                                       return Padding(
                                         padding: const EdgeInsets.all(4.0),
-                                        child: Image.file(media.file,
-                                            width: 100,
-                                            height: 100,
-                                            fit: BoxFit.cover),
+                                        child: media.type ==
+                                                AttachmentType.video
+                                            ? Stack(
+                                                alignment: Alignment.center,
+                                                children: <Widget>[
+                                                  AbsorbPointer(
+                                                    child: VideoWidget(
+                                                        videoUrl:
+                                                            media.file.path,
+                                                        play: false),
+                                                  ), // Video thumbnail
+                                                  const Icon(
+                                                      Icons.play_circle_fill,
+                                                      size: 40,
+                                                      color: Colors.white),
+                                                ],
+                                              )
+                                            : Image.file(media.file,
+                                                fit: BoxFit.cover),
                                       );
                                     },
                                   ),
