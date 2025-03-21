@@ -24,6 +24,7 @@ import '../features/personal/review/features/reivew_list/views/screens/media_pic
 import '../features/personal/review/features/reivew_list/views/screens/write_review_screen.dart';
 import '../features/personal/setting/more_info/views/screens/personal_more_information_setting_screen.dart';
 import '../features/personal/setting/setting_dashboard/views/screens/personal_setting_screen.dart';
+import '../features/personal/user/profiles/views/screens/edit_profile_screen.dart';
 
 class AppRoutes {
   static const String baseURL = 'https://selloutweb.com';
@@ -92,5 +93,7 @@ class AppRoutes {
     ExplorePropertyScreen.routeName: (_) => const ExplorePropertyScreen(),
     ExploreFoodDrinkScreen.routeName: (_) => const ExploreFoodDrinkScreen(),
     ExploreVehiclesScreen.routeName: (_) => const ExploreVehiclesScreen(),
+    // Profile
+    EditProfileScreen.routeName: (_) => EditProfileScreen(),
   };
 }

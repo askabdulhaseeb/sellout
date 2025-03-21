@@ -158,7 +158,7 @@ class PostModel extends PostEntity {
   }
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
-    final dynamic discountRaw = json['discount']; 
+    final dynamic discountRaw = json['discount'];
 
     final Map<String, dynamic> discountData =
         (discountRaw is Map<String, dynamic>)
@@ -166,7 +166,7 @@ class PostModel extends PostEntity {
             : <String, dynamic>{};
 
     final bool hasDiscount = discountRaw is bool
-        ? discountRaw 
+        ? discountRaw
         : discountData.isNotEmpty &&
             discountData.values.any((value) => (value as int? ?? 0) > 0);
 
@@ -200,10 +200,17 @@ class PostModel extends PostEntity {
       privacy: PrivacyType.fromJson(json['post_privacy']),
       condition: ConditionType.fromJson(json['item_condition']),
       deliveryType: DeliveryType.fromJson(json['delivery_type']),
-      listOfReviews: (json['list_of_reviews'] as List<dynamic>?)
-              ?.map<int>((e) => int.tryParse(e.toString()) ?? 0)
-              .toList() ??
-          <int>[],
+      listOfReviews: List<double>.from(
+        (json['list_of_reviews'] ?? <dynamic>[]).map((dynamic x) {
+          if (x is int) {
+            return x.toDouble(); // Convert int to double
+          } else if (x is double) {
+            return x; // Already a double
+          } else {
+            return double.tryParse(x.toString()) ?? 0.0;
+          }
+        }),
+      ),
       //
       currentLongitude:
           double.tryParse(json['current_longitude']?.toString() ?? '0.0') ??

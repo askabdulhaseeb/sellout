@@ -178,9 +178,9 @@ class ExploreProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  double calculateAverageRating(List<int> reviews) {
+  double calculateAverageRating(List<double> reviews) {
     if (reviews.isEmpty) return 0.0;
-    double sum = reviews.reduce((int a, int b) => a + b).toDouble();
+    double sum = reviews.reduce((double a, double b) => a + b).toDouble();
     return sum / reviews.length;
   }
 

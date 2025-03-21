@@ -49,7 +49,7 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
   ChangeNotifierProvider<AudioProvider>.value(value: AudioProvider()),
   //
   ChangeNotifierProvider<ProfileProvider>.value(
-      value: ProfileProvider(locator(), locator(), locator())),
+      value: ProfileProvider(locator(), locator(), locator(), locator())),
   //
   ChangeNotifierProvider<FeedProvider>.value(value: FeedProvider(locator())),
   ChangeNotifierProvider<PostDetailProvider>.value(
@@ -77,5 +77,5 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
 
 //
   ChangeNotifierProvider<BookingProvider>.value(
-      value: BookingProvider(locator(), locator(), locator(),locator())),
+      value: BookingProvider(locator(), locator(), locator(), locator())),
 ];

@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'core/theme/app_theme.dart';
 
+import 'features/personal/auth/signin/views/screens/sign_in_screen.dart';
 import 'services/app_providers.dart';
 import 'core/sources/local/hive_db.dart';
 import 'core/utilities/app_localization.dart';
@@ -46,7 +47,7 @@ class MyApp extends StatelessWidget {
         themeMode: kDebugMode ? ThemeMode.light : ThemeMode.light,
         routes: AppRoutes.routes,
         // onGenerateRoute: (RouteSettings settings) {},
-        // initialRoute: DashboardScreen.routeName,
+         initialRoute: SignInScreen.routeName,
       ),
     );
   }

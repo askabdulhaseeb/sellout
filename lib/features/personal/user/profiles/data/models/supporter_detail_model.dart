@@ -11,7 +11,7 @@ class SupporterDetailModel extends SupporterDetailEntity {
 
   factory SupporterDetailModel.fromMap(Map<String, dynamic> map) {
     return SupporterDetailModel(
-      userID: map['user_id'] ?? '',
+      userID: map['entity_id'] ?? '',
       supportingTime:
           map['supporting_time']?.toString().toDateTime() ?? DateTime.now(),
       status: StatusType.fromJson(map['status']),
@@ -20,7 +20,7 @@ class SupporterDetailModel extends SupporterDetailEntity {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'user_id': userID,
+      'entity_id': userID,
       'supporting_time': supportingTime.toIso8601String(),
       'status': status.json,
     };

@@ -48,7 +48,6 @@ import '../features/personal/auth/signup/domain/usecase/verify_opt_usecase.dart'
 import '../features/personal/auth/signup/views/providers/signup_provider.dart';
 import '../features/personal/book_visit/domain/usecase/cancel_visit_usecase.dart';
 import '../features/personal/book_visit/domain/usecase/update_visit_usecase.dart';
-import '../features/personal/book_visit/view/params/update_visit_params.dart';
 import '../features/personal/cart/data/repositories/cart_repository_impl.dart';
 import '../features/personal/cart/data/repositories/checkout_repository_impl.dart';
 import '../features/personal/cart/data/sources/remote/cart_remote_api.dart';
@@ -102,11 +101,13 @@ import '../features/personal/services/domain/usecase/get_special_offer_usecase.d
 import '../features/personal/services/views/providers/services_page_provider.dart';
 import '../features/personal/user/profiles/data/repositories/user_repository_impl.dart';
 import '../features/personal/user/profiles/data/sources/remote/my_visting_remote.dart';
+import '../features/personal/user/profiles/data/sources/remote/order_by_user_remote.dart';
 import '../features/personal/user/profiles/data/sources/remote/post_by_user_remote.dart';
 import '../features/personal/user/profiles/data/sources/remote/user_profile_remote_source.dart';
 import '../features/personal/user/profiles/domain/repositories/user_repositories.dart';
 import '../features/personal/user/profiles/domain/usecase/get_my_host_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/get_my_visiting_usecase.dart';
+import '../features/personal/user/profiles/domain/usecase/get_orders_buyer_id.dart';
 import '../features/personal/user/profiles/domain/usecase/get_post_by_id_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/get_user_by_uid.dart';
 import '../features/personal/user/profiles/views/providers/profile_provider.dart';
@@ -185,8 +186,9 @@ void _profile() {
       () => UserProfileRemoteSourceImpl());
   locator.registerFactory<PostByUserRemote>(() => PostByUserRemoteImpl());
   locator.registerFactory<MyVisitingRemote>(() => MyVisitingRemoteImpl());
-  locator.registerFactory<UserProfileRepository>(
-      () => UserProfileRepositoryImpl(locator(), locator(), locator()));
+  locator.registerFactory<OrderByUserRemote>(() => OrderByUserRemoteImpl());
+  locator.registerFactory<UserProfileRepository>(() =>
+      UserProfileRepositoryImpl(locator(), locator(), locator(), locator()));
   locator.registerFactory<GetUserByUidUsecase>(
       () => GetUserByUidUsecase(locator()));
   locator.registerFactory<GetImVisiterUsecase>(
@@ -194,8 +196,10 @@ void _profile() {
   locator.registerFactory<GetImHostUsecase>(() => GetImHostUsecase(locator()));
   locator
       .registerFactory<GetPostByIdUsecase>(() => GetPostByIdUsecase(locator()));
+       locator
+      .registerFactory<GetOrderByUidUsecase>(() => GetOrderByUidUsecase(locator()));
   locator.registerLazySingleton<ProfileProvider>(
-      () => ProfileProvider(locator(), locator(), locator()));
+      () => ProfileProvider(locator(), locator(), locator(), locator()));
 }
 
 void _chat() {

@@ -6,7 +6,9 @@ import '../../../../post/domain/entities/post_entity.dart';
 import '../../../../review/domain/entities/review_entity.dart';
 import '../../../../review/domain/param/get_review_param.dart';
 import '../../../../review/domain/usecase/get_reviews_usecase.dart';
+import '../../domain/entities/orderentity.dart';
 import '../../domain/entities/user_entity.dart';
+import '../../domain/usecase/get_orders_buyer_id.dart';
 import '../../domain/usecase/get_post_by_id_usecase.dart';
 import '../../domain/usecase/get_user_by_uid.dart';
 import '../enums/profile_page_tab_type.dart';
@@ -16,10 +18,12 @@ class ProfileProvider extends ChangeNotifier {
     this._getUserByUidUsecase,
     this._getPostByIdUsecase,
     this._getReviewsUsecase,
+    this._getOrderByIdUsecase,
   );
   final GetUserByUidUsecase _getUserByUidUsecase;
   final GetPostByIdUsecase _getPostByIdUsecase;
   final GetReviewsUsecase _getReviewsUsecase;
+  final GetOrderByUidUsecase _getOrderByIdUsecase;
 
   DataState<UserEntity?>? _user;
   UserEntity? get user => _user?.entity;
@@ -45,6 +49,10 @@ class ProfileProvider extends ChangeNotifier {
 
   Future<DataState<List<PostEntity>>> getPostByUser(String? uid) async {
     return await _getPostByIdUsecase(uid);
+  }
+
+  Future<DataState<List<OrderEntity>?>> getOrderByUser(String uid) async {
+    return await _getOrderByIdUsecase(uid);
   }
 
   Future<List<ReviewEntity>> getReviews(String? uid) async {
