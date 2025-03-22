@@ -19,7 +19,7 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
             CustomException('userId is empty'));
       }
       final DataState<bool> result = await ApiCall<bool>().call(
-        endpoint: '/orders/query?buyer_id=$id',
+        endpoint: '/orders/query?seller_id=$id',
         requestType: ApiRequestType.get,
         isAuth: true,
       );

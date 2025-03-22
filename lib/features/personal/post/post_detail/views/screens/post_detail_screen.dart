@@ -12,6 +12,7 @@ import '../../../data/sources/local/local_post.dart';
 import '../../../domain/entities/post_entity.dart';
 import '../../../domain/entities/visit/visiting_entity.dart';
 import '../../../feed/views/widgets/post/widgets/section/buttons/home_post_button_section.dart';
+import '../../../feed/views/widgets/post/widgets/section/buttons/type/post_button_for_user_tile.dart';
 import '../../../feed/views/widgets/post/widgets/section/home_post_header_section.dart';
 import '../providers/post_detail_provider.dart';
 import '../widgets/post_detail_description_section.dart';
@@ -62,56 +63,7 @@ class PostDetailScreen extends StatelessWidget {
                         PostDetailTitleAmountSection(post: post),
                         PostRatingSection(post: post),
                         if (isMe == true)
-                          Column(
-                            children: <Widget>[
-                              Row(spacing: 8, children: <Widget>[
-                                Expanded(
-                                    child: InDevMode(
-                                  child: CustomElevatedButton(
-                                      isLoading: false,
-                                      bgColor: Theme.of(context)
-                                          .colorScheme
-                                          .secondary,
-                                      onTap: () {},
-                                      title: 'promote'.tr()),
-                                )),
-                                Expanded(
-                                  child: CustomElevatedButton(
-                                      textColor: Theme.of(context)
-                                          .colorScheme
-                                          .onSurface,
-                                      border: Border.all(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface,
-                                      ),
-                                      bgColor:
-                                          Theme.of(context).colorScheme.surface,
-                                      isLoading: false,
-                                      onTap: () {},
-                                      title: 'edit_listing'.tr()),
-                                ),
-                              ]),
-                              if (visit?.visitingTime != null)
-                                CustomElevatedButton(
-                                    textColor: Theme.of(context).primaryColor,
-                                    border: Border.all(
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                    bgColor:
-                                        Theme.of(context).colorScheme.surface,
-                                    title: 'calender'.tr(),
-                                    isLoading: false,
-                                    onTap: () {
-                                      Navigator.pushNamed(
-                                          context, BookingScreen.routeName,
-                                          arguments: <String, dynamic>{
-                                            'post': post,
-                                            'visit': visit,
-                                          });
-                                    })
-                            ],
-                          ),
+                          PostButtonsForUser(visit: visit, post: post),
                         if (isMe == false)
                           PostButtonSection(
                             post: post,
