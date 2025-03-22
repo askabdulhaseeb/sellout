@@ -21,7 +21,7 @@ class FilterBottomSheet extends StatelessWidget {
       onClosing: () {},
       builder: (BuildContext context) {
         return Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: AppBar(
             automaticallyImplyLeading: false,
             centerTitle: true,

@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 import '../../../../auth/signin/data/models/address_model.dart';
 
 class OrderEntity {

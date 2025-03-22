@@ -39,6 +39,7 @@ class ProfileHeaderSection extends StatelessWidget {
                     children: <Widget>[
                       Expanded(
                         child: Text(
+                          maxLines: 2,
                           user?.displayName ?? '',
                           style: const TextStyle(
                             fontSize: 18,
@@ -54,7 +55,8 @@ class ProfileHeaderSection extends StatelessWidget {
                             GestureDetector(
                               onTap: () {},
                               child: PopupMenuButton<int>(
-                                color: Colors.white,
+                                color:
+                                    Theme.of(context).scaffoldBackgroundColor,
                                 onSelected: (int value) {
                                   if (value == 1) {
                                     Navigator.pushNamed(

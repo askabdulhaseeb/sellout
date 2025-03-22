@@ -26,7 +26,6 @@ class ExploreHeader extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white,
                 border: Border.all(width: 1, color: primaryColor),
                 borderRadius: BorderRadius.circular(5),
               ),

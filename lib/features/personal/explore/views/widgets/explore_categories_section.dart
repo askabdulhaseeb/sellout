@@ -30,7 +30,7 @@ class ExploreCategoriesSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          spacing: 8,
           children: <Widget>[
             _buildContainer(
                 context,

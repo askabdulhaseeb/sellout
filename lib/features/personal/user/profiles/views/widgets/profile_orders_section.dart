@@ -1,10 +1,14 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../core/widgets/custom_toggle_switch.dart';
+import '../../../../post/domain/entities/post_entity.dart';
+import '../../../../post/domain/params/get_specific_post_param.dart';
 import '../../domain/entities/orderentity.dart';
 import '../../domain/entities/user_entity.dart';
+import '../enums/order_type.dart';
 import '../providers/profile_provider.dart';
 
 class ProfileOrdersSection extends StatefulWidget {
@@ -17,110 +21,138 @@ class ProfileOrdersSection extends StatefulWidget {
 }
 
 class _ProfileOrdersSectionState extends State<ProfileOrdersSection> {
-  String selectedStatus = 'New Orders'; // Default selection
+  OrderType selectedStatus = OrderType.newOrder;
 
   @override
   Widget build(BuildContext context) {
     final ProfileProvider pro = Provider.of<ProfileProvider>(context);
 
-    return Column(
-      children: <Widget>[
-        CustomToggleSwitch<String>(
-          labels: const <String>['New Orders', 'completed', 'Cancelled'],
-          labelStrs: const <String>['New Orders', 'completed', 'Cancelled'],
-          labelText: 'Select Order Status',
-          initialValue: selectedStatus,
-          onToggle: (String value) {
-            setState(() {
-              selectedStatus = value;
-            });
-          },
-        ),
-        FutureBuilder<DataState<List<OrderEntity>?>>(
-          future: pro.getOrderByUser(widget.user?.uid ?? ''),
-          builder: (BuildContext context,
-              AsyncSnapshot<DataState<List<OrderEntity>?>> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (snapshot.hasError ||
-                snapshot.data == null ||
-                snapshot.data!.data == null) {
-              return const Center(child: Text("No orders found."));
-            }
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          CustomToggleSwitch<OrderType>(
+            labels: OrderType.list,
+            labelStrs:
+                OrderType.values.map((OrderType e) => e.label.tr()).toList(),
+            labelText: '',
+            initialValue: selectedStatus,
+            onToggle: (OrderType value) {
+              setState(() {
+                selectedStatus = value;
+              });
+            },
+          ),
+          FutureBuilder<DataState<List<OrderEntity>?>>(
+            future: pro.getOrderByUser(widget.user?.uid ?? ''),
+            builder: (BuildContext context,
+                AsyncSnapshot<DataState<List<OrderEntity>?>> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (snapshot.hasError ||
+                  snapshot.data == null ||
+                  snapshot.data!.entity == null) {
+                return const Center(child: Text('No orders found.'));
+              }
+              List<OrderEntity> allOrders = snapshot.data!.entity!;
+              List<OrderEntity> filteredOrders =
+                  allOrders.where((OrderEntity order) {
+                debugPrint('orderStatus: ${order.orderStatus}');
+                return order.orderStatus == selectedStatus.code;
+              }).toList();
+              if (filteredOrders.isEmpty) {
+                return const Center(child: Text('No orders in this category.'));
+              }
+              return SizedBox(
+                height:
+                    MediaQuery.of(context).size.height * 0.5, // Adjust height
+                child: ListView.builder(
+                  physics: ScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: filteredOrders.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return FutureBuilder(
+                      future: pro.getPostByPostId(GetSpecificPostParam(
+                          postId: filteredOrders[index].postId)),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<DataState<PostEntity>> postSnapshot) {
+                        if (postSnapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                        if (postSnapshot.hasError || !postSnapshot.hasData) {
+                          return Center(child: Text('something_wrong'.tr()));
+                        }
 
-            List<OrderEntity> allOrders = snapshot.data!.entity!;
-            List<OrderEntity> filteredOrders =
-                allOrders.where((OrderEntity order) {
-              return order.paymentDetail.status ==
-                  selectedStatus; // Filter by status
-            }).toList();
+                        final DataState<PostEntity>? post = postSnapshot.data;
 
-            if (filteredOrders.isEmpty) {
-              return const Center(child: Text('No orders in this category.'));
-            }
-
-            return SizedBox(
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: filteredOrders.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    margin:
-                        const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.white,
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        SizedBox(
-                          height: 50,
-                          width: 50,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: const CustomNetworkImage(
-                              imageURL: '',
-                              fit: BoxFit.cover,
-                            ),
+                        return Container(
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 6, horizontal: 12),
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(12),
+                            color: Colors.white,
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          child: Row(
                             children: <Widget>[
-                              Text(filteredOrders[index].orderId,
-                                  style:
-                                      Theme.of(context).textTheme.labelSmall),
-                              Text(
-                                  '\$${filteredOrders[index].price}', // Assuming price exists in OrderEntity
-                                  style:
-                                      Theme.of(context).textTheme.labelSmall),
-                              Text('sale_completed',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelSmall
-                                      ?.copyWith(color: Colors.green)),
+                              SizedBox(
+                                height: 70,
+                                width: 70,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: CustomNetworkImage(
+                                    imageURL: post?.entity?.imageURL ?? '',
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  spacing: 4,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(post?.entity?.title ?? '',
+                                        maxLines: 1,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelSmall),
+                                    Text(
+                                        '\$${filteredOrders[index].price}', // Assuming price exists
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelSmall),
+                                    Text('sale_completed'.tr(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelSmall
+                                            ?.copyWith(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .secondary)),
+                                  ],
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {},
+                                icon: const Icon(Icons.arrow_forward_ios,
+                                    size: 12),
+                              ),
                             ],
                           ),
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.arrow_forward_ios,
-                              size: 20, color: Colors.blue),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            );
-          },
-        ),
-      ],
+                        );
+                      },
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }

@@ -81,7 +81,7 @@ class ExploreProductsGridviewState extends State<ExploreProductsGridview> {
                         category.tr(),
                         style: TextStyle(
                           color: selectedCategory == category
-                              ? Colors.white
+                              ? Theme.of(context).colorScheme.onPrimary
                               : Colors.grey,
                         ),
                       ),
@@ -94,7 +94,7 @@ class ExploreProductsGridviewState extends State<ExploreProductsGridview> {
                                 .updateSelectedBusinessCategory(category);
                       },
                       selectedColor: Colors.black,
-                      backgroundColor: Colors.white,
+                      backgroundColor: Theme.of(context).colorScheme.surface,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),

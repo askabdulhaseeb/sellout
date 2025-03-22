@@ -105,6 +105,8 @@ import '../features/personal/user/profiles/data/sources/remote/order_by_user_rem
 import '../features/personal/user/profiles/data/sources/remote/post_by_user_remote.dart';
 import '../features/personal/user/profiles/data/sources/remote/user_profile_remote_source.dart';
 import '../features/personal/user/profiles/domain/repositories/user_repositories.dart';
+import '../features/personal/user/profiles/domain/usecase/edit_profile_detail_usecase.dart';
+import '../features/personal/user/profiles/domain/usecase/edit_profile_picture_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/get_my_host_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/get_my_visiting_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/get_orders_buyer_id.dart';
@@ -196,10 +198,21 @@ void _profile() {
   locator.registerFactory<GetImHostUsecase>(() => GetImHostUsecase(locator()));
   locator
       .registerFactory<GetPostByIdUsecase>(() => GetPostByIdUsecase(locator()));
-       locator
-      .registerFactory<GetOrderByUidUsecase>(() => GetOrderByUidUsecase(locator()));
-  locator.registerLazySingleton<ProfileProvider>(
-      () => ProfileProvider(locator(), locator(), locator(), locator()));
+  locator.registerFactory<GetOrderByUidUsecase>(
+      () => GetOrderByUidUsecase(locator()));
+  locator.registerFactory<UpdateProfilePictureUsecase>(
+      () => UpdateProfilePictureUsecase(locator()));
+  locator.registerFactory<UpdateProfileDetailUsecase>(
+      () => UpdateProfileDetailUsecase(locator()));
+  locator.registerLazySingleton<ProfileProvider>(() => ProfileProvider(
+        locator(),
+        locator(),
+        locator(),
+        locator(),
+        locator(),
+        locator(),
+        locator(),
+      ));
 }
 
 void _chat() {
