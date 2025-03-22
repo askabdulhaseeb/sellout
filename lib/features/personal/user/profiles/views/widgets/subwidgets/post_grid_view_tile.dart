@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../core/widgets/rating_display_widget.dart';
+import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../post/domain/entities/post_entity.dart';
 import '../../../../../post/post_detail/views/screens/post_detail_screen.dart';
 
@@ -11,6 +12,8 @@ class PostGridViewTile extends StatelessWidget {
   final PostEntity post;
   @override
   Widget build(BuildContext context) {
+    final bool isMe = post.createdBy == (LocalAuth.uid ?? '-');
+
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushNamed(
@@ -60,26 +63,31 @@ class PostGridViewTile extends StatelessWidget {
                 ],
               ),
               const Spacer(),
-              Column(
-                children: <Widget>[
-                  CustomIconButton(
-                    iconColor: Colors.red,
-                    padding: const EdgeInsets.all(4),
-                    margin: const EdgeInsets.all(4),
-                    bgColor: Colors.red.withValues(alpha: 200),
-                    icon: CupertinoIcons.pencil_ellipsis_rectangle,
-                    onPressed: () {},
-                  ),
-                  CustomIconButton(
-                    iconColor: Colors.blue,
-                    padding: const EdgeInsets.all(4),
-                    margin: const EdgeInsets.all(4),
-                    bgColor: Colors.blue.withValues(alpha: 200),
-                    icon: CupertinoIcons.speaker,
-                    onPressed: () {},
-                  ),
-                ],
-              )
+              if (isMe == true)
+                Column(
+                  children: <Widget>[
+                    CustomIconButton(
+                      iconColor: Theme.of(context).primaryColor,
+                      padding: const EdgeInsets.all(4),
+                      margin: const EdgeInsets.all(4),
+                      bgColor:
+                          Theme.of(context).primaryColor.withValues(alpha: 200),
+                      icon: CupertinoIcons.pencil_ellipsis_rectangle,
+                      onPressed: () {},
+                    ),
+                    CustomIconButton(
+                      iconColor: Theme.of(context).colorScheme.secondary,
+                      padding: const EdgeInsets.all(4),
+                      margin: const EdgeInsets.all(4),
+                      bgColor: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withValues(alpha: 200),
+                      icon: CupertinoIcons.speaker,
+                      onPressed: () {},
+                    ),
+                  ],
+                )
             ],
           ),
         ],

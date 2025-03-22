@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,9 +9,9 @@ import '../provider/view_booking_provider.dart';
 
 class BookVisitButton extends StatelessWidget {
   const BookVisitButton({
+    Key? key,
     this.post,
-    super.key,
-  });
+  }) : super(key: key);
   final PostEntity? post;
 
   @override

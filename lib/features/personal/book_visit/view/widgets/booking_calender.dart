@@ -2,15 +2,17 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/enums/routine/day_type.dart';
-import '../../../../../core/theme/app_theme.dart';
 import '../../../post/data/models/meetup/availability_model.dart';
 import '../../../post/domain/entities/meetup/availability_entity.dart';
 import '../../../post/domain/entities/post_entity.dart';
+import '../../../post/domain/entities/visit/visiting_entity.dart';
 import '../provider/view_booking_provider.dart';
 
 class BookingCalendarWidget extends StatelessWidget {
-  const BookingCalendarWidget({required this.post, super.key});
+  const BookingCalendarWidget({required this.post, super.key, this.visit});
   final PostEntity post;
+  final VisitingEntity? visit;
+
   @override
   Widget build(BuildContext context) {
     final List<AvailabilityEntity>? availabilities = post.availability;
@@ -29,23 +31,17 @@ class BookingCalendarWidget extends StatelessWidget {
     return Column(
       children: <Widget>[
         const SizedBox(height: 10),
-        Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme:
-                ColorScheme.light(primary: Theme.of(context).primaryColor),
-          ),
-          child: CalendarDatePicker(
-            selectableDayPredicate: (DateTime date) {
-              return date
-                  .isAfter(DateTime.now().subtract(const Duration(days: 1)));
-            },
-            initialDate: provider.selectedDate,
-            firstDate: DateTime(2025),
-            lastDate: DateTime(2100),
-            onDateChanged: (DateTime newDate) {
-              provider.updateDate(newDate);
-            },
-          ),
+        CalendarDatePicker(
+          selectableDayPredicate: (DateTime date) {
+            return date
+                .isAfter(DateTime.now().subtract(const Duration(days: 1)));
+          },
+          initialDate: visit?.dateTime ?? provider.selectedDate,
+          firstDate: DateTime(2025),
+          lastDate: DateTime(2100),
+          onDateChanged: (DateTime newDate) {
+            provider.updateDate(newDate);
+          },
         ),
         const SizedBox(height: 20),
         if (selectedAvailability?.isOpen == true)
@@ -74,19 +70,19 @@ class BookingCalendarWidget extends StatelessWidget {
                       onSelected: (bool selected) {
                         provider.updateSelectedTime(selected ? time : null);
                       },
-                      selectedColor: AppTheme.primaryColor,
-                      backgroundColor: Colors.white,
+                      selectedColor: Theme.of(context).primaryColor,
+                      backgroundColor: Theme.of(context).colorScheme.surface,
                       labelStyle: texttheme.bodyMedium?.copyWith(
                           color: provider.selectedTime == time
-                              ? Colors.white
-                              : Colors.black)),
+                              ? Theme.of(context).colorScheme.onPrimary
+                              : Theme.of(context).colorScheme.onSurface)),
                 );
               },
             ),
           )
         else
           Text('closed_day'.tr(),
-              style: TextStyle(color: AppTheme.light.primaryColor)),
+              style: TextStyle(color: Theme.of(context).colorScheme.error)),
       ],
     );
   }

@@ -1,9 +1,11 @@
 import '../../../../../../core/sources/data_state.dart';
+import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../post/domain/entities/post_entity.dart';
 import '../../../../post/domain/entities/visit/visiting_entity.dart';
 import '../../domain/entities/orderentity.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/user_repositories.dart';
+import '../../views/params/update_user_params.dart';
 import '../sources/remote/my_visting_remote.dart';
 import '../sources/remote/order_by_user_remote.dart';
 import '../sources/remote/post_by_user_remote.dart';
@@ -13,7 +15,8 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
   const UserProfileRepositoryImpl(
     this.userProfileRemoteSource,
     this.postByUserRemote,
-    this.myVisitingRemote, this.orderByUserRemote,
+    this.myVisitingRemote,
+    this.orderByUserRemote,
   );
   final UserProfileRemoteSource userProfileRemoteSource;
   final PostByUserRemote postByUserRemote;
@@ -39,8 +42,19 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
   Future<DataState<List<VisitingEntity>>> iMhost() async {
     return await myVisitingRemote.iMhost();
   }
-    @override
+
+  @override
   Future<DataState<List<OrderEntity>>> getOrderByUser(String? uid) async {
     return await orderByUserRemote.getOrderByUser(uid);
+  }
+
+  @override
+  Future<DataState<bool>> updateProfilePicture(PickedAttachment photo) async {
+    return await userProfileRemoteSource.updateProfilePicture(photo);
+  }
+
+  @override
+  Future<DataState<String>> updatePRofileDetail(UpdateUserParams photo) async {
+    return await userProfileRemoteSource.updatePRofileDetail(photo);
   }
 }

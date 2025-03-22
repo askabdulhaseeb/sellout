@@ -1,6 +1,8 @@
+import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../auth/signin/domain/repositories/signin_repository.dart';
 import '../../../../post/domain/entities/post_entity.dart';
 import '../../../../post/domain/entities/visit/visiting_entity.dart';
+import '../../views/params/update_user_params.dart';
 import '../entities/orderentity.dart';
 import '../entities/user_entity.dart';
 
@@ -10,4 +12,6 @@ abstract interface class UserProfileRepository {
   Future<DataState<List<VisitingEntity>>> iMvisiter();
   Future<DataState<List<VisitingEntity>>> iMhost();
   Future<DataState<List<OrderEntity>>> getOrderByUser(String? uid);
+  Future<DataState<bool>> updateProfilePicture(PickedAttachment photo);
+  Future<DataState<String>> updatePRofileDetail(UpdateUserParams photo);
 }

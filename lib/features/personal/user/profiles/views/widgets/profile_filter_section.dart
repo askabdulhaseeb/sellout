@@ -66,7 +66,7 @@ class CustomFilterButton extends StatelessWidget {
       height: 50,
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
-        color: Colors.white.withAlpha(200),
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(8),
       ),
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),

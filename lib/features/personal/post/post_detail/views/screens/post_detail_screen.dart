@@ -1,11 +1,16 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/attachment_slider.dart';
+import '../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../core/widgets/in_dev_mode.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../book_visit/view/screens/view_booking_screen.dart';
 import '../../../data/sources/local/local_post.dart';
 import '../../../domain/entities/post_entity.dart';
+import '../../../domain/entities/visit/visiting_entity.dart';
 import '../../../feed/views/widgets/post/widgets/section/buttons/home_post_button_section.dart';
 import '../../../feed/views/widgets/post/widgets/section/home_post_header_section.dart';
 import '../providers/post_detail_provider.dart';
@@ -27,6 +32,7 @@ class PostDetailScreen extends StatelessWidget {
     final Map<String, dynamic> args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final String postID = args['pid'] ?? '';
+    final VisitingEntity? visit = args['visit'] as VisitingEntity?;
     return Scaffold(
       appBar: AppBar(title: const Text('post_details').tr()),
       body: FutureBuilder<DataState<PostEntity>>(
@@ -39,6 +45,7 @@ class PostDetailScreen extends StatelessWidget {
         ) {
           final PostEntity? post =
               snapshot.data?.entity ?? LocalPost().post(postID);
+          final bool isMe = post?.createdBy == (LocalAuth.uid ?? '-');
           return post == null
               ? const SizedBox()
               : Padding(
@@ -54,10 +61,62 @@ class PostDetailScreen extends StatelessWidget {
                         AttachmentsSlider(urls: post.fileUrls),
                         PostDetailTitleAmountSection(post: post),
                         PostRatingSection(post: post),
-                        PostButtonSection(
-                          post: post,
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                        ),
+                        if (isMe == true)
+                          Column(
+                            children: <Widget>[
+                              Row(spacing: 8, children: <Widget>[
+                                Expanded(
+                                    child: InDevMode(
+                                  child: CustomElevatedButton(
+                                      isLoading: false,
+                                      bgColor: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
+                                      onTap: () {},
+                                      title: 'promote'.tr()),
+                                )),
+                                Expanded(
+                                  child: CustomElevatedButton(
+                                      textColor: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                      border: Border.all(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                      ),
+                                      bgColor:
+                                          Theme.of(context).colorScheme.surface,
+                                      isLoading: false,
+                                      onTap: () {},
+                                      title: 'edit_listing'.tr()),
+                                ),
+                              ]),
+                              if (visit?.visitingTime != null)
+                                CustomElevatedButton(
+                                    textColor: Theme.of(context).primaryColor,
+                                    border: Border.all(
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                    bgColor:
+                                        Theme.of(context).colorScheme.surface,
+                                    title: 'calender'.tr(),
+                                    isLoading: false,
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                          context, BookingScreen.routeName,
+                                          arguments: <String, dynamic>{
+                                            'post': post,
+                                            'visit': visit,
+                                          });
+                                    })
+                            ],
+                          ),
+                        if (isMe == false)
+                          PostButtonSection(
+                            post: post,
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                          ),
                         PostDetailDescriptionSection(post: post),
                         PostDetailTileListSection(post: post),
                         PostDetailPostageReturnSection(post: post),

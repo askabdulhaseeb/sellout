@@ -15,9 +15,9 @@ class LocationRadiusBottomSheet extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       height: 550,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
       ),
       child: Column(
         children: <Widget>[

@@ -51,6 +51,7 @@ class ProfilePromoGridview extends StatelessWidget {
         const SizedBox(height: 10),
         SizedBox(
           child: GridView.builder(
+            physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,

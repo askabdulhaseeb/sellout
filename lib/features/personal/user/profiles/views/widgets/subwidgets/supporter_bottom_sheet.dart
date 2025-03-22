@@ -23,12 +23,14 @@ class SupporterBottomsheet extends StatelessWidget {
     final GetUserByUidUsecase getUserByUidUsecase =
         GetUserByUidUsecase(locator());
     final TextTheme textTheme = Theme.of(context).textTheme;
+    final ColorScheme colorscheme = Theme.of(context).colorScheme;
+
     final TextEditingController searchController = TextEditingController();
 
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      decoration: BoxDecoration(
+        color: colorscheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
       ),
       height: MediaQuery.of(context).size.height * 0.6,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -40,12 +42,12 @@ class SupporterBottomsheet extends StatelessWidget {
             child: TextButton.icon(
               label: Text(
                 'close'.tr(),
-                style: const TextStyle(color: Colors.black),
+                style: textTheme.labelSmall,
               ),
-              icon: const Icon(
+              icon: Icon(
                 Icons.close,
                 size: 16,
-                color: Colors.black,
+                color: colorscheme.onSurface,
               ),
               onPressed: () => Navigator.pop(context),
             ),

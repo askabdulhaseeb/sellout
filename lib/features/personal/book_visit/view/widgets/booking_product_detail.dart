@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-
-import '../../../../../core/theme/app_theme.dart';
 import '../../../post/domain/entities/post_entity.dart';
 
 class BookViewProductDetail extends StatelessWidget {
@@ -20,11 +18,14 @@ class BookViewProductDetail extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 4),
       width: double.infinity,
       decoration: BoxDecoration(
-          color: AppTheme.darkScaffldColor.withAlpha(20),
+          color: Theme.of(context).colorScheme.shadow,
           borderRadius: BorderRadius.circular(10)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
+      const    SizedBox(
+            width: double.infinity,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -35,12 +36,10 @@ class BookViewProductDetail extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const Spacer(),
-              Expanded(
-                  child: Text(
+              Text(
                 '\$${post.price.toString()}',
                 maxLines: 1,
-              ))
+              )
             ],
           ),
           //   Row(
