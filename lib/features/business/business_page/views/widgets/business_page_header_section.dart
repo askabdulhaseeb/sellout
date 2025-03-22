@@ -28,7 +28,7 @@ class BusinessPageHeaderSection extends StatelessWidget {
                 child: CustomNetworkImage(
                   size: double.infinity,
                   imageURL: business.logo?.url,
-                  placeholder: business.displayName,
+                  placeholder: business.displayName ?? '',
                 ),
               ),
             ),
@@ -38,7 +38,7 @@ class BusinessPageHeaderSection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    business.displayName,
+                    business!.displayName ?? '',
                     maxLines: 2,
                     style: const TextStyle(
                       fontSize: 18,
@@ -47,11 +47,11 @@ class BusinessPageHeaderSection extends StatelessWidget {
                   ),
                   Opacity(
                     opacity: 0.6,
-                    child: Text(business.location.address, maxLines: 2),
+                    child: Text(business.location!.address, maxLines: 2),
                   ),
                   const SizedBox(height: 8),
                   RatingDisplayWidget(
-                    ratingList: business.listOfReviews,
+                    ratingList: business.listOfReviews ?? [],
                     onTap: () async {
                       final List<ReviewEntity> reviews =
                           await Provider.of<BusinessPageProvider>(context,

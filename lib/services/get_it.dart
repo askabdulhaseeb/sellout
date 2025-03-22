@@ -180,7 +180,7 @@ void _servicePage() {
   locator.registerFactory<GetSpecialOfferUsecase>(
       () => GetSpecialOfferUsecase(locator()));
   locator.registerLazySingleton<ServicesPageProvider>(
-      () => ServicesPageProvider(locator(), locator()));
+      () => ServicesPageProvider(locator(), locator(), locator()));
 }
 
 void _profile() {

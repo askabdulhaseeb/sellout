@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/enums/routine/day_type.dart';
+import '../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../post/data/models/meetup/availability_model.dart';
 import '../../../post/domain/entities/meetup/availability_entity.dart';
 import '../../../post/domain/entities/post_entity.dart';
@@ -9,13 +10,15 @@ import '../../../post/domain/entities/visit/visiting_entity.dart';
 import '../provider/view_booking_provider.dart';
 
 class BookingCalendarWidget extends StatelessWidget {
-  const BookingCalendarWidget({required this.post, super.key, this.visit});
-  final PostEntity post;
+  const BookingCalendarWidget(
+      {required this.post, super.key, this.visit, this.service});
+  final PostEntity? post;
   final VisitingEntity? visit;
+  final ServiceEntity? service;
 
   @override
   Widget build(BuildContext context) {
-    final List<AvailabilityEntity>? availabilities = post.availability;
+    final List<AvailabilityEntity>? availabilities = post?.availability;
     final BookingProvider provider = Provider.of<BookingProvider>(context);
     String selectedDay =
         DateFormat('EEEE').format(provider.selectedDate).toLowerCase();

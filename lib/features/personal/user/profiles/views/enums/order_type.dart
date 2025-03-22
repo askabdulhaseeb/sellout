@@ -1,17 +1,17 @@
 enum OrderType {
   newOrder(
-    'pending',
+    'processing',
     'new_order',
   ),
 
   completed(
-    'completed',
+    'delivered',
     'completed',
   ),
 
   cancelled(
-    'canceled_by_seller',
-    'cancelled',
+    'canceled',
+    'canceled',
   );
 
   const OrderType(
