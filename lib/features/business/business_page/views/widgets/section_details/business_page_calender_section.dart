@@ -26,7 +26,7 @@ class BusinessPageCalenderSection extends StatelessWidget {
             const SizedBox(height: 16),
             Flexible(
               child: FutureBuilder<DataState<List<BookingEntity>>>(
-                future: pagePro.getBookings(business.businessID),
+                future: pagePro.getBookings(business.businessID ?? '  '),
                 builder: (
                   BuildContext context,
                   AsyncSnapshot<DataState<List<BookingEntity>>> snapshot,

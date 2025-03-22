@@ -101,7 +101,9 @@ class ServicesPageExploreSpecialOfferSection extends StatelessWidget {
                                               : Opacity(
                                                   opacity: 0.6,
                                                   child: Text(
-                                                    business.location.address,
+                                                    business.location
+                                                            ?.address ??
+                                                        '',
                                                     maxLines: 1,
                                                     overflow:
                                                         TextOverflow.ellipsis,

@@ -19,9 +19,9 @@ class BusinessPageEmployeeListSection extends StatelessWidget {
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.only(left: 16),
-        itemCount: business.employees.length,
+        itemCount: business.employees?.length,
         itemBuilder: (BuildContext context, int index) {
-          final BusinessEmployeeEntity employee = business.employees[index];
+          final BusinessEmployeeEntity employee = business.employees![index];
           return _EmployeeTile(employee);
         },
       ),
