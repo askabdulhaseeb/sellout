@@ -1,9 +1,7 @@
-
 enum OrderType {
   newOrder(
     'pending',
     'new_order',
-
   ),
 
   completed(
@@ -12,7 +10,7 @@ enum OrderType {
   ),
 
   cancelled(
-    'cancelled',
+    'canceled_by_seller',
     'cancelled',
   );
 
