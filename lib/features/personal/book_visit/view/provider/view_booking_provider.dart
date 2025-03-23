@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/functions/app_log.dart';
@@ -10,26 +11,39 @@ import '../../../chats/chat_dashboard/data/models/chat/chat_model.dart';
 import '../../../chats/chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../chats/chat_dashboard/domain/usecase/get_my_chats_usecase.dart';
 import '../../../post/domain/entities/visit/visiting_entity.dart';
+import '../../../user/profiles/data/models/user_model.dart';
+import '../../../user/profiles/domain/usecase/get_user_by_uid.dart';
+import '../../domain/usecase/book_service_usecase.dart';
 import '../../domain/usecase/book_visit_usecase.dart';
 import '../../domain/usecase/cancel_visit_usecase.dart';
 import '../../domain/usecase/update_visit_usecase.dart';
+import '../params/book_service_params.dart';
 import '../params/book_visit_params.dart';
 import '../params/update_visit_params.dart';
 
 class BookingProvider extends ChangeNotifier {
-  BookingProvider(this._bookVisitUseCase, this._cancelVisitUseCase,
-      this._updateVisitUseCase, this._getmychatusecase);
+  BookingProvider(
+      this._bookVisitUseCase,
+      this._cancelVisitUseCase,
+      this._updateVisitUseCase,
+      this._getmychatusecase,
+      this._bookServiceUsecase,
+      this._getUserByUidUsecase);
   final BookVisitUseCase _bookVisitUseCase;
   final CancelVisitUseCase _cancelVisitUseCase;
   final UpdateVisitUseCase _updateVisitUseCase;
   final GetMyChatsUsecase _getmychatusecase;
+  final BookServiceUsecase _bookServiceUsecase;
+  final GetUserByUidUsecase _getUserByUidUsecase;
 
   DateTime _selectedDate = DateTime.now();
   String? _selectedTime;
   bool _isLoading = false;
-  String? _selectedpostId;
-  String? _selectedbusinessId;
+  // String? _selectedpostId;
+  // String? _selectedbusinessId;
   MessageEntity? _messageentity;
+  List<UserEntity> employees = <UserEntity>[];
+  UserEntity? selectedEmployee;
 
   DateTime get selectedDate => _selectedDate;
   String? get selectedTime => _selectedTime;
@@ -60,15 +74,15 @@ class BookingProvider extends ChangeNotifier {
   //   notifyListeners();
   // }
 
-  void setpostId(String postId) {
-    _selectedpostId = postId;
-    notifyListeners();
-  }
+  // void setpostId(String postId) {
+  //   _selectedpostId = postId;
+  //   notifyListeners();
+  // }
 
-  void setbusinessId(String postId) {
-    _selectedbusinessId = postId;
-    notifyListeners();
-  }
+  // void setbusinessId(String postId) {
+  //   _selectedbusinessId = postId;
+  //   notifyListeners();
+  // }
 
   String get formattedDateTime {
     if (_selectedTime == null) {
@@ -98,12 +112,33 @@ class BookingProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> bookVisit(BuildContext context) async {
+  Future<void> fetchEmployees(List<String> employeesID) async {
+    employees.clear();
+    for (String id in employeesID) {
+      final DataState<UserEntity?> user = await userbyuid(id);
+
+      employees.add(user.entity!);
+    }
+    if (employees.isNotEmpty) {
+      selectedEmployee = employees.first;
+    }
+    notifyListeners();
+  }
+
+  void setSelectedEmployee(UserEntity? user) {
+    selectedEmployee = user;
+    notifyListeners();
+  }
+
+  Future<void> bookVisit(
+      BuildContext context, String postID, String? businessID) async {
     isLoading = true;
+    // setpostId(postID);
+    // setbusinessId(businessID ?? 'null');
     final BookVisitParams params = BookVisitParams(
-        businessId: _selectedbusinessId ?? 'null',
+        businessId: businessID ?? 'null',
         dateTime: formattedDateTime,
-        postId: _selectedpostId ?? '');
+        postId: postID);
     final DataState<VisitingEntity> result =
         await _bookVisitUseCase.call(params);
     if (result is DataSuccess) {
@@ -111,7 +146,8 @@ class BookingProvider extends ChangeNotifier {
       DataState<List<ChatEntity>> chatresult =
           await _getmychatusecase.call(<String>[chatId]);
       if (chatresult is DataSuccess && (chatresult.data?.isNotEmpty ?? false)) {
-        final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+        final ChatProvider chatProvider =
+            Provider.of<ChatProvider>(context, listen: false);
         chatProvider.chat = chatresult.entity!.first;
         Navigator.of(context).pushReplacementNamed(
           ChatScreen.routeName,
@@ -176,6 +212,44 @@ class BookingProvider extends ChangeNotifier {
           context, result.exception?.message ?? 'something_wrong'.tr());
     }
     isLoading = false;
+  }
+
+  Future<void> bookService(
+    BuildContext context,
+    String serviceId,
+    String businessId,
+  ) async {
+    isLoading = true;
+    final BookServiceParams params = BookServiceParams(
+      servicesAndEmployees: <ServiceAndEmployee>[
+        ServiceAndEmployee(
+          serviceId: serviceId,
+          employeeId: selectedEmployee!.uid,
+          bookAt: formattedDateTime,
+        ),
+      ],
+      businessId: businessId,
+    );
+
+    final DataState<VisitingEntity> result =
+        await _bookServiceUsecase.call(params);
+
+    if (result is DataSuccess) {
+      if (kDebugMode) {
+        print('Booking successful: ${result.data}');
+      }
+      isLoading = false;
+      Navigator.pop(context);
+    } else {
+      if (kDebugMode) {
+        isLoading = false;
+        print('Booking failed: ${result.exception}');
+      }
+    }
+  }
+
+  Future<DataState<UserEntity?>> userbyuid(String uid) async {
+    return await _getUserByUidUsecase.call(uid);
   }
 
   void disposed() {

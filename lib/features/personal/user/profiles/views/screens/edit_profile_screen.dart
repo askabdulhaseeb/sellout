@@ -81,7 +81,7 @@ class EditProfileScreen extends StatelessWidget {
                       }
                     },
                     isLoading: false,
-                    title: 'Save Changes'),
+                    title: 'save_changes'.tr()),
               ),
             ],
           ),

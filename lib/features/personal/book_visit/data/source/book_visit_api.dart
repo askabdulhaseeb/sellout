@@ -4,11 +4,13 @@ import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/api_call.dart';
 import '../../../post/data/models/visit/visiting_model.dart';
 import '../../../post/domain/entities/visit/visiting_entity.dart';
+import '../../view/params/book_service_params.dart';
 import '../../view/params/book_visit_params.dart';
 import '../../view/params/update_visit_params.dart';
 
 abstract interface class BookVisitApi {
   Future<DataState<VisitingEntity>> bookVisit(BookVisitParams params);
+  Future<DataState<VisitingEntity>> bookService(BookServiceParams params);
   Future<DataState<VisitingEntity>> cancelVisit(UpdateVisitParams params);
   Future<DataState<VisitingEntity>> updateVisit(UpdateVisitParams params);
 }
@@ -33,6 +35,46 @@ class BookVisitApiImpl implements BookVisitApi {
             ? VisitingModel.fromJson(decodedData['items'])
             : null;
 
+        final String chatId = decodedData['chat_id'] ?? '';
+        return DataSuccess<VisitingEntity>(chatId, visitingItem);
+      } else {
+        AppLog.error(
+          result.exception?.message ?? 'ERROR - BookVisitApiImpl.bookVisit',
+          name: 'BookVisitApiImpl.bookVisit - failed',
+          error: result.exception,
+        );
+        return DataFailer<VisitingEntity>(
+          result.exception ?? CustomException('something_wrong'.tr()),
+        );
+      }
+    } catch (e) {
+      AppLog.error(
+        e.toString(),
+        name: 'BookVisitApiImpl.bookVisit - catch',
+        error: e,
+      );
+      return DataFailer<VisitingEntity>(CustomException(e.toString()));
+    }
+  }
+
+  @override
+  Future<DataState<VisitingEntity>> bookService(
+      BookServiceParams params) async {
+    const String endpoint = '/booking/create';
+    try {
+      final DataState<String> result = await ApiCall<String>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.post,
+        body: json.encode(params.toMap()),
+      );
+
+      if (result is DataSuccess<String>) {
+        debugPrint(result.data);
+        final Map<String, dynamic> decodedData =
+            json.decode(result.data ?? '{}');
+        final VisitingEntity? visitingItem = decodedData.containsKey('items')
+            ? VisitingModel.fromJson(decodedData['items'])
+            : null;
         final String chatId = decodedData['chat_id'] ?? '';
         return DataSuccess<VisitingEntity>(chatId, visitingItem);
       } else {

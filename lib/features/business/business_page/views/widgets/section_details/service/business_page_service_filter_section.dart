@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../core/widgets/in_dev_mode.dart';
+import '../../../../../../personal/chats/chat/views/screens/chat_screen.dart';
 import '../../../../../core/domain/entity/business_entity.dart';
 import '../../../../../service/views/screens/add_service_screen.dart';
 
@@ -49,20 +50,32 @@ class BusinessPageServiceFilterSection extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            InDevMode(
-              child: CustomElevatedButton(
-                title: 'promotion_boost'.tr(),
+            // InDevMode(
+            //   child: CustomElevatedButton(
+            //     title: 'promotion_boost'.tr(),
+            //     bgColor: Colors.transparent,
+            //     borderRadius: BorderRadius.circular(12),
+            //     textColor: Theme.of(context).colorScheme.secondary,
+            //     border:
+            //         Border.all(color: Theme.of(context).colorScheme.secondary),
+            //     padding:
+            //         const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            //     isLoading: false,
+            //     onTap: () {},
+            //   ),
+            // ),
+            CustomElevatedButton(
                 bgColor: Colors.transparent,
                 borderRadius: BorderRadius.circular(12),
-                textColor: Theme.of(context).colorScheme.secondary,
-                border:
-                    Border.all(color: Theme.of(context).colorScheme.secondary),
+                textColor: Theme.of(context).primaryColor,
+                border: Border.all(color: Theme.of(context).primaryColor),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                title: 'request_quote',
                 isLoading: false,
-                onTap: () {},
-              ),
-            ),
+                onTap: () {
+                  Navigator.pushNamed(context, ChatScreen.routeName);
+                })
           ],
         ),
       ),
