@@ -38,7 +38,7 @@ class UserProfileScreen extends StatelessWidget {
                   ProfileHeaderSection(user: user),
                   ProfileScoreSection(user: user),
                   ProfileGridTypeSelectionSection(user: user),
-                  ProfileFilterSection(user: user),
+                  // ProfileFilterSection(user: user),
                   ProfileGridSection(user: user),
                 ],
               ),

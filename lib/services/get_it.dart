@@ -46,6 +46,7 @@ import '../features/personal/auth/signup/domain/usecase/register_user_usecase.da
 import '../features/personal/auth/signup/domain/usecase/send_opt_usecase.dart';
 import '../features/personal/auth/signup/domain/usecase/verify_opt_usecase.dart';
 import '../features/personal/auth/signup/views/providers/signup_provider.dart';
+import '../features/personal/book_visit/domain/usecase/book_service_usecase.dart';
 import '../features/personal/book_visit/domain/usecase/cancel_visit_usecase.dart';
 import '../features/personal/book_visit/domain/usecase/update_visit_usecase.dart';
 import '../features/personal/cart/data/repositories/cart_repository_impl.dart';
@@ -398,6 +399,9 @@ void _bookvisit() {
   locator
       .registerFactory<CancelVisitUseCase>(() => CancelVisitUseCase(locator()));
   locator.registerFactory<BookVisitUseCase>(() => BookVisitUseCase(locator()));
-  locator.registerFactory<BookingProvider>(
-      () => BookingProvider(locator(), locator(), locator(), locator()));
+  locator
+      .registerFactory<BookServiceUsecase>(() => BookServiceUsecase(locator()));
+
+  locator.registerFactory<BookingProvider>(() => BookingProvider(
+      locator(), locator(), locator(), locator(), locator(), locator()));
 }

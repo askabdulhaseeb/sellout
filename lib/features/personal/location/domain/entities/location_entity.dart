@@ -14,15 +14,15 @@ class LocationEntity {
   });
 
   @HiveField(0)
-  final String id;
+  final String? id;
   @HiveField(1)
-  final String url;
+  final String? url;
   @HiveField(2)
-  final String title;
+  final String? title;
   @HiveField(3)
-  final String address;
+  final String? address;
   @HiveField(4)
-  final double latitude;
+  final double? latitude;
   @HiveField(5)
-  final double longitude;
+  final double? longitude;
 }

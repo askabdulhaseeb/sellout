@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../post/domain/entities/post_entity.dart';
-
+import 'subwidgets/employee_dropdown.dart';
 class BookViewProductDetail extends StatelessWidget {
   const BookViewProductDetail({
     required this.texttheme,
@@ -12,7 +12,6 @@ class BookViewProductDetail extends StatelessWidget {
 
   final PostEntity? post;
   final ServiceEntity? service;
-
   final TextTheme texttheme;
 
   @override
@@ -30,35 +29,29 @@ class BookViewProductDetail extends StatelessWidget {
           const SizedBox(
             width: double.infinity,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Column(
             children: <Widget>[
-              Expanded(
-                child: Text(
-                  post?.title ?? service?.name ?? 'null',
-                  style: texttheme.titleSmall,
-                  overflow: TextOverflow.ellipsis,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      post?.title ?? service?.name ?? 'null',
+                      style: texttheme.titleSmall,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Text(
+                    '\$${post?.price.toString() ?? service?.price.toString() ?? 'null'}',
+                    maxLines: 1,
+                  )
+                ],
               ),
-              Text(
-                '\$${post?.price.toString() ?? service?.price.toString() ?? 'null'}',
-                maxLines: 1,
-              )
+              if (service != null) const Divider(),
+              if (service != null)
+                EmployeeDropdown(employeesID: service!.employeesID)
             ],
           ),
-          //   Row(
-          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //     children: <Widget>[
-          //       SizedBox(
-          //           child: Text(
-          //         post.id,
-          //         style: texttheme.bodyLarge?.copyWith(
-          //             color: colorscheme.onSecondary.withAlpha(200)),
-          //         overflow: TextOverflow.ellipsis,
-          //       )),
-          //       const Text('')
-          //     ],
-          //   )
         ],
       ),
     );

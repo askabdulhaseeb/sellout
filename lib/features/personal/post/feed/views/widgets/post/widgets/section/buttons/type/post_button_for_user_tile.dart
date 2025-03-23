@@ -1,14 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../../../../book_visit/view/screens/view_booking_screen.dart';
 import '../../../../../../../../../listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../../../../../../../../../listing/listing_form/views/screens/add_listing_form_screen.dart';
-import '../../../../../../../../../listing/start_listing/views/screens/start_listing_screen.dart';
 import '../../../../../../../../domain/entities/post_entity.dart';
 import '../../../../../../../../domain/entities/visit/visiting_entity.dart';
 

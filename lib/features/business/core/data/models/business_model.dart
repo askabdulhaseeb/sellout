@@ -12,11 +12,9 @@ import 'routine_model.dart';
 class BusinessModel extends BusinessEntity {
   BusinessModel({
     required super.businessID,
-    required super.location,
     required super.logo,
     required super.acceptPromotions,
     required super.locationType,
-    required super.travelDetail,
     required super.employees,
     required super.address,
     required super.displayName,
@@ -28,6 +26,8 @@ class BusinessModel extends BusinessEntity {
     required super.listOfReviews,
     required super.createdAt,
     required super.updatedAt,
+    super.location,
+    super.travelDetail,
   });
 
   factory BusinessModel.fromRawJson(String str) =>

@@ -76,6 +76,7 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
       value: ExploreProvider(locator(), locator())),
 
 //
+
   ChangeNotifierProvider<BookingProvider>.value(
-      value: BookingProvider(locator(), locator(), locator(), locator())),
+      value: BookingProvider(locator(), locator(), locator(), locator(),locator(), locator())),
 ];

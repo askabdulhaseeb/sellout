@@ -1,13 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/attachment_slider.dart';
-import '../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../../../book_visit/view/screens/view_booking_screen.dart';
 import '../../../data/sources/local/local_post.dart';
 import '../../../domain/entities/post_entity.dart';
 import '../../../domain/entities/visit/visiting_entity.dart';
