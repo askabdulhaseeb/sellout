@@ -51,7 +51,7 @@ class BusinessPageHeaderSection extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   RatingDisplayWidget(
-                    ratingList: business.listOfReviews ?? [],
+                    ratingList: business.listOfReviews ?? <double>[],
                     onTap: () async {
                       final List<ReviewEntity> reviews =
                           await Provider.of<BusinessPageProvider>(context,

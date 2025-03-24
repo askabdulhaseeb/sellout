@@ -86,7 +86,7 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
   @override
   void write(BinaryWriter writer, PostEntity obj) {
     writer
-      ..writeByte(61)
+      ..writeByte(63)
       ..writeByte(0)
       ..write(obj.listID)
       ..writeByte(1)

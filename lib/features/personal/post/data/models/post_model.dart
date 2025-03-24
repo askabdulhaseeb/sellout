@@ -175,8 +175,6 @@ class PostModel extends PostEntity {
             discountData.values.any((value) => (value as int? ?? 0) > 0);
 
     final List<DiscountEntity> discounts = <DiscountEntity>[];
-    final bool hasDiscount =
-        bool.tryParse(json['discount']?.toString() ?? 'false') ?? false;
     if (hasDiscount) {
       final double d2 =
           double.tryParse(json['discount_2_item']?.toString() ?? '0.0') ?? 0.0;
@@ -205,11 +203,9 @@ class PostModel extends PostEntity {
       quantity: int.tryParse(json['quantity']?.toString() ?? '0') ?? 0,
       currency: json['currency']?.toString() ?? 'gbp',
       type: ListingType.fromJson(json['list_id']),
+      categoryType: json['type'].toString(),
       address: json['address'].toString(),
       acceptOffers: json['accept_offers'] ?? false,
-      address: json['address']?.toString() ?? '',
-      acceptOffers:
-          bool.tryParse(json['accept_offers']?.toString() ?? 'false') ?? false,
       minOfferAmount:
           double.tryParse(json['min_offer_amount']?.toString() ?? '0.0') ?? 0.0,
       privacy: PrivacyType.fromJson(json['post_privacy']),
