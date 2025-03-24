@@ -10,6 +10,7 @@ import '../../../../../../core/widgets/sellout_title.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../dashboard/views/providers/personal_bottom_nav_provider.dart';
 import '../../../../dashboard/views/screens/dasboard_screen.dart';
+import '../../../find_account/view/screens/find_account_screen.dart';
 import '../../../signup/views/screens/signup_screen.dart';
 import '../providers/signin_provider.dart';
 
@@ -33,7 +34,7 @@ class SignInScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Consumer<SigninProvider>(
             builder: (BuildContext context, SigninProvider authPro, _) {
@@ -57,7 +58,7 @@ class SignInScreen extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: () async => await authPro.forgotPassword(),
+                      onPressed: () =>AppNavigator.pushNamed(FindAccountScreen.routeName),
                       child: Text(
                         'forgot_password',
                         style: TextStyle(color: Theme.of(context).dividerColor),

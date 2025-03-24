@@ -26,21 +26,23 @@ class ProductChatTitleWidget extends StatelessWidget {
               placeholder: user?.displayName ?? '',
             ),
             const SizedBox(width: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  post?.title ?? '',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Opacity(
-                  opacity: 0.5,
-                  child: const Text(
-                    'tap_here_to_open_profile',
-                    style: TextStyle(fontSize: 12),
-                  ).tr(),
-                )
-              ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    post?.title ?? '',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Opacity(
+                    opacity: 0.5,
+                    child: const Text(
+                      'tap_here_to_open_profile',
+                      style: TextStyle(fontSize: 12),
+                    ).tr(),
+                  )
+                ],
+              ),
             )
           ],
         );

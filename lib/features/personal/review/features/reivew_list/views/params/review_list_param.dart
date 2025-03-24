@@ -1,6 +1,6 @@
 import '../../../../../../../core/enums/core/attachment_type.dart';
 import '../../../../domain/entities/review_entity.dart';
-import '../../domain/enums/review_sort_type.dart';
+import '../../../../domain/enums/review_sort_type.dart';
 
 class ReviewListScreenParam {
   ReviewListScreenParam({

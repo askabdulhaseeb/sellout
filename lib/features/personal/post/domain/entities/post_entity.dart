@@ -29,6 +29,9 @@ class PostEntity {
     required this.privacy,
     required this.condition,
     required this.deliveryType,
+    required this.listOfReviews,
+    required this.categoryType,
+
     //
     required this.currentLongitude,
     required this.currentLatitude,
@@ -72,6 +75,9 @@ class PostEntity {
     required this.wormAndFleaTreated,
     required this.vaccinationUpToDate,
     //
+    required this.propertytype,
+    required this.propertyCategory,
+    //
     required this.isActive,
     required this.createdBy,
     required this.updatedBy,
@@ -111,6 +117,11 @@ class PostEntity {
   final ConditionType condition;
   @HiveField(14)
   final DeliveryType deliveryType;
+  @HiveField(15)
+  final List<double> listOfReviews;
+  @HiveField(16)
+  final String categoryType;
+
   //
   @HiveField(30)
   final double currentLongitude;
@@ -192,6 +203,11 @@ class PostEntity {
   final bool? wormAndFleaTreated;
   @HiveField(116)
   final bool? vaccinationUpToDate;
+  @HiveField(117)
+  final String? propertytype;
+  @HiveField(118)
+  final String? propertyCategory;
+
   //
   @HiveField(190)
   final bool isActive;
