@@ -16,26 +16,22 @@ class BusinessRemoteAPIImpl implements BusinessCoreAPI {
   @override
   Future<DataState<BusinessEntity?>> getBusiness(String businessID) async {
     try {
-      final String endpoint = '/noAuth/entity/$businessID';
-
+      final String endpoint = 'business/$businessID';
       final ApiRequestEntity? local = await LocalRequestHistory().request(
         endpoint: endpoint,
         duration:
             kDebugMode ? const Duration(hours: 1) : const Duration(minutes: 5),
       );
-
       if (local != null) {
         final BusinessEntity business =
             BusinessModel.fromRawJson(local.encodedData);
         return DataSuccess<BusinessEntity?>(local.encodedData, business);
       }
-
-      final DataState<bool> result = await ApiCall<bool>().call(
+      final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,
         requestType: ApiRequestType.get,
-        isAuth: false,
+        isAuth: true,
       );
-
       if (result is DataSuccess) {
         final String raw = result.data ?? '';
         if (raw.isEmpty) {
@@ -58,11 +54,11 @@ class BusinessRemoteAPIImpl implements BusinessCoreAPI {
         return DataFailer<BusinessEntity?>(
             result.exception ?? CustomException('something_wrong'));
       }
-    } catch (e) {
+    } catch (e, stc) {
       AppLog.error(
         e.toString(),
         error: e,
-        name: 'BusinessRemoteAPIImpl.getBusiness - catch',
+        name: 'BusinessRemoteAPIImpl.getBusiness - catch,$stc',
       );
       return DataFailer<BusinessEntity?>(CustomException(e.toString()));
     }
@@ -70,7 +66,6 @@ class BusinessRemoteAPIImpl implements BusinessCoreAPI {
 
   @override
   Future<DataState<List<BusinessEntity>>> getBusinesses() {
-    // TODO: implement getBusinesses
     throw UnimplementedError();
   }
 }

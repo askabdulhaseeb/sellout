@@ -1,4 +1,5 @@
 {
     "java.compile.nullAnalysis.mode": "automatic",
-    "cmake.sourceDirectory": "/Users/askabdulhaseeb/Flutter/Upwork/sellout/linux"
+    "cmake.sourceDirectory": "/Users/askabdulhaseeb/Flutter/Upwork/sellout/linux",
+    "java.configuration.updateBuildConfiguration": "automatic"
 }

@@ -37,7 +37,7 @@ class SignupApiImpl implements SignupApi {
           return DataFailer<String>(CustomException('something_wrong'.tr()));
         }
         final dynamic data = json.decode(str);
-        final String entity = data['response']['user_id'].toString();
+        final String entity = data['item']['user_id'].toString();
         print('new user id: $entity - $data');
         return DataSuccess<String>(str, entity);
       } else {

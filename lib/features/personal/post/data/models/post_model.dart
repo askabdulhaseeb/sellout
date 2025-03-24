@@ -26,6 +26,9 @@ class PostModel extends PostEntity {
     required super.privacy,
     required super.condition,
     required super.deliveryType,
+    required super.listOfReviews,
+    required super.categoryType,
+
     //
     required super.currentLongitude,
     required super.currentLatitude,
@@ -71,6 +74,10 @@ class PostModel extends PostEntity {
     required super.wormAndFleaTreated,
     required super.vaccinationUpToDate,
     //
+    required super.propertyCategory,
+    required super.propertytype,
+
+    //
     required super.isActive,
     required super.createdBy,
     required super.updatedBy,
@@ -96,6 +103,8 @@ class PostModel extends PostEntity {
       privacy: entity.privacy,
       condition: entity.condition,
       deliveryType: entity.deliveryType,
+      listOfReviews: entity.listOfReviews,
+      categoryType: entity.categoryType,
       //
       currentLongitude: entity.currentLongitude,
       currentLatitude: entity.currentLatitude,
@@ -139,6 +148,10 @@ class PostModel extends PostEntity {
       wormAndFleaTreated: entity.wormAndFleaTreated,
       vaccinationUpToDate: entity.vaccinationUpToDate,
       //
+
+      propertyCategory: entity.propertyCategory,
+      propertytype: entity.propertytype,
+      //
       isActive: entity.isActive,
       createdBy: entity.createdBy,
       updatedBy: entity.updatedBy,
@@ -149,6 +162,18 @@ class PostModel extends PostEntity {
   }
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
+    final dynamic discountRaw = json['discount'];
+
+    final Map<String, dynamic> discountData =
+        (discountRaw is Map<String, dynamic>)
+            ? discountRaw
+            : <String, dynamic>{};
+
+    final bool hasDiscount = discountRaw is bool
+        ? discountRaw
+        : discountData.isNotEmpty &&
+            discountData.values.any((value) => (value as int? ?? 0) > 0);
+
     final List<DiscountEntity> discounts = <DiscountEntity>[];
     final bool hasDiscount =
         bool.tryParse(json['discount']?.toString() ?? 'false') ?? false;
@@ -169,6 +194,7 @@ class PostModel extends PostEntity {
         discounts.add(DiscountEntity(quantity: 5, discount: d5));
       }
     }
+
     return PostModel(
       listID: json['list_id']?.toString() ?? '',
       postID: json['post_id']?.toString() ?? '',
@@ -179,6 +205,8 @@ class PostModel extends PostEntity {
       quantity: int.tryParse(json['quantity']?.toString() ?? '0') ?? 0,
       currency: json['currency']?.toString() ?? 'gbp',
       type: ListingType.fromJson(json['list_id']),
+      address: json['address'].toString(),
+      acceptOffers: json['accept_offers'] ?? false,
       address: json['address']?.toString() ?? '',
       acceptOffers:
           bool.tryParse(json['accept_offers']?.toString() ?? 'false') ?? false,
@@ -187,6 +215,17 @@ class PostModel extends PostEntity {
       privacy: PrivacyType.fromJson(json['post_privacy']),
       condition: ConditionType.fromJson(json['item_condition']),
       deliveryType: DeliveryType.fromJson(json['delivery_type']),
+      listOfReviews: List<double>.from(
+        (json['list_of_reviews'] ?? <dynamic>[]).map((dynamic x) {
+          if (x is int) {
+            return x.toDouble(); // Convert int to double
+          } else if (x is double) {
+            return x; // Already a double
+          } else {
+            return double.tryParse(x.toString()) ?? 0.0;
+          }
+        }),
+      ),
       //
       currentLongitude:
           double.tryParse(json['current_longitude']?.toString() ?? '0.0') ??
@@ -258,6 +297,8 @@ class PostModel extends PostEntity {
       createdAt: json['created_at']?.toString().toDateTime() ?? DateTime.now(),
       updatedAt: json['updated_at']?.toString().toDateTime() ?? DateTime.now(),
       accessCode: json['access_code']?.toString(),
+      propertyCategory: json['property_category']?.toString(),
+      propertytype: json['property_type']?.toString(),
     );
   }
 }

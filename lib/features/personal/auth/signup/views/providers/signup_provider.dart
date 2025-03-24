@@ -1,10 +1,8 @@
 import 'dart:async';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/functions/permission_fun.dart';
 import '../../../../../../core/sources/api_call.dart';
@@ -21,6 +19,7 @@ import '../../domain/usecase/verify_opt_usecase.dart';
 import '../enums/signup_page_type.dart';
 import '../params/signup_basic_info_params.dart';
 import '../params/signup_send_opt_params.dart';
+import '../screens/pages/account_type_page.dart';
 import '../screens/pages/signup_basic_info_page.dart';
 import '../screens/pages/signup_dob_page.dart';
 import '../screens/pages/signup_location_page.dart';
@@ -104,10 +103,17 @@ class SignupProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  SignupPageType _currentPage = SignupPageType.basicInfo;
+  SignupPageType _currentPage = SignupPageType.accountType;
   SignupPageType get currentPage => _currentPage;
   set currentPage(SignupPageType value) {
     _currentPage = value;
+    notifyListeners();
+  }
+
+  bool _accountType = true;
+  bool get accountType => _accountType;
+  void setAccountType(bool accountType) {
+    _accountType = accountType;
     notifyListeners();
   }
 
@@ -124,6 +130,8 @@ class SignupProvider extends ChangeNotifier {
 
   Widget displayedPage() {
     switch (currentPage) {
+      case SignupPageType.accountType:
+        return const AccountTypeScreen();
       case SignupPageType.basicInfo:
         return const SignupBasicInfoPage();
       case SignupPageType.otp:
@@ -260,12 +268,12 @@ class SignupProvider extends ChangeNotifier {
     try {
       //
       final SignupBasicInfoParams params = SignupBasicInfoParams(
-        name: name.text,
-        username: username.text,
-        email: email.text,
-        phone: _phoneNumber!,
-        password: password.text,
-      );
+          name: name.text,
+          username: username.text,
+          email: email.text,
+          phone: _phoneNumber!,
+          password: password.text,
+         );
       final DataState<String> result = await _registerUserUsecase(params);
       if (result is DataSuccess) {
         _uid = result.entity?.toString();

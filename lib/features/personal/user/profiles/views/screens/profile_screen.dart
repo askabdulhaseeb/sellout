@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../auth/signin/domain/repositories/signin_repository.dart';
 import '../../data/sources/local/local_user.dart';
 import '../providers/profile_provider.dart';
-import '../widgets/profile_filter_section.dart';
 import '../widgets/profile_grid_section.dart';
 import '../widgets/profile_grid_type_selection_section.dart';
 import '../widgets/profile_header_section.dart';
@@ -32,7 +30,6 @@ class ProfileScreen extends StatelessWidget {
                   ProfileHeaderSection(user: user),
                   ProfileScoreSection(user: user),
                   ProfileGridTypeSelectionSection(user: user),
-                  ProfileFilterSection(user: user),
                   ProfileGridSection(user: user),
                 ],
               ),
