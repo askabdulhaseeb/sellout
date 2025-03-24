@@ -14,9 +14,7 @@ enum CategoryTypes {
 class CategoryType {
 
   CategoryType({
-    this.category,
-    required this.name,
-    required this.imageUrl,
+    required this.name, required this.imageUrl, this.category,
   });
   final CategoryTypes? category;
   final String name;
