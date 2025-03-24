@@ -1,5 +1,4 @@
 import 'package:get_it/get_it.dart';
-
 import '../core/widgets/appointment/data/repository/appointment_repository.dart';
 import '../core/widgets/appointment/data/services/appointment_api.dart';
 import '../core/widgets/appointment/domain/repository/appointment_repository.dart';
@@ -27,10 +26,17 @@ import '../features/business/service/data/sources/add_service_remote_api.dart';
 import '../features/business/service/domain/repositories/add_service_repository.dart';
 import '../features/business/service/domain/usecase/add_service_usecase.dart';
 import '../features/business/service/views/providers/add_service_provider.dart';
+import '../features/personal/auth/find_account/data/repository/find_account_repository_impl.dart';
+import '../features/personal/auth/find_account/data/source/find_account_remote_data_source.dart';
+import '../features/personal/auth/find_account/domain/repository/find_account_repository.dart';
+import '../features/personal/auth/find_account/domain/use_cases/find_account_usecase.dart';
+import '../features/personal/auth/find_account/domain/use_cases/newpassword_usecase.dart';
+import '../features/personal/auth/find_account/domain/use_cases/send_otp_usecase.dart';
+import '../features/personal/auth/find_account/domain/use_cases/verify_otpUsecase.dart';
+import '../features/personal/auth/find_account/view/providers/find_account_provider.dart';
 import '../features/personal/auth/signin/data/repositories/signin_repository_impl.dart';
 import '../features/personal/auth/signin/data/sources/signin_remote_source.dart';
 import '../features/personal/auth/signin/domain/repositories/signin_repository.dart';
-import '../features/personal/auth/signin/domain/usecase/forgot_password_usecase.dart';
 import '../features/personal/auth/signin/domain/usecase/login_usecase.dart';
 import '../features/personal/auth/signin/views/providers/signin_provider.dart';
 import '../features/personal/auth/signup/data/repositories/signup_repository_impl.dart';
@@ -40,6 +46,8 @@ import '../features/personal/auth/signup/domain/usecase/register_user_usecase.da
 import '../features/personal/auth/signup/domain/usecase/send_opt_usecase.dart';
 import '../features/personal/auth/signup/domain/usecase/verify_opt_usecase.dart';
 import '../features/personal/auth/signup/views/providers/signup_provider.dart';
+import '../features/personal/book_visit/domain/usecase/cancel_visit_usecase.dart';
+import '../features/personal/book_visit/domain/usecase/update_visit_usecase.dart';
 import '../features/personal/cart/data/repositories/cart_repository_impl.dart';
 import '../features/personal/cart/data/repositories/checkout_repository_impl.dart';
 import '../features/personal/cart/data/sources/remote/cart_remote_api.dart';
@@ -63,6 +71,16 @@ import '../features/personal/chats/chat_dashboard/data/sources/remote/chat_remot
 import '../features/personal/chats/chat_dashboard/domain/repositories/chat_repository.dart';
 import '../features/personal/chats/chat_dashboard/domain/usecase/get_my_chats_usecase.dart';
 import '../features/personal/chats/chat_dashboard/views/providers/chat_dashboard_provider.dart';
+import '../features/personal/explore/data/repository/explore_repository_impl.dart';
+import '../features/personal/explore/data/source/explore_remote_source.dart';
+import '../features/personal/explore/domain/repository/location_name_repo.dart';
+import '../features/personal/explore/domain/usecase/location_name_usecase.dart';
+import '../features/personal/explore/views/providers/explore_provider.dart';
+import '../features/personal/book_visit/data/repo/visit_book_repo_impl.dart';
+import '../features/personal/book_visit/data/source/book_visit_api.dart';
+import '../features/personal/book_visit/domain/repo/book_visit_repo.dart';
+import '../features/personal/book_visit/domain/usecase/book_visit_usecase.dart';
+import '../features/personal/book_visit/view/provider/view_booking_provider.dart';
 import '../features/personal/post/data/repositories/post_repository_impl.dart';
 import '../features/personal/post/data/sources/remote/post_remote_api.dart';
 import '../features/personal/post/domain/repositories/post_repository.dart';
@@ -73,7 +91,9 @@ import '../features/personal/post/feed/views/providers/feed_provider.dart';
 import '../features/personal/review/data/repositories/review_repository_impl.dart';
 import '../features/personal/review/data/sources/review_remote_api.dart';
 import '../features/personal/review/domain/repositories/review_repository.dart';
+import '../features/personal/review/domain/usecase/create_review_usecase.dart';
 import '../features/personal/review/domain/usecase/get_reviews_usecase.dart';
+import '../features/personal/review/features/reivew_list/views/providers/review_provider.dart';
 import '../features/personal/services/data/repositories/personal_services_repository_impl.dart';
 import '../features/personal/services/data/sources/services_explore_api.dart';
 import '../features/personal/services/domain/repositories/personal_services_repository.dart';
@@ -81,11 +101,15 @@ import '../features/personal/services/domain/usecase/get_special_offer_usecase.d
 import '../features/personal/services/views/providers/services_page_provider.dart';
 import '../features/personal/user/profiles/data/repositories/user_repository_impl.dart';
 import '../features/personal/user/profiles/data/sources/remote/my_visting_remote.dart';
+import '../features/personal/user/profiles/data/sources/remote/order_by_user_remote.dart';
 import '../features/personal/user/profiles/data/sources/remote/post_by_user_remote.dart';
 import '../features/personal/user/profiles/data/sources/remote/user_profile_remote_source.dart';
 import '../features/personal/user/profiles/domain/repositories/user_repositories.dart';
+import '../features/personal/user/profiles/domain/usecase/edit_profile_detail_usecase.dart';
+import '../features/personal/user/profiles/domain/usecase/edit_profile_picture_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/get_my_host_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/get_my_visiting_usecase.dart';
+import '../features/personal/user/profiles/domain/usecase/get_orders_buyer_id.dart';
 import '../features/personal/user/profiles/domain/usecase/get_post_by_id_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/get_user_by_uid.dart';
 import '../features/personal/user/profiles/views/providers/profile_provider.dart';
@@ -107,6 +131,8 @@ void setupLocator() {
   _appointment();
   _review();
   _country();
+  _explore();
+  _bookvisit();
 }
 
 void _auth() {
@@ -114,10 +140,9 @@ void _auth() {
   locator
       .registerFactory<SigninRepository>(() => SigninRepositoryImpl(locator()));
   locator.registerFactory<LoginUsecase>(() => LoginUsecase(locator()));
-  locator.registerFactory<ForgotPasswordUsecase>(
-      () => ForgotPasswordUsecase(locator()));
-  locator.registerLazySingleton<SigninProvider>(
-      () => SigninProvider(locator(), locator()));
+  locator.registerLazySingleton<SigninProvider>(() => SigninProvider(
+        locator(),
+      ));
   // Signup
   locator.registerFactory<SignupApi>(() => SignupApiImpl());
   locator
@@ -132,6 +157,20 @@ void _auth() {
       () => VerifyPhoneOtpUsecase(locator()));
   locator.registerLazySingleton<SignupProvider>(
       () => SignupProvider(locator(), locator(), locator(), locator()));
+  locator.registerFactory<FindAccountRemoteDataSource>(
+      () => FindAccountRemoteDataSourceimpl());
+  locator.registerLazySingleton<FindAccountRepository>(
+      () => FindAccountRepositoryImpl(locator()));
+  locator.registerLazySingleton<FindAccountUsecase>(
+      () => FindAccountUsecase(locator()));
+  locator.registerLazySingleton<SendEmailForOtpUsecase>(
+      () => SendEmailForOtpUsecase(locator()));
+  locator.registerLazySingleton<NewPasswordUsecase>(
+      () => NewPasswordUsecase(locator()));
+  locator.registerLazySingleton<VerifyOtpUseCase>(
+      () => VerifyOtpUseCase(locator()));
+  locator.registerFactory<FindAccountProvider>(
+      () => FindAccountProvider(locator(), locator(), locator(), locator()));
 }
 
 void _servicePage() {
@@ -141,7 +180,7 @@ void _servicePage() {
   locator.registerFactory<GetSpecialOfferUsecase>(
       () => GetSpecialOfferUsecase(locator()));
   locator.registerLazySingleton<ServicesPageProvider>(
-      () => ServicesPageProvider(locator(), locator()));
+      () => ServicesPageProvider(locator(), locator(), locator()));
 }
 
 void _profile() {
@@ -149,8 +188,9 @@ void _profile() {
       () => UserProfileRemoteSourceImpl());
   locator.registerFactory<PostByUserRemote>(() => PostByUserRemoteImpl());
   locator.registerFactory<MyVisitingRemote>(() => MyVisitingRemoteImpl());
-  locator.registerFactory<UserProfileRepository>(
-      () => UserProfileRepositoryImpl(locator(), locator(), locator()));
+  locator.registerFactory<OrderByUserRemote>(() => OrderByUserRemoteImpl());
+  locator.registerFactory<UserProfileRepository>(() =>
+      UserProfileRepositoryImpl(locator(), locator(), locator(), locator()));
   locator.registerFactory<GetUserByUidUsecase>(
       () => GetUserByUidUsecase(locator()));
   locator.registerFactory<GetImVisiterUsecase>(
@@ -158,8 +198,21 @@ void _profile() {
   locator.registerFactory<GetImHostUsecase>(() => GetImHostUsecase(locator()));
   locator
       .registerFactory<GetPostByIdUsecase>(() => GetPostByIdUsecase(locator()));
-  locator.registerLazySingleton<ProfileProvider>(
-      () => ProfileProvider(locator(), locator(), locator()));
+  locator.registerFactory<GetOrderByUidUsecase>(
+      () => GetOrderByUidUsecase(locator()));
+  locator.registerFactory<UpdateProfilePictureUsecase>(
+      () => UpdateProfilePictureUsecase(locator()));
+  locator.registerFactory<UpdateProfileDetailUsecase>(
+      () => UpdateProfileDetailUsecase(locator()));
+  locator.registerLazySingleton<ProfileProvider>(() => ProfileProvider(
+        locator(),
+        locator(),
+        locator(),
+        locator(),
+        locator(),
+        locator(),
+        locator(),
+      ));
 }
 
 void _chat() {
@@ -306,6 +359,10 @@ void _review() {
   locator
       .registerFactory<GetReviewsUsecase>(() => GetReviewsUsecase(locator()));
   //
+  locator.registerFactory<CreateReviewUsecase>(
+      () => CreateReviewUsecase(locator()));
+  locator.registerFactory<ReviewProvider>(() => ReviewProvider(locator()));
+
   // Providers
 }
 
@@ -320,6 +377,27 @@ void _country() {
   // USECASES
   locator
       .registerFactory<GetCountiesUsecase>(() => GetCountiesUsecase(locator()));
-  //
   // Providers
+}
+
+void _explore() {
+  locator.registerFactory<ExploreRemoteSource>(() => ExploreRemoteSourceImpl());
+  locator.registerFactory<ExploreRepository>(
+      () => ExploreRepositoryImpl(locator()));
+  locator.registerFactory<LocationByNameUsecase>(
+      () => LocationByNameUsecase(locator()));
+  locator.registerFactory<ExploreProvider>(
+      () => ExploreProvider(locator(), locator()));
+}
+
+void _bookvisit() {
+  locator.registerFactory<BookVisitApi>(() => BookVisitApiImpl());
+  locator.registerFactory<BookVisitRepo>(() => BookVisitRepoImpl(locator()));
+  locator
+      .registerFactory<UpdateVisitUseCase>(() => UpdateVisitUseCase(locator()));
+  locator
+      .registerFactory<CancelVisitUseCase>(() => CancelVisitUseCase(locator()));
+  locator.registerFactory<BookVisitUseCase>(() => BookVisitUseCase(locator()));
+  locator.registerFactory<BookingProvider>(
+      () => BookingProvider(locator(), locator(), locator(), locator()));
 }

@@ -1,7 +1,5 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../core/widgets/profile_photo.dart';
 import '../../../../../../core/widgets/rating_display_widget.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -10,6 +8,7 @@ import '../../../../review/features/reivew_list/views/params/review_list_param.d
 import '../../../../review/features/reivew_list/views/screens/review_list_screen.dart';
 import '../../domain/entities/user_entity.dart';
 import '../providers/profile_provider.dart';
+import '../screens/edit_profile_screen.dart';
 
 class ProfileHeaderSection extends StatelessWidget {
   const ProfileHeaderSection({required this.user, super.key});
@@ -21,7 +20,7 @@ class ProfileHeaderSection extends StatelessWidget {
     return AspectRatio(
       aspectRatio: 3 / 1,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
         child: Row(
           children: <Widget>[
             AspectRatio(
@@ -40,6 +39,7 @@ class ProfileHeaderSection extends StatelessWidget {
                     children: <Widget>[
                       Expanded(
                         child: Text(
+                          maxLines: 2,
                           user?.displayName ?? '',
                           style: const TextStyle(
                             fontSize: 18,
@@ -47,12 +47,38 @@ class ProfileHeaderSection extends StatelessWidget {
                           ),
                         ),
                       ),
-                      if (isMe) const SizedBox(width: 8),
+                      if (isMe) const Spacer(),
                       if (isMe)
-                        TextButton(
-                          onPressed: () {},
-                          child: const Text('edit').tr(),
-                        ),
+                        Row(
+                          children: <Widget>[
+                            const Icon(Icons.home_outlined),
+                            GestureDetector(
+                              onTap: () {},
+                              child: PopupMenuButton<int>(
+                                color:
+                                    Theme.of(context).scaffoldBackgroundColor,
+                                onSelected: (int value) {
+                                  if (value == 1) {
+                                    Navigator.pushNamed(
+                                        context, EditProfileScreen.routeName);
+                                  } else if (value == 2) {}
+                                },
+                                itemBuilder: (BuildContext context) =>
+                                    <PopupMenuEntry<int>>[
+                                  const PopupMenuItem<int>(
+                                    value: 1,
+                                    child: Text('Edit Profile'),
+                                  ),
+                                  const PopupMenuItem<int>(
+                                    value: 2,
+                                    child: Text('Settings'),
+                                  ),
+                                ],
+                                icon: const Icon(Icons.more_vert),
+                              ),
+                            )
+                          ],
+                        )
                     ],
                   ),
                   RatingDisplayWidget(
@@ -72,7 +98,7 @@ class ProfileHeaderSection extends StatelessWidget {
                       );
                     },
                   ),
-                  const SizedBox(height: 8),
+                  const Spacer(),
                   Text(
                     user?.username ?? '',
                     style: const TextStyle(
@@ -86,6 +112,43 @@ class ProfileHeaderSection extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void showMenuDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          contentPadding: EdgeInsets.zero,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.edit, color: Colors.blue),
+                title: const Text('Edit Profile'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(
+                      context, '/editProfile'); // Replace with actual route
+                },
+              ),
+              const Divider(height: 1),
+              ListTile(
+                leading: const Icon(Icons.settings, color: Colors.blue),
+                title: const Text('Settings'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(
+                      context, '/settings'); // Replace with actual route
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

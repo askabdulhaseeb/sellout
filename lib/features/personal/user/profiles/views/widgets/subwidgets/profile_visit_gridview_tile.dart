@@ -7,6 +7,7 @@ import '../../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../post/domain/entities/post_entity.dart';
 import '../../../../../post/domain/entities/visit/visiting_entity.dart';
+import '../../../../../post/post_detail/views/screens/post_detail_screen.dart';
 
 class ProfileVisitGridviewTile extends StatelessWidget {
   const ProfileVisitGridviewTile({required this.visit, super.key});
@@ -21,15 +22,24 @@ class ProfileVisitGridviewTile extends StatelessWidget {
         return Column(
           children: <Widget>[
             Expanded(
-              child: SizedBox(
-                width: double.infinity,
-                height: double.infinity,
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(8),
-                    topRight: Radius.circular(8),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, PostDetailScreen.routeName,
+                      arguments: <String, dynamic>{
+                        'pid': post?.postID,
+                        'visit': visit,
+                      });
+                },
+                child: SizedBox(
+                  width: double.infinity,
+                  height: double.infinity,
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(8),
+                      topRight: Radius.circular(8),
+                    ),
+                    child: CustomNetworkImage(imageURL: post?.imageURL),
                   ),
-                  child: CustomNetworkImage(imageURL: post?.imageURL),
                 ),
               ),
             ),

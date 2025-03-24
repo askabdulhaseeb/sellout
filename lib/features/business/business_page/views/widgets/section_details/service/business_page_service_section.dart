@@ -20,14 +20,14 @@ class BusinessPageServiceSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<ServiceEntity> local =
-        LocalService().byBusinessID(business.businessID);
+        LocalService().byBusinessID(business.businessID ?? '');
     return Consumer<BusinessPageProvider>(builder: (
       BuildContext context,
       BusinessPageProvider pagePro,
       _,
     ) {
       return FutureBuilder<DataState<ServicesListResponceEntity>>(
-        future: pagePro.getServicesListByBusinessID(business.businessID),
+        future: pagePro.getServicesListByBusinessID(business.businessID ?? ''),
         initialData: DataSuccess<ServicesListResponceEntity>(
           '',
           ServicesListResponceEntity(

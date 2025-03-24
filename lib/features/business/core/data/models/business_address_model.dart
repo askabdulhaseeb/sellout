@@ -10,10 +10,12 @@ class BusinessAddressModel extends BusinessAddressEntity {
 
   factory BusinessAddressModel.fromJson(Map<String, dynamic> json) =>
       BusinessAddressModel(
-        secondaryAddress: json['secondary_address'],
-        postalCode: json['postal_code'],
-        firstAddress: json['first_address'],
-        city: json['city'],
+        secondaryAddress: json['secondary_address'] ?? '',
+        postalCode: json['postal_code'] != null
+            ? int.tryParse(json['postal_code'].toString()) ?? 0
+            : 0,
+        firstAddress: json['first_address'] ?? '',
+        city: json['city'] ?? '',
       );
 
   Map<String, dynamic> toJson() => <String, dynamic>{

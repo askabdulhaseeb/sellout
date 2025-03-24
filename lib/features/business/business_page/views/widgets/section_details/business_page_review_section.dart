@@ -19,7 +19,7 @@ class BusinessPageReviewSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final GetReviewParam param = GetReviewParam(
-      id: business.businessID,
+      id: business.businessID ??  '',
       type: ReviewApiQueryOptionType.businessID,
     );
     return Padding(

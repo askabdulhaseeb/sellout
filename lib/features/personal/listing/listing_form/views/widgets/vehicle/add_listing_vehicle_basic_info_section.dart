@@ -29,7 +29,7 @@ class AddListingVehicleBasicInfoSection extends StatelessWidget {
             prefixText: LocalAuth.currency.toUpperCase(),
             keyboardType: TextInputType.number,
             validator: (String? value) => AppValidator.isEmpty(value),
-          ), 
+          ),
         ],
       );
     });

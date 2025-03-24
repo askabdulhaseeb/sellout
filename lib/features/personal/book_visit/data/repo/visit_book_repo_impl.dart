@@ -1,0 +1,23 @@
+import '../../../../../core/sources/data_state.dart';
+import '../../../post/domain/entities/visit/visiting_entity.dart';
+import '../../domain/repo/book_visit_repo.dart';
+import '../../view/params/book_visit_params.dart';
+import '../../view/params/update_visit_params.dart';
+import '../source/book_visit_api.dart';
+
+class BookVisitRepoImpl implements BookVisitRepo {
+  BookVisitRepoImpl(this.bookvisitapi);
+  final BookVisitApi bookvisitapi;
+  @override
+  Future<DataState<VisitingEntity>> bookvisit(BookVisitParams params) {
+    return bookvisitapi.bookVisit(params);
+  }
+    @override
+  Future<DataState<VisitingEntity>> cancelVisit(UpdateVisitParams params) async {
+    return await bookvisitapi.cancelVisit(params);
+  }
+     @override
+  Future<DataState<VisitingEntity>> updateVisit(UpdateVisitParams params) async {
+    return await bookvisitapi.updateVisit(params);
+  }
+}

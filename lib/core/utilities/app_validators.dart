@@ -65,6 +65,14 @@ class AppValidator {
     }
     return null;
   }
-
+  static String? validatePhoneOrEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a phone number or email';
+    }
+    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value) && !RegExp(r'^\+?[0-9]{10,}$').hasMatch(value)) {
+      return 'Please enter a valid phone number or email';
+    }
+    return null;
+  }
   static String? retaunNull(String? value) => null;
 }

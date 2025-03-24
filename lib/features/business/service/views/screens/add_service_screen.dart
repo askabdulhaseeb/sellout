@@ -33,6 +33,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
         ModalRoute.of(context)?.settings.arguments as BusinessEntity?;
     Provider.of<AddServiceProvider>(context, listen: false)
         .setBusiness(business);
+        
     super.didChangeDependencies();
   }
 

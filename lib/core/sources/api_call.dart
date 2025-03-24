@@ -148,11 +148,25 @@ class ApiCall<T> {
         request.fields.addAll(fieldsMap);
       }
 
-      if (attachments != null && attachments.isNotEmpty) {
+      if (attachments != null &&
+          attachments.isNotEmpty &&
+          attachments.length > 1) {
         for (PickedAttachment element in attachments) {
           request.files.add(
             await http.MultipartFile.fromPath(
               'files',
+              element.file.path,
+            ),
+          );
+        }
+      }
+      if (attachments != null &&
+          attachments.isNotEmpty &&
+          attachments.length == 1) {
+        for (PickedAttachment element in attachments) {
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              'file',
               element.file.path,
             ),
           );
