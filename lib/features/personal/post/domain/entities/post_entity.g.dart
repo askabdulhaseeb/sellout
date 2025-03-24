@@ -75,7 +75,9 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       propertyCategory: fields[118] as String?,
       isActive: fields[190] as bool,
       createdBy: fields[191] as String,
+      updatedBy: fields[194] == null ? '' : fields[194] as String,
       createdAt: fields[192] as DateTime,
+      updatedAt: fields[195] as DateTime?,
       accessCode: fields[193] as String?,
       inHiveAt: fields[199] as DateTime?,
     );
@@ -205,6 +207,10 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       ..write(obj.createdAt)
       ..writeByte(193)
       ..write(obj.accessCode)
+      ..writeByte(194)
+      ..write(obj.updatedBy)
+      ..writeByte(195)
+      ..write(obj.updatedAt)
       ..writeByte(199)
       ..write(obj.inHiveAt);
   }
