@@ -35,44 +35,42 @@ class BusinessModel extends BusinessEntity {
 
   factory BusinessModel.fromJson(Map<String, dynamic> json) => BusinessModel(
         businessID: json['business_id'],
-        location: LocationModel.fromJson(json['location']),
-        logo: json['profile_pic'] == null ||
-                (json['profile_pic'] ?? <dynamic>[]).isEmpty
-            ? null
-            : (json['profile_pic'] ?? <dynamic>[])
-                .map((dynamic x) => AttachmentModel.fromJson(x))
-                .toList()
-                .first,
+        location: json['location'] != null
+            ? LocationModel.fromJson(json['location'])
+            : null,
+        logo: (json['profile_pic'] as List<dynamic>?)?.isNotEmpty == true
+            ? AttachmentModel.fromJson(json['profile_pic'][0])
+            : null,
         acceptPromotions: json['accept_promotions'],
         locationType: json['location_type'],
-        travelDetail: BusinessTravelDetailModel.fromJson(json['travel_detail']),
-        employees: List<BusinessEmployeeModel>.from(
-            (json['employees'] ?? <dynamic>[])
-                .map((dynamic x) => BusinessEmployeeModel.fromJson(x))),
-        address: BusinessAddressModel.fromJson(json['address']),
+        travelDetail: json['travel_detail'] != null
+            ? BusinessTravelDetailModel.fromJson(json['travel_detail'])
+            : null,
+        employees: (json['employees'] as List<dynamic>?)
+            ?.map((x) => BusinessEmployeeModel.fromJson(x))
+            .toList(),
+        address: json['address'] != null
+            ? BusinessAddressModel.fromJson(json['address'])
+            : null,
         displayName: json['display_name'],
         ownerID: json['owner_id'],
         tagline: json['tagline'],
-        phoneNumber: json['phone_number']?.toString() ?? '',
+        phoneNumber: json['phone_number'],
         companyNo: json['company_no'],
-        routine: List<RoutineModel>.from((json['routine'] ?? <dynamic>[])
-            .map((dynamic x) => RoutineModel.fromJson(x))),
-        listOfReviews: List<double>.from(
-          (json['list_of_reviews'] ?? <dynamic>[]).map((dynamic x) {
-            if (x is int) {
-              return x.toDouble(); // Convert int to double
-            } else if (x is double) {
-              return x; // Already a double
-            } else {
-              return double.tryParse(x.toString()) ?? 0.0;
-            }
-          }),
-        ),
-        createdAt:
-            json['created_at']?.toString().toDateTime() ?? DateTime.now(),
-        updatedAt: (json['updated_at'] ?? json['created_at'])
-                ?.toString()
-                .toDateTime() ??
-            DateTime.now(),
+        routine: (json['routine'] as List<dynamic>?)
+            ?.map((x) => RoutineModel.fromJson(x))
+            .toList(),
+        listOfReviews: (json['list_of_reviews'] as List<dynamic>?)?.map((x) {
+          if (x is int) {
+            return x.toDouble();
+          } else if (x is double) {
+            return x;
+          } else {
+            return double.tryParse(x.toString()) ?? 0.0;
+          }
+        }).toList(),
+        createdAt: json['created_at']?.toString().toDateTime(),
+        updatedAt:
+            (json['updated_at'] ?? json['created_at'])?.toString().toDateTime(),
       );
 }

@@ -1,12 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../domain/entities/review_entity.dart';
-import '../../domain/enums/review_sort_type.dart';
+import '../../../../domain/enums/review_sort_type.dart';
 import '../params/review_list_param.dart';
-import '../providers/review_list_provider.dart';
+import '../providers/review_provider.dart';
 import '../widgets/review_tile.dart';
 
 class ReviewListScreen extends StatefulWidget {
@@ -20,7 +19,7 @@ class ReviewListScreen extends StatefulWidget {
 class _ReviewListScreenState extends State<ReviewListScreen> {
   @override
   void initState() {
-    Provider.of<ReviewListProvider>(context, listen: false).init(widget.param);
+    Provider.of<ReviewProvider>(context, listen: false).init(widget.param);
     super.initState();
   }
 
@@ -28,8 +27,8 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('reviews'.tr())),
-      body: Consumer<ReviewListProvider>(
-        builder: (BuildContext context, ReviewListProvider pro, _) {
+      body: Consumer<ReviewProvider>(
+        builder: (BuildContext context, ReviewProvider pro, _) {
           final List<ReviewEntity> reviews = pro.reviews();
           return Column(
             children: <Widget>[

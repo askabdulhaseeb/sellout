@@ -25,7 +25,7 @@ class BusinessPageScoreBottomSheet extends StatelessWidget {
               children: <Widget>[
                 Expanded(
                   child: Text(
-                    business.displayName,
+                    business.displayName ?? '',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
@@ -49,8 +49,8 @@ class BusinessPageScoreBottomSheet extends StatelessWidget {
               ],
             ),
             //
-            Text(business.tagline),
-            Text(business.location.address),
+            Text(business.tagline ?? ''),
+            Text(business.location!.address),
             const SizedBox(height: 16),
             const Text(
               'staff',
@@ -58,7 +58,7 @@ class BusinessPageScoreBottomSheet extends StatelessWidget {
             ).tr(),
             BusinessPageEmployeeListSection(business: business),
             const Divider(),
-            BusinessHoursDisplaySection(routine: business.routine),
+            BusinessHoursDisplaySection(routine: business.routine ?? []),
             const SizedBox(height: 64),
           ],
         ),

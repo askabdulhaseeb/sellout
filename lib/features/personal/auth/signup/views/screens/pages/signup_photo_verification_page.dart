@@ -21,7 +21,7 @@ class SignupPhotoVerificationPage extends StatelessWidget {
           ).tr(),
           const Text('photo_verification_subtitle').tr(),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: const EdgeInsets.symmetric(vertical: 4),
             child: AspectRatio(
               aspectRatio: 1 / 1,
               child: Container(color: Colors.grey),

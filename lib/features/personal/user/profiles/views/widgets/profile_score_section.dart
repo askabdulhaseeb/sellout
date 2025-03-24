@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
 import '../../domain/entities/user_entity.dart';
+import 'subwidgets/supporter_bottom_sheet.dart';
 
 class ProfileScoreSection extends StatelessWidget {
   const ProfileScoreSection({required this.user, super.key});
@@ -17,7 +17,7 @@ class ProfileScoreSection extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: _ScoreButton(
-                  title: 'my_orders'.tr(),
+                  title: 'details'.tr(),
                   count: '',
                   onPressed: () {},
                 ),
@@ -26,14 +26,40 @@ class ProfileScoreSection extends StatelessWidget {
                 child: _ScoreButton(
                   title: 'supporting'.tr(),
                   count: (user?.supporters.length ?? 0).toString(),
-                  onPressed: () {},
+                  onPressed: () => showModalBottomSheet(
+                    context: context,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(16)),
+                    ),
+                    isScrollControlled: true,
+                    builder: (BuildContext context) {
+                      return SupporterBottomsheet(
+                        supporters: user?.supporters,
+                        issupporter: false,
+                      );
+                    },
+                  ),
                 ),
               ),
               Expanded(
                 child: _ScoreButton(
                   title: 'supporters'.tr(),
-                  count: (user?.supporters.length ?? 0).toString(),
-                  onPressed: () {},
+                  count: (user?.supportings.length ?? 0).toString(),
+                  onPressed: () => showModalBottomSheet(
+                    context: context,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(16)),
+                    ),
+                    isScrollControlled: true,
+                    builder: (BuildContext context) {
+                      return SupporterBottomsheet(
+                        supporters: user?.supportings,
+                        issupporter: true,
+                      );
+                    },
+                  ),
                 ),
               ),
             ],

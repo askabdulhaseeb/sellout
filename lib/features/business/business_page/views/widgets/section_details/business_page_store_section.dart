@@ -23,7 +23,7 @@ class BusinessPageStoreSection extends StatelessWidget {
       _,
     ) {
       return FutureBuilder<DataState<List<PostEntity>>>(
-          future: pagePro.getPostByID(business.businessID),
+          future: pagePro.getPostByID(business.businessID ?? ''),
           initialData: DataSuccess<List<PostEntity>>('', localPosts),
           builder: (
             BuildContext context,

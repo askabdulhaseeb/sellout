@@ -22,7 +22,7 @@ class ProfileGridSection extends StatelessWidget {
       child: Consumer<ProfileProvider>(
         builder: (BuildContext context, ProfileProvider profile, _) {
           return profile.displayType == ProfilePageTabType.orders
-              ? const ProfileOrdersSection()
+              ?  ProfileOrdersSection(user: user)
               : profile.displayType == ProfilePageTabType.store
                   ? ProfileStoreGridview(user: user)
                   : profile.displayType == ProfilePageTabType.promos
