@@ -55,14 +55,14 @@ class LocationRadiusBottomSheet extends StatelessWidget {
                 target: provider.selectedLocation,
                 zoom: 12.0, // Default zoom level
               ),
-              markers: {
+              markers: <Marker>{
                 Marker(
                   markerId: const MarkerId('selected-location'),
                   position: provider.selectedLocation,
-                  infoWindow: const InfoWindow(title: "Selected Location"),
+                  infoWindow: const InfoWindow(title: 'Selected Location'),
                 ),
               },
-              circles: {
+              circles: <Circle>{
                 Circle(
                   circleId: const CircleId('radius'),
                   center: provider.selectedLocation,

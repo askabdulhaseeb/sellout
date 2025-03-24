@@ -10,15 +10,14 @@ import 'cancel_visiting_dialog.dart';
 
 class VisitingUpdateButtonsWidget extends StatelessWidget {
   const VisitingUpdateButtonsWidget({
-    super.key,
-    required this.message,
+    required this.message, super.key,
     this.post,
   });
   final MessageEntity message;
   final PostEntity? post;
   @override
   Widget build(BuildContext context) {
-    final pro = Provider.of<BookingProvider>(context, listen: false);
+    final BookingProvider pro = Provider.of<BookingProvider>(context, listen: false);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[

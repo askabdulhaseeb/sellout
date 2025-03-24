@@ -75,7 +75,7 @@ class EditProfileScreen extends StatelessWidget {
                 width: double.infinity,
                 child: CustomElevatedButton(
                     onTap: () {
-                      final result = pro.updateProfileDetail(context);
+                      final Future<void> result = pro.updateProfileDetail(context);
                       if (result is DataSuccess) {
                         Navigator.pop(context);
                       }

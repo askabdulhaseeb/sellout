@@ -819,7 +819,7 @@ class ExploreProvider extends ChangeNotifier {
 
 //
   Future<void> fetchLocations(String input) async {
-    final result = await _fetchLocationUseCase(
+    final DataState<List<LocationNameEntity>> result = await _fetchLocationUseCase(
         FetchLocationParams(input: input, apiKey: ''));
 
     if (result is DataSuccess<List<LocationNameEntity>>) {

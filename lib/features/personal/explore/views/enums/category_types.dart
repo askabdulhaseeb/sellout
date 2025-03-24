@@ -12,15 +12,15 @@ enum CategoryTypes {
 }
 
 class CategoryType {
-  final CategoryTypes? category;
-  final String name;
-  final String imageUrl;
 
   CategoryType({
     this.category,
     required this.name,
     required this.imageUrl,
   });
+  final CategoryTypes? category;
+  final String name;
+  final String imageUrl;
 
   String get displayName {
     return category?.translatedName ?? name.tr();
@@ -33,7 +33,7 @@ extension CategoryTypesExtension on CategoryTypes {
   }
 }
 
-final List<CategoryType> categories = [
+final List<CategoryType> categories = <CategoryType>[
   CategoryType(
     category: null, // No category enum for 'popular'
     name: 'popular',

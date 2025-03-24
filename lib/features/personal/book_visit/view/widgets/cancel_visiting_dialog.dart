@@ -8,9 +8,7 @@ import '../provider/view_booking_provider.dart';
 
 class CancelVisitingDialog extends StatelessWidget {
   const CancelVisitingDialog({
-    super.key,
-    required this.pro,
-    required this.message,
+    required this.pro, required this.message, super.key,
   });
 
   final BookingProvider pro;

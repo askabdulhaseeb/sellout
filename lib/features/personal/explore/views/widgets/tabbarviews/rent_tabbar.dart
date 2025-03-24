@@ -7,10 +7,7 @@ import '../../providers/explore_provider.dart';
 import '../price_range_widget.dart';
 class RentPropertyTabbar extends StatelessWidget {
   const RentPropertyTabbar({
-    super.key,
-    required this.exploreProvider,
-    required this.textTheme,
-    required this.colorScheme,
+    required this.exploreProvider, required this.textTheme, required this.colorScheme, super.key,
   });
 
   final ExploreProvider exploreProvider;

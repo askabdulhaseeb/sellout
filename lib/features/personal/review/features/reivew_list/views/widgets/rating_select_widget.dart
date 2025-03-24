@@ -15,7 +15,7 @@ class RatingSelectWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<ReviewProvider>(
-      builder: (context, reviewProvider, child) {
+      builder: (BuildContext context, ReviewProvider reviewProvider, Widget? child) {
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
@@ -30,9 +30,9 @@ class RatingSelectWidget extends StatelessWidget {
                     reviewProvider.rating < fullStarThreshold;
 
                 return GestureDetector(
-                  onTapDown: (details) {
-                    final position = details.localPosition.dx;
-                    final starWidth = size;
+                  onTapDown: (TapDownDetails details) {
+                    final double position = details.localPosition.dx;
+                    final double starWidth = size;
                     double newRating;
 
                     if (position < starWidth / 2) {

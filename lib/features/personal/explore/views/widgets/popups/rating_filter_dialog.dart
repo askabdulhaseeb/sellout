@@ -19,7 +19,7 @@ class _RatingFilterDialogState extends State<RatingFilterDialog> {
         children: List.generate(5, (int index) {
           int rating = index + 1;
           return ListTile(
-            title: Text("$rating Stars"),
+            title: Text('$rating Stars'),
             onTap: () {
               pro.setRating(rating);
               Navigator.pop(context);

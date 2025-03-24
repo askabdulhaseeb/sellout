@@ -1,9 +1,8 @@
 class UpdateVisitParams {
   UpdateVisitParams({
     required this.visitingId,
-    this.status,
+    required this.messageId, this.status,
     this.datetime,
-    required this.messageId,
     this.businessId,
   });
   final String visitingId;

@@ -39,7 +39,7 @@ class CurrentUserModel extends CurrentUserEntity {
       CurrentUserModel.fromJson(json.decode(str));
 
   factory CurrentUserModel.fromJson(Map<String, dynamic> json) {
-    final userData = json['item'] ?? {};
+    final userData = json['item'] ?? <dynamic, dynamic>{};
     final List<dynamic> addressData = userData['address'] ?? <dynamic>[];
     final List<AddressEntity> addressList = <AddressEntity>[];
     for (dynamic element in addressData) {
