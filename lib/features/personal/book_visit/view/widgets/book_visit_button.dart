@@ -9,9 +9,9 @@ import '../provider/view_booking_provider.dart';
 
 class BookVisitButton extends StatelessWidget {
   const BookVisitButton({
-    Key? key,
+    super.key,
     this.post,
-  }) : super(key: key);
+  });
   final PostEntity? post;
 
   @override

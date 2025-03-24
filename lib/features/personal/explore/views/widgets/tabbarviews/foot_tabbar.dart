@@ -10,10 +10,7 @@ import '../../providers/explore_provider.dart';
 
 class FootwearTabbarWidget extends StatelessWidget {
   const FootwearTabbarWidget({
-    super.key,
-    required this.exploreProvider,
-    required this.textTheme,
-    required this.colorScheme,
+    required this.exploreProvider, required this.textTheme, required this.colorScheme, super.key,
   });
 
   final ExploreProvider exploreProvider;

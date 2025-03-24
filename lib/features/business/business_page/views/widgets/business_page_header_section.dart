@@ -38,7 +38,7 @@ class BusinessPageHeaderSection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    business!.displayName ?? '',
+                    business.displayName ?? '',
                     maxLines: 2,
                     style: const TextStyle(
                       fontSize: 18,

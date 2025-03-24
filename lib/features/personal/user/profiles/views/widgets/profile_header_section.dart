@@ -125,10 +125,10 @@ class ProfileHeaderSection extends StatelessWidget {
           contentPadding: EdgeInsets.zero,
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            children: [
+            children: <Widget>[
               ListTile(
                 leading: const Icon(Icons.edit, color: Colors.blue),
-                title: const Text("Edit Profile"),
+                title: const Text('Edit Profile'),
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.pushNamed(
@@ -138,7 +138,7 @@ class ProfileHeaderSection extends StatelessWidget {
               const Divider(height: 1),
               ListTile(
                 leading: const Icon(Icons.settings, color: Colors.blue),
-                title: const Text("Settings"),
+                title: const Text('Settings'),
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.pushNamed(

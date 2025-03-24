@@ -20,7 +20,7 @@ class LocationNameModel extends LocationNameEntity {
               ?.map((x) =>
                   MatchedSubstringModel.fromMap(x as Map<String, dynamic>))
               .toList() ??
-          [],
+          <MatchedSubstringEntity>[],
       placeId: map['place_id'] as String,
       reference: map['reference'] as String,
       structuredFormatting: StructuredFormattingModel.fromMap(
@@ -28,8 +28,8 @@ class LocationNameModel extends LocationNameEntity {
       terms: (map['terms'] as List<dynamic>?)
               ?.map((x) => TermModel.fromMap(x as Map<String, dynamic>))
               .toList() ??
-          [],
-      types: (map['types'] as List<dynamic>?)?.cast<String>() ?? [],
+          <TermEntity>[],
+      types: (map['types'] as List<dynamic>?)?.cast<String>() ?? <String>[],
     );
   }
 
@@ -77,7 +77,7 @@ class StructuredFormattingModel extends StructuredFormattingEntity {
                   ?.map((x) =>
                       MatchedSubstringModel.fromMap(x as Map<String, dynamic>))
                   .toList() ??
-              [],
+              <MatchedSubstringEntity>[],
       secondaryText: map['secondary_text'] as String,
     );
   }

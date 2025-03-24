@@ -51,7 +51,7 @@ class ServiceSearchResults extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextTheme txt = Theme.of(context).textTheme;
-    ColorScheme clrsch = Theme.of(context).colorScheme;
+    // ColorScheme clrsch = Theme.of(context).colorScheme;
 
     return Consumer<ServicesPageProvider>(
       builder: (BuildContext context, ServicesPageProvider pro, Widget? child) {
