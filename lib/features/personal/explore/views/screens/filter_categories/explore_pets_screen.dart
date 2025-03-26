@@ -39,7 +39,7 @@ class _ExplorePetsScreenState extends State<ExplorePetsScreen> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
-          children: [
+          children: <Widget>[
             Container(
               padding: const EdgeInsets.all(8),
               width: double.infinity,

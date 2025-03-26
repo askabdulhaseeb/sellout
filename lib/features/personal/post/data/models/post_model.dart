@@ -80,7 +80,9 @@ class PostModel extends PostEntity {
     //
     required super.isActive,
     required super.createdBy,
+    required super.updatedBy,
     required super.createdAt,
+    required super.updatedAt,
     required super.accessCode,
   }) : super(inHiveAt: DateTime.now());
 
@@ -152,7 +154,9 @@ class PostModel extends PostEntity {
       //
       isActive: entity.isActive,
       createdBy: entity.createdBy,
+      updatedBy: entity.updatedBy,
       createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
       accessCode: entity.accessCode,
     );
   }
@@ -171,15 +175,22 @@ class PostModel extends PostEntity {
             discountData.values.any((value) => (value as int? ?? 0) > 0);
 
     final List<DiscountEntity> discounts = <DiscountEntity>[];
-
-    if (discountData.isNotEmpty) {
-      final int d2 = discountData['discount_2_item'] as int? ?? 0;
-      final int d3 = discountData['discount_3_item'] as int? ?? 0;
-      final int d5 = discountData['discount_5_item'] as int? ?? 0;
-
-      if (d2 > 0) discounts.add(DiscountEntity(quantity: 2, discount: d2));
-      if (d3 > 0) discounts.add(DiscountEntity(quantity: 3, discount: d3));
-      if (d5 > 0) discounts.add(DiscountEntity(quantity: 5, discount: d5));
+    if (hasDiscount) {
+      final double d2 =
+          double.tryParse(json['discount_2_item']?.toString() ?? '0.0') ?? 0.0;
+      final double d3 =
+          double.tryParse(json['discount_3_item']?.toString() ?? '0.0') ?? 0.0;
+      final double d5 =
+          double.tryParse(json['discount_5_item']?.toString() ?? '0.0') ?? 0.0;
+      if (d2 > 0) {
+        discounts.add(DiscountEntity(quantity: 2, discount: d2));
+      }
+      if (d3 > 0) {
+        discounts.add(DiscountEntity(quantity: 3, discount: d3));
+      }
+      if (d5 > 0) {
+        discounts.add(DiscountEntity(quantity: 5, discount: d5));
+      }
     }
 
     return PostModel(
@@ -193,8 +204,9 @@ class PostModel extends PostEntity {
       currency: json['currency']?.toString() ?? 'gbp',
       type: ListingType.fromJson(json['list_id']),
       categoryType: json['type']?.toString() ?? '',
-      address: json['address'].toString(),
-      acceptOffers: json['accept_offers'] ?? false,
+      address: json['address']?.toString() ?? '',
+      acceptOffers:
+          bool.tryParse(json['accept_offers']?.toString() ?? 'false') ?? false,
       minOfferAmount:
           double.tryParse(json['min_offer_amount']?.toString() ?? '0.0') ?? 0.0,
       privacy: PrivacyType.fromJson(json['post_privacy']),
@@ -276,9 +288,11 @@ class PostModel extends PostEntity {
       wormAndFleaTreated: json['worm_and_flea_treated'] ?? false,
       vaccinationUpToDate: json['vaccination_up_to_date'] ?? false,
       //
-      isActive: json['is_active'] ?? false,
+      isActive: bool.tryParse(json['is_active'] ?? 'false') ?? false,
       createdBy: json['created_by']?.toString() ?? '',
+      updatedBy: json['updated_by']?.toString() ?? '',
       createdAt: json['created_at']?.toString().toDateTime() ?? DateTime.now(),
+      updatedAt: json['updated_at']?.toString().toDateTime() ?? DateTime.now(),
       accessCode: json['access_code']?.toString(),
       propertyCategory: json['property_category']?.toString(),
       propertytype: json['property_type']?.toString(),

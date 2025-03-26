@@ -94,6 +94,6 @@ class AppRoutes {
     ExploreFoodDrinkScreen.routeName: (_) => const ExploreFoodDrinkScreen(),
     ExploreVehiclesScreen.routeName: (_) => const ExploreVehiclesScreen(),
     // Profile
-    EditProfileScreen.routeName: (_) => EditProfileScreen(),
+    EditProfileScreen.routeName: (_) => const EditProfileScreen(),
   };
 }

@@ -9,7 +9,7 @@ class NewPasswordParams {
 
   /// Convert class properties to a Map
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'uid': uid,
       'password': password,
     };

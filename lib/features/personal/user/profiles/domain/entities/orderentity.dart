@@ -32,10 +32,6 @@ class OrderEntity {
   final AddressEntity shippingAddress;
 }
 class OrderPaymentDetailEntity {
-  final String transactionId;
-  final String method;
-  final String status;
-  final DateTime timestamp;
 
   const OrderPaymentDetailEntity({
     required this.transactionId,
@@ -43,4 +39,8 @@ class OrderPaymentDetailEntity {
     required this.status,
     required this.timestamp,
   });
+  final String transactionId;
+  final String method;
+  final String status;
+  final DateTime timestamp;
 }

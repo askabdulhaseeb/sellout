@@ -18,7 +18,7 @@ class DiscountEntityAdapter extends TypeAdapter<DiscountEntity> {
     };
     return DiscountEntity(
       quantity: fields[0] as int,
-      discount: fields[1] as int,
+      discount: fields[1] as double,
     );
   }
 
