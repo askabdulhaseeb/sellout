@@ -116,6 +116,7 @@ class ProfileProvider extends ChangeNotifier {
             'profile_picture_updated_successfully'.tr(),
           )),
         );
+
         isLoading = false;
       } else {
         AppLog.error(result.exception!.message,

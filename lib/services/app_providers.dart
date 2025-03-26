@@ -49,14 +49,22 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
   ChangeNotifierProvider<AudioProvider>.value(value: AudioProvider()),
   //
   ChangeNotifierProvider<ProfileProvider>.value(
-      value: ProfileProvider(locator(), locator(), locator(), locator(),locator(),locator(), locator())),
+      value: ProfileProvider(locator(), locator(), locator(), locator(),
+          locator(), locator(), locator())),
   //
-  ChangeNotifierProvider<FeedProvider>.value(value: FeedProvider(locator())),
+  ChangeNotifierProvider<FeedProvider>.value(
+      value: FeedProvider(
+    locator(),
+    locator(),
+    locator(),
+    locator(),
+    locator(),
+  )),
   ChangeNotifierProvider<PostDetailProvider>.value(
       value: PostDetailProvider(locator(), locator())),
   //
   ChangeNotifierProvider<ServicesPageProvider>.value(
-      value: ServicesPageProvider(locator(), locator(),locator())),
+      value: ServicesPageProvider(locator(), locator(), locator())),
 
   ChangeNotifierProvider<CartProvider>.value(
       value:
@@ -68,8 +76,8 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
       value: AppointmentTileProvider(locator())),
   // Business
   ChangeNotifierProvider<BusinessPageProvider>.value(
-      value: BusinessPageProvider(
-          locator(), locator(), locator(), locator(), locator())),
+      value: BusinessPageProvider(locator(), locator(), locator(), locator(),
+          locator(), locator(), locator())),
   ChangeNotifierProvider<AddServiceProvider>.value(
       value: AddServiceProvider(locator())),
   ChangeNotifierProvider<ExploreProvider>.value(
@@ -78,5 +86,6 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
 //
 
   ChangeNotifierProvider<BookingProvider>.value(
-      value: BookingProvider(locator(), locator(), locator(), locator(),locator(), locator())),
+      value: BookingProvider(
+          locator(), locator(), locator(), locator(), locator(), locator())),
 ];

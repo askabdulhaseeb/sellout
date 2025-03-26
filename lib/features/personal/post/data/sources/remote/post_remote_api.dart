@@ -6,8 +6,13 @@ import '../../../../../../core/sources/api_call.dart';
 import '../../../../../../core/sources/local/local_request_history.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../cart/domain/usecase/cart/get_cart_usecase.dart';
+import '../../../../chats/chat/data/sources/local/local_message.dart';
+import '../../../../chats/chat/domain/entities/getted_message_entity.dart';
+import '../../../../chats/chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../domain/entities/post_entity.dart';
 import '../../../domain/params/add_to_cart_param.dart';
+import '../../../domain/params/create_offer_params.dart';
+import '../../../domain/params/update_offer_params.dart';
 import '../../models/post_model.dart';
 import '../local/local_post.dart';
 
@@ -15,6 +20,9 @@ abstract interface class PostRemoteApi {
   Future<DataState<List<PostEntity>>> getFeed();
   Future<DataState<PostEntity>> getPost(String id);
   Future<DataState<bool>> addToCart(AddToCartParam param);
+  Future<DataState<bool>> createOffer(CreateOfferparams param);
+  Future<DataState<bool>> updateOffer(UpdateOfferParams param);
+  Future<DataState<bool>> updateOfferStatus(UpdateOfferParams param);
 }
 
 class PostRemoteApiImpl implements PostRemoteApi {
@@ -153,6 +161,7 @@ class PostRemoteApiImpl implements PostRemoteApi {
       if (result is DataSuccess) {
         final GetCartUsecase cartUsecase = GetCartUsecase(locator());
         await cartUsecase('');
+
         return DataSuccess<bool>(result.data ?? '', true);
       } else {
         AppLog.error(
@@ -170,6 +179,126 @@ class PostRemoteApiImpl implements PostRemoteApi {
         name: 'PostRemoteApiImpl.addToCart - catch',
         error: e,
       );
+      return DataFailer<bool>(CustomException(e.toString()));
+    }
+  }
+
+  @override
+  Future<DataState<bool>> createOffer(CreateOfferparams param) async {
+    const String endpoint = '/offers/create';
+
+    try {
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.post,
+        isAuth: true,
+        body: json.encode(param.toMap()),
+      );
+      if (result is DataSuccess) {
+        debugPrint(result.data);
+        final Map<String, dynamic> data = jsonDecode(result.data ?? '');
+        final String chatID = data['chat_id'];
+        debugPrint('chatID:$chatID');
+        return DataSuccess<bool>(chatID, true);
+      } else {
+        AppLog.error(
+          result.exception?.message ?? 'ERROR - PostRemoteApiImpl.createOffer',
+          name: 'PostRemoteApiImpl.createOffer - failed',
+          error: result.exception,
+        );
+        return DataFailer<bool>(
+          result.exception ?? CustomException('something_wrong'.tr()),
+        );
+      }
+    } catch (e) {
+      AppLog.error(
+        e.toString(),
+        name: 'PostRemoteApiImpl.createOffer - catch',
+        error: e,
+      );
+      return DataFailer<bool>(CustomException(e.toString()));
+    }
+  }
+
+  @override
+  Future<DataState<bool>> updateOffer(UpdateOfferParams param) async {
+    String endpoint = '/offers/update/${param.offerId}';
+
+    try {
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.patch,
+        isAuth: true,
+        body: json.encode(param.toMap()),
+      );
+
+      if (result is DataSuccess) {
+        debugPrint(result.data);
+        return DataSuccess<bool>(result.data!, true);
+      } else {
+        AppLog.error(
+          result.exception?.message ?? 'PostRemoteApiImpl.updateOffer - else',
+          name: 'PostRemoteApiImpl.updateOffer - failed',
+          error: result.exception,
+        );
+        return DataFailer<bool>(
+          result.exception ?? CustomException('something_wrong'.tr()),
+        );
+      }
+    } catch (e) {
+      AppLog.error(
+        e.toString(),
+        name: 'PostRemoteApiImpl.updateOffer - catch',
+        error: e,
+      );
+      return DataFailer<bool>(CustomException(e.toString()));
+    }
+  }
+
+  @override
+  Future<DataState<bool>> updateOfferStatus(UpdateOfferParams param) async {
+    String endpoint = '/offers/update/offerStatus/${param.offerId}';
+
+    try {
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.patch,
+        isAuth: true,
+        body: json.encode(param.updateStatus()),
+      );
+
+      if (result is DataSuccess) {
+        // ✅ Fetch the existing entity from Hive
+        Map<String, dynamic> data = jsonDecode(result.data!);
+        final String dataStatus = data['updatedAttributes']['offer_status'];
+        final GettedMessageEntity? oldEntity =
+            LocalChatMessage().entity(param.offerId);
+
+        if (oldEntity != null) {
+          final List<MessageEntity> updatedMessages =
+              oldEntity.messages.map((MessageEntity msg) {
+            if (msg.offerDetail!.offerStatus == param.messageId) {
+              msg.offerDetail!.offerStatus = dataStatus;
+            }
+            return msg;
+          }).toList();
+          await LocalChatMessage().save(
+            GettedMessageEntity(
+              chatID: oldEntity.chatID,
+              messages: updatedMessages,
+              lastEvaluatedKey: oldEntity.lastEvaluatedKey,
+            ),
+            param.offerId,
+          );
+        }
+        LocalChatMessage().refresh();
+        return DataSuccess<bool>(result.data!, true);
+      } else {
+        return DataFailer<bool>(
+          result.exception ?? CustomException('something_wrong'.tr()),
+        );
+      }
+    } catch (e) {
       return DataFailer<bool>(CustomException(e.toString()));
     }
   }

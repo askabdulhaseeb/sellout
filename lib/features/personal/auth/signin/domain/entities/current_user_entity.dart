@@ -72,7 +72,7 @@ class CurrentUserEntity {
   @HiveField(42)
   final AttachmentEntity? verificationImage;
   @HiveField(43)
-  final List<AttachmentEntity> profileImage;
+   List<AttachmentEntity> profileImage;
   //
   @HiveField(97)
   final DateTime lastLoginTime;

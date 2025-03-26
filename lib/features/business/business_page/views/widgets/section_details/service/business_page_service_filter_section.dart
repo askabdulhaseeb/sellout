@@ -1,11 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../../core/widgets/in_dev_mode.dart';
-import '../../../../../../personal/chats/chat/views/screens/chat_screen.dart';
 import '../../../../../core/domain/entity/business_entity.dart';
 import '../../../../../service/views/screens/add_service_screen.dart';
+import '../../../providers/business_page_provider.dart';
 
 class BusinessPageServiceFilterSection extends StatelessWidget {
   const BusinessPageServiceFilterSection({required this.business, super.key});
@@ -13,6 +12,7 @@ class BusinessPageServiceFilterSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final pro = Provider.of<BusinessPageProvider>(context, listen: false);
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: SingleChildScrollView(
@@ -73,8 +73,7 @@ class BusinessPageServiceFilterSection extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                 title: 'request_quote',
                 isLoading: false,
-                onTap: () {
-                  Navigator.pushNamed(context, ChatScreen.routeName);
+                onTap: () {pro.createPrivateChat(context);
                 })
           ],
         ),
