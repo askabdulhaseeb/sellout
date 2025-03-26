@@ -42,7 +42,7 @@ class AddListingDiscountSection extends StatelessWidget {
                           // ),
                           controller: null,
                           onChanged: (String p0) => addPro.setDiscounts(
-                            e.copyWith(discount: int.tryParse(p0) ?? 0),
+                            e.copyWith(discount: double.tryParse(p0) ?? 0.0),
                           ),
                           hint: 'Ex.${e.quantity * 5}',
                           keyboardType: TextInputType.number,

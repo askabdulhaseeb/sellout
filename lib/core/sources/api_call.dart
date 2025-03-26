@@ -26,7 +26,7 @@ class ApiCall<T> {
     Map<String, String>? extraHeader,
     bool isConnectType = true,
     bool isAuth = true,
-    int count = 0,
+    int count = 1,
   }) async {
     try {
       String url = baseURL ?? dotenv.env['baseURL'] ?? '';
@@ -131,7 +131,7 @@ class ApiCall<T> {
     Map<String, String>? extraHeader,
     bool isConnectType = true,
     bool isAuth = true,
-    int count = 0,
+    int count = 1,
   }) async {
     try {
       String url = baseURL ?? dotenv.env['baseURL'] ?? '';

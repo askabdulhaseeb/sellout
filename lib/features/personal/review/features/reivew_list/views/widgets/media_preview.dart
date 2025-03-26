@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../../../core/enums/core/attachment_type.dart';
 import '../../../../../../../core/widgets/video_widget.dart';
 import '../../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../providers/review_provider.dart';

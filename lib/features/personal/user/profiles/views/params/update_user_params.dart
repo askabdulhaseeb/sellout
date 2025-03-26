@@ -5,7 +5,7 @@ class UpdateUserParams {
   final String bio;
   final String uid;
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'display_name': name,
       'bio': bio,
     };

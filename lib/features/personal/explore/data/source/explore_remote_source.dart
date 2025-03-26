@@ -14,7 +14,7 @@ class ExploreRemoteSourceImpl implements ExploreRemoteSource {
   Future<DataState<List<LocationNameModel>>> fetchLocationNames(
       FetchLocationParams params) async {
     try {
-      final response = await ApiCall<dynamic>().call(
+      final DataState response = await ApiCall<dynamic>().call(
         baseURL: 'https://maps.googleapis.com/maps/api/place/autocomplete',
         endpoint: '/json?input=${params.input}&key=${params.apiKey}',
         requestType: ApiRequestType.get,
@@ -26,7 +26,7 @@ class ExploreRemoteSourceImpl implements ExploreRemoteSource {
       if (response is DataSuccess) {
         debugPrint('Location fetching Success in Remote Source');
 final Map<String, dynamic> jsonData = jsonDecode(response.data ?? '');
-final List<dynamic> predictions = jsonData['predictions'] ?? [];
+final List<dynamic> predictions = jsonData['predictions'] ?? <dynamic>[];
         final List<LocationNameModel> locationData = predictions
             .map((json) => LocationNameModel.fromJson(json))
             .toList();

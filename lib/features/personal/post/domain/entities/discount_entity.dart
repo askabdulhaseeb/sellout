@@ -11,11 +11,11 @@ class DiscountEntity {
   @HiveField(0)
   final int quantity;
   @HiveField(1)
-  int discount;
+  double discount;
 
   // this is copyWith method
   DiscountEntity copyWith({
-    int? discount,
+    double? discount,
   }) {
     return DiscountEntity(
       quantity: quantity,

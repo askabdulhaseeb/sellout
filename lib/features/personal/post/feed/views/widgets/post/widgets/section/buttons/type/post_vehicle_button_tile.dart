@@ -14,7 +14,7 @@ class PostVehicleButtonTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pro = Provider.of<BookingProvider>(context, listen: false);
+    final BookingProvider pro = Provider.of<BookingProvider>(context, listen: false);
     return Row(
       children: <Widget>[
         Expanded(child: PostMakeOfferButton(post: post)),
