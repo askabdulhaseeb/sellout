@@ -27,7 +27,6 @@ class BookVisitApiImpl implements BookVisitApi {
       );
 
       if (result is DataSuccess<String>) {
-        debugPrint(result.data);
 
         final Map<String, dynamic> decodedData =
             json.decode(result.data ?? '{}');
@@ -69,7 +68,6 @@ class BookVisitApiImpl implements BookVisitApi {
       );
 
       if (result is DataSuccess<String>) {
-        debugPrint(result.data);
         final Map<String, dynamic> decodedData =
             json.decode(result.data ?? '{}');
         final VisitingEntity? visitingItem = decodedData.containsKey('items')
@@ -140,7 +138,6 @@ class BookVisitApiImpl implements BookVisitApi {
         requestType: ApiRequestType.patch,
         body: json.encode(params.toupdatevisit()),
       );
-      debugPrint('${params.toupdatevisit()}');
       if (result is DataSuccess) {
         return DataSuccess<VisitingEntity>(result.data ?? '', result.entity);
       } else {

@@ -8,6 +8,7 @@ import '../../../../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../../post/feed/views/enums/offer_status_enum.dart';
 import '../../../../../../../post/feed/views/providers/feed_provider.dart';
 import '../../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
+import '../../../../providers/chat_provider.dart';
 
 class CounterBottomSheet extends StatelessWidget {
   const CounterBottomSheet({
@@ -62,6 +63,7 @@ class CounterBottomSheet extends StatelessWidget {
                   minoffer: message.offerDetail!.minOfferAmount,
                   offerAmount: int.parse(offerController.text),
                 );
+                Provider.of<ChatProvider>(context, listen: false).getMessages();
                 Navigator.pop(context);
               },
               title: 'make_offer'.tr(),

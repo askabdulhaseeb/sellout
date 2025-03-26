@@ -38,8 +38,8 @@ class PostRepositoryImpl implements PostRepository {
     return await remoteApi.updateOffer(param);
   }
 
-  @override
-  Future<DataState<bool>> updateOfferStatus(UpdateOfferParams param) async {
-    return await remoteApi.updateOfferStatus(param);
-  }
+  // @override
+  // Future<DataState<bool>> updateOfferStatus(UpdateOfferParams param) async {
+  //   return await remoteApi.updateOfferStatus(param);
+  // }
 }

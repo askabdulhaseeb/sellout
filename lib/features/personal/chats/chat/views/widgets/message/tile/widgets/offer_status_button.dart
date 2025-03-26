@@ -5,6 +5,7 @@ import '../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../post/feed/views/enums/offer_status_enum.dart';
 import '../../../../../../../post/feed/views/providers/feed_provider.dart';
 import '../../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
+import '../../../../providers/chat_provider.dart';
 import 'counter_offer_bottomsheet.dart';
 
 class OfferStatusButtons extends StatelessWidget {
@@ -54,11 +55,19 @@ class OfferStatusButtons extends StatelessWidget {
                   title: 'decline'.tr(),
                   isLoading: false,
                   onTap: () {
-                    pro.updateOfferStatus(
-                        chatId: message.chatId,
-                        context: context,
-                        offerStatus: OfferStatus.accept.value,
-                        offerId: message.offerDetail!.offerId);
+                    pro.updateOffer(
+                      chatId: message.chatId,
+                      context: context,
+                      minoffer: 0, //optional(required for counter offer)
+                      offerAmount: 0, //optional(required for counter offer)
+                      quantity: 0, //optional(required for counter offer)
+                      offerStatus: OfferStatus.reject.value, //required
+                      offerId: message.offerDetail!.offerId, //required
+                      businessId: 'null', //required as null
+                      messageID: message.messageId, //required
+                    );
+                    Provider.of<ChatProvider>(context, listen: false)
+                        .getMessages();
                   }),
             ),
             Expanded(
@@ -78,11 +87,19 @@ class OfferStatusButtons extends StatelessWidget {
                   title: 'accept'.tr(),
                   isLoading: false,
                   onTap: () {
-                    pro.updateOfferStatus(
-                        chatId: message.chatId,
-                        context: context,
-                        offerStatus: OfferStatus.accept.value,
-                        offerId: message.offerDetail!.offerId);
+                    pro.updateOffer(
+                      chatId: message.chatId,
+                      context: context,
+                      minoffer: 0, //optional(required for counter offer)
+                      offerAmount: 0, //optional(required for counter offer)
+                      quantity: 0, //optional(required for counter offer)
+                      offerStatus: OfferStatus.accept.value, //required
+                      offerId: message.offerDetail!.offerId, //required
+                      businessId: 'null', //required as null
+                      messageID: message.messageId, //required
+                    );
+                    Provider.of<ChatProvider>(context, listen: false)
+                        .getMessages();
                   }),
             )
           ],

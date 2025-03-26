@@ -22,7 +22,6 @@ class BookingScreen extends StatelessWidget {
     final ServiceEntity? service = args['service'] as ServiceEntity?;
     final BusinessEntity? business = args['business'] as BusinessEntity?;
     final TextTheme texttheme = Theme.of(context).textTheme;
-    debugPrint(service.toString());
     return Scaffold(
       appBar: AppBar(
           centerTitle: true,

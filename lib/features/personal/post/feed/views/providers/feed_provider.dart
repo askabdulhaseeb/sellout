@@ -18,17 +18,17 @@ import '../../../domain/usecase/update_offer_usecase.dart';
 
 class FeedProvider extends ChangeNotifier {
   FeedProvider(
-      this._getFeedUsecase,
-      this._createOfferUsecase,
-      this._getMyChatsUsecase,
-      this._updateOfferUsecase,
-      this._updateOfferStatusUsecase);
+    this._getFeedUsecase,
+    this._createOfferUsecase,
+    this._getMyChatsUsecase,
+    this._updateOfferUsecase,
+  );
   final GetFeedUsecase _getFeedUsecase;
   final CreateOfferUsecase _createOfferUsecase;
   final UpdateOfferUsecase _updateOfferUsecase;
-  final UpdateOfferStatusUsecase _updateOfferStatusUsecase;
-
   final GetMyChatsUsecase _getMyChatsUsecase;
+  // final UpdateOfferStatusUsecase _updateOfferStatusUsecase;
+
   final List<PostEntity> _posts = <PostEntity>[];
   bool _isLoading = false;
   List<PostEntity> get feed => _posts;
@@ -65,8 +65,8 @@ class FeedProvider extends ChangeNotifier {
     required String currency,
     required int quantity,
     required String listId,
-    String? size,
-    String? color,
+    required String? size,
+    required String? color,
   }) async {
     setIsLoading(true);
 
@@ -76,8 +76,8 @@ class FeedProvider extends ChangeNotifier {
         currency: currency,
         quantity: quantity,
         listId: listId,
-        size: size ?? '',
-        color: color ?? '');
+        size: size,
+        color: color);
     try {
       final DataState<bool> result = await _createOfferUsecase.call(params);
 
@@ -86,7 +86,6 @@ class FeedProvider extends ChangeNotifier {
 
         final DataState<List<ChatEntity>> chatResult =
             await _getMyChatsUsecase.call(<String>[result.data!]);
-
         if (chatResult is DataSuccess && chatResult.entity!.isNotEmpty) {
           final ChatProvider chatProvider =
               Provider.of<ChatProvider>(context, listen: false);
@@ -150,43 +149,6 @@ class FeedProvider extends ChangeNotifier {
     } finally {
       setIsLoading(false);
     }
-
-    return DataFailer(CustomException('something_wrong'.tr()));
-  }
-
-  Future<DataState<bool>> updateOfferStatus({
-    required BuildContext context,
-    required String offerStatus,
-    required String offerId,
-    required String chatId,
-  }) async {
-    setIsLoading(true);
-    final UpdateOfferParams params = UpdateOfferParams(
-        chatID: chatId,
-        minOffer: 0,
-        offerAmount: 0,
-        quantity: 0,
-        businessId: '',
-        offerStatus: offerStatus,
-        messageId: '',
-        offerId: offerId);
-    try {
-      final DataState<bool> result =
-          await _updateOfferStatusUsecase.call(params);
-      if (result is DataSuccess && result.data != null) {
-        debugPrint('provider data: ${result.data}');
-      } else {
-        AppLog.error(result.exception?.message ?? 'something_wrong'.tr(),
-            name: 'FeedProvider.updateOfferStatus - Else');
-      }
-    } catch (e) {
-      AppLog.error(e.toString(),
-          name: 'FeedProvider.updateOfferStatus - catch');
-      return DataFailer<bool>(CustomException('$e'));
-    } finally {
-      setIsLoading(false);
-    }
-
-    return DataFailer(CustomException('something_wrong'.tr()));
+    return DataFailer<bool>(CustomException('something_wrong'.tr()));
   }
 }

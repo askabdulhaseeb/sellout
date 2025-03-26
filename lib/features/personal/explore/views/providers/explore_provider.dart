@@ -223,7 +223,7 @@ class ExploreProvider extends ChangeNotifier {
         bool categoryMatch = _selectedBusinessCategory == 'all' ||
             post.listID.toUpperCase() ==
                 _selectedPersonalCategory.toUpperCase();
-        double avgRating = calculateAverageRating(post.listOfReviews);
+        double avgRating = calculateAverageRating(post.listOfReviews!);
         post.listID.toUpperCase() == _selectedPersonalCategory.toUpperCase();
         bool ratingMatch =
             _selectedRating == null || avgRating.round() == _selectedRating;
@@ -243,7 +243,7 @@ class ExploreProvider extends ChangeNotifier {
   List<PostEntity> getBusinessPosts() {
     return SortOption.sortPosts(
       _posts.where((PostEntity post) {
-        double avgRating = calculateAverageRating(post.listOfReviews);
+        double avgRating = calculateAverageRating(post.listOfReviews!);
         bool categoryMatch = _selectedBusinessCategory == 'all' ||
             post.listID.toUpperCase() ==
                 _selectedBusinessCategory.toUpperCase();

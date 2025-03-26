@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../../core/widgets/custom_elevated_button.dart';
 
 class EditableQuoteDialog extends StatefulWidget {
@@ -15,10 +14,9 @@ class EditableQuoteDialogState extends State<EditableQuoteDialog> {
       TextEditingController(text: 'Quote title here');
   final TextEditingController priceController =
       TextEditingController(text: '100.0');
-
   DateTime selectedDate = DateTime.now();
-  List<String> includedServices = [];
-  List<String> excludedServices = [];
+  List<String> includedServices = <String>[];
+  List<String> excludedServices = <String>[];
 
   void _pickDate() async {
     DateTime? pickedDate = await showDatePicker(
