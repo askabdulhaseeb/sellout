@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../providers/services_page_provider.dart';
-import 'service_card.dart';
+import 'create_quote_dailog.dart';
 
 class ServiceSearchResults extends StatelessWidget {
   const ServiceSearchResults({super.key});
@@ -11,7 +11,6 @@ class ServiceSearchResults extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme txt = Theme.of(context).textTheme;
-
     return Consumer<ServicesPageProvider>(
       builder: (BuildContext context, ServicesPageProvider pro, Widget? child) {
         return Column(

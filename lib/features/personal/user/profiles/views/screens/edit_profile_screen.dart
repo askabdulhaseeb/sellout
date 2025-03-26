@@ -1,11 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/usecase/usecase.dart';
 import '../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../providers/profile_provider.dart';
 
 class EditProfileScreen extends StatelessWidget {
@@ -25,17 +28,26 @@ class EditProfileScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: <Widget>[
-              /// Profile Picture
-              Center(
-                child: SizedBox(
-                  height: 100,
-                  width: 100,
-                  child: ClipRRect(
-                      borderRadius: BorderRadius.circular(100),
-                      child: CustomNetworkImage(
+              ValueListenableBuilder<Box<CurrentUserEntity>>(
+                valueListenable: Hive.box<CurrentUserEntity>(LocalAuth.boxTitle)
+                    .listenable(),
+                builder: (BuildContext context, Box<CurrentUserEntity> box,
+                    Widget? child) {
+                  CurrentUserEntity? user = box.get(LocalAuth.boxTitle);
+                  return Center(
+                    child: SizedBox(
+                      height: 100,
+                      width: 100,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(100),
+                        child: CustomNetworkImage(
                           fit: BoxFit.cover,
-                          imageURL: pro.user?.profilePhotoURL)),
-                ),
+                          imageURL: user?.profileImage.first.url,
+                        ),
+                      ),
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 20),
               ElevatedButton.icon(
@@ -75,7 +87,8 @@ class EditProfileScreen extends StatelessWidget {
                 width: double.infinity,
                 child: CustomElevatedButton(
                     onTap: () {
-                      final result = pro.updateProfileDetail(context);
+                      final Future<void> result =
+                          pro.updateProfileDetail(context);
                       if (result is DataSuccess) {
                         Navigator.pop(context);
                       }

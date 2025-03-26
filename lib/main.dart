@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
         themeMode: kDebugMode ? ThemeMode.light : ThemeMode.light,
         routes: AppRoutes.routes,
         // onGenerateRoute: (RouteSettings settings) {},
-         initialRoute: SignInScreen.routeName,
+        // initialRoute: SignInScreen.routeName,
       ),
     );
   }

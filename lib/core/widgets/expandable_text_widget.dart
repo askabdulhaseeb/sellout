@@ -40,7 +40,7 @@ class _ExpandableTextState extends State<ExpandableText> {
               });
             },
             child: Text(
-              isExpanded ? "show_less".tr() : "show_more".tr(),
+              isExpanded ? 'show_less'.tr() : 'show_more'.tr(),
               style: TextStyle(color: Theme.of(context).primaryColor),
             ),
           ),

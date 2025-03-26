@@ -47,7 +47,7 @@ class BusinessPageHeaderSection extends StatelessWidget {
                   ),
                   Opacity(
                     opacity: 0.6,
-                    child: Text(business.location!.address ?? '', maxLines: 2),
+                    child: Text(business.location?.address ?? '', maxLines: 2),
                   ),
                   const SizedBox(height: 8),
                   RatingDisplayWidget(

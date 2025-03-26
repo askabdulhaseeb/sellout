@@ -3,7 +3,10 @@ import 'package:flutter/foundation.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/api_call.dart';
 import '../../../../../../../core/sources/local/local_request_history.dart';
+import '../../../../../../attachment/data/attchment_model.dart';
+import '../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../../attachment/domain/entities/picked_attachment.dart';
+import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../views/params/update_user_params.dart';
 import '../local/local_user.dart';
 
@@ -63,8 +66,18 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
         requestType: ApiRequestType.post,
         attachments: <PickedAttachment>[attachments],
       );
+
       if (result is DataSuccess<String>) {
         debugPrint('my data:${result.data ?? ''}');
+        Map<String, dynamic> myData = jsonDecode(result.data!);
+
+        // ✅ Convert JSON to List<AttachmentEntity>
+        List<AttachmentEntity> profilephoto = (myData['profile_image'] as List)
+            .map((e) => AttachmentModel.fromJson(e))
+            .toList();
+
+        // ✅ Update LocalAuth.currentUser properly and save it to Hive
+        LocalAuth.currentUser!.profileImage = profilephoto;
 
         return DataSuccess<bool>('', true);
       } else {
@@ -74,8 +87,9 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
             result.exception?.message ?? 'something_wrong'.tr()));
       }
     } catch (e) {
-      AppLog.error(e.toString(), name: 'GetUserAPI.updateProfilePicture: else');
-      return DataFailer<bool>(CustomException('something_wrong'));
+      AppLog.error(e.toString(),
+          name: 'GetUserAPI.updateProfilePicture: catch');
+      return DataFailer<bool>(CustomException('something_wrong'.tr()));
     }
   }
 
