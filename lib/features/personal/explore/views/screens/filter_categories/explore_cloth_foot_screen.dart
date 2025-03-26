@@ -50,7 +50,7 @@ class _ExploreCLothFOotScreenState extends State<ExploreCLothFOotScreen> {
                 children: <Widget>[
                   Text('cloth_foot'.tr(), style: textTheme.titleMedium),
                   Text(
-                      '${'find_perfect'.tr()} ${'cloth_foot'.tr()}${' items'.tr()}',
+                      '${'find_perfect'.tr()} ${'cloth_foot'.tr()}${'items'.tr()}',
                       style: textTheme.bodySmall),
                   const SizedBox(height: 10),
                   DefaultTabController(

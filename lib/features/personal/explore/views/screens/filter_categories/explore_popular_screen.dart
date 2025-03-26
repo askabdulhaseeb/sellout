@@ -53,7 +53,7 @@ class _ExplorePopularScreenState extends State<ExplorePopularScreen> {
                 children: <Widget>[
                   Text('popular'.tr(), style: textTheme.titleMedium),
                   Text(
-                      '${'find_perfect'.tr()} ${'popular'.tr()}${' items'.tr()}',
+                      '${'find_perfect'.tr()} ${'popular'.tr()}${'items'.tr()}',
                       style: textTheme.bodySmall),
                   const SizedBox(height: 10),
                   CustomTextFormField(
