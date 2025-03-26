@@ -118,7 +118,7 @@ class PostEntity {
   @HiveField(14)
   final DeliveryType deliveryType;
   @HiveField(15)
-  final List<double> listOfReviews;
+  final List<double>? listOfReviews;
   @HiveField(16)
   final String categoryType;
 

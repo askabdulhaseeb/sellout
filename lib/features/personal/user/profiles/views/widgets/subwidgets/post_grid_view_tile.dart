@@ -53,7 +53,7 @@ class PostGridViewTile extends StatelessWidget {
                   ),
                   RatingDisplayWidget(
                     size: 12,
-                    ratingList: post.listOfReviews,
+                    ratingList: post.listOfReviews!,
                   ),
                   Text(
                     post.priceStr,

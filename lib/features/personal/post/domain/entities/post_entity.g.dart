@@ -32,7 +32,7 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       privacy: fields[12] as PrivacyType,
       condition: fields[13] as ConditionType,
       deliveryType: fields[14] as DeliveryType,
-      listOfReviews: (fields[15] as List).cast<double>(),
+      listOfReviews: (fields[15] as List?)?.cast<double>(),
       categoryType: fields[16] as String,
       currentLongitude: fields[30] as double,
       currentLatitude: fields[31] as double,

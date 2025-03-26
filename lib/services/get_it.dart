@@ -251,17 +251,13 @@ void _feed() {
       .registerFactory<CreateOfferUsecase>(() => CreateOfferUsecase(locator()));
   locator
       .registerFactory<UpdateOfferUsecase>(() => UpdateOfferUsecase(locator()));
-  locator.registerFactory<UpdateOfferStatusUsecase>(
-      () => UpdateOfferStatusUsecase(locator()));
   locator.registerLazySingleton<FeedProvider>(() => FeedProvider(
-        locator(),
         locator(),
         locator(),
         locator(),
         locator(),
       ));
 }
-
 void _post() {
   locator.registerFactory<GetSpecificPostUsecase>(
       () => GetSpecificPostUsecase(locator()));

@@ -12,10 +12,7 @@ class OfferDetailEntity {
     required this.post,
     required this.price,
     required this.minOfferAmount,
-    this.offerStatus,
-    required this.currency,
-    required this.offerId,
-    required this.offerPrice,
+    required this.currency, required this.offerId, required this.offerPrice, this.offerStatus,
   });
 
   @HiveField(0)
@@ -37,5 +34,5 @@ class OfferDetailEntity {
   @HiveField(8)
   final String offerId;
   @HiveField(9)
-  final int offerPrice;
+   int offerPrice;
 }

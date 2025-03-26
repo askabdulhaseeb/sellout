@@ -1,13 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
-
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
 import '../../../../../../core/sources/local/local_request_history.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../cart/domain/usecase/cart/get_cart_usecase.dart';
 import '../../../../chats/chat/data/sources/local/local_message.dart';
-import '../../../../chats/chat/domain/entities/getted_message_entity.dart';
 import '../../../../chats/chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../domain/entities/post_entity.dart';
 import '../../../domain/params/add_to_cart_param.dart';
@@ -22,7 +20,7 @@ abstract interface class PostRemoteApi {
   Future<DataState<bool>> addToCart(AddToCartParam param);
   Future<DataState<bool>> createOffer(CreateOfferparams param);
   Future<DataState<bool>> updateOffer(UpdateOfferParams param);
-  Future<DataState<bool>> updateOfferStatus(UpdateOfferParams param);
+  // Future<DataState<bool>> updateOfferStatus(UpdateOfferParams param);
 }
 
 class PostRemoteApiImpl implements PostRemoteApi {
@@ -195,10 +193,8 @@ class PostRemoteApiImpl implements PostRemoteApi {
         body: json.encode(param.toMap()),
       );
       if (result is DataSuccess) {
-        debugPrint(result.data);
         final Map<String, dynamic> data = jsonDecode(result.data ?? '');
         final String chatID = data['chat_id'];
-        debugPrint('chatID:$chatID');
         return DataSuccess<bool>(chatID, true);
       } else {
         AppLog.error(
@@ -234,6 +230,18 @@ class PostRemoteApiImpl implements PostRemoteApi {
 
       if (result is DataSuccess) {
         debugPrint(result.data);
+        Map<String, dynamic> Mapdata = jsonDecode(result.data!);
+        String OfferStatus = Mapdata['updatedAttributes']['offer_status'];
+        int offerAmount = Mapdata['updatedAttributes']['offer_amount'];
+
+        MessageEntity message = LocalChatMessage()
+            .messages(param.chatID)
+            .firstWhere((MessageEntity element) =>
+                element.messageId == param.messageId);
+        message.offerDetail?.offerPrice = offerAmount;
+        message.offerDetail!.offerStatus = OfferStatus;
+        debugPrint(
+            'Offer status updated for message: ${message.messageId} ${message.offerDetail!.offerStatus}');
         return DataSuccess<bool>(result.data!, true);
       } else {
         AppLog.error(
@@ -255,51 +263,51 @@ class PostRemoteApiImpl implements PostRemoteApi {
     }
   }
 
-  @override
-  Future<DataState<bool>> updateOfferStatus(UpdateOfferParams param) async {
-    String endpoint = '/offers/update/offerStatus/${param.offerId}';
+  // @override
+  // Future<DataState<bool>> updateOfferStatus(UpdateOfferParams param) async {
+  //   String endpoint = '/offers/update/offerStatus/${param.offerId}';
 
-    try {
-      final DataState<bool> result = await ApiCall<bool>().call(
-        endpoint: endpoint,
-        requestType: ApiRequestType.patch,
-        isAuth: true,
-        body: json.encode(param.updateStatus()),
-      );
+  //   try {
+  //     final DataState<bool> result = await ApiCall<bool>().call(
+  //       endpoint: endpoint,
+  //       requestType: ApiRequestType.patch,
+  //       isAuth: true,
+  //       body: json.encode(param.updateStatus()),
+  //     );
 
-      if (result is DataSuccess) {
-        // ✅ Fetch the existing entity from Hive
-        Map<String, dynamic> data = jsonDecode(result.data!);
-        final String dataStatus = data['updatedAttributes']['offer_status'];
-        final GettedMessageEntity? oldEntity =
-            LocalChatMessage().entity(param.offerId);
+  //     if (result is DataSuccess) {
+  //       // ✅ Fetch the existing entity from Hive
+  //       Map<String, dynamic> data = jsonDecode(result.data!);
+  //       final String dataStatus = data['updatedAttributes']['offer_status'];
+  //       final GettedMessageEntity? oldEntity =
+  //           LocalChatMessage().entity(param.offerId);
 
-        if (oldEntity != null) {
-          final List<MessageEntity> updatedMessages =
-              oldEntity.messages.map((MessageEntity msg) {
-            if (msg.offerDetail!.offerStatus == param.messageId) {
-              msg.offerDetail!.offerStatus = dataStatus;
-            }
-            return msg;
-          }).toList();
-          await LocalChatMessage().save(
-            GettedMessageEntity(
-              chatID: oldEntity.chatID,
-              messages: updatedMessages,
-              lastEvaluatedKey: oldEntity.lastEvaluatedKey,
-            ),
-            param.offerId,
-          );
-        }
-        LocalChatMessage().refresh();
-        return DataSuccess<bool>(result.data!, true);
-      } else {
-        return DataFailer<bool>(
-          result.exception ?? CustomException('something_wrong'.tr()),
-        );
-      }
-    } catch (e) {
-      return DataFailer<bool>(CustomException(e.toString()));
-    }
-  }
+  //       if (oldEntity != null) {
+  //         final List<MessageEntity> updatedMessages =
+  //             oldEntity.messages.map((MessageEntity msg) {
+  //           if (msg.offerDetail!.offerStatus == param.messageId) {
+  //             msg.offerDetail!.offerStatus = dataStatus;
+  //           }
+  //           return msg;
+  //         }).toList();
+  //         await LocalChatMessage().save(
+  //           GettedMessageEntity(
+  //             chatID: oldEntity.chatID,
+  //             messages: updatedMessages,
+  //             lastEvaluatedKey: oldEntity.lastEvaluatedKey,
+  //           ),
+  //           param.offerId,
+  //         );
+  //       }
+  //       LocalChatMessage().refresh();
+  //       return DataSuccess<bool>(result.data!, true);
+  //     } else {
+  //       return DataFailer<bool>(
+  //         result.exception ?? CustomException('something_wrong'.tr()),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     return DataFailer<bool>(CustomException(e.toString()));
+  //   }
+  // }
 }

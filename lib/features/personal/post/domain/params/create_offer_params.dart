@@ -1,6 +1,11 @@
 class CreateOfferparams {
-  CreateOfferparams(
-    { required this.postId, required this.offerAmount, required this.currency, required this.quantity, required this.listId, this.color,
+  CreateOfferparams({
+    required this.postId,
+    required this.offerAmount,
+    required this.currency,
+    required this.quantity,
+    required this.listId,
+    this.color,
     this.size,
   });
   final String postId;
@@ -17,8 +22,8 @@ class CreateOfferparams {
       'currency': currency,
       'list_id': listId,
       'quantity': quantity,
-      'size': size,
-      'color': color
+      if (size != null) 'size': size,
+      if (color != null) 'color': color
     };
   }
 }

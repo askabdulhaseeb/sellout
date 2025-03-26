@@ -106,8 +106,8 @@ class BookingProvider extends ChangeNotifier {
       }
       return timeSlots;
     } catch (e) {
-      debugPrint(
-          "Time Parsing Error: $e (Opening: '$openingTime', Closing: '$closingTime')");
+      AppLog.error(e.toString(),
+          name: 'BookingProvider.generateTimeSlots -catch');
       return <String>[];
     }
   }
@@ -146,7 +146,8 @@ class BookingProvider extends ChangeNotifier {
       DataState<List<ChatEntity>> chatresult =
           await _getmychatusecase.call(<String>[chatId]);
       if (chatresult is DataSuccess && (chatresult.data?.isNotEmpty ?? false)) {
-        final ChatProvider chatProvider = Provider.of<ChatProvider>(context, listen: false);
+        final ChatProvider chatProvider =
+            Provider.of<ChatProvider>(context, listen: false);
         chatProvider.chat = chatresult.entity!.first;
         Navigator.of(context).pushReplacementNamed(
           ChatScreen.routeName,

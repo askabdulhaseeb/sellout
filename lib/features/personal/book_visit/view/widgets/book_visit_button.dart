@@ -2,6 +2,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../post/domain/entities/post_entity.dart';
@@ -38,7 +39,6 @@ class BookVisitButton extends StatelessWidget {
                         provider.messageentity?.visitingDetail?.visitingID ??
                             '',
                     messageId: provider.messageentity!.messageId);
-                debugPrint('date${provider.formattedDateTime}');
               }
             } else if (service != null) {
               provider.bookService(

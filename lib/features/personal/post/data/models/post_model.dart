@@ -288,7 +288,7 @@ class PostModel extends PostEntity {
       wormAndFleaTreated: json['worm_and_flea_treated'] ?? false,
       vaccinationUpToDate: json['vaccination_up_to_date'] ?? false,
       //
-      isActive: bool.tryParse(json['is_active'] ?? 'false') ?? false,
+isActive: (json['is_active'] is bool) ? json['is_active'] : (json['is_active'].toString().toLowerCase() == 'false'),
       createdBy: json['created_by']?.toString() ?? '',
       updatedBy: json['updated_by']?.toString() ?? '',
       createdAt: json['created_at']?.toString().toDateTime() ?? DateTime.now(),
