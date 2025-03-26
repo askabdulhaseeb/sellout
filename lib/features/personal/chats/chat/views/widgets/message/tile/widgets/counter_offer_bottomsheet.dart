@@ -36,7 +36,7 @@ class CounterBottomSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           // Title
-          Text('Counter Offer', style: Theme.of(context).textTheme.titleMedium),
+          Text('counter_offer'.tr(), style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 10),
           TextField(
             controller: offerController,

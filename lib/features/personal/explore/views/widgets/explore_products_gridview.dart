@@ -52,7 +52,7 @@ class ExploreProductsGridviewState extends State<ExploreProductsGridview> {
                   TextButton(
                     onPressed: controller.toggleShowAll,
                     child: Text(
-                      controller.showAll ? 'See Less'.tr() : 'See All'.tr(),
+                      controller.showAll ? 'see_less'.tr() : 'see_all'.tr(),
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary),
                     ),
