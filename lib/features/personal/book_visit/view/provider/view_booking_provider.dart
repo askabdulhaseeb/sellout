@@ -172,12 +172,12 @@ class BookingProvider extends ChangeNotifier {
     isLoading = true;
 
     final UpdateVisitParams params = UpdateVisitParams(
-      visitingId: visitingId,
+      visitingId: visitingId.trim(),
       status: 'cancel',
-      messageId: messageId,
+      messageId: messageId.trim(),
       businessId: 'null',
     );
-
+    debugPrint('${params.messageId},${params.visitingId} ');
     final DataState<VisitingEntity> result = await _cancelVisitUseCase(params);
     if (result is DataSuccess) {
       AppSnackBar.showSnackBar(context, 'visit_cancelled'.tr());

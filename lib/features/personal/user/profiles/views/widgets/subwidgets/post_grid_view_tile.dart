@@ -25,22 +25,28 @@ class PostGridViewTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Expanded(
-            child: SizedBox(
-              width: double.infinity,
-              height: double.infinity,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(8),
-                  topRight: Radius.circular(8),
+            child: Stack(
+              alignment: Alignment.topRight,
+              children: <Widget>[
+                SizedBox(
+                  width: double.infinity,
+                  height: 300,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: CustomNetworkImage(imageURL: post.imageURL),
+                  ),
                 ),
-                child: CustomNetworkImage(imageURL: post.imageURL),
-              ),
+                if (isMe != true)
+                  CustomIconButton(icon: CupertinoIcons.cart, onPressed: () {})
+              ],
             ),
           ),
           Row(
             children: <Widget>[
               Column(
+                spacing: 4,
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   SizedBox(
                     width: 100,
@@ -63,31 +69,36 @@ class PostGridViewTile extends StatelessWidget {
                 ],
               ),
               const Spacer(),
-              if (isMe == true)
-                Column(
+              SizedBox(
+                height: 100,
+                child: Column(
                   children: <Widget>[
-                    CustomIconButton(
-                      iconColor: Theme.of(context).primaryColor,
-                      padding: const EdgeInsets.all(4),
-                      margin: const EdgeInsets.all(4),
-                      bgColor:
-                          Theme.of(context).primaryColor.withValues(alpha: 200),
-                      icon: CupertinoIcons.pencil_ellipsis_rectangle,
-                      onPressed: () {},
-                    ),
-                    CustomIconButton(
-                      iconColor: Theme.of(context).colorScheme.secondary,
-                      padding: const EdgeInsets.all(4),
-                      margin: const EdgeInsets.all(4),
-                      bgColor: Theme.of(context)
-                          .colorScheme
-                          .secondary
-                          .withValues(alpha: 200),
-                      icon: CupertinoIcons.speaker,
-                      onPressed: () {},
-                    ),
+                    if (isMe == true)
+                      CustomIconButton(
+                        iconColor: Theme.of(context).primaryColor,
+                        padding: const EdgeInsets.all(4),
+                        margin: const EdgeInsets.all(4),
+                        bgColor: Theme.of(context)
+                            .primaryColor
+                            .withValues(alpha: 200),
+                        icon: CupertinoIcons.pencil_ellipsis_rectangle,
+                        onPressed: () {},
+                      ),
+                    if (isMe == true)
+                      CustomIconButton(
+                        iconColor: Theme.of(context).colorScheme.secondary,
+                        padding: const EdgeInsets.all(4),
+                        margin: const EdgeInsets.all(4),
+                        bgColor: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withValues(alpha: 200),
+                        icon: CupertinoIcons.speaker,
+                        onPressed: () {},
+                      ),
                   ],
-                )
+                ),
+              )
             ],
           ),
         ],

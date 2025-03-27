@@ -2,18 +2,18 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../core/widgets/expandable_text_widget.dart';
+import '../../../../../../core/widgets/rating_display_widget.dart';
 import '../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../../book_visit/view/screens/view_booking_screen.dart';
 import '../../providers/services_page_provider.dart';
 
 class ServiceCard extends StatelessWidget {
-  const ServiceCard({super.key, required this.service});
+  const ServiceCard({required this.service, super.key});
 
   final ServiceEntity service;
 
@@ -36,7 +36,7 @@ class ServiceCard extends StatelessWidget {
 
         final BusinessEntity business = snapshot.data!.entity!;
         final TextTheme txt = Theme.of(context).textTheme;
-        final ColorScheme clrsch = Theme.of(context).colorScheme;
+        // final ColorScheme clrsch = Theme.of(context).colorScheme;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,14 +54,10 @@ class ServiceCard extends StatelessWidget {
                           Text(business.displayName ?? '',
                               style: txt.titleMedium),
                           const SizedBox(width: 6),
-                          Text('5.0', style: txt.bodySmall),
-                          const SizedBox(width: 6),
-                          Icon(Icons.star, size: 12, color: clrsch.primary),
-                          const SizedBox(width: 6),
-                          Text(
-                            ' (${service.listOfReviews.length})',
-                            style: txt.bodyMedium?.copyWith(
-                                color: Theme.of(context).disabledColor),
+                          RatingDisplayWidget(
+                            size: 12,
+                            ratingList: service.listOfReviews,
+                            displayStars: false,
                           ),
                         ],
                       ),
@@ -130,7 +126,7 @@ class ServiceCard extends StatelessWidget {
                       RichText(
                           text: TextSpan(
                               style: TextTheme.of(context).bodySmall,
-                              children: [
+                              children: <InlineSpan>[
                             TextSpan(text: '${service.time.toString()} '),
                             TextSpan(
                               text: 'min'.tr(),
@@ -145,6 +141,9 @@ class ServiceCard extends StatelessWidget {
             ),
             CustomElevatedButton(
               title: 'book'.tr(),
+              bgColor: business.routine == null
+                  ? Theme.of(context).disabledColor
+                  : Theme.of(context).primaryColor,
               isLoading: false,
               onTap: () {
                 if (business.routine != null) {
