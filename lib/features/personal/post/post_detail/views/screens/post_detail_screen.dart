@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/sources/data_state.dart';
-import '../../../../../../core/widgets/attachment_slider.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../data/sources/local/local_post.dart';
 import '../../../domain/entities/post_entity.dart';
@@ -11,6 +10,7 @@ import '../../../feed/views/widgets/post/widgets/section/buttons/home_post_butto
 import '../../../feed/views/widgets/post/widgets/section/buttons/type/post_button_for_user_tile.dart';
 import '../../../feed/views/widgets/post/widgets/section/home_post_header_section.dart';
 import '../providers/post_detail_provider.dart';
+import '../widgets/post_detail_attachment_slider.dart';
 import '../widgets/post_detail_description_section.dart';
 import '../widgets/post_detail_postage_return_section.dart';
 import '../widgets/reviews/post_detail_review_overview_section.dart';
@@ -55,7 +55,7 @@ class PostDetailScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         PostHeaderSection(post: post),
-                        AttachmentsSlider(urls: post.fileUrls),
+                        PostDetailAttachmentSlider(urls: post.fileUrls),
                         PostDetailTitleAmountSection(post: post),
                         PostRatingSection(post: post),
                         if (isMe == true)
