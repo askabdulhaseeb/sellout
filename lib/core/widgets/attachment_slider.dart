@@ -79,7 +79,7 @@ class _Attachment extends StatelessWidget {
                 onTap: () {},
                 child: Icon(
                   Icons.arrow_back_ios_new_rounded,
-                  color: Theme.of(context).primaryColor.withOpacity(0.2),
+                  color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
                 ),
               ),
             ),
