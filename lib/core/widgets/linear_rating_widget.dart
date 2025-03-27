@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
 import '../../features/personal/review/domain/entities/review_entity.dart';
+
 
 class LinearRatingGraphWidget extends StatelessWidget {
   const LinearRatingGraphWidget({
@@ -18,7 +18,7 @@ class LinearRatingGraphWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Opacity(
+      Opacity(
           opacity: 0.6,
           child: Text(
             '${reviews.length} ${'global_reviews'.tr()}',

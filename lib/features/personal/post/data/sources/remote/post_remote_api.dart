@@ -230,6 +230,7 @@ class PostRemoteApiImpl implements PostRemoteApi {
 
       if (result is DataSuccess) {
         debugPrint(result.data);
+        debugPrint(param.toString());
         Map<String, dynamic> Mapdata = jsonDecode(result.data!);
         String OfferStatus = Mapdata['updatedAttributes']['offer_status'];
         int offerAmount = Mapdata['updatedAttributes']['offer_amount'];
@@ -244,6 +245,7 @@ class PostRemoteApiImpl implements PostRemoteApi {
             'Offer status updated for message: ${message.messageId} ${message.offerDetail!.offerStatus}');
         return DataSuccess<bool>(result.data!, true);
       } else {
+
         AppLog.error(
           result.exception?.message ?? 'PostRemoteApiImpl.updateOffer - else',
           name: 'PostRemoteApiImpl.updateOffer - failed',
@@ -254,6 +256,8 @@ class PostRemoteApiImpl implements PostRemoteApi {
         );
       }
     } catch (e) {
+      debugPrint(param.toString());
+
       AppLog.error(
         e.toString(),
         name: 'PostRemoteApiImpl.updateOffer - catch',
