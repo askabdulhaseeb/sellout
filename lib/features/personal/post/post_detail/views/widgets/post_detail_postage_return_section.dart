@@ -30,6 +30,25 @@ class PostDetailPostageReturnSection extends StatelessWidget {
                     .withValues(alpha: 0.4)),
           ),
           const SizedBox(
+            height: 8,
+          ),
+          Text(
+            'Thu 23 Nov - Fri 14 December',
+            style: TextTheme.of(context)
+                .titleMedium
+                ?.copyWith(fontWeight: FontWeight.normal),
+          ),
+          Text(
+            'From EdenBUrg United Kingdom',
+            style: TextTheme.of(context).titleMedium?.copyWith(
+                fontWeight: FontWeight.normal,
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.5)),
+          ),
+
+          const SizedBox(
             height: 6,
           ),
           Text(
@@ -42,9 +61,10 @@ class PostDetailPostageReturnSection extends StatelessWidget {
                     .withValues(alpha: 0.7)),
           ),
           Text(
-            maxLines: 3,
             'click_collect_at_checkout'.tr(),
-            style: TextTheme.of(context).titleSmall?.copyWith(),
+            style: TextTheme.of(context)
+                .titleMedium
+                ?.copyWith(fontWeight: FontWeight.normal),
           ),
           const Divider(),
           // _Tile(
