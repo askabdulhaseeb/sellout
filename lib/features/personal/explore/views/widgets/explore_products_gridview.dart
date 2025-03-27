@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../post/domain/entities/post_entity.dart';
 import '../../../user/profiles/views/widgets/subwidgets/post_grid_view_tile.dart';
 import '../providers/explore_provider.dart';
@@ -32,12 +31,10 @@ class ExploreProductsGridviewState extends State<ExploreProductsGridview> {
         final List<String> categories = widget.showPersonal
             ? controller.getPersonalCategories()
             : controller.getBusinessCategories();
-
         // Fetch filtered posts directly from the provider
         final List<PostEntity> filteredFeed = widget.showPersonal
             ? controller.getPersonalPosts().toSet().toList()
             : controller.getBusinessPosts().toSet().toList();
-
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -120,7 +117,7 @@ class ExploreProductsGridviewState extends State<ExploreProductsGridview> {
                   crossAxisCount: 2,
                   crossAxisSpacing: 8,
                   mainAxisSpacing: 8,
-                  childAspectRatio: 1,
+                  childAspectRatio: 0.7,
                 ),
                 itemCount: filteredFeed.length,
                 itemBuilder: (BuildContext context, int index) {
