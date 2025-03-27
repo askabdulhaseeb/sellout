@@ -5,8 +5,7 @@ import '../../../domain/entities/post_entity.dart';
 
 class ConditionDeliveryWidget extends StatelessWidget {
   const ConditionDeliveryWidget({
-    super.key,
-    required this.post,
+    required this.post, super.key,
   });
 
   final PostEntity? post;
