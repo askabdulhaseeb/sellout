@@ -1,7 +1,5 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/widgets/linear_rating_widget.dart';
 import '../../../../../review/data/sources/local_review.dart';
@@ -12,7 +10,7 @@ import '../../../../../review/features/reivew_list/views/screens/review_list_scr
 import '../../../../domain/entities/post_entity.dart';
 import '../../providers/post_detail_provider.dart';
 import 'post_detail_review_attachment_list_widget.dart';
-import 'post_detail_review_button_section.dart';
+import 'post_detail_review_header.dart';
 import 'post_detail_review_list_section.dart';
 
 class PostDetailReviewOverviewSection extends StatelessWidget {
@@ -29,11 +27,7 @@ class PostDetailReviewOverviewSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        const Text(
-          'customer_reviews',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-        ).tr(),
-        const SizedBox(height: 6),
+        PostDetailRatingHeader(post: post),
         FutureBuilder<DataState<List<ReviewEntity>>>(
           future: Provider.of<PostDetailProvider>(context, listen: false)
               .getReviews(param),
@@ -67,7 +61,7 @@ class PostDetailReviewOverviewSection extends StatelessWidget {
                     },
                   ),
                   const PostDetailReviewAttachmentListWidget(),
-                  PostDetailReviewButtonSection(post: post),
+                  // PostDetailReviewButtonSection(post: post),
                   PostDetailReviewListSection(reviews: reviews),
                 ],
               ),

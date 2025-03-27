@@ -27,7 +27,6 @@ class BookVisitApiImpl implements BookVisitApi {
       );
 
       if (result is DataSuccess<String>) {
-
         final Map<String, dynamic> decodedData =
             json.decode(result.data ?? '{}');
         final VisitingEntity? visitingItem = decodedData.containsKey('items')
@@ -110,6 +109,8 @@ class BookVisitApiImpl implements BookVisitApi {
       if (result is DataSuccess) {
         return DataSuccess<VisitingEntity>(result.data ?? '', result.entity);
       } else {
+        debugPrint('${params.tocancelvisit()} ');
+
         AppLog.error(
           result.exception?.message ?? 'something_wrong'.tr(),
           name: 'BookVisitApiImpl.CancelVisit - Else',
@@ -118,6 +119,8 @@ class BookVisitApiImpl implements BookVisitApi {
             CustomException('Failed to cancel visit. Please try again.'));
       }
     } catch (e) {
+      debugPrint('${params.tocancelvisit()} ');
+
       AppLog.error(
         e.toString(),
         name: 'BookVisitApiImpl.CancelVisit - catch',
@@ -141,6 +144,7 @@ class BookVisitApiImpl implements BookVisitApi {
       if (result is DataSuccess) {
         return DataSuccess<VisitingEntity>(result.data ?? '', result.entity);
       } else {
+        debugPrint('${params.toupdatevisit()}');
         AppLog.error(
           result.exception?.message ?? 'something_wrong'.tr(),
           name: 'BookVisitApiImpl.UpdateVisit - Else',
