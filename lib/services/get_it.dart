@@ -90,7 +90,6 @@ import '../features/personal/post/domain/usecase/add_to_cart_usecase.dart';
 import '../features/personal/post/domain/usecase/create_offer_usecase.dart';
 import '../features/personal/post/domain/usecase/get_feed_usecase.dart';
 import '../features/personal/post/domain/usecase/get_specific_post_usecase.dart';
-import '../features/personal/post/domain/usecase/update_offer_status_usecase.dart';
 import '../features/personal/post/domain/usecase/update_offer_usecase.dart';
 import '../features/personal/post/feed/views/providers/feed_provider.dart';
 import '../features/personal/review/data/repositories/review_repository_impl.dart';

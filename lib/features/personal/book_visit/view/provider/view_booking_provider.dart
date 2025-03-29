@@ -168,10 +168,12 @@ class BookingProvider extends ChangeNotifier {
     required BuildContext context,
     required String visitingId,
     required String messageId,
+    required String chatID,
   }) async {
     isLoading = true;
 
     final UpdateVisitParams params = UpdateVisitParams(
+      chatId: chatID,
       visitingId: visitingId.trim(),
       status: 'cancel',
       messageId: messageId.trim(),
@@ -187,16 +189,19 @@ class BookingProvider extends ChangeNotifier {
           context, result.exception?.message ?? 'something_wrong'.tr());
     }
     isLoading = false;
+    // notifyListeners();
   }
 
   Future<void> updateVisit({
     required BuildContext context,
     required String visitingId,
     required String messageId,
+    required String chatID,
   }) async {
     isLoading = true;
 
     final UpdateVisitParams params = UpdateVisitParams(
+      chatId: chatID,
       visitingId: visitingId,
       datetime: formattedDateTime,
       messageId: messageId,

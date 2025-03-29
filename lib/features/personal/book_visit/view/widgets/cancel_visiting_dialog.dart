@@ -55,7 +55,7 @@ class CancelVisitingDialog extends StatelessWidget {
                 ),
                 isLoading: false,
                 onTap: () {
-                  pro.cancelVisit(
+                  pro.cancelVisit(chatID: message.chatId,
                       context: context,
                       visitingId: message.visitingDetail?.visitingID ?? '',
                       messageId: message.messageId);
