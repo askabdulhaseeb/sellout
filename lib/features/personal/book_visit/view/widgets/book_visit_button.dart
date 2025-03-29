@@ -33,6 +33,7 @@ class BookVisitButton extends StatelessWidget {
                     context, post!.postID, post!.businessID ?? 'null');
               } else {
                 provider.updateVisit(
+                    chatID: provider.messageentity?.chatId ?? '',
                     context: context,
                     visitingId:
                         provider.messageentity?.visitingDetail?.visitingID ??

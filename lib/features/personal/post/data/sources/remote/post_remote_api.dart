@@ -231,19 +231,17 @@ class PostRemoteApiImpl implements PostRemoteApi {
       if (result is DataSuccess) {
         debugPrint(result.data);
         debugPrint(param.toString());
-        Map<String, dynamic> Mapdata = jsonDecode(result.data!);
-        String OfferStatus = Mapdata['updatedAttributes']['offer_status'];
-        int offerAmount = Mapdata['updatedAttributes']['offer_amount'];
+        Map<String, dynamic> mapdata = jsonDecode(result.data!);
+        String offerStatus = mapdata['updatedAttributes']['offer_status'];
+        int offerAmount = mapdata['updatedAttributes']['offer_amount'];
 
         MessageEntity message = LocalChatMessage()
             .messages(param.chatID)
             .firstWhere((MessageEntity element) =>
                 element.messageId == param.messageId);
         message.offerDetail?.offerPrice = offerAmount;
-        message.offerDetail!.offerStatus = OfferStatus;
-        debugPrint(
-            'Offer status updated for message: ${message.messageId} ${message.offerDetail!.offerStatus}');
-        return DataSuccess<bool>(result.data!, true);
+        message.offerDetail!.offerStatus = offerStatus;
+          return DataSuccess<bool>(result.data!, true);
       } else {
 
         AppLog.error(

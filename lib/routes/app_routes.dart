@@ -23,7 +23,10 @@ import '../features/personal/post/post_detail/views/screens/post_detail_screen.d
 import '../features/personal/review/features/reivew_list/views/screens/media_picker_screen.dart';
 import '../features/personal/review/features/reivew_list/views/screens/write_review_screen.dart';
 import '../features/personal/setting/more_info/views/screens/personal_more_information_setting_screen.dart';
+import '../features/personal/setting/setting_notification/view/screens/personal_setting_email_notification_screen.dart';
+import '../features/personal/setting/setting_notification/view/screens/personal_setting_notification_screen.dart';
 import '../features/personal/setting/setting_dashboard/views/screens/personal_setting_screen.dart';
+import '../features/personal/setting/setting_notification/view/screens/personal_setting_push_notification.dart';
 import '../features/personal/user/profiles/views/screens/edit_profile_screen.dart';
 
 class AppRoutes {
@@ -81,6 +84,11 @@ class AppRoutes {
     PersonalSettingScreen.routeName: (_) => const PersonalSettingScreen(),
     PersonalSettingMoreInformationScreen.routeName: (_) =>
         const PersonalSettingMoreInformationScreen(),
+    PersonalSettingNotificationScreen.routeName: (_) =>
+        const PersonalSettingNotificationScreen(),
+            PersonalSettingPushNotificationScreen.routeName: (_) =>
+        const PersonalSettingPushNotificationScreen(),    PersonalSettingEmailNotificationScreen.routeName: (_) =>
+        const PersonalSettingEmailNotificationScreen(),
     //Review
     WriteReviewScreen.routeName: (_) => const WriteReviewScreen(),
     MediaPickerScreen.routeName: (_) => const MediaPickerScreen(),
