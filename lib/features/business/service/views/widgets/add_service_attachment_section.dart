@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../attachment/domain/entities/picked_attachment.dart';
@@ -21,8 +20,8 @@ class AddServiceAttachmentSection extends StatelessWidget {
           CustomElevatedButton(
             title:
                 '+ ${'add'.tr()} ${'photos'.tr()} (${pro.attachments.length}/10)',
-            border: Border.all(color: Theme.of(context).primaryColor),
-            bgColor: Colors.transparent,
+            // border: Border.all(color: Theme.of(context).primaryColor),
+            bgColor:  Theme.of(context).primaryColor.withValues(alpha: 0.1),
             textColor: Theme.of(context).primaryColor,
             isLoading: false,
             onTap: () async => await pro.addPhotos(context),
