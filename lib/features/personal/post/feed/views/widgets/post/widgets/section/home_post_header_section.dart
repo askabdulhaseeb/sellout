@@ -5,7 +5,7 @@ import '../../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../../core/widgets/loader.dart';
 import '../../../../../../../../../core/widgets/profile_photo.dart';
 import '../../../../../../../../../services/get_it.dart';
-import '../../../../../../../../business/business_page/views/screens/business_page_screen.dart';
+import '../../../../../../../../business/business_page/views/screens/user_business_profile_screen.dart';
 import '../../../../../../../../business/core/data/sources/local_business.dart';
 import '../../../../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../../../../user/profiles/data/sources/local/local_user.dart';
@@ -97,9 +97,9 @@ class _BusinessHeader extends StatelessWidget {
             ? const Loader()
             : GestureDetector(
                 onTap: () => Navigator.of(context)
-                    .push(MaterialPageRoute<BusinessPageScreen>(
+                    .push(MaterialPageRoute<UserBusinessProfileScreen>(
                   builder: (BuildContext context) =>
-                      BusinessPageScreen(businessID: post.businessID ?? ''),
+                      UserBusinessProfileScreen(businessID: post.businessID ?? ''),
                 )),
                 child: Row(
                   children: <Widget>[

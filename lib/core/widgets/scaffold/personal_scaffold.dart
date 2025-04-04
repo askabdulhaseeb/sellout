@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../features/personal/auth/signin/data/sources/local/local_auth.dart';
 import 'app_bar/personal_app_bar.dart';
+import 'bottom_bar/business_bottom_nav_bar.dart';
 import 'bottom_bar/personal_bottom_nav_bar.dart';
 
 // export 'package:easy_localization/easy_localization.dart';
@@ -21,7 +23,9 @@ class PersonalScaffold extends StatelessWidget {
     return Scaffold(
       appBar: appBar ?? personalAppbar(context),
       body: body,
-      bottomNavigationBar: const PersonalBottomNavBar(),
+      bottomNavigationBar: LocalAuth.currentUser?.logindetail.type == 'business'
+          ? const BusinessBottomNavBar()
+          : const PersonalBottomNavBar(),
     );
   }
 }

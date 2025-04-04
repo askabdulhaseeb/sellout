@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../chats/chat/views/providers/chat_provider.dart';
@@ -13,7 +12,6 @@ import '../../../domain/params/create_offer_params.dart';
 import '../../../domain/params/update_offer_params.dart';
 import '../../../domain/usecase/create_offer_usecase.dart';
 import '../../../domain/usecase/get_feed_usecase.dart';
-import '../../../domain/usecase/update_offer_status_usecase.dart';
 import '../../../domain/usecase/update_offer_usecase.dart';
 
 class FeedProvider extends ChangeNotifier {

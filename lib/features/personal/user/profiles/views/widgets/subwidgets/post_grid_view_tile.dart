@@ -30,24 +30,27 @@ class PostGridViewTile extends StatelessWidget {
               children: <Widget>[
                 SizedBox(
                   width: double.infinity,
-                  height: 300,
+                  height: 330,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: CustomNetworkImage(imageURL: post.imageURL),
                   ),
                 ),
                 if (isMe != true)
-                  CustomIconButton(icon: CupertinoIcons.cart, onPressed: () {})
+                  CustomIconButton(
+                      iconColor: Theme.of(context).colorScheme.onPrimary,
+                      icon: CupertinoIcons.cart,
+                      onPressed: () {})
               ],
             ),
           ),
           Row(
             children: <Widget>[
               Column(
-                spacing: 4,
+                spacing: 2,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
+                children: <Widget>[  
                   SizedBox(
                     width: 100,
                     child: Text(
@@ -70,7 +73,7 @@ class PostGridViewTile extends StatelessWidget {
               ),
               const Spacer(),
               SizedBox(
-                height: 100,
+                height: 80,
                 child: Column(
                   children: <Widget>[
                     if (isMe == true)

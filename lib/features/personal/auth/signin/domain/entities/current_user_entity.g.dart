@@ -37,13 +37,17 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       lastLoginTime: fields[97] as DateTime,
       createdAt: fields[98] as DateTime,
       inHiveAt: fields[99] as DateTime,
+      businessStatus: fields[120] as String?,
+      businessName: fields[121] as String?,
+      businessID: fields[122] as String,
+      logindetail: fields[123] as LoginDetailEntity,
     );
   }
 
   @override
   void write(BinaryWriter writer, CurrentUserEntity obj) {
     writer
-      ..writeByte(20)
+      ..writeByte(24)
       ..writeByte(1)
       ..write(obj.message)
       ..writeByte(2)
@@ -83,7 +87,15 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       ..writeByte(98)
       ..write(obj.createdAt)
       ..writeByte(99)
-      ..write(obj.inHiveAt);
+      ..write(obj.inHiveAt)
+      ..writeByte(120)
+      ..write(obj.businessStatus)
+      ..writeByte(121)
+      ..write(obj.businessName)
+      ..writeByte(122)
+      ..write(obj.businessID)
+      ..writeByte(123)
+      ..write(obj.logindetail);
   }
 
   @override

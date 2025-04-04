@@ -28,7 +28,6 @@ class DashboardScreen extends StatelessWidget {
       uid == null ? const SignInScreen() : const ChatDashboardScreen(),
       uid == null ? const SignInScreen() : const ProfileScreen(),
     ];
-
     return Scaffold(
       body: Consumer<PersonalBottomNavProvider>(
         builder: (BuildContext context, PersonalBottomNavProvider navPro, _) {
