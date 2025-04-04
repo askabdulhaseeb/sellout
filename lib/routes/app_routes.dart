@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/functions/app_log.dart';
-import '../features/business/service/views/screens/add_service_screen.dart';
+import '../features/business/business_dashboard/view/screens/business_dashboard.dart';
 import '../features/personal/auth/find_account/view/screens/confirm_email_screen.dart';
 import '../features/personal/auth/find_account/view/screens/enter_code_screen.dart';
 import '../features/personal/auth/find_account/view/screens/find_account_screen.dart';
@@ -86,14 +86,15 @@ class AppRoutes {
         const PersonalSettingMoreInformationScreen(),
     PersonalSettingNotificationScreen.routeName: (_) =>
         const PersonalSettingNotificationScreen(),
-            PersonalSettingPushNotificationScreen.routeName: (_) =>
-        const PersonalSettingPushNotificationScreen(),    PersonalSettingEmailNotificationScreen.routeName: (_) =>
+    PersonalSettingPushNotificationScreen.routeName: (_) =>
+        const PersonalSettingPushNotificationScreen(),
+    PersonalSettingEmailNotificationScreen.routeName: (_) =>
         const PersonalSettingEmailNotificationScreen(),
     //Review
     WriteReviewScreen.routeName: (_) => const WriteReviewScreen(),
     MediaPickerScreen.routeName: (_) => const MediaPickerScreen(),
     // BUSSINESS
-    AddServiceScreen.routeName: (_) => const AddServiceScreen(),
+    BusinessDashboardScreen.routeName: (_) => const BusinessDashboardScreen(),
     // Explore
     ExplorePopularScreen.routeName: (_) => const ExplorePopularScreen(),
     ExploreCLothFOotScreen.routeName: (_) => const ExploreCLothFOotScreen(),

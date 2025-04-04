@@ -58,10 +58,12 @@ class SignInScreen extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: () =>AppNavigator.pushNamed(FindAccountScreen.routeName),
+                      onPressed: () =>
+                          AppNavigator.pushNamed(FindAccountScreen.routeName),
                       child: Text(
                         'forgot_password',
-                        style: TextStyle(color: Theme.of(context).dividerColor),
+                        style:
+                            TextStyle(color: Theme.of(context).disabledColor),
                       ).tr(),
                     ),
                   ),

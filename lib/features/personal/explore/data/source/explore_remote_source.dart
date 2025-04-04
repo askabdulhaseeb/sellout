@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import '../../../../../core/sources/api_call.dart';
 import '../../domain/entities/location_name_entity.dart';
 import '../../views/params/location_by_name_params.dart';
@@ -21,16 +20,15 @@ class ExploreRemoteSourceImpl implements ExploreRemoteSource {
         isAuth: false,
       );
 
-
       if (response is DataSuccess) {
-final Map<String, dynamic> jsonData = jsonDecode(response.data ?? '');
-final List<dynamic> predictions = jsonData['predictions'] ?? <dynamic>[];
+        final Map<String, dynamic> jsonData = jsonDecode(response.data ?? '');
+        final List<dynamic> predictions =
+            jsonData['predictions'] ?? <dynamic>[];
         final List<LocationNameModel> locationData = predictions
             .map((json) => LocationNameModel.fromJson(json))
             .toList();
 
-
-        return DataSuccess('', locationData);
+        return DataSuccess<List<LocationNameModel>>('', locationData);
       } else {
         return DataFailer<List<LocationNameModel>>(
             CustomException('Location fetching Failed'));

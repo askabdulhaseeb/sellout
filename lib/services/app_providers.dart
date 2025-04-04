@@ -2,6 +2,7 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import '../core/widgets/appointment/providers/appointment_tile_provider.dart';
 import '../features/attachment/views/providers/picked_media_provider.dart';
+import '../features/business/business_dashboard/providers/business_botttom_nav_provider.dart';
 import '../features/business/business_page/views/providers/business_page_provider.dart';
 import '../features/business/service/views/providers/add_service_provider.dart';
 import '../features/personal/auth/find_account/view/providers/find_account_provider.dart';
@@ -77,6 +78,8 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
   ChangeNotifierProvider<BusinessPageProvider>.value(
       value: BusinessPageProvider(locator(), locator(), locator(), locator(),
           locator(), locator(), locator())),
+  ChangeNotifierProvider<BusinessBottomNavProvider>.value(
+      value: BusinessBottomNavProvider()),
   ChangeNotifierProvider<AddServiceProvider>.value(
       value: AddServiceProvider(locator())),
   ChangeNotifierProvider<ExploreProvider>.value(

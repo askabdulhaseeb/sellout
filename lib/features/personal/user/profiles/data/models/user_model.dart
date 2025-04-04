@@ -1,10 +1,8 @@
 import 'dart:convert';
-
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../../core/extension/string_ext.dart';
 import '../../../../../attachment/data/attchment_model.dart';
 import '../../../../auth/signin/data/models/address_model.dart';
-
 import '../../domain/entities/business_profile_detail_entity.dart';
 import '../../domain/entities/user_entity.dart';
 import 'business_profile_detail_model.dart';

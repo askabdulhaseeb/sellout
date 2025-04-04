@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../data/models/address_model.dart';
+import 'login_detail_entity.dart';
 part 'current_user_entity.g.dart';
 
 @HiveType(typeId: 0)
@@ -33,6 +34,12 @@ class CurrentUserEntity {
     required this.lastLoginTime,
     required this.createdAt,
     required this.inHiveAt,
+    // New fields added for business logic
+    required this.businessStatus,
+    required this.businessName, 
+    required this.businessID,
+    //
+    required this.logindetail, 
   });
 
   @HiveField(1)
@@ -72,7 +79,7 @@ class CurrentUserEntity {
   @HiveField(42)
   final AttachmentEntity? verificationImage;
   @HiveField(43)
-   List<AttachmentEntity> profileImage;
+  List<AttachmentEntity> profileImage;
   //
   @HiveField(97)
   final DateTime lastLoginTime;
@@ -80,6 +87,16 @@ class CurrentUserEntity {
   final DateTime createdAt;
   @HiveField(99)
   final DateTime inHiveAt;
+
+  // Business-specific fields
+  @HiveField(120)
+  final String? businessStatus; // **New field**
+  @HiveField(121)
+  final String? businessName; // **New field**
+  @HiveField(122)
+  final String businessID; // **New field**
+  @HiveField(123)
+  final LoginDetailEntity logindetail; // **New field**
 
   // this is a Copy function to copy the current object and return a new object with old token
 
