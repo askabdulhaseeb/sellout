@@ -11,6 +11,7 @@ import '../../../../../core/widgets/app_snakebar.dart';
 import '../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../attachment/domain/entities/picked_attachment_option.dart';
 import '../../../../attachment/views/screens/pickable_attachment_screen.dart';
+import '../../../../personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../../core/domain/entity/business_entity.dart';
 import '../../domain/params/add_service_param.dart';
 import '../../domain/usecase/add_service_usecase.dart';
@@ -22,6 +23,7 @@ class AddServiceProvider extends ChangeNotifier {
   Future<void> addService(BuildContext context) async {
     try {
       final AddServiceParam param = AddServiceParam(
+        employeeIDs: <String>[],
         name: _title.text,
         category: _selectedCategory,
         type: _selectedType,
@@ -30,7 +32,7 @@ class AddServiceProvider extends ChangeNotifier {
         mints: _selectedMinute,
         price: _price.text,
         businessID: _business?.businessID ?? '',
-        currency: '',
+        currency: LocalAuth.currency,
         description: _description.text,
         included: _included.text,
         excluded: _notIncluded.text,

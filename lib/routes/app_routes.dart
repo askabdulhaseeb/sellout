@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/functions/app_log.dart';
 import '../features/business/business_dashboard/view/screens/business_dashboard.dart';
+import '../features/business/service/views/screens/add_service_screen.dart';
 import '../features/personal/auth/find_account/view/screens/confirm_email_screen.dart';
 import '../features/personal/auth/find_account/view/screens/enter_code_screen.dart';
 import '../features/personal/auth/find_account/view/screens/find_account_screen.dart';
@@ -104,5 +105,7 @@ class AppRoutes {
     ExploreVehiclesScreen.routeName: (_) => const ExploreVehiclesScreen(),
     // Profile
     EditProfileScreen.routeName: (_) => const EditProfileScreen(),
+    //services
+    AddServiceScreen.routeName: (_) => const AddServiceScreen(),
   };
 }
