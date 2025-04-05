@@ -1,7 +1,12 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
+import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../core/domain/entity/service/service_entity.dart';
+import '../../../../../service/views/providers/add_service_provider.dart';
+import '../../../../../service/views/screens/add_service_screen.dart';
 
 class BusinessPageServiceTile extends StatelessWidget {
   const BusinessPageServiceTile({required this.service, super.key});
@@ -9,10 +14,12 @@ class BusinessPageServiceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isMe = LocalAuth.currentUser?.businessID == service.businessID;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
       child: SizedBox(
-        height: 80,
+        height: 100,
         child: Row(
           children: <Widget>[
             ClipRRect(
@@ -43,6 +50,30 @@ class BusinessPageServiceTile extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(color: Theme.of(context).disabledColor),
                   ),
+                  if (isMe)
+                    SizedBox(
+                      width: 50,
+                      child: CustomElevatedButton(
+                        margin: const EdgeInsets.all(2),
+                        padding: const EdgeInsets.all(4),
+                        onTap: () {
+                          Provider.of<AddServiceProvider>(context,
+                                  listen: false)
+                              .setService(service);
+                          Navigator.pushNamed(
+                              context, AddServiceScreen.routeName);
+                        },
+                        isLoading: false,
+                        title: 'edit'.tr(),
+                        textStyle:
+                            Theme.of(context).textTheme.labelSmall?.copyWith(
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                        bgColor: Theme.of(context)
+                            .primaryColor
+                            .withValues(alpha: 0.1),
+                      ),
+                    ),
                 ],
               ),
             ),

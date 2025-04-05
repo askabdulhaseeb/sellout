@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../features/business/business_dashboard/providers/business_botttom_nav_provider.dart';
 import '../../../../features/personal/auth/signin/data/sources/local/local_auth.dart'
     show LocalAuth;
+import '../../../../features/personal/dashboard/views/providers/personal_bottom_nav_provider.dart';
 import '../../../../features/personal/user/profiles/data/sources/local/local_user.dart';
 import '../../../enums/nav_bar/business_bottom_nav_bar_type.dart';
 
@@ -32,8 +32,8 @@ class _BusinessBottomNavBarState extends State<BusinessBottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<BusinessBottomNavProvider>(
-      builder: (BuildContext context, BusinessBottomNavProvider navPro, _) {
+    return Consumer<PersonalBottomNavProvider>(
+      builder: (BuildContext context, PersonalBottomNavProvider navPro, _) {
         return BottomNavigationBar(
           showSelectedLabels: false,
           showUnselectedLabels: false,

@@ -10,4 +10,8 @@ class AddServiceRepositoryImpl implements AddServiceRepository {
   @override
   Future<DataState<bool>> addService(AddServiceParam params) async =>
       await remoteApi.addService(params);
+       @override
+  Future<DataState<bool>> updateService(AddServiceParam params) async =>
+      await remoteApi.updateService(params);
 }
+

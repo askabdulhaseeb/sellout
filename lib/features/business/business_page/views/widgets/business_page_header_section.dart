@@ -80,17 +80,18 @@ class BusinessPageHeaderSection extends StatelessWidget {
             ),
             Column(
               children: <Widget>[
-                CustomElevatedButton(
-                  padding: const EdgeInsets.all(6),
-                  onTap: () {},
-                  isLoading: false,
-                  title: 'edit'.tr(),
-                  textStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: Theme.of(context).primaryColor,
-                      ),
-                  bgColor:
-                      Theme.of(context).primaryColor.withValues(alpha: 0.1),
-                )
+                if (isMe)
+                  CustomElevatedButton(
+                    padding: const EdgeInsets.all(6),
+                    onTap: () {},
+                    isLoading: false,
+                    title: 'edit'.tr(),
+                    textStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: Theme.of(context).primaryColor,
+                        ),
+                    bgColor:
+                        Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                  )
               ],
             )
           ],

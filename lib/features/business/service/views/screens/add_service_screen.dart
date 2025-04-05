@@ -1,13 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../core/domain/entity/business_entity.dart';
 import '../providers/add_service_provider.dart';
 import '../widgets/add_service_attachment_section.dart';
 import '../widgets/add_service_button_section.dart';
 import '../widgets/add_service_description_section.dart';
 import '../widgets/add_service_dropdown_section.dart';
+import '../widgets/add_service_employee_section.dart';
 import '../widgets/add_service_time_and_price_section.dart';
 
 class AddServiceScreen extends StatefulWidget {
@@ -21,7 +21,7 @@ class AddServiceScreen extends StatefulWidget {
 class _AddServiceScreenState extends State<AddServiceScreen> {
   @override
   void initState() {
-    Provider.of<AddServiceProvider>(context, listen: false).reset();
+    // Provider.of<AddServiceProvider>(context, listen: false).reset();
     // Provider.of<AddServiceProvider>(context, listen: false)
     //     .setBusiness(business);
     super.initState();
@@ -33,14 +33,19 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
         ModalRoute.of(context)?.settings.arguments as BusinessEntity?;
     Provider.of<AddServiceProvider>(context, listen: false)
         .setBusiness(business);
-        
+
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
+    final pro = Provider.of<AddServiceProvider>(context, listen: false);
     return Scaffold(
-      appBar: AppBar(title: Text('add_service'.tr()), centerTitle: true),
+      appBar: AppBar(
+          title: Text(pro.currentService?.serviceID == null
+              ? 'add_service'.tr()
+              : 'edit_service'.tr()),
+          centerTitle: true),
       body: const Padding(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: SingleChildScrollView(
@@ -53,6 +58,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
               AddServiceTimeAndPriceSection(),
               AddServiceDescriptionSection(),
               AddServiceAttachmentSection(),
+              AddServiceEmployeeSection(),
               AddServiceButtonSection(),
               SizedBox(height: 200),
             ],

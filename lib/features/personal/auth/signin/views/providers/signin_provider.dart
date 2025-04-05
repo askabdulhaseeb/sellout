@@ -3,9 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../routes/app_linking.dart';
-import '../../../../../business/business_dashboard/view/screens/business_dashboard.dart';
 import '../../../../dashboard/views/screens/dasboard_screen.dart';
-import '../../data/sources/local/local_auth.dart';
 import '../../domain/params/login_params.dart';
 import '../../domain/usecase/login_usecase.dart';
 
@@ -50,19 +48,10 @@ class SigninProvider extends ChangeNotifier {
         debugPrint('Signin Ready');
 
         isLoading = false;
-        if (LocalAuth.currentUser?.logindetail.type == 'business') {
-          await AppNavigator.pushNamedAndRemoveUntil(
-            BusinessDashboardScreen.routeName,
-            (_) => false,
-          );
-        } else {
-          debugPrint(
-              'account type${LocalAuth.currentUser?.logindetail.type.toString()}');
-          await AppNavigator.pushNamedAndRemoveUntil(
-            DashboardScreen.routeName,
-            (_) => false,
-          );
-        }
+        await AppNavigator.pushNamedAndRemoveUntil(
+          DashboardScreen.routeName,
+          (_) => false,
+        );
       } else {
         debugPrint('Signin Error in Provider');
         log(

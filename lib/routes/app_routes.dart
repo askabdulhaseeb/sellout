@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../core/functions/app_log.dart';
-import '../features/business/business_dashboard/view/screens/business_dashboard.dart';
 import '../features/business/service/views/screens/add_service_screen.dart';
 import '../features/personal/auth/find_account/view/screens/confirm_email_screen.dart';
 import '../features/personal/auth/find_account/view/screens/enter_code_screen.dart';
@@ -94,8 +93,6 @@ class AppRoutes {
     //Review
     WriteReviewScreen.routeName: (_) => const WriteReviewScreen(),
     MediaPickerScreen.routeName: (_) => const MediaPickerScreen(),
-    // BUSSINESS
-    BusinessDashboardScreen.routeName: (_) => const BusinessDashboardScreen(),
     // Explore
     ExplorePopularScreen.routeName: (_) => const ExplorePopularScreen(),
     ExploreCLothFOotScreen.routeName: (_) => const ExploreCLothFOotScreen(),

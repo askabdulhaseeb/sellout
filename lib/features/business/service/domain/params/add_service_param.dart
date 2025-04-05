@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../../../../../core/enums/business/services/service_category_type.dart';
 import '../../../../../core/enums/business/services/service_model_type.dart';
 import '../../../../attachment/domain/entities/picked_attachment.dart';
@@ -18,7 +20,8 @@ class AddServiceParam {
       required this.excluded, //not_included_in_service
       required this.attachments, //files
       required this.isMobile, //mobile_service
-      required this.employeeIDs //employee_ids
+      required this.employeeIDs, //employee_ids
+      this.serviceID = ''
 
       });
 
@@ -37,6 +40,7 @@ class AddServiceParam {
   final List<PickedAttachment> attachments;
   final bool isMobile;
   final List<String> employeeIDs;
+  final String serviceID;
 
   Map<String, String> toMap() {
     return <String, String>{
@@ -53,7 +57,6 @@ class AddServiceParam {
       'description': description.trim(),
       'included_in_service': included.trim(),
       'not_included_in_service': excluded.trim(),
-      'employee_ids': employeeIDs.toString()
-    };
+    'employee_ids': jsonEncode(employeeIDs),     };
   }
 }

@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import '../../../../../core/extension/string_ext.dart';
 import '../../../../attachment/data/attchment_model.dart';
 import '../../../../personal/location/data/models/location_model.dart';
