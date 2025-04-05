@@ -41,13 +41,14 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       businessName: fields[121] as String?,
       businessID: fields[122] as String,
       logindetail: fields[123] as LoginDetailEntity,
+      employeeList: (fields[124] as List).cast<BusinessEmployeeEntity>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, CurrentUserEntity obj) {
     writer
-      ..writeByte(24)
+      ..writeByte(25)
       ..writeByte(1)
       ..write(obj.message)
       ..writeByte(2)
@@ -95,7 +96,9 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       ..writeByte(122)
       ..write(obj.businessID)
       ..writeByte(123)
-      ..write(obj.logindetail);
+      ..write(obj.logindetail)
+      ..writeByte(124)
+      ..write(obj.employeeList);
   }
 
   @override

@@ -18,10 +18,9 @@ class AddServiceAttachmentSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           CustomElevatedButton(
-            title:
-                '+ ${'add'.tr()} ${'photos'.tr()} (${pro.attachments.length}/10)',
+            title: '+ ${'add'.tr()} ${'photos'.tr()}',
             // border: Border.all(color: Theme.of(context).primaryColor),
-            bgColor:  Theme.of(context).primaryColor.withValues(alpha: 0.1),
+            bgColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
             textColor: Theme.of(context).primaryColor,
             isLoading: false,
             onTap: () async => await pro.addPhotos(context),
@@ -40,7 +39,7 @@ class AddServiceAttachmentSection extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: AspectRatio(
-                      aspectRatio: 1 / 1,
+                      aspectRatio: 16 / 9,
                       child: Stack(
                         clipBehavior: Clip.none,
                         alignment: Alignment.topRight,
@@ -70,14 +69,14 @@ class AddServiceAttachmentSection extends StatelessWidget {
             ),
           const SizedBox(height: 12),
           SwitchListTile.adaptive(
-            value: true,
+            value: pro.isMobileService,
             contentPadding: const EdgeInsets.all(0),
             title: Text(
               'mobile_service'.tr(),
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             subtitle: Text('mobile_service_description'.tr()),
-            onChanged: (_) {},
+            onChanged: pro.setIsMobileService,
           ),
           const SizedBox(height: 12),
         ],

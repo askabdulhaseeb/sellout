@@ -1,8 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../core/domain/entity/business_entity.dart';
+import '../../../../../service/views/providers/add_service_provider.dart';
 import '../../../../../service/views/screens/add_service_screen.dart';
 
 class BusinessPageServiceFilterSection extends StatelessWidget {
@@ -16,6 +19,7 @@ class BusinessPageServiceFilterSection extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: SingleChildScrollView(
+        padding: const EdgeInsets.all(4),
         scrollDirection: Axis.horizontal,
         child: Row(
           spacing: 4,
@@ -37,43 +41,51 @@ class BusinessPageServiceFilterSection extends StatelessWidget {
             //     },
             //   ),
             // ),
-            // Expanded(
-            //   child: CustomTextFormField(
-            //     controller: TextEditingController(),
-            //     hint: 'search'.tr(),
-            //     onChanged: (String value) {},
-            //   ),
-            // ),
-            CustomElevatedButton(
-              title: '+ ${'add_service'.tr()}',
-              bgColor: Colors.transparent,
-              textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.w500,
-                  ),
-              borderRadius: BorderRadius.circular(6),
-              textColor: Theme.of(context).primaryColor,
-              border: Border.all(color: Theme.of(context).primaryColor),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-              isLoading: false,
-              onTap: () => Navigator.of(context).pushNamed(
-                AddServiceScreen.routeName,
-                arguments: business,
+            SizedBox(
+              width: 140,
+              child: CustomTextFormField(
+                style: Theme.of(context).textTheme.bodySmall,
+                isExpanded: true,
+                contentPadding: const EdgeInsets.all(0),
+                controller: TextEditingController(),
+                hint: 'search'.tr(),
+                onChanged: (String value) {},
               ),
             ),
+            CustomElevatedButton(
+                title: '+ ${'add_service'.tr()}',
+                bgColor: Colors.transparent,
+                textStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                borderRadius: BorderRadius.circular(6),
+                textColor: Theme.of(context).primaryColor,
+                border: Border.all(color: Theme.of(context).primaryColor),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+                isLoading: false,
+                onTap: () {
+                  Provider.of<AddServiceProvider>(context, listen: false)
+                      .reset();
+                  Navigator.of(context).pushNamed(
+                    AddServiceScreen.routeName,
+                    arguments: business,
+                  );
+                }),
             InDevMode(
               child: CustomElevatedButton(
                 title: 'promotion_boost'.tr(),
                 bgColor: Colors.transparent,
                 borderRadius: BorderRadius.circular(6),
-                textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                textStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
                       color: Theme.of(context).colorScheme.secondary,
                       fontWeight: FontWeight.w500,
                     ),
                 border:
                     Border.all(color: Theme.of(context).colorScheme.secondary),
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
                 isLoading: false,
                 onTap: () {},
               ),

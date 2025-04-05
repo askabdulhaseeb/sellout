@@ -2,6 +2,7 @@ import 'package:hive/hive.dart';
 
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
+import '../../../../../business/core/domain/entity/business_employee_entity.dart';
 import '../../data/models/address_model.dart';
 import 'login_detail_entity.dart';
 part 'current_user_entity.g.dart';
@@ -40,6 +41,7 @@ class CurrentUserEntity {
     required this.businessID,
     //
     required this.logindetail, 
+    required this.employeeList
   });
 
   @HiveField(1)
@@ -97,6 +99,8 @@ class CurrentUserEntity {
   final String businessID; // **New field**
   @HiveField(123)
   final LoginDetailEntity logindetail; // **New field**
+  @HiveField(124)
+  final List<BusinessEmployeeEntity> employeeList; // **New field**
 
   // this is a Copy function to copy the current object and return a new object with old token
 

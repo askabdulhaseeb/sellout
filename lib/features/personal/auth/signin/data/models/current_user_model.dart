@@ -3,43 +3,45 @@ import 'dart:convert';
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../../core/extension/string_ext.dart';
 import '../../../../../attachment/data/attchment_model.dart';
+import '../../../../../business/core/data/models/business_employee_model.dart';
 import '../../domain/entities/current_user_entity.dart';
 import 'address_model.dart';
 import 'login_detail_model.dart';
 export '../../domain/entities/current_user_entity.dart';
 
 class CurrentUserModel extends CurrentUserEntity {
-  CurrentUserModel({
-    required super.message,
-    required super.token,
-    required super.userID,
-    //
-    required super.email,
-    required super.username,
-    required super.currency,
-    required super.privacy,
-    required super.countryAlpha3,
-    required super.countryCode,
-    required super.phoneNumber,
-    required super.language,
-    //
-    required super.address,
-    //
-    required super.chatIDs,
-    required super.businessIDs,
-    //
-    required super.imageVerified,
-    required super.verificationImage,
-    required super.profileImage,
-    //
-    required super.lastLoginTime,
-    required super.createdAt,
-    //
-    required super.businessStatus, // **Optional - used for Business**
-    required super.businessName, // **Optional - used for Business**
-    required super.businessID, // **Optional - used for Business**
-    required super.logindetail,
-  }) : super(inHiveAt: DateTime.now());
+  CurrentUserModel(
+      {required super.message,
+      required super.token,
+      required super.userID,
+      //
+      required super.email,
+      required super.username,
+      required super.currency,
+      required super.privacy,
+      required super.countryAlpha3,
+      required super.countryCode,
+      required super.phoneNumber,
+      required super.language,
+      //
+      required super.address,
+      //
+      required super.chatIDs,
+      required super.businessIDs,
+      //
+      required super.imageVerified,
+      required super.verificationImage,
+      required super.profileImage,
+      //
+      required super.lastLoginTime,
+      required super.createdAt,
+      //
+      required super.businessStatus, // **Optional - used for Business**
+      required super.businessName, // **Optional - used for Business**
+      required super.businessID, // **Optional - used for Business**
+      required super.logindetail,
+      required super.employeeList})
+      : super(inHiveAt: DateTime.now());
 
   factory CurrentUserModel.fromRawJson(String str) =>
       CurrentUserModel.fromJson(json.decode(str));
@@ -103,6 +105,10 @@ class CurrentUserModel extends CurrentUserEntity {
       businessID:
           userData['business_id'] ?? 'null', // **Optional - used for Business**
       logindetail: LoginDetailModel.fromJson(json['login_detail']),
+      employeeList: List<BusinessEmployeeModel>.from(
+        (userData['employees'] ?? [])
+            .map((e) => BusinessEmployeeModel.fromJson(e)),
+      ),
     );
   }
 }

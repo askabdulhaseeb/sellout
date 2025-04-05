@@ -25,6 +25,7 @@ import '../features/business/service/data/repositories/add_service_repository_im
 import '../features/business/service/data/sources/add_service_remote_api.dart';
 import '../features/business/service/domain/repositories/add_service_repository.dart';
 import '../features/business/service/domain/usecase/add_service_usecase.dart';
+import '../features/business/service/domain/usecase/update_service-usecase.dart';
 import '../features/business/service/views/providers/add_service_provider.dart';
 import '../features/personal/auth/find_account/data/repository/find_account_repository_impl.dart';
 import '../features/personal/auth/find_account/data/source/find_account_remote_data_source.dart';
@@ -257,6 +258,7 @@ void _feed() {
         locator(),
       ));
 }
+
 void _post() {
   locator.registerFactory<GetSpecificPostUsecase>(
       () => GetSpecificPostUsecase(locator()));
@@ -325,10 +327,11 @@ void _services() {
   locator.registerFactory<GetServiceByIdUsecase>(
       () => GetServiceByIdUsecase(locator()));
   locator.registerFactory(() => AddServiceUsecase(locator()));
+  locator.registerFactory(() => UpdateServiceUsecase(locator()));
   //
   // Providers
   locator.registerLazySingleton<AddServiceProvider>(
-      () => AddServiceProvider(locator()));
+      () => AddServiceProvider(locator(), locator()));
 }
 
 void _booking() {

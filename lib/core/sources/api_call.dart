@@ -160,19 +160,6 @@ class ApiCall<T> {
           );
         }
       }
-      if (attachments != null &&
-          attachments.isNotEmpty &&
-          attachments.length == 1) {
-        for (PickedAttachment element in attachments) {
-          request.files.add(
-            await http.MultipartFile.fromPath(
-              'file',
-              element.file.path,
-            ),
-          );
-        }
-      }
-
       /// Request Header
       // [Content-Type]
       final Map<String, String> headers = extraHeader ?? <String, String>{};
