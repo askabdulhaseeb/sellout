@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-
 import '../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../core/enums/listing/core/listing_type.dart';

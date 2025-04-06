@@ -57,9 +57,11 @@ class BusinessPageServiceTile extends StatelessWidget {
                         margin: const EdgeInsets.all(2),
                         padding: const EdgeInsets.all(4),
                         onTap: () {
-                          Provider.of<AddServiceProvider>(context,
-                                  listen: false)
-                              .setService(service);
+                          final AddServiceProvider pro =
+                              Provider.of<AddServiceProvider>(context,
+                                  listen: false);
+                          pro.reset();
+                          pro.setService(service);
                           Navigator.pushNamed(
                               context, AddServiceScreen.routeName);
                         },

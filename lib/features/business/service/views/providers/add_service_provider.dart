@@ -141,7 +141,7 @@ class AddServiceProvider extends ChangeNotifier {
       MaterialPageRoute<List<PickedAttachment>>(
         builder: (BuildContext context) => PickableAttachmentScreen(
           option: PickableAttachmentOption(
-            maxAttachments: 1,
+            maxAttachments: 10,
             type: AttachmentType.image,
             selectedMedia: _attachments
                 .map((PickedAttachment e) => e.selectedMedia!)

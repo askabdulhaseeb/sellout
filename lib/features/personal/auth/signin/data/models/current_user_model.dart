@@ -63,9 +63,9 @@ class CurrentUserModel extends CurrentUserEntity {
     return CurrentUserModel(
       message: json['message'] ?? '',
       token: json['token'] ?? '',
-      userID: userData['user_id'] ?? '',
+      userID: userData['user_id'] ?? userData['owner_id'] ?? '',
       //
-      email: userData['email'] ?? '',
+      email: userData['email'] ?? userData['owner_email'] ?? '',
       username: userData['user_name'] ?? '',
       currency: userData['currency'] ?? 'gbp',
       privacy: PrivacyType.fromJson(

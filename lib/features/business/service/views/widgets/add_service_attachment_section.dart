@@ -20,7 +20,7 @@ class AddServiceAttachmentSection extends StatelessWidget {
           CustomElevatedButton(
             title: '+ ${'add'.tr()} ${'photos'.tr()}',
             // border: Border.all(color: Theme.of(context).primaryColor),
-            bgColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+            bgColor: Theme.of(context).primaryColor.withValues(alpha: 0.025),
             textColor: Theme.of(context).primaryColor,
             isLoading: false,
             onTap: () async => await pro.addPhotos(context),

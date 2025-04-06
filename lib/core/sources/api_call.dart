@@ -148,9 +148,7 @@ class ApiCall<T> {
         request.fields.addAll(fieldsMap);
       }
 
-      if (attachments != null &&
-          attachments.isNotEmpty &&
-          attachments.length > 1) {
+      if (attachments != null && attachments.isNotEmpty) {
         for (PickedAttachment element in attachments) {
           request.files.add(
             await http.MultipartFile.fromPath(
@@ -160,6 +158,7 @@ class ApiCall<T> {
           );
         }
       }
+
       /// Request Header
       // [Content-Type]
       final Map<String, String> headers = extraHeader ?? <String, String>{};
