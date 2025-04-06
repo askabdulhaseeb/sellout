@@ -9,7 +9,7 @@ import '../../../../../../core/widgets/password_textformfield.dart';
 import '../../../../../../core/widgets/sellout_title.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../dashboard/views/providers/personal_bottom_nav_provider.dart';
-import '../../../../dashboard/views/screens/dasboard_screen.dart';
+import '../../../../dashboard/views/screens/dashboard_screen.dart';
 import '../../../find_account/view/screens/find_account_screen.dart';
 import '../../../signup/views/screens/signup_screen.dart';
 import '../providers/signin_provider.dart';

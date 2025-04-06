@@ -55,9 +55,7 @@ class AddServiceRemoteApiImpl implements AddServiceRemoteApi {
         isAuth: true,
       );
       if (result is DataSuccess) {
-        debugPrint(
-            'this is the file ${params.attachments.first.file.toString()}');
-        debugPrint('this is the file ${params.toMap().toString()}');
+        debugPrint('this is the file ${result.data.toString()}');
         return DataSuccess<bool>('', true);
       } else {
         AppLog.error(

@@ -17,7 +17,7 @@ import '../features/personal/explore/views/screens/filter_categories/explore_veh
 import '../features/personal/listing/listing_form/views/screens/add_listing_form_screen.dart';
 import '../features/personal/auth/signin/views/screens/sign_in_screen.dart';
 import '../features/personal/auth/signup/views/screens/signup_screen.dart';
-import '../features/personal/dashboard/views/screens/dasboard_screen.dart';
+import '../features/personal/dashboard/views/screens/dashboard_screen.dart';
 import '../features/personal/book_visit/view/screens/view_booking_screen.dart';
 import '../features/personal/post/post_detail/views/screens/post_detail_screen.dart';
 import '../features/personal/review/features/reivew_list/views/screens/media_picker_screen.dart';

@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../routes/app_linking.dart';
-import '../../../../dashboard/views/screens/dasboard_screen.dart';
+import '../../../../dashboard/views/screens/dashboard_screen.dart';
 import '../../domain/params/login_params.dart';
 import '../../domain/usecase/login_usecase.dart';
 
