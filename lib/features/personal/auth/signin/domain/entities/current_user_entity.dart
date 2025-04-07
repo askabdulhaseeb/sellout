@@ -9,40 +9,39 @@ part 'current_user_entity.g.dart';
 
 @HiveType(typeId: 0)
 class CurrentUserEntity {
-  CurrentUserEntity({
-    required this.message,
-    required this.token,
-    required this.userID,
-    //
-    required this.email,
-    required this.username,
-    required this.currency,
-    required this.privacy,
-    required this.countryAlpha3,
-    required this.countryCode,
-    required this.phoneNumber,
-    required this.language,
-    //
-    required this.address,
-    //
-    required this.chatIDs,
-    required this.businessIDs,
-    //
-    required this.imageVerified,
-    required this.verificationImage,
-    required this.profileImage,
-    //
-    required this.lastLoginTime,
-    required this.createdAt,
-    required this.inHiveAt,
-    // New fields added for business logic
-    required this.businessStatus,
-    required this.businessName, 
-    required this.businessID,
-    //
-    required this.logindetail, 
-    required this.employeeList
-  });
+  CurrentUserEntity(
+      {required this.message,
+      required this.token,
+      required this.userID,
+      //
+      required this.email,
+      required this.username,
+      required this.currency,
+      required this.privacy,
+      required this.countryAlpha3,
+      required this.countryCode,
+      required this.phoneNumber,
+      required this.language,
+      //
+      required this.address,
+      //
+      required this.chatIDs,
+      required this.businessIDs,
+      //
+      required this.imageVerified,
+      required this.verificationImage,
+      required this.profileImage,
+      //
+      required this.lastLoginTime,
+      required this.createdAt,
+      required this.inHiveAt,
+      // New fields added for business logic
+      required this.businessStatus,
+      required this.businessName,
+      required this.businessID,
+      //
+      required this.logindetail,
+      required this.employeeList});
 
   @HiveField(1)
   final String message;
@@ -91,12 +90,12 @@ class CurrentUserEntity {
   final DateTime inHiveAt;
 
   // Business-specific fields
-  @HiveField(120)
+  @HiveField(120, defaultValue: null)
   final String? businessStatus; // **New field**
-  @HiveField(121)
+  @HiveField(121, defaultValue: null)
   final String? businessName; // **New field**
-  @HiveField(122)
-  final String businessID; // **New field**
+  @HiveField(122, defaultValue: null)
+  final String? businessID; // **New field**
   @HiveField(123)
   final LoginDetailEntity logindetail; // **New field**
   @HiveField(124)
