@@ -193,7 +193,7 @@ class AddServiceProvider extends ChangeNotifier {
   final TextEditingController _description = TextEditingController();
   final TextEditingController _included = TextEditingController();
   final TextEditingController _notIncluded = TextEditingController();
-   List<PickedAttachment> _attachments = <PickedAttachment>[];
+   final List<PickedAttachment> _attachments = <PickedAttachment>[];
   ServiceCategoryType? _selectedCategory;
   ServiceType? _selectedType;
   ServiceModelType? _selectedModelType;

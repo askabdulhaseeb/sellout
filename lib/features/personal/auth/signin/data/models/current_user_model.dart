@@ -106,8 +106,8 @@ class CurrentUserModel extends CurrentUserEntity {
           userData['business_id'] ?? 'null', // **Optional - used for Business**
       logindetail: LoginDetailModel.fromJson(json['login_detail']),
       employeeList: List<BusinessEmployeeModel>.from(
-        (userData['employees'] ?? [])
-            .map((e) => BusinessEmployeeModel.fromJson(e)),
+        (userData['employees'] ?? <dynamic>[])
+            .map((dynamic e) => BusinessEmployeeModel.fromJson(e)),
       ),
     );
   }

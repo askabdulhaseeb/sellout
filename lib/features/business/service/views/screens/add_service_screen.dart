@@ -39,7 +39,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final pro = Provider.of<AddServiceProvider>(context, listen: false);
+    final AddServiceProvider pro = Provider.of<AddServiceProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
           title: Text(pro.currentService?.serviceID == null

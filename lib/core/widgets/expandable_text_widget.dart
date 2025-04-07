@@ -65,11 +65,11 @@ class _ExpandableTextState extends State<ExpandableText> {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         Html(
           data: textToShow,
-          style: {
-            "body": Style(
+          style: <String, Style>{
+            'body': Style(
               color: Theme.of(context).colorScheme.onSurface.withAlpha(900),
               fontSize: FontSize.medium,
             ),

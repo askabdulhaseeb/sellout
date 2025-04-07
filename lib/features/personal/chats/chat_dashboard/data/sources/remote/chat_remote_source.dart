@@ -54,6 +54,7 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
     }
   }
 
+  @override
   Future<DataState<ChatEntity>> createPrivateChat(
       CreatePrivateChatParams params) async {
     try {
