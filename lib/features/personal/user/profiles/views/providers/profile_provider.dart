@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
+import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../../attachment/domain/entities/picked_attachment_option.dart';
 import '../../../../../attachment/views/screens/pickable_attachment_screen.dart';
@@ -42,7 +43,8 @@ class ProfileProvider extends ChangeNotifier {
   DataState<UserEntity?>? _user;
   UserEntity? get user => _user?.entity;
 
-  TextEditingController namecontroller = TextEditingController();
+  TextEditingController namecontroller =
+      TextEditingController(text: LocalAuth.currentUser?.username);
   TextEditingController biocontroller = TextEditingController();
 
   ProfilePageTabType _displayType =
@@ -51,6 +53,13 @@ class ProfileProvider extends ChangeNotifier {
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+
+  List<AttachmentEntity>? _profilePhoto;
+  List<AttachmentEntity>? get profilePhoto => _profilePhoto;
+
+  void setProfilePhoto() {
+    _profilePhoto = LocalAuth.currentUser?.profileImage;
+  }
 
   set isLoading(bool value) {
     _isLoading = value;
@@ -107,16 +116,17 @@ class ProfileProvider extends ChangeNotifier {
     if (pickedAttachment != null && pickedAttachment.isNotEmpty) {
       debugPrint(pickedAttachment.length.toString());
       debugPrint(pickedAttachment.first.selectedMedia!.relativePath);
-      final DataState<bool> result =
+      final DataState<List<AttachmentEntity>> result =
           await _updateProfilePictureUsecase.call(pickedAttachment.single);
       if (result is DataSuccess) {
+        setProfilePhoto();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content: Text(
             'profile_picture_updated_successfully'.tr(),
           )),
         );
-
+        notifyListeners();
         isLoading = false;
       } else {
         AppLog.error(result.exception!.message,
@@ -124,6 +134,7 @@ class ProfileProvider extends ChangeNotifier {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('something_wrong'.tr())),
         );
+
         isLoading = false;
       }
     }
