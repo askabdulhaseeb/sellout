@@ -1,18 +1,30 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/usecase/usecase.dart';
 import '../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../core/widgets/custom_network_image.dart';
-import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../../../core/widgets/profile_photo.dart';
 import '../providers/profile_provider.dart';
 
-class EditProfileScreen extends StatelessWidget {
+class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
   static const String routeName = '/edit_profile';
+
+  @override
+  State<EditProfileScreen> createState() => _EditProfileScreenState();
+}
+
+class _EditProfileScreenState extends State<EditProfileScreen> {
+  late ProfileProvider pro;
+
+  @override
+  void initState() {
+    super.initState();
+    pro = Provider.of<ProfileProvider>(context, listen: false);
+    pro.setProfilePhoto();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,26 +39,20 @@ class EditProfileScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: <Widget>[
-              ValueListenableBuilder<Box<CurrentUserEntity>>(
-                valueListenable: Hive.box<CurrentUserEntity>(LocalAuth.boxTitle)
-                    .listenable(),
-                builder: (BuildContext context, Box<CurrentUserEntity> box,
-                    Widget? child) {
-                  CurrentUserEntity? user = box.get(LocalAuth.boxTitle);
-                  return Center(
-                    child: SizedBox(
-                      height: 100,
-                      width: 100,
-                      child: ClipRRect(
+              Center(
+                child: SizedBox(
+                    height: 100,
+                    width: 100,
+                    child: Consumer<ProfileProvider>(
+                      builder: (BuildContext context, ProfileProvider pr,
+                              Widget? child) =>
+                          ClipRRect(
                         borderRadius: BorderRadius.circular(100),
-                        child: CustomNetworkImage(
-                          fit: BoxFit.cover,
-                          imageURL: user?.profileImage.first.url,
+                        child: ProfilePhoto(
+                          url: pr.profilePhoto?.first.url,
                         ),
                       ),
-                    ),
-                  );
-                },
+                    )),
               ),
               const SizedBox(height: 20),
               ElevatedButton.icon(
