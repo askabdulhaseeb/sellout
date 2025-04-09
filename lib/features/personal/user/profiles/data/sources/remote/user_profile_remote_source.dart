@@ -12,7 +12,8 @@ import '../local/local_user.dart';
 
 abstract interface class UserProfileRemoteSource {
   Future<DataState<UserEntity?>> byUID(String value);
-  Future<DataState<bool>> updateProfilePicture(PickedAttachment photo);
+  Future<DataState<List<AttachmentEntity>>> updateProfilePicture(
+      PickedAttachment photo);
   Future<DataState<String>> updatePRofileDetail(UpdateUserParams photo);
 }
 
@@ -58,38 +59,37 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
   }
 
   @override
-  Future<DataState<bool>> updateProfilePicture(
+  Future<DataState<List<AttachmentEntity>>> updateProfilePicture(
       PickedAttachment attachments) async {
     try {
       final DataState<String> result = await ApiCall<String>().callFormData(
+        fileKey: 'file',
         endpoint: '/user/profilePic?action=update',
         requestType: ApiRequestType.post,
         attachments: <PickedAttachment>[attachments],
       );
-
       if (result is DataSuccess<String>) {
         debugPrint('my data:${result.data ?? ''}');
         Map<String, dynamic> myData = jsonDecode(result.data!);
-
         // ✅ Convert JSON to List<AttachmentEntity>
-        List<AttachmentEntity> profilephoto = (myData['profile_image'] as List)
-            .map((e) => AttachmentModel.fromJson(e))
-            .toList();
-
+        List<AttachmentEntity> profilephoto =
+            (myData['profile_image'] as List<dynamic>)
+                .map((dynamic e) => AttachmentModel.fromJson(e))
+                .toList();
         // ✅ Update LocalAuth.currentUser properly and save it to Hive
         LocalAuth.currentUser!.profileImage = profilephoto;
-
-        return DataSuccess<bool>('', true);
+        return DataSuccess<List<AttachmentEntity>>('', profilephoto);
       } else {
         AppLog.error(result.exception!.message,
             name: 'GetUserAPI.updateProfilePicture: else');
-        return DataFailer<bool>(CustomException(
+        return DataFailer<List<AttachmentEntity>>(CustomException(
             result.exception?.message ?? 'something_wrong'.tr()));
       }
     } catch (e) {
       AppLog.error(e.toString(),
           name: 'GetUserAPI.updateProfilePicture: catch');
-      return DataFailer<bool>(CustomException('something_wrong'.tr()));
+      return DataFailer<List<AttachmentEntity>>(
+          CustomException('something_wrong'.tr()));
     }
   }
 
