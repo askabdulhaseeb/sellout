@@ -569,6 +569,8 @@
     "settings": "Settings",
     "push_notifications": "Push Notifications",
     "email_notifications": "Email Notifications",
+    "basket": "Basket",
+    "buy_again": "Buy Again",
     "order": "Order",
     "appointments": "Appointments",
     "loading": "Loading...",

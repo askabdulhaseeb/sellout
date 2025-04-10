@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/enums/cart/cart_item_type.dart';
+import '../widgets/personal_appbar_bottom_section.dart';
 import 'checkout/personal_checkout_screen.dart';
 import '../providers/cart_provider.dart';
 import '../widgets/cart/cart_save_later_toggle_section.dart';
@@ -18,7 +19,13 @@ class PersonalCartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('cart').tr()),
+      appBar: AppBar(
+        title: const Text('cart').tr(),
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(28),
+          child: PersonalAppBarBottomSection(),
+        ),
+      ),
       body: Consumer<CartProvider>(
           builder: (BuildContext context, CartProvider cartPro, _) {
         return FutureBuilder<bool>(

@@ -14,6 +14,7 @@ import '../../domain/usecase/cart/cart_update_qty_usecase.dart';
 import '../../domain/usecase/cart/get_cart_usecase.dart';
 import '../../domain/usecase/cart/remove_from_cart_usecase.dart';
 import '../../domain/usecase/checkout/get_checkout_usecase.dart';
+import '../enums/cart_page_bottom_item_type.dart';
 
 class CartProvider extends ChangeNotifier {
   CartProvider(
@@ -35,6 +36,13 @@ class CartProvider extends ChangeNotifier {
 
   CartItemType _basketPage = CartItemType.cart;
   CartItemType get basketPage => _basketPage;
+
+  CartPageBottomItemType _bottomItemType = CartPageBottomItemType.basket;
+  CartPageBottomItemType get bottomItemType => _bottomItemType;
+  set bottomItemType(CartPageBottomItemType value) {
+    _bottomItemType = value;
+    notifyListeners();
+  }
 
   AddressEntity? _address = (LocalAuth.currentUser?.address != null &&
           LocalAuth.currentUser!.address
