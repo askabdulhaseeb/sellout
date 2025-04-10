@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../../../dashboard/views/screens/dasboard_screen.dart';
+import '../../../../dashboard/views/screens/dashboard_screen.dart';
 import '../../../setting_dashboard/views/widgets/personal_setting_tile.dart';
 
 class PersonalSettingMoreInformationScreen extends StatelessWidget {

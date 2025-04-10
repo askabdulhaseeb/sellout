@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../more_info/views/screens/personal_more_information_setting_screen.dart';
+import '../../../setting_notification/view/screens/personal_setting_notification_screen.dart';
 import '../widgets/personal_setting_tile.dart';
 
 class PersonalSettingScreen extends StatelessWidget {
@@ -11,7 +12,7 @@ class PersonalSettingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('peronsal_settings').tr()),
+      appBar: AppBar(centerTitle: true, title: const Text('settings').tr()),
       body: ListView(
         padding: const EdgeInsets.all(0),
         children: <Widget>[
@@ -23,7 +24,10 @@ class PersonalSettingScreen extends StatelessWidget {
           PersonalSettingTile(
             icon: Icons.notifications_none,
             title: 'notification'.tr(),
-            onTap: () {},
+            onTap: () {
+              Navigator.pushNamed(
+                  context, PersonalSettingNotificationScreen.routeName);
+            },
           ),
           PersonalSettingTile(
             icon: Icons.payment,

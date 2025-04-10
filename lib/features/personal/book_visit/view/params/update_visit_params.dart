@@ -1,7 +1,9 @@
 class UpdateVisitParams {
   UpdateVisitParams({
     required this.visitingId,
-    required this.messageId, this.status,
+    required this.messageId,
+    required this.chatId,
+    this.status,
     this.datetime,
     this.businessId,
   });
@@ -10,6 +12,7 @@ class UpdateVisitParams {
   final String? datetime;
   final String messageId;
   final String? businessId;
+  final String? chatId;
 
   Map<String, dynamic> tocancelvisit() {
     return <String, dynamic>{
@@ -27,5 +30,5 @@ class UpdateVisitParams {
       'message_id': messageId,
       'business_id': businessId ?? 'null',
     };
-  } 
+  }
 }

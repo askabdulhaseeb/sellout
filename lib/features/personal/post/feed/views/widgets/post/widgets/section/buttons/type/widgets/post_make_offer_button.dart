@@ -1,8 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
 import '../../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../domain/entities/post_entity.dart';
+import '../../../bottomsheets/create_offer_bottomsheet.dart';
 
 class PostMakeOfferButton extends StatelessWidget {
   const PostMakeOfferButton({required this.post, super.key});
@@ -10,10 +10,23 @@ class PostMakeOfferButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void showOfferBottomSheet(BuildContext context) {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return MakeOfferBottomSheet(post: post);
+        },
+      );
+    }
+
     return CustomElevatedButton(
-      onTap: () {},
-      title: 'make_an_offer'.tr(),
-      isLoading: false,
-    );
+        bgColor: post.acceptOffers == true
+            ? Theme.of(context).primaryColor
+            : Theme.of(context).disabledColor,
+        onTap: () =>
+            post.acceptOffers == true ? showOfferBottomSheet(context) : null,
+        title: 'make_an_offer'.tr(),
+        isLoading: false);
   }
 }

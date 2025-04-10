@@ -6,6 +6,7 @@ import '../../../../user/profiles/views/widgets/subwidgets/post_grid_view_tile.d
 import '../../providers/explore_provider.dart';
 import '../../widgets/tabbarviews/rent_tabbar.dart';
 import '../../widgets/tabbarviews/sale_tabbar.dart';
+
 class ExplorePropertyScreen extends StatefulWidget {
   const ExplorePropertyScreen({
     super.key,
@@ -49,7 +50,7 @@ class _ExplorePropertyScreenState extends State<ExplorePropertyScreen> {
                 children: <Widget>[
                   Text('property'.tr(), style: textTheme.titleMedium),
                   Text(
-                      '${'find_perfect'.tr()} ${'property'.tr()}${' items'.tr()}',
+                      '${'find_perfect'.tr()} ${'property'.tr()}${'items'.tr()}',
                       style: textTheme.bodySmall),
                   const SizedBox(height: 10),
                   DefaultTabController(
@@ -71,7 +72,7 @@ class _ExplorePropertyScreenState extends State<ExplorePropertyScreen> {
                                 borderRadius: BorderRadius.circular(4),
                                 border: Border.all(color: colorScheme.primary)),
                             tabs: <Widget>[
-                              Tab(text: 'Sale'.tr()),
+                              Tab(text: 'sale'.tr()),
                               Tab(text: 'rent'.tr()),
                             ],
                             onTap: (int index) {

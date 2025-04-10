@@ -59,7 +59,7 @@ class _ProfileOrdersSectionState extends State<ProfileOrdersSection> {
                 return order.orderStatus == selectedStatus.code;
               }).toList();
               if (filteredOrders.isEmpty) {
-                return const Center(child: Text('no_orders'));
+                return Center(child: Text('no_orders'.tr()));
               }
               return SizedBox(
                 height:

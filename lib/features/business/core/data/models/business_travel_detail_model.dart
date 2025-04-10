@@ -12,13 +12,13 @@ class BusinessTravelDetailModel extends BusinessTravelDetailEntity {
 
   factory BusinessTravelDetailModel.fromJson(Map<String, dynamic> json) =>
       BusinessTravelDetailModel(
-        currency: json['currency'],
-        maxTravelTime: json['max_travel_time'],
-        timeType: json['time_type'],
-        maxTravel: json['max_travel'],
+        currency: json['currency'] ?? '',
+        maxTravelTime: json['max_travel_time'] ?? '',
+        timeType: json['time_type'] ?? '',
+        maxTravel: json['max_travel'] ?? '',
         travelFee:
             double.tryParse(json['travel_fee']?.toString() ?? '0.0') ?? 0.0,
-        distance: json['distance'],
+        distance: json['distance'] ?? '',
       );
 
   Map<String, dynamic> toJson() => <String, dynamic>{

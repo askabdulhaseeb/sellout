@@ -44,7 +44,7 @@ class ExploreFoodDrinkScreen extends StatelessWidget {
                 children: <Widget>[
                   Text('food_drink'.tr(), style: textTheme.titleMedium),
                   Text(
-                      '${'find_perfect'.tr()} ${'food_drink'.tr()}${' items'.tr()}',
+                      '${'find_perfect'.tr()} ${'food_drink'.tr()}${'items'.tr()}',
                       style: textTheme.bodySmall),
                   const SizedBox(height: 10),
                   const SizedBox(height: 4),

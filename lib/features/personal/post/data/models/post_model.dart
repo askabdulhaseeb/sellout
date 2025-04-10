@@ -203,9 +203,10 @@ class PostModel extends PostEntity {
       quantity: int.tryParse(json['quantity']?.toString() ?? '0') ?? 0,
       currency: json['currency']?.toString() ?? 'gbp',
       type: ListingType.fromJson(json['list_id']),
-      categoryType: json['type'].toString(),
-      address: json['address'].toString(),
-      acceptOffers: json['accept_offers'] ?? false,
+      categoryType: json['type']?.toString() ?? '',
+      address: json['address']?.toString() ?? '',
+      acceptOffers:
+          bool.tryParse(json['accept_offers']?.toString() ?? 'false') ?? false,
       minOfferAmount:
           double.tryParse(json['min_offer_amount']?.toString() ?? '0.0') ?? 0.0,
       privacy: PrivacyType.fromJson(json['post_privacy']),
@@ -287,7 +288,7 @@ class PostModel extends PostEntity {
       wormAndFleaTreated: json['worm_and_flea_treated'] ?? false,
       vaccinationUpToDate: json['vaccination_up_to_date'] ?? false,
       //
-      isActive: bool.tryParse(json['is_active'] ?? 'false') ?? false,
+isActive: (json['is_active'] is bool) ? json['is_active'] : (json['is_active'].toString().toLowerCase() == 'false'),
       createdBy: json['created_by']?.toString() ?? '',
       updatedBy: json['updated_by']?.toString() ?? '',
       createdAt: json['created_at']?.toString().toDateTime() ?? DateTime.now(),

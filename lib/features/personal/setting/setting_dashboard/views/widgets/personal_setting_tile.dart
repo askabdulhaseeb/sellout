@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../../core/widgets/shadow_container.dart';
-
 class PersonalSettingTile extends StatelessWidget {
   const PersonalSettingTile({
     required this.icon,
@@ -21,10 +19,13 @@ class PersonalSettingTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      child: ShadowContainer(
-        onTap: onTap,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+            border: Border.all(color: Theme.of(context).dividerColor),
+            borderRadius: BorderRadius.circular(6)),
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         child: Row(
           children: <Widget>[

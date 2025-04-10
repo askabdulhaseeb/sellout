@@ -32,7 +32,7 @@ class MessageEntity {
   @HiveField(2)
   final DateTime updatedAt;
   @HiveField(3)
-  final VisitingEntity? visitingDetail;
+  VisitingEntity? visitingDetail;
   @HiveField(4)
   final DateTime createdAt;
   @HiveField(5)

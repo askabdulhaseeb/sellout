@@ -1,4 +1,3 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
@@ -8,7 +7,9 @@ import '../provider/view_booking_provider.dart';
 
 class CancelVisitingDialog extends StatelessWidget {
   const CancelVisitingDialog({
-    required this.pro, required this.message, super.key,
+    required this.pro,
+    required this.message,
+    super.key,
   });
 
   final BookingProvider pro;
@@ -18,11 +19,9 @@ class CancelVisitingDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Center(child: Text('are_you_sure'.tr())),
-      content: Text(
-          textAlign: TextAlign.center,
-          'cancel_viewing_description'.tr()),
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12)),
+      content:
+          Text(textAlign: TextAlign.center, 'cancel_viewing_description'.tr()),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       actions: <Widget>[
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -32,8 +31,7 @@ class CancelVisitingDialog extends StatelessWidget {
                   padding: const EdgeInsets.all(12),
                   margin: const EdgeInsets.all(6),
                   bgColor: Colors.transparent,
-                  border: Border.all(
-                      color: Theme.of(context).primaryColor),
+                  border: Border.all(color: Theme.of(context).primaryColor),
                   textColor: Theme.of(context).primaryColor,
                   textStyle: TextStyle(
                     fontSize: 14,
@@ -57,14 +55,10 @@ class CancelVisitingDialog extends StatelessWidget {
                 ),
                 isLoading: false,
                 onTap: () {
-                  pro.cancelVisit(
+                  pro.cancelVisit(chatID: message.chatId,
                       context: context,
-                      visitingId:
-                          message.visitingDetail?.visitingID ??
-                              '',
+                      visitingId: message.visitingDetail?.visitingID ?? '',
                       messageId: message.messageId);
-                  debugPrint(
-                      'visitingID:${message.visitingDetail?.visitingID ?? ''}messageId:${message.messageId}');
                 },
                 title: 'confirm'.tr(),
               ),

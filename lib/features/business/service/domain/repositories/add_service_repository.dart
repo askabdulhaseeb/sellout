@@ -3,4 +3,5 @@ import '../params/add_service_param.dart';
 
 abstract interface class AddServiceRepository {
   Future<DataState<bool>> addService(AddServiceParam params);
+  Future<DataState<bool>> updateService(AddServiceParam params);
 }

@@ -6,7 +6,6 @@ import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart'
 import '../../../domain/entities/getted_message_entity.dart';
 
 // getOnlineUsers
-//
 class LocalChatMessage {
   static final String boxTitle = AppStrings.localChatMessagesBox;
   static Box<GettedMessageEntity> get _box =>

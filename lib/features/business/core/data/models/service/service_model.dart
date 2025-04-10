@@ -46,7 +46,7 @@ class ServiceModel extends ServiceEntity {
         startAt: json['start_at'] ?? false,
         model: json['service_model'] ?? '',
         employeesID: List<String>.from(
-            (json['employees_ids'] ?? json['employees_id'] ?? <dynamic>[])
+            (json['employee_ids'] ?? json['employees_id'] ?? <dynamic>[])
                 .map((dynamic x) => x)),
         type: json['service_type'] ?? '',
         price: double.tryParse(json['price']?.toString() ?? '0.0') ?? 0.0,

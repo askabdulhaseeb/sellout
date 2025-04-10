@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-
 import '../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../core/enums/listing/core/listing_type.dart';
@@ -118,7 +117,7 @@ class PostEntity {
   @HiveField(14)
   final DeliveryType deliveryType;
   @HiveField(15)
-  final List<double> listOfReviews;
+  final List<double>? listOfReviews;
   @HiveField(16)
   final String categoryType;
 

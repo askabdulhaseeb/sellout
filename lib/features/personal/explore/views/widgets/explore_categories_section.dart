@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../core/widgets/custom_network_image.dart';
 import '../enums/category_types.dart';
 import '../enums/sort_enums.dart';
 import '../providers/explore_provider.dart';
@@ -128,8 +127,7 @@ class ExploreCategoriesSection extends StatelessWidget {
                   children: <Widget>[
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: CustomNetworkImage(
-                          fit: BoxFit.cover, imageURL: category.imageUrl),
+                      child: Image.asset(category.imageUrl, fit: BoxFit.cover),
                     ),
                     Container(
                       decoration: BoxDecoration(

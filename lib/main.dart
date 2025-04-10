@@ -53,4 +53,5 @@ class MyApp extends StatelessWidget {
 }
 
 // flutter packages pub run build_runner build --delete-conflicting-outputs
+// flutter clean && flutter pub get && cd ios && pod install && cd ..
 // flutter packages pub run build_runner build

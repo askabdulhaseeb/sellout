@@ -1,18 +1,22 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
+import '../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../../core/widgets/shadow_container.dart';
+import '../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../../post/domain/entities/post_entity.dart';
+import '../../../../../../post/feed/views/enums/offer_status_enum.dart';
 import '../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
+import 'widgets/offer_status_button.dart';
 
 class OfferMessageTile extends StatelessWidget {
   const OfferMessageTile({required this.message, super.key});
   final MessageEntity message;
-
   @override
   Widget build(BuildContext context) {
+    debugPrint(message.offerDetail?.offerId);
+
     return FutureBuilder<PostEntity?>(
         future: LocalPost().getPost(message.visitingDetail?.postID ??
             message.offerDetail?.post.postID ??
@@ -93,6 +97,28 @@ class OfferMessageTile extends StatelessWidget {
                       ),
                     ],
                   ),
+                  if (message.offerDetail?.offerStatus ==
+                          OfferStatus.pending.value &&
+                      message.sendBy != LocalAuth.currentUser?.userID)
+                    OfferStatusButtons(message: message),
+                  if (message.offerDetail?.offerStatus ==
+                          OfferStatus.accept.value &&
+                      message.sendBy == LocalAuth.currentUser?.userID)
+                    CustomElevatedButton(
+                        title: 'buy_now'.tr(), isLoading: false, onTap: () {}),
+                  if (message.offerDetail?.offerStatus ==
+                          OfferStatus.reject.value &&
+                      message.sendBy == LocalAuth.currentUser?.userID)
+                    Row(
+                      children: <Widget>[
+                        // Expanded(child: PostMakeOfferButton(post: post!)),
+                        Expanded(
+                            child: CustomElevatedButton(
+                                title: 'buy_now'.tr(),
+                                isLoading: false,
+                                onTap: () {})),
+                      ],
+                    )
                 ],
               ),
             ),

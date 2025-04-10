@@ -2,38 +2,46 @@ import 'package:hive/hive.dart';
 
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
+import '../../../../../business/core/domain/entity/business_employee_entity.dart';
 import '../../data/models/address_model.dart';
+import 'login_detail_entity.dart';
 part 'current_user_entity.g.dart';
 
 @HiveType(typeId: 0)
 class CurrentUserEntity {
-  CurrentUserEntity({
-    required this.message,
-    required this.token,
-    required this.userID,
-    //
-    required this.email,
-    required this.username,
-    required this.currency,
-    required this.privacy,
-    required this.countryAlpha3,
-    required this.countryCode,
-    required this.phoneNumber,
-    required this.language,
-    //
-    required this.address,
-    //
-    required this.chatIDs,
-    required this.businessIDs,
-    //
-    required this.imageVerified,
-    required this.verificationImage,
-    required this.profileImage,
-    //
-    required this.lastLoginTime,
-    required this.createdAt,
-    required this.inHiveAt,
-  });
+  CurrentUserEntity(
+      {required this.message,
+      required this.token,
+      required this.userID,
+      //
+      required this.email,
+      required this.username,
+      required this.currency,
+      required this.privacy,
+      required this.countryAlpha3,
+      required this.countryCode,
+      required this.phoneNumber,
+      required this.language,
+      //
+      required this.address,
+      //
+      required this.chatIDs,
+      required this.businessIDs,
+      //
+      required this.imageVerified,
+      required this.verificationImage,
+      required this.profileImage,
+      //
+      required this.lastLoginTime,
+      required this.createdAt,
+      required this.inHiveAt,
+      // New fields added for business logic
+      required this.businessStatus,
+      required this.businessName,
+      required this.businessID,
+      //
+      required this.logindetail,
+      required this.employeeList});
 
   @HiveField(1)
   final String message;
@@ -72,7 +80,7 @@ class CurrentUserEntity {
   @HiveField(42)
   final AttachmentEntity? verificationImage;
   @HiveField(43)
-  final List<AttachmentEntity> profileImage;
+  List<AttachmentEntity> profileImage;
   //
   @HiveField(97)
   final DateTime lastLoginTime;
@@ -80,6 +88,18 @@ class CurrentUserEntity {
   final DateTime createdAt;
   @HiveField(99)
   final DateTime inHiveAt;
+
+  // Business-specific fields
+  @HiveField(120, defaultValue: null)
+  final String? businessStatus; // **New field**
+  @HiveField(121, defaultValue: null)
+  final String? businessName; // **New field**
+  @HiveField(122, defaultValue: null)
+  final String? businessID; // **New field**
+  @HiveField(123)
+  final LoginDetailEntity logindetail; // **New field**
+  @HiveField(124)
+  final List<BusinessEmployeeEntity> employeeList; // **New field**
 
   // this is a Copy function to copy the current object and return a new object with old token
 

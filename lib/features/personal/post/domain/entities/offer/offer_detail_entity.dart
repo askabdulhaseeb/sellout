@@ -5,17 +5,14 @@ part 'offer_detail_entity.g.dart';
 
 @HiveType(typeId: 19)
 class OfferDetailEntity {
-  const OfferDetailEntity({
+  OfferDetailEntity({
     required this.postTitle,
     required this.size,
     required this.color,
     required this.post,
     required this.price,
     required this.minOfferAmount,
-    required this.offerStatus,
-    required this.currency,
-    required this.offerId,
-    required this.offerPrice,
+    required this.currency, required this.offerId, required this.offerPrice, this.offerStatus,
   });
 
   @HiveField(0)
@@ -31,11 +28,11 @@ class OfferDetailEntity {
   @HiveField(5)
   final int minOfferAmount;
   @HiveField(6)
-  final String offerStatus;
+  String? offerStatus;
   @HiveField(7)
   final String currency;
   @HiveField(8)
   final String offerId;
   @HiveField(9)
-  final int offerPrice;
+   int offerPrice;
 }

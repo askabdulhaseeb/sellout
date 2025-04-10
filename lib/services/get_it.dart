@@ -25,6 +25,7 @@ import '../features/business/service/data/repositories/add_service_repository_im
 import '../features/business/service/data/sources/add_service_remote_api.dart';
 import '../features/business/service/domain/repositories/add_service_repository.dart';
 import '../features/business/service/domain/usecase/add_service_usecase.dart';
+import '../features/business/service/domain/usecase/update_service-usecase.dart';
 import '../features/business/service/views/providers/add_service_provider.dart';
 import '../features/personal/auth/find_account/data/repository/find_account_repository_impl.dart';
 import '../features/personal/auth/find_account/data/source/find_account_remote_data_source.dart';
@@ -46,6 +47,7 @@ import '../features/personal/auth/signup/domain/usecase/register_user_usecase.da
 import '../features/personal/auth/signup/domain/usecase/send_opt_usecase.dart';
 import '../features/personal/auth/signup/domain/usecase/verify_opt_usecase.dart';
 import '../features/personal/auth/signup/views/providers/signup_provider.dart';
+import '../features/personal/book_visit/domain/usecase/book_service_usecase.dart';
 import '../features/personal/book_visit/domain/usecase/cancel_visit_usecase.dart';
 import '../features/personal/book_visit/domain/usecase/update_visit_usecase.dart';
 import '../features/personal/cart/data/repositories/cart_repository_impl.dart';
@@ -69,6 +71,7 @@ import '../features/personal/chats/chat/views/providers/chat_provider.dart';
 import '../features/personal/chats/chat_dashboard/data/repositories/chat_repository_impl.dart';
 import '../features/personal/chats/chat_dashboard/data/sources/remote/chat_remote_source.dart';
 import '../features/personal/chats/chat_dashboard/domain/repositories/chat_repository.dart';
+import '../features/personal/chats/chat_dashboard/domain/usecase/create_private_chat_usecase.dart';
 import '../features/personal/chats/chat_dashboard/domain/usecase/get_my_chats_usecase.dart';
 import '../features/personal/chats/chat_dashboard/views/providers/chat_dashboard_provider.dart';
 import '../features/personal/explore/data/repository/explore_repository_impl.dart';
@@ -85,8 +88,10 @@ import '../features/personal/post/data/repositories/post_repository_impl.dart';
 import '../features/personal/post/data/sources/remote/post_remote_api.dart';
 import '../features/personal/post/domain/repositories/post_repository.dart';
 import '../features/personal/post/domain/usecase/add_to_cart_usecase.dart';
+import '../features/personal/post/domain/usecase/create_offer_usecase.dart';
 import '../features/personal/post/domain/usecase/get_feed_usecase.dart';
 import '../features/personal/post/domain/usecase/get_specific_post_usecase.dart';
+import '../features/personal/post/domain/usecase/update_offer_usecase.dart';
 import '../features/personal/post/feed/views/providers/feed_provider.dart';
 import '../features/personal/review/data/repositories/review_repository_impl.dart';
 import '../features/personal/review/data/sources/review_remote_api.dart';
@@ -242,7 +247,16 @@ void _feed() {
   locator.registerFactory<PostRepository>(() => PostRepositoryImpl(locator()));
   locator.registerFactory<GetFeedUsecase>(() => GetFeedUsecase(locator()));
   locator.registerFactory<AddToCartUsecase>(() => AddToCartUsecase(locator()));
-  locator.registerLazySingleton<FeedProvider>(() => FeedProvider(locator()));
+  locator
+      .registerFactory<CreateOfferUsecase>(() => CreateOfferUsecase(locator()));
+  locator
+      .registerFactory<UpdateOfferUsecase>(() => UpdateOfferUsecase(locator()));
+  locator.registerLazySingleton<FeedProvider>(() => FeedProvider(
+        locator(),
+        locator(),
+        locator(),
+        locator(),
+      ));
 }
 
 void _post() {
@@ -286,8 +300,8 @@ void _business() {
   //
   // Providers
   locator.registerLazySingleton<BusinessPageProvider>(() =>
-      BusinessPageProvider(
-          locator(), locator(), locator(), locator(), locator()));
+      BusinessPageProvider(locator(), locator(), locator(), locator(),
+          locator(), locator(), locator()));
 }
 
 void _services() {
@@ -299,6 +313,9 @@ void _services() {
 
   //
   // REPOSITORIES
+
+  locator.registerFactory<CreatePrivateChatUsecase>(
+      () => CreatePrivateChatUsecase(locator()));
   locator.registerFactory<BusinessPageRepository>(
       () => BusinessPageRepositoryImpl(locator(), locator()));
   locator.registerFactory<AddServiceRepository>(
@@ -310,10 +327,11 @@ void _services() {
   locator.registerFactory<GetServiceByIdUsecase>(
       () => GetServiceByIdUsecase(locator()));
   locator.registerFactory(() => AddServiceUsecase(locator()));
+  locator.registerFactory(() => UpdateServiceUsecase(locator()));
   //
   // Providers
   locator.registerLazySingleton<AddServiceProvider>(
-      () => AddServiceProvider(locator()));
+      () => AddServiceProvider(locator(), locator()));
 }
 
 void _booking() {
@@ -398,6 +416,9 @@ void _bookvisit() {
   locator
       .registerFactory<CancelVisitUseCase>(() => CancelVisitUseCase(locator()));
   locator.registerFactory<BookVisitUseCase>(() => BookVisitUseCase(locator()));
-  locator.registerFactory<BookingProvider>(
-      () => BookingProvider(locator(), locator(), locator(), locator()));
+  locator
+      .registerFactory<BookServiceUsecase>(() => BookServiceUsecase(locator()));
+
+  locator.registerFactory<BookingProvider>(() => BookingProvider(
+      locator(), locator(), locator(), locator(), locator(), locator()));
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../../../../../../domain/entities/post_entity.dart';
 import 'widgets/post_add_to_basket_button.dart';
 import 'widgets/post_buy_now_butto.dart';

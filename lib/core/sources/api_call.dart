@@ -125,6 +125,7 @@ class ApiCall<T> {
   Future<DataState<T>> callFormData({
     required String endpoint,
     required ApiRequestType requestType,
+    String? fileKey,
     String? baseURL,
     Map<String, String>? fieldsMap,
     List<PickedAttachment>? attachments,
@@ -148,25 +149,11 @@ class ApiCall<T> {
         request.fields.addAll(fieldsMap);
       }
 
-      if (attachments != null &&
-          attachments.isNotEmpty &&
-          attachments.length > 1) {
+      if (attachments != null && attachments.isNotEmpty) {
         for (PickedAttachment element in attachments) {
           request.files.add(
             await http.MultipartFile.fromPath(
-              'files',
-              element.file.path,
-            ),
-          );
-        }
-      }
-      if (attachments != null &&
-          attachments.isNotEmpty &&
-          attachments.length == 1) {
-        for (PickedAttachment element in attachments) {
-          request.files.add(
-            await http.MultipartFile.fromPath(
-              'file',
+              fileKey ?? 'files',
               element.file.path,
             ),
           );

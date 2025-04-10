@@ -13,9 +13,13 @@ class AddServiceButtonSection extends StatelessWidget {
     return Consumer<AddServiceProvider>(
       builder: (BuildContext context, AddServiceProvider pro, _) {
         return CustomElevatedButton(
-          title: 'add'.tr(),
+          title: pro.currentService?.serviceID == null
+              ? 'add'.tr()
+              : 'update'.tr(),
           isLoading: pro.isLoading,
-          onTap: () async => pro.addService(context),
+          onTap: () async => pro.currentService?.serviceID == null
+              ? pro.addService(context)
+              : pro.updateService(context),
         );
       },
     );

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../core/enums/listing/core/listing_type.dart';
-import '../../../../../../core/widgets/shadow_container.dart';
 import '../../../listing_form/views/providers/add_listing_form_provider.dart';
 import '../../../listing_form/views/screens/add_listing_form_screen.dart';
 
@@ -27,7 +26,12 @@ class StartSellingList extends StatelessWidget {
                   Navigator.of(context)
                       .pushNamed(AddListingFormScreen.routeName);
                 },
-                child: ShadowContainer(
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                          color: Theme.of(context).colorScheme.outlineVariant)),
                   child: Row(
                     children: <Widget>[
                       CircleAvatar(

@@ -14,15 +14,15 @@ class BusinessTravelDetailEntity {
   });
 
   @HiveField(0)
-  final String currency;
+  final String? currency;
   @HiveField(1)
-  final int maxTravelTime;
+  final int? maxTravelTime;
   @HiveField(2)
-  final String timeType;
+  final String? timeType;
   @HiveField(3)
-  final int maxTravel;
+  final int? maxTravel;
   @HiveField(4)
-  final double travelFee;
+  final double? travelFee;
   @HiveField(5)
-  final String distance;
+  final String? distance;
 }
