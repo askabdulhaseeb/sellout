@@ -158,7 +158,6 @@ class FindAccountProvider with ChangeNotifier {
     }
     isLoading = true;
     try {
-      debugPrint('my data$_uid,${pin.text}');
       final VerifyPinParams params =
           VerifyPinParams(uid: _uid ?? '', otp: pin.text);
       final DataState<bool> result = await verifyOtpUsecase(params);

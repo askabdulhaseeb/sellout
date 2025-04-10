@@ -2,8 +2,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../core/theme/app_theme.dart';
 import '../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../post/domain/entities/post_entity.dart';
 import '../provider/view_booking_provider.dart';
 
@@ -11,8 +11,10 @@ class BookVisitButton extends StatelessWidget {
   const BookVisitButton({
     super.key,
     this.post,
+    this.service,
   });
   final PostEntity? post;
+  final ServiceEntity? service;
 
   @override
   Widget build(BuildContext context) {
@@ -20,22 +22,29 @@ class BookVisitButton extends StatelessWidget {
         (BuildContext context, BookingProvider provider, Widget? child) {
       return CustomElevatedButton(
           bgColor: provider.selectedTime != null
-              ? AppTheme.primaryColor
-              : AppTheme.darkScaffldColor.withAlpha(100),
+              ? Theme.of(context).primaryColor
+              : Theme.of(context).cardColor,
           title: 'book'.tr(),
           isLoading: provider.isLoading,
           onTap: () {
-            provider.setpostId(post!.postID);
-            provider.setbusinessId(post!.businessID ?? 'null');
-            if (provider.messageentity == null) {
-              provider.bookVisit(context);
+            if (post != null) {
+              if (provider.messageentity == null) {
+                provider.bookVisit(
+                    context, post!.postID, post!.businessID ?? 'null');
+              } else {
+                provider.updateVisit(
+                    chatID: provider.messageentity?.chatId ?? '',
+                    context: context,
+                    visitingId:
+                        provider.messageentity?.visitingDetail?.visitingID ??
+                            '',
+                    messageId: provider.messageentity!.messageId);
+              }
+            } else if (service != null) {
+              provider.bookService(
+                  context, service!.serviceID, service!.businessID);
             } else {
-              provider.updateVisit(
-                  context: context,
-                  visitingId:
-                      provider.messageentity?.visitingDetail?.visitingID ?? '',
-                  messageId: provider.messageentity!.messageId);
-              debugPrint('date${provider.formattedDateTime}');
+              debugPrint('both null');
             }
           });
     });

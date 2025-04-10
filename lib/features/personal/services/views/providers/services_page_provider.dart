@@ -25,6 +25,17 @@ class ServicesPageProvider extends ChangeNotifier {
   final GetBookingsListUsecase _getBookingsListUsecase;
   final GetBusinessByIdUsecase _getBusinessByIdUsecase;
   //
+    final Map<String, bool> _expandedDescriptions = <String, bool>{};
+
+  bool isDescriptionExpanded(String serviceId) {
+    return _expandedDescriptions[serviceId] ?? false;
+  }
+
+  void toggleDescription(String serviceId) {
+    _expandedDescriptions[serviceId] = !isDescriptionExpanded(serviceId);
+    notifyListeners();
+  }
+  //
   Future<List<ServiceEntity>> getSpecialOffer() async {
     try {
       if (_specialOffer.isNotEmpty) return specialOffer;

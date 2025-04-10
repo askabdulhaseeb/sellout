@@ -1,12 +1,16 @@
 import 'package:easy_localization/easy_localization.dart';
 
+import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/api_call.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../domain/params/create_private_chat_params.dart';
 import '../../models/chat/chat_model.dart';
 import '../local/local_chat.dart';
 
 abstract interface class ChatRemoteSource {
   Future<DataState<List<ChatEntity>>> getChats(List<String>? params);
+  Future<DataState<ChatEntity>> createPrivateChat(
+      CreatePrivateChatParams params);
 }
 
 class ChatRemoteSourceImpl implements ChatRemoteSource {
@@ -47,6 +51,40 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
       }
     } catch (e) {
       return DataFailer<List<ChatEntity>>(CustomException('$e'));
+    }
+  }
+
+  @override
+  Future<DataState<ChatEntity>> createPrivateChat(
+      CreatePrivateChatParams params) async {
+    try {
+      const String endpoint = '/chat/create';
+
+      final DataState<ChatEntity> result = await ApiCall<ChatEntity>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.post,
+        body: '',
+      );
+
+      if (result is DataSuccess) {
+        return DataSuccess<ChatEntity>(result.data ?? '', result.entity);
+      } else {
+        AppLog.error(
+          'New Message - ERROR',
+          name: 'ChatRemoteSourceImpl.createPrivateChat - else',
+          error: result.exception,
+        );
+        return DataFailer<ChatEntity>(
+          result.exception ?? CustomException('something_wrong'.tr()),
+        );
+      }
+    } catch (e) {
+      AppLog.error(
+        'New Message - ERROR',
+        name: 'ChatRemoteSourceImpl.createPrivateChat - catch',
+        error: CustomException(e.toString()),
+      );
+      return DataFailer<ChatEntity>(CustomException(e.toString()));
     }
   }
 }

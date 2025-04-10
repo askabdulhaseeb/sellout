@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../post/domain/entities/post_entity.dart';
 import '../../../post/domain/entities/visit/visiting_entity.dart';
@@ -19,11 +20,14 @@ class BookingScreen extends StatelessWidget {
     final PostEntity? post = args['post'] as PostEntity?;
     final VisitingEntity? visit = args['visit'] as VisitingEntity?;
     final ServiceEntity? service = args['service'] as ServiceEntity?;
+    final BusinessEntity? business = args['business'] as BusinessEntity?;
     final TextTheme texttheme = Theme.of(context).textTheme;
     return Scaffold(
       appBar: AppBar(
           centerTitle: true,
-          title: Text('book_viewing'.tr(), style: texttheme.titleMedium)),
+          title: Text(
+              business == null ? 'book_viewing'.tr() : 'book_appointment',
+              style: texttheme.titleMedium)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -31,15 +35,18 @@ class BookingScreen extends StatelessWidget {
             ProductImageWidget(
               post: post?.imageURL ?? service?.thumbnailURL ?? '',
             ),
-            BookingCalendarWidget(post: post, service: service, visit: visit),
+            BookingCalendarWidget(
+              post: post,
+              service: service,
+              visit: visit,
+              business: business,
+            ),
             const SizedBox(),
             BookViewProductDetail(
                 post: post, service: service, texttheme: texttheme),
             const SizedBox(),
             if (visit?.dateTime == null)
-              BookVisitButton(
-                post: post,
-              )
+              BookVisitButton(post: post, service: service)
           ],
         ),
       ),

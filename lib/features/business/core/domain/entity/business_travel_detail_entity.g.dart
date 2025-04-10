@@ -18,12 +18,12 @@ class BusinessTravelDetailEntityAdapter
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return BusinessTravelDetailEntity(
-      currency: fields[0] as String,
-      maxTravelTime: fields[1] as int,
-      timeType: fields[2] as String,
-      maxTravel: fields[3] as int,
-      travelFee: fields[4] as double,
-      distance: fields[5] as String,
+      currency: fields[0] as String?,
+      maxTravelTime: fields[1] as int?,
+      timeType: fields[2] as String?,
+      maxTravel: fields[3] as int?,
+      travelFee: fields[4] as double?,
+      distance: fields[5] as String?,
     );
   }
 

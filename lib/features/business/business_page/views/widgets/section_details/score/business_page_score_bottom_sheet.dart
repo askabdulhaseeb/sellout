@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../../../core/bottom_sheets/widgets/bottom_sheet_top_bar.dart';
 import '../../../../../core/domain/entity/business_entity.dart';
+import '../../../../../core/domain/entity/routine_entity.dart';
 import '../../business_page_employee_list_section.dart';
 import 'business_house_display_section.dart';
 
@@ -50,7 +51,7 @@ class BusinessPageScoreBottomSheet extends StatelessWidget {
             ),
             //
             Text(business.tagline ?? ''),
-            Text(business.location!.address),
+            Text(business.location!.address ?? ''),
             const SizedBox(height: 16),
             const Text(
               'staff',
@@ -58,7 +59,7 @@ class BusinessPageScoreBottomSheet extends StatelessWidget {
             ).tr(),
             BusinessPageEmployeeListSection(business: business),
             const Divider(),
-            BusinessHoursDisplaySection(routine: business.routine ?? []),
+            BusinessHoursDisplaySection(routine: business.routine ?? <RoutineEntity>[]),
             const SizedBox(height: 64),
           ],
         ),

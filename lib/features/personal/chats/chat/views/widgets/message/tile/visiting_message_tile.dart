@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../../../core/extension/datetime_ext.dart';
 import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../../core/widgets/shadow_container.dart';
+import '../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../../book_visit/view/widgets/visiting_update_buttons_widget.dart';
 import '../../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../../post/domain/entities/post_entity.dart';
@@ -23,6 +23,7 @@ class VisitingMessageTile extends StatelessWidget {
             ''),
         builder: (BuildContext context, AsyncSnapshot<PostEntity?> snapshot) {
           final PostEntity? post = snapshot.data;
+          debugPrint('Visiting status :${message.visitingDetail?.status.code}');
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: ShadowContainer(
@@ -31,7 +32,9 @@ class VisitingMessageTile extends StatelessWidget {
                   const SizedBox(
                     height: 10,
                   ),
-                  if (message.visitingDetail?.status == StatusType.pending)
+                  if (message.visitingDetail?.status.code == 'pending' &&
+                      message.visitingDetail?.visiterID ==
+                          LocalAuth.currentUser?.userID)
                     VisitingUpdateButtonsWidget(message: message, post: post)
                   else
                     const SizedBox.shrink(),

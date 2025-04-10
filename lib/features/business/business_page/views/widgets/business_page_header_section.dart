@@ -1,8 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import '../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../core/widgets/rating_display_widget.dart';
+import '../../../../personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../../../personal/review/domain/entities/review_entity.dart';
 import '../../../../personal/review/features/reivew_list/views/params/review_list_param.dart';
 import '../../../../personal/review/features/reivew_list/views/screens/review_list_screen.dart';
@@ -15,6 +17,7 @@ class BusinessPageHeaderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isMe = LocalAuth.currentUser?.businessID == business.businessID;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: AspectRatio(
@@ -35,6 +38,7 @@ class BusinessPageHeaderSection extends StatelessWidget {
             const SizedBox(width: 8),
             Expanded(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
@@ -47,11 +51,15 @@ class BusinessPageHeaderSection extends StatelessWidget {
                   ),
                   Opacity(
                     opacity: 0.6,
-                    child: Text(business.location!.address, maxLines: 2),
+                    child: Text(
+                      business.address?.firstAddress ?? '',
+                      maxLines: 2,
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   RatingDisplayWidget(
-                    ratingList: business.listOfReviews ?? [],
+                    ratingList: business.listOfReviews ?? <double>[],
                     onTap: () async {
                       final List<ReviewEntity> reviews =
                           await Provider.of<BusinessPageProvider>(context,
@@ -70,6 +78,22 @@ class BusinessPageHeaderSection extends StatelessWidget {
                 ],
               ),
             ),
+            Column(
+              children: <Widget>[
+                if (isMe)
+                  CustomElevatedButton(
+                    padding: const EdgeInsets.all(6),
+                    onTap: () {},
+                    isLoading: false,
+                    title: 'edit'.tr(),
+                    textStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: Theme.of(context).primaryColor,
+                        ),
+                    bgColor:
+                        Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                  )
+              ],
+            )
           ],
         ),
       ),

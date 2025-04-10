@@ -11,17 +11,36 @@ import '../../../../../core/widgets/app_snakebar.dart';
 import '../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../attachment/domain/entities/picked_attachment_option.dart';
 import '../../../../attachment/views/screens/pickable_attachment_screen.dart';
+import '../../../../personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../../core/domain/entity/business_entity.dart';
+import '../../../core/domain/entity/service/service_entity.dart';
 import '../../domain/params/add_service_param.dart';
 import '../../domain/usecase/add_service_usecase.dart';
+import '../../domain/usecase/update_service-usecase.dart';
 
 class AddServiceProvider extends ChangeNotifier {
-  AddServiceProvider(this._addServiceUsecase);
+  AddServiceProvider(this._addServiceUsecase, this._updateServiceUsecase);
   final AddServiceUsecase _addServiceUsecase;
+  final UpdateServiceUsecase _updateServiceUsecase;
+
+  void toggleSelection(String uid) {
+    if (_selectedEmployeeUIDs.contains(uid)) {
+      _selectedEmployeeUIDs.remove(uid);
+    } else {
+      _selectedEmployeeUIDs.add(uid);
+    }
+    notifyListeners();
+  }
+
+  void clearSelection() {
+    _selectedEmployeeUIDs.clear();
+    notifyListeners();
+  }
 
   Future<void> addService(BuildContext context) async {
     try {
       final AddServiceParam param = AddServiceParam(
+        employeeIDs: selectedEmployeeUIDs.toList(),
         name: _title.text,
         category: _selectedCategory,
         type: _selectedType,
@@ -30,7 +49,7 @@ class AddServiceProvider extends ChangeNotifier {
         mints: _selectedMinute,
         price: _price.text,
         businessID: _business?.businessID ?? '',
-        currency: '',
+        currency: LocalAuth.currency,
         description: _description.text,
         included: _included.text,
         excluded: _notIncluded.text,
@@ -38,7 +57,55 @@ class AddServiceProvider extends ChangeNotifier {
         isMobile: _isMobileService,
       );
       isLoading = true;
+      debugPrint('this is the file ${param.attachments.first.file.toString()}');
       final DataState<bool> result = await _addServiceUsecase(param);
+      if (result is DataSuccess) {
+        // ignore: use_build_context_synchronously
+        Navigator.of(context).pop();
+      } else {
+        AppSnackBar.showSnackBar(
+          // ignore: use_build_context_synchronously
+          context,
+          result.exception?.message ?? 'something_wrong'.tr(),
+        );
+        AppLog.error(
+          result.exception?.message ?? 'something_wrong'.tr(),
+          name: 'AddServiceProvider.addService - error',
+          error: result.exception,
+        );
+      }
+    } catch (e) {
+      AppLog.error(
+        e.toString(),
+        name: 'AddServiceProvider.addService - catch',
+        error: e,
+      );
+    }
+    isLoading = false;
+  }
+
+  Future<void> updateService(BuildContext context) async {
+    try {
+      final AddServiceParam param = AddServiceParam(
+        employeeIDs: selectedEmployeeUIDs.toList(),
+        name: _title.text,
+        category: _selectedCategory,
+        type: _selectedType,
+        model: _selectedModelType,
+        hours: _selectedHour,
+        mints: _selectedMinute,
+        price: _price.text,
+        businessID: currentService?.businessID ?? '',
+        currency: LocalAuth.currency,
+        description: _description.text,
+        included: _included.text,
+        excluded: _notIncluded.text,
+        attachments: attachments,
+        isMobile: _isMobileService,
+        serviceID: _currentService?.serviceID ?? '',
+      );
+      isLoading = true;
+      final DataState<bool> result = await _updateServiceUsecase(param);
       if (result is DataSuccess) {
         // ignore: use_build_context_synchronously
         Navigator.of(context).pop();
@@ -67,7 +134,7 @@ class AddServiceProvider extends ChangeNotifier {
   Future<void> addPhotos(BuildContext context) async {
     //
     final bool hasPersmission =
-        await PermissionFun.hasPermission(Permission.photos);
+        await PermissionFun.hasPermission(Permission.storage);
     if (!hasPersmission) return;
     //
     final List<PickedAttachment>? newPhotos = await Navigator.of(context).push(
@@ -113,6 +180,7 @@ class AddServiceProvider extends ChangeNotifier {
     _selectedMinute = null;
     _isMobileService = false;
     _isLoading = false;
+    _currentService = null;
   }
 
   //
@@ -125,10 +193,14 @@ class AddServiceProvider extends ChangeNotifier {
   final TextEditingController _description = TextEditingController();
   final TextEditingController _included = TextEditingController();
   final TextEditingController _notIncluded = TextEditingController();
-  final List<PickedAttachment> _attachments = <PickedAttachment>[];
+   final List<PickedAttachment> _attachments = <PickedAttachment>[];
   ServiceCategoryType? _selectedCategory;
   ServiceType? _selectedType;
   ServiceModelType? _selectedModelType;
+  List<String> _selectedEmployeeUIDs = <String>[];
+  ServiceEntity? _currentService;
+  ServiceEntity? get currentService => _currentService;
+
   //
   int? _selectedHour;
   int? _selectedMinute;
@@ -148,6 +220,7 @@ class AddServiceProvider extends ChangeNotifier {
   ServiceCategoryType? get selectedCategory => _selectedCategory;
   ServiceType? get selectedType => _selectedType;
   ServiceModelType? get selectedModelType => _selectedModelType;
+  List<String> get selectedEmployeeUIDs => _selectedEmployeeUIDs;
   //
   int? get selectedHour => _selectedHour;
   int? get selectedMinute => _selectedMinute;
@@ -193,6 +266,61 @@ class AddServiceProvider extends ChangeNotifier {
   void setIsMobileService(bool value) {
     _isMobileService = value;
     notifyListeners();
+  }
+
+  void setService(ServiceEntity service) {
+    _currentService = service;
+    _selectedCategory = getCategoryFromString(service.category);
+
+    // Set the type safely
+    _selectedType = getServiceTypeFromString(service.type);
+
+    // Set model type safely
+    _selectedModelType = getModelTypeFromString(service.model);
+
+    _selectedHour = service.time ~/ 60;
+    _selectedMinute = service.time % 60;
+    _title.text = service.name;
+    _price.text = service.price.toString();
+    _description.text = service.description;
+    _included.text = service.included ?? '';
+    _notIncluded.text = service.excluded;
+    _isMobileService = service.isMobileService;
+    _selectedEmployeeUIDs = service.employeesID;
+  }
+
+  ServiceCategoryType? getCategoryFromString(String value) {
+    for (ServiceCategoryType category in ServiceCategoryType.values) {
+      if (category.name == value ||
+          category.json == value ||
+          category.code == value) {
+        return category;
+      }
+    }
+    return null;
+  }
+
+  ServiceModelType? getModelTypeFromString(String value) {
+    try {
+      return ServiceModelType.values.firstWhere(
+        (ServiceModelType e) => e.code == value || e.json == value,
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
+  ServiceType? getServiceTypeFromString(String value) {
+    for (ServiceCategoryType category in ServiceCategoryType.values) {
+      // We search through the service types in each category
+      for (ServiceType serviceType in category.serviceTypes) {
+        // Check if either the code or the json matches the value
+        if (serviceType.code == value || serviceType.json == value) {
+          return serviceType; // Return the service type if a match is found
+        }
+      }
+    }
+    return null; 
   }
 
   set isLoading(bool value) {

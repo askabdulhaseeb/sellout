@@ -10,7 +10,7 @@ import '../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/phone_number_entity.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
-import '../../../../dashboard/views/screens/dasboard_screen.dart';
+import '../../../../dashboard/views/screens/dashboard_screen.dart';
 import '../../../signin/domain/params/login_params.dart';
 import '../../../signin/domain/usecase/login_usecase.dart';
 import '../../domain/usecase/register_user_usecase.dart';

@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
-
+import '../../../../../../core/widgets/expandable_text_widget.dart';
 import '../../../domain/entities/post_entity.dart';
 
 class PostDetailDescriptionSection extends StatelessWidget {
@@ -14,11 +13,21 @@ class PostDetailDescriptionSection extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
+      const  Divider(),
         Text(
-          '''${'description'.tr()}:''',
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          '''${'product_description'.tr()}:''',
+          style: Theme.of(context).textTheme.titleMedium,
         ),
-        Html(data: post.description),
+        const SizedBox(height: 6),
+        Text(
+          '''${'about_item'.tr()}:''',
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        ExpandableText(
+          text: post.description,
+          isHtml: true,
+        ),
+      const  Divider()
       ],
     );
   }

@@ -23,7 +23,7 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
   int quantity = 1;
   @override
   Widget build(BuildContext context) {
-    final BorderRadius borderRadius = BorderRadius.circular(8);
+    final BorderRadius borderRadius = BorderRadius.circular(6);
     final BoxDecoration decoration = BoxDecoration(
       border: Border.all(color: Theme.of(context).primaryColor),
       borderRadius: borderRadius,
@@ -33,7 +33,12 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
         Expanded(
           child: Container(
             padding: const EdgeInsets.all(6),
-            decoration: decoration,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Theme.of(context).disabledColor,
+              ),
+              borderRadius: borderRadius,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -46,9 +51,14 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
                     });
                   },
                   child: Container(
-                    padding: const EdgeInsets.all(4),
+                    margin: const EdgeInsets.all(6),
+                    padding: const EdgeInsets.all(3),
                     decoration: decoration,
-                    child: const Icon(Icons.remove),
+                    child: Icon(
+                      Icons.remove,
+                      size: 12,
+                      color: Theme.of(context).primaryColor,
+                    ),
                   ),
                 ),
                 Padding(
@@ -56,8 +66,8 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
                   child: Text(
                     quantity.toString(),
                     style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -70,9 +80,14 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
                     });
                   },
                   child: Container(
-                    padding: const EdgeInsets.all(4),
+                    margin: const EdgeInsets.all(6),
+                    padding: const EdgeInsets.all(3),
                     decoration: decoration,
-                    child: const Icon(Icons.add),
+                    child: Icon(
+                      Icons.add,
+                      size: 12,
+                      color: Theme.of(context).primaryColor,
+                    ),
                   ),
                 ),
               ],

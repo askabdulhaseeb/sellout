@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../../../domain/entities/post_entity.dart';
