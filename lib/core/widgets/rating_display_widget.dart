@@ -5,6 +5,7 @@ class RatingDisplayWidget extends StatelessWidget {
     required this.ratingList,
     this.displayPrefix = true,
     this.displayStars = true,
+    this.displayRating = true,
     this.maxRating = 5,
     this.size = 16,
     this.onTap,
@@ -15,6 +16,7 @@ class RatingDisplayWidget extends StatelessWidget {
   final List<double> ratingList;
   final bool displayPrefix;
   final bool displayStars;
+  final bool displayRating;
   final VoidCallback? onTap;
 
   @override
@@ -28,7 +30,7 @@ class RatingDisplayWidget extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          if (displayPrefix)
+          if (displayRating)
             Padding(
               padding: const EdgeInsets.only(right: 3),
               child: Text(

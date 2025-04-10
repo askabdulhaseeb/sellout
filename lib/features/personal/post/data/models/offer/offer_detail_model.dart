@@ -2,7 +2,7 @@ import '../../../domain/entities/offer/offer_detail_entity.dart';
 import '../post_model.dart';
 
 class OfferDetailModel extends OfferDetailEntity {
-  const OfferDetailModel({
+  OfferDetailModel({
     required super.postTitle,
     required super.size,
     required super.color,
@@ -17,16 +17,16 @@ class OfferDetailModel extends OfferDetailEntity {
 
   factory OfferDetailModel.fromJson(Map<String, dynamic> json) {
     return OfferDetailModel(
-      postTitle: json['post_title'],
-      size: json['size'],
-      color: json['color'],
-      post: PostModel.fromJson(json['post']),
+      postTitle: json['post_title'] ?? '',
+      size: json['size'] ?? '',
+      color: json['color'] ?? '',
+      post: PostModel.fromJson(json['post'] ?? <String, dynamic>{}),
       price: int.tryParse(json['price']?.toString() ?? '0') ?? 0,
       minOfferAmount:
           int.tryParse(json['min_offer_amount']?.toString() ?? '0') ?? 0,
-      offerStatus: json['offer_status'],
-      currency: json['currency'],
-      offerId: json['offer_id'],
+      offerStatus: json['offer_status'] ?? '',
+      currency: json['currency'] ?? '',
+      offerId: json['offer_id'] ?? '',
       offerPrice: int.tryParse(json['offer_price']?.toString() ?? '0') ?? 0,
     );
   }

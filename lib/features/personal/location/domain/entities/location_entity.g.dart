@@ -17,12 +17,12 @@ class LocationEntityAdapter extends TypeAdapter<LocationEntity> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return LocationEntity(
-      address: fields[3] as String,
-      id: fields[0] as String,
-      title: fields[2] as String,
-      url: fields[1] as String,
-      latitude: fields[4] as double,
-      longitude: fields[5] as double,
+      address: fields[3] as String?,
+      id: fields[0] as String?,
+      title: fields[2] as String?,
+      url: fields[1] as String?,
+      latitude: fields[4] as double?,
+      longitude: fields[5] as double?,
     );
   }
 

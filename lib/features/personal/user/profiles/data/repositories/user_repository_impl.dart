@@ -1,4 +1,5 @@
 import '../../../../../../core/sources/data_state.dart';
+import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../post/domain/entities/post_entity.dart';
 import '../../../../post/domain/entities/visit/visiting_entity.dart';
@@ -49,7 +50,7 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
   }
 
   @override
-  Future<DataState<bool>> updateProfilePicture(PickedAttachment photo) async {
+  Future<DataState<List<AttachmentEntity>>> updateProfilePicture(PickedAttachment photo) async {
     return await userProfileRemoteSource.updateProfilePicture(photo);
   }
 

@@ -7,7 +7,6 @@ import '../../../../features/personal/auth/signin/data/sources/local/local_auth.
 import '../../../../features/personal/cart/data/models/cart/cart_item_model.dart';
 import '../../../../features/personal/cart/data/sources/local_cart.dart';
 import '../../../../features/personal/cart/views/screens/personal_cart_screen.dart';
-import '../../../../features/personal/setting/setting_dashboard/views/screens/personal_setting_screen.dart';
 import '../../../../features/personal/user/profiles/data/sources/local/local_user.dart';
 import '../../../../features/personal/user/profiles/domain/entities/business_profile_detail_entity.dart';
 import '../../../utilities/app_icons.dart';
@@ -69,11 +68,6 @@ personalAppbar(BuildContext context) {
                     );
             }),
     actions: <Widget>[
-      _IconButton(
-        icon: AppIcons.setting,
-        onPressed: () =>
-            Navigator.of(context).pushNamed(PersonalSettingScreen.routeName),
-      ),
       InDevMode(
         child: _IconButton(icon: AppIcons.search, onPressed: () {}),
       ),
