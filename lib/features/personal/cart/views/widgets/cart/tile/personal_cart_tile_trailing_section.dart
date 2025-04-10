@@ -96,7 +96,7 @@ class _PersonalCartTileTrailingSectionState
                 horizontal: 8,
               ),
               decoration: BoxDecoration(
-                color: primaryColor.withOpacity(0.1),
+                color: Colors.red[100],
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(

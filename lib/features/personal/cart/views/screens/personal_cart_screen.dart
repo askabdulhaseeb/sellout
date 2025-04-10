@@ -34,7 +34,7 @@ class PersonalCartScreen extends StatelessWidget {
             return Column(
               children: <Widget>[
                 const PersonalCartPageTile(),
-                const SizedBox(height: 24),
+                // const SizedBox(height: 0),
                 cartPro.page == 1
                     ? Expanded(
                         child: Column(

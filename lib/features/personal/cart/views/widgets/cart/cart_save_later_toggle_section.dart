@@ -16,12 +16,15 @@ class CartSaveLaterToggleSection extends StatelessWidget {
       CartProvider cartPro,
       _,
     ) {
-      return CustomToggleSwitch<CartItemType>(
-        labels: CartItemType.list,
-        onToggle: (CartItemType value) => cartPro.basketPage = value,
-        initialValue: cartPro.basketPage,
-        labelStrs: CartItemType.codeList.map((String e) => e.tr()).toList(),
-        labelText: '',
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: CustomToggleSwitch<CartItemType>(
+          labels: CartItemType.list,
+          onToggle: (CartItemType value) => cartPro.basketPage = value,
+          initialValue: cartPro.basketPage,
+          labelStrs: CartItemType.codeList.map((String e) => e.tr()).toList(),
+          labelText: '',
+        ),
       );
     });
   }
