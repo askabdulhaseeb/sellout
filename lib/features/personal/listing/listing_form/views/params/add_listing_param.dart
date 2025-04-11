@@ -3,7 +3,8 @@ import '../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
-import '../../../../post/domain/entities/size_color/size_color_entity.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../post/data/models/size_color/size_color_model.dart';
 import '../../domain/entities/sub_category_entity.dart';
 
 class AddListingParam {
@@ -23,11 +24,16 @@ class AddListingParam {
     required this.localDeliveryAmount,
     required this.internationalDeliveryAmount,
     required this.listingType,
-    required this.category,
     required this.currency,
     required this.currentLatitude,
     required this.currentLongitude,
+    required this.brand,
+    required this.type,
+    this.category,
     this.sizeColor,
+    this.discount2Items,
+    this.discount3Items,
+    this.discount5Items,
   });
 
   final String? businessID;
@@ -36,7 +42,7 @@ class AddListingParam {
   final List<PickedAttachment> attachments;
   final String price;
   final String quantity;
-  final String discount;
+  final bool discount;
   final ConditionType condition;
   final bool acceptOffer;
   final String minOfferAmount;
@@ -45,11 +51,16 @@ class AddListingParam {
   final String localDeliveryAmount;
   final String internationalDeliveryAmount;
   final ListingType listingType;
-  final SubCategoryEntity category;
+  final SubCategoryEntity? category;
   final String currency;
   final String currentLatitude;
   final String currentLongitude;
-  final SizeColorEntity? sizeColor;
+  final String brand;
+  final String type;
+  final List<SizeColorModel>? sizeColor;
+  final String? discount2Items;
+  final String? discount3Items;
+  final String? discount5Items;
 
   String get acceptOfferJSON => acceptOffer ? 'true' : 'false';
 
@@ -82,10 +93,10 @@ class AddListingParam {
 
   Map<String, String> _discountMAP() {
     return <String, String>{
-      'discount': discount,
-      'disc_2_items': '0',
-      'disc_3_items': '0',
-      'disc_5_items': '0',
+      'discount': discount.toString(),
+      'disc_2_items': discount2Items ?? '0',
+      'disc_3_items': discount3Items ?? '0',
+      'disc_5_items': discount5Items ?? '0',
     };
   }
 
@@ -99,10 +110,12 @@ class AddListingParam {
   Map<String, String> _deliveryMAP() {
     return <String, String>{
       'delivery_type': deliveryType.json,
-      if (listingType != ListingType.clothAndFoot &&
+      if (
+          //listingType != ListingType.clothAndFoot &&
           listingType != ListingType.pets)
         'local_delivery': localDeliveryAmount,
-      if (listingType != ListingType.clothAndFoot &&
+      if (
+          //listingType != ListingType.clothAndFoot &&
           listingType != ListingType.pets)
         'international_delivery': internationalDeliveryAmount,
     };
@@ -111,7 +124,7 @@ class AddListingParam {
   Map<String, String> _listLocMAP() {
     return <String, String>{
       'list_id': listingType.json,
-      'address': category.address ?? '',
+      'address': category?.address ?? '',
       'currency': currency,
       'current_latitude': currentLatitude,
       'current_longitude': currentLongitude,
@@ -142,9 +155,9 @@ class AddListingParam {
     final Map<String, String> mapp = <String, String>{
       'quantity': quantity,
       'item_condition': condition.json,
-      'brand': '', //
-      'size_colors': '', //
-      'type': '', //
+      'brand': brand,
+      'size_colors': sizeColor.toString(), //
+      'type': type, //
     };
     mapp.addAll(_titleMAP());
     mapp.addAll(_discountMAP());

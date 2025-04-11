@@ -24,8 +24,7 @@ class AddListingPriceAndQuantityWidget extends StatelessWidget {
                 labelText: 'price'.tr(),
                 hint: 'Ex. 12000.0',
                 showSuffixIcon: false,
-                readOnly: isLoading,
-                prefixText:  LocalAuth.currency.toUpperCase(),
+                prefixText: LocalAuth.currency.toUpperCase(),
                 keyboardType: TextInputType.number,
                 validator: (String? value) => AppValidator.isEmpty(value),
               ),
@@ -40,7 +39,7 @@ class AddListingPriceAndQuantityWidget extends StatelessWidget {
                 readOnly: isLoading,
                 textAlign: TextAlign.center,
                 prefixIcon: IconButton(
-                  onPressed: isLoading ? null : formPro.decrementQuantity,
+                  onPressed: formPro.decrementQuantity,
                   icon: Icon(
                     Icons.remove_circle_outline,
                     color: formPro.quantity.text == '1'
@@ -49,7 +48,7 @@ class AddListingPriceAndQuantityWidget extends StatelessWidget {
                   ),
                 ),
                 suffixIcon: IconButton(
-                  onPressed: isLoading ? null : formPro.incrementQuantity,
+                  onPressed: formPro.incrementQuantity,
                   icon: Icon(
                     Icons.add_circle_outline_outlined,
                     color: isLoading ? null : Theme.of(context).primaryColor,

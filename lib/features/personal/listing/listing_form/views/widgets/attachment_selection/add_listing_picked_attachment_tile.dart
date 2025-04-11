@@ -23,8 +23,8 @@ class AddListingPickedAttachmentTile extends StatelessWidget {
                 height: double.infinity,
                 width: double.infinity,
                 child: attachment.type == AttachmentType.image
-                    ? Image.asset(
-                        attachment.file.path,
+                    ? Image.file(
+                        attachment.file,
                         fit: BoxFit.cover,
                       )
                     : Container(

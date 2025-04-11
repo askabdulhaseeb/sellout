@@ -28,47 +28,50 @@ class ExploreCategoriesSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Row(
-          spacing: 8,
-          children: <Widget>[
-            _buildContainer(
-                context,
-                '${'location'.tr()} - ${Provider.of<ExploreProvider>(context).selectedRadius} Km',
-                CupertinoIcons.location_solid,
-                primaryColor,
-                outlineColor,
-                textStyle,
-                () => showBottomSheet(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return const LocationRadiusBottomSheet();
-                    })),
-            _buildContainer(
-                context,
-                'sort'.tr(),
-                CupertinoIcons.sort_down,
-                primaryColor,
-                outlineColor,
-                textStyle,
-                () => showBottomSheet(
-                    context: context,
-                    builder: (BuildContext context) => SortBottomSheet(
-                          onSortSelected: (SortOption option) {
-                            pro.setSortOption(option);
-                          },
-                        ))),
-            _buildContainer(
-                context,
-                'filter'.tr(),
-                Icons.tune,
-                primaryColor,
-                outlineColor,
-                textStyle,
-                () => showBottomSheet(
-                    context: context,
-                    builder: (BuildContext context) =>
-                        const FilterBottomSheet())),
-          ],
+        SizedBox(
+          height: 40,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: <Widget>[
+              _buildContainer(
+                  context,
+                  '${'location'.tr()} - ${Provider.of<ExploreProvider>(context).selectedRadius} Km',
+                  CupertinoIcons.location_solid,
+                  primaryColor,
+                  outlineColor,
+                  textStyle,
+                  () => showBottomSheet(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const LocationRadiusBottomSheet();
+                      })),
+              _buildContainer(
+                  context,
+                  'sort'.tr(),
+                  CupertinoIcons.sort_down,
+                  primaryColor,
+                  outlineColor,
+                  textStyle,
+                  () => showBottomSheet(
+                      context: context,
+                      builder: (BuildContext context) => SortBottomSheet(
+                            onSortSelected: (SortOption option) {
+                              pro.setSortOption(option);
+                            },
+                          ))),
+              _buildContainer(
+                  context,
+                  'filter'.tr(),
+                  Icons.tune,
+                  primaryColor,
+                  outlineColor,
+                  textStyle,
+                  () => showBottomSheet(
+                      context: context,
+                      builder: (BuildContext context) =>
+                          const FilterBottomSheet())),
+            ],
+          ),
         ),
         const SizedBox(height: 8),
         Text(
@@ -168,6 +171,7 @@ class ExploreCategoriesSection extends StatelessWidget {
     return InkWell(
       onTap: ontap,
       child: Container(
+        margin: const EdgeInsets.all(4),
         padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,

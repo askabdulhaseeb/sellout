@@ -38,7 +38,7 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
       value: PersonalBottomNavProvider()),
 
   ChangeNotifierProvider<AddListingFormProvider>.value(
-      value: AddListingFormProvider()),
+      value: AddListingFormProvider(locator())),
   ChangeNotifierProvider<PickedMediaProvider>.value(
       value: PickedMediaProvider()),
   //

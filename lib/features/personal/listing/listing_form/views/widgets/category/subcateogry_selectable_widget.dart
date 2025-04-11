@@ -52,7 +52,6 @@ class _SubCategorySelectableWidgetState
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Loader();
         }
-
         if (snapshot.hasError || !snapshot.hasData) {
           AppLog.error(
             'SubCategorySelectableWidget: ${snapshot.error}',
@@ -61,7 +60,6 @@ class _SubCategorySelectableWidgetState
           );
           return Center(child: Text('something_wrong'.tr()));
         }
-
         // Cache filtered data to avoid recalculating
         final List<ListingEntity> selectedList = snapshot.data!
             .where((ListingEntity element) =>

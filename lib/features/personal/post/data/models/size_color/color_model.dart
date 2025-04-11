@@ -13,8 +13,10 @@ class ColorModel extends ColorEntity {
         quantity: entity.quantity,
       );
 
-  Map<String, dynamic> toJson() => <String, dynamic>{
-        'code': code,
-        'quantity': quantity,
-      };
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'code': code,
+      'quantity': quantity,
+    };
+  }
 }

@@ -84,6 +84,11 @@ import '../features/personal/book_visit/data/source/book_visit_api.dart';
 import '../features/personal/book_visit/domain/repo/book_visit_repo.dart';
 import '../features/personal/book_visit/domain/usecase/book_visit_usecase.dart';
 import '../features/personal/book_visit/view/provider/view_booking_provider.dart';
+import '../features/personal/listing/listing_form/data/repository/add_listing_repo_impl.dart';
+import '../features/personal/listing/listing_form/data/sources/remote/add_listing_remote_api.dart';
+import '../features/personal/listing/listing_form/domain/repository/add_listing_repo.dart';
+import '../features/personal/listing/listing_form/domain/usecase/add_listing_usecase.dart';
+import '../features/personal/listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../features/personal/post/data/repositories/post_repository_impl.dart';
 import '../features/personal/post/data/sources/remote/post_remote_api.dart';
 import '../features/personal/post/domain/repositories/post_repository.dart';
@@ -138,6 +143,7 @@ void setupLocator() {
   _country();
   _explore();
   _bookvisit();
+  _addlisting();
 }
 
 void _auth() {
@@ -421,4 +427,15 @@ void _bookvisit() {
 
   locator.registerFactory<BookingProvider>(() => BookingProvider(
       locator(), locator(), locator(), locator(), locator(), locator()));
+}
+
+void _addlisting() {
+  locator.registerFactory<AddListingRemoteApi>(() => AddListingRemoteApiImpl());
+
+  locator.registerFactory<AddListingRepo>(() => AddListingRepoImpl(locator()));
+  locator
+      .registerFactory<AddListingUsecase>(() => AddListingUsecase(locator()));
+  locator.registerFactory<AddListingFormProvider>(
+    () => AddListingFormProvider(locator()),
+  );
 }
