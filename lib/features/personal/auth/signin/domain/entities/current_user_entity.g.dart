@@ -39,7 +39,7 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       inHiveAt: fields[99] as DateTime,
       businessStatus: fields[120] as String?,
       businessName: fields[121] as String?,
-      businessID: fields[122] as String,
+      businessID: fields[122] as String?,
       logindetail: fields[123] as LoginDetailEntity,
       employeeList: (fields[124] as List).cast<BusinessEmployeeEntity>(),
     );
