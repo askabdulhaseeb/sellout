@@ -1,6 +1,8 @@
+import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter/services.dart';
 import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
@@ -8,14 +10,28 @@ import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../../core/enums/listing/pet/age_time_type.dart';
 import '../../../../../../core/enums/listing/vehicle/transmission_type.dart';
 import '../../../../../../core/functions/app_log.dart';
+import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../../attachment/domain/entities/picked_attachment_option.dart';
 import '../../../../../attachment/views/screens/pickable_attachment_screen.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../post/data/models/size_color/size_color_model.dart';
 import '../../../../post/domain/entities/discount_entity.dart';
+import '../../../../post/domain/entities/size_color/color_entity.dart';
+import '../../data/models/color_option_model.dart';
+import '../../domain/entities/color_options_entity.dart';
 import '../../domain/entities/sub_category_entity.dart';
+import '../../domain/usecase/add_listing_usecase.dart';
+import '../params/add_listing_param.dart';
 
 class AddListingFormProvider extends ChangeNotifier {
+  AddListingFormProvider(
+    this._addlistingUSecase,
+  );
+  final AddListingUsecase _addlistingUSecase;
+
+// AddListingUsecase _addlistingUSecase;
   Future<void> submit(BuildContext context) async {
     if (_attachments.isEmpty) {
       AppSnackBar.showSnackBar(
@@ -115,6 +131,60 @@ class AddListingFormProvider extends ChangeNotifier {
   Future<void> _onClothesAndFootSubmit() async {
     if (!(_clothesAndFootKey.currentState?.validate() ?? false)) return;
     setLoading(true);
+    try {
+      final AddListingParam param = AddListingParam(
+          businessID: LocalAuth.currentUser?.businessID,
+          title: title.text,
+          description: description.text,
+          attachments: attachments,
+          price: price.text,
+          quantity: quantity.text,
+          discount: isDiscounted,
+          discount2Items: _discounts
+              .firstWhere((DiscountEntity e) => e.quantity == 2)
+              .discount
+              .toString(),
+          discount3Items: _discounts
+              .firstWhere((DiscountEntity e) => e.quantity == 3)
+              .discount
+              .toString(),
+          discount5Items: _discounts
+              .firstWhere((DiscountEntity e) => e.quantity == 5)
+              .discount
+              .toString(),
+          condition: condition,
+          acceptOffer: acceptOffer,
+          minOfferAmount: minimumOffer.text,
+          privacyType: _privacy,
+          deliveryType: deliveryType,
+          localDeliveryAmount: '500',
+          internationalDeliveryAmount: '200',
+          listingType: ListingType.clothAndFoot,
+          category: _selectedCategory,
+          currency: LocalAuth.currentUser?.currency?.toUpperCase() ?? '',
+          currentLatitude: '12234',
+          currentLongitude: '123456',
+          brand: brand.text,
+          sizeColor: _sizeColorEntities
+              .map((SizeColorModel e) =>
+                  SizeColorModel(value: e.value, colors: e.colors, id: e.id))
+              .toList(),
+          type: selectedClothSubCategory);
+      debugPrint(param.toMap().toString());
+      debugPrint(sizeColorEntities.toString());
+      final DataState<String> result = await _addlistingUSecase(param);
+      if (result is DataSuccess) {
+        AppLog.info('Listing success: ${result.data}');
+      } else if (result is DataFailer) {
+        AppLog.error(result.exception?.message ?? 'something_wrong'.tr());
+      }
+    } catch (e) {
+      AppLog.error('$e');
+    } finally {
+      // Optional: stop loading
+      // isLoading = false;
+      // notifyListeners();
+    }
     await Future<void>.delayed(const Duration(seconds: 2));
     setLoading(false);
   }
@@ -122,6 +192,61 @@ class AddListingFormProvider extends ChangeNotifier {
   Future<void> _onVehicleSubmit() async {
     if (!(_vehicleKey.currentState?.validate() ?? false)) return;
     setLoading(true);
+
+    try {
+      final AddListingParam param = AddListingParam(
+          businessID: LocalAuth.currentUser?.businessID,
+          title: title.text,
+          description: description.text,
+          attachments: attachments,
+          price: price.text,
+          quantity: quantity.text,
+          discount: isDiscounted,
+          discount2Items: _discounts
+              .firstWhere((DiscountEntity e) => e.quantity == 2)
+              .discount
+              .toString(),
+          discount3Items: _discounts
+              .firstWhere((DiscountEntity e) => e.quantity == 3)
+              .discount
+              .toString(),
+          discount5Items: _discounts
+              .firstWhere((DiscountEntity e) => e.quantity == 5)
+              .discount
+              .toString(),
+          condition: condition,
+          acceptOffer: acceptOffer,
+          minOfferAmount: minimumOffer.text,
+          privacyType: _privacy,
+          deliveryType: deliveryType,
+          localDeliveryAmount: '500',
+          internationalDeliveryAmount: '200',
+          listingType: ListingType.vehicle,
+          category: _selectedCategory,
+          currency: LocalAuth.currentUser?.currency?.toUpperCase() ?? '',
+          currentLatitude: '12234',
+          currentLongitude: '123456',
+          brand: brand.text,
+          sizeColor: _sizeColorEntities
+              .map((SizeColorModel e) =>
+                  SizeColorModel(value: e.value, colors: e.colors, id: e.id))
+              .toList(),
+          type: selectedClothSubCategory);
+      debugPrint(param.toMap().toString());
+      debugPrint(sizeColorEntities.toString());
+      final DataState<String> result = await _addlistingUSecase(param);
+      if (result is DataSuccess) {
+        AppLog.info('Listing success: ${result.data}');
+      } else if (result is DataFailer) {
+        AppLog.error(result.exception?.message ?? 'something_wrong'.tr());
+      }
+    } catch (e) {
+      AppLog.error('$e');
+    } finally {
+      // Optional: stop loading
+      // isLoading = false;
+      // notifyListeners();
+    }
     await Future<void>.delayed(const Duration(seconds: 2));
     setLoading(false);
   }
@@ -256,6 +381,7 @@ class AddListingFormProvider extends ChangeNotifier {
     _deliveryType = value;
     notifyListeners();
   }
+
   // Cloth and Foot
   void setSelectedClothSubCategory(String value) {
     _selectedClothSubCategory = value;
@@ -312,12 +438,101 @@ class AddListingFormProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  //
+  void addOrUpdateSizeColorQuantity({
+    required String size,
+    required String color,
+    required int quantity,
+  }) {
+    final int sizeIndex =
+        _sizeColorEntities.indexWhere((SizeColorModel e) => e.value == size);
+
+    if (sizeIndex != -1) {
+      final SizeColorModel existingSize = _sizeColorEntities[sizeIndex];
+
+      final int colorIndex =
+          existingSize.colors.indexWhere((ColorEntity c) => c.code == color);
+
+      if (colorIndex != -1) {
+        // Update quantity for existing color
+        existingSize.colors[colorIndex] =
+            ColorEntity(code: color, quantity: quantity);
+      } else {
+        // Add new color to existing size
+        existingSize.colors.add(ColorEntity(code: color, quantity: quantity));
+        debugPrint(existingSize.colors.first.code);
+      }
+
+      _sizeColorEntities[sizeIndex] = SizeColorModel(
+        value: existingSize.value,
+        id: existingSize.id,
+        colors: existingSize.colors,
+      );
+    } else {
+      // Add new size with color
+      _sizeColorEntities.add(
+        SizeColorModel(
+          value: size,
+          id: size,
+          colors: <ColorEntity>[
+            ColorEntity(code: color, quantity: quantity),
+          ],
+        ),
+      );
+    }
+    notifyListeners();
+  }
+
+  /// Removes a specific color from a specific size.
+  /// If that size has no more colors left, the size entry is removed.
+  void removeColorFromSize({
+    required String size,
+    required String color,
+  }) {
+    final int sizeIndex =
+        _sizeColorEntities.indexWhere((SizeColorModel e) => e.value == size);
+    if (sizeIndex != -1) {
+      _sizeColorEntities[sizeIndex]
+          .colors
+          .removeWhere((ColorEntity c) => c.code == color);
+
+      // If no colors left, remove the size entry as well
+      if (_sizeColorEntities[sizeIndex].colors.isEmpty) {
+        _sizeColorEntities.removeAt(sizeIndex);
+      }
+
+      notifyListeners();
+    }
+  }
+
+  /// Clears all size-color-quantity data.
+  void clearAllSizeColorCombinations() {
+    _sizeColorEntities.clear();
+    notifyListeners();
+  }
+
+  Future<List<ColorOptionEntity>> colorOptions() async {
+    final String jsonString =
+        await rootBundle.loadString('assets/jsons/colors.json');
+    final Map<String, dynamic> colorsMap = jsonDecode(jsonString);
+    final Map<String, dynamic> colors = colorsMap['colors'];
+    return colors.entries.map((MapEntry<String, dynamic> entry) {
+      return ColorOptionModel.fromJson(entry.value);
+    }).toList();
+  }
+
+  // Load colors into the provider
+  Future<void> fetchColors() async {
+    _colors = await colorOptions();
+    notifyListeners();
+  }
+
   /// Getter
   ListingType? get listingType => _listingType ?? ListingType.items;
   SubCategoryEntity? get selectedCategory => _selectedCategory;
   bool get isDiscounted => _isDiscounted;
   List<DiscountEntity> get discounts => _discounts;
+  List<SizeColorModel> get sizeColorEntities => _sizeColorEntities;
+
   //
   List<PickedAttachment> get attachments => _attachments;
   ConditionType get condition => _condition;
@@ -326,6 +541,8 @@ class AddListingFormProvider extends ChangeNotifier {
   DeliveryType get deliveryType => _deliveryType;
   // Cloth and Foot
   String get selectedClothSubCategory => _selectedClothSubCategory;
+  List<ColorOptionEntity> get colors => _colors;
+
   // Vehicle
   TransmissionType get transmissionType => _transmissionType;
   TextEditingController get engineSize => _engineSize;
@@ -344,6 +561,7 @@ class AddListingFormProvider extends ChangeNotifier {
   //
   TextEditingController get title => _title;
   TextEditingController get description => _description;
+  TextEditingController get brand => _brand;
   TextEditingController get price => _price;
   TextEditingController get quantity => _quantity;
   TextEditingController get minimumOffer => _minimumOffer;
@@ -369,12 +587,16 @@ class AddListingFormProvider extends ChangeNotifier {
   ];
   // Selected Category
   // Size and Color
+  final List<SizeColorModel> _sizeColorEntities = <SizeColorModel>[];
+  //
   ConditionType _condition = ConditionType.newC;
   bool _acceptOffer = true;
   PrivacyType _privacy = PrivacyType.public;
   DeliveryType _deliveryType = DeliveryType.paid;
-    // Cloth and Foot
+  // Cloth and Foot
   String _selectedClothSubCategory = ListingType.clothAndFoot.cids.first;
+  List<ColorOptionEntity> _colors = <ColorOptionEntity>[];
+
   // Vehicle
   TransmissionType _transmissionType = TransmissionType.auto;
   final TextEditingController _engineSize = TextEditingController();
@@ -400,6 +622,9 @@ class AddListingFormProvider extends ChangeNotifier {
   );
   final TextEditingController _price = TextEditingController(
     text: kDebugMode ? '100' : '',
+  );
+  final TextEditingController _brand = TextEditingController(
+    text: kDebugMode ? 'Cobra' : '',
   );
   final TextEditingController _quantity = TextEditingController(text: '1');
   final TextEditingController _minimumOffer = TextEditingController(

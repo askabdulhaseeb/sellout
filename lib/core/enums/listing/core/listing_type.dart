@@ -17,7 +17,7 @@ enum ListingType {
   @HiveField(1)
   clothAndFoot(
     'cloth_foot',
-    'cloth_foot',
+    'clothes-foot',
     4,
     AppIcons.tShirt,
     <String>['clothes', 'footwear', 'cloth_foot'],

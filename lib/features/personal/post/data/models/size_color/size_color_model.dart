@@ -16,10 +16,13 @@ class SizeColorModel extends SizeColorEntity {
             .map((dynamic x) => ColorModel.fromJson(x))),
       );
 
-  Map<String, dynamic> toJson() => <String, dynamic>{
-        'id': id,
-        'value': value,
-        'colors': List<dynamic>.from(
-            colors.map((ColorEntity x) => ColorModel.fromEntity(x).toJson())),
-      };
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'id': id,
+      'value': value,
+      'colors': colors
+          .map((ColorEntity x) => ColorModel.fromEntity(x).toMap())
+          .toList(),
+    };
+  }
 }
