@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_radio_button_list_tile.dart';
@@ -45,7 +44,7 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
                   hint: 'local_delivery_fee'.tr(),
                   autoFocus: true,
                   // prefixText: LocalState.getCurrency(),
-                  prefixText: LocalAuth.currentUser?.currency,
+                  prefixText: LocalAuth.currentUser?.currency?.toUpperCase(),
                   contentPadding: EdgeInsets.zero,
                   validator: (String? value) =>
                       formPro.deliveryType == DeliveryType.paid &&
@@ -59,7 +58,7 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
                   hint: 'international_delivery_fee'.tr(),
                   autoFocus: true,
                   // prefixText: LocalState.getCurrency(),
-                  prefixText: LocalAuth.currentUser?.currency,
+                  prefixText: LocalAuth.currentUser?.currency?.toUpperCase(),
                   contentPadding: EdgeInsets.zero,
                   validator: (String? value) =>
                       formPro.deliveryType == DeliveryType.paid &&

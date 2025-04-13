@@ -10,19 +10,23 @@ import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../../core/enums/listing/pet/age_time_type.dart';
 import '../../../../../../core/enums/listing/pet/pet_categories.dart';
 import '../../../../../../core/enums/listing/vehicle/transmission_type.dart';
+import '../../../../../../core/enums/listing/vehicles/vehicle_body_type.dart';
+import '../../../../../../core/enums/listing/vehicles/vehicle_category_type.dart';
 import '../../../../../../core/enums/routine/day_type.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
-import '../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../routes/app_linking.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../../attachment/domain/entities/picked_attachment_option.dart';
 import '../../../../../attachment/views/screens/pickable_attachment_screen.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../dashboard/views/screens/dashboard_screen.dart';
 import '../../../../explore/domain/entities/location_name_entity.dart';
 import '../../../../location/data/models/location_model.dart';
 import '../../../../post/data/models/meetup/availability_model.dart';
 import '../../../../post/data/models/size_color/size_color_model.dart';
 import '../../../../post/domain/entities/discount_entity.dart';
+import '../../../../post/domain/entities/post_entity.dart';
 import '../../../../post/domain/entities/size_color/color_entity.dart';
 import '../../data/models/color_option_model.dart';
 import '../../domain/entities/color_options_entity.dart';
@@ -259,7 +263,7 @@ class AddListingFormProvider extends ChangeNotifier {
       debugPrint(sizeColorEntities.toString());
       final DataState<String> result = await _addlistingUSecase(param);
       if (result is DataSuccess) {
-        AppLog.info('Listing success: ${result.data}');
+        AppNavigator.pushNamed(DashboardScreen.routeName);
       } else if (result is DataFailer) {
         AppLog.error(result.exception?.message ?? 'something_wrong'.tr());
       }
@@ -317,7 +321,7 @@ class AddListingFormProvider extends ChangeNotifier {
       debugPrint(sizeColorEntities.toString());
       final DataState<String> result = await _addlistingUSecase(param);
       if (result is DataSuccess) {
-        AppLog.info('Listing success: ${result.data}');
+        AppNavigator.pushNamed(DashboardScreen.routeName);
       } else if (result is DataFailer) {
         AppLog.error(result.exception?.message ?? 'something_wrong'.tr());
       }
@@ -331,56 +335,56 @@ class AddListingFormProvider extends ChangeNotifier {
   Future<void> _onVehicleSubmit() async {
     if (!(_vehicleKey.currentState?.validate() ?? false)) return;
     setLoading(true);
-    getAvailabilityData();
 
+    getAvailabilityData();
     try {
       final AddListingParam param = AddListingParam(
-        availbility: jsonEncode(
-          _availability.map((AvailabilityModel e) => e.toJson()).toList(),
-        ),
-        engineSize: engineSize.text,
-        meetUpLocation: LocationModel(
-                address: selectedLocation?.description,
-                id: selectedLocation?.placeId,
-                title: selectedLocation?.structuredFormatting.mainText,
-                url: '',
-                latitude: 1234,
-                longitude: 678)
-            .toJson(),
-        mileage: mileage.text,
-        businessID: LocalAuth.currentUser?.businessID,
-        title: title.text,
-        description: description.text,
-        attachments: attachments,
-        price: price.text,
-        discount: isDiscounted,
-        condition: condition,
-        acceptOffer: acceptOffer,
-        minOfferAmount: minimumOffer.text,
-        privacyType: _privacy,
-        deliveryType: deliveryType,
-        listingType: listingType ?? ListingType.vehicle,
-        category: _selectedCategory,
-        currency: LocalAuth.currentUser?.currency ?? '',
-        type: selectedClothSubCategory,
-        bodyType: bodytype.text,
-        color: _selectedVehicleColor,
-        doors: doors.text,
-        emission: emission.text,
-        make: make.text,
-        model: model.text,
-        seats: seats.text,
-        year: year.text,
-        vehicleCategory: 'car',
-        currentLatitude: '12234',
-        currentLongitude: '123456',
-        milageUnit: 'km',
-      );
+          availbility: jsonEncode(
+            _availability.map((AvailabilityModel e) => e.toJson()).toList(),
+          ),
+          engineSize: engineSize.text,
+          meetUpLocation: LocationModel(
+                  address: selectedLocation?.description,
+                  id: selectedLocation?.placeId,
+                  title: selectedLocation?.structuredFormatting.mainText,
+                  url: 'www.text.url',
+                  latitude: 1234,
+                  longitude: 678)
+              .toJson(),
+          mileage: mileage.text,
+          businessID: LocalAuth.currentUser?.businessID,
+          title: title.text,
+          description: description.text,
+          attachments: attachments,
+          price: price.text,
+          discount: isDiscounted,
+          condition: condition,
+          acceptOffer: acceptOffer,
+          minOfferAmount: minimumOffer.text,
+          privacyType: _privacy,
+          deliveryType: deliveryType,
+          listingType: listingType ?? ListingType.vehicle,
+          category: _selectedCategory,
+          currency: LocalAuth.currentUser?.currency ?? '',
+          type: selectedClothSubCategory,
+          bodyType: _selectedBodyType?.json,
+          color: _selectedVehicleColor,
+          doors: doors.text,
+          emission: emission.text,
+          make: make.text,
+          model: model.text,
+          seats: seats.text,
+          year: year.text,
+          vehicleCategory: _selectedVehicleCategory.toString(),
+          currentLatitude: '12234',
+          currentLongitude: '123456',
+          milageUnit: _selectedMileageUnit,
+          transmission: transmissionType.json);
       debugPrint(param.toMap().toString());
       debugPrint(sizeColorEntities.toString());
       final DataState<String> result = await _addlistingUSecase(param);
       if (result is DataSuccess) {
-        AppLog.info('Listing success: ${result.data}');
+        AppNavigator.pushNamed(DashboardScreen.routeName);
       } else if (result is DataFailer) {
         AppLog.error(result.exception?.message ?? 'something_wrong'.tr());
       }
@@ -428,7 +432,7 @@ class AddListingFormProvider extends ChangeNotifier {
       debugPrint(sizeColorEntities.toString());
       final DataState<String> result = await _addlistingUSecase(param);
       if (result is DataSuccess) {
-        AppLog.info('Listing success: ${result.data}');
+        AppNavigator.pushNamed(DashboardScreen.routeName);
       } else if (result is DataFailer) {
         AppLog.error(result.exception?.message ?? 'something_wrong'.tr());
       }
@@ -492,7 +496,7 @@ class AddListingFormProvider extends ChangeNotifier {
       final DataState<String> result = await _addlistingUSecase(param);
 
       if (result is DataSuccess) {
-        AppLog.info('Listing success: ${result.data}');
+        AppNavigator.pushNamed(DashboardScreen.routeName);
       } else if (result is DataFailer) {
         AppLog.error(result.exception?.message ?? 'something_wrong'.tr());
       }
@@ -547,14 +551,11 @@ class AddListingFormProvider extends ChangeNotifier {
         currentLongitude: '123456',
         milageUnit: 'km',
       );
-
       debugPrint(param.toMap().toString());
       debugPrint(sizeColorEntities.toString());
-
       final DataState<String> result = await _addlistingUSecase(param);
-
       if (result is DataSuccess) {
-        AppLog.info('Listing success: ${result.data}');
+        AppNavigator.pushNamed(DashboardScreen.routeName);
       } else if (result is DataFailer) {
         AppLog.error(result.exception?.message ?? 'something_wrong'.tr());
       }
@@ -563,6 +564,10 @@ class AddListingFormProvider extends ChangeNotifier {
     } finally {
       setLoading(false);
     }
+  }
+
+  void setPost(PostEntity? value) {
+    _post = value;
   }
 
   //
@@ -694,6 +699,25 @@ class AddListingFormProvider extends ChangeNotifier {
   void setTransmissionType(TransmissionType? value) {
     if (value == null) return;
     _transmissionType = value;
+    notifyListeners();
+  }
+
+  void setMileageUnit(String? unit) {
+    _selectedMileageUnit = unit;
+    notifyListeners();
+  }
+
+  void setVehicleColor(String value) {
+    _selectedVehicleColor = value;
+  }
+
+  void setBodyType(VehicleBodyType? type) {
+    _selectedBodyType = type;
+    notifyListeners();
+  }
+
+  void setVehicleCategory(VehicleCategoryType? type) {
+    _selectedVehicleCategory = type;
     notifyListeners();
   }
 
@@ -848,10 +872,6 @@ class AddListingFormProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setVehicleColor(String value) {
-    _selectedVehicleColor = value;
-  }
-
   Future<List<ColorOptionEntity>> colorOptions() async {
     final String jsonString =
         await rootBundle.loadString('assets/jsons/colors.json');
@@ -871,6 +891,9 @@ class AddListingFormProvider extends ChangeNotifier {
   /// Getter
   ListingType? get listingType => _listingType ?? ListingType.items;
   SubCategoryEntity? get selectedCategory => _selectedCategory;
+  VehicleCategoryType? get selectedVehicleCategory => _selectedVehicleCategory;
+  PostEntity? get post => _post;
+
   bool get isDiscounted => _isDiscounted;
   List<DiscountEntity> get discounts => _discounts;
   List<SizeColorModel> get sizeColorEntities => _sizeColorEntities;
@@ -888,9 +911,10 @@ class AddListingFormProvider extends ChangeNotifier {
   String? get selectedVehicleColor => _selectedVehicleColor;
   // Vehicle
   TransmissionType get transmissionType => _transmissionType;
+  String? get selectedMileageUnit => _selectedMileageUnit;
   TextEditingController get engineSize => _engineSize;
   TextEditingController get mileage => _mileage;
-  TextEditingController get bodytype => _bodytype;
+  VehicleBodyType? get selectedBodyType => _selectedBodyType;
   TextEditingController get make => _make;
   TextEditingController get model => _model;
   TextEditingController get year => _year;
@@ -941,8 +965,10 @@ class AddListingFormProvider extends ChangeNotifier {
 
   //
   /// Controller
+  PostEntity? _post;
   ListingType? _listingType;
   SubCategoryEntity? _selectedCategory;
+  VehicleCategoryType? _selectedVehicleCategory;
   bool _isDiscounted = false;
   final List<DiscountEntity> _discounts = <DiscountEntity>[
     DiscountEntity(quantity: 2, discount: 0),
@@ -971,9 +997,6 @@ class AddListingFormProvider extends ChangeNotifier {
   final TextEditingController _model = TextEditingController(
     text: kDebugMode ? 'Gauche' : '',
   );
-  final TextEditingController _bodytype = TextEditingController(
-    text: kDebugMode ? 'EV' : '',
-  );
   final TextEditingController _year = TextEditingController(
     text: kDebugMode ? '2005' : '',
   );
@@ -987,7 +1010,9 @@ class AddListingFormProvider extends ChangeNotifier {
     text: kDebugMode ? '4' : '',
   );
   final TextEditingController _location = TextEditingController();
+  VehicleBodyType? _selectedBodyType;
   String? _selectedVehicleColor;
+  String? _selectedMileageUnit;
   // Property
   final TextEditingController _bedroom = TextEditingController();
   final TextEditingController _bathroom = TextEditingController();

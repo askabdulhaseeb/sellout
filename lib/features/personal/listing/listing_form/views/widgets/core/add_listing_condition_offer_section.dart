@@ -11,7 +11,6 @@ import '../../../../../../../core/widgets/custom_toggle_switch.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../data/sources/remote/get_access_code_api.dart';
 import '../../providers/add_listing_form_provider.dart';
-import 'add_listing_discount_section.dart';
 
 class AddListingConditionOfferSection extends StatelessWidget {
   const AddListingConditionOfferSection({super.key});

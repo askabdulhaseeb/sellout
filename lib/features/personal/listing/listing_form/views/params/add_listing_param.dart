@@ -53,6 +53,7 @@ class AddListingParam {
     this.engineSize,
     this.vehicleCategory,
     this.milageUnit,
+    this.transmission,
     // property
     this.propertyCategory,
     this.bedrooms,
@@ -114,6 +115,7 @@ class AddListingParam {
   final String? engineSize;
   final String? vehicleCategory;
   final String? milageUnit;
+  final String? transmission;
   //property
   final String? propertyCategory;
   final String? bedrooms;
@@ -175,7 +177,7 @@ class AddListingParam {
   Map<String, String> _offerMAP() {
     return <String, String>{
       'accept_offers': acceptOfferJSON,
-     if (acceptOfferJSON == 'true')  'min_offer_amount': minOfferAmount,
+      if (acceptOfferJSON == 'true') 'min_offer_amount': minOfferAmount,
     };
   }
 
@@ -257,19 +259,19 @@ class AddListingParam {
       'item_condition': condition.json,
       'make': make ?? '', //
       'model': model ?? '', //
-      'body_type': bodyType ?? 'Sedan', //
-      'emission': emission ?? 'euro_4', //
-      'year': year ?? '2017', //
-      'colour': color ?? 'black', //
-      'engine_size': engineSize ?? '2500', //
-      'mileage': mileage ?? '12', //
-      'doors': doors ?? '4', //
-      'seats': seats ?? '4', //
-      'transmission': 'auto', //
+      'body_type': bodyType ?? '', //
+      'emission': emission ?? '', //
+      'year': year ?? '', //
+      'colour': color ?? '', //
+      'engine_size': engineSize ?? '', //
+      'mileage': mileage ?? '', //
+      'doors': doors ?? '', //
+      'seats': seats ?? '', //
+      'transmission': transmission ?? '', //
       'author_name': LocalAuth.currentUser?.username ?? '', //
       'created_by': LocalAuth.currentUser?.userID ?? '',
-      'mileage_unit': 'miles', //
-      'vehicles_category': vehicleCategory ?? 'cars', //
+      'mileage_unit': milageUnit ?? '', //
+      'vehicles_category': vehicleCategory ?? '', //
     };
     mapp.addAll(_titleMAP());
     mapp.addAll(_offerMAP());

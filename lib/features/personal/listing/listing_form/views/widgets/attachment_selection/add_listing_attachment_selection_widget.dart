@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../providers/add_listing_form_provider.dart';
 import 'add_listing_attachment_selction_button.dart';

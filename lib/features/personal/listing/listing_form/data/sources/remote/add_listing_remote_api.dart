@@ -6,6 +6,7 @@ import '../../../views/params/add_listing_param.dart';
 
 abstract interface class AddListingRemoteApi {
   Future<DataState<String>> addListing(AddListingParam params);
+  Future<DataState<String>> editListing(AddListingParam params);
 }
 
 class AddListingRemoteApiImpl extends AddListingRemoteApi {
@@ -15,6 +16,30 @@ class AddListingRemoteApiImpl extends AddListingRemoteApi {
       final DataState<bool> response = await ApiCall<bool>().callFormData(
         endpoint: '/post/create',
         requestType: ApiRequestType.post,
+        attachments: params.attachments,
+        fieldsMap: params.toMap(),
+        isAuth: true,
+      );
+      if (response is DataSuccess) {
+        return DataSuccess<String>(response.data ?? '', null);
+      } else {
+        AppLog.error(response.exception?.message ?? 'something_wrong'.tr(),
+            name: 'AddListingRemoteApiImpl-addListing else');
+        return DataFailer<String>(CustomException(
+            'Failed to add item: ${response.exception?.message}'));
+      }
+    } catch (e, stc) {
+      AppLog.error('$e$stc', name: 'AddListingRemoteApiImpl-addListing catch');
+      return DataFailer<String>(CustomException('Error: ${e.toString()}'));
+    }
+  }
+
+  @override
+  Future<DataState<String>> editListing(AddListingParam params) async {
+    try {
+      final DataState<bool> response = await ApiCall<bool>().callFormData(
+        endpoint: 'post/update/9f0ee145-3e39-4514-867e-9464dc4f6',
+        requestType: ApiRequestType.patch,
         attachments: params.attachments,
         fieldsMap: params.toMap(),
         isAuth: true,

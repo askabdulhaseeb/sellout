@@ -1,7 +1,6 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import '../../../../../../../core/widgets/video_widget.dart';
 import '../../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../providers/add_listing_form_provider.dart';
 
@@ -32,7 +31,9 @@ class AddListingPickedAttachmentTile extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(color: Colors.grey),
                         ),
-                        child: Center(child: Text('videos'.tr())),
+                        child: VideoWidget(
+                          videoUrl: attachment.file.uri.path,
+                        ),
                       ),
               ),
               // Remove button

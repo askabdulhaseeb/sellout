@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/enums/listing/vehicles/vehicle_body_type.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_dropdown.dart';
@@ -46,16 +47,19 @@ class _AddListingVehicleBasicInfoSectionState
             readOnly: formPro.isLoading,
             keyboardType: TextInputType.number,
             validator: (String? value) => AppValidator.isEmpty(value),
-          ),
-          CustomTextFormField(
-            controller: formPro.bodytype,
-            labelText: 'body_type'.tr(),
-            hint: 'Ex. Sedan',
-            showSuffixIcon: false,
-            readOnly: formPro.isLoading,
-            keyboardType: TextInputType.number,
-            validator: (String? value) => AppValidator.isEmpty(value),
-          ),
+          ),CustomDropdown<VehicleBodyType>(
+  title: 'body_type'.tr(),
+  items: VehicleBodyType.values
+      .map((VehicleBodyType type) => DropdownMenuItem<VehicleBodyType>(
+            value: type,
+            child: Text(type.code),
+          ))
+      .toList(),
+  selectedItem: formPro.selectedBodyType,
+  onChanged: formPro.setBodyType,
+  validator: (_) =>
+      formPro.selectedBodyType == null ? 'Body type is required' : null,
+),
           CustomTextFormField(
             controller: formPro.emission,
             labelText: 'emission'.tr(),

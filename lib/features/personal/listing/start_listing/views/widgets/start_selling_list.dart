@@ -21,8 +21,10 @@ class StartSellingList extends StatelessWidget {
               padding: const EdgeInsets.only(top: 16),
               child: InkWell(
                 onTap: () {
-                  Provider.of<AddListingFormProvider>(context, listen: false)
-                      .setListingType(type);
+                  final AddListingFormProvider pro = Provider.of<AddListingFormProvider>(context,
+                      listen: false);
+                  pro.reset();
+                  pro.setListingType(type);
                   Navigator.of(context)
                       .pushNamed(AddListingFormScreen.routeName);
                 },
