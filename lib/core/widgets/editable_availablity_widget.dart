@@ -1,59 +1,115 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../features/personal/listing/listing_form/views/providers/add_listing_form_provider.dart';
+import '../../features/personal/post/domain/entities/meetup/availability_entity.dart';
+import 'scaffold/bottom_bar/availability_time_dailog.dart';
 
-import '../../features/business/core/domain/entity/routine_entity.dart';
-
-class EditableAvailablityWidget extends StatelessWidget {
-  const EditableAvailablityWidget({
-    required this.title,
-    required this.routine,
-    super.key,
-  });
-  final String title;
-  final List<RoutineEntity> routine;
+class EditableAvailabilityWidget extends StatelessWidget {
+  const EditableAvailabilityWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        if (title.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(top: 12, bottom: 4),
-            child: Text(
-              title,
-              style: Theme.of(context).textTheme.labelLarge,
+    return Consumer<AddListingFormProvider>(
+      builder: (BuildContext context, AddListingFormProvider provider, _) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const SizedBox(
+              height: 10,
             ),
-          ),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: routine.length,
-          padding: const EdgeInsets.all(0),
-          itemBuilder: (BuildContext context, int index) {
-            return Row(
-              children: <Widget>[
-                Switch.adaptive(
-                  padding: const EdgeInsets.all(0),
-                  value: routine[index].isOpen,
-                  onChanged: (bool value) {},
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    routine[index].day.code.tr(),
-                    style: Theme.of(context).textTheme.bodyLarge,
+            Text(
+              'add_Availbility_for_viewing'.tr(),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
+            ),
+            const SizedBox(height: 16),
+            ...provider.availability.map((AvailabilityEntity entity) {
+              final bool isOpen = entity.isOpen;
+              final bool hasValidTimes = entity.openingTime.isNotEmpty &&
+                  entity.closingTime.isNotEmpty;
+              final String timeRange = isOpen && hasValidTimes
+                  ? '${entity.openingTime} - ${entity.closingTime}'
+                  : 'Closed';
+
+              return Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(bottom: 12),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Switch(
+                          thumbIcon: WidgetStateProperty.all(Icon(
+                            Icons.circle,
+                            color: ColorScheme.of(context).surface,
+                          )),
+                          inactiveTrackColor: Theme.of(context).disabledColor,
+                          activeTrackColor: ColorScheme.of(context).secondary,
+                          thumbColor: WidgetStateProperty.all(
+                              ColorScheme.of(context).surface),
+                          trackOutlineColor: WidgetStateProperty.all(
+                              ColorScheme.of(context).surface),
+                          padding: const EdgeInsets.symmetric(vertical: 0),
+                          value: isOpen,
+                          onChanged: (bool val) {
+                            provider.toggleOpen(entity.day, val);
+                          },
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          entity.day.name[0].toUpperCase() +
+                              entity.day.name.substring(1),
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        const Spacer(),
+                        isOpen
+                            ? GestureDetector(
+                                onTap: () => showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AvailabilityTimeDialog(entity: entity),
+                                ),
+                                child: Text(
+                                  timeRange,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurfaceVariant),
+                                ),
+                              )
+                            : Text(
+                                timeRange,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurfaceVariant),
+                              ),
+                        Icon(Icons.arrow_forward_ios_rounded,
+                            size: 16,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant)
+                      ],
+                    ),
+                    const Divider()
+                  ],
                 ),
-                Text(
-                  routine[index].displayStr,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-              ],
-            );
-          },
-        ),
-      ],
+              );
+            })
+          ],
+        );
+      },
     );
   }
 }

@@ -14,7 +14,7 @@ class AvailabilityModel extends AvailabilityEntity {
 
   factory AvailabilityModel.fromJson(Map<String, dynamic> json) =>
       AvailabilityModel(
-        day:DayType.fromString(json['day']),
+        day: DayType.fromString(json['day']),
         isOpen: json['is_open'],
         closingTime: json['closing_time'] ?? '',
         openingTime: json['opening_time'] ?? '',
@@ -23,7 +23,21 @@ class AvailabilityModel extends AvailabilityEntity {
   Map<String, dynamic> toJson() => <String, dynamic>{
         'day': day.json,
         'is_open': isOpen,
-        'closing_time': closingTime,
-        'opening_time': openingTime,
+        if (isOpen == true) 'closing_time': closingTime,
+        if (isOpen == true) 'opening_time': openingTime,
       };
+  @override
+  AvailabilityModel copyWith({
+    DayType? day,
+    bool? isOpen,
+    String? openingTime,
+    String? closingTime,
+  }) {
+    return AvailabilityModel(
+      day: day ?? this.day,
+      isOpen: isOpen ?? this.isOpen,
+      openingTime: openingTime ?? this.openingTime,
+      closingTime: closingTime ?? this.closingTime,
+    );
+  }
 }

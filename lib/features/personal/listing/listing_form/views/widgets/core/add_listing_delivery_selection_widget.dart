@@ -6,6 +6,7 @@ import '../../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_radio_button_list_tile.dart';
 import '../../../../../../../core/widgets/location_input_button.dart';
+import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../providers/add_listing_form_provider.dart';
 
 class AddListingDeliverySelectionWidget extends StatelessWidget {
@@ -35,19 +36,38 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
             selectedValue: formPro.deliveryType,
             value: DeliveryType.paid,
             onChanged: formPro.setDeliveryType,
-            subtitle: CustomTextFormField(
-              controller: formPro.deliveryFee,
-              keyboardType: TextInputType.number,
-              hint: 'delivery_fee'.tr(),
-              autoFocus: true,
-              // prefixText: LocalState.getCurrency(),
-              prefixText: '₹',
-              contentPadding: EdgeInsets.zero,
-              validator: (String? value) =>
-                  formPro.deliveryType == DeliveryType.paid &&
-                          (value?.isEmpty ?? true)
-                      ? 'delivery_fee_is_required'.tr()
-                      : null,
+            subtitle: Column(
+              spacing: 2,
+              children: <Widget>[
+                CustomTextFormField(
+                  controller: formPro.localDeliveryFee,
+                  keyboardType: TextInputType.number,
+                  hint: 'local_delivery_fee'.tr(),
+                  autoFocus: true,
+                  // prefixText: LocalState.getCurrency(),
+                  prefixText: LocalAuth.currentUser?.currency,
+                  contentPadding: EdgeInsets.zero,
+                  validator: (String? value) =>
+                      formPro.deliveryType == DeliveryType.paid &&
+                              (value?.isEmpty ?? true)
+                          ? 'delivery_fee_is_required'.tr()
+                          : null,
+                ),
+                CustomTextFormField(
+                  controller: formPro.internationalDeliveryFee,
+                  keyboardType: TextInputType.number,
+                  hint: 'international_delivery_fee'.tr(),
+                  autoFocus: true,
+                  // prefixText: LocalState.getCurrency(),
+                  prefixText: LocalAuth.currentUser?.currency,
+                  contentPadding: EdgeInsets.zero,
+                  validator: (String? value) =>
+                      formPro.deliveryType == DeliveryType.paid &&
+                              (value?.isEmpty ?? true)
+                          ? 'delivery_fee_is_required'.tr()
+                          : null,
+                ),
+              ],
             ),
           ),
           CustomRadioButtonListTile<DeliveryType>(

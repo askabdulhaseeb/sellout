@@ -1,7 +1,5 @@
 import 'package:hive/hive.dart';
-
 import '../../../../../../core/enums/routine/day_type.dart';
-
 part 'availability_entity.g.dart';
 
 @HiveType(typeId: 16)
@@ -21,4 +19,18 @@ class AvailabilityEntity {
   final String closingTime;
   @HiveField(3)
   final String openingTime;
+
+  AvailabilityEntity copyWith({
+    DayType? day,
+    bool? isOpen,
+    String? openingTime,
+    String? closingTime,
+  }) {
+    return AvailabilityEntity(
+      day: day ?? this.day,
+      isOpen: isOpen ?? this.isOpen,
+      openingTime: openingTime ?? this.openingTime,
+      closingTime: closingTime ?? this.closingTime,
+    );
+  }
 }

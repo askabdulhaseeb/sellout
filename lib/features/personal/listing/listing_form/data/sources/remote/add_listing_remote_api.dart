@@ -13,19 +13,19 @@ class AddListingRemoteApiImpl extends AddListingRemoteApi {
   Future<DataState<String>> addListing(AddListingParam params) async {
     try {
       final DataState<bool> response = await ApiCall<bool>().callFormData(
-          endpoint: '/post/create',
-          requestType: ApiRequestType.post,
-          attachments: params.attachments,
-          fieldsMap: params.toMap(),
-          isAuth: true,
-          isConnectType: true);
+        endpoint: '/post/create',
+        requestType: ApiRequestType.post,
+        attachments: params.attachments,
+        fieldsMap: params.toMap(),
+        isAuth: true,
+      );
       if (response is DataSuccess) {
         return DataSuccess<String>(response.data ?? '', null);
       } else {
         AppLog.error(response.exception?.message ?? 'something_wrong'.tr(),
             name: 'AddListingRemoteApiImpl-addListing else');
         return DataFailer<String>(CustomException(
-            'Failed to add clothing item: ${response.exception?.message}'));
+            'Failed to add item: ${response.exception?.message}'));
       }
     } catch (e, stc) {
       AppLog.error('$e$stc', name: 'AddListingRemoteApiImpl-addListing catch');
