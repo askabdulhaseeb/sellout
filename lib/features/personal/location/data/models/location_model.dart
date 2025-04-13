@@ -12,14 +12,22 @@ class LocationModel extends LocationEntity {
 
   factory LocationModel.fromJson(Map<String, dynamic> json) => LocationModel(
         address: json['address'] ?? '',
-        id: json['id'] ?? '',
+        id: json['location_id'] ?? '',
         title: json['title'] ?? '',
-        url: json['url'] ?? '',
+        url: json['location_url'] ?? '',
         latitude: json['latitude']?.toDouble() ?? 0.0,
         longitude: json['longitude']?.toDouble() ?? 0.0,
       );
 
   Map<String, dynamic> toJson() => <String, dynamic>{
+        'address': address,
+        'location_id': id,
+        'title': title,
+        'location_url': url,
+        'latitude': latitude,
+        'longitude': longitude,
+      };
+  Map<String, dynamic> toJsonidurlkeys() => <String, dynamic>{
         'address': address,
         'id': id,
         'title': title,

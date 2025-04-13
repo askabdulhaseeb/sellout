@@ -1,10 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../../core/enums/listing/vehicle/transmission_type.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_toggle_switch.dart';
 import '../../providers/add_listing_form_provider.dart';
+import '../location_by_name_field.dart';
 
 class AddListingVehicleTernsmissionEngineMileageSection
     extends StatelessWidget {
@@ -38,6 +39,19 @@ class AddListingVehicleTernsmissionEngineMileageSection
                 ),
               ],
             ),
+            CustomTextFormField(
+              controller: formPro.doors,
+              labelText: 'doors'.tr(),
+              hint: 'Ex. 10000',
+              keyboardType: TextInputType.number,
+            ),
+            CustomTextFormField(
+              controller: formPro.seats,
+              labelText: 'seats'.tr(),
+              hint: 'Ex. 10000',
+              keyboardType: TextInputType.number,
+            ),
+            const LocationInputField(),
             CustomToggleSwitch<TransmissionType>(
               labels: TransmissionType.list,
               labelStrs: TransmissionType.list

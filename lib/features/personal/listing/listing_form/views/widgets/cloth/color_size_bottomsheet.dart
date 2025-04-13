@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../post/data/models/size_color/size_color_model.dart';
 import '../../../../../post/domain/entities/size_color/color_entity.dart';
@@ -132,120 +133,125 @@ class SizeColorBottomSheetState extends State<SizeColorBottomSheet> {
             ),
             const Divider(height: 32),
             // --- Input Row for Adding a New Size/Color Entry ---
-            Row(
-              children: <Widget>[
-                // --- Size Dropdown ---
-                Expanded(
-                  child: CustomDropdown<String>(
-                    title: '',
-                    validator: (_) => null,
-                    hint: 'size'.tr(),
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    selectedItem: selectedSize,
-                    items: <String>['XS', 'S', 'M', 'L']
-                        .map((String s) => DropdownMenuItem<String>(
-                              value: s,
-                              child: Text(s),
-                            ))
-                        .toList(),
-                    onChanged: (String? val) {
-                      setState(() {
-                        selectedSize = val;
-                      });
-                    },
-                  ),
-                ),
-                const SizedBox(width: 10),
-                // --- Color Dropdown ---
-                Expanded(
-                  child: Consumer<AddListingFormProvider>(
-                    builder: (BuildContext context,
-                        AddListingFormProvider provider, Widget? child) {
-                      return FutureBuilder<List<ColorOptionEntity>>(
-                        future: provider.colorOptions(),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<List<ColorOptionEntity>> snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          }
-                          final List<ColorOptionEntity> colorOptionsList =
-                              snapshot.data!;
-                          return CustomDropdown<String>(
-                            padding: const EdgeInsets.symmetric(vertical: 4),
-                            hint: 'color'.tr(),
-                            selectedItem: selectedColor,
-                            title: '',
-                            validator: (_) => null,
-                            items: colorOptionsList
-                                .map((ColorOptionEntity color) =>
-                                    DropdownMenuItem<String>(
-                                      value: color.value,
-                                      child: Text(color.label),
-                                    ))
-                                .toList(),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                selectedColor = newValue;
-                              });
-                            },
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(width: 10),
-                // --- Quantity TextField ---
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey),
+            Container(
+              color: ColorScheme.of(context).surface,
+              child: Row(
+                children: <Widget>[
+                  // --- Size Dropdown ---
+                  Expanded(
+                    child: CustomDropdown<String>(
+                      title: '',
+                      validator: (_) => null,
+                      hint: 'size'.tr(),
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      selectedItem: selectedSize,
+                      items: <String>['XS', 'S', 'M', 'L']
+                          .map((String s) => DropdownMenuItem<String>(
+                                value: s,
+                                child: Text(s),
+                              ))
+                          .toList(),
+                      onChanged: (String? val) {
+                        setState(() {
+                          selectedSize = val;
+                        });
+                      },
                     ),
-                    child: TextField(
+                  ),
+                  const SizedBox(width: 10),
+                  // --- Color Dropdown ---
+                  Expanded(
+                    child: Consumer<AddListingFormProvider>(
+                      builder: (BuildContext context,
+                          AddListingFormProvider provider, Widget? child) {
+                        return FutureBuilder<List<ColorOptionEntity>>(
+                          future: provider.colorOptions(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<List<ColorOptionEntity>> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+                            final List<ColorOptionEntity> colorOptionsList =
+                                snapshot.data!;
+                            return CustomDropdown<String>(
+                              padding: const EdgeInsets.symmetric(vertical: 4),
+                              hint: 'color'.tr(),
+                              selectedItem: selectedColor,
+                              title: '',
+                              validator: (_) => null,
+                              items: colorOptionsList
+                                  .map((ColorOptionEntity color) =>
+                                      DropdownMenuItem<String>(
+                                        value: color.value,
+                                        child: Row(
+                                          spacing: 2,
+                                          children: <Widget>[
+                                            CircleAvatar(
+                                              radius: 10,
+                                              backgroundColor: Color(int.parse(
+                                                  '0xFF${color.value.replaceAll('#', '')}')),
+                                            ),
+                                            Expanded(
+                                                child: Text(color.label,
+                                                    style: TextTheme.of(context)
+                                                        .labelSmall)),
+                                          ],
+                                        ),
+                                      ))
+                                  .toList(),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  selectedColor = newValue;
+                                });
+                              },
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  // --- Quantity TextField ---
+                  Expanded(
+                    child: CustomTextFormField(
                       controller: quantityController,
-                      decoration: InputDecoration(
-                        hintText: 'quantity'.tr(),
-                        border: InputBorder.none,
-                      ),
                       keyboardType: TextInputType.number,
                     ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                // --- Add Button ---
-                GestureDetector(
-                  onTap: () {
-                    if (selectedSize != null &&
-                        selectedColor != null &&
-                        quantityController.text.isNotEmpty) {
-                      final int quantity =
-                          int.tryParse(quantityController.text) ?? 1;
-                      provider.addOrUpdateSizeColorQuantity(
-                        size: selectedSize!,
-                        color: selectedColor!,
-                        quantity: quantity,
-                      );
-                      // Clear local state after adding.
-                      setState(() {
-                        selectedSize = null;
-                        selectedColor = null;
-                        quantityController.clear();
-                      });
-                    }
-                  },
-                  child: Text(
-                    'add'.tr(),
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                      fontWeight: FontWeight.bold,
+                  const SizedBox(width: 10),
+                  // --- Add Button ---
+                  GestureDetector(
+                    onTap: () {
+                      if (selectedSize != null &&
+                          selectedColor != null &&
+                          quantityController.text.isNotEmpty) {
+                        final int quantity =
+                            int.tryParse(quantityController.text) ?? 1;
+                        provider.addOrUpdateSizeColorQuantity(
+                          size: selectedSize!,
+                          color: selectedColor!,
+                          quantity: quantity,
+                        );
+                        // Clear local state after adding.
+                        setState(() {
+                          selectedSize = null;
+                          selectedColor = null;
+                          quantityController.clear();
+                        });
+                      }
+                    },
+                    child: Text(
+                      'add'.tr(),
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                )
-              ],
+                  )
+                ],
+              ),
             ),
           ],
         ),
