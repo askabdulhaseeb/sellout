@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../core/widgets/rating_display_widget.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../../listing/listing_form/views/providers/add_listing_form_provider.dart';
+import '../../../../../listing/listing_form/views/screens/add_listing_form_screen.dart';
 import '../../../../../post/domain/entities/post_entity.dart';
 import '../../../../../post/post_detail/views/screens/post_detail_screen.dart';
 
@@ -12,7 +15,8 @@ class PostGridViewTile extends StatelessWidget {
   final PostEntity post;
   @override
   Widget build(BuildContext context) {
-    final bool isMe = post.createdBy == (LocalAuth.uid ?? '-');
+    final bool isMe = (post.createdBy == (LocalAuth.uid ?? '') ||
+        post.businessID == LocalAuth.currentUser?.businessID);
 
     return GestureDetector(
       onTap: () {
@@ -50,7 +54,7 @@ class PostGridViewTile extends StatelessWidget {
                 spacing: 2,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[  
+                children: <Widget>[
                   SizedBox(
                     width: 100,
                     child: Text(
@@ -85,7 +89,15 @@ class PostGridViewTile extends StatelessWidget {
                             .primaryColor
                             .withValues(alpha: 200),
                         icon: CupertinoIcons.pencil_ellipsis_rectangle,
-                        onPressed: () {},
+                        onPressed: () {
+                          final AddListingFormProvider pro =
+                              Provider.of<AddListingFormProvider>(context,
+                                  listen: false);
+                          pro.setListingType(post.type);
+                          pro.setPost(post);
+                          Navigator.pushNamed(
+                              context, AddListingFormScreen.routeName);
+                        },
                       ),
                     if (isMe == true)
                       CustomIconButton(
