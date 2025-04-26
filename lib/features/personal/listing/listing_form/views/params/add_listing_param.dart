@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
@@ -100,7 +99,6 @@ class AddListingParam {
   final String? type;
   final List<SizeColorModel>? sizeColor;
   final List<DiscountEntity>? discounts;
-
   final String? accessCode;
   final String? postID;
   final List<AttachmentEntity>? oldAttachments;
@@ -243,7 +241,8 @@ class AddListingParam {
       'quantity': quantity ?? '',
       'item_condition': condition.json,
       'brand': brand ?? '',
-      'size_colors': sizeColor.toString(), //
+      'size_colors': jsonEncode(
+          sizeColor?.map((SizeColorModel e) => e.toMap()).toList()), //
       'type': type ?? '', //
 //      if (postID != null) 'old_file': oldAttachments.toString(),
     };

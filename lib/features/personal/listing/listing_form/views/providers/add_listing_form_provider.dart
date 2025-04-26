@@ -8,7 +8,6 @@ import '../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../../core/enums/listing/pet/age_time_type.dart';
-import '../../../../../../core/enums/listing/pet/pet_categories.dart';
 import '../../../../../../core/enums/listing/vehicle/transmission_type.dart';
 import '../../../../../../core/enums/listing/vehicles/vehicle_body_type.dart';
 import '../../../../../../core/enums/listing/vehicles/vehicle_category_type.dart';
@@ -29,7 +28,6 @@ import '../../../../post/domain/entities/discount_entity.dart';
 import '../../../../post/domain/entities/meetup/availability_entity.dart';
 import '../../../../post/domain/entities/post_entity.dart';
 import '../../../../post/domain/entities/size_color/color_entity.dart';
-import '../../../../post/domain/entities/size_color/size_color_entity.dart';
 import '../../data/models/color_option_model.dart';
 import '../../data/models/listing_model.dart';
 import '../../data/models/sub_category_model.dart';
@@ -202,6 +200,7 @@ class AddListingFormProvider extends ChangeNotifier {
   Future<void> reset() async {
     _title.clear();
     _attachments = <PickedAttachment>[];
+    _attachments = <PickedAttachment>[];
     _selectedCategory = null;
     _post = null;
     _description.clear();
@@ -247,7 +246,7 @@ class AddListingFormProvider extends ChangeNotifier {
     _bathroom.text = post?.bathroom.toString() ?? '0';
     _bedroom.text = post?.bedroom.toString() ?? '0';
     _brand.text = post?.brand ?? '';
-    _breed.text = post?.breed ?? '';
+    _selectedBreed = findCategoryByAddress(_listings, post?.breed ?? '');
     _condition = post?.condition ?? ConditionType.newC;
     _deliveryType = post?.deliveryType ?? DeliveryType.paid;
     _description.text = post?.description ?? '';
@@ -267,7 +266,7 @@ class AddListingFormProvider extends ChangeNotifier {
     _minimumOffer.text = post?.minOfferAmount.toString() ?? '';
     _model.text = post?.model.toString() ?? '';
     _parking = post?.parking ?? true;
-    _petCategory = PetCategory.fromJson(post?.listID);
+    // _petCategory = PetCategory.fromJson(post?.listID);
     _price.text = post?.price.toString() ?? '';
     _privacy = post?.privacy ?? PrivacyType.supporters;
     _quantity.text = post?.quantity.toString() ?? '1';
@@ -281,7 +280,7 @@ class AddListingFormProvider extends ChangeNotifier {
     _selectedVehicleCategory =
         VehicleCategoryType.fromJson(post?.vehiclesCategory);
     _selectedVehicleColor = post?.vehiclesCategory;
-    _sizeColorEntities = post?.sizeColors ?? <SizeColorEntity>[];
+    _sizeColorEntities = post?.sizeColors ?? <SizeColorModel>[];
     _tenureType = post?.tenureType ?? '';
     _time = AgeTimeType.fromJson(post?.readyToLeave);
     _title.text = post?.title ?? '';
@@ -380,10 +379,7 @@ class AddListingFormProvider extends ChangeNotifier {
           currentLatitude: 1234,
           currentLongitude: 1234,
           brand: brand.text,
-          sizeColor: _sizeColorEntities
-              .map((SizeColorEntity e) =>
-                  SizeColorModel(value: e.value, colors: e.colors, id: e.id))
-              .toList(),
+          sizeColor: _sizeColorEntities,
           type: selectedClothSubCategory);
       debugPrint(param.toMap().toString());
       debugPrint(sizeColorEntities.toString());
@@ -393,8 +389,6 @@ class AddListingFormProvider extends ChangeNotifier {
       if (result is DataSuccess) {
         AppNavigator.pushNamedAndRemoveUntil(
             DashboardScreen.routeName, (_) => false);
-        reset();
-
         reset();
       } else if (result is DataFailer) {
         AppLog.error(result.exception?.message ?? 'something_wrong'.tr());
@@ -613,9 +607,9 @@ class AddListingFormProvider extends ChangeNotifier {
         oldAttachments: post?.fileUrls,
         accessCode: _accessCode,
         age: age,
-        breed: _breed.text,
+        breed: _selectedBreed?.title,
         healthChecked: _healthChecked,
-        petsCategory: _petCategory?.json,
+        petsCategory: _selectedCategory?.title.toLowerCase(),
         wormAndFleaTreated: _wormAndFleaTreated,
         vaccinationUpToDate: _vaccinationUpToDate,
         readyToLeave: _time?.json,
@@ -678,8 +672,6 @@ class AddListingFormProvider extends ChangeNotifier {
   void setPost(PostEntity? value) {
     _post = value;
     debugPrint(' this is post id ${post?.postID}');
-    debugPrint(
-        ' this is post meet up location id ${post?.meetUpLocation?.latitude}');
   }
 
   /// Setter
@@ -870,8 +862,6 @@ class AddListingFormProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Pet
-
   void setTime(AgeTimeType? value) {
     if (value == null) return;
     _time = value;
@@ -885,8 +875,17 @@ class AddListingFormProvider extends ChangeNotifier {
   }
 
 // pets
-  void setPetCategory(PetCategory? category) {
-    _petCategory = category;
+  // void setPetCategory(PetCategory? category) {
+  //   _petCategory = category;
+  //   notifyListeners();
+  // }
+  void setPetBreed(SubCategoryEntity category) {
+    _selectedBreed = category;
+    notifyListeners();
+  }
+
+  void setPetBreeds(SubCategoryEntity category) {
+    _breed = category;
     notifyListeners();
   }
 
@@ -924,10 +923,10 @@ class AddListingFormProvider extends ChangeNotifier {
     required int quantity,
   }) {
     final int sizeIndex =
-        _sizeColorEntities.indexWhere((SizeColorEntity e) => e.value == size);
+        _sizeColorEntities.indexWhere((SizeColorModel e) => e.value == size);
 
     if (sizeIndex != -1) {
-      final SizeColorEntity existingSize = _sizeColorEntities[sizeIndex];
+      final SizeColorModel existingSize = _sizeColorEntities[sizeIndex];
 
       final int colorIndex =
           existingSize.colors.indexWhere((ColorEntity c) => c.code == color);
@@ -951,10 +950,10 @@ class AddListingFormProvider extends ChangeNotifier {
       // Add new size with color
       _sizeColorEntities.add(
         SizeColorModel(
-          value: size,
-          id: size,
+          value: size.toString(),
+          id: size.toString(),
           colors: <ColorEntity>[
-            ColorEntity(code: color, quantity: quantity),
+            ColorEntity(code: color.toString(), quantity: quantity),
           ],
         ),
       );
@@ -969,7 +968,7 @@ class AddListingFormProvider extends ChangeNotifier {
     required String color,
   }) {
     final int sizeIndex =
-        _sizeColorEntities.indexWhere((SizeColorEntity e) => e.value == size);
+        _sizeColorEntities.indexWhere((SizeColorModel e) => e.value == size);
     if (sizeIndex != -1) {
       _sizeColorEntities[sizeIndex]
           .colors
@@ -985,10 +984,6 @@ class AddListingFormProvider extends ChangeNotifier {
   }
 
   /// Clears all size-color-quantity data.
-  void clearAllSizeColorCombinations() {
-    _sizeColorEntities.clear();
-    notifyListeners();
-  }
 
   Future<List<ColorOptionEntity>> colorOptions() async {
     final String jsonString =
@@ -1014,7 +1009,7 @@ class AddListingFormProvider extends ChangeNotifier {
 
   bool get isDiscounted => _isDiscounted;
   List<DiscountEntity> get discounts => _discounts;
-  List<SizeColorEntity> get sizeColorEntities => _sizeColorEntities;
+  List<SizeColorModel> get sizeColorEntities => _sizeColorEntities;
   LocationNameEntity? get selectedLocation => _selectedLocation;
   //
   List<PickedAttachment> get attachments => _attachments;
@@ -1050,10 +1045,11 @@ class AddListingFormProvider extends ChangeNotifier {
   bool get animalFriendly => _animalFriendly;
   String? get selectedEnergyRating => _selectedEnergyRating;
   // Pet
-  TextEditingController get breed => _breed;
+  SubCategoryEntity? get selectedBreed => _selectedBreed;
   AgeTimeType? get age => _age;
-  PetCategory? get petCategory => _petCategory;
+  // PetCategory? get petCategory => _petCategory;
   bool? get healthChecked => _healthChecked;
+  SubCategoryEntity? get breed => _breed;
   // bool? get petsCategory => _petsCategory;
   bool? get wormAndFleaTreated => _wormAndFleaTreated;
   bool? get vaccinationUpToDate => _vaccinationUpToDate;
@@ -1135,7 +1131,7 @@ class AddListingFormProvider extends ChangeNotifier {
   }
 
   // Size and Color
-  List<SizeColorEntity> _sizeColorEntities = <SizeColorModel>[];
+  List<SizeColorModel> _sizeColorEntities = <SizeColorModel>[];
   //
   ConditionType _condition = ConditionType.newC;
   bool _acceptOffer = true;
@@ -1182,9 +1178,10 @@ class AddListingFormProvider extends ChangeNotifier {
   bool _parking = true;
   bool _animalFriendly = true;
   // Pet
-  final TextEditingController _breed = TextEditingController();
-  PetCategory? _petCategory;
+  SubCategoryEntity? _selectedBreed;
+  // PetCategory? _petCategory;
   bool? _healthChecked;
+  SubCategoryEntity? _breed;
   // bool _petsCategory;
   bool? _wormAndFleaTreated;
   bool? _vaccinationUpToDate;
@@ -1202,9 +1199,7 @@ class AddListingFormProvider extends ChangeNotifier {
   final TextEditingController _price = TextEditingController(
     text: kDebugMode ? '100' : '',
   );
-  final TextEditingController _brand = TextEditingController(
-    text: kDebugMode ? 'Cobra' : '',
-  );
+  final TextEditingController _brand = TextEditingController();
   final TextEditingController _quantity = TextEditingController(text: '1');
   final TextEditingController _minimumOffer = TextEditingController(
     text: kDebugMode ? '50' : '',
@@ -1212,9 +1207,7 @@ class AddListingFormProvider extends ChangeNotifier {
   final TextEditingController _localDeliveryFee = TextEditingController();
   final TextEditingController _internationalDeliveryFee =
       TextEditingController();
-
   String _accessCode = '';
-
   // Form State
   final GlobalKey<FormState> _itemKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _clothesAndFootKey = GlobalKey<FormState>();

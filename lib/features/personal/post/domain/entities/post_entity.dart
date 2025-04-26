@@ -5,9 +5,9 @@ import '../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../location/domain/entities/location_entity.dart';
+import '../../data/models/size_color/size_color_model.dart';
 import 'discount_entity.dart';
 import 'meetup/availability_entity.dart';
-import 'size_color/size_color_entity.dart';
 part 'post_entity.g.dart';
 
 @HiveType(typeId: 20)
@@ -154,7 +154,7 @@ class PostEntity {
   @HiveField(70)
   final bool hasDiscount;
   @HiveField(71)
-  final List<SizeColorEntity> sizeColors;
+  final List<SizeColorModel> sizeColors;
   @HiveField(72)
   final List<DiscountEntity> discounts;
   //
