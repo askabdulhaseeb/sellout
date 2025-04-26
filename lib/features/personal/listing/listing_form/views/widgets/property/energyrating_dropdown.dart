@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../../personal/listing/listing_form/views/providers/add_listing_form_provider.dart';
 
@@ -31,7 +30,7 @@ class EnergyRatingDropdownState extends State<EnergyRatingDropdown> {
       validator: (bool? value) => null,
       title: 'select_energy_rating'.tr(),
       selectedItem: provider.selectedEnergyRating,
-      hint: 'select_energy_rating'.tr(),
+      // hint: 'select_energy_rating'.tr(),
       items: energyRatings.map((String value) {
         return DropdownMenuItem<String>(
           value: value,

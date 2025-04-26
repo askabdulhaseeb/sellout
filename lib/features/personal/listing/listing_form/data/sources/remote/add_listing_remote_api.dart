@@ -38,7 +38,7 @@ class AddListingRemoteApiImpl extends AddListingRemoteApi {
   Future<DataState<String>> editListing(AddListingParam params) async {
     try {
       final DataState<bool> response = await ApiCall<bool>().callFormData(
-        endpoint: 'post/update/9f0ee145-3e39-4514-867e-9464dc4f6',
+        endpoint: '/post/update/${params.postID}',
         requestType: ApiRequestType.patch,
         attachments: params.attachments,
         fieldsMap: params.toMap(),
@@ -48,12 +48,12 @@ class AddListingRemoteApiImpl extends AddListingRemoteApi {
         return DataSuccess<String>(response.data ?? '', null);
       } else {
         AppLog.error(response.exception?.message ?? 'something_wrong'.tr(),
-            name: 'AddListingRemoteApiImpl-addListing else');
+            name: 'AddListingRemoteApiImpl-editListing else');
         return DataFailer<String>(CustomException(
-            'Failed to add item: ${response.exception?.message}'));
+            'Failed to edit item: ${response.exception?.message}'));
       }
     } catch (e, stc) {
-      AppLog.error('$e$stc', name: 'AddListingRemoteApiImpl-addListing catch');
+      AppLog.error('$e$stc', name: 'AddListingRemoteApiImpl-editListing catch');
       return DataFailer<String>(CustomException('Error: ${e.toString()}'));
     }
   }

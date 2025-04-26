@@ -11,4 +11,9 @@ class AddListingRepoImpl implements AddListingRepo {
   Future<DataState<String>> addListing(AddListingParam params) {
     return remoteApi.addListing(params);
   }
+
+  @override
+  Future<DataState<String>> editListing(AddListingParam params) {
+    return remoteApi.editListing(params);
+  }
 }

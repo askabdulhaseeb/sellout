@@ -19,7 +19,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         return Column(
-          children: [
+          children: <Widget>[
             Row(
               children: <Widget>[
                 Expanded(
@@ -76,9 +76,9 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
             ),
             CustomDropdown<bool>(
               selectedItem: formPro.vaccinationUpToDate,
-              items: const [
-                DropdownMenuItem(value: true, child: Text('Yes')),
-                DropdownMenuItem(value: false, child: Text('No')),
+              items: const <DropdownMenuItem<bool>>[
+                DropdownMenuItem<bool>(value: true, child: Text('Yes')),
+                DropdownMenuItem<bool>(value: false, child: Text('No')),
               ],
               onChanged: formPro.setVaccinationUpToDate,
               validator: (_) =>
@@ -87,9 +87,9 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
             ),
             CustomDropdown<bool>(
               selectedItem: formPro.wormAndFleaTreated,
-              items: const [
-                DropdownMenuItem(value: true, child: Text('Yes')),
-                DropdownMenuItem(value: false, child: Text('No')),
+              items: const <DropdownMenuItem<bool>>[
+                DropdownMenuItem<bool>(value: true, child: Text('Yes')),
+                DropdownMenuItem<bool>(value: false, child: Text('No')),
               ],
               onChanged: formPro.setWormFleeTreated,
               validator: (_) =>
@@ -98,9 +98,9 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
             ),
             CustomDropdown<bool>(
               selectedItem: formPro.healthChecked,
-              items: const [
-                DropdownMenuItem(value: true, child: Text('Yes')),
-                DropdownMenuItem(value: false, child: Text('No')),
+              items: const <DropdownMenuItem<bool>>[
+                DropdownMenuItem<bool>(value: true, child: Text('Yes')),
+                DropdownMenuItem<bool>(value: false, child: Text('No')),
               ],
               onChanged: formPro.setHealthChecked,
               validator: (_) =>

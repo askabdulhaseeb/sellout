@@ -12,6 +12,7 @@ import '../../widgets/core/add_listing_delivery_selection_widget.dart';
 import '../../widgets/core/add_listing_discount_section.dart';
 import '../../widgets/core/add_listing_post_button_widget.dart';
 import '../../widgets/add_listing_price_and_quantity_widget.dart';
+import '../../widgets/core/add_listing_update_button_widget.dart';
 
 class AddClothsAndFootwearForm extends StatelessWidget {
   const AddClothsAndFootwearForm({super.key});
@@ -38,7 +39,8 @@ class AddClothsAndFootwearForm extends StatelessWidget {
               const AddListingDiscountSection(),
               const AddListingConditionOfferSection(),
               const AddListingDeliverySelectionWidget(),
-              const AddListingPostButtonWidget(),
+              if (formPro.post == null) const AddListingPostButtonWidget(),
+              if (formPro.post != null) const AddListingUpdateButtons()
             ],
           ),
         );

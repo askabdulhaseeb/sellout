@@ -33,4 +33,12 @@ class AvailabilityEntity {
       closingTime: closingTime ?? this.closingTime,
     );
   }
+   Map<String, dynamic> toJson() {
+    return {
+      'day': day.toString(), // or use a custom way to serialize DayType
+      'isOpen': isOpen,
+      'openingTime': openingTime,
+      'closingTime': closingTime,
+    };
+  }
 }

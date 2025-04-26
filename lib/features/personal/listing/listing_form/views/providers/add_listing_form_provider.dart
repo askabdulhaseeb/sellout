@@ -26,23 +26,30 @@ import '../../../../location/data/models/location_model.dart';
 import '../../../../post/data/models/meetup/availability_model.dart';
 import '../../../../post/data/models/size_color/size_color_model.dart';
 import '../../../../post/domain/entities/discount_entity.dart';
+import '../../../../post/domain/entities/meetup/availability_entity.dart';
 import '../../../../post/domain/entities/post_entity.dart';
 import '../../../../post/domain/entities/size_color/color_entity.dart';
+import '../../../../post/domain/entities/size_color/size_color_entity.dart';
 import '../../data/models/color_option_model.dart';
+import '../../data/models/listing_model.dart';
+import '../../data/models/sub_category_model.dart';
+import '../../data/sources/remote/listing_api.dart';
 import '../../domain/entities/color_options_entity.dart';
 import '../../domain/entities/sub_category_entity.dart';
 import '../../domain/usecase/add_listing_usecase.dart';
+import '../../domain/usecase/edit_listing_usecase.dart';
 import '../params/add_listing_param.dart';
 
 class AddListingFormProvider extends ChangeNotifier {
   AddListingFormProvider(
     this._addlistingUSecase,
+    this._editListingUsecase,
   );
   final AddListingUsecase _addlistingUSecase;
+  final EditListingUsecase _editListingUsecase;
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-  final List<AvailabilityModel> _availability =
-      DayType.values.map((DayType day) {
+  List<AvailabilityEntity> _availability = DayType.values.map((DayType day) {
     return AvailabilityModel(
       day: day,
       isOpen: false,
@@ -52,14 +59,14 @@ class AddListingFormProvider extends ChangeNotifier {
   }).toList();
 
   // Getter for availability list.
-  List<AvailabilityModel> get availability => _availability;
+  List<AvailabilityEntity> get availability => _availability;
 
   // Toggle open status and update default times.
   void toggleOpen(DayType day, bool isOpen) {
     final int index =
-        _availability.indexWhere((AvailabilityModel e) => e.day == day);
+        _availability.indexWhere((AvailabilityEntity e) => e.day == day);
     if (index != -1) {
-      final AvailabilityModel current = _availability[index];
+      final AvailabilityEntity current = _availability[index];
       _availability[index] = current.copyWith(
         isOpen: isOpen,
         openingTime: isOpen ? '10:00 am' : '',
@@ -72,9 +79,9 @@ class AddListingFormProvider extends ChangeNotifier {
   // Set a new opening time.
   void setOpeningTime(DayType day, String time) {
     final int index =
-        _availability.indexWhere((AvailabilityModel e) => e.day == day);
+        _availability.indexWhere((AvailabilityEntity e) => e.day == day);
     if (index != -1) {
-      final AvailabilityModel current = _availability[index];
+      final AvailabilityEntity current = _availability[index];
       _availability[index] = current.copyWith(openingTime: time);
       notifyListeners();
     }
@@ -83,9 +90,9 @@ class AddListingFormProvider extends ChangeNotifier {
   // Set a new closing time.
   void setClosingTime(DayType day, String time) {
     final int index =
-        _availability.indexWhere((AvailabilityModel e) => e.day == day);
+        _availability.indexWhere((AvailabilityEntity e) => e.day == day);
     if (index != -1) {
-      final AvailabilityModel current = _availability[index];
+      final AvailabilityEntity current = _availability[index];
       _availability[index] = current.copyWith(closingTime: time);
       notifyListeners();
     }
@@ -134,10 +141,9 @@ class AddListingFormProvider extends ChangeNotifier {
   // Update opening time and auto-adjust closing time if necessary.
   void updateOpeningTime(DayType day, String time) {
     setOpeningTime(day, time);
-
     // Get the current entity for the day.
-    final AvailabilityModel entity =
-        availability.firstWhere((AvailabilityModel e) => e.day == day);
+    final AvailabilityEntity entity =
+        availability.firstWhere((AvailabilityEntity e) => e.day == day);
     // If closing time is empty or not valid, adjust closing time automatically.
     if (entity.closingTime.isEmpty ||
         !isClosingTimeValid(time, entity.closingTime)) {
@@ -153,7 +159,7 @@ class AddListingFormProvider extends ChangeNotifier {
   // This method will generate the availability data from your _availability list
   List<Map<String, dynamic>> getAvailabilityData() {
     return _availability
-        .map((AvailabilityModel model) => model.toJson())
+        .map((AvailabilityEntity model) => model.toJson())
         .toList();
   }
 
@@ -161,7 +167,7 @@ class AddListingFormProvider extends ChangeNotifier {
 
   LocationNameEntity? _selectedLocation;
   Future<void> submit(BuildContext context) async {
-    if (_attachments.isEmpty) {
+    if (_attachments.isEmpty && (_post?.fileUrls.isEmpty ?? true)) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Please add at least one Photo or Video'),
       ));
@@ -195,9 +201,12 @@ class AddListingFormProvider extends ChangeNotifier {
 
   Future<void> reset() async {
     _title.clear();
+    _attachments = <PickedAttachment>[];
+    _selectedCategory = null;
+    _post = null;
     _description.clear();
     _price.clear();
-    _quantity.clear();
+    _quantity.text = post?.quantity.toString() ?? '1';
     _minimumOffer.clear();
     _localDeliveryFee.clear();
     _internationalDeliveryFee.clear();
@@ -215,6 +224,13 @@ class AddListingFormProvider extends ChangeNotifier {
     _acceptOffer = true;
     _privacy = PrivacyType.public;
     _deliveryType = DeliveryType.paid;
+    _listingType = null;
+    _petKey.currentState?.reset();
+    _itemKey.currentState?.reset();
+    _vehicleKey.currentState?.reset();
+    _propertyKey.currentState?.reset();
+    _foodAndDrinkKey.currentState?.reset();
+    _clothesAndFootKey.currentState?.reset();
     _isDiscounted = false;
     for (DiscountEntity element in _discounts) {
       element.discount = 0;
@@ -222,30 +238,87 @@ class AddListingFormProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateVariables() async {
+    _selectedCategory = findCategoryByAddress(_listings, post?.address ?? '');
+    _age = AgeTimeType.fromJson(post?.age);
+    _animalFriendly = _animalFriendly; // Not part of API
+    _availability = post?.availability ??
+        <AvailabilityEntity>[]; // Handle based on your structure
+    _bathroom.text = post?.bathroom.toString() ?? '0';
+    _bedroom.text = post?.bedroom.toString() ?? '0';
+    _brand.text = post?.brand ?? '';
+    _breed.text = post?.breed ?? '';
+    _condition = post?.condition ?? ConditionType.newC;
+    _deliveryType = post?.deliveryType ?? DeliveryType.paid;
+    _description.text = post?.description ?? '';
+    _doors.text = post?.doors.toString() ?? '';
+    _emission.text = post?.emission ?? '';
+    _engineSize.text = post?.engineSize.toString() ?? '';
+    _garden = post?.garden ?? true;
+    _healthChecked = post?.healthChecked;
+    _isDiscounted = post?.hasDiscount ?? false;
+    _listingType = ListingType.fromJson(post?.listID);
+    _localDeliveryFee.text = post?.localDelivery.toString() ?? '';
+    _internationalDeliveryFee.text =
+        post?.internationalDelivery.toString() ?? '';
+    _location.text = post?.meetUpLocation?.address ?? '';
+    _make.text = post?.make.toString() ?? '';
+    _mileage.text = post?.mileage.toString() ?? '';
+    _minimumOffer.text = post?.minOfferAmount.toString() ?? '';
+    _model.text = post?.model.toString() ?? '';
+    _parking = post?.parking ?? true;
+    _petCategory = PetCategory.fromJson(post?.listID);
+    _price.text = post?.price.toString() ?? '';
+    _privacy = post?.privacy ?? PrivacyType.supporters;
+    _quantity.text = post?.quantity.toString() ?? '1';
+    _seats.text = post?.seats.toString() ?? '';
+    _selectedBodyType = VehicleBodyType.fromJson(post?.bodyType ?? '');
+    _selectedClothSubCategory = post?.categoryType ?? '';
+    _selectedEnergyRating = post?.energyRating;
+    _selectedMileageUnit = post?.mileageUnit;
+    _selectedPropertySubCategory = post?.propertyCategory.toString() ?? '';
+    _selectedPropertyType = post?.propertytype;
+    _selectedVehicleCategory =
+        VehicleCategoryType.fromJson(post?.vehiclesCategory);
+    _selectedVehicleColor = post?.vehiclesCategory;
+    _sizeColorEntities = post?.sizeColors ?? <SizeColorEntity>[];
+    _tenureType = post?.tenureType ?? '';
+    _time = AgeTimeType.fromJson(post?.readyToLeave);
+    _title.text = post?.title ?? '';
+    _transmissionType =
+        TransmissionType.fromJson(post?.transmission) ?? TransmissionType.auto;
+    _vaccinationUpToDate = post?.vaccinationUpToDate;
+    _wormAndFleaTreated = post?.wormAndFleaTreated;
+    _year.text = post?.year.toString() ?? '';
+    debugPrint(post?.discounts.toString());
+    for (DiscountEntity element in _discounts) {
+      final DiscountEntity? matching = post?.discounts.firstWhere(
+        (DiscountEntity e) => e.quantity == element.quantity,
+        orElse: () => DiscountEntity(quantity: element.quantity, discount: 5),
+      );
+      element.discount = matching?.discount ?? 0;
+    }
+  }
+
   Future<void> _onItemSubmit() async {
     if (!(_itemKey.currentState?.validate() ?? false)) return;
     setLoading(true);
     try {
       final AddListingParam param = AddListingParam(
-        businessID: LocalAuth.currentUser?.businessID,
+        accessCode: _accessCode,
+        postID: post?.postID ?? '',
+        oldAttachments: post?.fileUrls,
+        businessID: post == null ? LocalAuth.currentUser?.businessID : null,
+        currency: _post == null
+            ? LocalAuth.currentUser?.currency?.toUpperCase()
+            : null,
         title: title.text,
         description: description.text,
         attachments: attachments,
         price: price.text,
         quantity: quantity.text,
         discount: isDiscounted,
-        discount2Items: _discounts
-            .firstWhere((DiscountEntity e) => e.quantity == 2)
-            .discount
-            .toString(),
-        discount3Items: _discounts
-            .firstWhere((DiscountEntity e) => e.quantity == 3)
-            .discount
-            .toString(),
-        discount5Items: _discounts
-            .firstWhere((DiscountEntity e) => e.quantity == 5)
-            .discount
-            .toString(),
+        discounts: discounts,
         condition: condition,
         acceptOffer: acceptOffer,
         minOfferAmount: minimumOffer.text,
@@ -255,17 +328,21 @@ class AddListingFormProvider extends ChangeNotifier {
         internationalDeliveryAmount: _internationalDeliveryFee.text,
         listingType: listingType ?? ListingType.items,
         category: _selectedCategory,
-        currency: LocalAuth.currentUser?.currency ?? '',
-        currentLatitude: '12234',
-        currentLongitude: '123456',
+        currentLatitude: 12234,
+        currentLongitude: 123456,
       );
       debugPrint(param.toMap().toString());
       debugPrint(sizeColorEntities.toString());
-      final DataState<String> result = await _addlistingUSecase(param);
+      final DataState<String> result = _post == null
+          ? await _addlistingUSecase(param)
+          : await _editListingUsecase(param);
       if (result is DataSuccess) {
-        AppNavigator.pushNamed(DashboardScreen.routeName);
+        AppNavigator.pushNamedAndRemoveUntil(
+            DashboardScreen.routeName, (_) => false);
+        reset();
       } else if (result is DataFailer) {
-        AppLog.error(result.exception?.message ?? 'something_wrong'.tr());
+        AppLog.error(result.exception?.message ?? 'something_wrong'.tr(),
+            name: 'AddListingProvider.onvehicleSubmit - else');
       }
     } catch (e) {
       AppLog.error('$e');
@@ -280,25 +357,17 @@ class AddListingFormProvider extends ChangeNotifier {
     setLoading(true);
     try {
       final AddListingParam param = AddListingParam(
-          businessID: LocalAuth.currentUser?.businessID,
+          postID: post?.postID ?? '',
+          oldAttachments: post?.fileUrls,
+          businessID: post == null ? LocalAuth.currentUser?.businessID : null,
+          currency: _post == null ? LocalAuth.currentUser?.currency : null,
           title: title.text,
           description: description.text,
           attachments: attachments,
           price: price.text,
           quantity: quantity.text,
           discount: isDiscounted,
-          discount2Items: _discounts
-              .firstWhere((DiscountEntity e) => e.quantity == 2)
-              .discount
-              .toString(),
-          discount3Items: _discounts
-              .firstWhere((DiscountEntity e) => e.quantity == 3)
-              .discount
-              .toString(),
-          discount5Items: _discounts
-              .firstWhere((DiscountEntity e) => e.quantity == 5)
-              .discount
-              .toString(),
+          discounts: discounts,
           condition: condition,
           acceptOffer: acceptOffer,
           minOfferAmount: minimumOffer.text,
@@ -308,20 +377,25 @@ class AddListingFormProvider extends ChangeNotifier {
           internationalDeliveryAmount: _internationalDeliveryFee.text,
           listingType: ListingType.clothAndFoot,
           category: _selectedCategory,
-          currency: LocalAuth.currentUser?.currency?.toUpperCase() ?? '',
-          currentLatitude: '12234',
-          currentLongitude: '123456',
+          currentLatitude: 1234,
+          currentLongitude: 1234,
           brand: brand.text,
           sizeColor: _sizeColorEntities
-              .map((SizeColorModel e) =>
+              .map((SizeColorEntity e) =>
                   SizeColorModel(value: e.value, colors: e.colors, id: e.id))
               .toList(),
           type: selectedClothSubCategory);
       debugPrint(param.toMap().toString());
       debugPrint(sizeColorEntities.toString());
-      final DataState<String> result = await _addlistingUSecase(param);
+      final DataState<String> result = _post == null
+          ? await _addlistingUSecase(param)
+          : await _editListingUsecase(param);
       if (result is DataSuccess) {
-        AppNavigator.pushNamed(DashboardScreen.routeName);
+        AppNavigator.pushNamedAndRemoveUntil(
+            DashboardScreen.routeName, (_) => false);
+        reset();
+
+        reset();
       } else if (result is DataFailer) {
         AppLog.error(result.exception?.message ?? 'something_wrong'.tr());
       }
@@ -338,21 +412,31 @@ class AddListingFormProvider extends ChangeNotifier {
 
     getAvailabilityData();
     try {
+      debugPrint(post?.postID);
       final AddListingParam param = AddListingParam(
+          postID: post?.postID ?? '',
+          oldAttachments: post?.fileUrls,
           availbility: jsonEncode(
-            _availability.map((AvailabilityModel e) => e.toJson()).toList(),
+            _availability.map((AvailabilityEntity e) => e.toJson()).toList(),
           ),
           engineSize: engineSize.text,
           meetUpLocation: LocationModel(
-                  address: selectedLocation?.description,
-                  id: selectedLocation?.placeId,
-                  title: selectedLocation?.structuredFormatting.mainText,
+                  address: post == null
+                      ? selectedLocation?.description
+                      : post?.meetUpLocation?.address,
+                  id: post == null
+                      ? selectedLocation?.placeId
+                      : post?.meetUpLocation?.id,
+                  title: post == null
+                      ? selectedLocation?.structuredFormatting.mainText
+                      : post?.meetUpLocation?.title,
                   url: 'www.text.url',
                   latitude: 1234,
                   longitude: 678)
               .toJson(),
           mileage: mileage.text,
-          businessID: LocalAuth.currentUser?.businessID,
+          businessID: post == null ? LocalAuth.currentUser?.businessID : null,
+          currency: _post == null ? LocalAuth.currentUser?.currency : null,
           title: title.text,
           description: description.text,
           attachments: attachments,
@@ -365,7 +449,6 @@ class AddListingFormProvider extends ChangeNotifier {
           deliveryType: deliveryType,
           listingType: listingType ?? ListingType.vehicle,
           category: _selectedCategory,
-          currency: LocalAuth.currentUser?.currency ?? '',
           type: selectedClothSubCategory,
           bodyType: _selectedBodyType?.json,
           color: _selectedVehicleColor,
@@ -376,17 +459,22 @@ class AddListingFormProvider extends ChangeNotifier {
           seats: seats.text,
           year: year.text,
           vehicleCategory: _selectedVehicleCategory.toString(),
-          currentLatitude: '12234',
-          currentLongitude: '123456',
+          currentLatitude: 1234,
+          currentLongitude: 1234,
           milageUnit: _selectedMileageUnit,
           transmission: transmissionType.json);
       debugPrint(param.toMap().toString());
       debugPrint(sizeColorEntities.toString());
-      final DataState<String> result = await _addlistingUSecase(param);
+      final DataState<String> result = _post == null
+          ? await _addlistingUSecase(param)
+          : await _editListingUsecase(param);
       if (result is DataSuccess) {
-        AppNavigator.pushNamed(DashboardScreen.routeName);
+        AppNavigator.pushNamedAndRemoveUntil(
+            DashboardScreen.routeName, (_) => false);
+        reset();
       } else if (result is DataFailer) {
-        AppLog.error(result.exception?.message ?? 'something_wrong'.tr());
+        AppLog.error(result.exception?.message ?? 'something_wrong'.tr(),
+            name: 'AddListingProvider.onvehicleSubmit - else');
       }
     } catch (e) {
       AppLog.error('$e');
@@ -400,39 +488,39 @@ class AddListingFormProvider extends ChangeNotifier {
     setLoading(true);
     try {
       final AddListingParam param = AddListingParam(
-        deliveryType: deliveryType,
-        quantity: quantity.text,
-        businessID: LocalAuth.currentUser?.businessID,
-        title: title.text,
-        description: description.text,
-        attachments: attachments,
-        price: price.text,
-        discount: isDiscounted,
-        discount2Items: _discounts
-            .firstWhere((DiscountEntity e) => e.quantity == 2)
-            .discount
-            .toString(),
-        discount3Items: _discounts
-            .firstWhere((DiscountEntity e) => e.quantity == 3)
-            .discount
-            .toString(),
-        discount5Items: _discounts
-            .firstWhere((DiscountEntity e) => e.quantity == 5)
-            .discount
-            .toString(),
-        condition: condition,
-        acceptOffer: acceptOffer,
-        minOfferAmount: minimumOffer.text,
-        privacyType: _privacy,
-        listingType: ListingType.foodAndDrink,
-        category: _selectedCategory,
-        currency: LocalAuth.currentUser?.currency ?? '',
-      );
+          postID: post?.postID ?? '',
+          oldAttachments: post?.fileUrls,
+          deliveryType: deliveryType,
+          quantity: quantity.text,
+          businessID: post == null ? LocalAuth.currentUser?.businessID : null,
+          currency: _post == null ? LocalAuth.currentUser?.currency : null,
+          title: title.text,
+          description: description.text,
+          attachments: attachments,
+          price: price.text,
+          discount: isDiscounted,
+          discounts: _discounts,
+          condition: condition,
+          acceptOffer: acceptOffer,
+          minOfferAmount: minimumOffer.text,
+          privacyType: _privacy,
+          listingType: listingType ?? ListingType.foodAndDrink,
+          category: _selectedCategory,
+          currentLatitude: 1234,
+          currentLongitude: 1234,
+          localDeliveryAmount: _localDeliveryFee.text,
+          internationalDeliveryAmount: _internationalDeliveryFee.text);
       debugPrint(param.toMap().toString());
       debugPrint(sizeColorEntities.toString());
-      final DataState<String> result = await _addlistingUSecase(param);
+      final DataState<String> result = _post == null
+          ? await _addlistingUSecase(param)
+          : await _editListingUsecase(param);
       if (result is DataSuccess) {
-        AppNavigator.pushNamed(DashboardScreen.routeName);
+        AppNavigator.pushNamedAndRemoveUntil(
+            DashboardScreen.routeName, (_) => false);
+        reset();
+
+        reset();
       } else if (result is DataFailer) {
         AppLog.error(result.exception?.message ?? 'something_wrong'.tr());
       }
@@ -450,7 +538,10 @@ class AddListingFormProvider extends ChangeNotifier {
     getAvailabilityData();
     try {
       final AddListingParam param = AddListingParam(
-        businessID: LocalAuth.currentUser?.businessID ?? 'null',
+        postID: post?.postID ?? '',
+        oldAttachments: post?.fileUrls,
+        businessID: post == null ? LocalAuth.currentUser?.businessID : null,
+        currency: _post == null ? LocalAuth.currentUser?.currency : null,
         animalFriendly: animalFriendly.toString(),
         parking: parking.toString(),
         propertyType: _selectedPropertyType,
@@ -461,16 +552,22 @@ class AddListingFormProvider extends ChangeNotifier {
         tenureType: tenureType,
         propertyCategory: _selectedPropertySubCategory,
         availbility: jsonEncode(
-          _availability.map((AvailabilityModel e) => e.toJson()).toList(),
+          _availability.map((AvailabilityEntity e) => e.toJson()).toList(),
         ),
         meetUpLocation: LocationModel(
-          address: selectedLocation?.description ?? '',
-          id: selectedLocation?.placeId ?? '',
-          title: selectedLocation?.structuredFormatting.mainText ?? '',
-          url: 'www.testurl.com',
-          latitude: 1,
-          longitude: 1,
-        ).toJsonidurlkeys(),
+                address: post == null
+                    ? selectedLocation?.description
+                    : post?.meetUpLocation?.address,
+                id: post == null
+                    ? selectedLocation?.placeId
+                    : post?.meetUpLocation?.id,
+                title: post == null
+                    ? selectedLocation?.structuredFormatting.mainText
+                    : post?.meetUpLocation?.title,
+                url: 'www.text.url',
+                latitude: 1234,
+                longitude: 678)
+            .toJsonidurlkeys(),
         mileage: mileage.text,
         title: title.text,
         description: description.text,
@@ -484,19 +581,19 @@ class AddListingFormProvider extends ChangeNotifier {
         deliveryType: deliveryType,
         listingType: listingType ?? ListingType.vehicle,
         category: _selectedCategory,
-        currency: LocalAuth.currentUser?.currency ?? '',
-        currentLatitude: '12234',
-        currentLongitude: '123456',
-        milageUnit: 'km',
+        currentLatitude: 1234,
+        currentLongitude: 1234,
+        milageUnit: _selectedMileageUnit,
       );
-
       debugPrint(param.toMap().toString());
       debugPrint(sizeColorEntities.toString());
-
-      final DataState<String> result = await _addlistingUSecase(param);
-
+      final DataState<String> result = _post == null
+          ? await _addlistingUSecase(param)
+          : await _editListingUsecase(param);
       if (result is DataSuccess) {
-        AppNavigator.pushNamed(DashboardScreen.routeName);
+        AppNavigator.pushNamedAndRemoveUntil(
+            DashboardScreen.routeName, (_) => false);
+        reset();
       } else if (result is DataFailer) {
         AppLog.error(result.exception?.message ?? 'something_wrong'.tr());
       }
@@ -510,31 +607,41 @@ class AddListingFormProvider extends ChangeNotifier {
   Future<void> _onPetSubmit() async {
     if (!(_petKey.currentState?.validate() ?? false)) return;
     try {
+      debugPrint(post?.meetUpLocation?.id);
       final AddListingParam param = AddListingParam(
+        postID: post?.postID ?? '',
+        oldAttachments: post?.fileUrls,
         accessCode: _accessCode,
-        age: age?.json,
+        age: age,
         breed: _breed.text,
         healthChecked: _healthChecked,
         petsCategory: _petCategory?.json,
         wormAndFleaTreated: _wormAndFleaTreated,
         vaccinationUpToDate: _vaccinationUpToDate,
         readyToLeave: _time?.json,
-        quantity: quantity.text,
-        businessID: LocalAuth.currentUser?.businessID ?? 'null',
+        quantity: _quantity.text,
+        businessID: post == null ? LocalAuth.currentUser?.businessID : null,
+        currency: _post == null ? LocalAuth.currentUser?.currency : null,
         animalFriendly: animalFriendly.toString(),
         parking: parking.toString(),
         propertyType: _selectedPropertyType,
         availbility: jsonEncode(
-          _availability.map((AvailabilityModel e) => e.toJson()).toList(),
+          _availability.map((AvailabilityEntity e) => e.toJson()).toList(),
         ),
         meetUpLocation: LocationModel(
-          address: selectedLocation?.description ?? '',
-          id: selectedLocation?.placeId ?? '',
-          title: selectedLocation?.structuredFormatting.mainText ?? '',
-          url: 'www.testurl.com',
-          latitude: 1,
-          longitude: 1,
-        ).toJsonidurlkeys(),
+                address: _post != null
+                    ? selectedLocation?.description
+                    : post?.meetUpLocation?.address.toString(),
+                id: _post != null
+                    ? post?.meetUpLocation?.id ?? ''
+                    : selectedLocation?.placeId,
+                title: _post == null
+                    ? selectedLocation?.structuredFormatting.mainText
+                    : post?.meetUpLocation?.title,
+                url: 'www.text.url',
+                latitude: 1234,
+                longitude: 678)
+            .toJsonidurlkeys(),
         title: title.text,
         description: description.text,
         attachments: attachments,
@@ -546,16 +653,18 @@ class AddListingFormProvider extends ChangeNotifier {
         deliveryType: deliveryType,
         listingType: listingType ?? ListingType.pets,
         category: _selectedCategory,
-        currency: LocalAuth.currentUser?.currency ?? '',
-        currentLatitude: '12234',
-        currentLongitude: '123456',
-        milageUnit: 'km',
+        currentLatitude: 12234,
+        currentLongitude: 123456,
       );
       debugPrint(param.toMap().toString());
       debugPrint(sizeColorEntities.toString());
-      final DataState<String> result = await _addlistingUSecase(param);
+      final DataState<String> result = _post == null
+          ? await _addlistingUSecase(param)
+          : await _editListingUsecase(param);
       if (result is DataSuccess) {
-        AppNavigator.pushNamed(DashboardScreen.routeName);
+        AppNavigator.pushNamedAndRemoveUntil(
+            DashboardScreen.routeName, (_) => false);
+        reset();
       } else if (result is DataFailer) {
         AppLog.error(result.exception?.message ?? 'something_wrong'.tr());
       }
@@ -568,9 +677,11 @@ class AddListingFormProvider extends ChangeNotifier {
 
   void setPost(PostEntity? value) {
     _post = value;
+    debugPrint(' this is post id ${post?.postID}');
+    debugPrint(
+        ' this is post meet up location id ${post?.meetUpLocation?.latitude}');
   }
 
-  //
   /// Setter
   void setListingType(ListingType? value) {
     _listingType = value;
@@ -684,6 +795,10 @@ class AddListingFormProvider extends ChangeNotifier {
     _selectedLocation = value;
   }
 
+  Future<void> fetchCategories() async {
+    _listings = await ListingAPI().listing();
+  }
+
   // Cloth and Foot
   void setSelectedClothSubCategory(String value) {
     _selectedClothSubCategory = value;
@@ -756,11 +871,6 @@ class AddListingFormProvider extends ChangeNotifier {
   }
 
   // Pet
-  void setAge(AgeTimeType? value) {
-    if (value == null) return;
-    _age = value;
-    notifyListeners();
-  }
 
   void setTime(AgeTimeType? value) {
     if (value == null) return;
@@ -774,6 +884,7 @@ class AddListingFormProvider extends ChangeNotifier {
     // notifyListeners();
   }
 
+// pets
   void setPetCategory(PetCategory? category) {
     _petCategory = category;
     notifyListeners();
@@ -793,6 +904,13 @@ class AddListingFormProvider extends ChangeNotifier {
     _healthChecked = value;
     notifyListeners();
   }
+
+  void setAge(AgeTimeType? value) {
+    if (value == null) return;
+    _age = value;
+    notifyListeners();
+  }
+
 //
 
   void setLoading(bool value) {
@@ -806,10 +924,10 @@ class AddListingFormProvider extends ChangeNotifier {
     required int quantity,
   }) {
     final int sizeIndex =
-        _sizeColorEntities.indexWhere((SizeColorModel e) => e.value == size);
+        _sizeColorEntities.indexWhere((SizeColorEntity e) => e.value == size);
 
     if (sizeIndex != -1) {
-      final SizeColorModel existingSize = _sizeColorEntities[sizeIndex];
+      final SizeColorEntity existingSize = _sizeColorEntities[sizeIndex];
 
       final int colorIndex =
           existingSize.colors.indexWhere((ColorEntity c) => c.code == color);
@@ -851,7 +969,7 @@ class AddListingFormProvider extends ChangeNotifier {
     required String color,
   }) {
     final int sizeIndex =
-        _sizeColorEntities.indexWhere((SizeColorModel e) => e.value == size);
+        _sizeColorEntities.indexWhere((SizeColorEntity e) => e.value == size);
     if (sizeIndex != -1) {
       _sizeColorEntities[sizeIndex]
           .colors
@@ -896,9 +1014,8 @@ class AddListingFormProvider extends ChangeNotifier {
 
   bool get isDiscounted => _isDiscounted;
   List<DiscountEntity> get discounts => _discounts;
-  List<SizeColorModel> get sizeColorEntities => _sizeColorEntities;
+  List<SizeColorEntity> get sizeColorEntities => _sizeColorEntities;
   LocationNameEntity? get selectedLocation => _selectedLocation;
-
   //
   List<PickedAttachment> get attachments => _attachments;
   ConditionType get condition => _condition;
@@ -922,7 +1039,6 @@ class AddListingFormProvider extends ChangeNotifier {
   TextEditingController get doors => _doors;
   TextEditingController get seats => _seats;
   TextEditingController get location => _location;
-
   // Property
   TextEditingController get bedroom => _bedroom;
   TextEditingController get bathroom => _bathroom;
@@ -938,7 +1054,7 @@ class AddListingFormProvider extends ChangeNotifier {
   AgeTimeType? get age => _age;
   PetCategory? get petCategory => _petCategory;
   bool? get healthChecked => _healthChecked;
-  bool? get petsCategory => _petsCategory;
+  // bool? get petsCategory => _petsCategory;
   bool? get wormAndFleaTreated => _wormAndFleaTreated;
   bool? get vaccinationUpToDate => _vaccinationUpToDate;
   AgeTimeType? get time => _time;
@@ -962,9 +1078,12 @@ class AddListingFormProvider extends ChangeNotifier {
   GlobalKey<FormState> get foodAndDrinkKey => _foodAndDrinkKey;
   GlobalKey<FormState> get propertyKey => _propertyKey;
   GlobalKey<FormState> get petKey => _petKey;
+  List<ListingEntity> get listings => _listings;
 
   //
   /// Controller
+  List<ListingEntity> _listings = <ListingEntity>[];
+
   PostEntity? _post;
   ListingType? _listingType;
   SubCategoryEntity? _selectedCategory;
@@ -976,8 +1095,47 @@ class AddListingFormProvider extends ChangeNotifier {
     DiscountEntity(quantity: 5, discount: 0),
   ];
   // Selected Category
+  SubCategoryEntity? findCategoryByAddress(
+    List<ListingEntity> listings,
+    String address,
+  ) {
+    for (ListingEntity listing in listings) {
+      SubCategoryEntity? result =
+          _findCategoryInSubCategories(listing.subCategory, address);
+      if (result != null) {
+        return result;
+      }
+    }
+    AppLog.info('No matching category found for address: $address',
+        name: 'AddListingFormProvider - findCategoryByAddress');
+    return null;
+  }
+
+  SubCategoryEntity? _findCategoryInSubCategories(
+    List<SubCategoryEntity> subCategories,
+    String address,
+  ) {
+    for (SubCategoryEntity subCategory in subCategories) {
+      if (subCategory.address == address) {
+        AppLog.info('Match found: ${subCategory.toString()}',
+            name: 'AddListingFormProvider - findCategoryByAddress');
+        return subCategory; // Return the matching subCategory
+      }
+
+      // If this subcategory has nested subcategories, recurse through them
+      if (subCategory.subCategory.isNotEmpty) {
+        SubCategoryEntity? result =
+            _findCategoryInSubCategories(subCategory.subCategory, address);
+        if (result != null) {
+          return result;
+        }
+      }
+    }
+    return null;
+  }
+
   // Size and Color
-  final List<SizeColorModel> _sizeColorEntities = <SizeColorModel>[];
+  List<SizeColorEntity> _sizeColorEntities = <SizeColorModel>[];
   //
   ConditionType _condition = ConditionType.newC;
   bool _acceptOffer = true;
@@ -986,7 +1144,6 @@ class AddListingFormProvider extends ChangeNotifier {
   // Cloth and Foot
   String _selectedClothSubCategory = ListingType.clothAndFoot.cids.first;
   List<ColorOptionEntity> _colors = <ColorOptionEntity>[];
-
   // Vehicle
   TransmissionType _transmissionType = TransmissionType.auto;
   final TextEditingController _engineSize = TextEditingController();
@@ -1017,7 +1174,7 @@ class AddListingFormProvider extends ChangeNotifier {
   final TextEditingController _bedroom = TextEditingController();
   final TextEditingController _bathroom = TextEditingController();
   String? _tenureType;
-  final String _selectedPropertySubCategory = ListingType.property.cids.first;
+  String _selectedPropertySubCategory = ListingType.property.cids.first;
   String? _selectedEnergyRating;
   String? _selectedPropertyType;
 
@@ -1028,14 +1185,14 @@ class AddListingFormProvider extends ChangeNotifier {
   final TextEditingController _breed = TextEditingController();
   PetCategory? _petCategory;
   bool? _healthChecked;
-  bool? _petsCategory;
+  // bool _petsCategory;
   bool? _wormAndFleaTreated;
   bool? _vaccinationUpToDate;
   AgeTimeType? _age;
   AgeTimeType? _time;
   bool _isLoading = false;
   //
-  final List<PickedAttachment> _attachments = <PickedAttachment>[];
+  List<PickedAttachment> _attachments = <PickedAttachment>[];
   final TextEditingController _title = TextEditingController(
     text: kDebugMode ? 'Test Title' : '',
   );
@@ -1052,12 +1209,9 @@ class AddListingFormProvider extends ChangeNotifier {
   final TextEditingController _minimumOffer = TextEditingController(
     text: kDebugMode ? '50' : '',
   );
-  final TextEditingController _localDeliveryFee = TextEditingController(
-    text: kDebugMode ? '10' : '',
-  );
-  final TextEditingController _internationalDeliveryFee = TextEditingController(
-    text: kDebugMode ? '10' : '',
-  );
+  final TextEditingController _localDeliveryFee = TextEditingController();
+  final TextEditingController _internationalDeliveryFee =
+      TextEditingController();
 
   String _accessCode = '';
 

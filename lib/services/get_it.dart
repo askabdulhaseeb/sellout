@@ -88,6 +88,7 @@ import '../features/personal/listing/listing_form/data/repository/add_listing_re
 import '../features/personal/listing/listing_form/data/sources/remote/add_listing_remote_api.dart';
 import '../features/personal/listing/listing_form/domain/repository/add_listing_repo.dart';
 import '../features/personal/listing/listing_form/domain/usecase/add_listing_usecase.dart';
+import '../features/personal/listing/listing_form/domain/usecase/edit_listing_usecase.dart';
 import '../features/personal/listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../features/personal/post/data/repositories/post_repository_impl.dart';
 import '../features/personal/post/data/sources/remote/post_remote_api.dart';
@@ -434,8 +435,9 @@ void _addlisting() {
 
   locator.registerFactory<AddListingRepo>(() => AddListingRepoImpl(locator()));
   locator
-      .registerFactory<AddListingUsecase>(() => AddListingUsecase(locator()));
+      .registerFactory<AddListingUsecase>(() => AddListingUsecase(locator())); locator
+      .registerFactory<EditListingUsecase>(() => EditListingUsecase(locator()));
   locator.registerFactory<AddListingFormProvider>(
-    () => AddListingFormProvider(locator()),
+    () => AddListingFormProvider(locator(),locator()),
   );
 }

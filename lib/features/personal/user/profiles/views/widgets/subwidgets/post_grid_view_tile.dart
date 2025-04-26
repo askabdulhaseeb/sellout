@@ -95,6 +95,7 @@ class PostGridViewTile extends StatelessWidget {
                                   listen: false);
                           pro.setListingType(post.type);
                           pro.setPost(post);
+                          pro.updateVariables();
                           Navigator.pushNamed(
                               context, AddListingFormScreen.routeName);
                         },

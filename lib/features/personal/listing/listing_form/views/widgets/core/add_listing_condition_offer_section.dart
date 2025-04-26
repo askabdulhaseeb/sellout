@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../core/enums/listing/core/privacy_type.dart';
@@ -60,7 +59,8 @@ class AddListingConditionOfferSection extends StatelessWidget {
               initialValue: formPro.privacy,
               onToggle: formPro.setPrivacy,
             ),
-            if (formPro.privacy == PrivacyType.private)
+            if (formPro.privacy == PrivacyType.private &&
+                formPro.post?.accessCode == null)
               FutureBuilder<String?>(
                 future: GetAccessCodeApi().getCode(oldCode: formPro.accessCode),
                 initialData: formPro.accessCode,
@@ -76,7 +76,7 @@ class AddListingConditionOfferSection extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     margin: const EdgeInsets.symmetric(vertical: 8),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor.withOpacity(0.06),
+                      color: Theme.of(context).primaryColor.withValues(alpha: 0.06),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(

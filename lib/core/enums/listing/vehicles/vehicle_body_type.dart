@@ -40,8 +40,10 @@ enum VehicleBodyType {
 
   static List<VehicleBodyType> get all => VehicleBodyType.values;
 
-  static VehicleBodyType fromJson(String json) {
-    return VehicleBodyType.all
-        .firstWhere((VehicleBodyType e) => e.json == json);
+  static VehicleBodyType fromJson(String? json) {
+    return VehicleBodyType.all.firstWhere(
+      (VehicleBodyType e) => e.json == json,
+      orElse: () => VehicleBodyType.sedan,
+    );
   }
 }

@@ -64,6 +64,9 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       vehiclesCategory: fields[95] as String?,
       meetUpLocation: fields[96] as LocationEntity?,
       availability: (fields[97] as List?)?.cast<AvailabilityEntity>(),
+      bathroom: fields[99] as int?,
+      bedroom: fields[98] as int?,
+      energyRating: fields[100] as String?,
       age: fields[110] as String?,
       breed: fields[111] as String?,
       healthChecked: fields[112] as bool?,
@@ -71,8 +74,11 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       readyToLeave: fields[114] as String?,
       wormAndFleaTreated: fields[115] as bool?,
       vaccinationUpToDate: fields[116] as bool?,
-      propertytype: fields[117] as String?,
-      propertyCategory: fields[118] as String?,
+      propertytype: fields[125] as String?,
+      propertyCategory: fields[126] as String?,
+      garden: fields[127] as bool?,
+      parking: fields[128] as bool?,
+      tenureType: fields[129] as String?,
       isActive: fields[190] as bool,
       createdBy: fields[191] as String,
       updatedBy: fields[194] == null ? '' : fields[194] as String,
@@ -86,7 +92,7 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
   @override
   void write(BinaryWriter writer, PostEntity obj) {
     writer
-      ..writeByte(63)
+      ..writeByte(69)
       ..writeByte(0)
       ..write(obj.listID)
       ..writeByte(1)
@@ -181,6 +187,12 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       ..write(obj.meetUpLocation)
       ..writeByte(97)
       ..write(obj.availability)
+      ..writeByte(98)
+      ..write(obj.bedroom)
+      ..writeByte(99)
+      ..write(obj.bathroom)
+      ..writeByte(100)
+      ..write(obj.energyRating)
       ..writeByte(110)
       ..write(obj.age)
       ..writeByte(111)
@@ -195,10 +207,16 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       ..write(obj.wormAndFleaTreated)
       ..writeByte(116)
       ..write(obj.vaccinationUpToDate)
-      ..writeByte(117)
+      ..writeByte(125)
       ..write(obj.propertytype)
-      ..writeByte(118)
+      ..writeByte(126)
       ..write(obj.propertyCategory)
+      ..writeByte(127)
+      ..write(obj.garden)
+      ..writeByte(128)
+      ..write(obj.parking)
+      ..writeByte(129)
+      ..write(obj.tenureType)
       ..writeByte(190)
       ..write(obj.isActive)
       ..writeByte(191)
