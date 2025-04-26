@@ -37,9 +37,8 @@ class AddListingDiscountSection extends StatelessWidget {
                         child: CustomTextFormField(
                           labelText: ' ${e.quantity} ${'items'.tr()}',
                           controller: TextEditingController(
-                            text: e.discount <= 0 ? '' : e.discount.toString(),
+                            text: e.discount.toString(),
                           ),
-                        
                           onChanged: (String p0) => addPro.setDiscounts(
                             e.copyWith(discount: double.tryParse(p0) ?? 0.0),
                           ),

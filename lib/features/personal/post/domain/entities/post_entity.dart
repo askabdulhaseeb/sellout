@@ -65,6 +65,9 @@ class PostEntity {
     required this.vehiclesCategory,
     required this.meetUpLocation,
     required this.availability,
+    required this.bathroom,
+    required this.bedroom,
+    required this.energyRating,
     //
     required this.age,
     required this.breed,
@@ -73,9 +76,13 @@ class PostEntity {
     required this.readyToLeave,
     required this.wormAndFleaTreated,
     required this.vaccinationUpToDate,
+
     //
     required this.propertytype,
     required this.propertyCategory,
+    required this.garden,
+    required this.parking,
+    required this.tenureType,
     //
     required this.isActive,
     required this.createdBy,
@@ -187,6 +194,12 @@ class PostEntity {
   final LocationEntity? meetUpLocation;
   @HiveField(97)
   final List<AvailabilityEntity>? availability;
+  @HiveField(98)
+  final int? bedroom;
+  @HiveField(99)
+  final int? bathroom;
+  @HiveField(100)
+  final String? energyRating;
   //
   @HiveField(110)
   final String? age;
@@ -202,10 +215,17 @@ class PostEntity {
   final bool? wormAndFleaTreated;
   @HiveField(116)
   final bool? vaccinationUpToDate;
-  @HiveField(117)
+  //
+  @HiveField(125)
   final String? propertytype;
-  @HiveField(118)
+  @HiveField(126)
   final String? propertyCategory;
+  @HiveField(127)
+  final bool? garden;
+  @HiveField(128)
+  final bool? parking;
+  @HiveField(129)
+  final String? tenureType;
 
   //
   @HiveField(190)

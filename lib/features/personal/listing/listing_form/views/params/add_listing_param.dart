@@ -4,9 +4,12 @@ import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
+import '../../../../../../core/enums/listing/pet/age_time_type.dart';
+import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../post/data/models/size_color/size_color_model.dart';
+import '../../../../post/domain/entities/discount_entity.dart';
 import '../../domain/entities/sub_category_entity.dart';
 
 class AddListingParam {
@@ -32,12 +35,12 @@ class AddListingParam {
     this.quantity,
     this.discount,
     this.accessCode,
+    this.postID,
+    this.oldAttachments,
     // clothfoot
     this.brand,
     this.sizeColor,
-    this.discount2Items,
-    this.discount3Items,
-    this.discount5Items,
+    this.discounts,
     // vehicle
     this.make,
     this.model,
@@ -90,16 +93,17 @@ class AddListingParam {
   final String? internationalDeliveryAmount;
   final ListingType listingType;
   final SubCategoryEntity? category;
-  final String currency;
-  final String? currentLatitude;
-  final String? currentLongitude;
+  final String? currency;
+  final int? currentLatitude;
+  final int? currentLongitude;
   final String? brand;
   final String? type;
   final List<SizeColorModel>? sizeColor;
-  final String? discount2Items;
-  final String? discount3Items;
-  final String? discount5Items;
+  final List<DiscountEntity>? discounts;
+
   final String? accessCode;
+  final String? postID;
+  final List<AttachmentEntity>? oldAttachments;
 //vehicle
   final String? make;
   final String? model;
@@ -127,7 +131,7 @@ class AddListingParam {
   final String? propertyType;
   final String? animalFriendly;
   //pets
-  final String? age;
+  final AgeTimeType? age;
   final String? readyToLeave;
   final String? breed;
   final bool? healthChecked;
@@ -161,36 +165,44 @@ class AddListingParam {
       'description': description,
       'price': price,
       'post_privacy': privacyType.json,
-      if (privacyType.json == 'private') 'access_code': accessCode ?? ''
+      if (privacyType == PrivacyType.private) 'access_code': accessCode ?? ''
     };
   }
 
   Map<String, String> _discountMAP() {
     return <String, String>{
       'discount': discount.toString(),
-      if (discount == true) 'disc_2_items': discount2Items ?? '',
-      if (discount == true) 'disc_3_items': discount3Items ?? '',
-      if (discount == true) 'disc_5_items': discount5Items ?? '',
+      if (discount == true)
+        'disc_2_items': discounts!
+            .firstWhere((DiscountEntity e) => e.quantity == 2)
+            .discount
+            .toString(),
+      if (discount == true)
+        'disc_3_items': discounts!
+            .firstWhere((DiscountEntity e) => e.quantity == 3)
+            .discount
+            .toString(),
+      if (discount == true)
+        'disc_5_items': discounts!
+            .firstWhere((DiscountEntity e) => e.quantity == 5)
+            .discount
+            .toString(),
     };
   }
 
   Map<String, String> _offerMAP() {
     return <String, String>{
       'accept_offers': acceptOfferJSON,
-      if (acceptOfferJSON == 'true') 'min_offer_amount': minOfferAmount,
+      if (acceptOffer == true) 'min_offer_amount': minOfferAmount,
     };
   }
 
   Map<String, String> _deliveryMAP() {
     return <String, String>{
       'delivery_type': deliveryType.json,
-      if (
-          //listingType != ListingType.clothAndFoot &&
-          listingType != ListingType.pets)
+      if (deliveryType == DeliveryType.paid)
         'local_delivery': localDeliveryAmount ?? '0',
-      if (
-          //listingType != ListingType.clothAndFoot &&
-          listingType != ListingType.pets)
+      if (deliveryType == DeliveryType.paid)
         'international_delivery': internationalDeliveryAmount ?? '0',
     };
   }
@@ -199,9 +211,9 @@ class AddListingParam {
     return <String, String>{
       'list_id': listingType.json,
       'address': category?.address ?? '',
-      'currency': currency,
-      'current_latitude': currentLatitude ?? '',
-      'current_longitude': currentLongitude ?? '',
+      if (currency != null) 'currency': currency ?? '',
+      'current_latitude': currentLatitude.toString(),
+      'current_longitude': currentLongitude.toString(),
     };
   }
 
@@ -214,8 +226,9 @@ class AddListingParam {
 
   _item() {
     final Map<String, String> mapp = <String, String>{
-      'quantity': quantity ?? '',
+      'quantity': quantity ?? '2',
       'item_condition': condition.json,
+//      if (postID != null) 'old_file': oldAttachments.toString(),
     };
     mapp.addAll(_titleMAP());
     mapp.addAll(_discountMAP());
@@ -232,6 +245,7 @@ class AddListingParam {
       'brand': brand ?? '',
       'size_colors': sizeColor.toString(), //
       'type': type ?? '', //
+//      if (postID != null) 'old_file': oldAttachments.toString(),
     };
     mapp.addAll(_titleMAP());
     mapp.addAll(_discountMAP());
@@ -245,6 +259,7 @@ class AddListingParam {
     final Map<String, String> mapp = <String, String>{
       'quantity': quantity ?? '',
       'delivery_type': deliveryType.json,
+//      if (postID != null) 'old_file': oldAttachments.toString(),
     };
     mapp.addAll(_titleMAP());
     mapp.addAll(_discountMAP());
@@ -272,6 +287,7 @@ class AddListingParam {
       'created_by': LocalAuth.currentUser?.userID ?? '',
       'mileage_unit': milageUnit ?? '', //
       'vehicles_category': vehicleCategory ?? '', //
+//      if (postID != null) 'old_file': oldAttachments.toString(),
     };
     mapp.addAll(_titleMAP());
     mapp.addAll(_offerMAP());
@@ -290,6 +306,8 @@ class AddListingParam {
       'parking': parking ?? '',
       'tenure_type': tenureType ?? '',
       'property_type': propertyType ?? '',
+//      if (postID != null) 'old_file': oldAttachments.toString(),
+
       // 'animal_friendly': animalFriendly ?? '',
       // 'created_by': LocalAuth.currentUser?.userID ?? '',
     };
@@ -302,7 +320,7 @@ class AddListingParam {
   _pet() {
     final Map<String, String> mapp = <String, String>{
       'quantity': quantity.toString(),
-      'age': age ?? '',
+      'age': age?.json ?? '',
       'post_privacy': privacyType.json,
       'ready_to_leave': readyToLeave ?? '',
       'breed': breed ?? '',
@@ -310,11 +328,13 @@ class AddListingParam {
       'vaccination_up_to_date': vaccinationUpToDate.toString(),
       'worm_and_flea_treated': wormAndFleaTreated.toString(),
       'pets_category': petsCategory ?? '',
+//      if (postID != null) 'old_file': oldAttachments.toString(),
     };
     mapp.addAll(_titleMAP());
     mapp.addAll(_offerMAP());
     mapp.addAll(_listLocMAP());
     mapp.addAll(_meetupMAP());
+
     return mapp;
   }
 }

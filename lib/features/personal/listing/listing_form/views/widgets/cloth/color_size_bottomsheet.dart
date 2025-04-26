@@ -1,11 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_dropdown.dart';
-import '../../../../../post/data/models/size_color/size_color_model.dart';
 import '../../../../../post/domain/entities/size_color/color_entity.dart';
+import '../../../../../post/domain/entities/size_color/size_color_entity.dart';
 import '../../../domain/entities/color_options_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
 
@@ -79,7 +78,7 @@ class SizeColorBottomSheetState extends State<SizeColorBottomSheet> {
                   child: ListView.builder(
                     itemCount: provider.sizeColorEntities.length,
                     itemBuilder: (BuildContext context, int index) {
-                      final SizeColorModel sizeColorEntry =
+                      final SizeColorEntity sizeColorEntry =
                           provider.sizeColorEntities[index];
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

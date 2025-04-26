@@ -1,15 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
 import '../../../../../../../core/enums/listing/core/listing_type.dart';
-import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../core/widgets/loader.dart';
-
-import '../../../data/sources/remote/listing_api.dart';
 import '../../../domain/entities/listing_entity.dart';
 import '../../../domain/entities/sub_category_entity.dart';
+import '../../providers/add_listing_form_provider.dart';
 import 'category_selection_bottom_sheet.dart';
 
 class SubCategorySelectableWidget extends StatefulWidget {
@@ -31,47 +28,37 @@ class SubCategorySelectableWidget extends StatefulWidget {
 
 class _SubCategorySelectableWidgetState
     extends State<SubCategorySelectableWidget> {
-  late Future<List<ListingEntity>> _listingsFuture;
-
   @override
   void initState() {
     super.initState();
-    // Initialize future ONCE to prevent re-triggering
-    _listingsFuture = ListingAPI().listing();
+    // Fetch categories when the widget is initialized
+    final AddListingFormProvider provider =
+        Provider.of<AddListingFormProvider>(context, listen: false);
+    if (provider.listings.isEmpty) {
+      provider.fetchCategories();
+    }
   }
-
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<ListingEntity>>(
-      future: _listingsFuture,
-      builder: (
-        BuildContext context,
-        AsyncSnapshot<List<ListingEntity>> snapshot,
-      ) {
-        // Early return for loading/error states
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Loader();
+    return Consumer<AddListingFormProvider>(
+      builder: (BuildContext context, AddListingFormProvider provider,
+          Widget? child) {
+        if (provider.isLoading) {
+          return const Loader(); // Show loader while data is being fetched
         }
-        if (snapshot.hasError || !snapshot.hasData) {
-          AppLog.error(
-            'SubCategorySelectableWidget: ${snapshot.error}',
-            name: 'SubCategorySelectableWidget.build',
-            error: snapshot.error,
-          );
+        if (provider.listings.isEmpty) {
           return Center(child: Text('something_wrong'.tr()));
         }
-        // Cache filtered data to avoid recalculating
-        final List<ListingEntity> selectedList = snapshot.data!
-            .where((ListingEntity element) =>
-                element.type == widget.listType || kDebugMode)
+        final List<ListingEntity> selectedList = provider.listings
+            .where((ListingEntity element) => element.type == widget.listType)
             .toList();
-
-        return _buildCategorySelector(selectedList);
+        return _buildCategorySelector(selectedList, context);
       },
     );
   }
 
-  Widget _buildCategorySelector(List<ListingEntity> selectedList) {
+  Widget _buildCategorySelector(
+      List<ListingEntity> selectedList, BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -81,7 +68,7 @@ class _SubCategorySelectableWidgetState
         ).tr(),
         const SizedBox(height: 4),
         InkWell(
-          onTap: () => _handleCategorySelection(selectedList),
+          onTap: () => _handleCategorySelection(selectedList, context),
           borderRadius: BorderRadius.circular(8),
           child: Container(
             width: double.infinity,
@@ -113,7 +100,7 @@ class _SubCategorySelectableWidgetState
   }
 
   Future<void> _handleCategorySelection(
-      List<ListingEntity> selectedList) async {
+      List<ListingEntity> selectedList, BuildContext context) async {
     if (selectedList.isEmpty) {
       AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
       return;

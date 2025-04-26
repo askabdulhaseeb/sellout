@@ -15,35 +15,27 @@ class AddListingSizeColorWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final AddListingFormProvider pro =
         Provider.of<AddListingFormProvider>(context);
-    return Column(
-      children: <Widget>[
-        const SizedBox(
-          height: 10,
-        ),
-        InkWell(
-          onTap: () {
-            pro.fetchColors();
-            showBottomSheet(
-                context: context,
-                builder: (BuildContext context) =>
-                    const SizeColorBottomSheet());
+    return InkWell(
+      onTap: () {
+        pro.fetchColors();
+        showBottomSheet(
+            context: context,
+            builder: (BuildContext context) => const SizeColorBottomSheet());
+      },
+      child: AbsorbPointer(
+        child: CustomDropdown<int>(
+          hint: 'tap_to_select'.tr(),
+          title: 'select_size_color'.tr(),
+          items: const <DropdownMenuItem<int>>[
+            DropdownMenuItem<int>(value: 2, child: Text('2')),
+          ],
+          selectedItem: null,
+          onChanged: (int? p0) {},
+          validator: (bool? value) {
+            return null;
           },
-          child: AbsorbPointer(
-            child: CustomDropdown<int>(
-              hint: 'tap_to_select'.tr(),
-              title: 'select_size_color'.tr(),
-              items: const <DropdownMenuItem<int>>[
-                DropdownMenuItem<int>(value: 2, child: Text('2')),
-              ],
-              selectedItem: null,
-              onChanged: (int? p0) {},
-              validator: (bool? value) {
-                return null;
-              },
-            ),
-          ),
         ),
-      ],
+      ),
     );
   }
 }

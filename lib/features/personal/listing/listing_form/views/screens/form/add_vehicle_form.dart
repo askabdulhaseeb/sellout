@@ -6,6 +6,7 @@ import '../../widgets/category/subcateogry_selectable_widget.dart';
 import '../../widgets/core/add_listing_basic_info_section.dart';
 import '../../widgets/core/add_listing_condition_offer_section.dart';
 import '../../widgets/core/add_listing_post_button_widget.dart';
+import '../../widgets/core/add_listing_update_button_widget.dart';
 import '../../widgets/vehicle/add_listing_vehicle_basic_info_section.dart';
 import '../../widgets/vehicle/add_listing_vehicle_ternsmission_engine_mileage_section.dart';
 
@@ -31,7 +32,8 @@ class AddVehicleForm extends StatelessWidget {
             const AddListingVehicleTernsmissionEngineMileageSection(),
             const AddListingConditionOfferSection(),
             const EditableAvailabilityWidget(),
-            const AddListingPostButtonWidget(),
+       if (formPro.post == null) const AddListingPostButtonWidget(),
+              if (formPro.post != null) const AddListingUpdateButtons()
           ],
         ),
       );
