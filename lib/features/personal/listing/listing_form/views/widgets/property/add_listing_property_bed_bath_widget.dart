@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../location/data/models/location_model.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../location_by_name_field.dart';
 import 'energyrating_dropdown.dart';
@@ -45,8 +46,12 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
             ),
             const EnergyRatingDropdown(),
             const PropertyTypeDropdown(),
-            const LocationInputField(),
-          ],
+            LocationInputField(
+              onLocationSelected: (LocationModel location) {
+                formPro.setmeetupLocation(location);
+              },
+              initialLocation: formPro.selectedmeetupLocation ,
+            ),          ],
         );
       },
     );
