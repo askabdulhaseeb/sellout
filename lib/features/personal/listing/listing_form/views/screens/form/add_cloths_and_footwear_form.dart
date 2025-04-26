@@ -1,9 +1,8 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../../widgets/category/subcateogry_selectable_widget.dart';
+import '../../widgets/cloth/add_listing_brand_field.dart';
 import '../../widgets/cloth/add_listing_cloth_subcat_selection_section.dart';
 import '../../widgets/cloth/size_color_widget.dart';
 import '../../widgets/core/add_listing_basic_info_section.dart';
@@ -46,19 +45,5 @@ class AddClothsAndFootwearForm extends StatelessWidget {
         );
       },
     );
-  }
-}
-
-class AddListingBrandField extends StatelessWidget {
-  const AddListingBrandField({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomTextFormField(
-        hint: 'type_here'.tr(),
-        labelText: 'brand'.tr(),
-        controller: TextEditingController());
   }
 }

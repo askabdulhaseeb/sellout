@@ -1,11 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../../core/enums/listing/pet/age_time_type.dart';
-import '../../../../../../../core/enums/listing/pet/pet_categories.dart';
-import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_dropdown.dart';
+import '../../../data/models/sub_category_model.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../location_by_name_field.dart';
 
@@ -55,25 +53,31 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                 ),
               ],
             ),
-            CustomDropdown<PetCategory>(
-              selectedItem: formPro.petCategory,
-              items: PetCategory.values.map((PetCategory value) {
-                return DropdownMenuItem<PetCategory>(
-                  value: value,
-                  child: Text(value.title),
-                );
-              }).toList(),
-              onChanged: formPro.setPetCategory,
-              validator: (_) => formPro.petCategory == null
+            CustomDropdown<SubCategoryEntity>(
+              selectedItem: formPro.selectedBreed,
+              items: formPro.breed?.subCategory.map((SubCategoryEntity value) {
+                    return DropdownMenuItem<SubCategoryEntity>(
+                      value: value,
+                      child: Text(value.title),
+                    );
+                  }).toList() ??
+                  [], // ✅ Ensures non-null List
+              onChanged: (SubCategoryEntity? newValue) {
+                if (newValue != null) {
+                  formPro.setPetBreed(newValue);
+                }
+              },
+              validator: (_) => formPro.selectedBreed == null
                   ? 'Pet category is required'
                   : null,
               title: 'pet_category'.tr(),
             ),
+
             const LocationInputField(),
-            CustomTextFormField(
-              controller: formPro.breed,
-              labelText: 'breed',
-            ),
+            // CustomTextFormField(
+            //   controller: formPro.selectedBreed,
+            //   labelText: 'breed',
+            // ),
             CustomDropdown<bool>(
               selectedItem: formPro.vaccinationUpToDate,
               items: const <DropdownMenuItem<bool>>[
