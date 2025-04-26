@@ -20,7 +20,6 @@ import '../../../../../attachment/domain/entities/picked_attachment_option.dart'
 import '../../../../../attachment/views/screens/pickable_attachment_screen.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../dashboard/views/screens/dashboard_screen.dart';
-import '../../../../explore/domain/entities/location_name_entity.dart';
 import '../../../../location/data/models/location_model.dart';
 import '../../../../post/data/models/meetup/availability_model.dart';
 import '../../../../post/data/models/size_color/size_color_model.dart';
@@ -163,7 +162,8 @@ class AddListingFormProvider extends ChangeNotifier {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  LocationNameEntity? _selectedLocation;
+  LocationModel? _selectedMeetupLocation;
+  LocationModel? _selectedCollectionLocation;
   Future<void> submit(BuildContext context) async {
     if (_attachments.isEmpty && (_post?.fileUrls.isEmpty ?? true)) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -414,20 +414,7 @@ class AddListingFormProvider extends ChangeNotifier {
             _availability.map((AvailabilityEntity e) => e.toJson()).toList(),
           ),
           engineSize: engineSize.text,
-          meetUpLocation: LocationModel(
-                  address: post == null
-                      ? selectedLocation?.description
-                      : post?.meetUpLocation?.address,
-                  id: post == null
-                      ? selectedLocation?.placeId
-                      : post?.meetUpLocation?.id,
-                  title: post == null
-                      ? selectedLocation?.structuredFormatting.mainText
-                      : post?.meetUpLocation?.title,
-                  url: 'www.text.url',
-                  latitude: 1234,
-                  longitude: 678)
-              .toJson(),
+          meetUpLocation: _selectedMeetupLocation?.toJson(),
           mileage: mileage.text,
           businessID: post == null ? LocalAuth.currentUser?.businessID : null,
           currency: _post == null ? LocalAuth.currentUser?.currency : null,
@@ -548,20 +535,7 @@ class AddListingFormProvider extends ChangeNotifier {
         availbility: jsonEncode(
           _availability.map((AvailabilityEntity e) => e.toJson()).toList(),
         ),
-        meetUpLocation: LocationModel(
-                address: post == null
-                    ? selectedLocation?.description
-                    : post?.meetUpLocation?.address,
-                id: post == null
-                    ? selectedLocation?.placeId
-                    : post?.meetUpLocation?.id,
-                title: post == null
-                    ? selectedLocation?.structuredFormatting.mainText
-                    : post?.meetUpLocation?.title,
-                url: 'www.text.url',
-                latitude: 1234,
-                longitude: 678)
-            .toJsonidurlkeys(),
+        meetUpLocation: _selectedMeetupLocation?.toJsonidurlkeys(),
         mileage: mileage.text,
         title: title.text,
         description: description.text,
@@ -622,20 +596,7 @@ class AddListingFormProvider extends ChangeNotifier {
         availbility: jsonEncode(
           _availability.map((AvailabilityEntity e) => e.toJson()).toList(),
         ),
-        meetUpLocation: LocationModel(
-                address: _post != null
-                    ? selectedLocation?.description
-                    : post?.meetUpLocation?.address.toString(),
-                id: _post != null
-                    ? post?.meetUpLocation?.id ?? ''
-                    : selectedLocation?.placeId,
-                title: _post == null
-                    ? selectedLocation?.structuredFormatting.mainText
-                    : post?.meetUpLocation?.title,
-                url: 'www.text.url',
-                latitude: 1234,
-                longitude: 678)
-            .toJsonidurlkeys(),
+        meetUpLocation: _selectedMeetupLocation?.toJsonidurlkeys(),
         title: title.text,
         description: description.text,
         attachments: attachments,
@@ -783,8 +744,12 @@ class AddListingFormProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setSelectedLocation(LocationNameEntity value) {
-    _selectedLocation = value;
+  void setSelectedLocation(LocationModel value) {
+    _selectedCollectionLocation = value;
+  }
+
+  void setmeetupLocation(LocationModel value) {
+    _selectedMeetupLocation = value;
   }
 
   Future<void> fetchCategories() async {
@@ -1010,7 +975,9 @@ class AddListingFormProvider extends ChangeNotifier {
   bool get isDiscounted => _isDiscounted;
   List<DiscountEntity> get discounts => _discounts;
   List<SizeColorModel> get sizeColorEntities => _sizeColorEntities;
-  LocationNameEntity? get selectedLocation => _selectedLocation;
+  LocationModel? get selectedmeetupLocation => _selectedMeetupLocation;
+  LocationModel? get selectedCollectionLocation => _selectedCollectionLocation;
+
   //
   List<PickedAttachment> get attachments => _attachments;
   ConditionType get condition => _condition;

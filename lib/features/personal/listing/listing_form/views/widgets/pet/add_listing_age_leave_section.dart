@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/enums/listing/pet/age_time_type.dart';
 import '../../../../../../../core/widgets/custom_dropdown.dart';
+import '../../../../../location/data/models/location_model.dart';
+import '../../../../../location/domain/entities/location_entity.dart';
 import '../../../data/models/sub_category_model.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../location_by_name_field.dart';
@@ -73,7 +75,12 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
               title: 'pet_category'.tr(),
             ),
 
-            const LocationInputField(),
+            LocationInputField(
+              onLocationSelected: (LocationModel location) {
+                formPro.setmeetupLocation(location);
+              },
+              initialLocation: formPro.selectedmeetupLocation,
+            ),
             // CustomTextFormField(
             //   controller: formPro.selectedBreed,
             //   labelText: 'breed',
