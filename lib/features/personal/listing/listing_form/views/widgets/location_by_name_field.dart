@@ -11,6 +11,7 @@ import '../../../../../../services/get_it.dart';
 import '../../../../explore/domain/entities/location_name_entity.dart';
 import '../../../../explore/domain/usecase/location_name_usecase.dart';
 import '../../../../location/data/models/location_model.dart';
+import '../../../../location/domain/entities/location_entity.dart';
 
 class LocationInputField extends StatefulWidget {
   const LocationInputField({
@@ -21,7 +22,7 @@ class LocationInputField extends StatefulWidget {
   });
   final ValueChanged<LocationModel> onLocationSelected;
   final TextEditingController? controller;
-  final LocationModel? initialLocation;
+  final LocationEntity? initialLocation;
 
   @override
   State<LocationInputField> createState() => _LocationInputFieldState();

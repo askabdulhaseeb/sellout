@@ -59,8 +59,7 @@ class AddListingConditionOfferSection extends StatelessWidget {
               initialValue: formPro.privacy,
               onToggle: formPro.setPrivacy,
             ),
-            if (formPro.privacy == PrivacyType.private &&
-                formPro.post?.accessCode == null)
+            if (formPro.privacy == PrivacyType.private)
               FutureBuilder<String?>(
                 future: GetAccessCodeApi().getCode(oldCode: formPro.accessCode),
                 initialData: formPro.accessCode,
@@ -76,7 +75,9 @@ class AddListingConditionOfferSection extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     margin: const EdgeInsets.symmetric(vertical: 8),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor.withValues(alpha: 0.06),
+                      color: Theme.of(context)
+                          .primaryColor
+                          .withValues(alpha: 0.06),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(

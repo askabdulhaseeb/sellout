@@ -31,27 +31,27 @@ class _SubCategorySelectableWidgetState
   @override
   void initState() {
     super.initState();
-    // Fetch categories when the widget is initialized
     final AddListingFormProvider provider =
         Provider.of<AddListingFormProvider>(context, listen: false);
     if (provider.listings.isEmpty) {
       provider.fetchCategories();
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider provider,
           Widget? child) {
         if (provider.isLoading) {
-          return const Loader(); // Show loader while data is being fetched
+          return const Loader();
         }
-        if (provider.listings.isEmpty) {
-          return Center(child: Text('something_wrong'.tr()));
-        }
-        final List<ListingEntity> selectedList = provider.listings
-            .where((ListingEntity element) => element.type == widget.listType)
-            .toList();
+        final List<ListingEntity> selectedList = widget.listType != null
+            ? provider.listings
+                .where(
+                    (ListingEntity element) => element.type == widget.listType)
+                .toList()
+            : <ListingEntity>[];
         return _buildCategorySelector(selectedList, context);
       },
     );
@@ -102,14 +102,22 @@ class _SubCategorySelectableWidgetState
   Future<void> _handleCategorySelection(
       List<ListingEntity> selectedList, BuildContext context) async {
     if (selectedList.isEmpty) {
-      AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
+      AppSnackBar.showSnackBar(context, 'no_categories_available'.tr());
+      return;
+    }
+
+    final ListingEntity selectedCategory = selectedList.first;
+    final List<SubCategoryEntity>? subCategories = selectedCategory.subCategory;
+
+    if (subCategories == null || subCategories.isEmpty) {
+      AppSnackBar.showSnackBar(context, 'no_subcategories_available'.tr());
       return;
     }
 
     final SubCategoryEntity? selectCat = await showModalBottomSheet(
       context: context,
       builder: (BuildContext context) => CategorySelectionBottomSheet(
-        subCategories: selectedList.first.subCategory,
+        subCategories: subCategories,
       ),
     );
 

@@ -4,9 +4,12 @@ import '../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../../core/enums/listing/pet/age_time_type.dart';
+import '../../../../../attachment/data/attchment_model.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../location/data/models/location_model.dart';
+import '../../../../location/domain/entities/location_entity.dart';
 import '../../../../post/data/models/size_color/size_color_model.dart';
 import '../../../../post/domain/entities/discount_entity.dart';
 import '../../domain/entities/sub_category_entity.dart';
@@ -36,6 +39,7 @@ class AddListingParam {
     this.accessCode,
     this.postID,
     this.oldAttachments,
+    this.collectionLocation,
     // clothfoot
     this.brand,
     this.sizeColor,
@@ -102,6 +106,8 @@ class AddListingParam {
   final String? accessCode;
   final String? postID;
   final List<AttachmentEntity>? oldAttachments;
+  final String? availbility;
+
 //vehicle
   final String? make;
   final String? model;
@@ -109,10 +115,10 @@ class AddListingParam {
   final String? bodyType;
   final String? doors;
   final String? seats;
-  final Map<String, dynamic>? meetUpLocation;
+  final LocationEntity? meetUpLocation;
+  final LocationEntity? collectionLocation;
   final String? year;
   final String? color;
-  final String? availbility;
   final String? mileage;
   final String? engineSize;
   final String? vehicleCategory;
@@ -163,7 +169,14 @@ class AddListingParam {
       'description': description,
       'price': price,
       'post_privacy': privacyType.json,
-      if (privacyType == PrivacyType.private) 'access_code': accessCode ?? ''
+      if (privacyType == PrivacyType.private) 'access_code': accessCode ?? '',
+      if (postID != null)
+        'old_files': oldAttachments
+                ?.map((AttachmentEntity attachment) =>
+                    jsonEncode(AttachmentModel.fromEntity(attachment).toJson()))
+                .toList()
+                .toString() ??
+            ''
     };
   }
 
@@ -202,13 +215,20 @@ class AddListingParam {
         'local_delivery': localDeliveryAmount ?? '0',
       if (deliveryType == DeliveryType.paid)
         'international_delivery': internationalDeliveryAmount ?? '0',
+      if (deliveryType == DeliveryType.collocation)
+        'collection_location': collectionLocation != null
+            ? LocationModel.fromEntity(collectionLocation!)
+                .toJsonidurlkeys()
+                .toString()
+            : '',
     };
   }
 
   Map<String, String> _listLocMAP() {
     return <String, String>{
       'list_id': listingType.json,
-      'address': category?.address ?? '',
+      'address': 'property/test',
+      //category?.address ?? '',
       if (currency != null) 'currency': currency ?? '',
       'current_latitude': currentLatitude.toString(),
       'current_longitude': currentLongitude.toString(),
@@ -217,7 +237,9 @@ class AddListingParam {
 
   Map<String, String> _meetupMAP() {
     return <String, String>{
-      'meet_up_location': jsonEncode(meetUpLocation),
+      'meet_up_location': jsonEncode(meetUpLocation != null
+          ? LocationModel.fromEntity(meetUpLocation!).toJsonidurlkeys()
+          : ''),
       'availability': availbility ?? '',
     };
   }
@@ -226,7 +248,6 @@ class AddListingParam {
     final Map<String, String> mapp = <String, String>{
       'quantity': quantity ?? '2',
       'item_condition': condition.json,
-//      if (postID != null) 'old_file': oldAttachments.toString(),
     };
     mapp.addAll(_titleMAP());
     mapp.addAll(_discountMAP());
@@ -244,7 +265,6 @@ class AddListingParam {
       'size_colors': jsonEncode(
           sizeColor?.map((SizeColorModel e) => e.toMap()).toList()), //
       'type': type ?? '', //
-//      if (postID != null) 'old_file': oldAttachments.toString(),
     };
     mapp.addAll(_titleMAP());
     mapp.addAll(_discountMAP());
@@ -258,7 +278,6 @@ class AddListingParam {
     final Map<String, String> mapp = <String, String>{
       'quantity': quantity ?? '',
       'delivery_type': deliveryType.json,
-//      if (postID != null) 'old_file': oldAttachments.toString(),
     };
     mapp.addAll(_titleMAP());
     mapp.addAll(_discountMAP());
@@ -286,7 +305,6 @@ class AddListingParam {
       'created_by': LocalAuth.currentUser?.userID ?? '',
       'mileage_unit': milageUnit ?? '', //
       'vehicles_category': vehicleCategory ?? '', //
-//      if (postID != null) 'old_file': oldAttachments.toString(),
     };
     mapp.addAll(_titleMAP());
     mapp.addAll(_offerMAP());
@@ -305,10 +323,6 @@ class AddListingParam {
       'parking': parking ?? '',
       'tenure_type': tenureType ?? '',
       'property_type': propertyType ?? '',
-//      if (postID != null) 'old_file': oldAttachments.toString(),
-
-      // 'animal_friendly': animalFriendly ?? '',
-      // 'created_by': LocalAuth.currentUser?.userID ?? '',
     };
     mapp.addAll(_titleMAP());
     mapp.addAll(_listLocMAP());

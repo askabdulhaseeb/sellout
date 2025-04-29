@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../../../../../../../core/enums/listing/pet/age_time_type.dart';
 import '../../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../location/data/models/location_model.dart';
-import '../../../../../location/domain/entities/location_entity.dart';
 import '../../../data/models/sub_category_model.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../location_by_name_field.dart';
@@ -77,7 +76,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
 
             LocationInputField(
               onLocationSelected: (LocationModel location) {
-                formPro.setmeetupLocation(location);
+                formPro.setMeetupLocation(location);
               },
               initialLocation: formPro.selectedmeetupLocation,
             ),

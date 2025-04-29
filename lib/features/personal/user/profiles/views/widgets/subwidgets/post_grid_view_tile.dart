@@ -16,7 +16,7 @@ class PostGridViewTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isMe = (post.createdBy == (LocalAuth.uid ?? '') ||
-        post.businessID == LocalAuth.currentUser?.businessID);
+        post.createdBy == LocalAuth.currentUser?.businessID);
 
     return GestureDetector(
       onTap: () {
@@ -93,6 +93,7 @@ class PostGridViewTile extends StatelessWidget {
                           final AddListingFormProvider pro =
                               Provider.of<AddListingFormProvider>(context,
                                   listen: false);
+                          pro.reset();
                           pro.setListingType(post.type);
                           pro.setPost(post);
                           pro.updateVariables();

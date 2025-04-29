@@ -6,6 +6,7 @@ import '../../../../../../../core/enums/listing/vehicles/vehicle_category_type.d
 import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../../../core/widgets/custom_toggle_switch.dart';
+import '../../../../../location/data/models/location_model.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../location_by_name_field.dart';
 
@@ -84,7 +85,12 @@ class AddListingVehicleTernsmissionEngineMileageSection
               hint: 'Ex. 10000',
               keyboardType: TextInputType.number,
             ),
-            const LocationInputField(),
+            LocationInputField(
+              onLocationSelected: (LocationModel location) {
+                formPro.setMeetupLocation(location);
+              },
+              initialLocation: formPro.selectedmeetupLocation,
+            ),
             CustomToggleSwitch<TransmissionType>(
               labels: TransmissionType.list,
               labelStrs: TransmissionType.list
