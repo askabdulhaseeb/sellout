@@ -15,12 +15,14 @@ import '../../../../../../core/enums/routine/day_type.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../routes/app_linking.dart';
+import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../../attachment/domain/entities/picked_attachment_option.dart';
 import '../../../../../attachment/views/screens/pickable_attachment_screen.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../dashboard/views/screens/dashboard_screen.dart';
 import '../../../../location/data/models/location_model.dart';
+import '../../../../location/domain/entities/location_entity.dart';
 import '../../../../post/data/models/meetup/availability_model.dart';
 import '../../../../post/data/models/size_color/size_color_model.dart';
 import '../../../../post/domain/entities/discount_entity.dart';
@@ -44,7 +46,7 @@ class AddListingFormProvider extends ChangeNotifier {
   );
   final AddListingUsecase _addlistingUSecase;
   final EditListingUsecase _editListingUsecase;
-/////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   List<AvailabilityEntity> _availability = DayType.values.map((DayType day) {
     return AvailabilityModel(
@@ -152,7 +154,6 @@ class AddListingFormProvider extends ChangeNotifier {
 
 // Prepare the availability data for the API
   List<Map<String, dynamic>>? availabilityData;
-
   // This method will generate the availability data from your _availability list
   List<Map<String, dynamic>> getAvailabilityData() {
     return _availability
@@ -162,12 +163,12 @@ class AddListingFormProvider extends ChangeNotifier {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  LocationModel? _selectedMeetupLocation;
-  LocationModel? _selectedCollectionLocation;
+  LocationEntity? _selectedMeetupLocation;
+  LocationEntity? _selectedCollectionLocation;
   Future<void> submit(BuildContext context) async {
     if (_attachments.isEmpty && (_post?.fileUrls.isEmpty ?? true)) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Please add at least one Photo or Video'),
+        content: Text('please_add_at_least_one_photo_or_video'),
       ));
       return;
     }
@@ -199,7 +200,6 @@ class AddListingFormProvider extends ChangeNotifier {
 
   Future<void> reset() async {
     _title.clear();
-    _attachments = <PickedAttachment>[];
     _attachments = <PickedAttachment>[];
     _selectedCategory = null;
     _post = null;
@@ -239,10 +239,13 @@ class AddListingFormProvider extends ChangeNotifier {
 
   Future<void> updateVariables() async {
     _selectedCategory = findCategoryByAddress(_listings, post?.address ?? '');
+    _accessCode = post?.accessCode ?? '';
     _age = AgeTimeType.fromJson(post?.age);
     _animalFriendly = _animalFriendly; // Not part of API
     _availability = post?.availability ??
         <AvailabilityEntity>[]; // Handle based on your structure
+    _selectedMeetupLocation = post?.meetUpLocation;
+    _selectedCollectionLocation = post?.collectionLocation;
     _bathroom.text = post?.bathroom.toString() ?? '0';
     _bedroom.text = post?.bedroom.toString() ?? '0';
     _brand.text = post?.brand ?? '';
@@ -329,6 +332,7 @@ class AddListingFormProvider extends ChangeNotifier {
         category: _selectedCategory,
         currentLatitude: 12234,
         currentLongitude: 123456,
+        collectionLocation: selectedmeetupLocation,
       );
       debugPrint(param.toMap().toString());
       debugPrint(sizeColorEntities.toString());
@@ -363,6 +367,7 @@ class AddListingFormProvider extends ChangeNotifier {
           title: title.text,
           description: description.text,
           attachments: attachments,
+          collectionLocation: selectedmeetupLocation,
           price: price.text,
           quantity: quantity.text,
           discount: isDiscounted,
@@ -403,7 +408,6 @@ class AddListingFormProvider extends ChangeNotifier {
   Future<void> _onVehicleSubmit() async {
     if (!(_vehicleKey.currentState?.validate() ?? false)) return;
     setLoading(true);
-
     getAvailabilityData();
     try {
       debugPrint(post?.postID);
@@ -414,7 +418,7 @@ class AddListingFormProvider extends ChangeNotifier {
             _availability.map((AvailabilityEntity e) => e.toJson()).toList(),
           ),
           engineSize: engineSize.text,
-          meetUpLocation: _selectedMeetupLocation?.toJson(),
+          meetUpLocation: _selectedMeetupLocation,
           mileage: mileage.text,
           businessID: post == null ? LocalAuth.currentUser?.businessID : null,
           currency: _post == null ? LocalAuth.currentUser?.currency : null,
@@ -426,6 +430,7 @@ class AddListingFormProvider extends ChangeNotifier {
           condition: condition,
           acceptOffer: acceptOffer,
           minOfferAmount: minimumOffer.text,
+          collectionLocation: selectedmeetupLocation,
           privacyType: _privacy,
           deliveryType: deliveryType,
           listingType: listingType ?? ListingType.vehicle,
@@ -477,6 +482,7 @@ class AddListingFormProvider extends ChangeNotifier {
           currency: _post == null ? LocalAuth.currentUser?.currency : null,
           title: title.text,
           description: description.text,
+          collectionLocation: selectedmeetupLocation,
           attachments: attachments,
           price: price.text,
           discount: isDiscounted,
@@ -500,8 +506,6 @@ class AddListingFormProvider extends ChangeNotifier {
         AppNavigator.pushNamedAndRemoveUntil(
             DashboardScreen.routeName, (_) => false);
         reset();
-
-        reset();
       } else if (result is DataFailer) {
         AppLog.error(result.exception?.message ?? 'something_wrong'.tr());
       }
@@ -514,7 +518,6 @@ class AddListingFormProvider extends ChangeNotifier {
 
   Future<void> _onPropertySubmit() async {
     if (!(_propertyKey.currentState?.validate() ?? false)) return;
-
     setLoading(true);
     getAvailabilityData();
     try {
@@ -535,7 +538,8 @@ class AddListingFormProvider extends ChangeNotifier {
         availbility: jsonEncode(
           _availability.map((AvailabilityEntity e) => e.toJson()).toList(),
         ),
-        meetUpLocation: _selectedMeetupLocation?.toJsonidurlkeys(),
+        meetUpLocation: _selectedMeetupLocation,
+        collectionLocation: _selectedCollectionLocation,
         mileage: mileage.text,
         title: title.text,
         description: description.text,
@@ -596,7 +600,7 @@ class AddListingFormProvider extends ChangeNotifier {
         availbility: jsonEncode(
           _availability.map((AvailabilityEntity e) => e.toJson()).toList(),
         ),
-        meetUpLocation: _selectedMeetupLocation?.toJsonidurlkeys(),
+        meetUpLocation: _selectedMeetupLocation,
         title: title.text,
         description: description.text,
         attachments: attachments,
@@ -606,6 +610,7 @@ class AddListingFormProvider extends ChangeNotifier {
         minOfferAmount: minimumOffer.text,
         privacyType: _privacy,
         deliveryType: deliveryType,
+        collectionLocation: selectedmeetupLocation,
         listingType: listingType ?? ListingType.pets,
         category: _selectedCategory,
         currentLatitude: 12234,
@@ -704,8 +709,13 @@ class AddListingFormProvider extends ChangeNotifier {
     }
   }
 
-  void removeAttachment(PickedAttachment attachment) {
+  void removePickedAttachment(PickedAttachment attachment) {
     _attachments.remove(attachment);
+    notifyListeners();
+  }
+
+  void removeAttachmentEntity(AttachmentEntity attachment) {
+    _post?.fileUrls.remove(attachment);
     notifyListeners();
   }
 
@@ -744,11 +754,11 @@ class AddListingFormProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setSelectedLocation(LocationModel value) {
+  void setCollectionLocation(LocationModel value) {
     _selectedCollectionLocation = value;
   }
 
-  void setmeetupLocation(LocationModel value) {
+  void setMeetupLocation(LocationModel value) {
     _selectedMeetupLocation = value;
   }
 
@@ -975,8 +985,8 @@ class AddListingFormProvider extends ChangeNotifier {
   bool get isDiscounted => _isDiscounted;
   List<DiscountEntity> get discounts => _discounts;
   List<SizeColorModel> get sizeColorEntities => _sizeColorEntities;
-  LocationModel? get selectedmeetupLocation => _selectedMeetupLocation;
-  LocationModel? get selectedCollectionLocation => _selectedCollectionLocation;
+  LocationEntity? get selectedmeetupLocation => _selectedMeetupLocation;
+  LocationEntity? get selectedCollectionLocation => _selectedCollectionLocation;
 
   //
   List<PickedAttachment> get attachments => _attachments;

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../personal/post/data/sources/local/local_post.dart';
 import '../../../../../personal/post/domain/entities/post_entity.dart';

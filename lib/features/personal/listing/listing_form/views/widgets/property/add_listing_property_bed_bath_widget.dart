@@ -48,10 +48,11 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
             const PropertyTypeDropdown(),
             LocationInputField(
               onLocationSelected: (LocationModel location) {
-                formPro.setmeetupLocation(location);
+                formPro.setMeetupLocation(location);
               },
-              initialLocation: formPro.selectedmeetupLocation ,
-            ),          ],
+              initialLocation: formPro.selectedmeetupLocation,
+            ),
+          ],
         );
       },
     );

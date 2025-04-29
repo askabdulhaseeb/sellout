@@ -11,7 +11,6 @@ class AddListingDiscountSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.sizeOf(context).width - 32 - 28;
-
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider addPro, _) {
         return Column(
