@@ -16,7 +16,6 @@ import '../../domain/entities/sub_category_entity.dart';
 
 class AddListingParam {
   AddListingParam({
-    required this.businessID,
     required this.title,
     required this.description,
     required this.attachments,
@@ -80,7 +79,6 @@ class AddListingParam {
     this.petsCategory,
   });
   //
-  final String? businessID;
   final String title;
   final String description;
   final List<PickedAttachment> attachments;
@@ -164,7 +162,6 @@ class AddListingParam {
 
   Map<String, String> _titleMAP() {
     return <String, String>{
-      if (businessID != null) 'business_id': businessID ?? '',
       'title': title,
       'description': description,
       'price': price,
@@ -301,7 +298,6 @@ class AddListingParam {
       'seats': seats ?? '', //
       'transmission': transmission ?? '', //
       'author_name': LocalAuth.currentUser?.userName ?? '', //
-      'created_by': LocalAuth.currentUser?.userID ?? '',
       'mileage_unit': milageUnit ?? '', //
       'vehicles_category': vehicleCategory ?? '', //
     };

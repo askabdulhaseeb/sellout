@@ -23,7 +23,7 @@ class AttachmentMessageWidget extends StatelessWidget {
           return attachments[index].type == AttachmentType.image
               ? CustomNetworkImage(imageURL: attachments[index].url)
               : attachments[index].type == AttachmentType.video
-                  ? VideoWidget(videoUrl: attachments[index].url, play: false)
+                  ? VideoWidget(videoSource: attachments[index].url, play: false)
                   : Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(

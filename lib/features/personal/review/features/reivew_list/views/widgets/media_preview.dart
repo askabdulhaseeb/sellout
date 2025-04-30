@@ -32,7 +32,7 @@ class MediaPreview extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: media.type == AttachmentType.video
-                            ? VideoWidget(videoUrl: media.file.path)
+                            ? VideoWidget(videoSource: media.file.path)
                             : Image.file(media.file, width: 100, height: 100),
                       ),
                     );

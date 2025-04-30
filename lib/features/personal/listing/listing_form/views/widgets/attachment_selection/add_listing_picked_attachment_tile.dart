@@ -46,9 +46,10 @@ class AddListingPickedAttachmentTile extends StatelessWidget {
                 width: double.infinity,
                 child: isVideo
                     ? VideoWidget(
-                        videoUrl: isLocal
+                        videoSource: isLocal
                             ? attachment!.file.uri.path
                             : imageUrl?.url ?? '',
+                            play: false,
                       )
                     : isLocal
                         ? Image.file(

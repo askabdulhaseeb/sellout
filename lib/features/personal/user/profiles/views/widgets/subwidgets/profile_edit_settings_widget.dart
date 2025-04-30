@@ -14,7 +14,7 @@ class ProfileEditAndSettingsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        const Icon(Icons.home_outlined),
+        const Icon(Icons.home_outlined,),
         GestureDetector(
           onTap: () {},
           child: PopupMenuButton<int>(

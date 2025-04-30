@@ -42,7 +42,7 @@ class MediaGridView extends StatelessWidget {
                                   children: <Widget>[
                                     AbsorbPointer(
                                       child: VideoWidget(
-                                          videoUrl: media.file.path,
+                                          videoSource: media.file.path,
                                           play: false),
                                     ), // Video thumbnail
                                     const Icon(Icons.play_circle_fill,
