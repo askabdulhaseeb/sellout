@@ -616,6 +616,8 @@
     "delete": "Delete",
     "meetup_location": "Meetup Location",
     "preview_listing": "Preview Listing",
+    "feed_preview": "Feed Preview",
+    "detail_preview": "Detail Preview",
     "all": "All",
     "see_all": "See All",
     "next": "Next",
