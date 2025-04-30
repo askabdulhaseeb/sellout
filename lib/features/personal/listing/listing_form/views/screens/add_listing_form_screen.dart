@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
-import '../../../../../../core/functions/app_log.dart';
 import '../providers/add_listing_form_provider.dart';
 import 'form/add_cloths_and_footwear_form.dart';
 import 'form/add_food_and_drink_form.dart';
@@ -17,9 +16,6 @@ class AddListingFormScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AddListingFormProvider pro =
-        Provider.of<AddListingFormProvider>(context, listen: false);
-    AppLog.info(pro.post?.postID ?? 'null');
     return Scaffold(
       appBar: AppBar(
         title: Text(

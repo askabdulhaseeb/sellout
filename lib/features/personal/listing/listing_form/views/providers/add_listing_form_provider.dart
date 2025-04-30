@@ -163,39 +163,77 @@ class AddListingFormProvider extends ChangeNotifier {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  LocationEntity? _selectedMeetupLocation;
-  LocationEntity? _selectedCollectionLocation;
-  Future<void> submit(BuildContext context) async {
-    if (_attachments.isEmpty && (_post?.fileUrls.isEmpty ?? true)) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('please_add_at_least_one_photo_or_video'),
-      ));
-      return;
-    }
-    switch (listingType) {
-      case ListingType.items:
-        await _onItemSubmit();
-        break;
-      case ListingType.clothAndFoot:
-        await _onClothesAndFootSubmit();
-        break;
-      case ListingType.vehicle:
-        await _onVehicleSubmit();
-        break;
-      case ListingType.foodAndDrink:
-        await _onFoodAndDrinkSubmit();
-        break;
-
-      case ListingType.property:
-        await _onPropertySubmit();
-        break;
-      case ListingType.pets:
-        await _onPetSubmit();
-        break;
-      default:
-        break;
-    }
-    setLoading(false);
+  PostEntity? createPostFromFormData() {
+    return PostEntity(
+      engineSize: double.tryParse(engineSize.text),
+      mileageUnit: _selectedMileageUnit,
+      energyRating: selectedEnergyRating,
+      propertytype: '',
+      transmission: '',
+      updatedAt: DateTime.now(),
+      listID: '',
+      postID: '',
+      businessID: LocalAuth.currentUser?.businessID,
+      currency: LocalAuth.currentUser?.currency?.toUpperCase(),
+      type: listingType ?? ListingType.items,
+      listOfReviews: <double>[],
+      collectionLatitude: 23,
+      collectionLongitude: 123,
+      createdAt: DateTime.now(),
+      createdBy: LocalAuth.currentUser?.userID ?? '',
+      currentLatitude: 32,
+      currentLongitude: 323,
+      sizeChartUrl: null,
+      discounts: <DiscountEntity>[],
+      hasDiscount: false,
+      isActive: false,
+      updatedBy: '',
+      title: _title.text,
+      description: _description.text,
+      price: double.tryParse(_price.text) ?? 0.0,
+      quantity: int.tryParse(_quantity.text) ?? 1,
+      minOfferAmount: double.tryParse(_minimumOffer.text) ?? 0.0,
+      localDelivery: int.tryParse(_localDeliveryFee.text) ?? 0,
+      internationalDelivery: int.tryParse(_internationalDeliveryFee.text) ?? 0,
+      accessCode: _accessCode,
+      condition: _condition,
+      acceptOffers: _acceptOffer,
+      privacy: _privacy,
+      deliveryType: _deliveryType,
+      sizeColors: _sizeColorEntities,
+      address: _location.text,
+      categoryType: _selectedClothSubCategory,
+      brand: _brand.text,
+      make: _make.text,
+      model: _model.text,
+      year: int.tryParse(_year.text) ?? 0,
+      mileage: int.tryParse(_mileage.text) ?? 0,
+      emission: _emission.text,
+      doors: int.tryParse(_doors.text) ?? 0,
+      seats: int.tryParse(_seats.text) ?? 0,
+      vehiclesCategory: _selectedVehicleCategory?.json,
+      bodyType: _selectedBodyType?.json,
+      fuelType: _selectedEnergyRating,
+      interiorColor: _selectedVehicleColor,
+      exteriorColor: _selectedVehicleColor,
+      bedroom: int.tryParse(_bedroom.text) ?? 0,
+      bathroom: int.tryParse(_bathroom.text) ?? 0,
+      garden: _garden,
+      parking: _parking,
+      healthChecked: _healthChecked,
+      wormAndFleaTreated: _wormAndFleaTreated,
+      vaccinationUpToDate: _vaccinationUpToDate,
+      readyToLeave: _time?.json,
+      age: _age?.json,
+      breed: _selectedBreed?.title,
+      petsCategory: _selectedCategory?.title.toLowerCase(),
+      propertyCategory: _selectedPropertySubCategory,
+      tenureType: _tenureType,
+      availability: _availability,
+      collectionLocation: _selectedCollectionLocation,
+      meetUpLocation: _selectedMeetupLocation,
+      fileUrls: _post?.fileUrls ?? <AttachmentEntity>[],
+    );
   }
 
   Future<void> reset() async {
@@ -300,6 +338,39 @@ class AddListingFormProvider extends ChangeNotifier {
       );
       element.discount = matching?.discount ?? 0;
     }
+  }
+
+  Future<void> submit(BuildContext context) async {
+    if (_attachments.isEmpty && (_post?.fileUrls.isEmpty ?? true)) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('please_add_at_least_one_photo_or_video'),
+      ));
+      return;
+    }
+    switch (listingType) {
+      case ListingType.items:
+        await _onItemSubmit();
+        break;
+      case ListingType.clothAndFoot:
+        await _onClothesAndFootSubmit();
+        break;
+      case ListingType.vehicle:
+        await _onVehicleSubmit();
+        break;
+      case ListingType.foodAndDrink:
+        await _onFoodAndDrinkSubmit();
+        break;
+
+      case ListingType.property:
+        await _onPropertySubmit();
+        break;
+      case ListingType.pets:
+        await _onPetSubmit();
+        break;
+      default:
+        break;
+    }
+    setLoading(false);
   }
 
   Future<void> _onItemSubmit() async {
@@ -637,7 +708,7 @@ class AddListingFormProvider extends ChangeNotifier {
 
   void setPost(PostEntity? value) {
     _post = value;
-    debugPrint(' this is post id ${post?.postID}');
+    AppLog.info('Post id ${post?.postID}');
   }
 
   /// Setter
@@ -1114,6 +1185,8 @@ class AddListingFormProvider extends ChangeNotifier {
   bool _acceptOffer = true;
   PrivacyType _privacy = PrivacyType.public;
   DeliveryType _deliveryType = DeliveryType.paid;
+  LocationEntity? _selectedMeetupLocation;
+  LocationEntity? _selectedCollectionLocation;
   // Cloth and Foot
   String _selectedClothSubCategory = ListingType.clothAndFoot.cids.first;
   List<ColorOptionEntity> _colors = <ColorOptionEntity>[];

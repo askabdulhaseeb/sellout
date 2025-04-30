@@ -15,7 +15,8 @@ class CurrentUserEntity {
       required this.userID,
       //
       required this.email,
-      required this.username,
+      required this.userName,
+      required this.displayName,
       required this.currency,
       required this.privacy,
       required this.countryAlpha3,
@@ -53,18 +54,20 @@ class CurrentUserEntity {
   @HiveField(11)
   final String email;
   @HiveField(12)
-  final String username;
-  @HiveField(13)
-  final String? currency;
+  final String userName;
+    @HiveField(13)
+  final String displayName;
   @HiveField(14)
-  final PrivacyType privacy;
+  final String? currency;
   @HiveField(15)
-  final String countryAlpha3;
+  final PrivacyType privacy;
   @HiveField(16)
-  final String countryCode;
+  final String countryAlpha3;
   @HiveField(17)
-  final String phoneNumber;
+  final String countryCode;
   @HiveField(18)
+  final String phoneNumber;
+  @HiveField(19)
   final String language;
   //
   @HiveField(21)

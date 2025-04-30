@@ -170,13 +170,13 @@ class AddListingParam {
       'price': price,
       'post_privacy': privacyType.json,
       if (privacyType == PrivacyType.private) 'access_code': accessCode ?? '',
-      if (postID != null)
+      if (postID!.isNotEmpty)
         'old_files': oldAttachments
                 ?.map((AttachmentEntity attachment) =>
                     jsonEncode(AttachmentModel.fromEntity(attachment).toJson()))
                 .toList()
                 .toString() ??
-            ''
+            '[]'
     };
   }
 
@@ -217,9 +217,8 @@ class AddListingParam {
         'international_delivery': internationalDeliveryAmount ?? '0',
       if (deliveryType == DeliveryType.collocation)
         'collection_location': collectionLocation != null
-            ? LocationModel.fromEntity(collectionLocation!)
-                .toJsonidurlkeys()
-                .toString()
+            ? jsonEncode(
+                LocationModel.fromEntity(collectionLocation!).toJsonidurlkeys())
             : '',
     };
   }
@@ -227,8 +226,7 @@ class AddListingParam {
   Map<String, String> _listLocMAP() {
     return <String, String>{
       'list_id': listingType.json,
-      'address': 'property/test',
-      //category?.address ?? '',
+      'address': category?.address ?? '',
       if (currency != null) 'currency': currency ?? '',
       'current_latitude': currentLatitude.toString(),
       'current_longitude': currentLongitude.toString(),
@@ -237,9 +235,10 @@ class AddListingParam {
 
   Map<String, String> _meetupMAP() {
     return <String, String>{
-      'meet_up_location': jsonEncode(meetUpLocation != null
-          ? LocationModel.fromEntity(meetUpLocation!).toJsonidurlkeys()
-          : ''),
+      'meet_up_location': meetUpLocation != null
+          ? jsonEncode(
+              LocationModel.fromEntity(meetUpLocation!).toJsonidurlkeys())
+          : '',
       'availability': availbility ?? '',
     };
   }
@@ -301,7 +300,7 @@ class AddListingParam {
       'doors': doors ?? '', //
       'seats': seats ?? '', //
       'transmission': transmission ?? '', //
-      'author_name': LocalAuth.currentUser?.username ?? '', //
+      'author_name': LocalAuth.currentUser?.userName ?? '', //
       'created_by': LocalAuth.currentUser?.userID ?? '',
       'mileage_unit': milageUnit ?? '', //
       'vehicles_category': vehicleCategory ?? '', //
@@ -341,7 +340,6 @@ class AddListingParam {
       'vaccination_up_to_date': vaccinationUpToDate.toString(),
       'worm_and_flea_treated': wormAndFleaTreated.toString(),
       'pets_category': petsCategory ?? '',
-//      if (postID != null) 'old_file': oldAttachments.toString(),
     };
     mapp.addAll(_titleMAP());
     mapp.addAll(_offerMAP());

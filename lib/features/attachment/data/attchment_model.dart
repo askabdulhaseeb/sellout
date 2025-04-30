@@ -28,6 +28,7 @@ class AttachmentModel extends AttachmentEntity {
         fileId: json['file_id'] ?? '',
         originalName: json['original_name'] ?? '',
       );
+      
   Map<String, dynamic> toJson() => <String, String>{
         'created_at': createdAt.toUtc().toIso8601String(),
         'type': type.json.toString(),
