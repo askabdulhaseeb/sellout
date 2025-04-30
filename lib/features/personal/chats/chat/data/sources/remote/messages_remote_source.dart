@@ -1,10 +1,17 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 
+import '../../../../../../../core/enums/message/message_type.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/api_call.dart';
+import '../../../../../../../core/utilities/app_string.dart';
+import '../../../../../../attachment/domain/entities/attachment_entity.dart';
+import '../../../../chat_dashboard/data/models/message/message_model.dart';
 import '../../../domain/entities/getted_message_entity.dart';
 import '../../../domain/params/send_message_param.dart';
 import '../../models/getted_message_model.dart';
+import '../../models/message_last_evaluated_key.dart';
 import '../local/local_message.dart';
 
 abstract interface class MessagesRemoteSource {
@@ -73,8 +80,50 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
         attachments: msg.files,
         isConnectType: false,
       );
-
       if (result is DataSuccess) {
+        debugPrint('New Message - Success: ${result.data}');
+        final Map<String, dynamic> responseData = jsonDecode(result.data ?? '');
+        final Map<String, dynamic> data = responseData['items'];
+        final MessageModel newMsg = MessageModel(
+          messageId: data['message_id'],
+          text: data['text'],
+          chatId: data['chat_id'],
+          sendBy: data['send_by'],
+          displayText: data['display_text'],
+          source: data['source'],
+          createdAt: DateTime.parse(data['created_at']),
+          updatedAt: DateTime.parse(data['updated_at']),
+          fileUrl: <AttachmentEntity>[],
+          persons: List<String>.from(data['persons']),
+          offerDetail: null,
+          visitingDetail: null,
+          type: data['type'] == null
+              ? MessageType.none
+              : MessageType.fromJson(data['type']),
+        );
+        final String chatId = data['chat_id'];
+        final Box<GettedMessageEntity> box =
+            Hive.box<GettedMessageEntity>(AppStrings.localChatMessagesBox);
+
+        // Check if entity exists
+        final GettedMessageEntity existing =
+            box.values.firstWhere((GettedMessageEntity e) => e.chatID == chatId,
+                orElse: () => GettedMessageEntity(
+                      chatID: chatId,
+                      messages: <MessageModel>[],
+                      lastEvaluatedKey: MessageLastEvaluatedKeyModel(
+                          chatID: data['chat_id'],
+                          createdAt: data['created_at'],
+                          paginationKey: data['message_id']),
+                    ));
+
+        existing.messages.add(newMsg);
+
+        if (box.containsKey(existing.chatID)) {
+          await box.put(existing.chatID, existing);
+        } else {
+          await box.add(existing);
+        }
         return DataSuccess<bool>(result.data ?? '', true);
       } else {
         AppLog.error(
