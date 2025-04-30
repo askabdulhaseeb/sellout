@@ -85,10 +85,8 @@ class PostGridViewTile extends StatelessWidget {
                         iconColor: Theme.of(context).primaryColor,
                         padding: const EdgeInsets.all(4),
                         margin: const EdgeInsets.all(4),
-                        bgColor: Theme.of(context)
-                            .primaryColor
-                            .withValues(alpha: 200),
-                        icon: CupertinoIcons.pencil_ellipsis_rectangle,
+                        bgColor: Theme.of(context).primaryColor.withAlpha(40),
+                        icon: CupertinoIcons.pencil_circle,
                         onPressed: () {
                           final AddListingFormProvider pro =
                               Provider.of<AddListingFormProvider>(context,
@@ -109,7 +107,7 @@ class PostGridViewTile extends StatelessWidget {
                         bgColor: Theme.of(context)
                             .colorScheme
                             .secondary
-                            .withValues(alpha: 200),
+                            .withAlpha(40),
                         icon: CupertinoIcons.speaker,
                         onPressed: () {},
                       ),

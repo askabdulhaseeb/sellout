@@ -38,11 +38,16 @@ class PostButtonsForUser extends StatelessWidget {
                 border: Border.all(
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
-                bgColor: Theme.of(context).colorScheme.surface,
+                bgColor: Colors.white,
                 isLoading: false,
                 onTap: () {
-                  Provider.of<AddListingFormProvider>(context, listen: false)
-                      .setListingType(post?.type);
+                  final AddListingFormProvider pro =
+                      Provider.of<AddListingFormProvider>(context,
+                          listen: false);
+                  pro.reset();
+                  pro.setListingType(post?.type);
+                  pro.setPost(post);
+                  pro.updateVariables();
                   Navigator.pushNamed(context, AddListingFormScreen.routeName);
                 },
                 title: 'edit_listing'.tr()),

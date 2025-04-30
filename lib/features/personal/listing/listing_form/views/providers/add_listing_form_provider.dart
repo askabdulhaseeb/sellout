@@ -381,7 +381,6 @@ class AddListingFormProvider extends ChangeNotifier {
         accessCode: _accessCode,
         postID: post?.postID ?? '',
         oldAttachments: post?.fileUrls,
-        businessID: post == null ? LocalAuth.currentUser?.businessID : null,
         currency: _post == null
             ? LocalAuth.currentUser?.currency?.toUpperCase()
             : null,
@@ -433,7 +432,6 @@ class AddListingFormProvider extends ChangeNotifier {
       final AddListingParam param = AddListingParam(
           postID: post?.postID ?? '',
           oldAttachments: post?.fileUrls,
-          businessID: post == null ? LocalAuth.currentUser?.businessID : null,
           currency: _post == null ? LocalAuth.currentUser?.currency : null,
           title: title.text,
           description: description.text,
@@ -491,7 +489,6 @@ class AddListingFormProvider extends ChangeNotifier {
           engineSize: engineSize.text,
           meetUpLocation: _selectedMeetupLocation,
           mileage: mileage.text,
-          businessID: post == null ? LocalAuth.currentUser?.businessID : null,
           currency: _post == null ? LocalAuth.currentUser?.currency : null,
           title: title.text,
           description: description.text,
@@ -549,7 +546,6 @@ class AddListingFormProvider extends ChangeNotifier {
           oldAttachments: post?.fileUrls,
           deliveryType: deliveryType,
           quantity: quantity.text,
-          businessID: post == null ? LocalAuth.currentUser?.businessID : null,
           currency: _post == null ? LocalAuth.currentUser?.currency : null,
           title: title.text,
           description: description.text,
@@ -595,7 +591,6 @@ class AddListingFormProvider extends ChangeNotifier {
       final AddListingParam param = AddListingParam(
         postID: post?.postID ?? '',
         oldAttachments: post?.fileUrls,
-        businessID: post == null ? LocalAuth.currentUser?.businessID : null,
         currency: _post == null ? LocalAuth.currentUser?.currency : null,
         animalFriendly: animalFriendly.toString(),
         parking: parking.toString(),
@@ -663,7 +658,6 @@ class AddListingFormProvider extends ChangeNotifier {
         vaccinationUpToDate: _vaccinationUpToDate,
         readyToLeave: _time?.json,
         quantity: _quantity.text,
-        businessID: post == null ? LocalAuth.currentUser?.businessID : null,
         currency: _post == null ? LocalAuth.currentUser?.currency : null,
         animalFriendly: animalFriendly.toString(),
         parking: parking.toString(),

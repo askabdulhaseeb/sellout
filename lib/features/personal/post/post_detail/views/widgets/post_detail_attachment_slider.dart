@@ -1,9 +1,8 @@
 import 'dart:io';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
 import '../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../core/widgets/video_widget.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
 
@@ -59,8 +58,7 @@ class _PostDetailAttachmentSliderState
       );
     }
 
-    final currentAttachment = widget.attachments[selectedIndex];
-
+    final dynamic currentAttachment = widget.attachments[selectedIndex];
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -108,41 +106,15 @@ class _PostDetailAttachmentSliderState
 
   /// Builds a static video thumbnail with play icon
   Widget _buildVideoPreview(dynamic attachment) {
-    final String url = _getAttachmentUrl(attachment);
-    final bool isNetwork = url.startsWith('http');
+    final dynamic url = _getAttachmentUrl(attachment);
 
     return Stack(
       fit: StackFit.expand,
       children: <Widget>[
-        isNetwork
-            ? CustomNetworkImage(imageURL: url)
-            : Image.file(File(url), fit: BoxFit.cover),
-
-        // Play icon
-        Center(
-          child: Icon(
-            Icons.play_circle_fill,
-            size: 60,
-            color: Colors.white.withOpacity(0.8),
-          ),
-        ),
-
-        // "Video" label
-        Positioned(
-          bottom: 10,
-          right: 10,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.black54,
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Text(
-              'video'.tr(),
-              style: const TextStyle(color: Colors.white, fontSize: 12),
-            ),
-          ),
-        ),
+        VideoWidget(
+          videoSource: url,
+          play: true,
+        )
       ],
     );
   }
@@ -166,40 +138,34 @@ class _PostDetailAttachmentSliderState
               scale: selectedIndex == index ? 1.1 : 1.0,
               duration: const Duration(milliseconds: 200),
               child: Container(
-                width: 80,
-                margin: const EdgeInsets.symmetric(horizontal: 5),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: isSelected
-                        ? Theme.of(context).primaryColor
-                        : Colors.transparent,
-                    width: 2,
+                  width: 80,
+                  margin: const EdgeInsets.symmetric(horizontal: 5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: isSelected
+                          ? Theme.of(context).primaryColor
+                          : Colors.transparent,
+                      width: 2,
+                    ),
                   ),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: _isVideo(attachment)
-                      ? Stack(
-                          fit: StackFit.expand,
-                          children: <Widget>[
-                            isNetwork
-                                ? CustomNetworkImage(imageURL: url)
-                                : Image.file(File(url), fit: BoxFit.cover),
-                            const Center(
-                              child: Icon(
-                                Icons.play_circle_outline,
-                                size: 20,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        )
-                      : isNetwork
-                          ? CustomNetworkImage(imageURL: url)
-                          : Image.file(File(url), fit: BoxFit.cover),
-                ),
-              ),
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: _isVideo(attachment)
+                          ? VideoWidget(
+                              fit: BoxFit.cover,
+                              play: false,
+                              durationFontSize: 6,
+                              videoSource: url,
+                            )
+                          : Stack(
+                              fit: StackFit.expand,
+                              children: <Widget>[
+                                isNetwork
+                                    ? CustomNetworkImage(imageURL: url)
+                                    : Image.file(File(url), fit: BoxFit.cover),
+                              ],
+                            ))),
             ),
           );
         },

@@ -19,9 +19,12 @@ class PostHeaderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('temporary print to check business id ${post.businessID}');
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: post.businessID == null || (post.businessID ?? '').isEmpty
+      child: post.businessID == null ||
+              (post.businessID ?? '').isEmpty ||
+              post.businessID == 'null'
           ? _UserHeader(post: post)
           : _BusinessHeader(post: post),
     );
@@ -98,8 +101,8 @@ class _BusinessHeader extends StatelessWidget {
             : GestureDetector(
                 onTap: () => Navigator.of(context)
                     .push(MaterialPageRoute<UserBusinessProfileScreen>(
-                  builder: (BuildContext context) =>
-                      UserBusinessProfileScreen(businessID: post.businessID ?? ''),
+                  builder: (BuildContext context) => UserBusinessProfileScreen(
+                      businessID: post.businessID ?? ''),
                 )),
                 child: Row(
                   children: <Widget>[

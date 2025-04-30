@@ -1,8 +1,8 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../features/attachment/domain/entities/attachment_entity.dart';
 import '../../features/attachment/domain/entities/picked_attachment.dart';
 import 'custom_network_image.dart';
+import 'video_widget.dart';
 
 class AttachmentsSlider extends StatelessWidget {
   const AttachmentsSlider({
@@ -28,7 +28,7 @@ class AttachmentsSlider extends StatelessWidget {
         .map(
           (MapEntry<int, dynamic> entry) => entry.value is PickedAttachment
               ? _PickedAttachmentWidget(
-                  file: (entry.value as PickedAttachment).file,
+                  file: entry.value,
                   index: entry.key,
                   totalLength: totalLength,
                 )
@@ -69,9 +69,13 @@ class _AttachmentEntityWidget extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           height: double.infinity,
           child: entity.type == AttachmentType.video
-              ? const Center(child: Text('Video'))
+              ? VideoWidget(
+                  videoSource: entity.url,
+                  play: true,
+                )
               : InteractiveViewer(
-                  child: CustomNetworkImage(imageURL: entity.url),
+                  child: CustomNetworkImage(
+                      imageURL: entity.url, fit: BoxFit.cover),
                 ),
         ),
         if (totalLength > 1) _SliderCounter(index: index, total: totalLength),
@@ -87,7 +91,7 @@ class _PickedAttachmentWidget extends StatelessWidget {
     required this.totalLength,
   });
 
-  final File file;
+  final PickedAttachment file;
   final int index;
   final int totalLength;
 
@@ -100,8 +104,9 @@ class _PickedAttachmentWidget extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           height: double.infinity,
           child: InteractiveViewer(
-            child: Image.file(file, fit: BoxFit.cover),
-          ),
+              child: file.type == AttachmentType.image
+                  ? Image.file(file.file, fit: BoxFit.cover)
+                  : VideoWidget(videoSource: file.file.path)),
         ),
         if (totalLength > 1) _SliderCounter(index: index, total: totalLength),
       ],
