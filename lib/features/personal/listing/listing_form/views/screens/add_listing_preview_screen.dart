@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/widgets/custom_toggle_switch.dart';
@@ -39,7 +40,10 @@ class _AddListingPreviewScreenState extends State<AddListingPreviewScreen> {
                 CustomToggleSwitch<int>(
                   initialValue: _previewMode,
                   labels: const <int>[0, 1],
-                  labelStrs: const <String>['Feed Preview', 'Detail Preview'],
+                  labelStrs: <String>[
+                    'feed_preview'.tr(),
+                    'detail_preview'.tr()
+                  ],
                   labelText: '',
                   onToggle: (int index) {
                     setState(() {
