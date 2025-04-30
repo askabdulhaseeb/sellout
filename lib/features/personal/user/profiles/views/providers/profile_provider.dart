@@ -44,7 +44,7 @@ class ProfileProvider extends ChangeNotifier {
   UserEntity? get user => _user?.entity;
 
   TextEditingController namecontroller =
-      TextEditingController(text: LocalAuth.currentUser?.username);
+      TextEditingController(text: LocalAuth.currentUser?.displayName);
   TextEditingController biocontroller = TextEditingController();
 
   ProfilePageTabType _displayType =

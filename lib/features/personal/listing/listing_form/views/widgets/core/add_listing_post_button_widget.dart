@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../providers/add_listing_form_provider.dart';
+import '../../screens/add_listing_preview_screen.dart';
 
 class AddListingPostButtonWidget extends StatelessWidget {
   const AddListingPostButtonWidget({super.key});
@@ -25,6 +26,27 @@ class AddListingPostButtonWidget extends StatelessWidget {
               ),
             ),
           ),
+          CustomElevatedButton(
+              border: Border.all(color: ColorScheme.of(context).outline),
+              textColor: ColorScheme.of(context).outline,
+              bgColor: Colors.transparent,
+              title: 'preview_listing'.tr(),
+              isLoading: false,
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          const AddListingPreviewScreen(),
+                    ));
+              }),
+          CustomElevatedButton(
+              border: Border.all(color: ColorScheme.of(context).secondary),
+              textColor: ColorScheme.of(context).secondary,
+              bgColor: Colors.transparent,
+              title: 'promotion_boost'.tr(),
+              isLoading: false,
+              onTap: () {}),
           CustomElevatedButton(
             title: 'post'.tr(),
             isLoading: formPro.isLoading,

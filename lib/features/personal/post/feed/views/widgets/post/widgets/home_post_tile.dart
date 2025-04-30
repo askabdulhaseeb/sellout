@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../../../../../core/widgets/attachment_slider.dart';
+import '../../../../../../listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../../../../../domain/entities/post_entity.dart';
 import '../../../../../post_detail/views/screens/post_detail_screen.dart';
 import 'section/buttons/home_post_button_section.dart';
@@ -14,6 +16,8 @@ class HomePostTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AddListingFormProvider pro =
+        Provider.of<AddListingFormProvider>(context, listen: false);
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushNamed(
@@ -24,7 +28,10 @@ class HomePostTile extends StatelessWidget {
       child: Column(
         children: <Widget>[
           PostHeaderSection(post: post),
-          AttachmentsSlider(urls: post.fileUrls),
+          AttachmentsSlider(
+            attachments:
+                pro.attachments.isNotEmpty ? pro.attachments : post.fileUrls,
+          ),
           HomePostIconBottonSection(post: post),
           HomePostTitleSection(post: post),
           PostButtonSection(post: post),

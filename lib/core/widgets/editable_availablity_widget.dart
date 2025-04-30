@@ -31,8 +31,7 @@ class EditableAvailabilityWidget extends StatelessWidget {
                   entity.closingTime.isNotEmpty;
               final String timeRange = isOpen && hasValidTimes
                   ? '${entity.openingTime} - ${entity.closingTime}'
-                  : 'Closed';
-
+                  : 'closed'.tr();
               return Container(
                 width: double.infinity,
                 margin: const EdgeInsets.only(bottom: 12),
