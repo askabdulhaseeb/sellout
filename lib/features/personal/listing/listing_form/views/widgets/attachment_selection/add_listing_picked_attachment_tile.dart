@@ -41,15 +41,17 @@ class AddListingPickedAttachmentTile extends StatelessWidget {
           aspectRatio: 4 / 4,
           child: Stack(
             children: <Widget>[
-              SizedBox(
+              Container(
+                color: ColorScheme.of(context).outline.withAlpha(60),
                 height: double.infinity,
                 width: double.infinity,
                 child: isVideo
                     ? VideoWidget(
+                        fit: BoxFit.cover,
                         videoSource: isLocal
                             ? attachment!.file.uri.path
                             : imageUrl?.url ?? '',
-                            play: false,
+                        play: false,
                       )
                     : isLocal
                         ? Image.file(
@@ -61,9 +63,6 @@ class AddListingPickedAttachmentTile extends StatelessWidget {
                             fit: BoxFit.cover,
                           ),
               ),
-
-              // Remove Button (only for picked attachments)
-              // if (isLocal)
               Positioned(
                 top: 0,
                 right: 0,

@@ -1259,4 +1259,10 @@ class AddListingFormProvider extends ChangeNotifier {
   final GlobalKey<FormState> _foodAndDrinkKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _propertyKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _petKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    reset();
+    super.dispose();
+  }
 }

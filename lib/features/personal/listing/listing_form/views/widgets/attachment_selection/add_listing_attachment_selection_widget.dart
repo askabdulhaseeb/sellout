@@ -73,8 +73,7 @@ class AddListingAttachmentSelectionWidget extends StatelessWidget {
                       if (item is PickedAttachment) {
                         return AddListingPickedAttachmentTile(attachment: item);
                       } else if (item is AttachmentEntity) {
-                        return AddListingPickedAttachmentTile(
-                            imageUrl: item);
+                        return AddListingPickedAttachmentTile(imageUrl: item);
                       }
                       return const SizedBox.shrink(); // Fallback widget
                     },

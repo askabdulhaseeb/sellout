@@ -75,7 +75,8 @@ class _VideoWidgetState extends State<VideoWidget> {
           child: FittedBox(
             fit: widget.fit,
             clipBehavior: Clip.hardEdge,
-            child: SizedBox(
+            child: Container(
+              color: Colors.grey,
               width: _controller!.value.size.width,
               height: _controller!.value.size.height,
               child: VideoPlayer(_controller!),

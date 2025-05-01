@@ -11,8 +11,8 @@ import '../../../../../../../../domain/entities/visit/visiting_entity.dart';
 
 class PostButtonsForUser extends StatelessWidget {
   const PostButtonsForUser({
-    required this.visit,
     required this.post,
+    this.visit,
     super.key,
   });
 

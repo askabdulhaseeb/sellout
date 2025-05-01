@@ -32,9 +32,16 @@ class AddListingPostButtonWidget extends StatelessWidget {
               bgColor: Colors.transparent,
               title: 'preview_listing'.tr(),
               isLoading: false,
-              onTap: () {
+              onTap: () async {
+                if (formPro.attachments.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('please_add_at_least_one_photo_or_video'),
+                  ));
+                  return;
+                }
                 Navigator.push(
                     context,
+                    // ignore: always_specify_types
                     MaterialPageRoute(
                       builder: (BuildContext context) =>
                           const AddListingPreviewScreen(),

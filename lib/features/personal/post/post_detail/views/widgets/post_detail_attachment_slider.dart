@@ -121,8 +121,9 @@ class _PostDetailAttachmentSliderState
 
   /// Builds the horizontal list of thumbnails
   Widget _buildThumbnailStrip() {
-    return SizedBox(
-      height: 80,
+    return Container(
+      height: 90,
+      padding: const EdgeInsets.all(4),
       child: ListView.builder(
         physics: const BouncingScrollPhysics(),
         scrollDirection: Axis.horizontal,
@@ -138,14 +139,16 @@ class _PostDetailAttachmentSliderState
               scale: selectedIndex == index ? 1.1 : 1.0,
               duration: const Duration(milliseconds: 200),
               child: Container(
-                  width: 80,
-                  margin: const EdgeInsets.symmetric(horizontal: 5),
+                  width: 85,
+                  height: 90,
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       color: isSelected
                           ? Theme.of(context).primaryColor
-                          : Colors.transparent,
+                          : Theme.of(context).colorScheme.outline,
                       width: 2,
                     ),
                   ),
