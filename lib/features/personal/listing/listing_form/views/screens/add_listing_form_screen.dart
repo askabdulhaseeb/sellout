@@ -10,9 +10,20 @@ import 'form/add_pet_form.dart';
 import 'form/add_property_form.dart';
 import 'form/add_vehicle_form.dart';
 
-class AddListingFormScreen extends StatelessWidget {
+class AddListingFormScreen extends StatefulWidget {
   const AddListingFormScreen({super.key});
   static const String routeName = '/add-listing-form';
+
+  @override
+  State<AddListingFormScreen> createState() => _AddListingFormScreenState();
+}
+
+class _AddListingFormScreenState extends State<AddListingFormScreen> {
+  @override
+  void dispose() {
+    Provider.of<AddListingFormProvider>(context, listen: false).reset();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

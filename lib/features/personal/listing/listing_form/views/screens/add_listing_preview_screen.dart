@@ -52,31 +52,15 @@ class _AddListingPreviewScreenState extends State<AddListingPreviewScreen> {
                   },
                 ),
                 const SizedBox(height: 16),
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 500),
-                  switchInCurve: Curves.easeInOut,
-                  switchOutCurve: Curves.easeInOut,
-                  transitionBuilder:
-                      (Widget child, Animation<double> animation) {
-                    return FadeTransition(
-                      opacity: animation,
-                      child: SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(0.2, 0.0),
-                          end: Offset.zero,
-                        ).animate(animation),
-                        child: child,
-                      ),
-                    );
-                  },
-                  child: _previewMode == 0
-                      ? HomePostTile(post: previewPost)
-                      : PostDetailSection(
+                _previewMode == 0
+                    ? AbsorbPointer(child: HomePostTile(post: previewPost))
+                    : AbsorbPointer(
+                        child: PostDetailSection(
                           post: previewPost,
                           isMe: false,
                           visit: null,
                         ),
-                ),
+                      ),
               ],
             ),
           );
