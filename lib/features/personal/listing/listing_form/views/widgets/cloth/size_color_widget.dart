@@ -19,6 +19,7 @@ class AddListingSizeColorWidget extends StatelessWidget {
       onTap: () {
         pro.fetchColors();
         showBottomSheet(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             context: context,
             builder: (BuildContext context) => const SizeColorBottomSheet());
       },
