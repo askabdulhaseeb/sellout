@@ -36,7 +36,7 @@ class SizeColorBottomSheetState extends State<SizeColorBottomSheet> {
       child: Container(
         height: MediaQuery.of(context).size.height * 0.7,
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
+          color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
         ),
         padding: const EdgeInsets.all(16),
@@ -85,21 +85,16 @@ class SizeColorBottomSheetState extends State<SizeColorBottomSheet> {
                         children: sizeColorEntry.colors
                             .map((ColorEntity colorEntity) {
                           return Container(
-                            margin: const EdgeInsets.only(bottom: 12),
+                            margin: const EdgeInsets.symmetric(vertical: 12),
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.surface,
+                              backgroundBlendMode: BlendMode.color,
+                              border: Border.all(
+                                  color:
+                                      ColorScheme.of(context).outlineVariant),
+                              color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(12),
-                              boxShadow: <BoxShadow>[
-                                BoxShadow(
-                                  blurRadius: 5,
-                                  blurStyle: BlurStyle.outer,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .outlineVariant,
-                                ),
-                              ],
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -107,7 +102,17 @@ class SizeColorBottomSheetState extends State<SizeColorBottomSheet> {
                                 // Display the size value from the entry.
                                 Text(sizeColorEntry.value),
                                 // Display the color code and quantity.
-                                Text(colorEntity.code),
+                                Row(
+                                  spacing: 2,
+                                  children: <Widget>[
+                                    CircleAvatar(
+                                      radius: 8,
+                                      backgroundColor: Color(int.parse(
+                                          '0xFF${colorEntity.code.replaceAll('#', '')}')),
+                                    ),
+                                    Text(colorEntity.code),
+                                  ],
+                                ),
                                 Text(colorEntity.quantity.toString()),
                                 // Delete button to remove a specific color from the size.
                                 IconButton(
@@ -133,7 +138,7 @@ class SizeColorBottomSheetState extends State<SizeColorBottomSheet> {
             const Divider(height: 32),
             // --- Input Row for Adding a New Size/Color Entry ---
             Container(
-              color: ColorScheme.of(context).surface,
+              color: Theme.of(context).scaffoldBackgroundColor,
               child: Row(
                 children: <Widget>[
                   // --- Size Dropdown ---
@@ -147,7 +152,9 @@ class SizeColorBottomSheetState extends State<SizeColorBottomSheet> {
                       items: <String>['XS', 'S', 'M', 'L']
                           .map((String s) => DropdownMenuItem<String>(
                                 value: s,
-                                child: Text(s),
+                                child: Text(
+                                  s,
+                                ),
                               ))
                           .toList(),
                       onChanged: (String? val) {
@@ -159,7 +166,8 @@ class SizeColorBottomSheetState extends State<SizeColorBottomSheet> {
                   ),
                   const SizedBox(width: 10),
                   // --- Color Dropdown ---
-                  Expanded(
+                  SizedBox(
+                    width: 100,
                     child: Consumer<AddListingFormProvider>(
                       builder: (BuildContext context,
                           AddListingFormProvider provider, Widget? child) {
@@ -175,7 +183,8 @@ class SizeColorBottomSheetState extends State<SizeColorBottomSheet> {
                             final List<ColorOptionEntity> colorOptionsList =
                                 snapshot.data!;
                             return CustomDropdown<String>(
-                              padding: const EdgeInsets.symmetric(vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 4, horizontal: 0),
                               hint: 'color'.tr(),
                               selectedItem: selectedColor,
                               title: '',
@@ -185,15 +194,16 @@ class SizeColorBottomSheetState extends State<SizeColorBottomSheet> {
                                       DropdownMenuItem<String>(
                                         value: color.value,
                                         child: Row(
-                                          spacing: 2,
+                                          spacing: 1,
                                           children: <Widget>[
                                             CircleAvatar(
-                                              radius: 10,
+                                              radius: 8,
                                               backgroundColor: Color(int.parse(
                                                   '0xFF${color.value.replaceAll('#', '')}')),
                                             ),
                                             Expanded(
                                                 child: Text(color.label,
+                                                    maxLines: 2,
                                                     style: TextTheme.of(context)
                                                         .labelSmall)),
                                           ],
@@ -215,9 +225,9 @@ class SizeColorBottomSheetState extends State<SizeColorBottomSheet> {
                   // --- Quantity TextField ---
                   Expanded(
                     child: CustomTextFormField(
-                      controller: quantityController,
-                      keyboardType: TextInputType.number,
-                    ),
+                        controller: quantityController,
+                        keyboardType: TextInputType.number,
+                        hint: 'quantity'.tr()),
                   ),
                   const SizedBox(width: 10),
                   // --- Add Button ---
