@@ -107,9 +107,9 @@ class _SubCategorySelectableWidgetState
     }
 
     final ListingEntity selectedCategory = selectedList.first;
-    final List<SubCategoryEntity>? subCategories = selectedCategory.subCategory;
+    final List<SubCategoryEntity> subCategories = selectedCategory.subCategory;
 
-    if (subCategories == null || subCategories.isEmpty) {
+    if (subCategories.isEmpty) {
       AppSnackBar.showSnackBar(context, 'no_subcategories_available'.tr());
       return;
     }

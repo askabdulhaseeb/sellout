@@ -20,12 +20,6 @@ class AddListingFormScreen extends StatefulWidget {
 
 class _AddListingFormScreenState extends State<AddListingFormScreen> {
   @override
-  void dispose() {
-    Provider.of<AddListingFormProvider>(context, listen: false).reset();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

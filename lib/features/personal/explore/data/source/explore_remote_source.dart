@@ -27,7 +27,8 @@ class ExploreRemoteSourceImpl implements ExploreRemoteSource {
       if (response is DataSuccess) {
         final String rawJson = response.data ?? '';
         final Map<String, dynamic> jsonData = jsonDecode(rawJson);
-        final List<dynamic> predictions = jsonData['predictions'] ?? [];
+        final List<dynamic> predictions =
+            jsonData['predictions'] ?? <dynamic>[];
         debugPrint(predictions.toString());
         final List<LocationNameModel> locationData = predictions
             .map((json) => LocationNameModel.fromJson(json))

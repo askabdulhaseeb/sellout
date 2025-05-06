@@ -20,6 +20,7 @@ class AvailabilityModel extends AvailabilityEntity {
         openingTime: json['opening_time'] ?? '',
       );
 
+  @override
   Map<String, dynamic> toJson() => <String, dynamic>{
         'day': day.json,
         'is_open': isOpen,
