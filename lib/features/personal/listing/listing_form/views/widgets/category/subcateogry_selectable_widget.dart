@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/enums/listing/core/listing_type.dart';
+import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../core/widgets/loader.dart';
 import '../../../domain/entities/listing_entity.dart';
@@ -33,6 +34,7 @@ class _SubCategorySelectableWidgetState
     super.initState();
     final AddListingFormProvider provider =
         Provider.of<AddListingFormProvider>(context, listen: false);
+    AppLog.info(provider.selectedClothSubCategory);
     if (provider.listings.isEmpty) {
       provider.fetchCategories();
     }
@@ -46,12 +48,27 @@ class _SubCategorySelectableWidgetState
         if (provider.isLoading) {
           return const Loader();
         }
-        final List<ListingEntity> selectedList = widget.listType != null
-            ? provider.listings
-                .where(
-                    (ListingEntity element) => element.type == widget.listType)
-                .toList()
-            : <ListingEntity>[];
+
+        List<ListingEntity> selectedList = <ListingEntity>[];
+
+        if (widget.listType == ListingType.clothAndFoot) {
+          selectedList = provider.listings
+              .where((ListingEntity element) =>
+                  element.listId == provider.selectedClothSubCategory)
+              .toList();
+        }
+        // else if (widget.listType == ListingType.property) {
+        //   selectedList = provider.listings
+        //       .where((ListingEntity element) =>
+        //           element.listId == provider.selectedPropertySubCategory)
+        //       .toList();
+        // }
+        else if (widget.listType != null) {
+          selectedList = provider.listings
+              .where((ListingEntity element) => element.type == widget.listType)
+              .toList();
+        }
+
         return _buildCategorySelector(selectedList, context);
       },
     );
@@ -102,7 +119,7 @@ class _SubCategorySelectableWidgetState
   Future<void> _handleCategorySelection(
       List<ListingEntity> selectedList, BuildContext context) async {
     if (selectedList.isEmpty) {
-      AppSnackBar.showSnackBar(context, 'no_categories_available'.tr());
+      AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
       return;
     }
 
@@ -110,7 +127,7 @@ class _SubCategorySelectableWidgetState
     final List<SubCategoryEntity> subCategories = selectedCategory.subCategory;
 
     if (subCategories.isEmpty) {
-      AppSnackBar.showSnackBar(context, 'no_subcategories_available'.tr());
+      AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
       return;
     }
 

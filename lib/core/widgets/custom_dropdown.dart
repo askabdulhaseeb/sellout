@@ -122,6 +122,8 @@ class _Widget<T> extends StatelessWidget {
                 width: width ?? double.infinity,
                 height: height,
                 decoration: BoxDecoration(
+                  backgroundBlendMode: BlendMode.color,
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(
                     // width: 0.5,

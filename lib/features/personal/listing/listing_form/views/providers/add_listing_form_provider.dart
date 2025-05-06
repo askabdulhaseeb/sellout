@@ -834,6 +834,7 @@ class AddListingFormProvider extends ChangeNotifier {
   // Cloth and Foot
   void setSelectedClothSubCategory(String value) {
     _selectedClothSubCategory = value;
+   
     notifyListeners();
   }
 
