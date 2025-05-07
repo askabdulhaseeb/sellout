@@ -50,7 +50,6 @@ class _SubCategorySelectableWidgetState
         }
 
         List<ListingEntity> selectedList = <ListingEntity>[];
-
         if (widget.listType == ListingType.clothAndFoot) {
           selectedList = provider.listings
               .where((ListingEntity element) =>

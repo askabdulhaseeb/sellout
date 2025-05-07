@@ -237,99 +237,157 @@ class AddListingFormProvider extends ChangeNotifier {
   }
 
   Future<void> reset() async {
+    // Text fields
     _title.clear();
-    _attachments = <PickedAttachment>[];
-    _selectedCategory = null;
-    _post = null;
     _description.clear();
     _price.clear();
-    _quantity.text = post?.quantity.toString() ?? '1';
+    _quantity.text = '1';
     _minimumOffer.clear();
     _localDeliveryFee.clear();
     _internationalDeliveryFee.clear();
-    _accessCode = '';
     _engineSize.clear();
     _mileage.clear();
     _bedroom.clear();
     _bathroom.clear();
+    _make.clear();
+    _model.clear();
+    _brand.clear();
+    _seats.clear();
+    _doors.clear();
+    _emission.clear();
+    _location.clear();
+    // File attachments
+    _attachments = <PickedAttachment>[];
+    // Core post data
+    _post = null;
+    _accessCode = '';
+    _isDiscounted = false;
+
+    // Booleans
     _garden = true;
     _parking = true;
     _animalFriendly = true;
-    _age = null;
-    _time = AgeTimeType.readyToLeave;
-    _condition = ConditionType.newC;
     _acceptOffer = true;
+
+    // Enums and types
+    _age = null;
+    _time = null;
+    _condition = ConditionType.newC;
     _privacy = PrivacyType.public;
     _deliveryType = DeliveryType.paid;
     _listingType = null;
+    _transmissionType = TransmissionType.auto;
+
+    // Nullable booleans
+    _vaccinationUpToDate = null;
+    _wormAndFleaTreated = null;
+    _healthChecked = null;
+
+    // Categories and selections
+    _selectedCategory = null;
+    _selectedBreed = null;
+    _selectedBodyType = null;
+    _selectedEnergyRating = null;
+    _selectedMileageUnit = null;
+    _selectedPropertyType = null;
+    _selectedVehicleCategory = null;
+    _selectedVehicleColor = null;
+    _selectedMeetupLocation = null;
+    _selectedCollectionLocation = null;
+    // List data
+    _sizeColorEntities = <SizeColorModel>[];
+
+    // Strings
+    _tenureType = '';
+    _selectedPropertySubCategory = ListingType.property.cids.first;
+    _selectedClothSubCategory = ListingType.clothAndFoot.cids.first;
+
+    // Reset discounts
+    for (DiscountEntity element in _discounts) {
+      element.discount = 0;
+    }
+
+    // Reset form keys
     _petKey.currentState?.reset();
     _itemKey.currentState?.reset();
     _vehicleKey.currentState?.reset();
     _propertyKey.currentState?.reset();
     _foodAndDrinkKey.currentState?.reset();
     _clothesAndFootKey.currentState?.reset();
-    _isDiscounted = false;
-    for (DiscountEntity element in _discounts) {
-      element.discount = 0;
-    }
+    debugPrint('listing variables reset');
     notifyListeners();
   }
 
   Future<void> updateVariables() async {
+    // Category and access
     _selectedCategory = findCategoryByAddress(_listings, post?.address ?? '');
     _accessCode = post?.accessCode ?? '';
+    // Age and pet-related
     _age = AgeTimeType.fromJson(post?.age);
-    _animalFriendly = _animalFriendly; // Not part of API
-    _availability = post?.availability ??
-        <AvailabilityEntity>[]; // Handle based on your structure
+    _animalFriendly = _animalFriendly;
+    _vaccinationUpToDate = post?.vaccinationUpToDate;
+    _wormAndFleaTreated = post?.wormAndFleaTreated;
+    _healthChecked = post?.healthChecked;
+    _time = AgeTimeType.fromJson(post?.readyToLeave);
+
+    // Availability
+    _availability = post?.availability ?? <AvailabilityEntity>[];
+
+    // Locations
     _selectedMeetupLocation = post?.meetUpLocation;
     _selectedCollectionLocation = post?.collectionLocation;
+    _location.text = post?.meetUpLocation?.address ?? '';
+
+    // Property details
     _bathroom.text = post?.bathroom.toString() ?? '0';
     _bedroom.text = post?.bedroom.toString() ?? '0';
-    _brand.text = post?.brand ?? '';
-    _selectedBreed = findCategoryByAddress(_listings, post?.breed ?? '');
-    _condition = post?.condition ?? ConditionType.newC;
-    _deliveryType = post?.deliveryType ?? DeliveryType.paid;
-    _description.text = post?.description ?? '';
-    _doors.text = post?.doors.toString() ?? '';
-    _emission.text = post?.emission ?? '';
-    _engineSize.text = post?.engineSize.toString() ?? '';
     _garden = post?.garden ?? true;
-    _healthChecked = post?.healthChecked;
-    _isDiscounted = post?.hasDiscount ?? false;
-    _listingType = ListingType.fromJson(post?.listID);
-    _localDeliveryFee.text = post?.localDelivery.toString() ?? '';
-    _internationalDeliveryFee.text =
-        post?.internationalDelivery.toString() ?? '';
-    _location.text = post?.meetUpLocation?.address ?? '';
-    _make.text = post?.make.toString() ?? '';
-    _mileage.text = post?.mileage.toString() ?? '';
-    _minimumOffer.text = post?.minOfferAmount.toString() ?? '';
-    _model.text = post?.model.toString() ?? '';
     _parking = post?.parking ?? true;
-    // _petCategory = PetCategory.fromJson(post?.listID);
-    _price.text = post?.price.toString() ?? '';
-    _privacy = post?.privacy ?? PrivacyType.supporters;
-    _quantity.text = post?.quantity.toString() ?? '1';
-    _seats.text = post?.seats.toString() ?? '';
-    _selectedBodyType = VehicleBodyType.fromJson(post?.bodyType ?? '');
-    _selectedClothSubCategory = post?.categoryType ?? '';
-    _selectedEnergyRating = post?.energyRating;
-    _selectedMileageUnit = post?.mileageUnit;
     _selectedPropertySubCategory = post?.propertyCategory.toString() ?? '';
     _selectedPropertyType = post?.propertytype;
+    _tenureType = post?.tenureType ?? '';
+
+    // Product details
+    _title.text = post?.title ?? '';
+    _description.text = post?.description ?? '';
+    _price.text = post?.price.toString() ?? '';
+    _quantity.text = post?.quantity.toString() ?? '1';
+    _minimumOffer.text = post?.minOfferAmount.toString() ?? '';
+    _isDiscounted = post?.hasDiscount ?? false;
+
+    // Brand/Model/Make
+    _brand.text = post?.brand ?? '';
+    _make.text = post?.make.toString() ?? '';
+    _model.text = post?.model.toString() ?? '';
+    _selectedBreed = findCategoryByAddress(_listings, post?.breed ?? '');
+
+    // Vehicle details
+    _engineSize.text = post?.engineSize.toString() ?? '';
+    _mileage.text = post?.mileage.toString() ?? '';
+    _selectedMileageUnit = post?.mileageUnit;
+    _emission.text = post?.emission ?? '';
+    _seats.text = post?.seats.toString() ?? '';
+    _doors.text = post?.doors.toString() ?? '';
+    _year.text = post?.year.toString() ?? '';
+    _transmissionType =
+        TransmissionType.fromJson(post?.transmission) ?? TransmissionType.auto;
     _selectedVehicleCategory =
         VehicleCategoryType.fromJson(post?.vehiclesCategory);
     _selectedVehicleColor = post?.vehiclesCategory;
-    _sizeColorEntities = post?.sizeColors ?? <SizeColorModel>[];
-    _tenureType = post?.tenureType ?? '';
-    _time = AgeTimeType.fromJson(post?.readyToLeave);
-    _title.text = post?.title ?? '';
-    _transmissionType =
-        TransmissionType.fromJson(post?.transmission) ?? TransmissionType.auto;
-    _vaccinationUpToDate = post?.vaccinationUpToDate;
-    _wormAndFleaTreated = post?.wormAndFleaTreated;
-    _year.text = post?.year.toString() ?? '';
+    _selectedBodyType = VehicleBodyType.fromJson(post?.bodyType ?? '');
+
+    // Delivery & fees
+    _deliveryType = post?.deliveryType ?? DeliveryType.paid;
+    _localDeliveryFee.text = post?.localDelivery.toString() ?? '';
+    _internationalDeliveryFee.text =
+        post?.internationalDelivery.toString() ?? '';
+
+    // Listing, privacy, and condition
+    _listingType = ListingType.fromJson(post?.listID);
+    _privacy = post?.privacy ?? PrivacyType.supporters;
+    _condition = post?.condition ?? ConditionType.newC;
+
+    // Discounts
     debugPrint(post?.discounts.toString());
     for (DiscountEntity element in _discounts) {
       final DiscountEntity? matching = post?.discounts.firstWhere(
@@ -338,6 +396,11 @@ class AddListingFormProvider extends ChangeNotifier {
       );
       element.discount = matching?.discount ?? 0;
     }
+
+    // Clothes and sizing
+    _selectedClothSubCategory = post?.categoryType ?? '';
+    _selectedEnergyRating = post?.energyRating;
+    _sizeColorEntities = post?.sizeColors ?? <SizeColorModel>[];
   }
 
   Future<void> submit(BuildContext context) async {
@@ -834,7 +897,7 @@ class AddListingFormProvider extends ChangeNotifier {
   // Cloth and Foot
   void setSelectedClothSubCategory(String value) {
     _selectedClothSubCategory = value;
-   
+    _selectedCategory = null;
     notifyListeners();
   }
 

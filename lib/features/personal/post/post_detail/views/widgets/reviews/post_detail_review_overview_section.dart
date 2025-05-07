@@ -27,8 +27,8 @@ class _PostDetailReviewOverviewSectionState
   @override
   Widget build(BuildContext context) {
     final GetReviewParam param = GetReviewParam(
-      id: widget.post.createdBy,
-      type: ReviewApiQueryOptionType.sellerID,
+      id: widget.post.postID,
+      type: ReviewApiQueryOptionType.postID,
     );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
