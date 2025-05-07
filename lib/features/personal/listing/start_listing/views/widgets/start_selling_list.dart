@@ -23,7 +23,6 @@ class StartSellingList extends StatelessWidget {
                   final AddListingFormProvider pro =
                       Provider.of<AddListingFormProvider>(context,
                           listen: false);
-                  pro.reset();
                   pro.setListingType(type);
                   Navigator.of(context)
                       .pushNamed(AddListingFormScreen.routeName);

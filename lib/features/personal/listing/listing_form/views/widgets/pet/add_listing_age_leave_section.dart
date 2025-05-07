@@ -27,7 +27,10 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                     items: age.map((AgeTimeType value) {
                       return DropdownMenuItem<AgeTimeType>(
                         value: value,
-                        child: Text(value.title),
+                        child: Text(
+                          value.title,
+                          style: TextTheme.of(context).bodySmall,
+                        ),
                       );
                     }).toList(),
                     onChanged: formPro.setAge,
@@ -43,7 +46,10 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                     items: time.map((AgeTimeType value) {
                       return DropdownMenuItem<AgeTimeType>(
                         value: value,
-                        child: Text(value.title),
+                        child: Text(
+                          value.title,
+                          style: TextTheme.of(context).bodySmall,
+                        ),
                       );
                     }).toList(),
                     onChanged: formPro.setTime,
@@ -54,27 +60,6 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                 ),
               ],
             ),
-            CustomDropdown<SubCategoryEntity>(
-              selectedItem: formPro.selectedBreed,
-              items: formPro.breed?.subCategory.map((SubCategoryEntity value) {
-                    return DropdownMenuItem<SubCategoryEntity>(
-                      value: value,
-                      child: Text(value.title),
-                    );
-                  }).toList() ??
-                  <DropdownMenuItem<
-                      SubCategoryEntity>>[], // ✅ Ensures non-null List
-              onChanged: (SubCategoryEntity? newValue) {
-                if (newValue != null) {
-                  formPro.setPetBreed(newValue);
-                }
-              },
-              validator: (_) => formPro.selectedBreed == null
-                  ? 'Pet category is required'
-                  : null,
-              title: 'pet_category'.tr(),
-            ),
-
             LocationInputField(
               onLocationSelected: (LocationModel location) {
                 formPro.setMeetupLocation(location);

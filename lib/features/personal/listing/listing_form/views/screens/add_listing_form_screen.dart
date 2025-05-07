@@ -21,41 +21,46 @@ class AddListingFormScreen extends StatefulWidget {
 class _AddListingFormScreenState extends State<AddListingFormScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          Provider.of<AddListingFormProvider>(context, listen: false)
-                  .listingType
-                  ?.code
-                  .tr() ??
-              'select_type'.tr(),
+    return PopScope(
+      onPopInvokedWithResult: (bool didPop, dynamic result) {
+        Provider.of<AddListingFormProvider>(context, listen: false).reset();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            Provider.of<AddListingFormProvider>(context, listen: false)
+                    .listingType
+                    ?.code
+                    .tr() ??
+                'select_type'.tr(),
+          ),
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         ),
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Selector<AddListingFormProvider, ListingType?>(
-          selector: (_, AddListingFormProvider pro) => pro.listingType,
-          builder: (BuildContext context, ListingType? listingType, _) {
-            switch (listingType) {
-              case ListingType.items:
-                return const AddItemForm();
-              case ListingType.clothAndFoot:
-                return const AddClothsAndFootwearForm();
-              case ListingType.vehicle:
-                return const AddVehicleForm();
-              case ListingType.foodAndDrink:
-                return const AddFoodAndDrinkForm();
-              case ListingType.property:
-                return const AddPropertyForm();
-              case ListingType.pets:
-                return const AddPetForm();
-              default:
-                return const AddItemForm();
-            }
-          },
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Selector<AddListingFormProvider, ListingType?>(
+            selector: (_, AddListingFormProvider pro) => pro.listingType,
+            builder: (BuildContext context, ListingType? listingType, _) {
+              switch (listingType) {
+                case ListingType.items:
+                  return const AddItemForm();
+                case ListingType.clothAndFoot:
+                  return const AddClothsAndFootwearForm();
+                case ListingType.vehicle:
+                  return const AddVehicleForm();
+                case ListingType.foodAndDrink:
+                  return const AddFoodAndDrinkForm();
+                case ListingType.property:
+                  return const AddPropertyForm();
+                case ListingType.pets:
+                  return const AddPetForm();
+                default:
+                  return const AddItemForm();
+              }
+            },
+          ),
         ),
       ),
     );
