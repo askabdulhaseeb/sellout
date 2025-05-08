@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../../../data/sources/local/local_post.dart';
 import '../../../domain/entities/post_entity.dart';
 import '../../../domain/entities/visit/visiting_entity.dart';
@@ -51,45 +52,65 @@ class PostDetailScreen extends StatelessWidget {
         ) {
           final PostEntity? post =
               snapshot.data?.entity ?? LocalPost().post(postID);
-          final bool isMe = post?.createdBy == (LocalAuth.uid ?? '-');
+          final bool isMe =
+              post?.createdBy == (LocalAuth.currentUser?.businessID ?? '-');
           return post == null
               ? const SizedBox()
-              : Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: SingleChildScrollView(
-                    keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior.onDrag,
-                    child: Column(
-                      spacing: 4,
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        PostDetailAttachmentSlider(urls: post.fileUrls),
-                        PostDetailTitleAmountSection(post: post),
-                        if (isMe == true)
-                          PostButtonsForUser(visit: visit, post: post),
-                        if (isMe == false)
-                          PostButtonSection(
-                            post: post,
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                          ),
-                        PostRatingSection(
-                          post: post,
-                        ),
-                        ConditionDeliveryWidget(post: post),
-                        PostDetailDescriptionSection(post: post),
-                        // PostDetailTileListSection(post: post),
-                        PostDetailPostageReturnSection(post: post),
-                        const SelloutBankGuranterWidget(),
-                        const ReturnPolicyDetails(),
-                        // const UserMeetupSafetyGuildlineSection(),
-                        PostDetailReviewOverviewSection(post: post),
-                        const SizedBox(height: 200),
-                      ],
-                    ),
-                  ),
-                );
+              : PostDetailSection(post: post, isMe: isMe, visit: visit);
         },
+      ),
+    );
+  }
+}
+
+class PostDetailSection extends StatelessWidget {
+  const PostDetailSection({
+    required this.post,
+    required this.isMe,
+    required this.visit,
+    super.key,
+  });
+
+  final PostEntity post;
+  final bool isMe;
+  final VisitingEntity? visit;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        child: Column(
+          spacing: 4,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            PostDetailAttachmentSlider(
+                attachments: post.fileUrls.isNotEmpty
+                    ? post.fileUrls
+                    : Provider.of<AddListingFormProvider>(context).attachments),
+            PostDetailTitleAmountSection(post: post),
+            if (isMe == true) PostButtonsForUser(visit: visit, post: post),
+            if (isMe == false)
+              PostButtonSection(
+                post: post,
+                padding: const EdgeInsets.symmetric(vertical: 8),
+              ),
+            PostRatingSection(
+              post: post,
+            ),
+            ConditionDeliveryWidget(post: post),
+            PostDetailDescriptionSection(post: post),
+            // PostDetailTileListSection(post: post),
+            PostDetailPostageReturnSection(post: post),
+            const SelloutBankGuranterWidget(),
+            const ReturnPolicyDetails(),
+            // const UserMeetupSafetyGuildlineSection(),
+            PostDetailReviewOverviewSection(post: post),
+            const SizedBox(height: 200),
+          ],
+        ),
       ),
     );
   }

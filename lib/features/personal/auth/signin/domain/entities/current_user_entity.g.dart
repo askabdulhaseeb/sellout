@@ -21,13 +21,14 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       token: fields[2] as String,
       userID: fields[3] as String,
       email: fields[11] as String,
-      username: fields[12] as String,
-      currency: fields[13] as String?,
-      privacy: fields[14] as PrivacyType,
-      countryAlpha3: fields[15] as String,
-      countryCode: fields[16] as String,
-      phoneNumber: fields[17] as String,
-      language: fields[18] as String,
+      userName: fields[12] as String,
+      displayName: fields[13] as String,
+      currency: fields[14] as String?,
+      privacy: fields[15] as PrivacyType,
+      countryAlpha3: fields[16] as String,
+      countryCode: fields[17] as String,
+      phoneNumber: fields[18] as String,
+      language: fields[19] as String,
       address: (fields[21] as List).cast<AddressEntity>(),
       chatIDs: (fields[31] as List).cast<String>(),
       businessIDs: (fields[32] as List).cast<String>(),
@@ -48,7 +49,7 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
   @override
   void write(BinaryWriter writer, CurrentUserEntity obj) {
     writer
-      ..writeByte(25)
+      ..writeByte(26)
       ..writeByte(1)
       ..write(obj.message)
       ..writeByte(2)
@@ -58,18 +59,20 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       ..writeByte(11)
       ..write(obj.email)
       ..writeByte(12)
-      ..write(obj.username)
+      ..write(obj.userName)
       ..writeByte(13)
-      ..write(obj.currency)
+      ..write(obj.displayName)
       ..writeByte(14)
-      ..write(obj.privacy)
+      ..write(obj.currency)
       ..writeByte(15)
-      ..write(obj.countryAlpha3)
+      ..write(obj.privacy)
       ..writeByte(16)
-      ..write(obj.countryCode)
+      ..write(obj.countryAlpha3)
       ..writeByte(17)
-      ..write(obj.phoneNumber)
+      ..write(obj.countryCode)
       ..writeByte(18)
+      ..write(obj.phoneNumber)
+      ..writeByte(19)
       ..write(obj.language)
       ..writeByte(21)
       ..write(obj.address)

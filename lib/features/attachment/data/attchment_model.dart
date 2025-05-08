@@ -28,4 +28,17 @@ class AttachmentModel extends AttachmentEntity {
         fileId: json['file_id'] ?? '',
         originalName: json['original_name'] ?? '',
       );
+      
+  Map<String, dynamic> toJson() => <String, String>{
+        'created_at': createdAt.toUtc().toIso8601String(),
+        'type': type.json.toString(),
+        'url': url,
+        'file_id': _cleanFileId(fileId),
+        'original_name': originalName,
+      };
+}
+
+String _cleanFileId(String id) {
+  final List<String> parts = id.split('/');
+  return parts.last;
 }

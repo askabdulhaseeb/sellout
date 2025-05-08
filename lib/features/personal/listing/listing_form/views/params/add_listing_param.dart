@@ -1,55 +1,145 @@
+import 'dart:convert';
 import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
+import '../../../../../../core/enums/listing/pet/age_time_type.dart';
+import '../../../../../attachment/data/attchment_model.dart';
+import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
-import '../../../../post/domain/entities/size_color/size_color_entity.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../location/data/models/location_model.dart';
+import '../../../../location/domain/entities/location_entity.dart';
+import '../../../../post/data/models/size_color/size_color_model.dart';
+import '../../../../post/domain/entities/discount_entity.dart';
 import '../../domain/entities/sub_category_entity.dart';
 
 class AddListingParam {
   AddListingParam({
-    required this.businessID,
     required this.title,
     required this.description,
     required this.attachments,
     required this.price,
-    required this.quantity,
-    required this.discount,
     required this.condition,
     required this.acceptOffer,
     required this.minOfferAmount,
     required this.privacyType,
     required this.deliveryType,
-    required this.localDeliveryAmount,
-    required this.internationalDeliveryAmount,
     required this.listingType,
-    required this.category,
     required this.currency,
-    required this.currentLatitude,
-    required this.currentLongitude,
+    this.currentLatitude,
+    this.currentLongitude,
+    this.type,
+    this.localDeliveryAmount,
+    this.internationalDeliveryAmount,
+    this.category,
+    this.quantity,
+    this.discount,
+    this.accessCode,
+    this.postID,
+    this.oldAttachments,
+    this.collectionLocation,
+    // clothfoot
+    this.brand,
     this.sizeColor,
+    this.discounts,
+    // vehicle
+    this.make,
+    this.model,
+    this.emission,
+    this.bodyType,
+    this.doors,
+    this.seats,
+    this.meetUpLocation,
+    this.year,
+    this.color,
+    this.availbility,
+    this.mileage,
+    this.engineSize,
+    this.vehicleCategory,
+    this.milageUnit,
+    this.transmission,
+    // property
+    this.propertyCategory,
+    this.bedrooms,
+    this.bathrooms,
+    this.energyrating,
+    this.garden,
+    this.parking,
+    this.tenureType,
+    this.propertyType,
+    this.animalFriendly,
+    // pets
+    this.age,
+    this.readyToLeave,
+    this.breed,
+    this.healthChecked,
+    this.vaccinationUpToDate,
+    this.wormAndFleaTreated,
+    this.petsCategory,
   });
-
-  final String? businessID;
+  //
   final String title;
   final String description;
   final List<PickedAttachment> attachments;
   final String price;
-  final String quantity;
-  final String discount;
+  final String? quantity;
+  final bool? discount;
   final ConditionType condition;
   final bool acceptOffer;
   final String minOfferAmount;
   final PrivacyType privacyType;
   final DeliveryType deliveryType;
-  final String localDeliveryAmount;
-  final String internationalDeliveryAmount;
+  final String? localDeliveryAmount;
+  final String? internationalDeliveryAmount;
   final ListingType listingType;
-  final SubCategoryEntity category;
-  final String currency;
-  final String currentLatitude;
-  final String currentLongitude;
-  final SizeColorEntity? sizeColor;
+  final SubCategoryEntity? category;
+  final String? currency;
+  final int? currentLatitude;
+  final int? currentLongitude;
+  final String? brand;
+  final String? type;
+  final List<SizeColorModel>? sizeColor;
+  final List<DiscountEntity>? discounts;
+  final String? accessCode;
+  final String? postID;
+  final List<AttachmentEntity>? oldAttachments;
+  final String? availbility;
+
+//vehicle
+  final String? make;
+  final String? model;
+  final String? emission;
+  final String? bodyType;
+  final String? doors;
+  final String? seats;
+  final LocationEntity? meetUpLocation;
+  final LocationEntity? collectionLocation;
+  final String? year;
+  final String? color;
+  final String? mileage;
+  final String? engineSize;
+  final String? vehicleCategory;
+  final String? milageUnit;
+  final String? transmission;
+  //property
+  final String? propertyCategory;
+  final String? bedrooms;
+  final String? bathrooms;
+  final String? energyrating;
+  final String? garden;
+  final String? parking;
+  final String? tenureType;
+  final String? propertyType;
+  final String? animalFriendly;
+  //pets
+  final AgeTimeType? age;
+  final String? readyToLeave;
+  final String? breed;
+  final bool? healthChecked;
+  final bool? vaccinationUpToDate;
+  final bool? wormAndFleaTreated;
+  final String? petsCategory;
 
   String get acceptOfferJSON => acceptOffer ? 'true' : 'false';
 
@@ -72,62 +162,87 @@ class AddListingParam {
 
   Map<String, String> _titleMAP() {
     return <String, String>{
-      if (businessID != null) 'business_id': businessID ?? '',
       'title': title,
       'description': description,
       'price': price,
       'post_privacy': privacyType.json,
+      if (privacyType == PrivacyType.private) 'access_code': accessCode ?? '',
+      if (postID!.isNotEmpty)
+        'old_files': oldAttachments
+                ?.map((AttachmentEntity attachment) =>
+                    jsonEncode(AttachmentModel.fromEntity(attachment).toJson()))
+                .toList()
+                .toString() ??
+            '[]'
     };
   }
 
   Map<String, String> _discountMAP() {
     return <String, String>{
-      'discount': discount,
-      'disc_2_items': '0',
-      'disc_3_items': '0',
-      'disc_5_items': '0',
+      'discount': discount.toString(),
+      if (discount == true)
+        'disc_2_items': discounts!
+            .firstWhere((DiscountEntity e) => e.quantity == 2)
+            .discount
+            .toString(),
+      if (discount == true)
+        'disc_3_items': discounts!
+            .firstWhere((DiscountEntity e) => e.quantity == 3)
+            .discount
+            .toString(),
+      if (discount == true)
+        'disc_5_items': discounts!
+            .firstWhere((DiscountEntity e) => e.quantity == 5)
+            .discount
+            .toString(),
     };
   }
 
   Map<String, String> _offerMAP() {
     return <String, String>{
       'accept_offers': acceptOfferJSON,
-      'min_offer_amount': minOfferAmount,
+      if (acceptOffer == true) 'min_offer_amount': minOfferAmount,
     };
   }
 
   Map<String, String> _deliveryMAP() {
     return <String, String>{
       'delivery_type': deliveryType.json,
-      if (listingType != ListingType.clothAndFoot &&
-          listingType != ListingType.pets)
-        'local_delivery': localDeliveryAmount,
-      if (listingType != ListingType.clothAndFoot &&
-          listingType != ListingType.pets)
-        'international_delivery': internationalDeliveryAmount,
+      if (deliveryType == DeliveryType.paid)
+        'local_delivery': localDeliveryAmount ?? '0',
+      if (deliveryType == DeliveryType.paid)
+        'international_delivery': internationalDeliveryAmount ?? '0',
+      if (deliveryType == DeliveryType.collocation)
+        'collection_location': collectionLocation != null
+            ? jsonEncode(
+                LocationModel.fromEntity(collectionLocation!).toJsonidurlkeys())
+            : '',
     };
   }
 
   Map<String, String> _listLocMAP() {
     return <String, String>{
       'list_id': listingType.json,
-      'address': category.address ?? '',
-      'currency': currency,
-      'current_latitude': currentLatitude,
-      'current_longitude': currentLongitude,
+      'address': category?.address ?? '',
+      if (currency != null) 'currency': currency ?? '',
+      'current_latitude': currentLatitude.toString(),
+      'current_longitude': currentLongitude.toString(),
     };
   }
 
   Map<String, String> _meetupMAP() {
     return <String, String>{
-      'meet_up_location': '',
-      'availability': '',
+      'meet_up_location': meetUpLocation != null
+          ? jsonEncode(
+              LocationModel.fromEntity(meetUpLocation!).toJsonidurlkeys())
+          : '',
+      'availability': availbility ?? '',
     };
   }
 
   _item() {
     final Map<String, String> mapp = <String, String>{
-      'quantity': quantity,
+      'quantity': quantity ?? '2',
       'item_condition': condition.json,
     };
     mapp.addAll(_titleMAP());
@@ -140,11 +255,12 @@ class AddListingParam {
 
   _cloth() {
     final Map<String, String> mapp = <String, String>{
-      'quantity': quantity,
+      'quantity': quantity ?? '',
       'item_condition': condition.json,
-      'brand': '', //
-      'size_colors': '', //
-      'type': '', //
+      'brand': brand ?? '',
+      'size_colors': jsonEncode(
+          sizeColor?.map((SizeColorModel e) => e.toMap()).toList()), //
+      'type': type ?? '', //
     };
     mapp.addAll(_titleMAP());
     mapp.addAll(_discountMAP());
@@ -156,7 +272,7 @@ class AddListingParam {
 
   _food() {
     final Map<String, String> mapp = <String, String>{
-      'quantity': quantity,
+      'quantity': quantity ?? '',
       'delivery_type': deliveryType.json,
     };
     mapp.addAll(_titleMAP());
@@ -170,21 +286,20 @@ class AddListingParam {
   _vehicles() {
     final Map<String, String> mapp = <String, String>{
       'item_condition': condition.json,
-      'make': 'bmw', //
-      'model': 'm3', //
-      'body_type': 'Sedan', //
-      'emission': 'euro_4', //
-      'year': '2017', //
-      'colour': 'black', //
-      'engine_size': '2500', //
-      'mileage': '12', //
-      'doors': '4', //
-      'seats': '4', //
-      'transmission': 'auto', //
-      'author_name': 'ahmed', //
-      'created_by': 'hgkj876',
-      'mileage_unit': 'miles', //
-      'vehicles_category': 'cars', //
+      'make': make ?? '', //
+      'model': model ?? '', //
+      'body_type': bodyType ?? '', //
+      'emission': emission ?? '', //
+      'year': year ?? '', //
+      'colour': color ?? '', //
+      'engine_size': engineSize ?? '', //
+      'mileage': mileage ?? '', //
+      'doors': doors ?? '', //
+      'seats': seats ?? '', //
+      'transmission': transmission ?? '', //
+      'author_name': LocalAuth.currentUser?.userName ?? '', //
+      'mileage_unit': milageUnit ?? '', //
+      'vehicles_category': vehicleCategory ?? '', //
     };
     mapp.addAll(_titleMAP());
     mapp.addAll(_offerMAP());
@@ -195,14 +310,14 @@ class AddListingParam {
 
   _property() {
     final Map<String, String> mapp = <String, String>{
-      'property_category': 'sale',
-      'bedrooms': '6',
-      'bathrooms': '5',
-      'energy_rating': '81to91',
-      'garden': 'yes',
-      'parking': 'yes',
-      'tenure_type': 'free_hold',
-      'property_type': 'detached',
+      'property_category': propertyCategory ?? '',
+      'bedrooms': bedrooms.toString(),
+      'bathrooms': bathrooms.toString(),
+      'energy_rating': energyrating ?? '',
+      'garden': garden ?? '',
+      'parking': parking ?? '',
+      'tenure_type': tenureType ?? '',
+      'property_type': propertyType ?? '',
     };
     mapp.addAll(_titleMAP());
     mapp.addAll(_listLocMAP());
@@ -212,20 +327,21 @@ class AddListingParam {
 
   _pet() {
     final Map<String, String> mapp = <String, String>{
-      'age': '1_week',
-      'post_privacy': 'public',
-      'ready_to_leave': 'now',
-      'breed': 'Labrador',
-      'health_checked': 'yes',
-      'vaccination_up_to_date': 'yes',
-      'worm_and_flea_treated': 'yes',
-      'pets_category': 'dogs',
+      'quantity': quantity.toString(),
+      'age': age?.json ?? '',
+      'post_privacy': privacyType.json,
+      'ready_to_leave': readyToLeave ?? '',
+      'breed': breed ?? '',
+      'health_checked': healthChecked.toString(),
+      'vaccination_up_to_date': vaccinationUpToDate.toString(),
+      'worm_and_flea_treated': wormAndFleaTreated.toString(),
+      'pets_category': petsCategory ?? '',
     };
     mapp.addAll(_titleMAP());
-    mapp.addAll(_discountMAP());
     mapp.addAll(_offerMAP());
     mapp.addAll(_listLocMAP());
     mapp.addAll(_meetupMAP());
+
     return mapp;
   }
 }

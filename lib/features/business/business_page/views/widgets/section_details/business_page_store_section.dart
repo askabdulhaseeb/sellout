@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../personal/post/data/sources/local/local_post.dart';
 import '../../../../../personal/post/domain/entities/post_entity.dart';
@@ -37,10 +36,10 @@ class BusinessPageStoreSection extends StatelessWidget {
                 shrinkWrap: true,
                 primary: false,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 6.0,
-                  mainAxisSpacing: 6.0,
-                ),
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 6.0,
+                    mainAxisSpacing: 6.0,
+                    childAspectRatio: 0.7),
                 itemBuilder: (BuildContext context, int index) {
                   return PostGridViewTile(post: posts[index]);
                 },

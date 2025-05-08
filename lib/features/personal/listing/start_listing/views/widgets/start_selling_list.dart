@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../listing_form/views/providers/add_listing_form_provider.dart';
 import '../../../listing_form/views/screens/add_listing_form_screen.dart';
@@ -21,8 +20,10 @@ class StartSellingList extends StatelessWidget {
               padding: const EdgeInsets.only(top: 16),
               child: InkWell(
                 onTap: () {
-                  Provider.of<AddListingFormProvider>(context, listen: false)
-                      .setListingType(type);
+                  final AddListingFormProvider pro =
+                      Provider.of<AddListingFormProvider>(context,
+                          listen: false);
+                  pro.setListingType(type);
                   Navigator.of(context)
                       .pushNamed(AddListingFormScreen.routeName);
                 },

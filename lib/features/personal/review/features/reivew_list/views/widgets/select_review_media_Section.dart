@@ -73,7 +73,7 @@ class SelectReviewMediaSection extends StatelessWidget {
                                                 children: <Widget>[
                                                   AbsorbPointer(
                                                     child: VideoWidget(
-                                                        videoUrl:
+                                                        videoSource:
                                                             media.file.path,
                                                         play: false),
                                                   ), // Video thumbnail

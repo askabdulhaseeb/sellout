@@ -1,8 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../../core/widgets/custom_toggle_switch.dart';
 import '../../providers/add_listing_form_provider.dart';
+import 'add_property_tenure_type.dart';
 
 class AddPropertyGPAWidget extends StatelessWidget {
   const AddPropertyGPAWidget({super.key});
@@ -32,10 +34,11 @@ class AddPropertyGPAWidget extends StatelessWidget {
             CustomToggleSwitch<bool>(
               labels: const <bool>[true, false],
               labelStrs: const <String>['Yes', 'No'],
-              labelText: 'Animal friendly',
+              labelText: 'animal_friendly'.tr(),
               initialValue: formPro.animalFriendly,
               onToggle: formPro.setAnimalFriendly,
             ),
+            const AddListingTenureTypeSelection(),
           ],
         );
       },

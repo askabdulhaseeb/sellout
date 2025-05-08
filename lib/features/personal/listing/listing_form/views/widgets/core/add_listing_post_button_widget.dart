@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../providers/add_listing_form_provider.dart';
+import '../../screens/add_listing_preview_screen.dart';
 
 class AddListingPostButtonWidget extends StatelessWidget {
   const AddListingPostButtonWidget({super.key});
@@ -25,6 +26,34 @@ class AddListingPostButtonWidget extends StatelessWidget {
               ),
             ),
           ),
+          CustomElevatedButton(
+              border: Border.all(color: ColorScheme.of(context).outline),
+              textColor: ColorScheme.of(context).outline,
+              bgColor: Colors.transparent,
+              title: 'preview_listing'.tr(),
+              isLoading: false,
+              onTap: () async {
+                if (formPro.attachments.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('please_add_at_least_one_photo_or_video'),
+                  ));
+                  return;
+                }
+                Navigator.push(
+                    context,
+                    // ignore: always_specify_types
+                    MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          const AddListingPreviewScreen(),
+                    ));
+              }),
+          CustomElevatedButton(
+              border: Border.all(color: ColorScheme.of(context).secondary),
+              textColor: ColorScheme.of(context).secondary,
+              bgColor: Colors.transparent,
+              title: 'promotion_boost'.tr(),
+              isLoading: false,
+              onTap: () {}),
           CustomElevatedButton(
             title: 'post'.tr(),
             isLoading: formPro.isLoading,

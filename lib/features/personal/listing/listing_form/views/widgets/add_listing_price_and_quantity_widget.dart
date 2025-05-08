@@ -16,47 +16,51 @@ class AddListingPriceAndQuantityWidget extends StatelessWidget {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         final bool isLoading = readOnly || formPro.isLoading;
-        return Row(
+        return Column(
           children: <Widget>[
-            Expanded(
-              child: CustomTextFormField(
-                controller: formPro.price,
-                labelText: 'price'.tr(),
-                hint: 'Ex. 12000.0',
-                showSuffixIcon: false,
-                readOnly: isLoading,
-                prefixText:  LocalAuth.currency.toUpperCase(),
-                keyboardType: TextInputType.number,
-                validator: (String? value) => AppValidator.isEmpty(value),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: CustomTextFormField(
-                controller: formPro.quantity,
-                labelText: 'quantity'.tr(),
-                showSuffixIcon: false,
-                hint: '12.0',
-                readOnly: isLoading,
-                textAlign: TextAlign.center,
-                prefixIcon: IconButton(
-                  onPressed: isLoading ? null : formPro.decrementQuantity,
-                  icon: Icon(
-                    Icons.remove_circle_outline,
-                    color: formPro.quantity.text == '1'
-                        ? Theme.of(context).shadowColor
-                        : null,
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: CustomTextFormField(
+                    controller: formPro.price,
+                    labelText: 'price'.tr(),
+                    hint: 'Ex. 12000.0',
+                    showSuffixIcon: false,
+                    prefixText: LocalAuth.currency.toUpperCase(),
+                    keyboardType: TextInputType.number,
+                    validator: (String? value) => AppValidator.isEmpty(value),
                   ),
                 ),
-                suffixIcon: IconButton(
-                  onPressed: isLoading ? null : formPro.incrementQuantity,
-                  icon: Icon(
-                    Icons.add_circle_outline_outlined,
-                    color: isLoading ? null : Theme.of(context).primaryColor,
+                const SizedBox(width: 16),
+                Expanded(
+                  child: CustomTextFormField(
+                    controller: formPro.quantity,
+                    labelText: 'quantity'.tr(),
+                    showSuffixIcon: false,
+                    hint: '12.0',
+                    readOnly: isLoading,
+                    textAlign: TextAlign.center,
+                    prefixIcon: IconButton(
+                      onPressed: formPro.decrementQuantity,
+                      icon: Icon(
+                        Icons.remove_circle_outline,
+                        color: formPro.quantity.text == '1'
+                            ? Theme.of(context).shadowColor
+                            : null,
+                      ),
+                    ),
+                    suffixIcon: IconButton(
+                      onPressed: formPro.incrementQuantity,
+                      icon: Icon(
+                        Icons.add_circle_outline_outlined,
+                        color:
+                            isLoading ? null : Theme.of(context).primaryColor,
+                      ),
+                    ),
+                    keyboardType: TextInputType.number,
                   ),
                 ),
-                keyboardType: TextInputType.number,
-              ),
+              ],
             ),
           ],
         );

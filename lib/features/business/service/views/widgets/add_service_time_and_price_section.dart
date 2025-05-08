@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../core/extension/int_ext.dart';
 import '../../../../../core/utilities/app_validators.dart';
 import '../../../../../core/widgets/costom_textformfield.dart';
@@ -26,35 +25,47 @@ class AddServiceTimeAndPriceSection extends StatelessWidget {
                 Expanded(
                   child: CustomDropdown<int?>(
                     title: 'hours'.tr(),
-                    items: <int>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-                        .map(
-                          (int e) => DropdownMenuItem<int>(
-                            value: e,
-                            child: Text('${e}H'),
-                          ),
-                        )
-                        .toList(),
+                    items: <DropdownMenuItem<int?>>[
+                      const DropdownMenuItem<int?>(
+                        value: null,
+                        child: Text('-- Select Hour --'),
+                      ),
+                      ...<int>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(
+                        (int e) => DropdownMenuItem<int?>(
+                          value: e,
+                          child: Text('${e}H'),
+                        ),
+                      ),
+                    ],
                     selectedItem: pro.selectedHour,
                     onChanged: (int? value) => pro.setSelectedHour(value),
-                    validator: (_) => null,
+                    validator: (bool? value) =>
+                        value == null ? 'Please select hours' : null,
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: CustomDropdown<int?>(
                     title: 'minutes'.tr(),
-                    items: <int>[5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
-                        .map(
-                          (int e) => DropdownMenuItem<int>(
-                            value: e,
-                            child: Text(
-                                '${e.putInStart(sign: '0', length: 2)} mints'),
+                    items: <DropdownMenuItem<int?>>[
+                      const DropdownMenuItem<int?>(
+                        value: null,
+                        child: Text('-- Select Minutes --'),
+                      ),
+                      ...<int>[5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
+                          .map(
+                        (int e) => DropdownMenuItem<int?>(
+                          value: e,
+                          child: Text(
+                            '${e.putInStart(sign: '0', length: 2)} mints',
                           ),
-                        )
-                        .toList(),
+                        ),
+                      ),
+                    ],
                     selectedItem: pro.selectedMinute,
                     onChanged: (int? value) => pro.setSelectedMinute(value),
-                    validator: (_) => null,
+                    validator: (bool? value) =>
+                        value == null ? 'Please select minutes' : null,
                   ),
                 ),
               ],

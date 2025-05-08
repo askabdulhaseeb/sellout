@@ -12,4 +12,10 @@ enum ServiceModelType {
         membership,
         subscription,
       ];
+        static ServiceModelType fromJson(String json) {
+    return models().firstWhere(
+      (ServiceModelType e) => e.json == json,
+      orElse: () => ServiceModelType.oneOff, // fallback if needed
+    );
+  }
 }

@@ -6,6 +6,7 @@ import '../../../../../../core/usecase/usecase.dart';
 import '../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/profile_photo.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../providers/profile_provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -46,11 +47,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     child: Consumer<ProfileProvider>(
                       builder: (BuildContext context, ProfileProvider pr,
                               Widget? child) =>
-                          ClipRRect(
-                        borderRadius: BorderRadius.circular(100),
-                        child: ProfilePhoto(
-                          url: pr.profilePhoto?.first.url,
-                        ),
+                          ProfilePhoto(
+                        isCircle: true,
+                        url: (pro.profilePhoto != null &&
+                                pro.profilePhoto!.isNotEmpty)
+                            ? pro.profilePhoto!.first.url
+                            : '',
                       ),
                     )),
               ),
@@ -73,12 +75,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 controller: pro.namecontroller,
               ),
               const SizedBox(height: 16),
-
               /// Email Field
               CustomTextFormField(
                 readOnly: true,
                 labelText: 'username'.tr(),
-                controller: TextEditingController(),
+                controller: TextEditingController(
+                    text: LocalAuth.currentUser?.userName),
               ),
               const SizedBox(height: 16),
               CustomTextFormField(

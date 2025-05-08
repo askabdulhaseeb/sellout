@@ -20,7 +20,7 @@ class ProfileHeaderSection extends StatelessWidget {
     return AspectRatio(
       aspectRatio: 3 / 1,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 6),
         child: Row(
           children: <Widget>[
             AspectRatio(
@@ -36,18 +36,19 @@ class ProfileHeaderSection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 4,
                     children: <Widget>[
                       Expanded(
                         child: Text(
                           maxLines: 2,
                           user?.displayName ?? '',
                           style: const TextStyle(
-                            fontSize: 18,
+                            fontSize: 16,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),
-                      if (isMe) const Spacer(),
                       if (isMe) const ProfileEditAndSettingsWidget()
                     ],
                   ),
