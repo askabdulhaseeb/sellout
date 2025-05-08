@@ -18,45 +18,62 @@ class MessagesList extends HookWidget {
     final ScrollController scrollController = useScrollController();
     final ValueNotifier<List<MessageEntity>> messages =
         useState<List<MessageEntity>>(<MessageEntity>[]);
-    final ObjectRef<Set<String>> shownMessageIds =
-        useRef<Set<String>>(<String>{});
     final String? chatId = chatPro.chat?.chatId;
+
     useEffect(() {
       if (chatId == null) return null;
       final Box<GettedMessageEntity> box =
           Hive.box<GettedMessageEntity>(AppStrings.localChatMessagesBox);
+
+      // Initial load
+      final GettedMessageEntity? existing = box.get(chatId);
+      if (existing != null) {
+        messages.value = <MessageEntity>[...existing.sortedByNewestFirst()];
+      }
+
       final StreamSubscription<BoxEvent> subscription =
           box.watch(key: chatId).listen((BoxEvent event) {
         final GettedMessageEntity? updated = box.get(chatId);
-        final List<MessageEntity> newMessages =
-            updated?.sortedMessage() ?? <MessageEntity>[];
-        for (final MessageEntity message in newMessages) {
-          if (!shownMessageIds.value.contains(message.messageId)) {
-            shownMessageIds.value.add(message.messageId);
-            messages.value = <MessageEntity>[...messages.value, message];
-            WidgetsBinding.instance.endOfFrame.then((_) {
-              if (scrollController.hasClients) {
-                scrollController.animateTo(
-                  scrollController.position.minScrollExtent,
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeOut,
-                );
-              }
-            });
+        if (updated != null) {
+          final List<MessageEntity> newMessages = updated.sortedByNewestFirst();
+          final List<MessageEntity> previousMessages = messages.value;
+
+          if (!_areListsEqual(previousMessages, newMessages)) {
+            final bool wasNearBottom = scrollController.hasClients &&
+                scrollController.position.pixels >=
+                    scrollController.position.maxScrollExtent - 50;
+
+            messages.value = newMessages;
+
+            if (wasNearBottom) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (scrollController.hasClients) {
+                  scrollController.animateTo(
+                    scrollController.position.maxScrollExtent,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeOut,
+                  );
+                }
+              });
+            }
           }
         }
       });
+
       return subscription.cancel;
     }, <Object?>[chatId]);
+
     return Expanded(
       child: ListView.builder(
         controller: scrollController,
+        reverse: true, // Keep reverse true for bottom alignment
         itemCount: messages.value.length,
         itemBuilder: (BuildContext context, int index) {
+          // Direct index access with proper sorting
           final MessageEntity current = messages.value[index];
-          final MessageEntity? next = index < messages.value.length - 1
-              ? messages.value[index + 1]
-              : null;
+          final MessageEntity? next =
+              index > 0 ? messages.value[index - 1] : null;
+
           return MessageTile(
             key: ValueKey<String>(current.messageId),
             message: current,
@@ -67,5 +84,24 @@ class MessagesList extends HookWidget {
         },
       ),
     );
+  }
+
+  bool _areListsEqual(List<MessageEntity> a, List<MessageEntity> b) {
+    if (a.length != b.length) return false;
+    for (int i = 0; i < a.length; i++) {
+      if (a[i].messageId != b[i].messageId) return false;
+    }
+    return true;
+  }
+}
+
+extension SortedMessages on GettedMessageEntity {
+  List<MessageEntity> sortedByNewestFirst() {
+    final List<MessageEntity> copy = <MessageEntity>[
+      ...this.messages
+    ]; // use this.messages
+    copy.sort((MessageEntity a, MessageEntity b) =>
+        b.createdAt.compareTo(a.createdAt));
+    return copy;
   }
 }
