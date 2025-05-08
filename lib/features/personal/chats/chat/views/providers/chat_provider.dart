@@ -109,7 +109,6 @@ class ChatProvider extends ChangeNotifier {
     final DataState<bool> result = await _sendMessageUsecase(param);
     if (result is DataSuccess) {
       _message.clear();
-      notifyListeners();
     } else {
       AppSnackBar.showSnackBar(
           // ignore: use_build_context_synchronously
