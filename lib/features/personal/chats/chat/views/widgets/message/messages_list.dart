@@ -33,9 +33,8 @@ class MessagesList extends HookWidget {
         for (final MessageEntity message in newMessages) {
           if (!shownMessageIds.value.contains(message.messageId)) {
             shownMessageIds.value.add(message.messageId);
-            messages.value = <MessageEntity>[message, ...messages.value];
-
-            WidgetsBinding.instance.addPostFrameCallback((_) {
+            messages.value = <MessageEntity>[...messages.value, message];
+            WidgetsBinding.instance.endOfFrame.then((_) {
               if (scrollController.hasClients) {
                 scrollController.animateTo(
                   scrollController.position.minScrollExtent,
@@ -52,7 +51,6 @@ class MessagesList extends HookWidget {
     return Expanded(
       child: ListView.builder(
         controller: scrollController,
-        reverse: true,
         itemCount: messages.value.length,
         itemBuilder: (BuildContext context, int index) {
           final MessageEntity current = messages.value[index];
@@ -68,50 +66,6 @@ class MessagesList extends HookWidget {
           );
         },
       ),
-    );
-  }
-}
-
-class AnimatedMessageTile extends StatelessWidget {
-  const AnimatedMessageTile({
-    required this.message,
-    required this.nextMessage,
-    required this.animate,
-    super.key,
-  });
-  final MessageEntity message;
-  final MessageEntity? nextMessage;
-  final bool animate;
-
-  Duration get _timeDiff {
-    return (nextMessage != null && message.sendBy == nextMessage!.sendBy)
-        ? message.createdAt.difference(nextMessage!.createdAt)
-        : const Duration(days: 5);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final MessageTile tile = MessageTile(
-      key: ValueKey(message.messageId),
-      message: message,
-      timeDiff: _timeDiff,
-    );
-
-    if (!animate) return tile;
-
-    return TweenAnimationBuilder<double>(
-      tween: Tween<double>(begin: 0, end: 1),
-      duration: const Duration(milliseconds: 300),
-      builder: (BuildContext context, double value, Widget? child) {
-        return Opacity(
-          opacity: value,
-          child: Transform.translate(
-            offset: Offset(0, (1 - value) * 20),
-            child: child,
-          ),
-        );
-      },
-      child: tile,
     );
   }
 }

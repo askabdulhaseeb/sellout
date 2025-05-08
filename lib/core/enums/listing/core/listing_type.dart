@@ -36,7 +36,7 @@ enum ListingType {
     'food-drink',
     4,
     AppIcons.food,
-    <String>['food', 'drink', 'food_drink'],
+    <String>['food', 'drink', 'food-drink'],
   ),
   @HiveField(4)
   property(

@@ -329,7 +329,7 @@ class AddListingFormProvider extends ChangeNotifier {
     _wormAndFleaTreated = post?.wormAndFleaTreated;
     _healthChecked = post?.healthChecked;
     _time = AgeTimeType.fromJson(post?.readyToLeave);
-
+    _selectedBreed = findCategoryByAddress(listings, post?.address ?? '');
     // Availability
     _availability = post?.availability ?? <AvailabilityEntity>[];
 
@@ -714,9 +714,9 @@ class AddListingFormProvider extends ChangeNotifier {
         oldAttachments: post?.fileUrls,
         accessCode: _accessCode,
         age: age,
-        breed: _selectedBreed?.title,
+        breed: selectedCategory?.title ?? '',
         healthChecked: _healthChecked,
-        petsCategory: _selectedCategory?.title.toLowerCase(),
+        petsCategory: _petCategory,
         wormAndFleaTreated: _wormAndFleaTreated,
         vaccinationUpToDate: _vaccinationUpToDate,
         readyToLeave: _time?.json,
@@ -979,10 +979,10 @@ class AddListingFormProvider extends ChangeNotifier {
   }
 
 // pets
-  // void setPetCategory(PetCategory? category) {
-  //   _petCategory = category;
-  //   notifyListeners();
-  // }
+  void setPetCategory(String? category) {
+    _petCategory = category;
+  }
+
   void setPetBreed(SubCategoryEntity category) {
     _selectedBreed = category;
     notifyListeners();
@@ -1153,7 +1153,7 @@ class AddListingFormProvider extends ChangeNotifier {
   // Pet
   SubCategoryEntity? get selectedBreed => _selectedBreed;
   AgeTimeType? get age => _age;
-  // PetCategory? get petCategory => _petCategory;
+  String? get petCategory => _petCategory;
   bool? get healthChecked => _healthChecked;
   SubCategoryEntity? get breed => _breed;
   // bool? get petsCategory => _petsCategory;
@@ -1287,7 +1287,7 @@ class AddListingFormProvider extends ChangeNotifier {
   bool _animalFriendly = true;
   // Pet
   SubCategoryEntity? _selectedBreed;
-  // PetCategory? _petCategory;
+  String? _petCategory;
   bool? _healthChecked;
   SubCategoryEntity? _breed;
   // bool _petsCategory;
