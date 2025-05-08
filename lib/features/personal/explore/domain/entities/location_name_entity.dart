@@ -10,7 +10,7 @@ class LocationNameEntity {
   });
   final String description;
   final List<MatchedSubstringEntity> matchedSubstrings;
-  final String placeId;
+   String placeId;
   final String reference;
   final StructuredFormattingEntity structuredFormatting;
   final List<TermEntity> terms;

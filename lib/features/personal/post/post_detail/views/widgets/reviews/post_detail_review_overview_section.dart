@@ -13,21 +13,28 @@ import 'post_detail_review_attachment_list_widget.dart';
 import 'post_detail_review_header.dart';
 import 'post_detail_review_list_section.dart';
 
-class PostDetailReviewOverviewSection extends StatelessWidget {
+class PostDetailReviewOverviewSection extends StatefulWidget {
   const PostDetailReviewOverviewSection({required this.post, super.key});
   final PostEntity post;
 
   @override
+  State<PostDetailReviewOverviewSection> createState() =>
+      _PostDetailReviewOverviewSectionState();
+}
+
+class _PostDetailReviewOverviewSectionState
+    extends State<PostDetailReviewOverviewSection> {
+  @override
   Widget build(BuildContext context) {
     final GetReviewParam param = GetReviewParam(
-      id: post.createdBy,
-      type: ReviewApiQueryOptionType.sellerID,
+      id: widget.post.postID,
+      type: ReviewApiQueryOptionType.postID,
     );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        PostDetailRatingHeader(post: post),
+        PostDetailRatingHeader(post: widget.post),
         FutureBuilder<DataState<List<ReviewEntity>>>(
           future: Provider.of<PostDetailProvider>(context, listen: false)
               .getReviews(param),

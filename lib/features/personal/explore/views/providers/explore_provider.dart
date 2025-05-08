@@ -12,7 +12,6 @@ import '../../domain/entities/location_name_entity.dart';
 import '../../domain/usecase/location_name_usecase.dart';
 import '../enums/category_types.dart';
 import '../enums/sort_enums.dart';
-import '../params/location_by_name_params.dart';
 
 class ExploreProvider extends ChangeNotifier {
   ExploreProvider(this._getFeedUsecase, this._fetchLocationUseCase);
@@ -819,8 +818,8 @@ class ExploreProvider extends ChangeNotifier {
 
 //
   Future<void> fetchLocations(String input) async {
-    final DataState<List<LocationNameEntity>> result = await _fetchLocationUseCase(
-        FetchLocationParams(input: input, apiKey: ''));
+    final DataState<List<LocationNameEntity>> result =
+        await _fetchLocationUseCase(input);
 
     if (result is DataSuccess<List<LocationNameEntity>>) {
       debugPrint(result.data);

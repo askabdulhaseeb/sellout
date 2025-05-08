@@ -65,6 +65,10 @@ class PostModel extends PostEntity {
     required super.vehiclesCategory,
     required super.meetUpLocation,
     required super.availability,
+    required super.bedroom,
+    required super.bathroom,
+    required super.energyRating,
+
     //
     required super.age,
     required super.breed,
@@ -73,10 +77,12 @@ class PostModel extends PostEntity {
     required super.readyToLeave,
     required super.wormAndFleaTreated,
     required super.vaccinationUpToDate,
-    //
+//
     required super.propertyCategory,
     required super.propertytype,
-
+    required super.garden,
+    required super.parking,
+    required super.tenureType,
     //
     required super.isActive,
     required super.createdBy,
@@ -139,6 +145,9 @@ class PostModel extends PostEntity {
       vehiclesCategory: entity.vehiclesCategory,
       meetUpLocation: entity.meetUpLocation,
       availability: entity.availability,
+      bedroom: entity.bedroom,
+      bathroom: entity.bathroom,
+      energyRating: entity.energyRating,
       //
       age: entity.age,
       breed: entity.breed,
@@ -148,9 +157,11 @@ class PostModel extends PostEntity {
       wormAndFleaTreated: entity.wormAndFleaTreated,
       vaccinationUpToDate: entity.vaccinationUpToDate,
       //
-
       propertyCategory: entity.propertyCategory,
       propertytype: entity.propertytype,
+      garden: entity.garden,
+      parking: entity.parking,
+      tenureType: entity.tenureType,
       //
       isActive: entity.isActive,
       createdBy: entity.createdBy,
@@ -279,6 +290,9 @@ class PostModel extends PostEntity {
       availability: (json['availability'] ?? <dynamic>[])
           .map<AvailabilityModel>((dynamic e) => AvailabilityModel.fromJson(e))
           .toList(),
+      bedroom: json['bedrooms'] ?? 0,
+      bathroom: json['bathrooms'] ?? 0,
+
       //
       age: json['age']?.toString(),
       breed: json['breed']?.toString(),
@@ -288,14 +302,21 @@ class PostModel extends PostEntity {
       wormAndFleaTreated: json['worm_and_flea_treated'] ?? false,
       vaccinationUpToDate: json['vaccination_up_to_date'] ?? false,
       //
-isActive: (json['is_active'] is bool) ? json['is_active'] : (json['is_active'].toString().toLowerCase() == 'false'),
+      propertyCategory: json['property_category']?.toString(),
+      propertytype: json['property_type']?.toString(),
+      parking: json['parking'] ?? true,
+      garden: json['garden'] ?? false,
+      energyRating: json['energy_rating'] ,
+      tenureType: json['tenure_type'],
+      //
+      isActive: (json['is_active'] is bool)
+          ? json['is_active']
+          : (json['is_active'].toString().toLowerCase() == 'false'),
       createdBy: json['created_by']?.toString() ?? '',
       updatedBy: json['updated_by']?.toString() ?? '',
       createdAt: json['created_at']?.toString().toDateTime() ?? DateTime.now(),
       updatedAt: json['updated_at']?.toString().toDateTime() ?? DateTime.now(),
       accessCode: json['access_code']?.toString(),
-      propertyCategory: json['property_category']?.toString(),
-      propertytype: json['property_type']?.toString(),
     );
   }
 }

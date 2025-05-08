@@ -36,7 +36,7 @@ class LocationNameModel extends LocationNameEntity {
   factory LocationNameModel.fromRawJson(String str) =>
       LocationNameModel.fromJson(json.decode(str));
 
-  LocationNameModel( {
+  LocationNameModel({
     required super.description,
     required super.matchedSubstrings,
     required super.placeId,
@@ -78,7 +78,7 @@ class StructuredFormattingModel extends StructuredFormattingEntity {
                       MatchedSubstringModel.fromMap(x as Map<String, dynamic>))
                   .toList() ??
               <MatchedSubstringEntity>[],
-      secondaryText: map['secondary_text'] as String,
+      secondaryText: map['secondary_text'] ?? '',
     );
   }
 

@@ -193,7 +193,7 @@ class AddServiceProvider extends ChangeNotifier {
   final TextEditingController _description = TextEditingController();
   final TextEditingController _included = TextEditingController();
   final TextEditingController _notIncluded = TextEditingController();
-   final List<PickedAttachment> _attachments = <PickedAttachment>[];
+  final List<PickedAttachment> _attachments = <PickedAttachment>[];
   ServiceCategoryType? _selectedCategory;
   ServiceType? _selectedType;
   ServiceModelType? _selectedModelType;
@@ -270,14 +270,9 @@ class AddServiceProvider extends ChangeNotifier {
 
   void setService(ServiceEntity service) {
     _currentService = service;
-    _selectedCategory = getCategoryFromString(service.category);
-
-    // Set the type safely
+    _selectedCategory = ServiceCategoryType.fromJson(service.category);
     _selectedType = getServiceTypeFromString(service.type);
-
-    // Set model type safely
-    _selectedModelType = getModelTypeFromString(service.model);
-
+    _selectedModelType = ServiceModelType.fromJson(service.model);
     _selectedHour = service.time ~/ 60;
     _selectedMinute = service.time % 60;
     _title.text = service.name;
@@ -289,38 +284,12 @@ class AddServiceProvider extends ChangeNotifier {
     _selectedEmployeeUIDs = service.employeesID;
   }
 
-  ServiceCategoryType? getCategoryFromString(String value) {
-    for (ServiceCategoryType category in ServiceCategoryType.values) {
-      if (category.name == value ||
-          category.json == value ||
-          category.code == value) {
-        return category;
-      }
-    }
-    return null;
-  }
-
-  ServiceModelType? getModelTypeFromString(String value) {
-    try {
-      return ServiceModelType.values.firstWhere(
-        (ServiceModelType e) => e.code == value || e.json == value,
-      );
-    } catch (e) {
-      return null;
-    }
-  }
-
-  ServiceType? getServiceTypeFromString(String value) {
-    for (ServiceCategoryType category in ServiceCategoryType.values) {
-      // We search through the service types in each category
-      for (ServiceType serviceType in category.serviceTypes) {
-        // Check if either the code or the json matches the value
-        if (serviceType.code == value || serviceType.json == value) {
-          return serviceType; // Return the service type if a match is found
-        }
-      }
-    }
-    return null; 
+  ServiceType getServiceTypeFromString(String value) {
+    return ServiceCategoryType.values
+        .expand((ServiceCategoryType category) => category.serviceTypes)
+        .firstWhere(
+            (ServiceType type) => type.code == value || type.json == value,
+            orElse: () => _selectedCategory!.serviceTypes.first);
   }
 
   set isLoading(bool value) {

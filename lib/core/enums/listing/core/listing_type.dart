@@ -17,7 +17,7 @@ enum ListingType {
   @HiveField(1)
   clothAndFoot(
     'cloth_foot',
-    'cloth_foot',
+    'clothes-foot',
     4,
     AppIcons.tShirt,
     <String>['clothes', 'footwear', 'cloth_foot'],
@@ -33,10 +33,10 @@ enum ListingType {
   @HiveField(3)
   foodAndDrink(
     'food_drink',
-    'food_drink',
+    'food-drink',
     4,
     AppIcons.food,
-    <String>['food', 'drink', 'food_drink'],
+    <String>['food', 'drink', 'food-drink'],
   ),
   @HiveField(4)
   property(
@@ -44,7 +44,7 @@ enum ListingType {
     'property',
     4,
     AppIcons.key,
-    <String>['property'],
+    <String>['sale', 'rent'],
   ),
   @HiveField(5)
   pets(

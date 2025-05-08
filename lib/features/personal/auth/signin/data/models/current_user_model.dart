@@ -16,7 +16,8 @@ class CurrentUserModel extends CurrentUserEntity {
       required super.userID,
       //
       required super.email,
-      required super.username,
+      required super.userName,
+      required super.displayName,
       required super.currency,
       required super.privacy,
       required super.countryAlpha3,
@@ -66,7 +67,8 @@ class CurrentUserModel extends CurrentUserEntity {
       userID: userData['user_id'] ?? userData['owner_id'] ?? '',
       //
       email: userData['email'] ?? userData['owner_email'] ?? '',
-      username: userData['user_name'] ?? '',
+      userName: userData['user_name'] ?? '',
+      displayName: userData['display_name'] ?? '',
       currency: userData['currency'] ?? 'gbp',
       privacy: PrivacyType.fromJson(
           userData['profile_type'] ?? 'public'), // **Handled null**

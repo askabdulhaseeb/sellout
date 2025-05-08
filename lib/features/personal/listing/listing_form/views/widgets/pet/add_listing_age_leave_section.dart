@@ -1,9 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../../core/enums/listing/pet/age_time_type.dart';
 import '../../../../../../../core/widgets/custom_dropdown.dart';
+import '../../../../../location/data/models/location_model.dart';
 import '../../providers/add_listing_form_provider.dart';
+import '../location_by_name_field.dart';
 
 class AddListingPetAgeLeaveWidget extends StatelessWidget {
   const AddListingPetAgeLeaveWidget({super.key});
@@ -14,38 +16,91 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
     final List<AgeTimeType> time = AgeTimeType.time;
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
-        return Row(
+        return Column(
           children: <Widget>[
-            Expanded(
-              child: CustomDropdown<AgeTimeType>(
-                selectedItem: formPro.age,
-                items: age.map((AgeTimeType value) {
-                  return DropdownMenuItem<AgeTimeType>(
-                    value: value,
-                    child: Text(value.title),
-                  );
-                }).toList(),
-                onChanged: formPro.setAge,
-                validator: (_) =>
-                    formPro.age == null ? 'Age is required' : null,
-                title: 'Age',
-              ),
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: CustomDropdown<AgeTimeType>(
+                    selectedItem: formPro.age,
+                    items: age.map((AgeTimeType value) {
+                      return DropdownMenuItem<AgeTimeType>(
+                        value: value,
+                        child: Text(
+                          value.title,
+                          style: TextTheme.of(context).bodySmall,
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: formPro.setAge,
+                    validator: (_) =>
+                        formPro.age == null ? 'Age is required' : null,
+                    title: 'age'.tr(),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: CustomDropdown<AgeTimeType>(
+                    selectedItem: formPro.time,
+                    items: time.map((AgeTimeType value) {
+                      return DropdownMenuItem<AgeTimeType>(
+                        value: value,
+                        child: Text(
+                          value.title,
+                          style: TextTheme.of(context).bodySmall,
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: formPro.setTime,
+                    validator: (_) =>
+                        formPro.time == null ? 'Time is required' : null,
+                    title: 'ready_to_leave'.tr(),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: CustomDropdown<AgeTimeType>(
-                selectedItem: formPro.time,
-                items: time.map((AgeTimeType value) {
-                  return DropdownMenuItem<AgeTimeType>(
-                    value: value,
-                    child: Text(value.title),
-                  );
-                }).toList(),
-                onChanged: formPro.setTime,
-                validator: (_) =>
-                    formPro.time == null ? 'Time is required' : null,
-                title: 'Ready to Leave',
-              ),
+            LocationInputField(
+              onLocationSelected: (LocationModel location) {
+                formPro.setMeetupLocation(location);
+              },
+              initialLocation: formPro.selectedmeetupLocation,
+            ),
+            // CustomTextFormField(
+            //   controller: formPro.selectedBreed,
+            //   labelText: 'breed',
+            // ),
+            CustomDropdown<bool>(
+              selectedItem: formPro.vaccinationUpToDate,
+              items: const <DropdownMenuItem<bool>>[
+                DropdownMenuItem<bool>(value: true, child: Text('Yes')),
+                DropdownMenuItem<bool>(value: false, child: Text('No')),
+              ],
+              onChanged: formPro.setVaccinationUpToDate,
+              validator: (_) =>
+                  formPro.vaccinationUpToDate == null ? 'Required' : null,
+              title: 'vaccination_up_to_date'.tr(),
+            ),
+            CustomDropdown<bool>(
+              selectedItem: formPro.wormAndFleaTreated,
+              items: const <DropdownMenuItem<bool>>[
+                DropdownMenuItem<bool>(value: true, child: Text('Yes')),
+                DropdownMenuItem<bool>(value: false, child: Text('No')),
+              ],
+              onChanged: formPro.setWormFleeTreated,
+              validator: (_) =>
+                  formPro.wormAndFleaTreated == null ? 'Required' : null,
+              title: 'worm_flee_treated'.tr(),
+            ),
+            CustomDropdown<bool>(
+              selectedItem: formPro.healthChecked,
+              items: const <DropdownMenuItem<bool>>[
+                DropdownMenuItem<bool>(value: true, child: Text('Yes')),
+                DropdownMenuItem<bool>(value: false, child: Text('No')),
+              ],
+              onChanged: formPro.setHealthChecked,
+              validator: (_) =>
+                  formPro.healthChecked == null ? 'Required' : null,
+              title: 'health_checked'.tr(),
             ),
           ],
         );

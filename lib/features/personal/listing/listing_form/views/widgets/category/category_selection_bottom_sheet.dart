@@ -1,7 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
+import '../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../domain/entities/sub_category_entity.dart';
+import '../../providers/add_listing_form_provider.dart';
 
 class CategorySelectionBottomSheet extends StatefulWidget {
   const CategorySelectionBottomSheet({required this.subCategories, super.key});
@@ -17,6 +19,8 @@ class _CategorySelectionBottomSheetState
   List<SubCategoryEntity> selectedSubCategoryStack = <SubCategoryEntity>[];
   @override
   Widget build(BuildContext context) {
+    final AddListingFormProvider formPro =
+        Provider.of<AddListingFormProvider>(context, listen: false);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -74,6 +78,17 @@ class _CategorySelectionBottomSheetState
                     if (subCategory.subCategory.isEmpty) {
                       Navigator.of(context).pop(subCategory);
                       return;
+                    }
+                    if (formPro.listingType == ListingType.pets &&
+                        subCategory.subCategory.isNotEmpty) {
+                      // Assuming you have a provider named `BreedProvider`, update the breeds list based on the selected category.
+                      // This will be handled in the provider.
+                      // You could pass this category info to update the breed dropdown in another screen or widget.
+                      formPro.setPetBreeds(subCategory);
+                      Navigator.of(context).pop(subCategory);
+                      setState(() {
+                        selectedSubCategoryStack.add(subCategory);
+                      });
                     } else {
                       setState(() {
                         selectedSubCategoryStack.add(subCategory);

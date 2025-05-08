@@ -1,8 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../../core/enums/listing/core/item_condition_type.dart';
+import '../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
@@ -22,15 +22,17 @@ class AddListingConditionOfferSection extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            CustomToggleSwitch<ConditionType>(
-              labels: ConditionType.list,
-              labelStrs: ConditionType.list
-                  .map<String>((ConditionType e) => e.code.tr())
-                  .toList(),
-              labelText: 'condition'.tr(),
-              initialValue: formPro.condition,
-              onToggle: formPro.setCondition,
-            ),
+            if (formPro.listingType != ListingType.foodAndDrink &&
+                formPro.listingType != ListingType.pets)
+              CustomToggleSwitch<ConditionType>(
+                labels: ConditionType.list,
+                labelStrs: ConditionType.list
+                    .map<String>((ConditionType e) => e.code.tr())
+                    .toList(),
+                labelText: 'condition'.tr(),
+                initialValue: formPro.condition,
+                onToggle: formPro.setCondition,
+              ),
             CustomToggleSwitch<bool>(
               labels: const <bool>[true, false],
               labelStrs: <String>['yes'.tr(), 'no'.tr()],
@@ -43,7 +45,7 @@ class AddListingConditionOfferSection extends StatelessWidget {
                 controller: formPro.minimumOffer,
                 labelText: 'minimum_offerd_amount'.tr(),
                 showSuffixIcon: false,
-                prefixText:  LocalAuth.currency.toUpperCase(),
+                prefixText: LocalAuth.currency.toUpperCase(),
                 hint: '8.0',
                 keyboardType: TextInputType.number,
                 validator: (String? value) => AppValidator.isEmpty(value),
@@ -73,7 +75,9 @@ class AddListingConditionOfferSection extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     margin: const EdgeInsets.symmetric(vertical: 8),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor.withOpacity(0.06),
+                      color: Theme.of(context)
+                          .primaryColor
+                          .withValues(alpha: 0.06),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(

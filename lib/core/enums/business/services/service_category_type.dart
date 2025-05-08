@@ -319,6 +319,7 @@ enum ServiceCategoryType {
     ],
   );
 
+
   const ServiceCategoryType(
     this.code,
     this.json,

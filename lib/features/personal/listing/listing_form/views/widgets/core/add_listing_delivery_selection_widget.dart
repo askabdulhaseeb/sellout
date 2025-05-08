@@ -1,12 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_radio_button_list_tile.dart';
-import '../../../../../../../core/widgets/location_input_button.dart';
+import '../../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../../location/data/models/location_model.dart';
 import '../../providers/add_listing_form_provider.dart';
+import '../location_by_name_field.dart';
 
 class AddListingDeliverySelectionWidget extends StatelessWidget {
   const AddListingDeliverySelectionWidget({super.key});
@@ -35,19 +36,42 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
             selectedValue: formPro.deliveryType,
             value: DeliveryType.paid,
             onChanged: formPro.setDeliveryType,
-            subtitle: CustomTextFormField(
-              controller: formPro.deliveryFee,
-              keyboardType: TextInputType.number,
-              hint: 'delivery_fee'.tr(),
-              autoFocus: true,
-              // prefixText: LocalState.getCurrency(),
-              prefixText: '₹',
-              contentPadding: EdgeInsets.zero,
-              validator: (String? value) =>
-                  formPro.deliveryType == DeliveryType.paid &&
-                          (value?.isEmpty ?? true)
-                      ? 'delivery_fee_is_required'.tr()
-                      : null,
+            subtitle: Row(
+              spacing: 6,
+              children: <Widget>[
+                Expanded(
+                  child: CustomTextFormField(
+                    controller: formPro.localDeliveryFee,
+                    keyboardType: TextInputType.number,
+                    hint: 'local_delivery_fee'.tr(),
+                    autoFocus: true,
+                    // prefixText: LocalState.getCurrency(),
+                    prefixText: LocalAuth.currentUser?.currency?.toUpperCase(),
+                    contentPadding: EdgeInsets.zero,
+                    validator: (String? value) =>
+                        formPro.deliveryType == DeliveryType.paid &&
+                                (value?.isEmpty ?? true)
+                            ? 'local_delivery_fee_is_required'.tr()
+                            : null,
+                  ),
+                ),
+                Expanded(
+                  child: CustomTextFormField(
+                    controller: formPro.internationalDeliveryFee,
+                    keyboardType: TextInputType.number,
+                    hint: 'international_delivery_fee'.tr(),
+                    autoFocus: true,
+                    // prefixText: LocalState.getCurrency(),
+                    prefixText: LocalAuth.currentUser?.currency?.toUpperCase(),
+                    contentPadding: EdgeInsets.zero,
+                    validator: (String? value) =>
+                        formPro.deliveryType == DeliveryType.paid &&
+                                (value?.isEmpty ?? true)
+                            ? 'international_delivery_fee_is_required'.tr()
+                            : null,
+                  ),
+                ),
+              ],
             ),
           ),
           CustomRadioButtonListTile<DeliveryType>(
@@ -55,13 +79,20 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
             selectedValue: formPro.deliveryType,
             value: DeliveryType.collocation,
             onChanged: formPro.setDeliveryType,
-            subtitle: LocationInputButton(
-              validator: (bool? value) =>
-                  formPro.deliveryType == DeliveryType.collocation &&
-                          (value == null)
-                      ? 'location_is_required'.tr()
-                      : null,
+            subtitle: LocationInputField(
+              onLocationSelected: (LocationModel location) {
+                formPro.setCollectionLocation(location);
+              },
+              initialLocation: formPro.selectedCollectionLocation,
             ),
+
+            //  LocationInputButton(
+            //   validator: (bool? value) =>
+            //       formPro.deliveryType == DeliveryType.collocation &&
+            //               (value == null)
+            //           ? 'location_is_required'.tr()
+            //           : null,
+            // ),
           ),
         ],
       );

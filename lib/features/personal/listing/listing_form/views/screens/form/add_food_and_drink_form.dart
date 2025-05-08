@@ -7,7 +7,9 @@ import '../../widgets/category/subcateogry_selectable_widget.dart';
 import '../../widgets/core/add_listing_basic_info_section.dart';
 import '../../widgets/core/add_listing_condition_offer_section.dart';
 import '../../widgets/core/add_listing_delivery_selection_widget.dart';
+import '../../widgets/core/add_listing_discount_section.dart';
 import '../../widgets/core/add_listing_post_button_widget.dart';
+import '../../widgets/core/add_listing_update_button_widget.dart';
 
 class AddFoodAndDrinkForm extends StatelessWidget {
   const AddFoodAndDrinkForm({super.key});
@@ -29,9 +31,10 @@ class AddFoodAndDrinkForm extends StatelessWidget {
             ),
             const AddListingPriceAndQuantityWidget(),
             const AddListingConditionOfferSection(),
+            const AddListingDiscountSection(),
             const AddListingDeliverySelectionWidget(),
-            const AddListingPostButtonWidget(),
-          ],
+   if (formPro.post == null) const AddListingPostButtonWidget(),
+              if (formPro.post != null) const AddListingUpdateButtons()          ],
         ),
       );
     });
