@@ -6,6 +6,7 @@ import '../../features/personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../features/personal/chats/chat/domain/entities/getted_message_entity.dart';
 import '../../features/personal/chats/chat/domain/entities/message_last_evaluated_key_entity.dart';
 import '../../features/personal/chats/chat_dashboard/data/models/message/message_model.dart';
+import '../../features/personal/chats/chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../functions/app_log.dart';
 import '../utilities/app_string.dart';
 
@@ -43,55 +44,72 @@ class SocketService {
 
     socket!.connect();
     socket!.onConnect((_) {
-      AppLog.info('✅ Connected to server: ${socket!.id}',
+      AppLog.info(' Connected to server: ${socket!.id}',
           name: 'SocketService.connect');
-      debugPrint('🔐 Auth info: ${socket!.auth}');
+      debugPrint(' Auth info: ${socket!.auth}');
     });
 
     socket!.onConnectError((dynamic data) {
-      AppLog.error('🚨 Connect error: $data',
-          name: 'SocketService.connectError');
+      AppLog.error(' Connect error: $data', name: 'SocketService.connectError');
     });
 
     socket!.onDisconnect((_) {
-      AppLog.error('❌ Disconnected from server',
+      AppLog.error(' Disconnected from server',
           name: 'SocketService.disconnect');
     });
 
     socket!.on('getOnlineUsers', (dynamic data) {
-      AppLog.info('📶 Online users: $data',
-          name: 'SocketService.getOnlineUsers');
+      AppLog.info(' Online users: $data', name: 'SocketService.getOnlineUsers');
     });
 
     socket!.on('lastSeen', (dynamic data) {
-      AppLog.info('🕓 Last seen: $data', name: 'SocketService.lastSeen');
+      AppLog.info(' Last seen: $data', name: 'SocketService.lastSeen');
+    });
+    socket!.on('updatedMessage', (dynamic data) {
+      AppLog.info('Updated message: $data',
+          name: 'SocketService.updatedMessage');
+
+      final Map<String, dynamic> messageData = data;
+      final String chatId = messageData['chat_id'];
+      final String updatedMessageId = messageData['message_id'];
+
+      final Box<GettedMessageEntity> box =
+          Hive.box<GettedMessageEntity>(AppStrings.localChatMessagesBox);
+
+      final GettedMessageEntity? existing = box.get(chatId);
+
+      if (existing == null) {
+        AppLog.error('No existing chat found for update. Skipping...',
+            name: 'SocketService.updatedMessage');
+        return;
+      }
+
+      final int index = existing.messages.indexWhere(
+        (MessageEntity m) => m.messageId == updatedMessageId,
+      );
+
+      if (index != -1) {
+        // You can update any fields (e.g., seen status, text, etc.)
+        existing.messages[index] = MessageModel.fromJson(messageData);
+
+        box.put(chatId, existing); // 🔁 Update Hive to notify listeners
+        AppLog.info('Message $updatedMessageId updated in chat $chatId',
+            name: 'SocketService.updatedMessage');
+      } else {
+        AppLog.error('Message to update not found in chat $chatId',
+            name: 'SocketService.updatedMessage');
+      }
     });
 
     socket!.on('newMessage', (dynamic data) {
-      AppLog.info('📨 New message received: $data',
+      AppLog.info(' New message received: $data',
           name: 'SocketService.newMessage');
 
       final Map<String, dynamic> messageData = data;
-      AppLog.info('Decoded message data: $messageData',
-          name: 'SocketService.newMessage');
-
-      // Create a new MessageModel from the decoded data
       final MessageModel newMsg = MessageModel.fromJson(messageData);
-      AppLog.info('Created new message: $newMsg',
-          name: 'SocketService.newMessage');
-
-      // Extract the chat ID from the message data
       final String chatId = messageData['chat_id'];
-      AppLog.info('Chat ID extracted: $chatId',
-          name: 'SocketService.newMessage');
-
-      // Open the Hive box to store the messages
       final Box<GettedMessageEntity> box =
           Hive.box<GettedMessageEntity>(AppStrings.localChatMessagesBox);
-      AppLog.info('Opened Hive box: ${AppStrings.localChatMessagesBox}',
-          name: 'SocketService.newMessage');
-
-      // Check if the chatId exists in the box
       final GettedMessageEntity existing = box.values.firstWhere(
         (GettedMessageEntity e) => e.chatID == chatId,
         orElse: () => GettedMessageEntity(
@@ -133,11 +151,6 @@ class SocketService {
     socket!.onAny((String event, dynamic data) {
       debugPrint('📡 Event: $event');
       debugPrint('📦 Data: $data');
-    });
-
-    socket!.onAnyOutgoing((String event, dynamic data) {
-      AppLog.info('📤 Outgoing: $event → $data',
-          name: 'SocketService.outgoing');
     });
   }
 

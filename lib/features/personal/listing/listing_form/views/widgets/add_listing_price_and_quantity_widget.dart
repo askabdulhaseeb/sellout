@@ -4,9 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../core/widgets/costom_textformfield.dart';
-import '../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../domain/entities/sub_category_entity.dart';
 import '../providers/add_listing_form_provider.dart';
 
 class AddListingPriceAndQuantityWidget extends StatelessWidget {
@@ -20,25 +18,6 @@ class AddListingPriceAndQuantityWidget extends StatelessWidget {
         final bool isLoading = readOnly || formPro.isLoading;
         return Column(
           children: <Widget>[
-            CustomDropdown<SubCategoryEntity>(
-              selectedItem: formPro.selectedBreed,
-              items: formPro.breed?.subCategory.map((SubCategoryEntity value) {
-                    return DropdownMenuItem<SubCategoryEntity>(
-                      value: value,
-                      child: Text(value.title),
-                    );
-                  }).toList() ??
-                  <DropdownMenuItem<SubCategoryEntity>>[],
-              onChanged: (SubCategoryEntity? newValue) {
-                if (newValue != null) {
-                  formPro.setPetBreed(newValue);
-                }
-              },
-              validator: (_) => formPro.selectedBreed == null
-                  ? 'Pet category is required'
-                  : null,
-              title: 'pet_category'.tr(),
-            ),
             Row(
               children: <Widget>[
                 Expanded(
