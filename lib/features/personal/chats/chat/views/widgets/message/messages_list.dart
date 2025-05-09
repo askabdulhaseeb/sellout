@@ -25,32 +25,36 @@ class MessagesList extends HookWidget {
       final Box<GettedMessageEntity> box =
           Hive.box<GettedMessageEntity>(AppStrings.localChatMessagesBox);
 
-      // Initial load
+      // Initial load of messages
       final GettedMessageEntity? existing = box.get(chatId);
       if (existing != null) {
-        messages.value = <MessageEntity>[...existing.sortedByNewestFirst()];
+        messages.value = List.from(
+            existing.sortedByNewestFirst()); // Ensure list reference is updated
       }
 
+      // Subscribe to changes in the chat's messages
       final StreamSubscription<BoxEvent> subscription =
           box.watch(key: chatId).listen((BoxEvent event) {
         final GettedMessageEntity? updated = box.get(chatId);
         if (updated != null) {
           final List<MessageEntity> newMessages = updated.sortedByNewestFirst();
-          final List<MessageEntity> previousMessages = messages.value;
 
-          if (!_areListsEqual(previousMessages, newMessages)) {
+          // Check if the list actually changed
+          if (!_areListsEqual(messages.value, newMessages)) {
             final bool wasNearBottom = scrollController.hasClients &&
                 scrollController.position.pixels >=
                     scrollController.position.maxScrollExtent - 50;
 
-            messages.value = newMessages;
+            // Only update the messages if they actually changed
+            messages.value = List.from(newMessages); // Trigger rebuild
 
+            // Scroll to the bottom if user was near the bottom before the update
             if (wasNearBottom) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (scrollController.hasClients) {
                   scrollController.animateTo(
                     scrollController.position.maxScrollExtent,
-                    duration: const Duration(milliseconds: 300),
+                    duration: const Duration(milliseconds: 500),
                     curve: Curves.easeOut,
                   );
                 }
@@ -60,16 +64,16 @@ class MessagesList extends HookWidget {
         }
       });
 
+      // Cleanup subscription when the widget is disposed
       return subscription.cancel;
     }, <Object?>[chatId]);
 
     return Expanded(
       child: ListView.builder(
         controller: scrollController,
-        reverse: true, // Keep reverse true for bottom alignment
+        reverse: true,
         itemCount: messages.value.length,
         itemBuilder: (BuildContext context, int index) {
-          // Direct index access with proper sorting
           final MessageEntity current = messages.value[index];
           final MessageEntity? next =
               index > 0 ? messages.value[index - 1] : null;
@@ -89,7 +93,10 @@ class MessagesList extends HookWidget {
   bool _areListsEqual(List<MessageEntity> a, List<MessageEntity> b) {
     if (a.length != b.length) return false;
     for (int i = 0; i < a.length; i++) {
-      if (a[i].messageId != b[i].messageId) return false;
+      if (a[i].messageId != b[i].messageId ||
+          a[i].updatedAt != b[i].updatedAt) {
+        return false;
+      }
     }
     return true;
   }
@@ -98,7 +105,7 @@ class MessagesList extends HookWidget {
 extension SortedMessages on GettedMessageEntity {
   List<MessageEntity> sortedByNewestFirst() {
     final List<MessageEntity> copy = <MessageEntity>[
-      ...this.messages
+      ...messages
     ]; // use this.messages
     copy.sort((MessageEntity a, MessageEntity b) =>
         b.createdAt.compareTo(a.createdAt));

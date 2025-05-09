@@ -241,9 +241,8 @@ class PostRemoteApiImpl implements PostRemoteApi {
                 element.messageId == param.messageId);
         message.offerDetail?.offerPrice = offerAmount;
         message.offerDetail!.offerStatus = offerStatus;
-          return DataSuccess<bool>(result.data!, true);
+        return DataSuccess<bool>(result.data!, true);
       } else {
-
         AppLog.error(
           result.exception?.message ?? 'PostRemoteApiImpl.updateOffer - else',
           name: 'PostRemoteApiImpl.updateOffer - failed',
@@ -253,13 +252,14 @@ class PostRemoteApiImpl implements PostRemoteApi {
           result.exception ?? CustomException('something_wrong'.tr()),
         );
       }
-    } catch (e) {
+    } catch (e, stc) {
       debugPrint(param.toString());
 
       AppLog.error(
         e.toString(),
         name: 'PostRemoteApiImpl.updateOffer - catch',
         error: e,
+        stackTrace: stc,
       );
       return DataFailer<bool>(CustomException(e.toString()));
     }

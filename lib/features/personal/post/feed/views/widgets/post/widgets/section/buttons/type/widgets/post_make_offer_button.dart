@@ -12,6 +12,7 @@ class PostMakeOfferButton extends StatelessWidget {
   Widget build(BuildContext context) {
     void showOfferBottomSheet(BuildContext context) {
       showModalBottomSheet(
+        useSafeArea: true,
         context: context,
         isScrollControlled: true,
         builder: (BuildContext context) {
