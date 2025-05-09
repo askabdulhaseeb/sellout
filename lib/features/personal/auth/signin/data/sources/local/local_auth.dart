@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
-import '../../../../../../../core/sources/socket_service.dart';
+import '../../../../../../../core/sockets/socket_service.dart';
+import '../../../../../../../services/get_it.dart';
 import '../../../domain/entities/current_user_entity.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 export '../../../domain/entities/current_user_entity.dart';
@@ -32,7 +33,7 @@ class LocalAuth {
   static String get currency => currentUser?.currency ?? 'gbp';
 
   Future<void> signout() async {
-    final SocketService socketService = SocketService();
+    final SocketService socketService = SocketService(locator());
     socketService.disconnect();
     await _box.clear();
   }

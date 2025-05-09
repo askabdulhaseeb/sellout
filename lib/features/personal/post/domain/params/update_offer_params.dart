@@ -8,6 +8,8 @@ class UpdateOfferParams {
     required this.offerAmount,
     required this.quantity,
     required this.minOffer,
+    required this.size,
+    required this.color,
   });
   final int? offerAmount;
   final int? quantity;
@@ -17,6 +19,8 @@ class UpdateOfferParams {
   final String businessId;
   final String messageId;
   final String chatID;
+  final String size;
+  final String color;
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -25,6 +29,8 @@ class UpdateOfferParams {
       'business_id': businessId,
       'message_id': messageId,
       'quantity': quantity,
+      if (size != '') 'size': size,
+      if (color != '') 'color': color
     };
   }
 

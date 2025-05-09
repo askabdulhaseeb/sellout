@@ -13,6 +13,7 @@ class OfferDetailModel extends OfferDetailEntity {
     required super.currency,
     required super.offerId,
     required super.offerPrice,
+    required super.quantity,
   });
 
   factory OfferDetailModel.fromJson(Map<String, dynamic> json) {
@@ -28,6 +29,7 @@ class OfferDetailModel extends OfferDetailEntity {
       currency: json['currency'] ?? '',
       offerId: json['offer_id'] ?? '',
       offerPrice: int.tryParse(json['offer_price']?.toString() ?? '0') ?? 0,
+      quantity: json['quantity'] ?? 0,
     );
   }
 }

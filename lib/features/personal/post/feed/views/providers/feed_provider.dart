@@ -122,17 +122,22 @@ class FeedProvider extends ChangeNotifier {
     required int? offerAmount,
     required int? minoffer,
     required String chatId,
+    String size = '',
+    String color = '',
   }) async {
     setIsLoading(true);
     final UpdateOfferParams params = UpdateOfferParams(
-        chatID: chatId,
-        minOffer: minoffer,
-        offerAmount: offerAmount,
-        quantity: quantity,
-        businessId: businessId,
-        offerStatus: offerStatus,
-        messageId: messageID,
-        offerId: offerId);
+      chatID: chatId,
+      minOffer: minoffer,
+      offerAmount: offerAmount,
+      quantity: quantity,
+      businessId: businessId,
+      offerStatus: offerStatus,
+      messageId: messageID,
+      offerId: offerId,
+      size: size,
+      color: color,
+    );
     try {
       final DataState<bool> result = await _updateOfferUsecase.call(params);
       if (result is DataSuccess && result.data != null) {

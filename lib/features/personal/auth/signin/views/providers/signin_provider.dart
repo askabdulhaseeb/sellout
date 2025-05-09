@@ -2,8 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
-import '../../../../../../core/sources/socket_service.dart';
+import '../../../../../../core/sockets/socket_service.dart';
 import '../../../../../../routes/app_linking.dart';
+import '../../../../../../services/get_it.dart';
 import '../../../../dashboard/views/screens/dashboard_screen.dart';
 import '../../domain/params/login_params.dart';
 import '../../domain/usecase/login_usecase.dart';
@@ -47,7 +48,7 @@ class SigninProvider extends ChangeNotifier {
       );
       if (result is DataSuccess<bool>) {
         debugPrint('Signin Ready');
-        final SocketService socketService = SocketService();
+        final SocketService socketService = SocketService(locator());
         socketService.connect();
         isLoading = false;
         await AppNavigator.pushNamedAndRemoveUntil(

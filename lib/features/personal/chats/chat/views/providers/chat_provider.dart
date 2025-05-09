@@ -1,12 +1,17 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
+import '../../../../../../core/utilities/app_string.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
+import '../../../chat_dashboard/data/models/message/message_model.dart';
 import '../../../chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../../chat_dashboard/domain/entities/messages/message_entity.dart';
+import '../../../chat_dashboard/domain/usecase/get_my_chats_usecase.dart';
 import '../../data/models/message_last_evaluated_key.dart';
 import '../../domain/entities/getted_message_entity.dart';
 import '../../domain/entities/message_last_evaluated_key_entity.dart';
@@ -15,10 +20,11 @@ import '../../domain/usecase/get_messages_usecase.dart';
 import '../../domain/usecase/send_message_usecase.dart';
 
 class ChatProvider extends ChangeNotifier {
-  ChatProvider(this._getMessagesUsecase, this._sendMessageUsecase);
+  ChatProvider(this._getMessagesUsecase, this._sendMessageUsecase,
+      this._getMyChatUsecase);
   final GetMessagesUsecase _getMessagesUsecase;
   final SendMessageUsecase _sendMessageUsecase;
-
+  final GetMyChatsUsecase _getMyChatUsecase;
   ChatEntity? _chat;
   ChatEntity? get chat => _chat;
 

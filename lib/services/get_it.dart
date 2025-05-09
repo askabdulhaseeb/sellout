@@ -1,4 +1,6 @@
 import 'package:get_it/get_it.dart';
+import '../core/sockets/socket_implementations.dart';
+import '../core/sockets/socket_service.dart';
 import '../core/widgets/appointment/data/repository/appointment_repository.dart';
 import '../core/widgets/appointment/data/services/appointment_api.dart';
 import '../core/widgets/appointment/domain/repository/appointment_repository.dart';
@@ -145,6 +147,7 @@ void setupLocator() {
   _explore();
   _bookvisit();
   _addlisting();
+  _sockets();
 }
 
 void _auth() {
@@ -246,7 +249,8 @@ void _message() {
       .registerFactory<GetMessagesUsecase>(() => GetMessagesUsecase(locator()));
   locator
       .registerFactory<SendMessageUsecase>(() => SendMessageUsecase(locator()));
-  locator.registerLazySingleton(() => ChatProvider(locator(), locator()));
+  locator.registerLazySingleton(
+      () => ChatProvider(locator(), locator(), locator()));
 }
 
 void _feed() {
@@ -435,9 +439,19 @@ void _addlisting() {
 
   locator.registerFactory<AddListingRepo>(() => AddListingRepoImpl(locator()));
   locator
-      .registerFactory<AddListingUsecase>(() => AddListingUsecase(locator())); locator
+      .registerFactory<AddListingUsecase>(() => AddListingUsecase(locator()));
+  locator
       .registerFactory<EditListingUsecase>(() => EditListingUsecase(locator()));
   locator.registerFactory<AddListingFormProvider>(
-    () => AddListingFormProvider(locator(),locator()),
+    () => AddListingFormProvider(locator(), locator()),
+  );
+}
+
+void _sockets() {
+  locator.registerFactory<SocketService>(
+    () => SocketService(locator()),
+  );
+  locator.registerFactory<SocketImplementations>(
+    () => SocketImplementations(),
   );
 }
