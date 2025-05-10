@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/utilities/app_string.dart';
@@ -11,6 +13,7 @@ import '../../features/personal/chats/chat_dashboard/domain/usecase/get_my_chats
 import '../functions/app_log.dart';
 
 class SocketImplementations {
+  // NEW MESSAGES
   Future<void> handleNewMessage(Map<String, dynamic> data) async {
     final MessageModel newMsg = MessageModel.fromJson(data);
     final String chatId = data['chat_id'];
@@ -28,7 +31,6 @@ class SocketImplementations {
       if (chatResult is DataSuccess &&
           (chatResult.entity?.isNotEmpty ?? false)) {
         final ChatEntity newChat = chatResult.entity!.first;
-        // 🔽 Add to local chats box
         final Box<ChatEntity> localChatsBox =
             Hive.box<ChatEntity>(AppStrings.localChatsBox);
         await localChatsBox.put(chatId, newChat);
@@ -50,6 +52,7 @@ class SocketImplementations {
     await messageBox.put(chatId, existing);
   }
 
+  // UPDATE MESSAGES
   Future<void> handleUpdatedMessage(Map<String, dynamic> data) async {
     final Map<String, dynamic> messageData = data;
     final String? chatId = messageData['chat_id'];
@@ -80,23 +83,26 @@ class SocketImplementations {
     }
 
     try {
-      // Step 1: Create new updated message list
       final List<MessageEntity> updatedMessages = List.from(existing.messages);
       updatedMessages[index] = MessageModel.fromJson(messageData);
-      // Step 2: Create a new instance of GettedMessageEntity
-      final updatedEntity = GettedMessageEntity(
+      final GettedMessageEntity updatedEntity = GettedMessageEntity(
           chatID: existing.chatID,
           messages: updatedMessages,
-          lastEvaluatedKey: existing
-              .lastEvaluatedKey // include other fields from existing as needed
-          );
+          lastEvaluatedKey: existing.lastEvaluatedKey);
 
-      // Step 3: Save back to Hive
       await box.put(chatId, updatedEntity);
       AppLog.info('Successfully updated messages in Hive for chatId: $chatId');
     } catch (e, stackTrace) {
       AppLog.error('Error saving updated messages to Hive: $e',
           stackTrace: stackTrace, name: 'SocketService.updatedMessage');
     }
+  }
+
+  // ONLINE USERS
+  final ValueNotifier<List<String>> onlineUsers = ValueNotifier(<String>[]);
+
+  Future<void> handleOnlineUsers(List<String> users) async {
+    onlineUsers.value = users;
+    debugPrint(onlineUsers.value.toString());
   }
 }

@@ -249,8 +249,7 @@ void _message() {
       .registerFactory<GetMessagesUsecase>(() => GetMessagesUsecase(locator()));
   locator
       .registerFactory<SendMessageUsecase>(() => SendMessageUsecase(locator()));
-  locator.registerLazySingleton(
-      () => ChatProvider(locator(), locator(), locator()));
+  locator.registerLazySingleton(() => ChatProvider(locator(), locator()));
 }
 
 void _feed() {
@@ -451,7 +450,7 @@ void _sockets() {
   locator.registerFactory<SocketService>(
     () => SocketService(locator()),
   );
-  locator.registerFactory<SocketImplementations>(
+  locator.registerLazySingleton<SocketImplementations>(
     () => SocketImplementations(),
   );
 }

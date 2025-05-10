@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/src/foundation/change_notifier.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -13,7 +14,9 @@ class OrderChatListWidget extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final chatBox = Hive.box<ChatEntity>(AppStrings.localChatsBox);
-    final listenable = useListenable(chatBox.listenable());
+    // ignore: unused_local_variable
+    final ValueListenable<Box<ChatEntity>> listenable =
+        useListenable(chatBox.listenable());
 
     final List<ChatEntity> chats = chatBox.values
         .where((ChatEntity e) =>
