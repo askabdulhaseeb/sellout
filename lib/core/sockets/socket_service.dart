@@ -1,13 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:hive/hive.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../../features/personal/auth/signin/data/sources/local/local_auth.dart';
-import '../../features/personal/chats/chat/domain/entities/getted_message_entity.dart';
-import '../../features/personal/chats/chat_dashboard/data/models/message/message_model.dart';
-import '../../features/personal/chats/chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../functions/app_log.dart';
-import '../utilities/app_string.dart';
 import 'socket_implementations.dart';
 
 class SocketService {
@@ -58,9 +53,15 @@ class SocketService {
           name: 'SocketService.disconnect');
     });
 
-    socket!.on('getOnlineUsers', (dynamic data) {
+    socket!.on('getOnlineUsers', (dynamic data) async {
       AppLog.info('📶 Online users: $data',
           name: 'SocketService.getOnlineUsers');
+
+      // Since `data` is already a list of strings, you can directly use it
+      List<String> onlineUsers = List<String>.from(data);
+
+      await _socketImplementations.handleOnlineUsers(onlineUsers);
+      debugPrint('Updated online users list: $onlineUsers');
     });
 
     socket!.on('lastSeen', (dynamic data) {

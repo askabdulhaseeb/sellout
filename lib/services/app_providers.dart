@@ -45,7 +45,10 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
   ChangeNotifierProvider<ChatDashboardProvider>.value(
       value: ChatDashboardProvider(locator())),
   ChangeNotifierProvider<ChatProvider>.value(
-      value: ChatProvider(locator(), locator(), locator())),
+      value: ChatProvider(
+    locator(),
+    locator(),
+  )),
   ChangeNotifierProvider<AudioProvider>.value(value: AudioProvider()),
   //
   ChangeNotifierProvider<ProfileProvider>.value(
