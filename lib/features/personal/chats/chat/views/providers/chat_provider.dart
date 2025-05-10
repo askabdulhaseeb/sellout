@@ -4,6 +4,8 @@ import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
+import '../../../../../attachment/domain/entities/picked_attachment_option.dart';
+import '../../../../../attachment/views/screens/pickable_attachment_screen.dart';
 import '../../../chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../data/models/message_last_evaluated_key.dart';
@@ -23,6 +25,8 @@ class ChatProvider extends ChangeNotifier {
 
   ChatEntity? _chat;
   ChatEntity? get chat => _chat;
+  final List<PickedAttachment> _attachments = <PickedAttachment>[];
+  List<PickedAttachment> get attachments => _attachments;
 
   MessageLastEvaluatedKeyEntity? _key;
 
@@ -68,6 +72,46 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> setImages(
+    BuildContext context, {
+    required AttachmentType type,
+  }) async {
+    final List<PickedAttachment> selectedMedia =
+        _attachments.where((PickedAttachment element) {
+      return element.selectedMedia != null;
+    }).toList();
+    final List<PickedAttachment>? files =
+        await Navigator.of(context).push<List<PickedAttachment>>(
+      MaterialPageRoute<List<PickedAttachment>>(builder: (_) {
+        return PickableAttachmentScreen(
+          option: PickableAttachmentOption(
+            maxAttachments: 10,
+            allowMultiple: true,
+            type: type,
+            selectedMedia: selectedMedia
+                .map((PickedAttachment e) => e.selectedMedia!)
+                .toList(),
+          ),
+        );
+      }),
+    );
+    if (files != null) {
+      for (final PickedAttachment file in files) {
+        final int index = _attachments.indexWhere((PickedAttachment element) =>
+            element.selectedMedia == file.selectedMedia);
+        if (index == -1) {
+          _attachments.add(file);
+        }
+      }
+      notifyListeners();
+    }
+  }
+
+  void removePickedAttachment(PickedAttachment attachment) {
+    _attachments.remove(attachment);
+    notifyListeners();
+  }
+
   Future<bool> getMessages() async {
     _isLoading = true;
     final DataState<GettedMessageEntity> result =
@@ -106,7 +150,7 @@ class ChatProvider extends ChangeNotifier {
       text: _message.text,
       persons: _chat?.persons ?? <String>[],
       files: <PickedAttachment>[],
-      source: 'postman',
+      source: 'application',
     );
     final DataState<bool> result = await _sendMessageUsecase(param);
     if (result is DataSuccess) {

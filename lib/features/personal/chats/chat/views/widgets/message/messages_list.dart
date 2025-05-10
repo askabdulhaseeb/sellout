@@ -53,7 +53,7 @@ class MessagesList extends HookWidget {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (scrollController.hasClients) {
                   scrollController.animateTo(
-                    scrollController.position.maxScrollExtent,
+                    scrollController.position.minScrollExtent,
                     duration: const Duration(milliseconds: 500),
                     curve: Curves.easeOut,
                   );

@@ -19,7 +19,6 @@ class AddListingAttachmentSelectionWidget extends StatelessWidget {
           ...formPro.attachments,
           if (formPro.post?.fileUrls != null) ...formPro.post!.fileUrls,
         ];
-
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[

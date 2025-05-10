@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import '../../../../../../../core/enums/core/attachment_type.dart';
 import '../../providers/chat_provider.dart';
 
 class ChatInputField extends StatelessWidget {
@@ -24,7 +24,9 @@ class ChatInputField extends StatelessWidget {
           children: <Widget>[
             IconButton(
               icon: const Icon(Icons.attach_file),
-              onPressed: () {},
+              onPressed: () {
+                chatPro.setImages(context, type: AttachmentType.media);
+              },
             ),
             Expanded(
               child: TextFormField(
