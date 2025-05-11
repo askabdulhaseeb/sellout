@@ -19,7 +19,6 @@ class PostHeaderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('temporary print to check business id ${post.businessID}');
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: post.businessID == null ||

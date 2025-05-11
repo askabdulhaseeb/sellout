@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/change_notifier.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-
 import '../../../../../../../core/utilities/app_string.dart';
-import '../../../../../../../core/widgets/custom_shimmer_effect.dart';
 import '../../../domain/entities/chat/chat_entity.dart';
 import 'tiles/private_chat_dashboard_tile.dart';
 import 'tiles/product_chat_dashboard_tile.dart';

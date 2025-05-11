@@ -4,6 +4,7 @@ class ShadowContainer extends StatelessWidget {
   const ShadowContainer({
     required this.child,
     this.padding,
+    this.margin,
     this.color,
     this.decoration,
     this.borderRadius,
@@ -13,6 +14,8 @@ class ShadowContainer extends StatelessWidget {
   });
   final Widget child;
   final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry? margin;
+
   final Color? color;
   final Decoration? decoration;
   final BorderRadiusGeometry? borderRadius;
@@ -26,6 +29,8 @@ class ShadowContainer extends StatelessWidget {
       child: Container(
         padding:
             padding ?? const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        margin:
+            margin ?? const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: decoration ??
             BoxDecoration(
               color: color ?? Theme.of(context).scaffoldBackgroundColor,

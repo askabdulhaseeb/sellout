@@ -55,7 +55,7 @@ class CurrentUserEntity {
   final String email;
   @HiveField(12)
   final String userName;
-    @HiveField(13)
+  @HiveField(13)
   final String displayName;
   @HiveField(14)
   final String? currency;
@@ -105,23 +105,37 @@ class CurrentUserEntity {
   final List<BusinessEmployeeEntity> employeeList; // **New field**
 
   // this is a Copy function to copy the current object and return a new object with old token
-
-  // CurrentUserEntity copyWith({String? token}) {
-  //   return CurrentUserEntity(
-  //     message: message,
-  //     email: email,
-  //     token: token ?? this.token,
-  //     username: username,
-  //     userID: userID,
-  //     chatIDs: chatIDs,
-  //     address: address,
-  //     businessIDs: businessIDs,
-  //     currency: currency,
-  //     imageVerified: imageVerified,
-  //     verificationImage: verificationImage,
-  //     profileImage: profileImage,
-  //     privacy: privacy,
-  //     inHiveAt: inHiveAt,
-  //   );
-  // }
+  CurrentUserEntity copyWith({
+    String? token,
+    List<AddressEntity>? address,
+  }) {
+    return CurrentUserEntity(
+      userName: userName,
+      message: message,
+      email: email,
+      token: token ?? this.token,
+      displayName: displayName,
+      userID: userID,
+      chatIDs: chatIDs,
+      address: address ?? this.address,
+      businessIDs: businessIDs,
+      currency: currency,
+      imageVerified: imageVerified,
+      verificationImage: verificationImage,
+      profileImage: profileImage,
+      privacy: privacy,
+      countryAlpha3: countryAlpha3,
+      countryCode: countryCode,
+      phoneNumber: phoneNumber,
+      language: language,
+      lastLoginTime: lastLoginTime,
+      createdAt: createdAt,
+      inHiveAt: inHiveAt,
+      businessStatus: businessStatus,
+      businessName: businessName,
+      businessID: businessID,
+      logindetail: logindetail,
+      employeeList: employeeList,
+    );
+  }
 }
