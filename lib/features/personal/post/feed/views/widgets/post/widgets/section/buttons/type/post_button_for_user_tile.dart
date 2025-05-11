@@ -38,7 +38,7 @@ class PostButtonsForUser extends StatelessWidget {
                 border: Border.all(
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
-                bgColor: Colors.white,
+                bgColor: Theme.of(context).scaffoldBackgroundColor,
                 isLoading: false,
                 onTap: () {
                   final AddListingFormProvider pro =

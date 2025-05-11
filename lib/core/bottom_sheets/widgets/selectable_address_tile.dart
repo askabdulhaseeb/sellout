@@ -1,7 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../../features/personal/address/add_address/views/provider/add_address_provider.dart';
+import '../../../features/personal/address/add_address/views/screens/add_address_screen.dart';
 import '../../../features/personal/auth/signin/domain/entities/address_entity.dart';
+import '../../widgets/shadow_container.dart';
 
 class SelectableAddressTile extends StatelessWidget {
   const SelectableAddressTile({
@@ -19,7 +23,7 @@ class SelectableAddressTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return ShadowContainer(
       onTap: onTap,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,16 +68,18 @@ class SelectableAddressTile extends StatelessWidget {
                         const Text('  •  '),
                         InkWell(
                           onTap: () async {
-                            // final AddressEntity? newAddress =
-                            //     await Navigator.of(context)
-                            //         .push<AddressEntity?>(
-                            //   MaterialPageRoute<AddressEntity?>(
-                            //     builder: (BuildContext context) {
-                            //       return AddEditAddressScreen(
-                            //           initAddress: address);
-                            //     },
-                            //   ),
-                            // );
+                            AddAddressProvider pro =
+                                Provider.of<AddAddressProvider>(context,
+                                    listen: false);
+                            pro.updateVariable(address);
+                            Navigator.of(context).push<AddressEntity?>(
+                              MaterialPageRoute<AddressEntity?>(
+                                builder: (BuildContext context) {
+                                  return AddEditAddressScreen(
+                                      initAddress: address);
+                                },
+                              ),
+                            );
                           },
                           child: Container(
                             padding: const EdgeInsets.symmetric(
@@ -81,7 +87,7 @@ class SelectableAddressTile extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: Theme.of(context)
                                   .primaryColor
-                                  .withOpacity(0.1),
+                                  .withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(

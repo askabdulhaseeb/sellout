@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../core/bottom_sheets/address/address_bottom_sheet.dart';
 import '../../../../../../core/bottom_sheets/widgets/address_tile.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../auth/signin/domain/entities/address_entity.dart';
 import '../../providers/cart_provider.dart';
 
@@ -15,7 +16,8 @@ class CheckoutAddressSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CartProvider>(
       builder: (BuildContext context, CartProvider cartPro, _) {
-        final AddressEntity? address = cartPro.address;
+        final AddressEntity? address = LocalAuth.currentUser?.address.first;
+
         return address == null
             ? Padding(
                 padding: const EdgeInsets.all(16.0),

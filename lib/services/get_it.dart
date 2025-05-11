@@ -29,6 +29,12 @@ import '../features/business/service/domain/repositories/add_service_repository.
 import '../features/business/service/domain/usecase/add_service_usecase.dart';
 import '../features/business/service/domain/usecase/update_service-usecase.dart';
 import '../features/business/service/views/providers/add_service_provider.dart';
+import '../features/personal/address/add_address/data/repository/add_address_repo_impl.dart';
+import '../features/personal/address/add_address/data/source/add_address_remote_source.dart';
+import '../features/personal/address/add_address/domain/repo_impl/add_address_repo.dart';
+import '../features/personal/address/add_address/domain/usecase/add_address_usecase.dart';
+import '../features/personal/address/add_address/domain/usecase/update_address_usecase.dart';
+import '../features/personal/address/add_address/views/provider/add_address_provider.dart';
 import '../features/personal/auth/find_account/data/repository/find_account_repository_impl.dart';
 import '../features/personal/auth/find_account/data/source/find_account_remote_data_source.dart';
 import '../features/personal/auth/find_account/domain/repository/find_account_repository.dart';
@@ -148,6 +154,7 @@ void setupLocator() {
   _bookvisit();
   _addlisting();
   _sockets();
+  _addaddress();
 }
 
 void _auth() {
@@ -453,4 +460,24 @@ void _sockets() {
   locator.registerLazySingleton<SocketImplementations>(
     () => SocketImplementations(),
   );
+}
+
+void _addaddress() {
+  // API
+  locator.registerFactory<AddAddressRemoteSource>(
+      () => AddAddressRemoteSourceImpl());
+  //
+  // REPOSITORIES
+  locator.registerFactory<AddAddressRepository>(
+      () => AddAddressRepositoryImpl(locator()));
+  //
+  // USECASES
+  locator
+      .registerFactory<AddAddressUsecase>(() => AddAddressUsecase(locator()));
+  locator.registerFactory<UpdateAddressUsecase>(
+      () => UpdateAddressUsecase(locator()));
+  //
+  // Providers
+  locator.registerLazySingleton<AddAddressProvider>(
+      () => AddAddressProvider(locator(), locator()));
 }

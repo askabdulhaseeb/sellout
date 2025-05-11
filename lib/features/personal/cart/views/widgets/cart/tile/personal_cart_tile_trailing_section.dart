@@ -1,11 +1,7 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../../../../core/sources/api_call.dart';
 import '../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../core/widgets/loader.dart';
-import '../../../../../../../core/widgets/shadow_container.dart';
 import '../../../../../post/domain/entities/post_entity.dart';
 import '../../../../data/sources/local_cart.dart';
 import '../../../providers/cart_provider.dart';
@@ -29,24 +25,21 @@ class _PersonalCartTileTrailingSectionState
   bool _isLoading = false;
   @override
   Widget build(BuildContext context) {
-    final Color primaryColor = Theme.of(context).primaryColor;
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Text(
-          '${widget.item.quantity * (widget.post?.price ?? 0)} ${widget.post?.currency}'
-              .toUpperCase(),
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
+            '${widget.item.quantity * (widget.post?.price ?? 0)} ${widget.post?.currency}'
+                .toUpperCase(),
+            style: TextTheme.of(context)
+                .bodyMedium
+                ?.copyWith(fontWeight: FontWeight.w600)),
         const SizedBox(height: 4),
         _isLoading
             ? const Loader()
-            : ShadowContainer(
+            : GestureDetector(
                 onTap: () async {
                   setState(() {
                     _isLoading = true;
@@ -62,49 +55,22 @@ class _PersonalCartTileTrailingSectionState
                     _isLoading = false;
                   });
                 },
-                padding: const EdgeInsets.all(8),
-                child: const Icon(Icons.delete, color: Colors.red),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(
+                        color: ColorScheme.of(context)
+                            .outline
+                            .withValues(alpha: 0.1)),
+                  ),
+                  padding: const EdgeInsets.all(4),
+                  child: const Icon(
+                    Icons.delete_outline,
+                    color: Colors.red,
+                    size: 18,
+                  ),
+                ),
               ),
-        if (!_isLoading)
-          InkWell(
-            onTap: () async {
-              try {
-                setState(() {
-                  _isLoading = true;
-                });
-                final DataState<bool> result =
-                    await Provider.of<CartProvider>(context, listen: false)
-                        .updateStatus(widget.item);
-                if (result is DataFailer) {
-                  AppSnackBar.showSnackBar(
-                      // ignore: use_build_context_synchronously
-                      context,
-                      result.exception?.message ?? 'something_wrong');
-                }
-              } catch (e) {
-                // ignore: use_build_context_synchronously
-                AppSnackBar.showSnackBar(context, e.toString());
-              }
-              setState(() {
-                _isLoading = false;
-              });
-            },
-            child: Container(
-              margin: const EdgeInsets.only(top: 8),
-              padding: const EdgeInsets.symmetric(
-                vertical: 4,
-                horizontal: 8,
-              ),
-              decoration: BoxDecoration(
-                color: primaryColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                widget.item.type.tileActionCode.tr(),
-                style: TextStyle(color: primaryColor, fontSize: 12),
-              ).tr(),
-            ),
-          ),
       ],
     );
   }
