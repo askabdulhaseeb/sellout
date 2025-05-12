@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'core/theme/app_theme.dart';
-import 'features/personal/auth/signin/views/screens/sign_in_screen.dart';
 import 'services/app_providers.dart';
 import 'core/sources/local/hive_db.dart';
 import 'core/utilities/app_localization.dart';
@@ -43,10 +42,10 @@ class MyApp extends StatelessWidget {
         navigatorKey: AppNavigator().navigatorKey,
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,
-        themeMode: kDebugMode ? ThemeMode.light : ThemeMode.light,
+        themeMode: kDebugMode ? ThemeMode.dark : ThemeMode.light,
         routes: AppRoutes.routes,
         // onGenerateRoute: (RouteSettings settings) {},
-        initialRoute: SignInScreen.routeName,
+        // initialRoute: SignInScreen.routeName,
       ),
     );
   }

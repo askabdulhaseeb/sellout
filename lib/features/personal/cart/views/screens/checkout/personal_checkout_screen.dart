@@ -22,29 +22,28 @@ class PersonalCheckoutView extends StatelessWidget {
         padding: const EdgeInsets.all(0),
         child: Consumer<CartProvider>(
             builder: (BuildContext context, CartProvider cartPro, _) {
-          return Column(
+          return const Column(
             children: <Widget>[
-              if (cartPro.address != null)
-                FutureBuilder<DataState<CheckOutEntity>>(
-                  future: cartPro.checkout(),
-                  builder: (
-                    BuildContext context,
-                    AsyncSnapshot<DataState<CheckOutEntity>> snapshot,
-                  ) {
-                    final CheckOutEntity checkout = snapshot.data?.entity ??
-                        CheckOutModel(items: <CheckOutItemEntity>[]);
-                    return Column(
-                      children: <Widget>[
-                        CheckoutListSection(
-                          checkOut: checkout,
-                          currency: checkout.currency,
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              const CheckoutAddressSection(),
-              const CheckoutPaymentMethodSection(),
+              // if (cartPro.address != null)
+              //   FutureBuilder<DataState<CheckOutEntity>>(
+              //     future: cartPro.checkout(),
+              //     builder: (
+              //       BuildContext context,
+              //       AsyncSnapshot<DataState<CheckOutEntity>> snapshot,
+              //     ) {
+              //       final CheckOutEntity checkout = snapshot.data?.entity ??
+              //           CheckOutModel(items: <CheckOutItemEntity>[]);
+              //       return Column(
+              //         children: <Widget>[
+              //           CheckoutListSection(
+              //             checkOut: checkout,
+              //             currency: checkout.currency,
+              //           ),
+              //         ],
+              //       );
+              //     },
+              //   ),
+              CheckoutAddressSection(),
             ],
           );
         }),
