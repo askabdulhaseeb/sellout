@@ -629,6 +629,8 @@
     "field_left_empty":"This field can not left empty",
     "country":"Country",
     "address_category":"Address Category",
+    "update_address":"Update Address",
+    "stripe":"Stripe",
     "all": "All",
     "see_all": "See All",
     "next": "Next",

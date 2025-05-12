@@ -47,7 +47,7 @@ class AddAddressProvider extends ChangeNotifier {
         townCity: _townCityController.text,
         phoneNumber: LocalAuth.currentUser?.phoneNumber ?? '',
         postalCode: _postalCodeController.text,
-        addressCategory: 'offic',
+        addressCategory: _addressCategory ?? '',
         country: _selectedCountry,
         isDefault: _isDefault,
         action: _action,
@@ -67,7 +67,7 @@ class AddAddressProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  set addressCategory(String? value) {
+  void setaddressCategory(String? value) {
     _addressCategory = value;
     notifyListeners();
   }
@@ -165,6 +165,7 @@ class AddAddressProvider extends ChangeNotifier {
     _address1Controller.clear();
     _townCityController.clear();
     _selectedCountry = '';
+    _addressCategory = null;
     _isDefault = false;
   }
 }

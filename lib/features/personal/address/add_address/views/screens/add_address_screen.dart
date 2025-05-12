@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../core/widgets/custom_radio_button_list_tile.dart';
 import '../../../../../../core/widgets/custom_radio_toggle_tile.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/phone_number_entity.dart';
 import '../../../../../../core/widgets/phone_number/views/countries_dropdown.dart';
@@ -89,7 +88,7 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                       selectedItem: pros.addressCategory,
                       onChanged: (String? value) {
                         if (value != null) {
-                          pros.addressCategory = value;
+                          pros.setaddressCategory(value);
                         }
                       },
                       validator: (_) => null,
@@ -141,7 +140,9 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                   }
                 }
               },
-              title: 'save_address'.tr(),
+              title: widget.initAddress?.addressID == null
+                  ? 'save_address'.tr()
+                  : 'update_address'.tr(),
             )),
       ),
     );

@@ -25,7 +25,10 @@ class AddAddressRemoteSourceImpl extends AddAddressRemoteSource {
             name: 'AddAddressRemoteSourceImpl.addAddress');
         final Map<String, dynamic> decoded = jsonDecode(result.data ?? '{}');
         final List<AddressEntity> updatedAddressList =
-            decoded['updatedAddress'] as List<AddressEntity>;
+            (decoded['updatedAddress'] as List<dynamic>)
+                .map((e) => AddressModel.fromJson(e as Map<String, dynamic>))
+                .toList();
+
         final CurrentUserEntity? updatedUser = LocalAuth.currentUser?.copyWith(
           address: updatedAddressList,
         );
@@ -66,7 +69,9 @@ class AddAddressRemoteSourceImpl extends AddAddressRemoteSource {
             name: 'AddAddressRemoteSourceImpl.updateAddress');
         final Map<String, dynamic> decoded = jsonDecode(result.data ?? '{}');
         final List<AddressEntity> updatedAddressList =
-            decoded['updatedAddress'] as List<AddressEntity>;
+            (decoded['updatedAddress'] as List<dynamic>)
+                .map((e) => AddressModel.fromJson(e as Map<String, dynamic>))
+                .toList();
         final CurrentUserEntity? updatedUser = LocalAuth.currentUser?.copyWith(
           address: updatedAddressList,
         );

@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
 import '../../../features/personal/address/add_address/views/screens/add_address_screen.dart';
 import '../../../features/personal/auth/signin/data/models/address_model.dart';
 import '../../../features/personal/auth/signin/data/sources/local/local_auth.dart';

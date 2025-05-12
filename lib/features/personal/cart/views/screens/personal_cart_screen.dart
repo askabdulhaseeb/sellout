@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/enums/cart/cart_item_type.dart';
+import '../../../../../core/widgets/custom_elevated_button.dart';
+import '../widgets/checkout/checkout_payment_method_section.dart';
 import 'checkout/personal_checkout_screen.dart';
 import '../providers/cart_provider.dart';
 import '../widgets/cart/cart_save_later_toggle_section.dart';
@@ -41,7 +43,30 @@ class PersonalCartScreen extends StatelessWidget {
                           ],
                         ),
                       )
-                    : const PersonalCheckoutView(),
+                    : cartPro.page == 2
+                        ? Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                children: <Widget>[
+                                  const PersonalCheckoutView(),
+                                  const Spacer(),
+                                  CustomElevatedButton(
+                                    title: 'proceed_to_payment methods'.tr(),
+                                    isLoading: false,
+                                    onTap: () => Provider.of<CartProvider>(
+                                            context,
+                                            listen: false)
+                                        .page = 3,
+                                  ),
+                                  const SizedBox(height: 24),
+                                ],
+                              ),
+                            ),
+                          )
+                        : cartPro.page == 3
+                            ? const CheckoutPaymentMethodSection()
+                            : const SizedBox.shrink()
               ],
             );
           },
