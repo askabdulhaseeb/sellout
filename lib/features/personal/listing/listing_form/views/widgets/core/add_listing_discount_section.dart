@@ -8,6 +8,32 @@ import '../../providers/add_listing_form_provider.dart';
 class AddListingDiscountSection extends StatelessWidget {
   const AddListingDiscountSection({super.key});
 
+  // Helper method to build the Discount TextFormField
+  Widget buildDiscountField(
+      {required double width,
+      required DiscountEntity discount,
+      required AddListingFormProvider addPro}) {
+    return SizedBox(
+      width: width / 3,
+      child: CustomTextFormField(
+        labelText: ' ${discount.quantity} ${'items'.tr()}',
+        controller: TextEditingController(text: discount.discount.toString()),
+        onChanged: (String value) {
+          addPro.setDiscounts(
+            discount.copyWith(discount: double.tryParse(value) ?? 0.0),
+          );
+        },
+        hint: 'Ex.${discount.quantity * 5}',
+        keyboardType: TextInputType.number,
+        textAlign: TextAlign.end,
+        suffixIcon: const Opacity(
+          opacity: 0.7,
+          child: Icon(Icons.percent),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.sizeOf(context).width - 32 - 28;
@@ -30,27 +56,8 @@ class AddListingDiscountSection extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: addPro.discounts
-                    .map(
-                      (DiscountEntity e) => SizedBox(
-                        width: width / 3,
-                        child: CustomTextFormField(
-                          labelText: ' ${e.quantity} ${'items'.tr()}',
-                          controller: TextEditingController(
-                            text: e.discount.toString(),
-                          ),
-                          onChanged: (String p0) => addPro.setDiscounts(
-                            e.copyWith(discount: double.tryParse(p0) ?? 0.0),
-                          ),
-                          hint: 'Ex.${e.quantity * 5}',
-                          keyboardType: TextInputType.number,
-                          textAlign: TextAlign.end,
-                          suffixIcon: const Opacity(
-                            opacity: 0.7,
-                            child: Icon(Icons.percent),
-                          ),
-                        ),
-                      ),
-                    )
+                    .map((DiscountEntity e) => buildDiscountField(
+                        width: width, discount: e, addPro: addPro))
                     .toList(),
               ),
           ],

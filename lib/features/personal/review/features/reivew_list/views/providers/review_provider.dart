@@ -1,11 +1,11 @@
-import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:photo_manager/photo_manager.dart';
 import 'package:video_player/video_player.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../attachment/domain/entities/picked_attachment.dart';
+import '../../../../../../attachment/domain/entities/picked_attachment_option.dart';
+import '../../../../../../attachment/views/screens/pickable_attachment_screen.dart';
 import '../../../../domain/enums/review_sort_type.dart';
 import '../../../../domain/param/create_review_params.dart';
 import '../../../../domain/usecase/create_review_usecase.dart';
@@ -20,12 +20,10 @@ class ReviewProvider extends ChangeNotifier {
   TextEditingController reviewdescription = TextEditingController();
   String postIdentity = '';
   final List<PickedAttachment> _attachments = <PickedAttachment>[];
-  final List<PickedAttachment> _selectedattachment = <PickedAttachment>[];
   int _currentIndex = 0;
   VideoPlayerController? _videoController;
   bool _isloading = false;
   List<PickedAttachment> get attachments => _attachments;
-  List<PickedAttachment> get selectedattachment => _selectedattachment;
   int get currentIndex => _currentIndex;
   VideoPlayerController? get videoController => _videoController;
   bool get isloading => _isloading;
@@ -89,68 +87,54 @@ class ReviewProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchMedia() async {
-    attachments.clear();
-    selectedattachment.clear();
-    final List<PickedAttachment> previousSelection =
-        _selectedattachment.toList();
-    final PermissionState permission =
-        await PhotoManager.requestPermissionExtend();
-    if (!permission.hasAccess) {
-      debugPrint('Permission denied');
-      return;
-    }
-    if (!permission.isAuth) return;
-    final List<AssetPathEntity> albums = await PhotoManager.getAssetPathList(
-      onlyAll: true,
-      type: RequestType.image | RequestType.video,
+  Future<void> setImages(
+    BuildContext context, {
+    required AttachmentType type,
+  }) async {
+    final List<PickedAttachment> selectedMedia =
+        _attachments.where((PickedAttachment element) {
+      return element.selectedMedia != null;
+    }).toList();
+    final List<PickedAttachment>? files =
+        await Navigator.of(context).push<List<PickedAttachment>>(
+      MaterialPageRoute<List<PickedAttachment>>(builder: (_) {
+        return PickableAttachmentScreen(
+          option: PickableAttachmentOption(
+            maxAttachments: 10,
+            allowMultiple: true,
+            type: type,
+            selectedMedia: selectedMedia
+                .map((PickedAttachment e) => e.selectedMedia!)
+                .toList(),
+          ),
+        );
+      }),
     );
-
-    if (albums.isNotEmpty) {
-      final List<AssetEntity> mediaAssets =
-          await albums.first.getAssetListPaged(page: 0, size: 50);
-
-      for (final AssetEntity asset in mediaAssets) {
-        final File? file = await asset.file;
-        if (file != null) {
-          final PickedAttachment newAttachment = PickedAttachment(
-            type: asset.type == AssetType.video
-                ? AttachmentType.video
-                : AttachmentType.image,
-            selectedMedia: asset,
-            file: file,
-          );
-
-          _attachments.add(newAttachment);
-          if (previousSelection
-              .any((PickedAttachment a) => a.file.path == file.path)) {
-            _selectedattachment.add(newAttachment);
-          }
+    if (files != null) {
+      for (final PickedAttachment file in files) {
+        final int index = _attachments.indexWhere((PickedAttachment element) =>
+            element.selectedMedia == file.selectedMedia);
+        if (index == -1) {
+          _attachments.add(file);
         }
       }
+      notifyListeners();
     }
-    notifyListeners();
   }
 
-  /// Load video and play
-  void toggleMediaSelection(PickedAttachment media) {
-    if (selectedattachment
-        .any((PickedAttachment m) => m.file.path == media.file.path)) {
-      selectedattachment.removeWhere((PickedAttachment m) =>
-          m.file.path == media.file.path); // Remove if exists
-    } else {
-      selectedattachment.add(media); // Add only if not present
+  void removeAttachment(int index) {
+    attachments.removeAt(index);
+
+    // Adjust currentIndex to avoid out-of-range errors
+    if (currentIndex >= attachments.length) {
+      _currentIndex = attachments.isEmpty ? 0 : attachments.length - 1;
     }
+
     notifyListeners();
   }
 
   void setCurrentIndex(int index) {
     _currentIndex = index;
-    notifyListeners();
-  }
-
-  void clearSelection() {
-    _selectedattachment.clear();
     notifyListeners();
   }
 
@@ -162,6 +146,7 @@ class ReviewProvider extends ChangeNotifier {
     _rating = newRating < 1.0 ? 1.0 : newRating; // Ensure minimum rating is 1
     notifyListeners(); // Notify UI to update
   }
+
   void updatePostidentity(postId) {
     postIdentity = postId;
     debugPrint('this is the post id $postId');
@@ -175,7 +160,7 @@ class ReviewProvider extends ChangeNotifier {
         title: reviewTitle.text,
         text: reviewdescription.text,
         reviewType: 'post',
-        attachments: selectedattachment);
+        attachments: attachments);
     final DataState<bool> result = await createReviewUsecase(params);
     if (result is DataSuccess<bool>) {
       debugPrint('${result.data},${result.entity}');
@@ -188,13 +173,12 @@ class ReviewProvider extends ChangeNotifier {
     isloading = false;
   }
 
-  @override
-  void dispose() {
+  void disposed() {
+    updateRating(1);
     reviewTitle.clear();
     reviewdescription.clear();
     _videoController?.dispose();
     _attachments.clear();
-    _selectedattachment.clear();
-    super.dispose();
+    attachments.clear();
   }
 }

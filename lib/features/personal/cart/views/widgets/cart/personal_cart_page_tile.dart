@@ -35,7 +35,7 @@ class PersonalCartPageTile extends StatelessWidget {
             color: Theme.of(context).dividerColor,
           ),
           _IconButton(
-            title: 'review_order'.tr(),
+            title: 'payment_options'.tr(),
             isActive: cartPro.page == 3,
             onTap: () => cartPro.page = 3,
           ),

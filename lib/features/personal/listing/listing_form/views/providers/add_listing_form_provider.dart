@@ -164,6 +164,7 @@ class AddListingFormProvider extends ChangeNotifier {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   PostEntity? createPostFromFormData() {
+    debugPrint('listing variables preview');
     return PostEntity(
       engineSize: double.tryParse(engineSize.text),
       mileageUnit: _selectedMileageUnit,
@@ -401,6 +402,7 @@ class AddListingFormProvider extends ChangeNotifier {
     _selectedClothSubCategory = post?.categoryType ?? '';
     _selectedEnergyRating = post?.energyRating;
     _sizeColorEntities = post?.sizeColors ?? <SizeColorModel>[];
+    debugPrint('listing variables update variables');
   }
 
   Future<void> submit(BuildContext context) async {

@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../core/widgets/rating_display_widget.dart';
+import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../review/features/reivew_list/views/screens/write_review_screen.dart';
 import '../../../../domain/entities/post_entity.dart';
 
@@ -39,21 +40,23 @@ class PostDetailRatingHeader extends StatelessWidget {
             ),
             Text('out_of_5'.tr()),
             const Spacer(),
-            TextButton(
-                onPressed: () {
-                  Navigator.pushNamed(
-                    context,
-                    WriteReviewScreen.routeName,
-                    arguments: <String, PostEntity>{'post': post},
-                  );
-                },
-                child: Text(
-                  'write_review'.tr(),
-                  style: TextStyle(
-                      decorationColor: Theme.of(context).primaryColor,
-                      decoration: TextDecoration.underline,
-                      color: Theme.of(context).primaryColor),
-                ))
+            if (LocalAuth.currentUser?.userID != post.createdBy &&
+                LocalAuth.currentUser?.businessID != post.createdBy)
+              TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(
+                      context,
+                      WriteReviewScreen.routeName,
+                      arguments: <String, PostEntity>{'post': post},
+                    );
+                  },
+                  child: Text(
+                    'write_review'.tr(),
+                    style: TextStyle(
+                        decorationColor: Theme.of(context).primaryColor,
+                        decoration: TextDecoration.underline,
+                        color: Theme.of(context).primaryColor),
+                  ))
           ],
         ),
       ],

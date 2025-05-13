@@ -1,7 +1,7 @@
 import '../../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
-
+import '../../../../auth/signin/data/models/address_model.dart';
 import '../../../domain/param/cart_item_update_qty_param.dart';
 import '../../models/cart/cart_item_model.dart';
 import '../../models/cart/cart_model.dart';
@@ -15,6 +15,7 @@ abstract interface class CartRemoteAPI {
   Future<DataState<bool>> updateQty(CartItemUpdateQtyParam param);
   Future<DataState<bool>> updateStatus(
       CartItemModel params, CartItemType action);
+  Future<DataState<bool>> paymentAddress(AddressModel params);
 }
 
 class CartRemoteAPIImpl implements CartRemoteAPI {
@@ -179,6 +180,37 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
       AppLog.error(
         e.toString(),
         name: 'CartRemoteAPIImpl.updateQty - Catch',
+        error: e,
+      );
+      return DataFailer<bool>(CustomException(e.toString()));
+    }
+  }
+
+  @override
+  Future<DataState<bool>> paymentAddress(AddressModel param) async {
+    try {
+      const String endpoint = '/payment/cart';
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.post,
+        isAuth: true,
+        body: param.checkoutAddressToJson(),
+      );
+      if (result is DataSuccess<bool>) {
+        return result;
+      } else {
+        AppLog.error(
+          'Failed to add paymnet address',
+          name: 'CartRemoteAPIImpl.paymentAddress - Else',
+          error: CustomException('Failed to add payment Address'),
+        );
+        return DataFailer<bool>(
+            CustomException('Failed to add payment Address'));
+      }
+    } catch (e) {
+      AppLog.error(
+        e.toString(),
+        name: 'CartRemoteAPIImpl.paymentAddress - Catch',
         error: e,
       );
       return DataFailer<bool>(CustomException(e.toString()));

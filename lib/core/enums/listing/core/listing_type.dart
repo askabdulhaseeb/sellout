@@ -15,13 +15,8 @@ enum ListingType {
     <String>['items'],
   ),
   @HiveField(1)
-  clothAndFoot(
-    'cloth_foot',
-    'clothes-foot',
-    4,
-    AppIcons.tShirt,
-    <String>['clothes', 'footwear', 'cloth_foot'],
-  ),
+  clothAndFoot('cloth_foot', 'clothes-foot', 4, AppIcons.tShirt,
+      <String>['clothes', 'footwear', 'clothes-foot']),
   @HiveField(2)
   vehicle(
     'vehicles',
