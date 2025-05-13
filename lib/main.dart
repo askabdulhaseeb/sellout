@@ -11,9 +11,12 @@ import 'core/utilities/app_localization.dart';
 import 'services/get_it.dart';
 import 'routes/app_linking.dart';
 import 'routes/app_routes.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey = 'YOUR_PUBLISHABLE_KEY';
+  await Stripe.instance.applySettings();
   AppNavigator().init();
   await HiveDB.init();
   await dotenv.load(fileName: kDebugMode ? 'dev.env' : 'prod.env');

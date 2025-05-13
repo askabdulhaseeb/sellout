@@ -631,6 +631,7 @@
     "address_category":"Address Category",
     "update_address":"Update Address",
     "stripe":"Stripe",
+    "proceed_to_payment":"Proceed to Payment",
     "all": "All",
     "see_all": "See All",
     "next": "Next",

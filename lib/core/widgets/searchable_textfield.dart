@@ -24,6 +24,7 @@ class SearchableTextfield extends StatelessWidget {
         controller: controller,
         onChanged: onChanged,
         decoration: InputDecoration(
+          contentPadding: const EdgeInsets.all(0),
           hintStyle: TextTheme.of(context)
               .bodyMedium
               ?.copyWith(color: Theme.of(context).colorScheme.outlineVariant),

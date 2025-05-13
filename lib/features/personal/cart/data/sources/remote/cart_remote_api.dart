@@ -15,7 +15,7 @@ abstract interface class CartRemoteAPI {
   Future<DataState<bool>> updateQty(CartItemUpdateQtyParam param);
   Future<DataState<bool>> updateStatus(
       CartItemModel params, CartItemType action);
-  Future<DataState<bool>> paymentAddress(AddressModel params);
+  Future<DataState<bool>> cartPayIntent(AddressModel params);
 }
 
 class CartRemoteAPIImpl implements CartRemoteAPI {
@@ -187,7 +187,7 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
   }
 
   @override
-  Future<DataState<bool>> paymentAddress(AddressModel param) async {
+  Future<DataState<bool>> cartPayIntent(AddressModel param) async {
     try {
       const String endpoint = '/payment/cart';
       final DataState<bool> result = await ApiCall<bool>().call(
