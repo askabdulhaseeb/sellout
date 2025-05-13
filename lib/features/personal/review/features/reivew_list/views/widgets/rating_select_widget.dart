@@ -4,24 +4,23 @@ import '../providers/review_provider.dart';
 
 class RatingSelectWidget extends StatelessWidget {
   const RatingSelectWidget({
-    this.maxRating = 5,
     this.size = 24,
     super.key,
   });
 
-  final int maxRating;
   final double size;
 
   @override
   Widget build(BuildContext context) {
     return Consumer<ReviewProvider>(
-      builder: (BuildContext context, ReviewProvider reviewProvider, Widget? child) {
+      builder:
+          (BuildContext context, ReviewProvider reviewProvider, Widget? child) {
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: List<Widget>.generate(
-              maxRating,
+              5,
               (int index) {
                 final double fullStarThreshold = index + 1.0;
                 final bool isFilled =

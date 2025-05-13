@@ -60,24 +60,23 @@ class AddListingAttachmentSelectionWidget extends StatelessWidget {
               AspectRatio(
                 aspectRatio: 2 / 1,
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: ListView.builder(
-                    itemCount: allAttachments.length,
-                    scrollDirection: Axis.horizontal,
-                    primary: false,
-                    shrinkWrap: true,
-                    itemBuilder: (BuildContext context, int index) {
-                      final dynamic item = allAttachments[index];
+                    padding: const EdgeInsets.only(top: 8),
+                    child: ListView.builder(
+                      itemCount: allAttachments.length,
+                      scrollDirection: Axis.horizontal,
+                      primary: false,
+                      shrinkWrap: true,
+                      itemBuilder: (BuildContext context, int index) {
+                        final dynamic item = allAttachments[index];
 
-                      if (item is PickedAttachment) {
-                        return AddListingPickedAttachmentTile(attachment: item);
-                      } else if (item is AttachmentEntity) {
-                        return AddListingPickedAttachmentTile(imageUrl: item);
-                      }
-                      return const SizedBox.shrink(); // Fallback widget
-                    },
-                  ),
-                ),
+                        if (item is PickedAttachment) {
+                          return ListingAttachmentTile(attachment: item);
+                        } else if (item is AttachmentEntity) {
+                          return ListingAttachmentTile(imageUrl: item);
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    )),
               ),
           ],
         );

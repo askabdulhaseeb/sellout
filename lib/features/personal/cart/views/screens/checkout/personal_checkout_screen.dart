@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/shadow_container.dart';
-import '../../../data/models/checkout/check_out_model.dart';
-import '../../../domain/entities/checkout/check_out_entity.dart';
-import '../../../domain/entities/checkout/check_out_item_entity.dart';
 import '../../providers/cart_provider.dart';
 import '../../widgets/checkout/checkout_address_section.dart';
-import '../../widgets/checkout/checkout_list_section.dart';
-import '../../widgets/checkout/checkout_payment_method_section.dart';
 
 class PersonalCheckoutView extends StatelessWidget {
   const PersonalCheckoutView({super.key});

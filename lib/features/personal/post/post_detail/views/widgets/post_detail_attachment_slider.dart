@@ -52,7 +52,7 @@ class _PostDetailAttachmentSliderState
   Widget build(BuildContext context) {
     if (widget.attachments.isEmpty) {
       return Container(
-        height: 250,
+        height: 280,
         alignment: Alignment.center,
         child: Text('no_attachments'.tr()),
       );
@@ -63,23 +63,12 @@ class _PostDetailAttachmentSliderState
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         // Main image or video display
-        SizedBox(
-            height: 250,
-            width: double.infinity,
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              child: _isVideo(currentAttachment)
-                  ? _buildVideoPreview(currentAttachment)
-                  : _buildImagePreview(currentAttachment),
-              transitionBuilder: (Widget child, Animation<double> animation) {
-                return FadeTransition(opacity: animation, child: child);
-              },
-              layoutBuilder:
-                  (Widget? currentChild, List<Widget> previousChildren) {
-                return currentChild!;
-              },
-            )),
-
+        AspectRatio(
+          aspectRatio: 0.9,
+          child: _isVideo(currentAttachment)
+              ? _buildVideoPreview(currentAttachment)
+              : _buildImagePreview(currentAttachment),
+        ),
         // Thumbnails if enabled
         if (widget.showThumbnails && widget.attachments.length > 1) ...<Widget>[
           const SizedBox(height: 10),
@@ -111,9 +100,14 @@ class _PostDetailAttachmentSliderState
     return Stack(
       fit: StackFit.expand,
       children: <Widget>[
-        VideoWidget(
-          videoSource: url,
-          play: true,
+        Container(
+          decoration: BoxDecoration(
+              color: ColorScheme.of(context).outline,
+              borderRadius: BorderRadius.circular(8)),
+          child: VideoWidget(
+            videoSource: url,
+            play: true,
+          ),
         )
       ],
     );
@@ -121,10 +115,10 @@ class _PostDetailAttachmentSliderState
 
   /// Builds the horizontal list of thumbnails
   Widget _buildThumbnailStrip() {
-    return Container(
-      height: 90,
-      padding: const EdgeInsets.all(4),
+    return SizedBox(
+      height: 100,
       child: ListView.builder(
+        shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
         scrollDirection: Axis.horizontal,
         itemCount: widget.attachments.length,
@@ -133,42 +127,52 @@ class _PostDetailAttachmentSliderState
           final String url = _getAttachmentUrl(attachment);
           final bool isNetwork = url.startsWith('http');
           final bool isSelected = selectedIndex == index;
+
           return GestureDetector(
             onTap: () => setState(() => selectedIndex = index),
-            child: AnimatedScale(
-              scale: selectedIndex == index ? 1.1 : 1.0,
-              duration: const Duration(milliseconds: 200),
-              child: Container(
-                  width: 85,
-                  height: 90,
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: isSelected
-                          ? Theme.of(context).primaryColor
-                          : Theme.of(context).colorScheme.outline,
-                      width: 2,
-                    ),
-                  ),
-                  child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: _isVideo(attachment)
-                          ? VideoWidget(
-                              fit: BoxFit.cover,
-                              play: false,
-                              durationFontSize: 6,
-                              videoSource: url,
-                            )
-                          : Stack(
-                              fit: StackFit.expand,
-                              children: <Widget>[
-                                isNetwork
-                                    ? CustomNetworkImage(imageURL: url)
-                                    : Image.file(File(url), fit: BoxFit.cover),
-                              ],
-                            ))),
+            child: Container(
+              height: 100,
+              width: 100,
+              margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: isSelected
+                      ? Theme.of(context).primaryColor
+                      : Theme.of(context).colorScheme.secondary,
+                  width: 2,
+                ),
+                boxShadow: isSelected
+                    ? [
+                        BoxShadow(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withValues(alpha: 1),
+                          blurRadius: 2,
+                          spreadRadius: 1,
+                        ),
+                      ]
+                    : [],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: _isVideo(attachment)
+                    ? VideoWidget(
+                        fit: BoxFit.cover,
+                        play: false,
+                        durationFontSize: 6,
+                        videoSource: url,
+                      )
+                    : Stack(
+                        fit: StackFit.expand,
+                        children: <Widget>[
+                          isNetwork
+                              ? CustomNetworkImage(imageURL: url)
+                              : Image.file(File(url), fit: BoxFit.cover),
+                        ],
+                      ),
+              ),
             ),
           );
         },

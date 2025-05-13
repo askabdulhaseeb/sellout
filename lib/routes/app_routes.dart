@@ -20,7 +20,6 @@ import '../features/personal/auth/signup/views/screens/signup_screen.dart';
 import '../features/personal/dashboard/views/screens/dashboard_screen.dart';
 import '../features/personal/book_visit/view/screens/view_booking_screen.dart';
 import '../features/personal/post/post_detail/views/screens/post_detail_screen.dart';
-import '../features/personal/review/features/reivew_list/views/screens/media_picker_screen.dart';
 import '../features/personal/review/features/reivew_list/views/screens/write_review_screen.dart';
 import '../features/personal/setting/more_info/views/screens/personal_more_information_setting_screen.dart';
 import '../features/personal/setting/setting_notification/view/screens/personal_setting_email_notification_screen.dart';
@@ -92,7 +91,6 @@ class AppRoutes {
         const PersonalSettingEmailNotificationScreen(),
     //Review
     WriteReviewScreen.routeName: (_) => const WriteReviewScreen(),
-    MediaPickerScreen.routeName: (_) => const MediaPickerScreen(),
     // Explore
     ExplorePopularScreen.routeName: (_) => const ExplorePopularScreen(),
     ExploreCLothFOotScreen.routeName: (_) => const ExploreCLothFOotScreen(),

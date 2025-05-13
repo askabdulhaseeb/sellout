@@ -4,97 +4,111 @@ import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/video_widget.dart';
 import '../../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../providers/review_provider.dart';
-import '../screens/media_picker_screen.dart';
+import '../screens/review_media_preview_screen.dart';
 
 class SelectReviewMediaSection extends StatelessWidget {
-  const SelectReviewMediaSection({
-    super.key,
-  });
+  const SelectReviewMediaSection({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final BorderRadius borderRadius = BorderRadius.circular(12);
+
     return Consumer<ReviewProvider>(
-        builder: (BuildContext context, ReviewProvider provider,
-                Widget? child) =>
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  textAlign: TextAlign.start,
-                  'Add_photo_video'.tr(),
-                  style: TextTheme.of(context).titleSmall,
-                ),
-                Text('add_photo_description'.tr()),
-                SizedBox(
-                  height: 100,
-                  width: double.infinity,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: <Widget>[
-                      InkWell(
-                        onTap: () {
-                          Navigator.pushNamed(
-                              context, MediaPickerScreen.routeName);
-                        },
-                        child: Container(
-                          width: 80,
-                          margin: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Theme.of(context).colorScheme.outline),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Center(child: Icon(Icons.add)),
+      builder: (BuildContext context, ReviewProvider provider, Widget? child) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              'Add_photo_video'.tr(),
+              style: theme.textTheme.titleSmall,
+              textAlign: TextAlign.start,
+            ),
+            const SizedBox(height: 4),
+            Text('add_photo_description'.tr()),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 110,
+              width: double.infinity,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.only(left: 8),
+                children: <Widget>[
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<ReviewMediaPreviewScreen>(
+                          builder: (_) => const ReviewMediaPreviewScreen(),
                         ),
+                      );
+                    },
+                    borderRadius: borderRadius,
+                    child: Container(
+                      width: 90,
+                      margin: const EdgeInsets.only(right: 12),
+                      decoration: BoxDecoration(
+                        borderRadius: borderRadius,
+                        border: Border.all(color: theme.colorScheme.outline),
+                        color: theme.colorScheme.surface,
+                        boxShadow: const <BoxShadow>[
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 4,
+                            offset: Offset(2, 2),
+                          ),
+                        ],
                       ),
-                      Consumer<ReviewProvider>(
-                        builder: (BuildContext context, ReviewProvider provider,
-                            Widget? child) {
-                          return provider.selectedattachment.isEmpty
-                              ? const SizedBox.shrink()
-                              : Container(
-                                  height: 100,
-                                  width: 200,
-                                  margin: const EdgeInsets.all(8.0),
-                                  child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount:
-                                        provider.selectedattachment.length,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      final PickedAttachment media =
-                                          provider.selectedattachment[index];
-                                      return Padding(
-                                        padding: const EdgeInsets.all(4.0),
-                                        child: media.type ==
-                                                AttachmentType.video
-                                            ? Stack(
-                                                alignment: Alignment.center,
-                                                children: <Widget>[
-                                                  AbsorbPointer(
-                                                    child: VideoWidget(
-                                                        videoSource:
-                                                            media.file.path,
-                                                        play: false),
-                                                  ), // Video thumbnail
-                                                  const Icon(
-                                                      Icons.play_circle_fill,
-                                                      size: 40,
-                                                      color: Colors.white),
-                                                ],
-                                              )
-                                            : Image.file(media.file,
-                                                fit: BoxFit.cover),
-                                      );
-                                    },
-                                  ),
-                                );
-                        },
+                      child: const Center(
+                        child: Icon(Icons.add, size: 30),
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ],
-            ));
+                  if (provider.attachments.isNotEmpty)
+                    ...provider.attachments.map((PickedAttachment media) {
+                      return Container(
+                        width: 90,
+                        margin: const EdgeInsets.only(right: 12),
+                        decoration: BoxDecoration(
+                          borderRadius: borderRadius,
+                          boxShadow: const <BoxShadow>[
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 4,
+                              offset: Offset(2, 2),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: borderRadius,
+                          child: media.type == AttachmentType.video
+                              ? Stack(
+                                  alignment: Alignment.center,
+                                  children: <Widget>[
+                                    AbsorbPointer(
+                                      child: VideoWidget(
+                                        videoSource: media.file.path,
+                                        play: false,
+                                        showTime: true,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Image.file(
+                                  media.file,
+                                  fit: BoxFit.cover,
+                                  width: 90,
+                                  height: 100,
+                                ),
+                        ),
+                      );
+                    }),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

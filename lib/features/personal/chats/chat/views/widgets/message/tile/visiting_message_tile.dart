@@ -38,10 +38,6 @@ class VisitingMessageTile extends StatelessWidget {
                     VisitingUpdateButtonsWidget(message: message, post: post)
                   else
                     const SizedBox.shrink(),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const Divider(),
                   Opacity(
                     opacity: 0.6,
                     child: const Text(
