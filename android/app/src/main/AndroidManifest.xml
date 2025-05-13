@@ -1,9 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <application android:label="sellout" android:name="${applicationName}" android:icon="@mipmap/ic_launcher">
+    <application android:label="sellout" android:name="${applicationName}" android:icon="@mipmap/ic_launcher"android:theme="@style/NormalTheme">
         <activity android:name="io.flutter.embedding.android.FlutterFragmentActivity" android:exported="true" android:launchMode="singleTask" android:taskAffinity="" android:theme="@style/LaunchTheme" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode" android:hardwareAccelerated="true" android:windowSoftInputMode="adjustResize">
-r
+
             <!-- DEEP LINK -->
             <!-- <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
