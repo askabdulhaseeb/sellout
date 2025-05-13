@@ -9,8 +9,11 @@ class CustomIconButton extends StatelessWidget {
     this.margin,
     this.padding,
     this.borderRadius,
+    this.borderColor,
+    this.borderWidth,
     super.key,
   });
+
   final IconData icon;
   final Color? bgColor;
   final Color? iconColor;
@@ -18,6 +21,8 @@ class CustomIconButton extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
   final EdgeInsetsGeometry? padding;
   final BorderRadius? borderRadius;
+  final Color? borderColor;
+  final double? borderWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -25,13 +30,20 @@ class CustomIconButton extends StatelessWidget {
     return Padding(
       padding: margin ?? const EdgeInsets.all(6),
       child: Material(
-        color: bgColor ?? Theme.of(context).disabledColor.withOpacity(0.1),
+        color: bgColor ?? Theme.of(context).disabledColor.withAlpha(10),
         borderRadius: br,
         child: InkWell(
           onTap: onPressed,
           borderRadius: br,
           child: Container(
             padding: padding ?? const EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              borderRadius: br,
+              border: Border.all(
+                color: borderColor ?? Colors.transparent,
+                width: borderWidth ?? 1.0,
+              ),
+            ),
             child: Icon(icon, color: iconColor),
           ),
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../../core/widgets/searchable_textfield.dart';
 import '../providers/chat_dashboard_provider.dart';
 
@@ -24,10 +25,17 @@ class ChatDashboardSearchableWidget extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             pagePro.currentPage == ChatPageType.orders
-                ? IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.mark_chat_unread_outlined),
-                  )
+                ? CustomIconButton(
+                    borderRadius: BorderRadius.circular(12),
+                    padding: const EdgeInsets.all(11.5),
+                    borderColor: ColorScheme.of(context).outlineVariant,
+                    bgColor: Colors.transparent,
+                    icon: Icons.mark_chat_unread_outlined,
+                    onPressed: () {})
+                //  IconButton(
+                //     onPressed: () {},
+                //     icon: const Icon(Icons.mark_chat_unread_outlined),
+                //   )
                 : pagePro.currentPage == ChatPageType.services
                     ? IconButton(
                         onPressed: () {},

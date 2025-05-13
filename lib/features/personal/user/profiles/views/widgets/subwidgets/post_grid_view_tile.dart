@@ -37,7 +37,8 @@ class PostGridViewTile extends StatelessWidget {
                   height: 330,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: CustomNetworkImage(imageURL: post.imageURL),
+                    child: CustomNetworkImage(
+                        fit: BoxFit.cover, imageURL: post.imageURL),
                   ),
                 ),
                 if (isMe != true)

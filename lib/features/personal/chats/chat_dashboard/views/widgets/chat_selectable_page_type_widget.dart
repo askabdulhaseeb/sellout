@@ -1,8 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../../../core/widgets/shadow_container.dart';
 import '../providers/chat_dashboard_provider.dart';
 
 class ChatSelectablePageTypeWidget extends StatelessWidget {
@@ -25,7 +23,11 @@ class ChatSelectablePageTypeWidget extends StatelessWidget {
                   padding: const EdgeInsets.all(6),
                   child: GestureDetector(
                     onTap: () => pagePro.setCurrentTabIndex(tab),
-                    child: ShadowContainer(
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                              color: ColorScheme.of(context).outlineVariant)),
                       padding: const EdgeInsets.all(16),
                       child: Column(
                         children: <Widget>[

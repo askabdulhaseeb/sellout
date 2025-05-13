@@ -17,6 +17,10 @@ class AddressBottomSheet extends StatelessWidget {
     final List<AddressEntity> addresses =
         LocalAuth.currentUser?.address ?? <AddressEntity>[];
     return Container(
+      decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          backgroundBlendMode: BlendMode.color,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(12))),
       padding: const EdgeInsets.all(16),
       child: SingleChildScrollView(
         child: Column(

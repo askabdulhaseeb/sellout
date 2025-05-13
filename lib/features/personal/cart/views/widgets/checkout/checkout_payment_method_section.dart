@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
 import '../../../../../../core/utilities/app_string.dart';
 import '../../../../post/post_detail/views/widgets/post_detail_postage_return_section.dart';
 
@@ -21,6 +20,26 @@ class _CheckoutPaymentMethodSectionState
       'image': AppStrings.stripe,
       'title': 'stripe'.tr(),
     },
+    <String, String>{
+      'image': AppStrings.amex,
+      'title': 'amex'.tr(),
+    },
+    <String, String>{
+      'image': AppStrings.applePayBlack,
+      'title': 'applepayblack'.tr(),
+    },
+    <String, String>{
+      'image': AppStrings.dinersClub,
+      'title': 'dinnerclub'.tr(),
+    },
+    <String, String>{
+      'image': AppStrings.mastercard,
+      'title': 'mastercard'.tr(),
+    },
+    <String, String>{
+      'image': AppStrings.paypal,
+      'title': 'paypal'.tr(),
+    },
   ];
 
   @override
@@ -31,7 +50,6 @@ class _CheckoutPaymentMethodSectionState
         itemBuilder: (BuildContext context, int index) {
           final Map<String, String> method = paymentMethods[index];
           final bool isSelected = selectedIndex == index;
-
           return ListTile(
             onTap: () {
               setState(() {
@@ -39,6 +57,9 @@ class _CheckoutPaymentMethodSectionState
               });
             },
             leading: Checkbox(
+              activeColor: Colors.white,
+              fillColor: WidgetStatePropertyAll<Color>(
+                  Theme.of(context).scaffoldBackgroundColor),
               value: isSelected,
               onChanged: (_) {
                 setState(() {
