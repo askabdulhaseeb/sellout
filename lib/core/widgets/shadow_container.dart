@@ -30,7 +30,7 @@ class ShadowContainer extends StatelessWidget {
         padding:
             padding ?? const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         margin:
-            margin ?? const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            margin ?? const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
         decoration: decoration ??
             BoxDecoration(
               color: color ?? Theme.of(context).scaffoldBackgroundColor,
@@ -42,7 +42,7 @@ class ShadowContainer extends StatelessWidget {
                           .textTheme
                           .titleLarge!
                           .color!
-                          .withOpacity(0.2),
+                          .withValues(alpha: 0.2),
                       blurRadius: 8,
                       offset: const Offset(0, 0),
                     ),

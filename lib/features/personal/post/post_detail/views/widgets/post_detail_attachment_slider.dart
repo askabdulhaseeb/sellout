@@ -143,7 +143,7 @@ class _PostDetailAttachmentSliderState
                   width: 2,
                 ),
                 boxShadow: isSelected
-                    ? [
+                    ? <BoxShadow>[
                         BoxShadow(
                           color: Theme.of(context)
                               .colorScheme
@@ -153,7 +153,7 @@ class _PostDetailAttachmentSliderState
                           spreadRadius: 1,
                         ),
                       ]
-                    : [],
+                    : <BoxShadow>[],
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
