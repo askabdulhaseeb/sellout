@@ -21,14 +21,14 @@ class ProductChatDashboardTile extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ChatProvider pro = Provider.of<ChatProvider>(context, listen: false);
     final GetSpecificPostUsecase postUsecase =
         GetSpecificPostUsecase(locator());
     final GetUserByUidUsecase getUserByUidUsecase =
         GetUserByUidUsecase(locator());
     return GestureDetector(
       onTap: () {
-        Provider.of<ChatProvider>(context, listen: false).chat = chat;
-        SeenMessageCounter.reset(chat.chatId);
+        pro.chat = chat;
         Navigator.of(context).pushNamed(ChatScreen.routeName);
       },
       child: Padding(
@@ -88,8 +88,9 @@ class ProductChatDashboardTile extends HookWidget {
                               style: const TextStyle(fontSize: 10),
                             ),
                             UnseenMessageBadge(
-                              chat: chat,
-                            )
+                                unreadCount: pro
+                                    .getUnreadMessageCount(chat.persons.first),
+                                chat: chat),
                           ],
                         ),
                       ],

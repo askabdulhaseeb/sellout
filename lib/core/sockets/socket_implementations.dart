@@ -10,7 +10,6 @@ import '../../features/personal/chats/chat_dashboard/data/models/message/message
 import '../../features/personal/chats/chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../features/personal/chats/chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../features/personal/chats/chat_dashboard/domain/usecase/get_my_chats_usecase.dart';
-import '../../features/personal/chats/chat_dashboard/views/widgets/unseen_message_badge.dart';
 import '../functions/app_log.dart';
 
 class SocketImplementations {
@@ -48,7 +47,6 @@ class SocketImplementations {
             paginationKey: data['message_id'],
           ),
         );
-    SeenMessageCounter.newMessageReceived(chatId);
     existing.messages.add(newMsg);
     await messageBox.put(chatId, existing);
   }
