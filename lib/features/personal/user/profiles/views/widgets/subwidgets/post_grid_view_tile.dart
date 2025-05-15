@@ -49,40 +49,42 @@ class PostGridViewTile extends StatelessWidget {
               ],
             ),
           ),
-          Row(
-            children: <Widget>[
-              Column(
-                spacing: 2,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  SizedBox(
-                    width: 100,
-                    child: Text(
-                      overflow: TextOverflow.ellipsis,
-                      post.title,
+          SizedBox(
+            height: 80,
+            child: Row(
+              children: <Widget>[
+                Column(
+                  spacing: 4,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(
+                      width: 100,
+                      child: Text(
+                        overflow: TextOverflow.ellipsis,
+                        post.title,
+                        maxLines: 1,
+                        style: const TextStyle(fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    RatingDisplayWidget(
+                      fontSize: 10,
+                      size: 12,
+                      ratingList: post.listOfReviews!,
+                    ),
+                    Text(
+                      post.priceStr,
                       maxLines: 1,
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                  ),
-                  RatingDisplayWidget(
-                    size: 12,
-                    ratingList: post.listOfReviews!,
-                  ),
-                  Text(
-                    post.priceStr,
-                    maxLines: 1,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              SizedBox(
-                height: 80,
-                child: Column(
+                  ],
+                ),
+                const Spacer(),
+                Column(
                   children: <Widget>[
                     if (isMe == true)
                       CustomIconButton(
+                        iconSize: 20,
                         iconColor: Theme.of(context).primaryColor,
                         padding: const EdgeInsets.all(4),
                         margin: const EdgeInsets.all(4),
@@ -102,6 +104,7 @@ class PostGridViewTile extends StatelessWidget {
                       ),
                     if (isMe == true)
                       CustomIconButton(
+                        iconSize: 20,
                         iconColor: Theme.of(context).colorScheme.secondary,
                         padding: const EdgeInsets.all(4),
                         margin: const EdgeInsets.all(4),
@@ -113,9 +116,9 @@ class PostGridViewTile extends StatelessWidget {
                         onPressed: () {},
                       ),
                   ],
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ],
       ),

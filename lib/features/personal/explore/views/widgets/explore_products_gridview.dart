@@ -117,7 +117,7 @@ class ExploreProductsGridviewState extends State<ExploreProductsGridview> {
                   crossAxisCount: 2,
                   crossAxisSpacing: 8,
                   mainAxisSpacing: 8,
-                  childAspectRatio: 0.7,
+                  childAspectRatio: 0.75,
                 ),
                 itemCount: filteredFeed.length,
                 itemBuilder: (BuildContext context, int index) {
