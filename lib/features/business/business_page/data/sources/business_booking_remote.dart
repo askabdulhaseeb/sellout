@@ -21,9 +21,8 @@ class BusinessBookingRemoteImpl implements BusinessBookingRemote {
       final DataState<bool> result = await ApiCall<bool>().call(
         endpoint: endpoint,
         isAuth: true,
-        requestType: ApiRequestType.post,
+        requestType: ApiRequestType.get,
       );
-
       if (result is DataSuccess) {
         final String raw = result.data ?? '';
         if (raw.isEmpty) {
