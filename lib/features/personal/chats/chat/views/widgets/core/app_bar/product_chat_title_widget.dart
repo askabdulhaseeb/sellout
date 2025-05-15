@@ -1,11 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../../../../../core/widgets/profile_photo.dart';
 import '../../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../../post/domain/entities/post_entity.dart';
 import '../../../../../../user/profiles/data/sources/local/local_user.dart';
+import '../../../../../chat_dashboard/views/widgets/chat_profile_with_status.dart';
 import '../../../providers/chat_provider.dart';
 
 class ProductChatTitleWidget extends StatelessWidget {
@@ -21,9 +20,12 @@ class ProductChatTitleWidget extends StatelessWidget {
             LocalPost().post(pro.chat?.productInfo?.id ?? '');
         return Row(
           children: <Widget>[
-            ProfilePhoto(
-              url: post?.imageURL,
-              placeholder: user?.displayName ?? '',
+            ProfilePictureWithStatus(
+              isProduct: true,
+              postImageUrl: post?.imageURL ?? '',
+              userImageUrl: user?.profilePhotoURL ?? user?.displayName ?? '',
+              userDisplayName: user?.displayName ?? post?.title ?? '',
+              userId: user?.uid ?? '',
             ),
             const SizedBox(width: 8),
             Expanded(
