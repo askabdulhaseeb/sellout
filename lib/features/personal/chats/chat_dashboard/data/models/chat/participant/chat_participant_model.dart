@@ -32,4 +32,15 @@ class ChatParticipantModel extends ChatParticipantEntity {
         'chat_at': chatAt.toIso8601String(),
         'added_by': addedBy,
       };
+  factory ChatParticipantModel.fromEntity(ChatParticipantEntity entity) {
+    return ChatParticipantModel(
+      uid: entity.uid,
+      joinAt: entity.joinAt,
+      role: entity.role,
+      source: entity.source,
+      chatAt: entity.chatAt,
+      addBy: entity.addBy,
+      addedBy: entity.addedBy,
+    );
+  }
 }

@@ -19,12 +19,13 @@ class PrivateChatDashboardTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ChatProvider pro = Provider.of<ChatProvider>(context, listen: false);
     final GetUserByUidUsecase getUserByUidUsecase =
         GetUserByUidUsecase(locator());
     return GestureDetector(
       onTap: () {
-        Provider.of<ChatProvider>(context, listen: false).chat = chat;
-        SeenMessageCounter.reset(chat.chatId);
+        pro.chat = chat;
+
         Navigator.of(context).pushNamed(ChatScreen.routeName);
       },
       child: Padding(
@@ -78,7 +79,10 @@ class PrivateChatDashboardTile extends StatelessWidget {
                                 chat.lastMessage?.createdAt.timeAgo ?? '',
                                 style: const TextStyle(fontSize: 10),
                               ),
-                              UnseenMessageBadge(chat: chat),
+                              UnseenMessageBadge(
+                                  unreadCount: pro.getUnreadMessageCount(
+                                      chat.persons.first),
+                                  chat: chat),
                             ],
                           ),
                         ],
