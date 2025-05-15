@@ -4,4 +4,5 @@ import '../entities/checkout/check_out_entity.dart';
 
 abstract interface class CheckoutRepository {
   Future<DataState<CheckOutEntity>> getCheckout(AddressModel address);
+  Future<DataState<bool>> cartPayIntent(AddressModel params);
 }

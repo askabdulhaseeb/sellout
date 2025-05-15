@@ -27,7 +27,7 @@ class AppTheme {
         titleLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
       ),
       dividerColor: const Color(0xFFF0F0F0),
-      useMaterial3: true,
+      //  useMaterial3: true,
       appBarTheme: const AppBarTheme(
         backgroundColor: lightScaffldColor,
         surfaceTintColor: lightScaffldColor,
@@ -55,7 +55,7 @@ class AppTheme {
         titleLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
       ),
       dividerColor: Colors.white38,
-      useMaterial3: true,
+      // useMaterial3: true,
       appBarTheme: const AppBarTheme(
         backgroundColor: darkScaffldColor,
         surfaceTintColor: darkScaffldColor,

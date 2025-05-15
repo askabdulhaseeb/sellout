@@ -52,4 +52,14 @@ class AddressModel extends AddressEntity {
           'is_default': super.isDefault,
         },
       });
+  Map<String, dynamic> shippingAddressToJson() => <String, dynamic>{
+        'recipient_name': super.recipientName,
+        'address_1': super.address,
+        'town_city': super.townCity,
+        'phone_number': super.phoneNumber,
+        'postal_code': super.postalCode,
+        'address_category': super.category,
+        'country': super.country,
+        'is_default': super.isDefault,
+      };
 }

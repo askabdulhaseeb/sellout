@@ -8,6 +8,7 @@ import '../../models/checkout/check_out_model.dart';
 
 abstract interface class CheckoutRemoteAPI {
   Future<DataState<CheckOutEntity>> getCheckout(AddressModel address);
+  Future<DataState<bool>> cartPayIntent(AddressModel param);
 }
 
 class CheckoutRemoteAPIImpl implements CheckoutRemoteAPI {
@@ -42,5 +43,37 @@ class CheckoutRemoteAPIImpl implements CheckoutRemoteAPI {
       );
     }
     return DataFailer<CheckOutEntity>(CustomException('something_wrong'.tr()));
+  }
+
+  @override
+  Future<DataState<bool>> cartPayIntent(AddressModel param) async {
+    try {
+      const String endpoint = '/payment/cart';
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.post,
+        isAuth: true,
+        body: param.checkoutAddressToJson(),
+      );
+      if (result is DataSuccess<bool>) {
+        AppLog.info(result.data ?? '');
+        return result;
+      } else {
+        AppLog.error(
+          'Failed to add paymnet address',
+          name: 'CheckoutRemoteAPIImpl.paymentAddress - Else',
+          error: CustomException('Failed to add payment Address'),
+        );
+        return DataFailer<bool>(
+            CustomException('Failed to add payment Address'));
+      }
+    } catch (e) {
+      AppLog.error(
+        e.toString(),
+        name: 'CheckoutRemoteAPIImpl.paymentAddress - Catch',
+        error: e,
+      );
+      return DataFailer<bool>(CustomException(e.toString()));
+    }
   }
 }

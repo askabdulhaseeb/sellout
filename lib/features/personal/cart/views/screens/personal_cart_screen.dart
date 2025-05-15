@@ -52,13 +52,14 @@ class PersonalCartScreen extends StatelessWidget {
                                   const PersonalCheckoutView(),
                                   const Spacer(),
                                   CustomElevatedButton(
-                                    title: 'proceed_to_payment'.tr(),
-                                    isLoading: false,
-                                    onTap: () => Provider.of<CartProvider>(
-                                            context,
-                                            listen: false)
-                                        .page = 3,
-                                  ),
+                                      title: 'proceed_to_payment'.tr(),
+                                      isLoading: false,
+                                      onTap: () {
+                                        CartProvider pro =
+                                            Provider.of<CartProvider>(context,
+                                                listen: false);
+                                        pro.page = 3;
+                                      }),
                                   const SizedBox(height: 24),
                                 ],
                               ),
