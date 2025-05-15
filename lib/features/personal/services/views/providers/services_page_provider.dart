@@ -18,14 +18,14 @@ import '../enums/services_page_type.dart';
 class ServicesPageProvider extends ChangeNotifier {
   ServicesPageProvider(
     this._getSpecialOfferUsecase,
-    this._getBookingsListUsecase, this._getBusinessByIdUsecase,
-    
+    this._getBookingsListUsecase,
+    this._getBusinessByIdUsecase,
   );
   final GetSpecialOfferUsecase _getSpecialOfferUsecase;
   final GetBookingsListUsecase _getBookingsListUsecase;
   final GetBusinessByIdUsecase _getBusinessByIdUsecase;
   //
-    final Map<String, bool> _expandedDescriptions = <String, bool>{};
+  final Map<String, bool> _expandedDescriptions = <String, bool>{};
 
   bool isDescriptionExpanded(String serviceId) {
     return _expandedDescriptions[serviceId] ?? false;
@@ -35,6 +35,7 @@ class ServicesPageProvider extends ChangeNotifier {
     _expandedDescriptions[serviceId] = !isDescriptionExpanded(serviceId);
     notifyListeners();
   }
+
   //
   Future<List<ServiceEntity>> getSpecialOffer() async {
     try {
@@ -86,7 +87,6 @@ class ServicesPageProvider extends ChangeNotifier {
     }
     return LocalBooking().userBooking(LocalAuth.uid ?? '');
   }
-
 
   Future<DataState<BusinessEntity?>> getbusinessbyid(String uid) async {
     return await _getBusinessByIdUsecase(uid);
