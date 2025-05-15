@@ -637,6 +637,7 @@
     "please_Select_payment_method":"Please select a payment method",
     "apple_pay":"Apple Pay",
     "google_pay":"Google Pay",
+    "select_dropdown":"Please select a value from dropdown",
     "all": "All",
     "see_all": "See All",
     "add_new_card":"Add a new card",

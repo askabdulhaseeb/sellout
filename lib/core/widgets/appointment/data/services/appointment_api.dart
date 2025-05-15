@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../../../../sources/api_call.dart';
 import '../../domain/params/update_appointment_params.dart';
 
@@ -11,14 +13,14 @@ class AppointmentApiImpl implements AppointmentApi {
     UpdateAppointmentParams params,
   ) async {
     try {
-      print(json.encode(params.toMap()));
+      debugPrint(json.encode(params.toMap()));
       const String endpoint = '/booking/update/status';
       final DataState<bool> result = await ApiCall<bool>().call(
         endpoint: endpoint,
         requestType: ApiRequestType.patch,
         body: json.encode(params.toMap()),
         isAuth: true,
-        isConnectType: false,
+        isConnectType: true,
       );
       return result;
     } catch (e) {

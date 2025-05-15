@@ -123,7 +123,7 @@ class _Widget<T> extends StatelessWidget {
                 height: height,
                 decoration: BoxDecoration(
                   backgroundBlendMode: BlendMode.color,
-                  color: Colors.white,
+                  color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(
                     // width: 0.5,
