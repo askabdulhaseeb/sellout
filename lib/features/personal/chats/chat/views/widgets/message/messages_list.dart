@@ -70,6 +70,7 @@ class MessagesList extends HookWidget {
 
     return Expanded(
       child: ListView.builder(
+        physics: const BouncingScrollPhysics(),
         controller: scrollController,
         reverse: true,
         itemCount: messages.value.length,

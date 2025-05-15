@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../post/domain/entities/post_entity.dart';
-import '../provider/view_booking_provider.dart';
+import '../provider/visiting_provider.dart';
 
 class BookVisitButton extends StatelessWidget {
   const BookVisitButton({

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../chats/chat_dashboard/domain/entities/messages/message_entity.dart';
-import '../provider/view_booking_provider.dart';
+import '../provider/visiting_provider.dart';
 
 class CancelVisitingDialog extends StatelessWidget {
   const CancelVisitingDialog({
@@ -55,7 +55,8 @@ class CancelVisitingDialog extends StatelessWidget {
                 ),
                 isLoading: false,
                 onTap: () {
-                  pro.cancelVisit(chatID: message.chatId,
+                  pro.cancelVisit(
+                      chatID: message.chatId,
                       context: context,
                       visitingId: message.visitingDetail?.visitingID ?? '',
                       messageId: message.messageId);
