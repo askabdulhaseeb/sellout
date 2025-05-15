@@ -91,26 +91,26 @@ class ServiceCard extends StatelessWidget {
                     children: <Widget>[
                       Text(service.name,
                           style: TextTheme.of(context)
-                              .bodyMedium
+                              .bodyLarge
                               ?.copyWith(fontWeight: FontWeight.w600)),
                       const Spacer(),
                       IconButton(
                           onPressed: () {},
                           icon: const Icon(
                             CupertinoIcons.chat_bubble,
-                            size: 14,
+                            size: 20,
                           )),
                       IconButton(
                           onPressed: () {},
                           icon: const Icon(
                             CupertinoIcons.share,
-                            size: 14,
+                            size: 20,
                           )),
                       IconButton(
                           onPressed: () {},
                           icon: const Icon(
                             CupertinoIcons.archivebox,
-                            size: 14,
+                            size: 20,
                           )),
                     ],
                   ),
@@ -119,13 +119,13 @@ class ServiceCard extends StatelessWidget {
                       Text(
                         '\$${service.price}',
                         style: TextTheme.of(context)
-                            .bodyMedium
+                            .bodyLarge
                             ?.copyWith(fontWeight: FontWeight.w600),
                       ),
                       const SizedBox(width: 10),
                       RichText(
                           text: TextSpan(
-                              style: TextTheme.of(context).bodySmall,
+                              style: TextTheme.of(context).bodyMedium,
                               children: <InlineSpan>[
                             TextSpan(text: '${service.time.toString()} '),
                             TextSpan(
@@ -135,7 +135,9 @@ class ServiceCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 5),
-                  ExpandableText(text: service.description),
+                  ExpandableText(
+                    text: service.description,
+                  ),
                 ],
               ),
             ),

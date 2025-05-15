@@ -42,15 +42,16 @@ class AppointmentTileUserInfoSection extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(
-                      '${user?.address.first.townCity}/${user?.address.first.country}',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
+                    if (user != null && user.address.isNotEmpty)
+                      Text(
+                        '${user.address.first.townCity}/${user.address.first.country}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      )
                   ],
                 ),
               ),

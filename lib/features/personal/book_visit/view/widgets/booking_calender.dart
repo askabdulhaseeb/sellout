@@ -11,7 +11,7 @@ import '../../../post/data/models/meetup/availability_model.dart';
 import '../../../post/domain/entities/meetup/availability_entity.dart';
 import '../../../post/domain/entities/post_entity.dart';
 import '../../../post/domain/entities/visit/visiting_entity.dart';
-import '../provider/view_booking_provider.dart';
+import '../provider/visiting_provider.dart';
 
 class BookingCalendarWidget extends StatelessWidget {
   const BookingCalendarWidget({

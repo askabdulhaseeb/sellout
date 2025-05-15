@@ -107,13 +107,6 @@ class BookVisitApiImpl implements BookVisitApi {
       );
       if (result is DataSuccess) {
         debugPrint(result.data);
-        Map<String, dynamic> mapData = jsonDecode(result.data!);
-        VisitingEntity visitStatus = VisitingModel.fromJson(mapData['result']);
-        MessageEntity message = LocalChatMessage()
-            .messages(params.chatId!)
-            .firstWhere((MessageEntity element) =>
-                element.messageId == params.messageId);
-        message.visitingDetail = visitStatus;
         return DataSuccess<VisitingEntity>(result.data ?? '', result.entity);
       } else {
         debugPrint('${params.tocancelvisit()} ');

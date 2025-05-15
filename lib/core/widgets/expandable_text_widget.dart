@@ -33,17 +33,18 @@ class _ExpandableTextState extends State<ExpandableText> {
     String displayedText = isExpanded || !isLong
         ? widget.text
         : '${widget.text.substring(0, widget.maxLength)}... ';
-
     return RichText(
       text: TextSpan(
         text: displayedText,
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: Theme.of(context).colorScheme.onSurface.withAlpha(900),
             ),
         children: <TextSpan>[
           if (isLong)
             TextSpan(
-              text: isExpanded ? ' show_less'.tr() : ' show_more'.tr(),
+              text: isExpanded
+                  ? '...${'show_less'.tr()}'
+                  : '...${'show_more'.tr()}',
               style: TextStyle(color: Theme.of(context).primaryColor),
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
