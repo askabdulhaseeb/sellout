@@ -1,9 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../../../../../core/widgets/profile_photo.dart';
 import '../../../../../../user/profiles/data/sources/local/local_user.dart';
+import '../../../../../chat_dashboard/views/widgets/chat_profile_with_status.dart';
 import '../../../providers/chat_provider.dart';
 
 class PrivateChatTitleWidget extends StatelessWidget {
@@ -17,9 +16,12 @@ class PrivateChatTitleWidget extends StatelessWidget {
             LocalUser().userEntity(pro.chat?.otherPerson() ?? '');
         return Row(
           children: <Widget>[
-            ProfilePhoto(
-              url: user?.profilePhotoURL,
-              placeholder: user?.displayName ?? '',
+            ProfilePictureWithStatus(
+              isProduct: false,
+              postImageUrl: user?.profilePhotoURL ?? user?.displayName ?? '',
+              userImageUrl: '',
+              userDisplayName: user?.displayName ?? '',
+              userId: user?.uid ?? '',
             ),
             const SizedBox(width: 8),
             Column(

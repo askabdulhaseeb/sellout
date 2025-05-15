@@ -46,9 +46,8 @@ class AddServiceDropdownSection extends StatelessWidget {
                 selectedItem: pro.selectedCategory,
                 onChanged: (ServiceCategoryType? value) =>
                     pro.setSelectedCategory(value),
-                validator: (bool? isValid) => (pro.selectedCategory == null)
-                    ? 'Please select hours'
-                    : null),
+                validator: (bool? isValid) =>
+                    (pro.selectedCategory == null) ? 'select_type'.tr() : null),
             const SizedBox(height: 8),
             CustomDropdown<ServiceType?>(
                 title: 'service_type'.tr(),
@@ -70,7 +69,7 @@ class AddServiceDropdownSection extends StatelessWidget {
                 selectedItem: pro.selectedType,
                 onChanged: (ServiceType? value) => pro.setSelectedType(value),
                 validator: (bool? isValid) =>
-                    (pro.selectedType == null) ? 'Please select hours' : null),
+                    (pro.selectedType == null) ? 'select_type'.tr() : null),
             const SizedBox(height: 8),
             CustomDropdown<ServiceModelType?>(
                 title: 'service_model'.tr(),
@@ -92,7 +91,7 @@ class AddServiceDropdownSection extends StatelessWidget {
                 onChanged: (ServiceModelType? value) =>
                     pro.setSelectedModelType(value),
                 validator: (bool? isValid) => (pro.selectedModelType == null)
-                    ? 'Please select hours'
+                    ? 'select_type'.tr()
                     : null),
           ],
         );

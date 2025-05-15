@@ -42,9 +42,8 @@ class AddServiceTimeAndPriceSection extends StatelessWidget {
                     ],
                     selectedItem: pro.selectedHour,
                     onChanged: (int? value) => pro.setSelectedHour(value),
-                    validator: (bool? isValid) => (pro.selectedHour == null)
-                        ? 'Please select hours'
-                        : null,
+                    validator: (bool? isValid) =>
+                        (pro.selectedHour == null) ? 'select_type'.tr() : null,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -70,7 +69,7 @@ class AddServiceTimeAndPriceSection extends StatelessWidget {
                     selectedItem: pro.selectedMinute,
                     onChanged: (int? value) => pro.setSelectedMinute(value),
                     validator: (bool? isValid) => (pro.selectedMinute == null)
-                        ? 'Please select hours'
+                        ? 'select_type'.tr()
                         : null,
                   ),
                 ),
