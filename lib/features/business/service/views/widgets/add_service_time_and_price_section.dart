@@ -28,19 +28,23 @@ class AddServiceTimeAndPriceSection extends StatelessWidget {
                     items: <DropdownMenuItem<int?>>[
                       const DropdownMenuItem<int?>(
                         value: null,
-                        child: Text('-- Select Hour --'),
+                        child: Text(''),
                       ),
                       ...<int>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(
                         (int e) => DropdownMenuItem<int?>(
                           value: e,
-                          child: Text('${e}H'),
+                          child: Text(
+                            '${e}H',
+                            style: TextTheme.of(context).bodyLarge,
+                          ),
                         ),
                       ),
                     ],
                     selectedItem: pro.selectedHour,
                     onChanged: (int? value) => pro.setSelectedHour(value),
-                    validator: (bool? value) =>
-                        value == null ? 'Please select hours' : null,
+                    validator: (bool? isValid) => (pro.selectedHour == null)
+                        ? 'Please select hours'
+                        : null,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -50,7 +54,7 @@ class AddServiceTimeAndPriceSection extends StatelessWidget {
                     items: <DropdownMenuItem<int?>>[
                       const DropdownMenuItem<int?>(
                         value: null,
-                        child: Text('-- Select Minutes --'),
+                        child: Text(''),
                       ),
                       ...<int>[5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
                           .map(
@@ -58,14 +62,16 @@ class AddServiceTimeAndPriceSection extends StatelessWidget {
                           value: e,
                           child: Text(
                             '${e.putInStart(sign: '0', length: 2)} mints',
+                            style: TextTheme.of(context).bodyLarge,
                           ),
                         ),
                       ),
                     ],
                     selectedItem: pro.selectedMinute,
                     onChanged: (int? value) => pro.setSelectedMinute(value),
-                    validator: (bool? value) =>
-                        value == null ? 'Please select minutes' : null,
+                    validator: (bool? isValid) => (pro.selectedMinute == null)
+                        ? 'Please select hours'
+                        : null,
                   ),
                 ),
               ],
