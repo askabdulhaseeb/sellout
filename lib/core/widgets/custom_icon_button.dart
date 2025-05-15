@@ -11,6 +11,7 @@ class CustomIconButton extends StatelessWidget {
     this.borderRadius,
     this.borderColor,
     this.borderWidth,
+    this.iconSize,
     super.key,
   });
 
@@ -23,6 +24,7 @@ class CustomIconButton extends StatelessWidget {
   final BorderRadius? borderRadius;
   final Color? borderColor;
   final double? borderWidth;
+  final double? iconSize;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +46,11 @@ class CustomIconButton extends StatelessWidget {
                 width: borderWidth ?? 1.0,
               ),
             ),
-            child: Icon(icon, color: iconColor),
+            child: Icon(
+              icon,
+              color: iconColor,
+              size: iconSize ?? 24,
+            ),
           ),
         ),
       ),

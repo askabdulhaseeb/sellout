@@ -51,9 +51,7 @@ class _PostDetailAttachmentSliderState
   @override
   Widget build(BuildContext context) {
     if (widget.attachments.isEmpty) {
-      return Container(
-        height: 280,
-        alignment: Alignment.center,
+      return Center(
         child: Text('no_attachments'.tr()),
       );
     }
@@ -64,7 +62,7 @@ class _PostDetailAttachmentSliderState
       children: <Widget>[
         // Main image or video display
         AspectRatio(
-          aspectRatio: 0.9,
+          aspectRatio: 1,
           child: _isVideo(currentAttachment)
               ? _buildVideoPreview(currentAttachment)
               : _buildImagePreview(currentAttachment),
@@ -102,7 +100,7 @@ class _PostDetailAttachmentSliderState
       children: <Widget>[
         Container(
           decoration: BoxDecoration(
-              color: ColorScheme.of(context).outline,
+              color: ColorScheme.of(context).outline.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8)),
           child: VideoWidget(
             videoSource: url,
@@ -127,7 +125,6 @@ class _PostDetailAttachmentSliderState
           final String url = _getAttachmentUrl(attachment);
           final bool isNetwork = url.startsWith('http');
           final bool isSelected = selectedIndex == index;
-
           return GestureDetector(
             onTap: () => setState(() => selectedIndex = index),
             child: Container(
@@ -135,33 +132,31 @@ class _PostDetailAttachmentSliderState
               width: 100,
               margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: isSelected
-                      ? Theme.of(context).primaryColor
-                      : Theme.of(context).colorScheme.secondary,
-                  width: 2,
-                ),
-                boxShadow: isSelected
-                    ? <BoxShadow>[
-                        BoxShadow(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .primary
-                              .withValues(alpha: 1),
-                          blurRadius: 2,
-                          spreadRadius: 1,
-                        ),
-                      ]
-                    : <BoxShadow>[],
-              ),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isSelected
+                        ? Theme.of(context).primaryColor
+                        : Theme.of(context).colorScheme.secondary,
+                    width: 2,
+                  ),
+                  boxShadow: <BoxShadow>[
+                    BoxShadow(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withValues(alpha: 0.1),
+                      blurRadius: 2,
+                      spreadRadius: 1,
+                    ),
+                  ]),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: _isVideo(attachment)
                     ? VideoWidget(
                         fit: BoxFit.cover,
                         play: false,
-                        durationFontSize: 6,
+                        showTime: true,
+                        durationFontSize: 10,
                         videoSource: url,
                       )
                     : Stack(

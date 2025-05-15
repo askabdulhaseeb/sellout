@@ -22,16 +22,12 @@ class _CheckoutPaymentMethodSectionState
 
   final List<Map<String, String>> paymentMethods = <Map<String, String>>[
     <String, String>{
-      'image': AppStrings.stripe,
-      'title': 'Stripe',
+      'image': AppStrings.applePayBlack,
+      'title': 'google_pay',
     },
     <String, String>{
-      'image': AppStrings.mastercard,
-      'title': 'mastercard',
-    },
-    <String, String>{
-      'image': AppStrings.visa,
-      'title': 'visa',
+      'image': AppStrings.applePayBlack,
+      'title': 'apple_pay',
     },
   ];
 
@@ -39,7 +35,6 @@ class _CheckoutPaymentMethodSectionState
   Widget build(BuildContext context) {
     final CartProvider pro = Provider.of<CartProvider>(context, listen: false);
     final String clientSecret = pro.orderBilling?.clientSecret ?? '';
-
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(

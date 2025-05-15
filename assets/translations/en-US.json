@@ -635,6 +635,8 @@
     "payment_successful":"Thanks for Shopping.",
     "payment_successful_description":"When your order is done processing, we’ll email the information to ",
     "please_Select_payment_method":"Please select a payment method",
+    "apple_pay":"Apple Pay",
+    "google_pay":"Google Pay",
     "all": "All",
     "see_all": "See All",
     "add_new_card":"Add a new card",

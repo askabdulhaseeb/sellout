@@ -44,7 +44,7 @@ class ProfileStoreGridview extends StatelessWidget {
                   crossAxisCount: 2,
                   crossAxisSpacing: 6.0,
                   mainAxisSpacing: 6.0,
-                  childAspectRatio: 0.7),
+                  childAspectRatio: 0.75),
               itemBuilder: (BuildContext context, int index) {
                 return PostGridViewTile(post: posts[index]);
               },
