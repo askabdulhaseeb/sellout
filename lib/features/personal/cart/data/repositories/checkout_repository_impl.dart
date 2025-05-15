@@ -11,4 +11,9 @@ class CheckoutRepositoryImpl implements CheckoutRepository {
   Future<DataState<CheckOutEntity>> getCheckout(AddressModel address) async {
     return await _remote.getCheckout(address);
   }
+
+  @override
+  Future<DataState<bool>> cartPayIntent(AddressModel param) async {
+    return await _remote.cartPayIntent(param);
+  }
 }

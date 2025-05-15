@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_stripe/flutter_stripe.dart';
 import '../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../../auth/signin/data/models/address_model.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../user/profiles/data/models/order_model.dart';
 import '../../data/models/cart/cart_model.dart';
 import '../../domain/entities/cart/cart_entity.dart';
 import '../../domain/entities/checkout/check_out_entity.dart';
+import '../../domain/entities/checkout/order_billing_entity.dart';
 import '../../domain/param/cart_item_update_qty_param.dart';
 import '../../domain/usecase/cart/cart_item_status_update_usecase.dart';
 import '../../domain/usecase/cart/cart_update_qty_usecase.dart';
@@ -30,12 +32,23 @@ class CartProvider extends ChangeNotifier {
   final GetCheckoutUsecase _getCheckoutUsecase;
 
   List<CartItemEntity> _cartItems = <CartItemEntity>[];
+//
   int _page = 1;
   int get page => _page;
-
+//
+  OrderBillingEntity? _orderBilling;
+  OrderBillingEntity? get orderBilling => _orderBilling;
+//
+  OrderPaymentDetailModel? _orderPaymentDetailModel;
+  OrderPaymentDetailModel? get orderPaymentDetailModel =>
+      _orderPaymentDetailModel;
+//
+  CheckOutEntity? _checkoutEntity;
+  CheckOutEntity? get checkoutEntity => _checkoutEntity;
+//
   CartItemType _basketPage = CartItemType.cart;
   CartItemType get basketPage => _basketPage;
-
+//
   AddressEntity? _address = (LocalAuth.currentUser?.address != null &&
           LocalAuth.currentUser!.address
               .where((AddressEntity element) => element.isDefault)
@@ -142,5 +155,52 @@ class CartProvider extends ChangeNotifier {
       );
       return DataFailer<bool>(CustomException(e.toString()));
     }
+  }
+
+// cardbrand
+  // CardBrand? _cardBrand;
+  // CardBrand? get cardBrand => _cardBrand;
+  // void SetCardBrand() {}
+  // bool isCardBrandValid(String cardNumber, String selectedBrand) {
+  //   if (selectedBrand.toLowerCase() == 'visa') {
+  //     return cardNumber.startsWith('4');
+  //   } else if (selectedBrand.toLowerCase() == 'mastercard') {
+  //     final int? prefix2 = cardNumber.length >= 2
+  //         ? int.tryParse(cardNumber.substring(0, 2))
+  //         : null;
+  //     final int? prefix4 = cardNumber.length >= 4
+  //         ? int.tryParse(cardNumber.substring(0, 4))
+  //         : null;
+  //     if (prefix2 != null && prefix4 != null) {
+  //       bool inOldRange = prefix2 >= 51 && prefix2 <= 55;
+  //       bool inNewRange = prefix4 >= 2221 && prefix4 <= 2720;
+  //       return inOldRange || inNewRange;
+  //     }
+  //     return false;
+  //   } else if (selectedBrand.toLowerCase() == 'stripe') {
+  //     // Accept all brands for Stripe here or add other logic
+  //     return true;
+  //   }
+  //   return false;
+  // }
+
+  Future<PaymentIntent> presentStripePaymentSheet(String clientSecret) async {
+    // final CardBrand? allowedBrand = _cardBrand;
+
+    // if (allowedBrand == null) {
+    //   throw Exception('Selected card brand is not supported');
+    // }
+
+    await Stripe.instance.initPaymentSheet(
+      paymentSheetParameters: SetupPaymentSheetParameters(
+          paymentIntentClientSecret: clientSecret,
+          merchantDisplayName: LocalAuth.currentUser?.userName),
+    );
+
+    await Stripe.instance.presentPaymentSheet();
+
+    final PaymentIntent paymentIntent =
+        await Stripe.instance.retrievePaymentIntent(clientSecret);
+    return paymentIntent;
   }
 }

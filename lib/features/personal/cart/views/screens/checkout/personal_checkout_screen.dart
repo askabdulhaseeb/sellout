@@ -31,6 +31,7 @@ class PersonalCheckoutView extends StatelessWidget {
                 ) {
                   final CheckOutEntity checkout = snapshot.data?.entity ??
                       CheckOutModel(items: <CheckOutItemEntity>[]);
+
                   return Column(
                     children: <Widget>[
                       CheckoutListSection(

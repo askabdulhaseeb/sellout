@@ -12,7 +12,7 @@ class HomePromoListSection extends StatelessWidget {
         itemCount: 5,
         itemBuilder: (BuildContext context, int index) {
           return Container(
-            width: 200,
+            width: 100,
             margin: const EdgeInsets.only(right: 10),
             decoration: BoxDecoration(
               color: Theme.of(context).dividerColor,

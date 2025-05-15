@@ -1,6 +1,5 @@
 import '../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../core/sources/data_state.dart';
-import '../../../auth/signin/data/models/address_model.dart';
 import '../../domain/entities/cart/cart_entity.dart';
 import '../../domain/param/cart_item_update_qty_param.dart';
 import '../../domain/repositories/cart_repository.dart';
@@ -43,10 +42,5 @@ class CartRepositoryImpl implements CartRepository {
   @override
   Future<DataState<bool>> updateQty(CartItemUpdateQtyParam param) async {
     return await _remoteAPI.updateQty(param);
-  }
-
-  @override
-  Future<DataState<bool>> cartPayIntent(AddressModel param) async {
-    return await _remoteAPI.cartPayIntent(param);
   }
 }

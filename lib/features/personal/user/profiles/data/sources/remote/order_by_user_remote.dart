@@ -6,6 +6,7 @@ import '../../models/order_model.dart';
 
 abstract interface class OrderByUserRemote {
   Future<DataState<List<OrderEntity>>> getOrderByUser(String? userId);
+  Future<DataState<bool>> createOrder(List<OrderModel> orderData);
 }
 
 class OrderByUserRemoteImpl implements OrderByUserRemote {
@@ -50,5 +51,36 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
     return DataFailer<List<OrderEntity>>(
       CustomException('Failed to get Order by user'),
     );
+  }
+
+  @override
+  Future<DataState<bool>> createOrder(List<OrderModel> orderData) async {
+    try {
+      final List<Map<String, dynamic>> jsonOrders =
+          orderData.map((OrderModel e) => e.toJson()).toList();
+
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: '/orders/create',
+        requestType: ApiRequestType.post,
+        body: json.encode(jsonOrders),
+        isAuth: true,
+      );
+      AppLog.info('ceate order data ${result.data ?? ''}');
+      if (result is DataSuccess) {
+        return DataSuccess<bool>(result.data ?? '', true);
+      } else {
+        return DataFailer<bool>(
+          result.exception ?? CustomException('Failed to create order'),
+        );
+      }
+    } catch (e, stc) {
+      AppLog.error(e.toString(),
+          name: 'PostByUserRemoteImpl.createOrder - catch',
+          error: e,
+          stackTrace: stc);
+      return DataFailer<bool>(
+        CustomException('Failed to create order'),
+      );
+    }
   }
 }

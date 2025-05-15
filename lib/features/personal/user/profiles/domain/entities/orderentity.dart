@@ -1,7 +1,6 @@
 import '../../../../auth/signin/data/models/address_model.dart';
 
 class OrderEntity {
-
   const OrderEntity({
     required this.orderId,
     required this.buyerId,
@@ -16,6 +15,7 @@ class OrderEntity {
     required this.updatedAt,
     required this.paymentDetail,
     required this.shippingAddress,
+    required this.businessId,
   });
   final String orderId;
   final String buyerId;
@@ -30,9 +30,10 @@ class OrderEntity {
   final DateTime updatedAt;
   final OrderPaymentDetailEntity paymentDetail;
   final AddressEntity shippingAddress;
+  final String businessId;
 }
-class OrderPaymentDetailEntity {
 
+class OrderPaymentDetailEntity {
   const OrderPaymentDetailEntity({
     required this.transactionId,
     required this.method,

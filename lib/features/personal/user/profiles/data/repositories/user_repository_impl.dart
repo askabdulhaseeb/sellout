@@ -7,6 +7,7 @@ import '../../domain/entities/orderentity.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/user_repositories.dart';
 import '../../views/params/update_user_params.dart';
+import '../models/order_model.dart';
 import '../sources/remote/my_visting_remote.dart';
 import '../sources/remote/order_by_user_remote.dart';
 import '../sources/remote/post_by_user_remote.dart';
@@ -50,7 +51,13 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
   }
 
   @override
-  Future<DataState<List<AttachmentEntity>>> updateProfilePicture(PickedAttachment photo) async {
+  Future<DataState<bool>> createOrder(List<OrderModel> orderData) async {
+    return await orderByUserRemote.createOrder(orderData);
+  }
+
+  @override
+  Future<DataState<List<AttachmentEntity>>> updateProfilePicture(
+      PickedAttachment photo) async {
     return await userProfileRemoteSource.updateProfilePicture(photo);
   }
 

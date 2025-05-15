@@ -69,6 +69,7 @@ import '../features/personal/cart/domain/usecase/cart/cart_update_qty_usecase.da
 import '../features/personal/cart/domain/usecase/cart/get_cart_usecase.dart';
 import '../features/personal/cart/domain/usecase/cart/remove_from_cart_usecase.dart';
 import '../features/personal/cart/domain/usecase/checkout/get_checkout_usecase.dart';
+import '../features/personal/cart/domain/usecase/checkout/pay_intent_usecase.dart';
 import '../features/personal/cart/views/providers/cart_provider.dart';
 import '../features/personal/chats/chat/data/repositories/message_repository_impl.dart';
 import '../features/personal/chats/chat/data/sources/remote/messages_remote_source.dart';
@@ -124,6 +125,7 @@ import '../features/personal/user/profiles/data/sources/remote/order_by_user_rem
 import '../features/personal/user/profiles/data/sources/remote/post_by_user_remote.dart';
 import '../features/personal/user/profiles/data/sources/remote/user_profile_remote_source.dart';
 import '../features/personal/user/profiles/domain/repositories/user_repositories.dart';
+import '../features/personal/user/profiles/domain/usecase/create_order_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/edit_profile_detail_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/edit_profile_picture_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/get_my_host_usecase.dart';
@@ -298,6 +300,9 @@ void _cart() {
       () => CheckoutRepositoryImpl(locator()));
   locator
       .registerFactory<GetCheckoutUsecase>(() => GetCheckoutUsecase(locator()));
+  locator.registerFactory<PayIntentUsecase>(() => PayIntentUsecase(locator()));
+  locator
+      .registerFactory<CreateOrderUsecase>(() => CreateOrderUsecase(locator()));
   // provider
   locator.registerLazySingleton<CartProvider>(() =>
       CartProvider(locator(), locator(), locator(), locator(), locator()));
