@@ -7,7 +7,6 @@ import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../../attachment/domain/entities/picked_attachment_option.dart';
 import '../../../../../attachment/views/screens/pickable_attachment_screen.dart';
 import '../../../chat_dashboard/domain/entities/chat/chat_entity.dart';
-import '../../../chat_dashboard/domain/entities/chat/participant/chat_participant_entity.dart';
 import '../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../data/models/message_last_evaluated_key.dart';
 import '../../domain/entities/getted_message_entity.dart';
@@ -110,29 +109,6 @@ class ChatProvider extends ChangeNotifier {
       }
       notifyListeners();
     }
-  }
-
-  int getUnreadMessageCount(String userId) {
-    if (_chat == null ||
-        _chat!.participants == null ||
-        _gettedMessage == null) {
-      return 0;
-    }
-
-    // Find the participant for the user
-    final ChatParticipantEntity participant = _chat!.participants!.firstWhere(
-      (ChatParticipantEntity p) => p.uid == userId,
-    );
-
-    final DateTime lastReadAt = participant.chatAt;
-
-    // Count messages with createdAt > lastReadAt
-    final int unreadCount =
-        _gettedMessage!.messages.where((MessageEntity message) {
-      return message.createdAt.isAfter(lastReadAt);
-    }).length;
-
-    return unreadCount;
   }
 
   void removePickedAttachment(PickedAttachment attachment) {

@@ -79,10 +79,7 @@ class PrivateChatDashboardTile extends StatelessWidget {
                                 chat.lastMessage?.createdAt.timeAgo ?? '',
                                 style: const TextStyle(fontSize: 10),
                               ),
-                              UnseenMessageBadge(
-                                  unreadCount: pro.getUnreadMessageCount(
-                                      chat.persons.first),
-                                  chat: chat),
+                              UnseenMessageBadge(chat: chat),
                             ],
                           ),
                         ],
