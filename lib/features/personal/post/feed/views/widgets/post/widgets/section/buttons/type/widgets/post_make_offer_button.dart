@@ -22,11 +22,8 @@ class PostMakeOfferButton extends StatelessWidget {
     }
 
     return CustomElevatedButton(
-        bgColor: post.acceptOffers == true
-            ? Theme.of(context).primaryColor
-            : Theme.of(context).disabledColor,
-        onTap: () =>
-            post.acceptOffers == true ? showOfferBottomSheet(context) : null,
+        bgColor: Theme.of(context).primaryColor,
+        onTap: () => showOfferBottomSheet(context),
         title: 'make_an_offer'.tr(),
         isLoading: false);
   }

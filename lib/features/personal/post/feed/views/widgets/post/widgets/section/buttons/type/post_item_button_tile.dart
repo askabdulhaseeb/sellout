@@ -12,13 +12,15 @@ class PostItemButtonTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        Row(
-          children: <Widget>[
-            Expanded(child: PostBuyNowButto(post: post)),
-            const SizedBox(width: 12),
-            Expanded(child: PostMakeOfferButton(post: post)),
-          ],
-        ),
+        if (post.acceptOffers == false) PostBuyNowButto(post: post),
+        if (post.acceptOffers == true)
+          Row(
+            children: <Widget>[
+              Expanded(child: PostBuyNowButto(post: post)),
+              const SizedBox(width: 12),
+              Expanded(child: PostMakeOfferButton(post: post)),
+            ],
+          ),
         PostAddToBasketButton(post: post),
       ],
     );

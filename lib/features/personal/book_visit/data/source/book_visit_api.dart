@@ -2,8 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/api_call.dart';
-import '../../../chats/chat/data/sources/local/local_message.dart';
-import '../../../chats/chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../post/data/models/visit/visiting_model.dart';
 import '../../../post/domain/entities/visit/visiting_entity.dart';
 import '../../view/params/book_service_params.dart';

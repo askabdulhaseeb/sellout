@@ -17,17 +17,13 @@ class SocketImplementations {
   Future<void> handleNewMessage(Map<String, dynamic> data) async {
     final MessageModel newMsg = MessageModel.fromJson(data);
     final String chatId = data['chat_id'];
-
     final Box<GettedMessageEntity> messageBox =
         Hive.box<GettedMessageEntity>(AppStrings.localChatMessagesBox);
-
     final bool exists = messageBox.containsKey(chatId);
-
     if (!exists) {
       final GetMyChatsUsecase getMyChatUsecase = GetMyChatsUsecase(locator());
       final DataState<List<ChatEntity>> chatResult =
           await getMyChatUsecase.call(<String>[chatId]);
-
       if (chatResult is DataSuccess &&
           (chatResult.entity?.isNotEmpty ?? false)) {
         final ChatEntity newChat = chatResult.entity!.first;

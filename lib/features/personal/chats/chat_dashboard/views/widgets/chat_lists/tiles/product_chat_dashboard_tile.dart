@@ -11,6 +11,7 @@ import '../../../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../../../../user/profiles/domain/usecase/get_user_by_uid.dart';
 import '../../../../../chat/views/providers/chat_provider.dart';
 import '../../../../../chat/views/screens/chat_screen.dart';
+import '../../../../data/models/chat/chat_model.dart';
 import '../../../../domain/entities/chat/chat_entity.dart';
 import '../../chat_profile_with_status.dart';
 import '../../unseen_message_badge.dart';
@@ -87,10 +88,7 @@ class ProductChatDashboardTile extends HookWidget {
                               chat.lastMessage?.createdAt.timeAgo ?? '',
                               style: const TextStyle(fontSize: 10),
                             ),
-                            UnseenMessageBadge(
-                                unreadCount: pro
-                                    .getUnreadMessageCount(chat.persons.first),
-                                chat: chat),
+                            UnseenMessageBadge(chat: chat),
                           ],
                         ),
                       ],

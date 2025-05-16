@@ -2,6 +2,17 @@ import '../../../../../../../../core/enums/chat/chat_participant_role.dart';
 import '../../../../domain/entities/chat/participant/chat_participant_entity.dart';
 
 class ChatParticipantModel extends ChatParticipantEntity {
+  factory ChatParticipantModel.fromEntity(ChatParticipantEntity entity) {
+    return ChatParticipantModel(
+      uid: entity.uid,
+      joinAt: entity.joinAt,
+      role: entity.role,
+      source: entity.source,
+      chatAt: entity.chatAt,
+      addBy: entity.addBy,
+      addedBy: entity.addedBy,
+    );
+  }
   ChatParticipantModel({
     required super.uid,
     required super.joinAt,
@@ -29,18 +40,7 @@ class ChatParticipantModel extends ChatParticipantEntity {
         'role': role.json,
         'add_by': addBy,
         'source': source,
-        'chat_at': chatAt.toIso8601String(),
+        'chat_At': chatAt.toIso8601String(),
         'added_by': addedBy,
       };
-  factory ChatParticipantModel.fromEntity(ChatParticipantEntity entity) {
-    return ChatParticipantModel(
-      uid: entity.uid,
-      joinAt: entity.joinAt,
-      role: entity.role,
-      source: entity.source,
-      chatAt: entity.chatAt,
-      addBy: entity.addBy,
-      addedBy: entity.addedBy,
-    );
-  }
 }
