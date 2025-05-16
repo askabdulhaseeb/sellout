@@ -1,18 +1,38 @@
 import 'package:flutter/material.dart';
-
-import '../../../../features/personal/bookings/domain/entity/booking_entity.dart';
-import '../../../functions/app_log.dart';
-import '../../../sources/api_call.dart';
-import '../../app_snakebar.dart';
-import '../domain/params/update_appointment_params.dart';
-import '../domain/usecase/update_appointment_usecase.dart';
+import '../../../../../features/business/core/domain/entity/business_entity.dart';
+import '../../../../../features/personal/bookings/domain/entity/booking_entity.dart';
+import '../../../../../features/personal/user/profiles/domain/entities/user_entity.dart';
+import '../../../../functions/app_log.dart';
+import '../../../../sources/api_call.dart';
+import '../../../app_snakebar.dart';
+import '../../domain/params/update_appointment_params.dart';
+import '../../domain/usecase/update_appointment_usecase.dart';
 
 class AppointmentTileProvider extends ChangeNotifier {
-  AppointmentTileProvider(this._updateAppointmentUsecase);
+  AppointmentTileProvider(
+    this._updateAppointmentUsecase,
+  );
   final UpdateAppointmentUsecase _updateAppointmentUsecase;
+//
+  BusinessEntity? _business;
+  BusinessEntity? get business => _business;
+  void setbusiness(BusinessEntity data) {
+    _business = data;
+    notifyListeners();
+  }
 
+//
+  UserEntity? _user;
+  UserEntity? get user => _user;
+  void setUser(UserEntity user) {
+    _user = user;
+    notifyListeners();
+  }
+
+//
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+//
   set isLoading(bool value) {
     _isLoading = value;
     notifyListeners();

@@ -1,9 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
-import '../../../../features/personal/bookings/domain/entity/booking_entity.dart';
-import '../../../../features/personal/user/profiles/data/sources/local/local_user.dart';
-import '../../profile_photo.dart';
+import 'package:provider/provider.dart';
+import '../../../../../features/personal/bookings/domain/entity/booking_entity.dart';
+import '../../../../../features/personal/user/profiles/data/sources/local/local_user.dart';
+import '../../../profile_photo.dart';
+import '../providers/appointment_tile_provider.dart';
 
 class AppointmentTileUserInfoSection extends StatelessWidget {
   const AppointmentTileUserInfoSection({required this.booking, super.key});
@@ -21,6 +22,11 @@ class AppointmentTileUserInfoSection extends StatelessWidget {
           AsyncSnapshot<UserEntity?> snapshot,
         ) {
           final UserEntity? user = snapshot.data;
+          if (user != null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              context.read<AppointmentTileProvider>().setUser(user);
+            });
+          }
           return Row(
             children: <Widget>[
               ProfilePhoto(

@@ -5,7 +5,7 @@ import '../core/widgets/appointment/data/repository/appointment_repository.dart'
 import '../core/widgets/appointment/data/services/appointment_api.dart';
 import '../core/widgets/appointment/domain/repository/appointment_repository.dart';
 import '../core/widgets/appointment/domain/usecase/update_appointment_usecase.dart';
-import '../core/widgets/appointment/providers/appointment_tile_provider.dart';
+import '../core/widgets/appointment/view/providers/appointment_tile_provider.dart';
 import '../core/widgets/phone_number/data/repository/phone_number_repository_impl.dart';
 import '../core/widgets/phone_number/data/sources/country_api.dart';
 import '../core/widgets/phone_number/domain/repository/phone_number_repository.dart';
