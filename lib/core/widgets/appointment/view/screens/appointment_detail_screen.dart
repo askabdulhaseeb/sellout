@@ -1,10 +1,14 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../../../features/business/core/data/sources/local_business.dart';
-import '../../../../../features/personal/auth/signin/domain/entities/address_entity.dart';
+import '../../../../../features/business/core/data/sources/service/local_service.dart';
+import '../../../../../features/business/core/domain/entity/service/service_entity.dart';
 import '../../../../../features/personal/bookings/domain/entity/booking_entity.dart';
 import '../../../../../features/business/core/domain/entity/business_entity.dart';
 import '../../../../../features/personal/user/profiles/data/sources/local/local_user.dart';
+import '../../../../extension/datetime_ext.dart';
+import '../../../in_dev_mode.dart';
 import '../../../profile_photo.dart';
 import '../widgets/appointment_tile_button_section.dart';
 
@@ -24,6 +28,10 @@ class AppointmentDetailScreen extends StatelessWidget {
     return await LocalBusiness().getBusiness(booking.businessID ?? '');
   }
 
+  Future<ServiceEntity?> _getService() async {
+    return await LocalService().getService(booking.serviceID ?? '');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,8 +39,9 @@ class AppointmentDetailScreen extends StatelessWidget {
         title: Text('${booking.bookedAt.toLocal()}'.split(' ')[0]),
       ),
       body: FutureBuilder<List<dynamic>>(
-        future: Future.wait(<Future>[_getUser(), _getBusiness()]),
-        builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+        future: Future.wait(
+            <Future<dynamic>>[_getUser(), _getBusiness(), _getService()]),
+        builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -41,145 +50,36 @@ class AppointmentDetailScreen extends StatelessWidget {
           }
           final UserEntity? user = snapshot.data![0] as UserEntity?;
           final BusinessEntity? business = snapshot.data![1] as BusinessEntity?;
+          final ServiceEntity? service = snapshot.data![2] as ServiceEntity?;
           if (user == null || business == null) {
             return const Center(
                 child: Text('User or Business data not found.'));
           }
-          final AddressEntity? userAddress =
-              user.address.isNotEmpty ? user.address.first : null;
-          return Column(
-            children: <Widget>[
-              Container(
-                height: 200,
-                margin: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              spacing: 12,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                //Appointment map
+                AppointmentMapSection(business: business),
+                const SizedBox(height: 12),
+                AppointmentDescriptionSection(
+                  business: business,
+                  service: service,
+                  user: user,
+                  booking: booking,
                 ),
-                child: Stack(
-                  children: <Widget>[
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: GoogleMap(
-                        initialCameraPosition: CameraPosition(
-                          target: LatLng(
-                            business.location?.latitude ?? 40.7128,
-                            business.location?.longitude ?? -74.0060,
-                          ),
-                          zoom: 14,
-                        ),
-                        markers: <Marker>{
-                          Marker(
-                            markerId: const MarkerId('businessLocation'),
-                            position: LatLng(
-                              business.location?.latitude ?? 0,
-                              business.location?.longitude ?? 0,
-                            ),
-                            infoWindow: InfoWindow(title: business.displayName),
-                          ),
-                        },
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 10,
-                      left: 10,
-                      right: 10,
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                            color: ColorScheme.of(context).surfaceContainer,
-                            borderRadius: BorderRadius.circular(16)),
-                        child: Row(spacing: 10, children: <Widget>[
-                          ProfilePhoto(
-                            size: 24,
-                            isCircle: true,
-                            url: business.logo?.url,
-                            placeholder: business.displayName.toString(),
-                          ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  business.displayName.toString(),
-                                  style: TextTheme.of(context)
-                                      .bodyMedium
-                                      ?.copyWith(fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  overflow: TextOverflow.ellipsis,
-                                  business.location?.address ?? 'N/A',
-                                  style: TextTheme.of(context)
-                                      .bodySmall
-                                      ?.copyWith(fontWeight: FontWeight.w500),
-                                ),
-                              ],
-                            ),
-                          )
-                        ]),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.9),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: const <BoxShadow>[
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 5,
-                      spreadRadius: 2,
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        CircleAvatar(
-                          backgroundImage: user.profilePhotoURL != null
-                              ? NetworkImage(user.profilePhotoURL!)
-                              : null,
-                          child: user.profilePhotoURL == null
-                              ? const Icon(Icons.person)
-                              : null,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            user.displayName,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    if (userAddress != null)
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                              'User Location: ${userAddress.townCity}, ${userAddress.country}'),
-                          Text('Street: ${userAddress.address}'),
-                        ],
-                      ),
-                    const SizedBox(height: 8),
-                    Text('Business: ${business.displayName}'),
-                    Text('Business Address: ${business.address}'),
-                    const SizedBox(height: 4),
-                    Text("Service: ${booking.serviceID ?? 'N/A'}"),
-                    Text('Time: ${booking.bookedAt.toLocal()}'),
-                  ],
-                ),
-              ),
-            ],
+
+                const InDevMode(
+                    child: SizedBox(
+                  height: 100,
+                  width: double.infinity,
+                  child: Center(child: Text('TODO: Payment detail section')),
+                ))
+              ],
+            ),
           );
         },
       ),
@@ -190,6 +90,157 @@ class AppointmentDetailScreen extends StatelessWidget {
           booking: booking,
         ),
       ),
+    );
+  }
+}
+
+class AppointmentMapSection extends StatelessWidget {
+  const AppointmentMapSection({
+    required this.business,
+    super.key,
+  });
+
+  final BusinessEntity business;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 250,
+      child: Stack(
+        children: <Widget>[
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: GoogleMap(
+              initialCameraPosition: const CameraPosition(
+                target: LatLng(40.7128, -74.0060),
+                zoom: 14,
+              ),
+              markers: <Marker>{
+                Marker(
+                  markerId: const MarkerId('businessLocation'),
+                  position: const LatLng(40.7128, -74.0060),
+                  infoWindow: InfoWindow(title: business.displayName),
+                ),
+              },
+            ),
+          ),
+          Positioned(
+            bottom: 10,
+            left: 10,
+            right: 10,
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: ColorScheme.of(context).surfaceContainer,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Row(
+                children: <Widget>[
+                  ProfilePhoto(
+                    size: 24,
+                    isCircle: true,
+                    url: business.logo?.url,
+                    placeholder: business.displayName.toString(),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          business.displayName ?? '',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          business.location?.address ?? 'N/A',
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class AppointmentDescriptionSection extends StatelessWidget {
+  const AppointmentDescriptionSection({
+    required this.business,
+    required this.service,
+    required this.user,
+    required this.booking,
+    super.key,
+  });
+
+  final BusinessEntity business;
+  final ServiceEntity? service;
+  final UserEntity user;
+  final BookingEntity booking;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          business.displayName ?? '',
+          style: Theme.of(context)
+              .textTheme
+              .titleLarge
+              ?.copyWith(fontWeight: FontWeight.w500),
+        ),
+        const SizedBox(
+          height: 6,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text(
+              service?.name ?? '',
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            Text(
+              service?.price.toString() ?? '',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w600),
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Expanded(
+              child: Text(
+                '${'with'.tr()} ${user.displayName}:',
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: ColorScheme.of(context).outline),
+              ),
+            ),
+            Text(
+              '${booking.bookedAt.timeOnly} - ${booking.endAt.timeOnly}',
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: ColorScheme.of(context).outline),
+            ),
+            const Divider(),
+          ],
+        ),
+      ],
     );
   }
 }
