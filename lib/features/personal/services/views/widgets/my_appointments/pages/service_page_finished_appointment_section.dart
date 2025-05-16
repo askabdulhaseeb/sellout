@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../../bookings/domain/entity/booking_entity.dart';
 import '../../../providers/services_page_provider.dart';
-import '../../../../../../../core/widgets/appointment/appointment_tile.dart';
+import '../../../../../../../core/widgets/appointment/view/screens/appointment_tile.dart';
 
 class ServicePageFinishedAppointmentSection extends StatelessWidget {
   const ServicePageFinishedAppointmentSection({super.key});

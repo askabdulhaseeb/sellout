@@ -2,9 +2,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../features/personal/bookings/domain/entity/booking_entity.dart';
-import '../../../extension/datetime_ext.dart';
-import '../../../extension/int_ext.dart';
+import '../../../../../features/personal/bookings/domain/entity/booking_entity.dart';
+import '../../../../extension/datetime_ext.dart';
+import '../../../../extension/int_ext.dart';
 
 class AppointmentTileDatetimeSection extends StatelessWidget {
   const AppointmentTileDatetimeSection({required this.booking, super.key});

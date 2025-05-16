@@ -1,6 +1,6 @@
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
-import '../core/widgets/appointment/providers/appointment_tile_provider.dart';
+import '../core/widgets/appointment/view/providers/appointment_tile_provider.dart';
 import '../features/attachment/views/providers/picked_media_provider.dart';
 import '../features/business/business_page/views/providers/business_page_provider.dart';
 import '../features/business/service/views/providers/add_service_provider.dart';
