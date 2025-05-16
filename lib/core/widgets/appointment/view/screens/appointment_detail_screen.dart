@@ -1,16 +1,14 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../../../features/business/core/data/sources/local_business.dart';
 import '../../../../../features/business/core/data/sources/service/local_service.dart';
 import '../../../../../features/business/core/domain/entity/service/service_entity.dart';
 import '../../../../../features/personal/bookings/domain/entity/booking_entity.dart';
 import '../../../../../features/business/core/domain/entity/business_entity.dart';
 import '../../../../../features/personal/user/profiles/data/sources/local/local_user.dart';
-import '../../../../extension/datetime_ext.dart';
 import '../../../in_dev_mode.dart';
-import '../../../profile_photo.dart';
 import '../widgets/appointment_tile_button_section.dart';
+import '../widgets/business_detail_widgets/appointment_detail_description.dart';
+import '../widgets/business_detail_widgets/appointment_detail_map.dart';
 
 class AppointmentDetailScreen extends StatelessWidget {
   const AppointmentDetailScreen({
@@ -90,160 +88,6 @@ class AppointmentDetailScreen extends StatelessWidget {
           booking: booking,
         ),
       ),
-    );
-  }
-}
-
-class AppointmentMapSection extends StatelessWidget {
-  const AppointmentMapSection({
-    required this.business,
-    super.key,
-  });
-
-  final BusinessEntity business;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 250,
-      child: Stack(
-        children: <Widget>[
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: LatLng(business.location?.latitude ?? 40.7128,
-                    business.location?.longitude ?? -74.0060),
-                zoom: 14,
-              ),
-              markers: <Marker>{
-                Marker(
-                  markerId: MarkerId(business.displayName ?? ''),
-                  position: LatLng(business.location?.latitude ?? 40.7128,
-                      business.location?.longitude ?? -74.0060),
-                  infoWindow: InfoWindow(title: business.displayName),
-                ),
-              },
-            ),
-          ),
-          Positioned(
-            bottom: 10,
-            left: 10,
-            right: 10,
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: ColorScheme.of(context).surfaceContainer,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Row(
-                children: <Widget>[
-                  ProfilePhoto(
-                    size: 24,
-                    isCircle: true,
-                    url: business.logo?.url,
-                    placeholder: business.displayName.toString(),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          business.displayName ?? '',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          business.location?.address ?? 'N/A',
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontWeight: FontWeight.w500),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class AppointmentDescriptionSection extends StatelessWidget {
-  const AppointmentDescriptionSection({
-    required this.business,
-    required this.service,
-    required this.user,
-    required this.booking,
-    super.key,
-  });
-
-  final BusinessEntity business;
-  final ServiceEntity? service;
-  final UserEntity user;
-  final BookingEntity booking;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          business.displayName ?? '',
-          style: Theme.of(context)
-              .textTheme
-              .titleLarge
-              ?.copyWith(fontWeight: FontWeight.w500, fontSize: 18),
-        ),
-        const SizedBox(
-          height: 6,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text(
-              service?.name ?? '',
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-            Text(
-              service?.price.toString() ?? '',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Expanded(
-              child: Text(
-                '${'with'.tr()} ${user.displayName}:',
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: ColorScheme.of(context).outline),
-              ),
-            ),
-            Text(
-              '${booking.bookedAt.timeOnly} - ${booking.endAt.timeOnly}',
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  fontWeight: FontWeight.w500,
-                  color: ColorScheme.of(context).outline),
-            ),
-            const Divider(),
-          ],
-        ),
-        const Divider()
-      ],
     );
   }
 }
