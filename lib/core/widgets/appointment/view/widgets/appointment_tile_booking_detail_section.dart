@@ -13,7 +13,7 @@ class AppointmentTileBookingDetailSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<BusinessEntity?>(
-      future: LocalBusiness().getBusiness(booking.bookingID ?? ''),
+      future: LocalBusiness().getBusiness(booking.businessID ?? ''),
       builder: (
         BuildContext context,
         AsyncSnapshot<BusinessEntity?> snapshot,

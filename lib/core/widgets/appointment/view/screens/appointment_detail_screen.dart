@@ -111,14 +111,16 @@ class AppointmentMapSection extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: GoogleMap(
-              initialCameraPosition: const CameraPosition(
-                target: LatLng(40.7128, -74.0060),
+              initialCameraPosition: CameraPosition(
+                target: LatLng(business.location?.latitude ?? 40.7128,
+                    business.location?.longitude ?? -74.0060),
                 zoom: 14,
               ),
               markers: <Marker>{
                 Marker(
-                  markerId: const MarkerId('businessLocation'),
-                  position: const LatLng(40.7128, -74.0060),
+                  markerId: MarkerId(business.displayName ?? ''),
+                  position: LatLng(business.location?.latitude ?? 40.7128,
+                      business.location?.longitude ?? -74.0060),
                   infoWindow: InfoWindow(title: business.displayName),
                 ),
               },
@@ -199,7 +201,7 @@ class AppointmentDescriptionSection extends StatelessWidget {
           style: Theme.of(context)
               .textTheme
               .titleLarge
-              ?.copyWith(fontWeight: FontWeight.w500),
+              ?.copyWith(fontWeight: FontWeight.w500, fontSize: 18),
         ),
         const SizedBox(
           height: 6,
@@ -240,6 +242,7 @@ class AppointmentDescriptionSection extends StatelessWidget {
             const Divider(),
           ],
         ),
+        const Divider()
       ],
     );
   }
