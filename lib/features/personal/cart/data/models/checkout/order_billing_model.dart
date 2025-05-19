@@ -24,6 +24,15 @@ class OrderBillingModel extends OrderBillingEntity {
 }
 
 class BillingDetailsModel extends BillingDetailsEntity {
+
+  factory BillingDetailsModel.fromMap(Map<String, dynamic> json) {
+    return BillingDetailsModel(
+      subtotal: json['subtotal'],
+      deliveryTotal: json['deliveryTotal'],
+      grandTotal: json['grandTotal'],
+      currency: json['currency'],
+    );
+  }
   BillingDetailsModel({
     required super.subtotal,
     required super.deliveryTotal,
@@ -48,15 +57,6 @@ class BillingDetailsModel extends BillingDetailsEntity {
     );
   }
 
-  factory BillingDetailsModel.fromMap(Map<String, dynamic> json) {
-    return BillingDetailsModel(
-      subtotal: json['subtotal'],
-      deliveryTotal: json['deliveryTotal'],
-      grandTotal: json['grandTotal'],
-      currency: json['currency'],
-    );
-  }
-
   Map<String, dynamic> toMap() => <String, dynamic>{
         'subtotal': subtotal,
         'deliveryTotal': deliveryTotal,
@@ -66,23 +66,27 @@ class BillingDetailsModel extends BillingDetailsEntity {
 }
 
 class OrderItemModel extends OrderItemEntity {
+
+  factory OrderItemModel.fromMap(Map<String, dynamic> json) {
+    return OrderItemModel(
+      name: json['name'],
+      quantity: json['quantity'],
+      price: json['price'],
+      totalPrice: json['total_price'],
+      imageUrls: List<String>.from(json['image_urls']),
+      currencyExchangeRate: (json['currency_exchange_rate'] as num).toDouble(),
+      deliveryPrice: json['delivery_price'],
+    );
+  }
   OrderItemModel({
-    required String name,
-    required int quantity,
-    required String price,
-    required String totalPrice,
-    required List<String> imageUrls,
-    required double currencyExchangeRate,
-    required String deliveryPrice,
-  }) : super(
-          name: name,
-          quantity: quantity,
-          price: price,
-          totalPrice: totalPrice,
-          imageUrls: imageUrls,
-          currencyExchangeRate: currencyExchangeRate,
-          deliveryPrice: deliveryPrice,
-        );
+    required super.name,
+    required super.quantity,
+    required super.price,
+    required super.totalPrice,
+    required super.imageUrls,
+    required super.currencyExchangeRate,
+    required super.deliveryPrice,
+  });
 
   factory OrderItemModel.fromEntity(OrderItemEntity entity) {
     return OrderItemModel(
@@ -104,18 +108,6 @@ class OrderItemModel extends OrderItemEntity {
       imageUrls: imageUrls,
       currencyExchangeRate: currencyExchangeRate,
       deliveryPrice: deliveryPrice,
-    );
-  }
-
-  factory OrderItemModel.fromMap(Map<String, dynamic> json) {
-    return OrderItemModel(
-      name: json['name'],
-      quantity: json['quantity'],
-      price: json['price'],
-      totalPrice: json['total_price'],
-      imageUrls: List<String>.from(json['image_urls']),
-      currencyExchangeRate: (json['currency_exchange_rate'] as num).toDouble(),
-      deliveryPrice: json['delivery_price'],
     );
   }
 

@@ -35,7 +35,7 @@ class ListingAttachmentTile extends StatelessWidget {
     );
 
     // Get the video URL for network/video type
-    final videoSource = isLocal ? attachment?.file.uri : imageUrl?.url;
+    final Object? videoSource = isLocal ? attachment?.file.uri : imageUrl?.url;
 
     return Padding(
       padding: const EdgeInsets.all(3),

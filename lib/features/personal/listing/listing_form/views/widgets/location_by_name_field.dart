@@ -270,10 +270,10 @@ class _LocationSearchFieldState extends State<LocationSearchField> {
 }
 
 class Debouncer {
-  final int milliseconds;
-  Timer? _timer;
 
   Debouncer({required this.milliseconds});
+  final int milliseconds;
+  Timer? _timer;
 
   void run(VoidCallback action) {
     _timer?.cancel();

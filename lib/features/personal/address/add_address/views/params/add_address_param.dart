@@ -23,7 +23,7 @@ class AddressParams {
   final String action;
 
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       if (addressId != '') 'address_id': addressId,
       'recipient_name': recipientName,
       'address_1': address1,

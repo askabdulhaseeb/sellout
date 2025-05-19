@@ -33,9 +33,9 @@ class ServiceCardDetail extends StatelessWidget {
               ),
               Row(
                 mainAxisSize: MainAxisSize.min,
-                children: [
+                children: <Widget>[
                   IconButton(
-                      padding: EdgeInsets.all(0),
+                      padding: const EdgeInsets.all(0),
                       onPressed: () {},
                       icon: const Icon(CupertinoIcons.chat_bubble, size: 20)),
                   IconButton(
