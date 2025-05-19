@@ -16,11 +16,11 @@ class PostVehicleButtonTile extends StatelessWidget {
     final BookingProvider pro =
         Provider.of<BookingProvider>(context, listen: false);
     return Column(
-      children: [
+      children: <Widget>[
         if (post.acceptOffers == false)
           CustomElevatedButton(
             title: 'book_visit'.tr(),
-            textStyle: TextStyle(
+            textStyle: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),

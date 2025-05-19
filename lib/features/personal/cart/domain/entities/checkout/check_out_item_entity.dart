@@ -3,27 +3,6 @@ import '../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../attachment/data/attchment_model.dart';
 
 class CheckOutItemEntity {
-  final String cartItemId;
-  final String title;
-  final String sellerId;
-  final String buyerId;
-  final String postId;
-  final String postBusinessId;
-  final List<AttachmentModel> image;
-  final String postCurrency;
-  final String buyerCurrency;
-  final double currencyExchangeRate;
-  final double originalPrice;
-  final double price;
-  final int quantity;
-  final int quantityDifference;
-  final double totalPrice;
-  final double deliveryPrice;
-  final double coreDeliverCharges;
-  final ConditionType condition;
-  final DeliveryType deliveryType;
-  final String postType;
-  final double itemGrandTotal;
 
   CheckOutItemEntity({
     required this.cartItemId,
@@ -48,4 +27,25 @@ class CheckOutItemEntity {
     required this.postType,
     required this.itemGrandTotal,
   });
+  final String cartItemId;
+  final String title;
+  final String sellerId;
+  final String buyerId;
+  final String postId;
+  final String postBusinessId;
+  final List<AttachmentModel> image;
+  final String postCurrency;
+  final String buyerCurrency;
+  final double currencyExchangeRate;
+  final double originalPrice;
+  final double price;
+  final int quantity;
+  final int quantityDifference;
+  final double totalPrice;
+  final double deliveryPrice;
+  final double coreDeliverCharges;
+  final ConditionType condition;
+  final DeliveryType deliveryType;
+  final String postType;
+  final double itemGrandTotal;
 }

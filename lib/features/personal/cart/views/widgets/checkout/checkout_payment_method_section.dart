@@ -198,9 +198,9 @@ class PaymentSuccessSheet extends StatelessWidget {
 }
 
 class PaymentErrorSheet extends StatelessWidget {
-  final String message;
 
   const PaymentErrorSheet({super.key, required this.message});
+  final String message;
 
   @override
   Widget build(BuildContext context) {

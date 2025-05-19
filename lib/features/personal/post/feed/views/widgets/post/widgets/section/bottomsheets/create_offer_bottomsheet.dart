@@ -86,7 +86,7 @@ class _MakeOfferBottomSheetState extends State<MakeOfferBottomSheet> {
                       const SizedBox(height: 20),
                       if (widget.post.listID == ListingType.clothAndFoot.json)
                         Column(
-                          children: [
+                          children: <Widget>[
                             CustomDropdown<String>(
                               title: 'size'.tr(),
                               items: widget.post.sizeColors

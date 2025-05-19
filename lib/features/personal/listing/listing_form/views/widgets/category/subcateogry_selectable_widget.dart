@@ -110,10 +110,10 @@ class _SubCategorySelectableWidgetState
             // Second Dropdown (only for pets if sub-sub-categories exist)
             if (widget.listType == ListingType.pets &&
                 selectedSubCategory != null &&
-                selectedSubCategory!.subCategory.isNotEmpty) ...{
+                selectedSubCategory!.subCategory.isNotEmpty) ...<Widget>{
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: <Widget>[
                   Text(
                     'breed'.tr(), // 👈 Add this label
                     style: const TextStyle(fontWeight: FontWeight.w500),

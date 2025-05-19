@@ -54,14 +54,14 @@ class PhoneNumberEntity {
         await getCountiesUsecase.call(const Duration(days: 1));
 
     if (result is DataSuccess) {
-      final List<CountryEntity> countries = result.entity ?? [];
+      final List<CountryEntity> countries = result.entity ?? <CountryEntity>[];
       final Box<CountryEntity> box = await LocalCountry.openBox;
 
       // Clear the existing data and store the new countries in Hive
       await box.clear();
       await box.addAll(countries);
     } else if (result is DataFailer) {
-      throw Exception("Failed to fetch country data: ${result.exception}");
+      throw Exception('Failed to fetch country data: ${result.exception}');
     }
   }
 }

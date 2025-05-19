@@ -23,9 +23,9 @@ class OfferStatusButtons extends HookWidget {
       ),
       builder: (BuildContext context) {
         // Using hooks to manage TextEditingController state
-        final offerController = useTextEditingController(
+        final TextEditingController offerController = useTextEditingController(
             text: message.offerDetail?.offerPrice.toString());
-        final quantityController = useTextEditingController(text: '1');
+        final TextEditingController quantityController = useTextEditingController(text: '1');
 
         return CounterBottomSheet(
           offerController: offerController,
