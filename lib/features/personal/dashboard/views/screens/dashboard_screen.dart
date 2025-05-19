@@ -8,9 +8,9 @@ import '../../../../business/business_dashboard/view/screens/businesss_dashboard
 import '../../../../business/business_page/views/screens/business_profile_screen.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../auth/signin/views/screens/sign_in_screen.dart';
+import '../../../marketplace/views/screens/marketplace_screen.dart';
 import '../../../listing/start_listing/views/screens/start_listing_screen.dart';
 import '../../../chats/chat_dashboard/views/screens/chat_dashboard_screen.dart';
-import '../../../explore/views/screens/explore_screen.dart';
 import '../../../post/feed/views/screens/home_screen.dart';
 import '../../../user/profiles/views/screens/profile_screen.dart';
 import '../../../services/views/screens/services_screen.dart';
@@ -39,7 +39,7 @@ class DashboardScreen extends StatelessWidget {
           ]
         : <Widget>[
             const HomeScreen(),
-            const ExploreScreen(),
+            const MarketPlaceScreen(),
             const ServicesScreen(),
             uid == null ? const SignInScreen() : const StartListingScreen(),
             uid == null ? const SignInScreen() : const ChatDashboardScreen(),

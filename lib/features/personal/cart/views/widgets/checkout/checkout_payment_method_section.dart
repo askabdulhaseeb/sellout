@@ -119,6 +119,7 @@ class _CheckoutPaymentMethodSectionState
               } catch (e) {
                 // On failure, show error bottom sheet
                 showModalBottomSheet(
+                  // ignore: use_build_context_synchronously
                   context: context,
                   isScrollControlled: true,
                   shape: const RoundedRectangleBorder(
@@ -198,8 +199,7 @@ class PaymentSuccessSheet extends StatelessWidget {
 }
 
 class PaymentErrorSheet extends StatelessWidget {
-
-  const PaymentErrorSheet({super.key, required this.message});
+  const PaymentErrorSheet({required this.message, super.key});
   final String message;
 
   @override

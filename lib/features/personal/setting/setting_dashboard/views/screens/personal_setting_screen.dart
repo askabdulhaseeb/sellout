@@ -2,7 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../more_info/views/screens/personal_more_information_setting_screen.dart';
-import '../../../setting_notification/view/screens/personal_setting_notification_screen.dart';
+import '../../../view/setting_options/setting_notification/view/screens/personal_setting_notification_screen.dart';
+import '../../../view/setting_options/security/view/screens/setting_security_screen.dart';
 import '../widgets/personal_setting_tile.dart';
 
 class PersonalSettingScreen extends StatelessWidget {
@@ -42,7 +43,9 @@ class PersonalSettingScreen extends StatelessWidget {
           PersonalSettingTile(
             icon: Icons.security,
             title: 'security'.tr(),
-            onTap: () {},
+            onTap: () {
+              Navigator.pushNamed(context, SettingSecurityScreen.routeName);
+            },
           ),
           PersonalSettingTile(
             icon: Icons.contact_page_outlined,

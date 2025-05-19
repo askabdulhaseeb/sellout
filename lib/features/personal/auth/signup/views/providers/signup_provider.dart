@@ -268,12 +268,12 @@ class SignupProvider extends ChangeNotifier {
     try {
       //
       final SignupBasicInfoParams params = SignupBasicInfoParams(
-          name: name.text,
-          username: username.text,
-          email: email.text,
-          phone: _phoneNumber!,
-          password: password.text,
-         );
+        name: name.text,
+        username: username.text,
+        email: email.text,
+        phone: _phoneNumber!,
+        password: password.text,
+      );
       final DataState<String> result = await _registerUserUsecase(params);
       if (result is DataSuccess) {
         _uid = result.entity?.toString();

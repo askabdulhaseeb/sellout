@@ -32,6 +32,7 @@ class ServiceCardBusinessInfo extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Row(
+                spacing: 4,
                 children: <Widget>[
                   Text(business.displayName ?? '', style: txt.titleMedium),
                   RatingDisplayWidget(

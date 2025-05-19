@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../core/widgets/expandable_text_widget.dart';
+import '../../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../business/core/domain/entity/service/service_entity.dart';
 
 class ServiceCardDetail extends StatelessWidget {
