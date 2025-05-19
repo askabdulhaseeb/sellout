@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../../../../features/business/core/domain/entity/business_entity.dart';
@@ -66,7 +67,7 @@ class AppointmentMapSection extends StatelessWidget {
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          business.location?.address ?? 'N/A',
+                          business.location?.address ?? 'na'.tr(),
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context)
                               .textTheme

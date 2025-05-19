@@ -17,21 +17,29 @@ class ServiceCardButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomElevatedButton(
-      title: 'book'.tr(),
-      bgColor: business.routine == null
-          ? Theme.of(context).disabledColor
-          : Theme.of(context).primaryColor,
-      isLoading: false,
-      onTap: () {
-        if (business.routine != null) {
-          Navigator.pushNamed(context, BookingScreen.routeName,
-              arguments: <String, dynamic>{
-                'service': service,
-                'business': business
-              });
-        }
-      },
+    return Column(
+      spacing: 8,
+      children: [
+        CustomElevatedButton(
+          title: 'book'.tr(),
+          bgColor: business.routine == null
+              ? Theme.of(context).disabledColor
+              : Theme.of(context).primaryColor,
+          isLoading: false,
+          onTap: () {
+            if (business.routine != null) {
+              Navigator.pushNamed(context, BookingScreen.routeName,
+                  arguments: <String, dynamic>{
+                    'service': service,
+                    'business': business
+                  });
+            }
+          },
+        ),
+        const Divider(
+          thickness: 2,
+        )
+      ],
     );
   }
 }

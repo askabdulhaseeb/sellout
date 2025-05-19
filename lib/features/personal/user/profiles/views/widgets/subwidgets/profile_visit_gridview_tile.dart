@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../../../../../../core/theme/app_theme.dart';
@@ -51,13 +52,13 @@ class ProfileVisitGridviewTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        post?.title ?? 'n/a',
+                        post?.title ?? 'na'.tr(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        post?.priceStr ?? 'n/a',
+                        post?.priceStr ?? 'na'.tr(),
                         maxLines: 1,
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),

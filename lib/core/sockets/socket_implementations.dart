@@ -78,7 +78,8 @@ class SocketImplementations {
     }
 
     try {
-      final List<MessageEntity> updatedMessages = List.from(existing.messages);
+      final List<MessageEntity> updatedMessages =
+          List<MessageEntity>.from(existing.messages);
       updatedMessages[index] = MessageModel.fromJson(messageData);
       final GettedMessageEntity updatedEntity = GettedMessageEntity(
           chatID: existing.chatID,

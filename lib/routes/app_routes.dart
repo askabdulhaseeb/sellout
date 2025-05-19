@@ -8,12 +8,12 @@ import '../features/personal/auth/find_account/view/screens/new_password_screen.
 import '../features/personal/auth/find_account/view/screens/send_code_screen.dart';
 import '../features/personal/cart/views/screens/personal_cart_screen.dart';
 import '../features/personal/chats/chat/views/screens/chat_screen.dart';
-import '../features/personal/explore/views/screens/filter_categories/explore_cloth_foot_screen.dart';
-import '../features/personal/explore/views/screens/filter_categories/explore_food_drink_screen.dart';
-import '../features/personal/explore/views/screens/filter_categories/explore_pets_screen.dart';
-import '../features/personal/explore/views/screens/filter_categories/explore_popular_screen.dart';
-import '../features/personal/explore/views/screens/filter_categories/explore_property_screen.dart';
-import '../features/personal/explore/views/screens/filter_categories/explore_vehicles_screen.dart';
+import '../features/personal/marketplace/views/screens/filter_categories/explore_cloth_foot_screen.dart';
+import '../features/personal/marketplace/views/screens/filter_categories/explore_food_drink_screen.dart';
+import '../features/personal/marketplace/views/screens/filter_categories/explore_pets_screen.dart';
+import '../features/personal/marketplace/views/screens/filter_categories/explore_popular_screen.dart';
+import '../features/personal/marketplace/views/screens/filter_categories/explore_property_screen.dart';
+import '../features/personal/marketplace/views/screens/filter_categories/explore_vehicles_screen.dart';
 import '../features/personal/listing/listing_form/views/screens/add_listing_form_screen.dart';
 import '../features/personal/auth/signin/views/screens/sign_in_screen.dart';
 import '../features/personal/auth/signup/views/screens/signup_screen.dart';
@@ -22,10 +22,11 @@ import '../features/personal/book_visit/view/screens/view_booking_screen.dart';
 import '../features/personal/post/post_detail/views/screens/post_detail_screen.dart';
 import '../features/personal/review/features/reivew_list/views/screens/write_review_screen.dart';
 import '../features/personal/setting/more_info/views/screens/personal_more_information_setting_screen.dart';
-import '../features/personal/setting/setting_notification/view/screens/personal_setting_email_notification_screen.dart';
-import '../features/personal/setting/setting_notification/view/screens/personal_setting_notification_screen.dart';
+import '../features/personal/setting/view/setting_options/security/view/screens/setting_security_screen.dart';
+import '../features/personal/setting/view/setting_options/setting_notification/view/screens/personal_setting_email_notification_screen.dart';
+import '../features/personal/setting/view/setting_options/setting_notification/view/screens/personal_setting_notification_screen.dart';
 import '../features/personal/setting/setting_dashboard/views/screens/personal_setting_screen.dart';
-import '../features/personal/setting/setting_notification/view/screens/personal_setting_push_notification.dart';
+import '../features/personal/setting/view/setting_options/setting_notification/view/screens/personal_setting_push_notification.dart';
 import '../features/personal/user/profiles/views/screens/edit_profile_screen.dart';
 
 class AppRoutes {
@@ -89,6 +90,7 @@ class AppRoutes {
         const PersonalSettingPushNotificationScreen(),
     PersonalSettingEmailNotificationScreen.routeName: (_) =>
         const PersonalSettingEmailNotificationScreen(),
+    SettingSecurityScreen.routeName: (_) => const SettingSecurityScreen(),
     //Review
     WriteReviewScreen.routeName: (_) => const WriteReviewScreen(),
     // Explore

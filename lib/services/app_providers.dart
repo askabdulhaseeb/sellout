@@ -10,7 +10,7 @@ import '../features/personal/auth/signup/views/providers/signup_provider.dart';
 import '../features/personal/cart/views/providers/cart_provider.dart';
 import '../features/personal/chats/chat/views/providers/audio_provider.dart';
 import '../features/personal/chats/chat/views/providers/chat_provider.dart';
-import '../features/personal/explore/views/providers/explore_provider.dart';
+import '../features/personal/marketplace/views/providers/marketplace_provider.dart';
 import '../features/personal/listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../features/personal/chats/chat_dashboard/views/providers/chat_dashboard_provider.dart';
 import '../features/personal/dashboard/views/providers/personal_bottom_nav_provider.dart';
@@ -84,8 +84,10 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
           locator(), locator(), locator())),
   ChangeNotifierProvider<AddServiceProvider>.value(
       value: AddServiceProvider(locator(), locator())),
-  ChangeNotifierProvider<ExploreProvider>.value(
-      value: ExploreProvider(locator(), locator())),
+  ChangeNotifierProvider<MarketPlaceProvider>.value(
+      value: MarketPlaceProvider(
+    locator(),
+  )),
 
 //
 
