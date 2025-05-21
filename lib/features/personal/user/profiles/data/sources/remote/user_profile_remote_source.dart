@@ -101,6 +101,8 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
         requestType: ApiRequestType.patch,
         body: json.encode(params.toMap()),
       );
+      AppLog.info(params.toMap().toString(),
+          name: 'user\'s attributes to be updated');
       if (result is DataSuccess<String>) {
         return DataSuccess<String>(result.data ?? '', result.data);
       } else {

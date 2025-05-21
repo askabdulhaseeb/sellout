@@ -41,7 +41,8 @@ class CurrentUserModel extends CurrentUserEntity {
       required super.businessName, // **Optional - used for Business**
       required super.businessID, // **Optional - used for Business**
       required super.logindetail,
-      required super.employeeList})
+      required super.employeeList,
+      required super.twoStepAuthEnabled})
       : super(inHiveAt: DateTime.now());
 
   factory CurrentUserModel.fromRawJson(String str) =>
@@ -111,6 +112,8 @@ class CurrentUserModel extends CurrentUserEntity {
         (userData['employees'] ?? <dynamic>[])
             .map((dynamic e) => BusinessEmployeeModel.fromJson(e)),
       ),
+      twoStepAuthEnabled:
+          userData['security']?['two_factor_authentication'] ?? false,
     );
   }
 }

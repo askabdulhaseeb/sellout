@@ -6,6 +6,7 @@ import '../features/personal/auth/find_account/view/screens/enter_code_screen.da
 import '../features/personal/auth/find_account/view/screens/find_account_screen.dart';
 import '../features/personal/auth/find_account/view/screens/new_password_screen.dart';
 import '../features/personal/auth/find_account/view/screens/send_code_screen.dart';
+import '../features/personal/auth/signin/views/screens/verify_two_factor_screen.dart';
 import '../features/personal/cart/views/screens/personal_cart_screen.dart';
 import '../features/personal/chats/chat/views/screens/chat_screen.dart';
 import '../features/personal/marketplace/views/screens/filter_categories/explore_cloth_foot_screen.dart';
@@ -67,6 +68,7 @@ class AppRoutes {
     SendCodeScreen.routeName: (_) => const SendCodeScreen(),
     EnterCodeScreen.routeName: (_) => const EnterCodeScreen(),
     NewPasswordScreen.routeName: (_) => const NewPasswordScreen(),
+    VerifyTwoFactorScreen.routeName: (_) => const VerifyTwoFactorScreen(),
 
     // DAHSBOARD
     DashboardScreen.routeName: (_) => const DashboardScreen(),

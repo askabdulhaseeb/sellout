@@ -47,6 +47,7 @@ import '../features/personal/auth/signin/data/repositories/signin_repository_imp
 import '../features/personal/auth/signin/data/sources/signin_remote_source.dart';
 import '../features/personal/auth/signin/domain/repositories/signin_repository.dart';
 import '../features/personal/auth/signin/domain/usecase/login_usecase.dart';
+import '../features/personal/auth/signin/domain/usecase/verify_two_factor_usecsae.dart';
 import '../features/personal/auth/signin/views/providers/signin_provider.dart';
 import '../features/personal/auth/signup/data/repositories/signup_repository_impl.dart';
 import '../features/personal/auth/signup/data/sources/signup_api.dart';
@@ -166,6 +167,7 @@ void _auth() {
   locator.registerFactory<LoginUsecase>(() => LoginUsecase(locator()));
   locator.registerLazySingleton<SigninProvider>(() => SigninProvider(
         locator(),
+        locator(),
       ));
   // Signup
   locator.registerFactory<SignupApi>(() => SignupApiImpl());
@@ -175,6 +177,8 @@ void _auth() {
   //     () => GetCountiesUsecase(locator()));
   locator.registerFactory<RegisterUserUsecase>(
       () => RegisterUserUsecase(locator()));
+  locator.registerFactory<VerifyTwoFactorUseCase>(
+      () => VerifyTwoFactorUseCase(locator()));
   locator.registerFactory<SendPhoneOtpUsecase>(
       () => SendPhoneOtpUsecase(locator()));
   locator.registerFactory<VerifyPhoneOtpUsecase>(

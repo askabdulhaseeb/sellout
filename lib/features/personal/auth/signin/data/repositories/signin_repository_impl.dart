@@ -1,4 +1,5 @@
 import '../../domain/repositories/signin_repository.dart';
+import '../../views/params/two_factor_params.dart';
 import '../sources/signin_remote_source.dart';
 
 class SigninRepositoryImpl implements SigninRepository {
@@ -12,6 +13,17 @@ class SigninRepositoryImpl implements SigninRepository {
       return result;
     } catch (e) {
       return DataFailer<bool>(CustomException('Signin Error: $e'));
+    }
+  }
+
+  @override
+  Future<DataState<bool>> verifyTwoFactorAuth(TwoFactorParams params) async {
+    try {
+      final DataState<bool> result =
+          await remoteSource.verifyTwoFactorAuth(params);
+      return result;
+    } catch (e) {
+      return DataFailer<bool>(CustomException('Two Factor Error: $e'));
     }
   }
 }

@@ -42,7 +42,9 @@ class CurrentUserEntity {
       required this.businessID,
       //
       required this.logindetail,
-      required this.employeeList});
+      required this.employeeList,
+      //
+      required this.twoStepAuthEnabled});
 
   @HiveField(1)
   final String message;
@@ -103,11 +105,14 @@ class CurrentUserEntity {
   final LoginDetailEntity logindetail; // **New field**
   @HiveField(124)
   final List<BusinessEmployeeEntity> employeeList; // **New field**
+  @HiveField(135)
+  final bool? twoStepAuthEnabled;
 
   // this is a Copy function to copy the current object and return a new object with old token
   CurrentUserEntity copyWith({
     String? token,
     List<AddressEntity>? address,
+    bool? twoStepAuthEnabled,
   }) {
     return CurrentUserEntity(
       userName: userName,
@@ -136,6 +141,7 @@ class CurrentUserEntity {
       businessID: businessID,
       logindetail: logindetail,
       employeeList: employeeList,
+      twoStepAuthEnabled: twoStepAuthEnabled,
     );
   }
 }
