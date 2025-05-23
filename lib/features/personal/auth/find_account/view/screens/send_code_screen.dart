@@ -87,8 +87,9 @@ class _SendCodeScreenState extends State<SendCodeScreen> {
           ],
         ),
       ),
-      bottomSheet: Container(
-        color: Colors.white,
+      bottomSheet: BottomAppBar(
+        height: 100,
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
@@ -97,8 +98,8 @@ class _SendCodeScreenState extends State<SendCodeScreen> {
                   margin: const EdgeInsets.all(10),
                   title: 'not_you?'.tr(),
                   isLoading: false,
-                  textColor: Colors.grey,
-                  bgColor: Colors.transparent,
+                  textColor: ColorScheme.of(context).onSurface,
+                  bgColor: ColorScheme.of(context).surface,
                   border: Border.all(color: Theme.of(context).dividerColor),
                   onTap: () => Navigator.pop(context)),
             ),

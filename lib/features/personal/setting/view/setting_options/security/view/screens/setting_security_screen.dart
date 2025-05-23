@@ -68,11 +68,11 @@ class SettingSecurityScreen extends StatelessWidget {
             onTap: () {
               showModalBottomSheet(
                 context: context,
-                backgroundColor: Colors.white,
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
                 ),
-                builder: (BuildContext context) => TwoFactorAuthBottomSheet(),
+                builder: (BuildContext context) =>
+                    const TwoFactorAuthBottomSheet(),
               );
             },
           ),

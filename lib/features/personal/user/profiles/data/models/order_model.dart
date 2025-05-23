@@ -17,7 +17,7 @@ class OrderModel extends OrderEntity {
         updatedAt: DateTime.parse(json['updated_at']),
         paymentDetail: OrderPaymentDetailModel.fromJson(json['payment_detail']),
         shippingAddress: AddressModel.fromJson(json['shipping_address']),
-        businessId: json['business_id']);
+        businessId: json['business_id'] ?? '');
   }
   factory OrderModel.fromEntity(OrderEntity entity) {
     return OrderModel(

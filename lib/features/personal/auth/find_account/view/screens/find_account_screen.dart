@@ -63,24 +63,23 @@ class FindAccountScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomSheet: Container(
-        color: Colors.white,
+      bottomSheet: BottomAppBar(
+        height: 100,
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: Row(
           children: <Widget>[
             Expanded(
-              flex: 1,
               child: CustomElevatedButton(
                 margin: const EdgeInsets.all(10),
                 title: 'cancel'.tr(),
                 isLoading: false,
-                bgColor: Colors.transparent,
-                textColor: Colors.grey,
+                textColor: ColorScheme.of(context).onSurface,
+                bgColor: ColorScheme.of(context).surface,
                 border: Border.all(color: Theme.of(context).dividerColor),
                 onTap: () => Navigator.pop(context),
               ),
             ),
             Expanded(
-              flex: 1,
               child: CustomElevatedButton(
                   margin: const EdgeInsets.all(10),
                   title: 'confirm'.tr(),

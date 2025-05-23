@@ -3,26 +3,28 @@ import 'package:flutter/foundation.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
 import '../../../../../../core/sources/local/hive_db.dart';
-import '../../views/params/two_factor_params.dart';
+import '../../domain/params/login_params.dart';
+import '../../domain/params/two_factor_params.dart';
 import '../models/current_user_model.dart';
 import 'local/local_auth.dart';
 
 abstract interface class SigninRemoteSource {
-  Future<DataState<bool>> signin(String email, String password);
+  Future<DataState<bool>> signin(LoginParams params);
   Future<DataState<bool>> verifyTwoFactorAuth(TwoFactorParams params);
+  Future<DataState<bool>> resendTwoFactorCode(TwoFactorParams params);
 }
 
 class SigninRemoteSourceImpl implements SigninRemoteSource {
   @override
-  Future<DataState<bool>> signin(String email, String password) async {
+  Future<DataState<bool>> signin(LoginParams params) async {
     try {
+      final Map<String, dynamic> bodyMap = await params.toMap();
+      final String bodyJson = json.encode(bodyMap);
+      debugPrint(bodyJson);
       final DataState<bool> responce = await ApiCall<bool>().call(
         endpoint: 'userAuth/login',
         requestType: ApiRequestType.post,
-        body: json.encode(<String, String>{
-          'email': email.trim(),
-          'password': password.trim(),
-        }),
+        body: bodyJson,
         isConnectType: true,
         isAuth: false,
       );
@@ -44,7 +46,8 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
         return DataFailer<bool>(CustomException('Signin Failed'));
       }
     } catch (e, stc) {
-      AppLog.error(e.toString(), name: 'SignInRemoteSourceImpl - catch $stc');
+      AppLog.error('signIn error',
+          name: 'SignInRemoteSourceImpl - catch ', error: e, stackTrace: stc);
       return DataFailer<bool>(CustomException('Signin Failed: $e'));
     }
   }
@@ -79,6 +82,42 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
           stackTrace: stc);
       return DataFailer<bool>(
           CustomException('two step verification Failed: $e'));
+    }
+  }
+
+  @override
+  Future<DataState<bool>> resendTwoFactorCode(TwoFactorParams params) async {
+    try {
+      final DataState<bool> responce = await ApiCall<bool>().call(
+        endpoint: '/userAuth/2FA/resend',
+        requestType: ApiRequestType.post,
+        body: json.encode(params.resendCodeMap()),
+        isConnectType: true,
+        isAuth: false,
+      );
+
+      if (responce is DataSuccess<bool>) {
+        return responce;
+      } else {
+        AppLog.error(
+          responce.exception?.message ?? 'something_wrong'.tr(),
+          name: 'SignInRemoteSourceImpl.resendTwoFactorCode - else}',
+          error: responce.exception?.reason ?? '',
+        );
+        return DataFailer<bool>(
+          CustomException(
+              responce.exception?.message ?? 'something_wrong'.tr()),
+        );
+      }
+    } catch (e, stc) {
+      AppLog.error(
+        e.toString(),
+        name: 'SignInRemoteSourceImpl.resendTwoFactorCode - catch',
+        stackTrace: stc,
+      );
+      return DataFailer<bool>(
+        CustomException('Resend code failed: $e'),
+      );
     }
   }
 }

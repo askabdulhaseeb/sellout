@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../../../core/theme/app_theme.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../domain/entities/user_entity.dart';
 import '../enums/profile_page_tab_type.dart';
@@ -37,55 +38,6 @@ class ProfileGridTypeSelectionSection extends StatelessWidget {
             },
           ),
         );
-        // Expanded(
-        //     child: _IconButton(
-        //       isSelected: userPro.displayType == ProfilePageTabType.orders,
-        //       icon: Icons.grid_on,
-        //       title: isMe ? 'my_store'.tr() : 'store'.tr(),
-        //       onPressed: () => userPro.displayType = 0,
-        //     ),
-        //   ),
-        // return SizedBox(
-        //   height: 64,
-        //   child: Row(
-        //     children: <Widget>[
-        //       Expanded(
-        //         child: _IconButton(
-        //           isSelected: userPro.displayType == ProfilePageTabType.orders,
-        //           icon: Icons.grid_on,
-        //           title: isMe ? 'my_store'.tr() : 'store'.tr(),
-        //           onPressed: () => userPro.displayType = 0,
-        //         ),
-        //       ),
-        //       Expanded(
-        //         child: _IconButton(
-        //           isSelected: userPro.displayType == 1,
-        //           icon: Icons.video_collection_outlined,
-        //           title: isMe ? 'my_promos'.tr() : 'promos'.tr(),
-        //           onPressed: () => userPro.displayType = 1,
-        //         ),
-        //       ),
-        //       if (isMe)
-        //         Expanded(
-        //           child: _IconButton(
-        //             icon: Icons.calendar_month_outlined,
-        //             isSelected: userPro.displayType == 2,
-        //             title: 'my_viewing'.tr(),
-        //             onPressed: () => userPro.displayType = 2,
-        //           ),
-        //         ),
-        //       if (isMe)
-        //         Expanded(
-        //           child: _IconButton(
-        //             icon: Icons.bookmark_border,
-        //             isSelected: userPro.displayType == 3,
-        //             title: 'my_saved'.tr(),
-        //             onPressed: () => userPro.displayType = 3,
-        //           ),
-        //         ),
-        //     ],
-        //   ),
-        // );
       }),
     );
   }
@@ -124,7 +76,7 @@ class _IconButton extends StatelessWidget {
             width: 68,
             decoration: BoxDecoration(
               color: isSelected
-                  ? Theme.of(context).primaryColor
+                  ? AppTheme.primaryColor
                   : Theme.of(context).dividerColor,
             ),
           ),

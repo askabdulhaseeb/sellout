@@ -130,15 +130,12 @@ class BookingProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> bookVisit(
-      BuildContext context, String postID, String? businessID) async {
+  Future<void> bookVisit(BuildContext context, String postID) async {
     isLoading = true;
     // setpostId(postID);
     // setbusinessId(businessID ?? 'null');
-    final BookVisitParams params = BookVisitParams(
-        businessId: businessID ?? 'null',
-        dateTime: formattedDateTime,
-        postId: postID);
+    final BookVisitParams params =
+        BookVisitParams(dateTime: formattedDateTime, postId: postID);
     final DataState<VisitingEntity> result =
         await _bookVisitUseCase.call(params);
     if (result is DataSuccess) {

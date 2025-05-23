@@ -19,60 +19,64 @@ class PersonalCartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('cart').tr()),
-      body: Consumer<CartProvider>(
-          builder: (BuildContext context, CartProvider cartPro, _) {
-        return FutureBuilder<bool>(
-          future: cartPro.getCart(),
-          builder: (BuildContext context, AsyncSnapshot<bool> snap) {
-            return Column(
-              children: <Widget>[
-                const PersonalCartPageTile(),
-                const SizedBox(height: 24),
-                cartPro.page == 1
-                    ? Expanded(
-                        child: Column(
-                          children: <Widget>[
-                            const CartSaveLaterToggleSection(),
-                            cartPro.basketPage == CartItemType.cart
-                                ? const PersonalCartItemList()
-                                : const PersonalCartSaveLaterItemList(),
-                            if (cartPro.basketPage == CartItemType.cart)
-                              const PersonalCartTotalSection(),
-                          ],
-                        ),
-                      )
-                    : cartPro.page == 2
-                        ? Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                children: <Widget>[
-                                  const PersonalCheckoutView(),
-                                  const Spacer(),
-                                  CustomElevatedButton(
-                                      title: 'proceed_to_payment'.tr(),
-                                      isLoading: false,
-                                      onTap: () {
-                                        CartProvider pro =
-                                            Provider.of<CartProvider>(context,
-                                                listen: false);
-                                        pro.page = 3;
-                                      }),
-                                  const SizedBox(height: 24),
-                                ],
+    final CartProvider pro = Provider.of<CartProvider>(context, listen: false);
+    return PopScope(
+      onPopInvokedWithResult: (bool didPop, dynamic result) => pro.reset(),
+      child: Scaffold(
+        appBar: AppBar(title: const Text('cart').tr()),
+        body: Consumer<CartProvider>(
+            builder: (BuildContext context, CartProvider cartPro, _) {
+          return FutureBuilder<bool>(
+            future: cartPro.getCart(),
+            builder: (BuildContext context, AsyncSnapshot<bool> snap) {
+              return Column(
+                children: <Widget>[
+                  const PersonalCartPageTile(),
+                  const SizedBox(height: 24),
+                  cartPro.page == 1
+                      ? Expanded(
+                          child: Column(
+                            children: <Widget>[
+                              const CartSaveLaterToggleSection(),
+                              cartPro.basketPage == CartItemType.cart
+                                  ? const PersonalCartItemList()
+                                  : const PersonalCartSaveLaterItemList(),
+                              if (cartPro.basketPage == CartItemType.cart)
+                                const PersonalCartTotalSection(),
+                            ],
+                          ),
+                        )
+                      : cartPro.page == 2
+                          ? Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  children: <Widget>[
+                                    const PersonalCheckoutView(),
+                                    const Spacer(),
+                                    CustomElevatedButton(
+                                        title: 'proceed_to_payment'.tr(),
+                                        isLoading: false,
+                                        onTap: () {
+                                          CartProvider pro =
+                                              Provider.of<CartProvider>(context,
+                                                  listen: false);
+                                          pro.getBillingDetails();
+                                        }),
+                                    const SizedBox(height: 24),
+                                  ],
+                                ),
                               ),
-                            ),
-                          )
-                        : cartPro.page == 3
-                            ? const CheckoutPaymentMethodSection()
-                            : const SizedBox.shrink()
-              ],
-            );
-          },
-        );
-      }),
+                            )
+                          : cartPro.page == 3
+                              ? const CheckoutPaymentMethodSection()
+                              : const SizedBox.shrink()
+                ],
+              );
+            },
+          );
+        }),
+      ),
     );
   }
 }

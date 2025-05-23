@@ -1,6 +1,6 @@
 enum OrderType {
   newOrder(
-    'processing',
+    'pending',
     'new_order',
   ),
 

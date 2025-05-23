@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../../core/extension/string_ext.dart';
 import '../../../../../attachment/data/attchment_model.dart';
@@ -7,6 +6,7 @@ import '../../../../../business/core/data/models/business_employee_model.dart';
 import '../../domain/entities/current_user_entity.dart';
 import 'address_model.dart';
 import 'login_detail_model.dart';
+import 'login_info_model.dart';
 export '../../domain/entities/current_user_entity.dart';
 
 class CurrentUserModel extends CurrentUserEntity {
@@ -41,6 +41,7 @@ class CurrentUserModel extends CurrentUserEntity {
       required super.businessName, // **Optional - used for Business**
       required super.businessID, // **Optional - used for Business**
       required super.logindetail,
+      required super.loginActivity,
       required super.employeeList,
       required super.twoStepAuthEnabled})
       : super(inHiveAt: DateTime.now());
@@ -108,6 +109,14 @@ class CurrentUserModel extends CurrentUserEntity {
       businessID:
           userData['business_id'] ?? 'null', // **Optional - used for Business**
       logindetail: LoginDetailModel.fromJson(json['login_detail']),
+      loginActivity:
+          (json['login_activity'] != null && json['login_activity'] is List)
+              ? List<DeviceLoginInfoModel>.from(
+                  json['login_activity']
+                      .map((e) => DeviceLoginInfoModel.fromJson(e)),
+                )
+              : [],
+
       employeeList: List<BusinessEmployeeModel>.from(
         (userData['employees'] ?? <dynamic>[])
             .map((dynamic e) => BusinessEmployeeModel.fromJson(e)),

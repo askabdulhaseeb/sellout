@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
@@ -55,6 +56,7 @@ class CheckoutRemoteAPIImpl implements CheckoutRemoteAPI {
         isAuth: true,
         body: param.checkoutAddressToJson(),
       );
+      debugPrint(param.checkoutAddressToJson());
       if (result is DataSuccess<bool>) {
         AppLog.info(result.data ?? '');
         return result;

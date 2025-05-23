@@ -24,29 +24,26 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
         requestType: ApiRequestType.get,
         isAuth: true,
       );
-
       if (result is DataSuccess) {
         final String raw = result.data ?? '';
         final dynamic userable = json.decode(raw);
-
         final List<dynamic> list = userable['orders'];
-        final List<OrderEntity> posts = <OrderEntity>[];
+        final List<OrderEntity> orders = <OrderEntity>[];
         for (dynamic element in list) {
           final OrderEntity post = OrderModel.fromJson(element);
-          posts.add(post);
+          orders.add(post);
         }
-        return DataSuccess<List<OrderEntity>>(raw, posts);
+        return DataSuccess<List<OrderEntity>>(raw, orders);
       } else {
         return DataFailer<List<OrderEntity>>(
           result.exception ?? CustomException('Failed to get post by user'),
         );
       }
-    } catch (e) {
-      AppLog.error(
-        e.toString(),
-        name: 'PostByUserRemoteImpl.getOrderByUser - catch',
-        error: e,
-      );
+    } catch (e, stc) {
+      AppLog.error(e.toString(),
+          name: 'PostByUserRemoteImpl.getOrderByUser - catch',
+          error: e,
+          stackTrace: stc);
     }
     return DataFailer<List<OrderEntity>>(
       CustomException('Failed to get Order by user'),

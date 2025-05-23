@@ -67,7 +67,6 @@ class VerifyTwoFactorScreen extends StatelessWidget {
                 onChanged: (String value) =>
                     context.read<SigninProvider>().twoFACode = value,
                 gap: 8,
-                textColor: Colors.black,
                 obscureText: false,
                 validator: (String? value) {
                   if (value == null || value.length != 6) {
@@ -77,29 +76,26 @@ class VerifyTwoFactorScreen extends StatelessWidget {
                 },
               ),
               TextButton(onPressed: null, child: Text('didnot_get_code'.tr())),
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  // Consumer<SigninProvider>(
-                  //   builder: (BuildContext context, SigninProvider prov, _) =>
-                  //       TextButton(
-                  //     onPressed: () => prov.sendemailforOtp(context),
-                  //     child: Text(
-                  //       'resend_code'.tr(),
-                  //       style: Theme.of(context).textTheme.bodyMedium,
-                  //     ),
-                  //   ),
-                  // ),
-                  // Text(
-                  //   '${context.watch<SigninProider>().resentCodeSeconds}',
-                  // ),
+                  Consumer<SigninProvider>(
+                    builder: (BuildContext context, SigninProvider prov, _) =>
+                        TextButton(
+                      onPressed: () => prov.resendCode(),
+                      child: Text(
+                        'resend_code'.tr(),
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+                  ),
                 ],
               )
             ],
           ),
         ),
-        bottomSheet: Container(
-          color: Colors.white,
+        bottomSheet: BottomAppBar(
+          height: 100,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
@@ -107,9 +103,9 @@ class VerifyTwoFactorScreen extends StatelessWidget {
                 child: CustomElevatedButton(
                   margin: const EdgeInsets.all(10),
                   title: 'cancel'.tr(),
-                  textColor: Colors.grey,
                   isLoading: false,
-                  bgColor: Colors.transparent,
+                  textColor: ColorScheme.of(context).onSurface,
+                  bgColor: ColorScheme.of(context).surface,
                   border: Border.all(color: Theme.of(context).dividerColor),
                   onTap: () => Navigator.pop(context),
                 ),

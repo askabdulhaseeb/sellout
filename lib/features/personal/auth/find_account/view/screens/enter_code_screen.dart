@@ -87,8 +87,9 @@ class EnterCodeScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomSheet: Container(
-        color: Colors.white,
+      bottomSheet: BottomAppBar(
+        height: 100,
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
@@ -96,9 +97,9 @@ class EnterCodeScreen extends StatelessWidget {
               child: CustomElevatedButton(
                 margin: const EdgeInsets.all(10),
                 title: 'cancel'.tr(),
-                textColor: Colors.grey,
                 isLoading: false,
-                bgColor: Colors.transparent,
+                textColor: ColorScheme.of(context).onSurface,
+                bgColor: ColorScheme.of(context).surface,
                 border: Border.all(color: Theme.of(context).dividerColor),
                 onTap: () => Navigator.pop(context),
               ),
