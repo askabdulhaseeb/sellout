@@ -48,7 +48,6 @@ class ProfileOrderListview extends StatelessWidget {
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey),
                 borderRadius: BorderRadius.circular(12),
-                color: Colors.white,
               ),
               child: Row(
                 children: <Widget>[

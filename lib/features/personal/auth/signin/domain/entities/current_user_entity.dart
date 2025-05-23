@@ -5,6 +5,7 @@ import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../business/core/domain/entity/business_employee_entity.dart';
 import '../../data/models/address_model.dart';
 import 'login_detail_entity.dart';
+import 'login_info_entity.dart';
 part 'current_user_entity.g.dart';
 
 @HiveType(typeId: 0)
@@ -42,6 +43,7 @@ class CurrentUserEntity {
       required this.businessID,
       //
       required this.logindetail,
+      required this.loginActivity,
       required this.employeeList,
       //
       required this.twoStepAuthEnabled});
@@ -93,8 +95,7 @@ class CurrentUserEntity {
   final DateTime createdAt;
   @HiveField(99)
   final DateTime inHiveAt;
-
-  // Business-specific fields
+  //
   @HiveField(120, defaultValue: null)
   final String? businessStatus; // **New field**
   @HiveField(121, defaultValue: null)
@@ -102,9 +103,12 @@ class CurrentUserEntity {
   @HiveField(122, defaultValue: null)
   final String? businessID; // **New field**
   @HiveField(123)
-  final LoginDetailEntity logindetail; // **New field**
+  final LoginDetailEntity logindetail;
   @HiveField(124)
+  final List<DeviceLoginInfoEntity> loginActivity; // **New field**
+  @HiveField(125)
   final List<BusinessEmployeeEntity> employeeList; // **New field**
+  //
   @HiveField(135)
   final bool? twoStepAuthEnabled;
 
@@ -140,6 +144,7 @@ class CurrentUserEntity {
       businessName: businessName,
       businessID: businessID,
       logindetail: logindetail,
+      loginActivity: loginActivity,
       employeeList: employeeList,
       twoStepAuthEnabled: twoStepAuthEnabled,
     );

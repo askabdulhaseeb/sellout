@@ -7,17 +7,21 @@ import '../../../../../../core/sockets/socket_service.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../dashboard/views/screens/dashboard_screen.dart';
+import '../../domain/params/device_details.dart';
 import '../../domain/params/login_params.dart';
 import '../../domain/usecase/login_usecase.dart';
+import '../../domain/usecase/resend_twofactor_code.dart';
 import '../../domain/usecase/verify_two_factor_usecsae.dart';
-import '../params/two_factor_params.dart';
+import '../../domain/params/two_factor_params.dart';
 import '../screens/verify_two_factor_screen.dart';
 
 class SigninProvider extends ChangeNotifier {
-  SigninProvider(this.loginUsecase, this.verifyTwoFactorUseCase);
+  SigninProvider(this.loginUsecase, this.verifyTwoFactorUseCase,
+      this.resendTwoFactorUseCase);
 
   final LoginUsecase loginUsecase;
   final VerifyTwoFactorUseCase verifyTwoFactorUseCase;
+  final ResendTwoFactorUseCase resendTwoFactorUseCase;
 
   //
   final GlobalKey<FormState> signInFormKey = GlobalKey<FormState>();
@@ -122,6 +126,38 @@ class SigninProvider extends ChangeNotifier {
       debugPrint(e.toString());
       AppLog.error(e.toString(),
           name: 'SigninProvider.verifyTwoFactorAuth - Catch', error: e);
+    }
+    isLoading = false;
+    return;
+  }
+
+  Future<void> resendCode() async {
+    isLoading = true;
+
+    try {
+      TwoFactorParams params = TwoFactorParams(
+          deviceId: await DeviceInfoUtil.getDeviceId(), sessionKey: sessionKey);
+      debugPrint(params.resendCodeMap().toString());
+      final DataState<bool> result = await resendTwoFactorUseCase(params);
+      if (result is DataSuccess<bool>) {
+        final Map<String, dynamic> jsonMap = jsonDecode(result.data ?? '');
+        setSessonKey(jsonMap['session_key']);
+        AppLog.info(
+          'Sent Code successfully in Provider',
+          name: 'SigninProvider.resendCode - if',
+        );
+      } else {
+        debugPrint('ResendCode Error in Provider');
+        AppLog.error(
+          'resendCode Error in Provider',
+          name: 'SigninProvider.resendCode - Else',
+          error: result,
+        );
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      AppLog.error(e.toString(),
+          name: 'SigninProvider.resendCode - Catch', error: e);
     }
     isLoading = false;
     return;

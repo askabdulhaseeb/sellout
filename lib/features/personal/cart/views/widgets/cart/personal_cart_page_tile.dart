@@ -15,30 +15,27 @@ class PersonalCartPageTile extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           _IconButton(
-            title: 'shopping_basket'.tr(),
-            isActive: cartPro.page == 1,
-            onTap: () => cartPro.page = 1,
-          ),
+              title: 'shopping_basket'.tr(),
+              isActive: cartPro.page == 1,
+              onTap: () {}),
           Container(
             height: 3,
             width: 40,
             color: Theme.of(context).dividerColor,
           ),
           _IconButton(
-            title: 'checkout'.tr(),
-            isActive: cartPro.page == 2,
-            onTap: () => cartPro.page = 2,
-          ),
+              title: 'checkout'.tr(),
+              isActive: cartPro.page == 2,
+              onTap: () {}),
           Container(
             height: 3,
             width: 40,
             color: Theme.of(context).dividerColor,
           ),
           _IconButton(
-            title: 'payment_options'.tr(),
-            isActive: cartPro.page == 3,
-            onTap: () => cartPro.page = 3,
-          ),
+              title: 'payment_options'.tr(),
+              isActive: cartPro.page == 3,
+              onTap: () {}),
         ],
       );
     });

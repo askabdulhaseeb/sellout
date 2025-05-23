@@ -648,6 +648,8 @@
     "review_logged_in_devices":"Review your logged-in devices.",
     "promoted":"Promoted",
     "no_items_available":"No Items available here",
+    "start_payment":"Start Payment",
+    "master_card":"Master card",
     "all": "All",
     "see_all": "See All",
     "see_less": "See Less",

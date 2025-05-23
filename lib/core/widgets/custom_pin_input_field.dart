@@ -6,7 +6,6 @@ class CustomPinInputField extends StatefulWidget {
     required this.onChanged,
     this.gap = 12,
     this.fillColor,
-    this.textColor = Colors.black,
     this.fontSize = 16,
     this.obscureText = false,
     this.keyboardType = TextInputType.number,
@@ -17,7 +16,6 @@ class CustomPinInputField extends StatefulWidget {
   final int pinLength;
   final double gap;
   final Color? fillColor;
-  final Color textColor;
   final double fontSize;
   final bool obscureText;
   final TextInputType keyboardType;
@@ -95,11 +93,10 @@ class CustomPinInputFieldState extends State<CustomPinInputField> {
                     maxLength: 1,
                     obscureText: widget.obscureText,
                     obscuringCharacter: '•',
-                    style: TextStyle(
-                      fontSize: widget.fontSize,
-                      color: widget.textColor,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextTheme.of(context).bodySmall?.copyWith(
+                          fontSize: widget.fontSize,
+                          fontWeight: FontWeight.bold,
+                        ),
                     decoration: InputDecoration(
                       counterText: '',
                       filled: widget.fillColor != null,

@@ -58,9 +58,9 @@ class ConfirmEmailScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomSheet: Container(
-        height: 150,
-        color: Colors.white,
+      bottomSheet: BottomAppBar(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        height: 100,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -70,8 +70,8 @@ class ConfirmEmailScreen extends StatelessWidget {
               margin: const EdgeInsets.all(10),
               title: 'try_another_way'.tr(),
               isLoading: false,
-              textColor: Colors.grey,
-              bgColor: Colors.transparent,
+              textColor: ColorScheme.of(context).onSurface,
+              bgColor: ColorScheme.of(context).surface,
               border: Border.all(color: Theme.of(context).dividerColor),
               onTap: () =>
                   Navigator.pushNamed(context, SendCodeScreen.routeName),

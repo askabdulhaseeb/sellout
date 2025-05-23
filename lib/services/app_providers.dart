@@ -21,13 +21,13 @@ import '../features/personal/review/features/reivew_list/views/providers/review_
 import '../features/personal/services/views/providers/services_page_provider.dart';
 import '../features/personal/user/profiles/views/providers/profile_provider.dart';
 import 'get_it.dart';
-
 import '../features/personal/auth/signin/views/providers/signin_provider.dart';
 
 final List<SingleChildWidget> appProviders = <SingleChildWidget>[
   // Add your providers here
   ChangeNotifierProvider<SigninProvider>.value(
       value: SigninProvider(
+    locator(),
     locator(),
     locator(),
   )),
@@ -71,8 +71,8 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
       value: ServicesPageProvider(locator(), locator(), locator())),
 
   ChangeNotifierProvider<CartProvider>.value(
-      value:
-          CartProvider(locator(), locator(), locator(), locator(), locator())),
+      value: CartProvider(
+          locator(), locator(), locator(), locator(), locator(), locator())),
   ChangeNotifierProvider<ReviewProvider>.value(
       value: ReviewProvider(locator())),
   //

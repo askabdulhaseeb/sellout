@@ -29,8 +29,7 @@ class BookVisitButton extends StatelessWidget {
           onTap: () {
             if (post != null) {
               if (provider.messageentity == null) {
-                provider.bookVisit(
-                    context, post!.postID, post!.businessID ?? 'null');
+                provider.bookVisit(context, post!.postID);
               } else {
                 provider.updateVisit(
                     chatID: provider.messageentity?.chatId ?? '',

@@ -74,8 +74,9 @@ class NewPasswordScreen extends StatelessWidget {
             ),
           ),
         ),
-        bottomSheet: Container(
-          color: Colors.white,
+        bottomSheet: BottomAppBar(
+          height: 100,
+          color: Theme.of(context).scaffoldBackgroundColor,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
@@ -84,8 +85,8 @@ class NewPasswordScreen extends StatelessWidget {
                   margin: const EdgeInsets.all(10),
                   title: 'cancel'.tr(),
                   isLoading: false,
-                  bgColor: Colors.transparent,
-                  textColor: Colors.grey,
+                  textColor: ColorScheme.of(context).onSurface,
+                  bgColor: ColorScheme.of(context).surface,
                   border: Border.all(color: Theme.of(context).dividerColor),
                   onTap: () => Navigator.pop(context),
                 ),

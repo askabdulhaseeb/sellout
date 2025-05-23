@@ -52,7 +52,7 @@ class AccountTypeScreen extends StatelessWidget {
                     'personal'.tr(),
                     style: TextStyle(
                       color: pro.accountType == true
-                          ? Colors.black
+                          ? ColorScheme.of(context).onSurface
                           : ColorScheme.of(context).outline,
                       fontSize: 14,
                     ),
@@ -81,7 +81,7 @@ class AccountTypeScreen extends StatelessWidget {
                     'business'.tr(),
                     style: TextStyle(
                       color: pro.accountType == false
-                          ? Colors.black
+                          ? ColorScheme.of(context).onSurface
                           : ColorScheme.of(context).outline,
                       fontSize: 14,
                     ),

@@ -13,6 +13,7 @@ import '../../../features/business/core/domain/entity/business_travel_detail_ent
 import '../../../features/business/core/domain/entity/routine_entity.dart';
 import '../../../features/business/core/domain/entity/service/service_entity.dart';
 import '../../../features/personal/auth/signin/domain/entities/login_detail_entity.dart';
+import '../../../features/personal/auth/signin/domain/entities/login_info_entity.dart';
 import '../../../features/personal/bookings/data/sources/local_booking.dart';
 import '../../../features/personal/bookings/domain/entity/booking_entity.dart';
 import '../../../features/personal/bookings/domain/entity/booking_payment_detail_entity.dart';
@@ -27,6 +28,7 @@ import '../../../features/personal/chats/chat_dashboard/domain/entities/chat/par
 import '../../../features/personal/chats/chat_dashboard/domain/entities/chat/participant/invitation_entity.dart';
 import '../../../features/personal/chats/chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../features/personal/listing/listing_form/data/sources/local/local_listing.dart';
+import '../../../features/personal/listing/listing_form/domain/entities/color_options_entity.dart';
 import '../../../features/personal/listing/listing_form/domain/entities/listing_entity.dart';
 import '../../../features/personal/listing/listing_form/domain/entities/sub_category_entity.dart';
 import '../../../features/personal/auth/signin/data/models/address_model.dart';
@@ -123,7 +125,8 @@ class HiveDB {
     Hive.registerAdapter(BookingPaymentDetailEntityAdapter()); // 50
     Hive.registerAdapter(CountryEntityAdapter()); // 51
     Hive.registerAdapter(LoginDetailEntityAdapter()); // 52
-
+    Hive.registerAdapter(ColorOptionEntityAdapter()); // 53
+    Hive.registerAdapter(DeviceLoginInfoEntityAdapter()); // 54
     // Hive box Open
     await refresh();
   }

@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import '../../../../../../core/theme/app_theme.dart';
 import '../../../../../../core/utilities/app_string.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../routes/app_linking.dart';
-import '../../../../dashboard/views/screens/dashboard_screen.dart';
+import '../../../../../../core/widgets/in_dev_mode.dart';
 import '../../providers/cart_provider.dart';
+import 'tile/payment_success_bottomsheet.dart';
 
 class CheckoutPaymentMethodSection extends StatefulWidget {
   const CheckoutPaymentMethodSection({super.key});
@@ -21,14 +21,7 @@ class _CheckoutPaymentMethodSectionState
   int? selectedIndex;
 
   final List<Map<String, String>> paymentMethods = <Map<String, String>>[
-    <String, String>{
-      'image': AppStrings.applePayBlack,
-      'title': 'google_pay',
-    },
-    <String, String>{
-      'image': AppStrings.applePayBlack,
-      'title': 'apple_pay',
-    },
+    <String, String>{'image': AppStrings.mastercard, 'title': 'master_card'},
   ];
 
   @override
@@ -66,7 +59,7 @@ class _CheckoutPaymentMethodSectionState
                     children: <Widget>[
                       Image.asset(method['image']!, width: 30),
                       const SizedBox(width: 12),
-                      Text(method['title']!),
+                      Text(method['title']!.tr()),
                     ],
                   ),
                 );
@@ -74,18 +67,20 @@ class _CheckoutPaymentMethodSectionState
             ),
           ),
           const SizedBox(height: 12),
-          TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.add_circle_outline,
-              color: AppTheme.primaryColor,
-            ),
-            label: const Text('add_new_card'),
-            style: TextButton.styleFrom(
-              elevation: 0,
-              backgroundColor: AppTheme.primaryColor.withAlpha(0x33),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+          InDevMode(
+            child: TextButton.icon(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.add_circle_outline,
+                color: AppTheme.primaryColor,
+              ),
+              label: const Text('add_new_card'),
+              style: TextButton.styleFrom(
+                elevation: 0,
+                backgroundColor: AppTheme.primaryColor.withAlpha(0x33),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
           ),
@@ -117,118 +112,16 @@ class _CheckoutPaymentMethodSectionState
                   builder: (_) => const PaymentSuccessSheet(),
                 );
               } catch (e) {
-                // On failure, show error bottom sheet
-                showModalBottomSheet(
-                  // ignore: use_build_context_synchronously
-                  context: context,
-                  isScrollControlled: true,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(20)),
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('${'payment_failed'.tr()}: ${e.toString()}'),
+                    backgroundColor: ColorScheme.of(context).error,
                   ),
-                  builder: (_) => PaymentErrorSheet(message: e.toString()),
                 );
               }
             },
-            title: 'confirm_payment'.tr(),
+            title: 'start_payment'.tr(),
             isLoading: false,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class PaymentSuccessSheet extends StatelessWidget {
-  const PaymentSuccessSheet({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: const Icon(Icons.close)),
-        ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 24, 20, 40),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              const SizedBox(
-                width: double.infinity,
-              ),
-              Text(
-                'payment_successful'.tr(),
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'payment_successful_description'.tr(),
-                style: TextStyle(color: Colors.grey.shade600),
-              ),
-              const SizedBox(height: 16),
-              const Icon(Icons.check_circle_outline_rounded,
-                  color: AppTheme.primaryColor, size: 60),
-              const SizedBox(height: 16),
-            ],
-          ),
-        ),
-        bottomSheet: BottomAppBar(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          height: 100,
-          child: CustomElevatedButton(
-            bgColor: Theme.of(context).scaffoldBackgroundColor,
-            border: Border.all(color: ColorScheme.of(context).onSurface),
-            textColor: ColorScheme.of(context).onSurface,
-            onTap: () {
-              AppNavigator.pushNamedAndRemoveUntil(
-                  DashboardScreen.routeName, (_) => false);
-            },
-            title: 'continue'.tr(),
-            isLoading: false,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class PaymentErrorSheet extends StatelessWidget {
-  const PaymentErrorSheet({required this.message, super.key});
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Text(
-            'Payment Failed!',
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-          const SizedBox(height: 16),
-          const Icon(Icons.error_outline, color: Colors.red, size: 60),
-          const SizedBox(height: 16),
-          Text(
-            message,
-            style: TextStyle(color: Colors.grey.shade600),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Try Again'),
-            ),
           ),
         ],
       ),

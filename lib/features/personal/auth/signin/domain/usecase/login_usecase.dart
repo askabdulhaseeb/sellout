@@ -9,7 +9,7 @@ class LoginUsecase implements UseCase<bool, LoginParams> {
   @override
   Future<DataState<bool>> call(LoginParams params) async {
     try {
-      return await repository.signin(params.email, params.password);
+      return await repository.signin(params);
     } catch (e) {
       print(e);
     }
