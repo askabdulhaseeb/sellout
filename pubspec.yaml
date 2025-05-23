@@ -53,6 +53,8 @@ dependencies:
   socket_io_client: ^3.1.2
 
   flutter_stripe: ^11.5.0
+  device_info_plus: ^10.0.1
+
 
 dev_dependencies:
   flutter_test:
