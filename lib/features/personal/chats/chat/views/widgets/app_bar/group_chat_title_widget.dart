@@ -1,34 +1,30 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../user/profiles/data/sources/local/local_user.dart';
-import '../../../../../chat_dashboard/views/widgets/chat_profile_with_status.dart';
-import '../../../providers/chat_provider.dart';
+import '../../../../../../../core/widgets/profile_photo.dart';
+import '../../../../chat_dashboard/domain/entities/chat/group/group_into_entity.dart';
+import '../../providers/chat_provider.dart';
 
-class PrivateChatTitleWidget extends StatelessWidget {
-  const PrivateChatTitleWidget({super.key});
+class GroupChatTitleWidget extends StatelessWidget {
+  const GroupChatTitleWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Consumer<ChatProvider>(
       builder: (BuildContext context, ChatProvider pro, _) {
-        final UserEntity? user =
-            LocalUser().userEntity(pro.chat?.otherPerson() ?? '');
+        final GroupInfoEntity? groupInfo = pro.chat?.groupInfo;
         return Row(
           children: <Widget>[
-            ProfilePictureWithStatus(
-              isProduct: false,
-              postImageUrl: user?.profilePhotoURL ?? user?.displayName ?? '',
-              userImageUrl: '',
-              userDisplayName: user?.displayName ?? '',
-              userId: user?.uid ?? '',
+            ProfilePhoto(
+              url: groupInfo?.groupThumbnailURL,
+              placeholder: groupInfo?.title ?? '',
             ),
             const SizedBox(width: 8),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  user?.displayName ?? '',
+                  groupInfo?.title ?? '',
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Opacity(

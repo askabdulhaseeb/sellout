@@ -115,7 +115,7 @@ import '../features/personal/review/data/sources/review_remote_api.dart';
 import '../features/personal/review/domain/repositories/review_repository.dart';
 import '../features/personal/review/domain/usecase/create_review_usecase.dart';
 import '../features/personal/review/domain/usecase/get_reviews_usecase.dart';
-import '../features/personal/review/features/reivew_list/views/providers/review_provider.dart';
+import '../features/personal/review/views/providers/review_provider.dart';
 import '../features/personal/services/data/repositories/personal_services_repository_impl.dart';
 import '../features/personal/services/data/sources/services_explore_api.dart';
 import '../features/personal/services/domain/repositories/personal_services_repository.dart';

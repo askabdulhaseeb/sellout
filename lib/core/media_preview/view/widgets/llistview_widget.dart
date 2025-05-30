@@ -1,102 +1,20 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/widgets/video_widget.dart';
-import '../../../../../../attachment/domain/entities/picked_attachment.dart';
-import '../providers/review_provider.dart';
 
-class ReviewMediaPreviewScreen extends StatefulWidget {
-  const ReviewMediaPreviewScreen({super.key});
-
-  @override
-  State<ReviewMediaPreviewScreen> createState() =>
-      _ReviewMediaPreviewScreenState();
-}
-
-class _ReviewMediaPreviewScreenState extends State<ReviewMediaPreviewScreen> {
-  @override
-  void initState() {
-    super.initState();
-    // Schedule the media selection after build phase
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final ReviewProvider provider =
-          Provider.of<ReviewProvider>(context, listen: false);
-
-      provider.setImages(context, type: AttachmentType.media);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('photo_videos'.tr())),
-      body: Consumer<ReviewProvider>(
-        builder:
-            (BuildContext context, ReviewProvider provider, Widget? child) {
-          return provider.attachments.isEmpty
-              ? Center(child: Text('no_media_selected'.tr()))
-              : const Column(
-                  children: <Widget>[
-                    Expanded(child: MediaPreview()),
-                    MediaListView(),
-                  ],
-                );
-        },
-      ),
-    );
-  }
-}
-
-class MediaPreview extends StatelessWidget {
-  const MediaPreview({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<ReviewProvider>(
-      builder: (BuildContext context, ReviewProvider provider, Widget? child) {
-        final List<PickedAttachment> attachments = provider.attachments;
-        if (attachments.isEmpty) {
-          return const SizedBox.shrink();
-        }
-
-        final PickedAttachment media = attachments[provider.currentIndex];
-
-        return Container(
-          margin: const EdgeInsets.all(16),
-          child: media.type == AttachmentType.video
-              ? Stack(
-                  alignment: Alignment.center,
-                  children: <Widget>[
-                    VideoWidget(
-                      videoSource: media.file.path,
-                      play: true,
-                    ),
-                  ],
-                )
-              : ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.file(
-                    media.file,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-        );
-      },
-    );
-  }
-}
+import '../../../../features/attachment/domain/entities/picked_attachment.dart';
+import '../../../widgets/video_widget.dart';
+import '../provider/media_preview_provider.dart';
 
 class MediaListView extends StatelessWidget {
   const MediaListView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ReviewProvider>(
-      builder: (BuildContext context, ReviewProvider provider, Widget? child) {
+    return Consumer<MediaPreviewProvider>(
+      builder:
+          (BuildContext context, MediaPreviewProvider provider, Widget? child) {
         final List<PickedAttachment> attachments = provider.attachments;
-        if (attachments.isEmpty) {
-          return const SizedBox.shrink();
-        }
+        if (attachments.isEmpty) return const SizedBox.shrink();
 
         return SizedBox(
           height: 150,

@@ -1,12 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-
-import '../../../../../../../core/enums/message/message_type.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/api_call.dart';
 import '../../../../../../../core/utilities/app_string.dart';
-import '../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../chat_dashboard/data/models/message/message_model.dart';
 import '../../../domain/entities/getted_message_entity.dart';
 import '../../../domain/params/send_message_param.dart';
@@ -84,27 +81,10 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
         debugPrint('New Message - Success: ${result.data}');
         final Map<String, dynamic> responseData = jsonDecode(result.data ?? '');
         final Map<String, dynamic> data = responseData['items'];
-        final MessageModel newMsg = MessageModel(
-          messageId: data['message_id'],
-          text: data['text'],
-          chatId: data['chat_id'],
-          sendBy: data['send_by'],
-          displayText: data['display_text'],
-          source: data['source'],
-          createdAt: DateTime.parse(data['created_at']),
-          updatedAt: DateTime.parse(data['updated_at']),
-          fileUrl: <AttachmentEntity>[],
-          persons: List<String>.from(data['persons']),
-          offerDetail: null,
-          visitingDetail: null,
-          type: data['type'] == null
-              ? MessageType.none
-              : MessageType.fromJson(data['type']),
-        );
+        final MessageModel newMsg = MessageModel.fromJson(data);
         final String chatId = data['chat_id'];
         final Box<GettedMessageEntity> box =
             Hive.box<GettedMessageEntity>(AppStrings.localChatMessagesBox);
-
         // Check if entity exists
         final GettedMessageEntity existing =
             box.values.firstWhere((GettedMessageEntity e) => e.chatID == chatId,

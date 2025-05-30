@@ -7,11 +7,11 @@ import '../../../../../core/widgets/custom_elevated_button.dart';
 import '../widgets/checkout/checkout_payment_method_section.dart';
 import 'checkout/personal_checkout_screen.dart';
 import '../providers/cart_provider.dart';
-import '../widgets/cart/cart_save_later_toggle_section.dart';
-import '../widgets/cart/personal_cart_total_section.dart';
-import 'cart/personal_cart_cart_item_list.dart';
-import '../widgets/cart/personal_cart_page_tile.dart';
-import 'cart/personal_cart_save_later_item_list.dart';
+import '../widgets/cart_widgets/cart_save_later_toggle_section.dart';
+import '../widgets/cart_widgets/personal_cart_total_section.dart';
+import 'cart_screens/personal_cart_cart_item_list.dart';
+import '../widgets/cart_widgets/personal_cart_page_tile.dart';
+import 'cart_screens/personal_cart_save_later_item_list.dart';
 
 class PersonalCartScreen extends StatelessWidget {
   const PersonalCartScreen({super.key});

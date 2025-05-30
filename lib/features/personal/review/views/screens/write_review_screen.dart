@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/widgets/costom_textformfield.dart';
-import '../../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../post/domain/entities/post_entity.dart';
+import '../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../post/domain/entities/post_entity.dart';
 import '../providers/review_provider.dart';
 import '../widgets/rating_select_widget.dart';
 import '../widgets/select_review_media_section.dart';

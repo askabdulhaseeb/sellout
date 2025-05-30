@@ -1,10 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/widgets/video_widget.dart';
-import '../../../../../../attachment/domain/entities/picked_attachment.dart';
+import '../../../../../core/widgets/video_widget.dart';
+import '../../../../attachment/domain/entities/picked_attachment.dart';
 import '../providers/review_provider.dart';
-import '../screens/review_media_preview_screen.dart';
 
 class SelectReviewMediaSection extends StatelessWidget {
   const SelectReviewMediaSection({super.key});
@@ -36,12 +35,7 @@ class SelectReviewMediaSection extends StatelessWidget {
                 children: <Widget>[
                   InkWell(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute<ReviewMediaPreviewScreen>(
-                          builder: (_) => const ReviewMediaPreviewScreen(),
-                        ),
-                      );
+                      provider.setImages(context);
                     },
                     borderRadius: borderRadius,
                     child: Container(

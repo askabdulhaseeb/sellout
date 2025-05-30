@@ -10,6 +10,7 @@ class VideoWidget extends StatefulWidget {
     this.durationFontSize = 12,
     super.key,
     this.showTime = false,
+    this.borderRadius = 12,
   });
 
   final dynamic videoSource;
@@ -17,6 +18,7 @@ class VideoWidget extends StatefulWidget {
   final BoxFit fit;
   final double durationFontSize;
   final bool showTime;
+  final double borderRadius;
 
   @override
   State<VideoWidget> createState() => _VideoWidgetState();
@@ -35,33 +37,13 @@ class _VideoWidgetState extends State<VideoWidget> {
 
   Future<void> _initializeVideo() async {
     try {
-      if (widget.videoSource is Uri &&
-              (widget.videoSource as Uri).isScheme('http') ||
-          widget.videoSource is String &&
-              (widget.videoSource as String).startsWith('http')) {
-        final uri = widget.videoSource is Uri
-            ? widget.videoSource
-            : Uri.parse(widget.videoSource);
-        _controller = VideoPlayerController.networkUrl(uri);
-      } else if (widget.videoSource is Uri &&
-          (widget.videoSource as Uri).isScheme('file')) {
-        final Uri uri = widget.videoSource as Uri;
-        final String filePath = uri.toFilePath();
-        if (filePath.isNotEmpty) {
-          _controller = VideoPlayerController.file(File(filePath));
-        } else {
-          throw Exception('Invalid file path for URI.');
-        }
+      if (widget.videoSource is String &&
+          (widget.videoSource as String).startsWith('http')) {
+        _controller = VideoPlayerController.networkUrl(widget.videoSource);
       } else if (widget.videoSource is String) {
-        final String path = widget.videoSource as String;
-        final File file = File(path);
-        if (file.existsSync()) {
-          _controller = VideoPlayerController.file(file);
-        } else {
-          throw Exception('File not found at $path');
-        }
+        _controller = VideoPlayerController.file(File(widget.videoSource));
       } else {
-        throw Exception('Unsupported URI type or scheme.');
+        throw Exception('Unsupported video source.');
       }
 
       await _controller!.initialize();
@@ -89,77 +71,84 @@ class _VideoWidgetState extends State<VideoWidget> {
     super.dispose();
   }
 
-  // Format video duration
   String _formatDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final String minutes = twoDigits(duration.inMinutes.remainder(60));
-    final String seconds = twoDigits(duration.inSeconds.remainder(60));
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
     return '$minutes:$seconds';
   }
 
   @override
   Widget build(BuildContext context) {
     if (_hasError) {
-      return const Center(child: Icon(Icons.error, color: Colors.red));
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(widget.borderRadius),
+        child: Container(
+          color: Colors.grey,
+          height: 180,
+          child: const Center(child: Icon(Icons.error, color: Colors.red)),
+        ),
+      );
     }
 
     if (!_initialized) {
-      return const Center(child: CircularProgressIndicator());
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(widget.borderRadius),
+        child: Container(
+          color: Colors.green,
+          height: 180,
+          child: const Center(child: CircularProgressIndicator()),
+        ),
+      );
     }
 
-    return Stack(
-      alignment: Alignment.center,
-      children: <Widget>[
-        AspectRatio(
-          aspectRatio: _controller!.value.aspectRatio,
-          child: FittedBox(
-            fit: widget.fit,
-            clipBehavior: Clip.hardEdge,
-            child: Container(
-              color: Colors.grey,
-              width: _controller!.value.size.width,
-              height: _controller!.value.size.height,
-              child: VideoPlayer(_controller!),
-            ),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(widget.borderRadius),
+      child: Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          AspectRatio(
+            aspectRatio: _controller!.value.aspectRatio,
+            child: VideoPlayer(_controller!),
           ),
-        ),
-        if (widget.play)
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                _controller!.value.isPlaying
-                    ? _controller!.pause()
-                    : _controller!.play();
-              });
-            },
-            child: CircleAvatar(
-              backgroundColor: Colors.black54,
-              child: Icon(
-                _controller!.value.isPlaying ? Icons.pause : Icons.play_arrow,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        if (widget.showTime)
-          Positioned(
-            bottom: 4,
-            right: 4,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: Colors.black54,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                _formatDuration(_controller!.value.duration),
-                style: TextStyle(
+          if (widget.play)
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  _controller!.value.isPlaying
+                      ? _controller!.pause()
+                      : _controller!.play();
+                });
+              },
+              child: CircleAvatar(
+                backgroundColor: Colors.black54,
+                child: Icon(
+                  _controller!.value.isPlaying ? Icons.pause : Icons.play_arrow,
                   color: Colors.white,
-                  fontSize: widget.durationFontSize,
                 ),
               ),
             ),
-          ),
-      ],
+          if (widget.showTime)
+            Positioned(
+              bottom: 6,
+              right: 6,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  _formatDuration(_controller!.value.duration),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: widget.durationFontSize,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

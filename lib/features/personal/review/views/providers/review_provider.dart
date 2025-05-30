@@ -1,15 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import '../../../../../../../core/functions/app_log.dart';
-import '../../../../../../../core/sources/data_state.dart';
-import '../../../../../../attachment/domain/entities/picked_attachment.dart';
-import '../../../../../../attachment/domain/entities/picked_attachment_option.dart';
-import '../../../../../../attachment/views/screens/pickable_attachment_screen.dart';
-import '../../../../domain/enums/review_sort_type.dart';
-import '../../../../domain/param/create_review_params.dart';
-import '../../../../domain/usecase/create_review_usecase.dart';
-import '../../../../domain/entities/review_entity.dart';
+import '../../../../../core/functions/app_log.dart';
+import '../../../../../core/media_preview/view/screens/media_preview_screen.dart';
+import '../../../../../core/sources/data_state.dart';
+import '../../../../attachment/domain/entities/picked_attachment.dart';
+import '../../domain/enums/review_sort_type.dart';
+import '../../domain/param/create_review_params.dart';
+import '../../domain/usecase/create_review_usecase.dart';
+import '../../domain/entities/review_entity.dart';
 import '../params/review_list_param.dart';
 
 class ReviewProvider extends ChangeNotifier {
@@ -87,39 +86,16 @@ class ReviewProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setImages(
-    BuildContext context, {
-    required AttachmentType type,
-  }) async {
-    final List<PickedAttachment> selectedMedia =
-        _attachments.where((PickedAttachment element) {
-      return element.selectedMedia != null;
-    }).toList();
-    final List<PickedAttachment>? files =
-        await Navigator.of(context).push<List<PickedAttachment>>(
-      MaterialPageRoute<List<PickedAttachment>>(builder: (_) {
-        return PickableAttachmentScreen(
-          option: PickableAttachmentOption(
-            maxAttachments: 10,
-            allowMultiple: true,
-            type: type,
-            selectedMedia: selectedMedia
-                .map((PickedAttachment e) => e.selectedMedia!)
-                .toList(),
-          ),
-        );
-      }),
+  void setImages(BuildContext context) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute<ReviewMediaPreviewScreen>(
+        builder: (_) => ReviewMediaPreviewScreen(
+          attachments: attachments,
+        ),
+      ),
     );
-    if (files != null) {
-      for (final PickedAttachment file in files) {
-        final int index = _attachments.indexWhere((PickedAttachment element) =>
-            element.selectedMedia == file.selectedMedia);
-        if (index == -1) {
-          _attachments.add(file);
-        }
-      }
-      notifyListeners();
-    }
+    notifyListeners();
   }
 
   void removeAttachment(int index) {

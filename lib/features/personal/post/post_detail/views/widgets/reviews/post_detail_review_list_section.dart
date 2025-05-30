@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../review/domain/entities/review_entity.dart';
-import '../../../../../review/features/reivew_list/views/params/review_list_param.dart';
-import '../../../../../review/features/reivew_list/views/screens/review_list_screen.dart';
-import '../../../../../review/features/reivew_list/views/widgets/review_tile.dart';
+import '../../../../../review/views/params/review_list_param.dart';
+import '../../../../../review/views/screens/review_list_screen.dart';
+import '../../../../../review/views/widgets/review_tile.dart';
 
 class PostDetailReviewListSection extends StatelessWidget {
   const PostDetailReviewListSection({required this.reviews, super.key});
