@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 	<dict>
+	    <key>NSCameraUsageDescription</key>
+        <string>This app needs access to the camera to take photos.</string>
+        <key>NSMicrophoneUsageDescription</key>
+        <string>This app needs access to the microphone for video recording.</string>
+        <key>NSPhotoLibraryAddUsageDescription</key>
+        <string>This app saves photos to your gallery.</string>
  	    <key>NSAllowsArbitraryLoads</key>
         <true/>
         <key>NSAppTransportSecurity</key>

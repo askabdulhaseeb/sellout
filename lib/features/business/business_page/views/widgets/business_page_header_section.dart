@@ -6,8 +6,8 @@ import '../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../core/widgets/rating_display_widget.dart';
 import '../../../../personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../../../personal/review/domain/entities/review_entity.dart';
-import '../../../../personal/review/features/reivew_list/views/params/review_list_param.dart';
-import '../../../../personal/review/features/reivew_list/views/screens/review_list_screen.dart';
+import '../../../../personal/review/views/params/review_list_param.dart';
+import '../../../../personal/review/views/screens/review_list_screen.dart';
 import '../../../core/domain/entity/business_entity.dart';
 import '../providers/business_page_provider.dart';
 

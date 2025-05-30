@@ -1,83 +1,136 @@
+import 'dart:io';
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../../../../../../core/functions/permission_fun.dart';
-import '../../../../../../core/widgets/app_snakebar.dart';
-
 class AudioProvider extends ChangeNotifier {
-  final RecorderController _recoder = RecorderController();
-  final PlayerController _player = PlayerController();
+  final RecorderController _recorderController = RecorderController();
+  final Map<String, PlayerController> _playerControllers =
+      <String, PlayerController>{};
+  final Map<String, Duration> _audioDurations = <String, Duration>{};
+  String? _currentRecordingPath;
+  String? _currentlyPlayingPath;
 
-  RecorderController get recoder => _recoder;
-  PlayerController get player => _player;
+  RecorderController get recorder => _recorderController;
+  bool get isRecording => _recorderController.isRecording;
+  String? get currentlyPlayingPath => _currentlyPlayingPath;
 
-  Future<dynamic> get duration async =>
-      await _player.getDuration(DurationType.max);
+  Future<void> startRecording(BuildContext context) async {
+    try {
+      final bool hasPermission = await _checkMicrophonePermission(context);
+      if (!hasPermission) return;
 
-  Future<void> startPlayer(String url) async {
-    _player.preparePlayer(
-      path: url,
-    );
-    await _player.startPlayer();
-    notifyListeners();
-  }
-
-  Future<void> stopPlayer() async {
-    await _player.stopPlayer();
-    notifyListeners();
-  }
-
-  Future<void> pausePlayer() async {
-    await _player.pausePlayer();
-    notifyListeners();
-  }
-
-  Future<void> setRate(double rate) async {
-    await _player.setRate(rate);
-    notifyListeners();
-  }
-
-  Future<void> seekTo(int value) async {
-    await _player.seekTo(value);
-    notifyListeners();
-  }
-
-  //
-  // Recorder
-  //
-  Stream<Duration> get durationRecorder => _recoder.onCurrentDuration;
-
-  Future<void> startRecorder(BuildContext context) async {
-    final bool hasPermission =
-        await PermissionFun.hasPermission(Permission.microphone);
-    if (!hasPermission) {
-      AppSnackBar.showSnackBar(context, 'microphone_permission_issue'.tr());
-      return;
+      _currentRecordingPath = await _getRecordingPath();
+      await _recorderController.record(path: _currentRecordingPath);
+      notifyListeners();
+    } catch (e) {
+      _showErrorSnackbar(context, 'failed_to_start_recording'.tr());
     }
-    _recoder.refresh();
-    await _recoder.record();
+  }
+
+  Future<String?> stopRecording() async {
+    try {
+      final String? path = await _recorderController.stop();
+      _currentRecordingPath = null;
+      notifyListeners();
+      return path;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<void> togglePlaying(String filePath) async {
+    if (_currentlyPlayingPath == filePath) {
+      await pauseCurrent();
+    } else {
+      await _playFile(filePath);
+    }
+  }
+
+  Future<void> _playFile(String filePath) async {
+    try {
+      await pauseCurrent();
+      _currentlyPlayingPath = filePath;
+
+      final PlayerController player =
+          _playerControllers[filePath] ?? PlayerController();
+      await player.preparePlayer(path: filePath);
+      await player.startPlayer();
+
+      if (!_playerControllers.containsKey(filePath)) {
+        _playerControllers[filePath] = player;
+      }
+
+      player.onPlayerStateChanged.listen((PlayerState state) {
+        if (state == PlayerState.stopped) {
+          _currentlyPlayingPath = null;
+          notifyListeners();
+        }
+      });
+
+      notifyListeners();
+    } catch (e) {
+      _currentlyPlayingPath = null;
+      notifyListeners();
+    }
+  }
+
+  Future<void> pauseCurrent() async {
+    if (_currentlyPlayingPath != null) {
+      await _playerControllers[_currentlyPlayingPath]?.pausePlayer();
+      _currentlyPlayingPath = null;
+      notifyListeners();
+    }
+  }
+
+  Duration? getDuration(String filePath) {
+    return _audioDurations[filePath];
+  }
+
+  bool isPlaying(String filePath) {
+    return _currentlyPlayingPath == filePath &&
+        _playerControllers[filePath]?.playerState == PlayerState.playing;
+  }
+
+  Future<void> loadDurations(List<String> audioPaths) async {
+    for (final String path in audioPaths) {
+      if (!_audioDurations.containsKey(path)) {
+        final PlayerController player = PlayerController();
+        await player.preparePlayer(path: path);
+        _audioDurations[path] = (await player.getDuration()) as Duration;
+        await player.stopPlayer();
+        player.dispose();
+      }
+    }
     notifyListeners();
   }
 
-  Future<void> stopRecorder() async {
-    await _recoder.stop();
-    notifyListeners();
+  Future<bool> _checkMicrophonePermission(BuildContext context) async {
+    final PermissionStatus status = await Permission.microphone.request();
+    if (status != PermissionStatus.granted) {
+      _showErrorSnackbar(context, 'microphone_permission_issue'.tr());
+      return false;
+    }
+    return true;
   }
 
-  Future<void> pauseRecorder() async {
-    await _recoder.pause();
-    notifyListeners();
+  Future<String> _getRecordingPath() async {
+    final Directory dir = Directory.systemTemp;
+    return '${dir.path}/recording_${DateTime.now().millisecondsSinceEpoch}.aac';
   }
 
-  Future<void> resumeRecorder() async {
-    await _recoder.record();
-    notifyListeners();
+  void _showErrorSnackbar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
-  void deleteRecorder() async {
-    _recoder.reset();
-    notifyListeners();
+  @override
+  void dispose() {
+    _recorderController.dispose();
+    for (final PlayerController player in _playerControllers.values) {
+      player.dispose();
+    }
+    super.dispose();
   }
 }

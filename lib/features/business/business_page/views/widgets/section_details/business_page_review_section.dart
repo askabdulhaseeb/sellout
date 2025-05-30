@@ -8,8 +8,8 @@ import '../../../../../personal/post/post_detail/views/widgets/reviews/post_deta
 import '../../../../../personal/review/data/sources/local_review.dart';
 import '../../../../../personal/review/domain/entities/review_entity.dart';
 import '../../../../../personal/review/domain/param/get_review_param.dart';
-import '../../../../../personal/review/features/reivew_list/views/params/review_list_param.dart';
-import '../../../../../personal/review/features/reivew_list/views/screens/review_list_screen.dart';
+import '../../../../../personal/review/views/params/review_list_param.dart';
+import '../../../../../personal/review/views/screens/review_list_screen.dart';
 import '../../../../core/domain/entity/business_entity.dart';
 
 class BusinessPageReviewSection extends StatelessWidget {
@@ -42,7 +42,6 @@ class BusinessPageReviewSection extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 LinearRatingGraphWidget(
-                 
                   reviews: reviews,
                   onTap: (int value) {
                     Navigator.of(context).push(

@@ -17,7 +17,7 @@ import '../features/personal/dashboard/views/providers/personal_bottom_nav_provi
 import '../features/personal/book_visit/view/provider/visiting_provider.dart';
 import '../features/personal/post/feed/views/providers/feed_provider.dart';
 import '../features/personal/post/post_detail/views/providers/post_detail_provider.dart';
-import '../features/personal/review/features/reivew_list/views/providers/review_provider.dart';
+import '../features/personal/review/views/providers/review_provider.dart';
 import '../features/personal/services/views/providers/services_page_provider.dart';
 import '../features/personal/user/profiles/views/providers/profile_provider.dart';
 import 'get_it.dart';
@@ -43,6 +43,7 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
       value: AddListingFormProvider(locator(), locator())),
   ChangeNotifierProvider<PickedMediaProvider>.value(
       value: PickedMediaProvider()),
+
   //
   ChangeNotifierProvider<ChatDashboardProvider>.value(
       value: ChatDashboardProvider(locator())),

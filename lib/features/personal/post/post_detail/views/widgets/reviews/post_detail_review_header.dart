@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../core/widgets/rating_display_widget.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../../../../review/features/reivew_list/views/screens/write_review_screen.dart';
+import '../../../../../review/views/screens/write_review_screen.dart';
 import '../../../../domain/entities/post_entity.dart';
 
 class PostDetailRatingHeader extends StatelessWidget {

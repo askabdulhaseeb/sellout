@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../../../../../core/widgets/profile_photo.dart';
-import '../../../../../post/domain/entities/post_entity.dart';
+import '../../../../../../../core/widgets/profile_photo.dart';
+import '../../../post/domain/entities/post_entity.dart';
 
 class WriteReviewHeaderSection extends StatelessWidget {
   const WriteReviewHeaderSection({required this.post, super.key});

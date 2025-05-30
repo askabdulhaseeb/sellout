@@ -1,11 +1,12 @@
+import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../../../../../core/functions/app_log.dart';
+import '../../../../../../core/media_preview/view/screens/media_preview_screen.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
-import '../../../../../attachment/domain/entities/picked_attachment_option.dart';
-import '../../../../../attachment/views/screens/pickable_attachment_screen.dart';
 import '../../../chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../data/models/message_last_evaluated_key.dart';
@@ -31,14 +32,11 @@ class ChatProvider extends ChangeNotifier {
 
   final List<PickedAttachment> _attachments = <PickedAttachment>[];
   List<PickedAttachment> get attachments => _attachments;
-
   MessageLastEvaluatedKeyEntity? _key;
-
   GettedMessageEntity? _gettedMessage;
   GettedMessageEntity? get gettedMessage => _gettedMessage;
   final TextEditingController _message = TextEditingController();
   TextEditingController get message => _message;
-
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
@@ -74,41 +72,6 @@ class ChatProvider extends ChangeNotifier {
       messages: <MessageEntity>[],
     );
     notifyListeners();
-  }
-
-  Future<void> setImages(
-    BuildContext context, {
-    required AttachmentType type,
-  }) async {
-    final List<PickedAttachment> selectedMedia =
-        _attachments.where((PickedAttachment element) {
-      return element.selectedMedia != null;
-    }).toList();
-    final List<PickedAttachment>? files =
-        await Navigator.of(context).push<List<PickedAttachment>>(
-      MaterialPageRoute<List<PickedAttachment>>(builder: (_) {
-        return PickableAttachmentScreen(
-          option: PickableAttachmentOption(
-            maxAttachments: 10,
-            allowMultiple: true,
-            type: type,
-            selectedMedia: selectedMedia
-                .map((PickedAttachment e) => e.selectedMedia!)
-                .toList(),
-          ),
-        );
-      }),
-    );
-    if (files != null) {
-      for (final PickedAttachment file in files) {
-        final int index = _attachments.indexWhere((PickedAttachment element) =>
-            element.selectedMedia == file.selectedMedia);
-        if (index == -1) {
-          _attachments.add(file);
-        }
-      }
-      notifyListeners();
-    }
   }
 
   void removePickedAttachment(PickedAttachment attachment) {
@@ -148,22 +111,80 @@ class ChatProvider extends ChangeNotifier {
     return await getMessages();
   }
 
+  void addAttachment(PickedAttachment attachment) {
+    _attachments.add(attachment);
+    notifyListeners();
+  }
+
+  void clearAttachments() {
+    _attachments.clear();
+    notifyListeners();
+  }
+
   Future<void> sendMessage(BuildContext context) async {
     final SendMessageParam param = SendMessageParam(
       chatID: _chat?.chatId ?? _key?.chatID ?? '',
       text: _message.text,
       persons: _chat?.persons ?? <String>[],
-      files: <PickedAttachment>[],
+      files: _attachments,
       source: 'application',
     );
     final DataState<bool> result = await _sendMessageUsecase(param);
     if (result is DataSuccess) {
       _message.clear();
+      _attachments.clear();
+      notifyListeners();
     } else {
       AppSnackBar.showSnackBar(
           // ignore: use_build_context_synchronously
           context,
           result.exception?.message ?? 'something_wrong'.tr());
     }
+  }
+
+  void setImages(BuildContext context) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute<ReviewMediaPreviewScreen>(
+        builder: (_) => ReviewMediaPreviewScreen(
+          attachments: attachments,
+        ),
+      ),
+    );
+    notifyListeners();
+  }
+
+  final RecorderController recorderController = RecorderController();
+  bool isRecording = false;
+
+  Future<void> startRecording(BuildContext context) async {
+    if (!await _checkPermission(context)) return;
+
+    isRecording = true;
+    await recorderController.record();
+    notifyListeners();
+  }
+
+  Future<String?> stopRecording() async {
+    isRecording = false;
+    final path = await recorderController.stop();
+    notifyListeners();
+    return path;
+  }
+
+  Future<bool> _checkPermission(BuildContext context) async {
+    final status = await Permission.microphone.request();
+    if (!status.isGranted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Microphone access required'.tr())));
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  void dispose() {
+    recorderController.dispose();
+    super.dispose();
   }
 }

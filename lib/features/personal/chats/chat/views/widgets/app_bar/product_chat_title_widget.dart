@@ -1,11 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../post/data/sources/local/local_post.dart';
-import '../../../../../../post/domain/entities/post_entity.dart';
-import '../../../../../../user/profiles/data/sources/local/local_user.dart';
-import '../../../../../chat_dashboard/views/widgets/chat_profile_with_status.dart';
-import '../../../providers/chat_provider.dart';
+import '../../../../../post/data/sources/local/local_post.dart';
+import '../../../../../post/domain/entities/post_entity.dart';
+import '../../../../../user/profiles/data/sources/local/local_user.dart';
+import '../../../../chat_dashboard/views/widgets/chat_profile_with_status.dart';
+import '../../providers/chat_provider.dart';
 
 class ProductChatTitleWidget extends StatelessWidget {
   const ProductChatTitleWidget({super.key});

@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
 import '../../../../../../../core/enums/message/message_type.dart';
 import '../../../../../../../core/extension/datetime_ext.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
