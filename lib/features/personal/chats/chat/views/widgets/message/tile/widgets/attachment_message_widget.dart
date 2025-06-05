@@ -4,7 +4,7 @@ import '../../../../../../../../../core/widgets/video_widget.dart';
 import '../../../../../../../../attachment/domain/entities/attachment_entity.dart';
 
 class AttachmentMessageWidget extends StatelessWidget {
-  const AttachmentMessageWidget({super.key, required this.attachments});
+  const AttachmentMessageWidget({required this.attachments, super.key});
   final List<AttachmentEntity> attachments;
 
   @override
@@ -72,7 +72,7 @@ class AttachmentMessageWidget extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white, // background for contrast
               borderRadius: BorderRadius.circular(12),
-              boxShadow: [
+              boxShadow: <BoxShadow>[
                 BoxShadow(
                   color: Colors.grey.withValues(alpha: 0.15),
                   blurRadius: 6,

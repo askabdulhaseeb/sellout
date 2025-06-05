@@ -10,6 +10,8 @@ import '../features/personal/auth/signup/views/providers/signup_provider.dart';
 import '../features/personal/cart/views/providers/cart_provider.dart';
 import '../features/personal/chats/chat/views/providers/audio_provider.dart';
 import '../features/personal/chats/chat/views/providers/chat_provider.dart';
+import '../features/personal/chats/create_chat/view/provider/create_private_chat_provider.dart';
+import '../features/personal/chats/create_chat/view/provider/create_chat_group_provider.dart';
 import '../features/personal/marketplace/views/providers/marketplace_provider.dart';
 import '../features/personal/listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../features/personal/chats/chat_dashboard/views/providers/chat_dashboard_provider.dart';
@@ -52,11 +54,16 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
     locator(),
     locator(),
   )),
+    ChangeNotifierProvider<CreateChatGroupProvider>.value(
+      value: CreateChatGroupProvider(locator())),
+       ChangeNotifierProvider<CreatePrivateChatProvider>.value(
+      value: CreatePrivateChatProvider(locator())),
   ChangeNotifierProvider<AudioProvider>.value(value: AudioProvider()),
   //
   ChangeNotifierProvider<ProfileProvider>.value(
       value: ProfileProvider(locator(), locator(), locator(), locator(),
           locator(), locator(), locator())),
+
   //
   ChangeNotifierProvider<FeedProvider>.value(
       value: FeedProvider(
@@ -83,7 +90,7 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
   // Business
   ChangeNotifierProvider<BusinessPageProvider>.value(
       value: BusinessPageProvider(locator(), locator(), locator(), locator(),
-          locator(), locator(), locator())),
+         locator())),
   ChangeNotifierProvider<AddServiceProvider>.value(
       value: AddServiceProvider(locator(), locator())),
   ChangeNotifierProvider<MarketPlaceProvider>.value(

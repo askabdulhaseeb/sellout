@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,8 @@ class ChatProvider extends ChangeNotifier {
 
   DateTime? _chatAt;
   DateTime? get chatAT => _chatAt;
+
+
 
   final List<PickedAttachment> _attachments = <PickedAttachment>[];
   List<PickedAttachment> get attachments => _attachments;
@@ -153,37 +156,99 @@ class ChatProvider extends ChangeNotifier {
     );
     notifyListeners();
   }
-
+//-----------------------------Audio Recording Widget
   final RecorderController recorderController = RecorderController();
-  bool isRecording = false;
+  bool _isPaused = false;
+  bool _isRecording = false;
+  bool _isLocked = false;
+  bool _showDelete = false;
+  Duration _recordingDuration = Duration.zero;
+  Timer? _timer;
+  final bool _isSending = false;
 
-  Future<void> startRecording(BuildContext context) async {
-    if (!await _checkPermission(context)) return;
-
-    isRecording = true;
-    await recorderController.record();
-    notifyListeners();
-  }
-
-  Future<String?> stopRecording() async {
-    isRecording = false;
-    final path = await recorderController.stop();
-    notifyListeners();
-    return path;
-  }
-
-  Future<bool> _checkPermission(BuildContext context) async {
-    final status = await Permission.microphone.request();
+  bool get isRecording => _isRecording;
+  bool get isLocked => _isLocked;
+  bool get showDelete => _showDelete;
+  Duration get recordingDuration => _recordingDuration;
+  bool get isSending => _isSending;
+ void setRecording(bool value){
+  _isRecording = value;
+ }
+  Future<void> requestMicPermission() async {
+    final PermissionStatus status = await Permission.microphone.status;
     if (!status.isGranted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Microphone access required'.tr())));
-      return false;
+      final PermissionStatus result = await Permission.microphone.request();
+      if (!result.isGranted) {
+        throw Exception('Microphone permission not granted');
+      }
     }
-    return true;
   }
 
-  @override
-  void dispose() {
+  Future<void> startRecording() async {
+    if (_isRecording) return;
+    
+    try {
+      await requestMicPermission();
+      
+      _isRecording = true;
+      _isPaused = false;
+      _isLocked = false;
+      _showDelete = false;
+      _recordingDuration = Duration.zero;
+      
+      await recorderController.record();
+      _startTimer();
+      notifyListeners();
+    } catch (e) {
+      _resetRecordingState();
+      rethrow;
+    }
+  }
+
+  void _startTimer() {
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      _recordingDuration += const Duration(seconds: 1);
+      notifyListeners();
+    });
+  }
+
+  void cancelRecording() {
+    _timer?.cancel();
+    _resetRecordingState();
+    recorderController.reset();
+    notifyListeners();
+  }
+
+  void toggleLock() {
+    _isLocked = !_isLocked;
+    notifyListeners();
+  }
+
+  Future<void> togglePauseResume() async {
+    if (!_isRecording) return;
+
+    if (_isPaused) {
+      await recorderController.record();
+    } else {
+      await recorderController.pause();
+    }
+    
+    _isPaused = !_isPaused;
+    notifyListeners();
+  }
+
+  void _resetRecordingState() {
+    _timer?.cancel();
+    _isRecording = false;
+    _isPaused = false;
+    _isLocked = false;
+    _showDelete = false;
+    _recordingDuration = Duration.zero;
+  }
+
+  void disposed() {
+    _timer?.cancel();
     recorderController.dispose();
     super.dispose();
   }

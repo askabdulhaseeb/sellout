@@ -2,14 +2,14 @@ import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/api_call.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../../domain/params/create_private_chat_params.dart';
+import '../../../domain/params/create_chat_params.dart';
 import '../../models/chat/chat_model.dart';
 import '../local/local_chat.dart';
 
 abstract interface class ChatRemoteSource {
   Future<DataState<List<ChatEntity>>> getChats(List<String>? params);
-  Future<DataState<ChatEntity>> createPrivateChat(
-      CreatePrivateChatParams params);
+  Future<DataState<ChatEntity>> createChat(
+      CreateChatParams params);
 }
 
 class ChatRemoteSourceImpl implements ChatRemoteSource {
@@ -54,23 +54,25 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
   }
 
   @override
-  Future<DataState<ChatEntity>> createPrivateChat(
-      CreatePrivateChatParams params) async {
+  Future<DataState<ChatEntity>> createChat(
+      CreateChatParams params) async {
     try {
       const String endpoint = '/chat/create';
-
-      final DataState<ChatEntity> result = await ApiCall<ChatEntity>().call(
+      final DataState<ChatEntity> result = await ApiCall<ChatEntity>().callFormData(
         endpoint: endpoint,
         requestType: ApiRequestType.post,
-        body: '',
+        fieldsMap: params.toMap(),
+        attachments: params.attachments
       );
-
       if (result is DataSuccess) {
+      Map<String,dynamic> map= jsonDecode(result.data ?? '');
+      ChatModel chat = ChatModel.fromJson(map['data']);
+      LocalChat().save(chat);
         return DataSuccess<ChatEntity>(result.data ?? '', result.entity);
       } else {
         AppLog.error(
-          'New Message - ERROR',
-          name: 'ChatRemoteSourceImpl.createPrivateChat - else',
+          'Create ${params.type} chat - ERROR',
+          name: 'ChatRemoteSourceImpl.createChat - else',
           error: result.exception,
         );
         return DataFailer<ChatEntity>(
@@ -79,8 +81,8 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
       }
     } catch (e) {
       AppLog.error(
-        'New Message - ERROR',
-        name: 'ChatRemoteSourceImpl.createPrivateChat - catch',
+        'Create ${params.type} chat - ERROR',
+        name: 'ChatRemoteSourceImpl.createChat - catch',
         error: CustomException(e.toString()),
       );
       return DataFailer<ChatEntity>(CustomException(e.toString()));

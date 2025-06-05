@@ -2,6 +2,8 @@ import 'dart:convert';
 import '../../../../../core/extension/string_ext.dart';
 import '../../../../attachment/data/attchment_model.dart';
 import '../../../../personal/location/data/models/location_model.dart';
+import '../../../../personal/user/profiles/data/models/supporter_detail_model.dart';
+import '../../../../personal/user/profiles/domain/entities/supporter_detail_entity.dart';
 import '../../domain/entity/business_entity.dart';
 import 'business_address_model.dart';
 import 'business_employee_model.dart';
@@ -25,8 +27,11 @@ class BusinessModel extends BusinessEntity {
     required super.listOfReviews,
     required super.createdAt,
     required super.updatedAt,
+     super.supporters,
+     super.supportings,
     super.location,
     super.travelDetail,
+
   });
 
   factory BusinessModel.fromRawJson(String str) =>
@@ -71,5 +76,14 @@ class BusinessModel extends BusinessEntity {
         createdAt: json['created_at']?.toString().toDateTime(),
         updatedAt:
             (json['updated_at'] ?? json['created_at'])?.toString().toDateTime(),
+     supporters: (json['supporters'] as List<dynamic>?)
+    ?.map((e) => e != null ? SupporterDetailModel.fromMap(e).toEntity() : [])
+    .whereType<SupporterDetailEntity>()
+    .toList(),
+supportings: (json['supporting'] as List<dynamic>?)
+    ?.map((e) => e != null ? SupporterDetailModel.fromMap(e).toEntity() : [])
+    .whereType<SupporterDetailEntity>()
+    .toList(),
+
       );
 }

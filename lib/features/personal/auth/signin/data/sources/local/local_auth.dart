@@ -24,7 +24,6 @@ class LocalAuth {
 
   Future<void> signin(CurrentUserEntity currentUser) async =>
       await _box.put(boxTitle, currentUser);
-
   static CurrentUserEntity? get currentUser =>
       _box.length == 0 ? null : _box.get(boxTitle);
 

@@ -63,7 +63,12 @@ class MessagesList extends HookWidget {
           }
         }
       });
-
+  scrollController.addListener(() {
+    if (scrollController.position.pixels <=
+        scrollController.position.minScrollExtent + 100) {
+      chatPro.loadMessages(); // Call pagination loader
+    }
+  });
       // Cleanup subscription when the widget is disposed
       return subscription.cancel;
     }, <Object?>[chatId]);

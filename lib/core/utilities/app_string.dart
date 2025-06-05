@@ -17,6 +17,8 @@ class AppStrings {
   static String get localServicesBox => 'com.sellout.local-services';
   static String get localBookingsBox => 'com.sellout.local-bookings';
   static String get localCountryBox => 'com.sellout.local-countries';
+  static String get localUnreadMessages => 'com.sellout.local-unread-messages';
+
   // [IMAGES]
   // Payment METHODS
   static String get amex => 'assets/images/payment_methods/amex.png';

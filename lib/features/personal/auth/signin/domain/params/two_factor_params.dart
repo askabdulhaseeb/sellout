@@ -10,14 +10,14 @@ class TwoFactorParams {
   final String? deviceId;
 
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'code': code?.trim(),
       'session_key': sessionKey.trim(),
     };
   }
 
   Map<String, dynamic> resendCodeMap() {
-    return {
+    return <String, dynamic>{
       'session_key': sessionKey.trim(),
       // 'device_id': deviceId?.trim(),
     };

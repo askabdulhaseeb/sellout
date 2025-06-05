@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../business/core/domain/entity/business_employee_entity.dart';
+import '../../../../user/profiles/domain/entities/supporter_detail_entity.dart';
 import '../../data/models/address_model.dart';
 import 'login_detail_entity.dart';
 import 'login_info_entity.dart';
@@ -46,7 +47,11 @@ class CurrentUserEntity {
       required this.loginActivity,
       required this.employeeList,
       //
-      required this.twoStepAuthEnabled});
+      required this.twoStepAuthEnabled,
+      //
+       required this.supporters,
+       required this.supporting
+       });
 
   @HiveField(1)
   final String message;
@@ -111,12 +116,18 @@ class CurrentUserEntity {
   //
   @HiveField(135)
   final bool? twoStepAuthEnabled;
+  //
+    @HiveField(140)
+   List<SupporterDetailEntity> supporters;  
+  @HiveField(141)
+    List<SupporterDetailEntity> supporting;
 
   // this is a Copy function to copy the current object and return a new object with old token
   CurrentUserEntity copyWith({
     String? token,
     List<AddressEntity>? address,
     bool? twoStepAuthEnabled,
+  List<SupporterDetailEntity>? supporting,
   }) {
     return CurrentUserEntity(
       userName: userName,
@@ -147,6 +158,8 @@ class CurrentUserEntity {
       loginActivity: loginActivity,
       employeeList: employeeList,
       twoStepAuthEnabled: twoStepAuthEnabled,
+      supporters: supporters,
+      supporting:supporting ?? this.supporting
     );
   }
 }

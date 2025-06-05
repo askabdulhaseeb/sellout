@@ -26,7 +26,7 @@ class DeviceLoginInfoModel extends DeviceLoginInfoEntity {
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'device_id': deviceId,
       'os': os,
       'app_version': appVersion,

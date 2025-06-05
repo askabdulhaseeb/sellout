@@ -13,7 +13,7 @@ class AppTheme {
     return ThemeData(
       primaryColor: primaryColor,
       scaffoldBackgroundColor: lightScaffldColor,
-      dialogTheme: const DialogTheme(
+      dialogTheme: const DialogThemeData(
         backgroundColor: lightScaffldColor,
       ),
       shadowColor: Colors.black45,
@@ -27,7 +27,7 @@ class AppTheme {
         titleLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
       ),
       dividerColor: const Color(0xFFF0F0F0),
-      //  useMaterial3: true,
+        useMaterial3: true,
       appBarTheme: const AppBarTheme(
         backgroundColor: lightScaffldColor,
         surfaceTintColor: lightScaffldColor,
@@ -41,7 +41,7 @@ class AppTheme {
     return ThemeData(
       primaryColor: primaryColor,
       scaffoldBackgroundColor: darkScaffldColor,
-      dialogTheme: const DialogTheme(
+      dialogTheme: const DialogThemeData(
         backgroundColor: darkScaffldColor,
       ),
       shadowColor: Colors.white30,
@@ -55,7 +55,7 @@ class AppTheme {
         titleLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
       ),
       dividerColor: Colors.white38,
-      // useMaterial3: true,
+       useMaterial3: true,
       appBarTheme: const AppBarTheme(
         backgroundColor: darkScaffldColor,
         surfaceTintColor: darkScaffldColor,

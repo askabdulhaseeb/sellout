@@ -1,16 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/data_state.dart';
-import '../../../../personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../../../personal/bookings/domain/entity/booking_entity.dart';
-import '../../../../personal/chats/chat/views/providers/chat_provider.dart';
-import '../../../../personal/chats/chat/views/screens/chat_screen.dart';
-import '../../../../personal/chats/chat_dashboard/domain/entities/chat/chat_entity.dart';
-import '../../../../personal/chats/chat_dashboard/domain/params/create_private_chat_params.dart';
-import '../../../../personal/chats/chat_dashboard/domain/usecase/create_private_chat_usecase.dart';
-import '../../../../personal/chats/chat_dashboard/domain/usecase/get_my_chats_usecase.dart';
 import '../../../../personal/post/domain/entities/post_entity.dart';
 import '../../../../personal/review/domain/entities/review_entity.dart';
 import '../../../../personal/review/domain/param/get_review_param.dart';
@@ -32,16 +23,14 @@ class BusinessPageProvider extends ChangeNotifier {
     this._getReviewsUsecase,
     this._getPostByIdUsecase,
     this._getBookingsListUsecase,
-    this._createPrivateChatUsecase,
-    this._getMyChatsUsecase,
+
   );
   final GetBusinessByIdUsecase _byID;
   final GetServicesListByBusinessIdUsecase _servicesListUsecase;
   final GetReviewsUsecase _getReviewsUsecase;
   final GetPostByIdUsecase _getPostByIdUsecase;
   final GetBookingsListUsecase _getBookingsListUsecase;
-  final CreatePrivateChatUsecase _createPrivateChatUsecase;
-  final GetMyChatsUsecase _getMyChatsUsecase;
+
 
   BusinessEntity? _business;
   BusinessEntity? get business => _business;
@@ -171,46 +160,4 @@ class BusinessPageProvider extends ChangeNotifier {
     );
     return result;
   }
-
-  Future<DataState<ChatEntity>> createPrivateChat(context) async {
-    try {
-      AppLog.info('Creating private chat with ${business?.businessID ?? ''}',
-          name: 'BusinessPageProvider.createPrivateChat');
-      CreatePrivateChatParams params = CreatePrivateChatParams(
-          recieverId: <String>[LocalAuth.uid ?? ''],
-          type: 'private',
-          businessID: business?.businessID ?? '');
-      final DataState<ChatEntity> result =
-          await _createPrivateChatUsecase.call(params);
-      if (result is DataSuccess) {
-        final String chatId = result.entity?.chatId ?? '';
-        DataState<List<ChatEntity>> chatresult =
-            await _getMyChatsUsecase.call(<String>[chatId]);
-        if (chatresult is DataSuccess &&
-            (chatresult.data?.isNotEmpty ?? false)) {
-          final ChatProvider chatProvider =
-              Provider.of<ChatProvider>(context, listen: false);
-          chatProvider.chat = chatresult.entity!.first;
-          Navigator.of(context).pushReplacementNamed(
-            ChatScreen.routeName,
-            arguments: chatId,
-          );
-        }
-      } else {
-        AppLog.error(
-          'Failed to create private chat',
-          name: 'BusinessPageProvider.createPrivateChat',
-          error: result.exception,
-        );
-      }
-      return result;
-    } catch (e) {
-      AppLog.error(
-        'Exception occurred while creating private chat',
-        name: 'BusinessPageProvider.createPrivateChat',
-        error: CustomException(e.toString()),
-      );
-      return DataFailer<ChatEntity>(CustomException(e.toString()));
-    }
-  }
-}
+ }
