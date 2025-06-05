@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../../domain/entities/chat/chat_entity.dart';

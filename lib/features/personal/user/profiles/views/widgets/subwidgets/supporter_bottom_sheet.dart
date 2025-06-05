@@ -1,15 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
-import '../../../../../../../core/sources/api_call.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../services/get_it.dart';
+import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../domain/entities/supporter_detail_entity.dart';
 import '../../../domain/entities/user_entity.dart';
 import '../../../domain/usecase/get_user_by_uid.dart';
-
-class SupporterBottomsheet extends StatelessWidget {
+import 'support_button.dart';
+class SupporterBottomsheet extends StatefulWidget {
   const SupporterBottomsheet({
     required this.supporters,
     required this.issupporter,
@@ -18,128 +17,125 @@ class SupporterBottomsheet extends StatelessWidget {
 
   final List<SupporterDetailEntity>? supporters;
   final bool issupporter;
+
+  @override
+  State<SupporterBottomsheet> createState() => _SupporterBottomsheetState();
+}
+
+class _SupporterBottomsheetState extends State<SupporterBottomsheet> {
+  final TextEditingController searchController = TextEditingController();
+  final GetUserByUidUsecase getUserByUidUsecase = GetUserByUidUsecase(locator());
+
+  List<UserEntity> allUsers = [];
+  List<UserEntity> filteredUsers = [];
+
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchAllUsers();
+    searchController.addListener(_filterUsers);
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  void _fetchAllUsers() async {
+    final supporters = widget.supporters ?? [];
+
+    final List<UserEntity> temp = [];
+
+    for (final supporter in supporters) {
+      if (supporter.userID.isEmpty) continue;
+      final result = await getUserByUidUsecase(supporter.userID);
+      if (result.entity != null) {
+        temp.add(result.entity!);
+      }
+    }
+
+    setState(() {
+      allUsers = temp;
+      filteredUsers = temp;
+      isLoading = false;
+    });
+  }
+
+  void _filterUsers() {
+    final query = searchController.text.toLowerCase();
+
+    setState(() {
+      filteredUsers = allUsers.where((user) {
+        return user.username.toLowerCase().contains(query);
+      }).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final GetUserByUidUsecase getUserByUidUsecase =
-        GetUserByUidUsecase(locator());
-    final TextTheme textTheme = Theme.of(context).textTheme;
-    final ColorScheme colorscheme = Theme.of(context).colorScheme;
-
-    final TextEditingController searchController = TextEditingController();
+    final textTheme = Theme.of(context).textTheme;
 
     return Container(
       decoration: BoxDecoration(
-        color: colorscheme.surface,
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
       ),
-      height: MediaQuery.of(context).size.height * 0.6,
+      height: MediaQuery.of(context).size.height * 0.66,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
         children: <Widget>[
-          /// Close Button
           Align(
             alignment: Alignment.topLeft,
             child: TextButton.icon(
-              label: Text(
-                'close'.tr(),
-                style: textTheme.labelSmall,
-              ),
-              icon: Icon(
-                Icons.close,
-                size: 16,
-                color: colorscheme.onSurface,
-              ),
+              label: Text('close'.tr(), style: textTheme.labelSmall),
+              icon: Icon(Icons.close, size: 16, color: ColorScheme.of(context).onSurface),
               onPressed: () => Navigator.pop(context),
             ),
           ),
-
-          /// Search Field
           CustomTextFormField(
             hint: 'search'.tr(),
             prefixIcon: const Icon(Icons.search),
             controller: searchController,
           ),
           const SizedBox(height: 8, width: double.infinity),
-
-          /// Supporter List
           Expanded(
-            child: ListView.builder(
-              itemCount: supporters?.length ?? 0,
-              itemBuilder: (BuildContext context, int index) {
-                final SupporterDetailEntity? supporter = supporters?[index];
-
-                if (supporter == null || supporter.userID.isEmpty) {
-                  debugPrint('Skipping supporter: ${supporter?.userID}');
-                  return const SizedBox.shrink();
-                }
-
-                debugPrint('Fetching user data for ID: ${supporter.userID}');
-
-                return FutureBuilder<DataState<UserEntity?>>(
-                  future: getUserByUidUsecase(supporter.userID),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<DataState<UserEntity?>> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    if (snapshot.hasError) {
-                      debugPrint('Error loading user: ${snapshot.error}');
-                      return const ListTile(
-                        title: Text('Error loading user'),
-                      );
-                    }
-                    if (snapshot.data == null || snapshot.data!.data == null) {
-                      debugPrint(
-                          'User data is null for ID: ${supporter.userID}');
-                      return const ListTile(
-                        title: Text('Error loading user'),
-                      );
-                    }
-
-                    final UserEntity user = snapshot.data!.entity!;
-
-                    return ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: SizedBox(
-                        width: 50,
-                        height: 50,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(15),
-                          child: CustomNetworkImage(
-                            imageURL: user.profilePhotoURL ?? '',
-                            fit: BoxFit.cover,
-                            color: Colors.grey.shade300,
-                          ),
-                        ),
-                      ),
-                      title: Text(
-                        user.username,
-                        style: textTheme.bodyMedium,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      trailing: Container(
-                        height: 30,
-                        width: 100,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(14),
-                          color: Theme.of(context).primaryColor.withAlpha(20),
-                        ),
-                        child: Center(
-                          child: Text(
-                            issupporter == true
-                                ? 'supporter'.tr()
-                                : 'supporting'.tr(),
-                            style: textTheme.labelSmall?.copyWith(
-                              color: Theme.of(context).primaryColor,
+            child: isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : ListView.builder(
+                    itemCount: filteredUsers.length,
+                    itemBuilder: (context, index) {
+                      final user = filteredUsers[index];
+                      return ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: SizedBox(
+                          width: 50,
+                          height: 50,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(15),
+                            child: CustomNetworkImage(
+                              imageURL: user.profilePhotoURL ?? '',
+                              fit: BoxFit.cover,
+                              color: Colors.grey.shade300,
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
+                        title: Text(
+                          user.username,
+                          style: textTheme.bodyMedium,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        trailing: LocalAuth.uid != user.uid
+                            ? SizedBox(
+                                width: 100,
+                                child: SupportButton(supporterId: user.uid),
+                              )
+                            : null,
+                      );
+                    },
+                  ),
           ),
         ],
       ),

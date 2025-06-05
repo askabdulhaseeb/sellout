@@ -1,6 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../../../../../../core/theme/app_theme.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../domain/entities/user_entity.dart';
+import 'subwidgets/support_button.dart';
 import 'subwidgets/supporter_bottom_sheet.dart';
 
 class ProfileScoreSection extends StatelessWidget {
@@ -8,14 +11,15 @@ class ProfileScoreSection extends StatelessWidget {
   final UserEntity? user;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { 
+    final bool isMe = user?.uid == (LocalAuth.uid ?? '-');
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SizedBox(
-          height: 32,
+          height: 35,
           child: Row(
             children: <Widget>[
-              Expanded(
+          if(isMe)    Expanded(
                 child: _ScoreButton(
                   title: 'details'.tr(),
                   count: '',
@@ -25,27 +29,7 @@ class ProfileScoreSection extends StatelessWidget {
               Expanded(
                 child: _ScoreButton(
                   title: 'supporting'.tr(),
-                  count: (user?.supporters.length ?? 0).toString(),
-                  onPressed: () => showModalBottomSheet(
-                    context: context,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(16)),
-                    ),
-                    isScrollControlled: true,
-                    builder: (BuildContext context) {
-                      return SupporterBottomsheet(
-                        supporters: user?.supporters,
-                        issupporter: false,
-                      );
-                    },
-                  ),
-                ),
-              ),
-              Expanded(
-                child: _ScoreButton(
-                  title: 'supporters'.tr(),
-                  count: (user?.supportings.length ?? 0).toString(),
+                  count: (user?.supportings?.length ?? 0).toString(),
                   onPressed: () => showModalBottomSheet(
                     context: context,
                     shape: const RoundedRectangleBorder(
@@ -56,12 +40,33 @@ class ProfileScoreSection extends StatelessWidget {
                     builder: (BuildContext context) {
                       return SupporterBottomsheet(
                         supporters: user?.supportings,
+                        issupporter: false,
+                      );
+                    },
+                  ),
+                ),
+              ),
+              Expanded(
+                child: _ScoreButton(
+                  title: 'supporters'.tr(),
+                  count: (user?.supporters?.length ?? 0).toString(),
+                  onPressed: () => showModalBottomSheet(
+                    context: context,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(16)),
+                    ),
+                    isScrollControlled: true,
+                    builder: (BuildContext context) {
+                      return SupporterBottomsheet(
+                        supporters:user?.supporters,
                         issupporter: true,
                       );
                     },
                   ),
                 ),
               ),
+              if(!isMe)Expanded(child:  SupportButton(supporterId: user?.uid ?? '',supportColor: AppTheme.primaryColor,supportingColor: AppTheme.secondaryColor,supportTextColor:ColorScheme.of(context).onPrimary ,supportingTextColor:ColorScheme.of(context).onPrimary ,))
             ],
           )),
     );

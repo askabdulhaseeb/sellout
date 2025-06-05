@@ -93,9 +93,9 @@ class UserEntity {
   @HiveField(61)
   final List<dynamic> interest;
   @HiveField(62)
-  final List<SupporterDetailEntity> supporters;
+  final List<SupporterDetailEntity>? supporters;
   @HiveField(63)
-  final List<SupporterDetailEntity> supportings;
+  final List<SupporterDetailEntity>? supportings;
   @HiveField(64)
   final List<ProfileBusinessDetailEntity> businessDetail;
   //

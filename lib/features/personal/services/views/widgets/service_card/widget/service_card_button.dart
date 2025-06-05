@@ -19,7 +19,7 @@ class ServiceCardButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       spacing: 8,
-      children: [
+      children: <Widget>[
         CustomElevatedButton(
           title: 'book'.tr(),
           bgColor: business.routine == null

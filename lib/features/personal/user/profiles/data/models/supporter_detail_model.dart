@@ -25,4 +25,12 @@ class SupporterDetailModel extends SupporterDetailEntity {
       'status': status.json,
     };
   }
+   SupporterDetailEntity toEntity() {
+  return SupporterDetailEntity(
+    userID: userID,
+    supportingTime: supportingTime,
+    status: status,
+  );
+}
+
 }
