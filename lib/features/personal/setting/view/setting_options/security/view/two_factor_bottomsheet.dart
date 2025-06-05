@@ -28,10 +28,10 @@ class _TwoFactorAuthBottomSheetState extends State<TwoFactorAuthBottomSheet> {
   }
 
   Future<void> _updateLocalUser(bool newValue) async {
-    final currentUser = LocalAuth.currentUser;
+    final CurrentUserEntity? currentUser = LocalAuth.currentUser;
     if (currentUser == null) return;
 
-    final updatedUser = currentUser.copyWith(twoStepAuthEnabled: newValue);
+    final CurrentUserEntity updatedUser = currentUser.copyWith(twoStepAuthEnabled: newValue);
     await LocalAuth().signin(updatedUser);
   }
 

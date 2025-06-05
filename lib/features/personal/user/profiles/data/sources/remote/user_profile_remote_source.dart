@@ -7,7 +7,10 @@ import '../../../../../../attachment/data/attchment_model.dart';
 import '../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../domain/entities/supporter_detail_entity.dart';
+import '../../../views/params/add_remove_supporter_params.dart';
 import '../../../views/params/update_user_params.dart';
+import '../../models/supporter_detail_model.dart';
 import '../local/local_user.dart';
 
 abstract interface class UserProfileRemoteSource {
@@ -15,6 +18,7 @@ abstract interface class UserProfileRemoteSource {
   Future<DataState<List<AttachmentEntity>>> updateProfilePicture(
       PickedAttachment photo);
   Future<DataState<String>> updatePRofileDetail(UpdateUserParams photo);
+    Future<DataState<String>> addRemoveSupporters(AddRemoveSupporterParams params);
 }
 
 class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
@@ -117,4 +121,84 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
       return DataFailer<String>(CustomException('something_wrong'));
     }
   }
+
+
+ @override
+Future<DataState<String>> addRemoveSupporters(AddRemoveSupporterParams params) async {
+  AppLog.info('${params.action.value}ing supporter',
+      name: 'UserProfileRemoteImpl.addRemoveSupporters - start');
+
+  try {
+    final DataState<String> result = await ApiCall<String>().call(
+      endpoint: '/user/add/support?action=${params.action.value}',
+      requestType: ApiRequestType.patch,
+      body: json.encode(params.toJson()),
+    );
+debugPrint(result.data);
+    AppLog.info('API called',
+        name: 'UserProfileRemoteImpl.addRemoveSupporters - after API call');
+    if (result is DataSuccess<String>) {
+      final String responseData = result.data ?? '';
+      debugPrint('Raw API Response: $responseData');
+      if (LocalAuth.currentUser == null) {
+        return DataFailer<String>(CustomException('User not signed in.'));
+      }
+      if (params.action == SupporterAction.add) {
+        final Map<String, dynamic> supporterMap = jsonDecode(responseData);
+        final SupporterDetailEntity supporterEntity = SupporterDetailModel.fromMap(
+                supporterMap['user_detail'])
+            .toEntity();
+        final List<SupporterDetailEntity> existingSupporters =
+            LocalAuth.currentUser?.supporting ?? <SupporterDetailEntity>[];
+
+        final bool alreadySupporting = existingSupporters.any(
+            (SupporterDetailEntity element) => element.userID == supporterEntity.userID);
+
+        if (!alreadySupporting) {
+          final List<SupporterDetailEntity> updatedSupporting = List<SupporterDetailEntity>.from(existingSupporters)
+            ..add(supporterEntity);
+
+          final CurrentUserEntity updatedUser =
+              LocalAuth.currentUser!.copyWith(supporting: updatedSupporting);
+          await LocalAuth().signin(updatedUser);
+          AppLog.info('Supporter added',
+              name: 'UserProfileRemoteImpl.addRemoveSupporters');
+        } else {
+          AppLog.info('Duplicate supporter ignored',
+              name: 'UserProfileRemoteImpl.addRemoveSupporters');
+        }
+      } else if (params.action == SupporterAction.unfollow) {
+        AppLog.info('Removing supporter',
+            name: 'UserProfileRemoteImpl.addRemoveSupporters');
+
+        final List<SupporterDetailEntity> updatedList = List<SupporterDetailEntity>.from(
+            LocalAuth.currentUser?.supporting ?? <dynamic>[]);
+
+        updatedList.removeWhere(
+            (SupporterDetailEntity element) => element.userID == params.supporterId);
+
+        final CurrentUserEntity updatedUser =
+            LocalAuth.currentUser!.copyWith(supporting: updatedList);
+        await LocalAuth().signin(updatedUser);
+
+        AppLog.info('Supporter removed',
+            name: 'UserProfileRemoteImpl.addRemoveSupporters');
+      }
+
+      return DataSuccess<String>(responseData, result.entity);
+    } else {
+      AppLog.error('API returned failure: ${result.exception?.message}',
+          name: 'UserProfileRemoteImpl.addRemoveSupporters');
+      return DataFailer<String>(
+        CustomException(result.exception?.message ?? 'something_wrong'),
+      );
+    }
+  } catch (e, st) {
+    AppLog.error('Exception caught: $e',
+        name: 'UserProfileRemoteImpl.addRemoveSupporters',
+        error: CustomException(e.toString()),
+        stackTrace: st);
+    return DataFailer<String>(CustomException('something_wrong'));
+  }
+}
 }

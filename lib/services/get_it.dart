@@ -82,7 +82,7 @@ import '../features/personal/chats/chat/views/providers/chat_provider.dart';
 import '../features/personal/chats/chat_dashboard/data/repositories/chat_repository_impl.dart';
 import '../features/personal/chats/chat_dashboard/data/sources/remote/chat_remote_source.dart';
 import '../features/personal/chats/chat_dashboard/domain/repositories/chat_repository.dart';
-import '../features/personal/chats/chat_dashboard/domain/usecase/create_private_chat_usecase.dart';
+import '../features/personal/chats/chat_dashboard/domain/usecase/create_chat_usecase.dart';
 import '../features/personal/chats/chat_dashboard/domain/usecase/get_my_chats_usecase.dart';
 import '../features/personal/chats/chat_dashboard/views/providers/chat_dashboard_provider.dart';
 import '../features/personal/book_visit/data/repo/visit_book_repo_impl.dart';
@@ -90,6 +90,8 @@ import '../features/personal/book_visit/data/source/book_visit_api.dart';
 import '../features/personal/book_visit/domain/repo/book_visit_repo.dart';
 import '../features/personal/book_visit/domain/usecase/book_visit_usecase.dart';
 import '../features/personal/book_visit/view/provider/visiting_provider.dart';
+import '../features/personal/chats/create_chat/view/provider/create_private_chat_provider.dart';
+import '../features/personal/chats/create_chat/view/provider/create_chat_group_provider.dart';
 import '../features/personal/marketplace/data/repository/explore_repository_impl.dart';
 import '../features/personal/marketplace/data/source/explore_remote_source.dart';
 import '../features/personal/marketplace/domain/repository/location_name_repo.dart';
@@ -127,6 +129,7 @@ import '../features/personal/user/profiles/data/sources/remote/order_by_user_rem
 import '../features/personal/user/profiles/data/sources/remote/post_by_user_remote.dart';
 import '../features/personal/user/profiles/data/sources/remote/user_profile_remote_source.dart';
 import '../features/personal/user/profiles/domain/repositories/user_repositories.dart';
+import '../features/personal/user/profiles/domain/usecase/add_remove_supporter_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/create_order_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/edit_profile_detail_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/edit_profile_picture_usecase.dart';
@@ -236,6 +239,8 @@ void _profile() {
       () => UpdateProfilePictureUsecase(locator()));
   locator.registerFactory<UpdateProfileDetailUsecase>(
       () => UpdateProfileDetailUsecase(locator()));
+       locator.registerFactory<AddRemoveSupporterUsecase>(
+      () => AddRemoveSupporterUsecase(locator()));
   locator.registerLazySingleton<ProfileProvider>(() => ProfileProvider(
         locator(),
         locator(),
@@ -255,6 +260,10 @@ void _chat() {
       .registerFactory<GetMyChatsUsecase>(() => GetMyChatsUsecase(locator()));
   locator.registerLazySingleton<ChatDashboardProvider>(
       () => ChatDashboardProvider(locator()));
+      locator.registerLazySingleton<CreateChatGroupProvider>(
+      () => CreateChatGroupProvider(locator())); 
+      locator.registerLazySingleton<CreatePrivateChatProvider>(
+      () => CreatePrivateChatProvider(locator()));
 }
 
 void _message() {
@@ -331,7 +340,7 @@ void _business() {
   // Providers
   locator.registerLazySingleton<BusinessPageProvider>(() =>
       BusinessPageProvider(locator(), locator(), locator(), locator(),
-          locator(), locator(), locator()));
+          locator()));
 }
 
 void _services() {
@@ -344,8 +353,8 @@ void _services() {
   //
   // REPOSITORIES
 
-  locator.registerFactory<CreatePrivateChatUsecase>(
-      () => CreatePrivateChatUsecase(locator()));
+  locator.registerFactory<CreateChatUsecase>(
+      () => CreateChatUsecase(locator()));
   locator.registerFactory<BusinessPageRepository>(
       () => BusinessPageRepositoryImpl(locator(), locator()));
   locator.registerFactory<AddServiceRepository>(

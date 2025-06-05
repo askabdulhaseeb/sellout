@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../../core/widgets/searchable_textfield.dart';
+import '../../../create_chat/view/screens/create_group_bottomsheet.dart';
+import '../../../create_chat/view/screens/create_private_chat_bottomsheet.dart';
 import '../providers/chat_dashboard_provider.dart';
 
 class ChatDashboardSearchableWidget extends StatelessWidget {
@@ -31,7 +32,7 @@ class ChatDashboardSearchableWidget extends StatelessWidget {
                     borderColor: ColorScheme.of(context).outlineVariant,
                     bgColor: Colors.transparent,
                     icon: Icons.mark_chat_unread_outlined,
-                    onPressed: () {})
+                    onPressed: () {showBottomSheet(context: context, builder: (BuildContext context) =>  CreatePrivateChatBottomsheet(),);},)
                 //  IconButton(
                 //     onPressed: () {},
                 //     icon: const Icon(Icons.mark_chat_unread_outlined),
@@ -42,7 +43,7 @@ class ChatDashboardSearchableWidget extends StatelessWidget {
                         icon: const Icon(Icons.card_membership_sharp),
                       )
                     : IconButton(
-                        onPressed: () {},
+                        onPressed: () {showBottomSheet(context: context, builder: (BuildContext context) => const CreateGroupBottomSheet(),);},
                         icon: const Icon(Icons.group_add_outlined),
                       ),
           ],

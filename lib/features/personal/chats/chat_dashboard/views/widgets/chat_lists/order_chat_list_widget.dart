@@ -17,7 +17,6 @@ class OrderChatListWidget extends HookWidget {
     // ignore: unused_local_variable
     final ValueListenable<Box<ChatEntity>> listenable =
         useListenable(chatBox.listenable());
-
     final List<ChatEntity> chats = chatBox.values
         .where((ChatEntity e) =>
             e.type == ChatType.private || e.type == ChatType.product)

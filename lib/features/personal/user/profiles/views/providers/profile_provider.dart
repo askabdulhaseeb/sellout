@@ -162,4 +162,4 @@ class ProfileProvider extends ChangeNotifier {
       isLoading = false;
     }
   }
-}
+ }

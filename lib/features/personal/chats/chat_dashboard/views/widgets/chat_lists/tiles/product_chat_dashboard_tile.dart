@@ -88,7 +88,7 @@ class ProductChatDashboardTile extends HookWidget {
                               chat.lastMessage?.createdAt.timeAgo ?? '',
                               style: const TextStyle(fontSize: 10),
                             ),
-                            UnseenMessageBadge(chat: chat),
+                            UnreadMessageBadgeWidget(chatId: chat.chatId),
                           ],
                         ),
                       ],

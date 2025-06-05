@@ -12,7 +12,7 @@ class UpdateUserParams {
   bool? twoFactorAuth;
 
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       if (name.isNotEmpty) 'display_name': name,
       if (bio.isNotEmpty) 'bio': bio,
       if (twoFactorAuth != null)
