@@ -22,10 +22,12 @@ import '../../../features/personal/chats/chat/data/sources/local/local_message.d
 import '../../../features/personal/chats/chat/domain/entities/getted_message_entity.dart';
 import '../../../features/personal/chats/chat/domain/entities/message_last_evaluated_key_entity.dart';
 import '../../../features/personal/chats/chat_dashboard/data/sources/local/local_chat.dart';
+import '../../../features/personal/chats/chat_dashboard/data/sources/local/local_unseen_messages.dart';
 import '../../../features/personal/chats/chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../../features/personal/chats/chat_dashboard/domain/entities/chat/group/group_into_entity.dart';
 import '../../../features/personal/chats/chat_dashboard/domain/entities/chat/participant/chat_participant_entity.dart';
 import '../../../features/personal/chats/chat_dashboard/domain/entities/chat/participant/invitation_entity.dart';
+import '../../../features/personal/chats/chat_dashboard/domain/entities/chat/unread_message_entity.dart';
 import '../../../features/personal/chats/chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../features/personal/listing/listing_form/data/sources/local/local_listing.dart';
 import '../../../features/personal/listing/listing_form/domain/entities/color_options_entity.dart';
@@ -127,6 +129,7 @@ class HiveDB {
     Hive.registerAdapter(LoginDetailEntityAdapter()); // 52
     Hive.registerAdapter(ColorOptionEntityAdapter()); // 53
     Hive.registerAdapter(DeviceLoginInfoEntityAdapter()); // 54
+    Hive.registerAdapter(UnreadMessageEntityAdapter()); // 55
     // Hive box Open
     await refresh();
   }
@@ -146,6 +149,8 @@ class HiveDB {
     await LocalReview().refresh();
     await LocalBooking().refresh();
     await LocalCountry().refresh();
+        await LocalUnreadMessagesService().refresh();
+
   }
 
   static Future<void> signout() async {
@@ -162,6 +167,7 @@ class HiveDB {
     await LocalService().clear();
     await LocalReview().clear();
     await LocalBooking().clear();
+    await LocalUnreadMessagesService().clear();
     // await LocalCountry().clear();
   }
 }

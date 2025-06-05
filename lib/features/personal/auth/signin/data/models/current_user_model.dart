@@ -3,7 +3,10 @@ import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../../core/extension/string_ext.dart';
 import '../../../../../attachment/data/attchment_model.dart';
 import '../../../../../business/core/data/models/business_employee_model.dart';
+import '../../../../user/profiles/data/models/supporter_detail_model.dart';
+import '../../../../user/profiles/domain/entities/supporter_detail_entity.dart';
 import '../../domain/entities/current_user_entity.dart';
+import '../../domain/entities/login_info_entity.dart';
 import 'address_model.dart';
 import 'login_detail_model.dart';
 import 'login_info_model.dart';
@@ -43,7 +46,11 @@ class CurrentUserModel extends CurrentUserEntity {
       required super.logindetail,
       required super.loginActivity,
       required super.employeeList,
-      required super.twoStepAuthEnabled})
+      required super.twoStepAuthEnabled,
+      //      
+      required super.supporters,
+      required super.supporting,
+      })
       : super(inHiveAt: DateTime.now());
 
   factory CurrentUserModel.fromRawJson(String str) =>
@@ -51,7 +58,6 @@ class CurrentUserModel extends CurrentUserEntity {
 
   factory CurrentUserModel.fromJson(Map<String, dynamic> json) {
     final userData = json['item'] ?? <dynamic, dynamic>{};
-
     // **Handling address field to support both List and Map**
     final dynamic addressData = userData['address'];
     List<AddressEntity> addressList = <AddressEntity>[];
@@ -115,7 +121,7 @@ class CurrentUserModel extends CurrentUserEntity {
                   json['login_activity']
                       .map((e) => DeviceLoginInfoModel.fromJson(e)),
                 )
-              : [],
+              : <DeviceLoginInfoEntity>[],
 
       employeeList: List<BusinessEmployeeModel>.from(
         (userData['employees'] ?? <dynamic>[])
@@ -123,6 +129,13 @@ class CurrentUserModel extends CurrentUserEntity {
       ),
       twoStepAuthEnabled:
           userData['security']?['two_factor_authentication'] ?? false,
+    supporters: (userData['supporters'] as List<dynamic>?)
+    ?.map((e) => SupporterDetailModel.fromMap(e).toEntity())
+    .toList() ?? <SupporterDetailEntity>[],
+supporting: (userData['supporting'] as List<dynamic>?)
+    ?.map((e) => SupporterDetailModel.fromMap(e).toEntity())
+    .toList() ?? <SupporterDetailEntity>[],
+
     );
   }
 }

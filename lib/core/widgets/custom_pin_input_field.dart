@@ -76,7 +76,7 @@ class CustomPinInputFieldState extends State<CustomPinInputField> {
       builder: (FormFieldState<String> field) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
+          children: <Widget>[
             Wrap(
               alignment: WrapAlignment.center,
               spacing: widget.gap,
@@ -133,7 +133,7 @@ class CustomPinInputFieldState extends State<CustomPinInputField> {
                       }
 
                       _updatePinCode();
-                      field.didChange(_controllers.map((e) => e.text).join());
+                      field.didChange(_controllers.map((TextEditingController e) => e.text).join());
                     },
                     onTap: () {
                       if (_controllers[index].text.isNotEmpty) {

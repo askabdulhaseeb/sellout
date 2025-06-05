@@ -15,7 +15,7 @@ import '../../profile_photo.dart';
 
 personalAppbar(BuildContext context) {
   final String me = LocalAuth.uid ?? '';
-  return AppBar(
+  return AppBar(automaticallyImplyLeading: false,
     centerTitle: false,
     surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,

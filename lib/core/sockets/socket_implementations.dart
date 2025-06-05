@@ -7,6 +7,7 @@ import '../../../../../../services/get_it.dart';
 import '../../features/personal/chats/chat/data/models/message_last_evaluated_key.dart';
 import '../../features/personal/chats/chat/domain/entities/getted_message_entity.dart';
 import '../../features/personal/chats/chat_dashboard/data/models/message/message_model.dart';
+import '../../features/personal/chats/chat_dashboard/data/sources/local/local_unseen_messages.dart';
 import '../../features/personal/chats/chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../features/personal/chats/chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../features/personal/chats/chat_dashboard/domain/usecase/get_my_chats_usecase.dart';
@@ -45,6 +46,8 @@ class SocketImplementations {
         );
     existing.messages.add(newMsg);
     await messageBox.put(chatId, existing);
+  await LocalUnreadMessagesService().increment(chatId);
+
   }
 
   // UPDATE MESSAGES

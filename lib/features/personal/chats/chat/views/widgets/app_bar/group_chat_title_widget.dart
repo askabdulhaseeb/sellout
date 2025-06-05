@@ -23,9 +23,11 @@ class GroupChatTitleWidget extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  groupInfo?.title ?? '',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                Expanded(
+                  child: Text(
+                    groupInfo?.title ?? '',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
                 Opacity(
                   opacity: 0.5,

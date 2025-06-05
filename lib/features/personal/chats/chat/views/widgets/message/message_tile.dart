@@ -5,7 +5,7 @@ import '../../../../../../../core/extension/datetime_ext.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
-import 'tile/alart_message_tile.dart';
+import 'tile/alert_message_tile.dart';
 import 'tile/offer_message_tile.dart';
 import 'tile/visiting_message_tile.dart';
 import 'tile/text_message_tile.dart';
