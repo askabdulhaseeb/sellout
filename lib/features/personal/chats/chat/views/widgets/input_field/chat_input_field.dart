@@ -1,14 +1,18 @@
+import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../providers/chat_provider.dart';
-import 'widgets/audio_recording_widget.dart';
-import 'widgets/chat_field_Attachment_menu.dart';
-import 'widgets/chat_field_attachment_slider.dart';
+import 'widgets/chat_input_recording_widget.dart';
+import 'widgets/input_field_pop_menu/chat_input_pop_menu.dart';
+import 'widgets/input_field_pop_menu/subwidgets/chat_input_attachment_slider.dart';
+import 'widgets/field_input_bottomsheets/chat_input_emogi_picker_bottomsheet.dart';
 
 class ChatInputField extends StatelessWidget {
   const ChatInputField({super.key});
-
+  
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -17,54 +21,63 @@ class ChatInputField extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
             color: Theme.of(context).dividerColor,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(16),
-              topRight: Radius.circular(16),
-            ),
           ),
           child: Consumer<ChatProvider>(
             builder: (BuildContext context, ChatProvider chatPro, _) {
+              // ⏺️ Show Audio Recorder if active
+              if (chatPro.isRecordingAudio) {
+                return ChatInputRecordingWidget(
+  onSend: (File audioFile) {
+    final ChatProvider chatPro = Provider.of<ChatProvider>(context, listen: false);
+    final PickedAttachment attachment = PickedAttachment(file: audioFile, type: AttachmentType.audio);
+    chatPro.addAttachment(attachment);
+  },
+  onCancel: () {
+    // Optional additional cancel logic here
+  },
+);
+   }
+
+              // 💬 Normal Chat UI
               return Column(
                 children: <Widget>[
-                  if (chatPro.attachments.isNotEmpty &&
-                      chatPro.attachments.first.type != AttachmentType.audio)
+                  if (chatPro.attachments.isNotEmpty)
                     ChatAttachmentsListView(attachments: chatPro.attachments),
-                  // If recording is active or paused, show the audio UI
-                  if (chatPro.isRecording)
-                    const AudioRecordingWidget(),
-                  // Otherwise show text input
-                   if (!chatPro.isRecording)    Row(
-                      children: <Widget>[ 
-                       const  AttachmentMenuButton(),
-                        Expanded(
-                          child: TextFormField(
-                            controller: chatPro.message,
-                            minLines: 1,
-                            maxLines: 5,
-                            onChanged: (String value) =>
-                                chatPro.onTextChange(value),
-                            decoration: const InputDecoration(
-                              hintText: 'your_message_here',
-                              border: InputBorder.none,
-                            ),
+                  Row(
+                    children: <Widget>[
+                      const AttachmentMenuButton(),
+                      IconButton(
+                        icon: const Icon(Icons.emoji_emotions_outlined),
+                        onPressed: () => showEmojiPickerBottomSheet(context),
+                      ),
+                      Expanded(
+                        child: CustomTextFormField(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide: BorderSide.none,
                           ),
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          controller: chatPro.message,
+                          minLines: 1,
+                          maxLines: 5,
+                          onChanged: chatPro.onTextChange,
+                          hint: 'your_message_here'.tr(),
                         ),
-                        IconButton(
-                          icon: Icon(
-                            chatPro.message.text.isEmpty
-                                ? Icons.mic
-                                : Icons.send,
-                          ),
-                          onPressed: () async {
-                            if (chatPro.message.text.isNotEmpty) {
-                              await chatPro.sendMessage(context);
-                            } else {
-                              //  chatPro.startRecording();
-                            }
-                          },
-                        ),
-                      ],
-                    ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.mic_none_outlined),
+                        onPressed: chatPro.startRecording,
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.send_outlined),
+                        onPressed: () async {
+                          if (chatPro.message.text.isNotEmpty) {
+                            await chatPro.sendMessage(context);
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ],
               );
             },

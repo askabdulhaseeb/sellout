@@ -22,6 +22,7 @@ import '../features/personal/dashboard/views/screens/dashboard_screen.dart';
 import '../features/personal/book_visit/view/screens/view_booking_screen.dart';
 import '../features/personal/post/post_detail/views/screens/post_detail_screen.dart';
 import '../features/personal/review/views/screens/write_review_screen.dart';
+import '../features/personal/search/view/view/search_screen.dart';
 import '../features/personal/setting/more_info/views/screens/personal_more_information_setting_screen.dart';
 import '../features/personal/setting/view/setting_options/security/view/screens/setting_security_screen.dart';
 import '../features/personal/setting/view/setting_options/setting_notification/view/screens/personal_setting_email_notification_screen.dart';
@@ -106,5 +107,6 @@ class AppRoutes {
     EditProfileScreen.routeName: (_) => const EditProfileScreen(),
     //services
     AddServiceScreen.routeName: (_) => const AddServiceScreen(),
+    SearchScreen.routeName: (_) => const SearchScreen(),
   };
 }

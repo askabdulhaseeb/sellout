@@ -21,7 +21,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {debugPrint(  Provider.of<ChatProvider>(context, listen: false).chat?.persons.toString());
     return Scaffold(
       appBar: chatAppBar(context),
       body: const Column(

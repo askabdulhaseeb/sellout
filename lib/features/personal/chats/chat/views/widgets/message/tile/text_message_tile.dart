@@ -25,7 +25,7 @@ class TextMessageTile extends StatelessWidget {
             message.fileUrl.isNotEmpty
                 ? message.fileUrl.any(
                         (AttachmentEntity e) => e.type == AttachmentType.audio)
-                    ? AudioMessaheWidget(message: message)
+                    ? AudioMessageWidget(message: message)
                     : AttachmentMessageWidget(attachments: message.fileUrl)
                 : const SizedBox(),
             if (message.text.isNotEmpty)

@@ -20,10 +20,6 @@ class PostVehicleButtonTile extends StatelessWidget {
         if (post.acceptOffers == false)
           CustomElevatedButton(
             title: 'book_visit'.tr(),
-            textStyle: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
             isLoading: false,
             onTap: () {
               pro.disposed();

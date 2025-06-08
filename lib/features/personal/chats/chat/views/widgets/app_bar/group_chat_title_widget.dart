@@ -20,27 +20,27 @@ class GroupChatTitleWidget extends StatelessWidget {
               placeholder: groupInfo?.title ?? '',
             ),
             const SizedBox(width: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Expanded(
-                  child: Text(
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
                     groupInfo?.title ?? '',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                ),
-                Opacity(
-                  opacity: 0.5,
-                  child: const Text(
-                    'tap_here_to_open_profile',
-                    style: TextStyle(fontSize: 12),
-                  ).tr(),
-                )
-              ],
-            )
-          ],
-        );
-      },
+                  Opacity(
+                    opacity: 0.5,
+                    child: const Text(
+                      'tap_here_to_open_profile',
+                      style: TextStyle(fontSize: 12),
+                   ).tr(),
+                 )
+               ],
+             ),
+           )
+         ],
+       );
+     },
     );
   }
 }

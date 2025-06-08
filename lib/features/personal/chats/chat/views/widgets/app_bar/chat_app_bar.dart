@@ -9,7 +9,8 @@ import 'product_chat_title_widget.dart';
 
 chatAppBar(BuildContext context) {
   final ChatEntity? chat = Provider.of<ChatProvider>(context).chat;
-  return AppBar(
+  return AppBar(leading:IconButton(onPressed: (){Navigator.pop(context);},
+   icon: const Icon(Icons.arrow_back_ios_rounded)),leadingWidth:40,
     title: chat?.type == ChatType.product
         ? const ProductChatTitleWidget()
         : chat?.type == ChatType.group

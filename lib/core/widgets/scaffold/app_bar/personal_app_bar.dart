@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-
 import '../../../../features/business/core/data/sources/local_business.dart';
 import '../../../../features/business/core/domain/entity/business_entity.dart';
 import '../../../../features/personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../../../features/personal/cart/data/models/cart/cart_item_model.dart';
 import '../../../../features/personal/cart/data/sources/local_cart.dart';
 import '../../../../features/personal/cart/views/screens/personal_cart_screen.dart';
+import '../../../../features/personal/search/view/view/search_screen.dart';
 import '../../../../features/personal/user/profiles/data/sources/local/local_user.dart';
 import '../../../../features/personal/user/profiles/domain/entities/business_profile_detail_entity.dart';
 import '../../../utilities/app_icons.dart';
@@ -68,9 +68,7 @@ personalAppbar(BuildContext context) {
                     );
             }),
     actions: <Widget>[
-      InDevMode(
-        child: _IconButton(icon: AppIcons.search, onPressed: () {}),
-      ),
+      _IconButton(icon: AppIcons.search, onPressed: () {Navigator.pushNamed(context, SearchScreen.routeName);}),
       InDevMode(
         child: _IconButton(icon: AppIcons.notification, onPressed: () {}),
       ),

@@ -48,13 +48,7 @@ final CreatePrivateChatProvider provider = Provider.of<CreatePrivateChatProvider
                     leading: CircularProgressIndicator(),
                   );
                 }
-
-                if (snapshot.hasError || snapshot.data == null || snapshot.data!.entity == null) {
-                  return const ListTile(title: Text('Error loading user'));
-                }
-
                 final UserEntity user = snapshot.data!.entity!;
-
                 return ListTile(
                   minTileHeight: 70,
                   leading: ProfilePhoto(
@@ -64,7 +58,7 @@ final CreatePrivateChatProvider provider = Provider.of<CreatePrivateChatProvider
                   ),
                   title: Text(user.displayName),
                   trailing: SizedBox(height: 70,width: 60,
-                    child: CustomElevatedButton(
+                    child: CustomElevatedButton(padding:const EdgeInsets.all(0),
                       onTap: () {
                     provider.startPrivateChat(context, userId);
                       },

@@ -118,6 +118,12 @@ import '../features/personal/review/domain/repositories/review_repository.dart';
 import '../features/personal/review/domain/usecase/create_review_usecase.dart';
 import '../features/personal/review/domain/usecase/get_reviews_usecase.dart';
 import '../features/personal/review/views/providers/review_provider.dart';
+import '../features/personal/search/data/repository/search_repository_impl.dart';
+import '../features/personal/search/data/source/search_remote_source.dart';
+import '../features/personal/search/domain/repository/search_repository.dart';
+import '../features/personal/search/domain/usecase/search_usecase.dart';
+import '../features/personal/search/view/provider/search_provider.dart';
+import '../features/personal/search/view/view/search_screen.dart';
 import '../features/personal/services/data/repositories/personal_services_repository_impl.dart';
 import '../features/personal/services/data/sources/services_explore_api.dart';
 import '../features/personal/services/domain/repositories/personal_services_repository.dart';
@@ -162,6 +168,7 @@ void setupLocator() {
   _addlisting();
   _sockets();
   _addaddress();
+  _search();
 }
 
 void _auth() {
@@ -502,4 +509,22 @@ void _addaddress() {
   // Providers
   locator.registerLazySingleton<AddAddressProvider>(
       () => AddAddressProvider(locator(), locator()));
+}
+void _search() {
+  // API
+  //
+  locator.registerFactory<SearchRemoteDataSource>(() => SearchRemoteDataSourceImpl());
+  // REPOSITORIES
+  //
+  locator.registerFactory<SearchRepository>(
+      () => SearchRepositoryImpl(locator()));
+  // USECASES
+  //
+  locator.registerFactory<SearchUsecase>(
+      () => SearchUsecase(locator()));
+  // Providers
+  locator.registerLazySingleton<SearchProvider>(
+      () => SearchProvider(locator()));
+        locator.registerLazySingleton<SearchScreen>(
+      () => const SearchScreen());
 }

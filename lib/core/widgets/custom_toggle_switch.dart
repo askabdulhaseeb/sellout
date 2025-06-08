@@ -31,7 +31,7 @@ class CustomToggleSwitch<T> extends StatelessWidget {
           if (labelText.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(bottom: 2),
-              child: Text(
+              child: Text(overflow: TextOverflow.ellipsis,maxLines: 1,
                 labelText,
                 style: const TextStyle(fontWeight: FontWeight.w500),
               ),
