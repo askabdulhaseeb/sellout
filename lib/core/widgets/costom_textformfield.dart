@@ -133,13 +133,13 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
             cursorColor: Theme.of(context).colorScheme.secondary,
             decoration: InputDecoration(
               contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-              // filled: true,
-              // fillColor: widget.color ??
-              //     Theme.of(context)
-              //         .textTheme
-              //         .bodyLarge!
-              //         .color!
-              //         .withOpacity(0.05),
+              filled: true,
+              fillColor: widget.color ??
+                  Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .color!
+                      .withValues(alpha:0.05),
               hintText: widget.hint,
               prefixText:
                   widget.prefixText == null ? null : '${widget.prefixText!} ',

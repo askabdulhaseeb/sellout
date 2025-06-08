@@ -42,7 +42,7 @@ class ReviewRemoteApiImpl implements ReviewRemoteApi {
       // Cloud Fresh Data
       final DataState<bool> response = await ApiCall<bool>().call(
         endpoint: endpoint,
-        requestType: ApiRequestType.get,
+        requestType: ApiRequestType.get,isAuth: false
       );
       if (response is DataSuccess) {
         final String raw = response.data ?? '';

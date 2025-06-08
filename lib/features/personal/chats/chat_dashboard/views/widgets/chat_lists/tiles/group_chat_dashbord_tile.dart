@@ -4,22 +4,22 @@ import '../../../../../../../../core/extension/datetime_ext.dart';
 import '../../../../../../../../core/widgets/profile_photo.dart';
 import '../../../../../chat/views/providers/chat_provider.dart';
 import '../../../../../chat/views/screens/chat_screen.dart';
+import '../../../../data/sources/local/local_unseen_messages.dart';
 import '../../../../domain/entities/chat/chat_entity.dart';
+import '../../unseen_message_badge.dart';
 
 class GroupChatDashbordTile extends StatelessWidget {
   const GroupChatDashbordTile({required this.chat, super.key});
   final ChatEntity chat;
-
   @override
   Widget build(BuildContext context) {
-    return InkWell( onTap: () {
+    return InkWell( onTap: ()async {
           Provider.of<ChatProvider>(context, listen: false).chat = chat;
+                  await LocalUnreadMessagesService().clearCount(chat.chatId);
           Navigator.of(context).pushNamed(ChatScreen.routeName);
         },
       child: Container(      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-
-       
-        child: Column(
+        child: Column(mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Row(
               children: <Widget>[
@@ -46,9 +46,13 @@ class GroupChatDashbordTile extends StatelessWidget {
                     ],
                   ),
                 ),
-                Text(
-                  chat.lastMessage?.createdAt.timeAgo ?? '',
-                  style: const TextStyle(fontSize: 10),
+                Column(
+                  children: <Widget>[
+                    Text(
+                      chat.lastMessage?.createdAt.timeAgo ?? '',
+                      style: const TextStyle(fontSize: 10),
+                    ), UnreadMessageBadgeWidget(chatId: chat.chatId),
+                  ],
                 ),
               ],
             ),

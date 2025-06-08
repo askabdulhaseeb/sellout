@@ -9,6 +9,7 @@ import '../../../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../../../../user/profiles/domain/usecase/get_user_by_uid.dart';
 import '../../../../../chat/views/providers/chat_provider.dart';
 import '../../../../../chat/views/screens/chat_screen.dart';
+import '../../../../data/sources/local/local_unseen_messages.dart';
 import '../../../../domain/entities/chat/chat_entity.dart';
 import '../../chat_profile_with_status.dart';
 import '../../unseen_message_badge.dart';
@@ -23,9 +24,9 @@ class PrivateChatDashboardTile extends StatelessWidget {
     final GetUserByUidUsecase getUserByUidUsecase =
         GetUserByUidUsecase(locator());
     return GestureDetector(
-      onTap: () {
+      onTap: ()async {
         pro.chat = chat;
-
+        await LocalUnreadMessagesService().clearCount(chat.chatId);
         Navigator.of(context).pushNamed(ChatScreen.routeName);
       },
       child: Padding(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../../../../core/widgets/video_widget.dart';
-import '../../../../../../../attachment/domain/entities/picked_attachment.dart';
+import '../../../../../../../../../../core/widgets/video_widget.dart';
+import '../../../../../../../../../attachment/domain/entities/picked_attachment.dart';
 
 class ChatAttachmentsListView extends StatelessWidget {
   const ChatAttachmentsListView({required this.attachments, super.key});

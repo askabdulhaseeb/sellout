@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/media_preview/view/screens/media_preview_screen.dart';
 import '../../../../../../core/sources/data_state.dart';
@@ -26,23 +24,23 @@ class ChatProvider extends ChangeNotifier {
   final SendMessageUsecase _sendMessageUsecase;
 
   ChatEntity? _chat;
-  ChatEntity? get chat => _chat;
-
-  DateTime? _chatAt;
-  DateTime? get chatAT => _chatAt;
-
-
-
-  final List<PickedAttachment> _attachments = <PickedAttachment>[];
-  List<PickedAttachment> get attachments => _attachments;
   MessageLastEvaluatedKeyEntity? _key;
   GettedMessageEntity? _gettedMessage;
-  GettedMessageEntity? get gettedMessage => _gettedMessage;
-  final TextEditingController _message = TextEditingController();
-  TextEditingController get message => _message;
+  DateTime? _chatAt;
   bool _isLoading = false;
+  bool isRecordingAudio  =false;
+  final TextEditingController _message = TextEditingController();
+  final FocusNode focusNode = FocusNode();
+  TextSelection lastSelection = const TextSelection.collapsed(offset: 0);
+  final List<PickedAttachment> _attachments = <PickedAttachment>[];
+//
+  List<PickedAttachment> get attachments => _attachments;
+  GettedMessageEntity? get gettedMessage => _gettedMessage;
+  TextEditingController get message => _message;
+  DateTime? get chatAT => _chatAt;
+  ChatEntity? get chat => _chat;
   bool get isLoading => _isLoading;
-
+//
   set isLoading(bool value) {
     _isLoading = value;
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -50,14 +48,40 @@ class ChatProvider extends ChangeNotifier {
     });
   }
 
-  onTextChange(String value) {
-    if (value.isEmpty) {
-      notifyListeners();
-    } else if (value.length == 1) {
-      notifyListeners();
-    }
-    return;
+ void startRecording() {
+    isRecordingAudio = true;
+    notifyListeners();
   }
+
+  void stopRecording() {
+    isRecordingAudio = false;
+    notifyListeners();
+  }
+
+ void onTextChange(String value) {
+  lastSelection = _message.selection;
+  notifyListeners(); // optional
+}
+
+void insertEmoji(String emoji) {
+  final String text = _message.text;
+  final TextSelection selection = lastSelection;
+
+  final String newText = text.replaceRange(
+    selection.start,
+    selection.end,
+    emoji,
+  );
+
+  final int newSelection = selection.start + emoji.length;
+
+  _message.value = _message.value.copyWith(
+    text: newText,
+    selection: TextSelection.collapsed(offset: newSelection),
+  );
+
+  notifyListeners();
+}
 
   set chat(ChatEntity? value) {
     _chat = value;
@@ -118,7 +142,7 @@ class ChatProvider extends ChangeNotifier {
     _attachments.add(attachment);
     notifyListeners();
   }
-
+ 
   void clearAttachments() {
     _attachments.clear();
     notifyListeners();
@@ -157,99 +181,5 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
   }
 //-----------------------------Audio Recording Widget
-  final RecorderController recorderController = RecorderController();
-  bool _isPaused = false;
-  bool _isRecording = false;
-  bool _isLocked = false;
-  bool _showDelete = false;
-  Duration _recordingDuration = Duration.zero;
-  Timer? _timer;
-  final bool _isSending = false;
 
-  bool get isRecording => _isRecording;
-  bool get isLocked => _isLocked;
-  bool get showDelete => _showDelete;
-  Duration get recordingDuration => _recordingDuration;
-  bool get isSending => _isSending;
- void setRecording(bool value){
-  _isRecording = value;
- }
-  Future<void> requestMicPermission() async {
-    final PermissionStatus status = await Permission.microphone.status;
-    if (!status.isGranted) {
-      final PermissionStatus result = await Permission.microphone.request();
-      if (!result.isGranted) {
-        throw Exception('Microphone permission not granted');
-      }
-    }
-  }
-
-  Future<void> startRecording() async {
-    if (_isRecording) return;
-    
-    try {
-      await requestMicPermission();
-      
-      _isRecording = true;
-      _isPaused = false;
-      _isLocked = false;
-      _showDelete = false;
-      _recordingDuration = Duration.zero;
-      
-      await recorderController.record();
-      _startTimer();
-      notifyListeners();
-    } catch (e) {
-      _resetRecordingState();
-      rethrow;
-    }
-  }
-
-  void _startTimer() {
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
-      _recordingDuration += const Duration(seconds: 1);
-      notifyListeners();
-    });
-  }
-
-  void cancelRecording() {
-    _timer?.cancel();
-    _resetRecordingState();
-    recorderController.reset();
-    notifyListeners();
-  }
-
-  void toggleLock() {
-    _isLocked = !_isLocked;
-    notifyListeners();
-  }
-
-  Future<void> togglePauseResume() async {
-    if (!_isRecording) return;
-
-    if (_isPaused) {
-      await recorderController.record();
-    } else {
-      await recorderController.pause();
-    }
-    
-    _isPaused = !_isPaused;
-    notifyListeners();
-  }
-
-  void _resetRecordingState() {
-    _timer?.cancel();
-    _isRecording = false;
-    _isPaused = false;
-    _isLocked = false;
-    _showDelete = false;
-    _recordingDuration = Duration.zero;
-  }
-
-  void disposed() {
-    _timer?.cancel();
-    recorderController.dispose();
-    super.dispose();
-  }
 }
