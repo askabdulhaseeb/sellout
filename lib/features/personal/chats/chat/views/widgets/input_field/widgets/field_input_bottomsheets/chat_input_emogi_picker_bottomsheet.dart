@@ -12,38 +12,36 @@ void showEmojiPickerBottomSheet(BuildContext context) {
     backgroundColor: Colors.transparent,
     builder: (BuildContext subcontext) {
       final ChatProvider chatPro = Provider.of<ChatProvider>(context, listen: false); // <-- replace with your class
-
       return Padding(
         padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
         child: Container(
-          height: 400,
+          height: 450,
           decoration: BoxDecoration(
             color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(20),
           ),
-          padding: const EdgeInsets.all(8),
           child: EmojiPicker(
-            onEmojiSelected:(Category? category, Emoji emoji) =>  {
-              chatPro.message.text += emoji.emoji,
-              chatPro.message.selection = TextSelection.fromPosition(
-                TextPosition(offset: chatPro.message.text.length),
-              ),
-            },
-            config: Config(bottomActionBarConfig: BottomActionBarConfig(backgroundColor: Theme.of(context).scaffoldBackgroundColor,),categoryViewConfig: CategoryViewConfig(
-              // bgColor: 
-              indicatorColor: Theme.of(context).primaryColor,
-              iconColor: Theme.of(context).disabledColor,
-              iconColorSelected: Theme.of(context).primaryColor,
-              // recentsLimit: 30,
-              tabIndicatorAnimDuration: kTabScrollDuration,
-              categoryIcons: const CategoryIcons(),
-              // buttonMode: ButtonMode.CUPERTINO,
-             // enableSkinTones: true,
-              ),
-              
-            ),
-          ),
+    onBackspacePressed: () {
+    },
+    textEditingController: chatPro.message, 
+    config: Config(
+        height: 260,
+        checkPlatformCompatibility: true,
+        emojiViewConfig:  EmojiViewConfig(
+        emojiSizeMax: 20,
+        backgroundColor: Theme.of(context).cardColor
         ),
+        viewOrderConfig: const ViewOrderConfig(
+            top: EmojiPickerItem.categoryBar,
+            middle: EmojiPickerItem.emojiView,
+            bottom: EmojiPickerItem.searchBar,
+        ),
+        skinToneConfig: const SkinToneConfig(),
+        categoryViewConfig:  CategoryViewConfig(backgroundColor: Theme.of(context).scaffoldBackgroundColor),
+        bottomActionBarConfig:  BottomActionBarConfig(backgroundColor: Theme.of(context).scaffoldBackgroundColor),
+        searchViewConfig:  SearchViewConfig(backgroundColor: Theme.of(context).scaffoldBackgroundColor),
+    ),
+)   ),
       );
     },
   );

@@ -134,12 +134,7 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
             decoration: InputDecoration(
               contentPadding: const EdgeInsets.symmetric(horizontal: 12),
               filled: true,
-              fillColor: widget.color ??
-                  Theme.of(context)
-                      .textTheme
-                      .bodyLarge!
-                      .color!
-                      .withValues(alpha:0.05),
+              fillColor: widget.color ?? Theme.of(context).scaffoldBackgroundColor,
               hintText: widget.hint,
               prefixText:
                   widget.prefixText == null ? null : '${widget.prefixText!} ',

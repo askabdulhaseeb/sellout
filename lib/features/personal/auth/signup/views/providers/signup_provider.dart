@@ -19,7 +19,6 @@ import '../../domain/usecase/verify_opt_usecase.dart';
 import '../enums/signup_page_type.dart';
 import '../params/signup_basic_info_params.dart';
 import '../params/signup_send_opt_params.dart';
-import '../screens/pages/account_type_page.dart';
 import '../screens/pages/signup_basic_info_page.dart';
 import '../screens/pages/signup_dob_page.dart';
 import '../screens/pages/signup_location_page.dart';
@@ -103,7 +102,7 @@ class SignupProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  SignupPageType _currentPage = SignupPageType.accountType;
+  SignupPageType _currentPage = SignupPageType.basicInfo;
   SignupPageType get currentPage => _currentPage;
   set currentPage(SignupPageType value) {
     _currentPage = value;
@@ -130,8 +129,8 @@ class SignupProvider extends ChangeNotifier {
 
   Widget displayedPage() {
     switch (currentPage) {
-      case SignupPageType.accountType:
-        return const AccountTypeScreen();
+      // case SignupPageType.accountType:
+      //   return const AccountTypeScreen();
       case SignupPageType.basicInfo:
         return const SignupBasicInfoPage();
       case SignupPageType.otp:

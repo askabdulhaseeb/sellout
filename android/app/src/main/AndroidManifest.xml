@@ -5,14 +5,9 @@
 <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-<uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 <uses-permission android:name="android.permission.READ_CONTACTS"/>
-<uses-permission android:name="android.permission.WRITE_CONTACTS"/>
     <application android:label="sellout" android:name="${applicationName}" android:icon="@mipmap/ic_launcher" android:theme="@style/NormalTheme">
         <activity android:name="io.flutter.embedding.android.FlutterFragmentActivity" android:exported="true" android:launchMode="singleTask" android:taskAffinity="" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode" android:hardwareAccelerated="true" android:windowSoftInputMode="adjustResize">
             <!-- DEEP LINK -->

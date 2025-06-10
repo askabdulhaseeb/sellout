@@ -73,26 +73,24 @@ class MessagesList extends HookWidget {
       return subscription.cancel;
     }, <Object?>[chatId]);
 
-    return Expanded(
-      child: ListView.builder(
-        physics: const BouncingScrollPhysics(),
-        controller: scrollController,
-        reverse: true,
-        itemCount: messages.value.length,
-        itemBuilder: (BuildContext context, int index) {
-          final MessageEntity current = messages.value[index];
-          final MessageEntity? next =
-              index > 0 ? messages.value[index - 1] : null;
-
-          return MessageTile(
-            key: ValueKey<String>(current.messageId),
-            message: current,
-            timeDiff: (next != null && current.sendBy == next.sendBy)
-                ? current.createdAt.difference(next.createdAt)
-                : const Duration(days: 5),
-          );
-        },
-      ),
+    return ListView.builder(padding: const EdgeInsets.all(0),
+      physics: const BouncingScrollPhysics(),
+      controller: scrollController,
+      reverse: true,
+      itemCount: messages.value.length,
+      itemBuilder: (BuildContext context, int index) {
+        final MessageEntity current = messages.value[index];
+        final MessageEntity? next =
+            index > 0 ? messages.value[index - 1] : null;
+    
+        return MessageTile(
+          key: ValueKey<String>(current.messageId),
+          message: current,
+          timeDiff: (next != null && current.sendBy == next.sendBy)
+              ? current.createdAt.difference(next.createdAt)
+              : const Duration(days: 5),
+        );
+      },
     );
   }
 

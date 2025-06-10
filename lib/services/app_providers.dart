@@ -8,7 +8,6 @@ import '../features/personal/address/add_address/views/provider/add_address_prov
 import '../features/personal/auth/find_account/view/providers/find_account_provider.dart';
 import '../features/personal/auth/signup/views/providers/signup_provider.dart';
 import '../features/personal/cart/views/providers/cart_provider.dart';
-import '../features/personal/chats/chat/views/providers/audio_provider.dart';
 import '../features/personal/chats/chat/views/providers/chat_provider.dart';
 import '../features/personal/chats/create_chat/view/provider/create_private_chat_provider.dart';
 import '../features/personal/chats/create_chat/view/provider/create_chat_group_provider.dart';
@@ -18,6 +17,7 @@ import '../features/personal/chats/chat_dashboard/views/providers/chat_dashboard
 import '../features/personal/dashboard/views/providers/personal_bottom_nav_provider.dart';
 import '../features/personal/book_visit/view/provider/visiting_provider.dart';
 import '../features/personal/post/feed/views/providers/feed_provider.dart';
+import '../features/personal/promo/view/provider/promo_provider.dart';
 import '../features/personal/post/post_detail/views/providers/post_detail_provider.dart';
 import '../features/personal/review/views/providers/review_provider.dart';
 import '../features/personal/search/view/provider/search_provider.dart';
@@ -59,7 +59,6 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
       value: CreateChatGroupProvider(locator())),
        ChangeNotifierProvider<CreatePrivateChatProvider>.value(
       value: CreatePrivateChatProvider(locator())),
-  ChangeNotifierProvider<AudioProvider>.value(value: AudioProvider()),
   //
   ChangeNotifierProvider<ProfileProvider>.value(
       value: ProfileProvider(locator(), locator(), locator(), locator(),
@@ -72,6 +71,11 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
     locator(),
     locator(),
     locator(),
+  )),
+   ChangeNotifierProvider<PromoProvider>.value(
+      value: PromoProvider(
+    locator(),locator(),
+
   )),
   ChangeNotifierProvider<PostDetailProvider>.value(
       value: PostDetailProvider(locator(), locator())),

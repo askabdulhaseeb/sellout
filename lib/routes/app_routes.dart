@@ -7,6 +7,7 @@ import '../features/personal/auth/find_account/view/screens/find_account_screen.
 import '../features/personal/auth/find_account/view/screens/new_password_screen.dart';
 import '../features/personal/auth/find_account/view/screens/send_code_screen.dart';
 import '../features/personal/auth/signin/views/screens/verify_two_factor_screen.dart';
+import '../features/personal/auth/welcome_screen/view/screens/welcome_screen.dart';
 import '../features/personal/cart/views/screens/personal_cart_screen.dart';
 import '../features/personal/chats/chat/views/screens/chat_screen.dart';
 import '../features/personal/marketplace/views/screens/filter_categories/explore_cloth_foot_screen.dart';
@@ -21,6 +22,7 @@ import '../features/personal/auth/signup/views/screens/signup_screen.dart';
 import '../features/personal/dashboard/views/screens/dashboard_screen.dart';
 import '../features/personal/book_visit/view/screens/view_booking_screen.dart';
 import '../features/personal/post/post_detail/views/screens/post_detail_screen.dart';
+import '../features/personal/promo/view/screens/create_promo_screen.dart';
 import '../features/personal/review/views/screens/write_review_screen.dart';
 import '../features/personal/search/view/view/search_screen.dart';
 import '../features/personal/setting/more_info/views/screens/personal_more_information_setting_screen.dart';
@@ -55,13 +57,14 @@ class AppRoutes {
       case '/overview':
         return DashboardScreen.routeName;
       default:
-        return SignInScreen.routeName;
+        return WelcomeScreen.routeName;
     }
   }
 
   static Map<String, Widget Function(BuildContext)> routes =
       <String, WidgetBuilder>{
     // AUTH
+    WelcomeScreen.routeName: (_) => const WelcomeScreen(),
     SignInScreen.routeName: (_) => const SignInScreen(),
     SignupScreen.routeName: (_) => const SignupScreen(),
     FindAccountScreen.routeName: (_) => const FindAccountScreen(),
@@ -76,11 +79,11 @@ class AppRoutes {
     AddListingFormScreen.routeName: (_) => const AddListingFormScreen(),
     // POST
     PostDetailScreen.routeName: (_) => const PostDetailScreen(),
+    CreatePromoScreen.routeName:(_)=> const CreatePromoScreen(),
     //CHAT
     ChatScreen.routeName: (_) => const ChatScreen(),
     //BOOKING
     BookingScreen.routeName: (_) => const BookingScreen(),
-
     // CART
     PersonalCartScreen.routeName: (_) => const PersonalCartScreen(),
     // SETTINGS

@@ -56,7 +56,7 @@ void _triggerSearch([String? manualQuery]) {
             ? SearchEntityType.services
             : SearchEntityType.users,
     queryText,
-    6, // or your desired page size
+    12, // or your desired page size
   );
 
   provider.search();

@@ -21,14 +21,17 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {debugPrint(  Provider.of<ChatProvider>(context, listen: false).chat?.persons.toString());
-    return Scaffold(
+  Widget build(BuildContext context) {
+    debugPrint(  Provider.of<ChatProvider>(context, listen: false).chat?.persons.toString());
+    return Scaffold( resizeToAvoidBottomInset: true,
       appBar: chatAppBar(context),
-      body: const Column(
-        children: <Widget>[
-          MessagesList(),
-          ChatInputField(),
-        ],
+      body: const SafeArea(
+        child: Column(
+          children: <Widget>[
+            Expanded(child: MessagesList()),
+            ChatInputField(),
+          ],
+        ),
       ),
     );
   }

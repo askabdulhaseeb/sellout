@@ -7,8 +7,6 @@ import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/password_textformfield.dart';
 import '../../../../../../core/widgets/sellout_title.dart';
 import '../../../../../../routes/app_linking.dart';
-import '../../../../dashboard/views/providers/personal_bottom_nav_provider.dart';
-import '../../../../dashboard/views/screens/dashboard_screen.dart';
 import '../../../find_account/view/screens/find_account_screen.dart';
 import '../../../signup/views/screens/signup_screen.dart';
 import '../providers/signin_provider.dart';
@@ -19,19 +17,11 @@ class SignInScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final SigninProvider authPro = Provider.of<SigninProvider>(context,listen: false);
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppBar(leading: IconButton(onPressed: (){Navigator.pop(context);},icon:const Icon(Icons.arrow_back_ios),),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.of(context).canPop()
-                ? AppNavigator.pushNamed(DashboardScreen.routeName)
-                : Provider.of<PersonalBottomNavProvider>(context, listen: false)
-                    .setCurrentTab(PersonalBottomNavBarType.home),
-            child: const Text('skip').tr(),
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -66,25 +56,25 @@ class SignInScreen extends StatelessWidget {
                       ).tr(),
                     ),
                   ),
-                  CustomElevatedButton(
-                    title: 'login'.tr(),
-                    isLoading: authPro.isLoading,
-                    onTap: () async => await authPro.signIn(),
-                  ),
-                  CustomElevatedButton(
-                    title: 'create_account'.tr(),
-                    isLoading: false,
-                    bgColor: Colors.transparent,
-                    border: Border.all(color: Theme.of(context).dividerColor),
-                    onTap: () async =>
-                        await AppNavigator.pushNamed(SignupScreen.routeName),
-                  ),
                 ],
               ),
             ),
           );
         }),
-      ),
+      ),bottomSheet: BottomAppBar(color: Theme.of(context).scaffoldBackgroundColor,height: 150,child: Column(children: [   CustomElevatedButton(padding:const EdgeInsets.all(0),
+                  title: 'dont_have_account'.tr(),textStyle: TextTheme.of(context).bodyMedium,
+                  isLoading: false,
+                  bgColor: Colors.transparent,
+                  border: null,
+                  onTap: () async =>
+                      await AppNavigator.pushNamed(SignupScreen.routeName),
+                ), 
+                                  CustomElevatedButton(
+                    title: 'login'.tr(),
+                    isLoading: authPro.isLoading,
+                    onTap: () async => await authPro.signIn(),
+                  ),
+              ],),),
     );
   }
 }

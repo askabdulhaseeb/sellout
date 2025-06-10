@@ -47,8 +47,7 @@ class CustomMediaTile extends StatelessWidget {
                 fit: BoxFit.cover,
               )
             : VideoWidget(
-                fit: BoxFit.cover,
-                showTime: true,
+                         showTime: true,
                 videoSource: media.file.path,
                 play: false,
               ),
