@@ -4,11 +4,9 @@ import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
 import '../../../../../../core/sources/local/local_request_history.dart';
 import '../../../../../../services/get_it.dart';
-import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../cart/domain/usecase/cart/get_cart_usecase.dart';
 import '../../../../chats/chat/data/sources/local/local_message.dart';
 import '../../../../chats/chat_dashboard/domain/entities/messages/message_entity.dart';
-import '../../../../user/profiles/domain/entities/supporter_detail_entity.dart';
 import '../../../domain/entities/post_entity.dart';
 import '../../../domain/params/add_to_cart_param.dart';
 import '../../../domain/params/create_offer_params.dart';
@@ -22,7 +20,6 @@ abstract interface class PostRemoteApi {
   Future<DataState<bool>> addToCart(AddToCartParam param);
   Future<DataState<bool>> createOffer(CreateOfferparams param);
   Future<DataState<bool>> updateOffer(UpdateOfferParams param);
-    Future<DataState<bool>> getPromoOfFollower();
 
   // Future<DataState<bool>> updateOfferStatus(UpdateOfferParams param);
 }
@@ -262,47 +259,6 @@ class PostRemoteApiImpl implements PostRemoteApi {
       AppLog.error(
         e.toString(),
         name: 'PostRemoteApiImpl.updateOffer - catch',
-        error: e,
-        stackTrace: stc,
-      );
-      return DataFailer<bool>(CustomException(e.toString()));
-    }
-  }
-
- @override
-  Future<DataState<bool>> getPromoOfFollower() async {
-    String endpoint = '/promo/followers/get';
-final List<String> supporterIds = LocalAuth.currentUser?.supporters
-    .map((SupporterDetailEntity supporter) => supporter.userID)
-    .toList() ?? <String>[];
-        debugPrint(jsonEncode(supporterIds));
-
-    try {
-      final DataState<bool> result = await ApiCall<bool>().call(
-        endpoint: endpoint,
-        requestType: ApiRequestType.post,
-        isAuth: true,
-        body:json.encode({
-      'follower_ids': supporterIds,
-    }));
-      if (result is DataSuccess) {
-        debugPrint(result.data);
-        // Map<String, dynamic> mapdata = jsonDecode(result.data!);
-        return DataSuccess<bool>(result.data!, true);
-      } else {
-        AppLog.error(
-          result.exception?.message ?? 'PostRemoteApiImpl.getPromoOfFollower - else',
-          name: 'PostRemoteApiImpl.getPromoOfFollower - failed',
-          error: result.exception,
-        );
-        return DataFailer<bool>(
-          result.exception ?? CustomException('something_wrong'.tr()),
-        );
-      }
-    } catch (e, stc) {
-      AppLog.error(
-        e.toString(),
-        name: 'PostRemoteApiImpl.getPromoOfFollower - catch',
         error: e,
         stackTrace: stc,
       );

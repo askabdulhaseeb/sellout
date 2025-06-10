@@ -18,6 +18,7 @@ class AppStrings {
   static String get localBookingsBox => 'com.sellout.local-bookings';
   static String get localCountryBox => 'com.sellout.local-countries';
   static String get localUnreadMessages => 'com.sellout.local-unread-messages';
+  static String get localPromosBox => 'com.sellout.local-promo';
 
   // [IMAGES]
   // Payment METHODS

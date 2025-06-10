@@ -15,8 +15,8 @@ class CreatePromoParams{
   final String price;
   final List<PickedAttachment> attachments;
 
-  Map<String, dynamic> toMap() {
-    return {
+  Map<String, String> toMap() {
+    return <String, String>{
       'reference_type': referenceType,
       'reference_id': referenceID,
       'title': title,

@@ -2,6 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/theme/app_theme.dart';
+import '../../../../../../../core/widgets/in_dev_mode.dart';
+import '../../../../../promo/domain/entities/promo_entity.dart';
 import '../../../../../promo/view/provider/promo_provider.dart';
 import '../../../../../promo/view/screens/create_promo_screen.dart';
 
@@ -24,50 +26,57 @@ class _HomePromoListSectionState extends State<HomePromoListSection> {
   @override
   Widget build(BuildContext context) {
     final List<int> promos = <int>[1, 2]; // Dummy data
-
-    return Column(
+final List<PromoEntity>? pro = Provider.of<PromoProvider>(context, listen: false).promoList; 
+   return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         // Header
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0,),
-          child: Row(
+          child: Row(mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Text(
                 'promo'.tr(),
                 style: TextTheme.of(context).titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               const Spacer(),
-              TextButton(
-                onPressed: () {},
-                child: Text(
-                  'view_more'.tr(),
-                  style: TextTheme.of(context).bodyMedium?.copyWith(
-                        color: AppTheme.primaryColor,
-                        decoration: TextDecoration.underline,
-                        decorationColor: AppTheme.primaryColor,
-                      ),
+              InDevMode(
+                child: TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    'view_more'.tr(),
+                    style: TextTheme.of(context).bodySmall?.copyWith(
+                          color: AppTheme.primaryColor,
+                          decoration: TextDecoration.underline,
+                          decorationColor: AppTheme.primaryColor,
+                        ),
+                  ),
                 ),
               ),
             ],
           ),
         ),
 
-        // Promo List
-        SizedBox(
-          height: 130,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            itemCount: promos.length + 1,
-            itemBuilder: (BuildContext context, int index) {
-              if (index == 0) {
-                return const AddPromoCard();
-              }
-              return const PromoItemCard(); // replace with real data later
-            },
-          ),
+        
+ SizedBox(
+  height: 130,
+  child: pro == null || pro.isEmpty
+      ? Center(child: Text('No promos found', style: TextTheme.of(context).bodySmall))
+      : ListView.builder(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          itemCount: pro.length + 1, // +1 for AddPromoCard
+          itemBuilder: (BuildContext context, int index) {
+            if (index == 0) {
+              return const AddPromoCard();
+            }
+
+            final PromoEntity promo = pro[index - 1];
+            return PromoItemCard(title: promo.title, file: promo.fileUrl);
+          },
         ),
+)
+
       ],
     );
   }
@@ -136,27 +145,47 @@ class AddPromoCard extends StatelessWidget {
     );
   }
 }
-
 class PromoItemCard extends StatelessWidget {
-  const PromoItemCard({super.key});
+  final String title;
+  final String file;
+
+  const PromoItemCard({
+    required this.title, required this.file, super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Container(
-          width: 80,
-          height: 100,
-          margin: const EdgeInsets.only(right: 12),
-          decoration: BoxDecoration(
-            color: Theme.of(context).dividerColor,
-            borderRadius: BorderRadius.circular(10),
+    return SizedBox(            width: 80,
+
+      child: Column(
+        children: <Widget>[
+          Container(
+            width: 80,
+            height: 100,
+            margin: const EdgeInsets.only(right: 12),
+            decoration: BoxDecoration(
+              color: Theme.of(context).dividerColor,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: 
+                 ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.network(
+                      file,
+                      fit: BoxFit.cover,
+                      width: 80,
+                      height: 100,
+                    ),
+                  )
           ),
-          child: const Icon(Icons.play_arrow_rounded, size: 40),
-        ),
-        const SizedBox(height: 4),
-        Text('your story', style: TextTheme.of(context).bodySmall),
-      ],
+          const SizedBox(height: 4),
+          Text(
+            title,
+            style: TextTheme.of(context).bodySmall,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
     );
   }
 }

@@ -10,6 +10,5 @@ abstract interface class PostRepository {
   Future<DataState<bool>> addToCart(AddToCartParam param);
   Future<DataState<bool>> createOffer(CreateOfferparams param);
     Future<DataState<bool>> updateOffer(UpdateOfferParams param);
-    Future<DataState<bool>> getPromoOfFollower();
     // Future<DataState<bool>> updateOfferStatus(UpdateOfferParams param);
 }

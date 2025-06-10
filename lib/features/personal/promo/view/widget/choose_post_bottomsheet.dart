@@ -143,6 +143,7 @@ class SimplePostTile extends StatelessWidget {
           context,
           listen: false,
         );
+        pro.setPost(post);
         pro.setRefernceID( post.postID,'post_attachment'
         // PASS REF TYPE HERE
         );

@@ -3,7 +3,8 @@ import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../post/domain/entities/post_entity.dart';
-import '../../../post/domain/usecase/get_promo_of_followers_usecase.dart';
+import '../../domain/entities/promo_entity.dart';
+import '../../domain/usecase/get_promo_of_followers_usecase.dart';
 import 'dart:async';
 import 'package:camera/camera.dart';
 import '../../../../attachment/domain/entities/picked_attachment_option.dart';
@@ -18,6 +19,9 @@ class PromoProvider extends ChangeNotifier {
   List<PickedAttachment> attachments = <PickedAttachment>[];
 PostEntity? _post;
 PostEntity? get post => _post;
+List<PromoEntity>? _promoList;
+List<PromoEntity>? get promoList => _promoList;
+
 int get pageNumber => attachment?.file == null ? 1 : 2;
   PickedAttachment? attachment;
   CameraController? cameraController;
@@ -37,6 +41,15 @@ int get pageNumber => attachment?.file == null ? 1 : 2;
   void setRefernceID(String refID,String refType){
 _referenceId = refID;
 referenceType = refType;
+  }void setPost(PostEntity posts){
+_post = posts;
+notifyListeners();
+  }
+  void clearPost(){
+_referenceId = '';
+referenceType = '';
+_post = null;
+notifyListeners();
   }
     CreatePromoParams get promoParams {
   return CreatePromoParams(
@@ -162,11 +175,10 @@ referenceType = refType;
  
   Future<void> getPromoOfFollower() async {
     try {
-      final DataState<bool> response = await getPromoUsecase.call(true);
-
+      final DataState<List<PromoEntity>> response = await getPromoUsecase.call(true);
       if (response is DataSuccess) {
         AppLog.info('Promo fetched successfully: ${response.data}');
-        // Do something with response.entity if needed
+_promoList = response.entity;
       } else {
         AppLog.error('Failed to fetch promo: ${response.exception?.message}');
       }
@@ -182,6 +194,8 @@ referenceType = refType;
     attachment = null;
     title.clear();
     price.clear();
+        clearPost();
+
    if(isFlashOn) toggleFlash();
   }
 }
