@@ -37,7 +37,7 @@ class _CustomShimmerState extends State<CustomShimmer>
             return LinearGradient(
               colors: <Color>[
                 Colors.grey.shade300,
-                Colors.grey.shade100,
+                Colors.white,
                 Colors.grey.shade300
               ],
               stops: const <double>[0.1, 0.5, 0.9],
