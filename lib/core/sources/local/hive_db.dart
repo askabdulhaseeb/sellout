@@ -1,8 +1,6 @@
 import 'dart:io';
-
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
-
 import '../../../features/attachment/domain/entities/attachment_entity.dart';
 import '../../../features/business/core/data/sources/local_business.dart';
 import '../../../features/business/core/data/sources/service/local_service.dart';
@@ -45,6 +43,8 @@ import '../../../features/personal/post/domain/entities/post_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/color_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/size_color_entity.dart';
 import '../../../features/personal/post/domain/entities/visit/visiting_entity.dart';
+import '../../../features/personal/promo/data/source/local/local_promo.dart';
+import '../../../features/personal/promo/domain/entities/promo_entity.dart';
 import '../../../features/personal/review/data/sources/local_review.dart';
 import '../../../features/personal/review/domain/entities/review_entity.dart';
 import '../../../features/personal/user/profiles/data/sources/local/local_user.dart';
@@ -130,6 +130,8 @@ class HiveDB {
     Hive.registerAdapter(ColorOptionEntityAdapter()); // 53
     Hive.registerAdapter(DeviceLoginInfoEntityAdapter()); // 54
     Hive.registerAdapter(UnreadMessageEntityAdapter()); // 55
+    Hive.registerAdapter(PromoEntityAdapter()); // 56
+    
     // Hive box Open
     await refresh();
   }
@@ -149,7 +151,9 @@ class HiveDB {
     await LocalReview().refresh();
     await LocalBooking().refresh();
     await LocalCountry().refresh();
-        await LocalUnreadMessagesService().refresh();
+    await LocalUnreadMessagesService().refresh();
+    await LocalPromo().refresh();
+
 
   }
 
@@ -168,6 +172,8 @@ class HiveDB {
     await LocalReview().clear();
     await LocalBooking().clear();
     await LocalUnreadMessagesService().clear();
+    await LocalPromo().clear();
+
     // await LocalCountry().clear();
   }
 }
