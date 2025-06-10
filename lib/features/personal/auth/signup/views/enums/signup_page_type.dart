@@ -1,6 +1,6 @@
 
 enum SignupPageType {
-  accountType,
+  // accountType,
   basicInfo,
   otp,
   photoVerification,
@@ -9,8 +9,8 @@ enum SignupPageType {
 
   SignupPageType? next() {
     switch (this) {
-      case SignupPageType.accountType:
-        return SignupPageType.basicInfo;
+      // case SignupPageType.accountType:
+      //   return SignupPageType.basicInfo;
       case SignupPageType.basicInfo:
         return SignupPageType.otp;
       case SignupPageType.otp:
@@ -26,10 +26,10 @@ enum SignupPageType {
 
   SignupPageType? previous() {
     switch (this) {
-      case SignupPageType.accountType:
-        return null;
       case SignupPageType.basicInfo:
-        return SignupPageType.accountType;
+        return null;
+      // case SignupPageType.basicInfo:
+      //   return SignupPageType.accountType;
       case SignupPageType.otp:
         return SignupPageType.basicInfo;
       case SignupPageType.photoVerification:

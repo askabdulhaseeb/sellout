@@ -7,6 +7,7 @@ import '../../../../../../core/sockets/socket_service.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../dashboard/views/screens/dashboard_screen.dart';
+import '../../data/sources/local/local_auth.dart';
 import '../../domain/params/device_details.dart';
 import '../../domain/params/login_params.dart';
 import '../../domain/usecase/login_usecase.dart';
@@ -68,7 +69,8 @@ class SigninProvider extends ChangeNotifier {
         if (jsonMap['require_2fa'] == true) {
           setSessonKey(jsonMap['session_key']);
           AppNavigator.pushNamed(VerifyTwoFactorScreen.routeName);
-        } else {
+        } else if(LocalAuth.uid == null){}
+        else {
           final SocketService socketService = SocketService(locator());
           socketService.connect();
           isLoading = false;

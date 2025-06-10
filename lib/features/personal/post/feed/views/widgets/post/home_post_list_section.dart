@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../data/sources/local/local_post.dart';
 import '../../../../domain/entities/post_entity.dart';
@@ -12,25 +11,24 @@ class HomePostListSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: FutureBuilder<DataState<List<PostEntity>>>(
-        future: Provider.of<FeedProvider>(context, listen: false).getFeed(),
-        initialData: DataSuccess<List<PostEntity>>('', LocalPost().all),
-        builder: (
-          BuildContext context,
-          AsyncSnapshot<DataState<List<PostEntity>>> snapshot,
-        ) {
-          final List<PostEntity> posts =
-              snapshot.data?.entity ?? <PostEntity>[];
-          return ListView.builder(
-            primary: false,
-            shrinkWrap: true,
-            itemCount: posts.length,
-            itemBuilder: (BuildContext context, int index) =>
-                HomePostTile(post: posts[index]),
-          );
-        },
-      ),
+    return FutureBuilder<DataState<List<PostEntity>>>(
+      future: Provider.of<FeedProvider>(context, listen: false).getFeed(),
+      initialData: DataSuccess<List<PostEntity>>('', LocalPost().all),
+      builder: (
+        BuildContext context,
+        AsyncSnapshot<DataState<List<PostEntity>>> snapshot,
+      ) {
+        final List<PostEntity> posts =
+            snapshot.data?.entity ?? <PostEntity>[];
+        return ListView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          primary: false,
+          shrinkWrap: true,
+          itemCount: posts.length,
+          itemBuilder: (BuildContext context, int index) =>
+              HomePostTile(post: posts[index]),
+        );
+      },
     );
   }
 }

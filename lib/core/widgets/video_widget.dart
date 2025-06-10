@@ -12,7 +12,6 @@ class VideoWidget extends StatefulWidget {
     this.showTime = false,
     this.borderRadius = 12,
   });
-
   final dynamic videoSource;
   final bool play;
   final BoxFit fit;
@@ -34,36 +33,47 @@ class _VideoWidgetState extends State<VideoWidget> {
     super.initState();
     _initializeVideo();
   }
-
-  Future<void> _initializeVideo() async {
-    try {
-      if (widget.videoSource is String &&
-          (widget.videoSource as String).startsWith('http')) {
-        _controller = VideoPlayerController.networkUrl(widget.videoSource);
-      } else if (widget.videoSource is String) {
-        _controller = VideoPlayerController.file(File(widget.videoSource));
+Future<void> _initializeVideo() async {
+  try {
+    if (widget.videoSource is String) {
+      final String src = widget.videoSource as String;
+      if (src.startsWith('http')) {
+        _controller = VideoPlayerController.networkUrl(Uri.parse(src));
       } else {
-        throw Exception('Unsupported video source.');
+        final File file = File(src);
+        if (!await file.exists()) {
+          throw Exception('Video file not found at path: $src');
+        }
+        _controller = VideoPlayerController.file(file);
       }
-
-      await _controller!.initialize();
-
-      if (mounted) {
-        setState(() {
-          _initialized = true;
-        });
-
-        if (widget.play) _controller!.play();
-        _controller!.setLooping(true);
+    } else if (widget.videoSource is File) {
+      if (!await widget.videoSource.exists()) {
+        throw Exception('File does not exist.');
       }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _hasError = true;
-        });
-      }
+      _controller = VideoPlayerController.file(widget.videoSource);
+    } else {
+      throw Exception('Unsupported video source type: ${widget.videoSource.runtimeType}');
+    }
+
+    await _controller!.initialize();
+
+    if (mounted) {
+      setState(() {
+        _initialized = true;
+      });
+
+      if (widget.play) _controller!.play();
+      _controller!.setLooping(true);
+    }
+  } catch (e) {
+    debugPrint('Video initialization error: $e');
+    if (mounted) {
+      setState(() {
+        _hasError = true;
+      });
     }
   }
+}
 
   @override
   void dispose() {

@@ -38,7 +38,7 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
           await HiveDB.signout();
           final CurrentUserModel currentUser =
               CurrentUserModel.fromRawJson(responce.data ?? '');
-          await LocalAuth().signin(currentUser);
+             if( currentUser.logindetail.role != 'founder'){await LocalAuth().signin(currentUser);}
           return responce;
         }
       } else {

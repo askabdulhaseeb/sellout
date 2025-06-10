@@ -1,0 +1,187 @@
+import 'package:flutter/material.dart';
+import '../../../../../core/functions/app_log.dart';
+import '../../../../../core/sources/data_state.dart';
+import '../../../../attachment/domain/entities/picked_attachment.dart';
+import '../../../post/domain/entities/post_entity.dart';
+import '../../../post/domain/usecase/get_promo_of_followers_usecase.dart';
+import 'dart:async';
+import 'package:camera/camera.dart';
+import '../../../../attachment/domain/entities/picked_attachment_option.dart';
+import '../../../../attachment/views/screens/pickable_attachment_screen.dart';
+import '../../domain/params/create_promo_params.dart';
+import '../../domain/usecase/create_promo_usecase.dart';
+class PromoProvider extends ChangeNotifier {
+  PromoProvider(this.getPromoUsecase,this.createPromoUsecase);
+  final GetPromoFollowerUseCase getPromoUsecase;
+    final CreatePromoUsecase createPromoUsecase;
+
+  List<PickedAttachment> attachments = <PickedAttachment>[];
+PostEntity? _post;
+PostEntity? get post => _post;
+int get pageNumber => attachment?.file == null ? 1 : 2;
+  PickedAttachment? attachment;
+  CameraController? cameraController;
+  List<CameraDescription> cameras = <CameraDescription>[];
+  bool isRecording = false;
+  bool isRearCamera = true;
+  bool isFlashOn = false;
+  int recordingSeconds = 0;
+  Timer? _timer;
+  TextEditingController title = TextEditingController();
+  TextEditingController price = TextEditingController();
+  String referenceType = '';
+  String _referenceId = '';
+  String get referenceId => _referenceId;
+   bool isLoading = false;
+  String? errorMessage;
+  void setRefernceID(String refID,String refType){
+_referenceId = refID;
+referenceType = refType;
+  }
+    CreatePromoParams get promoParams {
+  return CreatePromoParams(
+    referenceType: 'post',
+    referenceID: _referenceId,
+    title: title.text,
+    price: price.text,
+    attachments: attachment != null ? <PickedAttachment>[attachment!] : <PickedAttachment>[],
+  );
+}
+
+
+
+
+  Future<void> initCamera() async {
+    cameras = await availableCameras();
+    cameraController = CameraController(cameras.first, ResolutionPreset.high);
+    await cameraController?.initialize();
+    notifyListeners();
+  }
+
+  Future<void> toggleCamera() async {
+    isRearCamera = !isRearCamera;
+    final CameraLensDirection direction = isRearCamera ? CameraLensDirection.back : CameraLensDirection.front;
+    final CameraDescription camera = cameras.firstWhere((CameraDescription cam) => cam.lensDirection == direction);
+    cameraController = CameraController(camera, ResolutionPreset.high);
+    await cameraController?.initialize();
+    notifyListeners();
+  }
+
+  Future<void> toggleFlash() async {
+    if (cameraController == null || !cameraController!.value.isInitialized) return;
+    isFlashOn = !isFlashOn;
+    await cameraController!.setFlashMode(isFlashOn ? FlashMode.torch : FlashMode.off);
+    notifyListeners();
+  }
+
+  Future<void> startRecording(BuildContext context) async {
+    if (cameraController == null || cameraController!.value.isRecordingVideo) return;
+
+    try {
+      await cameraController!.startVideoRecording();
+      isRecording = true;
+      recordingSeconds = 0;
+      notifyListeners();
+
+      _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+        recordingSeconds++;
+        notifyListeners();
+      });
+    } catch (e) {
+      _timer?.cancel();
+      isRecording = false;
+      notifyListeners();
+      debugPrint('Error recording video: $e');
+    }
+  }
+
+  Future<void> stopRecording() async {
+    if (!isRecording || cameraController == null) return null;
+
+    final XFile file = await cameraController!.stopVideoRecording();
+    _timer?.cancel();
+    isRecording = false;
+    recordingSeconds = 0;
+
+   final PickedAttachment attachmentt = PickedAttachment(
+      file: file,
+      type: AttachmentType.video,
+    );
+    setAttachments(attachmentt);
+    notifyListeners();
+
+  }
+
+  Future<void> pickVideoFromGallery(
+    BuildContext context, {
+    required AttachmentType type,
+  }) async {
+    final List<PickedAttachment>? files = await Navigator.of(context).push<List<PickedAttachment>>(
+      MaterialPageRoute<List<PickedAttachment>>(
+        builder: (_) => PickableAttachmentScreen(
+          option: PickableAttachmentOption(
+            maxAttachments: 1,
+            type: type,
+          ),
+        ),
+      ),
+    );
+
+    if (files != null && files.isNotEmpty) {
+      setAttachments(files.first) ;
+          notifyListeners();
+    }
+    notifyListeners();
+  }
+
+  void setAttachments(PickedAttachment newAttachments) {
+    attachment = newAttachments;
+    if(isFlashOn) toggleFlash();
+  }
+
+  void disposeController() {
+    cameraController?.dispose();
+  }
+
+  Future<bool> createPromo() async {
+    isLoading = true;
+    errorMessage = null;
+    notifyListeners();
+    final DataState<bool> result = await createPromoUsecase.call(promoParams);
+    isLoading = false;
+
+    if (result is DataSuccess && result.data == true) {
+      notifyListeners();
+      return true;
+    } else {
+      errorMessage = result.exception?.message ?? 'Failed to create promo';
+      notifyListeners();
+      return false;
+    }
+  }
+ 
+  Future<void> getPromoOfFollower() async {
+    try {
+      final DataState<bool> response = await getPromoUsecase.call(true);
+
+      if (response is DataSuccess) {
+        AppLog.info('Promo fetched successfully: ${response.data}');
+        // Do something with response.entity if needed
+      } else {
+        AppLog.error('Failed to fetch promo: ${response.exception?.message}');
+      }
+    } catch (e) {
+      AppLog.error('Exception in getPromoOfFollower: $e');
+    }
+
+    notifyListeners();
+  }
+
+
+  void reset(){
+    attachment = null;
+    title.clear();
+    price.clear();
+   if(isFlashOn) toggleFlash();
+  }
+}

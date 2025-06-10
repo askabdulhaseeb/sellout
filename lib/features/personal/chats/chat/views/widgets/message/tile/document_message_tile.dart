@@ -8,9 +8,9 @@ import '../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../attachment/domain/entities/attachment_entity.dart';
 
 class DocumentTile extends StatefulWidget {
-  const DocumentTile({required this.attachment, super.key});
+  const DocumentTile({required this.attachment, required this.isMe, super.key});
   final AttachmentEntity attachment;
-
+final bool isMe;
   @override
   State<DocumentTile> createState() => _DocumentTileState();
 }
@@ -59,65 +59,90 @@ class _DocumentTileState extends State<DocumentTile> {
           });
 
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(tr('document_tile.downloadedTo', args: [filePath]))),
+            SnackBar(content: Text('document_tile.downloadedTo'.tr())),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(tr('document_tile.downloadFailed'))),
+            SnackBar(content: Text('document_tile.downloadFailed'.tr())),
           );
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(tr('document_tile.downloadHttpFailed'))),
+          SnackBar(content: Text('document_tile.downloadHttpFailed'.tr())),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(tr('document_tile.error', args: [e.toString()]))),
+        SnackBar(content: Text('document_tile.error'.tr())),
       );
     } finally {
       setState(() => isDownloading = false);
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final ColorScheme colorScheme = theme.colorScheme;
+ @override
+Widget build(BuildContext context) {
+  final ThemeData theme = Theme.of(context);
+  final ColorScheme colorScheme = theme.colorScheme;
+  final bool isMe = widget.isMe; // you must have this field
 
-    return Padding(
-      padding: const EdgeInsets.all(12),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Icon(
-            Icons.insert_drive_file_rounded,
-            size: 36,
-            color: colorScheme.secondary.withOpacity(0.8),
+  final Color tileColor = isMe ? colorScheme.secondary.withValues(alpha: 0.2) : colorScheme.primary.withValues(alpha: 0.2);
+  final Color iconColor = isMe
+      ? colorScheme.onSecondary.withValues(alpha:0.8)
+      : colorScheme.onPrimary.withValues(alpha:0.8);
+  final Color textColor = isMe ? colorScheme.onSecondary : colorScheme.onPrimary;
+  final Color buttonBgColor = isMe
+      ? colorScheme.secondary.withValues(alpha:0.2)
+      : colorScheme.primary.withValues(alpha:0.2);
+  final Color buttonTextColor = isMe ? colorScheme.secondary : colorScheme.primary;
+  final Color dividerColor = theme.dividerColor;
+
+  return Container(
+    margin: const EdgeInsets.symmetric(vertical: 6),
+    padding: const EdgeInsets.all(8),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Container(
+          height: 100,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: tileColor,
           ),
-          const SizedBox(height: 12),
-          Text(
-            widget.attachment.originalName,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurface,
+          child: Center(
+            child: Icon(
+              Icons.insert_drive_file_rounded,
+              size: 36,
+              color: iconColor,
             ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 8),
-          SizedBox(
-            width: 100,
-            child: CustomElevatedButton(
-              isLoading: isDownloading,
-              title: isDownloading
-                  ? tr('document_tile.downloading')
-                  : tr('document_tile.download'),
-              onTap: _downloadFile,
-            )
+        ),
+        const SizedBox(height: 6),
+        Text(
+          widget.attachment.originalName,
+          style: theme.textTheme.bodyLarge?.copyWith(color: textColor),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 8),
+        SizedBox(
+          height: 50,
+          width: double.infinity,
+          child: CustomElevatedButton(
+            bgColor: buttonBgColor,
+            textStyle: TextTheme.of(context).labelMedium?.copyWith(color: buttonTextColor),
+            isLoading: isDownloading,
+            title: isDownloading ? 'downloading'.tr() : 'download'.tr(),
+            onTap: _downloadFile,
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 }

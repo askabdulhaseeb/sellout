@@ -109,9 +109,16 @@ import '../features/personal/post/domain/repositories/post_repository.dart';
 import '../features/personal/post/domain/usecase/add_to_cart_usecase.dart';
 import '../features/personal/post/domain/usecase/create_offer_usecase.dart';
 import '../features/personal/post/domain/usecase/get_feed_usecase.dart';
+import '../features/personal/post/domain/usecase/get_promo_of_followers_usecase.dart';
 import '../features/personal/post/domain/usecase/get_specific_post_usecase.dart';
 import '../features/personal/post/domain/usecase/update_offer_usecase.dart';
 import '../features/personal/post/feed/views/providers/feed_provider.dart';
+import '../features/personal/promo/data/repo/promo_repo_impl.dart';
+import '../features/personal/promo/data/source/remote_data_source.dart';
+import '../features/personal/promo/domain/repo/promo_repo.dart';
+import '../features/personal/promo/domain/usecase/create_promo_usecase.dart';
+import '../features/personal/promo/view/provider/promo_provider.dart';
+import '../features/personal/promo/view/screens/create_promo_screen.dart';
 import '../features/personal/review/data/repositories/review_repository_impl.dart';
 import '../features/personal/review/data/sources/review_remote_api.dart';
 import '../features/personal/review/domain/repositories/review_repository.dart';
@@ -288,17 +295,27 @@ void _message() {
 void _feed() {
   locator.registerFactory<PostRemoteApi>(() => PostRemoteApiImpl());
   locator.registerFactory<PostRepository>(() => PostRepositoryImpl(locator()));
+    locator.registerFactory<PromoRemoteDataSource>(() => PromoRemoteDataSourceImpl());
+  locator.registerFactory<PromoRepository>(() => PromoRepositoryImpl(locator()));
   locator.registerFactory<GetFeedUsecase>(() => GetFeedUsecase(locator()));
   locator.registerFactory<AddToCartUsecase>(() => AddToCartUsecase(locator()));
   locator
       .registerFactory<CreateOfferUsecase>(() => CreateOfferUsecase(locator()));
   locator
       .registerFactory<UpdateOfferUsecase>(() => UpdateOfferUsecase(locator()));
+      locator
+      .registerFactory<GetPromoFollowerUseCase>(() => GetPromoFollowerUseCase(locator()));
   locator.registerLazySingleton<FeedProvider>(() => FeedProvider(
         locator(),
         locator(),
         locator(),
         locator(),
+      ));
+            locator.registerFactory<CreatePromoUsecase>(() => CreatePromoUsecase(locator()));
+
+      locator.registerLazySingleton<PromoProvider>(() => PromoProvider(
+        locator(),        locator()
+
       ));
 }
 

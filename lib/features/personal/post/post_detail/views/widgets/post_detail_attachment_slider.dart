@@ -153,7 +153,6 @@ class _PostDetailAttachmentSliderState
                 borderRadius: BorderRadius.circular(10),
                 child: _isVideo(attachment)
                     ? VideoWidget(
-                        fit: BoxFit.cover,
                         play: false,
                         showTime: true,
                         durationFontSize: 10,

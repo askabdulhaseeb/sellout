@@ -33,10 +33,12 @@ class ChatProvider extends ChangeNotifier {
   final FocusNode focusNode = FocusNode();
   TextSelection lastSelection = const TextSelection.collapsed(offset: 0);
   final List<PickedAttachment> _attachments = <PickedAttachment>[];
+  
 //
   List<PickedAttachment> get attachments => _attachments;
   GettedMessageEntity? get gettedMessage => _gettedMessage;
   TextEditingController get message => _message;
+
   DateTime? get chatAT => _chatAt;
   ChatEntity? get chat => _chat;
   bool get isLoading => _isLoading;
@@ -180,6 +182,5 @@ void insertEmoji(String emoji) {
     );
     notifyListeners();
   }
-//-----------------------------Audio Recording Widget
 
 }

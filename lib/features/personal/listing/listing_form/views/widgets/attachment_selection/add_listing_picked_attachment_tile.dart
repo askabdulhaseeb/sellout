@@ -51,7 +51,6 @@ class ListingAttachmentTile extends StatelessWidget {
                 width: double.infinity,
                 child: isVideo
                     ? VideoWidget(
-                        fit: BoxFit.cover,
                         videoSource: videoSource,
                         play: false,
                       )

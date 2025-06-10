@@ -16,7 +16,6 @@ class SigninRepositoryImpl implements SigninRepository {
       return DataFailer<bool>(CustomException('Signin Error: $e'));
     }
   }
-
   @override
   Future<DataState<bool>> verifyTwoFactorAuth(TwoFactorParams params) async {
     try {

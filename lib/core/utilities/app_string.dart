@@ -31,6 +31,10 @@ class AppStrings {
   static String get paypal => 'assets/images/payment_methods/paypal.png';
   static String get visa => 'assets/images/payment_methods/visa.png';
   static String get stripe => 'assets/images/payment_methods/stripe.png';
+  //logo
+  static String get selloutLogo => 'assets/images/sellout_logo.png';
+
+
   String get baseURL =>
       kDebugMode ? 'http://192.168.0.181:3200' : dotenv.env['baseURL'] ?? '';
 }

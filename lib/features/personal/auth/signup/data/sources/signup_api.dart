@@ -36,8 +36,7 @@ class SignupApiImpl implements SignupApi {
           );
           return DataFailer<String>(CustomException('something_wrong'.tr()));
         }
-        final dynamic data = json.decode(str);
-        AppLog.error(data);
+        final Map<String,dynamic> data = json.decode(str);
         final String entity = data['item']['user_id'];
         return DataSuccess<String>(str, entity);
       } else {
@@ -49,11 +48,12 @@ class SignupApiImpl implements SignupApi {
           response.exception?.message ?? 'something_wrong'.tr(),
         ));
       }
-    } catch (e) {
+    } catch (e,stc) {
       AppLog.error(
         'Error from signupBasicInfo: $e',
         name: 'SignupApiImpl.signupBasicInfo - catch',
         error: e,
+        stackTrace: stc
       );
       return DataFailer<String>(CustomException(e.toString()));
     }

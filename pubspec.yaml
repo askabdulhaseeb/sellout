@@ -56,10 +56,9 @@ dependencies:
 
   flutter_stripe: ^9.4.1
   device_info_plus: ^10.0.1
-  image_picker: ^1.1.2
+  camera: ^0.11.1
   emoji_picker_flutter: ^4.3.0
   file_picker: ^10.1.9
-
   
 dev_dependencies:
   flutter_test:

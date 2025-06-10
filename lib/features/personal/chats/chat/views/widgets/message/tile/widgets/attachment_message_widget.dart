@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../../../core/widgets/video_widget.dart';
 import '../../../../../../../../attachment/domain/entities/attachment_entity.dart';
-import '../document_message_tile.dart';
 
 class AttachmentMessageWidget extends StatelessWidget {
   const AttachmentMessageWidget({required this.attachments, super.key});
@@ -29,13 +28,11 @@ class AttachmentMessageWidget extends StatelessWidget {
         Widget mediaWidget;
         if (attachment.type == AttachmentType.image) {
           mediaWidget = CustomNetworkImage(imageURL: attachment.url);
-        } else if (attachment.type == AttachmentType.video) {
+        } else {
           mediaWidget = VideoWidget(
             videoSource: attachment.url,
             play: false,
           );
-        } else {
-          mediaWidget = DocumentTile(attachment:attachment);
         }
         // "+X" overlay
         if (isLast) {

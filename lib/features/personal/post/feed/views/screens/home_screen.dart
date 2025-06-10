@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../widgets/post/home_post_list_section.dart';
@@ -12,12 +11,12 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const PersonalScaffold(
-      body: Column(
+      body:SingleChildScrollView(child: Column(mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          InDevMode(child: HomePromoListSection()),
+          HomePromoListSection(),
           HomePostListSection(),
         ],
-      ),
+      ),)
     );
   }
 }
