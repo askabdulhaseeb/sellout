@@ -1,10 +1,16 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import '../../../../../../../core/enums/chat/chat_participant_role.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/api_call.dart';
 import '../../../../../../../core/utilities/app_string.dart';
+import '../../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../chat_dashboard/data/models/chat/chat_model.dart';
+import '../../../../chat_dashboard/data/models/chat/participant/chat_participant_model.dart';
 import '../../../../chat_dashboard/data/models/message/message_model.dart';
+import '../../../../chat_dashboard/data/sources/local/local_chat.dart';
+import '../../../../chat_dashboard/domain/entities/chat/participant/chat_participant_entity.dart';
 import '../../../domain/entities/getted_message_entity.dart';
 import '../../../domain/params/send_message_param.dart';
 import '../../models/getted_message_model.dart';
@@ -18,6 +24,7 @@ abstract interface class MessagesRemoteSource {
     required String createdAt,
   });
   Future<DataState<bool>> sendMessage(SendMessageParam msg);
+  Future<DataState<bool>> acceptGorupInvite(String groupId);
 }
 
 class MessagesRemoteSourceImpl implements MessagesRemoteSource {
@@ -34,7 +41,6 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
       isAuth: true,
       requestType: ApiRequestType.get,
     );
-
     if (result is DataSuccess) {
       final String raw = result.data ?? '';
       if (raw.isEmpty) {
@@ -125,7 +131,71 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
     }
   }
 
+@override
+Future<DataState<bool>> acceptGorupInvite(String groupId) async {
+  try {
+    const String endpoint = '/chat/group/acceptInvite';
+    final DataState<bool> result = await ApiCall<bool>().call(
+      endpoint: endpoint,
+      requestType: ApiRequestType.patch,
+      body: jsonEncode(<String, String>{'chat_id': groupId}),
+    );
+
+    if (result is DataSuccess) {
+      debugPrint('Invite Accepted - Success: ${result.data}');
+
+      // Parse response JSON
+      final Map<String, dynamic> responseData = jsonDecode(result.data ?? '{}');
+      final DateTime joinAt = DateTime.parse(responseData['join_at']);
+      final String uid = LocalAuth.uid ?? '';
+
+      final ChatEntity? chat = LocalChat().chatEntity(groupId);
+
+      if (chat != null) {
+        final List<ChatParticipantEntity>? participants = chat.groupInfo?.participants;
+        final int index = participants?.indexWhere((p) => p.uid == uid) ?? -1;
+
+        if (index != -1 && participants != null) {
+          // Convert entity to model
+          final ChatParticipantModel model = ChatParticipantModel.fromEntity(participants[index]);
+
+          // Create updated model using copyWith
+          final ChatParticipantModel updatedModel = model.copyWith(
+            joinAt: joinAt,
+            role: ChatParticipantRoleType.member,
+            source: 'invitation',
+          );
+          // Replace old entity with updated model
+          participants[index] = ChatParticipantModel.fromEntity(updatedModel);
+          // Save updated chat back to Hive
+          final Box<ChatEntity> box = Hive.box<ChatEntity>(AppStrings.localChatsBox);
+          box.put(chat.chatId, chat);
+        }
+      }
+
+      return DataSuccess<bool>(result.data ?? '', true);
+    } else {
+      AppLog.error(
+        'Invite Accept - ERROR',
+        name: 'MessagesRemoteSourceImpl.acceptGorupInvite - else',
+        error: result.exception,
+      );
+      return DataFailer<bool>(
+        result.exception ?? CustomException('something_wrong'.tr()),
+      );
+    }
+  } catch (e) {
+    AppLog.error(
+      'Invite Accept - ERROR',
+      name: 'MessagesRemoteSourceImpl.acceptGorupInvite - catch',
+      error: CustomException(e.toString()),
+    );
+    return DataFailer<bool>(CustomException(e.toString()));
+  }
+}
+
   GettedMessageEntity? _local(String chatID) {
     return LocalChatMessage().entity(chatID);
   }
 }
+

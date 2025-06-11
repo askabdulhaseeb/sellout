@@ -6,6 +6,7 @@ import '../../../../../../core/media_preview/view/screens/media_preview_screen.d
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
+import '../../../../listing/listing_form/views/widgets/attachment_selection/cept_group_invite_usecase.dart';
 import '../../../chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../data/models/message_last_evaluated_key.dart';
@@ -19,10 +20,11 @@ class ChatProvider extends ChangeNotifier {
   ChatProvider(
     this._getMessagesUsecase,
     this._sendMessageUsecase,
+    this._acceptGroupInviteUsecase,
   );
   final GetMessagesUsecase _getMessagesUsecase;
   final SendMessageUsecase _sendMessageUsecase;
-
+      final AcceptGorupInviteUsecase _acceptGroupInviteUsecase;
   ChatEntity? _chat;
   MessageLastEvaluatedKeyEntity? _key;
   GettedMessageEntity? _gettedMessage;
@@ -170,6 +172,21 @@ void insertEmoji(String emoji) {
           result.exception?.message ?? 'something_wrong'.tr());
     }
   }
+ 
+ Future<void> acceptGroupInvite(BuildContext context) async {
+  final DataState<bool> result = await _acceptGroupInviteUsecase.call(chat?.chatId ?? '');
+  if (result is DataSuccess) {
+    AppSnackBar.showSnackBar(
+      context,
+      'group_invite_accepted'.tr(),
+    );notifyListeners();
+  } else {
+    AppSnackBar.showSnackBar(
+      context,
+      result.exception?.message ?? 'something_wrong'.tr(),
+    );notifyListeners();
+  }
+}
 
   void setImages(BuildContext context) async {
     await Navigator.push(

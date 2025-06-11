@@ -205,7 +205,7 @@ class PromoItemCard extends StatelessWidget {
                   ),
                   if (isVideo(file))
                      Positioned.fill(
-                      child: VideoWidget(videoSource: file,
+                      child: VideoWidget(videoSource: file,play: false,
                       ),
                     ),
                 ],

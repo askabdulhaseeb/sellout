@@ -54,6 +54,7 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
       value: ChatProvider(
     locator(),
     locator(),
+    locator(),
   )),
     ChangeNotifierProvider<CreateChatGroupProvider>.value(
       value: CreateChatGroupProvider(locator())),
