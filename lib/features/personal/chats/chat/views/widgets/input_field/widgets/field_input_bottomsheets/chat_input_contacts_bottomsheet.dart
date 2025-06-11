@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
@@ -43,24 +42,19 @@ Future<File?> exportContactAsVcf(Contact contact) async {
   try {
     // Convert contact to vCard format
     final String vcf = contact.toVCard();
-
     // Get temporary directory
     final Directory directory = await getTemporaryDirectory();
-
     // Create file
     final File file = File('${directory.path}/${contact.displayName}.vcf');
-
     // Write vCard to file
     await file.writeAsString(vcf);
-
     return file;
   } catch (e) {
     print("Error exporting contact: $e");
     return null;
   }
 }
-
-          return Column(
+  return Column(
             children: <Widget>[
               Expanded(
                 child: DraggableScrollableSheet(
@@ -74,7 +68,6 @@ Future<File?> exportContactAsVcf(Contact contact) async {
                       itemBuilder: (BuildContext context, int index) {
                         final Contact contact = contacts[index];
                         final bool isSelected = selectedContacts.contains(contact);
-
                         return ListTile(
                           leading: CircleAvatar(
                             backgroundColor: ColorScheme.of(context).secondary,

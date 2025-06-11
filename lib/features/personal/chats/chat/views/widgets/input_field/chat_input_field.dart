@@ -43,8 +43,8 @@ class ChatInputField extends StatelessWidget {
                     ChatAttachmentsListView(attachments: chatPro.attachments),
            ValueListenableBuilder<TextEditingValue>(
   valueListenable: chatPro.message,
-  builder: (context, value, child) {
-    final isEmpty = value.text.isEmpty;
+  builder: (BuildContext context, TextEditingValue value, Widget? child) {
+    final bool isEmpty = value.text.isEmpty;
     return Row(
       children: <Widget>[
         if (isEmpty) const AttachmentMenuButton(),

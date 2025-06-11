@@ -25,4 +25,9 @@ class MessageRepositoryImpl implements MessageRepository {
   Future<DataState<bool>> sendMessage(SendMessageParam msg) async {
     return await remoteSource.sendMessage(msg);
   }
+
+  @override
+  Future<DataState<bool>> acceptGorupInvite(String groupId)async{
+    return await remoteSource.acceptGorupInvite(groupId);
+    }
 }

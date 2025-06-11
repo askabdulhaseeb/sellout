@@ -92,6 +92,7 @@ import '../features/personal/book_visit/domain/usecase/book_visit_usecase.dart';
 import '../features/personal/book_visit/view/provider/visiting_provider.dart';
 import '../features/personal/chats/create_chat/view/provider/create_private_chat_provider.dart';
 import '../features/personal/chats/create_chat/view/provider/create_chat_group_provider.dart';
+import '../features/personal/listing/listing_form/views/widgets/attachment_selection/cept_group_invite_usecase.dart';
 import '../features/personal/marketplace/data/repository/explore_repository_impl.dart';
 import '../features/personal/marketplace/data/source/explore_remote_source.dart';
 import '../features/personal/marketplace/domain/repository/location_name_repo.dart';
@@ -288,9 +289,13 @@ void _message() {
       .registerFactory<GetMessagesUsecase>(() => GetMessagesUsecase(locator()));
   locator
       .registerFactory<SendMessageUsecase>(() => SendMessageUsecase(locator()));
-  locator.registerLazySingleton(() => ChatProvider(locator(), locator()));
+  locator
+      .registerFactory<AcceptGorupInviteUsecase>(() => AcceptGorupInviteUsecase(locator()));
+  locator.registerLazySingleton(() => ChatProvider(
+    locator(),   
+    locator(),
+    locator()));
 }
-
 void _feed() {
   locator.registerFactory<PostRemoteApi>(() => PostRemoteApiImpl());
   locator.registerFactory<PostRepository>(() => PostRepositoryImpl(locator()));

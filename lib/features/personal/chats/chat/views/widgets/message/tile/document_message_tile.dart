@@ -95,7 +95,7 @@ Widget build(BuildContext context) {
       ? colorScheme.secondary.withValues(alpha:0.2)
       : colorScheme.primary.withValues(alpha:0.2);
   final Color buttonTextColor = isMe ? colorScheme.secondary : colorScheme.primary;
-  final Color dividerColor = theme.dividerColor;
+  // final Color dividerColor = theme.dividerColor;
 
   return Container(
     margin: const EdgeInsets.symmetric(vertical: 6),

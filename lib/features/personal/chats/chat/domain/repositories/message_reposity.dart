@@ -9,4 +9,6 @@ abstract interface class MessageRepository {
     required String createdAt,
   });
   Future<DataState<bool>> sendMessage(SendMessageParam msg);
+    Future<DataState<bool>> acceptGorupInvite(String groupId);
+
 }
