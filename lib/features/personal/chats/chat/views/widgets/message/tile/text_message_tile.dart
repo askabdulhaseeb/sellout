@@ -3,7 +3,7 @@ import '../../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../message_bg_widget.dart';
-import 'conatct_message_tile.dart';
+import 'contact_message_tile.dart';
 import 'document_message_tile.dart';
 import 'widgets/attachment_message_widget.dart';
 import 'widgets/audio_message_widget.dart';
@@ -35,7 +35,7 @@ class TextMessageTile extends StatelessWidget {
                   case AttachmentType.document:
                     return DocumentTile(attachment: attachment,isMe: isMe);
                   case AttachmentType.contacts:
-                    return ContactMessageTile(attachment: attachment);
+                    return ContactMessageTile(attachment: attachment,isMe: isMe,);
                   case AttachmentType.location:
                     return Text('📍 Location: ${attachment.originalName}');
                   default:
