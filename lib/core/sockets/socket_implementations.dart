@@ -1,51 +1,47 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/utilities/app_string.dart';
-import '../../../../../../services/get_it.dart';
 import '../../features/personal/chats/chat/data/models/message_last_evaluated_key.dart';
+import '../../features/personal/chats/chat/data/sources/local/local_message.dart';
 import '../../features/personal/chats/chat/domain/entities/getted_message_entity.dart';
 import '../../features/personal/chats/chat_dashboard/data/models/message/message_model.dart';
 import '../../features/personal/chats/chat_dashboard/data/sources/local/local_unseen_messages.dart';
-import '../../features/personal/chats/chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../features/personal/chats/chat_dashboard/domain/entities/messages/message_entity.dart';
-import '../../features/personal/chats/chat_dashboard/domain/usecase/get_my_chats_usecase.dart';
 import '../functions/app_log.dart';
 
 class SocketImplementations {
   // NEW MESSAGES
   Future<void> handleNewMessage(Map<String, dynamic> data) async {
-    final MessageModel newMsg = MessageModel.fromJson(data);
-    final String chatId = data['chat_id'];
-    final Box<GettedMessageEntity> messageBox =
-        Hive.box<GettedMessageEntity>(AppStrings.localChatMessagesBox);
-    final bool exists = messageBox.containsKey(chatId);
-    if (!exists) {
-      final GetMyChatsUsecase getMyChatUsecase = GetMyChatsUsecase(locator());
-      final DataState<List<ChatEntity>> chatResult =
-          await getMyChatUsecase.call(<String>[chatId]);
-      if (chatResult is DataSuccess &&
-          (chatResult.entity?.isNotEmpty ?? false)) {
-        final ChatEntity newChat = chatResult.entity!.first;
-        final Box<ChatEntity> localChatsBox =
-            Hive.box<ChatEntity>(AppStrings.localChatsBox);
-        await localChatsBox.put(chatId, newChat);
-      }
-    }
+      final MessageModel newMsg = MessageModel.fromJson(data);
+      final String chatId = data['chat_id'];
 
-    final GettedMessageEntity existing = messageBox.get(chatId) ??
-        GettedMessageEntity(
+      // Get existing entity from local storage
+      // final GettedMessageEntity? existingEntity = LocalChatMessage().entity(chatId);
+      final List<MessageEntity> existingMessages = LocalChatMessage().messages(chatId);
+
+      // 🔒 Check if the message already exists
+      final bool isDuplicate = existingMessages.any(
+        (MessageEntity m) => m.messageId == newMsg.messageId,
+      );
+
+      if (!isDuplicate) {
+        existingMessages.add(newMsg);
+      }
+
+      // Create updated entity
+      final GettedMessageEntity updatedEntity = GettedMessageEntity(
+        chatID: chatId,
+        messages: existingMessages,
+        lastEvaluatedKey: MessageLastEvaluatedKeyModel(
           chatID: chatId,
-          messages: <MessageModel>[],
-          lastEvaluatedKey: MessageLastEvaluatedKeyModel(
-            chatID: chatId,
-            createdAt: data['created_at'],
-            paginationKey: data['message_id'],
-          ),
-        );
-    existing.messages.add(newMsg);
-    await messageBox.put(chatId, existing);
+          createdAt: data['created_at'],
+          paginationKey: data['message_id'],
+        ),
+      );
+
+      // Save updated entity to local storage
+      LocalChatMessage().save(updatedEntity,chatId);
   await LocalUnreadMessagesService().increment(chatId);
 
   }

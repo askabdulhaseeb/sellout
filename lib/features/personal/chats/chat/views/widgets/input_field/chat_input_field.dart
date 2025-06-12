@@ -1,9 +1,7 @@
-import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
-import '../../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../providers/chat_provider.dart';
 import 'widgets/chat_input_recording_widget.dart';
 import 'widgets/input_field_pop_menu/chat_input_pop_menu.dart';
@@ -25,17 +23,9 @@ class ChatInputField extends StatelessWidget {
             builder: (BuildContext context, ChatProvider chatPro, _) {
               // ⏺️ Show Audio Recorder if active
               if (chatPro.isRecordingAudio) {
-                return ChatInputRecordingWidget(
-                  onSend: (File audioFile) {
-                    final PickedAttachment attachment = PickedAttachment(file: audioFile, type: AttachmentType.audio);
-                    chatPro.addAttachment(attachment);
-                  },
-                  onCancel: () {
-                    // Optional additional cancel logic here
-                  },
+                return const SwipeToRecordWidget(
                 );
               }
-
               // 💬 Normal Chat UI
               return Column(
                 children: <Widget>[
@@ -47,27 +37,25 @@ class ChatInputField extends StatelessWidget {
     final bool isEmpty = value.text.isEmpty;
     return Row(
       children: <Widget>[
+
         if (isEmpty) const AttachmentMenuButton(),
-
-        IconButton(
-          icon: const Icon(Icons.emoji_emotions_outlined),
-          onPressed: () => showEmojiPickerBottomSheet(context),
-        ),
-
-        Expanded(
-          child: CustomTextFormField(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(5),
-              borderSide: BorderSide.none,
+                IconButton(
+        icon: const Icon(Icons.emoji_emotions_outlined),
+        onPressed: () => showEmojiPickerBottomSheet(context),
+                ),
+          Expanded(
+            child: CustomTextFormField(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+                borderSide: BorderSide.none,
+              ),
+              color: Theme.of(context).scaffoldBackgroundColor,
+              controller: chatPro.message,
+              minLines: 1,
+              maxLines: 5,
+              hint: 'your_message_here'.tr(),
             ),
-            color: Theme.of(context).scaffoldBackgroundColor,
-            controller: chatPro.message,
-            minLines: 1,
-            maxLines: 5,
-            hint: 'your_message_here'.tr(),
           ),
-        ),
-
         if (isEmpty)
           IconButton(
             icon: const Icon(Icons.mic_none_outlined),

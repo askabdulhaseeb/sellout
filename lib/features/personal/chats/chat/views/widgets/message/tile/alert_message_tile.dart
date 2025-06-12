@@ -11,17 +11,19 @@ class AlartMessageTile extends StatelessWidget {
     return SizedBox(width: double.infinity,
       child: Row(mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[ if(LocalAuth.uid ==  message.persons.first)
-          Container(
-            padding: const EdgeInsets.all(4),
-            margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 48),
-            decoration: BoxDecoration(
-              color: AppTheme.lightPrimary,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              message.displayText,
-              style: TextStyle(color: Theme.of(context).primaryColor),
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 48),
+              decoration: BoxDecoration(
+                color: AppTheme.lightPrimary,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              alignment: Alignment.center,
+              child: Text(maxLines: 4,
+                message.displayText,textAlign: TextAlign.center,
+                style: TextStyle(color: Theme.of(context).primaryColor),
+              ),
             ),
           ),
         ],

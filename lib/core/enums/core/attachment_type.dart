@@ -18,7 +18,7 @@ enum AttachmentType {
   @HiveField(5)
   media('media', 'media'),
   @HiveField(6)
-  contacts('contacts', 'contacts'),
+  contacts('contact', 'contact'),
    @HiveField(7)
   location('location', 'location');
 
@@ -38,7 +38,7 @@ enum AttachmentType {
         return AttachmentType.audio;
       case 'document':
         return AttachmentType.document;
-        case 'contacts':
+        case 'contact':
         return AttachmentType.contacts;
         case 'location':
         return AttachmentType.location;

@@ -14,7 +14,7 @@ class GroupChatDashbordTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell( onTap: ()async {
-          Provider.of<ChatProvider>(context, listen: false).chat = chat;
+          Provider.of<ChatProvider>(context, listen: false).setChat(chat);
                   await LocalUnreadMessagesService().clearCount(chat.chatId);
           Navigator.of(context).pushNamed(ChatScreen.routeName);
         },

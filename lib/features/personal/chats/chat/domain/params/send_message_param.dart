@@ -18,8 +18,7 @@ class SendMessageParam {
   Map<String, dynamic> _map() {
     return <String, dynamic>{
       'chat_id': chatID,
-      if(text.isEmpty)'text':' ',
-      if(text.isNotEmpty)'text': text,
+      if(text.isEmpty)'text':'null',
       'persons': persons,
       'source': source,
     };

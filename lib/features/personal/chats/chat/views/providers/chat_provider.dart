@@ -7,6 +7,7 @@ import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../listing/listing_form/views/widgets/attachment_selection/cept_group_invite_usecase.dart';
+import '../../../chat_dashboard/data/sources/local/local_chat.dart';
 import '../../../chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../data/models/message_last_evaluated_key.dart';
@@ -87,23 +88,20 @@ void insertEmoji(String emoji) {
   notifyListeners();
 }
 
-  set chat(ChatEntity? value) {
-    _chat = value;
-    _key = MessageLastEvaluatedKeyModel(
-      chatID: _chat?.chatId ?? '',
-      createdAt: 'null',
-    );
-    _gettedMessage = GettedMessageEntity(
-      chatID: _chat?.chatId ?? '',
-      lastEvaluatedKey: _key ??
-          MessageLastEvaluatedKeyModel(
-            chatID: _chat?.chatId ?? '',
-            createdAt: 'null',
-          ),
-      messages: <MessageEntity>[],
-    );
-    notifyListeners();
-  }
+ void setChat(ChatEntity? value) {
+  _chat = value;
+  _key = MessageLastEvaluatedKeyModel(
+    chatID: _chat?.chatId ?? '',
+    createdAt: 'null',
+  );
+  _gettedMessage = GettedMessageEntity(
+    chatID: _chat?.chatId ?? '',
+    lastEvaluatedKey: _key!,
+    messages: <MessageEntity>[],
+  );
+  notifyListeners();
+}
+
 
   void removePickedAttachment(PickedAttachment attachment) {
     _attachments.remove(attachment);
@@ -175,18 +173,20 @@ void insertEmoji(String emoji) {
  
  Future<void> acceptGroupInvite(BuildContext context) async {
   final DataState<bool> result = await _acceptGroupInviteUsecase.call(chat?.chatId ?? '');
+  try {
   if (result is DataSuccess) {
-    AppSnackBar.showSnackBar(
-      context,
-      'group_invite_accepted'.tr(),
-    );notifyListeners();
+  setChat( LocalChat().chatEntity(chat?.chatId ?? ''));
+  debugPrint('provider chat is updated');
+  notifyListeners();
   } else {
     AppSnackBar.showSnackBar(
       context,
       result.exception?.message ?? 'something_wrong'.tr(),
-    );notifyListeners();
+    );
   }
-}
+} catch (e,stc) {
+  AppLog.error('error chatprovider - acceptinvite',error: e,stackTrace: stc);
+}}
 
   void setImages(BuildContext context) async {
     await Navigator.push(

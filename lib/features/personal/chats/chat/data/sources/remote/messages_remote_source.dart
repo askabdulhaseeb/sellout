@@ -11,6 +11,8 @@ import '../../../../chat_dashboard/data/models/chat/participant/chat_participant
 import '../../../../chat_dashboard/data/models/message/message_model.dart';
 import '../../../../chat_dashboard/data/sources/local/local_chat.dart';
 import '../../../../chat_dashboard/domain/entities/chat/participant/chat_participant_entity.dart';
+import '../../../../chat_dashboard/domain/entities/chat/participant/invitation_entity.dart';
+import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../domain/entities/getted_message_entity.dart';
 import '../../../domain/params/send_message_param.dart';
 import '../../models/getted_message_model.dart';
@@ -70,66 +72,74 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
             );
     }
   }
+@override
+Future<DataState<bool>> sendMessage(SendMessageParam msg) async {
+  try {
+    const String endpoint = '/chat/message/send';
+    final Map<String, String> body = msg.fieldMap();
 
-  @override
-  Future<DataState<bool>> sendMessage(SendMessageParam msg) async {
-    try {
-      const String endpoint = '/chat/message/send';
-      final Map<String, String> body = msg.fieldMap();
-      final DataState<bool> result = await ApiCall<bool>().callFormData(
-        endpoint: endpoint,
-        requestType: ApiRequestType.post,
-        fieldsMap: body,
-        attachments: msg.files,
-        isConnectType: false,
+    final DataState<bool> result = await ApiCall<bool>().callFormData(
+      endpoint: endpoint,
+      requestType: ApiRequestType.post,
+      fieldsMap: body,
+      attachments: msg.files,
+      isConnectType: false,
+    );
+
+    if (result is DataSuccess) {
+      debugPrint('New Message - Success: ${result.data}');
+      final Map<String, dynamic> responseData = jsonDecode(result.data ?? '');
+      final Map<String, dynamic> data = responseData['items'];
+
+      final MessageModel newMsg = MessageModel.fromJson(data);
+      final String chatId = data['chat_id'];
+
+      // Get existing entity from local storage
+      // final GettedMessageEntity? existingEntity = LocalChatMessage().entity(chatId);
+      final List<MessageEntity> existingMessages = LocalChatMessage().messages(chatId);
+
+      // 🔒 Check if the message already exists
+      final bool isDuplicate = existingMessages.any(
+        (MessageEntity m) => m.messageId == newMsg.messageId,
       );
-      if (result is DataSuccess) {
-        debugPrint('New Message - Success: ${result.data}');
-        final Map<String, dynamic> responseData = jsonDecode(result.data ?? '');
-        final Map<String, dynamic> data = responseData['items'];
-        final MessageModel newMsg = MessageModel.fromJson(data);
-        final String chatId = data['chat_id'];
-        final Box<GettedMessageEntity> box =
-            Hive.box<GettedMessageEntity>(AppStrings.localChatMessagesBox);
-        // Check if entity exists
-        final GettedMessageEntity existing =
-            box.values.firstWhere((GettedMessageEntity e) => e.chatID == chatId,
-                orElse: () => GettedMessageEntity(
-                      chatID: chatId,
-                      messages: <MessageModel>[],
-                      lastEvaluatedKey: MessageLastEvaluatedKeyModel(
-                          chatID: data['chat_id'],
-                          createdAt: data['created_at'],
-                          paginationKey: data['message_id']),
-                    ));
 
-        existing.messages.add(newMsg);
-
-        if (box.containsKey(existing.chatID)) {
-          await box.put(existing.chatID, existing);
-        } else {
-          await box.add(existing);
-        }
-        return DataSuccess<bool>(result.data ?? '', true);
-      } else {
-        AppLog.error(
-          'New Message - ERROR',
-          name: 'MessagesRemoteSourceImpl.sendMessage - else',
-          error: result.exception,
-        );
-        return DataFailer<bool>(
-          result.exception ?? CustomException('something_wrong'.tr()),
-        );
+      if (!isDuplicate) {
+        existingMessages.add(newMsg);
       }
-    } catch (e) {
+
+      // Create updated entity
+      final GettedMessageEntity updatedEntity = GettedMessageEntity(
+        chatID: chatId,
+        messages: existingMessages,
+        lastEvaluatedKey: MessageLastEvaluatedKeyModel(
+          chatID: chatId,
+          createdAt: data['created_at'],
+          paginationKey: data['message_id'],
+        ),
+      );
+
+      // Save updated entity to local storage
+      LocalChatMessage().save(updatedEntity,chatId);
+      return DataSuccess<bool>(result.data ?? '', true);
+    } else {
       AppLog.error(
         'New Message - ERROR',
-        name: 'MessagesRemoteSourceImpl.sendMessage - catch',
-        error: CustomException(e.toString()),
+        name: 'MessagesRemoteSourceImpl.sendMessage - else',
+        error: result.exception,
       );
-      return DataFailer<bool>(CustomException(e.toString()));
+      return DataFailer<bool>(
+        result.exception ?? CustomException('something_wrong'.tr()),
+      );
     }
+  } catch (e) {
+    AppLog.error(
+      'New Message - ERROR',
+      name: 'MessagesRemoteSourceImpl.sendMessage - catch',
+      error: CustomException(e.toString()),
+    );
+    return DataFailer<bool>(CustomException(e.toString()));
   }
+}
 
 @override
 Future<DataState<bool>> acceptGorupInvite(String groupId) async {
@@ -143,33 +153,36 @@ Future<DataState<bool>> acceptGorupInvite(String groupId) async {
 
     if (result is DataSuccess) {
       debugPrint('Invite Accepted - Success: ${result.data}');
-
-      // Parse response JSON
       final Map<String, dynamic> responseData = jsonDecode(result.data ?? '{}');
       final DateTime joinAt = DateTime.parse(responseData['join_at']);
       final String uid = LocalAuth.uid ?? '';
-
       final ChatEntity? chat = LocalChat().chatEntity(groupId);
-
       if (chat != null) {
+        final List<InvitationEntity>? invitations = chat.groupInfo?.invitations;
         final List<ChatParticipantEntity>? participants = chat.groupInfo?.participants;
-        final int index = participants?.indexWhere((p) => p.uid == uid) ?? -1;
+        if (invitations != null && participants != null) {
+          final int inviteIndex = invitations.indexWhere((InvitationEntity p) => p.uid == uid);
+          if (inviteIndex != -1) {
+            final InvitationEntity invite = invitations[inviteIndex];
+            // ✅ Convert invitation to participant
+            final ChatParticipantModel participant = ChatParticipantModel(chatAt: joinAt,
+              uid: invite.uid,
+              addedBy: invite.addedBy,
+              joinAt: joinAt,
+              role: ChatParticipantRoleType.member,
+              source: 'invitation',
+            );
 
-        if (index != -1 && participants != null) {
-          // Convert entity to model
-          final ChatParticipantModel model = ChatParticipantModel.fromEntity(participants[index]);
+            // ✅ Add participant to participants list
+            participants.add(participant);
 
-          // Create updated model using copyWith
-          final ChatParticipantModel updatedModel = model.copyWith(
-            joinAt: joinAt,
-            role: ChatParticipantRoleType.member,
-            source: 'invitation',
-          );
-          // Replace old entity with updated model
-          participants[index] = ChatParticipantModel.fromEntity(updatedModel);
-          // Save updated chat back to Hive
-          final Box<ChatEntity> box = Hive.box<ChatEntity>(AppStrings.localChatsBox);
-          box.put(chat.chatId, chat);
+            // ✅ Remove invitation from invitations list
+            invitations.removeAt(inviteIndex);
+
+            // ✅ Save updated chat to Hive
+            final Box<ChatEntity> box = Hive.box<ChatEntity>(AppStrings.localChatsBox);
+            box.put(chat.chatId, chat);
+          }
         }
       }
 
