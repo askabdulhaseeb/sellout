@@ -13,13 +13,19 @@ class AudioMessageWidget extends StatefulWidget {
   State<AudioMessageWidget> createState() => _AudioMessageWidgetState();
 }
 
-class _AudioMessageWidgetState extends State<AudioMessageWidget> {
+class _AudioMessageWidgetState extends State<AudioMessageWidget> { 
   late final VoiceNotePlayerController controller;
 
   @override
   void initState() {
-    super.initState();
     controller = VoiceNotePlayerController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -28,9 +34,9 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget> {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
     final TextTheme textTheme = theme.textTheme;
-
-    return PopScope(
-      onPopInvokedWithResult:(bool didPop, dynamic result) => controller.dispose(),
+    return PopScope(onPopInvokedWithResult: (bool didPop, dynamic result) async {
+       controller.pause();
+    },
       child: Align(
         alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
         child: AudioPlayerWidget(
@@ -44,26 +50,23 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget> {
           textDirection: TextDirection.ltr,
           size: 30,
           backgroundColor: Colors.transparent,
-          progressBarHeight: 50,
+          progressBarHeight: 100,
           progressBarColor: !isMe
               ? AppTheme.primaryColor
-              : colorScheme.secondary.withValues(alpha:0.8),
+              : colorScheme.secondary,
           progressBarBackgroundColor: !isMe
-              ? AppTheme.primaryColor.withValues(alpha:0.2)
-              : colorScheme.secondary.withValues(alpha:0.1),
+              ? AppTheme.primaryColor.withValues(alpha:0.5)
+              : colorScheme.secondary.withValues(alpha:0.5),
           iconColor: !isMe ? AppTheme.primaryColor : colorScheme.secondary,
           shapeType: PlayIconShapeType.circular,
           showProgressBar: true,
-          showTimer: true,
+          showSpeedControl: true,
           width: 280,
-          audioSpeeds: const <double>[0.01, 0.02, 0.03, 0.04],
-
-          // Debug Callbacks
+          audioSpeeds: const <double>[0.25, 0.5, 1, 1.5, 1.75, 2],
           onSeek: (double value) => debugPrint('Seeked to: $value'),
           onError: (String msg) => debugPrint('Error: $msg'),
-          onPause: () => debugPrint('Paused'),
-          onPlay: (bool playing) => debugPrint('Playing: $playing'),
           onSpeedChange: (double speed) => debugPrint('Speed: $speed'),
+
         ),
       ),
     );

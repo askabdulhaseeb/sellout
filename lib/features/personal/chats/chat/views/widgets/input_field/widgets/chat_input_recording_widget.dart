@@ -27,7 +27,7 @@ class _SwipeToRecordWidgetState extends State<SwipeToRecordWidget>
   int _recordDuration = 0;
   bool isSending = false;
 
-  ChatProvider get chatPro => Provider.of<ChatProvider>(context, listen: false);
+  ChatProvider get chatPro => Provider.of<ChatProvider>(context, listen: false);//Exception has occurred.FlutterError (This widget has been unmounted, so the State no longer has a context (and should be considered defunct).Consider canceling any active work during "dispose" or using the "mounted" getter to determine if the State is still active.)
 
   @override
   void initState() {
@@ -69,7 +69,8 @@ class _SwipeToRecordWidgetState extends State<SwipeToRecordWidget>
     _controller.stop();
     _timer?.cancel();
     await _recorder.stop();
-      chatPro.stopRecording();
+    if (!mounted) return;
+Provider.of<ChatProvider>(context, listen: false).stopRecording();
 
   }
 
@@ -95,13 +96,15 @@ class _SwipeToRecordWidgetState extends State<SwipeToRecordWidget>
     type: AttachmentType.audio,
   );
 
-  chatPro.addAttachment(attachment);
-  await chatPro.sendMessage(context);
+if (!mounted) return;
 
+final ChatProvider chatPro = Provider.of<ChatProvider>(context, listen: false);
+chatPro.addAttachment(attachment);
+await chatPro.sendMessage(context);
+chatPro.stopRecording();
   setState(() {
     isSending = false;
   });
-  chatPro.stopRecording();
 }
 
   String _formatDuration(int seconds) {
@@ -114,8 +117,8 @@ class _SwipeToRecordWidgetState extends State<SwipeToRecordWidget>
   Widget build(BuildContext context) {
     return Center(
       child: PopScope(
-        onPopInvokedWithResult: (bool didPop, dynamic result) {
-_stopRecording();        },
+        onPopInvokedWithResult: (bool didPop, dynamic result) =>
+_stopRecording(),
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             GestureDetector(
