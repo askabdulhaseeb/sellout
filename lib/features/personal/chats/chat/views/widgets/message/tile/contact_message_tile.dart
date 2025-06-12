@@ -38,9 +38,9 @@ class _ContactMessageTileState extends State<ContactMessageTile> {
     }
 
     return <String, String>{
-      'name': name ?? 'Unknown',
-      'phone': phone ?? 'N/A',
-      'email': email ?? 'N/A',
+      'name': name ?? 'Unknown'.tr(),
+      'phone': phone ?? 'na'.tr(),
+      'email': email ?? 'na'.tr(),
     };
   }
 
@@ -87,15 +87,15 @@ const Divider(),          if (_showDetails)
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text('📞 ${'phone'.tr()}: ${data['phone']}'),
-                    Text('✉️ ${'email'.tr()}: ${data['email']}'),
+                    Text('📞 ${'phone'.tr()}: ${data['phone']}',style: TextTheme.of(context).bodySmall?.copyWith(color: ColorScheme.of(context).surface),),
+                    Text('✉️ ${'email'.tr()}: ${data['email']}',style: TextTheme.of(context).bodySmall?.copyWith(color: ColorScheme.of(context).surface),),
                   ],
                 );
               },
             ),
           TextButton(
             onPressed: _toggleDetails,
-            child: Text(_showDetails ? 'see_less'.tr() : 'see_all'.tr(),style: TextTheme.of(context).bodySmall?.copyWith(color:widget.isMe ?AppTheme.secondaryColor: AppTheme.primaryColor),),
+            child: Text(_showDetails ? 'see_all'.tr() : 'see_less'.tr(),style: TextTheme.of(context).bodySmall?.copyWith(color:widget.isMe ?AppTheme.secondaryColor: AppTheme.primaryColor),),
           ),
         ],
       ),

@@ -67,9 +67,9 @@ class AttachmentMenuButton extends StatelessWidget {
       },
     ];
 
-    return PopupMenuButton<ChatPopMenuOptions>(
+    return PopupMenuButton<ChatPopMenuOptions>(padding:const EdgeInsets.all(0),child:Icon(Icons.add_circle_outline_outlined, color: iconColor) ,
       color: Theme.of(context).scaffoldBackgroundColor,
-      icon: Icon(Icons.add_circle_outline_outlined, color: iconColor),
+      
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),

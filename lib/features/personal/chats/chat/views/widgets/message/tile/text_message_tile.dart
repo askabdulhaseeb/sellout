@@ -7,6 +7,7 @@ import 'contact_message_tile.dart';
 import 'document_message_tile.dart';
 import 'widgets/attachment_message_widget.dart';
 import 'widgets/audio_message_widget.dart';
+
 class TextMessageTile extends StatelessWidget {
   const TextMessageTile({required this.message, super.key});
   final MessageEntity message;
@@ -24,25 +25,33 @@ class TextMessageTile extends StatelessWidget {
               isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            if (message.fileUrl.isNotEmpty)
+            // Handle non-image/video attachments
+            if (message.fileUrl.isNotEmpty &&
+                message.fileUrl.first.type != AttachmentType.image &&
+                message.fileUrl.first.type != AttachmentType.video)
               ...message.fileUrl.map((AttachmentEntity attachment) {
                 switch (attachment.type) {
                   case AttachmentType.audio:
                     return AudioMessageWidget(message: message);
-                  case AttachmentType.image:
-                  case AttachmentType.video:
-                    return AttachmentMessageWidget(attachments: <AttachmentEntity>[attachment]);
                   case AttachmentType.document:
-                    return DocumentTile(attachment: attachment,isMe: isMe);
+                    return DocumentTile(attachment: attachment, isMe: isMe);
                   case AttachmentType.contacts:
-                    return ContactMessageTile(attachment: attachment,isMe: isMe,);
+                    return ContactMessageTile(attachment: attachment, isMe: isMe);
                   case AttachmentType.location:
                     return Text('📍 Location: ${attachment.originalName}');
                   default:
-                    return const Text('asmkasmka');
+                    return const Text('Unknown attachment type');
                 }
               }).toList(),
-            if (message.text.isNotEmpty ||message.text == ' ')
+
+            // Handle image/video attachments in one widget
+            if (message.fileUrl.isNotEmpty &&
+                (message.fileUrl.first.type == AttachmentType.image ||
+                 message.fileUrl.first.type == AttachmentType.video))
+              AttachmentMessageWidget(attachments: message.fileUrl),
+
+            // Handle text
+            if (message.text.isNotEmpty || message.text == ' ')
               Text(
                 message.text,
                 style: const TextStyle(color: Colors.black),
