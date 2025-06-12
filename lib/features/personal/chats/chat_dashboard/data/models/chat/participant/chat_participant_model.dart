@@ -43,22 +43,4 @@ class ChatParticipantModel extends ChatParticipantEntity {
         'chat_At': chatAt.toIso8601String(),
         'added_by': addedBy,
       };
-       ChatParticipantModel copyWith({
-    DateTime? joinAt,
-    ChatParticipantRoleType? role,
-    String? source,
-    DateTime? chatAt,
-    String? addBy,
-    String? addedBy,
-  }) {
-    return ChatParticipantModel(
-      uid: uid,
-      joinAt: joinAt ?? this.joinAt,
-      role: role ?? this.role,
-      source: source ?? this.source,
-      chatAt: chatAt ?? this.chatAt,
-      addBy: addBy ?? this.addBy,
-      addedBy: addedBy ?? this.addedBy,
-    );
   }
-}

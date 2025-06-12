@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/enums/chat/chat_type.dart';
 import '../../../../../../../core/utilities/app_string.dart';
+import '../../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../chat_dashboard/domain/entities/chat/participant/chat_participant_entity.dart';
 import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../domain/entities/getted_message_entity.dart';
 import '../../providers/chat_provider.dart';
@@ -18,37 +21,44 @@ class MessagesList extends HookWidget {
     final ScrollController scrollController = useScrollController();
     final ValueNotifier<List<MessageEntity>> messages =
         useState<List<MessageEntity>>(<MessageEntity>[]);
+
     final String? chatId = chatPro.chat?.chatId;
 
     useEffect(() {
       if (chatId == null) return null;
+
       final Box<GettedMessageEntity> box =
           Hive.box<GettedMessageEntity>(AppStrings.localChatMessagesBox);
 
-      // Initial load of messages
       final GettedMessageEntity? existing = box.get(chatId);
       if (existing != null) {
-        messages.value = List.from(
-            existing.sortedByNewestFirst()); // Ensure list reference is updated
+    if (chatPro.chat?.type ==  ChatType.group) {
+  final DateTime? chatAt = _getJoinedAt(chatPro);
+  messages.value = _filterMessages(existing.sortedMessage(), chatAt);
+} else {
+  messages.value = existing.sortedMessage();
+}
+
       }
 
-      // Subscribe to changes in the chat's messages
       final StreamSubscription<BoxEvent> subscription =
           box.watch(key: chatId).listen((BoxEvent event) {
         final GettedMessageEntity? updated = box.get(chatId);
-        if (updated != null) {
-          final List<MessageEntity> newMessages = updated.sortedByNewestFirst();
+        if (updated != null) {  final List<MessageEntity> newMessages;
+       if (chatPro.chat?.type == ChatType.group) {
+    final DateTime? chatAt = _getJoinedAt(chatPro);
+    newMessages = _filterMessages(updated.sortedMessage(), chatAt);
+  } else {
+    newMessages = updated.sortedMessage();
+  }
 
-          // Check if the list actually changed
+          final bool wasNearBottom = scrollController.hasClients &&
+              scrollController.position.pixels >=
+                  scrollController.position.maxScrollExtent - 50;
+
           if (!_areListsEqual(messages.value, newMessages)) {
-            final bool wasNearBottom = scrollController.hasClients &&
-                scrollController.position.pixels >=
-                    scrollController.position.maxScrollExtent - 50;
+            messages.value = newMessages;
 
-            // Only update the messages if they actually changed
-            messages.value = List.from(newMessages); // Trigger rebuild
-
-            // Scroll to the bottom if user was near the bottom before the update
             if (wasNearBottom) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (scrollController.hasClients) {
@@ -63,17 +73,19 @@ class MessagesList extends HookWidget {
           }
         }
       });
-  scrollController.addListener(() {
-    if (scrollController.position.pixels <=
-        scrollController.position.minScrollExtent + 100) {
-      chatPro.loadMessages(); // Call pagination loader
-    }
-  });
-      // Cleanup subscription when the widget is disposed
+
+      scrollController.addListener(() {
+        if (scrollController.position.pixels <=
+            scrollController.position.minScrollExtent + 100) {
+          chatPro.loadMessages();
+        }
+      });
+
       return subscription.cancel;
     }, <Object?>[chatId]);
 
-    return ListView.builder(padding: const EdgeInsets.all(0),
+    return ListView.builder(
+      padding: const EdgeInsets.all(0),
       physics: const BouncingScrollPhysics(),
       controller: scrollController,
       reverse: true,
@@ -82,7 +94,7 @@ class MessagesList extends HookWidget {
         final MessageEntity current = messages.value[index];
         final MessageEntity? next =
             index > 0 ? messages.value[index - 1] : null;
-    
+
         return MessageTile(
           key: ValueKey<String>(current.messageId),
           message: current,
@@ -94,6 +106,29 @@ class MessagesList extends HookWidget {
     );
   }
 
+  DateTime? _getJoinedAt(ChatProvider chatPro) {
+    final String userId = LocalAuth.uid ?? '';
+    final List<ChatParticipantEntity> participants =
+        chatPro.chat?.groupInfo?.participants ?? <ChatParticipantEntity>[];
+
+    for (final ChatParticipantEntity p in participants) {
+      if (p.uid == userId) {
+        return p.chatAt;
+      }
+    }
+
+    // If not a participant, return null
+    return null;
+  }
+
+  List<MessageEntity> _filterMessages(
+      List<MessageEntity> messages, DateTime? chatAt) {
+    if (chatAt == null) return <MessageEntity>[];
+    return messages
+        .where((MessageEntity m) => m.createdAt.isAfter(chatAt))
+        .toList();
+  }
+
   bool _areListsEqual(List<MessageEntity> a, List<MessageEntity> b) {
     if (a.length != b.length) return false;
     for (int i = 0; i < a.length; i++) {
@@ -103,16 +138,5 @@ class MessagesList extends HookWidget {
       }
     }
     return true;
-  }
-}
-
-extension SortedMessages on GettedMessageEntity {
-  List<MessageEntity> sortedByNewestFirst() {
-    final List<MessageEntity> copy = <MessageEntity>[
-      ...messages
-    ]; // use this.messages
-    copy.sort((MessageEntity a, MessageEntity b) =>
-        b.createdAt.compareTo(a.createdAt));
-    return copy;
   }
 }

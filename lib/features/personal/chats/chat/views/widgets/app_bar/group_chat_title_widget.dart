@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/profile_photo.dart';
 import '../../../../chat_dashboard/domain/entities/chat/group/group_into_entity.dart';
 import '../../providers/chat_provider.dart';
+import '../../screens/group_detail_screen.dart';
 
 class GroupChatTitleWidget extends StatelessWidget {
   const GroupChatTitleWidget({super.key});
@@ -13,33 +14,35 @@ class GroupChatTitleWidget extends StatelessWidget {
     return Consumer<ChatProvider>(
       builder: (BuildContext context, ChatProvider pro, _) {
         final GroupInfoEntity? groupInfo = pro.chat?.groupInfo;
-        return Row(
-          children: <Widget>[
-            ProfilePhoto(
-              url: groupInfo?.groupThumbnailURL,
-              placeholder: groupInfo?.title ?? '',
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    groupInfo?.title ?? '',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Opacity(
-                    opacity: 0.5,
-                    child: const Text(
-                      'tap_here_to_open_profile',
-                      style: TextStyle(fontSize: 12),
-                   ).tr(),
-                 )
-               ],
-             ),
-           )
-         ],
-       );
+        return InkWell(onTap: (){Navigator.push(context,MaterialPageRoute<GroupDetailScreen>(builder:(BuildContext context) => const GroupDetailScreen(), ));},
+          child: Row(
+            children: <Widget>[
+              ProfilePhoto(
+                url: groupInfo?.groupThumbnailURL,
+                placeholder: groupInfo?.title ?? '',
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      groupInfo?.title ?? '',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Opacity(
+                      opacity: 0.5,
+                      child: const Text(
+                        'tap_here_to_open_profile',
+                        style: TextStyle(fontSize: 12),
+                     ).tr(),
+                   )
+                 ],
+               ),
+             )
+           ],
+                 ),
+        );
      },
     );
   }

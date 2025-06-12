@@ -145,7 +145,7 @@ class BookingProvider extends ChangeNotifier {
       if (chatresult is DataSuccess && (chatresult.data?.isNotEmpty ?? false)) {
         final ChatProvider chatProvider =
             Provider.of<ChatProvider>(context, listen: false);
-        chatProvider.chat = chatresult.entity!.first;
+        chatProvider.setChat(chatresult.entity!.first); 
         Navigator.of(context).pushReplacementNamed(
           ChatScreen.routeName,
           arguments: chatId,

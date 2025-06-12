@@ -47,11 +47,9 @@ class _DocumentTileState extends State<DocumentTile> {
       if (response.statusCode == 200) {
         final Directory? directory = await getExternalStorageDirectory();
         if (directory == null) throw Exception("Storage directory not found");
-
         filePath = '${directory.path}/$fileName';
         final File file = File(filePath);
         await file.writeAsBytes(response.bodyBytes);
-
         final bool exists = await file.exists();
         if (exists) {
           setState(() {

@@ -76,7 +76,7 @@ class MessageTile extends StatelessWidget {
                                   ? OfferMessageTile(message: message)
                                   : Text(
                                       '${message.displayText} - ${message.type?.code.tr()}',
-                                    ),
+                                    )
             ],
           );
   }
