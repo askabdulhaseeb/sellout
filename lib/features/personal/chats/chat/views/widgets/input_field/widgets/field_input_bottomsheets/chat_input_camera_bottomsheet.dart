@@ -1,13 +1,13 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../providers/chat_provider.dart';
 
-void showCameraPickerBottomSheet(BuildContext context) async {
+void showCameraPickerBottomSheet(BuildContext context) async {final ChatProvider chatPro =Provider.of<ChatProvider>(context,listen:false);
   showModalBottomSheet(
     context: context,
     shape: const RoundedRectangleBorder(
@@ -20,24 +20,26 @@ void showCameraPickerBottomSheet(BuildContext context) async {
           children: <Widget>[
             ListTile(
               leading: const Icon(Icons.photo_camera),
-              title: const Text('Take Photo'),
+              title:  Text('take_photo'.tr()),
               onTap: () async {
                 Navigator.pop(context);
                 final PickedAttachment? picked = await pickFromCamera(isVideo: false);
                 if (picked != null) {
-                  Provider.of<ChatProvider>(context, listen: false).addAttachment(picked);
+                 chatPro.addAttachment(picked);
+                 chatPro.sendMessage(context);
                 }
               },
             ),
             ListTile(
               leading: const Icon(Icons.videocam),
-              title: const Text('Record Video'),
+              title:  Text('record_video'.tr()),
               onTap: () async {
                 Navigator.pop(context);
                 final PickedAttachment? picked = await pickFromCamera(isVideo: true);
                 if (picked != null) {
-                  Provider.of<ChatProvider>(context, listen: false).addAttachment(picked);
-                }
+                 chatPro.addAttachment(picked);
+                 chatPro.sendMessage(context);
+                 }
               },
             ),
           ],
@@ -60,16 +62,12 @@ Future<PickedAttachment?> pickFromCamera({required bool isVideo}) async {
 
   final File finalFile = File(file.path);
 
-  AssetEntity? entity;
+  PickedAttachment? entity;
   if (isVideo) {
-    entity = await PhotoManager.editor.saveVideo(finalFile);
+    entity = PickedAttachment(file: finalFile, type: AttachmentType.video);
   } else {
-    entity = await PhotoManager.editor.saveImageWithPath(finalFile.path);
+    entity = PickedAttachment(file: finalFile, type: AttachmentType.image);
   }
 
-  return PickedAttachment(
-    file: finalFile,
-    type: isVideo ? AttachmentType.video : AttachmentType.image,
-    selectedMedia: entity,
-  );
+  return entity;
 }

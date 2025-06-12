@@ -1,7 +1,7 @@
 enum ChatPopMenuOptions {
   camera,
   mediaLibrary,
-  location,
+  // location,
   document,
   contacts,
 }
