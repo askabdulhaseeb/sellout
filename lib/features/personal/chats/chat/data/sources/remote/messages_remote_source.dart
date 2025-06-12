@@ -15,6 +15,7 @@ import '../../../../chat_dashboard/domain/entities/chat/participant/invitation_e
 import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../domain/entities/getted_message_entity.dart';
 import '../../../domain/params/leave_group_params.dart';
+import '../../../domain/params/send_invite_to_group_params.dart';
 import '../../../domain/params/send_message_param.dart';
 import '../../models/getted_message_model.dart';
 import '../../models/message_last_evaluated_key.dart';
@@ -29,6 +30,8 @@ abstract interface class MessagesRemoteSource {
   Future<DataState<bool>> sendMessage(SendMessageParam msg);
   Future<DataState<bool>> acceptGorupInvite(String groupId);
   Future<DataState<bool>> removeParticipants(LeaveGroupParams params);
+    Future<DataState<bool>> sendInviteToGroup(SendGroupInviteParams params);
+
 
 }
 
@@ -210,14 +213,14 @@ Future<DataState<bool>> acceptGorupInvite(String groupId) async {
   }
 }
 
-@override
-Future<DataState<bool>> removeParticipants(LeaveGroupParams params) async {
+ @override
+ Future<DataState<bool>> removeParticipants(LeaveGroupParams params) async {
   try {
     const String endpoint = '/chat/group/removal';
     final DataState<bool> result = await ApiCall<bool>().call(
       endpoint: endpoint,
       requestType: ApiRequestType.patch,
-      body: jsonEncode(params)
+      body: jsonEncode(params.toMap())
     );
 
     if (result is DataSuccess) {
@@ -256,7 +259,39 @@ Future<DataState<bool>> removeParticipants(LeaveGroupParams params) async {
   }
 }
 
+ @override
+ Future<DataState<bool>> sendInviteToGroup(SendGroupInviteParams params) async {
+  try { debugPrint(jsonEncode(params.toMap()));
+    const String endpoint = '/chat/group/add';
+    final DataState<bool> result = await ApiCall<bool>().call(
+      endpoint: endpoint,
+      requestType: ApiRequestType.patch,
+      body: jsonEncode(params.toMap())
+    );
 
+    if (result is DataSuccess) {
+      debugPrint('Group Invite sent - Success: ${result.data}');
+      return DataSuccess<bool>(result.data ?? '', true);
+    } else {
+      AppLog.error(
+        'Invite send error - ERROR',
+        name: 'MessagesRemoteSourceImpl.sendInviteToGroup - else',
+        error: result.exception,
+      );
+      return DataFailer<bool>(
+        result.exception ?? CustomException('something_wrong'.tr()),
+      );
+    }
+  } catch (e,stc) {
+    AppLog.error(
+      'Invite send error - ERROR',
+      name: 'MessagesRemoteSourceImpl.sendInviteToGroup - catch',
+      error: CustomException(e.toString()),
+      stackTrace: stc
+    );
+    return DataFailer<bool>(CustomException(e.toString()));
+  }
+}
   GettedMessageEntity? _local(String chatID) {
     return LocalChatMessage().entity(chatID);
   }

@@ -1,6 +1,7 @@
 import '../../../../../../core/sources/data_state.dart';
 import '../../domain/entities/getted_message_entity.dart';
 import '../../domain/params/leave_group_params.dart';
+import '../../domain/params/send_invite_to_group_params.dart';
 import '../../domain/params/send_message_param.dart';
 import '../../domain/repositories/message_reposity.dart';
 import '../sources/remote/messages_remote_source.dart';
@@ -37,5 +38,8 @@ class MessageRepositoryImpl implements MessageRepository {
 async{
     return await remoteSource.removeParticipants(params);
     }
-
+ @override
+ Future<DataState<bool>> sendInviteToGroup(SendGroupInviteParams params)async{
+    return await remoteSource.sendInviteToGroup(params);
+    }
 }

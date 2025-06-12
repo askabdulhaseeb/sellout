@@ -23,8 +23,9 @@ import '../features/personal/review/views/providers/review_provider.dart';
 import '../features/personal/search/view/provider/search_provider.dart';
 import '../features/personal/services/views/providers/services_page_provider.dart';
 import '../features/personal/user/profiles/views/providers/profile_provider.dart';
-import 'get_it.dart';
 import '../features/personal/auth/signin/views/providers/signin_provider.dart';
+import 'get_it.dart';
+
 
 final List<SingleChildWidget> appProviders = <SingleChildWidget>[
   // Add your providers here
@@ -46,14 +47,14 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
       value: AddListingFormProvider(locator(), locator())),
   ChangeNotifierProvider<PickedMediaProvider>.value(
       value: PickedMediaProvider()),
-
   //
   ChangeNotifierProvider<ChatDashboardProvider>.value(
       value: ChatDashboardProvider(locator())),
   ChangeNotifierProvider<ChatProvider>.value(
       value: ChatProvider(
     locator(),
-    locator(),   
+    locator(),
+    locator(),
     locator(),
     locator(),
   )),
@@ -103,16 +104,14 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
       value: MarketPlaceProvider(
     locator(),
   )),
-
 //
-
   ChangeNotifierProvider<BookingProvider>.value(
       value: BookingProvider(
           locator(), locator(), locator(), locator(), locator(), locator())),
 //
   ChangeNotifierProvider<AddAddressProvider>.value(
       value: AddAddressProvider(locator(), locator())),
-      //
+//
         ChangeNotifierProvider<SearchProvider>.value(
       value:   
 SearchProvider( locator())),

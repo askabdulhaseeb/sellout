@@ -15,9 +15,11 @@ import '../../data/models/message_last_evaluated_key.dart';
 import '../../domain/entities/getted_message_entity.dart';
 import '../../domain/entities/message_last_evaluated_key_entity.dart';
 import '../../domain/params/leave_group_params.dart';
+import '../../domain/params/send_invite_to_group_params.dart';
 import '../../domain/params/send_message_param.dart';
 import '../../domain/usecase/get_messages_usecase.dart';
-import '../../domain/usecase/remove_group_participant_usecase.dart';
+import '../../domain/usecase/leave_group_usecase.dart';
+import '../../domain/usecase/send_group_invite_usecase.dart';
 import '../../domain/usecase/send_message_usecase.dart';
 
 class ChatProvider extends ChangeNotifier {
@@ -26,11 +28,13 @@ class ChatProvider extends ChangeNotifier {
     this._sendMessageUsecase,
     this._acceptGroupInviteUsecase,
     this._leaveGroupparams,
+    this._sendGroupInviteUsecase,
   );
   final GetMessagesUsecase _getMessagesUsecase;
   final SendMessageUsecase _sendMessageUsecase;
       final AcceptGorupInviteUsecase _acceptGroupInviteUsecase;
-      final RemoveParticipantUsecase _leaveGroupparams;
+      final LeaveGroupUsecase _leaveGroupparams;
+      final SendGroupInviteUsecase _sendGroupInviteUsecase;
   ChatEntity? _chat;
   MessageLastEvaluatedKeyEntity? _key;
   GettedMessageEntity? _gettedMessage;
@@ -188,7 +192,7 @@ void insertEmoji(String emoji) {
     _attachments.clear();
     notifyListeners();
   }
-
+//
   Future<void> sendMessage(BuildContext context) async {
     setLoading(true);
     final SendMessageParam param = SendMessageParam(
@@ -245,6 +249,24 @@ LeaveGroupParams   leaveparams = LeaveGroupParams(chatId: chat?.chatId ?? '',rem
   }
 } catch (e,stc) {
   AppLog.error('error chatprovider - LeaveGroup',name:'ChatPRovider.LeaveGroup - Catch' ,error: e,stackTrace: stc);
+  setLoading(false); 
+}}
+
+ Future<void> sendGroupInvite(List<String> newParticipant) async {
+  setLoading(true);
+SendGroupInviteParams   inviteparams = SendGroupInviteParams(chatId: chat?.chatId ?? '',newParticipants: newParticipant);
+  final DataState<bool> result = await _sendGroupInviteUsecase.call(inviteparams);
+  try {
+  if (result is DataSuccess) {
+  setChat( LocalChat().chatEntity(chat?.chatId ?? ''));
+  debugPrint('you invited${inviteparams.newParticipants} to ${inviteparams.chatId}');
+  setLoading(false); 
+  } else {
+      AppLog.error('you failed to invite to the group${inviteparams.chatId}',name: 'ChatPRovider.sendGroupInvite - else');
+    setLoading(false); 
+  }
+} catch (e,stc) {
+  AppLog.error('error chatprovider - sendGroupInvite',name:'ChatPRovider.sendGroupInvite - Catch' ,error: e,stackTrace: stc);
   setLoading(false); 
 }}
 }
