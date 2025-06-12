@@ -21,9 +21,9 @@ class AttachmentMenuButton extends StatelessWidget {
         showMediaBottomSheet(context);
         break;
 
-      case ChatPopMenuOptions.location:
-        // TODO: Implement location picking logic
-        break;
+      // case ChatPopMenuOptions.location:
+      //   // TODO: Implement location picking logic
+      //   break;
 
       case ChatPopMenuOptions.document:
         await pickDocument(context);
@@ -50,11 +50,11 @@ class AttachmentMenuButton extends StatelessWidget {
         'icon': Icons.photo_library_outlined,
         'title': 'photo_video_library'.tr(),
       },
-      <String, dynamic>{
-        'option': ChatPopMenuOptions.location,
-        'icon': Icons.location_on_outlined,
-        'title': 'location'.tr(),
-      },
+      // <String, dynamic>{
+      //   'option': ChatPopMenuOptions.location,
+      //   'icon': Icons.location_on_outlined,
+      //   'title': 'location'.tr(),
+      // },
       <String, dynamic>{
         'option': ChatPopMenuOptions.document,
         'icon': Icons.insert_drive_file_outlined,
