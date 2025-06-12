@@ -17,9 +17,11 @@ class GroupChatTitleWidget extends StatelessWidget {
         return InkWell(onTap: (){Navigator.push(context,MaterialPageRoute<GroupDetailScreen>(builder:(BuildContext context) => const GroupDetailScreen(), ));},
           child: Row(
             children: <Widget>[
-              ProfilePhoto(
-                url: groupInfo?.groupThumbnailURL,
-                placeholder: groupInfo?.title ?? '',
+              Hero(tag: 'group_profile',
+                child: ProfilePhoto(
+                  url: groupInfo?.groupThumbnailURL,
+                  placeholder: groupInfo?.title ?? '',
+                ),
               ),
               const SizedBox(width: 8),
               Expanded(
