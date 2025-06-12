@@ -1,14 +1,13 @@
 import 'dart:io';
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../providers/chat_provider.dart';
+
 void showCameraPickerBottomSheet(BuildContext context) async {
-  final List<CameraDescription> cameras = await availableCameras();
-final CameraDescription camera = cameras.first;
   showModalBottomSheet(
     context: context,
     shape: const RoundedRectangleBorder(
@@ -24,13 +23,9 @@ final CameraDescription camera = cameras.first;
               title: const Text('Take Photo'),
               onTap: () async {
                 Navigator.pop(context);
-                final PickedAttachment? picked = await pickFromCamera(
-                  isVideo: false,
-                  camera: camera,
-                );
+                final PickedAttachment? picked = await pickFromCamera(isVideo: false);
                 if (picked != null) {
-                  Provider.of<ChatProvider>(context, listen: false)
-                      .addAttachment(picked);
+                  Provider.of<ChatProvider>(context, listen: false).addAttachment(picked);
                 }
               },
             ),
@@ -39,13 +34,9 @@ final CameraDescription camera = cameras.first;
               title: const Text('Record Video'),
               onTap: () async {
                 Navigator.pop(context);
-                final PickedAttachment? picked = await pickFromCamera(
-                  isVideo: true,
-                  camera: camera,
-                );
+                final PickedAttachment? picked = await pickFromCamera(isVideo: true);
                 if (picked != null) {
-                  Provider.of<ChatProvider>(context, listen: false)
-                      .addAttachment(picked);
+                  Provider.of<ChatProvider>(context, listen: false).addAttachment(picked);
                 }
               },
             ),
@@ -55,48 +46,29 @@ final CameraDescription camera = cameras.first;
     },
   );
 }
-Future<PickedAttachment?> pickFromCamera({
-  required bool isVideo,
-  required CameraDescription camera,
-}) async {
+
+Future<PickedAttachment?> pickFromCamera({required bool isVideo}) async {
   final PermissionStatus cameraStatus = await Permission.camera.request();
   if (!cameraStatus.isGranted) return null;
 
-  final CameraController controller = CameraController(
-    camera,
-    ResolutionPreset.medium,
-    enableAudio: isVideo,
-  );
+  final ImagePicker picker = ImagePicker();
+  final XFile? file = isVideo
+      ? await picker.pickVideo(source: ImageSource.camera)
+      : await picker.pickImage(source: ImageSource.camera);
 
-  await controller.initialize();
+  if (file == null) return null;
 
-  final XFile? capturedFile;
-
-  if (isVideo) {
-    await controller.startVideoRecording();
-    await Future.delayed(const Duration(seconds: 5)); // auto-stop after 5 sec
-    capturedFile = await controller.stopVideoRecording();
-  } else {
-    capturedFile = await controller.takePicture();
-  }
-
-  await controller.dispose();
-
-  if (!File(capturedFile.path).existsSync()) {
-    return null;
-  }
-
-  final File file = File(capturedFile.path);
+  final File finalFile = File(file.path);
 
   AssetEntity? entity;
   if (isVideo) {
-    entity = await PhotoManager.editor.saveVideo(file);
+    entity = await PhotoManager.editor.saveVideo(finalFile);
   } else {
-    entity = await PhotoManager.editor.saveImageWithPath(file.path);
+    entity = await PhotoManager.editor.saveImageWithPath(finalFile.path);
   }
 
   return PickedAttachment(
-    file: file,
+    file: finalFile,
     type: isVideo ? AttachmentType.video : AttachmentType.image,
     selectedMedia: entity,
   );
