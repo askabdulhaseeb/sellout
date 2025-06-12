@@ -14,6 +14,7 @@ import '../../../../chat_dashboard/domain/entities/chat/participant/chat_partici
 import '../../../../chat_dashboard/domain/entities/chat/participant/invitation_entity.dart';
 import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../domain/entities/getted_message_entity.dart';
+import '../../../domain/params/leave_group_params.dart';
 import '../../../domain/params/send_message_param.dart';
 import '../../models/getted_message_model.dart';
 import '../../models/message_last_evaluated_key.dart';
@@ -27,6 +28,8 @@ abstract interface class MessagesRemoteSource {
   });
   Future<DataState<bool>> sendMessage(SendMessageParam msg);
   Future<DataState<bool>> acceptGorupInvite(String groupId);
+  Future<DataState<bool>> removeParticipants(LeaveGroupParams params);
+
 }
 
 class MessagesRemoteSourceImpl implements MessagesRemoteSource {
@@ -206,6 +209,53 @@ Future<DataState<bool>> acceptGorupInvite(String groupId) async {
     return DataFailer<bool>(CustomException(e.toString()));
   }
 }
+
+@override
+Future<DataState<bool>> removeParticipants(LeaveGroupParams params) async {
+  try {
+    const String endpoint = '/chat/group/removal';
+    final DataState<bool> result = await ApiCall<bool>().call(
+      endpoint: endpoint,
+      requestType: ApiRequestType.patch,
+      body: jsonEncode(params)
+    );
+
+    if (result is DataSuccess) {
+      debugPrint('Group Left - Success: ${result.data}');
+      // final Map<String, dynamic> responseData = jsonDecode(result.data ?? '{}');
+      // final DateTime joinAt = DateTime.parse(responseData['join_at']);
+      final String uid = LocalAuth.uid ?? '';
+      final ChatEntity? chat = LocalChat().chatEntity(params.chatId);
+      if (chat != null) {
+        final List<ChatParticipantEntity>? participants= chat.groupInfo?.participants;
+        if (participants != null) {
+          final int inviteIndex = participants.indexWhere((ChatParticipantEntity p) => p.uid == uid);
+            participants.removeAt(inviteIndex);
+            final Box<ChatEntity> box = Hive.box<ChatEntity>(AppStrings.localChatsBox);
+            box.put(chat.chatId, chat);
+          }
+        }
+      return DataSuccess<bool>(result.data ?? '', true);
+    } else {
+      AppLog.error(
+        'Invite Accept - ERROR',
+        name: 'MessagesRemoteSourceImpl.removeParticipants - else',
+        error: result.exception,
+      );
+      return DataFailer<bool>(
+        result.exception ?? CustomException('something_wrong'.tr()),
+      );
+    }
+  } catch (e) {
+    AppLog.error(
+      'Invite Accept - ERROR',
+      name: 'MessagesRemoteSourceImpl.removeParticipants - catch',
+      error: CustomException(e.toString()),
+    );
+    return DataFailer<bool>(CustomException(e.toString()));
+  }
+}
+
 
   GettedMessageEntity? _local(String chatID) {
     return LocalChatMessage().entity(chatID);

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/functions/app_log.dart';
-import '../../../../../../core/media_preview/view/screens/media_preview_screen.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
@@ -15,8 +14,10 @@ import '../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../data/models/message_last_evaluated_key.dart';
 import '../../domain/entities/getted_message_entity.dart';
 import '../../domain/entities/message_last_evaluated_key_entity.dart';
+import '../../domain/params/leave_group_params.dart';
 import '../../domain/params/send_message_param.dart';
 import '../../domain/usecase/get_messages_usecase.dart';
+import '../../domain/usecase/remove_group_participant_usecase.dart';
 import '../../domain/usecase/send_message_usecase.dart';
 
 class ChatProvider extends ChangeNotifier {
@@ -24,10 +25,12 @@ class ChatProvider extends ChangeNotifier {
     this._getMessagesUsecase,
     this._sendMessageUsecase,
     this._acceptGroupInviteUsecase,
+    this._leaveGroupparams,
   );
   final GetMessagesUsecase _getMessagesUsecase;
   final SendMessageUsecase _sendMessageUsecase;
       final AcceptGorupInviteUsecase _acceptGroupInviteUsecase;
+      final RemoveParticipantUsecase _leaveGroupparams;
   ChatEntity? _chat;
   MessageLastEvaluatedKeyEntity? _key;
   GettedMessageEntity? _gettedMessage;
@@ -48,11 +51,9 @@ class ChatProvider extends ChangeNotifier {
   ChatEntity? get chat => _chat;
   bool get isLoading => _isLoading;
 //
-  set isLoading(bool value) {
+  void setLoading(bool value) {
     _isLoading = value;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
-    });
   }
 
  void startRecording() {
@@ -189,9 +190,10 @@ void insertEmoji(String emoji) {
   }
 
   Future<void> sendMessage(BuildContext context) async {
+    setLoading(true);
     final SendMessageParam param = SendMessageParam(
       chatID: _chat?.chatId ?? _key?.chatID ?? '',
-      text: _message.text,
+      text: _message.text.isEmpty ? 'null' : _message.text,
       persons: _chat?.persons ?? <String>[],
       files: _attachments,
       source: 'application',
@@ -200,30 +202,49 @@ void insertEmoji(String emoji) {
     if (result is DataSuccess) {
       _message.clear();
       _attachments.clear();
-      notifyListeners();
+     setLoading(false);
     } else {
       AppSnackBar.showSnackBar(
           // ignore: use_build_context_synchronously
           context,
           result.exception?.message ?? 'something_wrong'.tr());
-    }
+    }setLoading(false);
   }
- 
+
  Future<void> acceptGroupInvite(BuildContext context) async {
+  setLoading(true);
   final DataState<bool> result = await _acceptGroupInviteUsecase.call(chat?.chatId ?? '');
   try {
   if (result is DataSuccess) {
   setChat( LocalChat().chatEntity(chat?.chatId ?? ''));
   debugPrint('provider chat is updated');
-  notifyListeners();
-  } else {
+setLoading(false);  } else {
     AppSnackBar.showSnackBar(
       context,
       result.exception?.message ?? 'something_wrong'.tr(),
-    );
+    );setLoading(false); 
+          AppLog.error('you accepted group invite',name: 'ChatPRovider.LeaveGroup - else');
   }
 } catch (e,stc) {
-  AppLog.error('error chatprovider - acceptinvite',error: e,stackTrace: stc);
+      AppLog.error('failed to accept invite',name: 'ChatPRovider.LeaveGroup - else',error: e,stackTrace: stc);
+  setLoading(false); 
 }}
 
+ Future<void> leaveGroup() async {
+  setLoading(true); 
+LeaveGroupParams   leaveparams = LeaveGroupParams(chatId: chat?.chatId ?? '',removalType: 'leave');
+  final DataState<bool> result = await _leaveGroupparams.call(leaveparams);
+  try {
+  if (result is DataSuccess) {
+  setChat( LocalChat().chatEntity(chat?.chatId ?? ''));
+  debugPrint('you left the group${leaveparams.chatId}');
+  setLoading(false); 
+  } else {
+      AppLog.error('you failed to leave the group${leaveparams.chatId}',name: 'ChatPRovider.LeaveGroup - else');
+    setLoading(false); 
+  }
+} catch (e,stc) {
+  AppLog.error('error chatprovider - LeaveGroup',name:'ChatPRovider.LeaveGroup - Catch' ,error: e,stackTrace: stc);
+  setLoading(false); 
+}}
 }

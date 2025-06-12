@@ -29,9 +29,9 @@ void showMediaBottomSheet(BuildContext context) {
               ),
               title: Text('photo_library'.tr()),
               subtitle: Text('upload_photo_from_library'.tr()),
-              onTap: () {
+              onTap: () {                Navigator.pop(context);
+
                 chatPro.setImages(context, type: AttachmentType.image);
-                Navigator.pop(context);
               },
             ),
             ListTile(
@@ -41,9 +41,9 @@ void showMediaBottomSheet(BuildContext context) {
               ),
               title: Text('video_library'.tr()),
               subtitle: Text('upload_a_video_from_library'.tr()),
-              onTap: () {    
+              onTap: () {                    Navigator.pop(context);
+
             chatPro.setImages(context, type: AttachmentType.video);
-                Navigator.pop(context);
                 // Handle video selection
               },
             ),

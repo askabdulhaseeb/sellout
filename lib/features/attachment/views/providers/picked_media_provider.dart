@@ -1,8 +1,6 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
-
 import '../../../../core/functions/app_log.dart';
 import '../../domain/entities/picked_attachment.dart';
 import '../../domain/entities/picked_attachment_option.dart';
@@ -54,31 +52,31 @@ class PickedMediaProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeMedia(AssetEntity value) {
-    _pickedMedia.remove(value);
+  void removeMedia(int value) {
+    _pickedMedia.removeAt(value);
     notifyListeners();
   }
-
   void onTap(AssetEntity? value) {
     if (value == null) return;
     if (_pickedMedia.length > _option.maxAttachments) return;
-    final bool isOld = _option.selectedMedia?.contains(value) ?? false;
-    if (_pickedMedia.contains(value) && !isOld) {
-      removeMedia(value);
-    } else if (!isOld) {
-      addMedia(value);
-    }
+final bool isOld = _option.selectedMedia?.any((AssetEntity e) => e.id == value.id) ?? false;
+    final int existingIndex = _pickedMedia.indexWhere((AssetEntity e) => e.id == value.id);
+if (existingIndex != -1 && !isOld) {
+  removeMedia(existingIndex);
+} else if (existingIndex == -1 && !isOld) {
+  addMedia(value);
+}
   }
 
   int? indexOf(AssetEntity value) {
-    final int index = _pickedMedia.indexOf(value);
+final int index = _pickedMedia.indexWhere((AssetEntity e) => e.id == value.id);
     return index == -1 ? null : index;
   }
 
   void clearMedia() {
     _pickedMedia.clear();
     notifyListeners();
-  }
+  } 
 
   // Getters
   List<AssetEntity> get pickedMedia => _pickedMedia;

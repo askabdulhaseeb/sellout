@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../../../../../../../core/widgets/video_widget.dart';
 import '../../../../../../../../../attachment/domain/entities/picked_attachment.dart';
+import '../../../../../providers/chat_provider.dart';
 
 class ChatAttachmentsListView extends StatelessWidget {
   const ChatAttachmentsListView({required this.attachments, super.key});
@@ -22,36 +24,60 @@ class ChatAttachmentsListView extends StatelessWidget {
     );
   }
 }
-
 class CustomMediaTile extends StatelessWidget {
-  const CustomMediaTile({required this.media, super.key});
+  const CustomMediaTile({
+    required this.media,
+    super.key,
+  });
+
   final PickedAttachment media;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 100,
-      width: 100,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outline,
+    return Stack(
+      children: <Widget>[
+        Container(
+          height: 100,
+          width: 100,
+          margin: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Theme.of(context).colorScheme.outline),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: media.type == AttachmentType.image
+                ? Image.file(media.file, fit: BoxFit.cover)
+                : VideoWidget(
+                    showTime: true,
+                    videoSource: media.file.path,
+                    play: false,
+                  ),
+          ),
         ),
-      ),
-      margin: const EdgeInsets.all(8),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: media.type == AttachmentType.image
-            ? Image.file(
-                media.file,
-                fit: BoxFit.cover,
-              )
-            : VideoWidget(
-                         showTime: true,
-                videoSource: media.file.path,
-                play: false,
+
+        // Positioned close button
+        Positioned(
+          top: 4,
+          right: 4,
+          child: GestureDetector(
+            onTap: (){final ChatProvider pro = Provider.of<ChatProvider>(context,listen: false);
+            pro.removePickedAttachment(media);},
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.6),
+                shape: BoxShape.circle,
               ),
-      ),
+              padding: const EdgeInsets.all(4),
+              child: const Icon(
+                Icons.close,
+                size: 16,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

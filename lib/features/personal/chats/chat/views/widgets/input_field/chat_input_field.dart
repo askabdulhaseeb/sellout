@@ -21,15 +21,13 @@ class ChatInputField extends StatelessWidget {
           ),
           child: Consumer<ChatProvider>(
             builder: (BuildContext context, ChatProvider chatPro, _) {
-              // ⏺️ Show Audio Recorder if active
               if (chatPro.isRecordingAudio) {
                 return const SwipeToRecordWidget(
                 );
               }
-              // 💬 Normal Chat UI
               return Column(
                 children: <Widget>[
-                  if (chatPro.attachments.isNotEmpty)
+                  if (chatPro.attachments.isNotEmpty && !chatPro.isLoading)
                     ChatAttachmentsListView(attachments: chatPro.attachments),
            ValueListenableBuilder<TextEditingValue>(
   valueListenable: chatPro.message,
@@ -37,11 +35,10 @@ class ChatInputField extends StatelessWidget {
     final bool isEmpty = value.text.isEmpty;
     return Row(
       children: <Widget>[
-
         if (isEmpty) const AttachmentMenuButton(),
-                IconButton(
-        icon: const Icon(Icons.emoji_emotions_outlined),
-        onPressed: () => showEmojiPickerBottomSheet(context),
+                InkWell(
+       child:  const Padding(padding: EdgeInsets.all(6),child: Icon(Icons.emoji_emotions_outlined)),
+        onTap: () => showEmojiPickerBottomSheet(context),
                 ),
           Expanded(
             child: CustomTextFormField(
@@ -61,13 +58,13 @@ class ChatInputField extends StatelessWidget {
             icon: const Icon(Icons.mic_none_outlined),
             onPressed: chatPro.startRecording,
           ),
-
-        if (!isEmpty)
+        if (!isEmpty || chatPro.attachments.isNotEmpty)
           IconButton(
-            icon: const Icon(Icons.send_outlined),
+            icon:chatPro.isLoading ? const CircularProgressIndicator(): const Icon(Icons.send_outlined),
             onPressed: () async {
-              await chatPro.sendMessage(context);
-            },
+if (!chatPro.isLoading ) {
+                await chatPro.sendMessage(context);
+}            },
           ),
       ],
     );

@@ -294,6 +294,7 @@ void _message() {
   locator.registerLazySingleton(() => ChatProvider(
     locator(),   
     locator(),
+    locator(),
     locator()));
 }
 void _feed() {

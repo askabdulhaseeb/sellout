@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../features/attachment/domain/entities/picked_attachment.dart';
 import '../../../theme/app_theme.dart';
 import '../provider/media_preview_provider.dart';
-import '../widgets/llistview_widget.dart';
+import '../widgets/media_llistview_widget.dart';
 import '../widgets/preview_widget.dart';
 
 class ReviewMediaPreviewScreen extends StatelessWidget {

@@ -53,6 +53,7 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
   ChangeNotifierProvider<ChatProvider>.value(
       value: ChatProvider(
     locator(),
+    locator(),   
     locator(),
     locator(),
   )),
@@ -64,7 +65,6 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
   ChangeNotifierProvider<ProfileProvider>.value(
       value: ProfileProvider(locator(), locator(), locator(), locator(),
           locator(), locator(), locator())),
-
   //
   ChangeNotifierProvider<FeedProvider>.value(
       value: FeedProvider(
