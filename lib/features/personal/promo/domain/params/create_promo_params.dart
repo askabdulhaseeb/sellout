@@ -1,6 +1,5 @@
 
 import '../../../../attachment/domain/entities/picked_attachment.dart';
-
 class CreatePromoParams{
    CreatePromoParams({
     required this.referenceType,
@@ -17,10 +16,10 @@ class CreatePromoParams{
 
   Map<String, String> toMap() {
     return <String, String>{
-      'reference_type': referenceType,
-      'reference_id': referenceID,
-      'title': title,
-      'price': price,
+     if(referenceID.isNotEmpty)    'reference_type': referenceType.trim(),
+     if(referenceID.isNotEmpty) 'reference_id': referenceID.trim(),
+      'title': title.trim(),
+      'price': price.trim(),
     };
   }
   }

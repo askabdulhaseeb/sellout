@@ -13,10 +13,13 @@ class VerifyTwoFactorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final SigninProvider pro =
-        Provider.of<SigninProvider>(context, listen: false);
+    final GlobalKey<FormState> verifyTwoStepAuthFormKey =
+        GlobalKey<FormState>();
+
+    // final SigninProvider pro =
+    //     Provider.of<SigninProvider>(context, listen: false);
     return Form(
-      key: pro.verifyTwoStepAuthFormKey,
+      key: verifyTwoStepAuthFormKey,
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -90,26 +93,19 @@ class VerifyTwoFactorScreen extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(
+                height: 400,
               )
             ],
           ),
         ),
         bottomSheet: BottomAppBar(
+          color: Theme.of(context).scaffoldBackgroundColor,
           height: 100,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Expanded(
-                child: CustomElevatedButton(
-                  margin: const EdgeInsets.all(10),
-                  title: 'cancel'.tr(),
-                  isLoading: false,
-                  textColor: ColorScheme.of(context).onSurface,
-                  bgColor: ColorScheme.of(context).surface,
-                  border: Border.all(color: Theme.of(context).dividerColor),
-                  onTap: () => Navigator.pop(context),
-                ),
-              ),
               Consumer<SigninProvider>(
                 builder: (BuildContext context, SigninProvider pro, _) =>
                     Expanded(
@@ -118,11 +114,10 @@ class VerifyTwoFactorScreen extends StatelessWidget {
                     title: 'confirm'.tr(),
                     isLoading: pro.isLoading,
                     onTap: () {
-                      if (!pro.verifyTwoStepAuthFormKey.currentState!
-                          .validate()) {
-                        return AppSnackBar.showSnackBar(context, '');
+                      if (verifyTwoStepAuthFormKey.currentState!.validate()) {
+                        pro.verifyTwoFactorAuth();
+                        ;
                       }
-                      pro.verifyTwoFactorAuth();
                     },
                   ),
                 ),

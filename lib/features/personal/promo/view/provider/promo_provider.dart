@@ -36,7 +36,8 @@ int get pageNumber => attachment?.file == null ? 1 : 2;
   String referenceType = '';
   String _referenceId = '';
   String get referenceId => _referenceId;
-   bool isLoading = false;
+   bool _isLoading = false;
+   bool get isLoadig => _isLoading;
   String? errorMessage;
   void setRefernceID(String refID,String refType){
 _referenceId = refID;
@@ -53,11 +54,11 @@ notifyListeners();
   }
     CreatePromoParams get promoParams {
   return CreatePromoParams(
-    referenceType: 'post',
+    referenceType: 'post_attachment',
     referenceID: _referenceId,
     title: title.text,
     price: price.text,
-    attachments: attachment != null ? <PickedAttachment>[attachment!] : <PickedAttachment>[],
+    attachments: <PickedAttachment>[attachment!],
   );
 }
 
@@ -158,13 +159,11 @@ notifyListeners();
 Future<void> createPromo(BuildContext context) async {
   _setLoading(true);
   errorMessage = null;
-
   final DataState<bool> result = await createPromoUsecase.call(promoParams);
-
   _setLoading(false);
 
-  if (result is DataSuccess) {  _setLoading(false);
-
+  if (result is DataSuccess) { 
+     _setLoading(false);
     Navigator.pop(context); // pop on success
   } else {
     errorMessage = result.exception?.message ?? 'Failed to create promo';
@@ -173,7 +172,7 @@ Future<void> createPromo(BuildContext context) async {
 }
 
 void _setLoading(bool value) {
-  isLoading = value;
+  _isLoading = value;
   notifyListeners();
 }
 

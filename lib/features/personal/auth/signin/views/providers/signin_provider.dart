@@ -26,7 +26,6 @@ class SigninProvider extends ChangeNotifier {
 
   //
   final GlobalKey<FormState> signInFormKey = GlobalKey<FormState>();
-  final GlobalKey<FormState> verifyTwoStepAuthFormKey = GlobalKey<FormState>();
   final TextEditingController email = TextEditingController(
     text: kDebugMode ? 'ahmershurahbeeljan@gmail.com' : '',
   );
@@ -69,8 +68,8 @@ class SigninProvider extends ChangeNotifier {
         if (jsonMap['require_2fa'] == true) {
           setSessonKey(jsonMap['session_key']);
           AppNavigator.pushNamed(VerifyTwoFactorScreen.routeName);
-        } else if(LocalAuth.uid == null){}
-        else {
+        } else if (LocalAuth.uid == null) {
+        } else {
           final SocketService socketService = SocketService(locator());
           socketService.connect();
           isLoading = false;
