@@ -1,7 +1,3 @@
-import 'dart:convert';
-
-import 'package:flutter/widgets.dart';
-
 class SendGroupInviteParams {
 
   factory SendGroupInviteParams.fromMap(Map<String, dynamic> map) {

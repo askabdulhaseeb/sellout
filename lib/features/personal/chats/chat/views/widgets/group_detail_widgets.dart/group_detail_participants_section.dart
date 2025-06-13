@@ -28,8 +28,8 @@ class GroupDetailParticipantsWidget extends StatelessWidget {
             ),
           ),
         ),
-        Expanded(
-          child: ListView.builder(
+        SizedBox(
+          child: ListView.builder(shrinkWrap: true,
             itemCount: groupInfo?.participants.length,
             itemBuilder: (BuildContext context, int index) {
               return ParticipantTile(participant: groupInfo?.participants[index]);
