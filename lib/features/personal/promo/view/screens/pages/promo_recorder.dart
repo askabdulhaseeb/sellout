@@ -15,6 +15,7 @@ class CustomCameraScreen extends StatefulWidget {
 class _CustomCameraScreenState extends State<CustomCameraScreen> {
   CameraController? _controller;
   bool _isRecording = false;
+  bool _isCapturingPhoto = false;
   late List<CameraDescription> _cameras;
   int _currentCameraIndex = 0;
   Timer? _timer;
@@ -32,9 +33,19 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
   }
 
   Future<void> _startCamera(CameraDescription camera) async {
-    _controller = CameraController(camera, ResolutionPreset.high);
-    await _controller!.initialize();
-    if (mounted) setState(() {});
+    try {
+      // Dispose previous controller safely
+      await _controller?.dispose();
+
+      _controller = CameraController(camera, ResolutionPreset.high);
+      await _controller!.initialize();
+
+      if (mounted) {
+        setState(() {});
+      }
+    } catch (e) {
+      debugPrint('Error initializing camera: $e');
+    }
   }
 
   Future<void> _switchCamera() async {
@@ -43,29 +54,59 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
   }
 
   Future<void> _capturePhoto() async {
-    final XFile file = await _controller!.takePicture();
-    Provider.of<PromoProvider>(context,listen: false).setAttachments(PickedAttachment(file:file ,type: AttachmentType.media));
+    if (_isCapturingPhoto) return;
+    if (!mounted || _controller == null || !_controller!.value.isInitialized || _controller!.value.isTakingPicture) {
+      debugPrint('Camera not ready or busy');
+      return;
+    }
+
+    _isCapturingPhoto = true;
+    try {
+      final XFile file = await _controller!.takePicture();
+      if (!mounted) return;
+
+      Provider.of<PromoProvider>(context, listen: false).setAttachments(
+        PickedAttachment(file: file, type: AttachmentType.media),
+      );
+    } catch (e) {
+      debugPrint('Error capturing photo: $e');
+    } finally {
+      _isCapturingPhoto = false;
+    }
   }
 
   Future<void> _toggleRecording() async {
-    if (_isRecording) {
-      final XFile file = await _controller!.stopVideoRecording();
-      Provider.of<PromoProvider>(context,listen: false).setAttachments(PickedAttachment(file:file ,type: AttachmentType.media));
-      _stopTimer();
-      setState(() => _isRecording = false);
-    } else {
-      await _controller!.startVideoRecording();
-      _startTimer();
-      setState(() => _isRecording = true);
+    if (!mounted || _controller == null || !_controller!.value.isInitialized) return;
+
+    try {
+      if (_isRecording) {
+        final XFile file = await _controller!.stopVideoRecording();
+        if (!mounted) return;
+
+        Provider.of<PromoProvider>(context, listen: false).setAttachments(
+          PickedAttachment(file: file, type: AttachmentType.media),
+        );
+
+        _stopTimer();
+        setState(() => _isRecording = false);
+      } else {
+        await _controller!.startVideoRecording();
+        _startTimer();
+        setState(() => _isRecording = true);
+      }
+    } catch (e) {
+      debugPrint('Error with video recording: $e');
     }
   }
 
   void _startTimer() {
     _recordingSeconds = 0;
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      setState(() {
-        _recordingSeconds++;
-      });
+      if (mounted) {
+        setState(() {
+          _recordingSeconds++;
+        });
+      }
     });
   }
 
@@ -74,10 +115,27 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
   }
 
   Future<void> _pickFromGallery() async {
-  Provider.of<PromoProvider>(context,listen: false).pickVideoFromGallery(context, type: AttachmentType.media);}
+    Provider.of<PromoProvider>(context, listen: false).pickVideoFromGallery(
+      context,
+      type: AttachmentType.media,
+    );
+  }
+
+  Future<void> _toggleFlash() async {
+    // Assuming you have toggleFlash function in your PromoProvider
+    Provider.of<PromoProvider>(context, listen: false).toggleFlash();
+    if (_controller != null && _controller!.value.isInitialized) {
+      await _controller!.setFlashMode(
+        _controller!.value.flashMode == FlashMode.torch ? FlashMode.off : FlashMode.torch,
+      );
+      if (mounted) setState(() {});
+    }
+  }
+
   @override
   void dispose() {
     _controller?.dispose();
+    _controller = null;
     _stopTimer();
     super.dispose();
   }
@@ -93,7 +151,7 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
-        children: [
+        children: <Widget>[
           CameraPreview(_controller!),
           Positioned(
             top: MediaQuery.of(context).padding.top + 20,
@@ -101,10 +159,19 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
             right: 20,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
+              children: <Widget>[
                 IconButton(
                   icon: const Icon(Icons.flip_camera_ios, color: Colors.white),
                   onPressed: _switchCamera,
+                ),
+                IconButton(
+                  icon: Icon(
+                    _controller!.value.flashMode == FlashMode.torch
+                        ? Icons.flash_on
+                        : Icons.flash_off,
+                    color: Colors.white,
+                  ),
+                  onPressed: _toggleFlash,
                 ),
                 if (_isRecording)
                   Text(
@@ -115,7 +182,6 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                const SizedBox(width: 48),
               ],
             ),
           ),
@@ -125,7 +191,7 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
             right: 20,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
+              children: <Widget>[
                 GestureDetector(
                   onTap: _pickFromGallery,
                   child: const CircleAvatar(
@@ -160,8 +226,8 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
   }
 
   String _formatTime(int seconds) {
-    final min = (seconds ~/ 60).toString().padLeft(2, '0');
-    final sec = (seconds % 60).toString().padLeft(2, '0');
+    final String min = (seconds ~/ 60).toString().padLeft(2, '0');
+    final String sec = (seconds % 60).toString().padLeft(2, '0');
     return '$min:$sec';
   }
 }
