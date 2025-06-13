@@ -16,8 +16,9 @@ class PromoRepositoryImpl implements PromoRepository {
     }
     @override
   Future<DataState<List<PromoEntity>>> getPromoOfFollower() async {
-   
-  
     return await promoRemoteApi.getPromoOfFollower();
+    }
+      Future<DataState<List<PromoEntity>>> getPromoByid(String id) async {
+    return await promoRemoteApi.getPromoByid(id);
     }
 }

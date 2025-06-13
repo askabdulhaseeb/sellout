@@ -12,6 +12,7 @@ import '../local/local_promo.dart';
 abstract class PromoRemoteDataSource {
  Future<DataState<bool>> createPromo(CreatePromoParams promo);
  Future<DataState<List<PromoEntity>>> getPromoOfFollower();
+  Future<DataState<List<PromoEntity>>> getPromoByid(String id);
 }
 
 
@@ -108,4 +109,53 @@ Future<DataState<List<PromoEntity>>> getPromoOfFollower() async {
 }
 
 
+  @override
+ Future<DataState<List<PromoEntity>>> getPromoByid(String uid) async {
+  String endpoint = '/promo/query?user_id=$uid';
+  final List<String> supporterIds = LocalAuth.currentUser?.supporters
+          .map((SupporterDetailEntity supporter) => supporter.userID)
+          .toList() ??
+      <String>[];
+
+  debugPrint(jsonEncode(supporterIds));
+
+  try {
+    final DataState<List<PromoEntity>> result = await ApiCall<List<PromoEntity>>().call(
+      endpoint: endpoint,
+      requestType: ApiRequestType.get,
+      isAuth: true,
+    );
+
+    if (result is DataSuccess) {
+      debugPrint(result.data);
+      Map<String, dynamic> mapdata = jsonDecode(result.data!);
+      List<Map<String, dynamic>> listOfPromoMap =
+          List<Map<String, dynamic>>.from(mapdata['data'] ?? <dynamic>[]);
+      // 🔽 Convert all maps to PromoModel
+      final List<PromoEntity> promoModels =
+          listOfPromoMap.map((Map<String, dynamic> map) => PromoModel.fromMap(map)).toList();
+      // 🔽 Save all promos to Hive
+      await LocalPromo().saveAll(promoModels);
+      return DataSuccess<List<PromoEntity>>(result.data ?? '', promoModels);
+    } else {
+      AppLog.error(
+        result.exception?.message ??
+            'PromoRemoteDataSourceImpl.getPromoOfFollower - else',
+        name: 'PromoRemoteDataSourceImpl.getPromoOfFollower - failed',
+        error: result.exception,
+      );
+      return DataFailer<List<PromoEntity>>(
+        result.exception ?? CustomException('something_wrong'.tr()),
+      );
+    }
+  } catch (e, stc) {
+    AppLog.error(
+      e.toString(),
+      name: 'PromoRemoteDataSourceImpl.getPromoOfFollower - catch',
+      error: e,
+      stackTrace: stc,
+    );
+    return DataFailer<List<PromoEntity>>(CustomException(e.toString()));
+  }
+}
 }
