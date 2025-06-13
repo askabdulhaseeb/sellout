@@ -30,11 +30,10 @@ class ParticipantTile extends StatelessWidget {
         return ListTile(
           leading: ProfilePhoto(
             url: user.profilePhotoURL,
-            isCircle: true,
-            placeholder: 'na'.tr(),
-            size: 20,
+            placeholder: user.displayName,
+            size: 25,
           ),
-          title: Text(user.displayName, style: Theme.of(context).textTheme.titleMedium),
+          title: Text(user.displayName, style: Theme.of(context).textTheme.titleMedium,maxLines: 1,overflow: TextOverflow.ellipsis,),
           subtitle: Text(participant?.role.json ?? '', style: Theme.of(context).textTheme.bodySmall),
         );
       },

@@ -258,7 +258,6 @@ SendGroupInviteParams   inviteparams = SendGroupInviteParams(chatId: chat?.chatI
   final DataState<bool> result = await _sendGroupInviteUsecase.call(inviteparams);
   try {
   if (result is DataSuccess) {
-  setChat( LocalChat().chatEntity(chat?.chatId ?? ''));
   debugPrint('you invited${inviteparams.newParticipants} to ${inviteparams.chatId}');
   setLoading(false); 
   } else {

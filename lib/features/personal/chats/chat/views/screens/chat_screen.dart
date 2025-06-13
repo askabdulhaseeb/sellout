@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../../../../../../core/theme/app_theme.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../chat_dashboard/domain/entities/chat/group/group_into_entity.dart';
+import '../../../chat_dashboard/domain/entities/chat/participant/chat_participant_entity.dart';
 import '../../../chat_dashboard/domain/entities/chat/participant/invitation_entity.dart';
 import '../providers/chat_provider.dart';
 import '../widgets/app_bar/chat_app_bar.dart';
@@ -40,25 +42,32 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
-}
-class SendMessageWidget extends StatelessWidget {
+}class SendMessageWidget extends StatelessWidget {
   const SendMessageWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-
-       return Consumer<ChatProvider>(builder: (BuildContext context, ChatProvider pro, Widget? child) {
-            final bool isInivitations = pro.chat
-            ?.groupInfo
-            ?.invitations
-            .any(( InvitationEntity inivitations) => inivitations.uid == LocalAuth.uid) ==
-        true;
-        return     Column(
-      children: <Widget>[
-        if (!isInivitations) const ChatInputField(),
- if (isInivitations) const GroupInviteActionWidget()
-      ],
-    );});
+    return Consumer<ChatProvider>(
+      builder: (BuildContext context, ChatProvider pro, Widget? child) {
+        final GroupInfoEntity? groupInfo = pro.chat?.groupInfo;
+        final String? currentUid = LocalAuth.uid;
+        final bool isInvited = groupInfo?.invitations.any(
+              (InvitationEntity invitation) => invitation.uid == currentUid,
+            ) ==
+            true;
+        final bool isParticipant = groupInfo?.participants.any(
+              (ChatParticipantEntity participant) => participant.uid == currentUid,
+            ) ==
+            true;
+        return Column(
+          children: <Widget>[
+            if (isParticipant) const ChatInputField(),
+            if (!isParticipant && isInvited) const GroupInviteActionWidget(),
+            if(!isParticipant && !isInvited) const Text('you are not a participant of this group')
+          ],
+        );
+      },
+    );
   }
 }
 class GroupInviteActionWidget extends StatelessWidget {
@@ -77,8 +86,7 @@ class GroupInviteActionWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Text(
-           'You_have_been_added_group'.tr()
-,
+           'You_have_been_added_group'.tr(),
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 18,
