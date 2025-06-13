@@ -27,7 +27,7 @@ class ChoosePostForPromoWidget extends StatelessWidget {
         );
       },
       child: Consumer<PromoProvider>(
-        builder: (context, pro, _) {
+        builder: (BuildContext context, PromoProvider pro, _) {
           final PostEntity? selectedPost = pro.post;
 
           return selectedPost == null
@@ -50,10 +50,6 @@ class PostSelectionField extends StatelessWidget {
       child: CustomTextFormField(controller: TextEditingController(),
       labelText: 'link_product'.tr(),
         validator: (String? value) {
-          if (pro.referenceId.isEmpty) {
-            return 'Please select a post';
-          }
-          return null;
         },
         readOnly: true,
       ),
@@ -73,7 +69,7 @@ class SelectedPostTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-        children: [  Text(
+        children: <Widget>[  Text(
              'link_product'.tr(),
               style: const TextStyle(fontWeight: FontWeight.w500),
             ),

@@ -78,14 +78,18 @@ class PromoDetailsForm extends StatelessWidget {
 
             const ChoosePostForPromoWidget(),
             const SizedBox(height: 30),
-            CustomElevatedButton(
-             isLoading: pro.isLoading,
-              onTap: () {
-                if (formKey.currentState!.validate()) {
-            pro.createPromo(context);                  }
-              },
-             title:    'upload_promo'.tr(),
-              
+            Consumer<PromoProvider>(builder: (BuildContext context, PromoProvider promoPro, Widget? child) => 
+               CustomElevatedButton(
+               isLoading: promoPro.isLoadig,
+                onTap: () {
+                  if (formKey.currentState!.validate()) 
+                  {
+              promoPro.createPromo(context);  
+                              }
+                },
+               title:'upload_promo'.tr(),
+                
+              ),
             ),
           ],
         ),

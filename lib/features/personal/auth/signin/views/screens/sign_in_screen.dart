@@ -17,9 +17,16 @@ class SignInScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final SigninProvider authPro = Provider.of<SigninProvider>(context,listen: false);
+    final SigninProvider authPro =
+        Provider.of<SigninProvider>(context, listen: false);
     return Scaffold(
-      appBar: AppBar(leading: IconButton(onPressed: (){Navigator.pop(context);},icon:const Icon(Icons.arrow_back_ios),),
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back_ios),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -56,25 +63,38 @@ class SignInScreen extends StatelessWidget {
                       ).tr(),
                     ),
                   ),
+                  const SizedBox(
+                    height: 400,
+                  )
                 ],
               ),
             ),
           );
         }),
-      ),bottomSheet: BottomAppBar(color: Theme.of(context).scaffoldBackgroundColor,height: 150,child: Column(children: [   CustomElevatedButton(padding:const EdgeInsets.all(0),
-                  title: 'dont_have_account'.tr(),textStyle: TextTheme.of(context).bodyMedium,
-                  isLoading: false,
-                  bgColor: Colors.transparent,
-                  border: null,
-                  onTap: () async =>
-                      await AppNavigator.pushNamed(SignupScreen.routeName),
-                ), 
-                                  CustomElevatedButton(
-                    title: 'login'.tr(),
-                    isLoading: authPro.isLoading,
-                    onTap: () async => await authPro.signIn(),
-                  ),
-              ],),),
+      ),
+      bottomSheet: BottomAppBar(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        height: 150,
+        child: Column(
+          children: [
+            CustomElevatedButton(
+              padding: const EdgeInsets.all(0),
+              title: 'dont_have_account'.tr(),
+              textStyle: TextTheme.of(context).bodyMedium,
+              isLoading: false,
+              bgColor: Colors.transparent,
+              border: null,
+              onTap: () async =>
+                  await AppNavigator.pushNamed(SignupScreen.routeName),
+            ),
+            CustomElevatedButton(
+              title: 'login'.tr(),
+              isLoading: authPro.isLoading,
+              onTap: () async => await authPro.signIn(),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
