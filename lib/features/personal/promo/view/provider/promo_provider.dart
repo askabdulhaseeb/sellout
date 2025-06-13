@@ -155,24 +155,28 @@ notifyListeners();
   void disposeController() {
     cameraController?.dispose();
   }
+Future<void> createPromo(BuildContext context) async {
+  _setLoading(true);
+  errorMessage = null;
 
-  Future<bool> createPromo() async {
-    isLoading = true;
-    errorMessage = null;
-    notifyListeners();
-    final DataState<bool> result = await createPromoUsecase.call(promoParams);
-    isLoading = false;
+  final DataState<bool> result = await createPromoUsecase.call(promoParams);
 
-    if (result is DataSuccess && result.data == true) {
-      notifyListeners();
-      return true;
-    } else {
-      errorMessage = result.exception?.message ?? 'Failed to create promo';
-      notifyListeners();
-      return false;
-    }
+  _setLoading(false);
+
+  if (result is DataSuccess) {  _setLoading(false);
+
+    Navigator.pop(context); // pop on success
+  } else {
+    errorMessage = result.exception?.message ?? 'Failed to create promo';
+  _setLoading(false);
   }
- 
+}
+
+void _setLoading(bool value) {
+  isLoading = value;
+  notifyListeners();
+}
+
   Future<void> getPromoOfFollower() async {
     try {
       final DataState<List<PromoEntity>> response = await getPromoUsecase.call(true);
@@ -195,7 +199,6 @@ _promoList = response.entity;
     title.clear();
     price.clear();
         clearPost();
-
    if(isFlashOn) toggleFlash();
   }
 }

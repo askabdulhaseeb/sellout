@@ -16,7 +16,6 @@ class PromoDetailsForm extends StatelessWidget {
   Widget build(BuildContext context) {
     final PromoProvider pro = Provider.of<PromoProvider>(context, listen: false);
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Form(
@@ -83,9 +82,8 @@ class PromoDetailsForm extends StatelessWidget {
              isLoading: pro.isLoading,
               onTap: () {
                 if (formKey.currentState!.validate()) {
-            pro.createPromo();                  }
+            pro.createPromo(context);                  }
               },
-              
              title:    'upload_promo'.tr(),
               
             ),

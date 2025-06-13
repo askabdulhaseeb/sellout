@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../core/enums/chat/chat_type.dart';
 import '../../../../../../core/theme/app_theme.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -42,7 +43,8 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
-}class SendMessageWidget extends StatelessWidget {
+  }
+class SendMessageWidget extends StatelessWidget {
   const SendMessageWidget({super.key});
 
   @override
@@ -51,21 +53,33 @@ class _ChatScreenState extends State<ChatScreen> {
       builder: (BuildContext context, ChatProvider pro, Widget? child) {
         final GroupInfoEntity? groupInfo = pro.chat?.groupInfo;
         final String? currentUid = LocalAuth.uid;
+
         final bool isInvited = groupInfo?.invitations.any(
               (InvitationEntity invitation) => invitation.uid == currentUid,
             ) ==
             true;
+
         final bool isParticipant = groupInfo?.participants.any(
               (ChatParticipantEntity participant) => participant.uid == currentUid,
             ) ==
             true;
-        return Column(
-          children: <Widget>[
-            if (isParticipant) const ChatInputField(),
-            if (!isParticipant && isInvited) const GroupInviteActionWidget(),
-            if(!isParticipant && !isInvited) const Text('you are not a participant of this group')
-          ],
-        );
+
+        if (pro.chat?.type == ChatType.group) {
+          if (isParticipant) {
+            return const ChatInputField();
+          } else if (isInvited) {
+            return const GroupInviteActionWidget();
+          } else {
+            return Text('you_are_not_participant_group'.tr());
+          }
+        }
+
+        if (pro.chat?.type == ChatType.private || pro.chat?.type == ChatType.product) {
+          return const ChatInputField();
+        }
+
+        // Default fallback
+        return const SizedBox();
       },
     );
   }
