@@ -133,13 +133,12 @@ notifyListeners();
       MaterialPageRoute<List<PickedAttachment>>(
         builder: (_) => PickableAttachmentScreen(
           option: PickableAttachmentOption(
-            maxAttachments: 1,
+            maxAttachments: 0,allowMultiple: false,
             type: type,
           ),
         ),
       ),
     );
-
     if (files != null && files.isNotEmpty) {
       setAttachments(files.first) ;
           notifyListeners();

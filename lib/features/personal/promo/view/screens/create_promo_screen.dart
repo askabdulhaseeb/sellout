@@ -22,7 +22,7 @@ class _CreatePromoScreenState extends State<CreatePromoScreen> {
           child: Consumer<PromoProvider>(
             builder: (BuildContext context, PromoProvider pro, _) {
               return pro.pageNumber == 1
-                  ? const PromoRecorderView()
+                  ? const CustomCameraScreen()
                   : const PromoDetailsForm();
             },
           ),
