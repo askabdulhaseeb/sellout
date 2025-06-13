@@ -149,6 +149,7 @@ notifyListeners();
   void setAttachments(PickedAttachment newAttachments) {
     attachment = newAttachments;
     if(isFlashOn) toggleFlash();
+    notifyListeners();
   }
 
   void disposeController() {
