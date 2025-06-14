@@ -3,13 +3,13 @@ import '../../../post/domain/entities/visit/visiting_entity.dart';
 import '../../view/params/update_visit_params.dart';
 import '../repo/book_visit_repo.dart';
 
-class CancelVisitUseCase implements UseCase<VisitingEntity, UpdateVisitParams> {
-
-  CancelVisitUseCase(this.repository);
+class UpdateVisitStatusUseCase
+    implements UseCase<VisitingEntity, UpdateVisitParams> {
+  UpdateVisitStatusUseCase(this.repository);
   final BookVisitRepo repository;
 
   @override
   Future<DataState<VisitingEntity>> call(UpdateVisitParams params) {
-    return repository.cancelVisit(params);
+    return repository.updateVisitStatus(params);
   }
 }

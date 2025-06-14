@@ -32,12 +32,7 @@ class VisitingMessageTile extends StatelessWidget {
                   const SizedBox(
                     height: 10,
                   ),
-                  if (message.visitingDetail?.status.code == 'pending' &&
-                      message.visitingDetail?.visiterID ==
-                          LocalAuth.currentUser?.userID)
-                    VisitingUpdateButtonsWidget(message: message, post: post)
-                  else
-                    const SizedBox.shrink(),
+                  VisitingUpdateButtonsWidget(message: message, post: post),
                   Opacity(
                     opacity: 0.6,
                     child: const Text(

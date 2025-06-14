@@ -25,7 +25,7 @@ import '../params/update_visit_params.dart';
 class BookingProvider extends ChangeNotifier {
   BookingProvider(
     this._bookVisitUseCase,
-    this._cancelVisitUseCase,
+    this._updateVisitStatusUseCase,
     this._updateVisitUseCase,
     this._getmychatusecase,
     this._bookServiceUsecase,
@@ -33,7 +33,7 @@ class BookingProvider extends ChangeNotifier {
     this._getVisitByPostUsecase,
   );
   final BookVisitUseCase _bookVisitUseCase;
-  final CancelVisitUseCase _cancelVisitUseCase;
+  final UpdateVisitStatusUseCase _updateVisitStatusUseCase;
   final UpdateVisitUseCase _updateVisitUseCase;
   final GetMyChatsUsecase _getmychatusecase;
   final BookServiceUsecase _bookServiceUsecase;
@@ -248,32 +248,34 @@ class BookingProvider extends ChangeNotifier {
     isLoading = false;
   }
 
-  Future<void> cancelVisit({
+  Future<void> updateVisitStatus({
     required BuildContext context,
     required String visitingId,
     required String messageId,
     required String chatID,
+    required String status,
   }) async {
     isLoading = true;
 
     final UpdateVisitParams params = UpdateVisitParams(
       chatId: chatID,
       visitingId: visitingId.trim(),
-      status: 'cancel',
+      status: status,
       messageId: messageId.trim(),
       businessId: 'null',
     );
     debugPrint('${params.messageId},${params.visitingId} ');
-    final DataState<VisitingEntity> result = await _cancelVisitUseCase(params);
+    final DataState<VisitingEntity> result =
+        await _updateVisitStatusUseCase(params);
     if (result is DataSuccess) {
-      AppSnackBar.showSnackBar(context, 'visit_cancelled'.tr());
+      AppSnackBar.showSnackBar(context, 'visit_updated_successfully'.tr());
       Navigator.pop(context);
     } else {
       AppSnackBar.showSnackBar(
           context, result.exception?.message ?? 'something_wrong'.tr());
     }
     isLoading = false;
-    // notifyListeners();
+    notifyListeners();
   }
 
   Future<void> updateVisit({
@@ -356,7 +358,6 @@ class BookingProvider extends ChangeNotifier {
       final String errorMsg =
           result.exception?.message ?? 'Unknown error in GetVisitByPostUsecase';
       debugPrint('❌ Failed to fetch visits: $errorMsg');
-
       AppLog.error(
         errorMsg,
         name: 'BookingProvider.getVisitsByPost',

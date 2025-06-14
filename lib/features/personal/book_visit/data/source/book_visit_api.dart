@@ -11,7 +11,7 @@ import '../../view/params/update_visit_params.dart';
 abstract interface class BookVisitApi {
   Future<DataState<VisitingEntity>> bookVisit(BookVisitParams params);
   Future<DataState<VisitingEntity>> bookService(BookServiceParams params);
-  Future<DataState<VisitingEntity>> cancelVisit(UpdateVisitParams params);
+  Future<DataState<VisitingEntity>> updateVisitStatus(UpdateVisitParams params);
   Future<DataState<VisitingEntity>> updateVisit(UpdateVisitParams params);
   Future<DataState<List<VisitingEntity>>> getPostVisits(String postID);
 }
@@ -93,7 +93,7 @@ class BookVisitApiImpl implements BookVisitApi {
   }
 
   @override
-  Future<DataState<VisitingEntity>> cancelVisit(
+  Future<DataState<VisitingEntity>> updateVisitStatus(
       UpdateVisitParams params) async {
     const String endpoint = '/visit/update?attribute=status';
 

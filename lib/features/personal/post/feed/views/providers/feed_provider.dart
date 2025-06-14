@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
+import '../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../chats/chat/views/providers/chat_provider.dart';
 import '../../../../chats/chat/views/screens/chat_screen.dart';
 import '../../../../chats/chat_dashboard/domain/entities/chat/chat_entity.dart';
@@ -87,7 +88,7 @@ class FeedProvider extends ChangeNotifier {
         if (chatResult is DataSuccess && chatResult.entity!.isNotEmpty) {
           final ChatProvider chatProvider =
               Provider.of<ChatProvider>(context, listen: false);
-          chatProvider.setChat(chatResult.entity!.first) ;
+          chatProvider.setChat(chatResult.entity!.first);
 
           Navigator.of(context).pushReplacementNamed(
             ChatScreen.routeName,
@@ -101,6 +102,8 @@ class FeedProvider extends ChangeNotifier {
       } else {
         AppLog.error(result.exception?.message ?? 'something_wrong'.tr(),
             name: 'FeedProvider.createOffer - API failed');
+        AppSnackBar.showSnackBar(
+            context, result.exception?.message ?? 'something_wrong'.tr());
       }
     } catch (e) {
       AppLog.error(e.toString(), name: 'FeedProvider.createOffer - catch');
@@ -108,7 +111,6 @@ class FeedProvider extends ChangeNotifier {
     } finally {
       setIsLoading(false);
     }
-
     return DataFailer<bool>(CustomException('something_wrong'.tr()));
   }
 

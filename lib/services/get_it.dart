@@ -489,8 +489,8 @@ void _bookvisit() {
   locator.registerFactory<BookVisitRepo>(() => BookVisitRepoImpl(locator()));
   locator
       .registerFactory<UpdateVisitUseCase>(() => UpdateVisitUseCase(locator()));
-  locator
-      .registerFactory<CancelVisitUseCase>(() => CancelVisitUseCase(locator()));
+  locator.registerFactory<UpdateVisitStatusUseCase>(
+      () => UpdateVisitStatusUseCase(locator()));
   locator.registerFactory<BookVisitUseCase>(() => BookVisitUseCase(locator()));
   locator
       .registerFactory<BookServiceUsecase>(() => BookServiceUsecase(locator()));

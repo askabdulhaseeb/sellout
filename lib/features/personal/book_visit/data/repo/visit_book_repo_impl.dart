@@ -15,9 +15,9 @@ class BookVisitRepoImpl implements BookVisitRepo {
   }
 
   @override
-  Future<DataState<VisitingEntity>> cancelVisit(
+  Future<DataState<VisitingEntity>> updateVisitStatus(
       UpdateVisitParams params) async {
-    return await bookvisitapi.cancelVisit(params);
+    return await bookvisitapi.updateVisitStatus(params);
   }
 
   @override
