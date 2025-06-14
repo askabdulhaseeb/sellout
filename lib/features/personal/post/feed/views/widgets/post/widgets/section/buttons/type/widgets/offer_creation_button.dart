@@ -5,7 +5,7 @@ import '../../../../../../../../../../../../core/enums/listing/core/listing_type
 import '../../../../../../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../providers/feed_provider.dart';
-import '../../../bottomsheets/create_offer_bottomsheet.dart';
+import '../../../bottomsheets/make_an_offer_bottomsheet.dart';
 
 class OfferCreationButton extends StatelessWidget {
   const OfferCreationButton({
@@ -51,7 +51,6 @@ class OfferCreationButton extends StatelessWidget {
               return; // If size or color is missing, show error and do nothing
             }
           }
-
           // Proceed if everything is valid
           pro.createOffer(
             color: selectedColor,

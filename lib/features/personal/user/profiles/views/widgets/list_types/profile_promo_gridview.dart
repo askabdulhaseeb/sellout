@@ -78,7 +78,7 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
     final String lowerQuery = query.toLowerCase();
     _safeSetState(() {
       _filteredPromos = _allPromos.where((PromoEntity promo) {
-        final String title = promo.title?.toLowerCase() ?? '';
+        final String title = promo.title.toLowerCase();
         return title.contains(lowerQuery);
       }).toList();
     });

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../../../../core/enums/listing/core/listing_type.dart';
+import '../../../../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../../../domain/entities/post_entity.dart';
 import '../../../../../../../domain/entities/visit/visiting_entity.dart';
@@ -26,14 +27,24 @@ class PostButtonSection extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             child: PostButtonsForUser(visit: visit, post: post),
           )
-        : Padding(
-            padding: padding ??
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            child: (post.type == ListingType.pets ||
-                    post.type == ListingType.vehicle ||
-                    post.type == ListingType.property)
-                ? PostVehicleButtonTile(post: post)
-                : PostItemButtonTile(post: post),
+        : GestureDetector(
+            onTap: () {
+              if (LocalAuth.currentUser?.userID == null) {
+                AppSnackBar.showSnackBar(context, 'please_login_first');
+              }
+            },
+            child: AbsorbPointer(
+              absorbing: LocalAuth.currentUser?.userID == null,
+              child: Padding(
+                padding: padding ??
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                child: (post.type == ListingType.pets ||
+                        post.type == ListingType.vehicle ||
+                        post.type == ListingType.property)
+                    ? PostVehicleButtonTile(post: post)
+                    : PostItemButtonTile(post: post),
+              ),
+            ),
           );
   }
 }
