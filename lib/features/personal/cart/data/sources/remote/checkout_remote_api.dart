@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
 import '../../../../auth/signin/data/models/address_model.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../domain/entities/checkout/check_out_entity.dart';
 import '../../models/checkout/check_out_model.dart';
 
@@ -49,6 +50,7 @@ class CheckoutRemoteAPIImpl implements CheckoutRemoteAPI {
   @override
   Future<DataState<bool>> cartPayIntent(AddressModel param) async {
     try {
+      debugPrint(LocalAuth.token);
       const String endpoint = '/payment/cart';
       final DataState<bool> result = await ApiCall<bool>().call(
         endpoint: endpoint,

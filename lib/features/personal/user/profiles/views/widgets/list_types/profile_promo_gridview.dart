@@ -53,8 +53,10 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
       return;
     }
 
-    final GetPromoByIdUsecase getPromoByIdUsecase = GetPromoByIdUsecase(locator());
-    final DataState<List<PromoEntity>> result = await getPromoByIdUsecase(widget.user!.uid);
+    final GetPromoByIdUsecase getPromoByIdUsecase =
+        GetPromoByIdUsecase(locator());
+    final DataState<List<PromoEntity>> result =
+        await getPromoByIdUsecase(widget.user!.uid);
 
     if (_isDisposed) return;
 
@@ -62,8 +64,9 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
       _allPromos
         ..clear()
         ..addAll(result.entity!);
-      _allPromos.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-      _filteredPromos = List.from(_allPromos);
+      _allPromos.sort(
+          (PromoEntity a, PromoEntity b) => b.createdAt.compareTo(a.createdAt));
+      _filteredPromos = List<PromoEntity>.from(_allPromos);
     }
 
     _safeSetState(() {
@@ -74,7 +77,7 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
   void _filterPromos(String query) {
     final String lowerQuery = query.toLowerCase();
     _safeSetState(() {
-      _filteredPromos = _allPromos.where((promo) {
+      _filteredPromos = _allPromos.where((PromoEntity promo) {
         final String title = promo.title?.toLowerCase() ?? '';
         return title.contains(lowerQuery);
       }).toList();
@@ -148,7 +151,7 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
               childAspectRatio: 0.8,
             ),
             itemCount: _filteredPromos.length,
-            itemBuilder: (context, index) {
+            itemBuilder: (BuildContext context, int index) {
               return PromoGridViewTile(promo: _filteredPromos[index]);
             },
           ),

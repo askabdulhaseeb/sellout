@@ -13,6 +13,7 @@ abstract interface class BookVisitApi {
   Future<DataState<VisitingEntity>> bookService(BookServiceParams params);
   Future<DataState<VisitingEntity>> cancelVisit(UpdateVisitParams params);
   Future<DataState<VisitingEntity>> updateVisit(UpdateVisitParams params);
+  Future<DataState<List<VisitingEntity>>> getPostVisits(String postID);
 }
 
 class BookVisitApiImpl implements BookVisitApi {
@@ -156,6 +157,43 @@ class BookVisitApiImpl implements BookVisitApi {
         error: e,
       );
       return DataFailer<VisitingEntity>(CustomException(e.toString()));
+    }
+  }
+
+  @override
+  Future<DataState<List<VisitingEntity>>> getPostVisits(String postID) async {
+    final String endpoint = '/visit/query?post_id=$postID';
+
+    try {
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.post,
+      );
+
+      if (result is DataSuccess<bool>) {
+        final String raw = result.data ?? '';
+        debugPrint(result.data);
+        final dynamic usable = json.decode(raw);
+        final List<dynamic> rawList = usable['items'] ?? <dynamic>[];
+        final List<VisitingEntity> list =
+            rawList.map((item) => VisitingModel.fromJson(item)).toList();
+        return DataSuccess<List<VisitingEntity>>('Success', list);
+      } else {
+        AppLog.error('Failed to fetch visits', name: 'getPostVisits');
+        return DataFailer<List<VisitingEntity>>(
+          CustomException('Failed to fetch visits'),
+        );
+      }
+    } catch (e, stack) {
+      AppLog.error(
+        e.toString(),
+        name: 'getPostVisits',
+        error: e,
+        stackTrace: stack,
+      );
+      return DataFailer<List<VisitingEntity>>(
+        CustomException('Exception occurred: ${e.toString()}'),
+      );
     }
   }
 }

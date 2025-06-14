@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../user/profiles/domain/entities/user_entity.dart';
-import '../../provider/visiting_provider.dart';
+import '../../provider/booking_provider.dart';
 
 class EmployeeDropdown extends StatefulWidget {
   const EmployeeDropdown({required this.employeesID, super.key});

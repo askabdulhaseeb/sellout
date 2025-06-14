@@ -11,48 +11,51 @@ class BusinessPageScoreSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   // final bool isMe = business.businessID == (LocalAuth.uid ?? '-');
-     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 6),
-      child: SizedBox(
+    // final bool isMe = business.businessID == (LocalAuth.uid ?? '-');
+    return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        child: SizedBox(
           height: 35,
           child: Row(
-        children: <Widget>[
-          // _Button(
-          //   title: 'details'.tr(),
-          //   onTap: () async {
-          //     await showModalBottomSheet<void>(
-          //       context: context,
-          //       builder: (BuildContext context) {
-          //         return BusinessPageScoreBottomSheet(business: business);
-          //       },
-          //     );
-          //   },
-          // ),
+            children: <Widget>[
               Expanded(
                 child: _ScoreButton(
-                  title: 'supporting'.tr(),
-                  count: (business.supportings?.length ?? 0).toString(),
-                  onPressed: () => showModalBottomSheet(
-                    context: context,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(16)),
-                    ),
-                    isScrollControlled: true,
-                    builder: (BuildContext context) {
-                      return SupporterBottomsheet(
-                        supporters:business.supportings,
-                        issupporter: false,
-                      );
-                    },
-                  ),
+                  count: '',
+                  title: 'details'.tr(),
+                  onPressed: () async {
+                    // await showModalBottomSheet<void>(
+                    //   context: context,
+                    //   builder: (BuildContext context) {
+                    //     return BusinessPageScoreSection(business: business);
+                    //   },
+                    // );
+                  },
                 ),
               ),
+              // Expanded(
+              //   child: _ScoreButton(
+              //     title: 'supporting'.tr(),
+              //     count: (business.supportings?.length ?? 0).toString(),
+              //     onPressed: () => showModalBottomSheet(
+              //       context: context,
+              //       shape: const RoundedRectangleBorder(
+              //         borderRadius:
+              //             BorderRadius.vertical(top: Radius.circular(16)),
+              //       ),
+              //       isScrollControlled: true,
+              //       builder: (BuildContext context) {
+              //         return SupporterBottomsheet(
+              //           supporters: business.supportings,
+              //           issupporter: false,
+              //         );
+              //       },
+              //     ),
+              //   ),
+              // ),
               Expanded(
                 child: _ScoreButton(
                   title: 'supporters'.tr(),
-                  count: (business.supporters?.length?? 0).toString(),
+                  count: (business.supporters?.length ?? 0).toString(),
                   onPressed: () => showModalBottomSheet(
                     context: context,
                     shape: const RoundedRectangleBorder(
@@ -62,19 +65,25 @@ class BusinessPageScoreSection extends StatelessWidget {
                     isScrollControlled: true,
                     builder: (BuildContext context) {
                       return SupporterBottomsheet(
-                        supporters:business.supporters,
+                        supporters: business.supporters,
                         issupporter: true,
                       );
                     },
                   ),
                 ),
               ),
-          // if(!isMe)
-           Expanded(child:  SupportButton(supporterId: business.ownerID ?? '',supportColor: AppTheme.primaryColor,supportingColor: AppTheme.secondaryColor,supportTextColor:ColorScheme.of(context).onPrimary ,supportingTextColor:ColorScheme.of(context).onPrimary ,))
-
-        ],
-      ),
-    ));
+              // if(!isMe)
+              Expanded(
+                  child: SupportButton(
+                supporterId: business.businessID ?? '',
+                supportColor: AppTheme.primaryColor,
+                supportingColor: AppTheme.secondaryColor,
+                supportTextColor: ColorScheme.of(context).onPrimary,
+                supportingTextColor: ColorScheme.of(context).onPrimary,
+              ))
+            ],
+          ),
+        ));
   }
 }
 

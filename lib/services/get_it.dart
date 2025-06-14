@@ -59,6 +59,7 @@ import '../features/personal/auth/signup/domain/usecase/verify_opt_usecase.dart'
 import '../features/personal/auth/signup/views/providers/signup_provider.dart';
 import '../features/personal/book_visit/domain/usecase/book_service_usecase.dart';
 import '../features/personal/book_visit/domain/usecase/cancel_visit_usecase.dart';
+import '../features/personal/book_visit/domain/usecase/get_visit_by_post_usecase.dart';
 import '../features/personal/book_visit/domain/usecase/update_visit_usecase.dart';
 import '../features/personal/cart/data/repositories/cart_repository_impl.dart';
 import '../features/personal/cart/data/repositories/checkout_repository_impl.dart';
@@ -88,10 +89,10 @@ import '../features/personal/chats/chat_dashboard/domain/usecase/create_chat_use
 import '../features/personal/chats/chat_dashboard/domain/usecase/get_my_chats_usecase.dart';
 import '../features/personal/chats/chat_dashboard/views/providers/chat_dashboard_provider.dart';
 import '../features/personal/book_visit/data/repo/visit_book_repo_impl.dart';
-import '../features/personal/book_visit/data/source/book_visit_api.dart';
+import '../features/personal/book_visit/data/source/book_visIt_api.dart';
 import '../features/personal/book_visit/domain/repo/book_visit_repo.dart';
 import '../features/personal/book_visit/domain/usecase/book_visit_usecase.dart';
-import '../features/personal/book_visit/view/provider/visiting_provider.dart';
+import '../features/personal/book_visit/view/provider/booking_provider.dart';
 import '../features/personal/chats/create_chat/view/provider/create_private_chat_provider.dart';
 import '../features/personal/chats/create_chat/view/provider/create_chat_group_provider.dart';
 import '../features/personal/listing/listing_form/views/widgets/attachment_selection/cept_group_invite_usecase.dart';
@@ -246,6 +247,8 @@ void _profile() {
       () => GetUserByUidUsecase(locator()));
   locator.registerFactory<GetImVisiterUsecase>(
       () => GetImVisiterUsecase(locator()));
+  locator.registerFactory<GetVisitByPostUsecase>(
+      () => GetVisitByPostUsecase(locator()));
   locator.registerFactory<GetImHostUsecase>(() => GetImHostUsecase(locator()));
   locator
       .registerFactory<GetPostByIdUsecase>(() => GetPostByIdUsecase(locator()));
@@ -255,7 +258,7 @@ void _profile() {
       () => UpdateProfilePictureUsecase(locator()));
   locator.registerFactory<UpdateProfileDetailUsecase>(
       () => UpdateProfileDetailUsecase(locator()));
-       locator.registerFactory<AddRemoveSupporterUsecase>(
+  locator.registerFactory<AddRemoveSupporterUsecase>(
       () => AddRemoveSupporterUsecase(locator()));
   locator.registerLazySingleton<ProfileProvider>(() => ProfileProvider(
         locator(),
@@ -276,9 +279,9 @@ void _chat() {
       .registerFactory<GetMyChatsUsecase>(() => GetMyChatsUsecase(locator()));
   locator.registerLazySingleton<ChatDashboardProvider>(
       () => ChatDashboardProvider(locator()));
-      locator.registerLazySingleton<CreateChatGroupProvider>(
-      () => CreateChatGroupProvider(locator())); 
-      locator.registerLazySingleton<CreatePrivateChatProvider>(
+  locator.registerLazySingleton<CreateChatGroupProvider>(
+      () => CreateChatGroupProvider(locator()));
+  locator.registerLazySingleton<CreatePrivateChatProvider>(
       () => CreatePrivateChatProvider(locator()));
 }
 
@@ -291,44 +294,42 @@ void _message() {
       .registerFactory<GetMessagesUsecase>(() => GetMessagesUsecase(locator()));
   locator
       .registerFactory<SendMessageUsecase>(() => SendMessageUsecase(locator()));
-       locator
-      .registerFactory<LeaveGroupUsecase>(() => LeaveGroupUsecase(locator())); 
-       locator
-      .registerFactory<SendGroupInviteUsecase>(() => SendGroupInviteUsecase(locator()));
   locator
-      .registerFactory<AcceptGorupInviteUsecase>(() => AcceptGorupInviteUsecase(locator()));
-  locator.registerLazySingleton(() => ChatProvider(
-    locator(),   
-    locator(),
-    locator(),   
-     locator(),
-    locator()));
+      .registerFactory<LeaveGroupUsecase>(() => LeaveGroupUsecase(locator()));
+  locator.registerFactory<SendGroupInviteUsecase>(
+      () => SendGroupInviteUsecase(locator()));
+  locator.registerFactory<AcceptGorupInviteUsecase>(
+      () => AcceptGorupInviteUsecase(locator()));
+  locator.registerLazySingleton(() =>
+      ChatProvider(locator(), locator(), locator(), locator(), locator()));
 }
+
 void _feed() {
   locator.registerFactory<PostRemoteApi>(() => PostRemoteApiImpl());
   locator.registerFactory<PostRepository>(() => PostRepositoryImpl(locator()));
-    locator.registerFactory<PromoRemoteDataSource>(() => PromoRemoteDataSourceImpl());
-  locator.registerFactory<PromoRepository>(() => PromoRepositoryImpl(locator()));
+  locator.registerFactory<PromoRemoteDataSource>(
+      () => PromoRemoteDataSourceImpl());
+  locator
+      .registerFactory<PromoRepository>(() => PromoRepositoryImpl(locator()));
   locator.registerFactory<GetFeedUsecase>(() => GetFeedUsecase(locator()));
   locator.registerFactory<AddToCartUsecase>(() => AddToCartUsecase(locator()));
   locator
       .registerFactory<CreateOfferUsecase>(() => CreateOfferUsecase(locator()));
   locator
       .registerFactory<UpdateOfferUsecase>(() => UpdateOfferUsecase(locator()));
-      locator
-      .registerFactory<GetPromoFollowerUseCase>(() => GetPromoFollowerUseCase(locator()));
+  locator.registerFactory<GetPromoFollowerUseCase>(
+      () => GetPromoFollowerUseCase(locator()));
   locator.registerLazySingleton<FeedProvider>(() => FeedProvider(
         locator(),
         locator(),
         locator(),
         locator(),
       ));
-            locator.registerFactory<CreatePromoUsecase>(() => CreatePromoUsecase(locator()));
+  locator
+      .registerFactory<CreatePromoUsecase>(() => CreatePromoUsecase(locator()));
 
-      locator.registerLazySingleton<PromoProvider>(() => PromoProvider(
-        locator(),        locator()
-
-      ));
+  locator.registerLazySingleton<PromoProvider>(
+      () => PromoProvider(locator(), locator()));
 }
 
 void _post() {
@@ -375,8 +376,8 @@ void _business() {
   //
   // Providers
   locator.registerLazySingleton<BusinessPageProvider>(() =>
-      BusinessPageProvider(locator(), locator(), locator(), locator(),
-          locator()));
+      BusinessPageProvider(
+          locator(), locator(), locator(), locator(), locator()));
 }
 
 void _services() {
@@ -389,8 +390,8 @@ void _services() {
   //
   // REPOSITORIES
 
-  locator.registerFactory<CreateChatUsecase>(
-      () => CreateChatUsecase(locator()));
+  locator
+      .registerFactory<CreateChatUsecase>(() => CreateChatUsecase(locator()));
   locator.registerFactory<BusinessPageRepository>(
       () => BusinessPageRepositoryImpl(locator(), locator()));
   locator.registerFactory<AddServiceRepository>(
@@ -494,7 +495,7 @@ void _bookvisit() {
   locator
       .registerFactory<BookServiceUsecase>(() => BookServiceUsecase(locator()));
 
-  locator.registerFactory<BookingProvider>(() => BookingProvider(
+  locator.registerFactory<BookingProvider>(() => BookingProvider(locator(),
       locator(), locator(), locator(), locator(), locator(), locator()));
 }
 
@@ -539,21 +540,21 @@ void _addaddress() {
   locator.registerLazySingleton<AddAddressProvider>(
       () => AddAddressProvider(locator(), locator()));
 }
+
 void _search() {
   // API
   //
-  locator.registerFactory<SearchRemoteDataSource>(() => SearchRemoteDataSourceImpl());
+  locator.registerFactory<SearchRemoteDataSource>(
+      () => SearchRemoteDataSourceImpl());
   // REPOSITORIES
   //
-  locator.registerFactory<SearchRepository>(
-      () => SearchRepositoryImpl(locator()));
+  locator
+      .registerFactory<SearchRepository>(() => SearchRepositoryImpl(locator()));
   // USECASES
   //
-  locator.registerFactory<SearchUsecase>(
-      () => SearchUsecase(locator()));
+  locator.registerFactory<SearchUsecase>(() => SearchUsecase(locator()));
   // Providers
-  locator.registerLazySingleton<SearchProvider>(
-      () => SearchProvider(locator()));
-        locator.registerLazySingleton<SearchScreen>(
-      () => const SearchScreen());
+  locator
+      .registerLazySingleton<SearchProvider>(() => SearchProvider(locator()));
+  locator.registerLazySingleton<SearchScreen>(() => const SearchScreen());
 }

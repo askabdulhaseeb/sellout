@@ -2,8 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../../../../book_visit/view/provider/visiting_provider.dart';
-import '../../../../../../../../../book_visit/view/screens/view_booking_screen.dart';
+import '../../../../../../../../../book_visit/view/provider/booking_provider.dart';
+import '../../../../../../../../../book_visit/view/screens/booking_screen.dart';
 import '../../../../../../../../domain/entities/post_entity.dart';
 import 'widgets/post_make_offer_button.dart';
 

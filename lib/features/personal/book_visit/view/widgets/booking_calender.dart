@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../core/enums/routine/day_type.dart';
 import '../../../../business/core/data/models/routine_model.dart';
 import '../../../../business/core/domain/entity/business_entity.dart';
@@ -11,7 +10,7 @@ import '../../../post/data/models/meetup/availability_model.dart';
 import '../../../post/domain/entities/meetup/availability_entity.dart';
 import '../../../post/domain/entities/post_entity.dart';
 import '../../../post/domain/entities/visit/visiting_entity.dart';
-import '../provider/visiting_provider.dart';
+import '../provider/booking_provider.dart';
 
 class BookingCalendarWidget extends StatelessWidget {
   const BookingCalendarWidget({
@@ -108,41 +107,73 @@ class BookingCalendarWidget extends StatelessWidget {
             closingTime != null &&
             openingTime.isNotEmpty &&
             closingTime.isNotEmpty)
-          SizedBox(
-            height: 50,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount:
-                  provider.generateTimeSlots(openingTime, closingTime).length,
-              itemBuilder: (BuildContext context, int index) {
-                String time = provider.generateTimeSlots(
-                  openingTime!,
-                  closingTime!,
-                )[index];
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: ChoiceChip(
-                    showCheckmark: false,
-                    label: Text(time),
-                    selected: provider.selectedTime == time,
-                    onSelected: (bool selected) {
-                      provider.updateSelectedTime(selected ? time : null);
+          FutureBuilder<List<VisitingEntity>>(
+            future: provider.getVisitsByPost(post?.postID ?? ''),
+            builder: (BuildContext context,
+                AsyncSnapshot<List<VisitingEntity>> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Text('error_loading_slots'.tr());
+              } else {
+                final List<VisitingEntity> visits =
+                    snapshot.data ?? <VisitingEntity>[];
+                final List<Map<String, dynamic>> slots = provider
+                    .generateTimeSlots(openingTime!, closingTime!, visits);
+                if (slots.isEmpty) {
+                  return Text('no_available_slots'.tr());
+                }
+                return SizedBox(
+                  height: 50,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: slots.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final Map<String, dynamic> slot = slots[index];
+                      final String time = slot['time'] as String;
+                      final bool isBooked = slot['isBooked'] as bool;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: ChoiceChip(
+                          showCheckmark: false,
+                          label: Text(
+                            time,
+                            style: textTheme.bodyMedium?.copyWith(
+                              color: isBooked
+                                  ? Colors.grey
+                                  : (provider.selectedTime == time
+                                      ? Theme.of(context).colorScheme.onPrimary
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .onSurface),
+                              decoration:
+                                  isBooked ? TextDecoration.lineThrough : null,
+                            ),
+                          ),
+                          selected: provider.selectedTime == time,
+                          onSelected: isBooked
+                              ? null
+                              : (bool selected) {
+                                  provider.updateSelectedTime(
+                                      selected ? time : null);
+                                },
+                          selectedColor: Theme.of(context).primaryColor,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.surface,
+                          disabledColor: Colors.grey.shade300,
+                        ),
+                      );
                     },
-                    selectedColor: Theme.of(context).primaryColor,
-                    backgroundColor: Theme.of(context).colorScheme.surface,
-                    labelStyle: textTheme.bodyMedium?.copyWith(
-                      color: provider.selectedTime == time
-                          ? Theme.of(context).colorScheme.onPrimary
-                          : Theme.of(context).colorScheme.onSurface,
-                    ),
                   ),
                 );
-              },
-            ),
+              }
+            },
           )
         else
-          Text('closed_day'.tr(),
-              style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          Text(
+            'closed_day'.tr(),
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
       ],
     );
   }

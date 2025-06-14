@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../chats/chat_dashboard/domain/entities/messages/message_entity.dart';
-import '../provider/visiting_provider.dart';
+import '../provider/booking_provider.dart';
 
 class CancelVisitingDialog extends StatelessWidget {
   const CancelVisitingDialog({

@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import '../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../chats/chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../post/domain/entities/post_entity.dart';
-import '../provider/visiting_provider.dart';
-import '../screens/view_booking_screen.dart';
+import '../provider/booking_provider.dart';
+import '../screens/booking_screen.dart';
 import 'cancel_visiting_dialog.dart';
 
 class VisitingUpdateButtonsWidget extends StatelessWidget {
