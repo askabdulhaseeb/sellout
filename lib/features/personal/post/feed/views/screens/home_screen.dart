@@ -10,12 +10,14 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const PersonalScaffold(
-      body:SingleChildScrollView(child: Column(mainAxisSize: MainAxisSize.min,
+        body: SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           HomePromoListSection(),
           HomePostListSection(),
         ],
-      ),)
-    );
+      ),
+    ));
   }
 }

@@ -20,7 +20,7 @@ import '../features/personal/listing/listing_form/views/screens/add_listing_form
 import '../features/personal/auth/signin/views/screens/sign_in_screen.dart';
 import '../features/personal/auth/signup/views/screens/signup_screen.dart';
 import '../features/personal/dashboard/views/screens/dashboard_screen.dart';
-import '../features/personal/book_visit/view/screens/view_booking_screen.dart';
+import '../features/personal/book_visit/view/screens/booking_screen.dart';
 import '../features/personal/post/post_detail/views/screens/post_detail_screen.dart';
 import '../features/personal/promo/view/screens/create_promo_screen.dart';
 import '../features/personal/review/views/screens/write_review_screen.dart';
@@ -73,13 +73,12 @@ class AppRoutes {
     EnterCodeScreen.routeName: (_) => const EnterCodeScreen(),
     NewPasswordScreen.routeName: (_) => const NewPasswordScreen(),
     VerifyTwoFactorScreen.routeName: (_) => const VerifyTwoFactorScreen(),
-
     // DAHSBOARD
     DashboardScreen.routeName: (_) => const DashboardScreen(),
     AddListingFormScreen.routeName: (_) => const AddListingFormScreen(),
     // POST
     PostDetailScreen.routeName: (_) => const PostDetailScreen(),
-    CreatePromoScreen.routeName:(_)=> const CreatePromoScreen(),
+    CreatePromoScreen.routeName: (_) => const CreatePromoScreen(),
     //CHAT
     ChatScreen.routeName: (_) => const ChatScreen(),
     //BOOKING

@@ -16,6 +16,7 @@ import '../../../user/profiles/domain/usecase/get_user_by_uid.dart';
 import '../../domain/usecase/book_service_usecase.dart';
 import '../../domain/usecase/book_visit_usecase.dart';
 import '../../domain/usecase/cancel_visit_usecase.dart';
+import '../../domain/usecase/get_visit_by_post_usecase.dart';
 import '../../domain/usecase/update_visit_usecase.dart';
 import '../params/book_service_params.dart';
 import '../params/book_visit_params.dart';
@@ -23,18 +24,21 @@ import '../params/update_visit_params.dart';
 
 class BookingProvider extends ChangeNotifier {
   BookingProvider(
-      this._bookVisitUseCase,
-      this._cancelVisitUseCase,
-      this._updateVisitUseCase,
-      this._getmychatusecase,
-      this._bookServiceUsecase,
-      this._getUserByUidUsecase);
+    this._bookVisitUseCase,
+    this._cancelVisitUseCase,
+    this._updateVisitUseCase,
+    this._getmychatusecase,
+    this._bookServiceUsecase,
+    this._getUserByUidUsecase,
+    this._getVisitByPostUsecase,
+  );
   final BookVisitUseCase _bookVisitUseCase;
   final CancelVisitUseCase _cancelVisitUseCase;
   final UpdateVisitUseCase _updateVisitUseCase;
   final GetMyChatsUsecase _getmychatusecase;
   final BookServiceUsecase _bookServiceUsecase;
   final GetUserByUidUsecase _getUserByUidUsecase;
+  final GetVisitByPostUsecase _getVisitByPostUsecase;
 
   DateTime _selectedDate = DateTime.now();
   String? _selectedTime;
@@ -91,32 +95,115 @@ class BookingProvider extends ChangeNotifier {
     return '$_selectedTime ${DateFormat('yyyy-MM-dd').format(_selectedDate)}';
   }
 
-  List<String> generateTimeSlots(String openingTime, String closingTime) {
+  List<Map<String, dynamic>> generateTimeSlots(
+    String openingTime,
+    String closingTime,
+    List<VisitingEntity> visits,
+  ) {
     try {
-      final DateFormat format = DateFormat('hh:mm a');
+      final DateFormat timeFormat = DateFormat('hh:mm a');
+
       openingTime = openingTime.toUpperCase().trim();
       closingTime = closingTime.toUpperCase().trim();
-      final DateTime open = format.parse(openingTime);
-      final DateTime close = format.parse(closingTime);
-      List<String> timeSlots = <String>[];
-      DateTime current = open;
-      while (current.isBefore(close) || current.isAtSameMomentAs(close)) {
-        timeSlots.add(format.format(current));
+
+      final DateTime openTime = parseTimeOnSelectedDate(openingTime);
+      final DateTime closeTime = parseTimeOnSelectedDate(closingTime);
+
+      final List<DateTime> bookedSlots = getBookedSlots(visits);
+      final List<Map<String, dynamic>> slots = <Map<String, dynamic>>[];
+      DateTime current = openTime;
+
+      while (
+          current.isBefore(closeTime) || current.isAtSameMomentAs(closeTime)) {
+        final String displaySlot = timeFormat.format(current);
+
+        final bool isBooked = bookedSlots.any((DateTime booked) =>
+            booked.year == current.year &&
+            booked.month == current.month &&
+            booked.day == current.day &&
+            booked.hour == current.hour &&
+            booked.minute == current.minute);
+
+        slots.add(<String, dynamic>{
+          'time': displaySlot,
+          'isBooked': isBooked,
+        });
+
         current = current.add(const Duration(minutes: 30));
       }
-      return timeSlots;
-    } catch (e) {
-      AppLog.error(e.toString(),
-          name: 'BookingProvider.generateTimeSlots -catch');
-      return <String>[];
+
+      return slots;
+    } catch (e, stack) {
+      AppLog.error(
+        'Error: ${e.toString()}',
+        name: 'BookingProvider.generateTimeSlots - catch',
+      );
+      debugPrint('Stack Trace: $stack');
+      return <Map<String, dynamic>>[];
     }
+  }
+
+  DateTime parseTimeOnSelectedDate(String timeStr) {
+    final DateFormat timeFormat = DateFormat('hh:mm a');
+    final DateTime parsed = timeFormat.parse(timeStr, true);
+
+    return DateTime(
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+      parsed.hour,
+      parsed.minute,
+    );
+  }
+
+  List<DateTime> getBookedSlots(List<VisitingEntity> visits) {
+    final Map<String, VisitingEntity> latestAcceptedMap =
+        <String, VisitingEntity>{};
+
+    for (final VisitingEntity visit in visits) {
+      final DateTime slotTime = DateTime(
+        visit.dateTime.year,
+        visit.dateTime.month,
+        visit.dateTime.day,
+        visit.dateTime.hour,
+        visit.dateTime.minute,
+      );
+
+      if (!isSameDate(slotTime, _selectedDate)) continue;
+
+      final String key = slotTime.toString();
+      if (latestAcceptedMap.containsKey(key)) {
+        final VisitingEntity existing = latestAcceptedMap[key]!;
+        if (visit.createdAt!.isAfter(existing.createdAt!)) {
+          latestAcceptedMap[key] = visit;
+        }
+      } else {
+        latestAcceptedMap[key] = visit;
+      }
+    }
+
+    return latestAcceptedMap.values.map((VisitingEntity visit) {
+      // Use raw components without timezone conversion
+      return DateTime(
+        visit.dateTime.year,
+        visit.dateTime.month,
+        visit.dateTime.day,
+        visit.dateTime.hour,
+        visit.dateTime.minute,
+      );
+    }).toList();
+  }
+
+  bool isSameDate(DateTime a, DateTime b) {
+    final bool same = a.year == b.year && a.month == b.month && a.day == b.day;
+    debugPrint('Compare Dates: $a vs $b => isSame: $same');
+    return same;
   }
 
   Future<void> fetchEmployees(List<String> employeesID) async {
     employees.clear();
     for (String id in employeesID) {
       final DataState<UserEntity?> user = await userbyuid(id);
-
       employees.add(user.entity!);
     }
     if (employees.isNotEmpty) {
@@ -145,7 +232,7 @@ class BookingProvider extends ChangeNotifier {
       if (chatresult is DataSuccess && (chatresult.data?.isNotEmpty ?? false)) {
         final ChatProvider chatProvider =
             Provider.of<ChatProvider>(context, listen: false);
-        chatProvider.setChat(chatresult.entity!.first); 
+        chatProvider.setChat(chatresult.entity!.first);
         Navigator.of(context).pushReplacementNamed(
           ChatScreen.routeName,
           arguments: chatId,
@@ -247,6 +334,36 @@ class BookingProvider extends ChangeNotifier {
         isLoading = false;
         print('Booking failed: ${result.exception}');
       }
+    }
+  }
+
+  Future<List<VisitingEntity>> getVisitsByPost(String postId) async {
+    debugPrint('🔍 Fetching visits for postId: $postId');
+
+    final DataState<List<VisitingEntity>> result =
+        await _getVisitByPostUsecase.call(postId);
+
+    if (result is DataSuccess && result.data != null) {
+      debugPrint(
+          '✅ Successfully fetched visits: ${result.entity!.length} visits found');
+
+      for (final VisitingEntity visit in result.entity!) {
+        debugPrint('📌 Visit: ${visit.dateTime}');
+      }
+
+      return result.entity!;
+    } else {
+      final String errorMsg =
+          result.exception?.message ?? 'Unknown error in GetVisitByPostUsecase';
+      debugPrint('❌ Failed to fetch visits: $errorMsg');
+
+      AppLog.error(
+        errorMsg,
+        name: 'BookingProvider.getVisitsByPost',
+        error: result.exception,
+      );
+
+      return <VisitingEntity>[];
     }
   }
 

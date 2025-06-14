@@ -9,4 +9,5 @@ abstract interface class BookVisitRepo {
   Future<DataState<VisitingEntity>> bookservice(BookServiceParams params);
   Future<DataState<VisitingEntity>> cancelVisit(UpdateVisitParams params);
   Future<DataState<VisitingEntity>> updateVisit(UpdateVisitParams params);
+  Future<DataState<List<VisitingEntity>>> getPostVisits(String postID);
 }

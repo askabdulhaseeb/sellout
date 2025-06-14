@@ -4,7 +4,7 @@ import '../../domain/repo/book_visit_repo.dart';
 import '../../view/params/book_service_params.dart';
 import '../../view/params/book_visit_params.dart';
 import '../../view/params/update_visit_params.dart';
-import '../source/book_visit_api.dart';
+import '../source/book_visIt_api.dart';
 
 class BookVisitRepoImpl implements BookVisitRepo {
   BookVisitRepoImpl(this.bookvisitapi);
@@ -29,5 +29,10 @@ class BookVisitRepoImpl implements BookVisitRepo {
   @override
   Future<DataState<VisitingEntity>> bookservice(BookServiceParams params) {
     return bookvisitapi.bookService(params);
+  }
+
+  @override
+  Future<DataState<List<VisitingEntity>>> getPostVisits(String postID) {
+    return bookvisitapi.getPostVisits(postID);
   }
 }

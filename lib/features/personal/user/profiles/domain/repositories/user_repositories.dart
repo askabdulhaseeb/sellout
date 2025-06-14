@@ -13,11 +13,13 @@ abstract interface class UserProfileRepository {
   Future<DataState<UserEntity?>> byUID(String uid);
   Future<DataState<List<PostEntity>>> getPostByUser(String? uid);
   Future<DataState<List<VisitingEntity>>> iMvisiter();
+
   Future<DataState<List<VisitingEntity>>> iMhost();
   Future<DataState<List<OrderEntity>>> getOrderByUser(String? uid);
   Future<DataState<bool>> createOrder(List<OrderModel> orderData);
   Future<DataState<List<AttachmentEntity>>> updateProfilePicture(
       PickedAttachment photo);
   Future<DataState<String>> updatePRofileDetail(UpdateUserParams photo);
-    Future<DataState<String>> addRemoveSupporters(AddRemoveSupporterParams params);
+  Future<DataState<String>> addRemoveSupporters(
+      AddRemoveSupporterParams params);
 }

@@ -23,7 +23,7 @@ class PromoRemoteDataSourceImpl implements PromoRemoteDataSource {
         endpoint: '/promo/create',
         requestType: ApiRequestType.post,
         fileKey: 'file',
-        isConnectType: false,
+        isConnectType: true,
         isAuth: true,
         attachments: param.attachments,
         fieldsMap: param.toMap(),

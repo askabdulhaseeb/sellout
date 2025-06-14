@@ -15,7 +15,7 @@ import '../features/personal/marketplace/views/providers/marketplace_provider.da
 import '../features/personal/listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../features/personal/chats/chat_dashboard/views/providers/chat_dashboard_provider.dart';
 import '../features/personal/dashboard/views/providers/personal_bottom_nav_provider.dart';
-import '../features/personal/book_visit/view/provider/visiting_provider.dart';
+import '../features/personal/book_visit/view/provider/booking_provider.dart';
 import '../features/personal/post/feed/views/providers/feed_provider.dart';
 import '../features/personal/promo/view/provider/promo_provider.dart';
 import '../features/personal/post/post_detail/views/providers/post_detail_provider.dart';
@@ -25,7 +25,6 @@ import '../features/personal/services/views/providers/services_page_provider.dar
 import '../features/personal/user/profiles/views/providers/profile_provider.dart';
 import '../features/personal/auth/signin/views/providers/signin_provider.dart';
 import 'get_it.dart';
-
 
 final List<SingleChildWidget> appProviders = <SingleChildWidget>[
   // Add your providers here
@@ -58,9 +57,9 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
     locator(),
     locator(),
   )),
-    ChangeNotifierProvider<CreateChatGroupProvider>.value(
+  ChangeNotifierProvider<CreateChatGroupProvider>.value(
       value: CreateChatGroupProvider(locator())),
-       ChangeNotifierProvider<CreatePrivateChatProvider>.value(
+  ChangeNotifierProvider<CreatePrivateChatProvider>.value(
       value: CreatePrivateChatProvider(locator())),
   //
   ChangeNotifierProvider<ProfileProvider>.value(
@@ -74,10 +73,10 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
     locator(),
     locator(),
   )),
-   ChangeNotifierProvider<PromoProvider>.value(
+  ChangeNotifierProvider<PromoProvider>.value(
       value: PromoProvider(
-    locator(),locator(),
-
+    locator(),
+    locator(),
   )),
   ChangeNotifierProvider<PostDetailProvider>.value(
       value: PostDetailProvider(locator(), locator())),
@@ -96,8 +95,8 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
 
   // Business
   ChangeNotifierProvider<BusinessPageProvider>.value(
-      value: BusinessPageProvider(locator(), locator(), locator(), locator(),
-         locator())),
+      value: BusinessPageProvider(
+          locator(), locator(), locator(), locator(), locator())),
   ChangeNotifierProvider<AddServiceProvider>.value(
       value: AddServiceProvider(locator(), locator())),
   ChangeNotifierProvider<MarketPlaceProvider>.value(
@@ -106,13 +105,12 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
   )),
 //
   ChangeNotifierProvider<BookingProvider>.value(
-      value: BookingProvider(
-          locator(), locator(), locator(), locator(), locator(), locator())),
+      value: BookingProvider(locator(), locator(), locator(), locator(),
+          locator(), locator(), locator())),
 //
   ChangeNotifierProvider<AddAddressProvider>.value(
       value: AddAddressProvider(locator(), locator())),
 //
-        ChangeNotifierProvider<SearchProvider>.value(
-      value:   
-SearchProvider( locator())),
+  ChangeNotifierProvider<SearchProvider>.value(
+      value: SearchProvider(locator())),
 ];

@@ -65,8 +65,11 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
   @override
   Future<DataState<String>> updatePRofileDetail(UpdateUserParams photo) async {
     return await userProfileRemoteSource.updatePRofileDetail(photo);
-  } @override
-  Future<DataState<String>> addRemoveSupporters(AddRemoveSupporterParams params) async {
+  }
+
+  @override
+  Future<DataState<String>> addRemoveSupporters(
+      AddRemoveSupporterParams params) async {
     return await userProfileRemoteSource.addRemoveSupporters(params);
   }
 }
