@@ -1,7 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/api_call.dart';
+import '../../../chats/chat/data/sources/local/local_message.dart';
+import '../../../chats/chat/domain/entities/getted_message_entity.dart';
+import '../../../chats/chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../post/data/models/visit/visiting_model.dart';
 import '../../../post/domain/entities/visit/visiting_entity.dart';
 import '../../view/params/book_service_params.dart';
@@ -11,7 +15,7 @@ import '../../view/params/update_visit_params.dart';
 abstract interface class BookVisitApi {
   Future<DataState<VisitingEntity>> bookVisit(BookVisitParams params);
   Future<DataState<VisitingEntity>> bookService(BookServiceParams params);
-  Future<DataState<VisitingEntity>> updateVisitStatus(UpdateVisitParams params);
+  // Future<DataState<VisitingEntity>> updateVisitStatus(UpdateVisitParams params);
   Future<DataState<VisitingEntity>> updateVisit(UpdateVisitParams params);
   Future<DataState<List<VisitingEntity>>> getPostVisits(String postID);
 }
@@ -92,46 +96,44 @@ class BookVisitApiImpl implements BookVisitApi {
     }
   }
 
-  @override
-  Future<DataState<VisitingEntity>> updateVisitStatus(
-      UpdateVisitParams params) async {
-    const String endpoint = '/visit/update?attribute=status';
-
-    try {
-      final DataState<VisitingEntity> result =
-          await ApiCall<VisitingEntity>().call(
-        endpoint: endpoint,
-        requestType: ApiRequestType.patch,
-        body: json.encode(params.tocancelvisit()),
-      );
-      if (result is DataSuccess) {
-        debugPrint(result.data);
-        return DataSuccess<VisitingEntity>(result.data ?? '', result.entity);
-      } else {
-        debugPrint('${params.tocancelvisit()} ');
-        AppLog.error(
-          result.exception?.message ?? 'something_wrong'.tr(),
-          name: 'BookVisitApiImpl.CancelVisit - Else',
-        );
-        return DataFailer<VisitingEntity>(
-            CustomException('Failed to cancel visit. Please try again.'));
-      }
-    } catch (e, stc) {
-      debugPrint('${params.tocancelvisit()} ');
-
-      AppLog.error(
-        e.toString(),
-        name: 'BookVisitApiImpl.CancelVisit - catch $stc',
-        error: e,
-      );
-      return DataFailer<VisitingEntity>(CustomException(e.toString()));
-    }
-  }
+  // @override
+  // Future<DataState<VisitingEntity>> updateVisitStatus(
+  //     UpdateVisitParams params) async {
+  //   const String endpoint = '/visit/update?attribute=status';
+  //   try {
+  //     final DataState<VisitingEntity> result =
+  //         await ApiCall<VisitingEntity>().call(
+  //       endpoint: endpoint,
+  //       requestType: ApiRequestType.patch,
+  //       body: json.encode(params.tocancelvisit()),
+  //     );
+  //     if (result is DataSuccess) {
+  //       debugPrint(result.data);
+  //       return DataSuccess<VisitingEntity>(result.data ?? '', result.entity);
+  //     } else {
+  //       debugPrint('${params.tocancelvisit()} ');
+  //       AppLog.error(
+  //         result.exception?.message ?? 'something_wrong'.tr(),
+  //         name: 'BookVisitApiImpl.CancelVisit - Else',
+  //       );
+  //       return DataFailer<VisitingEntity>(
+  //           CustomException('Failed to cancel visit. Please try again.'));
+  //     }
+  //   } catch (e, stc) {
+  //     debugPrint('${params.tocancelvisit()} ');
+  //     AppLog.error(
+  //       e.toString(),
+  //       name: 'BookVisitApiImpl.CancelVisit - catch $stc',
+  //       error: e,
+  //     );
+  //     return DataFailer<VisitingEntity>(CustomException(e.toString()));
+  //   }
+  // }
 
   @override
   Future<DataState<VisitingEntity>> updateVisit(
       UpdateVisitParams params) async {
-    const String endpoint = '/visit/update?attribute=date';
+    String endpoint = '/visit/update?attribute=${params.query}';
     try {
       final DataState<VisitingEntity> result =
           await ApiCall<VisitingEntity>().call(
@@ -139,7 +141,36 @@ class BookVisitApiImpl implements BookVisitApi {
         requestType: ApiRequestType.patch,
         body: json.encode(params.toupdatevisit()),
       );
+
+      debugPrint(result.data);
+
       if (result is DataSuccess) {
+        final Map<String, dynamic> map = jsonDecode(result.data ?? '');
+        final Map<String, dynamic> updatedVisiting = map['result'];
+        final VisitingEntity visitingEntity =
+            VisitingModel.fromJson(updatedVisiting);
+        // ✅ Update in local chat messages
+        final LocalChatMessage localChat = LocalChatMessage();
+        final String chatId = params.chatId ?? '';
+        final GettedMessageEntity? getted = localChat.entity(chatId);
+        if (getted != null) {
+          final List<MessageEntity> updatedMessages =
+              getted.messages.map((MessageEntity msg) {
+            if (msg.visitingDetail?.visitingID == visitingEntity.visitingID) {
+              return msg.copyWith(visitingDetail: visitingEntity);
+            }
+            return msg;
+          }).toList();
+
+          final GettedMessageEntity updatedGetted = GettedMessageEntity(
+            chatID: chatId,
+            messages: updatedMessages,
+            lastEvaluatedKey: getted.lastEvaluatedKey,
+          );
+
+          await localChat.save(updatedGetted, chatId);
+        }
+
         return DataSuccess<VisitingEntity>(result.data ?? '', result.entity);
       } else {
         debugPrint('${params.toupdatevisit()}');
@@ -148,7 +179,8 @@ class BookVisitApiImpl implements BookVisitApi {
           name: 'BookVisitApiImpl.UpdateVisit - Else',
         );
         return DataFailer<VisitingEntity>(
-            CustomException('Failed to update visit. Please try again.'));
+          CustomException('Failed to update visit. Please try again.'),
+        );
       }
     } catch (e) {
       AppLog.error(

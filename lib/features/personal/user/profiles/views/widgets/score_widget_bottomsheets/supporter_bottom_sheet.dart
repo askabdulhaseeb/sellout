@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../services/get_it.dart';
@@ -7,7 +8,8 @@ import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../domain/entities/supporter_detail_entity.dart';
 import '../../../domain/entities/user_entity.dart';
 import '../../../domain/usecase/get_user_by_uid.dart';
-import 'support_button.dart';
+import '../subwidgets/support_button.dart';
+
 class SupporterBottomsheet extends StatefulWidget {
   const SupporterBottomsheet({
     required this.supporters,
@@ -24,10 +26,10 @@ class SupporterBottomsheet extends StatefulWidget {
 
 class _SupporterBottomsheetState extends State<SupporterBottomsheet> {
   final TextEditingController searchController = TextEditingController();
-  final GetUserByUidUsecase getUserByUidUsecase = GetUserByUidUsecase(locator());
-
-  List<UserEntity> allUsers = [];
-  List<UserEntity> filteredUsers = [];
+  final GetUserByUidUsecase getUserByUidUsecase =
+      GetUserByUidUsecase(locator());
+  List<UserEntity> allUsers = <UserEntity>[];
+  List<UserEntity> filteredUsers = <UserEntity>[];
 
   bool isLoading = true;
 
@@ -45,13 +47,15 @@ class _SupporterBottomsheetState extends State<SupporterBottomsheet> {
   }
 
   void _fetchAllUsers() async {
-    final supporters = widget.supporters ?? [];
+    final List<SupporterDetailEntity> supporters =
+        widget.supporters ?? <SupporterDetailEntity>[];
 
-    final List<UserEntity> temp = [];
+    final List<UserEntity> temp = <UserEntity>[];
 
-    for (final supporter in supporters) {
+    for (final SupporterDetailEntity supporter in supporters) {
       if (supporter.userID.isEmpty) continue;
-      final result = await getUserByUidUsecase(supporter.userID);
+      final DataState<UserEntity?> result =
+          await getUserByUidUsecase(supporter.userID);
       if (result.entity != null) {
         temp.add(result.entity!);
       }
@@ -65,10 +69,10 @@ class _SupporterBottomsheetState extends State<SupporterBottomsheet> {
   }
 
   void _filterUsers() {
-    final query = searchController.text.toLowerCase();
+    final String query = searchController.text.toLowerCase();
 
     setState(() {
-      filteredUsers = allUsers.where((user) {
+      filteredUsers = allUsers.where((UserEntity user) {
         return user.username.toLowerCase().contains(query);
       }).toList();
     });
@@ -76,7 +80,7 @@ class _SupporterBottomsheetState extends State<SupporterBottomsheet> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    final TextTheme textTheme = Theme.of(context).textTheme;
 
     return Container(
       decoration: BoxDecoration(
@@ -91,7 +95,8 @@ class _SupporterBottomsheetState extends State<SupporterBottomsheet> {
             alignment: Alignment.topLeft,
             child: TextButton.icon(
               label: Text('close'.tr(), style: textTheme.labelSmall),
-              icon: Icon(Icons.close, size: 16, color: ColorScheme.of(context).onSurface),
+              icon: Icon(Icons.close,
+                  size: 16, color: ColorScheme.of(context).onSurface),
               onPressed: () => Navigator.pop(context),
             ),
           ),
@@ -106,8 +111,8 @@ class _SupporterBottomsheetState extends State<SupporterBottomsheet> {
                 ? const Center(child: CircularProgressIndicator())
                 : ListView.builder(
                     itemCount: filteredUsers.length,
-                    itemBuilder: (context, index) {
-                      final user = filteredUsers[index];
+                    itemBuilder: (BuildContext context, int index) {
+                      final UserEntity user = filteredUsers[index];
                       return ListTile(
                         contentPadding: EdgeInsets.zero,
                         leading: SizedBox(

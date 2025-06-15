@@ -89,7 +89,7 @@ import '../features/personal/chats/chat_dashboard/domain/usecase/create_chat_use
 import '../features/personal/chats/chat_dashboard/domain/usecase/get_my_chats_usecase.dart';
 import '../features/personal/chats/chat_dashboard/views/providers/chat_dashboard_provider.dart';
 import '../features/personal/book_visit/data/repo/visit_book_repo_impl.dart';
-import '../features/personal/book_visit/data/source/book_visIt_api.dart';
+import '../features/personal/book_visit/data/source/book_visit_api.dart';
 import '../features/personal/book_visit/domain/repo/book_visit_repo.dart';
 import '../features/personal/book_visit/domain/usecase/book_visit_usecase.dart';
 import '../features/personal/book_visit/view/provider/booking_provider.dart';
@@ -489,13 +489,13 @@ void _bookvisit() {
   locator.registerFactory<BookVisitRepo>(() => BookVisitRepoImpl(locator()));
   locator
       .registerFactory<UpdateVisitUseCase>(() => UpdateVisitUseCase(locator()));
-  locator.registerFactory<UpdateVisitStatusUseCase>(
-      () => UpdateVisitStatusUseCase(locator()));
+  // locator.registerFactory<UpdateVisitStatusUseCase>(
+  //     () => UpdateVisitStatusUseCase(locator()));
   locator.registerFactory<BookVisitUseCase>(() => BookVisitUseCase(locator()));
   locator
       .registerFactory<BookServiceUsecase>(() => BookServiceUsecase(locator()));
 
-  locator.registerFactory<BookingProvider>(() => BookingProvider(locator(),
+  locator.registerFactory<BookingProvider>(() => BookingProvider(
       locator(), locator(), locator(), locator(), locator(), locator()));
 }
 

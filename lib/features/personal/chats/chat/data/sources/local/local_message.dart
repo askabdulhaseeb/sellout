@@ -77,4 +77,21 @@ class LocalChatMessage {
         b.createdAt.compareTo(a.createdAt));
     return msgs;
   }
+
+  Stream<List<MessageEntity>> messagesStream(String chatID) async* {
+    // Ensure box is open
+    await refresh();
+
+    yield messages(chatID); // Emit current messages immediately
+
+    // Listen to changes in the box
+    await for (final BoxEvent event in _box.watch()) {
+      final GettedMessageEntity? entity = _box.get(chatID);
+      if (entity != null) {
+        yield entity.messages;
+      } else {
+        yield <MessageEntity>[];
+      }
+    }
+  }
 }

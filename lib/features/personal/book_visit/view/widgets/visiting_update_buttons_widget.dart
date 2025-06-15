@@ -28,12 +28,12 @@ class VisitingUpdateButtonsWidget extends StatelessWidget {
 
     return Column(
       children: <Widget>[
-        if (!isHost) CancelAndChangeButtons(message: message, post: post),
+        if (!isHost && status == StatusType.pending)
+          CancelAndChangeButtons(message: message, post: post),
         if (isHost && status == StatusType.pending)
           HostPendingButtons(message: message),
         if (isHost && status == StatusType.accepted)
           HostDoneButton(message: message),
-        const Divider(),
       ],
     );
   }
@@ -54,50 +54,55 @@ class CancelAndChangeButtons extends StatelessWidget {
     final BookingProvider pro =
         Provider.of<BookingProvider>(context, listen: false);
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return Column(
       children: <Widget>[
-        Expanded(
-          child: CustomElevatedButton(
-            margin: const EdgeInsets.all(4),
-            padding: const EdgeInsets.all(4),
-            bgColor: Colors.transparent,
-            border: Border.all(color: Theme.of(context).primaryColor),
-            textColor: Theme.of(context).primaryColor,
-            textStyle: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).primaryColor,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            Expanded(
+              child: CustomElevatedButton(
+                margin: const EdgeInsets.all(4),
+                padding: const EdgeInsets.all(4),
+                bgColor: Colors.transparent,
+                border: Border.all(color: Theme.of(context).primaryColor),
+                textColor: Theme.of(context).primaryColor,
+                textStyle: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).primaryColor,
+                ),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) =>
+                        CancelVisitingDialog(pro: pro, message: message),
+                  );
+                },
+                isLoading: false,
+                title: 'cancel_viewing'.tr(),
+              ),
             ),
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (_) =>
-                    CancelVisitingDialog(pro: pro, message: message),
-              );
-            },
-            isLoading: false,
-            title: 'cancel_viewing'.tr(),
-          ),
-        ),
-        Expanded(
-          child: CustomElevatedButton(
-            padding: const EdgeInsets.all(4),
-            margin: const EdgeInsets.all(4),
-            title: 'change_date'.tr(),
-            isLoading: false,
-            textStyle: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).canvasColor,
+            Expanded(
+              child: CustomElevatedButton(
+                padding: const EdgeInsets.all(4),
+                margin: const EdgeInsets.all(4),
+                title: 'change_date'.tr(),
+                isLoading: false,
+                textStyle: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).canvasColor,
+                ),
+                onTap: () {
+                  pro.setMessageEntity(message);
+                  Navigator.pushNamed(context, BookingScreen.routeName,
+                      arguments: <String, PostEntity?>{'post': post});
+                },
+              ),
             ),
-            onTap: () {
-              pro.setMessageEntity(message);
-              Navigator.pushNamed(context, BookingScreen.routeName,
-                  arguments: <String, PostEntity?>{'post': post});
-            },
-          ),
+          ],
         ),
+        const Divider(),
       ],
     );
   }
@@ -113,59 +118,66 @@ class HostPendingButtons extends StatelessWidget {
     final BookingProvider pro =
         Provider.of<BookingProvider>(context, listen: false);
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return Column(
       children: <Widget>[
-        Expanded(
-          child: CustomElevatedButton(
-            margin: const EdgeInsets.all(4),
-            padding: const EdgeInsets.all(4),
-            bgColor: Colors.transparent,
-            border: Border.all(color: Theme.of(context).primaryColor),
-            textColor: Theme.of(context).primaryColor,
-            textStyle: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).primaryColor,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            Expanded(
+              child: CustomElevatedButton(
+                margin: const EdgeInsets.all(4),
+                padding: const EdgeInsets.all(4),
+                bgColor: Colors.transparent,
+                border: Border.all(color: Theme.of(context).primaryColor),
+                textColor: Theme.of(context).primaryColor,
+                textStyle: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).primaryColor,
+                ),
+                onTap: () {
+                  pro.updateVisit(
+                    query: 'status',
+                    status: 'reject',
+                    chatID: message.chatId,
+                    context: context,
+                    visitingId: message.visitingDetail?.visitingID ?? '',
+                    messageId: message.messageId,
+                  );
+                },
+                isLoading: false,
+                title: 'reject_viewing'.tr(),
+              ),
             ),
-            onTap: () {
-              pro.updateVisitStatus(
-                status: 'reject',
-                chatID: message.chatId,
-                context: context,
-                visitingId: message.visitingDetail?.visitingID ?? '',
-                messageId: message.messageId,
-              );
-            },
-            isLoading: false,
-            title: 'reject_viewing'.tr(),
-          ),
-        ),
-        Expanded(
-          child: CustomElevatedButton(
-            margin: const EdgeInsets.all(4),
-            padding: const EdgeInsets.all(4),
-            bgColor: Colors.transparent,
-            border: Border.all(color: Theme.of(context).primaryColor),
-            textColor: Theme.of(context).primaryColor,
-            textStyle: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).primaryColor,
+            Expanded(
+              child: CustomElevatedButton(
+                margin: const EdgeInsets.all(4),
+                padding: const EdgeInsets.all(4),
+                bgColor: Colors.transparent,
+                border: Border.all(color: Theme.of(context).primaryColor),
+                textColor: Theme.of(context).primaryColor,
+                textStyle: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).primaryColor,
+                ),
+                onTap: () {
+                  pro.updateVisit(
+                    query: 'status',
+                    status: 'accept',
+                    chatID: message.chatId,
+                    context: context,
+                    visitingId: message.visitingDetail?.visitingID ?? '',
+                    messageId: message.messageId,
+                  );
+                },
+                isLoading: false,
+                title: 'accept_viewing'.tr(),
+              ),
             ),
-            onTap: () {
-              pro.updateVisitStatus(
-                status: 'accept',
-                chatID: message.chatId,
-                context: context,
-                visitingId: message.visitingDetail?.visitingID ?? '',
-                messageId: message.messageId,
-              );
-            },
-            isLoading: false,
-            title: 'accept_viewing'.tr(),
-          ),
+          ],
         ),
+        const Divider(),
       ],
     );
   }
@@ -181,27 +193,37 @@ class HostDoneButton extends StatelessWidget {
     final BookingProvider pro =
         Provider.of<BookingProvider>(context, listen: false);
 
-    return Expanded(
-      child: CustomElevatedButton(
-        padding: const EdgeInsets.all(4),
-        margin: const EdgeInsets.all(4),
-        title: 'visiting_done'.tr(),
-        isLoading: false,
-        textStyle: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
-          color: Theme.of(context).canvasColor,
+    return Column(
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: CustomElevatedButton(
+                padding: const EdgeInsets.all(4),
+                margin: const EdgeInsets.all(4),
+                title: 'visiting_done'.tr(),
+                isLoading: false,
+                textStyle: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).canvasColor,
+                ),
+                onTap: () {
+                  pro.updateVisit(
+                    query: 'status',
+                    status: 'accept',
+                    chatID: message.chatId,
+                    context: context,
+                    visitingId: message.visitingDetail?.visitingID ?? '',
+                    messageId: message.messageId,
+                  );
+                },
+              ),
+            ),
+          ],
         ),
-        onTap: () {
-          pro.updateVisitStatus(
-            status: 'accept',
-            chatID: message.chatId,
-            context: context,
-            visitingId: message.visitingDetail?.visitingID ?? '',
-            messageId: message.messageId,
-          );
-        },
-      ),
+        const Divider(),
+      ],
     );
   }
 }

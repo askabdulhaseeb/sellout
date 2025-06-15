@@ -1,7 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../../../../../core/enums/routine/day_type.dart';
+import '../../../../../core/theme/app_theme.dart';
 import '../../../../business/core/data/models/routine_model.dart';
 import '../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../business/core/domain/entity/routine_entity.dart';
@@ -89,17 +91,25 @@ class BookingCalendarWidget extends StatelessWidget {
     return Column(
       children: <Widget>[
         const SizedBox(height: 10),
-        CalendarDatePicker(
-          selectableDayPredicate: (DateTime date) {
-            return date
-                .isAfter(DateTime.now().subtract(const Duration(days: 1)));
-          },
-          initialDate: visit?.dateTime ?? provider.selectedDate,
-          firstDate: DateTime(2025),
-          lastDate: DateTime(2100),
-          onDateChanged: (DateTime newDate) {
-            provider.updateDate(newDate);
-          },
+        Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+                  primary: AppTheme
+                      .primaryColor, // Set your desired indicator color here
+                ),
+          ),
+          child: CalendarDatePicker(
+            selectableDayPredicate: (DateTime date) {
+              return date
+                  .isAfter(DateTime.now().subtract(const Duration(days: 1)));
+            },
+            initialDate: visit?.dateTime ?? provider.selectedDate,
+            firstDate: DateTime(2025),
+            lastDate: DateTime(2100),
+            onDateChanged: (DateTime newDate) {
+              provider.updateDate(newDate);
+            },
+          ),
         ),
         const SizedBox(height: 20),
         if (isOpen &&

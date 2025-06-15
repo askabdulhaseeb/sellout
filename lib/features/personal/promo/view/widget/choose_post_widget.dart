@@ -9,7 +9,6 @@ import '../../../post/domain/entities/post_entity.dart';
 import '../provider/promo_provider.dart';
 import 'choose_post_bottomsheet.dart';
 
-
 class ChoosePostForPromoWidget extends StatelessWidget {
   const ChoosePostForPromoWidget({super.key});
 
@@ -44,19 +43,20 @@ class PostSelectionField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final PromoProvider pro = Provider.of<PromoProvider>(context);
+    // final PromoProvider pro = Provider.of<PromoProvider>(context);
 
     return AbsorbPointer(
-      child: CustomTextFormField(controller: TextEditingController(),
-      labelText: 'link_product'.tr(),
+      child: CustomTextFormField(
+        controller: TextEditingController(),
+        labelText: 'link_product'.tr(),
         validator: (String? value) {
+          return null;
         },
         readOnly: true,
       ),
     );
   }
 }
-
 
 class SelectedPostTile extends StatelessWidget {
   const SelectedPostTile({super.key});
@@ -68,18 +68,20 @@ class SelectedPostTile extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(12),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[  Text(
-             'link_product'.tr(),
-              style: const TextStyle(fontWeight: FontWeight.w500),
-            ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'link_product'.tr(),
+            style: const TextStyle(fontWeight: FontWeight.w500),
+          ),
           Row(
             children: <Widget>[
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: CustomNetworkImage(
                   imageURL: post.imageURL,
-                 size: 60,
+                  size: 60,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -102,12 +104,16 @@ class SelectedPostTile extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(width: 80,
-                child: CustomElevatedButton(bgColor: AppTheme.primaryColor.withValues(alpha: 0.1),
-                
-                 isLoading: false,
-                 onTap: () => pro.clearPost(),textStyle:TextTheme.of(context).labelMedium?.copyWith(color: AppTheme.primaryColor,),
-                 title: 'deselect'.tr(),
+              SizedBox(
+                width: 80,
+                child: CustomElevatedButton(
+                  bgColor: AppTheme.primaryColor.withValues(alpha: 0.1),
+                  isLoading: false,
+                  onTap: () => pro.clearPost(),
+                  textStyle: TextTheme.of(context).labelMedium?.copyWith(
+                        color: AppTheme.primaryColor,
+                      ),
+                  title: 'deselect'.tr(),
                 ),
               ),
             ],
