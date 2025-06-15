@@ -23,7 +23,7 @@ class BookVisitButton extends StatelessWidget {
       return CustomElevatedButton(
           bgColor: provider.selectedTime != null
               ? Theme.of(context).primaryColor
-              : Theme.of(context).cardColor,
+              : Theme.of(context).disabledColor,
           title: 'book'.tr(),
           isLoading: provider.isLoading,
           onTap: () {
@@ -32,6 +32,7 @@ class BookVisitButton extends StatelessWidget {
                 provider.bookVisit(context, post!.postID);
               } else {
                 provider.updateVisit(
+                    query: 'date',
                     chatID: provider.messageentity?.chatId ?? '',
                     context: context,
                     visitingId:

@@ -53,4 +53,35 @@ class MessageEntity {
   final OfferDetailEntity? offerDetail;
 
   String? get postImage => offerDetail?.post.imageURL;
+  MessageEntity copyWith({
+    List<String>? persons,
+    List<AttachmentEntity>? fileUrl,
+    DateTime? updatedAt,
+    DateTime? createdAt,
+    String? messageId,
+    String? text,
+    String? displayText,
+    String? sendBy,
+    String? chatId,
+    VisitingEntity? visitingDetail,
+    MessageType? type,
+    String? source,
+    OfferDetailEntity? offerDetail,
+  }) {
+    return MessageEntity(
+      persons: persons ?? this.persons,
+      fileUrl: fileUrl ?? this.fileUrl,
+      updatedAt: updatedAt ?? this.updatedAt,
+      createdAt: createdAt ?? this.createdAt,
+      messageId: messageId ?? this.messageId,
+      text: text ?? this.text,
+      displayText: displayText ?? this.displayText,
+      sendBy: sendBy ?? this.sendBy,
+      chatId: chatId ?? this.chatId,
+      visitingDetail: visitingDetail ?? this.visitingDetail,
+      type: type ?? this.type,
+      source: source ?? this.source,
+      offerDetail: offerDetail ?? this.offerDetail,
+    );
+  }
 }

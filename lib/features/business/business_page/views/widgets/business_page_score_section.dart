@@ -1,8 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_theme.dart';
+import '../../../../personal/user/profiles/views/widgets/score_widget_bottomsheets/employyement_details_bottomsheet.dart';
 import '../../../../personal/user/profiles/views/widgets/subwidgets/support_button.dart';
-import '../../../../personal/user/profiles/views/widgets/subwidgets/supporter_bottom_sheet.dart';
+import '../../../../personal/user/profiles/views/widgets/score_widget_bottomsheets/supporter_bottom_sheet.dart';
 import '../../../core/domain/entity/business_entity.dart';
 
 class BusinessPageScoreSection extends StatelessWidget {
@@ -23,12 +24,11 @@ class BusinessPageScoreSection extends StatelessWidget {
                   count: '',
                   title: 'details'.tr(),
                   onPressed: () async {
-                    // await showModalBottomSheet<void>(
-                    //   context: context,
-                    //   builder: (BuildContext context) {
-                    //     return BusinessPageScoreSection(business: business);
-                    //   },
-                    // );
+                    showBottomSheet(
+                      context: context,
+                      builder: (BuildContext context) =>
+                          const EmploymentDetailsBottomSheet(),
+                    );
                   },
                 ),
               ),

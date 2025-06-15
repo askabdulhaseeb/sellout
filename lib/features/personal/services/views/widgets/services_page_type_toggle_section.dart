@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../../core/theme/app_theme.dart';
 import '../../../../../core/widgets/custom_toggle_switch.dart';
 import '../enums/services_page_type.dart';
 import '../providers/services_page_provider.dart';
@@ -19,6 +20,12 @@ class ServicesPageTypeToggleSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             CustomToggleSwitch<ServicesPageType>(
+              seletedFontSize: MediaQuery.of(context).size.width * 0.032,
+              isShaded: false,
+              selectedColors: const <Color>[
+                AppTheme.primaryColor,
+                AppTheme.secondaryColor
+              ],
               labels: ServicesPageType.values,
               labelStrs: ServicesPageType.values
                   .map((ServicesPageType e) => e.code.tr())

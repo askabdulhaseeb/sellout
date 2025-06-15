@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 import '../../../../../../core/theme/app_theme.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../domain/entities/user_entity.dart';
+import 'score_widget_bottomsheets/employyement_details_bottomsheet.dart';
 import 'subwidgets/support_button.dart';
-import 'subwidgets/supporter_bottom_sheet.dart';
+import 'score_widget_bottomsheets/supporter_bottom_sheet.dart';
 
 class ProfileScoreSection extends StatelessWidget {
   const ProfileScoreSection({required this.user, super.key});
   final UserEntity? user;
 
   @override
-  Widget build(BuildContext context) { 
+  Widget build(BuildContext context) {
     final bool isMe = user?.uid == (LocalAuth.uid ?? '-');
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -19,13 +20,20 @@ class ProfileScoreSection extends StatelessWidget {
           height: 35,
           child: Row(
             children: <Widget>[
-          if(isMe)    Expanded(
-                child: _ScoreButton(
-                  title: 'details'.tr(),
-                  count: '',
-                  onPressed: () {},
+              if (isMe)
+                Expanded(
+                  child: _ScoreButton(
+                    title: 'details'.tr(),
+                    count: '',
+                    onPressed: () {
+                      showBottomSheet(
+                        context: context,
+                        builder: (BuildContext context) =>
+                            const EmploymentDetailsBottomSheet(),
+                      );
+                    },
+                  ),
                 ),
-              ),
               Expanded(
                 child: _ScoreButton(
                   title: 'supporting'.tr(),
@@ -59,14 +67,22 @@ class ProfileScoreSection extends StatelessWidget {
                     isScrollControlled: true,
                     builder: (BuildContext context) {
                       return SupporterBottomsheet(
-                        supporters:user?.supporters,
+                        supporters: user?.supporters,
                         issupporter: true,
                       );
                     },
                   ),
                 ),
               ),
-              if(!isMe)Expanded(child:  SupportButton(supporterId: user?.uid ?? '',supportColor: AppTheme.primaryColor,supportingColor: AppTheme.secondaryColor,supportTextColor:ColorScheme.of(context).onPrimary ,supportingTextColor:ColorScheme.of(context).onPrimary ,))
+              if (!isMe)
+                Expanded(
+                    child: SupportButton(
+                  supporterId: user?.uid ?? '',
+                  supportColor: AppTheme.primaryColor,
+                  supportingColor: AppTheme.secondaryColor,
+                  supportTextColor: ColorScheme.of(context).onPrimary,
+                  supportingTextColor: ColorScheme.of(context).onPrimary,
+                ))
             ],
           )),
     );

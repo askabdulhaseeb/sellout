@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../post/domain/entities/post_entity.dart';
@@ -19,7 +20,7 @@ class ProfileOrderListview extends StatelessWidget {
 
   final List<OrderEntity> filteredOrders;
   final ProfileProvider pro;
-  final OrderType selectedStatus;
+  final StatusType selectedStatus;
 
   @override
   Widget build(BuildContext context) {
