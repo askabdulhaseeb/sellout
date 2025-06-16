@@ -30,7 +30,6 @@ class PostEntity {
     required this.deliveryType,
     required this.listOfReviews,
     required this.categoryType,
-
     //
     required this.currentLongitude,
     required this.currentLatitude,

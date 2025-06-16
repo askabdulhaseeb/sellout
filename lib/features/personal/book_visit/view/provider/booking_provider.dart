@@ -25,7 +25,6 @@ class BookingProvider extends ChangeNotifier {
     this._bookVisitUseCase,
     // this._updateVisitStatusUseCase,
     this._updateVisitUseCase,
-    this._getmychatusecase,
     this._bookServiceUsecase,
     this._getUserByUidUsecase,
     this._getVisitByPostUsecase,
@@ -33,7 +32,6 @@ class BookingProvider extends ChangeNotifier {
   final BookVisitUseCase _bookVisitUseCase;
   // final UpdateVisitStatusUseCase _updateVisitStatusUseCase;
   final UpdateVisitUseCase _updateVisitUseCase;
-  final GetMyChatsUsecase _getmychatusecase;
   final BookServiceUsecase _bookServiceUsecase;
   final GetUserByUidUsecase _getUserByUidUsecase;
   final GetVisitByPostUsecase _getVisitByPostUsecase;
@@ -221,23 +219,16 @@ class BookingProvider extends ChangeNotifier {
 
   Future<void> bookVisit(BuildContext context, String postID) async {
     setIsLoading(true);
+
     final BookVisitParams params =
         BookVisitParams(dateTime: formattedDateTime, postId: postID);
     final DataState<VisitingEntity> result =
         await _bookVisitUseCase.call(params);
+
     if (result is DataSuccess) {
       final String chatId = result.data ?? '';
-      DataState<List<ChatEntity>> chatresult =
-          await _getmychatusecase.call(<String>[chatId]);
-      if (chatresult is DataSuccess && (chatresult.data?.isNotEmpty ?? false)) {
-        final ChatProvider chatProvider =
-            Provider.of<ChatProvider>(context, listen: false);
-        chatProvider.setChat(chatresult.entity!.first);
-        chatProvider.getMessages();
-        Navigator.of(context).pushReplacementNamed(
-          ChatScreen.routeName,
-        );
-      }
+      await Provider.of<ChatProvider>(context, listen: false)
+          .createOrOpenChatById(context, chatId);
     } else if (result is DataFailer) {
       AppLog.error(
         result.exception?.message ?? 'ERROR - BookingProvider.BookVisit',
