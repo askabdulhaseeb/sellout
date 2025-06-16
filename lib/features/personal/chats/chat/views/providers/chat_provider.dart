@@ -11,6 +11,7 @@ import '../../../../listing/listing_form/views/widgets/attachment_selection/cept
 import '../../../chat_dashboard/data/sources/local/local_chat.dart';
 import '../../../chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../../chat_dashboard/domain/entities/messages/message_entity.dart';
+import '../../../chat_dashboard/domain/usecase/get_my_chats_usecase.dart';
 import '../../data/models/message_last_evaluated_key.dart';
 import '../../domain/entities/getted_message_entity.dart';
 import '../../domain/entities/message_last_evaluated_key_entity.dart';
@@ -21,6 +22,7 @@ import '../../domain/usecase/get_messages_usecase.dart';
 import '../../domain/usecase/leave_group_usecase.dart';
 import '../../domain/usecase/send_group_invite_usecase.dart';
 import '../../domain/usecase/send_message_usecase.dart';
+import '../screens/chat_screen.dart';
 
 class ChatProvider extends ChangeNotifier {
   ChatProvider(
@@ -29,12 +31,14 @@ class ChatProvider extends ChangeNotifier {
     this._acceptGroupInviteUsecase,
     this._leaveGroupparams,
     this._sendGroupInviteUsecase,
+    this._getmychatusecase,
   );
   final GetMessagesUsecase _getMessagesUsecase;
   final SendMessageUsecase _sendMessageUsecase;
   final AcceptGorupInviteUsecase _acceptGroupInviteUsecase;
   final LeaveGroupUsecase _leaveGroupparams;
   final SendGroupInviteUsecase _sendGroupInviteUsecase;
+  final GetMyChatsUsecase _getmychatusecase;
   ChatEntity? _chat;
   MessageLastEvaluatedKeyEntity? _key;
   GettedMessageEntity? _gettedMessage;
@@ -172,6 +176,30 @@ class ChatProvider extends ChangeNotifier {
       _isLoading = false;
       return false;
     }
+  }
+
+  Future<void> createOrOpenChatById(BuildContext context, String chatId) async {
+    final DataState<List<ChatEntity>> chatResult =
+        await _getmychatusecase.call(<String>[chatId]);
+
+    if (chatResult is DataSuccess && (chatResult.data?.isNotEmpty ?? false)) {
+      final ChatEntity chat = chatResult.entity!.first;
+      await openChat(context, chat);
+    } else if (chatResult is DataFailer) {
+      AppLog.error(
+        chatResult.exception?.message ??
+            'ERROR - BookingProvider.createOrOpenChatById',
+        name: 'BookingProvider.createOrOpenChatById - failed',
+        error: chatResult.exception,
+      );
+    }
+  }
+
+  Future<void> openChat(BuildContext context, ChatEntity chat) async {
+    setChat(chat);
+    getMessages();
+
+    Navigator.of(context).pushReplacementNamed(ChatScreen.routeName);
   }
 
   Future<bool> loadMessages() async {

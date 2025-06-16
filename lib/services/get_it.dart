@@ -299,8 +299,14 @@ void _message() {
       () => SendGroupInviteUsecase(locator()));
   locator.registerFactory<AcceptGorupInviteUsecase>(
       () => AcceptGorupInviteUsecase(locator()));
-  locator.registerLazySingleton(() =>
-      ChatProvider(locator(), locator(), locator(), locator(), locator()));
+  locator.registerLazySingleton(() => ChatProvider(
+        locator(),
+        locator(),
+        locator(),
+        locator(),
+        locator(),
+        locator(),
+      ));
 }
 
 void _feed() {
@@ -494,8 +500,8 @@ void _bookvisit() {
   locator
       .registerFactory<BookServiceUsecase>(() => BookServiceUsecase(locator()));
 
-  locator.registerFactory<BookingProvider>(() => BookingProvider(
-      locator(), locator(), locator(), locator(), locator(), locator()));
+  locator.registerFactory<BookingProvider>(() =>
+      BookingProvider(locator(), locator(), locator(), locator(), locator()));
 }
 
 void _addlisting() {

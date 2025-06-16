@@ -56,6 +56,7 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
     locator(),
     locator(),
     locator(),
+    locator(),
   )),
   ChangeNotifierProvider<CreateChatGroupProvider>.value(
       value: CreateChatGroupProvider(locator())),
@@ -106,7 +107,7 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
 //
   ChangeNotifierProvider<BookingProvider>.value(
       value: BookingProvider(
-          locator(), locator(), locator(), locator(), locator(), locator())),
+          locator(), locator(), locator(), locator(), locator())),
 //
   ChangeNotifierProvider<AddAddressProvider>.value(
       value: AddAddressProvider(locator(), locator())),
