@@ -1,11 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../../../core/widgets/costom_textformfield.dart';
-import '../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../core/widgets/video_widget.dart';
-import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../../core/widgets/video_widget.dart';
+import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../provider/promo_provider.dart';
 import '../../widget/choose_post_widget.dart';
 
@@ -14,7 +13,8 @@ class PromoDetailsForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final PromoProvider pro = Provider.of<PromoProvider>(context, listen: false);
+    final PromoProvider pro =
+        Provider.of<PromoProvider>(context, listen: false);
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -39,7 +39,8 @@ class PromoDetailsForm extends StatelessWidget {
             SizedBox(
               height: 200,
               width: double.infinity,
-              child: VideoWidget(videoSource: pro.attachment?.file, showTime: true),
+              child: VideoWidget(
+                  videoSource: pro.attachment?.file, showTime: true),
             ),
             const SizedBox(height: 20),
             // Title
@@ -78,17 +79,17 @@ class PromoDetailsForm extends StatelessWidget {
 
             const ChoosePostForPromoWidget(),
             const SizedBox(height: 30),
-            Consumer<PromoProvider>(builder: (BuildContext context, PromoProvider promoPro, Widget? child) => 
-               CustomElevatedButton(
-               isLoading: promoPro.isLoadig,
+            Consumer<PromoProvider>(
+              builder: (BuildContext context, PromoProvider promoPro,
+                      Widget? child) =>
+                  CustomElevatedButton(
+                isLoading: promoPro.isLoadig,
                 onTap: () {
-                  if (formKey.currentState!.validate()) 
-                  {
-              promoPro.createPromo(context);  
-                              }
+                  if (formKey.currentState!.validate()) {
+                    promoPro.createPromo(context);
+                  }
                 },
-               title:'upload_promo'.tr(),
-                
+                title: 'upload_promo'.tr(),
               ),
             ),
           ],

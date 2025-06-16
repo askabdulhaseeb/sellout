@@ -1,8 +1,7 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../core/theme/app_theme.dart';
-import '../../../../../../promo/view/screens/create_promo_screen.dart';
+import '../../../../../../promo/view/create_promo/screens/create_promo_screen.dart';
 
 class AddPromoCard extends StatelessWidget {
   const AddPromoCard({super.key});
@@ -13,16 +12,18 @@ class AddPromoCard extends StatelessWidget {
       onTap: () {
         Navigator.pushNamed(context, CreatePromoScreen.routeName);
       },
-      child: SizedBox(              width: 80,
-
-        child: Column(crossAxisAlignment: CrossAxisAlignment.center,
+      child: SizedBox(
+        width: 80,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Container(
               width: 80,
               height: 100,
               margin: const EdgeInsets.only(right: 12),
               decoration: BoxDecoration(
-                border: Border.all(color: Theme.of(context).dividerColor, width: 2),
+                border:
+                    Border.all(color: Theme.of(context).dividerColor, width: 2),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Stack(
@@ -34,7 +35,8 @@ class AddPromoCard extends StatelessWidget {
                     child: Container(
                       decoration: const BoxDecoration(
                         color: AppTheme.primaryColor,
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(10)),
                       ),
                     ),
                   ),
@@ -55,15 +57,22 @@ class AddPromoCard extends StatelessWidget {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: AppTheme.primaryColor,
-                        border: Border.all(color: ColorScheme.of(context).onPrimary),
+                        border: Border.all(
+                            color: ColorScheme.of(context).onPrimary),
                       ),
-                      child: Icon(Icons.add, size: 20, color: ColorScheme.of(context).onPrimary),
+                      child: Icon(Icons.add,
+                          size: 20, color: ColorScheme.of(context).onPrimary),
                     ),
                   ),
                 ],
               ),
             ),
-            Text('create_yours'.tr(), style: TextTheme.of(context).bodySmall,textAlign: TextAlign.start,overflow: TextOverflow.ellipsis,),
+            Text(
+              'create_yours'.tr(),
+              style: TextTheme.of(context).bodySmall,
+              textAlign: TextAlign.start,
+              overflow: TextOverflow.ellipsis,
+            ),
           ],
         ),
       ),

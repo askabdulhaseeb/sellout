@@ -18,14 +18,11 @@ class OfferMessageTile extends HookWidget {
   @override
   Widget build(BuildContext context) {
     debugPrint(message.offerDetail?.offerId);
-
     // Hook for post data state management
     final ValueNotifier<PostEntity?> post = useState<PostEntity?>(null);
-
     // Hook for monitoring changes to the offer status
     final ValueNotifier<String?> offerStatus =
         useState<String?>(message.offerDetail?.offerStatus);
-
     // Effect to fetch post data when widget is first built
     useEffect(() {
       // Fetch the post data from the local database
@@ -36,11 +33,9 @@ class OfferMessageTile extends HookWidget {
           .then((PostEntity? fetchedPost) {
         post.value = fetchedPost; // Update state when data is fetched
       });
-
       // Return cleanup function (optional in this case, as no cleanup is required)
       return null;
     }, <Object?>[]);
-
     // Effect to monitor and rebuild when offer status changes
     useEffect(() {
       // Assuming there is a method that updates the offer status locally

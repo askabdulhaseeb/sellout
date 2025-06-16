@@ -3,46 +3,54 @@ part 'promo_entity.g.dart';
 
 @HiveType(typeId: 56)
 class PromoEntity {
-
-
   const PromoEntity({
+    required this.promoId,
     required this.title,
     required this.createdBy,
-    required this.promoId,
+    required this.createdAt,
     required this.promoType,
     required this.isActive,
-    required this.createdAt,
     required this.fileUrl,
-     this.views, this.thumbnailUrl,
+    required this.referenceType,
+    required this.referenceId,
+    this.thumbnailUrl,
+    this.views,
     this.price,
   });
-@HiveField(0)
-  final String title;
 
-  @HiveField(1)
-  final String createdBy;
-
-  @HiveField(2)
+  @HiveField(0)
   final String promoId;
 
+  @HiveField(1)
+  final String title;
+
+  @HiveField(2)
+  final String createdBy;
+
   @HiveField(3)
-  final String promoType;
+  final String createdAt;
 
   @HiveField(4)
-  final bool isActive;
+  final String promoType;
 
   @HiveField(5)
-  final String createdAt;
+  final bool isActive;
 
   @HiveField(6)
   final String fileUrl;
 
   @HiveField(7)
-  final String? thumbnailUrl;
+  final String referenceType;
 
   @HiveField(8)
-  final List<dynamic>? views;
+  final String referenceId;
+
   @HiveField(9)
+  final String? thumbnailUrl;
+
+  @HiveField(10)
+  final List<dynamic>? views;
+
+  @HiveField(11)
   final String? price;
-  
 }

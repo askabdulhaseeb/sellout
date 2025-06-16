@@ -15,8 +15,10 @@ class CreatePromoScreen extends StatefulWidget {
 class _CreatePromoScreenState extends State<CreatePromoScreen> {
   @override
   Widget build(BuildContext context) {
-    final PromoProvider pro = Provider.of<PromoProvider>(context,listen: false);
-    return PopScope(onPopInvokedWithResult: (bool didPop, dynamic result) => pro.reset(),
+    final PromoProvider pro =
+        Provider.of<PromoProvider>(context, listen: false);
+    return PopScope(
+      onPopInvokedWithResult: (bool didPop, dynamic result) => pro.reset(),
       child: Scaffold(
         body: Center(
           child: Consumer<PromoProvider>(

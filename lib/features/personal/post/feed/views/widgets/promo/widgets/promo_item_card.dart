@@ -1,29 +1,21 @@
-
 import 'package:flutter/material.dart';
-
-import '../../../../../../../../core/widgets/video_widget.dart';
+import '../../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../promo/domain/entities/promo_entity.dart';
 
 class PromoItemCard extends StatelessWidget {
   const PromoItemCard({
     required this.title,
-    required this.file,
+    required this.promo,
     super.key,
   });
 
   final String title;
-  final String file;
-
-  bool isVideo(String url) {
-    final String lower = url.toLowerCase();
-    return lower.endsWith('.mp4') ||
-           lower.endsWith('.mov') ||
-           lower.endsWith('.webm') ||
-           lower.endsWith('.avi');
-  }
+  final PromoEntity promo;
 
   @override
   Widget build(BuildContext context) {
-    return Container(margin:const EdgeInsets.symmetric( horizontal:6),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 2),
       width: 80,
       child: Column(
         children: <Widget>[
@@ -31,7 +23,8 @@ class PromoItemCard extends StatelessWidget {
             width: 80,
             height: 100,
             margin: const EdgeInsets.only(right: 12),
-            decoration: BoxDecoration(border: Border.all(color:Theme.of(context).dividerColor),
+            decoration: BoxDecoration(
+              border: Border.all(color: Theme.of(context).dividerColor),
               color: Theme.of(context).dividerColor,
               borderRadius: BorderRadius.circular(10),
             ),
@@ -39,24 +32,17 @@ class PromoItemCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               child: Stack(
                 children: <Widget>[
-                  Image.network(
-                    file,
-                    fit: BoxFit.cover,
-                    width: 80,
-                    height: 100,
-                    errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
-                  ),
-                  if (isVideo(file))
-                     Positioned.fill(
-                      child: VideoWidget(videoSource: file,play: false,
-                      ),
-                    ),
+                  CustomNetworkImage(
+                      imageURL: promo.thumbnailUrl ?? 'na',
+                      fit: BoxFit.cover,
+                      placeholder: promo.title),
                 ],
               ),
             ),
           ),
           const SizedBox(height: 4),
-          Text(maxLines: 1,
+          Text(
+            maxLines: 1,
             title,
             style: TextTheme.of(context).bodySmall,
             overflow: TextOverflow.clip,

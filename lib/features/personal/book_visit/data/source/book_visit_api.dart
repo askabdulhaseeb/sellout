@@ -142,38 +142,19 @@ class BookVisitApiImpl implements BookVisitApi {
         body: json.encode(params.toupdatevisit()),
       );
 
-      debugPrint(result.data);
+      debugPrint('API RESULT DATA: ${result.data}');
 
       if (result is DataSuccess) {
         final Map<String, dynamic> map = jsonDecode(result.data ?? '');
         final Map<String, dynamic> updatedVisiting = map['result'];
         final VisitingEntity visitingEntity =
             VisitingModel.fromJson(updatedVisiting);
-        // ✅ Update in local chat messages
-        final LocalChatMessage localChat = LocalChatMessage();
-        final String chatId = params.chatId ?? '';
-        final GettedMessageEntity? getted = localChat.entity(chatId);
-        if (getted != null) {
-          final List<MessageEntity> updatedMessages =
-              getted.messages.map((MessageEntity msg) {
-            if (msg.visitingDetail?.visitingID == visitingEntity.visitingID) {
-              return msg.copyWith(visitingDetail: visitingEntity);
-            }
-            return msg;
-          }).toList();
 
-          final GettedMessageEntity updatedGetted = GettedMessageEntity(
-            chatID: chatId,
-            messages: updatedMessages,
-            lastEvaluatedKey: getted.lastEvaluatedKey,
-          );
-
-          await localChat.save(updatedGetted, chatId);
-        }
+        await _updateVisitingInLocalChat(params.chatId ?? '', visitingEntity);
 
         return DataSuccess<VisitingEntity>(result.data ?? '', result.entity);
       } else {
-        debugPrint('${params.toupdatevisit()}');
+        debugPrint('Update payload: ${params.toupdatevisit()}');
         AppLog.error(
           result.exception?.message ?? 'something_wrong'.tr(),
           name: 'BookVisitApiImpl.UpdateVisit - Else',
@@ -226,6 +207,50 @@ class BookVisitApiImpl implements BookVisitApi {
       return DataFailer<List<VisitingEntity>>(
         CustomException('Exception occurred: ${e.toString()}'),
       );
+    }
+  }
+
+  Future<void> _updateVisitingInLocalChat(
+      String chatId, VisitingEntity visitingEntity) async {
+    final LocalChatMessage localChat = LocalChatMessage();
+    final GettedMessageEntity? getted = localChat.entity(chatId);
+
+    if (getted == null) {
+      debugPrint(
+          '⚠️ No existing GettedMessageEntity found for chatId: $chatId');
+      return;
+    }
+
+    final List<MessageEntity> updatedMessages = getted.messages.map((msg) {
+      if (msg.visitingDetail?.visitingID == visitingEntity.visitingID) {
+        debugPrint(
+            '🔄 Updating visitingID: ${visitingEntity.visitingID} with new status: ${visitingEntity.status}');
+        return msg.copyWith(visitingDetail: visitingEntity);
+      }
+      return msg;
+    }).toList();
+
+    final GettedMessageEntity updatedGetted = GettedMessageEntity(
+      chatID: chatId,
+      messages: updatedMessages,
+      lastEvaluatedKey: getted.lastEvaluatedKey,
+    );
+
+    // ✅ Call your clean update method
+    await localChat.update(updatedGetted, chatId);
+
+    debugPrint(
+        '✅ Successfully replaced GettedMessageEntity for chatId: $chatId');
+
+    // Optional verify
+    final GettedMessageEntity? stored = localChat.entity(chatId);
+    if (stored != null) {
+      for (final msg in stored.messages) {
+        debugPrint(
+            '📌 Stored visitingID: ${msg.visitingDetail?.visitingID}, status: ${msg.visitingDetail?.status}');
+      }
+    } else {
+      debugPrint('❌ Failed to retrieve stored data for chatId: $chatId');
     }
   }
 }

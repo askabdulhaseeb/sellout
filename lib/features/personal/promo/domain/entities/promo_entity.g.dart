@@ -17,42 +17,48 @@ class PromoEntityAdapter extends TypeAdapter<PromoEntity> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return PromoEntity(
-      title: fields[0] as String,
-      createdBy: fields[1] as String,
-      promoId: fields[2] as String,
-      promoType: fields[3] as String,
-      isActive: fields[4] as bool,
-      createdAt: fields[5] as String,
+      promoId: fields[0] as String,
+      title: fields[1] as String,
+      createdBy: fields[2] as String,
+      createdAt: fields[3] as String,
+      promoType: fields[4] as String,
+      isActive: fields[5] as bool,
       fileUrl: fields[6] as String,
-      views: (fields[8] as List?)?.cast<dynamic>(),
-      thumbnailUrl: fields[7] as String?,
-      price: fields[9] as String?,
+      referenceType: fields[7] as String,
+      referenceId: fields[8] as String,
+      thumbnailUrl: fields[9] as String?,
+      views: (fields[10] as List?)?.cast<dynamic>(),
+      price: fields[11] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, PromoEntity obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(12)
       ..writeByte(0)
-      ..write(obj.title)
-      ..writeByte(1)
-      ..write(obj.createdBy)
-      ..writeByte(2)
       ..write(obj.promoId)
+      ..writeByte(1)
+      ..write(obj.title)
+      ..writeByte(2)
+      ..write(obj.createdBy)
       ..writeByte(3)
-      ..write(obj.promoType)
-      ..writeByte(4)
-      ..write(obj.isActive)
-      ..writeByte(5)
       ..write(obj.createdAt)
+      ..writeByte(4)
+      ..write(obj.promoType)
+      ..writeByte(5)
+      ..write(obj.isActive)
       ..writeByte(6)
       ..write(obj.fileUrl)
       ..writeByte(7)
-      ..write(obj.thumbnailUrl)
+      ..write(obj.referenceType)
       ..writeByte(8)
-      ..write(obj.views)
+      ..write(obj.referenceId)
       ..writeByte(9)
+      ..write(obj.thumbnailUrl)
+      ..writeByte(10)
+      ..write(obj.views)
+      ..writeByte(11)
       ..write(obj.price);
   }
 
