@@ -1,14 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../core/widgets/costom_textformfield.dart';
-import '../../../../user/profiles/views/widgets/subwidgets/promo_grid_view_tile.dart';
 import '../../../domain/entities/promo_entity.dart';
 
-class PromoGridView extends StatefulWidget {
-  const PromoGridView({
+class PromoHomeGridView extends StatefulWidget {
+  const PromoHomeGridView({
     required this.promos,
     super.key,
   });
@@ -16,10 +12,10 @@ class PromoGridView extends StatefulWidget {
   final List<PromoEntity>? promos;
 
   @override
-  State<PromoGridView> createState() => _PromoGridViewState();
+  State<PromoHomeGridView> createState() => _PromoGridViewState();
 }
 
-class _PromoGridViewState extends State<PromoGridView> {
+class _PromoGridViewState extends State<PromoHomeGridView> {
   late List<PromoEntity> promoList;
   late List<PromoEntity> filteredList;
   final TextEditingController _controller = TextEditingController();
@@ -79,10 +75,8 @@ class _PromoGridViewState extends State<PromoGridView> {
                   itemCount: filteredList.length,
                   itemBuilder: (BuildContext context, int index) {
                     final PromoEntity promo = filteredList[index];
-                    final double height = (index % 2 == 0) ? 160 : 120;
-
-                    return PromoGridViewTile(
-                      promo: promo,
+                    return PromoHomeGridView(
+                      promos: <PromoEntity>[promo],
                     );
                   },
                 ),
