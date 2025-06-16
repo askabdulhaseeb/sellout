@@ -32,44 +32,32 @@ class MessagesList extends HookWidget {
 
       final GettedMessageEntity? existing = box.get(chatId);
       if (existing != null) {
-    if (chatPro.chat?.type ==  ChatType.group) {
-  final DateTime? chatAt = _getJoinedAt(chatPro);
-  messages.value = _filterMessages(existing.sortedMessage(), chatAt);
-} else {
-  messages.value = existing.sortedMessage();
-}
-
+        messages.value = _prepareMessages(existing, chatPro);
       }
 
       final StreamSubscription<BoxEvent> subscription =
           box.watch(key: chatId).listen((BoxEvent event) {
         final GettedMessageEntity? updated = box.get(chatId);
-        if (updated != null) {  final List<MessageEntity> newMessages;
-       if (chatPro.chat?.type == ChatType.group) {
-    final DateTime? chatAt = _getJoinedAt(chatPro);
-    newMessages = _filterMessages(updated.sortedMessage(), chatAt);
-  } else {
-    newMessages = updated.sortedMessage();
-  }
+        if (updated != null) {
+          final List<MessageEntity> newMessages =
+              _prepareMessages(updated, chatPro);
 
           final bool wasNearBottom = scrollController.hasClients &&
               scrollController.position.pixels >=
                   scrollController.position.maxScrollExtent - 50;
 
-          if (!_areListsEqual(messages.value, newMessages)) {
-            messages.value = newMessages;
+          messages.value = newMessages;
 
-            if (wasNearBottom) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (scrollController.hasClients) {
-                  scrollController.animateTo(
-                    scrollController.position.minScrollExtent,
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.easeOut,
-                  );
-                }
-              });
-            }
+          if (wasNearBottom) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (scrollController.hasClients) {
+                scrollController.animateTo(
+                  scrollController.position.minScrollExtent,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOut,
+                );
+              }
+            });
           }
         }
       });
@@ -85,7 +73,7 @@ class MessagesList extends HookWidget {
     }, <Object?>[chatId]);
 
     return ListView.builder(
-      padding: const EdgeInsets.all(0),
+      padding: EdgeInsets.zero,
       physics: const BouncingScrollPhysics(),
       controller: scrollController,
       reverse: true,
@@ -106,6 +94,16 @@ class MessagesList extends HookWidget {
     );
   }
 
+  List<MessageEntity> _prepareMessages(
+      GettedMessageEntity entity, ChatProvider chatPro) {
+    if (chatPro.chat?.type == ChatType.group) {
+      final DateTime? chatAt = _getJoinedAt(chatPro);
+      return _filterMessages(entity.sortedMessage(), chatAt);
+    } else {
+      return entity.sortedMessage();
+    }
+  }
+
   DateTime? _getJoinedAt(ChatProvider chatPro) {
     final String userId = LocalAuth.uid ?? '';
     final List<ChatParticipantEntity> participants =
@@ -116,8 +114,6 @@ class MessagesList extends HookWidget {
         return p.chatAt;
       }
     }
-
-    // If not a participant, return null
     return null;
   }
 
@@ -127,16 +123,5 @@ class MessagesList extends HookWidget {
     return messages
         .where((MessageEntity m) => m.createdAt.isAfter(chatAt))
         .toList();
-  }
-
-  bool _areListsEqual(List<MessageEntity> a, List<MessageEntity> b) {
-    if (a.length != b.length) return false;
-    for (int i = 0; i < a.length; i++) {
-      if (a[i].messageId != b[i].messageId ||
-          a[i].updatedAt != b[i].updatedAt) {
-        return false;
-      }
-    }
-    return true;
   }
 }

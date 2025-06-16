@@ -9,9 +9,11 @@ class PromoModel extends PromoEntity {
     required super.isActive,
     required super.createdAt,
     required super.fileUrl,
+    required super.referenceType,
+    required super.referenceId,
     super.thumbnailUrl,
-    required super.views,
-    required super.price
+    super.views,
+    super.price,
   });
 
   factory PromoModel.fromMap(Map<String, dynamic> map) {
@@ -23,14 +25,16 @@ class PromoModel extends PromoEntity {
       isActive: map['is_active'] ?? false,
       createdAt: map['created_at'] ?? '',
       fileUrl: map['file_url'] ?? '',
-      thumbnailUrl: map['thumbnail_url'],
-      views: map['views'] ?? [],
-      price: map['price'] ?? ''
+      referenceType: map['reference_type'] ?? '',
+      referenceId: map['reference_id'] ?? '',
+      thumbnailUrl: map['thumbnail_url'] ?? '',
+      views: map['views'] ?? <dynamic>[],
+      price: map['price'] ?? '',
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'title': title,
       'created_by': createdBy,
       'promo_id': promoId,
@@ -38,9 +42,11 @@ class PromoModel extends PromoEntity {
       'is_active': isActive,
       'created_at': createdAt,
       'file_url': fileUrl,
+      'reference_type': referenceType,
+      'reference_id': referenceId,
       'thumbnail_url': thumbnailUrl,
       'views': views,
-      'price' : price,
+      'price': price,
     };
   }
 }

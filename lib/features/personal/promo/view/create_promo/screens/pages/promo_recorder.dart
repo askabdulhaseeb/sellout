@@ -2,7 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:provider/provider.dart';
-import '../../../../../attachment/domain/entities/picked_attachment.dart';
+
+import '../../../../../../../core/enums/core/attachment_type.dart';
+import '../../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../provider/promo_provider.dart';
 
 class CustomCameraScreen extends StatefulWidget {
@@ -55,7 +57,10 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
 
   Future<void> _capturePhoto() async {
     if (_isCapturingPhoto) return;
-    if (!mounted || _controller == null || !_controller!.value.isInitialized || _controller!.value.isTakingPicture) {
+    if (!mounted ||
+        _controller == null ||
+        !_controller!.value.isInitialized ||
+        _controller!.value.isTakingPicture) {
       debugPrint('Camera not ready or busy');
       return;
     }
@@ -76,7 +81,8 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
   }
 
   Future<void> _toggleRecording() async {
-    if (!mounted || _controller == null || !_controller!.value.isInitialized) return;
+    if (!mounted || _controller == null || !_controller!.value.isInitialized)
+      return;
 
     try {
       if (_isRecording) {
@@ -126,7 +132,9 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
     Provider.of<PromoProvider>(context, listen: false).toggleFlash();
     if (_controller != null && _controller!.value.isInitialized) {
       await _controller!.setFlashMode(
-        _controller!.value.flashMode == FlashMode.torch ? FlashMode.off : FlashMode.torch,
+        _controller!.value.flashMode == FlashMode.torch
+            ? FlashMode.off
+            : FlashMode.torch,
       );
       if (mounted) setState(() {});
     }

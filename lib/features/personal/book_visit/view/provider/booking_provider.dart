@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/data_state.dart';
-import '../../../../../core/widgets/app_snakebar.dart';
 import '../../../chats/chat/views/providers/chat_provider.dart';
 import '../../../chats/chat/views/screens/chat_screen.dart';
 import '../../../chats/chat_dashboard/data/models/chat/chat_model.dart';
@@ -169,7 +168,6 @@ class BookingProvider extends ChangeNotifier {
       );
 
       if (!isSameDate(slotTime, _selectedDate)) continue;
-
       final String key = slotTime.toString();
       if (latestAcceptedMap.containsKey(key)) {
         final VisitingEntity existing = latestAcceptedMap[key]!;
@@ -216,10 +214,13 @@ class BookingProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setIsLoading(bool value) {
+    isLoading = value;
+    notifyListeners();
+  }
+
   Future<void> bookVisit(BuildContext context, String postID) async {
-    isLoading = true;
-    // setpostId(postID);
-    // setbusinessId(businessID ?? 'null');
+    setIsLoading(true);
     final BookVisitParams params =
         BookVisitParams(dateTime: formattedDateTime, postId: postID);
     final DataState<VisitingEntity> result =
@@ -232,9 +233,9 @@ class BookingProvider extends ChangeNotifier {
         final ChatProvider chatProvider =
             Provider.of<ChatProvider>(context, listen: false);
         chatProvider.setChat(chatresult.entity!.first);
+        chatProvider.getMessages();
         Navigator.of(context).pushReplacementNamed(
           ChatScreen.routeName,
-          arguments: chatId,
         );
       }
     } else if (result is DataFailer) {
@@ -244,37 +245,9 @@ class BookingProvider extends ChangeNotifier {
         error: result.exception,
       );
     }
-    isLoading = false;
+
+    setIsLoading(false);
   }
-
-  // Future<void> updateVisitStatus({
-  //   required BuildContext context,
-  //   required String visitingId,
-  //   required String messageId,
-  //   required String chatID,
-  //   required String status,
-  // }) async {
-  //   isLoading = true;
-
-  //   final UpdateVisitParams params = UpdateVisitParams(
-  //     chatId: chatID,
-  //     visitingId: visitingId.trim(),
-  //     status: status,
-  //     messageId: messageId.trim(),
-  //     businessId: 'null',
-  //   );
-  //   debugPrint('${params.messageId},${params.visitingId} ');
-  //   final DataState<VisitingEntity> result = await _updateVisitUseCase(params);
-  //   if (result is DataSuccess) {
-  //     AppSnackBar.showSnackBar(context, 'visit_updated_successfully'.tr());
-  //     Navigator.pop(context);
-  //   } else {
-  //     AppSnackBar.showSnackBar(
-  //         context, result.exception?.message ?? 'something_wrong'.tr());
-  //   }
-  //   isLoading = false;
-  //   notifyListeners();
-  // }
 
   Future<void> updateVisit({
     required String query,
@@ -284,7 +257,7 @@ class BookingProvider extends ChangeNotifier {
     required String chatID,
     String? status,
   }) async {
-    isLoading = true;
+    setIsLoading(true);
 
     final UpdateVisitParams params = UpdateVisitParams(
       query: query,
@@ -295,16 +268,28 @@ class BookingProvider extends ChangeNotifier {
       status: status,
       businessId: 'null',
     );
+
     final DataState<VisitingEntity> result = await _updateVisitUseCase(params);
+
     if (result is DataSuccess) {
-      AppSnackBar.showSnackBar(context, 'visit_updated'.tr());
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('visit_updated'.tr()),
+          duration: const Duration(seconds: 1),
+        ),
+      );
       disposed();
-      Navigator.pop(context);
+      notifyListeners();
     } else {
-      AppSnackBar.showSnackBar(
-          context, result.exception?.message ?? 'something_wrong'.tr());
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result.exception?.message ?? 'something_wrong'.tr()),
+          duration: const Duration(seconds: 1),
+        ),
+      );
     }
-    isLoading = false;
+
+    setIsLoading(false);
   }
 
   Future<void> bookService(
@@ -312,7 +297,8 @@ class BookingProvider extends ChangeNotifier {
     String serviceId,
     String businessId,
   ) async {
-    isLoading = true;
+    setIsLoading(true);
+
     final BookServiceParams params = BookServiceParams(
       servicesAndEmployees: <ServiceAndEmployee>[
         ServiceAndEmployee(
@@ -331,14 +317,14 @@ class BookingProvider extends ChangeNotifier {
       if (kDebugMode) {
         print('Booking successful: ${result.data}');
       }
-      isLoading = false;
       Navigator.pop(context);
     } else {
       if (kDebugMode) {
-        isLoading = false;
         print('Booking failed: ${result.exception}');
       }
     }
+
+    setIsLoading(false);
   }
 
   Future<List<VisitingEntity>> getVisitsByPost(String postId) async {
@@ -377,5 +363,6 @@ class BookingProvider extends ChangeNotifier {
   void disposed() {
     _messageentity = null;
     _selectedDate = DateTime.now();
+    _selectedTime = '';
   }
 }

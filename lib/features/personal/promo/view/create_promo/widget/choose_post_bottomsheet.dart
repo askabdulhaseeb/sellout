@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../core/sources/data_state.dart';
-import '../../../../../core/widgets/custom_network_image.dart';
-import '../../../../../core/widgets/custom_toggle_switch.dart';
-import '../../../../../services/get_it.dart';
-import '../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../../post/data/sources/local/local_post.dart';
-import '../../../post/domain/entities/post_entity.dart';
-import '../../../user/profiles/data/sources/local/local_user.dart';
-import '../../../user/profiles/domain/usecase/get_post_by_id_usecase.dart';
+import '../../../../../../core/sources/data_state.dart';
+import '../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../core/widgets/custom_toggle_switch.dart';
+import '../../../../../../services/get_it.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../post/data/sources/local/local_post.dart';
+import '../../../../post/domain/entities/post_entity.dart';
+import '../../../../user/profiles/data/sources/local/local_user.dart';
+import '../../../../user/profiles/domain/usecase/get_post_by_id_usecase.dart';
 import '../provider/promo_provider.dart';
 
 class ChoosePostBottomSheet extends StatefulWidget {
@@ -49,7 +49,8 @@ class _ChoosePostBottomSheetState extends State<ChoosePostBottomSheet> {
             const SizedBox(height: 12),
             FutureBuilder<UserEntity?>(
               future: userFuture,
-              builder: (BuildContext context, AsyncSnapshot<UserEntity?> snapshot) {
+              builder:
+                  (BuildContext context, AsyncSnapshot<UserEntity?> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
@@ -68,7 +69,6 @@ class _ChoosePostBottomSheetState extends State<ChoosePostBottomSheet> {
     );
   }
 }
-
 
 class PromoPostGridview extends StatelessWidget {
   const PromoPostGridview({required this.user, super.key});
@@ -120,7 +120,6 @@ class PromoPostGridview extends StatelessWidget {
   }
 }
 
-
 class PromoViewGridview extends StatelessWidget {
   const PromoViewGridview({required this.user, super.key});
   final UserEntity? user;
@@ -132,23 +131,23 @@ class PromoViewGridview extends StatelessWidget {
   }
 }
 
-
 class SimplePostTile extends StatelessWidget {
   const SimplePostTile({required this.post, super.key});
   final PostEntity post;
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(onTap: () {
-          final PromoProvider pro = Provider.of<PromoProvider>(
+    return GestureDetector(
+      onTap: () {
+        final PromoProvider pro = Provider.of<PromoProvider>(
           context,
           listen: false,
         );
         pro.setPost(post);
-        pro.setRefernceID( post.postID,'post_attachment'
-        // PASS REF TYPE HERE
-        );
+        pro.setRefernceID(post.postID, 'post_attachment'
+            // PASS REF TYPE HERE
+            );
         Navigator.pop(context);
-    },
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -183,4 +182,3 @@ class SimplePostTile extends StatelessWidget {
     );
   }
 }
-

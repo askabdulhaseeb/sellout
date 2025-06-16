@@ -61,6 +61,11 @@ class LocalChatMessage {
     }
   }
 
+  Future<void> update(GettedMessageEntity value, String chatID) async {
+    await _put(chatID, value);
+    AppLog.info('✅ Replaced GettedMessageEntity for chatID: $chatID');
+  }
+
   Future<void> _put(String key, GettedMessageEntity value) async {
     await _box.put(key, value);
   }
@@ -76,22 +81,5 @@ class LocalChatMessage {
     msgs.sort((MessageEntity a, MessageEntity b) =>
         b.createdAt.compareTo(a.createdAt));
     return msgs;
-  }
-
-  Stream<List<MessageEntity>> messagesStream(String chatID) async* {
-    // Ensure box is open
-    await refresh();
-
-    yield messages(chatID); // Emit current messages immediately
-
-    // Listen to changes in the box
-    await for (final BoxEvent event in _box.watch()) {
-      final GettedMessageEntity? entity = _box.get(chatID);
-      if (entity != null) {
-        yield entity.messages;
-      } else {
-        yield <MessageEntity>[];
-      }
-    }
   }
 }

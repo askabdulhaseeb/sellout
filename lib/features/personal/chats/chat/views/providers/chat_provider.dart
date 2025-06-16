@@ -32,20 +32,20 @@ class ChatProvider extends ChangeNotifier {
   );
   final GetMessagesUsecase _getMessagesUsecase;
   final SendMessageUsecase _sendMessageUsecase;
-      final AcceptGorupInviteUsecase _acceptGroupInviteUsecase;
-      final LeaveGroupUsecase _leaveGroupparams;
-      final SendGroupInviteUsecase _sendGroupInviteUsecase;
+  final AcceptGorupInviteUsecase _acceptGroupInviteUsecase;
+  final LeaveGroupUsecase _leaveGroupparams;
+  final SendGroupInviteUsecase _sendGroupInviteUsecase;
   ChatEntity? _chat;
   MessageLastEvaluatedKeyEntity? _key;
   GettedMessageEntity? _gettedMessage;
   DateTime? _chatAt;
   bool _isLoading = false;
-  bool isRecordingAudio  =false;
+  bool isRecordingAudio = false;
   final TextEditingController _message = TextEditingController();
   final FocusNode focusNode = FocusNode();
   TextSelection lastSelection = const TextSelection.collapsed(offset: 0);
   final List<PickedAttachment> _attachments = <PickedAttachment>[];
-  
+
 //
   List<PickedAttachment> get attachments => _attachments;
   GettedMessageEntity? get gettedMessage => _gettedMessage;
@@ -57,10 +57,10 @@ class ChatProvider extends ChangeNotifier {
 //
   void setLoading(bool value) {
     _isLoading = value;
-      notifyListeners();
+    notifyListeners();
   }
 
- void startRecording() {
+  void startRecording() {
     isRecordingAudio = true;
     notifyListeners();
   }
@@ -70,44 +70,44 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
   }
 
- void onTextChange(String value) {
-  lastSelection = _message.selection;
-  notifyListeners(); // optional
-}
+  void onTextChange(String value) {
+    lastSelection = _message.selection;
+    notifyListeners(); // optional
+  }
 
-void insertEmoji(String emoji) {
-  final String text = _message.text;
-  final TextSelection selection = lastSelection;
+  void insertEmoji(String emoji) {
+    final String text = _message.text;
+    final TextSelection selection = lastSelection;
 
-  final String newText = text.replaceRange(
-    selection.start,
-    selection.end,
-    emoji,
-  );
+    final String newText = text.replaceRange(
+      selection.start,
+      selection.end,
+      emoji,
+    );
 
-  final int newSelection = selection.start + emoji.length;
+    final int newSelection = selection.start + emoji.length;
 
-  _message.value = _message.value.copyWith(
-    text: newText,
-    selection: TextSelection.collapsed(offset: newSelection),
-  );
+    _message.value = _message.value.copyWith(
+      text: newText,
+      selection: TextSelection.collapsed(offset: newSelection),
+    );
 
-  notifyListeners();
-}
+    notifyListeners();
+  }
 
- void setChat(ChatEntity? value) {
-  _chat = value;
-  _key = MessageLastEvaluatedKeyModel(
-    chatID: _chat?.chatId ?? '',
-    createdAt: 'null',
-  );
-  _gettedMessage = GettedMessageEntity(
-    chatID: _chat?.chatId ?? '',
-    lastEvaluatedKey: _key!,
-    messages: <MessageEntity>[],
-  );
-  notifyListeners();
-}
+  void setChat(ChatEntity? value) {
+    _chat = value;
+    _key = MessageLastEvaluatedKeyModel(
+      chatID: _chat?.chatId ?? '',
+      createdAt: 'null',
+    );
+    _gettedMessage = GettedMessageEntity(
+      chatID: _chat?.chatId ?? '',
+      lastEvaluatedKey: _key!,
+      messages: <MessageEntity>[],
+    );
+    notifyListeners();
+  }
 
   Future<void> setImages(
     BuildContext context, {
@@ -143,8 +143,6 @@ void insertEmoji(String emoji) {
       notifyListeners();
     }
   }
-
-
 
   void removePickedAttachment(PickedAttachment attachment) {
     _attachments.remove(attachment);
@@ -187,11 +185,12 @@ void insertEmoji(String emoji) {
     _attachments.add(attachment);
     notifyListeners();
   }
- 
+
   void clearAttachments() {
     _attachments.clear();
     notifyListeners();
   }
+
 //
   Future<void> sendMessage(BuildContext context) async {
     setLoading(true);
@@ -206,66 +205,85 @@ void insertEmoji(String emoji) {
     if (result is DataSuccess) {
       _message.clear();
       _attachments.clear();
-     setLoading(false);
+      setLoading(false);
     } else {
       AppSnackBar.showSnackBar(
           // ignore: use_build_context_synchronously
           context,
           result.exception?.message ?? 'something_wrong'.tr());
-    }setLoading(false);
+    }
+    setLoading(false);
   }
 
- Future<void> acceptGroupInvite(BuildContext context) async {
-  setLoading(true);
-  final DataState<bool> result = await _acceptGroupInviteUsecase.call(chat?.chatId ?? '');
-  try {
-  if (result is DataSuccess) {
-  setChat( LocalChat().chatEntity(chat?.chatId ?? ''));
-  debugPrint('provider chat is updated');
-setLoading(false);  } else {
-    AppSnackBar.showSnackBar(
-      context,
-      result.exception?.message ?? 'something_wrong'.tr(),
-    );setLoading(false); 
-          AppLog.error('you accepted group invite',name: 'ChatPRovider.LeaveGroup - else');
+  Future<void> acceptGroupInvite(BuildContext context) async {
+    setLoading(true);
+    final DataState<bool> result =
+        await _acceptGroupInviteUsecase.call(chat?.chatId ?? '');
+    try {
+      if (result is DataSuccess) {
+        setChat(LocalChat().chatEntity(chat?.chatId ?? ''));
+        debugPrint('provider chat is updated');
+        setLoading(false);
+      } else {
+        AppSnackBar.showSnackBar(
+          context,
+          result.exception?.message ?? 'something_wrong'.tr(),
+        );
+        setLoading(false);
+        AppLog.error('you accepted group invite',
+            name: 'ChatPRovider.LeaveGroup - else');
+      }
+    } catch (e, stc) {
+      AppLog.error('failed to accept invite',
+          name: 'ChatPRovider.LeaveGroup - else', error: e, stackTrace: stc);
+      setLoading(false);
+    }
   }
-} catch (e,stc) {
-      AppLog.error('failed to accept invite',name: 'ChatPRovider.LeaveGroup - else',error: e,stackTrace: stc);
-  setLoading(false); 
-}}
 
- Future<void> leaveGroup() async {
-  setLoading(true); 
-LeaveGroupParams   leaveparams = LeaveGroupParams(chatId: chat?.chatId ?? '',removalType: 'leave');
-  final DataState<bool> result = await _leaveGroupparams.call(leaveparams);
-  try {
-  if (result is DataSuccess) {
-  setChat( LocalChat().chatEntity(chat?.chatId ?? ''));
-  debugPrint('you left the group${leaveparams.chatId}');
-  setLoading(false); 
-  } else {
-      AppLog.error('you failed to leave the group${leaveparams.chatId}',name: 'ChatPRovider.LeaveGroup - else');
-    setLoading(false); 
+  Future<void> leaveGroup() async {
+    setLoading(true);
+    LeaveGroupParams leaveparams =
+        LeaveGroupParams(chatId: chat?.chatId ?? '', removalType: 'leave');
+    final DataState<bool> result = await _leaveGroupparams.call(leaveparams);
+    try {
+      if (result is DataSuccess) {
+        setChat(LocalChat().chatEntity(chat?.chatId ?? ''));
+        debugPrint('you left the group${leaveparams.chatId}');
+        setLoading(false);
+      } else {
+        AppLog.error('you failed to leave the group${leaveparams.chatId}',
+            name: 'ChatPRovider.LeaveGroup - else');
+        setLoading(false);
+      }
+    } catch (e, stc) {
+      AppLog.error('error chatprovider - LeaveGroup',
+          name: 'ChatPRovider.LeaveGroup - Catch', error: e, stackTrace: stc);
+      setLoading(false);
+    }
   }
-} catch (e,stc) {
-  AppLog.error('error chatprovider - LeaveGroup',name:'ChatPRovider.LeaveGroup - Catch' ,error: e,stackTrace: stc);
-  setLoading(false); 
-}}
 
- Future<void> sendGroupInvite(List<String> newParticipant) async {
-  setLoading(true);
-SendGroupInviteParams   inviteparams = SendGroupInviteParams(chatId: chat?.chatId ?? '',newParticipants: newParticipant);
-  final DataState<bool> result = await _sendGroupInviteUsecase.call(inviteparams);
-  try {
-  if (result is DataSuccess) {
-  debugPrint('you invited${inviteparams.newParticipants} to ${inviteparams.chatId}');
-  setLoading(false); 
-  } else {
-      AppLog.error('you failed to invite to the group${inviteparams.chatId}',name: 'ChatPRovider.sendGroupInvite - else');
-    setLoading(false); 
+  Future<void> sendGroupInvite(List<String> newParticipant) async {
+    setLoading(true);
+    SendGroupInviteParams inviteparams = SendGroupInviteParams(
+        chatId: chat?.chatId ?? '', newParticipants: newParticipant);
+    final DataState<bool> result =
+        await _sendGroupInviteUsecase.call(inviteparams);
+    try {
+      if (result is DataSuccess) {
+        debugPrint(
+            'you invited${inviteparams.newParticipants} to ${inviteparams.chatId}');
+        setLoading(false);
+      } else {
+        AppLog.error('you failed to invite to the group${inviteparams.chatId}',
+            name: 'ChatPRovider.sendGroupInvite - else');
+        setLoading(false);
+      }
+    } catch (e, stc) {
+      AppLog.error('error chatprovider - sendGroupInvite',
+          name: 'ChatPRovider.sendGroupInvite - Catch',
+          error: e,
+          stackTrace: stc);
+      setLoading(false);
+    }
   }
-} catch (e,stc) {
-  AppLog.error('error chatprovider - sendGroupInvite',name:'ChatPRovider.sendGroupInvite - Catch' ,error: e,stackTrace: stc);
-  setLoading(false); 
-}}
 }

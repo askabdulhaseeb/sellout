@@ -89,10 +89,8 @@ class FeedProvider extends ChangeNotifier {
           final ChatProvider chatProvider =
               Provider.of<ChatProvider>(context, listen: false);
           chatProvider.setChat(chatResult.entity!.first);
-
           Navigator.of(context).pushReplacementNamed(
             ChatScreen.routeName,
-            arguments: result.data,
           );
           return result;
         } else if (chatResult is DataFailer) {

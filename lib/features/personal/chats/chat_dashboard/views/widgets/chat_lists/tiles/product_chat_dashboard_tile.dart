@@ -29,10 +29,9 @@ class ProductChatDashboardTile extends HookWidget {
     final GetUserByUidUsecase getUserByUidUsecase =
         GetUserByUidUsecase(locator());
     return GestureDetector(
-      onTap: ()async {
+      onTap: () async {
         pro.setChat(chat);
-                await LocalUnreadMessagesService().clearCount(chat.chatId);
-
+        await LocalUnreadMessagesService().clearCount(chat.chatId);
         Navigator.of(context).pushNamed(ChatScreen.routeName);
       },
       child: Padding(

@@ -17,7 +17,7 @@ import '../features/personal/chats/chat_dashboard/views/providers/chat_dashboard
 import '../features/personal/dashboard/views/providers/personal_bottom_nav_provider.dart';
 import '../features/personal/book_visit/view/provider/booking_provider.dart';
 import '../features/personal/post/feed/views/providers/feed_provider.dart';
-import '../features/personal/promo/view/provider/promo_provider.dart';
+import '../features/personal/promo/view/create_promo/provider/promo_provider.dart';
 import '../features/personal/post/post_detail/views/providers/post_detail_provider.dart';
 import '../features/personal/review/views/providers/review_provider.dart';
 import '../features/personal/search/view/provider/search_provider.dart';
