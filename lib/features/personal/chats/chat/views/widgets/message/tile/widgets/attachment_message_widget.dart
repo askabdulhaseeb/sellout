@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../../../core/widgets/video_widget.dart';
 import '../../../../../../../../attachment/domain/entities/attachment_entity.dart';
+
 class AttachmentMessageWidget extends StatelessWidget {
   const AttachmentMessageWidget({required this.attachments, super.key});
 
@@ -12,7 +13,6 @@ class AttachmentMessageWidget extends StatelessWidget {
     final int totalCount = attachments.length;
 
     if (totalCount == 1) {
-      // ✅ Just one image/video — show full width
       return Padding(
         padding: const EdgeInsets.all(8),
         child: GestureDetector(
@@ -20,13 +20,14 @@ class AttachmentMessageWidget extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute<AttachmentDetailScreen>(
-                builder: (_) => AttachmentDetailScreen(attachments: attachments),
+                builder: (_) =>
+                    AttachmentDetailScreen(attachments: attachments),
               ),
             );
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: _buildMediaContent(attachments.first,context),
+            child: _buildMediaContent(attachments.first, context),
           ),
         ),
       );
@@ -56,7 +57,8 @@ class AttachmentMessageWidget extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute<AttachmentDetailScreen>(
-                  builder: (_) => AttachmentDetailScreen(attachments: attachments),
+                  builder: (_) =>
+                      AttachmentDetailScreen(attachments: attachments),
                 ),
               );
             },
@@ -65,12 +67,12 @@ class AttachmentMessageWidget extends StatelessWidget {
               children: <Widget>[
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: _buildMediaContent(attachments[index],context),
+                  child: _buildMediaContent(attachments[index], context),
                 ),
                 if (isLastVisible)
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha:0.5),
+                      color: Colors.black.withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Center(
@@ -92,17 +94,29 @@ class AttachmentMessageWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildMediaContent(AttachmentEntity attachment,BuildContext context) {
+  Widget _buildMediaContent(AttachmentEntity attachment, BuildContext context) {
     if (attachment.type == AttachmentType.image) {
-      return CustomNetworkImage(size: 200,imageURL:attachment.url, fit: BoxFit.cover);
+      return CustomNetworkImage(
+          size: 200, imageURL: attachment.url, fit: BoxFit.cover);
     } else {
-      return Container(decoration: BoxDecoration(color:Theme.of(context).scaffoldBackgroundColor,border: Border.all(color: Theme.of(context).dividerColor),borderRadius: BorderRadius.circular(12)),child: VideoWidget(videoSource: attachment.url, play: false,showTime: true,));
+      return Container(
+          decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              border: Border.all(color: Theme.of(context).dividerColor),
+              borderRadius: BorderRadius.circular(12)),
+          child: VideoWidget(
+            videoSource: attachment.url,
+            play: false,
+            showTime: true,
+          ));
     }
   }
 }
+
 class AttachmentDetailScreen extends StatefulWidget {
   const AttachmentDetailScreen({
-    required this.attachments, super.key,
+    required this.attachments,
+    super.key,
     this.initialIndex = 0,
   });
   final List<AttachmentEntity> attachments;
@@ -133,7 +147,8 @@ class _AttachmentDetailScreenState extends State<AttachmentDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Attachment ${_currentIndex + 1}/${widget.attachments.length}'),
+        title: Text(
+            'Attachment ${_currentIndex + 1}/${widget.attachments.length}'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -203,7 +218,8 @@ class _AttachmentDetailScreenState extends State<AttachmentDetailScreen> {
       return Image.network(
         attachment.url,
         fit: BoxFit.contain,
-        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+        loadingBuilder: (BuildContext context, Widget child,
+            ImageChunkEvent? loadingProgress) {
           if (loadingProgress == null) return child;
           return Center(
             child: CircularProgressIndicator(
@@ -214,12 +230,14 @@ class _AttachmentDetailScreenState extends State<AttachmentDetailScreen> {
             ),
           );
         },
-        errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+        errorBuilder:
+            (BuildContext context, Object error, StackTrace? stackTrace) {
           return const Center(child: Icon(Icons.error));
         },
       );
     } else {
-      return VideoWidget(videoSource: attachment.url,showTime: true, play: true);
+      return VideoWidget(
+          videoSource: attachment.url, showTime: true, play: true);
     }
   }
 }

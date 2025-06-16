@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../../../../../core/enums/routine/day_type.dart';
 import '../../../../../core/theme/app_theme.dart';
 import '../../../../business/core/data/models/routine_model.dart';

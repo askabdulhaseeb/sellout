@@ -3,8 +3,8 @@ import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../domain/entities/promo_entity.dart';
 import '../promo_screen.dart';
 
-class PromoGridViewTile extends StatelessWidget {
-  const PromoGridViewTile({
+class PromoHomeGridViewTile extends StatelessWidget {
+  const PromoHomeGridViewTile({
     super.key,
     required this.promo,
     required this.height,

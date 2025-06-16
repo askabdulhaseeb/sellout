@@ -19,7 +19,7 @@ class _HomePromoListSectionState extends State<HomePromoListSection> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<PromoProvider>(context, listen: false).getPromoOfFollower();
     });
   }
@@ -49,7 +49,7 @@ class _HomePromoListSectionState extends State<HomePromoListSection> {
                 TextButton(
                   onPressed: () => showBottomSheet(
                     context: context,
-                    builder: (BuildContext context) => PromoGridView(
+                    builder: (BuildContext context) => PromoHomeGridView(
                       promos: pro,
                     ),
                   ),
