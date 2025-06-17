@@ -1,8 +1,8 @@
 import 'package:hive/hive.dart';
-
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../business/core/domain/entity/business_employee_entity.dart';
+import '../../../../setting/view/setting_options/setting_notification/domain/entities/notification_entity.dart';
 import '../../../../user/profiles/domain/entities/supporter_detail_entity.dart';
 import '../../data/models/address_model.dart';
 import 'login_detail_entity.dart';
@@ -46,12 +46,12 @@ class CurrentUserEntity {
       required this.logindetail,
       required this.loginActivity,
       required this.employeeList,
+      required this.notification,
       //
       required this.twoStepAuthEnabled,
       //
-       required this.supporters,
-       required this.supporting
-       });
+      required this.supporters,
+      required this.supporting});
 
   @HiveField(1)
   final String message;
@@ -110,56 +110,57 @@ class CurrentUserEntity {
   @HiveField(123)
   final LoginDetailEntity logindetail;
   @HiveField(124)
-  final List<DeviceLoginInfoEntity> loginActivity; // **New field**
+  final List<DeviceLoginInfoEntity> loginActivity; // device activity
   @HiveField(125)
   final List<BusinessEmployeeEntity> employeeList; // **New field**
-  //
+  @HiveField(126)
+  final NotificationSettingsEntity? notification;
   @HiveField(135)
   final bool? twoStepAuthEnabled;
   //
-    @HiveField(140)
-   List<SupporterDetailEntity> supporters;  
+  @HiveField(140)
+  List<SupporterDetailEntity> supporters;
   @HiveField(141)
-    List<SupporterDetailEntity> supporting;
+  List<SupporterDetailEntity> supporting;
 
   // this is a Copy function to copy the current object and return a new object with old token
   CurrentUserEntity copyWith({
     String? token,
     List<AddressEntity>? address,
     bool? twoStepAuthEnabled,
-  List<SupporterDetailEntity>? supporting,
+    List<SupporterDetailEntity>? supporting,
   }) {
     return CurrentUserEntity(
-      userName: userName,
-      message: message,
-      email: email,
-      token: token ?? this.token,
-      displayName: displayName,
-      userID: userID,
-      chatIDs: chatIDs,
-      address: address ?? this.address,
-      businessIDs: businessIDs,
-      currency: currency,
-      imageVerified: imageVerified,
-      verificationImage: verificationImage,
-      profileImage: profileImage,
-      privacy: privacy,
-      countryAlpha3: countryAlpha3,
-      countryCode: countryCode,
-      phoneNumber: phoneNumber,
-      language: language,
-      lastLoginTime: lastLoginTime,
-      createdAt: createdAt,
-      inHiveAt: inHiveAt,
-      businessStatus: businessStatus,
-      businessName: businessName,
-      businessID: businessID,
-      logindetail: logindetail,
-      loginActivity: loginActivity,
-      employeeList: employeeList,
-      twoStepAuthEnabled: twoStepAuthEnabled,
-      supporters: supporters,
-      supporting:supporting ?? this.supporting
-    );
+        userName: userName,
+        message: message,
+        email: email,
+        token: token ?? this.token,
+        displayName: displayName,
+        userID: userID,
+        chatIDs: chatIDs,
+        address: address ?? this.address,
+        businessIDs: businessIDs,
+        currency: currency,
+        imageVerified: imageVerified,
+        verificationImage: verificationImage,
+        profileImage: profileImage,
+        privacy: privacy,
+        countryAlpha3: countryAlpha3,
+        countryCode: countryCode,
+        phoneNumber: phoneNumber,
+        language: language,
+        lastLoginTime: lastLoginTime,
+        createdAt: createdAt,
+        inHiveAt: inHiveAt,
+        businessStatus: businessStatus,
+        businessName: businessName,
+        businessID: businessID,
+        logindetail: logindetail,
+        loginActivity: loginActivity,
+        employeeList: employeeList,
+        notification: notification,
+        twoStepAuthEnabled: twoStepAuthEnabled,
+        supporters: supporters,
+        supporting: supporting ?? this.supporting);
   }
 }

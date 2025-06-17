@@ -20,7 +20,6 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
     try {
       final Map<String, dynamic> bodyMap = await params.toMap();
       final String bodyJson = json.encode(bodyMap);
-      debugPrint(bodyJson);
       final DataState<bool> responce = await ApiCall<bool>().call(
         endpoint: 'userAuth/login',
         requestType: ApiRequestType.post,
@@ -38,7 +37,9 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
           await HiveDB.signout();
           final CurrentUserModel currentUser =
               CurrentUserModel.fromRawJson(responce.data ?? '');
-             if( currentUser.logindetail.role != 'founder'){await LocalAuth().signin(currentUser);}
+          if (currentUser.logindetail.role != 'founder') {
+            await LocalAuth().signin(currentUser);
+          }
           return responce;
         }
       } else {

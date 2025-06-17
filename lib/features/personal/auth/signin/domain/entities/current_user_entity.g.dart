@@ -44,6 +44,7 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       logindetail: fields[123] as LoginDetailEntity,
       loginActivity: (fields[124] as List).cast<DeviceLoginInfoEntity>(),
       employeeList: (fields[125] as List).cast<BusinessEmployeeEntity>(),
+      notification: fields[126] as NotificationSettingsEntity?,
       twoStepAuthEnabled: fields[135] as bool?,
       supporters: (fields[140] as List).cast<SupporterDetailEntity>(),
       supporting: (fields[141] as List).cast<SupporterDetailEntity>(),
@@ -53,7 +54,7 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
   @override
   void write(BinaryWriter writer, CurrentUserEntity obj) {
     writer
-      ..writeByte(30)
+      ..writeByte(31)
       ..writeByte(1)
       ..write(obj.message)
       ..writeByte(2)
@@ -108,6 +109,8 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       ..write(obj.loginActivity)
       ..writeByte(125)
       ..write(obj.employeeList)
+      ..writeByte(126)
+      ..write(obj.notification)
       ..writeByte(135)
       ..write(obj.twoStepAuthEnabled)
       ..writeByte(140)

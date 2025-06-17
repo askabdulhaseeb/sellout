@@ -1,8 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
-import 'personal_setting_email_notification_screen.dart';
-import 'personal_setting_push_notification.dart';
+import 'pages/personal_setting_email_notification_screen.dart';
+import 'pages/personal_setting_push_notification.dart';
 
 class PersonalSettingNotificationScreen extends StatefulWidget {
   const PersonalSettingNotificationScreen({super.key});

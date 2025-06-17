@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 
 class PersonalSettingEmailNotificationScreen extends StatefulWidget {
   const PersonalSettingEmailNotificationScreen({super.key});
-  static String routeName = '/personal-notification-setting-email';
+  static String routeName = '/email_notification';
   @override
   State<PersonalSettingEmailNotificationScreen> createState() =>
       _PersonalSettingEmailNotificationScreenState();
 }
- 
+
 class _PersonalSettingEmailNotificationScreenState
     extends State<PersonalSettingEmailNotificationScreen> {
   @override

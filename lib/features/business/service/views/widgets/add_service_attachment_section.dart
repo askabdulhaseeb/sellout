@@ -100,8 +100,8 @@ class AddServiceAttachmentSection extends StatelessWidget {
             ),
           const SizedBox(height: 12),
           SwitchListTile.adaptive(
-            value: pro.isMobileService,
             contentPadding: const EdgeInsets.all(0),
+            value: pro.isMobileService,
             title: Text(
               'mobile_service'.tr(),
               style: const TextStyle(fontWeight: FontWeight.bold),

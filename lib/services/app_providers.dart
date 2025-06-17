@@ -22,6 +22,7 @@ import '../features/personal/post/post_detail/views/providers/post_detail_provid
 import '../features/personal/review/views/providers/review_provider.dart';
 import '../features/personal/search/view/provider/search_provider.dart';
 import '../features/personal/services/views/providers/services_page_provider.dart';
+import '../features/personal/setting/view/setting_options/setting_notification/view/providers/push_notification_provider.dart';
 import '../features/personal/user/profiles/views/providers/profile_provider.dart';
 import '../features/personal/auth/signin/views/providers/signin_provider.dart';
 import 'get_it.dart';
@@ -115,4 +116,7 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
 //
   ChangeNotifierProvider<SearchProvider>.value(
       value: SearchProvider(locator())),
+//
+  ChangeNotifierProvider<PushNotificationProvider>.value(
+      value: PushNotificationProvider(locator())),
 ];
