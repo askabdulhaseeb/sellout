@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../providers/cart_provider.dart';
 
 class PersonalCartPageTile extends StatelessWidget {
@@ -17,7 +16,9 @@ class PersonalCartPageTile extends StatelessWidget {
           _IconButton(
               title: 'shopping_basket'.tr(),
               isActive: cartPro.page == 1,
-              onTap: () {}),
+              onTap: () {
+                cartPro.page = 1;
+              }),
           Container(
             height: 3,
             width: 40,
@@ -26,16 +27,18 @@ class PersonalCartPageTile extends StatelessWidget {
           _IconButton(
               title: 'checkout'.tr(),
               isActive: cartPro.page == 2,
-              onTap: () {}),
-          Container(
-            height: 3,
-            width: 40,
-            color: Theme.of(context).dividerColor,
-          ),
-          _IconButton(
-              title: 'payment_options'.tr(),
-              isActive: cartPro.page == 3,
-              onTap: () {}),
+              onTap: () {
+                cartPro.page = 2;
+              }),
+          // Container(
+          //   height: 3,
+          //   width: 40,
+          //   color: Theme.of(context).dividerColor,
+          // ),
+          // _IconButton(
+          //     title: 'payment_options'.tr(),
+          //     isActive: cartPro.page == 3,
+          //     onTap: () {}),
         ],
       );
     });
@@ -61,7 +64,7 @@ class _IconButton extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
       child: SizedBox(
-        width: MediaQuery.sizeOf(context).width / 6,
+        width: MediaQuery.sizeOf(context).width / 5,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[

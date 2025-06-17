@@ -5,11 +5,11 @@ import '../../features/personal/auth/signin/data/sources/local/local_auth.dart';
 import '../functions/app_log.dart';
 import 'socket_implementations.dart';
 
-class SocketService with WidgetsBindingObserver{
+class SocketService with WidgetsBindingObserver {
   SocketService(this._socketImplementations);
   final SocketImplementations _socketImplementations;
   IO.Socket? socket;
-   bool _isInitialized = false;
+  bool _isInitialized = false;
 
   bool get isConnected => socket?.connected ?? false;
 
@@ -26,7 +26,8 @@ class SocketService with WidgetsBindingObserver{
     final String? entityId = LocalAuth.uid;
 
     if (baseUrl == null || entityId == null) {
-      AppLog.error('Missing baseURL or userId (entityId)', name: 'SocketService.connect');
+      AppLog.error('Missing baseURL or userId (entityId)',
+          name: 'SocketService.connect');
       return;
     }
 
@@ -65,6 +66,11 @@ class SocketService with WidgetsBindingObserver{
       debugPrint('Updated online users list: $onlineUsers');
     });
 
+    socket!.on('new-notification', (dynamic data) async {
+      AppLog.info('🔔 New notification: $data',
+          name: 'SocketService.getOnlineUsers');
+    });
+
     socket!.on('lastSeen', (dynamic data) {
       AppLog.info('🕓 Last seen: $data', name: 'SocketService.lastSeen');
     });
@@ -91,6 +97,7 @@ class SocketService with WidgetsBindingObserver{
           name: 'SocketService.outgoing');
     });
   }
+
   void disconnect() {
     socket?.disconnect();
     AppLog.info('⚠️ Manual disconnect', name: 'SocketService.disconnect');

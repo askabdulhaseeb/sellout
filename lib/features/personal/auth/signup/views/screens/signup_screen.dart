@@ -1,10 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../core/widgets/sellout_title.dart';
 import '../providers/signup_provider.dart';
-import '../widgets/signup_page_progress_bar_widget.dart';
+import 'pages/signup_photo_verification_page.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -40,11 +39,13 @@ class _SignupScreenState extends State<SignupScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Consumer<SignupProvider>(
           builder: (BuildContext context, SignupProvider pro, _) {
-            return Column(
+            return const Column(
               children: <Widget>[
-                const SignupPageProgressBarWidget(),
-                const SizedBox(height: 16),
-                Expanded(child: pro.displayedPage()),
+                // const SignupPageProgressBarWidget(),
+                // const SizedBox(height: 16),
+                Expanded(child: SignupPhotoVerificationPage()
+                    //pro.displayedPage()
+                    ),
               ],
             );
           },

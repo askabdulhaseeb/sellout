@@ -1,7 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import '../../../../../../../core/enums/core/attachment_type.dart';
+import '../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../providers/signup_provider.dart';
 
@@ -13,27 +15,74 @@ class SignupPhotoVerificationPage extends StatelessWidget {
     return Consumer<SignupProvider>(
         builder: (BuildContext context, SignupProvider pro, _) {
       return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           const Text(
             'photo_verification',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ).tr(),
-          const Text('photo_verification_subtitle').tr(),
+          const Text(
+            'photo_verification_subtitle',
+            textAlign: TextAlign.center,
+          ).tr(),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
             child: AspectRatio(
-              aspectRatio: 1 / 1,
-              child: Container(color: Colors.grey),
-            ),
+                aspectRatio: 1 / 1,
+                child: pro.attachment == null
+                    ? Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: AppTheme.primaryColor),
+                            borderRadius: BorderRadius.circular(15)),
+                        child: Column(
+                          spacing: 8,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: AppTheme.primaryColor
+                                      .withValues(alpha: 0.3),
+                                  // border: Border.all(color: AppTheme.primaryColor),
+                                  borderRadius: BorderRadius.circular(15)),
+                              padding: const EdgeInsets.all(16),
+                              child: const Icon(
+                                CupertinoIcons.person_badge_plus,
+                                color: AppTheme.primaryColor,
+                              ),
+                            ),
+                            Text('upload_selfie_verification',
+                                    style: TextTheme.of(context).titleSmall)
+                                .tr(),
+                            Text(
+                              'upload_selfie_description'.tr(),
+                              style: TextTheme.of(context).bodyLarge,
+                            ),
+                            SizedBox(
+                              width: 120,
+                              child: CustomElevatedButton(
+                                  title: 'take_photo',
+                                  textStyle: TextTheme.of(context)
+                                      .bodySmall
+                                      ?.copyWith(
+                                          color: ColorScheme.of(context)
+                                              .onPrimary),
+                                  isLoading: false,
+                                  onTap: () {
+                                    pro.setImage(context,
+                                        type: AttachmentType.image);
+                                  }),
+                            )
+                          ],
+                        ),
+                      )
+                    : Image.file(pro.attachment?.file)),
           ),
           const Text('photo_verification_policy').tr(),
           const Spacer(),
           CustomElevatedButton(
-            title: 'next'.tr(),
-            isLoading: pro.isLoading,
-            onTap: () => pro.onNext(context),
-          ),
+              title: 'verify_photo'.tr(),
+              isLoading: pro.isLoading,
+              onTap: () => pro.verifyImage(context)),
           const SizedBox(height: 16),
         ],
       );

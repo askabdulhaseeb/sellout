@@ -48,12 +48,8 @@ class MyApp extends StatelessWidget {
         themeMode: kDebugMode ? ThemeMode.light : ThemeMode.light,
         routes: AppRoutes.routes,
         // onGenerateRoute: (RouteSettings settings) {},
-        // initialRoute: WelcomeScreen.routeName,
+        //initialRoute: SignupScreen.routeName,
       ),
     );
   }
 }
-
-// flutter packages pub run build_runner build --delete-conflicting-outputs
-// flutter clean && flutter pub get && cd ios && pod install && cd ..
-// flutter packages pub run build_runner build

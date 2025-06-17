@@ -48,7 +48,6 @@ class ProfileScoreSection extends StatelessWidget {
                     builder: (BuildContext context) {
                       return SupporterBottomsheet(
                         supporters: user?.supportings,
-                        issupporter: false,
                       );
                     },
                   ),
@@ -68,7 +67,6 @@ class ProfileScoreSection extends StatelessWidget {
                     builder: (BuildContext context) {
                       return SupporterBottomsheet(
                         supporters: user?.supporters,
-                        issupporter: true,
                       );
                     },
                   ),

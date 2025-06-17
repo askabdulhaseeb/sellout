@@ -56,6 +56,7 @@ import '../features/personal/auth/signup/domain/repositories/signup_repository.d
 import '../features/personal/auth/signup/domain/usecase/register_user_usecase.dart';
 import '../features/personal/auth/signup/domain/usecase/send_opt_usecase.dart';
 import '../features/personal/auth/signup/domain/usecase/verify_opt_usecase.dart';
+import '../features/personal/auth/signup/domain/usecase/verify_user_by_image_usecase.dart';
 import '../features/personal/auth/signup/views/providers/signup_provider.dart';
 import '../features/personal/book_visit/domain/usecase/book_service_usecase.dart';
 import '../features/personal/book_visit/domain/usecase/get_visit_by_post_usecase.dart';
@@ -206,8 +207,10 @@ void _auth() {
       () => SendPhoneOtpUsecase(locator()));
   locator.registerFactory<VerifyPhoneOtpUsecase>(
       () => VerifyPhoneOtpUsecase(locator()));
-  locator.registerLazySingleton<SignupProvider>(
-      () => SignupProvider(locator(), locator(), locator(), locator()));
+  locator.registerFactory<VerifyUserByImageUsecase>(
+      () => VerifyUserByImageUsecase(locator()));
+  locator.registerLazySingleton<SignupProvider>(() => SignupProvider(
+      locator(), locator(), locator(), locator(), locator(), locator()));
   locator.registerFactory<FindAccountRemoteDataSource>(
       () => FindAccountRemoteDataSourceimpl());
   locator.registerLazySingleton<FindAccountRepository>(

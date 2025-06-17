@@ -35,7 +35,8 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
     locator(),
   )),
   ChangeNotifierProvider<SignupProvider>.value(
-      value: SignupProvider(locator(), locator(), locator(), locator())),
+      value: SignupProvider(
+          locator(), locator(), locator(), locator(), locator(), locator())),
   ChangeNotifierProvider<FindAccountProvider>.value(
       value: FindAccountProvider(locator(), locator(), locator(), locator())),
   //

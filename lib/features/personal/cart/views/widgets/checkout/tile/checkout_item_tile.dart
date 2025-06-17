@@ -24,7 +24,7 @@ class CheckoutItemTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
             child: CustomNetworkImage(
               imageURL: item.image.first.url,
-              size: 100,
+              size: 60,
             ),
           ),
           const SizedBox(width: 12),
@@ -36,13 +36,23 @@ class CheckoutItemTile extends StatelessWidget {
                   item.title,
                   maxLines: 1,
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 12,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                Text(item.condition.code.tr()),
+                Text(
+                  item.condition.code.tr(),
+                  style: const TextStyle(
+                    fontSize: 12,
+                  ),
+                ),
                 const SizedBox(height: 2),
-                Text('${'quantity'.tr()}: ${item.quantity}'),
+                Text(
+                  '${'quantity'.tr()}: ${item.quantity}',
+                  style: const TextStyle(
+                    fontSize: 12,
+                  ),
+                ),
               ],
             ),
           ),
@@ -52,9 +62,10 @@ class CheckoutItemTile extends StatelessWidget {
             children: <Widget>[
               Text(
                 item.price.toStringAsFixed(2),
-                style: Theme.of(context).textTheme.titleLarge,
+                style: Theme.of(context).textTheme.titleSmall,
               ),
-              Text(curency.toUpperCase()),
+              Text(curency.toUpperCase(),
+                  style: Theme.of(context).textTheme.titleSmall),
             ],
           ),
         ],

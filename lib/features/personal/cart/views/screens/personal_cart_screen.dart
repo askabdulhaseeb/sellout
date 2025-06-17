@@ -1,10 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../core/enums/cart/cart_item_type.dart';
+import '../../../../../core/sources/api_call.dart';
 import '../../../../../core/widgets/custom_elevated_button.dart';
-import '../widgets/checkout/checkout_payment_method_section.dart';
+import '../widgets/checkout/tile/payment_success_bottomsheet.dart';
 import 'checkout/personal_checkout_screen.dart';
 import '../providers/cart_provider.dart';
 import '../widgets/cart_widgets/cart_save_later_toggle_section.dart';
@@ -55,22 +56,56 @@ class PersonalCartScreen extends StatelessWidget {
                                     const PersonalCheckoutView(),
                                     const Spacer(),
                                     CustomElevatedButton(
-                                        title: 'proceed_to_payment'.tr(),
-                                        isLoading: false,
-                                        onTap: () {
-                                          CartProvider pro =
-                                              Provider.of<CartProvider>(context,
-                                                  listen: false);
-                                          pro.getBillingDetails();
-                                        }),
+                                      title: 'proceed_to_payment'.tr(),
+                                      isLoading: false,
+                                      onTap: () async {
+                                        final CartProvider pro =
+                                            Provider.of<CartProvider>(context,
+                                                listen: false);
+                                        final DataState<PaymentIntent> result =
+                                            await pro.processPayment();
+                                        if (result is DataSuccess) {
+                                          // 🎉 Payment succeeded → Show success bottom sheet
+                                          if (context.mounted) {
+                                            showModalBottomSheet(
+                                              context: context,
+                                              isScrollControlled: true,
+                                              shape:
+                                                  const RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.vertical(
+                                                        top: Radius.circular(
+                                                            20)),
+                                              ),
+                                              builder: (_) =>
+                                                  const PaymentSuccessSheet(),
+                                            );
+                                          }
+                                        } else if (result is DataFailer) {
+                                          // ❌ Payment failed → Show error
+                                          if (context.mounted) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                    '${'payment_failed'.tr()}: ${result.exception?.toString()}'),
+                                                backgroundColor:
+                                                    ColorScheme.of(context)
+                                                        .error,
+                                              ),
+                                            );
+                                          }
+                                        }
+                                      },
+                                    ),
                                     const SizedBox(height: 24),
                                   ],
                                 ),
                               ),
                             )
-                          : cartPro.page == 3
-                              ? const CheckoutPaymentMethodSection()
-                              : const SizedBox.shrink()
+                          // : cartPro.page == 3
+                          //     ? const CheckoutPaymentMethodSection()
+                          : const SizedBox.shrink()
                 ],
               );
             },

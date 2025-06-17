@@ -24,6 +24,9 @@ class PromoRemoteDataSourceImpl implements PromoRemoteDataSource {
         requestType: ApiRequestType.post,
         fileKey: 'file',
         isConnectType: true,
+        extraHeader: <String, String>{
+          'Content-Type': 'multipart/form-data',
+        },
         isAuth: true,
         attachments: param.attachments,
         fieldsMap: param.toMap(),

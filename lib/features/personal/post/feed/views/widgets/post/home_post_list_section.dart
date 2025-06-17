@@ -18,8 +18,7 @@ class HomePostListSection extends StatelessWidget {
         BuildContext context,
         AsyncSnapshot<DataState<List<PostEntity>>> snapshot,
       ) {
-        final List<PostEntity> posts =
-            snapshot.data?.entity ?? <PostEntity>[];
+        final List<PostEntity> posts = snapshot.data?.entity ?? <PostEntity>[];
         return ListView.builder(
           physics: const NeverScrollableScrollPhysics(),
           primary: false,

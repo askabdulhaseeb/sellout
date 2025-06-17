@@ -2,13 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
-import '../../../../../../core/sources/data_state.dart';
-import '../../../../../../routes/app_linking.dart';
-import '../../../../dashboard/views/screens/dashboard_screen.dart';
 import '../../../chat/views/providers/chat_provider.dart';
-import '../../../chat/views/screens/chat_screen.dart';
 import '../../../chat_dashboard/data/models/chat/chat_model.dart';
-import '../../../chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../../chat_dashboard/domain/params/create_chat_params.dart';
 import '../../../chat_dashboard/domain/usecase/create_chat_usecase.dart';
 

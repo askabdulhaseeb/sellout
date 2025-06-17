@@ -43,7 +43,7 @@ class _AddToCartDialogState extends State<AddToCartDialog> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 24,
+                  fontSize: 18,
                 ),
               ).tr(),
               IconButton(
