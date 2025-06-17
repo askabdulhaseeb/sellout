@@ -67,9 +67,9 @@ class PersonalCartScreen extends StatelessWidget {
                                         if (result is DataSuccess) {
                                           // 🎉 Payment succeeded → Show success bottom sheet
                                           if (context.mounted) {
-                                            showModalBottomSheet(
+                                            showBottomSheet(
                                               context: context,
-                                              isScrollControlled: true,
+                                              enableDrag: false,
                                               shape:
                                                   const RoundedRectangleBorder(
                                                 borderRadius:

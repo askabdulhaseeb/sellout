@@ -12,6 +12,7 @@ class DeviceLoginInfoEntity {
     required this.deviceType,
     required this.location,
     required this.platform,
+    required this.deviceName,
   });
 
   @HiveField(0)
@@ -37,4 +38,7 @@ class DeviceLoginInfoEntity {
 
   @HiveField(7)
   final String platform;
+
+  @HiveField(8)
+  final String deviceName;
 }

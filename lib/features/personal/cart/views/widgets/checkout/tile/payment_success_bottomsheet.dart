@@ -26,6 +26,7 @@ class _PaymentSuccessSheetState extends State<PaymentSuccessSheet> {
   Widget build(BuildContext context) {
     final CartProvider pro = Provider.of<CartProvider>(context, listen: false);
     return SafeArea(
+      top: true,
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -86,7 +87,9 @@ class _PaymentSuccessSheetState extends State<PaymentSuccessSheet> {
                         ? AppTheme.primaryColor
                         : ColorScheme.of(context).outlineVariant),
                 label: Text(
-                  showOrderInfo ? 'Hide Order Info' : 'See Order Info',
+                  showOrderInfo
+                      ? 'hide_order_info'.tr()
+                      : 'see_order_info'.tr(),
                   style: TextTheme.of(context).bodySmall?.copyWith(
                       color: showOrderInfo
                           ? AppTheme.primaryColor
@@ -130,7 +133,7 @@ class CartPaymentSuccessDetailsSection extends StatelessWidget {
       children: <Widget>[
         Text(
           '${'order_total'.tr()}:${pro.orderBilling?.billingDetails.grandTotal}',
-          style: TextTheme.of(context).bodyLarge,
+          style: TextTheme.of(context).titleSmall,
         ),
         InDevMode(child: AddressTile(address: pro.address!, onTap: () {})),
         SizedBox(
@@ -171,7 +174,7 @@ class OrderSuccessTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
             child: CustomNetworkImage(
               imageURL: item?.imageUrls.first,
-              size: 100,
+              size: 60,
             ),
           ),
           const SizedBox(width: 12),
@@ -183,12 +186,17 @@ class OrderSuccessTile extends StatelessWidget {
                   item?.name ?? '',
                   maxLines: 1,
                   style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 2),
-                Text('Quantity: ${item?.quantity}'),
+                Text(
+                  'Quantity: ${item?.quantity}',
+                  style: const TextStyle(
+                    fontSize: 12,
+                  ),
+                ),
               ],
             ),
           ),
@@ -198,7 +206,7 @@ class OrderSuccessTile extends StatelessWidget {
             children: <Widget>[
               Text(
                 item?.price ?? '',
-                style: Theme.of(context).textTheme.titleLarge,
+                style: Theme.of(context).textTheme.titleSmall,
               ),
               Text(currency.toUpperCase()),
             ],

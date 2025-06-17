@@ -25,13 +25,14 @@ class DeviceLoginInfoEntityAdapter extends TypeAdapter<DeviceLoginInfoEntity> {
       deviceType: fields[5] as String,
       location: fields[6] as String,
       platform: fields[7] as String,
+      deviceName: fields[8] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, DeviceLoginInfoEntity obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.deviceId)
       ..writeByte(1)
@@ -47,7 +48,9 @@ class DeviceLoginInfoEntityAdapter extends TypeAdapter<DeviceLoginInfoEntity> {
       ..writeByte(6)
       ..write(obj.location)
       ..writeByte(7)
-      ..write(obj.platform);
+      ..write(obj.platform)
+      ..writeByte(8)
+      ..write(obj.deviceName);
   }
 
   @override
