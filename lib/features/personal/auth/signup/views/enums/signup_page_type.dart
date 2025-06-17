@@ -1,10 +1,9 @@
-
 enum SignupPageType {
   // accountType,
   basicInfo,
   otp,
-  photoVerification,
   dateOfBirth,
+  photoVerification,
   location;
 
   SignupPageType? next() {

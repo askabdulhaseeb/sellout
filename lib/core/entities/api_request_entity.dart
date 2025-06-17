@@ -1,9 +1,6 @@
 import 'dart:convert';
-
 import 'package:hive/hive.dart';
-
 import '../sources/local/local_request_history.dart';
-
 part 'api_request_entity.g.dart';
 
 @HiveType(typeId: 3)

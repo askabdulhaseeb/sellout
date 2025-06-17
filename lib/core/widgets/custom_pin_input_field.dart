@@ -81,17 +81,17 @@ class CustomPinInputFieldState extends State<CustomPinInputField> {
     widget.onChanged(pinCode);
   }
 
-  void _handlePaste(String value) {
-    if (value.length == widget.pinLength) {
-      _isPasting = true;
-      for (int i = 0; i < widget.pinLength; i++) {
-        _controllers[i].text = value[i];
-      }
-      _isPasting = false;
-      _updatePinCode();
-      _focusNodes[widget.pinLength - 1].requestFocus();
-    }
-  }
+  // void _handlePaste(String value) {
+  //   if (value.length == widget.pinLength) {
+  //     _isPasting = true;
+  //     for (int i = 0; i < widget.pinLength; i++) {
+  //       _controllers[i].text = value[i];
+  //     }
+  //     _isPasting = false;
+  //     _updatePinCode();
+  //     _focusNodes[widget.pinLength - 1].requestFocus();
+  //   }
+  // }
 
   void _handleKeyEvent(RawKeyEvent event, int index) {
     if (event is RawKeyDownEvent) {

@@ -13,37 +13,36 @@ import '../functions/app_log.dart';
 class SocketImplementations {
   // NEW MESSAGES
   Future<void> handleNewMessage(Map<String, dynamic> data) async {
-      final MessageModel newMsg = MessageModel.fromJson(data);
-      final String chatId = data['chat_id'];
+    final MessageModel newMsg = MessageModel.fromJson(data);
+    final String chatId = data['chat_id'];
+    // Get existing entity from local storage
+    // final GettedMessageEntity? existingEntity = LocalChatMessage().entity(chatId);
+    final List<MessageEntity> existingMessages =
+        LocalChatMessage().messages(chatId);
 
-      // Get existing entity from local storage
-      // final GettedMessageEntity? existingEntity = LocalChatMessage().entity(chatId);
-      final List<MessageEntity> existingMessages = LocalChatMessage().messages(chatId);
+    // 🔒 Check if the message already exists
+    final bool isDuplicate = existingMessages.any(
+      (MessageEntity m) => m.messageId == newMsg.messageId,
+    );
 
-      // 🔒 Check if the message already exists
-      final bool isDuplicate = existingMessages.any(
-        (MessageEntity m) => m.messageId == newMsg.messageId,
-      );
+    if (!isDuplicate) {
+      existingMessages.add(newMsg);
+    }
 
-      if (!isDuplicate) {
-        existingMessages.add(newMsg);
-      }
-
-      // Create updated entity
-      final GettedMessageEntity updatedEntity = GettedMessageEntity(
+    // Create updated entity
+    final GettedMessageEntity updatedEntity = GettedMessageEntity(
+      chatID: chatId,
+      messages: existingMessages,
+      lastEvaluatedKey: MessageLastEvaluatedKeyModel(
         chatID: chatId,
-        messages: existingMessages,
-        lastEvaluatedKey: MessageLastEvaluatedKeyModel(
-          chatID: chatId,
-          createdAt: data['created_at'],
-          paginationKey: data['message_id'],
-        ),
-      );
+        createdAt: data['created_at'],
+        paginationKey: data['message_id'],
+      ),
+    );
 
-      // Save updated entity to local storage
-      LocalChatMessage().save(updatedEntity,chatId);
-  await LocalUnreadMessagesService().increment(chatId);
-
+    // Save updated entity to local storage
+    LocalChatMessage().save(updatedEntity, chatId);
+    await LocalUnreadMessagesService().increment(chatId);
   }
 
   // UPDATE MESSAGES
@@ -95,9 +94,28 @@ class SocketImplementations {
 
   // ONLINE USERS
   final ValueNotifier<List<String>> onlineUsers = ValueNotifier(<String>[]);
-
   Future<void> handleOnlineUsers(List<String> users) async {
     onlineUsers.value = users;
     debugPrint(onlineUsers.value.toString());
   }
+
+  // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  //     FlutterLocalNotificationsPlugin();
+  // Future<void> showLocalNotification(String title, String body) async {
+  //   const AndroidNotificationDetails androidPlatformChannelSpecifics =
+  //       AndroidNotificationDetails(
+  //     'your_channel_id',
+  //     'Your Channel Name',
+  //     importance: Importance.max,
+  //     priority: Priority.high,
+  //   );
+  //   const NotificationDetails platformChannelSpecifics =
+  //       NotificationDetails(android: androidPlatformChannelSpecifics);
+  //   await flutterLocalNotificationsPlugin.show(
+  //     0,
+  //     title,
+  //     body,
+  //     platformChannelSpecifics,
+  //   );
+  // }
 }

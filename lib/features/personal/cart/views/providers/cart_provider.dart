@@ -161,7 +161,6 @@ class CartProvider extends ChangeNotifier {
       if (state is DataSuccess) {
         Map<String, dynamic> jsonMap = jsonDecode(state.data ?? '');
         _orderBilling = OrderBillingModel.fromMap(jsonMap);
-        page = 3;
       }
       return state;
     } catch (e, stc) {
@@ -182,6 +181,46 @@ class CartProvider extends ChangeNotifier {
     final PaymentIntent paymentIntent =
         await Stripe.instance.retrievePaymentIntent(clientSecret);
     return paymentIntent;
+  }
+
+  Future<DataState<PaymentIntent>> processPayment() async {
+    try {
+      // Step 1: Get billing details
+      final DataState<bool> billingState = await getBillingDetails();
+
+      if (billingState is DataFailer) {
+        // Billing failed, return the failure
+        return DataFailer<PaymentIntent>(billingState.exception!);
+      }
+      // Step 2: Billing succeeded, ensure we have orderBilling
+      if (_orderBilling?.clientSecret == null) {
+        return DataFailer<PaymentIntent>(
+          CustomException('Client secret is missing'),
+        );
+      }
+
+      final String clientSecret = _orderBilling!.clientSecret;
+      // Step 3: Show Stripe payment sheet
+      await Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: SetupPaymentSheetParameters(
+          paymentIntentClientSecret: clientSecret,
+          merchantDisplayName: LocalAuth.currentUser?.userName ?? 'Merchant',
+        ),
+      );
+      await Stripe.instance.presentPaymentSheet();
+      // Step 4: Retrieve PaymentIntent
+      final PaymentIntent paymentIntent =
+          await Stripe.instance.retrievePaymentIntent(clientSecret);
+      return DataSuccess<PaymentIntent>('', paymentIntent);
+    } catch (e, stc) {
+      AppLog.error(
+        e.toString(),
+        name: 'CartProvider.processPayment - Catch',
+        error: e,
+      );
+      debugPrint('Error in processPayment: $e\n$stc');
+      return DataFailer<PaymentIntent>(CustomException(e.toString()));
+    }
   }
 
   void reset() {

@@ -4,12 +4,14 @@ class UpdateUserParams {
     this.bio = '',
     this.uid = '',
     this.twoFactorAuth,
+    this.dob,
   });
 
   final String name;
   final String bio;
   final String uid;
   bool? twoFactorAuth;
+  final DateTime? dob;
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -19,6 +21,7 @@ class UpdateUserParams {
         'security': <String, bool>{
           'two_factor_authentication': twoFactorAuth ?? false,
         },
+      if (dob != null) 'dob': dob!.toIso8601String(),
     };
   }
 }

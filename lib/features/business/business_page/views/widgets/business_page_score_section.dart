@@ -66,7 +66,6 @@ class BusinessPageScoreSection extends StatelessWidget {
                     builder: (BuildContext context) {
                       return SupporterBottomsheet(
                         supporters: business.supporters,
-                        issupporter: true,
                       );
                     },
                   ),

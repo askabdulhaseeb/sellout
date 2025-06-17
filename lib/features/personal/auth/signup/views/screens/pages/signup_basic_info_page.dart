@@ -19,67 +19,80 @@ class SignupBasicInfoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<SignupProvider>(
       builder: (BuildContext context, SignupProvider pro, _) {
-        return Form(
-          key: pro.basicInfoFormKey,
-          child: AutofillGroup(
-            child: ListView(
+        return Scaffold(
+          extendBody: false,
+          extendBodyBehindAppBar: false,
+          appBar: null,
+          body: Form(
+            key: pro.basicInfoFormKey,
+            child: AutofillGroup(
+              child: ListView(
+                children: <Widget>[
+                  CustomTextFormField(
+                    controller: pro.name,
+                    autoFocus: true,
+                    showSuffixIcon: true,
+                    readOnly: pro.isLoading,
+                    hint: 'Ex. John Snow',
+                    labelText: 'full_name'.tr(),
+                    autofillHints: const <String>[AutofillHints.name],
+                    validator: (String? value) =>
+                        AppValidator.lessThenDigits(value, 3),
+                  ),
+                  CustomTextFormField(
+                    controller: pro.username,
+                    hint: 'Ex. john_snow',
+                    labelText: 'username'.tr(),
+                    showSuffixIcon: true,
+                    readOnly: pro.isLoading,
+                    autofillHints: const <String>[AutofillHints.username],
+                    validator: (String? value) =>
+                        AppValidator.lessThenDigits(value, 3),
+                  ),
+                  const SizedBox(height: 8),
+                  PhoneNumberInputField(
+                    initialValue: pro.phoneNumber,
+                    labelText: 'phone_number'.tr(),
+                    onChange: (PhoneNumberEntity? value) {
+                      pro.phoneNumber = value;
+                    },
+                  ),
+                  CustomTextFormField(
+                    controller: pro.email,
+                    hint: 'Ex. username@host.com',
+                    labelText: 'email'.tr(),
+                    showSuffixIcon: true,
+                    readOnly: pro.isLoading,
+                    autofillHints: const <String>[AutofillHints.email],
+                    validator: (String? value) => AppValidator.email(value),
+                  ),
+                  PasswordTextFormField(
+                    controller: pro.password,
+                    labelText: 'password'.tr(),
+                    readOnly: pro.isLoading,
+                    autofillHints: const <String>[AutofillHints.newPassword],
+                    textInputAction: TextInputAction.next,
+                  ),
+                  PasswordTextFormField(
+                    controller: pro.confirmPassword,
+                    labelText: 'confirm_password'.tr(),
+                    textInputAction: TextInputAction.done,
+                    readOnly: pro.isLoading,
+                    autofillHints: const <String>[AutofillHints.newPassword],
+                    validator: (String? value) => AppValidator.confirmPassword(
+                        pro.password.text, value ?? ''),
+                    onFieldSubmitted: (_) => pro.onNext(context),
+                  ),
+                  const SizedBox(height: 180),
+                ],
+              ),
+            ),
+          ),
+          bottomSheet: BottomAppBar(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            height: 170,
+            child: Column(
               children: <Widget>[
-                CustomTextFormField(
-                  controller: pro.name,
-                  autoFocus: true,
-                  showSuffixIcon: true,
-                  readOnly: pro.isLoading,
-                  hint: 'Ex. John Snow',
-                  labelText: 'full_name'.tr(),
-                  autofillHints: const <String>[AutofillHints.name],
-                  validator: (String? value) =>
-                      AppValidator.lessThenDigits(value, 3),
-                ),
-                CustomTextFormField(
-                  controller: pro.username,
-                  hint: 'Ex. john_snow',
-                  labelText: 'username'.tr(),
-                  showSuffixIcon: true,
-                  readOnly: pro.isLoading,
-                  autofillHints: const <String>[AutofillHints.username],
-                  validator: (String? value) =>
-                      AppValidator.lessThenDigits(value, 3),
-                ),
-                const SizedBox(height: 8),
-                PhoneNumberInputField(
-                  initialValue: pro.phoneNumber,
-                  labelText: 'phone_number'.tr(),
-                  onChange: (PhoneNumberEntity? value) {
-                    pro.phoneNumber = value;
-                  },
-                ),
-                CustomTextFormField(
-                  controller: pro.email,
-                  hint: 'Ex. username@host.com',
-                  labelText: 'email'.tr(),
-                  showSuffixIcon: true,
-                  readOnly: pro.isLoading,
-                  autofillHints: const <String>[AutofillHints.email],
-                  validator: (String? value) => AppValidator.email(value),
-                ),
-                PasswordTextFormField(
-                  controller: pro.password,
-                  labelText: 'password'.tr(),
-                  readOnly: pro.isLoading,
-                  autofillHints: const <String>[AutofillHints.newPassword],
-                  textInputAction: TextInputAction.next,
-                ),
-                PasswordTextFormField(
-                  controller: pro.confirmPassword,
-                  labelText: 'confirm_password'.tr(),
-                  textInputAction: TextInputAction.done,
-                  readOnly: pro.isLoading,
-                  autofillHints: const <String>[AutofillHints.newPassword],
-                  validator: (String? value) => AppValidator.confirmPassword(
-                      pro.password.text, value ?? ''),
-                  onFieldSubmitted: (_) => pro.onNext(context),
-                ),
-                const SizedBox(height: 24),
                 RichText(
                   textAlign: TextAlign.center,
                   text: TextSpan(

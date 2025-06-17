@@ -38,13 +38,7 @@ android {
         }
     }
 }
-configurations {
-    implementationDependencies {
-        canBeResolved = true
-        canBeConsumed = false
-        extendsFrom configurations.implementation
-    }
-}
+
 flutter {
     source = "../.."
 }
