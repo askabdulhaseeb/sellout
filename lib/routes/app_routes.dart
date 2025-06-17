@@ -21,16 +21,17 @@ import '../features/personal/auth/signin/views/screens/sign_in_screen.dart';
 import '../features/personal/auth/signup/views/screens/signup_screen.dart';
 import '../features/personal/dashboard/views/screens/dashboard_screen.dart';
 import '../features/personal/book_visit/view/screens/booking_screen.dart';
+import '../features/personal/notifications/view/screens/notification_screen.dart';
 import '../features/personal/post/post_detail/views/screens/post_detail_screen.dart';
 import '../features/personal/promo/view/create_promo/screens/create_promo_screen.dart';
 import '../features/personal/review/views/screens/write_review_screen.dart';
 import '../features/personal/search/view/view/search_screen.dart';
 import '../features/personal/setting/more_info/views/screens/personal_more_information_setting_screen.dart';
 import '../features/personal/setting/view/setting_options/security/view/screens/setting_security_screen.dart';
-import '../features/personal/setting/view/setting_options/setting_notification/view/screens/personal_setting_email_notification_screen.dart';
+import '../features/personal/setting/view/setting_options/setting_notification/view/screens/pages/personal_setting_email_notification_screen.dart';
+import '../features/personal/setting/view/setting_options/setting_notification/view/screens/pages/personal_setting_push_notification.dart';
 import '../features/personal/setting/view/setting_options/setting_notification/view/screens/personal_setting_notification_screen.dart';
 import '../features/personal/setting/setting_dashboard/views/screens/personal_setting_screen.dart';
-import '../features/personal/setting/view/setting_options/setting_notification/view/screens/personal_setting_push_notification.dart';
 import '../features/personal/user/profiles/views/screens/edit_profile_screen.dart';
 
 class AppRoutes {
@@ -110,5 +111,6 @@ class AppRoutes {
     //services
     AddServiceScreen.routeName: (_) => const AddServiceScreen(),
     SearchScreen.routeName: (_) => const SearchScreen(),
+    NotificationsScreen.routeName: (_) => const NotificationsScreen(),
   };
 }

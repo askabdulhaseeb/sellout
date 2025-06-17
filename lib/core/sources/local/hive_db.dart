@@ -47,6 +47,7 @@ import '../../../features/personal/promo/data/source/local/local_promo.dart';
 import '../../../features/personal/promo/domain/entities/promo_entity.dart';
 import '../../../features/personal/review/data/sources/local_review.dart';
 import '../../../features/personal/review/domain/entities/review_entity.dart';
+import '../../../features/personal/setting/view/setting_options/setting_notification/domain/entities/notification_entity.dart';
 import '../../../features/personal/user/profiles/data/sources/local/local_user.dart';
 import '../../../features/personal/user/profiles/data/sources/local/local_visits.dart';
 import '../../../features/personal/user/profiles/domain/entities/business_profile_detail_entity.dart';
@@ -131,7 +132,8 @@ class HiveDB {
     Hive.registerAdapter(DeviceLoginInfoEntityAdapter()); // 54
     Hive.registerAdapter(UnreadMessageEntityAdapter()); // 55
     Hive.registerAdapter(PromoEntityAdapter()); // 56
-    
+    Hive.registerAdapter(NotificationSettingsEntityAdapter()); // 57
+
     // Hive box Open
     await refresh();
   }
@@ -153,8 +155,6 @@ class HiveDB {
     await LocalCountry().refresh();
     await LocalUnreadMessagesService().refresh();
     await LocalPromo().refresh();
-
-
   }
 
   static Future<void> signout() async {

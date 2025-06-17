@@ -3,6 +3,7 @@ import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../../core/extension/string_ext.dart';
 import '../../../../../attachment/data/attchment_model.dart';
 import '../../../../../business/core/data/models/business_employee_model.dart';
+import '../../../../setting/view/setting_options/setting_notification/data/models/notification_model.dart';
 import '../../../../user/profiles/data/models/supporter_detail_model.dart';
 import '../../../../user/profiles/domain/entities/supporter_detail_entity.dart';
 import '../../domain/entities/current_user_entity.dart';
@@ -49,6 +50,7 @@ class CurrentUserModel extends CurrentUserEntity {
     //
     required super.supporters,
     required super.supporting,
+    required super.notification,
   }) : super(inHiveAt: DateTime.now());
 
   factory CurrentUserModel.fromRawJson(String str) =>
@@ -118,6 +120,12 @@ class CurrentUserModel extends CurrentUserEntity {
               .map((e) => DeviceLoginInfoModel.fromJson(e))
               .toList()
           : <DeviceLoginInfoModel>[]),
+// notification: userData['notifications'] != null
+//     ? NotificationSettingsModel.fromMap(userData['notifications'])
+//     : null,
+      notification: userData['notifications'] != null
+          ? NotificationSettingsModel.fromMap(userData['notifications'])
+          : null, //The argument type 'NotificationSettingsModel?' can't be assigned to the parameter type 'NotificationSettingsEntity'.
       employeeList: List<BusinessEmployeeModel>.from(
         (userData['employees'] ?? <dynamic>[])
             .map((dynamic e) => BusinessEmployeeModel.fromJson(e)),

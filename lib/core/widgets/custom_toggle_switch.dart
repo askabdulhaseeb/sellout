@@ -46,7 +46,7 @@ class CustomToggleSwitch<T> extends StatelessWidget {
               ),
             ),
           Wrap(
-            spacing: labels.length == 2 ? 16 : 8,
+            spacing: labels.length == 2 ? 16 : 4,
             runSpacing: 16,
             alignment: WrapAlignment.spaceBetween,
             runAlignment: WrapAlignment.spaceBetween,
@@ -88,6 +88,7 @@ class CustomToggleSwitch<T> extends StatelessWidget {
                       child: Text(
                         e,
                         maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontSize: seletedFontSize,
                           color: isSelected ? selectedColor : Colors.grey,

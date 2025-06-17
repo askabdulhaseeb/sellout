@@ -6,16 +6,17 @@ import '../../../../features/personal/auth/signin/data/sources/local/local_auth.
 import '../../../../features/personal/cart/data/models/cart/cart_item_model.dart';
 import '../../../../features/personal/cart/data/sources/local_cart.dart';
 import '../../../../features/personal/cart/views/screens/personal_cart_screen.dart';
+import '../../../../features/personal/notifications/view/screens/notification_screen.dart';
 import '../../../../features/personal/search/view/view/search_screen.dart';
 import '../../../../features/personal/user/profiles/data/sources/local/local_user.dart';
 import '../../../../features/personal/user/profiles/domain/entities/business_profile_detail_entity.dart';
 import '../../../utilities/app_icons.dart';
-import '../../in_dev_mode.dart';
 import '../../profile_photo.dart';
 
 personalAppbar(BuildContext context) {
   final String me = LocalAuth.uid ?? '';
-  return AppBar(automaticallyImplyLeading: false,
+  return AppBar(
+    automaticallyImplyLeading: false,
     centerTitle: false,
     surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -68,10 +69,16 @@ personalAppbar(BuildContext context) {
                     );
             }),
     actions: <Widget>[
-      _IconButton(icon: AppIcons.search, onPressed: () {Navigator.pushNamed(context, SearchScreen.routeName);}),
-      InDevMode(
-        child: _IconButton(icon: AppIcons.notification, onPressed: () {}),
-      ),
+      _IconButton(
+          icon: AppIcons.search,
+          onPressed: () {
+            Navigator.pushNamed(context, SearchScreen.routeName);
+          }),
+      _IconButton(
+          icon: AppIcons.notification,
+          onPressed: () {
+            Navigator.pushNamed(context, NotificationsScreen.routeName);
+          }),
       if (me.isNotEmpty)
         ValueListenableBuilder<Box<CartEntity>>(
             valueListenable: LocalCart().listenable(),
