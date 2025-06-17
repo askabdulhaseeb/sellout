@@ -187,7 +187,6 @@ class CartProvider extends ChangeNotifier {
     try {
       // Step 1: Get billing details
       final DataState<bool> billingState = await getBillingDetails();
-
       if (billingState is DataFailer) {
         // Billing failed, return the failure
         return DataFailer<PaymentIntent>(billingState.exception!);
@@ -204,7 +203,7 @@ class CartProvider extends ChangeNotifier {
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
           paymentIntentClientSecret: clientSecret,
-          merchantDisplayName: LocalAuth.currentUser?.userName ?? 'Merchant',
+          merchantDisplayName: 'Merchant',
         ),
       );
       await Stripe.instance.presentPaymentSheet();

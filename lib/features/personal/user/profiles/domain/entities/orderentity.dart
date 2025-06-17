@@ -35,13 +35,28 @@ class OrderEntity {
 
 class OrderPaymentDetailEntity {
   const OrderPaymentDetailEntity({
-    required this.transactionId,
     required this.method,
     required this.status,
     required this.timestamp,
+    required this.quantity,
+    required this.price,
+    required this.paymentIndentId,
+    required this.transactionChargeCurrency,
+    required this.transactionChargePerItem,
+    required this.sellerId,
+    required this.postCurrency,
+    required this.deliveryPrice,
   });
-  final String transactionId;
+
   final String method;
   final String status;
   final DateTime timestamp;
+  final int quantity;
+  final double price;
+  final String paymentIndentId;
+  final String transactionChargeCurrency;
+  final double transactionChargePerItem;
+  final String sellerId;
+  final String postCurrency;
+  final double deliveryPrice;
 }

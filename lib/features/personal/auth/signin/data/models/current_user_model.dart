@@ -6,52 +6,50 @@ import '../../../../../business/core/data/models/business_employee_model.dart';
 import '../../../../user/profiles/data/models/supporter_detail_model.dart';
 import '../../../../user/profiles/domain/entities/supporter_detail_entity.dart';
 import '../../domain/entities/current_user_entity.dart';
-import '../../domain/entities/login_info_entity.dart';
 import 'address_model.dart';
 import 'login_detail_model.dart';
 import 'login_info_model.dart';
 export '../../domain/entities/current_user_entity.dart';
 
 class CurrentUserModel extends CurrentUserEntity {
-  CurrentUserModel(
-      {required super.message,
-      required super.token,
-      required super.userID,
-      //
-      required super.email,
-      required super.userName,
-      required super.displayName,
-      required super.currency,
-      required super.privacy,
-      required super.countryAlpha3,
-      required super.countryCode,
-      required super.phoneNumber,
-      required super.language,
-      //
-      required super.address,
-      //
-      required super.chatIDs,
-      required super.businessIDs,
-      //
-      required super.imageVerified,
-      required super.verificationImage,
-      required super.profileImage,
-      //
-      required super.lastLoginTime,
-      required super.createdAt,
-      //
-      required super.businessStatus, // **Optional - used for Business**
-      required super.businessName, // **Optional - used for Business**
-      required super.businessID, // **Optional - used for Business**
-      required super.logindetail,
-      required super.loginActivity,
-      required super.employeeList,
-      required super.twoStepAuthEnabled,
-      //      
-      required super.supporters,
-      required super.supporting,
-      })
-      : super(inHiveAt: DateTime.now());
+  CurrentUserModel({
+    required super.message,
+    required super.token,
+    required super.userID,
+    //
+    required super.email,
+    required super.userName,
+    required super.displayName,
+    required super.currency,
+    required super.privacy,
+    required super.countryAlpha3,
+    required super.countryCode,
+    required super.phoneNumber,
+    required super.language,
+    //
+    required super.address,
+    //
+    required super.chatIDs,
+    required super.businessIDs,
+    //
+    required super.imageVerified,
+    required super.verificationImage,
+    required super.profileImage,
+    //
+    required super.lastLoginTime,
+    required super.createdAt,
+    //
+    required super.businessStatus, // **Optional - used for Business**
+    required super.businessName, // **Optional - used for Business**
+    required super.businessID, // **Optional - used for Business**
+    required super.logindetail,
+    required super.loginActivity,
+    required super.employeeList,
+    required super.twoStepAuthEnabled,
+    //
+    required super.supporters,
+    required super.supporting,
+  }) : super(inHiveAt: DateTime.now());
 
   factory CurrentUserModel.fromRawJson(String str) =>
       CurrentUserModel.fromJson(json.decode(str));
@@ -115,27 +113,25 @@ class CurrentUserModel extends CurrentUserEntity {
       businessID:
           userData['business_id'] ?? 'null', // **Optional - used for Business**
       logindetail: LoginDetailModel.fromJson(json['login_detail']),
-      loginActivity:
-          (json['login_activity'] != null && json['login_activity'] is List)
-              ? List<DeviceLoginInfoModel>.from(
-                  json['login_activity']
-                      .map((e) => DeviceLoginInfoModel.fromJson(e)),
-                )
-              : <DeviceLoginInfoEntity>[],
-
+      loginActivity: (userData['login_activity'] is List
+          ? (userData['login_activity'] as List<dynamic>)
+              .map((e) => DeviceLoginInfoModel.fromJson(e))
+              .toList()
+          : <DeviceLoginInfoModel>[]),
       employeeList: List<BusinessEmployeeModel>.from(
         (userData['employees'] ?? <dynamic>[])
             .map((dynamic e) => BusinessEmployeeModel.fromJson(e)),
       ),
       twoStepAuthEnabled:
           userData['security']?['two_factor_authentication'] ?? false,
-    supporters: (userData['supporters'] as List<dynamic>?)
-    ?.map((e) => SupporterDetailModel.fromMap(e).toEntity())
-    .toList() ?? <SupporterDetailEntity>[],
-supporting: (userData['supporting'] as List<dynamic>?)
-    ?.map((e) => SupporterDetailModel.fromMap(e).toEntity())
-    .toList() ?? <SupporterDetailEntity>[],
-
+      supporters: (userData['supporters'] as List<dynamic>?)
+              ?.map((e) => SupporterDetailModel.fromMap(e).toEntity())
+              .toList() ??
+          <SupporterDetailEntity>[],
+      supporting: (userData['supporting'] as List<dynamic>?)
+              ?.map((e) => SupporterDetailModel.fromMap(e).toEntity())
+              .toList() ??
+          <SupporterDetailEntity>[],
     );
   }
 }

@@ -4,12 +4,12 @@ import '../../domain/entities/orderentity.dart';
 class OrderModel extends OrderEntity {
   factory OrderModel.fromJson(Map<String, dynamic> json) {
     return OrderModel(
-        orderId: json['order_id'],
-        buyerId: json['buyer_id'],
-        sellerId: json['seller_id'],
-        postId: json['post_id'],
-        orderStatus: json['order_status'],
-        orderType: json['order_type'],
+        orderId: json['order_id'] ?? '',
+        buyerId: json['buyer_id'] ?? '',
+        sellerId: json['seller_id'] ?? '',
+        postId: json['post_id'] ?? '',
+        orderStatus: json['order_status'] ?? '',
+        orderType: json['order_type'] ?? '',
         price: (json['price'] as num).toDouble(),
         totalAmount: (json['total_amount'] as num).toDouble(),
         quantity: json['quantity'],
@@ -17,7 +17,7 @@ class OrderModel extends OrderEntity {
         updatedAt: DateTime.parse(json['updated_at']),
         paymentDetail: OrderPaymentDetailModel.fromJson(json['payment_detail']),
         shippingAddress: AddressModel.fromJson(json['shipping_address']),
-        businessId: json['business_id'] ?? '');
+        businessId: json['business_id'] ?? 'null');
   }
   factory OrderModel.fromEntity(OrderEntity entity) {
     return OrderModel(
@@ -73,34 +73,70 @@ class OrderModel extends OrderEntity {
 }
 
 class OrderPaymentDetailModel extends OrderPaymentDetailEntity {
-  const OrderPaymentDetailModel({
-    required super.transactionId,
-    required super.method,
-    required super.status,
-    required super.timestamp,
-  });
-  factory OrderPaymentDetailModel.fromJson(Map<String, dynamic> json) {
-    return OrderPaymentDetailModel(
-      transactionId: json['transaction_id'],
-      method: json['method'],
-      status: json['status'],
-      timestamp: DateTime.parse(json['timestamp']),
-    );
-  }
   factory OrderPaymentDetailModel.fromEntity(OrderPaymentDetailEntity entity) {
     return OrderPaymentDetailModel(
-      transactionId: entity.transactionId,
       method: entity.method,
       status: entity.status,
       timestamp: entity.timestamp,
+      quantity: entity.quantity,
+      price: entity.price,
+      paymentIndentId: entity.paymentIndentId,
+      transactionChargeCurrency: entity.transactionChargeCurrency,
+      transactionChargePerItem: entity.transactionChargePerItem,
+      sellerId: entity.sellerId,
+      postCurrency: entity.postCurrency,
+      deliveryPrice: entity.deliveryPrice,
     );
   }
+  const OrderPaymentDetailModel({
+    required super.method,
+    required super.status,
+    required super.timestamp,
+    required super.quantity,
+    required super.price,
+    required super.paymentIndentId,
+    required super.transactionChargeCurrency,
+    required super.transactionChargePerItem,
+    required super.sellerId,
+    required super.postCurrency,
+    required super.deliveryPrice,
+  });
+
+  factory OrderPaymentDetailModel.fromJson(Map<String, dynamic> json) {
+    return OrderPaymentDetailModel(
+      method: json['method'] ?? '',
+      status: json['status'] ?? '',
+      timestamp: json['timestamp'] != null
+          ? DateTime.tryParse(json['timestamp']) ?? DateTime.now()
+          : DateTime.now(),
+      quantity: json['quantity'] ?? 0,
+      price: (json['price'] is num) ? (json['price'] as num).toDouble() : 0.0,
+      paymentIndentId: json['payment_indent_id'] ?? '',
+      transactionChargeCurrency: json['transaction_charge_currency'] ?? '',
+      transactionChargePerItem: (json['transaction_charge_per_item'] is num)
+          ? (json['transaction_charge_per_item'] as num).toDouble()
+          : 0.0,
+      sellerId: json['seller_id'] ?? '',
+      postCurrency: json['post_currency'] ?? '',
+      deliveryPrice: (json['delivery_price'] is num)
+          ? (json['delivery_price'] as num).toDouble()
+          : 0.0,
+    );
+  }
+
   Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'transaction_id': transactionId,
+    return {
       'method': method,
       'status': status,
       'timestamp': timestamp.toIso8601String(),
+      'quantity': quantity,
+      'price': price,
+      'payment_indent_id': paymentIndentId,
+      'transaction_charge_currency': transactionChargeCurrency,
+      'transaction_charge_per_item': transactionChargePerItem,
+      'seller_id': sellerId,
+      'post_currency': postCurrency,
+      'delivery_price': deliveryPrice,
     };
   }
 }
