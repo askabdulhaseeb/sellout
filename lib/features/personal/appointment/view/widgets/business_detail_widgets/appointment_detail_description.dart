@@ -1,10 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../features/business/core/domain/entity/business_entity.dart';
-import '../../../../../../features/business/core/domain/entity/service/service_entity.dart';
-import '../../../../../../features/personal/bookings/domain/entity/booking_entity.dart';
-import '../../../../../../features/personal/user/profiles/domain/entities/user_entity.dart';
-import '../../../../../extension/datetime_ext.dart';
+import '../../../../../business/core/domain/entity/business_entity.dart';
+import '../../../../../business/core/domain/entity/service/service_entity.dart';
+import '../../../../bookings/domain/entity/booking_entity.dart';
+import '../../../../user/profiles/domain/entities/user_entity.dart';
+import '../../../../../../core/extension/datetime_ext.dart';
 
 class AppointmentDescriptionSection extends StatelessWidget {
   const AppointmentDescriptionSection({

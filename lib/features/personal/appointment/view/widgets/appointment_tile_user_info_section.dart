@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../features/personal/bookings/domain/entity/booking_entity.dart';
-import '../../../../../features/personal/user/profiles/data/sources/local/local_user.dart';
-import '../../../profile_photo.dart';
+import '../../../bookings/domain/entity/booking_entity.dart';
+import '../../../user/profiles/data/sources/local/local_user.dart';
+import '../../../../../core/widgets/profile_photo.dart';
 import '../providers/appointment_tile_provider.dart';
 
 class AppointmentTileUserInfoSection extends StatelessWidget {

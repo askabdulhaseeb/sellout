@@ -1,11 +1,12 @@
 import 'package:get_it/get_it.dart';
 import '../core/sockets/socket_implementations.dart';
 import '../core/sockets/socket_service.dart';
-import '../core/widgets/appointment/data/repository/appointment_repository.dart';
-import '../core/widgets/appointment/data/services/appointment_api.dart';
-import '../core/widgets/appointment/domain/repository/appointment_repository.dart';
-import '../core/widgets/appointment/domain/usecase/update_appointment_usecase.dart';
-import '../core/widgets/appointment/view/providers/appointment_tile_provider.dart';
+import '../features/personal/appointment/data/repository/appointment_repository.dart';
+import '../features/personal/appointment/data/services/appointment_api.dart';
+import '../features/personal/appointment/domain/repository/appointment_repository.dart';
+import '../features/personal/appointment/domain/usecase/hold_service_payment_usecase.dart';
+import '../features/personal/appointment/domain/usecase/update_appointment_usecase.dart';
+import '../features/personal/appointment/view/providers/appointment_tile_provider.dart';
 import '../core/widgets/phone_number/data/repository/phone_number_repository_impl.dart';
 import '../core/widgets/phone_number/data/sources/country_api.dart';
 import '../core/widgets/phone_number/domain/repository/phone_number_repository.dart';
@@ -442,11 +443,14 @@ void _appointment() {
       () => AppointmentRepositoryImpl(locator()));
   // USECASES
   //
+
   locator.registerFactory<UpdateAppointmentUsecase>(
       () => UpdateAppointmentUsecase(locator()));
+  locator.registerFactory<HoldServicePaymentUsecase>(
+      () => HoldServicePaymentUsecase(locator()));
   // Providers
-  locator.registerLazySingleton<AppointmentTileProvider>(
-      () => AppointmentTileProvider(locator()));
+  locator.registerFactory<AppointmentTileProvider>(
+      () => AppointmentTileProvider(locator(), locator(), locator()));
 }
 
 void _review() {
@@ -503,8 +507,8 @@ void _bookvisit() {
   locator
       .registerFactory<BookServiceUsecase>(() => BookServiceUsecase(locator()));
 
-  locator.registerFactory<BookingProvider>(() =>
-      BookingProvider(locator(), locator(), locator(), locator(), locator()));
+  locator.registerFactory<BookingProvider>(() => BookingProvider(
+      locator(), locator(), locator(), locator(), locator(), locator()));
 }
 
 void _addlisting() {

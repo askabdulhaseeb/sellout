@@ -1,10 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../features/business/core/data/sources/local_business.dart';
-import '../../../../../features/business/core/data/sources/service/local_service.dart';
-import '../../../../../features/business/core/domain/entity/business_entity.dart';
-import '../../../../../features/business/core/domain/entity/service/service_entity.dart';
-import '../../../../../features/personal/bookings/domain/entity/booking_entity.dart';
+import '../../../../business/core/data/sources/local_business.dart';
+import '../../../../business/core/data/sources/service/local_service.dart';
+import '../../../../business/core/domain/entity/business_entity.dart';
+import '../../../../business/core/domain/entity/service/service_entity.dart';
+import '../../../bookings/domain/entity/booking_entity.dart';
 
 class AppointmentTileBookingDetailSection extends StatelessWidget {
   const AppointmentTileBookingDetailSection({required this.booking, super.key});

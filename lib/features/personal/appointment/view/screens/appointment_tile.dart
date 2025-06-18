@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../features/personal/bookings/domain/entity/booking_entity.dart';
+import '../../../bookings/domain/entity/booking_entity.dart';
 import '../widgets/appointment_tile_booking_detail_section.dart';
 import '../widgets/appointment_tile_button_section.dart';
 import '../widgets/appointment_tile_datetime_section.dart';

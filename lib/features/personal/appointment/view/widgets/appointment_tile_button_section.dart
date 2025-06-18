@@ -1,10 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../features/personal/bookings/domain/entity/booking_entity.dart';
-import '../../../../enums/core/status_type.dart';
-import '../../../custom_elevated_button.dart';
-import '../../../loader.dart';
+import '../../../bookings/domain/entity/booking_entity.dart';
+import '../../../../../core/enums/core/status_type.dart';
+import '../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../core/widgets/loader.dart';
 import '../providers/appointment_tile_provider.dart';
 
 class AppointmentTileButtonSection extends StatelessWidget {
