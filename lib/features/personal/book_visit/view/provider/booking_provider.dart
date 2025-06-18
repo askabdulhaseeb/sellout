@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/data_state.dart';
+import '../../../../business/business_page/domain/params/get_business_bookings_params.dart';
+import '../../../../business/business_page/domain/usecase/get_business_bookings_list_usecase.dart';
+import '../../../bookings/domain/entity/booking_entity.dart';
 import '../../../chats/chat/views/providers/chat_provider.dart';
 import '../../../chats/chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../post/domain/entities/visit/visiting_entity.dart';
@@ -19,20 +22,20 @@ import '../params/update_visit_params.dart';
 
 class BookingProvider extends ChangeNotifier {
   BookingProvider(
-    this._bookVisitUseCase,
-    // this._updateVisitStatusUseCase,
-    this._updateVisitUseCase,
-    this._bookServiceUsecase,
-    this._getUserByUidUsecase,
-    this._getVisitByPostUsecase,
-  );
+      this._bookVisitUseCase,
+      // this._updateVisitStatusUseCase,
+      this._updateVisitUseCase,
+      this._bookServiceUsecase,
+      this._getUserByUidUsecase,
+      this._getVisitByPostUsecase,
+      this._getBookingsListUsecase);
   final BookVisitUseCase _bookVisitUseCase;
   // final UpdateVisitStatusUseCase _updateVisitStatusUseCase;
   final UpdateVisitUseCase _updateVisitUseCase;
   final BookServiceUsecase _bookServiceUsecase;
   final GetUserByUidUsecase _getUserByUidUsecase;
   final GetVisitByPostUsecase _getVisitByPostUsecase;
-
+  final GetBookingsListUsecase _getBookingsListUsecase;
   DateTime _selectedDate = DateTime.now();
   String? _selectedTime;
   bool _isLoading = false;
@@ -91,7 +94,8 @@ class BookingProvider extends ChangeNotifier {
   List<Map<String, dynamic>> generateTimeSlots(
     String openingTime,
     String closingTime,
-    List<VisitingEntity> visits,
+    List<dynamic> bookingsOrVisits,
+    DateTime selectedDate,
   ) {
     try {
       final DateFormat timeFormat = DateFormat('hh:mm a');
@@ -99,10 +103,14 @@ class BookingProvider extends ChangeNotifier {
       openingTime = openingTime.toUpperCase().trim();
       closingTime = closingTime.toUpperCase().trim();
 
-      final DateTime openTime = parseTimeOnSelectedDate(openingTime);
-      final DateTime closeTime = parseTimeOnSelectedDate(closingTime);
+      final DateTime openTime =
+          parseTimeOnSelectedDate(openingTime, selectedDate);
+      final DateTime closeTime =
+          parseTimeOnSelectedDate(closingTime, selectedDate);
 
-      final List<DateTime> bookedSlots = getBookedSlots(visits);
+      final List<DateTime> bookedSlots =
+          getBookedSlots(bookingsOrVisits, selectedDate);
+
       final List<Map<String, dynamic>> slots = <Map<String, dynamic>>[];
       DateTime current = openTime;
 
@@ -136,53 +144,74 @@ class BookingProvider extends ChangeNotifier {
     }
   }
 
-  DateTime parseTimeOnSelectedDate(String timeStr) {
+  DateTime parseTimeOnSelectedDate(String timeStr, DateTime selectedDate) {
     final DateFormat timeFormat = DateFormat('hh:mm a');
     final DateTime parsed = timeFormat.parse(timeStr, true);
 
     return DateTime(
-      _selectedDate.year,
-      _selectedDate.month,
-      _selectedDate.day,
+      selectedDate.year,
+      selectedDate.month,
+      selectedDate.day,
       parsed.hour,
       parsed.minute,
     );
   }
 
-  List<DateTime> getBookedSlots(List<VisitingEntity> visits) {
-    final Map<String, VisitingEntity> latestAcceptedMap =
-        <String, VisitingEntity>{};
+  List<DateTime> getBookedSlots(List<dynamic> items, DateTime selectedDate) {
+    final Map<String, dynamic> latestAcceptedMap = <String, dynamic>{};
 
-    for (final VisitingEntity visit in visits) {
-      final DateTime slotTime = DateTime(
-        visit.dateTime.year,
-        visit.dateTime.month,
-        visit.dateTime.day,
-        visit.dateTime.hour,
-        visit.dateTime.minute,
-      );
+    for (final dynamic item in items) {
+      DateTime? slotTime;
+      DateTime? createdAt;
 
-      if (!isSameDate(slotTime, _selectedDate)) continue;
-      final String key = slotTime.toString();
+      if (item is VisitingEntity) {
+        slotTime = item.dateTime;
+        createdAt = item.createdAt;
+      } else if (item is BookingEntity) {
+        slotTime = item.bookedAt;
+        createdAt = item.createdAt;
+      } else {
+        continue;
+      }
+
+      if (slotTime == null || createdAt == null) continue;
+
+      if (!isSameDate(slotTime, selectedDate)) continue;
+
+      final String key = slotTime.toIso8601String();
+
       if (latestAcceptedMap.containsKey(key)) {
-        final VisitingEntity existing = latestAcceptedMap[key]!;
-        if (visit.createdAt!.isAfter(existing.createdAt!)) {
-          latestAcceptedMap[key] = visit;
+        final dynamic existing = latestAcceptedMap[key];
+        final DateTime? existingCreatedAt = existing.createdAt;
+
+        if (createdAt.isAfter(existingCreatedAt!)) {
+          latestAcceptedMap[key] = item;
         }
       } else {
-        latestAcceptedMap[key] = visit;
+        latestAcceptedMap[key] = item;
       }
     }
 
-    return latestAcceptedMap.values.map((VisitingEntity visit) {
-      // Use raw components without timezone conversion
-      return DateTime(
-        visit.dateTime.year,
-        visit.dateTime.month,
-        visit.dateTime.day,
-        visit.dateTime.hour,
-        visit.dateTime.minute,
-      );
+    return latestAcceptedMap.values.map((dynamic item) {
+      if (item is VisitingEntity) {
+        return DateTime(
+          item.dateTime.year,
+          item.dateTime.month,
+          item.dateTime.day,
+          item.dateTime.hour,
+          item.dateTime.minute,
+        );
+      } else if (item is BookingEntity) {
+        return DateTime(
+          item.bookedAt.year,
+          item.bookedAt.month,
+          item.bookedAt.day,
+          item.bookedAt.hour,
+          item.bookedAt.minute,
+        );
+      } else {
+        return DateTime(1900); // fallback (won’t match anything)
+      }
     }).toList();
   }
 
@@ -317,14 +346,11 @@ class BookingProvider extends ChangeNotifier {
 
   Future<List<VisitingEntity>> getVisitsByPost(String postId) async {
     debugPrint('🔍 Fetching visits for postId: $postId');
-
     final DataState<List<VisitingEntity>> result =
         await _getVisitByPostUsecase.call(postId);
-
     if (result is DataSuccess && result.data != null) {
       debugPrint(
           '✅ Successfully fetched visits: ${result.entity!.length} visits found');
-
       for (final VisitingEntity visit in result.entity!) {
         debugPrint('📌 Visit: ${visit.dateTime}');
       }
@@ -339,13 +365,39 @@ class BookingProvider extends ChangeNotifier {
         name: 'BookingProvider.getVisitsByPost',
         error: result.exception,
       );
-
       return <VisitingEntity>[];
     }
   }
 
   Future<DataState<UserEntity?>> userbyuid(String uid) async {
     return await _getUserByUidUsecase.call(uid);
+  }
+
+  Future<List<BookingEntity>> getBookingBYServiceID(String serviceID) async {
+    debugPrint('🔍 Fetching Bookings for ServiceID: $serviceID');
+    final GetBookingsParams params = GetBookingsParams(serviceID: serviceID);
+    final DataState<List<BookingEntity>> result =
+        await _getBookingsListUsecase.call(params);
+
+    if (result is DataSuccess && result.data != null) {
+      debugPrint(
+          '✅ Successfully fetched services: ${result.entity!.length} services found');
+      for (final BookingEntity booking in result.entity!) {
+        debugPrint('📌 Visit: ${booking.bookedAt}');
+      }
+      return result.entity!;
+    } else {
+      final String errorMsg = result.exception?.message ??
+          'Unknown error in getBookingBYServiceID ';
+      debugPrint('❌ Failed to fetch visits: $errorMsg');
+      AppLog.error(
+        errorMsg,
+        name: 'BookingProvider.getBookingBYServiceID',
+        error: result.exception,
+      );
+
+      return <BookingEntity>[];
+    }
   }
 
   void disposed() {

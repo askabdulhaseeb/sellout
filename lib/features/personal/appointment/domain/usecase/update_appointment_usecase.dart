@@ -1,4 +1,4 @@
-import '../../../../usecase/usecase.dart';
+import '../../../../../core/usecase/usecase.dart';
 import '../params/update_appointment_params.dart';
 import '../repository/appointment_repository.dart';
 

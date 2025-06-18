@@ -33,15 +33,12 @@ class BookingCalendarWidget extends StatelessWidget {
     // Determine selected day (in lowercase) from the provider's selected date.
     String selectedDay =
         DateFormat('EEEE').format(provider.selectedDate).toLowerCase();
-
     // Decide which data source to use based on whether post is available.
     final bool usePostAvailability = post != null;
-
     // Variables to hold the opening and closing times and open status.
     String? openingTime;
     String? closingTime;
     bool isOpen = false;
-
     if (usePostAvailability) {
       // Use post.availability if available.
       final List<AvailabilityEntity>? availabilities = post?.availability;
@@ -116,22 +113,33 @@ class BookingCalendarWidget extends StatelessWidget {
             closingTime != null &&
             openingTime.isNotEmpty &&
             closingTime.isNotEmpty)
-          FutureBuilder<List<VisitingEntity>>(
-            future: provider.getVisitsByPost(post?.postID ?? ''),
-            builder: (BuildContext context,
-                AsyncSnapshot<List<VisitingEntity>> snapshot) {
+          FutureBuilder<List<dynamic>>(
+            future: service != null
+                ? provider.getBookingBYServiceID(service!.serviceID)
+                : provider.getVisitsByPost(post?.postID ?? ''),
+            builder:
+                (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
                 return Text('error_loading_slots'.tr());
               } else {
-                final List<VisitingEntity> visits =
-                    snapshot.data ?? <VisitingEntity>[];
-                final List<Map<String, dynamic>> slots = provider
-                    .generateTimeSlots(openingTime!, closingTime!, visits);
+                final List<dynamic> bookingsOrVisits =
+                    snapshot.data ?? <dynamic>[];
+
+                // ✅ Use updated generateTimeSlots that handles both VisitingEntity and BookingEntity
+                final List<Map<String, dynamic>> slots =
+                    provider.generateTimeSlots(
+                  openingTime!,
+                  closingTime!,
+                  bookingsOrVisits,
+                  provider.selectedDate,
+                );
+
                 if (slots.isEmpty) {
                   return Text('no_available_slots'.tr());
                 }
+
                 return SizedBox(
                   height: 50,
                   child: ListView.builder(
@@ -141,6 +149,7 @@ class BookingCalendarWidget extends StatelessWidget {
                       final Map<String, dynamic> slot = slots[index];
                       final String time = slot['time'] as String;
                       final bool isBooked = slot['isBooked'] as bool;
+
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 5),
                         child: ChoiceChip(
