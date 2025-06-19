@@ -132,15 +132,17 @@ class _Widget<T> extends StatelessWidget {
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton2<T>(
+                    iconStyleData: IconStyleData(
+                        icon: Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: ColorScheme.of(context).onSurface,
+                    )),
                     isExpanded: true,
                     hint: Text(
                       hint ?? 'select_item'.tr(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Theme.of(context).hintColor,
-                      ),
+                      style: TextTheme.of(context).bodyMedium,
                     ),
                     items: items,
                     value: selectedItem,

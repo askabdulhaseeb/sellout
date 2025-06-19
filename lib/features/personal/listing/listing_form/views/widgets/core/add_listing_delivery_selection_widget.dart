@@ -21,10 +21,10 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           const SizedBox(height: 8),
-          const Text(
-            'delivery',
-            style: TextStyle(fontWeight: FontWeight.w500),
-          ).tr(),
+          Text(
+            'delivery'.tr(),
+            style: const TextStyle(fontWeight: FontWeight.w500),
+          ),
           CustomRadioButtonListTile<DeliveryType>(
             title: DeliveryType.freeDelivery.code.tr(),
             selectedValue: formPro.deliveryType,
@@ -44,7 +44,6 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
                     controller: formPro.localDeliveryFee,
                     keyboardType: TextInputType.number,
                     hint: 'local_delivery_fee'.tr(),
-                    autoFocus: true,
                     // prefixText: LocalState.getCurrency(),
                     prefixText: LocalAuth.currentUser?.currency?.toUpperCase(),
                     contentPadding: EdgeInsets.zero,
@@ -60,7 +59,6 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
                     controller: formPro.internationalDeliveryFee,
                     keyboardType: TextInputType.number,
                     hint: 'international_delivery_fee'.tr(),
-                    autoFocus: true,
                     // prefixText: LocalState.getCurrency(),
                     prefixText: LocalAuth.currentUser?.currency?.toUpperCase(),
                     contentPadding: EdgeInsets.zero,

@@ -1,9 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
 import '../../../../../../../core/widgets/custom_dropdown.dart';
-import '../../providers/add_listing_form_provider.dart';
 import 'color_size_bottomsheet.dart';
 
 class AddListingSizeColorWidget extends StatelessWidget {
@@ -13,11 +10,10 @@ class AddListingSizeColorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AddListingFormProvider pro =
-        Provider.of<AddListingFormProvider>(context);
+    // final AddListingFormProvider pro =
+    //     Provider.of<AddListingFormProvider>(context);
     return InkWell(
       onTap: () {
-        pro.fetchColors();
         showBottomSheet(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             context: context,
@@ -25,6 +21,7 @@ class AddListingSizeColorWidget extends StatelessWidget {
       },
       child: AbsorbPointer(
         child: CustomDropdown<int>(
+          height: 50,
           hint: 'tap_to_select'.tr(),
           title: 'select_size_color'.tr(),
           items: const <DropdownMenuItem<int>>[

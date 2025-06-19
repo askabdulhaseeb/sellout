@@ -13,13 +13,38 @@ import '../../widgets/core/add_listing_post_button_widget.dart';
 import '../../widgets/add_listing_price_and_quantity_widget.dart';
 import '../../widgets/core/add_listing_update_button_widget.dart';
 
-class AddClothsAndFootwearForm extends StatelessWidget {
+class AddClothsAndFootwearForm extends StatefulWidget {
   const AddClothsAndFootwearForm({super.key});
+
+  @override
+  State<AddClothsAndFootwearForm> createState() =>
+      _AddClothsAndFootwearFormState();
+}
+
+class _AddClothsAndFootwearFormState extends State<AddClothsAndFootwearForm> {
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => _loadDropdowns());
+  }
+
+  Future<void> _loadDropdowns() async {
+    final AddListingFormProvider formPro =
+        Provider.of<AddListingFormProvider>(context, listen: false);
+    await formPro.fetchDropdownListings('/category/clothes-foot?list-id=');
+  }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
+        if (formPro.isDropdownLoading) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
         return Form(
           key: formPro.clothesAndFootKey,
           child: ListView(
@@ -39,7 +64,7 @@ class AddClothsAndFootwearForm extends StatelessWidget {
               const AddListingConditionOfferSection(),
               const AddListingDeliverySelectionWidget(),
               if (formPro.post == null) const AddListingPostButtonWidget(),
-              if (formPro.post != null) const AddListingUpdateButtons()
+              if (formPro.post != null) const AddListingUpdateButtons(),
             ],
           ),
         );

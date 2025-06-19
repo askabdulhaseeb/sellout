@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../../../core/widgets/loader.dart';
 import '../../../domain/entities/listing_entity.dart';
 import '../../../domain/entities/sub_category_entity.dart';
@@ -40,7 +41,7 @@ class _SubCategorySelectableWidgetState
     selectedSubSubCategory = null;
 
     if (provider.listings.isEmpty) {
-      provider.fetchCategories();
+      provider.fetchCategories(provider.listingType?.json ?? '', '');
     }
   }
 
@@ -56,7 +57,7 @@ class _SubCategorySelectableWidgetState
         if (widget.listType == ListingType.clothAndFoot) {
           selectedList = provider.listings
               .where((ListingEntity e) =>
-                  e.listId == provider.selectedClothSubCategory)
+                  e.cid == provider.selectedClothSubCategory)
               .toList();
         } else if (widget.listType != null) {
           selectedList = provider.listings
@@ -91,17 +92,14 @@ class _SubCategorySelectableWidgetState
                   children: <Widget>[
                     Expanded(
                       child: Text(
-                        selectedSubCategory?.title ?? 'select_category'.tr(),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color:
-                              selectedSubCategory == null ? Colors.grey : null,
-                        ),
-                      ),
+                          selectedSubCategory?.title ?? 'select_category'.tr(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextTheme.of(context).bodyMedium),
                     ),
-                    const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                    const Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                    ),
                   ],
                 ),
               ),
@@ -111,41 +109,27 @@ class _SubCategorySelectableWidgetState
             if (widget.listType == ListingType.pets &&
                 selectedSubCategory != null &&
                 selectedSubCategory!.subCategory.isNotEmpty) ...<Widget>{
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    'breed'.tr(), // 👈 Add this label
-                    style: const TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                  DropdownButtonFormField<SubCategoryEntity>(
-                    value: selectedSubSubCategory,
-                    items: selectedSubCategory!.subCategory
-                        .map(
-                          (SubCategoryEntity sub) => DropdownMenuItem(
-                            value: sub,
-                            child: Text(sub.title),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (SubCategoryEntity? sub) {
-                      if (sub != null) {
-                        setState(() {
-                          selectedSubSubCategory = sub;
-                        });
-                        widget.onSelected(sub); // Same onSelected
-                      }
-                    },
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+              CustomDropdown<SubCategoryEntity>(
+                validator: (bool? value) => null,
+                title: 'breed'.tr(),
+                selectedItem: selectedSubSubCategory,
+                items: selectedSubCategory!.subCategory
+                    .map(
+                      (SubCategoryEntity sub) => DropdownMenuItem(
+                        value: sub,
+                        child: Text(sub.title,
+                            style: TextTheme.of(context).bodyMedium),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 10),
-                      hintText: 'select_breed'.tr(),
-                    ),
-                  ),
-                ],
+                    )
+                    .toList(),
+                onChanged: (SubCategoryEntity? sub) {
+                  if (sub != null) {
+                    setState(() {
+                      selectedSubSubCategory = sub;
+                    });
+                    widget.onSelected(sub); // Same onSelected
+                  }
+                },
               ),
             }
           ],

@@ -22,7 +22,7 @@ class _AddListingPreviewScreenState extends State<AddListingPreviewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Listing Preview'),
+        title: Text('listing_preview'.tr()),
         centerTitle: true,
         elevation: 2,
       ),

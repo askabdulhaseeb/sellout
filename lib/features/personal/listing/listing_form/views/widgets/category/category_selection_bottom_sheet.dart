@@ -84,7 +84,7 @@ class _CategorySelectionBottomSheetState
                       // Assuming you have a provider named `BreedProvider`, update the breeds list based on the selected category.
                       // This will be handled in the provider.
                       // You could pass this category info to update the breed dropdown in another screen or widget.
-                      formPro.setPetBreeds(subCategory);
+
                       Navigator.of(context).pop(subCategory);
                       setState(() {
                         selectedSubCategoryStack.add(subCategory);

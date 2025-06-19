@@ -6,23 +6,36 @@ import '../../../listing_form/views/providers/add_listing_form_provider.dart';
 import '../../../listing_form/views/screens/add_listing_form_screen.dart';
 
 class StartSellingList extends StatelessWidget {
-  const StartSellingList({super.key});
+  const StartSellingList({
+    required this.searchQuery,
+    super.key,
+  });
+
+  final String searchQuery;
 
   @override
   Widget build(BuildContext context) {
     final List<ListingType> list = ListingType.list;
+
+    final List<ListingType> filteredList = list.where((ListingType type) {
+      final String code = type.code.toLowerCase();
+      return code.contains(searchQuery.toLowerCase());
+    }).toList();
+
     return ListView(
       primary: false,
       shrinkWrap: true,
-      children: list
+      children: filteredList
           .map(
             (ListingType type) => Padding(
               padding: const EdgeInsets.only(top: 16),
               child: InkWell(
                 onTap: () {
                   final AddListingFormProvider pro =
-                      Provider.of<AddListingFormProvider>(context,
-                          listen: false);
+                      Provider.of<AddListingFormProvider>(
+                    context,
+                    listen: false,
+                  );
                   pro.setListingType(type);
                   Navigator.of(context)
                       .pushNamed(AddListingFormScreen.routeName);
@@ -30,9 +43,11 @@ class StartSellingList extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                          color: Theme.of(context).colorScheme.outlineVariant)),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                    ),
+                  ),
                   child: Row(
                     children: <Widget>[
                       CircleAvatar(

@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AppStrings {
+  static var local;
+
   // Hive Boxes
   static String get localAuthBox => 'com.sellout.local-auth';
   static String get localUsersBox => 'com.sellout.local-users';
@@ -19,7 +21,8 @@ class AppStrings {
   static String get localCountryBox => 'com.sellout.local-countries';
   static String get localUnreadMessages => 'com.sellout.local-unread-messages';
   static String get localPromosBox => 'com.sellout.local-promo';
-
+  static String get localColorBox => 'com.sellout.local-colors-box';
+  static String get localDropDownListingBox => 'com.sellout.dropdown-listings';
   // [IMAGES]
   // Payment METHODS
   static String get amex => 'assets/images/payment_methods/amex.png';
@@ -34,7 +37,6 @@ class AppStrings {
   static String get stripe => 'assets/images/payment_methods/stripe.png';
   //logo
   static String get selloutLogo => 'assets/images/sellout_logo.png';
-
 
   String get baseURL =>
       kDebugMode ? 'http://192.168.0.181:3200' : dotenv.env['baseURL'] ?? '';

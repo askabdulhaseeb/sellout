@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class CustomDropdown extends StatelessWidget {
@@ -16,7 +15,6 @@ class CustomDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
     return DropdownButtonFormField<String>(
       isExpanded: true,
       padding: const EdgeInsets.all(0),
@@ -25,7 +23,7 @@ class CustomDropdown extends StatelessWidget {
       hint: Text(
         hint,
         overflow: TextOverflow.ellipsis,
-        style: textTheme.labelMedium,
+        style: TextTheme.of(context).bodyMedium,
       ),
       value: value,
       items: items
@@ -33,7 +31,7 @@ class CustomDropdown extends StatelessWidget {
                 value: item,
                 child: Text(
                   item,
-                  style: textTheme.labelMedium,
+                  style: TextTheme.of(context).bodyMedium,
                   overflow: TextOverflow.ellipsis,
                 ),
               ))

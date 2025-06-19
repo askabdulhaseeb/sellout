@@ -3,7 +3,6 @@ import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
-import '../../../../../../core/enums/listing/pet/age_time_type.dart';
 import '../../../../../attachment/data/attchment_model.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
@@ -133,7 +132,7 @@ class AddListingParam {
   final String? propertyType;
   final String? animalFriendly;
   //pets
-  final AgeTimeType? age;
+  final String? age;
   final String? readyToLeave;
   final String? breed;
   final bool? healthChecked;
@@ -328,7 +327,7 @@ class AddListingParam {
   _pet() {
     final Map<String, String> mapp = <String, String>{
       'quantity': quantity.toString(),
-      'age': age?.json ?? '',
+      'age': age ?? '',
       'post_privacy': privacyType.json,
       'ready_to_leave': readyToLeave ?? '',
       'breed': breed ?? '',

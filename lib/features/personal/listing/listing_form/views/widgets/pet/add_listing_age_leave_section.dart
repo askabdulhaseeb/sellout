@@ -1,19 +1,18 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/enums/listing/pet/age_time_type.dart';
 import '../../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../location/data/models/location_model.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../location_by_name_field.dart';
+import '../custom_listing_dropdown.dart'; // Assuming this contains CustomDynamicDropdown
 
 class AddListingPetAgeLeaveWidget extends StatelessWidget {
   const AddListingPetAgeLeaveWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final List<AgeTimeType> age = AgeTimeType.age;
-    final List<AgeTimeType> time = AgeTimeType.time;
+    final TextStyle? textStyle = TextTheme.of(context).bodyMedium;
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         return Column(
@@ -21,43 +20,33 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
             Row(
               children: <Widget>[
                 Expanded(
-                  child: CustomDropdown<AgeTimeType>(
-                    selectedItem: formPro.age,
-                    items: age.map((AgeTimeType value) {
-                      return DropdownMenuItem<AgeTimeType>(
-                        value: value,
-                        child: Text(
-                          value.title,
-                          style: TextTheme.of(context).bodySmall,
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: formPro.setAge,
-                    validator: (_) =>
-                        formPro.age == null ? 'Age is required' : null,
+                  child: CustomDynamicDropdown(
+                    categoryKey: 'age',
+                    selectedValue: formPro.age,
                     title: 'age'.tr(),
+                    onChanged: (String? value) {
+                      formPro.setAge(value);
+                    },
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: CustomDropdown<AgeTimeType>(
-                    selectedItem: formPro.time,
-                    items: time.map((AgeTimeType value) {
-                      return DropdownMenuItem<AgeTimeType>(
-                        value: value,
-                        child: Text(
-                          value.title,
-                          style: TextTheme.of(context).bodySmall,
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: formPro.setTime,
-                    validator: (_) =>
-                        formPro.time == null ? 'Time is required' : null,
+                  child: CustomDynamicDropdown(
+                    categoryKey: 'ready_to_leave',
+                    selectedValue: formPro.time,
                     title: 'ready_to_leave'.tr(),
+                    onChanged: (String? value) {
+                      formPro.setTime(value);
+                    },
                   ),
                 ),
               ],
+            ),
+            CustomDynamicDropdown(
+              categoryKey: 'breed',
+              selectedValue: formPro.breed,
+              title: 'breed'.tr(),
+              onChanged: (String? value) {},
             ),
             LocationInputField(
               onLocationSelected: (LocationModel location) {
@@ -65,15 +54,13 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
               },
               initialLocation: formPro.selectedmeetupLocation,
             ),
-            // CustomTextFormField(
-            //   controller: formPro.selectedBreed,
-            //   labelText: 'breed',
-            // ),
             CustomDropdown<bool>(
               selectedItem: formPro.vaccinationUpToDate,
-              items: const <DropdownMenuItem<bool>>[
-                DropdownMenuItem<bool>(value: true, child: Text('Yes')),
-                DropdownMenuItem<bool>(value: false, child: Text('No')),
+              items: <DropdownMenuItem<bool>>[
+                DropdownMenuItem<bool>(
+                    value: true, child: Text('Yes', style: textStyle)),
+                DropdownMenuItem<bool>(
+                    value: false, child: Text('No', style: textStyle)),
               ],
               onChanged: formPro.setVaccinationUpToDate,
               validator: (_) =>
@@ -82,9 +69,11 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
             ),
             CustomDropdown<bool>(
               selectedItem: formPro.wormAndFleaTreated,
-              items: const <DropdownMenuItem<bool>>[
-                DropdownMenuItem<bool>(value: true, child: Text('Yes')),
-                DropdownMenuItem<bool>(value: false, child: Text('No')),
+              items: <DropdownMenuItem<bool>>[
+                DropdownMenuItem<bool>(
+                    value: true, child: Text('Yes', style: textStyle)),
+                DropdownMenuItem<bool>(
+                    value: false, child: Text('No', style: textStyle)),
               ],
               onChanged: formPro.setWormFleeTreated,
               validator: (_) =>
@@ -93,9 +82,11 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
             ),
             CustomDropdown<bool>(
               selectedItem: formPro.healthChecked,
-              items: const <DropdownMenuItem<bool>>[
-                DropdownMenuItem<bool>(value: true, child: Text('Yes')),
-                DropdownMenuItem<bool>(value: false, child: Text('No')),
+              items: <DropdownMenuItem<bool>>[
+                DropdownMenuItem<bool>(
+                    value: true, child: Text('Yes', style: textStyle)),
+                DropdownMenuItem<bool>(
+                    value: false, child: Text('No', style: textStyle)),
               ],
               onChanged: formPro.setHealthChecked,
               validator: (_) =>

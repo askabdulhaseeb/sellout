@@ -34,8 +34,9 @@ class AddListingPostButtonWidget extends StatelessWidget {
               isLoading: false,
               onTap: () async {
                 if (formPro.attachments.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('please_add_at_least_one_photo_or_video'),
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content:
+                        Text('please_add_at_least_one_photo_or_video'.tr()),
                   ));
                   return;
                 }
