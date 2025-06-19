@@ -4,9 +4,8 @@ import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../location/data/models/location_model.dart';
 import '../../providers/add_listing_form_provider.dart';
+import '../custom_listing_dropdown.dart';
 import '../location_by_name_field.dart';
-import 'energyrating_dropdown.dart';
-import 'property_type_dropdown.dart';
 
 class AddListingPropertyBedBathWidget extends StatelessWidget {
   const AddListingPropertyBedBathWidget({super.key});
@@ -44,8 +43,23 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
               hint: 'Ex. 350',
               keyboardType: TextInputType.number,
             ),
-            const EnergyRatingDropdown(),
-            const PropertyTypeDropdown(),
+            CustomDynamicDropdown(
+              categoryKey: 'property_type',
+              selectedValue: formPro.selectedPropertyType,
+              onChanged: (String? p0) => formPro.setPropertyType(p0),
+              title: 'property_type'.tr(),
+            ),
+            CustomDynamicDropdown(
+                categoryKey: 'energy_rating',
+                onChanged: (String? p0) => formPro.setEnergyRating(p0),
+                selectedValue: formPro.selectedEnergyRating,
+                title: 'energy_rating'.tr()),
+            CustomDynamicDropdown(
+              categoryKey: 'property_type',
+              selectedValue: formPro.selectedPropertyType,
+              onChanged: (String? p0) => formPro.setPropertyType(p0),
+              title: 'property_type'.tr(),
+            ),
             LocationInputField(
               onLocationSelected: (LocationModel location) {
                 formPro.setMeetupLocation(location);

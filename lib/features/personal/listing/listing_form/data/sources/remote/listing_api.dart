@@ -1,11 +1,12 @@
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/api_call.dart';
 import '../../../../../../../core/sources/local/local_request_history.dart';
+import '../../../views/params/get_categories_params.dart';
 import '../../models/listing_model.dart';
 import '../local/local_listing.dart';
 
 class ListingAPI {
-  Future<List<ListingEntity>> listing() async {
+  Future<List<ListingEntity>> listing(GetCategoriesParams params) async {
     try {
       ApiRequestEntity? request = await LocalRequestHistory()
           .request(endpoint: '/category', duration: const Duration(days: 1));
@@ -15,14 +16,12 @@ class ListingAPI {
           return local;
         }
       }
-
       final DataState<bool> req = await ApiCall<bool>().call(
         endpoint: '/category',
         requestType: ApiRequestType.get,
         isAuth: false,
         isConnectType: false,
       );
-
       if (req is DataSuccess) {
         final List<dynamic> data = json.decode(req.data ?? '');
         return await _decodeData(data);

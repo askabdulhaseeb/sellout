@@ -10,33 +10,61 @@ import '../../widgets/core/add_listing_update_button_widget.dart';
 import '../../widgets/vehicle/add_listing_vehicle_basic_info_section.dart';
 import '../../widgets/vehicle/add_listing_vehicle_ternsmission_engine_mileage_section.dart';
 
-class AddVehicleForm extends StatelessWidget {
+class AddVehicleForm extends StatefulWidget {
   const AddVehicleForm({super.key});
 
   @override
+  State<AddVehicleForm> createState() => _AddVehicleFormState();
+}
+
+class _AddVehicleFormState extends State<AddVehicleForm> {
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => _loadDropdowns());
+  }
+
+  Future<void> _loadDropdowns() async {
+    final AddListingFormProvider formPro =
+        Provider.of<AddListingFormProvider>(context, listen: false);
+    await formPro.fetchDropdownListings('/category/vehicles?list-id=');
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Consumer<AddListingFormProvider>(
-        builder: (BuildContext context, AddListingFormProvider formPro, _) {
-      return Form(
-        key: formPro.vehicleKey,
-        child: ListView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          children: <Widget>[
-            const AddListingBasicInfoSection(),
-            SubCategorySelectableWidget(
-              listType: formPro.listingType,
-              subCategory: formPro.selectedCategory,
-              onSelected: formPro.setSelectedCategory,
-            ),
-            const AddListingVehicleBasicInfoSection(),
-            const AddListingVehicleTernsmissionEngineMileageSection(),
-            const AddListingConditionOfferSection(),
-            const EditableAvailabilityWidget(),
-       if (formPro.post == null) const AddListingPostButtonWidget(),
-              if (formPro.post != null) const AddListingUpdateButtons()
-          ],
-        ),
+    final AddListingFormProvider formPro =
+        Provider.of<AddListingFormProvider>(context, listen: false);
+    if (formPro.isDropdownLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
       );
-    });
+    }
+
+    return Consumer<AddListingFormProvider>(
+      builder: (BuildContext context, AddListingFormProvider formPro, _) {
+        return Form(
+          key: formPro.vehicleKey,
+          child: ListView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            children: <Widget>[
+              const AddListingBasicInfoSection(),
+              SubCategorySelectableWidget(
+                listType: formPro.listingType,
+                subCategory: formPro.selectedCategory,
+                onSelected: formPro.setSelectedCategory,
+              ),
+              const AddListingVehicleBasicInfoSection(),
+              const AddListingVehicleTernsmissionEngineMileageSection(),
+              const AddListingConditionOfferSection(),
+              const EditableAvailabilityWidget(),
+              if (formPro.post == null) const AddListingPostButtonWidget(),
+              if (formPro.post != null) const AddListingUpdateButtons(),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

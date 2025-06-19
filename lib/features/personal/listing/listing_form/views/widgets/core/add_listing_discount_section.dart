@@ -5,19 +5,43 @@ import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../post/domain/entities/discount_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
 
-class AddListingDiscountSection extends StatelessWidget {
+class AddListingDiscountSection extends StatefulWidget {
   const AddListingDiscountSection({super.key});
 
-  // Helper method to build the Discount TextFormField
-  Widget buildDiscountField(
-      {required double width,
-      required DiscountEntity discount,
-      required AddListingFormProvider addPro}) {
+  @override
+  State<AddListingDiscountSection> createState() =>
+      _AddListingDiscountSectionState();
+}
+
+class _AddListingDiscountSectionState extends State<AddListingDiscountSection> {
+  final Map<int, TextEditingController> _controllers =
+      <int, TextEditingController>{};
+
+  @override
+  void dispose() {
+    for (final TextEditingController controller in _controllers.values) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  Widget buildDiscountField({
+    required double width,
+    required int index,
+    required DiscountEntity discount,
+    required AddListingFormProvider addPro,
+  }) {
+    // Initialize controller if not exists
+    _controllers.putIfAbsent(
+      index,
+      () => TextEditingController(text: discount.discount.toString()),
+    );
+
     return SizedBox(
       width: width / 3,
       child: CustomTextFormField(
         labelText: ' ${discount.quantity} ${'items'.tr()}',
-        controller: TextEditingController(text: discount.discount.toString()),
+        controller: _controllers[index],
         onChanged: (String value) {
           addPro.setDiscounts(
             discount.copyWith(discount: double.tryParse(value) ?? 0.0),
@@ -40,11 +64,10 @@ class AddListingDiscountSection extends StatelessWidget {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider addPro, _) {
         return Column(
-          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             SwitchListTile.adaptive(
-              contentPadding: const EdgeInsets.all(0),
+              contentPadding: EdgeInsets.zero,
               title: const Text(
                 'select_discount',
                 style: TextStyle(fontWeight: FontWeight.w500),
@@ -55,10 +78,15 @@ class AddListingDiscountSection extends StatelessWidget {
             if (addPro.isDiscounted)
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: addPro.discounts
-                    .map((DiscountEntity e) => buildDiscountField(
-                        width: width, discount: e, addPro: addPro))
-                    .toList(),
+                children: List.generate(
+                  addPro.discounts.length,
+                  (int index) => buildDiscountField(
+                    width: width,
+                    index: index,
+                    discount: addPro.discounts[index],
+                    addPro: addPro,
+                  ),
+                ),
               ),
           ],
         );

@@ -27,8 +27,11 @@ import '../../../features/personal/chats/chat_dashboard/domain/entities/chat/par
 import '../../../features/personal/chats/chat_dashboard/domain/entities/chat/participant/invitation_entity.dart';
 import '../../../features/personal/chats/chat_dashboard/domain/entities/chat/unread_message_entity.dart';
 import '../../../features/personal/chats/chat_dashboard/domain/entities/messages/message_entity.dart';
+import '../../../features/personal/listing/listing_form/data/sources/local/local_colors.dart';
+import '../../../features/personal/listing/listing_form/data/sources/local/local_dropdown_listings.dart';
 import '../../../features/personal/listing/listing_form/data/sources/local/local_listing.dart';
 import '../../../features/personal/listing/listing_form/domain/entities/color_options_entity.dart';
+import '../../../features/personal/listing/listing_form/domain/entities/dropdown_listings_entity.dart';
 import '../../../features/personal/listing/listing_form/domain/entities/listing_entity.dart';
 import '../../../features/personal/listing/listing_form/domain/entities/sub_category_entity.dart';
 import '../../../features/personal/auth/signin/data/models/address_model.dart';
@@ -133,6 +136,8 @@ class HiveDB {
     Hive.registerAdapter(UnreadMessageEntityAdapter()); // 55
     Hive.registerAdapter(PromoEntityAdapter()); // 56
     Hive.registerAdapter(NotificationSettingsEntityAdapter()); // 57
+    Hive.registerAdapter(DropdownCategoryEntityAdapter()); //58
+    Hive.registerAdapter(DropdownOptionEntityAdapter()); //59
 
     // Hive box Open
     await refresh();
@@ -155,14 +160,16 @@ class HiveDB {
     await LocalCountry().refresh();
     await LocalUnreadMessagesService().refresh();
     await LocalPromo().refresh();
+    await LocalDropDownListings().refresh();
+    await LocalColors().refresh();
   }
 
   static Future<void> signout() async {
     await LocalPost().clear();
     await LocalAuth().signout();
     await LocalUser().clear();
-    // await LocalRequestHistory().clear();
-    // await LocalListing().clear();
+    await LocalRequestHistory().clear();
+    await LocalListing().clear();
     await LocalChat().clear();
     await LocalChatMessage().clear();
     await LocalVisit().clear();
@@ -173,7 +180,8 @@ class HiveDB {
     await LocalBooking().clear();
     await LocalUnreadMessagesService().clear();
     await LocalPromo().clear();
-
+    await LocalDropDownListings().clear();
+    await LocalColors().clear();
     // await LocalCountry().clear();
   }
 }

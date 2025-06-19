@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../providers/add_listing_form_provider.dart';
 import '../../widgets/category/subcateogry_selectable_widget.dart';
 import '../../widgets/core/add_listing_basic_info_section.dart';
@@ -11,11 +10,39 @@ import '../../widgets/core/add_listing_post_button_widget.dart';
 import '../../widgets/add_listing_price_and_quantity_widget.dart';
 import '../../widgets/core/add_listing_update_button_widget.dart';
 
-class AddItemForm extends StatelessWidget {
+class AddItemForm extends StatefulWidget {
   const AddItemForm({super.key});
 
   @override
+  State<AddItemForm> createState() => _AddItemFormState();
+}
+
+class _AddItemFormState extends State<AddItemForm> {
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => _loadDropdowns());
+  }
+
+  Future<void> _loadDropdowns() async {
+    final AddListingFormProvider formPro =
+        Provider.of<AddListingFormProvider>(context, listen: false);
+
+    await formPro.fetchDropdownListings('/category/items?list-id=');
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final AddListingFormProvider formPro =
+        Provider.of<AddListingFormProvider>(context, listen: false);
+    if (formPro.isDropdownLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         return Form(
@@ -34,7 +61,7 @@ class AddItemForm extends StatelessWidget {
               const AddListingConditionOfferSection(),
               const AddListingDeliverySelectionWidget(),
               if (formPro.post == null) const AddListingPostButtonWidget(),
-              if (formPro.post != null) const AddListingUpdateButtons()
+              if (formPro.post != null) const AddListingUpdateButtons(),
             ],
           ),
         );

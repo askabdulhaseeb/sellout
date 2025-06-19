@@ -1,4 +1,3 @@
-// location_input_field.dart
 import 'dart:async';
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
@@ -160,6 +159,34 @@ class _LocationSearchFieldState extends State<LocationSearchField> {
   final LayerLink _layerLink = LayerLink();
   final FocusNode _focusNode = FocusNode();
   OverlayEntry? _overlayEntry;
+  final GlobalKey _containerKey = GlobalKey();
+
+  void _showOverlay() {
+    _overlayEntry?.remove();
+    // Calculate height dynamically
+    final RenderBox? renderBox =
+        _containerKey.currentContext?.findRenderObject() as RenderBox?;
+    final double offsetY = renderBox?.size.height ?? 48.0;
+
+    _overlayEntry = _createOverlayEntry(offsetY: offsetY);
+    Overlay.of(context).insert(_overlayEntry!);
+  }
+
+  OverlayEntry _createOverlayEntry({required double offsetY}) {
+    return OverlayEntry(
+      builder: (BuildContext context) => SuggestionsOverlay(
+        layerLink: _layerLink,
+        suggestions: _suggestions,
+        isLoading: _isLoading,
+        offsetY: offsetY, // Pass dynamic height
+        onSuggestionSelected: (LocationNameEntity suggestion) {
+          widget.onLocationSelected(suggestion);
+          _focusNode.unfocus();
+          _removeOverlay();
+        },
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -176,29 +203,6 @@ class _LocationSearchFieldState extends State<LocationSearchField> {
     } else {
       _removeOverlay();
     }
-  }
-
-  void _showOverlay() {
-    _overlayEntry?.remove();
-    _overlayEntry = _createOverlayEntry();
-    if (_overlayEntry != null) {
-      Overlay.of(context).insert(_overlayEntry!);
-    }
-  }
-
-  OverlayEntry _createOverlayEntry() {
-    return OverlayEntry(
-      builder: (BuildContext context) => SuggestionsOverlay(
-        layerLink: _layerLink,
-        suggestions: _suggestions,
-        isLoading: _isLoading,
-        onSuggestionSelected: (LocationNameEntity suggestion) {
-          widget.onLocationSelected(suggestion);
-          _focusNode.unfocus();
-          _removeOverlay();
-        },
-      ),
-    );
   }
 
   void _removeOverlay() {
@@ -238,6 +242,7 @@ class _LocationSearchFieldState extends State<LocationSearchField> {
     return CompositedTransformTarget(
       link: _layerLink,
       child: Column(
+        key: _containerKey,
         spacing: 4,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -290,6 +295,7 @@ class SuggestionsOverlay extends StatelessWidget {
     required this.suggestions,
     required this.isLoading,
     required this.onSuggestionSelected,
+    required this.offsetY,
     super.key,
   });
 
@@ -297,6 +303,7 @@ class SuggestionsOverlay extends StatelessWidget {
   final List<LocationNameEntity> suggestions;
   final bool isLoading;
   final ValueChanged<LocationNameEntity> onSuggestionSelected;
+  final double offsetY; // New parameter
 
   @override
   Widget build(BuildContext context) {
@@ -305,7 +312,7 @@ class SuggestionsOverlay extends StatelessWidget {
       child: CompositedTransformFollower(
         link: layerLink,
         showWhenUnlinked: false,
-        offset: const Offset(0, 48),
+        offset: Offset(0, offsetY),
         child: Material(
           elevation: 4,
           child: Container(
@@ -398,7 +405,7 @@ class LocationMapPreview extends StatelessWidget {
           ),
           markers: <Marker>{
             Marker(
-              markerId: const MarkerId('selectedLocation'),
+              markerId: MarkerId('selected_location'.tr()),
               position: latLng,
               infoWindow: InfoWindow(title: locationName),
             ),

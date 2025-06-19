@@ -11,16 +11,39 @@ import '../../widgets/property/add_listing_property_bed_bath_widget.dart';
 import '../../widgets/property/add_listing_property_subcat_selection_section.dart';
 import '../../widgets/property/add_property_gpa_widget.dart';
 
-class AddPropertyForm extends StatelessWidget {
+class AddPropertyForm extends StatefulWidget {
   const AddPropertyForm({super.key});
+
+  @override
+  State<AddPropertyForm> createState() => _AddPropertyFormState();
+}
+
+class _AddPropertyFormState extends State<AddPropertyForm> {
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() => _loadDropdowns());
+  }
+
+  Future<void> _loadDropdowns() async {
+    final AddListingFormProvider formPro =
+        Provider.of<AddListingFormProvider>(context, listen: false);
+    await formPro.fetchDropdownListings('/category/property?list-id=');
+  }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<AddListingFormProvider>(
-      builder: (BuildContext context, AddListingFormProvider formPro,
-          Widget? child) {
+      builder: (BuildContext context, AddListingFormProvider formPro, _) {
+        if (formPro.isDropdownLoading) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
         return Form(
-          key: Provider.of<AddListingFormProvider>(context).propertyKey,
+          key: formPro.propertyKey,
           child: ListView(
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: <Widget>[
@@ -36,7 +59,7 @@ class AddPropertyForm extends StatelessWidget {
               const AddListingConditionOfferSection(),
               const EditableAvailabilityWidget(),
               if (formPro.post == null) const AddListingPostButtonWidget(),
-              if (formPro.post != null) const AddListingUpdateButtons()
+              if (formPro.post != null) const AddListingUpdateButtons(),
             ],
           ),
         );

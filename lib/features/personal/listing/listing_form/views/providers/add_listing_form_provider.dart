@@ -2,15 +2,10 @@ import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
-import '../../../../../../core/enums/listing/pet/age_time_type.dart';
-import '../../../../../../core/enums/listing/vehicle/transmission_type.dart';
-import '../../../../../../core/enums/listing/vehicles/vehicle_body_type.dart';
-import '../../../../../../core/enums/listing/vehicles/vehicle_category_type.dart';
 import '../../../../../../core/enums/routine/day_type.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
@@ -29,15 +24,16 @@ import '../../../../post/domain/entities/discount_entity.dart';
 import '../../../../post/domain/entities/meetup/availability_entity.dart';
 import '../../../../post/domain/entities/post_entity.dart';
 import '../../../../post/domain/entities/size_color/color_entity.dart';
-import '../../data/models/color_option_model.dart';
 import '../../data/models/listing_model.dart';
 import '../../data/models/sub_category_model.dart';
+import '../../data/sources/remote/dropdown_listing_api.dart';
 import '../../data/sources/remote/listing_api.dart';
 import '../../domain/entities/color_options_entity.dart';
 import '../../domain/entities/sub_category_entity.dart';
 import '../../domain/usecase/add_listing_usecase.dart';
 import '../../domain/usecase/edit_listing_usecase.dart';
 import '../params/add_listing_param.dart';
+import '../params/get_categories_params.dart';
 
 class AddListingFormProvider extends ChangeNotifier {
   AddListingFormProvider(
@@ -46,7 +42,7 @@ class AddListingFormProvider extends ChangeNotifier {
   );
   final AddListingUsecase _addlistingUSecase;
   final EditListingUsecase _editListingUsecase;
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   List<AvailabilityEntity> _availability = DayType.values.map((DayType day) {
     return AvailabilityModel(
@@ -161,7 +157,7 @@ class AddListingFormProvider extends ChangeNotifier {
         .toList();
   }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   PostEntity? createPostFromFormData() {
     debugPrint('listing variables preview');
@@ -205,15 +201,15 @@ class AddListingFormProvider extends ChangeNotifier {
       address: _location.text,
       categoryType: _selectedClothSubCategory,
       brand: _brand.text,
-      make: _make.text,
+      make: _make,
       model: _model.text,
       year: int.tryParse(_year.text) ?? 0,
       mileage: int.tryParse(_mileage.text) ?? 0,
-      emission: _emission.text,
+      emission: _emission,
       doors: int.tryParse(_doors.text) ?? 0,
       seats: int.tryParse(_seats.text) ?? 0,
-      vehiclesCategory: _selectedVehicleCategory?.json,
-      bodyType: _selectedBodyType?.json,
+      vehiclesCategory: _selectedVehicleCategory,
+      bodyType: _selectedBodyType,
       fuelType: _selectedEnergyRating,
       interiorColor: _selectedVehicleColor,
       exteriorColor: _selectedVehicleColor,
@@ -224,8 +220,8 @@ class AddListingFormProvider extends ChangeNotifier {
       healthChecked: _healthChecked,
       wormAndFleaTreated: _wormAndFleaTreated,
       vaccinationUpToDate: _vaccinationUpToDate,
-      readyToLeave: _time?.json,
-      age: _age?.json,
+      readyToLeave: _time,
+      age: _age,
       breed: _selectedBreed?.title,
       petsCategory: _selectedCategory?.title.toLowerCase(),
       propertyCategory: _selectedPropertySubCategory,
@@ -250,12 +246,11 @@ class AddListingFormProvider extends ChangeNotifier {
     _mileage.clear();
     _bedroom.clear();
     _bathroom.clear();
-    _make.clear();
     _model.clear();
     _brand.clear();
     _seats.clear();
     _doors.clear();
-    _emission.clear();
+    _emission = null;
     _location.clear();
     // File attachments
     _attachments = <PickedAttachment>[];
@@ -277,7 +272,8 @@ class AddListingFormProvider extends ChangeNotifier {
     _privacy = PrivacyType.public;
     _deliveryType = DeliveryType.paid;
     _listingType = null;
-    _transmissionType = TransmissionType.auto;
+    _transmissionType = null;
+    _make = null;
 
     // Nullable booleans
     _vaccinationUpToDate = null;
@@ -299,7 +295,7 @@ class AddListingFormProvider extends ChangeNotifier {
     _sizeColorEntities = <SizeColorModel>[];
 
     // Strings
-    _tenureType = '';
+    _tenureType = null;
     _selectedPropertySubCategory = ListingType.property.cids.first;
     _selectedClothSubCategory = ListingType.clothAndFoot.cids.first;
 
@@ -324,12 +320,12 @@ class AddListingFormProvider extends ChangeNotifier {
     _selectedCategory = findCategoryByAddress(_listings, post?.address ?? '');
     _accessCode = post?.accessCode ?? '';
     // Age and pet-related
-    _age = AgeTimeType.fromJson(post?.age);
+    _age = post?.age;
     _animalFriendly = _animalFriendly;
     _vaccinationUpToDate = post?.vaccinationUpToDate;
     _wormAndFleaTreated = post?.wormAndFleaTreated;
     _healthChecked = post?.healthChecked;
-    _time = AgeTimeType.fromJson(post?.readyToLeave);
+    _time = post?.readyToLeave;
     _selectedBreed = findCategoryByAddress(listings, post?.address ?? '');
     // Availability
     _availability = post?.availability ?? <AvailabilityEntity>[];
@@ -358,7 +354,7 @@ class AddListingFormProvider extends ChangeNotifier {
 
     // Brand/Model/Make
     _brand.text = post?.brand ?? '';
-    _make.text = post?.make.toString() ?? '';
+    _make = post?.make.toString() ?? '';
     _model.text = post?.model.toString() ?? '';
     _selectedBreed = findCategoryByAddress(_listings, post?.breed ?? '');
 
@@ -366,16 +362,14 @@ class AddListingFormProvider extends ChangeNotifier {
     _engineSize.text = post?.engineSize.toString() ?? '';
     _mileage.text = post?.mileage.toString() ?? '';
     _selectedMileageUnit = post?.mileageUnit;
-    _emission.text = post?.emission ?? '';
+    _emission = post?.emission ?? '';
     _seats.text = post?.seats.toString() ?? '';
     _doors.text = post?.doors.toString() ?? '';
     _year.text = post?.year.toString() ?? '';
-    _transmissionType =
-        TransmissionType.fromJson(post?.transmission) ?? TransmissionType.auto;
-    _selectedVehicleCategory =
-        VehicleCategoryType.fromJson(post?.vehiclesCategory);
+    _transmissionType = post?.transmission ?? '';
+    _selectedVehicleCategory = post?.vehiclesCategory;
     _selectedVehicleColor = post?.vehiclesCategory;
-    _selectedBodyType = VehicleBodyType.fromJson(post?.bodyType ?? '');
+    _selectedBodyType = post?.bodyType ?? '';
 
     // Delivery & fees
     _deliveryType = post?.deliveryType ?? DeliveryType.paid;
@@ -467,7 +461,7 @@ class AddListingFormProvider extends ChangeNotifier {
         category: _selectedCategory,
         currentLatitude: 12234,
         currentLongitude: 123456,
-        collectionLocation: selectedmeetupLocation,
+        collectionLocation: selectedCollectionLocation,
       );
       debugPrint(param.toMap().toString());
       debugPrint(sizeColorEntities.toString());
@@ -569,11 +563,11 @@ class AddListingFormProvider extends ChangeNotifier {
           listingType: listingType ?? ListingType.vehicle,
           category: _selectedCategory,
           type: selectedClothSubCategory,
-          bodyType: _selectedBodyType?.json,
+          bodyType: _selectedBodyType,
           color: _selectedVehicleColor,
           doors: doors.text,
-          emission: emission.text,
-          make: make.text,
+          emission: _emission,
+          make: _make,
           model: model.text,
           seats: seats.text,
           year: year.text,
@@ -581,7 +575,7 @@ class AddListingFormProvider extends ChangeNotifier {
           currentLatitude: 1234,
           currentLongitude: 1234,
           milageUnit: _selectedMileageUnit,
-          transmission: transmissionType.json);
+          transmission: transmissionType);
       debugPrint(param.toMap().toString());
       debugPrint(sizeColorEntities.toString());
       final DataState<String> result = _post == null
@@ -715,13 +709,13 @@ class AddListingFormProvider extends ChangeNotifier {
         postID: post?.postID ?? '',
         oldAttachments: post?.fileUrls,
         accessCode: _accessCode,
-        age: age,
+        age: age ?? '',
         breed: selectedCategory?.title ?? '',
         healthChecked: _healthChecked,
         petsCategory: _petCategory,
         wormAndFleaTreated: _wormAndFleaTreated,
         vaccinationUpToDate: _vaccinationUpToDate,
-        readyToLeave: _time?.json,
+        readyToLeave: _time,
         quantity: _quantity.text,
         currency: _post == null ? LocalAuth.currentUser?.currency : null,
         animalFriendly: animalFriendly.toString(),
@@ -762,6 +756,22 @@ class AddListingFormProvider extends ChangeNotifier {
       AppLog.error('$e');
     } finally {
       setLoading(false);
+    }
+  }
+
+  Future<void> fetchDropdownListings(String endpoint) async {
+    _isDropdownLoading = true;
+    notifyListeners();
+    try {
+      await DropDownListingAPI()
+          .fetchAndStore(endpoint)
+          .timeout(const Duration(seconds: 10));
+    } catch (e) {
+      debugPrint('Error fetching dropdown listings: $e');
+      // Optionally handle error
+    } finally {
+      _isDropdownLoading = false;
+      notifyListeners();
     }
   }
 
@@ -892,8 +902,10 @@ class AddListingFormProvider extends ChangeNotifier {
     _selectedMeetupLocation = value;
   }
 
-  Future<void> fetchCategories() async {
-    _listings = await ListingAPI().listing();
+  Future<void> fetchCategories(String listID, String listIdType) async {
+    final GetCategoriesParams params =
+        GetCategoriesParams(listId: listID, listIdType: listIdType);
+    _listings = await ListingAPI().listing(params);
   }
 
   // Cloth and Foot
@@ -909,9 +921,13 @@ class AddListingFormProvider extends ChangeNotifier {
   }
 
   // Vehicle
-  void setTransmissionType(TransmissionType? value) {
-    if (value == null) return;
+  void setTransmissionType(String? value) {
     _transmissionType = value;
+    notifyListeners();
+  }
+
+  void setFuelType(String? value) {
+    _fuelType = value;
     notifyListeners();
   }
 
@@ -924,12 +940,12 @@ class AddListingFormProvider extends ChangeNotifier {
     _selectedVehicleColor = value;
   }
 
-  void setBodyType(VehicleBodyType? type) {
+  void setBodyType(String? type) {
     _selectedBodyType = type;
     notifyListeners();
   }
 
-  void setVehicleCategory(VehicleCategoryType? type) {
+  void setVehicleCategory(String? type) {
     _selectedVehicleCategory = type;
     notifyListeners();
   }
@@ -968,7 +984,7 @@ class AddListingFormProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setTime(AgeTimeType? value) {
+  void setTime(String? value) {
     if (value == null) return;
     _time = value;
     notifyListeners();
@@ -990,7 +1006,7 @@ class AddListingFormProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setPetBreeds(SubCategoryEntity category) {
+  void setPetBreeds(String category) {
     _breed = category;
     notifyListeners();
   }
@@ -1010,13 +1026,20 @@ class AddListingFormProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setAge(AgeTimeType? value) {
+  void setAge(String? value) {
     if (value == null) return;
     _age = value;
     notifyListeners();
   }
 
-//
+  void setemissionType(String? value) {
+    _emission = value;
+  }
+
+  void seteMake(String? value) {
+    _make = value;
+  }
+//?
 
   void setLoading(bool value) {
     _isLoading = value;
@@ -1091,26 +1114,27 @@ class AddListingFormProvider extends ChangeNotifier {
 
   /// Clears all size-color-quantity data.
 
-  Future<List<ColorOptionEntity>> colorOptions() async {
-    final String jsonString =
-        await rootBundle.loadString('assets/jsons/colors.json');
-    final Map<String, dynamic> colorsMap = jsonDecode(jsonString);
-    final Map<String, dynamic> colors = colorsMap['colors'];
-    return colors.entries.map((MapEntry<String, dynamic> entry) {
-      return ColorOptionModel.fromJson(entry.value);
-    }).toList();
-  }
+  // Future<List<ColorOptionEntity>> colorOptions() async {
+  //   final String jsonString =
+  //       await rootBundle.loadString('assets/jsons/colors.json');
+  //   final Map<String, dynamic> colorsMap = jsonDecode(jsonString);
+  //   final Map<String, dynamic> colors = colorsMap['colors'];
+  //   return colors.entries.map((MapEntry<String, dynamic> entry) {
+  //     return ColorOptionModel.fromJson(entry.value);
+  //   }).toList();
+  // }
 
-  // Load colors into the provider
-  Future<void> fetchColors() async {
-    _colors = await colorOptions();
-    notifyListeners();
-  }
+  // // Load colors into the provider
+  // Future<void> fetchColors() async {
+  //   _colors = await colorOptions();
+  //   notifyListeners();
+  // }
 
   /// Getter
   ListingType? get listingType => _listingType ?? ListingType.items;
+  bool get isDropdownLoading => _isDropdownLoading;
   SubCategoryEntity? get selectedCategory => _selectedCategory;
-  VehicleCategoryType? get selectedVehicleCategory => _selectedVehicleCategory;
+  String? get selectedVehicleCategory => _selectedVehicleCategory;
   PostEntity? get post => _post;
 
   bool get isDiscounted => _isDiscounted;
@@ -1130,15 +1154,16 @@ class AddListingFormProvider extends ChangeNotifier {
   List<ColorOptionEntity> get colors => _colors;
   String? get selectedVehicleColor => _selectedVehicleColor;
   // Vehicle
-  TransmissionType get transmissionType => _transmissionType;
+  String? get transmissionType => _transmissionType;
+  String? get fuelTYpe => _fuelType;
   String? get selectedMileageUnit => _selectedMileageUnit;
   TextEditingController get engineSize => _engineSize;
   TextEditingController get mileage => _mileage;
-  VehicleBodyType? get selectedBodyType => _selectedBodyType;
-  TextEditingController get make => _make;
+  String? get selectedBodyType => _selectedBodyType;
+  String? get make => _make;
   TextEditingController get model => _model;
   TextEditingController get year => _year;
-  TextEditingController get emission => _emission;
+  String? get emission => _emission;
   TextEditingController get doors => _doors;
   TextEditingController get seats => _seats;
   TextEditingController get location => _location;
@@ -1154,14 +1179,14 @@ class AddListingFormProvider extends ChangeNotifier {
   String? get selectedEnergyRating => _selectedEnergyRating;
   // Pet
   SubCategoryEntity? get selectedBreed => _selectedBreed;
-  AgeTimeType? get age => _age;
+  String? get age => _age;
   String? get petCategory => _petCategory;
   bool? get healthChecked => _healthChecked;
-  SubCategoryEntity? get breed => _breed;
+  String? get breed => _breed;
   // bool? get petsCategory => _petsCategory;
   bool? get wormAndFleaTreated => _wormAndFleaTreated;
   bool? get vaccinationUpToDate => _vaccinationUpToDate;
-  AgeTimeType? get time => _time;
+  String? get time => _time;
   bool get isLoading => _isLoading;
   //
   TextEditingController get title => _title;
@@ -1187,11 +1212,11 @@ class AddListingFormProvider extends ChangeNotifier {
   //
   /// Controller
   List<ListingEntity> _listings = <ListingEntity>[];
-
+  bool _isDropdownLoading = false;
   PostEntity? _post;
   ListingType? _listingType;
   SubCategoryEntity? _selectedCategory;
-  VehicleCategoryType? _selectedVehicleCategory;
+  String? _selectedVehicleCategory;
   bool _isDiscounted = false;
   final List<DiscountEntity> _discounts = <DiscountEntity>[
     DiscountEntity(quantity: 2, discount: 0),
@@ -1238,7 +1263,6 @@ class AddListingFormProvider extends ChangeNotifier {
     return null;
   }
 
-  // Size and Color
   List<SizeColorModel> _sizeColorEntities = <SizeColorModel>[];
   //
   ConditionType _condition = ConditionType.newC;
@@ -1251,29 +1275,18 @@ class AddListingFormProvider extends ChangeNotifier {
   String _selectedClothSubCategory = ListingType.clothAndFoot.cids.first;
   List<ColorOptionEntity> _colors = <ColorOptionEntity>[];
   // Vehicle
-  TransmissionType _transmissionType = TransmissionType.auto;
+  String? _transmissionType;
+  String? _fuelType;
   final TextEditingController _engineSize = TextEditingController();
   final TextEditingController _mileage = TextEditingController();
-  final TextEditingController _make = TextEditingController(
-    text: kDebugMode ? 'WolksVegan' : '',
-  );
-  final TextEditingController _model = TextEditingController(
-    text: kDebugMode ? 'Gauche' : '',
-  );
-  final TextEditingController _year = TextEditingController(
-    text: kDebugMode ? '2005' : '',
-  );
-  final TextEditingController _emission = TextEditingController(
-    text: kDebugMode ? 'Toyota' : '',
-  );
-  final TextEditingController _doors = TextEditingController(
-    text: kDebugMode ? '5' : '',
-  );
-  final TextEditingController _seats = TextEditingController(
-    text: kDebugMode ? '4' : '',
-  );
+  String? _make;
+  final TextEditingController _model = TextEditingController();
+  final TextEditingController _year = TextEditingController();
+  String? _emission;
+  final TextEditingController _doors = TextEditingController();
+  final TextEditingController _seats = TextEditingController();
   final TextEditingController _location = TextEditingController();
-  VehicleBodyType? _selectedBodyType;
+  String? _selectedBodyType;
   String? _selectedVehicleColor;
   String? _selectedMileageUnit;
   // Property
@@ -1291,12 +1304,12 @@ class AddListingFormProvider extends ChangeNotifier {
   SubCategoryEntity? _selectedBreed;
   String? _petCategory;
   bool? _healthChecked;
-  SubCategoryEntity? _breed;
+  String? _breed;
   // bool _petsCategory;
   bool? _wormAndFleaTreated;
   bool? _vaccinationUpToDate;
-  AgeTimeType? _age;
-  AgeTimeType? _time;
+  String? _age;
+  String? _time;
   bool _isLoading = false;
   //
   List<PickedAttachment> _attachments = <PickedAttachment>[];
