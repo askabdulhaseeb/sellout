@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../listing/listing_form/views/providers/add_listing_form_provider.dart';
@@ -30,6 +31,7 @@ class PostDetailScreen extends StatelessWidget {
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final String postID = args['pid'] ?? '';
     final VisitingEntity? visit = args['visit'] as VisitingEntity?;
+
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 110,
@@ -77,6 +79,7 @@ class PostDetailSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AppLog.info('PostID: ${post.postID} ');
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SingleChildScrollView(

@@ -2,6 +2,8 @@ import '../../../../../core/sources/data_state.dart';
 import '../../domain/entities/post_entity.dart';
 import '../../domain/params/add_to_cart_param.dart';
 import '../../domain/params/create_offer_params.dart';
+import '../../domain/params/feed_response_params.dart';
+import '../../domain/params/get_feed_params.dart';
 import '../../domain/params/update_offer_params.dart';
 import '../../domain/repositories/post_repository.dart';
 import '../sources/remote/post_remote_api.dart';
@@ -11,8 +13,8 @@ class PostRepositoryImpl implements PostRepository {
   final PostRemoteApi remoteApi;
 
   @override
-  Future<DataState<List<PostEntity>>> getFeed() async {
-    return await remoteApi.getFeed();
+  Future<DataState<GetFeedResponse>> getFeed(GetFeedParams params) async {
+    return await remoteApi.getFeed(params);
   }
 
   @override

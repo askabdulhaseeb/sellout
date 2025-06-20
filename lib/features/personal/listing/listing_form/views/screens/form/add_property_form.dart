@@ -19,17 +19,19 @@ class AddPropertyForm extends StatefulWidget {
 }
 
 class _AddPropertyFormState extends State<AddPropertyForm> {
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
-
     Future.microtask(() => _loadDropdowns());
   }
 
   Future<void> _loadDropdowns() async {
     final AddListingFormProvider formPro =
         Provider.of<AddListingFormProvider>(context, listen: false);
-    await formPro.fetchDropdownListings('/category/property?list-id=');
+    await formPro.fetchDropdownListings(
+        '/category/${formPro.listingType?.json}?list-id=');
   }
 
   @override
@@ -41,7 +43,6 @@ class _AddPropertyFormState extends State<AddPropertyForm> {
             child: CircularProgressIndicator(),
           );
         }
-
         return Form(
           key: formPro.propertyKey,
           child: ListView(

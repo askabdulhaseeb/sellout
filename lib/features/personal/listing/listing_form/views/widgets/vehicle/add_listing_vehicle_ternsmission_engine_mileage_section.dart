@@ -39,7 +39,7 @@ class AddListingVehicleTernsmissionEngineMileageSection
                   child: CustomDynamicDropdown(
                     categoryKey: 'mileage_unit',
                     selectedValue: formPro.selectedMileageUnit,
-                    title: 'mileage_unit'.tr(),
+                    title: 'mileage_unit',
                     onChanged: formPro.setMileageUnit,
                   ),
                 ),
@@ -48,7 +48,7 @@ class AddListingVehicleTernsmissionEngineMileageSection
             CustomDynamicDropdown(
               categoryKey: 'vehicles',
               selectedValue: formPro.selectedVehicleCategory,
-              title: 'Vehicle Category',
+              title: 'vehicle_category',
               onChanged: (String? val) {
                 formPro.setVehicleCategory(val);
               },

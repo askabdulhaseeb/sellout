@@ -33,7 +33,8 @@ class _AddClothsAndFootwearFormState extends State<AddClothsAndFootwearForm> {
   Future<void> _loadDropdowns() async {
     final AddListingFormProvider formPro =
         Provider.of<AddListingFormProvider>(context, listen: false);
-    await formPro.fetchDropdownListings('/category/clothes-foot?list-id=');
+    await formPro.fetchDropdownListings(
+        '/category/${formPro.listingType?.json}?list-id=');
   }
 
   @override

@@ -23,6 +23,7 @@ class AppStrings {
   static String get localPromosBox => 'com.sellout.local-promo';
   static String get localColorBox => 'com.sellout.local-colors-box';
   static String get localDropDownListingBox => 'com.sellout.dropdown-listings';
+  static String get localPostListCache => 'com.sellout.local-post-list-cache';
   // [IMAGES]
   // Payment METHODS
   static String get amex => 'assets/images/payment_methods/amex.png';

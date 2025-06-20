@@ -22,7 +22,7 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
   int quantity = 1;
   @override
   Widget build(BuildContext context) {
-    final BorderRadius borderRadius = BorderRadius.circular(6);
+    final BorderRadius borderRadius = BorderRadius.circular(8);
     final BoxDecoration decoration = BoxDecoration(
       border: Border.all(color: Theme.of(context).primaryColor),
       borderRadius: borderRadius,
@@ -31,7 +31,8 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
       children: <Widget>[
         Expanded(
           child: Container(
-            padding: const EdgeInsets.all(6),
+            height: 50,
+            padding: const EdgeInsets.all(2),
             decoration: BoxDecoration(
               border: Border.all(
                 color: Theme.of(context).disabledColor,
@@ -51,7 +52,7 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
                   },
                   child: Container(
                     margin: const EdgeInsets.all(6),
-                    padding: const EdgeInsets.all(3),
+                    padding: const EdgeInsets.all(4),
                     decoration: decoration,
                     child: Icon(
                       Icons.remove,
@@ -62,13 +63,8 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Text(
-                    quantity.toString(),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  child: Text(quantity.toString(),
+                      style: TextTheme.of(context).titleMedium),
                 ),
                 InkWell(
                   borderRadius: borderRadius,
@@ -80,7 +76,7 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
                   },
                   child: Container(
                     margin: const EdgeInsets.all(6),
-                    padding: const EdgeInsets.all(3),
+                    padding: const EdgeInsets.all(4),
                     decoration: decoration,
                     child: Icon(
                       Icons.add,
@@ -95,60 +91,65 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: CustomElevatedButton(
-            onTap: () async {
-              try {
-                if (widget.post.sizeColors.isNotEmpty) {
-                  await showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AddToCartDialog(post: widget.post);
-                    },
-                  );
-                } else {
-                  final AddToCartUsecase usecase = AddToCartUsecase(locator());
-                  final DataState<bool> result = await usecase(
-                    AddToCartParam(post: widget.post, quantity: quantity),
-                  );
-                  if (result is DataSuccess) {
-                    AppSnackBar.showSnackBar(
-                      // ignore: use_build_context_synchronously
-                      context,
-                      'successfull_add_to_basket'.tr(),
-                      backgroundColor: Colors.green,
+          child: SizedBox(
+            height: 50,
+            child: CustomElevatedButton(
+              margin: const EdgeInsets.all(0),
+              onTap: () async {
+                try {
+                  if (widget.post.sizeColors.isNotEmpty) {
+                    await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AddToCartDialog(post: widget.post);
+                      },
                     );
                   } else {
-                    AppLog.error(
-                      result.exception?.message ?? 'AddToCartDialog',
-                      name: 'post_add_to_basket_button.dart',
-                      error: result.exception,
+                    final AddToCartUsecase usecase =
+                        AddToCartUsecase(locator());
+                    final DataState<bool> result = await usecase(
+                      AddToCartParam(post: widget.post, quantity: quantity),
                     );
-                    AppSnackBar.showSnackBar(
-                      // ignore: use_build_context_synchronously
-                      context,
-                      result.exception?.message ?? 'something_wrong'.tr(),
-                    );
+                    if (result is DataSuccess) {
+                      AppSnackBar.showSnackBar(
+                        // ignore: use_build_context_synchronously
+                        context,
+                        'successfull_add_to_basket'.tr(),
+                        backgroundColor: Colors.green,
+                      );
+                    } else {
+                      AppLog.error(
+                        result.exception?.message ?? 'AddToCartDialog',
+                        name: 'post_add_to_basket_button.dart',
+                        error: result.exception,
+                      );
+                      AppSnackBar.showSnackBar(
+                        // ignore: use_build_context_synchronously
+                        context,
+                        result.exception?.message ?? 'something_wrong'.tr(),
+                      );
+                    }
                   }
+                  //
+                } catch (e) {
+                  AppLog.error(
+                    e.toString(),
+                    name: 'PostAddToBasketButton.onTap - catch',
+                    error: e,
+                  );
                 }
-                //
-              } catch (e) {
-                AppLog.error(
-                  e.toString(),
-                  name: 'PostAddToBasketButton.onTap - catch',
-                  error: e,
-                );
-              }
-            },
-            title: 'add_to_basket'.tr(),
-            bgColor: Colors.transparent,
-            border: Border.all(color: Theme.of(context).primaryColor),
-            textColor: Theme.of(context).primaryColor,
-            textStyle: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).primaryColor,
+              },
+              title: 'add_to_basket'.tr(),
+              bgColor: Colors.transparent,
+              border: Border.all(color: Theme.of(context).primaryColor),
+              textColor: Theme.of(context).primaryColor,
+              textStyle: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).primaryColor,
+              ),
+              isLoading: false,
             ),
-            isLoading: false,
           ),
         ),
       ],

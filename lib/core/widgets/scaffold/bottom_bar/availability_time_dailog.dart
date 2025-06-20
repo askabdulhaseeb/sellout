@@ -16,110 +16,101 @@ class AvailabilityTimeDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AddListingFormProvider provider =
+    final provider =
         Provider.of<AddListingFormProvider>(context, listen: false);
-    final List<String> timeSlots = provider.generateTimeSlots();
+    final timeSlots = provider.generateTimeSlots();
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 0,
-      backgroundColor: Colors.transparent,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
+          color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
+          children: [
             Text(
               'set_time_range'.tr(),
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
             Row(
-              children: <Widget>[
+              children: [
                 Expanded(
-                  child: _TimeDropdown(
-                    value: entity.openingTime,
+                  child: CustomDropdown<String>(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    title: 'start_time'.tr(),
+                    selectedItem: entity.openingTime.isNotEmpty
+                        ? entity.openingTime
+                        : null,
                     hint: 'start_time'.tr(),
-                    items: timeSlots,
-                    onChanged: (String? newValue) {
+                    validator: (_) => null,
+                    onChanged: (newValue) {
                       if (newValue != null) {
                         provider.updateOpeningTime(entity.day, newValue);
                       }
                     },
+                    items: timeSlots.map((item) {
+                      return DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(
+                          item,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ),
-                const SizedBox(width: 2),
+                const SizedBox(width: 8),
                 Expanded(
-                  child: _TimeDropdown(
-                    value: entity.closingTime,
+                  child: CustomDropdown<String>(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    title: 'end_time'.tr(),
+                    selectedItem: entity.closingTime.isNotEmpty
+                        ? entity.closingTime
+                        : null,
                     hint: 'end_time'.tr(),
-                    items: timeSlots,
-                    enabledItems: (String item) {
-                      if (entity.openingTime.isEmpty) return false;
-                      return provider.isClosingTimeValid(
-                          entity.openingTime, item);
-                    },
-                    onChanged: (String? newValue) {
+                    validator: (_) => null,
+                    onChanged: (newValue) {
                       if (newValue != null) {
                         provider.setClosingTime(entity.day, newValue);
                       }
                     },
+                    items: timeSlots.map((item) {
+                      final isEnabled = entity.openingTime.isEmpty
+                          ? false
+                          : provider.isClosingTimeValid(
+                              entity.openingTime, item);
+                      return DropdownMenuItem<String>(
+                        value: item,
+                        enabled: isEnabled,
+                        child: Text(
+                          item,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 24),
-            CustomElevatedButton(
-              onTap: () => Navigator.pop(context),
-              isLoading: false,
-              title: 'done'.tr(),
+            SizedBox(
+              width: double.infinity,
+              child: CustomElevatedButton(
+                onTap: () => Navigator.pop(context),
+                isLoading: false,
+                title: 'done'.tr(),
+              ),
             ),
           ],
         ),
       ),
-    );
-  }
-}
-
-class _TimeDropdown extends StatelessWidget {
-  const _TimeDropdown({
-    required this.value,
-    required this.hint,
-    required this.items,
-    required this.onChanged,
-    this.enabledItems,
-  });
-
-  final String? value;
-  final String hint;
-  final List<String> items;
-  final bool Function(String)? enabledItems;
-  final ValueChanged<String?> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomDropdown<String>(
-      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 2),
-      title: hint,
-      validator: (bool? value) {
-        return null;
-      },
-      selectedItem: value ?? hint, // Default to hint if null
-      hint: hint,
-      items: items.map((String item) {
-        return DropdownMenuItem<String>(
-          value: item,
-          enabled: enabledItems == null ? true : enabledItems!(item),
-          child: Text(item),
-        );
-      }).toList(),
-      onChanged: onChanged,
     );
   }
 }

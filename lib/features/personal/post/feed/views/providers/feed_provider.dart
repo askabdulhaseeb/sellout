@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../core/extension/string_ext.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
@@ -8,8 +9,12 @@ import '../../../../chats/chat/views/providers/chat_provider.dart';
 import '../../../../chats/chat/views/screens/chat_screen.dart';
 import '../../../../chats/chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../../../chats/chat_dashboard/domain/usecase/get_my_chats_usecase.dart';
+import '../../../data/sources/local/local_feed.dart';
+import '../../../domain/entities/feed/feed_entity.dart';
 import '../../../domain/entities/post_entity.dart';
 import '../../../domain/params/create_offer_params.dart';
+import '../../../domain/params/feed_response_params.dart';
+import '../../../domain/params/get_feed_params.dart';
 import '../../../domain/params/update_offer_params.dart';
 import '../../../domain/usecase/create_offer_usecase.dart';
 import '../../../domain/usecase/get_feed_usecase.dart';
@@ -28,20 +33,17 @@ class FeedProvider extends ChangeNotifier {
   final GetMyChatsUsecase _getMyChatsUsecase;
   // final UpdateOfferStatusUsecase _updateOfferStatusUsecase;
 
-  final List<PostEntity> _posts = <PostEntity>[];
   bool _isLoading = false;
-  List<PostEntity> get feed => _posts;
   String _offerAmount = '';
   String get offerAmount => _offerAmount;
   bool get isLoading => _isLoading;
+  String? _nextPageToken;
+  final ScrollController scrollController = ScrollController();
+  List<PostEntity> get posts => _posts;
+  List<PostEntity> _posts = <PostEntity>[];
 
   void setIsLoading(bool value) {
     _isLoading = value;
-    notifyListeners();
-  }
-
-  void updateOfferAmount(String amount) {
-    _offerAmount = amount;
     notifyListeners();
   }
 
@@ -50,11 +52,89 @@ class FeedProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<DataState<List<PostEntity>>> getFeed() async {
-    final DataState<List<PostEntity>> result = await _getFeedUsecase(null);
-    _posts.addAll(result.entity ?? <PostEntity>[]);
-    notifyListeners();
-    return result;
+  Future<void> loadInitialFeed(String type) async {
+    _nextPageToken = null;
+    final String endpoint = 'feed?type=$type&key=';
+    final String endpointHash = endpoint.toSHA256();
+    final FeedEntity? cachedFeed = LocalFeed.get(endpointHash);
+    if (cachedFeed != null) {
+      _posts = cachedFeed.posts;
+      _nextPageToken = cachedFeed.nextPageToken;
+    }
+
+    await _fetchFeed(type, _nextPageToken, endpointHash);
+  }
+
+  Future<void> loadMoreFeed(String type) async {
+    if (_isLoading || _nextPageToken == null) return;
+    setIsLoading(true);
+    try {
+      // Use base endpointHash
+      // final String endpoint = 'feed?type=$type&key=$_nextPageToken';
+      final String baseEndpoint = 'feed?type=$type&key=';
+      final String endpointHash = baseEndpoint.toSHA256();
+
+      await _fetchFeed(type, _nextPageToken, endpointHash);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  Future<void> _fetchFeed(String type, String? key, String endpointHash) async {
+    AppLog.info('Fetching feed started', name: 'FeedProvider._fetchFeed');
+
+    final GetFeedParams params = GetFeedParams(type: type, key: key ?? '');
+    final DataState<GetFeedResponse> result = await _getFeedUsecase(params);
+
+    if (result is DataSuccess && result.entity != null) {
+      AppLog.info('Feed data success from API',
+          name: 'FeedProvider._fetchFeed');
+
+      final List<PostEntity> posts = result.entity!.posts;
+      _nextPageToken = result.entity!.nextPageToken;
+
+      AppLog.info('Fetched ${posts.length} posts from API',
+          name: 'FeedProvider._fetchFeed');
+
+      // Merge posts + dedupe
+      final Map<String, PostEntity> unique = <String, PostEntity>{
+        for (final PostEntity p in <PostEntity>[..._posts, ...posts])
+          p.postID: p
+      };
+      _posts = unique.values.toList();
+
+      AppLog.info('Total unique posts after merge: ${_posts.length}',
+          name: 'FeedProvider._fetchFeed');
+
+      // Save combined posts
+      try {
+        await LocalFeed.save(
+          FeedEntity(
+            endpointHash: endpointHash,
+            posts: _posts,
+            cachedAt: DateTime.now(),
+            nextPageToken: _nextPageToken,
+          ),
+        );
+        AppLog.info('Saved posts to LocalFeed ✅',
+            name: 'FeedProvider._fetchFeed');
+      } catch (e) {
+        AppLog.error('Failed to save to LocalFeed: $e',
+            name: 'FeedProvider._fetchFeed');
+      }
+
+      notifyListeners();
+      AppLog.info('Notified listeners of feed update',
+          name: 'FeedProvider._fetchFeed');
+    } else if (result is DataFailer) {
+      AppLog.error(
+        'Feed API failed: ${result.exception?.message ?? 'something_wrong'.tr()}',
+        name: 'FeedProvider._fetchFeed',
+      );
+    } else {
+      AppLog.error('Unknown failure in fetching feed',
+          name: 'FeedProvider._fetchFeed');
+    }
   }
 
   Future<DataState<bool>> createOffer({
