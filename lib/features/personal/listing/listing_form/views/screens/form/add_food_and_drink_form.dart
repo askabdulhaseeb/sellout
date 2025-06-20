@@ -29,21 +29,19 @@ class _AddFoodAndDrinkFormState extends State<AddFoodAndDrinkForm> {
   Future<void> _loadDropdowns() async {
     final AddListingFormProvider formPro =
         Provider.of<AddListingFormProvider>(context, listen: false);
-    await formPro.fetchDropdownListings('/category/food-drink?list-id=');
+    await formPro.fetchDropdownListings(
+        '/category/${formPro.listingType?.json}?list-id=');
   }
 
   @override
   Widget build(BuildContext context) {
-    final AddListingFormProvider formPro =
-        Provider.of<AddListingFormProvider>(context, listen: false);
-    if (formPro.isDropdownLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
-
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
+        if (formPro.isDropdownLoading) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
         return Form(
           key: formPro.foodAndDrinkKey,
           child: ListView(

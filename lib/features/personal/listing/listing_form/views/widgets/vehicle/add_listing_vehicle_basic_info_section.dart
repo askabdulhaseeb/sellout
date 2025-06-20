@@ -52,7 +52,7 @@ class _AddListingVehicleBasicInfoSectionState
             CustomDynamicDropdown(
               categoryKey: 'body_type',
               selectedValue: formPro.selectedBodyType,
-              title: 'body_type'.tr(),
+              title: 'body_type',
               onChanged: (String? value) => formPro.setBodyType(value ?? ''),
             ),
 
@@ -60,7 +60,7 @@ class _AddListingVehicleBasicInfoSectionState
             CustomDynamicDropdown(
               categoryKey: 'emission_standards',
               selectedValue: formPro.emission,
-              title: 'emission_standards'.tr(),
+              title: 'emission_standards',
               onChanged: (String? value) => formPro.setemissionType(value),
             ),
 
@@ -87,7 +87,7 @@ class _AddListingVehicleBasicInfoSectionState
             CustomDynamicDropdown(
               categoryKey: 'fuel_type',
               selectedValue: formPro.fuelTYpe,
-              title: 'fuel_type'.tr(),
+              title: 'fuel_type',
               onChanged: (String? value) => formPro.setFuelType(value),
             ),
 

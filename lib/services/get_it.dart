@@ -492,8 +492,9 @@ void _explore() {
       () => ExploreRepositoryImpl(locator()));
   locator.registerFactory<LocationByNameUsecase>(
       () => LocationByNameUsecase(locator()));
-  locator.registerFactory<MarketPlaceProvider>(
-      () => MarketPlaceProvider(locator()));
+  locator.registerFactory<MarketPlaceProvider>(() => MarketPlaceProvider(
+      // locator()
+      ));
 }
 
 void _bookvisit() {

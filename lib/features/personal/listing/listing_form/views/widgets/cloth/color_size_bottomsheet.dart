@@ -198,47 +198,38 @@ class SizeColorInputRow extends StatelessWidget {
     final AddListingFormProvider formPro =
         Provider.of<AddListingFormProvider>(context, listen: false);
 
-    return Column(
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        // First row: Size + Color
-        Row(
-          spacing: 4,
-          children: <Widget>[
-            Expanded(
-              child: SizeDropdown(
-                formPro: formPro,
-                selectedSize: selectedSize,
-                onSizeChanged: onSizeChanged,
-              ),
-            ),
-            Expanded(
-              child: CustomTextFormField(
-                controller: quantityController,
-                keyboardType: TextInputType.number,
-                hint: 'quantity'.tr(),
-              ),
-            ),
-          ],
+        Expanded(
+          flex: 2,
+          child: SizeDropdown(
+            formPro: formPro,
+            selectedSize: selectedSize,
+            onSizeChanged: onSizeChanged,
+          ),
         ),
-        const SizedBox(height: 8),
-
-        // Second row: Quantity + Add button
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: SizedBox(
-                width: 120,
-                child: ColorDropdown(
-                  formPro: formPro,
-                  selectedColor: selectedColor,
-                  onColorChanged: onColorChanged,
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            AddButton(onAdd: onAdd),
-          ],
+        const SizedBox(width: 8),
+        Expanded(
+          flex: 2,
+          child: ColorDropdown(
+            formPro: formPro,
+            selectedColor: selectedColor,
+            onColorChanged: onColorChanged,
+          ),
         ),
+        const SizedBox(width: 8),
+        Expanded(
+          flex: 1,
+          child: CustomTextFormField(
+            controller: quantityController,
+            keyboardType: TextInputType.number,
+            hint: 'quantity'.tr(),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        const SizedBox(width: 8),
+        AddButton(onAdd: onAdd),
       ],
     );
   }
@@ -267,7 +258,7 @@ class AddButton extends StatelessWidget {
   }
 }
 
-class ColorDropdown extends StatelessWidget {
+class ColorDropdown extends StatefulWidget {
   const ColorDropdown({
     required this.formPro,
     required this.selectedColor,
@@ -280,13 +271,29 @@ class ColorDropdown extends StatelessWidget {
   final ValueChanged<String?> onColorChanged;
 
   @override
+  State<ColorDropdown> createState() => _ColorDropdownState();
+}
+
+class _ColorDropdownState extends State<ColorDropdown> {
+  late Future<List<ColorOptionEntity>> _colorFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _colorFuture = ColorOptionsApi().getColors();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<ColorOptionEntity>>(
-      future: ColorOptionsApi().getColors(),
+      future: _colorFuture,
       builder: (BuildContext context,
           AsyncSnapshot<List<ColorOptionEntity>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const SizedBox(
+            height: 40,
+            child: Center(child: CircularProgressIndicator(strokeWidth: 1.5)),
+          );
         }
         if (snapshot.hasError) {
           return const Text('Error loading colors');
@@ -294,7 +301,7 @@ class ColorDropdown extends StatelessWidget {
 
         List<ColorOptionEntity> colors = snapshot.data ?? <ColorOptionEntity>[];
         colors = colors.where((ColorOptionEntity color) {
-          return color.tag.contains(formPro.selectedClothSubCategory);
+          return color.tag.contains(widget.formPro.selectedClothSubCategory);
         }).toList();
 
         if (colors.isEmpty) {
@@ -305,31 +312,34 @@ class ColorDropdown extends StatelessWidget {
           title: '',
           validator: (_) => null,
           hint: 'color'.tr(),
-          selectedItem: selectedColor,
+          selectedItem: widget.selectedColor,
+          padding: const EdgeInsets.symmetric(vertical: 4),
           items: colors.map((ColorOptionEntity color) {
             return DropdownMenuItem<String>(
               value: color.value,
               child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   CircleAvatar(
-                    radius: 8,
+                    radius: 6, // smaller circle
                     backgroundColor: Color(
                       int.parse('0xFF${color.value.replaceAll('#', '')}'),
                     ),
                   ),
                   const SizedBox(width: 4),
-                  Expanded(
+                  Flexible(
                     child: Text(
                       color.label,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 12), // smaller font
                     ),
                   ),
                 ],
               ),
             );
           }).toList(),
-          onChanged: onColorChanged,
+          onChanged: widget.onColorChanged,
         );
       },
     );
@@ -350,13 +360,16 @@ class SizeDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomDynamicDropdown(
-      hint: 'size'.tr(),
-      categoryKey: formPro.selectedClothSubCategory == 'clothes'
-          ? 'clothes_sizes'
-          : 'foot_sizes',
-      onChanged: onSizeChanged,
-      selectedValue: selectedSize,
+    return Padding(
+      padding: EdgeInsets.zero, // ensure no padding around
+      child: CustomDynamicDropdown(
+        hint: 'size'.tr(),
+        categoryKey: formPro.selectedClothSubCategory == 'clothes'
+            ? 'clothes_sizes'
+            : 'foot_sizes',
+        onChanged: onSizeChanged,
+        selectedValue: selectedSize,
+      ),
     );
   }
 }

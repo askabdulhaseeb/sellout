@@ -78,7 +78,10 @@ class _CustomDynamicDropdownState extends State<CustomDynamicDropdown> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           if (widget.title.isNotEmpty)
-            Text(widget.title.tr(), style: TextTheme.of(context).bodyLarge),
+            Text(
+              widget.title.tr(),
+              style: const TextStyle(fontWeight: FontWeight.w500),
+            ),
           if (widget.title.isNotEmpty) const SizedBox(height: 2),
           GestureDetector(
             onTap: _showPicker,
@@ -92,11 +95,13 @@ class _CustomDynamicDropdownState extends State<CustomDynamicDropdown> {
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text(
-                    displayLabel ?? widget.hint.tr(),
-                    style: TextTheme.of(context).bodyMedium,
+                  Expanded(
+                    child: Text(
+                      overflow: TextOverflow.ellipsis,
+                      displayLabel ?? widget.hint.tr(),
+                      style: TextTheme.of(context).bodyMedium,
+                    ),
                   ),
                   const Icon(Icons.keyboard_arrow_down_rounded),
                 ],

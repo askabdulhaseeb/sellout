@@ -406,6 +406,7 @@ class AddListingFormProvider extends ChangeNotifier {
       ));
       return;
     }
+    setLoading(true);
     switch (listingType) {
       case ListingType.items:
         await _onItemSubmit();
@@ -434,7 +435,6 @@ class AddListingFormProvider extends ChangeNotifier {
 
   Future<void> _onItemSubmit() async {
     if (!(_itemKey.currentState?.validate() ?? false)) return;
-    setLoading(true);
     try {
       final AddListingParam param = AddListingParam(
         accessCode: _accessCode,
@@ -478,15 +478,11 @@ class AddListingFormProvider extends ChangeNotifier {
       }
     } catch (e) {
       AppLog.error('$e');
-    } finally {
-      setLoading(false);
-    }
-    setLoading(false);
+    } finally {}
   }
 
   Future<void> _onClothesAndFootSubmit() async {
     if (!(_clothesAndFootKey.currentState?.validate() ?? false)) return;
-    setLoading(true);
     try {
       final AddListingParam param = AddListingParam(
           postID: post?.postID ?? '',
@@ -528,14 +524,11 @@ class AddListingFormProvider extends ChangeNotifier {
       }
     } catch (e) {
       AppLog.error('$e');
-    } finally {
-      setLoading(false);
-    }
+    } finally {}
   }
 
   Future<void> _onVehicleSubmit() async {
     if (!(_vehicleKey.currentState?.validate() ?? false)) return;
-    setLoading(true);
     getAvailabilityData();
     try {
       debugPrint(post?.postID);
@@ -591,14 +584,11 @@ class AddListingFormProvider extends ChangeNotifier {
       }
     } catch (e) {
       AppLog.error('$e');
-    } finally {
-      setLoading(false);
-    }
+    } finally {}
   }
 
   Future<void> _onFoodAndDrinkSubmit() async {
     if (!(_foodAndDrinkKey.currentState?.validate() ?? false)) return;
-    setLoading(true);
     try {
       final AddListingParam param = AddListingParam(
           postID: post?.postID ?? '',
@@ -637,14 +627,11 @@ class AddListingFormProvider extends ChangeNotifier {
       }
     } catch (e) {
       AppLog.error('$e');
-    } finally {
-      setLoading(false);
-    }
+    } finally {}
   }
 
   Future<void> _onPropertySubmit() async {
     if (!(_propertyKey.currentState?.validate() ?? false)) return;
-    setLoading(true);
     getAvailabilityData();
     try {
       final AddListingParam param = AddListingParam(
@@ -696,9 +683,7 @@ class AddListingFormProvider extends ChangeNotifier {
       }
     } catch (e) {
       AppLog.error('$e');
-    } finally {
-      setLoading(false);
-    }
+    } finally {}
   }
 
   Future<void> _onPetSubmit() async {
@@ -754,9 +739,7 @@ class AddListingFormProvider extends ChangeNotifier {
       }
     } catch (e) {
       AppLog.error('$e');
-    } finally {
-      setLoading(false);
-    }
+    } finally {}
   }
 
   Future<void> fetchDropdownListings(String endpoint) async {

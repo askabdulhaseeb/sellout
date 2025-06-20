@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:hive/hive.dart';
-
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/utilities/app_string.dart';
 import '../../../../../../services/get_it.dart';
@@ -24,12 +23,22 @@ class LocalPost {
     }
   }
 
-  Future<void> save(PostEntity value) async =>
-      await _box.put(value.postID, value);
+  Future<void> save(PostEntity value) async {
+    await _box.put(value.postID, value);
+  }
+
+  Future<void> saveAll(List<PostEntity> posts) async {
+    final Map<String, PostEntity> map = {
+      for (var post in posts) post.postID: post,
+    };
+    await _box.putAll(map);
+  }
 
   Future<void> clear() async => await _box.clear();
 
   PostEntity? post(String id) => _box.get(id);
+
+  List<PostEntity> get all => _box.values.toList();
 
   DataState<PostEntity> dataState(String id) {
     final PostEntity? po = post(id);
@@ -57,8 +66,6 @@ class LocalPost {
       return po;
     }
   }
-
-  List<PostEntity> get all => _box.values.toList();
 
   DataState<List<PostEntity>> postbyUid(String? value) {
     final String id = value ?? LocalAuth.uid ?? '';

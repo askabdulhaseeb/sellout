@@ -3,20 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../core/enums/listing/core/item_condition_type.dart';
-import '../../../../../core/sources/data_state.dart';
 import '../../../post/domain/entities/post_entity.dart';
 import '../../../post/domain/entities/size_color/color_entity.dart';
 import '../../../post/domain/entities/size_color/size_color_entity.dart';
-import '../../../post/domain/usecase/get_feed_usecase.dart';
 import '../enums/category_types.dart';
 import '../enums/sort_enums.dart';
 
 class MarketPlaceProvider extends ChangeNotifier {
   MarketPlaceProvider(
-    this._getFeedUsecase,
-    // this._locationUseCase
-  );
-  final GetFeedUsecase _getFeedUsecase;
+      // this._getFeedUsecase,
+      // this._locationUseCase
+      );
+  // final GetFeedUsecase _getFeedUsecase;
   // final LocationByNameUsecase _locationUseCase;
   String _selectedPersonalCategory = 'all';
   String _selectedBusinessCategory = 'all';
@@ -161,12 +159,12 @@ class MarketPlaceProvider extends ChangeNotifier {
     selectedLocation = location;
   }
 
-  Future<DataState<List<PostEntity>>> getFeed() async {
-    final DataState<List<PostEntity>> result = await _getFeedUsecase(null);
-    _posts.addAll(result.entity ?? <PostEntity>[]);
-    notifyListeners();
-    return result;
-  }
+  // Future<DataState<List<PostEntity>>> getFeed() async {
+  //   final DataState<List<PostEntity>> result = await _getFeedUsecase(null);
+  //   _posts.addAll(result.entity ?? <PostEntity>[]);
+  //   notifyListeners();
+  //   return result;
+  // }
 
   void updatefootclothSelectedTab(int index) {
     _selectedfootclothTab = index;

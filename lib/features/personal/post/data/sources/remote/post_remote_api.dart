@@ -10,12 +10,14 @@ import '../../../../chats/chat_dashboard/domain/entities/messages/message_entity
 import '../../../domain/entities/post_entity.dart';
 import '../../../domain/params/add_to_cart_param.dart';
 import '../../../domain/params/create_offer_params.dart';
+import '../../../domain/params/feed_response_params.dart';
+import '../../../domain/params/get_feed_params.dart';
 import '../../../domain/params/update_offer_params.dart';
 import '../../models/post_model.dart';
 import '../local/local_post.dart';
 
 abstract interface class PostRemoteApi {
-  Future<DataState<List<PostEntity>>> getFeed();
+  Future<DataState<GetFeedResponse>> getFeed(GetFeedParams params);
   Future<DataState<PostEntity>> getPost(String id);
   Future<DataState<bool>> addToCart(AddToCartParam param);
   Future<DataState<bool>> createOffer(CreateOfferparams param);
@@ -26,26 +28,37 @@ abstract interface class PostRemoteApi {
 
 class PostRemoteApiImpl implements PostRemoteApi {
   @override
-  Future<DataState<List<PostEntity>>> getFeed() async {
-    const String endpoint = '/post';
+  Future<DataState<GetFeedResponse>> getFeed(GetFeedParams params) async {
+    final String endpoint = 'feed?type=${params.type}&key=${params.key}';
+    debugPrint('[FeedAPI] Calling endpoint: $endpoint');
+
     try {
-      ApiRequestEntity? request = await LocalRequestHistory().request(
+      debugPrint('[FeedAPI] Checking local cache for: $endpoint');
+      final ApiRequestEntity? request = await LocalRequestHistory().request(
         endpoint: endpoint,
-        duration:
-            kDebugMode ? const Duration(days: 1) : const Duration(minutes: 30),
+        duration: Duration.zero,
       );
+
       if (request != null) {
-        final List<PostEntity> list = LocalPost().all;
-        // AppLog.info(
-        //   'Post length: Lenght: ${list.length}',
-        //   name: 'PostRemoteApiImpl.getFeed - local if',
-        // );
-        if (list.isNotEmpty) {
-          return DataSuccess<List<PostEntity>>(request.encodedData, list);
-        }
+        debugPrint('[FeedAPI] Loaded posts from local cache ✅');
+        final Map<String, dynamic> jsonMap = json.decode(request.encodedData);
+        final List<dynamic> listt = jsonMap['response'];
+        final String? nextPageToken = jsonMap['nextPageToken'];
+
+        final List<PostEntity> posts =
+            listt.map<PostEntity>((item) => PostModel.fromJson(item)).toList();
+
+        return DataSuccess<GetFeedResponse>(
+          '',
+          GetFeedResponse(
+            nextPageToken: nextPageToken,
+            posts: posts,
+          ),
+        );
       }
 
-      final DataState<bool> result = await ApiCall<bool>().call(
+      debugPrint('[FeedAPI] No valid cache found. Fetching from network 🌐...');
+      final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,
         requestType: ApiRequestType.get,
         isAuth: false,
@@ -54,38 +67,44 @@ class PostRemoteApiImpl implements PostRemoteApi {
       if (result is DataSuccess) {
         final String raw = result.data ?? '';
         if (raw.isEmpty) {
-          return DataFailer<List<PostEntity>>(
-              result.exception ?? CustomException('something_wrong'.tr()));
+          debugPrint('[FeedAPI] Empty response received ⚠️');
+          return DataFailer<GetFeedResponse>(
+            result.exception ?? CustomException('something_wrong'.tr()),
+          );
         }
-        final List<dynamic> listt = json.decode(raw)['response'];
-        AppLog.info(
-          'Post length: Lenght: ${listt.length}',
-          name: 'PostRemoteApiImpl.getFeed - if',
+
+        debugPrint('[FeedAPI] Parsing response data...');
+        final Map<String, dynamic> jsonMap = json.decode(raw);
+        final List<dynamic> listt = jsonMap['response'];
+        final String? nextPageToken = jsonMap['nextPageToken'];
+
+        final List<PostEntity> posts =
+            listt.map<PostEntity>((item) => PostModel.fromJson(item)).toList();
+
+        // Save raw API response
+        await LocalRequestHistory().save(
+          ApiRequestEntity(url: endpoint, encodedData: raw),
         );
-        final List<PostEntity> list = <PostEntity>[];
-        for (final dynamic item in listt) {
-          final PostEntity post = PostModel.fromJson(item);
-          await LocalPost().save(post);
-          list.add(post);
-        }
-        return DataSuccess<List<PostEntity>>(raw, list);
+        debugPrint('[FeedAPI] Next page token: $nextPageToken');
+        return DataSuccess<GetFeedResponse>(
+          '',
+          GetFeedResponse(
+            nextPageToken: nextPageToken,
+            posts: posts,
+          ),
+        );
       } else {
-        AppLog.error(
-          '${result.exception?.message}',
-          name: 'PostRemoteApiImpl.getFeed - else',
-          error: result.exception,
-        );
-        return DataFailer<List<PostEntity>>(
+        debugPrint(
+            '[FeedAPI] Network call failed ❌: ${result.exception?.message}');
+        return DataFailer<GetFeedResponse>(
           result.exception ?? CustomException('something_wrong'.tr()),
         );
       }
     } catch (e) {
-      AppLog.error(
-        e.toString(),
-        name: 'PostRemoteApiImpl.getFeed - catch',
-        error: e,
+      debugPrint('[FeedAPI] Exception occurred 💥: $e');
+      return DataFailer<GetFeedResponse>(
+        CustomException(e.toString()),
       );
-      return DataFailer<List<PostEntity>>(CustomException(e.toString()));
     }
   }
 

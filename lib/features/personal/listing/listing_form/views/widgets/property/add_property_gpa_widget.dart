@@ -19,21 +19,21 @@ class AddPropertyGPAWidget extends StatelessWidget {
           children: <Widget>[
             CustomToggleSwitch<bool>(
               labels: const <bool>[true, false],
-              labelStrs: const <String>['Yes', 'No'],
-              labelText: 'Garden',
+              labelStrs: <String>['yes'.tr(), 'no'.tr()],
+              labelText: 'garden'.tr(),
               initialValue: formPro.garden,
               onToggle: formPro.setGarden,
             ),
             CustomToggleSwitch<bool>(
               labels: const <bool>[true, false],
-              labelStrs: const <String>['Yes', 'No'],
-              labelText: 'Parking',
+              labelStrs: <String>['yes'.tr(), 'no'.tr()],
+              labelText: 'parking'.tr(),
               initialValue: formPro.parking,
               onToggle: formPro.setParking,
             ),
             CustomToggleSwitch<bool>(
               labels: const <bool>[true, false],
-              labelStrs: const <String>['Yes', 'No'],
+              labelStrs: <String>['yes'.tr(), 'no'.tr()],
               labelText: 'animal_friendly'.tr(),
               initialValue: formPro.animalFriendly,
               onToggle: formPro.setAnimalFriendly,

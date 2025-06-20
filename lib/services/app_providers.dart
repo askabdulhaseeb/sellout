@@ -104,8 +104,8 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
       value: AddServiceProvider(locator(), locator())),
   ChangeNotifierProvider<MarketPlaceProvider>.value(
       value: MarketPlaceProvider(
-    locator(),
-  )),
+          // locator(),
+          )),
 //
   ChangeNotifierProvider<BookingProvider>.value(
       value: BookingProvider(

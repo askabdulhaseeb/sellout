@@ -198,8 +198,7 @@ class ChatProvider extends ChangeNotifier {
   Future<void> openChat(BuildContext context, ChatEntity chat) async {
     setChat(chat);
     getMessages();
-
-    Navigator.of(context).pushReplacementNamed(ChatScreen.routeName);
+    Navigator.of(context).pushNamed(ChatScreen.routeName);
   }
 
   Future<bool> loadMessages() async {

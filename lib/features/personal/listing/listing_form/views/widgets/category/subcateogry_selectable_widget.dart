@@ -79,14 +79,14 @@ class _SubCategorySelectableWidgetState
             InkWell(
               onTap: () => _handleCategorySelection(
                   widget.listType!, selectedList, context),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(6),
               child: Container(
                 width: double.infinity,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(),
                 ),
                 child: Row(
                   children: <Widget>[
@@ -115,7 +115,8 @@ class _SubCategorySelectableWidgetState
                 selectedItem: selectedSubSubCategory,
                 items: selectedSubCategory!.subCategory
                     .map(
-                      (SubCategoryEntity sub) => DropdownMenuItem(
+                      (SubCategoryEntity sub) =>
+                          DropdownMenuItem<SubCategoryEntity>(
                         value: sub,
                         child: Text(sub.title,
                             style: TextTheme.of(context).bodyMedium),

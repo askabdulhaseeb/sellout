@@ -190,7 +190,7 @@ class PromoProvider extends ChangeNotifier {
       final DataState<List<PromoEntity>> response =
           await getPromoUsecase.call(true);
       if (response is DataSuccess) {
-        AppLog.info('Promo fetched successfully: ${response.data}');
+        AppLog.info('Promo fetched successfully');
         _promoList = response.entity;
       } else {
         AppLog.error('Failed to fetch promo: ${response.exception?.message}');

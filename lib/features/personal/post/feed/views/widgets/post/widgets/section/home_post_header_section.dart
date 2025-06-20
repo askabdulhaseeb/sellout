@@ -46,39 +46,42 @@ class _UserHeader extends StatelessWidget {
           final DataState<UserEntity?>? result = snapshot.data;
           final UserEntity? user = result?.entity;
           return snapshot.connectionState == ConnectionState.waiting
-              ? const Loader()
-              : GestureDetector(
-                  onTap: () => Navigator.of(context)
-                      .push(MaterialPageRoute<UserProfileScreen>(
-                    builder: (BuildContext context) =>
-                        UserProfileScreen(uid: post.createdBy),
-                  )),
-                  child: Row(
-                    children: <Widget>[
-                      ProfilePhoto(
-                        url: user?.profilePhotoURL,
-                        placeholder: user?.displayName ?? '',
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              user?.displayName ?? 'null',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                            Text(post.createdAt.timeAgo),
-                          ],
+              ? const SizedBox(height: 50, child: Loader())
+              : SizedBox(
+                  height: 50,
+                  child: GestureDetector(
+                    onTap: () => Navigator.of(context)
+                        .push(MaterialPageRoute<UserProfileScreen>(
+                      builder: (BuildContext context) =>
+                          UserProfileScreen(uid: post.createdBy),
+                    )),
+                    child: Row(
+                      children: <Widget>[
+                        ProfilePhoto(
+                          url: user?.profilePhotoURL,
+                          placeholder: user?.displayName ?? '',
                         ),
-                      ),
-                      const _MoreButton(),
-                    ],
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                user?.displayName ?? 'null',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              Text(post.createdAt.timeAgo),
+                            ],
+                          ),
+                        ),
+                        const _MoreButton(),
+                      ],
+                    ),
                   ),
                 );
         });
@@ -96,56 +99,61 @@ class _BusinessHeader extends StatelessWidget {
       builder: (BuildContext context, AsyncSnapshot<BusinessEntity?> snapshot) {
         final BusinessEntity? business = snapshot.data;
         return snapshot.connectionState == ConnectionState.waiting
-            ? const Loader()
-            : GestureDetector(
-                onTap: () => Navigator.of(context)
-                    .push(MaterialPageRoute<UserBusinessProfileScreen>(
-                  builder: (BuildContext context) => UserBusinessProfileScreen(
-                      businessID: post.businessID ?? ''),
-                )),
-                child: Row(
-                  children: <Widget>[
-                    ProfilePhoto(
-                      url: business?.logo?.url,
-                      placeholder: business?.displayName ?? '',
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              Flexible(
-                                child: Text(
-                                  business?.displayName ?? 'null',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 4),
-                              CircleAvatar(
-                                radius: 8,
-                                backgroundColor: Theme.of(context).primaryColor,
-                                child: const FittedBox(
-                                  child: Text(
-                                    'B',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Text(post.createdAt.timeAgo),
-                        ],
+            ? const SizedBox(height: 50, child: Loader())
+            : SizedBox(
+                height: 50,
+                child: GestureDetector(
+                  onTap: () => Navigator.of(context)
+                      .push(MaterialPageRoute<UserBusinessProfileScreen>(
+                    builder: (BuildContext context) =>
+                        UserBusinessProfileScreen(
+                            businessID: post.businessID ?? ''),
+                  )),
+                  child: Row(
+                    children: <Widget>[
+                      ProfilePhoto(
+                        url: business?.logo?.url,
+                        placeholder: business?.displayName ?? '',
                       ),
-                    ),
-                    const _MoreButton(),
-                  ],
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                              children: <Widget>[
+                                Flexible(
+                                  child: Text(
+                                    business?.displayName ?? 'null',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                CircleAvatar(
+                                  radius: 8,
+                                  backgroundColor:
+                                      Theme.of(context).primaryColor,
+                                  child: const FittedBox(
+                                    child: Text(
+                                      'B',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Text(post.createdAt.timeAgo),
+                          ],
+                        ),
+                      ),
+                      const _MoreButton(),
+                    ],
+                  ),
                 ),
               );
       },

@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../post/domain/entities/discount_entity.dart';
@@ -37,14 +38,23 @@ class _AddListingDiscountSectionState extends State<AddListingDiscountSection> {
       () => TextEditingController(text: discount.discount.toString()),
     );
 
+// Inside buildDiscountField:
     return SizedBox(
       width: width / 3,
       child: CustomTextFormField(
         labelText: ' ${discount.quantity} ${'items'.tr()}',
         controller: _controllers[index],
         onChanged: (String value) {
+          double parsed = double.tryParse(value) ?? 0.0;
+          if (parsed > 100) {
+            parsed = 100;
+            _controllers[index]!.text = '100';
+            _controllers[index]!.selection = TextSelection.fromPosition(
+              TextPosition(offset: _controllers[index]!.text.length),
+            );
+          }
           addPro.setDiscounts(
-            discount.copyWith(discount: double.tryParse(value) ?? 0.0),
+            discount.copyWith(discount: parsed),
           );
         },
         hint: 'Ex.${discount.quantity * 5}',
@@ -54,6 +64,9 @@ class _AddListingDiscountSectionState extends State<AddListingDiscountSection> {
           opacity: 0.7,
           child: Icon(Icons.percent),
         ),
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.allow(RegExp(r'^\d{0,3}(\.\d{0,2})?$')),
+        ],
       ),
     );
   }

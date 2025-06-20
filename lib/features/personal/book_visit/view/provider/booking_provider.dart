@@ -174,7 +174,7 @@ class BookingProvider extends ChangeNotifier {
         continue;
       }
 
-      if (slotTime == null || createdAt == null) continue;
+      if (createdAt == null) continue;
 
       if (!isSameDate(slotTime, selectedDate)) continue;
 

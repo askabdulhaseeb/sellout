@@ -21,7 +21,7 @@ class ExploreProductsGridviewState extends State<ExploreProductsGridview> {
     final MarketPlaceProvider pro =
         Provider.of<MarketPlaceProvider>(context, listen: false);
     if (pro.posts.isEmpty) {
-      pro.getFeed();
+      // pro.getFeed();
     }
   }
 
