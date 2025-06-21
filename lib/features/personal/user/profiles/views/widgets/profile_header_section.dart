@@ -71,6 +71,7 @@ class ProfileHeaderSection extends StatelessWidget {
                   ),
                   const Spacer(),
                   Text(
+                    overflow: TextOverflow.ellipsis,
                     user?.username ?? '',
                     style: const TextStyle(
                       fontSize: 14,
