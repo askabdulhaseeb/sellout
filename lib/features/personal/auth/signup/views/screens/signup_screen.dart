@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/widgets/sellout_title.dart';
@@ -16,7 +17,9 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<SignupProvider>(context, listen: false).reset();
+    if (!kDebugMode) {
+      Provider.of<SignupProvider>(context, listen: false).reset();
+    }
   }
 
   @override

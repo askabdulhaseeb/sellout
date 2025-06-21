@@ -19,35 +19,50 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
     //   final SearchProvider provider =
     //       Provider.of<SearchProvider>(context, listen: false);
     return Scaffold(
-      appBar: AppBar(title: Text('search'.tr())),
+      appBar: AppBar(
+        title: Text(
+          'search'.tr(),
+          style: TextTheme.of(context).titleMedium,
+        ),
+        centerTitle: true,
+      ),
       body: Consumer<SearchProvider>(
         builder:
             (BuildContext context, SearchProvider provider, Widget? child) =>
-                Column(
-          children: <Widget>[
-            CustomToggleSwitch<SearchEntityType>(
-              labels: SearchEntityType.values,
-              labelStrs: <String>['posts'.tr(), 'services'.tr(), 'users'.tr()],
-              labelText: '',
-              initialValue: provider.currentType,
-              onToggle: (SearchEntityType value) {
-                provider.switchType(value);
-              },
-            ),
-            Expanded(
-              child: IndexedStack(
-                index: provider.currentType.index,
-                children: const <Widget>[
-                  SearchPostsSection(),
-                  SearchServicesSection(),
-                  SearchUsersSection(),
+                Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: <Widget>[
+              CustomToggleSwitch<SearchEntityType>(
+                seletedFontSize: screenWidth * 0.035,
+                labels: SearchEntityType.values,
+                labelStrs: <String>[
+                  'posts'.tr(),
+                  'services'.tr(),
+                  'users'.tr()
                 ],
+                labelText: '',
+                initialValue: provider.currentType,
+                onToggle: (SearchEntityType value) {
+                  provider.switchType(value);
+                },
               ),
-            ),
-          ],
+              Expanded(
+                child: IndexedStack(
+                  index: provider.currentType.index,
+                  children: const <Widget>[
+                    SearchPostsSection(),
+                    SearchServicesSection(),
+                    SearchUsersSection(),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -62,19 +62,19 @@ class SignupProvider extends ChangeNotifier {
 
   //
   final TextEditingController name = TextEditingController(
-    text: kDebugMode ? 'John Snow' : '',
+    text: kDebugMode ? 'ahmershurahbeeljan+test@gmail.com' : '',
   );
   final TextEditingController username = TextEditingController(
-    text: kDebugMode ? 'john_snow' : '',
+    text: kDebugMode ? 'ahmershurahbeeljan+test@gmail.com' : '',
   );
   final TextEditingController email = TextEditingController(
-    text: kDebugMode ? 'jone_snow@gmail.com' : '',
+    text: kDebugMode ? 'ahmershurahbeeljan+test@gmail.com' : '',
   );
   final TextEditingController password = TextEditingController(
-    text: kDebugMode ? '1234567890' : '',
+    text: kDebugMode ? 'Shurahbeel_69' : '',
   );
   final TextEditingController confirmPassword = TextEditingController(
-    text: kDebugMode ? '1234567890' : '',
+    text: kDebugMode ? 'Shurahbeel_69' : '',
   );
   final TextEditingController phone = TextEditingController(
     text: kDebugMode ? '1234567890' : '',
@@ -112,7 +112,7 @@ class SignupProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  SignupPageType _currentPage = SignupPageType.dateOfBirth;
+  SignupPageType _currentPage = SignupPageType.basicInfo;
   SignupPageType get currentPage => _currentPage;
   set currentPage(SignupPageType value) {
     _currentPage = value;
@@ -129,6 +129,7 @@ class SignupProvider extends ChangeNotifier {
   static const int _codeSendingTime = 60;
   int _resentCodeSeconds = _codeSendingTime;
   int get resentCodeSeconds => _resentCodeSeconds;
+
   set resentCodeSeconds(int value) {
     _resentCodeSeconds = value;
     notifyListeners();
@@ -203,11 +204,11 @@ class SignupProvider extends ChangeNotifier {
     final SignupPageType? page = _currentPage.next();
     if (page != null) {
       currentPage = page;
+      print('Current page before next: $_currentPage');
+      print('Next page: $page');
     }
     if (_isLoading) {
       isLoading = false;
-    } else {
-      notifyListeners();
     }
     if (page == null) {
       isLoading = true;
@@ -247,35 +248,6 @@ class SignupProvider extends ChangeNotifier {
       }
       notifyListeners();
     });
-  }
-
-  Future<bool> enableLocation(BuildContext context) async {
-    try {
-      // Request permission (this will show the system dialog)
-      final PermissionStatus status =
-          await Permission.locationWhenInUse.request();
-
-      if (status == PermissionStatus.granted) {
-        // Permission granted
-        return true;
-      } else if (status == PermissionStatus.permanentlyDenied) {
-        // Show message + open settings
-        // ignore: use_build_context_synchronously
-        AppSnackBar.showSnackBar(context,
-            'Permission permanently denied. Please enable from settings.');
-        await openAppSettings();
-      } else {
-        // Permission denied or other status
-        // ignore: use_build_context_synchronously
-        AppSnackBar.showSnackBar(context, 'Location permission denied.');
-      }
-
-      return false;
-    } catch (e) {
-      // ignore: use_build_context_synchronously
-      AppSnackBar.showSnackBar(context, 'Error: ${e.toString()}');
-      return false;
-    }
   }
 
   Future<void> setImage(
@@ -416,6 +388,10 @@ class SignupProvider extends ChangeNotifier {
         SignupOptParams(uid: _uid ?? '', otp: otp.text),
       );
       if (result is DataSuccess) {
+        await _loginUsecase(LoginParams(
+          email: email.text,
+          password: password.text,
+        ));
         return true;
       } else {
         AppLog.error(
@@ -446,10 +422,12 @@ class SignupProvider extends ChangeNotifier {
       uid: LocalAuth.uid ?? '',
       dob: dob,
     );
+    isLoading = true;
     final DataState<String> result = await _updateProfileDetailUsecase(params);
     if (result is DataSuccess) {
       AppLog.info('profile_updated_successfully'.tr());
-      Navigator.pop(context);
+      isLoading = false;
+
       return true;
     } else {
       AppLog.error(result.exception!.message,
@@ -457,6 +435,7 @@ class SignupProvider extends ChangeNotifier {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('something_wrong'.tr())),
       );
+      isLoading = false;
       return false;
     }
   }
@@ -470,24 +449,70 @@ class SignupProvider extends ChangeNotifier {
       AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
       return false;
     }
-    final DataState<bool> result =
-        await _verifyUserByImageUsecase(_attachment!);
-    if (result is DataSuccess) {
-      AppLog.info('image_verified_successfully'.tr());
-      Navigator.pop(context);
-      return true;
-    }
 
-    AppLog.error(
-      result is DataFailer
-          ? result.exception?.message ?? 'Unknown error'
-          : 'Verification failed',
-      name: 'SignupProvider.verifyImage - failure',
-    );
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('something_wrong'.tr())),
-    );
-    return false;
+    isLoading = true;
+    try {
+      final DataState<bool> result =
+          await _verifyUserByImageUsecase(_attachment!);
+
+      if (result is DataSuccess) {
+        AppLog.info('image_verified_successfully'.tr());
+        isLoading = false;
+        return true;
+      } else {
+        AppLog.error(
+          result is DataFailer
+              ? result.exception?.message ?? 'Unknown error'
+              : 'Verification failed',
+          name: 'SignupProvider.verifyImage - failure',
+        );
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('something_wrong'.tr())),
+        );
+        isLoading = false;
+        return false;
+      }
+    } catch (e, stack) {
+      AppLog.error(
+        'verifyImage exception: $e',
+        name: 'SignupProvider.verifyImage - catch',
+        error: stack,
+      );
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('something_wrong'.tr())),
+      );
+      isLoading = false;
+      return false;
+    }
+  }
+
+  Future<bool> enableLocation(BuildContext context) async {
+    try {
+      final PermissionStatus status =
+          await Permission.locationWhenInUse.request();
+
+      if (status == PermissionStatus.granted) {
+        AppSnackBar.showSnackBar(context, 'Location permission granted.');
+        return true;
+      }
+
+      if (status == PermissionStatus.permanentlyDenied) {
+        AppSnackBar.showSnackBar(
+          context,
+          'Permission permanently denied. Please enable it from settings.',
+        );
+        await openAppSettings();
+      } else {
+        AppSnackBar.showSnackBar(context, 'Location permission denied.');
+      }
+
+      return false;
+    } catch (e) {
+      AppSnackBar.showSnackBar(context, 'Error: ${e.toString()}');
+      return false;
+    }
   }
 
   /// reset
