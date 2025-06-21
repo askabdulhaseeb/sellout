@@ -24,6 +24,7 @@ import '../../../../post/domain/entities/discount_entity.dart';
 import '../../../../post/domain/entities/meetup/availability_entity.dart';
 import '../../../../post/domain/entities/post_entity.dart';
 import '../../../../post/domain/entities/size_color/color_entity.dart';
+import '../../../../post/domain/entities/size_color/size_color_entity.dart';
 import '../../data/models/listing_model.dart';
 import '../../data/models/sub_category_model.dart';
 import '../../data/sources/remote/dropdown_listing_api.dart';
@@ -395,7 +396,7 @@ class AddListingFormProvider extends ChangeNotifier {
     // Clothes and sizing
     _selectedClothSubCategory = post?.categoryType ?? '';
     _selectedEnergyRating = post?.energyRating;
-    _sizeColorEntities = post?.sizeColors ?? <SizeColorModel>[];
+    _sizeColorEntities = post?.sizeColors ?? <SizeColorEntity>[];
     debugPrint('listing variables update variables');
   }
 
@@ -1035,10 +1036,10 @@ class AddListingFormProvider extends ChangeNotifier {
     required int quantity,
   }) {
     final int sizeIndex =
-        _sizeColorEntities.indexWhere((SizeColorModel e) => e.value == size);
+        _sizeColorEntities.indexWhere((SizeColorEntity e) => e.value == size);
 
     if (sizeIndex != -1) {
-      final SizeColorModel existingSize = _sizeColorEntities[sizeIndex];
+      final SizeColorEntity existingSize = _sizeColorEntities[sizeIndex];
 
       final int colorIndex =
           existingSize.colors.indexWhere((ColorEntity c) => c.code == color);
@@ -1080,7 +1081,7 @@ class AddListingFormProvider extends ChangeNotifier {
     required String color,
   }) {
     final int sizeIndex =
-        _sizeColorEntities.indexWhere((SizeColorModel e) => e.value == size);
+        _sizeColorEntities.indexWhere((SizeColorEntity e) => e.value == size);
     if (sizeIndex != -1) {
       _sizeColorEntities[sizeIndex]
           .colors
@@ -1122,7 +1123,7 @@ class AddListingFormProvider extends ChangeNotifier {
 
   bool get isDiscounted => _isDiscounted;
   List<DiscountEntity> get discounts => _discounts;
-  List<SizeColorModel> get sizeColorEntities => _sizeColorEntities;
+  List<SizeColorEntity> get sizeColorEntities => _sizeColorEntities;
   LocationEntity? get selectedmeetupLocation => _selectedMeetupLocation;
   LocationEntity? get selectedCollectionLocation => _selectedCollectionLocation;
 
@@ -1246,7 +1247,7 @@ class AddListingFormProvider extends ChangeNotifier {
     return null;
   }
 
-  List<SizeColorModel> _sizeColorEntities = <SizeColorModel>[];
+  List<SizeColorEntity> _sizeColorEntities = <SizeColorModel>[];
   //
   ConditionType _condition = ConditionType.newC;
   bool _acceptOffer = true;
