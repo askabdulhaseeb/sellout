@@ -45,7 +45,7 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       fileUrls: (fields[61] as List).cast<AttachmentEntity>(),
       hasDiscount: fields[70] as bool,
       discounts: (fields[72] as List).cast<DiscountEntity>(),
-      sizeColors: (fields[71] as List).cast<SizeColorModel>(),
+      sizeColors: (fields[71] as List).cast<SizeColorEntity>(),
       year: fields[80] as int?,
       doors: fields[81] as int?,
       seats: fields[82] as int?,

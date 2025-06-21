@@ -24,7 +24,14 @@ class PersonalCartScreen extends StatelessWidget {
     return PopScope(
       onPopInvokedWithResult: (bool didPop, dynamic result) => pro.reset(),
       child: Scaffold(
-        appBar: AppBar(title: const Text('cart').tr()),
+        appBar: AppBar(
+            // leading: BackButton(
+            //   onPressed: () {
+            //     AppNavigator.pushNamedAndRemoveUntil(
+            //         DashboardScreen.routeName, (_) => false);
+            //   },
+            // ),
+            title: const Text('cart').tr()),
         body: Consumer<CartProvider>(
             builder: (BuildContext context, CartProvider cartPro, _) {
           return FutureBuilder<bool>(

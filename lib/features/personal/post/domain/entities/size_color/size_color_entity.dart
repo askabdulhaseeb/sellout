@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-
 import 'color_entity.dart';
 part 'size_color_entity.g.dart';
 
@@ -13,8 +12,10 @@ class SizeColorEntity {
 
   @HiveField(0)
   final String value;
+
   @HiveField(1)
   final List<ColorEntity> colors;
+
   @HiveField(2)
   final String id;
 }

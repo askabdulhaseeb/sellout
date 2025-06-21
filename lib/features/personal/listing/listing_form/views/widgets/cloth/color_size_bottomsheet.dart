@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_dropdown.dart';
-import '../../../../../post/data/models/size_color/size_color_model.dart';
 import '../../../../../post/domain/entities/size_color/color_entity.dart';
+import '../../../../../post/domain/entities/size_color/size_color_entity.dart';
 import '../../../data/sources/remote/colors_api.dart';
 import '../../../domain/entities/color_options_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
@@ -129,7 +129,7 @@ class SizeColorListView extends StatelessWidget {
         return ListView.builder(
           itemCount: provider.sizeColorEntities.length,
           itemBuilder: (_, int index) {
-            final SizeColorModel sizeColorEntry =
+            final SizeColorEntity sizeColorEntry =
                 provider.sizeColorEntities[index];
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,

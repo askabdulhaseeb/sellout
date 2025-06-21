@@ -9,8 +9,11 @@ import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../location/data/models/location_model.dart';
 import '../../../../location/domain/entities/location_entity.dart';
+import '../../../../post/data/models/size_color/color_model.dart';
 import '../../../../post/data/models/size_color/size_color_model.dart';
 import '../../../../post/domain/entities/discount_entity.dart';
+import '../../../../post/domain/entities/size_color/color_entity.dart';
+import '../../../../post/domain/entities/size_color/size_color_entity.dart';
 import '../../domain/entities/sub_category_entity.dart';
 
 class AddListingParam {
@@ -98,7 +101,7 @@ class AddListingParam {
   final int? currentLongitude;
   final String? brand;
   final String? type;
-  final List<SizeColorModel>? sizeColor;
+  final List<SizeColorEntity>? sizeColor;
   final List<DiscountEntity>? discounts;
   final String? accessCode;
   final String? postID;
@@ -257,8 +260,16 @@ class AddListingParam {
       'quantity': quantity ?? '',
       'item_condition': condition.json,
       'brand': brand ?? '',
-      'size_colors': jsonEncode(
-          sizeColor?.map((SizeColorModel e) => e.toMap()).toList()), //
+      'size_colors': jsonEncode(sizeColor
+          ?.map((SizeColorEntity e) => SizeColorModel(
+                value: e.value,
+                colors: e.colors
+                    .map((ColorEntity c) => ColorModel.fromEntity(c))
+                    .toList(),
+                id: e.id,
+              ).toMap())
+          .toList()),
+
       'type': type ?? '', //
     };
     mapp.addAll(_titleMAP());
