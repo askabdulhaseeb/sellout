@@ -14,18 +14,13 @@ class HomeScreen extends HookWidget {
   Widget build(BuildContext context) {
     final ScrollController scrollController = useScrollController();
     final FeedProvider feedProvider = context.read<FeedProvider>();
-
     const String type = 'post';
     const String initialEndpoint = 'feed?type=$type&key=';
     final String endpointHash = initialEndpoint.toSHA256();
-
-    // Initial load
     useEffect(() {
       feedProvider.loadInitialFeed(type);
       return null;
     }, const <Object?>[]);
-
-    // Load more on scroll
     useEffect(() {
       scrollController.addListener(() {
         if (scrollController.position.pixels >=
@@ -35,7 +30,6 @@ class HomeScreen extends HookWidget {
       });
       return null;
     }, <Object?>[scrollController]);
-
     return PersonalScaffold(
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),

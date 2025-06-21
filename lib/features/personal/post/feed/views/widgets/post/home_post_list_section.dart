@@ -1,10 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_hooks/flutter_hooks.dart';
-// import '../../../../data/sources/local/local_post.dart';
-// import '../../../../domain/entities/post_entity.dart';
-// import '../../providers/feed_provider.dart';
-// import 'widgets/home_post_tile.dart';
-
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../../../data/sources/local/local_feed.dart';
@@ -20,9 +13,7 @@ class HomePostListSection extends HookWidget {
   Widget build(BuildContext context) {
     useListenable(LocalFeed.box.listenable());
     final List<PostEntity> posts = LocalFeed.getPostsForEndpoint(endpointHash);
-
     final bool isLoading = posts.isEmpty;
-
     if (isLoading) {
       return SliverList(
         delegate: SliverChildBuilderDelegate(
@@ -140,14 +131,14 @@ class _LoadingTile extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: Container(
-                  height: 40,
+                  height: 15,
                   color: Theme.of(context).dividerColor,
                 ),
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: Container(
-                  height: 40,
+                  height: 15,
                   color: Theme.of(context).dividerColor,
                 ),
               ),
