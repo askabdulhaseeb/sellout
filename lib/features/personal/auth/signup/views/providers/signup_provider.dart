@@ -505,7 +505,7 @@ class SignupProvider extends ChangeNotifier {
     _attachment = null;
     _phoneNumber = null;
     _isLoading = false;
-    _currentPage = SignupPageType.dateOfBirth;
+    _currentPage = SignupPageType.basicInfo;
     _resendCodeTimer?.cancel();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();

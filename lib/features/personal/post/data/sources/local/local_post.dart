@@ -8,11 +8,11 @@ import '../../../domain/entities/post_entity.dart';
 import '../../../domain/usecase/get_specific_post_usecase.dart';
 
 class LocalPost {
-  static final String boxTitle = AppStrings.localPostsBox;
-  static Box<PostEntity> get _box => Hive.box<PostEntity>(boxTitle);
+  static final String boxTitle = AppStrings.localPostsBox; // this is key
+  static Box<PostEntity> get _box => Hive.box<PostEntity>(boxTitle); // box
 
   static Future<Box<PostEntity>> get openBox async =>
-      await Hive.openBox<PostEntity>(boxTitle);
+      await Hive.openBox<PostEntity>(boxTitle); // open box
 
   Future<Box<PostEntity>> refresh() async {
     final bool isOpen = Hive.isBoxOpen(boxTitle);
@@ -20,21 +20,21 @@ class LocalPost {
       return _box;
     } else {
       return await Hive.openBox<PostEntity>(boxTitle);
-    }
+    } // refresh function  chekc if box is not open
   }
 
   Future<void> save(PostEntity value) async {
     await _box.put(value.postID, value);
-  }
+  } // according to requiremnts
 
   Future<void> saveAll(List<PostEntity> posts) async {
-    final Map<String, PostEntity> map = {
-      for (var post in posts) post.postID: post,
+    final Map<String, PostEntity> map = <String, PostEntity>{
+      for (PostEntity post in posts) post.postID: post,
     };
     await _box.putAll(map);
   }
 
-  Future<void> clear() async => await _box.clear();
+  Future<void> clear() async => await _box.clear(); // clear functon to sign out
 
   PostEntity? post(String id) => _box.get(id);
 
