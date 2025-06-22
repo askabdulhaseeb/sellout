@@ -12,6 +12,8 @@ class CustomToggleSwitch<T> extends StatelessWidget {
     this.selectedColors,
     this.isShaded = true,
     this.seletedFontSize = 14,
+    this.verticalPadding = 12,
+    this.horizontalPadding = 16,
     super.key,
   });
 
@@ -22,9 +24,12 @@ class CustomToggleSwitch<T> extends StatelessWidget {
   final List<String> labelStrs;
   final List<double>? customWidths;
   final void Function(T)? onToggle;
-  final List<Color>? selectedColors; // 🌟 NEW ADDED for Order section
+  final List<Color>? selectedColors;
   final bool isShaded;
   final double seletedFontSize;
+  final double verticalPadding; // 🌟 New for vertical padding
+  final double horizontalPadding; // 🌟 New for horizontal padding
+
   @override
   Widget build(BuildContext context) {
     final double minWidth = MediaQuery.of(context).size.width - 52;
@@ -58,11 +63,15 @@ class CustomToggleSwitch<T> extends StatelessWidget {
                 final int currentIndex = labelStrs.indexOf(e);
                 final bool isSelected = index == currentIndex;
 
-                // 🌟 Get the color for this button if selected
                 final Color selectedColor = (selectedColors != null &&
                         selectedColors!.length > currentIndex)
                     ? selectedColors![currentIndex]
                     : Theme.of(context).primaryColor;
+
+                final double? buttonWidth = (customWidths != null &&
+                        customWidths!.length > currentIndex)
+                    ? customWidths![currentIndex]
+                    : (minWidth / labelStrs.length);
 
                 return InkWell(
                   borderRadius: borderRadius,
@@ -70,15 +79,15 @@ class CustomToggleSwitch<T> extends StatelessWidget {
                       ? null
                       : () => onToggle?.call(labels[currentIndex]),
                   child: Container(
-                    width: minWidth / labelStrs.length,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 16,
+                    width: buttonWidth,
+                    padding: EdgeInsets.symmetric(
+                      vertical: verticalPadding,
+                      horizontal: horizontalPadding,
                     ),
                     decoration: BoxDecoration(
                       borderRadius: borderRadius,
                       color: isSelected
-                          ? selectedColor.withValues(alpha: isShaded ? 0.1 : 0)
+                          ? selectedColor.withOpacity(isShaded ? 0.1 : 0)
                           : Colors.transparent,
                       border: Border.all(
                         color: isSelected ? selectedColor : Colors.grey,

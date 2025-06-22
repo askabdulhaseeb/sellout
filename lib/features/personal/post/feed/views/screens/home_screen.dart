@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/extension/string_ext.dart';
 import '../../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../providers/feed_provider.dart';
 import '../widgets/post/home_post_list_section.dart';
@@ -15,12 +14,17 @@ class HomeScreen extends HookWidget {
     final ScrollController scrollController = useScrollController();
     final FeedProvider feedProvider = context.read<FeedProvider>();
     const String type = 'post';
-    const String initialEndpoint = 'feed?type=$type&key=';
-    final String endpointHash = initialEndpoint.toSHA256();
+
     useEffect(() {
-      feedProvider.loadInitialFeed(type);
+      if (feedProvider.posts.isEmpty) {
+        Future<void>.microtask(() {
+          feedProvider.loadInitialFeed(type);
+        });
+      }
       return null;
     }, const <Object?>[]);
+
+    // Scroll listener for pagination
     useEffect(() {
       scrollController.addListener(() {
         if (scrollController.position.pixels >=
@@ -34,10 +38,10 @@ class HomeScreen extends HookWidget {
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         controller: scrollController,
-        slivers: <Widget>[
-          const SliverToBoxAdapter(child: HomePromoListSection()),
-          const SliverToBoxAdapter(child: SizedBox(height: 16)),
-          HomePostListSection(endpointHash: endpointHash),
+        slivers: const <Widget>[
+          SliverToBoxAdapter(child: HomePromoListSection()),
+          SliverToBoxAdapter(child: SizedBox(height: 16)),
+          HomePostListSection(),
         ],
       ),
     );

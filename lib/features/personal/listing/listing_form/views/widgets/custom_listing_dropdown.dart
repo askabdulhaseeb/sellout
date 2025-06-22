@@ -4,12 +4,13 @@ import 'package:hive/hive.dart';
 import '../../data/sources/local/local_dropdown_listings.dart';
 import '../../domain/entities/dropdown_listings_entity.dart';
 
-class CustomDynamicDropdown extends StatefulWidget {
-  const CustomDynamicDropdown({
+class CustomListingDropDown extends StatefulWidget {
+  const CustomListingDropDown({
     required this.categoryKey,
     required this.selectedValue,
     required this.onChanged,
     this.title = '',
+    this.padding,
     this.hint = '',
     super.key,
   });
@@ -19,12 +20,13 @@ class CustomDynamicDropdown extends StatefulWidget {
   final void Function(String?) onChanged;
   final String title;
   final String hint;
+  final EdgeInsetsGeometry? padding;
 
   @override
-  State<CustomDynamicDropdown> createState() => _CustomDynamicDropdownState();
+  State<CustomListingDropDown> createState() => _CustomListingDropDownState();
 }
 
-class _CustomDynamicDropdownState extends State<CustomDynamicDropdown> {
+class _CustomListingDropDownState extends State<CustomListingDropDown> {
   List<DropdownOptionEntity> options = <DropdownOptionEntity>[];
   bool isLoading = true;
   String? displayLabel;
@@ -35,9 +37,21 @@ class _CustomDynamicDropdownState extends State<CustomDynamicDropdown> {
     _loadOptions();
   }
 
-  Future<void> _loadOptions() async {
-    setState(() => isLoading = true);
+  @override
+  void didUpdateWidget(covariant CustomListingDropDown oldWidget) {
+    super.didUpdateWidget(oldWidget);
 
+    if (widget.categoryKey != oldWidget.categoryKey) {
+      _loadOptions();
+    } else if (widget.selectedValue != oldWidget.selectedValue) {
+      _syncDisplayLabel();
+    }
+  }
+
+  Future<void> _loadOptions() async {
+    setState(() {
+      isLoading = true;
+    });
     try {
       final Box<DropdownCategoryEntity> box =
           Hive.box(LocalDropDownListings.boxTitle);
@@ -45,25 +59,38 @@ class _CustomDynamicDropdownState extends State<CustomDynamicDropdown> {
 
       if (category != null) {
         options = category.options;
-        _updateDisplayLabel(widget.selectedValue, category.options);
+      } else {
+        options = <DropdownOptionEntity>[];
       }
+
+      _syncDisplayLabel();
     } catch (e) {
       debugPrint('Dropdown load error: $e');
     } finally {
-      setState(() => isLoading = false);
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
-  void _updateDisplayLabel(String? value, List<DropdownOptionEntity> opts) {
+  void _syncDisplayLabel() {
+    final String? label = _findLabel(widget.selectedValue, options);
+    setState(() {
+      displayLabel = label;
+    });
+  }
+
+  String? _findLabel(String? value, List<DropdownOptionEntity> opts) {
     for (final DropdownOptionEntity opt in opts) {
       if (opt.value == value) {
-        setState(() => displayLabel = opt.label);
-        return;
+        return opt.label;
       }
       if (opt.children.isNotEmpty) {
-        _updateDisplayLabel(value, opt.children);
+        final String? childLabel = _findLabel(value, opt.children);
+        if (childLabel != null) return childLabel;
       }
     }
+    return null;
   }
 
   @override
@@ -72,8 +99,8 @@ class _CustomDynamicDropdownState extends State<CustomDynamicDropdown> {
       return const Center(child: CircularProgressIndicator(strokeWidth: 2.0));
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+    return Container(
+      padding: widget.padding ?? const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -98,9 +125,12 @@ class _CustomDynamicDropdownState extends State<CustomDynamicDropdown> {
                 children: <Widget>[
                   Expanded(
                     child: Text(
-                      overflow: TextOverflow.ellipsis,
                       displayLabel ?? widget.hint.tr(),
-                      style: TextTheme.of(context).bodyMedium,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextTheme.of(context).bodyMedium?.copyWith(
+                          color: ColorScheme.of(context)
+                              .outline
+                              .withValues(alpha: 0.5)),
                     ),
                   ),
                   const Icon(Icons.keyboard_arrow_down_rounded),
@@ -115,7 +145,7 @@ class _CustomDynamicDropdownState extends State<CustomDynamicDropdown> {
 
   Future<void> _showPicker() async {
     final DropdownOptionEntity? result =
-        await _showOptionsBottomSheet(widget.title, options, null);
+        await _showOptionsBottomSheet(widget.title, options);
     if (result != null) {
       setState(() {
         displayLabel = result.label;
@@ -127,7 +157,6 @@ class _CustomDynamicDropdownState extends State<CustomDynamicDropdown> {
   Future<DropdownOptionEntity?> _showOptionsBottomSheet(
     String title,
     List<DropdownOptionEntity> opts,
-    String? parentValue,
   ) {
     return showModalBottomSheet<DropdownOptionEntity>(
       context: context,
@@ -148,15 +177,13 @@ class _CustomDynamicDropdownState extends State<CustomDynamicDropdown> {
                 child: Text(
                   title.tr(),
                   style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                      fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
               const Divider(height: 1),
               Expanded(
                 child: ListView(
-                  padding: const EdgeInsets.all(0),
+                  padding: EdgeInsets.zero,
                   children: opts.map((DropdownOptionEntity opt) {
                     return ListTile(
                       title: Text(opt.label),
@@ -167,12 +194,8 @@ class _CustomDynamicDropdownState extends State<CustomDynamicDropdown> {
                         if (opt.children.isNotEmpty) {
                           final DropdownOptionEntity? childResult =
                               await _showOptionsBottomSheet(
-                            opt.label,
-                            opt.children,
-                            opt.value,
-                          );
+                                  opt.label, opt.children);
                           if (childResult != null) {
-                            // Return the final child
                             Navigator.pop(context, childResult);
                           }
                         } else {

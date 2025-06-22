@@ -3,6 +3,39 @@ part 'dropdown_listings_entity.g.dart';
 
 @HiveType(typeId: 58)
 class DropdownOptionEntity {
+  const DropdownOptionEntity({
+    required this.label,
+    required this.value,
+    this.children = const <DropdownOptionEntity>[],
+  });
+
+  factory DropdownOptionEntity.fromMap(MapEntry<String, dynamic> entry) {
+    final String key = entry.key;
+    final value = entry.value;
+
+    if (value is Map<String, dynamic>) {
+      if (value.containsKey('label') && value.containsKey('value')) {
+        // It's a leaf node (final selectable option)
+        return DropdownOptionEntity(
+          label: value['label'] ?? key,
+          value: value['value'] ?? key,
+        );
+      } else {
+        // It's a group node (has nested children)
+        return DropdownOptionEntity(
+          label: key,
+          value: key,
+          children: value.entries.map(DropdownOptionEntity.fromMap).toList(),
+        );
+      }
+    } else {
+      // Defensive fallback: unexpected type, treat as a simple option
+      return DropdownOptionEntity(
+        label: key,
+        value: key,
+      );
+    }
+  }
   @HiveField(0)
   final String label;
 
@@ -12,39 +45,14 @@ class DropdownOptionEntity {
   @HiveField(2)
   final List<DropdownOptionEntity> children;
 
-  const DropdownOptionEntity({
-    required this.label,
-    required this.value,
-    this.children = const <DropdownOptionEntity>[],
-  });
-
-  factory DropdownOptionEntity.fromMap(MapEntry<String, dynamic> entry) {
-    final valueMap = entry.value as Map<String, dynamic>;
-
-    if (valueMap.containsKey('label')) {
-      // This is a leaf node
-      return DropdownOptionEntity(
-        label: valueMap['label'] ?? entry.key,
-        value: valueMap['value'] ?? entry.key,
-        children: const [],
-      );
-    } else {
-      // This is a group node
-      return DropdownOptionEntity(
-        label: entry.key,
-        value: entry.key,
-        children: valueMap.entries.map(DropdownOptionEntity.fromMap).toList(),
-      );
-    }
-  }
-
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'label': label,
       'value': value,
       if (children.isNotEmpty)
-        'children': {
-          for (final child in children) child.value: child.toMap(),
+        'children': <String, Map<String, dynamic>>{
+          for (final DropdownOptionEntity child in children)
+            child.value: child.toMap(),
         }
     };
   }
@@ -52,12 +60,6 @@ class DropdownOptionEntity {
 
 @HiveType(typeId: 59)
 class DropdownCategoryEntity {
-  @HiveField(0)
-  final String key;
-
-  @HiveField(1)
-  final List<DropdownOptionEntity> options;
-
   const DropdownCategoryEntity({
     required this.key,
     required this.options,
@@ -69,10 +71,15 @@ class DropdownCategoryEntity {
       options: map.entries.map(DropdownOptionEntity.fromMap).toList(),
     );
   }
+  @HiveField(0)
+  final String key;
+
+  @HiveField(1)
+  final List<DropdownOptionEntity> options;
 
   Map<String, dynamic> toMap() {
-    return {
-      for (final opt in options) opt.value: opt.toMap(),
+    return <String, dynamic>{
+      for (final DropdownOptionEntity opt in options) opt.value: opt.toMap(),
     };
   }
 }

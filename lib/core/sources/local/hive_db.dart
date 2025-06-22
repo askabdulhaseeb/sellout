@@ -37,7 +37,6 @@ import '../../../features/personal/listing/listing_form/domain/entities/sub_cate
 import '../../../features/personal/auth/signin/data/models/address_model.dart';
 import '../../../features/personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../../features/personal/location/domain/entities/location_entity.dart';
-import '../../../features/personal/post/data/sources/local/local_feed.dart';
 import '../../../features/personal/post/data/sources/local/local_post.dart';
 import '../../../features/personal/post/domain/entities/discount_entity.dart';
 import '../../../features/personal/post/domain/entities/feed/feed_entity.dart';
@@ -165,7 +164,7 @@ class HiveDB {
     await LocalPromo().refresh();
     await LocalDropDownListings().refresh();
     await LocalColors().refresh();
-    await LocalFeed().refresh();
+    // await LocalFeed().refresh();
   }
 
   static Future<void> signout() async {
@@ -186,7 +185,7 @@ class HiveDB {
     await LocalPromo().clear();
     await LocalDropDownListings().clear();
     await LocalColors().clear();
-    await LocalFeed().clear();
+    // await LocalFeed().clear();
     // await LocalCountry().clear();
   }
 }

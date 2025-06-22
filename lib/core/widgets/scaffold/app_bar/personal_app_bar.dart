@@ -21,59 +21,63 @@ personalAppbar(BuildContext context) {
     surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     shadowColor: Theme.of(context).dividerColor,
-    title: LocalAuth.currentUser == null
-        ? const SizedBox()
-        : FutureBuilder<UserEntity?>(
-            future: LocalUser().user(me),
-            initialData: LocalUser().userEntity(me),
-            builder: (
-              BuildContext context,
-              AsyncSnapshot<UserEntity?> snapshot,
-            ) {
-              final UserEntity? user = snapshot.data;
-              return user == null
-                  ? const SizedBox()
-                  : Container(
-                      width: 62,
-                      margin: const EdgeInsets.only(right: 8),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 7,
-                        horizontal: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Theme.of(context).dividerColor,
-                      ),
-                      child: GestureDetector(
-                        onTap: () async => await showProfileMenu(context, user),
-                        onLongPress: () async =>
-                            await showProfileMenu(context, user),
-                        onDoubleTap: () async =>
-                            await showProfileMenu(context, user),
-                        child: Row(
-                          children: <Widget>[
-                            const SizedBox(width: 4),
-                            CircleAvatar(
-                              radius: 12,
-                              backgroundColor: Theme.of(context).primaryColor,
-                              child: ProfilePhoto(
-                                url: user.profilePhotoURL,
-                                isCircle: true,
-                                size: 10,
-                              ),
-                            ),
-                            const Icon(Icons.keyboard_arrow_down_rounded)
-                          ],
+    title: Row(
+      children: <Widget>[
+        if (LocalAuth.currentUser != null)
+          FutureBuilder<UserEntity?>(
+              future: LocalUser().user(me),
+              initialData: LocalUser().userEntity(me),
+              builder: (
+                BuildContext context,
+                AsyncSnapshot<UserEntity?> snapshot,
+              ) {
+                final UserEntity? user = snapshot.data;
+                return user == null
+                    ? const SizedBox()
+                    : Container(
+                        width: 62,
+                        margin: const EdgeInsets.only(right: 8),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 7,
+                          horizontal: 4,
                         ),
-                      ),
-                    );
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Theme.of(context).dividerColor,
+                        ),
+                        child: GestureDetector(
+                          onTap: () async =>
+                              await showProfileMenu(context, user),
+                          onLongPress: () async =>
+                              await showProfileMenu(context, user),
+                          onDoubleTap: () async =>
+                              await showProfileMenu(context, user),
+                          child: Row(
+                            children: <Widget>[
+                              const SizedBox(width: 4),
+                              CircleAvatar(
+                                radius: 12,
+                                backgroundColor: Theme.of(context).primaryColor,
+                                child: ProfilePhoto(
+                                  url: user.profilePhotoURL,
+                                  isCircle: true,
+                                  size: 10,
+                                ),
+                              ),
+                              const Icon(Icons.keyboard_arrow_down_rounded)
+                            ],
+                          ),
+                        ),
+                      );
+              }),
+        _IconButton(
+            icon: AppIcons.search,
+            onPressed: () {
+              Navigator.pushNamed(context, SearchScreen.routeName);
             }),
+      ],
+    ),
     actions: <Widget>[
-      _IconButton(
-          icon: AppIcons.search,
-          onPressed: () {
-            Navigator.pushNamed(context, SearchScreen.routeName);
-          }),
       _IconButton(
           icon: AppIcons.notification,
           onPressed: () {

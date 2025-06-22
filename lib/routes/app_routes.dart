@@ -10,12 +10,6 @@ import '../features/personal/auth/signin/views/screens/verify_two_factor_screen.
 import '../features/personal/auth/welcome_screen/view/screens/welcome_screen.dart';
 import '../features/personal/cart/views/screens/personal_cart_screen.dart';
 import '../features/personal/chats/chat/views/screens/chat_screen.dart';
-import '../features/personal/marketplace/views/screens/filter_categories/explore_cloth_foot_screen.dart';
-import '../features/personal/marketplace/views/screens/filter_categories/explore_food_drink_screen.dart';
-import '../features/personal/marketplace/views/screens/filter_categories/explore_pets_screen.dart';
-import '../features/personal/marketplace/views/screens/filter_categories/explore_popular_screen.dart';
-import '../features/personal/marketplace/views/screens/filter_categories/explore_property_screen.dart';
-import '../features/personal/marketplace/views/screens/filter_categories/explore_vehicles_screen.dart';
 import '../features/personal/listing/listing_form/views/screens/add_listing_form_screen.dart';
 import '../features/personal/auth/signin/views/screens/sign_in_screen.dart';
 import '../features/personal/auth/signup/views/screens/signup_screen.dart';
@@ -100,12 +94,12 @@ class AppRoutes {
     //Review
     WriteReviewScreen.routeName: (_) => const WriteReviewScreen(),
     // Explore
-    ExplorePopularScreen.routeName: (_) => const ExplorePopularScreen(),
-    ExploreCLothFOotScreen.routeName: (_) => const ExploreCLothFOotScreen(),
-    ExplorePetsScreen.routeName: (_) => const ExplorePetsScreen(),
-    ExplorePropertyScreen.routeName: (_) => const ExplorePropertyScreen(),
-    ExploreFoodDrinkScreen.routeName: (_) => const ExploreFoodDrinkScreen(),
-    ExploreVehiclesScreen.routeName: (_) => const ExploreVehiclesScreen(),
+    // ExplorePopularScreen.routeName: (_) => const ExplorePopularScreen(),
+    // ExploreCLothFOotScreen.routeName: (_) => const ExploreCLothFOotScreen(),
+    // ExplorePetsScreen.routeName: (_) => const ExplorePetsScreen(),
+    // ExplorePropertyScreen.routeName: (_) => const ExplorePropertyScreen(),
+    // ExploreFoodDrinkScreen.routeName: (_) => const ExploreFoodDrinkScreen(),
+    // ExploreVehiclesScreen.routeName: (_) => const ExploreVehiclesScreen(),
     // Profile
     EditProfileScreen.routeName: (_) => const EditProfileScreen(),
     //services

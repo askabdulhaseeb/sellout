@@ -38,8 +38,6 @@ class PostBuyNowButton extends StatelessWidget {
 
         if (result is DataSuccess) {
           // ignore: use_build_context_synchronously
-          await Future<Duration>.delayed(const Duration(milliseconds: 100));
-          // ignore: use_build_context_synchronously
           await Navigator.of(context).pushNamed(PersonalCartScreen.routeName);
         } else {
           AppLog.error(

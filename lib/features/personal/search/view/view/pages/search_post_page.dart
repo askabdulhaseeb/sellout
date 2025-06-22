@@ -5,53 +5,22 @@ import '../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../user/profiles/views/widgets/subwidgets/post_grid_view_tile.dart';
 import '../../provider/search_provider.dart';
 
-class SearchPostsSection extends StatefulWidget {
+class SearchPostsSection extends StatelessWidget {
   const SearchPostsSection({super.key});
-
-  @override
-  State<SearchPostsSection> createState() => _SearchPostsSectionState();
-}
-
-class _SearchPostsSectionState extends State<SearchPostsSection> {
-  late final TextEditingController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    final SearchProvider provider = context.read<SearchProvider>();
-    _controller = TextEditingController(text: provider.postQuery);
-  }
-
-  @override
-  void didUpdateWidget(covariant SearchPostsSection oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    final SearchProvider provider = context.read<SearchProvider>();
-    // Update controller text when switching type
-    final String query = provider.currentQuery;
-    if (_controller.text != query) {
-      _controller.text = query;
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     final SearchProvider provider = context.watch<SearchProvider>();
+    final TextEditingController controller = TextEditingController(
+      text: provider.postQuery,
+    );
 
     return Column(
       children: <Widget>[
         CustomTextFormField(
-          autoFocus: true,
-          controller: _controller,
+          controller: controller,
           hint: 'search'.tr(),
-          onChanged: (String value) {
-            provider.search(_controller.text);
-          },
+          onChanged: provider.searchPosts,
         ),
         Expanded(
           child: NotificationListener<ScrollNotification>(
@@ -59,7 +28,7 @@ class _SearchPostsSectionState extends State<SearchPostsSection> {
               if (!provider.isLoading &&
                   scrollInfo.metrics.pixels >=
                       scrollInfo.metrics.maxScrollExtent - 100) {
-                provider.search(provider.currentQuery, isLoadMore: true);
+                provider.searchPosts(provider.postQuery, isLoadMore: true);
               }
               return false;
             },
@@ -76,15 +45,17 @@ class _SearchPostsSectionState extends State<SearchPostsSection> {
                     ),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 6.0,
-                            mainAxisSpacing: 6.0,
-                            childAspectRatio: 0.75),
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 6.0,
+                      mainAxisSpacing: 6.0,
+                      childAspectRatio: 0.75,
+                    ),
                   ),
                 ),
                 if (provider.isLoading)
                   const SliverToBoxAdapter(
-                      child: Center(child: CircularProgressIndicator())),
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
               ],
             ),
           ),

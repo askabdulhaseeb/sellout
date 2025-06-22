@@ -43,18 +43,18 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
               hint: 'Ex. 350',
               keyboardType: TextInputType.number,
             ),
-            CustomDynamicDropdown(
+            CustomListingDropDown(
               categoryKey: 'property_type',
               selectedValue: formPro.selectedPropertyType,
               onChanged: (String? p0) => formPro.setPropertyType(p0),
               title: 'property_type'.tr(),
             ),
-            CustomDynamicDropdown(
+            CustomListingDropDown(
                 categoryKey: 'energy_rating',
                 onChanged: (String? p0) => formPro.setEnergyRating(p0),
                 selectedValue: formPro.selectedEnergyRating,
                 title: 'energy_rating'.tr()),
-            CustomDynamicDropdown(
+            CustomListingDropDown(
               categoryKey: 'property_type',
               selectedValue: formPro.selectedPropertyType,
               onChanged: (String? p0) => formPro.setPropertyType(p0),

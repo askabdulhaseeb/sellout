@@ -97,10 +97,11 @@ import '../features/personal/book_visit/view/provider/booking_provider.dart';
 import '../features/personal/chats/create_chat/view/provider/create_private_chat_provider.dart';
 import '../features/personal/chats/create_chat/view/provider/create_chat_group_provider.dart';
 import '../features/personal/listing/listing_form/views/widgets/attachment_selection/cept_group_invite_usecase.dart';
-import '../features/personal/marketplace/data/repository/explore_repository_impl.dart';
+import '../features/personal/marketplace/data/repository/marketplace_repo_impl.dart';
 import '../features/personal/marketplace/data/source/explore_remote_source.dart';
-import '../features/personal/marketplace/domain/repository/location_name_repo.dart';
+import '../features/personal/marketplace/domain/repository/marketplace_repo.dart';
 import '../features/personal/marketplace/domain/usecase/location_name_usecase.dart';
+import '../features/personal/marketplace/domain/usecase/post_by_filters_usecase.dart';
 import '../features/personal/marketplace/views/providers/marketplace_provider.dart';
 import '../features/personal/listing/listing_form/data/repository/add_listing_repo_impl.dart';
 import '../features/personal/listing/listing_form/data/sources/remote/add_listing_remote_api.dart';
@@ -174,7 +175,7 @@ void setupLocator() {
   _appointment();
   _review();
   _country();
-  _explore();
+  _marketplace();
   _bookvisit();
   _addlisting();
   _sockets();
@@ -486,15 +487,17 @@ void _country() {
   // Providers
 }
 
-void _explore() {
+void _marketplace() {
   locator.registerFactory<ExploreRemoteSource>(() => ExploreRemoteSourceImpl());
-  locator.registerFactory<ExploreRepository>(
-      () => ExploreRepositoryImpl(locator()));
+  locator.registerFactory<GetPostByFiltersUsecase>(
+      () => GetPostByFiltersUsecase(locator()));
+
+  locator
+      .registerFactory<MarketPlaceRepo>(() => MarketPlaceRepoImpl(locator()));
   locator.registerFactory<LocationByNameUsecase>(
       () => LocationByNameUsecase(locator()));
-  locator.registerFactory<MarketPlaceProvider>(() => MarketPlaceProvider(
-      // locator()
-      ));
+  locator.registerFactory<MarketPlaceProvider>(
+      () => MarketPlaceProvider(locator()));
 }
 
 void _bookvisit() {

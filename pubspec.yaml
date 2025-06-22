@@ -105,6 +105,7 @@ flutter:
     - assets/icons/
     - assets/images/
     - assets/images/payment_methods/
+    - assets/images/marketplace_filters/
     - assets/jsons/
     - assets/translations/
 
