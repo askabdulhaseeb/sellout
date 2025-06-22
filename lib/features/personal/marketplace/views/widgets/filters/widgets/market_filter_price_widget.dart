@@ -12,20 +12,26 @@ class MarketFilterPriceWIdget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final MarketPlaceProvider marketPro =
-        Provider.of<MarketPlaceProvider>(context, listen: false);
-    return Row(
-      spacing: 4,
-      children: <Widget>[
-        Expanded(
-          child: CustomTextFormField(
-              hint: 'min_price'.tr(), controller: marketPro.minPriceController),
-        ),
-        Expanded(
-          child: CustomTextFormField(
-              hint: 'max_price'.tr(), controller: marketPro.maxPriceController),
-        )
-      ],
+    return Consumer<MarketPlaceProvider>(
+      builder: (BuildContext context, MarketPlaceProvider marketPro,
+              Widget? child) =>
+          Row(
+        spacing: 4,
+        children: <Widget>[
+          Expanded(
+            child: CustomTextFormField(
+                keyboardType: TextInputType.number,
+                hint: 'min_price'.tr(),
+                controller: marketPro.minPriceController),
+          ),
+          Expanded(
+            child: CustomTextFormField(
+                keyboardType: TextInputType.number,
+                hint: 'max_price'.tr(),
+                controller: marketPro.maxPriceController),
+          )
+        ],
+      ),
     );
   }
 }
