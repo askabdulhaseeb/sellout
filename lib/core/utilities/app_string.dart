@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AppStrings {
-  static var local;
+  // static var local;
 
   // Hive Boxes
   static String get localAuthBox => 'com.sellout.local-auth';
@@ -25,6 +25,19 @@ class AppStrings {
   static String get localDropDownListingBox => 'com.sellout.dropdown-listings';
   static String get localPostListCache => 'com.sellout.local-post-list-cache';
   // [IMAGES]
+  // Maketplace CATEGORIES
+  static const String clothfootmarketplace =
+      'assets/images/marketplace_filters/clothfoot_marketplace.jpg';
+  static const String fooddrinkmarketplace =
+      'assets/images/marketplace_filters/fooddrink_marketplace.jpg';
+  static const String petsmarketplaceex =
+      'assets/images/marketplace_filters/pets_marketplace.jpg';
+  static const String popularmarketplace =
+      'assets/images/marketplace_filters/popular_marketplace.jpg';
+  static const String propertymarketplace =
+      'assets/images/marketplace_filters/property_marketplace.jpg';
+  static const String vehiclemarketplace =
+      'assets/images/marketplace_filters/vehicle_marketplace.jpg';
   // Payment METHODS
   static String get amex => 'assets/images/payment_methods/amex.png';
   static String get applePayBlack =>
@@ -36,7 +49,7 @@ class AppStrings {
   static String get paypal => 'assets/images/payment_methods/paypal.png';
   static String get visa => 'assets/images/payment_methods/visa.png';
   static String get stripe => 'assets/images/payment_methods/stripe.png';
-  //logo
+  //app LOGO
   static String get selloutLogo => 'assets/images/sellout_logo.png';
 
   String get baseURL =>

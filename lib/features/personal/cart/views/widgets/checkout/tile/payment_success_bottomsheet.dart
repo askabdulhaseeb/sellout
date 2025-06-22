@@ -60,7 +60,7 @@ class _PaymentSuccessSheetState extends State<PaymentSuccessSheet> {
               if (showOrderInfo) CartPaymentSuccessDetailsSection(pro: pro),
               if (!showOrderInfo)
                 Text(
-                  '${'order_total:'.tr()}:${pro.orderBilling?.billingDetails.grandTotal}',
+                  '${'order_total'.tr()}: ${pro.orderBilling?.billingDetails.grandTotal}${pro.orderBilling?.billingDetails.currency}',
                   style: TextStyle(color: Colors.grey.shade600),
                 ),
             ],

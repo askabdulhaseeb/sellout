@@ -11,52 +11,49 @@ class SearchUsersSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final SearchProvider provider = context.watch<SearchProvider>();
-    final TextEditingController _controller =
-        TextEditingController(text: provider.userQuery);
-
-    return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            CustomTextFormField(
-              autoFocus: true,
-              controller: _controller,
-              hint: 'search'.tr(),
-              onChanged: (String value) {
-                provider.search(_controller.text);
-              },
-            ),
-            Expanded(
-              child: NotificationListener<ScrollNotification>(
-                onNotification: (ScrollNotification scrollInfo) {
-                  if (!provider.isLoading &&
-                      scrollInfo.metrics.pixels >=
-                          scrollInfo.metrics.maxScrollExtent - 100) {
-                    provider.search(provider.currentQuery, isLoadMore: true);
-                  }
-                  return false;
-                },
-                child: CustomScrollView(
-                  controller: provider.currentScrollController,
-                  slivers: <Widget>[
-                    SliverPadding(
-                      padding: const EdgeInsets.all(8),
-                      sliver: SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (BuildContext context, int index) =>
-                              UserTile(user: provider.userResults[index]),
-                          childCount: provider.userResults.length,
-                        ),
-                      ),
+    final TextEditingController controller = TextEditingController(
+      text: provider.userQuery,
+    );
+    return Column(
+      children: <Widget>[
+        CustomTextFormField(
+          autoFocus: true,
+          controller: controller,
+          hint: 'search'.tr(),
+          onChanged: provider.searchUsers,
+        ),
+        Expanded(
+          child: NotificationListener<ScrollNotification>(
+            onNotification: (ScrollNotification scrollInfo) {
+              if (!provider.isLoading &&
+                  scrollInfo.metrics.pixels >=
+                      scrollInfo.metrics.maxScrollExtent - 100) {
+                provider.searchUsers(provider.currentQuery, isLoadMore: true);
+              }
+              return false;
+            },
+            child: CustomScrollView(
+              controller: provider.currentScrollController,
+              slivers: <Widget>[
+                SliverPadding(
+                  padding: const EdgeInsets.all(8),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (BuildContext context, int index) =>
+                          UserTile(user: provider.userResults[index]),
+                      childCount: provider.userResults.length,
                     ),
-                    if (provider.isLoading)
-                      const SliverToBoxAdapter(
-                          child: Center(child: CircularProgressIndicator())),
-                  ],
+                  ),
                 ),
-              ),
+                if (provider.isLoading)
+                  const SliverToBoxAdapter(
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+              ],
             ),
-          ],
-        ));
+          ),
+        ),
+      ],
+    );
   }
 }

@@ -1,0 +1,52 @@
+import 'dart:convert';
+import 'filter_params.dart';
+
+class PostByFiltersParams {
+  PostByFiltersParams({
+    required this.filters,
+    this.distance,
+    this.clientLat,
+    this.clientLng,
+    this.address,
+    this.lastKey,
+    this.category,
+  });
+  final String? category;
+  final double? distance;
+  final double? clientLat;
+  final double? clientLng;
+  final String? address;
+  final String? lastKey;
+  final List<FilterParam> filters;
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'distance': distance,
+      'clientLat': clientLat,
+      'clientLng': clientLng,
+      'address': address,
+      'lastKey': lastKey,
+      'filters': filters.map((FilterParam x) => x.toMap()).toList(),
+    };
+  }
+
+  String toJson() => json.encode(toMap());
+
+  // PostByFiltersParams copyWith({
+  //   double? distance,
+  //   double? clientLat,
+  //   double? clientLng,
+  //   String? address,
+  //   String? lastKey,
+  //   List<FilterParam>? filters,
+  // }) {
+  //   return PostByFiltersParams(
+  //     distance: distance ?? this.distance,
+  //     clientLat: clientLat ?? this.clientLat,
+  //     clientLng: clientLng ?? this.clientLng,
+  //     address: address ?? this.address,
+  //     lastKey: lastKey ?? this.lastKey,
+  //     filters: filters ?? this.filters,
+  //   );
+  // }
+}

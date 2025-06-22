@@ -49,7 +49,7 @@ class _AddListingVehicleBasicInfoSectionState
             ),
 
             /// Body type dynamic dropdown
-            CustomDynamicDropdown(
+            CustomListingDropDown(
               categoryKey: 'body_type',
               selectedValue: formPro.selectedBodyType,
               title: 'body_type',
@@ -57,7 +57,7 @@ class _AddListingVehicleBasicInfoSectionState
             ),
 
             /// Emission standard dynamic dropdown
-            CustomDynamicDropdown(
+            CustomListingDropDown(
               categoryKey: 'emission_standards',
               selectedValue: formPro.emission,
               title: 'emission_standards',
@@ -65,7 +65,7 @@ class _AddListingVehicleBasicInfoSectionState
             ),
 
             /// Make dynamic dropdown
-            CustomDynamicDropdown(
+            CustomListingDropDown(
               categoryKey: 'make',
               selectedValue: formPro.make,
               title: 'make'.tr(),
@@ -84,7 +84,7 @@ class _AddListingVehicleBasicInfoSectionState
             ),
 
             /// Fuel type dynamic dropdown
-            CustomDynamicDropdown(
+            CustomListingDropDown(
               categoryKey: 'fuel_type',
               selectedValue: formPro.fuelTYpe,
               title: 'fuel_type',
@@ -92,7 +92,7 @@ class _AddListingVehicleBasicInfoSectionState
             ),
 
             /// Transmission dynamic dropdown
-            CustomDynamicDropdown(
+            CustomListingDropDown(
               categoryKey: 'transmission',
               selectedValue: formPro.transmissionType,
               title: 'transmission'.tr(),

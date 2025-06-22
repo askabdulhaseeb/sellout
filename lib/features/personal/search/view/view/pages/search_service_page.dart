@@ -11,52 +11,50 @@ class SearchServicesSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final SearchProvider provider = context.watch<SearchProvider>();
-    final TextEditingController _controller =
-        TextEditingController(text: provider.serviceQuery);
+    final TextEditingController controller = TextEditingController(
+      text: provider.serviceQuery,
+    );
 
-    return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            CustomTextFormField(
-              autoFocus: true,
-              controller: _controller,
-              hint: 'search'.tr(),
-              onChanged: (String value) {
-                provider.search(_controller.text);
-              },
-            ),
-            Expanded(
-              child: NotificationListener<ScrollNotification>(
-                onNotification: (ScrollNotification scrollInfo) {
-                  if (!provider.isLoading &&
-                      scrollInfo.metrics.pixels >=
-                          scrollInfo.metrics.maxScrollExtent - 100) {
-                    provider.search(provider.currentQuery, isLoadMore: true);
-                  }
-                  return false;
-                },
-                child: CustomScrollView(
-                  controller: provider.currentScrollController,
-                  slivers: <Widget>[
-                    SliverPadding(
-                      padding: const EdgeInsets.all(8),
-                      sliver: SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (BuildContext context, int index) => ServiceCard(
-                              service: provider.serviceResults[index]),
-                          childCount: provider.serviceResults.length,
-                        ),
-                      ),
+    return Column(
+      children: <Widget>[
+        CustomTextFormField(
+          controller: controller,
+          hint: 'search'.tr(),
+          onChanged: provider.searchServices,
+        ),
+        Expanded(
+          child: NotificationListener<ScrollNotification>(
+            onNotification: (ScrollNotification scrollInfo) {
+              if (!provider.isLoading &&
+                  scrollInfo.metrics.pixels >=
+                      scrollInfo.metrics.maxScrollExtent - 100) {
+                provider.searchServices(provider.currentQuery,
+                    isLoadMore: true);
+              }
+              return false;
+            },
+            child: CustomScrollView(
+              controller: provider.currentScrollController,
+              slivers: <Widget>[
+                SliverPadding(
+                  padding: const EdgeInsets.all(8),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (BuildContext context, int index) =>
+                          ServiceCard(service: provider.serviceResults[index]),
+                      childCount: provider.serviceResults.length,
                     ),
-                    if (provider.isLoading)
-                      const SliverToBoxAdapter(
-                          child: Center(child: CircularProgressIndicator())),
-                  ],
+                  ),
                 ),
-              ),
+                if (provider.isLoading)
+                  const SliverToBoxAdapter(
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+              ],
             ),
-          ],
-        ));
+          ),
+        ),
+      ],
+    );
   }
 }

@@ -1,29 +1,23 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../enums/category_types.dart';
+import '../../../../../core/enums/listing/core/listing_type.dart';
+import '../../../listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../providers/marketplace_provider.dart';
-import '../screens/filter_categories/explore_cloth_foot_screen.dart';
-import '../screens/filter_categories/explore_food_drink_screen.dart';
-import '../screens/filter_categories/explore_pets_screen.dart';
-import '../screens/filter_categories/explore_property_screen.dart';
-import '../screens/filter_categories/explore_vehicles_screen.dart';
-import '../screens/filter_categories/explore_popular_screen.dart';
 
 class ExploreCategoriesSection extends StatelessWidget {
   const ExploreCategoriesSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final MarketPlaceProvider pro =
-        Provider.of<MarketPlaceProvider>(context, listen: false);
+    final MarketPlaceProvider marketplacePro =
+        context.read<MarketPlaceProvider>();
+    final ThemeData theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          'discover_categories'.tr(),
-          style: Theme.of(context).textTheme.titleSmall,
-        ),
+        Text('discover_categories'.tr(), style: theme.textTheme.titleSmall),
         const SizedBox(height: 8),
         GridView.builder(
           shrinkWrap: true,
@@ -34,38 +28,15 @@ class ExploreCategoriesSection extends StatelessWidget {
             mainAxisSpacing: 10,
             childAspectRatio: 1,
           ),
-          itemCount: categories.length,
+          itemCount: ListingType.values.length,
           itemBuilder: (BuildContext context, int index) {
-            final CategoryType category = categories[index];
+            final ListingType category = ListingType.values[index];
             return InkWell(
               onTap: () {
-                if (category.name == 'popular') {
-                  pro.filterPopularResults();
-                  Navigator.pushNamed(context, ExplorePopularScreen.routeName);
-                }
-                if (category.name == 'cloth_foot') {
-                  pro.filterFootResults();
-                  pro.filterCLothResults();
-                  Navigator.pushNamed(
-                      context, ExploreCLothFOotScreen.routeName);
-                }
-                if (category.name == 'pets') {
-                  pro.filterpetResults();
-                  Navigator.pushNamed(context, ExplorePetsScreen.routeName);
-                }
-                if (category.name == 'vehicles') {
-                  pro.filtervehicleResults();
-                  Navigator.pushNamed(context, ExploreVehiclesScreen.routeName);
-                }
-                if (category.name == 'food_drink') {
-                  Navigator.pushNamed(
-                      context, ExploreFoodDrinkScreen.routeName);
-                }
-                if (category.name == 'property') {
-                  pro.filterSaleResults();
-                  pro.filterRentResults();
-                  Navigator.pushNamed(context, ExplorePropertyScreen.routeName);
-                }
+                marketplacePro.setMarketplaceCategory(category);
+                Provider.of<AddListingFormProvider>(context, listen: false)
+                    .fetchDropdownListings(
+                        '/category/${marketplacePro.marketplaceCategory?.json}?list-id=');
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -76,7 +47,10 @@ class ExploreCategoriesSection extends StatelessWidget {
                   children: <Widget>[
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.asset(category.imageUrl, fit: BoxFit.cover),
+                      child: Image.asset(
+                        category.imagePath,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                     Container(
                       decoration: BoxDecoration(
@@ -85,12 +59,10 @@ class ExploreCategoriesSection extends StatelessWidget {
                       ),
                       child: Center(
                         child: Text(
+                          category.code.tr(),
                           textAlign: TextAlign.center,
-                          category.name.tr(),
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Colors.white,
-                                  ),
+                          style: theme.textTheme.bodyMedium
+                              ?.copyWith(color: Colors.white),
                         ),
                       ),
                     ),
@@ -101,7 +73,7 @@ class ExploreCategoriesSection extends StatelessWidget {
           },
         ),
         const SizedBox(height: 12),
-        const Divider()
+        const Divider(),
       ],
     );
   }

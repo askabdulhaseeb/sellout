@@ -18,10 +18,34 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   @override
+  void initState() {
+    super.initState();
+
+    // Perform initial fetch for all 3 types
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final SearchProvider provider =
+          Provider.of<SearchProvider>(context, listen: false);
+
+      // Fetch posts
+      if (provider.postResults.isEmpty) {
+        await provider.searchPosts('');
+      }
+
+      // Fetch services
+      if (provider.serviceResults.isEmpty) {
+        await provider.searchServices('');
+      }
+
+      // Fetch users
+      if (provider.userResults.isEmpty) {
+        await provider.searchUsers('');
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    //   final SearchProvider provider =
-    //       Provider.of<SearchProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: Text(

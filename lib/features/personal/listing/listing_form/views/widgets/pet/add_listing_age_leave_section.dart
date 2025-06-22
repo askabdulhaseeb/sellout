@@ -19,7 +19,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
             Row(
               children: <Widget>[
                 Expanded(
-                  child: CustomDynamicDropdown(
+                  child: CustomListingDropDown(
                     categoryKey: 'age',
                     selectedValue: formPro.age,
                     title: 'age'.tr(),
@@ -28,7 +28,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: CustomDynamicDropdown(
+                  child: CustomListingDropDown(
                     categoryKey: 'ready_to_leave',
                     selectedValue: formPro.time,
                     title: 'ready_to_leave'.tr(),
@@ -38,7 +38,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
               ],
             ),
             // Uncomment if you want breed dropdown
-            // CustomDynamicDropdown(
+            // CustomListingDropDown(
             //   categoryKey: 'breed',
             //   selectedValue: formPro.breed,
             //   title: 'breed'.tr(),

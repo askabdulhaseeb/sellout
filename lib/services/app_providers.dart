@@ -95,17 +95,17 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
   //
   ChangeNotifierProvider<AppointmentTileProvider>.value(
       value: AppointmentTileProvider(locator(), locator(), locator())),
-
   // Business
   ChangeNotifierProvider<BusinessPageProvider>.value(
       value: BusinessPageProvider(
           locator(), locator(), locator(), locator(), locator())),
   ChangeNotifierProvider<AddServiceProvider>.value(
       value: AddServiceProvider(locator(), locator())),
+
   ChangeNotifierProvider<MarketPlaceProvider>.value(
       value: MarketPlaceProvider(
-          // locator(),
-          )),
+    locator(),
+  )),
 //
   ChangeNotifierProvider<BookingProvider>.value(
       value: BookingProvider(

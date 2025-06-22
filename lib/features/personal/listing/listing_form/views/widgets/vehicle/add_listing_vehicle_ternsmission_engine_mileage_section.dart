@@ -36,7 +36,7 @@ class AddListingVehicleTernsmissionEngineMileageSection
                 ),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: CustomDynamicDropdown(
+                  child: CustomListingDropDown(
                     categoryKey: 'mileage_unit',
                     selectedValue: formPro.selectedMileageUnit,
                     title: 'mileage_unit',
@@ -45,7 +45,7 @@ class AddListingVehicleTernsmissionEngineMileageSection
                 ),
               ],
             ),
-            CustomDynamicDropdown(
+            CustomListingDropDown(
               categoryKey: 'vehicles',
               selectedValue: formPro.selectedVehicleCategory,
               title: 'vehicle_category',
