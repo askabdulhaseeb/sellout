@@ -10,28 +10,30 @@ class MarketFilterAgeLeaveWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final MarketPlaceProvider marketPro =
-        Provider.of<MarketPlaceProvider>(context, listen: false);
-    return Row(
-      spacing: 4,
-      children: <Widget>[
-        Expanded(
-          child: CustomListingDropDown(
-            hint: 'age',
-            categoryKey: 'age',
-            selectedValue: marketPro.age,
-            onChanged: (String? p0) => marketPro.setAge(p0),
+    return Consumer<MarketPlaceProvider>(
+      builder: (BuildContext context, MarketPlaceProvider marketPro,
+              Widget? child) =>
+          Row(
+        spacing: 4,
+        children: <Widget>[
+          Expanded(
+            child: CustomListingDropDown(
+              hint: 'age',
+              categoryKey: 'age',
+              selectedValue: marketPro.age,
+              onChanged: (String? p0) => marketPro.setAge(p0),
+            ),
           ),
-        ),
-        Expanded(
-          child: CustomListingDropDown(
-            hint: 'ready_to_leave',
-            categoryKey: 'ready_to_leave',
-            selectedValue: marketPro.readyToLeave,
-            onChanged: (String? p0) => marketPro.setReadyToLeave(p0),
+          Expanded(
+            child: CustomListingDropDown(
+              hint: 'ready_to_leave',
+              categoryKey: 'ready_to_leave',
+              selectedValue: marketPro.readyToLeave,
+              onChanged: (String? p0) => marketPro.setReadyToLeave(p0),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

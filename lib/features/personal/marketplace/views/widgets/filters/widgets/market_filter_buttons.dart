@@ -13,43 +13,45 @@ class MarketFilterButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final MarketPlaceProvider marketPro =
-        Provider.of<MarketPlaceProvider>(context, listen: false);
-    return Column(
-      children: <Widget>[
-        CustomElevatedButton(
-            title: 'search'.tr(),
-            isLoading: marketPro.isLoading,
-            onTap: () {
-              marketPro.loadPosts();
-            }),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            GestureDetector(
-              onTap: () => marketPro.resetFilters(),
-              child: Text(
-                'reset_filters'.tr(),
-                style: textTheme.labelMedium?.copyWith(
-                    fontWeight: FontWeight.w400,
-                    decorationColor: colorScheme.outlineVariant,
-                    color: colorScheme.outlineVariant,
-                    decoration: TextDecoration.underline),
+    return Consumer<MarketPlaceProvider>(
+      builder: (BuildContext context, MarketPlaceProvider marketPro,
+              Widget? child) =>
+          Column(
+        children: <Widget>[
+          CustomElevatedButton(
+              title: 'search'.tr(),
+              isLoading: marketPro.isLoading,
+              onTap: () {
+                marketPro.loadPosts();
+              }),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              GestureDetector(
+                onTap: () => marketPro.resetFilters(),
+                child: Text(
+                  'reset_filters'.tr(),
+                  style: textTheme.labelMedium?.copyWith(
+                      fontWeight: FontWeight.w400,
+                      decorationColor: colorScheme.outlineVariant,
+                      color: colorScheme.outlineVariant,
+                      decoration: TextDecoration.underline),
+                ),
               ),
-            ),
-            GestureDetector(
-              child: Text(
-                'more_options'.tr(),
-                style: textTheme.labelMedium?.copyWith(
-                    fontWeight: FontWeight.w400,
-                    decorationColor: colorScheme.outlineVariant,
-                    color: colorScheme.outlineVariant,
-                    decoration: TextDecoration.underline),
-              ),
-            )
-          ],
-        ),
-      ],
+              GestureDetector(
+                child: Text(
+                  'more_options'.tr(),
+                  style: textTheme.labelMedium?.copyWith(
+                      fontWeight: FontWeight.w400,
+                      decorationColor: colorScheme.outlineVariant,
+                      color: colorScheme.outlineVariant,
+                      decoration: TextDecoration.underline),
+                ),
+              )
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

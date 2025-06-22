@@ -49,6 +49,16 @@ class MarketPlaceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setProperyyCategory(String? category) {
+    _propertyCategory = category;
+    notifyListeners();
+  }
+
+  void setFoodDrinkCategory(String? category) {
+    _foodDrinkCategory = category;
+    notifyListeners();
+  }
+
   void setSize(String? size) {
     _selectedSize = size;
   }
@@ -99,19 +109,26 @@ class MarketPlaceProvider extends ChangeNotifier {
   }
 
   void resetFilters() {
-    //cloth foot variables
+    // Cloth & Foot
     _cLothFootCategory = ListingType.clothAndFoot.cids.first;
     _selectedSize = null;
     _selectedColor = null;
-    //items varibales
+    // Items
     _listingItemCategory = null;
-    minPriceController.clear();
-    maxPriceController.clear();
-    //pets variables
+    // Pets
     _age = null;
     _readyToLeave = null;
-
-    ///
+    // Property
+    _propertyCategory = ListingType.property.cids.first;
+    _propertyType = null;
+    // Food & Drink
+    _foodDrinkCategory = ListingType.foodAndDrink.cids.first;
+    // Vehicles
+    _make = null;
+    _year = null;
+    // General
+    minPriceController.clear();
+    maxPriceController.clear();
     postFilterController.clear();
     _posts = null;
     _isLoading = false;
@@ -121,6 +138,9 @@ class MarketPlaceProvider extends ChangeNotifier {
 //variables
   ListingType? _marketplaceCategory;
   String? _cLothFootCategory = ListingType.clothAndFoot.cids.first;
+  String? _propertyCategory = ListingType.property.cids.first;
+  String? _foodDrinkCategory = ListingType.foodAndDrink.cids.first;
+
   String? _selectedSize;
   String? _selectedColor;
   bool _isLoading = false;
@@ -135,6 +155,8 @@ class MarketPlaceProvider extends ChangeNotifier {
 // Getters
   ListingType? get marketplaceCategory => _marketplaceCategory;
   String? get cLothFootCategory => _cLothFootCategory;
+  String? get propertyCategory => _propertyCategory;
+  String? get foodDrinkCategory => _foodDrinkCategory;
   String? get selectedSize => _selectedSize;
   String? get selectedColor => _selectedColor;
   bool get isLoading => _isLoading;
@@ -216,6 +238,44 @@ class MarketPlaceProvider extends ChangeNotifier {
     }
 
     if (_marketplaceCategory == ListingType.clothAndFoot) {
+      filters.add(FilterParam(
+        attribute: 'type',
+        operator: 'eq',
+        value: _cLothFootCategory!,
+      ));
+    }
+// property section filters
+    if (_propertyType != null && _propertyType!.isNotEmpty) {
+      filters.add(FilterParam(
+        attribute: 'property_type',
+        operator: 'eq',
+        value: _propertyType!,
+      ));
+    }
+    if (_marketplaceCategory == ListingType.property) {
+      filters.add(FilterParam(
+        attribute: 'type',
+        operator: 'eq',
+        value: _cLothFootCategory!,
+      ));
+    }
+// vehicle section filters
+    if (_make != null && _make!.isNotEmpty) {
+      filters.add(FilterParam(
+        attribute: 'make',
+        operator: 'eq',
+        value: _make!,
+      ));
+    }
+    if (_year != null && _year!.isNotEmpty) {
+      filters.add(FilterParam(
+        attribute: 'year',
+        operator: 'eq',
+        value: _year!,
+      ));
+    }
+// food & drink section
+    if (_marketplaceCategory == ListingType.foodAndDrink) {
       filters.add(FilterParam(
         attribute: 'type',
         operator: 'eq',

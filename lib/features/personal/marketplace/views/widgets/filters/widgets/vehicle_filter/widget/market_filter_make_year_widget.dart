@@ -15,7 +15,7 @@ class MarketFilterMakeYearWidget extends StatelessWidget {
         Provider.of<MarketPlaceProvider>(context, listen: false);
     return Row(
       spacing: 4,
-      children: [
+      children: <Widget>[
         Expanded(
             child: CustomListingDropDown(
           hint: 'make',
@@ -23,13 +23,13 @@ class MarketFilterMakeYearWidget extends StatelessWidget {
           selectedValue: marketPro.make,
           onChanged: (String? p0) => marketPro.setMake(p0),
         )),
-        Expanded(
-            child: CustomListingDropDown(
-          hint: 'year',
-          categoryKey: 'year',
-          selectedValue: marketPro.year,
-          onChanged: (String? p0) => marketPro.setYear(p0),
-        )),
+        // Expanded(
+        //     child: CustomListingDropDown(
+        //   hint: 'year',
+        //   categoryKey: 'year',
+        //   selectedValue: marketPro.year,
+        //   onChanged: (String? p0) => marketPro.setYear(p0),
+        // )),
       ],
     );
   }

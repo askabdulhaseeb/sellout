@@ -15,34 +15,37 @@ class MarketFilterFoodDrinkToggleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final MarketPlaceProvider marketPro =
-        Provider.of<MarketPlaceProvider>(context, listen: false);
     final List<String> subCategories =
         ListingType.foodAndDrink.cids.getRange(0, 2).toList();
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-                border: Border.all(color: ColorScheme.of(context).outline),
-                borderRadius: BorderRadius.circular(8)),
-            child: Center(
-              child: CustomToggleSwitch<String>(
-                  verticalPadding: 6,
-                  isShaded: false,
-                  customWidths: <double>[
-                    screenWidth * 0.39,
-                    screenWidth * 0.39
-                  ],
-                  labels: subCategories,
-                  labelStrs: subCategories.map((String e) => e.tr()).toList(),
-                  labelText: '',
-                  initialValue: marketPro.cLothFootCategory,
-                  onToggle: marketPro.setClothFootCategory),
+    return Consumer<MarketPlaceProvider>(
+      builder: (BuildContext context, MarketPlaceProvider marketPro,
+              Widget? child) =>
+          Row(
+        children: <Widget>[
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                  border: Border.all(color: ColorScheme.of(context).outline),
+                  borderRadius: BorderRadius.circular(8)),
+              child: Center(
+                child: CustomToggleSwitch<String>(
+                    verticalPadding: 6,
+                    isShaded: false,
+                    customWidths: <double>[
+                      screenWidth * 0.39,
+                      screenWidth * 0.39
+                    ],
+                    labels: subCategories,
+                    labelStrs: subCategories.map((String e) => e.tr()).toList(),
+                    labelText: '',
+                    initialValue: marketPro.foodDrinkCategory,
+                    onToggle: (String p0) =>
+                        marketPro.setFoodDrinkCategory(p0)),
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
