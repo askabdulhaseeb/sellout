@@ -43,7 +43,8 @@ class _CustomListingDropDownState extends State<CustomListingDropDown> {
 
     if (widget.categoryKey != oldWidget.categoryKey) {
       _loadOptions();
-    } else if (widget.selectedValue != oldWidget.selectedValue) {
+    }
+    if (widget.selectedValue != oldWidget.selectedValue) {
       _syncDisplayLabel();
     }
   }
@@ -81,10 +82,9 @@ class _CustomListingDropDownState extends State<CustomListingDropDown> {
   }
 
   String? _findLabel(String? value, List<DropdownOptionEntity> opts) {
+    if (value == null) return null; // explicitly handle null value
     for (final DropdownOptionEntity opt in opts) {
-      if (opt.value == value) {
-        return opt.label;
-      }
+      if (opt.value == value) return opt.label;
       if (opt.children.isNotEmpty) {
         final String? childLabel = _findLabel(value, opt.children);
         if (childLabel != null) return childLabel;
@@ -127,10 +127,12 @@ class _CustomListingDropDownState extends State<CustomListingDropDown> {
                     child: Text(
                       displayLabel ?? widget.hint.tr(),
                       overflow: TextOverflow.ellipsis,
-                      style: TextTheme.of(context).bodyMedium?.copyWith(
-                          color: ColorScheme.of(context)
-                              .outline
-                              .withValues(alpha: 0.5)),
+                      style: displayLabel != null
+                          ? Theme.of(context).textTheme.bodyMedium
+                          : Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: ColorScheme.of(context)
+                                  .outline
+                                  .withValues(alpha: 0.5)),
                     ),
                   ),
                   const Icon(Icons.keyboard_arrow_down_rounded),

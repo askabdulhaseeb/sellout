@@ -19,11 +19,13 @@ class LocationInputField extends StatefulWidget {
     super.key,
     this.controller,
     this.initialLocation,
+    this.showMap = false,
   });
 
   final ValueChanged<LocationModel> onLocationSelected;
   final TextEditingController? controller;
   final LocationEntity? initialLocation;
+  final bool showMap;
 
   @override
   State<LocationInputField> createState() => _LocationInputFieldState();
@@ -124,7 +126,7 @@ class _LocationInputFieldState extends State<LocationInputField> {
           onLocationSelected: _handleLocationSelection,
           initialText: widget.initialLocation?.title,
         ),
-        if (_selectedLatLng != null)
+        if (_selectedLatLng != null && widget.showMap)
           LocationMapPreview(
             latLng: _selectedLatLng!,
             locationName: _controller.text,

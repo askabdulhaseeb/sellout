@@ -6,8 +6,8 @@ import 'widget/market_filter_food_drink_toggle_button.dart';
 
 class FoodDrinkFilterSection extends StatelessWidget {
   const FoodDrinkFilterSection({
-    super.key,
     required this.screenWidth,
+    super.key,
   });
 
   final double screenWidth;
