@@ -1,9 +1,13 @@
+import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../../post/domain/entities/post_entity.dart';
+import '../../domain/enum/radius_type.dart';
 import '../../domain/params/filter_params.dart';
 import '../../domain/params/post_by_filter_params.dart';
 import '../../domain/usecase/post_by_filters_usecase.dart';
@@ -102,6 +106,16 @@ class MarketPlaceProvider extends ChangeNotifier {
     _propertyType = value;
   }
 
+  void setRadiusType(RadiusType value) {
+    _radiusType = value;
+    notifyListeners();
+  }
+
+  void setRadius(double value) {
+    _selectedRadius = value;
+    notifyListeners();
+  }
+
 // reset functions
   void clearMarketplaceCategory() {
     _marketplaceCategory = null;
@@ -151,6 +165,10 @@ class MarketPlaceProvider extends ChangeNotifier {
   String? _make;
   String? _year;
   String? _propertyType;
+  LatLng _selectedLocation = const LatLng(0, 0);
+  String _selectedLocationName = '';
+  double _selectedRadius = 5;
+  RadiusType _radiusType = RadiusType.local;
 
 // Getters
   ListingType? get marketplaceCategory => _marketplaceCategory;
@@ -167,6 +185,10 @@ class MarketPlaceProvider extends ChangeNotifier {
   String? get make => _make;
   String? get year => _year;
   String? get propertyType => _propertyType;
+  LatLng get selectedLocation => _selectedLocation;
+  String get selectedLocationName => _selectedLocationName;
+  double get selectedRadius => _selectedRadius;
+  RadiusType get radiusType => _radiusType;
 
 // textfield controllers
   TextEditingController postFilterController = TextEditingController();
@@ -177,6 +199,9 @@ class MarketPlaceProvider extends ChangeNotifier {
 
   PostByFiltersParams _buildPostByFiltersParams() {
     return PostByFiltersParams(
+      clientLat: _selectedLocation.latitude,
+      clientLng: _selectedLocation.longitude,
+      distance: 100,
       category: _marketplaceCategory?.json ?? '',
       filters: _buildFilters(),
     );
@@ -283,6 +308,47 @@ class MarketPlaceProvider extends ChangeNotifier {
       ));
     }
     return filters;
+  }
+
+//
+  Future<LatLng> getLocationCoordinates(String address) async {
+    final bool hasConnection = await _checkInternetConnection();
+    if (!hasConnection) throw 'NO_INTERNET';
+
+    final List<Location> locations = await locationFromAddress(address)
+        .timeout(const Duration(seconds: 10), onTimeout: () {
+      throw 'TIMEOUT';
+    });
+
+    if (locations.isEmpty) throw 'NO_RESULTS';
+    return LatLng(locations.first.latitude, locations.first.longitude);
+  }
+
+  // Default radius type: worldwide or local
+
+  void updateLocation(LatLng location, String name) {
+    _selectedLocation = location;
+    _selectedLocationName = name;
+    notifyListeners();
+  }
+
+  void updateRadiusType(RadiusType value) {
+    _radiusType = value;
+    notifyListeners();
+  }
+
+  void updateRadius(double value) {
+    _selectedRadius = value;
+    notifyListeners();
+  }
+
+  Future<bool> _checkInternetConnection() async {
+    try {
+      await InternetAddress.lookup('google.com');
+      return true;
+    } on SocketException {
+      return false;
+    }
   }
 }
 /////////////////////////////////////////////////////////////////////////////
