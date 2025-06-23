@@ -289,6 +289,33 @@ class ChatProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> removeFromGroup(String? partcicpantId) async {
+    setLoading(true);
+    LeaveGroupParams leaveparams = LeaveGroupParams(
+      participantId: partcicpantId,
+      chatId: chat?.chatId ?? '',
+      removalType: 'remove',
+    );
+    final DataState<bool> result = await _leaveGroupparams.call(leaveparams);
+    try {
+      if (result is DataSuccess) {
+        setChat(LocalChat().chatEntity(chat?.chatId ?? ''));
+        debugPrint(
+            'you removed ${leaveparams.participantId} from group${leaveparams.chatId}');
+        setLoading(false);
+      } else {
+        AppLog.error(
+            'you failed to remove ${leaveparams.participantId} from group${leaveparams.chatId}',
+            name: 'ChatPRovider.LeaveGroup - else');
+        setLoading(false);
+      }
+    } catch (e, stc) {
+      AppLog.error('error chatprovider - LeaveGroup',
+          name: 'ChatPRovider.LeaveGroup - Catch', error: e, stackTrace: stc);
+      setLoading(false);
+    }
+  }
+
   Future<void> sendGroupInvite(List<String> newParticipant) async {
     setLoading(true);
     SendGroupInviteParams inviteparams = SendGroupInviteParams(

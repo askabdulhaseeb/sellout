@@ -2,6 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../user/profiles/data/sources/local/local_user.dart';
+import '../../../../../../business/core/data/sources/local_business.dart';
+import '../../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../chat_dashboard/views/widgets/chat_profile_with_status.dart';
 import '../../providers/chat_provider.dart';
 
@@ -12,24 +14,39 @@ class PrivateChatTitleWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ChatProvider>(
       builder: (BuildContext context, ChatProvider pro, _) {
+        final String otherPersonId = pro.chat?.otherPerson() ?? '';
+        final bool isBusiness = otherPersonId.toUpperCase().startsWith('BU');
+        final BusinessEntity? business =
+            isBusiness ? LocalBusiness().business(otherPersonId) : null;
+
         final UserEntity? user =
-            LocalUser().userEntity(pro.chat?.otherPerson() ?? '');
+            !isBusiness ? LocalUser().userEntity(otherPersonId) : null;
+
         return Row(
           children: <Widget>[
             ProfilePictureWithStatus(
               isProduct: false,
-              postImageUrl: user?.profilePhotoURL ?? user?.displayName ?? '',
+              postImageUrl: isBusiness
+                  ? (business?.logo?.url ?? '')
+                  : (user?.profilePhotoURL ?? user?.displayName ?? ''),
               userImageUrl: '',
-              userDisplayName: user?.displayName ?? '',
-              userId: user?.uid ?? '',
+              userDisplayName: isBusiness
+                  ? (business?.displayName ?? '')
+                  : (user?.displayName ?? ''),
+              userId:
+                  isBusiness ? (business?.businessID ?? '') : (user?.uid ?? ''),
             ),
             const SizedBox(width: 8),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(overflow: TextOverflow.ellipsis,
-                    user?.displayName ?? '',
+                  Text(
+                    isBusiness
+                        ? (business?.displayName ?? '')
+                        : (user?.displayName ?? ''),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Opacity(

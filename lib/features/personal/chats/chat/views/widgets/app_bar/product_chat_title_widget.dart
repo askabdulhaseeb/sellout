@@ -1,9 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../business/core/data/sources/local_business.dart';
+import '../../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../post/domain/entities/post_entity.dart';
 import '../../../../../user/profiles/data/sources/local/local_user.dart';
+import '../../../../../user/profiles/data/models/user_model.dart';
 import '../../../../chat_dashboard/views/widgets/chat_profile_with_status.dart';
 import '../../providers/chat_provider.dart';
 
@@ -14,18 +17,31 @@ class ProductChatTitleWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ChatProvider>(
       builder: (BuildContext context, ChatProvider pro, _) {
+        final String otherPersonId = pro.chat?.otherPerson() ?? '';
+        final bool isBusiness = otherPersonId.toUpperCase().startsWith('BU');
+
+        final BusinessEntity? business =
+            isBusiness ? LocalBusiness().business(otherPersonId) : null;
+
         final UserEntity? user =
-            LocalUser().userEntity(pro.chat?.otherPerson() ?? '');
+            !isBusiness ? LocalUser().userEntity(otherPersonId) : null;
+
         final PostEntity? post =
             LocalPost().post(pro.chat?.productInfo?.id ?? '');
+
         return Row(
           children: <Widget>[
             ProfilePictureWithStatus(
               isProduct: true,
               postImageUrl: post?.imageURL ?? '',
-              userImageUrl: user?.profilePhotoURL ?? user?.displayName ?? '',
-              userDisplayName: user?.displayName ?? post?.title ?? '',
-              userId: user?.uid ?? '',
+              userImageUrl: isBusiness
+                  ? (business?.logo?.url ?? '')
+                  : (user?.profilePhotoURL ?? ''),
+              userDisplayName: isBusiness
+                  ? (business?.displayName ?? '')
+                  : (user?.displayName ?? post?.title ?? ''),
+              userId:
+                  isBusiness ? (business?.businessID ?? '') : (user?.uid ?? ''),
             ),
             const SizedBox(width: 8),
             Expanded(
