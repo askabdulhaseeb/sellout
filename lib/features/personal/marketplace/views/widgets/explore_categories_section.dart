@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../listing/listing_form/views/providers/add_listing_form_provider.dart';
+import '../../../post/domain/entities/post_entity.dart';
 import '../providers/marketplace_provider.dart';
 
 class ExploreCategoriesSection extends StatelessWidget {
@@ -33,10 +34,12 @@ class ExploreCategoriesSection extends StatelessWidget {
             final ListingType category = ListingType.values[index];
             return InkWell(
               onTap: () {
+                AddListingFormProvider addListingPro =
+                    Provider.of<AddListingFormProvider>(context, listen: false);
+                addListingPro.fetchDropdownListings(
+                    '/category/${marketplacePro.marketplaceCategory?.json}?list-id=');
+                marketplacePro.setPosts(<PostEntity>[]);
                 marketplacePro.setMarketplaceCategory(category);
-                Provider.of<AddListingFormProvider>(context, listen: false)
-                    .fetchDropdownListings(
-                        '/category/${marketplacePro.marketplaceCategory?.json}?list-id=');
               },
               child: Container(
                 decoration: BoxDecoration(

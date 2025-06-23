@@ -922,6 +922,7 @@ class AddListingFormProvider extends ChangeNotifier {
 
   void setVehicleColor(String value) {
     _selectedVehicleColor = value;
+    notifyListeners();
   }
 
   void setBodyType(String? type) {

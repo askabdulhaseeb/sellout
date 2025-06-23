@@ -19,6 +19,14 @@ class MarketPlaceScreen extends StatefulWidget {
 
 class _MarketPlaceScreenState extends State<MarketPlaceScreen> {
   @override
+  void initState() {
+    final MarketPlaceProvider marketPro =
+        Provider.of<MarketPlaceProvider>(context, listen: false);
+    marketPro.loadPosts();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final MarketPlaceProvider marketPro = context.watch<MarketPlaceProvider>();
 
