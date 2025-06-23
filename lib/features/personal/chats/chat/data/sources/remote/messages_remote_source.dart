@@ -30,9 +30,7 @@ abstract interface class MessagesRemoteSource {
   Future<DataState<bool>> sendMessage(SendMessageParam msg);
   Future<DataState<bool>> acceptGorupInvite(String groupId);
   Future<DataState<bool>> removeParticipants(LeaveGroupParams params);
-    Future<DataState<bool>> sendInviteToGroup(SendGroupInviteParams params);
-
-
+  Future<DataState<bool>> sendInviteToGroup(SendGroupInviteParams params);
 }
 
 class MessagesRemoteSourceImpl implements MessagesRemoteSource {
@@ -78,222 +76,230 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
             );
     }
   }
-@override
-Future<DataState<bool>> sendMessage(SendMessageParam msg) async {
-  try {
-    const String endpoint = '/chat/message/send';
-    final Map<String, String> body = msg.fieldMap();
 
-    final DataState<bool> result = await ApiCall<bool>().callFormData(
-      endpoint: endpoint,
-      requestType: ApiRequestType.post,
-      fieldsMap: body,
-      attachments: msg.files,
-      isConnectType: false,
-    );
+  @override
+  Future<DataState<bool>> sendMessage(SendMessageParam msg) async {
+    try {
+      const String endpoint = '/chat/message/send';
+      final Map<String, String> body = msg.fieldMap();
 
-    if (result is DataSuccess) {
-      debugPrint('New Message - Success: ${result.data}');
-      final Map<String, dynamic> responseData = jsonDecode(result.data ?? '');
-      final Map<String, dynamic> data = responseData['items'];
-
-      final MessageModel newMsg = MessageModel.fromJson(data);
-      final String chatId = data['chat_id'];
-
-      // Get existing entity from local storage
-      // final GettedMessageEntity? existingEntity = LocalChatMessage().entity(chatId);
-      final List<MessageEntity> existingMessages = LocalChatMessage().messages(chatId);
-
-      // 🔒 Check if the message already exists
-      final bool isDuplicate = existingMessages.any(
-        (MessageEntity m) => m.messageId == newMsg.messageId,
+      final DataState<bool> result = await ApiCall<bool>().callFormData(
+        endpoint: endpoint,
+        requestType: ApiRequestType.post,
+        fieldsMap: body,
+        attachments: msg.files,
+        isConnectType: false,
       );
 
-      if (!isDuplicate) {
-        existingMessages.add(newMsg);
-      }
+      if (result is DataSuccess) {
+        debugPrint('New Message - Success: ${result.data}');
+        final Map<String, dynamic> responseData = jsonDecode(result.data ?? '');
+        final Map<String, dynamic> data = responseData['items'];
 
-      // Create updated entity
-      final GettedMessageEntity updatedEntity = GettedMessageEntity(
-        chatID: chatId,
-        messages: existingMessages,
-        lastEvaluatedKey: MessageLastEvaluatedKeyModel(
+        final MessageModel newMsg = MessageModel.fromJson(data);
+        final String chatId = data['chat_id'];
+
+        // Get existing entity from local storage
+        // final GettedMessageEntity? existingEntity = LocalChatMessage().entity(chatId);
+        final List<MessageEntity> existingMessages =
+            LocalChatMessage().messages(chatId);
+
+        // 🔒 Check if the message already exists
+        final bool isDuplicate = existingMessages.any(
+          (MessageEntity m) => m.messageId == newMsg.messageId,
+        );
+
+        if (!isDuplicate) {
+          existingMessages.add(newMsg);
+        }
+
+        // Create updated entity
+        final GettedMessageEntity updatedEntity = GettedMessageEntity(
           chatID: chatId,
-          createdAt: data['created_at'],
-          paginationKey: data['message_id'],
-        ),
-      );
+          messages: existingMessages,
+          lastEvaluatedKey: MessageLastEvaluatedKeyModel(
+            chatID: chatId,
+            createdAt: data['created_at'],
+            paginationKey: data['message_id'],
+          ),
+        );
 
-      // Save updated entity to local storage
-      LocalChatMessage().save(updatedEntity,chatId);
-      return DataSuccess<bool>(result.data ?? '', true);
-    } else {
+        // Save updated entity to local storage
+        LocalChatMessage().save(updatedEntity, chatId);
+        return DataSuccess<bool>(result.data ?? '', true);
+      } else {
+        AppLog.error(
+          'New Message - ERROR',
+          name: 'MessagesRemoteSourceImpl.sendMessage - else',
+          error: result.exception,
+        );
+        return DataFailer<bool>(
+          result.exception ?? CustomException('something_wrong'.tr()),
+        );
+      }
+    } catch (e) {
       AppLog.error(
         'New Message - ERROR',
-        name: 'MessagesRemoteSourceImpl.sendMessage - else',
-        error: result.exception,
+        name: 'MessagesRemoteSourceImpl.sendMessage - catch',
+        error: CustomException(e.toString()),
       );
-      return DataFailer<bool>(
-        result.exception ?? CustomException('something_wrong'.tr()),
-      );
+      return DataFailer<bool>(CustomException(e.toString()));
     }
-  } catch (e) {
-    AppLog.error(
-      'New Message - ERROR',
-      name: 'MessagesRemoteSourceImpl.sendMessage - catch',
-      error: CustomException(e.toString()),
-    );
-    return DataFailer<bool>(CustomException(e.toString()));
   }
-}
 
-@override
-Future<DataState<bool>> acceptGorupInvite(String groupId) async {
-  try {
-    const String endpoint = '/chat/group/acceptInvite';
-    final DataState<bool> result = await ApiCall<bool>().call(
-      endpoint: endpoint,
-      requestType: ApiRequestType.patch,
-      body: jsonEncode(<String, String>{'chat_id': groupId}),
-    );
+  @override
+  Future<DataState<bool>> acceptGorupInvite(String groupId) async {
+    try {
+      const String endpoint = '/chat/group/acceptInvite';
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.patch,
+        body: jsonEncode(<String, String>{'chat_id': groupId}),
+      );
 
-    if (result is DataSuccess) {
-      debugPrint('Invite Accepted - Success: ${result.data}');
-      final Map<String, dynamic> responseData = jsonDecode(result.data ?? '{}');
-      final DateTime joinAt = DateTime.parse(responseData['join_at']);
-      final String uid = LocalAuth.uid ?? '';
-      final ChatEntity? chat = LocalChat().chatEntity(groupId);
-      if (chat != null) {
-        final List<InvitationEntity>? invitations = chat.groupInfo?.invitations;
-        final List<ChatParticipantEntity>? participants = chat.groupInfo?.participants;
-        if (invitations != null && participants != null) {
-          final int inviteIndex = invitations.indexWhere((InvitationEntity p) => p.uid == uid);
-          if (inviteIndex != -1) {
-            final InvitationEntity invite = invitations[inviteIndex];
-            // ✅ Convert invitation to participant
-            final ChatParticipantModel participant = ChatParticipantModel(chatAt: joinAt,
-              uid: invite.uid,
-              addedBy: invite.addedBy,
-              joinAt: joinAt,
-              role: ChatParticipantRoleType.member,
-              source: 'invitation',
-            );
+      if (result is DataSuccess) {
+        debugPrint('Invite Accepted - Success: ${result.data}');
+        final Map<String, dynamic> responseData =
+            jsonDecode(result.data ?? '{}');
+        final DateTime joinAt = DateTime.parse(responseData['join_at']);
+        final String uid = LocalAuth.uid ?? '';
+        final ChatEntity? chat = LocalChat().chatEntity(groupId);
+        if (chat != null) {
+          final List<InvitationEntity>? invitations =
+              chat.groupInfo?.invitations;
+          final List<ChatParticipantEntity>? participants =
+              chat.groupInfo?.participants;
+          if (invitations != null && participants != null) {
+            final int inviteIndex =
+                invitations.indexWhere((InvitationEntity p) => p.uid == uid);
+            if (inviteIndex != -1) {
+              final InvitationEntity invite = invitations[inviteIndex];
+              // ✅ Convert invitation to participant
+              final ChatParticipantModel participant = ChatParticipantModel(
+                chatAt: joinAt,
+                uid: invite.uid,
+                addedBy: invite.addedBy,
+                joinAt: joinAt,
+                role: ChatParticipantRoleType.member,
+                source: 'invitation',
+              );
 
-            // ✅ Add participant to participants list
-            participants.add(participant);
+              // ✅ Add participant to participants list
+              participants.add(participant);
 
-            // ✅ Remove invitation from invitations list
-            invitations.removeAt(inviteIndex);
+              // ✅ Remove invitation from invitations list
+              invitations.removeAt(inviteIndex);
 
-            // ✅ Save updated chat to Hive
-            final Box<ChatEntity> box = Hive.box<ChatEntity>(AppStrings.localChatsBox);
-            box.put(chat.chatId, chat);
+              // ✅ Save updated chat to Hive
+              final Box<ChatEntity> box =
+                  Hive.box<ChatEntity>(AppStrings.localChatsBox);
+              box.put(chat.chatId, chat);
+            }
           }
         }
+
+        return DataSuccess<bool>(result.data ?? '', true);
+      } else {
+        AppLog.error(
+          'Invite Accept - ERROR',
+          name: 'MessagesRemoteSourceImpl.acceptGorupInvite - else',
+          error: result.exception,
+        );
+        return DataFailer<bool>(
+          result.exception ?? CustomException('something_wrong'.tr()),
+        );
       }
-
-      return DataSuccess<bool>(result.data ?? '', true);
-    } else {
+    } catch (e) {
       AppLog.error(
         'Invite Accept - ERROR',
-        name: 'MessagesRemoteSourceImpl.acceptGorupInvite - else',
-        error: result.exception,
+        name: 'MessagesRemoteSourceImpl.acceptGorupInvite - catch',
+        error: CustomException(e.toString()),
       );
-      return DataFailer<bool>(
-        result.exception ?? CustomException('something_wrong'.tr()),
-      );
+      return DataFailer<bool>(CustomException(e.toString()));
     }
-  } catch (e) {
-    AppLog.error(
-      'Invite Accept - ERROR',
-      name: 'MessagesRemoteSourceImpl.acceptGorupInvite - catch',
-      error: CustomException(e.toString()),
-    );
-    return DataFailer<bool>(CustomException(e.toString()));
   }
-}
 
- @override
- Future<DataState<bool>> removeParticipants(LeaveGroupParams params) async {
-  try {
-    const String endpoint = '/chat/group/removal';
-    final DataState<bool> result = await ApiCall<bool>().call(
-      endpoint: endpoint,
-      requestType: ApiRequestType.patch,
-      body: jsonEncode(params.toMap())
-    );
-
-    if (result is DataSuccess) {
-      debugPrint('Group Left - Success: ${result.data}');
-      // final Map<String, dynamic> responseData = jsonDecode(result.data ?? '{}');
-      // final DateTime joinAt = DateTime.parse(responseData['join_at']);
-      final String uid = LocalAuth.uid ?? '';
-      final ChatEntity? chat = LocalChat().chatEntity(params.chatId);
-      if (chat != null) {
-        final List<ChatParticipantEntity>? participants= chat.groupInfo?.participants;
-        if (participants != null) {
-          final int inviteIndex = participants.indexWhere((ChatParticipantEntity p) => p.uid == uid);
+  @override
+  Future<DataState<bool>> removeParticipants(LeaveGroupParams params) async {
+    try {
+      const String endpoint = '/chat/group/removal';
+      final DataState<bool> result = await ApiCall<bool>().call(
+          endpoint: endpoint,
+          requestType: ApiRequestType.patch,
+          body: jsonEncode(params.toMap()));
+      if (result is DataSuccess) {
+        debugPrint('Group Leave/remove - Success: ${result.data}');
+        // final Map<String, dynamic> responseData = jsonDecode(result.data ?? '{}');
+        // final DateTime joinAt = DateTime.parse(responseData['join_at']);
+        final String uid = params.participantId ?? '';
+        final ChatEntity? chat = LocalChat().chatEntity(params.chatId);
+        if (chat != null) {
+          final List<ChatParticipantEntity>? participants =
+              chat.groupInfo?.participants;
+          if (participants != null) {
+            final int inviteIndex = participants
+                .indexWhere((ChatParticipantEntity p) => p.uid == uid);
             participants.removeAt(inviteIndex);
-            final Box<ChatEntity> box = Hive.box<ChatEntity>(AppStrings.localChatsBox);
+            final Box<ChatEntity> box =
+                Hive.box<ChatEntity>(AppStrings.localChatsBox);
             box.put(chat.chatId, chat);
           }
         }
-      return DataSuccess<bool>(result.data ?? '', true);
-    } else {
+        return DataSuccess<bool>(result.data ?? '', true);
+      } else {
+        AppLog.error(
+          'Invite Accept - ERROR',
+          name: 'MessagesRemoteSourceImpl.removeParticipants - else',
+          error: result.exception,
+        );
+        return DataFailer<bool>(
+          result.exception ?? CustomException('something_wrong'.tr()),
+        );
+      }
+    } catch (e) {
       AppLog.error(
         'Invite Accept - ERROR',
-        name: 'MessagesRemoteSourceImpl.removeParticipants - else',
-        error: result.exception,
+        name: 'MessagesRemoteSourceImpl.removeParticipants - catch',
+        error: CustomException(e.toString()),
       );
-      return DataFailer<bool>(
-        result.exception ?? CustomException('something_wrong'.tr()),
-      );
+      return DataFailer<bool>(CustomException(e.toString()));
     }
-  } catch (e) {
-    AppLog.error(
-      'Invite Accept - ERROR',
-      name: 'MessagesRemoteSourceImpl.removeParticipants - catch',
-      error: CustomException(e.toString()),
-    );
-    return DataFailer<bool>(CustomException(e.toString()));
   }
-}
 
- @override
- Future<DataState<bool>> sendInviteToGroup(SendGroupInviteParams params) async {
-  try { debugPrint(jsonEncode(params.toMap()));
-    const String endpoint = '/chat/group/add';
-    final DataState<bool> result = await ApiCall<bool>().call(
-      endpoint: endpoint,
-      requestType: ApiRequestType.patch,
-      body: jsonEncode(params.toMap())
-    );
+  @override
+  Future<DataState<bool>> sendInviteToGroup(
+      SendGroupInviteParams params) async {
+    try {
+      debugPrint(jsonEncode(params.toMap()));
+      const String endpoint = '/chat/group/add';
+      final DataState<bool> result = await ApiCall<bool>().call(
+          endpoint: endpoint,
+          requestType: ApiRequestType.patch,
+          body: jsonEncode(params.toMap()));
 
-    if (result is DataSuccess) {
-      debugPrint('Group Invite sent - Success: ${result.data}');
-      return DataSuccess<bool>(result.data ?? '', true);
-    } else {
-      AppLog.error(
-        'Invite send error - ERROR',
-        name: 'MessagesRemoteSourceImpl.sendInviteToGroup - else',
-        error: result.exception,
-      );
-      return DataFailer<bool>(
-        result.exception ?? CustomException('something_wrong'.tr()),
-      );
+      if (result is DataSuccess) {
+        debugPrint('Group Invite sent - Success: ${result.data}');
+        return DataSuccess<bool>(result.data ?? '', true);
+      } else {
+        AppLog.error(
+          'Invite send error - ERROR',
+          name: 'MessagesRemoteSourceImpl.sendInviteToGroup - else',
+          error: result.exception,
+        );
+        return DataFailer<bool>(
+          result.exception ?? CustomException('something_wrong'.tr()),
+        );
+      }
+    } catch (e, stc) {
+      AppLog.error('Invite send error - ERROR',
+          name: 'MessagesRemoteSourceImpl.sendInviteToGroup - catch',
+          error: CustomException(e.toString()),
+          stackTrace: stc);
+      return DataFailer<bool>(CustomException(e.toString()));
     }
-  } catch (e,stc) {
-    AppLog.error(
-      'Invite send error - ERROR',
-      name: 'MessagesRemoteSourceImpl.sendInviteToGroup - catch',
-      error: CustomException(e.toString()),
-      stackTrace: stc
-    );
-    return DataFailer<bool>(CustomException(e.toString()));
   }
-}
+
   GettedMessageEntity? _local(String chatID) {
     return LocalChatMessage().entity(chatID);
   }
 }
-

@@ -232,13 +232,16 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
                               ? 'group_description_required'.tr()
                               : null,
                     ),
+                    const SizedBox(
+                      height: 100,
+                    ),
                   ],
                 ),
               ),
             ),
           ),
           Positioned(
-            bottom: 16,
+            bottom: 2,
             left: 16,
             right: 16,
             child: CustomElevatedButton(

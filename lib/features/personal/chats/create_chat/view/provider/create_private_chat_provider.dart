@@ -55,7 +55,9 @@ class CreatePrivateChatProvider with ChangeNotifier {
         debugPrint(result.data ?? '');
         final Map<String, dynamic> chat = jsonDecode(result.data ?? '');
         final ChatModel chatEntity = ChatModel.fromJson(chat['data']);
+        // ignore: use_build_context_synchronously
         await Provider.of<ChatProvider>(context, listen: false)
+            // ignore: use_build_context_synchronously
             .openChat(context, chatEntity);
       } else {
         setLoading(false);

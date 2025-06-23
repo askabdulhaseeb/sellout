@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/expandable_text_widget.dart';
 import '../../../../../../business/core/domain/entity/service/service_entity.dart';
+import '../../../../../chats/create_chat/view/provider/create_private_chat_provider.dart';
 
 class ServiceCardDetail extends StatelessWidget {
   const ServiceCardDetail({
@@ -36,7 +38,11 @@ class ServiceCardDetail extends StatelessWidget {
                 children: <Widget>[
                   IconButton(
                       padding: const EdgeInsets.all(0),
-                      onPressed: () {},
+                      onPressed: () {
+                        Provider.of<CreatePrivateChatProvider>(context,
+                                listen: false)
+                            .startPrivateChat(context, service.businessID);
+                      },
                       icon: const Icon(CupertinoIcons.chat_bubble, size: 20)),
                   IconButton(
                       onPressed: () {},
