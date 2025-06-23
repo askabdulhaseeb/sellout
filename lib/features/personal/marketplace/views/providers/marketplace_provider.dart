@@ -199,9 +199,14 @@ class MarketPlaceProvider extends ChangeNotifier {
 
   PostByFiltersParams _buildPostByFiltersParams() {
     return PostByFiltersParams(
-      clientLat: _selectedLocation.latitude,
-      clientLng: _selectedLocation.longitude,
-      distance: 100,
+      clientLat: _selectedLocation != const LatLng(0, 0)
+          ? _selectedLocation.latitude
+          : null,
+      clientLng: _selectedLocation != const LatLng(0, 0)
+          ? _selectedLocation.longitude
+          : null,
+      distance:
+          _selectedLocation != const LatLng(0, 0) ? _selectedRadius : null,
       category: _marketplaceCategory?.json ?? '',
       filters: _buildFilters(),
     );

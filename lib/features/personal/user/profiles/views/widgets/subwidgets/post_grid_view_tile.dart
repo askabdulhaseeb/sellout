@@ -1,13 +1,21 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/dialogs/cart/add_to_cart_dialog.dart';
+import '../../../../../../../core/functions/app_log.dart';
+import '../../../../../../../core/sources/data_state.dart';
+import '../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../core/widgets/rating_display_widget.dart';
+import '../../../../../../../services/get_it.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../../../../../listing/listing_form/views/screens/add_listing_form_screen.dart';
 import '../../../../../post/domain/entities/post_entity.dart';
+import '../../../../../post/domain/params/add_to_cart_param.dart';
+import '../../../../../post/domain/usecase/add_to_cart_usecase.dart';
 import '../../../../../post/post_detail/views/screens/post_detail_screen.dart';
 
 class PostGridViewTile extends StatelessWidget {
@@ -41,11 +49,7 @@ class PostGridViewTile extends StatelessWidget {
                         fit: BoxFit.cover, imageURL: post.imageURL),
                   ),
                 ),
-                if (isMe != true)
-                  CustomIconButton(
-                      iconColor: Theme.of(context).colorScheme.onPrimary,
-                      icon: CupertinoIcons.cart,
-                      onPressed: () {})
+                if (isMe != true) PostGridViewTileBasketButton(post: post)
               ],
             ),
           ),
@@ -123,5 +127,70 @@ class PostGridViewTile extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class PostGridViewTileBasketButton extends StatelessWidget {
+  const PostGridViewTileBasketButton({
+    required this.post,
+    super.key,
+  });
+
+  final PostEntity post;
+
+  @override
+  Widget build(BuildContext context) {
+    Future<void> addToBasket(BuildContext context, PostEntity post) async {
+      try {
+        if (post.sizeColors.isNotEmpty) {
+          await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AddToCartDialog(post: post);
+            },
+          );
+        } else {
+          final AddToCartUsecase usecase = AddToCartUsecase(locator());
+          final DataState<bool> result = await usecase(
+            AddToCartParam(post: post, quantity: 1),
+          );
+          if (result is DataSuccess) {
+            AppSnackBar.showSnackBar(
+              // ignore: use_build_context_synchronously
+              context,
+              'successfull_add_to_basket'.tr(),
+              backgroundColor: Colors.green,
+            );
+          } else {
+            AppLog.error(
+              result.exception?.message ?? 'AddToCartError',
+              name: 'post_add_to_basket_button.dart',
+              error: result.exception,
+            );
+            AppSnackBar.showSnackBar(
+              // ignore: use_build_context_synchronously
+              context,
+              result.exception?.message ?? 'something_wrong'.tr(),
+            );
+          }
+        }
+      } catch (e, stackTrace) {
+        AppLog.error(
+          e.toString(),
+          name: 'PostAddToBasketButton._addToBasket',
+          error: e,
+          stackTrace: stackTrace,
+        );
+        // ignore: use_build_context_synchronously
+        AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
+      }
+    }
+
+    return CustomIconButton(
+        iconColor: Theme.of(context).colorScheme.onPrimary,
+        icon: CupertinoIcons.cart,
+        onPressed: () {
+          addToBasket(context, post);
+        });
   }
 }

@@ -40,11 +40,8 @@ class _CustomListingDropDownState extends State<CustomListingDropDown> {
   @override
   void didUpdateWidget(covariant CustomListingDropDown oldWidget) {
     super.didUpdateWidget(oldWidget);
-
-    if (widget.categoryKey != oldWidget.categoryKey) {
-      _loadOptions();
-    }
-    if (widget.selectedValue != oldWidget.selectedValue) {
+    if (widget.categoryKey != oldWidget.categoryKey ||
+        widget.selectedValue != oldWidget.selectedValue) {
       _syncDisplayLabel();
     }
   }

@@ -19,7 +19,11 @@ class GoBAckButtonWidget extends StatelessWidget {
         foregroundColor: colorScheme.onSurfaceVariant,
       ),
       icon: Icon(Icons.arrow_back_ios, color: colorScheme.onSurfaceVariant),
-      onPressed: () => marketPro.clearMarketplaceCategory(),
+      onPressed: () {
+        marketPro.clearMarketplaceCategory();
+        marketPro.resetFilters();
+        marketPro.loadPosts();
+      },
       label: Text('go_back'.tr()),
     );
   }

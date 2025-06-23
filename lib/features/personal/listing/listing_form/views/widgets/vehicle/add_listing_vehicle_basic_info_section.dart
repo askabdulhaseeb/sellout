@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/dialogs/cart/dropdowns/color_dropdown.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -99,6 +100,11 @@ class _AddListingVehicleBasicInfoSectionState
               onChanged: (String? value) =>
                   formPro.setTransmissionType(value ?? ''),
             ),
+            ColorDropdown(
+              selectedColor: formPro.selectedVehicleColor,
+              onColorChanged: (String? value) =>
+                  formPro.setVehicleColor(value ?? ''),
+            )
 
             /// Color with color dots
             //   FutureBuilder<List<ColorOptionEntity>>(
