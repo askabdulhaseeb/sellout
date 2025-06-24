@@ -27,7 +27,7 @@ class _AddClothsAndFootwearFormState extends State<AddClothsAndFootwearForm> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => _loadDropdowns());
+    Future<void>.microtask(() => _loadDropdowns());
   }
 
   Future<void> _loadDropdowns() async {

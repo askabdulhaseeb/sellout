@@ -5,9 +5,10 @@ import '../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../attachment/domain/entities/attachment_entity.dart';
 
 class ContactMessageTile extends StatefulWidget {
-  const ContactMessageTile({super.key, required this.attachment,required this.isMe});
+  const ContactMessageTile(
+      {super.key, required this.attachment, required this.isMe});
   final AttachmentEntity attachment;
-final bool isMe;
+  final bool isMe;
   @override
   State<ContactMessageTile> createState() => _ContactMessageTileState();
 }
@@ -55,22 +56,31 @@ class _ContactMessageTileState extends State<ContactMessageTile> {
 
   @override
   Widget build(BuildContext context) {
-    final String contactName = widget.attachment.originalName.replaceAll('.vcf', '');
+    final String contactName =
+        widget.attachment.originalName.replaceAll('.vcf', '');
 
-    return SizedBox(width: 200,
+    return SizedBox(
+      width: 200,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Container(width: double.infinity,padding: const EdgeInsets.all(6),decoration: BoxDecoration(color:widget.isMe ?AppTheme.secondaryColor.withValues(alpha: 0.3): AppTheme.primaryColor.withValues(alpha: 0.3),borderRadius: BorderRadius.circular(10)),
-            child: Text(
-             '${'contact'.tr()}: $contactName ',maxLines: 3,
-              style:  TextTheme.of(context).bodySmall
-            ),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+                color: widget.isMe
+                    ? AppTheme.secondaryColor.withValues(alpha: 0.3)
+                    : AppTheme.primaryColor.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(10)),
+            child: Text('${'contact'.tr()}: $contactName ',
+                maxLines: 3, style: TextTheme.of(context).bodySmall),
           ),
-const Divider(),          if (_showDetails)
+          const Divider(),
+          if (_showDetails)
             FutureBuilder<Map<String, String>>(
               future: _detailsFuture,
-              builder: (BuildContext context, AsyncSnapshot<Map<String, String>> snapshot) {
+              builder: (BuildContext context,
+                  AsyncSnapshot<Map<String, String>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Padding(
                     padding: EdgeInsets.symmetric(vertical: 8),
@@ -82,20 +92,36 @@ const Divider(),          if (_showDetails)
                     child: Text('Failed to load contact details'),
                   );
                 }
-          
+
                 final Map<String, String> data = snapshot.data!;
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text('📞 ${'phone'.tr()}: ${data['phone']}',style: TextTheme.of(context).bodySmall?.copyWith(color: ColorScheme.of(context).surface),),
-                    Text('✉️ ${'email'.tr()}: ${data['email']}',style: TextTheme.of(context).bodySmall?.copyWith(color: ColorScheme.of(context).surface),),
+                    Text(
+                      '📞 ${'phone'.tr()}: ${data['phone']}',
+                      style: TextTheme.of(context)
+                          .bodySmall
+                          ?.copyWith(color: ColorScheme.of(context).surface),
+                    ),
+                    Text(
+                      '✉️ ${'email'.tr()}: ${data['email']}',
+                      style: TextTheme.of(context)
+                          .bodySmall
+                          ?.copyWith(color: ColorScheme.of(context).surface),
+                    ),
                   ],
                 );
               },
             ),
           TextButton(
             onPressed: _toggleDetails,
-            child: Text(_showDetails ? 'see_all'.tr() : 'see_less'.tr(),style: TextTheme.of(context).bodySmall?.copyWith(color:widget.isMe ?AppTheme.secondaryColor: AppTheme.primaryColor),),
+            child: Text(
+              _showDetails ? 'see_all'.tr() : 'see_less'.tr(),
+              style: TextTheme.of(context).bodySmall?.copyWith(
+                  color: widget.isMe
+                      ? AppTheme.secondaryColor
+                      : AppTheme.primaryColor),
+            ),
           ),
         ],
       ),

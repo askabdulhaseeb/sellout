@@ -24,6 +24,7 @@ class ChatAttachmentsListView extends StatelessWidget {
     );
   }
 }
+
 class CustomMediaTile extends StatelessWidget {
   const CustomMediaTile({
     required this.media,
@@ -61,11 +62,14 @@ class CustomMediaTile extends StatelessWidget {
           top: 4,
           right: 4,
           child: GestureDetector(
-            onTap: (){final ChatProvider pro = Provider.of<ChatProvider>(context,listen: false);
-            pro.removePickedAttachment(media);},
+            onTap: () {
+              final ChatProvider pro =
+                  Provider.of<ChatProvider>(context, listen: false);
+              pro.removePickedAttachment(media);
+            },
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.6),
+                color: Colors.black.withValues(alpha: 0.6),
                 shape: BoxShape.circle,
               ),
               padding: const EdgeInsets.all(4),

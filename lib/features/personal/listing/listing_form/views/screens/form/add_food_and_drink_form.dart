@@ -23,7 +23,7 @@ class _AddFoodAndDrinkFormState extends State<AddFoodAndDrinkForm> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => _loadDropdowns());
+    Future<void>.microtask(() => _loadDropdowns());
   }
 
   Future<void> _loadDropdowns() async {

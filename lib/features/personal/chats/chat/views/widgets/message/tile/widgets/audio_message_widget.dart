@@ -69,8 +69,8 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget> {
         progressBarHeight: 100,
         progressBarColor: !isMe ? AppTheme.primaryColor : colorScheme.secondary,
         progressBarBackgroundColor: !isMe
-            ? AppTheme.primaryColor.withOpacity(0.5)
-            : colorScheme.secondary.withOpacity(0.5),
+            ? AppTheme.primaryColor.withValues(alpha: 0.5)
+            : colorScheme.secondary.withValues(alpha: 0.5),
         iconColor: !isMe ? AppTheme.primaryColor : colorScheme.secondary,
         shapeType: PlayIconShapeType.circular,
         showProgressBar: true,

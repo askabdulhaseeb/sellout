@@ -89,7 +89,10 @@ class _EmployeeTile extends StatelessWidget {
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
+                    ? Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: 0.2)
                     : Theme.of(context).dividerColor,
                 border: Border.all(
                   color: isSelected

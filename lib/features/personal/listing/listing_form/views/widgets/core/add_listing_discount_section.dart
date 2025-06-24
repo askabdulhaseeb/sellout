@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../../core/widgets/custom_Switch_list_tile.dart';
 import '../../../../../post/domain/entities/discount_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
 
@@ -79,19 +80,15 @@ class _AddListingDiscountSectionState extends State<AddListingDiscountSection> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            SwitchListTile.adaptive(
-              contentPadding: EdgeInsets.zero,
-              title: const Text(
-                'select_discount',
-                style: TextStyle(fontWeight: FontWeight.w500),
-              ).tr(),
+            CustomSwitchListTile(
+              title: 'select_discount'.tr(),
               value: addPro.isDiscounted,
               onChanged: (bool value) => addPro.setIsDiscount(value),
             ),
             if (addPro.isDiscounted)
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: List.generate(
+                children: List<Widget>.generate(
                   addPro.discounts.length,
                   (int index) => buildDiscountField(
                     width: width,

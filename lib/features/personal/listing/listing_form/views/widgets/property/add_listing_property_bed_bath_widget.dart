@@ -44,22 +44,18 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
               keyboardType: TextInputType.number,
             ),
             CustomListingDropDown(
+              hint: 'select_category',
               categoryKey: 'property_type',
               selectedValue: formPro.selectedPropertyType,
               onChanged: (String? p0) => formPro.setPropertyType(p0),
-              title: 'property_type'.tr(),
+              title: 'category',
             ),
             CustomListingDropDown(
+                hint: 'energy_rating',
                 categoryKey: 'energy_rating',
                 onChanged: (String? p0) => formPro.setEnergyRating(p0),
                 selectedValue: formPro.selectedEnergyRating,
                 title: 'energy_rating'.tr()),
-            CustomListingDropDown(
-              categoryKey: 'property_type',
-              selectedValue: formPro.selectedPropertyType,
-              onChanged: (String? p0) => formPro.setPropertyType(p0),
-              title: 'property_type'.tr(),
-            ),
             LocationInputField(
               onLocationSelected: (LocationModel location) {
                 formPro.setMeetupLocation(location);

@@ -25,8 +25,8 @@ class PersonalSettingTile extends StatelessWidget {
         decoration: BoxDecoration(
             border: Border.all(color: Theme.of(context).dividerColor),
             borderRadius: BorderRadius.circular(6)),
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        margin: const EdgeInsets.symmetric(vertical: 6),
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
         child: Row(
           children: <Widget>[
             CircleAvatar(
@@ -35,8 +35,13 @@ class PersonalSettingTile extends StatelessWidget {
               child: Icon(icon, color: iconColor),
             ),
             const SizedBox(width: 12),
-            Text(title, style: TextStyle(color: textColor)),
-            const Spacer(),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(color: textColor),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
             if (displayTrailingIcon)
               const Icon(Icons.arrow_forward_ios, size: 18),
           ],
