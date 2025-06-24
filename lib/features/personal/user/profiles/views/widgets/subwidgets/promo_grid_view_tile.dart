@@ -6,9 +6,10 @@ import '../../../../../promo/domain/entities/promo_entity.dart';
 
 class PromoGridViewTile extends StatelessWidget {
   const PromoGridViewTile({
-    required this.promo, super.key,
+    required this.promo,
+    super.key,
   });
-final PromoEntity promo;
+  final PromoEntity promo;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -18,11 +19,8 @@ final PromoEntity promo;
             width: double.infinity,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child:  CustomNetworkImage(
-                fit: BoxFit.fill,
-                imageURL:
-                  promo.fileUrl
-              ),
+              child:
+                  CustomNetworkImage(fit: BoxFit.fill, imageURL: promo.fileUrl),
             ),
           ),
         ),

@@ -23,12 +23,11 @@ class HomeScreen extends HookWidget {
       }
       return null;
     }, const <Object?>[]);
-
     // Scroll listener for pagination
     useEffect(() {
       scrollController.addListener(() {
         if (scrollController.position.pixels >=
-            scrollController.position.maxScrollExtent - 400) {
+            scrollController.position.maxScrollExtent - 600) {
           feedProvider.loadMoreFeed(type);
         }
       });
@@ -36,7 +35,8 @@ class HomeScreen extends HookWidget {
     }, <Object?>[scrollController]);
     return PersonalScaffold(
       body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(
+            decelerationRate: ScrollDecelerationRate.normal),
         controller: scrollController,
         slivers: const <Widget>[
           SliverToBoxAdapter(child: HomePromoListSection()),

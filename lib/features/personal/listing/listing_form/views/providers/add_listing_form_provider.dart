@@ -35,6 +35,7 @@ import '../../domain/usecase/add_listing_usecase.dart';
 import '../../domain/usecase/edit_listing_usecase.dart';
 import '../params/add_listing_param.dart';
 import '../params/get_categories_params.dart';
+import '../widgets/property/add_property_tenure_type.dart';
 
 class AddListingFormProvider extends ChangeNotifier {
   AddListingFormProvider(
@@ -223,8 +224,8 @@ class AddListingFormProvider extends ChangeNotifier {
       vaccinationUpToDate: _vaccinationUpToDate,
       readyToLeave: _time,
       age: _age,
-      breed: _selectedBreed?.title,
-      petsCategory: _selectedCategory?.title.toLowerCase(),
+      breed: _breed,
+      petsCategory: _petCategory,
       propertyCategory: _selectedPropertySubCategory,
       tenureType: _tenureType,
       availability: _availability,
@@ -283,7 +284,8 @@ class AddListingFormProvider extends ChangeNotifier {
 
     // Categories and selections
     _selectedCategory = null;
-    _selectedBreed = null;
+    _breed = null;
+    _petCategory = null;
     _selectedBodyType = null;
     _selectedEnergyRating = null;
     _selectedMileageUnit = null;
@@ -296,7 +298,7 @@ class AddListingFormProvider extends ChangeNotifier {
     _sizeColorEntities = <SizeColorModel>[];
 
     // Strings
-    _tenureType = null;
+    _tenureType = 'freehold';
     _selectedPropertySubCategory = ListingType.property.cids.first;
     _selectedClothSubCategory = ListingType.clothAndFoot.cids.first;
 
@@ -327,15 +329,12 @@ class AddListingFormProvider extends ChangeNotifier {
     _wormAndFleaTreated = post?.wormAndFleaTreated;
     _healthChecked = post?.healthChecked;
     _time = post?.readyToLeave;
-    _selectedBreed = findCategoryByAddress(listings, post?.address ?? '');
     // Availability
     _availability = post?.availability ?? <AvailabilityEntity>[];
-
     // Locations
     _selectedMeetupLocation = post?.meetUpLocation;
     _selectedCollectionLocation = post?.collectionLocation;
     _location.text = post?.meetUpLocation?.address ?? '';
-
     // Property details
     _bathroom.text = post?.bathroom.toString() ?? '0';
     _bedroom.text = post?.bedroom.toString() ?? '0';
@@ -344,7 +343,6 @@ class AddListingFormProvider extends ChangeNotifier {
     _selectedPropertySubCategory = post?.propertyCategory.toString() ?? '';
     _selectedPropertyType = post?.propertytype;
     _tenureType = post?.tenureType ?? '';
-
     // Product details
     _title.text = post?.title ?? '';
     _description.text = post?.description ?? '';
@@ -352,13 +350,10 @@ class AddListingFormProvider extends ChangeNotifier {
     _quantity.text = post?.quantity.toString() ?? '1';
     _minimumOffer.text = post?.minOfferAmount.toString() ?? '';
     _isDiscounted = post?.hasDiscount ?? false;
-
     // Brand/Model/Make
     _brand.text = post?.brand ?? '';
     _make = post?.make.toString() ?? '';
     _model.text = post?.model.toString() ?? '';
-    _selectedBreed = findCategoryByAddress(_listings, post?.breed ?? '');
-
     // Vehicle details
     _engineSize.text = post?.engineSize.toString() ?? '';
     _mileage.text = post?.mileage.toString() ?? '';
@@ -964,7 +959,7 @@ class AddListingFormProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setSelectedTenureType(String? value) {
+  void setSelectedTenureType(String value) {
     _tenureType = value;
     notifyListeners();
   }
@@ -984,15 +979,16 @@ class AddListingFormProvider extends ChangeNotifier {
 // pets
   void setPetCategory(String? category) {
     _petCategory = category;
+    notifyListeners();
   }
 
-  void setPetBreed(SubCategoryEntity category) {
-    _selectedBreed = category;
+  void setPetBreed(String? value) {
+    _breed = value;
     notifyListeners();
   }
 
   void setPetBreeds(String category) {
-    _breed = category;
+    _petCategory = category;
     notifyListeners();
   }
 
@@ -1019,10 +1015,12 @@ class AddListingFormProvider extends ChangeNotifier {
 
   void setemissionType(String? value) {
     _emission = value;
+    notifyListeners();
   }
 
   void seteMake(String? value) {
     _make = value;
+    notifyListeners();
   }
 //?
 
@@ -1155,7 +1153,7 @@ class AddListingFormProvider extends ChangeNotifier {
   // Property
   TextEditingController get bedroom => _bedroom;
   TextEditingController get bathroom => _bathroom;
-  String? get tenureType => _tenureType;
+  String get tenureType => _tenureType;
   String? get selectedPropertySubCategory => _selectedPropertySubCategory;
   String? get selectedPropertyType => _selectedPropertyType;
   bool get garden => _garden;
@@ -1163,7 +1161,6 @@ class AddListingFormProvider extends ChangeNotifier {
   bool get animalFriendly => _animalFriendly;
   String? get selectedEnergyRating => _selectedEnergyRating;
   // Pet
-  SubCategoryEntity? get selectedBreed => _selectedBreed;
   String? get age => _age;
   String? get petCategory => _petCategory;
   bool? get healthChecked => _healthChecked;
@@ -1277,7 +1274,7 @@ class AddListingFormProvider extends ChangeNotifier {
   // Property
   final TextEditingController _bedroom = TextEditingController();
   final TextEditingController _bathroom = TextEditingController();
-  String? _tenureType;
+  String _tenureType = TenureType.freehold.value;
   String _selectedPropertySubCategory = ListingType.property.cids.first;
   String? _selectedEnergyRating;
   String? _selectedPropertyType;
@@ -1286,7 +1283,6 @@ class AddListingFormProvider extends ChangeNotifier {
   bool _parking = true;
   bool _animalFriendly = true;
   // Pet
-  SubCategoryEntity? _selectedBreed;
   String? _petCategory;
   bool? _healthChecked;
   String? _breed;

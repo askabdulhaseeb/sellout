@@ -25,7 +25,8 @@ class OfferStatusButtons extends HookWidget {
         // Using hooks to manage TextEditingController state
         final TextEditingController offerController = useTextEditingController(
             text: message.offerDetail?.offerPrice.toString());
-        final TextEditingController quantityController = useTextEditingController(text: '1');
+        final TextEditingController quantityController =
+            useTextEditingController(text: '1');
 
         return CounterBottomSheet(
           offerController: offerController,
@@ -50,7 +51,7 @@ class OfferStatusButtons extends HookWidget {
                 border: Border.all(color: Theme.of(context).primaryColor),
                 textColor: Theme.of(context).primaryColor,
                 bgColor: Colors.transparent,
-                title: 'decline'.tr(),
+                title: 'cancel'.tr(),
                 isLoading: false,
                 onTap: () {
                   pro.updateOffer(
@@ -64,19 +65,6 @@ class OfferStatusButtons extends HookWidget {
                     businessId: 'null',
                     messageID: message.messageId,
                   );
-                },
-              ),
-            ),
-            // Counter offer button
-            Expanded(
-              child: CustomElevatedButton(
-                borderRadius: BorderRadius.circular(10),
-                textColor: Theme.of(context).primaryColor,
-                bgColor: Theme.of(context).primaryColor.withAlpha(20),
-                title: 'counter'.tr(),
-                isLoading: false,
-                onTap: () {
-                  showOfferBottomSheet(context);
                 },
               ),
             ),

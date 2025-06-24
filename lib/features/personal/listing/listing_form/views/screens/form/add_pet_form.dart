@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/editable_availablity_widget.dart';
 import '../../providers/add_listing_form_provider.dart';
-import '../../widgets/category/subcateogry_selectable_widget.dart';
 import '../../widgets/core/add_listing_update_button_widget.dart';
 import '../../widgets/pet/add_listing_age_leave_section.dart';
 import '../../widgets/core/add_listing_basic_info_section.dart';
@@ -23,7 +22,7 @@ class _AddPetFormState extends State<AddPetForm> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => _loadDropdowns());
+    Future<void>.microtask(() => _loadDropdowns());
   }
 
   Future<void> _loadDropdowns() async {
@@ -49,11 +48,11 @@ class _AddPetFormState extends State<AddPetForm> {
             children: <Widget>[
               const AddListingBasicInfoSection(),
               const AddListingPetAgeLeaveWidget(),
-              SubCategorySelectableWidget(
-                listType: formPro.listingType,
-                subCategory: formPro.selectedCategory,
-                onSelected: formPro.setSelectedCategory,
-              ),
+              // SubCategorySelectableWidget(
+              //   listType: formPro.listingType,
+              //   subCategory: formPro.selectedCategory,
+              //   onSelected: formPro.setSelectedCategory,
+              // ),
               const AddListingPriceAndQuantityWidget(),
               const AddListingConditionOfferSection(),
               const EditableAvailabilityWidget(),

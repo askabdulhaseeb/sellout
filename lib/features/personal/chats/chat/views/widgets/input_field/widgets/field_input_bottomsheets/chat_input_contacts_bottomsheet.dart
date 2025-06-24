@@ -10,7 +10,7 @@ import '../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../providers/chat_provider.dart';
 
- void showContactsBottomSheet(BuildContext context) async {
+void showContactsBottomSheet(BuildContext context) async {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -50,7 +50,8 @@ class _ContactsBottomSheetState extends State<_ContactsBottomSheet> {
     }
 
     try {
-      final List<Contact> contacts = await FlutterContacts.getContacts(withProperties: true).timeout(
+      final List<Contact> contacts =
+          await FlutterContacts.getContacts(withProperties: true).timeout(
         const Duration(seconds: 30),
         onTimeout: () {
           setState(() => _error = true);
@@ -100,7 +101,8 @@ class _ContactsBottomSheetState extends State<_ContactsBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final ChatProvider chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    final ChatProvider chatProvider =
+        Provider.of<ChatProvider>(context, listen: false);
 
     if (_error) {
       return const Padding(
@@ -118,7 +120,8 @@ class _ContactsBottomSheetState extends State<_ContactsBottomSheet> {
 
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
@@ -127,7 +130,10 @@ class _ContactsBottomSheetState extends State<_ContactsBottomSheet> {
               height: 5,
               width: 50,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.secondary.withOpacity(0.4),
+                color: Theme.of(context)
+                    .colorScheme
+                    .secondary
+                    .withValues(alpha: 0.4),
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
@@ -163,7 +169,8 @@ class _ContactsBottomSheetState extends State<_ContactsBottomSheet> {
                             ),
                       ),
                     ),
-                    title: Text(contact.displayName, style: Theme.of(context).textTheme.bodyLarge),
+                    title: Text(contact.displayName,
+                        style: Theme.of(context).textTheme.bodyLarge),
                     subtitle: Text(
                       contact.phones.isNotEmpty
                           ? contact.phones.first.number
@@ -171,7 +178,9 @@ class _ContactsBottomSheetState extends State<_ContactsBottomSheet> {
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     trailing: Icon(
-                      isSelected ? Icons.check_circle : Icons.radio_button_unchecked,
+                      isSelected
+                          ? Icons.check_circle
+                          : Icons.radio_button_unchecked,
                       color: isSelected
                           ? Theme.of(context).colorScheme.primary
                           : Theme.of(context).colorScheme.outline,
@@ -188,28 +197,28 @@ class _ContactsBottomSheetState extends State<_ContactsBottomSheet> {
             Padding(
               padding: const EdgeInsets.all(16),
               child: CustomElevatedButton(
-  title: 'send'.tr(),
-  isLoading: chatProvider.isLoading,
-  bgColor: _selectedContact != null && _selectedContact!.phones.isNotEmpty
-      ? AppTheme.primaryColor
-      : Theme.of(context).disabledColor,
-  onTap: () async {
-    final Contact? contact = _selectedContact;
-    if (contact != null && contact.phones.isNotEmpty) {
-      final File? file = await _exportContactAsVcf(contact);
-      if (file != null) {
-        final PickedAttachment attachment = PickedAttachment(
-          type: AttachmentType.contacts,
-          file: file,
-        );
-        chatProvider.addAttachment(attachment);
-        await chatProvider.sendMessage(context);
-        Navigator.pop(context);
-      }
-    }
-  },
-),
-
+                title: 'send'.tr(),
+                isLoading: chatProvider.isLoading,
+                bgColor: _selectedContact != null &&
+                        _selectedContact!.phones.isNotEmpty
+                    ? AppTheme.primaryColor
+                    : Theme.of(context).disabledColor,
+                onTap: () async {
+                  final Contact? contact = _selectedContact;
+                  if (contact != null && contact.phones.isNotEmpty) {
+                    final File? file = await _exportContactAsVcf(contact);
+                    if (file != null) {
+                      final PickedAttachment attachment = PickedAttachment(
+                        type: AttachmentType.contacts,
+                        file: file,
+                      );
+                      chatProvider.addAttachment(attachment);
+                      await chatProvider.sendMessage(context);
+                      Navigator.pop(context);
+                    }
+                  }
+                },
+              ),
             ),
           ],
         ),

@@ -1,10 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/enums/chat/chat_type.dart';
 import '../../../../../../core/theme/app_theme.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../chat_dashboard/data/models/chat/chat_model.dart';
+import '../../../chat_dashboard/data/sources/local/local_unseen_messages.dart';
 import '../../../chat_dashboard/domain/entities/chat/group/group_into_entity.dart';
 import '../../../chat_dashboard/domain/entities/chat/participant/chat_participant_entity.dart';
 import '../../../chat_dashboard/domain/entities/chat/participant/invitation_entity.dart';
@@ -29,21 +30,32 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(  Provider.of<ChatProvider>(context, listen: false).chat?.persons.toString());
-    return Scaffold( 
-      resizeToAvoidBottomInset: true,
-      appBar: chatAppBar(context),
-      body: const SafeArea(
-        child: Column(
-          children: <Widget>[
-            Expanded(child: MessagesList()),
-            SendMessageWidget()
-          ],
+    final ChatEntity? chat =
+        Provider.of<ChatProvider>(context, listen: false).chat;
+
+    debugPrint(Provider.of<ChatProvider>(context, listen: false)
+        .chat
+        ?.persons
+        .toString());
+    return PopScope(
+      onPopInvokedWithResult: (bool didPop, dynamic result) =>
+          LocalUnreadMessagesService().clearCount(chat?.chatId ?? ''),
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        appBar: chatAppBar(context),
+        body: const SafeArea(
+          child: Column(
+            children: <Widget>[
+              Expanded(child: MessagesList()),
+              SendMessageWidget()
+            ],
+          ),
         ),
       ),
     );
   }
-  }
+}
+
 class SendMessageWidget extends StatelessWidget {
   const SendMessageWidget({super.key});
 
@@ -60,7 +72,8 @@ class SendMessageWidget extends StatelessWidget {
             true;
 
         final bool isParticipant = groupInfo?.participants.any(
-              (ChatParticipantEntity participant) => participant.uid == currentUid,
+              (ChatParticipantEntity participant) =>
+                  participant.uid == currentUid,
             ) ==
             true;
 
@@ -74,7 +87,8 @@ class SendMessageWidget extends StatelessWidget {
           }
         }
 
-        if (pro.chat?.type == ChatType.private || pro.chat?.type == ChatType.product) {
+        if (pro.chat?.type == ChatType.private ||
+            pro.chat?.type == ChatType.product) {
           return const ChatInputField();
         }
 
@@ -84,6 +98,7 @@ class SendMessageWidget extends StatelessWidget {
     );
   }
 }
+
 class GroupInviteActionWidget extends StatelessWidget {
   const GroupInviteActionWidget({super.key});
 
@@ -100,7 +115,7 @@ class GroupInviteActionWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Text(
-           'You_have_been_added_group'.tr(),
+            'You_have_been_added_group'.tr(),
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 18,
@@ -112,7 +127,8 @@ class GroupInviteActionWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               CustomElevatedButton(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 isLoading: false,
                 borderRadius: BorderRadius.circular(30),
                 textStyle: TextTheme.of(context)
@@ -121,11 +137,12 @@ class GroupInviteActionWidget extends StatelessWidget {
                 bgColor: AppTheme.primaryColor,
                 title: 'accept'.tr(),
                 onTap: () {
-              pro.acceptGroupInvite(context);
+                  pro.acceptGroupInvite(context);
                 },
               ),
               CustomElevatedButton(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 isLoading: false,
                 borderRadius: BorderRadius.circular(30),
                 textStyle: TextTheme.of(context)
@@ -134,9 +151,7 @@ class GroupInviteActionWidget extends StatelessWidget {
                 bgColor: Colors.transparent,
                 border: Border.all(color: AppTheme.secondaryColor),
                 title: 'decline'.tr(),
-                onTap: () {
-
-                },
+                onTap: () {},
               ),
             ],
           ),

@@ -49,8 +49,10 @@ class _AddListingVehicleBasicInfoSectionState
               validator: AppValidator.isEmpty,
             ),
 
-            /// Body type dynamic dropdown
+            /// Body type dynamic dropdown *second part of address
             CustomListingDropDown(
+              hint: 'body_type',
+              parentValue: formPro.selectedVehicleCategory,
               categoryKey: 'body_type',
               selectedValue: formPro.selectedBodyType,
               title: 'body_type',
@@ -59,6 +61,7 @@ class _AddListingVehicleBasicInfoSectionState
 
             /// Emission standard dynamic dropdown
             CustomListingDropDown(
+              hint: 'emission_standards',
               categoryKey: 'emission_standards',
               selectedValue: formPro.emission,
               title: 'emission_standards',
@@ -67,13 +70,14 @@ class _AddListingVehicleBasicInfoSectionState
 
             /// Make dynamic dropdown
             CustomListingDropDown(
+              hint: 'make',
               categoryKey: 'make',
               selectedValue: formPro.make,
               title: 'make'.tr(),
               onChanged: (String? value) => formPro.seteMake(value),
             ),
 
-            /// Model
+            /// Model field
             CustomTextFormField(
               controller: formPro.model,
               labelText: 'model'.tr(),
@@ -86,6 +90,7 @@ class _AddListingVehicleBasicInfoSectionState
 
             /// Fuel type dynamic dropdown
             CustomListingDropDown(
+              hint: 'fuel_type',
               categoryKey: 'fuel_type',
               selectedValue: formPro.fuelTYpe,
               title: 'fuel_type',
@@ -94,13 +99,16 @@ class _AddListingVehicleBasicInfoSectionState
 
             /// Transmission dynamic dropdown
             CustomListingDropDown(
+              hint: 'transmission',
               categoryKey: 'transmission',
               selectedValue: formPro.transmissionType,
               title: 'transmission'.tr(),
               onChanged: (String? value) =>
                   formPro.setTransmissionType(value ?? ''),
             ),
+
             ColorDropdown(
+              title: 'color'.tr(),
               selectedColor: formPro.selectedVehicleColor,
               onColorChanged: (String? value) =>
                   formPro.setVehicleColor(value ?? ''),
@@ -116,7 +124,6 @@ class _AddListingVehicleBasicInfoSectionState
             //       }
             //       final List<ColorOptionEntity> colorOptionsList =
             //           snapshot.data ?? [];
-
             //       return CustomDropdown<String>(
             //         isSearchable: true,
             //         padding: const EdgeInsets.symmetric(vertical: 4),

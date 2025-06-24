@@ -142,7 +142,6 @@ class AddListingParam {
   final bool? vaccinationUpToDate;
   final bool? wormAndFleaTreated;
   final String? petsCategory;
-
   String get acceptOfferJSON => acceptOffer ? 'true' : 'false';
 
   Map<String, String> toMap() {
@@ -225,7 +224,13 @@ class AddListingParam {
   Map<String, String> _listLocMAP() {
     return <String, String>{
       'list_id': listingType.json,
-      'address': category?.address ?? '',
+      'address': listingType == ListingType.vehicle
+          ? '${listingType.json}/$vehicleCategory/$bodyType'
+          : listingType == ListingType.pets
+              ? '${listingType.json}/$petsCategory/$breed'
+              : listingType == ListingType.property
+                  ? '${listingType.json}/$propertyType'
+                  : category?.address ?? '',
       if (currency != null) 'currency': currency ?? '',
       'current_latitude': currentLatitude.toString(),
       'current_longitude': currentLongitude.toString(),

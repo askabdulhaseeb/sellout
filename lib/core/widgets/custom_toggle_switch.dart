@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_theme.dart';
+
 class CustomToggleSwitch<T> extends StatelessWidget {
   const CustomToggleSwitch({
     required this.labels,
@@ -62,11 +64,10 @@ class CustomToggleSwitch<T> extends StatelessWidget {
                     : -1;
                 final int currentIndex = labelStrs.indexOf(e);
                 final bool isSelected = index == currentIndex;
-
                 final Color selectedColor = (selectedColors != null &&
                         selectedColors!.length > currentIndex)
                     ? selectedColors![currentIndex]
-                    : Theme.of(context).primaryColor;
+                    : AppTheme.primaryColor;
 
                 final double? buttonWidth = (customWidths != null &&
                         customWidths!.length > currentIndex)
@@ -87,9 +88,10 @@ class CustomToggleSwitch<T> extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: borderRadius,
                       color: isSelected
-                          ? selectedColor.withOpacity(isShaded ? 0.1 : 0)
+                          ? selectedColor.withValues(alpha: isShaded ? 0.1 : 0)
                           : Colors.transparent,
                       border: Border.all(
+                        width: 2,
                         color: isSelected ? selectedColor : Colors.grey,
                       ),
                     ),
@@ -100,6 +102,7 @@ class CustomToggleSwitch<T> extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontSize: seletedFontSize,
+                          fontWeight: FontWeight.w500,
                           color: isSelected ? selectedColor : Colors.grey,
                         ),
                       ),

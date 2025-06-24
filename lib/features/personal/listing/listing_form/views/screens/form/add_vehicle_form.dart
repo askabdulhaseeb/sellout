@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/editable_availablity_widget.dart';
 import '../../providers/add_listing_form_provider.dart';
-import '../../widgets/category/subcateogry_selectable_widget.dart';
 import '../../widgets/core/add_listing_basic_info_section.dart';
 import '../../widgets/core/add_listing_condition_offer_section.dart';
 import '../../widgets/core/add_listing_post_button_widget.dart';
 import '../../widgets/core/add_listing_update_button_widget.dart';
+import '../../widgets/custom_listing_dropdown.dart';
 import '../../widgets/vehicle/add_listing_vehicle_basic_info_section.dart';
 import '../../widgets/vehicle/add_listing_vehicle_ternsmission_engine_mileage_section.dart';
 
@@ -48,11 +48,17 @@ class _AddVehicleFormState extends State<AddVehicleForm> {
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: <Widget>[
               const AddListingBasicInfoSection(),
-              SubCategorySelectableWidget(
-                listType: formPro.listingType,
-                subCategory: formPro.selectedCategory,
-                onSelected: formPro.setSelectedCategory,
-              ),
+              CustomListingDropDown(
+                  title: 'category',
+                  categoryKey: 'vehicles',
+                  hint: 'select_category',
+                  selectedValue: formPro.selectedVehicleCategory,
+                  onChanged: (String? p0) => formPro.setVehicleCategory(p0)),
+              // SubCategorySelectableWidget(
+              //   listType: formPro.listingType,
+              //   subCategory: formPro.selectedCategory,
+              //   onSelected: formPro.setSelectedCategory,
+              // ),
               const AddListingVehicleBasicInfoSection(),
               const AddListingVehicleTernsmissionEngineMileageSection(),
               const AddListingConditionOfferSection(),

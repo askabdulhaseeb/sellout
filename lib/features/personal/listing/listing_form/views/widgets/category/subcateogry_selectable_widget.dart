@@ -81,9 +81,9 @@ class _SubCategorySelectableWidgetState
                   widget.listType!, selectedList, context),
               borderRadius: BorderRadius.circular(6),
               child: Container(
+                height: 50,
                 width: double.infinity,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.only(left: 26, right: 10),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(),
@@ -109,29 +109,32 @@ class _SubCategorySelectableWidgetState
             if (widget.listType == ListingType.pets &&
                 selectedSubCategory != null &&
                 selectedSubCategory!.subCategory.isNotEmpty) ...<Widget>{
-              CustomDropdown<SubCategoryEntity>(
-                validator: (bool? value) => null,
-                title: 'breed'.tr(),
-                selectedItem: selectedSubSubCategory,
-                items: selectedSubCategory!.subCategory
-                    .map(
-                      (SubCategoryEntity sub) =>
-                          DropdownMenuItem<SubCategoryEntity>(
-                        value: sub,
-                        child: Text(sub.title,
-                            style: TextTheme.of(context).bodyMedium),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (SubCategoryEntity? sub) {
-                  if (sub != null) {
-                    setState(() {
-                      selectedSubSubCategory = sub;
-                    });
-                    widget.onSelected(sub); // Same onSelected
-                  }
-                },
-              ),
+              Container(
+                height: 50,
+                child: CustomDropdown<SubCategoryEntity>(
+                  validator: (bool? value) => null,
+                  title: 'breed'.tr(),
+                  selectedItem: selectedSubSubCategory,
+                  items: selectedSubCategory!.subCategory
+                      .map(
+                        (SubCategoryEntity sub) =>
+                            DropdownMenuItem<SubCategoryEntity>(
+                          value: sub,
+                          child: Text(sub.title,
+                              style: TextTheme.of(context).bodyMedium),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (SubCategoryEntity? sub) {
+                    if (sub != null) {
+                      setState(() {
+                        selectedSubSubCategory = sub;
+                      });
+                      widget.onSelected(sub); // Same onSelected
+                    }
+                  },
+                ),
+              )
             }
           ],
         );

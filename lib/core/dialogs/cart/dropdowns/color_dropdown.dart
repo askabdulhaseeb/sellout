@@ -12,13 +12,17 @@ class ColorDropdown extends StatefulWidget {
     required this.onColorChanged,
     this.colorRadius,
     super.key,
+    this.title = '',
+    this.padding,
   });
 
   final String? selectedColor;
   final ValueChanged<String?> onColorChanged;
   final double? colorRadius;
+  final EdgeInsetsGeometry? padding;
   @override
   State<ColorDropdown> createState() => _ColorDropdownState();
+  final String title;
 }
 
 class _ColorDropdownState extends State<ColorDropdown> {
@@ -58,12 +62,11 @@ class _ColorDropdownState extends State<ColorDropdown> {
         }
 
         return CustomDropdown<String>(
-          isSearchable: true,
-          title: '',
+          title: widget.title,
           validator: (_) => null,
           hint: 'color'.tr(),
           selectedItem: widget.selectedColor,
-          padding: const EdgeInsets.symmetric(vertical: 4),
+          padding: widget.padding ?? const EdgeInsets.symmetric(vertical: 4),
           items: colors.map((ColorOptionEntity color) {
             return DropdownMenuItem<String>(
               value: color.value,

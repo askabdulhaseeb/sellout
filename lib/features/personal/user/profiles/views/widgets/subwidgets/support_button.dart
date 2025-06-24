@@ -11,15 +11,14 @@ import '../../../domain/usecase/add_remove_supporter_usecase.dart';
 import '../../params/add_remove_supporter_params.dart';
 
 class SupportButton extends StatefulWidget {
-  const SupportButton({
-    required this.supporterId,
-    super.key,
-    this.supportingColor,
-    this.supportColor,
-    this.supportTextColor,
-    this.supportingTextColor
-  });
-  
+  const SupportButton(
+      {required this.supporterId,
+      super.key,
+      this.supportingColor,
+      this.supportColor,
+      this.supportTextColor,
+      this.supportingTextColor});
+
   final String supporterId;
   final Color? supportingColor;
   final Color? supportColor;
@@ -32,7 +31,8 @@ class SupportButton extends StatefulWidget {
 
 class _SupportButtonState extends State<SupportButton> {
   bool isLoading = false;
-  final AddRemoveSupporterUsecase _addRemoveSupporterUsecase = locator<AddRemoveSupporterUsecase>();
+  final AddRemoveSupporterUsecase _addRemoveSupporterUsecase =
+      locator<AddRemoveSupporterUsecase>();
 
   // Getter for real-time supporting status
   bool get isSupporting {
@@ -48,11 +48,12 @@ class _SupportButtonState extends State<SupportButton> {
         action: isSupporting ? SupporterAction.unfollow : SupporterAction.add,
         supporterId: widget.supporterId,
       );
-      
+
       final DataState<String> result = await _addRemoveSupporterUsecase(params);
-      
+
       if (result is DataSuccess) {
-        AppLog.info(isSupporting ? 'supporter_removed'.tr() : 'supporter_added'.tr());
+        AppLog.info(
+            isSupporting ? 'supporter_removed'.tr() : 'supporter_added'.tr());
       } else {
         AppLog.error(
           result.exception?.reason ?? 'Unknown error',
@@ -79,14 +80,18 @@ class _SupportButtonState extends State<SupportButton> {
       child: CustomElevatedButton(
         margin: const EdgeInsets.all(0),
         padding: const EdgeInsets.all(6),
-        bgColor: isSupporting 
-          ? (widget.supportingColor ?? AppTheme.secondaryColor.withValues(alpha: 0.1)) 
-          : (widget.supportColor ?? AppTheme.primaryColor.withValues(alpha: 0.1)),
+        bgColor: isSupporting
+            ? (widget.supportingColor ??
+                AppTheme.secondaryColor.withValues(alpha: 0.1))
+            : (widget.supportColor ??
+                AppTheme.primaryColor.withValues(alpha: 0.1)),
         textStyle: TextTheme.of(context).labelMedium?.copyWith(
-          color: isSupporting 
-                     ? (widget.supportingTextColor ?? ColorScheme.of(context).secondary) 
-          : (widget.supportingTextColor ?? ColorScheme.of(context).primary),
-        ),
+              color: isSupporting
+                  ? (widget.supportingTextColor ??
+                      ColorScheme.of(context).secondary)
+                  : (widget.supportingTextColor ??
+                      ColorScheme.of(context).primary),
+            ),
         title: isSupporting ? 'supporting'.tr() : 'support'.tr(),
         onTap: _handleSupport,
         isLoading: isLoading,

@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/widgets/costom_textformfield.dart';
-import '../../../../../../core/widgets/custom_drop_down.dart';
+import '../../../../../../core/widgets/custom_dropdown.dart';
 import '../../data/models/user_model.dart';
 
 class ProfileFilterSection extends StatelessWidget {
@@ -31,11 +31,17 @@ class ProfileFilterSection extends StatelessWidget {
           Expanded(
             child: SizedBox(
                 height: 50,
-                child: CustomDropdown(
+                child: CustomDropdown<dynamic>(
+                  items: const <DropdownMenuItem<Object?>>[],
+                  validator: (bool? value) => null,
                   hint: 'Select Category',
-                  items: const <String>['Category', 'Option 1', 'Option 2'],
-                  value: 'Category',
-                  onChanged: (String? value) {},
+                  selectedItem: const <String>[
+                    'Category',
+                    'Option 1',
+                    'Option 2'
+                  ],
+                  title: 'Category',
+                  onChanged: (Object? p0) {},
                 )),
           ),
           const SizedBox(width: 10),

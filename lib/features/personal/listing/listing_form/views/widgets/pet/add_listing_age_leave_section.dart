@@ -20,6 +20,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
               children: <Widget>[
                 Expanded(
                   child: CustomListingDropDown(
+                    hint: 'age',
                     categoryKey: 'age',
                     selectedValue: formPro.age,
                     title: 'age'.tr(),
@@ -29,6 +30,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                 const SizedBox(width: 16),
                 Expanded(
                   child: CustomListingDropDown(
+                    hint: 'ready_to_leave',
                     categoryKey: 'ready_to_leave',
                     selectedValue: formPro.time,
                     title: 'ready_to_leave'.tr(),
@@ -37,18 +39,25 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                 ),
               ],
             ),
-            // Uncomment if you want breed dropdown
-            // CustomListingDropDown(
-            //   categoryKey: 'breed',
-            //   selectedValue: formPro.breed,
-            //   title: 'breed'.tr(),
-            //   onChanged: formPro.setBreed,
-            // ),
+            CustomListingDropDown(
+                title: 'category',
+                hint: 'select_category',
+                categoryKey: 'pets',
+                selectedValue: formPro.petCategory,
+                onChanged: (String? p0) => formPro.setPetCategory(p0)),
+            CustomListingDropDown(
+                parentValue: formPro.petCategory,
+                title: 'breed',
+                hint: 'breed',
+                categoryKey: 'breed',
+                selectedValue: formPro.breed,
+                onChanged: (String? p0) => formPro.setPetBreed(p0)),
             LocationInputField(
               onLocationSelected: formPro.setMeetupLocation,
               initialLocation: formPro.selectedmeetupLocation,
             ),
             CustomDropdown<bool>(
+              height: 50,
               selectedItem: formPro.vaccinationUpToDate,
               items: <DropdownMenuItem<bool>>[
                 DropdownMenuItem<bool>(
@@ -66,6 +75,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
               title: 'vaccination_up_to_date'.tr(),
             ),
             CustomDropdown<bool>(
+              height: 50,
               selectedItem: formPro.wormAndFleaTreated,
               items: <DropdownMenuItem<bool>>[
                 DropdownMenuItem<bool>(
@@ -83,6 +93,8 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
               title: 'worm_flee_treated'.tr(),
             ),
             CustomDropdown<bool>(
+              height: 50,
+              padding: const EdgeInsets.all(0),
               selectedItem: formPro.healthChecked,
               items: <DropdownMenuItem<bool>>[
                 DropdownMenuItem<bool>(

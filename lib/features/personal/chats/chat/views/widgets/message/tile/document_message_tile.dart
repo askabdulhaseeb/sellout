@@ -10,7 +10,7 @@ import '../../../../../../../attachment/domain/entities/attachment_entity.dart';
 class DocumentTile extends StatefulWidget {
   const DocumentTile({required this.attachment, required this.isMe, super.key});
   final AttachmentEntity attachment;
-final bool isMe;
+  final bool isMe;
   @override
   State<DocumentTile> createState() => _DocumentTileState();
 }
@@ -78,69 +78,75 @@ class _DocumentTileState extends State<DocumentTile> {
     }
   }
 
- @override
-Widget build(BuildContext context) {
-  final ThemeData theme = Theme.of(context);
-  final ColorScheme colorScheme = theme.colorScheme;
-  final bool isMe = widget.isMe; // you must have this field
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
+    final bool isMe = widget.isMe; // you must have this field
 
-  final Color tileColor = isMe ? colorScheme.secondary.withValues(alpha: 0.2) : colorScheme.primary.withValues(alpha: 0.2);
-  final Color iconColor = isMe
-      ? colorScheme.onSecondary.withValues(alpha:0.8)
-      : colorScheme.onPrimary.withValues(alpha:0.8);
-  final Color textColor = isMe ? colorScheme.onSecondary : colorScheme.onPrimary;
-  final Color buttonBgColor = isMe
-      ? colorScheme.secondary.withValues(alpha:0.2)
-      : colorScheme.primary.withValues(alpha:0.2);
-  final Color buttonTextColor = isMe ? colorScheme.secondary : colorScheme.primary;
-  // final Color dividerColor = theme.dividerColor;
+    final Color tileColor = isMe
+        ? colorScheme.secondary.withValues(alpha: 0.2)
+        : colorScheme.primary.withValues(alpha: 0.2);
+    final Color iconColor = isMe
+        ? colorScheme.onSecondary.withValues(alpha: 0.8)
+        : colorScheme.onPrimary.withValues(alpha: 0.8);
+    final Color textColor =
+        isMe ? colorScheme.onSecondary : colorScheme.onPrimary;
+    final Color buttonBgColor = isMe
+        ? colorScheme.secondary.withValues(alpha: 0.2)
+        : colorScheme.primary.withValues(alpha: 0.2);
+    final Color buttonTextColor =
+        isMe ? colorScheme.secondary : colorScheme.primary;
+    // final Color dividerColor = theme.dividerColor;
 
-  return Container(
-    margin: const EdgeInsets.symmetric(vertical: 6),
-    padding: const EdgeInsets.all(8),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(12),
-    ),
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        Container(
-          height: 100,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            color: tileColor,
-          ),
-          child: Center(
-            child: Icon(
-              Icons.insert_drive_file_rounded,
-              size: 36,
-              color: iconColor,
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Container(
+            height: 100,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: tileColor,
+            ),
+            child: Center(
+              child: Icon(
+                Icons.insert_drive_file_rounded,
+                size: 36,
+                color: iconColor,
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 6),
-        Text(
-          widget.attachment.originalName,
-          style: theme.textTheme.bodyLarge?.copyWith(color: textColor),
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 8),
-        SizedBox(
-          height: 50,
-          width: double.infinity,
-          child: CustomElevatedButton(
-            bgColor: buttonBgColor,
-            textStyle: TextTheme.of(context).labelMedium?.copyWith(color: buttonTextColor),
-            isLoading: isDownloading,
-            title: isDownloading ? 'downloading'.tr() : 'download'.tr(),
-            onTap: _downloadFile,
+          const SizedBox(height: 6),
+          Text(
+            widget.attachment.originalName,
+            style: theme.textTheme.bodyLarge?.copyWith(color: textColor),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
           ),
-        ),
-      ],
-    ),
-  );
-}
+          const SizedBox(height: 8),
+          SizedBox(
+            height: 50,
+            width: double.infinity,
+            child: CustomElevatedButton(
+              bgColor: buttonBgColor,
+              textStyle: TextTheme.of(context)
+                  .labelMedium
+                  ?.copyWith(color: buttonTextColor),
+              isLoading: isDownloading,
+              title: isDownloading ? 'downloading'.tr() : 'download'.tr(),
+              onTap: _downloadFile,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

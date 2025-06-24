@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/editable_availablity_widget.dart';
 import '../../providers/add_listing_form_provider.dart';
-import '../../widgets/category/subcateogry_selectable_widget.dart';
 import '../../widgets/core/add_listing_basic_info_section.dart';
 import '../../widgets/core/add_listing_condition_offer_section.dart';
 import '../../widgets/core/add_listing_post_button_widget.dart';
 import '../../widgets/core/add_listing_update_button_widget.dart';
 import '../../widgets/property/add_listing_property_bed_bath_widget.dart';
-import '../../widgets/property/add_listing_property_subcat_selection_section.dart';
 import '../../widgets/property/add_property_gpa_widget.dart';
 
 class AddPropertyForm extends StatefulWidget {
@@ -24,7 +22,7 @@ class _AddPropertyFormState extends State<AddPropertyForm> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => _loadDropdowns());
+    Future<void>.microtask(() => _loadDropdowns());
   }
 
   Future<void> _loadDropdowns() async {
@@ -49,12 +47,12 @@ class _AddPropertyFormState extends State<AddPropertyForm> {
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: <Widget>[
               const AddListingBasicInfoSection(),
-              const AddListingPropertySubcatSelectionSection(),
-              SubCategorySelectableWidget(
-                listType: formPro.listingType,
-                subCategory: formPro.selectedCategory,
-                onSelected: formPro.setSelectedCategory,
-              ),
+              //  const AddListingPropertySubacatSelectionSection(),
+              // SubCategorySelectableWidget(
+              //   listType: formPro.listingType,
+              //   subCategory: formPro.selectedCategory,
+              //   onSelected: formPro.setSelectedCategory,
+              // ),
               const AddListingPropertyBedBathWidget(),
               const AddPropertyGPAWidget(),
               const AddListingConditionOfferSection(),

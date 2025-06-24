@@ -12,6 +12,7 @@ class CustomListingDropDown extends StatefulWidget {
     this.title = '',
     this.padding,
     this.hint = '',
+    this.parentValue,
     super.key,
   });
 
@@ -21,6 +22,7 @@ class CustomListingDropDown extends StatefulWidget {
   final String title;
   final String hint;
   final EdgeInsetsGeometry? padding;
+  final String? parentValue;
 
   @override
   State<CustomListingDropDown> createState() => _CustomListingDropDownState();
@@ -28,6 +30,7 @@ class CustomListingDropDown extends StatefulWidget {
 
 class _CustomListingDropDownState extends State<CustomListingDropDown> {
   List<DropdownOptionEntity> options = <DropdownOptionEntity>[];
+  List<DropdownOptionEntity> filteredOptions = <DropdownOptionEntity>[];
   bool isLoading = true;
   String? displayLabel;
 
@@ -40,54 +43,94 @@ class _CustomListingDropDownState extends State<CustomListingDropDown> {
   @override
   void didUpdateWidget(covariant CustomListingDropDown oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.categoryKey != oldWidget.categoryKey ||
-        widget.selectedValue != oldWidget.selectedValue) {
-      _syncDisplayLabel();
+
+    final bool keyChanged = widget.categoryKey != oldWidget.categoryKey;
+    final bool parentChanged = widget.parentValue != oldWidget.parentValue;
+    final bool valueChanged = widget.selectedValue != oldWidget.selectedValue;
+
+    if (keyChanged || parentChanged || valueChanged) {
+      if (keyChanged || parentChanged) {
+        // Full reload needed for category or parent change
+        _loadOptions();
+      } else if (valueChanged) {
+        // Just update display label for value change
+        _syncDisplayLabel();
+      }
     }
   }
 
-  Future<void> _loadOptions() async {
-    setState(() {
-      isLoading = true;
-    });
-    try {
-      final Box<DropdownCategoryEntity> box =
-          Hive.box(LocalDropDownListings.boxTitle);
-      final DropdownCategoryEntity? category = box.get(widget.categoryKey);
+  // Find option by value in hierarchy
+  DropdownOptionEntity? _findOptionByValue(
+      List<DropdownOptionEntity> opts, String value) {
+    for (final DropdownOptionEntity opt in opts) {
+      if (opt.value == value) return opt;
+      final DropdownOptionEntity? found =
+          _findOptionByValue(opt.children, value);
+      if (found != null) return found;
+    }
+    return null;
+  }
 
-      if (category != null) {
-        options = category.options;
-      } else {
-        options = <DropdownOptionEntity>[];
-      }
+  // Filter options based on parentValue
+  void _filterOptions() {
+    if (widget.parentValue != null) {
+      final DropdownOptionEntity? parentOption =
+          _findOptionByValue(options, widget.parentValue!);
+      filteredOptions = parentOption?.children ?? <DropdownOptionEntity>[];
+    } else {
+      filteredOptions = options;
+    }
+  }
 
-      _syncDisplayLabel();
-    } catch (e) {
-      debugPrint('Dropdown load error: $e');
-    } finally {
-      setState(() {
-        isLoading = false;
+  // Validate selected value against current filtered options
+  void _validateSelection() {
+    final bool isValid = filteredOptions.any((DropdownOptionEntity opt) =>
+        opt.value == widget.selectedValue ||
+        _findOptionByValue(opt.children, widget.selectedValue!) != null);
+
+    if (!isValid && widget.selectedValue != null) {
+      // Reset invalid selection
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        widget.onChanged(null);
       });
     }
   }
 
-  void _syncDisplayLabel() {
-    final String? label = _findLabel(widget.selectedValue, options);
-    setState(() {
-      displayLabel = label;
-    });
+  Future<void> _loadOptions() async {
+    setState(() => isLoading = true);
+
+    try {
+      final Box<DropdownCategoryEntity> box =
+          Hive.box<DropdownCategoryEntity>(LocalDropDownListings.boxTitle);
+      final DropdownCategoryEntity? category = box.get(widget.categoryKey);
+
+      setState(() {
+        options = category?.options ?? <DropdownOptionEntity>[];
+        _filterOptions();
+        _validateSelection(); // Check if selected value is still valid
+        displayLabel = _findLabel(widget.selectedValue, options);
+      });
+    } catch (e) {
+      debugPrint('Dropdown load error: $e');
+    } finally {
+      setState(() => isLoading = false);
+    }
   }
 
   String? _findLabel(String? value, List<DropdownOptionEntity> opts) {
-    if (value == null) return null; // explicitly handle null value
+    if (value == null) return null;
     for (final DropdownOptionEntity opt in opts) {
       if (opt.value == value) return opt.label;
-      if (opt.children.isNotEmpty) {
-        final String? childLabel = _findLabel(value, opt.children);
-        if (childLabel != null) return childLabel;
-      }
+      final String? childLabel = _findLabel(value, opt.children);
+      if (childLabel != null) return childLabel;
     }
     return null;
+  }
+
+  void _syncDisplayLabel() {
+    setState(() {
+      displayLabel = _findLabel(widget.selectedValue, options);
+    });
   }
 
   @override
@@ -101,12 +144,13 @@ class _CustomListingDropDownState extends State<CustomListingDropDown> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          if (widget.title.isNotEmpty)
+          if (widget.title.isNotEmpty) ...<Widget>[
             Text(
               widget.title.tr(),
               style: const TextStyle(fontWeight: FontWeight.w500),
             ),
-          if (widget.title.isNotEmpty) const SizedBox(height: 2),
+            const SizedBox(height: 2),
+          ],
           GestureDetector(
             onTap: _showPicker,
             child: InputDecorator(
@@ -115,8 +159,10 @@ class _CustomListingDropDownState extends State<CustomListingDropDown> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(6),
                 ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
               ),
               child: Row(
                 children: <Widget>[
@@ -125,9 +171,10 @@ class _CustomListingDropDownState extends State<CustomListingDropDown> {
                       displayLabel ?? widget.hint.tr(),
                       overflow: TextOverflow.ellipsis,
                       style: displayLabel != null
-                          ? Theme.of(context).textTheme.bodyMedium
-                          : Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: ColorScheme.of(context)
+                          ? null
+                          : TextStyle(
+                              color: Theme.of(context)
+                                  .colorScheme
                                   .outline
                                   .withValues(alpha: 0.5)),
                     ),
@@ -144,71 +191,83 @@ class _CustomListingDropDownState extends State<CustomListingDropDown> {
 
   Future<void> _showPicker() async {
     final DropdownOptionEntity? result =
-        await _showOptionsBottomSheet(widget.title, options);
-    if (result != null) {
-      setState(() {
-        displayLabel = result.label;
-      });
-      widget.onChanged(result.value);
-    }
-  }
-
-  Future<DropdownOptionEntity?> _showOptionsBottomSheet(
-    String title,
-    List<DropdownOptionEntity> opts,
-  ) {
-    return showModalBottomSheet<DropdownOptionEntity>(
+        await showModalBottomSheet<DropdownOptionEntity>(
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       isScrollControlled: true,
-      builder: (_) {
-        return Container(
-          constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.7),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  title.tr(),
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
-                ),
+      builder: (BuildContext context) => _OptionsPicker(
+        title: widget.title,
+        options: filteredOptions,
+      ),
+    );
+
+    if (result != null) {
+      widget.onChanged(result.value);
+    }
+  }
+}
+
+class _OptionsPicker extends StatelessWidget {
+  const _OptionsPicker({required this.title, required this.options});
+  final String title;
+  final List<DropdownOptionEntity> options;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.7,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              title.tr(),
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
-              const Divider(height: 1),
-              Expanded(
-                child: ListView(
-                  padding: EdgeInsets.zero,
-                  children: opts.map((DropdownOptionEntity opt) {
-                    return ListTile(
-                      title: Text(opt.label),
-                      trailing: opt.children.isNotEmpty
-                          ? const Icon(Icons.chevron_right)
-                          : null,
-                      onTap: () async {
-                        if (opt.children.isNotEmpty) {
-                          final DropdownOptionEntity? childResult =
-                              await _showOptionsBottomSheet(
-                                  opt.label, opt.children);
-                          if (childResult != null) {
-                            Navigator.pop(context, childResult);
-                          }
-                        } else {
-                          Navigator.pop(context, opt);
-                        }
-                      },
-                    );
-                  }).toList(),
-                ),
-              ),
-            ],
+            ),
           ),
-        );
-      },
+          const Divider(height: 1),
+          Expanded(
+            child: ListView.builder(
+              itemCount: options.length,
+              itemBuilder: (BuildContext context, int index) {
+                final DropdownOptionEntity opt = options[index];
+                return ListTile(
+                  title: Text(opt.label),
+                  trailing: opt.children.isNotEmpty
+                      ? const Icon(Icons.chevron_right)
+                      : null,
+                  onTap: () async {
+                    if (opt.children.isNotEmpty) {
+                      final DropdownOptionEntity? childResult =
+                          await showModalBottomSheet<DropdownOptionEntity>(
+                        context: context,
+                        builder: (BuildContext ctx) => _OptionsPicker(
+                          title: opt.label,
+                          options: opt.children,
+                        ),
+                      );
+                      if (childResult != null) {
+                        Navigator.pop(context, childResult);
+                      }
+                    } else {
+                      Navigator.pop(context, opt);
+                    }
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
