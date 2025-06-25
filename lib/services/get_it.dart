@@ -139,6 +139,7 @@ import '../features/personal/search/view/view/search_screen.dart';
 import '../features/personal/services/data/repositories/personal_services_repository_impl.dart';
 import '../features/personal/services/data/sources/services_explore_api.dart';
 import '../features/personal/services/domain/repositories/personal_services_repository.dart';
+import '../features/personal/services/domain/usecase/get_service_by_categories_usecase.dart';
 import '../features/personal/services/domain/usecase/get_special_offer_usecase.dart';
 import '../features/personal/services/views/providers/services_page_provider.dart';
 import '../features/personal/user/profiles/data/repositories/user_repository_impl.dart';
@@ -235,8 +236,10 @@ void _servicePage() {
       () => PersonalServicesRepositoryImpl(locator()));
   locator.registerFactory<GetSpecialOfferUsecase>(
       () => GetSpecialOfferUsecase(locator()));
+  locator.registerFactory<GetServiceCategoryUsecase>(
+      () => GetServiceCategoryUsecase(locator()));
   locator.registerLazySingleton<ServicesPageProvider>(
-      () => ServicesPageProvider(locator(), locator(), locator()));
+      () => ServicesPageProvider(locator(), locator(), locator(), locator()));
 }
 
 void _profile() {

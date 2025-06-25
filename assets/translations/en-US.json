@@ -796,6 +796,7 @@
   "post_reported_message_extra": " and it doesn’t follow Sellout community guideline. Team Sellout will look into your report and take action in 24 hours!",
   "cancel_report": "Cancel this report",
   "report_failed": "Report failed. Please try again.",
+  "no_services_found": "No services found in this section",
   "next": "Next",
   "closed": "Closed",
   "default": "Default",
