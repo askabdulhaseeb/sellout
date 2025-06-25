@@ -31,7 +31,6 @@ class PostDetailScreen extends StatelessWidget {
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final String postID = args['pid'] ?? '';
     final VisitingEntity? visit = args['visit'] as VisitingEntity?;
-
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 110,

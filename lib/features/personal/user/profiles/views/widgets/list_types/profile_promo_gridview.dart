@@ -8,7 +8,7 @@ import '../../../../../promo/domain/entities/promo_entity.dart';
 import '../../../../../promo/domain/usecase/get_promo_by_id_usecase.dart';
 import '../../../../../promo/view/create_promo/screens/create_promo_screen.dart';
 import '../../../domain/entities/user_entity.dart';
-import '../subwidgets/promo_grid_view_tile.dart';
+import '../subwidgets/promo_user_gridview_tile.dart';
 
 class ProfilePromoGridview extends StatefulWidget {
   const ProfilePromoGridview({

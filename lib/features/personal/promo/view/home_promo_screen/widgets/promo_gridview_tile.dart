@@ -5,13 +5,11 @@ import '../promo_screen.dart';
 
 class PromoHomeGridViewTile extends StatelessWidget {
   const PromoHomeGridViewTile({
-    super.key,
     required this.promo,
-    required this.height,
+    super.key,
   });
 
   final PromoEntity promo;
-  final double height;
 
   @override
   Widget build(BuildContext context) {

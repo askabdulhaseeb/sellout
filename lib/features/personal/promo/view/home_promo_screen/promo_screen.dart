@@ -1,14 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/sources/data_state.dart';
+import '../../../../../core/theme/app_theme.dart';
 import '../../../../../core/widgets/video_widget.dart';
 import '../../../../../services/get_it.dart';
-import '../../../post/domain/entities/post_entity.dart';
 import '../../../post/post_detail/views/screens/post_detail_screen.dart';
 import '../../../user/profiles/domain/entities/user_entity.dart'
     show UserEntity;
-import '../../../user/profiles/domain/usecase/get_post_by_id_usecase.dart';
 import '../../../user/profiles/domain/usecase/get_user_by_uid.dart';
 import '../../domain/entities/promo_entity.dart';
 
@@ -19,8 +19,6 @@ class PromoScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final GetPostByIdUsecase getPostByIdUsecase = GetPostByIdUsecase(locator());
-
     return Scaffold(
       appBar: PromoAppBar(promo: promo),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -30,28 +28,13 @@ class PromoScreen extends StatelessWidget {
           if (promo.referenceId != '')
             PromoFooter(
               promo: promo,
-              onOrderNow: () async {
-                showDialog(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (_) =>
-                      const Center(child: CircularProgressIndicator()),
-                );
-                final DataState<List<PostEntity>> dataState =
-                    await getPostByIdUsecase.call(promo.referenceId);
-                debugPrint(
-                    'Post usecase called for referenceId: ${promo.referenceId}');
-                debugPrint('DataState result: $dataState');
-                Navigator.pop(context);
-                if (dataState is DataSuccess) {
-                  final PostEntity post = dataState.entity!.first;
-                  debugPrint('Post found: ${post.toString()}');
+              onOrderNow: () {
+                if (promo.referenceId.isNotEmpty) {
                   Navigator.of(context).pushNamed(
                     PostDetailScreen.routeName,
-                    arguments: <String, PostEntity>{'pid': post},
+                    arguments: <String, String>{'pid': promo.referenceId},
                   );
                 } else {
-                  debugPrint('Post not found');
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('post_not_found')),
                   );
@@ -69,7 +52,6 @@ class PromoScreen extends StatelessWidget {
 
 class PromoAppBar extends StatelessWidget implements PreferredSizeWidget {
   const PromoAppBar({required this.promo, super.key});
-
   final PromoEntity promo;
 
   @override
@@ -174,24 +156,20 @@ class PromoMedia extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return isVideo(promo.fileUrl)
-        ? VideoWidget(videoSource: promo.fileUrl)
-        : Image.network(
-            promo.fileUrl,
-            width: double.infinity,
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) =>
-                const Center(child: Icon(Icons.broken_image, size: 48)),
-          );
-  }
-
-  bool isVideo(String url) {
-    final String lowerUrl = url.toLowerCase();
-    return lowerUrl.endsWith('.mp4') ||
-        lowerUrl.endsWith('.mov') ||
-        lowerUrl.endsWith('.avi') ||
-        lowerUrl.endsWith('.mkv') ||
-        lowerUrl.endsWith('.webm');
+    if ((promo.promoType).toLowerCase() == 'image') {
+      return CachedNetworkImage(
+        imageUrl: promo.fileUrl,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        placeholder: (_, __) => const Center(
+          child: CircularProgressIndicator(strokeWidth: 1.5),
+        ),
+        errorWidget: (_, __, ___) =>
+            const Center(child: Icon(Icons.broken_image, size: 48)),
+      );
+    } else {
+      return VideoWidget(videoSource: promo.fileUrl);
+    }
   }
 }
 
@@ -207,54 +185,66 @@ class PromoFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
+
     return Column(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               IconButton(
-                  onPressed: () {}, icon: const Icon(Icons.share_outlined)),
-              Text(
-                '${promo.title} - \$${promo.price ?? "0"}',
-                style: Theme.of(context).textTheme.bodyLarge,
+                onPressed: () {},
+                icon: const Icon(Icons.share_outlined),
+                color: theme.iconTheme.color,
+              ),
+              Expanded(
+                child: Text(
+                  '${promo.title} - \$${promo.price ?? "0"}',
+                  style: theme.textTheme.bodyLarge
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
               IconButton(
-                  onPressed: () {}, icon: const Icon(CupertinoIcons.tag)),
+                onPressed: () {},
+                icon: const Icon(CupertinoIcons.tag),
+                color: theme.iconTheme.color,
+              ),
             ],
           ),
         ),
         Container(
-          color: Theme.of(context).primaryColor,
-          padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          color: theme.primaryColor,
           child: Row(
             children: <Widget>[
-              const SizedBox(
-                width: 50,
-              ),
               Expanded(
-                child: ElevatedButton(
+                child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: ColorScheme.of(context).onPrimary,
+                    backgroundColor: AppTheme.primaryColor,
+                    foregroundColor: theme.primaryColor,
                     elevation: 0,
-                    backgroundColor: Theme.of(context).primaryColor,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   onPressed: onOrderNow,
-                  child: Text('order_now_>'.tr()),
+                  icon: const Icon(Icons.shopping_bag_outlined),
+                  label: Text(
+                    'order_now_>'.tr(),
+                    style: TextTheme.of(context)
+                        .titleSmall
+                        ?.copyWith(color: colorScheme.onPrimary),
+                  ),
                 ),
               ),
-              const SizedBox(width: 8),
-              Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: IconButton(
-                  onPressed: onOrderNow,
-                  icon: const Icon(Icons.shopping_cart_outlined),
-                  color: ColorScheme.of(context).onPrimary,
-                ),
+              const SizedBox(width: 10),
+              Icon(
+                Icons.shopping_cart_outlined,
+                color: colorScheme.onPrimary,
               ),
             ],
           ),
