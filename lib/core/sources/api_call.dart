@@ -1,16 +1,13 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-
 import '../../features/attachment/domain/entities/picked_attachment.dart';
 import '../enums/core/api_request_type.dart';
 import '../functions/app_log.dart';
 import 'data_state.dart';
 import '../../features/personal/auth/signin/data/sources/local/local_auth.dart';
 import 'local/local_request_history.dart';
-
 export 'dart:convert';
 export '../enums/core/api_request_type.dart';
 export 'data_state.dart';
@@ -126,6 +123,7 @@ class ApiCall<T> {
     required String endpoint,
     required ApiRequestType requestType,
     String? fileKey,
+    Map<String, PickedAttachment>? fileMap,
     String? baseURL,
     Map<String, String>? fieldsMap,
     List<PickedAttachment>? attachments,

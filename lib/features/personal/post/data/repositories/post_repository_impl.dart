@@ -1,3 +1,4 @@
+import '../../../../../core/params/report_params.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../domain/entities/post_entity.dart';
 import '../../domain/params/add_to_cart_param.dart';
@@ -38,6 +39,16 @@ class PostRepositoryImpl implements PostRepository {
   @override
   Future<DataState<bool>> updateOffer(UpdateOfferParams param) async {
     return await remoteApi.updateOffer(param);
+  }
+
+  @override
+  Future<DataState<bool>> reportPost(ReportParams params) async {
+    return await remoteApi.reportPost(params);
+  }
+
+  @override
+  Future<DataState<bool>> savePost(String params) async {
+    return await remoteApi.savePost(params);
   }
 
   // @override

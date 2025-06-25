@@ -2,12 +2,14 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
+import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../user/profiles/domain/entities/supporter_detail_entity.dart';
 import '../../../domain/entities/promo_entity.dart';
 import '../../../domain/params/create_promo_params.dart';
 import '../../model/promo_model.dart';
 import '../local/local_promo.dart';
+import 'package:mime/mime.dart';
 
 abstract class PromoRemoteDataSource {
   Future<DataState<bool>> createPromo(CreatePromoParams promo);
@@ -18,37 +20,49 @@ abstract class PromoRemoteDataSource {
 class PromoRemoteDataSourceImpl implements PromoRemoteDataSource {
   @override
   Future<DataState<bool>> createPromo(CreatePromoParams param) async {
+    debugPrint('👉 Fields: ${param.toMap()}');
+    debugPrint('👉 File path: ${param.attachments?.file.path}');
+    debugPrint('👉 File MIME: ${lookupMimeType(param.attachments!.file.path)}');
+    debugPrint('👉 Thumb path: ${param.thumbNail?.file.path}');
+    debugPrint('👉 Thumb MIME: ${lookupMimeType(param.thumbNail!.file.path)}');
     try {
       final DataState<String> result = await ApiCall<String>().callFormData(
         endpoint: '/promo/create',
         requestType: ApiRequestType.post,
-        fileKey: 'file',
-        isConnectType: true,
-        extraHeader: <String, String>{
-          'Content-Type': 'multipart/form-data',
+        fileMap: <String, PickedAttachment>{
+          'file': param.attachments!,
+          'thumbnail': param.thumbNail!,
         },
-        isAuth: true,
-        attachments: param.attachments,
         fieldsMap: param.toMap(),
+        isConnectType: false, // ✅ No Content-Type: application/json
+        isAuth: true, // ✅ Adds Bearer token
       );
-      if (result is DataSuccess) {
-        debugPrint(result.data);
+
+      if (result is DataSuccess<String>) {
+        AppLog.info(
+          'Promo created successfully: ${result.data}',
+          name: 'PromoRemoteDataSourceImpl.createPromo - if',
+        );
         return DataSuccess<bool>(result.data!, true);
-      } else {
+      } else if (result is DataFailer<String>) {
         AppLog.error(
-          result.exception?.message ??
-              'PromoRemoteDataSourceImpl.createPromo - failed',
-          name: 'PromoRemoteDataSourceImpl.createPromo - else',
-          error: result.exception,
+          result.exception?.message ?? 'Unknown error during promo creation',
+          name: 'PromoRemoteDataSourceImpl.createPromo - else if',
+          error: result.exception?.reason ?? 'something_wrong',
         );
         return DataFailer<bool>(
-          result.exception ?? CustomException('something_wrong'.tr()),
+          result.exception ?? CustomException('Something went wrong'),
         );
+      } else {
+        AppLog.error(
+          'Unexpected state in createPromo',
+          name: 'PromoRemoteDataSourceImpl.createPromo - else',
+        );
+        return DataFailer<bool>(CustomException('Unexpected API state'));
       }
     } catch (e, stc) {
-      debugPrint(param.toString());
       AppLog.error(
-        e.toString(),
+        'Exception during createPromo: $e',
         name: 'PromoRemoteDataSourceImpl.createPromo - catch',
         error: e,
         stackTrace: stc,

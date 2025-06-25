@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:photo_manager/photo_manager.dart';
 import 'attachment_entity.dart';
 export '../../../../core/enums/core/attachment_type.dart';
+
 class PickedAttachment {
   const PickedAttachment({
     required this.file,
@@ -8,7 +11,7 @@ class PickedAttachment {
     this.selectedMedia,
   });
 
-  final dynamic file;
+  final File file;
   final AttachmentType type;
   final AssetEntity? selectedMedia;
 

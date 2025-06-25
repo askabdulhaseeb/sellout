@@ -1,10 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../features/personal/listing/listing_form/data/sources/remote/colors_api.dart';
-import '../../../../features/personal/listing/listing_form/domain/entities/color_options_entity.dart';
-import '../../../../features/personal/listing/listing_form/views/providers/add_listing_form_provider.dart';
-import '../../../widgets/custom_dropdown.dart';
+import '../../features/personal/listing/listing_form/data/sources/remote/colors_api.dart';
+import '../../features/personal/listing/listing_form/domain/entities/color_options_entity.dart';
+import '../../features/personal/listing/listing_form/views/providers/add_listing_form_provider.dart';
+import '../widgets/custom_dropdown.dart';
 
 class ColorDropdown extends StatefulWidget {
   const ColorDropdown({

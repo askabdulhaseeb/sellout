@@ -48,18 +48,11 @@ class _SubCategorySelectableWidgetState
   @override
   Widget build(BuildContext context) {
     return Consumer<AddListingFormProvider>(
-      builder: (BuildContext context, AddListingFormProvider provider,
-          Widget? child) {
+      builder: (BuildContext context, AddListingFormProvider provider, _) {
         if (provider.isLoading) return const Loader();
 
         List<ListingEntity> selectedList = <ListingEntity>[];
-
-        if (widget.listType == ListingType.clothAndFoot) {
-          selectedList = provider.listings
-              .where((ListingEntity e) =>
-                  e.cid == provider.selectedClothSubCategory)
-              .toList();
-        } else if (widget.listType != null) {
+        if (widget.listType != null) {
           selectedList = provider.listings
               .where((ListingEntity e) => e.type == widget.listType)
               .toList();
@@ -69,16 +62,12 @@ class _SubCategorySelectableWidgetState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              widget.listType == ListingType.pets
-                  ? 'pet_category'.tr()
-                  : 'category'.tr(),
+              'category'.tr(),
               style: const TextStyle(fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 4),
-            // First Dropdown
             InkWell(
-              onTap: () => _handleCategorySelection(
-                  widget.listType!, selectedList, context),
+              onTap: () => _handleCategorySelection(selectedList, context),
               borderRadius: BorderRadius.circular(6),
               child: Container(
                 height: 50,
@@ -86,63 +75,61 @@ class _SubCategorySelectableWidgetState
                 padding: const EdgeInsets.only(left: 26, right: 10),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(6),
-                  border: Border.all(),
+                  border: Border.all(color: Colors.grey),
                 ),
                 child: Row(
                   children: <Widget>[
                     Expanded(
                       child: Text(
-                          selectedSubCategory?.title ?? 'select_category'.tr(),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextTheme.of(context).bodyMedium),
+                        selectedSubCategory?.title ?? 'select_category'.tr(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextTheme.of(context).bodyMedium,
+                      ),
                     ),
-                    const Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                    ),
+                    const Icon(Icons.keyboard_arrow_down_rounded),
                   ],
                 ),
               ),
             ),
-
-            // Second Dropdown (only for pets if sub-sub-categories exist)
-            if (widget.listType == ListingType.pets &&
-                selectedSubCategory != null &&
-                selectedSubCategory!.subCategory.isNotEmpty) ...<Widget>{
-              Container(
-                height: 50,
-                child: CustomDropdown<SubCategoryEntity>(
-                  validator: (bool? value) => null,
-                  title: 'breed'.tr(),
-                  selectedItem: selectedSubSubCategory,
-                  items: selectedSubCategory!.subCategory
-                      .map(
-                        (SubCategoryEntity sub) =>
-                            DropdownMenuItem<SubCategoryEntity>(
-                          value: sub,
-                          child: Text(sub.title,
-                              style: TextTheme.of(context).bodyMedium),
+            if (selectedSubCategory != null &&
+                selectedSubCategory!.subCategory.isNotEmpty)
+              CustomDropdown<SubCategoryEntity>(
+                validator: (bool? sub) {
+                  if (selectedSubCategory!.subCategory.isNotEmpty &&
+                      sub == null) {
+                    return 'please_select_sub_category'.tr();
+                  }
+                  return null;
+                },
+                title: 'sub_category'.tr(),
+                selectedItem: selectedSubSubCategory,
+                items: selectedSubCategory!.subCategory
+                    .map(
+                      (SubCategoryEntity sub) =>
+                          DropdownMenuItem<SubCategoryEntity>(
+                        value: sub,
+                        child: Text(
+                          sub.title,
+                          style: TextTheme.of(context).bodyMedium,
                         ),
-                      )
-                      .toList(),
-                  onChanged: (SubCategoryEntity? sub) {
-                    if (sub != null) {
-                      setState(() {
-                        selectedSubSubCategory = sub;
-                      });
-                      widget.onSelected(sub); // Same onSelected
-                    }
-                  },
-                ),
-              )
-            }
+                      ),
+                    )
+                    .toList(),
+                onChanged: (SubCategoryEntity? sub) {
+                  setState(() {
+                    selectedSubSubCategory = sub;
+                  });
+                  widget.onSelected(sub);
+                },
+              ),
           ],
         );
       },
     );
   }
 
-  Future<void> _handleCategorySelection(ListingType listType,
+  Future<void> _handleCategorySelection(
       List<ListingEntity> selectedList, BuildContext context) async {
     if (selectedList.isEmpty) {
       AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
@@ -157,7 +144,8 @@ class _SubCategorySelectableWidgetState
       return;
     }
 
-    final SubCategoryEntity? selected = await showModalBottomSheet(
+    final SubCategoryEntity? selected =
+        await showModalBottomSheet<SubCategoryEntity>(
       context: context,
       builder: (_) => CategorySelectionBottomSheet(
         subCategories: subCategories,
@@ -170,12 +158,7 @@ class _SubCategorySelectableWidgetState
         selectedSubSubCategory = null;
       });
 
-      if (listType == ListingType.pets) {
-        Provider.of<AddListingFormProvider>(context, listen: false)
-            .setPetCategory(selected.title.toLowerCase());
-      }
-      // If it's not pets or there's no sub-sub-category, select immediately
-      if (listType != ListingType.pets || selected.subCategory.isEmpty) {
+      if (selected.subCategory.isEmpty) {
         widget.onSelected(selected);
       }
     }

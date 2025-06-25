@@ -87,7 +87,6 @@ class _CustomListingDropDownState extends State<CustomListingDropDown> {
     final bool isValid = filteredOptions.any((DropdownOptionEntity opt) =>
         opt.value == widget.selectedValue ||
         _findOptionByValue(opt.children, widget.selectedValue!) != null);
-
     if (!isValid && widget.selectedValue != null) {
       // Reset invalid selection
       WidgetsBinding.instance.addPostFrameCallback((_) {

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../../core/widgets/video_widget.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../provider/promo_provider.dart';
 import '../../widget/choose_post_widget.dart';
@@ -15,9 +14,10 @@ class PromoDetailsForm extends StatelessWidget {
   Widget build(BuildContext context) {
     final PromoProvider pro =
         Provider.of<PromoProvider>(context, listen: false);
+    debugPrint(pro.attachment?.type.json);
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
       child: Form(
         key: formKey,
         child: Column(
@@ -36,21 +36,12 @@ class PromoDetailsForm extends StatelessWidget {
                 )
               ],
             ),
-            SizedBox(
-              height: 200,
-              width: double.infinity,
-              child: VideoWidget(
-                  videoSource: pro.attachment?.file, showTime: true),
-            ),
+            const PromoThumbnailPicker(),
             const SizedBox(height: 20),
             // Title
             CustomTextFormField(
               controller: pro.title,
               showSuffixIcon: true,
-              // suffixIcon: Padding(
-              //   padding: const EdgeInsets.all(8),
-              //   child: Text('${pro.title.text.length}/20'),
-              // ),
               hint: 'title'.tr(),
               maxLength: 20,
               validator: (String? value) {
@@ -61,7 +52,6 @@ class PromoDetailsForm extends StatelessWidget {
               },
             ),
             const SizedBox(height: 16),
-
             // Price
             CustomTextFormField(
               controller: pro.price,
@@ -76,7 +66,6 @@ class PromoDetailsForm extends StatelessWidget {
               },
             ),
             const SizedBox(height: 16),
-
             const ChoosePostForPromoWidget(),
             const SizedBox(height: 30),
             Consumer<PromoProvider>(
@@ -93,6 +82,59 @@ class PromoDetailsForm extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class PromoThumbnailPicker extends StatelessWidget {
+  const PromoThumbnailPicker({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final PromoProvider pro = Provider.of<PromoProvider>(context);
+
+    return GestureDetector(
+      onTap: () {
+        pro.pickThumbnailFromGallery(context);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: ColorScheme.of(context).surfaceContainer,
+        ),
+        height: 200,
+        width: double.infinity,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Builder(
+            builder: (_) {
+              final String? thumbPath = pro.thumbNail?.file.path;
+              if (thumbPath != null && thumbPath.isNotEmpty) {
+                return Image.file(
+                  pro.thumbNail!.file,
+                  fit: BoxFit.cover,
+                );
+              } else {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(Icons.image_outlined,
+                          size: 50, color: Theme.of(context).primaryColor),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Tap to pick a thumbnail',
+                        style:
+                            TextStyle(color: ColorScheme.of(context).primary),
+                      ),
+                    ],
+                  ),
+                );
+              }
+            },
+          ),
         ),
       ),
     );

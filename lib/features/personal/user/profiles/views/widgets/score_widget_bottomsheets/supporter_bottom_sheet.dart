@@ -35,8 +35,9 @@ class _SupporterBottomsheetState extends State<SupporterBottomsheet> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final supporters = widget.supporters ?? <SupporterDetailEntity>[];
+    final TextTheme textTheme = Theme.of(context).textTheme;
+    final List<SupporterDetailEntity> supporters =
+        widget.supporters ?? <SupporterDetailEntity>[];
 
     return Container(
       decoration: BoxDecoration(
@@ -46,7 +47,7 @@ class _SupporterBottomsheetState extends State<SupporterBottomsheet> {
       height: MediaQuery.of(context).size.height * 0.66,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
-        children: [
+        children: <Widget>[
           Align(
             alignment: Alignment.topLeft,
             child: TextButton.icon(
@@ -65,8 +66,8 @@ class _SupporterBottomsheetState extends State<SupporterBottomsheet> {
           Expanded(
             child: ListView.builder(
               itemCount: supporters.length,
-              itemBuilder: (context, index) {
-                final supporter = supporters[index];
+              itemBuilder: (BuildContext context, int index) {
+                final SupporterDetailEntity supporter = supporters[index];
                 if (supporter.userID.startsWith('BU')) {
                   return BusinessSupporterTile(
                     businessId: supporter.userID,
@@ -102,7 +103,7 @@ class BusinessSupporterTile extends StatefulWidget {
 }
 
 class _BusinessSupporterTileState extends State<BusinessSupporterTile> {
-  final getBusiness = GetBusinessByIdUsecase(locator());
+  final GetBusinessByIdUsecase getBusiness = GetBusinessByIdUsecase(locator());
   BusinessEntity? business;
   bool isLoading = true;
 
@@ -132,28 +133,53 @@ class _BusinessSupporterTileState extends State<BusinessSupporterTile> {
       return const SizedBox(); // filtered out
     }
 
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
-        child: CustomNetworkImage(
-          imageURL: business?.logo?.url ?? '',
-          size: 50,
-          fit: BoxFit.cover,
-          color: Colors.grey.shade300,
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        border: Border.all(
+            color: ColorScheme.of(context).outline.withValues(alpha: 0.1)),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: CustomNetworkImage(
+            placeholder: business?.displayName ?? 'na'.tr(),
+            imageURL: business?.logo?.url ?? '',
+            size: 50,
+            fit: BoxFit.cover,
+            color: Colors.grey.shade300,
+          ),
         ),
+        title: Wrap(
+          spacing: 4,
+          children: <Widget>[
+            Text(
+              business?.displayName ?? 'na',
+              overflow: TextOverflow.ellipsis,
+              style: TextTheme.of(context).bodySmall,
+            ),
+            CircleAvatar(
+              radius: 8,
+              backgroundColor: Theme.of(context).primaryColor,
+              child: const FittedBox(
+                child: Text(
+                  'B',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ],
+        ),
+        trailing: LocalAuth.uid != business!.businessID
+            ? SizedBox(
+                width: 100,
+                child: SupportButton(supporterId: business?.businessID ?? ''),
+              )
+            : null,
       ),
-      title: Text(
-        business?.displayName ?? 'na',
-        overflow: TextOverflow.ellipsis,
-        style: TextTheme.of(context).bodySmall,
-      ),
-      trailing: LocalAuth.uid != business!.businessID
-          ? SizedBox(
-              width: 100,
-              child: SupportButton(supporterId: business?.businessID ?? ''),
-            )
-          : null,
     );
   }
 }
@@ -173,7 +199,7 @@ class UserSupporterTile extends StatefulWidget {
 }
 
 class _UserSupporterTileState extends State<UserSupporterTile> {
-  final getUser = GetUserByUidUsecase(locator());
+  final GetUserByUidUsecase getUser = GetUserByUidUsecase(locator());
   UserEntity? user;
   bool isLoading = true;
 
@@ -203,28 +229,38 @@ class _UserSupporterTileState extends State<UserSupporterTile> {
       return const SizedBox(); // filtered out
     }
 
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
-        child: CustomNetworkImage(
-          imageURL: user!.profilePhotoURL ?? '',
-          size: 50,
-          fit: BoxFit.cover,
-          color: Colors.grey.shade300,
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        border: Border.all(
+            color: ColorScheme.of(context).outline.withValues(alpha: 0.1)),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: CustomNetworkImage(
+            placeholder: user!.displayName,
+            imageURL: user!.profilePhotoURL ?? '',
+            size: 50,
+            fit: BoxFit.cover,
+            color: Colors.grey.shade300,
+          ),
         ),
+        title: Text(
+          user!.username,
+          overflow: TextOverflow.ellipsis,
+          style: TextTheme.of(context).bodySmall,
+        ),
+        trailing: LocalAuth.uid != user!.uid
+            ? SizedBox(
+                width: 100,
+                child: SupportButton(supporterId: user!.uid),
+              )
+            : null,
       ),
-      title: Text(
-        user!.username,
-        overflow: TextOverflow.ellipsis,
-        style: TextTheme.of(context).bodySmall,
-      ),
-      trailing: LocalAuth.uid != user!.uid
-          ? SizedBox(
-              width: 100,
-              child: SupportButton(supporterId: user!.uid),
-            )
-          : null,
     );
   }
 }

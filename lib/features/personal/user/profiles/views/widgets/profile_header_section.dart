@@ -33,11 +33,11 @@ class ProfileHeaderSection extends StatelessWidget {
             const SizedBox(width: 16),
             Expanded(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 4,
                     children: <Widget>[
                       Expanded(
                         child: Text(

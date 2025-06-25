@@ -397,8 +397,17 @@ class AddListingFormProvider extends ChangeNotifier {
 
   Future<void> submit(BuildContext context) async {
     if (_attachments.isEmpty && (_post?.fileUrls.isEmpty ?? true)) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('please_add_at_least_one_photo_or_video'),
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('please_add_at_least_one_photo_or_video'.tr()),
+      ));
+      return;
+    }
+    if (selectedCategory == null &&
+        (listingType == ListingType.items ||
+            listingType == ListingType.clothAndFoot ||
+            listingType == ListingType.foodAndDrink)) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('select_category'.tr()),
       ));
       return;
     }
@@ -478,7 +487,7 @@ class AddListingFormProvider extends ChangeNotifier {
   }
 
   Future<void> _onClothesAndFootSubmit() async {
-    if (!(_clothesAndFootKey.currentState?.validate() ?? false)) return;
+    if (!(clothesAndFootKey.currentState?.validate() ?? false)) return;
     try {
       final AddListingParam param = AddListingParam(
           postID: post?.postID ?? '',
@@ -628,6 +637,7 @@ class AddListingFormProvider extends ChangeNotifier {
 
   Future<void> _onPropertySubmit() async {
     if (!(_propertyKey.currentState?.validate() ?? false)) return;
+
     getAvailabilityData();
     try {
       final AddListingParam param = AddListingParam(

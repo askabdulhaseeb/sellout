@@ -83,11 +83,26 @@ class PrivateChatBusinessTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    business.displayName ?? '',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  Row(
+                    spacing: 2,
+                    children: <Widget>[
+                      Text(
+                        business.displayName ?? '',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      CircleAvatar(
+                        radius: 8,
+                        backgroundColor: Theme.of(context).primaryColor,
+                        child: const FittedBox(
+                          child: Text(
+                            'B',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   Text(
                     chat.lastMessage?.displayText ?? '',
