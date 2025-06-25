@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../domain/entities/promo_entity.dart';
+import 'promo_gridview_tile.dart';
 
 class PromoHomeGridView extends StatefulWidget {
   const PromoHomeGridView({
@@ -12,10 +13,10 @@ class PromoHomeGridView extends StatefulWidget {
   final List<PromoEntity>? promos;
 
   @override
-  State<PromoHomeGridView> createState() => _PromoGridViewState();
+  State<PromoHomeGridView> createState() => _PromoHomeGridViewState();
 }
 
-class _PromoGridViewState extends State<PromoHomeGridView> {
+class _PromoHomeGridViewState extends State<PromoHomeGridView> {
   late List<PromoEntity> promoList;
   late List<PromoEntity> filteredList;
   final TextEditingController _controller = TextEditingController();
@@ -30,14 +31,19 @@ class _PromoGridViewState extends State<PromoHomeGridView> {
   void _filterPromos(String query) {
     final String lowerQuery = query.toLowerCase();
     setState(() {
-      filteredList = promoList.where((PromoEntity promo) {
-        return promo.title.toLowerCase().contains(lowerQuery);
-      }).toList();
+      filteredList = promoList
+          .where(
+            (PromoEntity promo) =>
+                promo.title.toLowerCase().contains(lowerQuery),
+          )
+          .toList();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -47,40 +53,36 @@ class _PromoGridViewState extends State<PromoHomeGridView> {
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             CustomTextFormField(
-              labelText: '',
+              labelText: 'search'.tr(),
               controller: _controller,
               onChanged: _filterPromos,
             ),
             const SizedBox(height: 12),
-            if (filteredList.isEmpty)
-              Expanded(
-                child: Center(
-                  child: Text(
-                    'no_promos_found'.tr(),
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ),
-              )
-            else
-              Expanded(
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
-                  ),
-                  itemCount: filteredList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final PromoEntity promo = filteredList[index];
-                    return PromoHomeGridView(
-                      promos: <PromoEntity>[promo],
-                    );
-                  },
-                ),
-              ),
+            Expanded(
+              child: filteredList.isEmpty
+                  ? Center(
+                      child: Text(
+                        'no_promos_found'.tr(),
+                        style: theme.textTheme.bodyLarge,
+                      ),
+                    )
+                  : GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
+                        childAspectRatio: 0.75,
+                      ),
+                      itemCount: filteredList.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final PromoEntity promo = filteredList[index];
+                        return PromoHomeGridViewTile(promo: promo);
+                      },
+                    ),
+            ),
           ],
         ),
       ),
