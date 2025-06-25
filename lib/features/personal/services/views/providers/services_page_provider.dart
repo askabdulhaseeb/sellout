@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../core/enums/business/services/service_category_type.dart'
+    show ServiceCategoryType;
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/api_call.dart';
+import '../../../../business/business_page/domain/entities/services_list_responce_entity.dart';
 import '../../../../business/business_page/domain/params/get_business_bookings_params.dart';
 import '../../../../business/business_page/domain/usecase/get_business_bookings_list_usecase.dart';
 import '../../../../business/core/domain/entity/business_entity.dart';
@@ -11,21 +14,89 @@ import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../bookings/data/sources/local_booking.dart';
 import '../../../bookings/domain/entity/booking_entity.dart';
 import '../../../location/domain/entities/location_entity.dart';
+import '../../domain/params/get_categorized_services_params.dart';
+import '../../domain/usecase/get_service_by_categories_usecase.dart';
 import '../../domain/usecase/get_special_offer_usecase.dart';
 import '../enums/service_appointment_section_type.dart';
 import '../enums/services_page_type.dart';
 
 class ServicesPageProvider extends ChangeNotifier {
   ServicesPageProvider(
-    this._getSpecialOfferUsecase,
-    this._getBookingsListUsecase,
-    this._getBusinessByIdUsecase,
-  );
+      this._getSpecialOfferUsecase,
+      this._getBookingsListUsecase,
+      this._getBusinessByIdUsecase,
+      this._getServiceByCategory);
   final GetSpecialOfferUsecase _getSpecialOfferUsecase;
   final GetBookingsListUsecase _getBookingsListUsecase;
   final GetBusinessByIdUsecase _getBusinessByIdUsecase;
+  final GetServiceCategoryUsecase _getServiceByCategory;
   //
   final Map<String, bool> _expandedDescriptions = <String, bool>{};
+
+  List<ServiceEntity> _categorizedServices = <ServiceEntity>[];
+  bool _isLoading = false;
+  String? _nextKey;
+  bool _hasMore = true;
+
+  // Getter for services
+  List<ServiceEntity> get categorizedServices => _categorizedServices;
+
+  // Getter for loading
+  bool get isLoading => _isLoading;
+
+  // Getter for load more condition
+  bool get hasMore => _hasMore;
+
+  // Set loading state
+  void _setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
+  void clearCategorizedServices() {
+    _categorizedServices = <ServiceEntity>[];
+  }
+
+  // Initial fetch
+  Future<void> fetchServicesByCategory(ServiceCategoryType category) async {
+    if (_isLoading) return;
+    clearCategorizedServices();
+    _setLoading(true);
+    final GetServiceCategoryParams params =
+        GetServiceCategoryParams(type: category);
+    final DataState<ServicesListResponceEntity> result =
+        await _getServiceByCategory.call(params);
+    if (result is DataSuccess) {
+      final ServicesListResponceEntity? servicesEntity = result.entity;
+      _categorizedServices.clear();
+      _categorizedServices
+          .addAll(servicesEntity?.services ?? <ServiceEntity>[]);
+      _nextKey = servicesEntity?.nextKey;
+      _hasMore = _nextKey != null;
+    }
+
+    _setLoading(false);
+  }
+
+  // // Load more for pagination
+  // Future<void> loadMoreServices(ServiceCategoryType category) async {
+  //   if (_isLoading || !_hasMore) return;
+
+  //   _setLoading(true);
+
+  //   final DataState<ServicesListResponceEntity> result =
+  //       await _getServiceByCategory.call(category);
+
+  //   if (result is DataSuccess) {
+  //     final ServicesListResponceEntity? servicesEntity = result.entity;
+  //     _categorizedServices
+  //         .addAll(servicesEntity?.services ?? <ServiceEntity>[]);
+  //     _nextKey = servicesEntity?.nextKey;
+  //     _hasMore = _nextKey != null;
+  //   }
+
+  //   _setLoading(false);
+  // }
 
   bool isDescriptionExpanded(String serviceId) {
     return _expandedDescriptions[serviceId] ?? false;

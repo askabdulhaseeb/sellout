@@ -1,5 +1,7 @@
 import '../../../../../core/sources/data_state.dart';
+import '../../../../business/business_page/domain/entities/services_list_responce_entity.dart';
 import '../../../../business/core/domain/entity/service/service_entity.dart';
+import '../../domain/params/get_categorized_services_params.dart';
 import '../../domain/repositories/personal_services_repository.dart';
 import '../sources/services_explore_api.dart';
 
@@ -10,5 +12,11 @@ class PersonalServicesRepositoryImpl implements PersonalServicesRepository {
   @override
   Future<DataState<List<ServiceEntity>>> specialOffers() async {
     return await servicesApi.specialOffers();
+  }
+
+  @override
+  Future<DataState<ServicesListResponceEntity>> getServicesByCategory(
+      GetServiceCategoryParams type) async {
+    return await servicesApi.getservicesCategories(type);
   }
 }
