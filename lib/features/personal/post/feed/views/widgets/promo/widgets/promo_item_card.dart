@@ -23,14 +23,16 @@ class PromoItemCard extends StatelessWidget {
         );
       },
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 2),
         width: 80,
+        margin: const EdgeInsets.only(right: 12),
         child: Column(
+          spacing: 4,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Container(
               width: 80,
-              height: 100,
-              margin: const EdgeInsets.only(right: 12),
+              height: 90,
               decoration: BoxDecoration(
                 border: Border.all(color: Theme.of(context).dividerColor),
                 color: Theme.of(context).dividerColor,
@@ -48,7 +50,6 @@ class PromoItemCard extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 4),
             Text(
               maxLines: 1,
               title,

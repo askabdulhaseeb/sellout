@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import '../../../../../../core/functions/app_log.dart';
+import '../../../../../../core/params/report_params.dart';
 import '../../../../../../core/sources/api_call.dart';
 import '../../../../../../core/sources/local/local_request_history.dart';
 import '../../../../../../services/get_it.dart';
@@ -22,8 +23,8 @@ abstract interface class PostRemoteApi {
   Future<DataState<bool>> addToCart(AddToCartParam param);
   Future<DataState<bool>> createOffer(CreateOfferparams param);
   Future<DataState<bool>> updateOffer(UpdateOfferParams param);
-
-  // Future<DataState<bool>> updateOfferStatus(UpdateOfferParams param);
+  Future<DataState<bool>> reportPost(ReportParams params);
+  Future<DataState<bool>> savePost(String postID);
 }
 
 class PostRemoteApiImpl implements PostRemoteApi {
@@ -285,6 +286,86 @@ class PostRemoteApiImpl implements PostRemoteApi {
     }
   }
 
+  @override
+  Future<DataState<bool>> reportPost(ReportParams params) async {
+    const String endpoint = '/post/report';
+    try {
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.patch,
+        isAuth: true,
+        body: json.encode(params.toPostReportMap()),
+      );
+      if (result is DataSuccess) {
+        AppLog.info(
+          result.data ?? '',
+          name: 'PostRemoteApiImpl.reportPost - success',
+        );
+        debugPrint(result.data.toString());
+        debugPrint(params.toString());
+        return DataSuccess<bool>(result.data ?? '', true);
+      } else {
+        AppLog.error(
+          result.exception?.message ?? 'PostRemoteApiImpl.reportPost - else',
+          name: 'PostRemoteApiImpl.reportPost - failed',
+          error: result.exception,
+        );
+        return DataFailer<bool>(
+          result.exception ?? CustomException('something_wrong'.tr()),
+        );
+      }
+    } catch (e, stk) {
+      debugPrint(params.toString());
+
+      AppLog.error(
+        e.toString(),
+        name: 'PostRemoteApiImpl.reportPost - catch',
+        error: e,
+        stackTrace: stk,
+      );
+      return DataFailer<bool>(CustomException(e.toString()));
+    }
+  }
+
+  @override
+  Future<DataState<bool>> savePost(String postID) async {
+    const String endpoint = 'user/save/post';
+    try {
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.patch,
+        isAuth: true,
+        body: json.encode(<String, String>{'post_id': postID}),
+      );
+
+      if (result is DataSuccess) {
+        AppLog.info(
+          'Post report successful',
+          name: 'PostRemoteApiImpl.reportPost - success',
+        );
+        debugPrint('Post report successful: postID = $postID');
+        return DataSuccess<bool>(result.data ?? '', true);
+      } else {
+        AppLog.error(
+          result.exception?.message ?? 'Unknown error during report',
+          name: 'PostRemoteApiImpl.reportPost - failed',
+          error: result.exception,
+        );
+        return DataFailer<bool>(
+          result.exception ?? CustomException('something_wrong'.tr()),
+        );
+      }
+    } catch (e, stk) {
+      AppLog.error(
+        e.toString(),
+        name: 'PostRemoteApiImpl.reportPost - catch',
+        error: e,
+        stackTrace: stk,
+      );
+      return DataFailer<bool>(CustomException(e.toString()));
+    }
+  }
+
   // @override
   // Future<DataState<bool>> updateOfferStatus(UpdateOfferParams param) async {
   //   String endpoint = '/offers/update/offerStatus/${param.offerId}';
@@ -303,7 +384,6 @@ class PostRemoteApiImpl implements PostRemoteApi {
   //       final String dataStatus = data['updatedAttributes']['offer_status'];
   //       final GettedMessageEntity? oldEntity =
   //           LocalChatMessage().entity(param.offerId);
-
   //       if (oldEntity != null) {
   //         final List<MessageEntity> updatedMessages =
   //             oldEntity.messages.map((MessageEntity msg) {

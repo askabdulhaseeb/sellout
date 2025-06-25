@@ -12,69 +12,68 @@ class AddPromoCard extends StatelessWidget {
       onTap: () {
         Navigator.pushNamed(context, CreatePromoScreen.routeName);
       },
-      child: SizedBox(
-        width: 80,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              width: 80,
-              height: 100,
-              margin: const EdgeInsets.only(right: 12),
-              decoration: BoxDecoration(
-                border:
-                    Border.all(color: Theme.of(context).dividerColor, width: 2),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Stack(
-                alignment: Alignment.center,
-                children: <Widget>[
-                  Positioned.fill(
-                    top: 0,
-                    bottom: 30,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: AppTheme.primaryColor,
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(10)),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 50,
-                    child: Text(
-                      'promo'.tr(),
-                      style: TextTheme.of(context).bodyLarge?.copyWith(
-                            color: ColorScheme.of(context).onPrimary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 20,
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppTheme.primaryColor,
-                        border: Border.all(
-                            color: ColorScheme.of(context).onPrimary),
-                      ),
-                      child: Icon(Icons.add,
-                          size: 20, color: ColorScheme.of(context).onPrimary),
-                    ),
-                  ),
-                ],
-              ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Container(
+            width: 80,
+            height: 90,
+            margin: const EdgeInsets.only(right: 12),
+            decoration: BoxDecoration(
+              border:
+                  Border.all(color: Theme.of(context).dividerColor, width: 2),
+              borderRadius: BorderRadius.circular(10),
             ),
-            Text(
-              'create_yours'.tr(),
-              style: TextTheme.of(context).bodySmall,
-              textAlign: TextAlign.start,
-              overflow: TextOverflow.ellipsis,
+            child: Stack(
+              alignment: Alignment.center,
+              children: <Widget>[
+                Positioned.fill(
+                  top: 0,
+                  bottom: 25,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: AppTheme.primaryColor,
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(8)),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 45,
+                  child: Text(
+                    overflow: TextOverflow.ellipsis,
+                    'promo'.tr(),
+                    style: TextTheme.of(context).bodyMedium?.copyWith(
+                          color: ColorScheme.of(context).onPrimary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 10,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppTheme.primaryColor,
+                      border:
+                          Border.all(color: ColorScheme.of(context).onPrimary),
+                    ),
+                    child: Icon(Icons.add,
+                        size: 20, color: ColorScheme.of(context).onPrimary),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          Text(
+            'create_yours'.tr(),
+            style: TextTheme.of(context).bodySmall,
+            textAlign: TextAlign.start,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ),
     );
   }

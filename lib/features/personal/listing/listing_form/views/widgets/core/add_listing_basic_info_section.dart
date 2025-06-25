@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
@@ -16,22 +17,24 @@ class AddListingBasicInfoSection extends StatelessWidget {
           children: <Widget>[
             CustomTextFormField(
               controller: formPro.title,
-              labelText: 'What are you selling?',
-              hint: 'Enter product name',
-              autoFocus: true,
+              labelText: 'what_are_you_selling'.tr(),
+              hint: 'enter_product_name'.tr(),
               showSuffixIcon: true,
-              validator: (String? value) => AppValidator.isEmpty(value),
+              validator: (String? value) =>
+                  AppValidator.isEmpty(formPro.title.text),
             ),
             const SizedBox(height: 16),
             const AddListingAttachmentSelectionWidget(),
             CustomTextFormField(
+              contentPadding: const EdgeInsets.all(6),
               controller: formPro.description,
-              hint: 'Enter product Description...',
+              hint: 'enter_product_description'.tr(),
               isExpanded: true,
               maxLines: 5,
               showSuffixIcon: false,
-              labelText: 'Describe your product',
-              validator: (String? value) => AppValidator.isEmpty(value),
+              labelText: 'describe_product'.tr(),
+              validator: (String? value) =>
+                  AppValidator.isEmpty(formPro.title.text),
             ),
           ],
         );

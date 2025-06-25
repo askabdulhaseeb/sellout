@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
 import 'package:flutter/material.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
@@ -22,6 +25,8 @@ class PromoProvider extends ChangeNotifier {
   PostEntity? get post => _post;
   List<PromoEntity>? _promoList;
   List<PromoEntity>? get promoList => _promoList;
+  PickedAttachment? _thumbNail;
+  PickedAttachment? get thumbNail => _thumbNail;
 
   int get pageNumber => attachment?.file == null ? 1 : 2;
   PickedAttachment? attachment;
@@ -50,6 +55,10 @@ class PromoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setThumbNail(PickedAttachment value) {
+    _thumbNail = value;
+  }
+
   void clearPost() {
     _referenceId = '';
     referenceType = '';
@@ -59,11 +68,12 @@ class PromoProvider extends ChangeNotifier {
 
   CreatePromoParams get promoParams {
     return CreatePromoParams(
+      thumbNail: _thumbNail,
       referenceType: 'post_attachment',
       referenceID: _referenceId,
       title: title.text,
       price: price.text,
-      attachments: <PickedAttachment>[attachment!],
+      attachments: attachment,
     );
   }
 
@@ -86,8 +96,9 @@ class PromoProvider extends ChangeNotifier {
   }
 
   Future<void> toggleFlash() async {
-    if (cameraController == null || !cameraController!.value.isInitialized)
+    if (cameraController == null || !cameraController!.value.isInitialized) {
       return;
+    }
     isFlashOn = !isFlashOn;
     await cameraController!
         .setFlashMode(isFlashOn ? FlashMode.torch : FlashMode.off);
@@ -95,8 +106,9 @@ class PromoProvider extends ChangeNotifier {
   }
 
   Future<void> startRecording(BuildContext context) async {
-    if (cameraController == null || cameraController!.value.isRecordingVideo)
+    if (cameraController == null || cameraController!.value.isRecordingVideo) {
       return;
+    }
 
     try {
       await cameraController!.startVideoRecording();
@@ -116,23 +128,29 @@ class PromoProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> stopRecording() async {
-    if (!isRecording || cameraController == null) return null;
+  Future<File> _saveFileToDocuments(File file) async {
+    final Directory dir = await getApplicationDocumentsDirectory();
+    String fileName = p.basename(file.path);
 
-    final XFile file = await cameraController!.stopVideoRecording();
-    _timer?.cancel();
-    isRecording = false;
-    recordingSeconds = 0;
+    // Ensure file has an extension to help with MIME type detection
+    if (p.extension(fileName).isEmpty) {
+      // Guess based on file type or default to .tmp
+      if (fileName.contains('image')) {
+        fileName = '$fileName.jpg';
+      } else if (fileName.contains('video')) {
+        fileName = '$fileName.mp4';
+      } else {
+        fileName = '$fileName.tmp';
+      }
+    }
 
-    final PickedAttachment attachmentt = PickedAttachment(
-      file: file,
-      type: AttachmentType.video,
-    );
-    setAttachments(attachmentt);
-    notifyListeners();
+    final String newPath = p.join(dir.path, fileName);
+    final File savedFile = await file.copy(newPath);
+    debugPrint('✅ File saved at: ${savedFile.path}');
+    return savedFile;
   }
 
-  Future<void> pickVideoFromGallery(
+  Future<void> pickFromGallery(
     BuildContext context, {
     required AttachmentType type,
   }) async {
@@ -148,11 +166,37 @@ class PromoProvider extends ChangeNotifier {
         ),
       ),
     );
+
     if (files != null && files.isNotEmpty) {
-      setAttachments(files.first);
+      final File savedFile = await _saveFileToDocuments(files.first.file);
+      setAttachments(
+        PickedAttachment(file: savedFile, type: files.first.type),
+      );
       notifyListeners();
     }
-    notifyListeners();
+  }
+
+  Future<void> pickThumbnailFromGallery(BuildContext context) async {
+    final List<PickedAttachment>? files =
+        await Navigator.of(context).push<List<PickedAttachment>>(
+      MaterialPageRoute<List<PickedAttachment>>(
+        builder: (_) => PickableAttachmentScreen(
+          option: PickableAttachmentOption(
+            maxAttachments: 0,
+            allowMultiple: false,
+            type: AttachmentType.image,
+          ),
+        ),
+      ),
+    );
+
+    if (files != null && files.isNotEmpty) {
+      final File savedFile = await _saveFileToDocuments(files.first.file);
+      setThumbNail(
+        PickedAttachment(file: savedFile, type: AttachmentType.image),
+      );
+      notifyListeners();
+    }
   }
 
   void setAttachments(PickedAttachment newAttachments) {
@@ -170,9 +214,9 @@ class PromoProvider extends ChangeNotifier {
     errorMessage = null;
     final DataState<bool> result = await createPromoUsecase.call(promoParams);
     _setLoading(false);
-
     if (result is DataSuccess) {
       _setLoading(false);
+      // ignore: use_build_context_synchronously
       Navigator.pop(context); // pop on success
     } else {
       errorMessage = result.exception?.message ?? 'Failed to create promo';
@@ -186,6 +230,7 @@ class PromoProvider extends ChangeNotifier {
   }
 
   Future<void> getPromoOfFollower() async {
+    _setLoading(true);
     try {
       final DataState<List<PromoEntity>> response =
           await getPromoUsecase.call(true);
@@ -199,11 +244,12 @@ class PromoProvider extends ChangeNotifier {
       AppLog.error('Exception in getPromoOfFollower: $e');
     }
 
-    notifyListeners();
+    _setLoading(false);
   }
 
   void reset() {
     attachment = null;
+    _thumbNail = null;
     title.clear();
     price.clear();
     clearPost();

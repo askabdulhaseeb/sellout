@@ -78,6 +78,7 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
             value: DeliveryType.collocation,
             onChanged: formPro.setDeliveryType,
             subtitle: LocationInputField(
+              title: ''.tr(),
               onLocationSelected: (LocationModel location) {
                 formPro.setCollectionLocation(location);
               },

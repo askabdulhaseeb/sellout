@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../../../core/dialogs/cart/dropdowns/color_dropdown.dart';
+import '../../../../../../../../../core/dropdowns/color_dropdown.dart';
 import '../../../../../../../listing/listing_form/views/widgets/custom_listing_dropdown.dart';
 import '../../../../../providers/marketplace_provider.dart';
 

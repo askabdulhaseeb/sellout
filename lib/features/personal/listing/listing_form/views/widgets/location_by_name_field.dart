@@ -19,6 +19,7 @@ class LocationInputField extends StatefulWidget {
     super.key,
     this.controller,
     this.initialLocation,
+    this.title,
     this.showMap = false,
   });
 
@@ -26,7 +27,7 @@ class LocationInputField extends StatefulWidget {
   final TextEditingController? controller;
   final LocationEntity? initialLocation;
   final bool showMap;
-
+  final String? title;
   @override
   State<LocationInputField> createState() => _LocationInputFieldState();
 }
@@ -122,6 +123,7 @@ class _LocationInputFieldState extends State<LocationInputField> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         LocationSearchField(
+          title: widget.title,
           controller: _controller,
           onLocationSelected: _handleLocationSelection,
           initialText: widget.initialLocation?.title,
@@ -144,11 +146,13 @@ class LocationSearchField extends StatefulWidget {
     required this.onLocationSelected,
     super.key,
     this.initialText,
+    this.title,
   });
 
   final TextEditingController controller;
   final ValueChanged<LocationNameEntity> onLocationSelected;
   final String? initialText;
+  final String? title;
 
   @override
   State<LocationSearchField> createState() => _LocationSearchFieldState();
@@ -249,7 +253,7 @@ class _LocationSearchFieldState extends State<LocationSearchField> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            'meetup_location'.tr(),
+            widget.title ?? 'meetup_location'.tr(),
             style: const TextStyle(fontWeight: FontWeight.w500),
           ),
           TextFormField(

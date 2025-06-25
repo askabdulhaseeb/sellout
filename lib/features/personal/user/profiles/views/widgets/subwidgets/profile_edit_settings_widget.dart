@@ -1,7 +1,7 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../setting/setting_dashboard/views/screens/personal_setting_screen.dart';
 import '../../screens/edit_profile_screen.dart';
 
@@ -14,23 +14,23 @@ class ProfileEditAndSettingsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        const Icon(Icons.home_outlined,),
+        const InDevMode(
+            child: Icon(
+          Icons.home_outlined,
+        )),
         GestureDetector(
           onTap: () {},
           child: PopupMenuButton<int>(
-            color:
-                Theme.of(context).scaffoldBackgroundColor,
+            color: Theme.of(context).scaffoldBackgroundColor,
             onSelected: (int value) {
               if (value == 1) {
-                Navigator.pushNamed(
-                    context, EditProfileScreen.routeName);
+                Navigator.pushNamed(context, EditProfileScreen.routeName);
               } else if (value == 2) {
-                Navigator.of(context).pushNamed(
-                    PersonalSettingScreen.routeName);
+                Navigator.of(context)
+                    .pushNamed(PersonalSettingScreen.routeName);
               }
             },
-            itemBuilder: (BuildContext context) =>
-                <PopupMenuEntry<int>>[
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
               PopupMenuItem<int>(
                 value: 1,
                 child: Row(

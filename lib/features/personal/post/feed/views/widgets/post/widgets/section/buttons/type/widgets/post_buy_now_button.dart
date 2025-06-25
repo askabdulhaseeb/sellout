@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../../../../../../core/dialogs/cart/buy_now_dailog.dart';
+import '../../../../../../../../../../../../core/dialogs/post/buy_now_dailog.dart';
 import '../../../../../../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../../../../../core/widgets/app_snakebar.dart';

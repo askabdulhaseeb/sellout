@@ -1,3 +1,4 @@
+import '../../../../../core/params/report_params.dart';
 import '../../../auth/signin/domain/repositories/signin_repository.dart';
 import '../entities/post_entity.dart';
 import '../params/add_to_cart_param.dart';
@@ -12,5 +13,7 @@ abstract interface class PostRepository {
   Future<DataState<bool>> addToCart(AddToCartParam param);
   Future<DataState<bool>> createOffer(CreateOfferparams param);
   Future<DataState<bool>> updateOffer(UpdateOfferParams param);
+  Future<DataState<bool>> reportPost(ReportParams params);
+  Future<DataState<bool>> savePost(String params);
   // Future<DataState<bool>> updateOfferStatus(UpdateOfferParams param);
 }

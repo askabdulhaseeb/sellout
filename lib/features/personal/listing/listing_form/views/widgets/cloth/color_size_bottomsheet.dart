@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/dialogs/cart/dropdowns/color_dropdown.dart';
+import '../../../../../../../core/dropdowns/color_dropdown.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../post/domain/entities/size_color/color_entity.dart';
 import '../../../../../post/domain/entities/size_color/size_color_entity.dart';

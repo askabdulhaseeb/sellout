@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../../../../../../../core/extension/datetime_ext.dart';
 import '../../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../../core/widgets/loader.dart';
@@ -12,6 +11,7 @@ import '../../../../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../../../../../user/profiles/domain/usecase/get_user_by_uid.dart';
 import '../../../../../../../user/profiles/views/screens/user_profile_screen.dart';
 import '../../../../../../domain/entities/post_entity.dart';
+import '../../../../../../../../../core/dialogs/post/home_post_tile_more_button_options.dart';
 
 class PostHeaderSection extends StatelessWidget {
   const PostHeaderSection({required this.post, super.key});
@@ -79,7 +79,7 @@ class _UserHeader extends StatelessWidget {
                             ],
                           ),
                         ),
-                        const _MoreButton(),
+                        _MoreButton(post.postID),
                       ],
                     ),
                   ),
@@ -151,7 +151,7 @@ class _BusinessHeader extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const _MoreButton(),
+                      _MoreButton(post.postID),
                     ],
                   ),
                 ),
@@ -162,12 +162,16 @@ class _BusinessHeader extends StatelessWidget {
 }
 
 class _MoreButton extends StatelessWidget {
-  const _MoreButton();
-
+  const _MoreButton(this.postID);
+  final String postID;
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      onPressed: () {},
+      onPressed: () {
+        final RenderBox button = context.findRenderObject() as RenderBox;
+        final Offset position = button.localToGlobal(Offset.zero);
+        homePostTileShowMoreButton(context, position, postID);
+      },
       icon: Icon(Icons.adaptive.more),
     );
   }

@@ -46,14 +46,6 @@ class AddListingVehicleTernsmissionEngineMileageSection
                 ),
               ],
             ),
-            CustomListingDropDown(
-              categoryKey: 'vehicles',
-              selectedValue: formPro.selectedVehicleCategory,
-              title: 'vehicle_category',
-              onChanged: (String? val) {
-                formPro.setVehicleCategory(val);
-              },
-            ),
             CustomTextFormField(
               controller: formPro.doors,
               labelText: 'doors'.tr(),
@@ -72,13 +64,6 @@ class AddListingVehicleTernsmissionEngineMileageSection
               },
               initialLocation: formPro.selectedmeetupLocation,
             ),
-            // CustomToggleSwitch<TransmissionType>(
-            //   labels: TransmissionType.list,
-            //   labelStrs: TransmissionType.list.map((e) => e.title).toList(),
-            //   labelText: 'Transmission',
-            //   onToggle: formPro.setTransmissionType,
-            //   initialValue: formPro.transmissionType,
-            // ),
           ],
         );
       },

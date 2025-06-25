@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/dialogs/cart/dropdowns/color_dropdown.dart';
+import '../../../../../../../core/dropdowns/color_dropdown.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -28,26 +28,24 @@ class _AddListingVehicleBasicInfoSectionState
           children: <Widget>[
             /// Price
             CustomTextFormField(
-              controller: formPro.price,
-              labelText: 'price'.tr(),
-              hint: 'Ex. 12000.0',
-              showSuffixIcon: false,
-              readOnly: formPro.isLoading,
-              prefixText: LocalAuth.currency.toUpperCase(),
-              keyboardType: TextInputType.number,
-              validator: AppValidator.isEmpty,
-            ),
+                controller: formPro.price,
+                labelText: 'price'.tr(),
+                hint: 'Ex. 12000.0',
+                showSuffixIcon: false,
+                readOnly: formPro.isLoading,
+                prefixText: LocalAuth.currency.toUpperCase(),
+                keyboardType: TextInputType.number,
+                validator: (String? value) => AppValidator.isEmpty(value)),
 
             /// Year
             CustomTextFormField(
-              controller: formPro.year,
-              labelText: 'year'.tr(),
-              hint: 'Ex. 2025',
-              showSuffixIcon: false,
-              readOnly: formPro.isLoading,
-              keyboardType: TextInputType.number,
-              validator: AppValidator.isEmpty,
-            ),
+                controller: formPro.year,
+                labelText: 'year'.tr(),
+                hint: 'Ex. 2025',
+                showSuffixIcon: false,
+                readOnly: formPro.isLoading,
+                keyboardType: TextInputType.number,
+                validator: (String? value) => AppValidator.isEmpty(value)),
 
             /// Body type dynamic dropdown *second part of address
             CustomListingDropDown(
@@ -102,7 +100,7 @@ class _AddListingVehicleBasicInfoSectionState
               hint: 'transmission',
               categoryKey: 'transmission',
               selectedValue: formPro.transmissionType,
-              title: 'transmission'.tr(),
+              title: 'transmission',
               onChanged: (String? value) =>
                   formPro.setTransmissionType(value ?? ''),
             ),
