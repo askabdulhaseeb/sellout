@@ -78,9 +78,7 @@ class _ServicesPageExploreCategoriesSectionState
 
 class _CategoryTile extends StatelessWidget {
   const _CategoryTile({required this.category});
-
   final ServiceCategoryType category;
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

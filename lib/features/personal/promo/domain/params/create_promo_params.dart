@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart'; // for debugPrint
+import 'package:flutter/foundation.dart';
 import '../../../../attachment/domain/entities/picked_attachment.dart';
 
 class CreatePromoParams {
@@ -26,11 +26,18 @@ class CreatePromoParams {
       'price': price.trim(),
     };
 
-    // ✅ Debug print for map and file paths
     debugPrint('👉 CreatePromoParams - toMap: $map');
     debugPrint('👉 Attachment path: ${attachments?.file.path}');
     debugPrint('👉 Thumbnail path: ${thumbNail?.file.path}');
 
     return map;
+  }
+
+  /// ✅ Corrected: attachments map (key -> PickedAttachment)
+  Map<String, PickedAttachment> getAttachmentsMap() {
+    return <String, PickedAttachment>{
+      if (attachments != null) 'file': attachments!,
+      if (thumbNail != null) 'thumbnail': thumbNail!,
+    };
   }
 }

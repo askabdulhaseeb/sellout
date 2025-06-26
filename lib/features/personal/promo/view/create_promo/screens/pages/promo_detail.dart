@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:mime/mime.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
@@ -73,9 +76,10 @@ class PromoDetailsForm extends StatelessWidget {
                       Widget? child) =>
                   CustomElevatedButton(
                 isLoading: promoPro.isLoadig,
-                onTap: () {
+                onTap: () async {
                   if (formKey.currentState!.validate()) {
-                    promoPro.createPromo(context);
+                    await promoPro.createPromo(context);
+                    promoPro.errorMessage == '' ? Navigator.pop(context) : null;
                   }
                 },
                 title: 'upload_promo'.tr(),
@@ -94,7 +98,9 @@ class PromoThumbnailPicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final PromoProvider pro = Provider.of<PromoProvider>(context);
-
+    final String? attachmentPath = pro.attachment?.file.path;
+    final bool isImage = attachmentPath != null &&
+        (lookupMimeType(attachmentPath)?.startsWith('image/') ?? false);
     return GestureDetector(
       onTap: () {
         pro.pickThumbnailFromGallery(context);
@@ -110,29 +116,33 @@ class PromoThumbnailPicker extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           child: Builder(
             builder: (_) {
+              if (isImage) {
+                return Image.file(
+                  File(attachmentPath),
+                  fit: BoxFit.cover,
+                );
+              }
               final String? thumbPath = pro.thumbNail?.file.path;
               if (thumbPath != null && thumbPath.isNotEmpty) {
                 return Image.file(
                   pro.thumbNail!.file,
                   fit: BoxFit.cover,
                 );
-              } else {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Icon(Icons.image_outlined,
-                          size: 50, color: Theme.of(context).primaryColor),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Tap to pick a thumbnail',
-                        style:
-                            TextStyle(color: ColorScheme.of(context).primary),
-                      ),
-                    ],
-                  ),
-                );
               }
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(Icons.image_outlined,
+                        size: 50, color: Theme.of(context).primaryColor),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Tap to pick a thumbnail',
+                      style: TextStyle(color: ColorScheme.of(context).primary),
+                    ),
+                  ],
+                ),
+              );
             },
           ),
         ),

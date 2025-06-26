@@ -3,7 +3,7 @@ import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../post/domain/entities/post_entity.dart';
 import '../../../../post/domain/entities/visit/visiting_entity.dart';
-import '../../domain/entities/orderentity.dart';
+import '../../domain/entities/order_entity.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/user_repositories.dart';
 import '../../views/params/add_remove_supporter_params.dart';

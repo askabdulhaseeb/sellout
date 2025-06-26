@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../../../../core/theme/app_theme.dart';
+import '../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../core/widgets/video_widget.dart';
 import '../../../../../services/get_it.dart';
 import '../../../post/post_detail/views/screens/post_detail_screen.dart';
@@ -14,12 +15,12 @@ import '../../domain/entities/promo_entity.dart';
 
 class PromoScreen extends StatelessWidget {
   const PromoScreen({required this.promo, super.key});
-
   final PromoEntity promo;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: false,
       appBar: PromoAppBar(promo: promo),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Column(
@@ -69,10 +70,8 @@ class PromoAppBar extends StatelessWidget implements PreferredSizeWidget {
             return const Center(
                 child: CircularProgressIndicator(strokeWidth: 1.5));
           }
-
           String profileUrl = 'https://via.placeholder.com/150';
           String username = 'Unknown';
-
           if (snapshot.hasData && snapshot.data is DataSuccess<UserEntity?>) {
             final UserEntity? user =
                 (snapshot.data as DataSuccess<UserEntity?>).entity;
@@ -95,27 +94,31 @@ class PromoAppBar extends StatelessWidget implements PreferredSizeWidget {
                 const SizedBox(width: 6),
                 Expanded(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(username,
                           style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 12)),
-                      Text(_formatTimeAgo(promo.createdAt),
-                          style: const TextStyle(
-                              color: Colors.green, fontSize: 10)),
                     ],
                   ),
                 ),
-                const Icon(Icons.favorite_border, size: 14),
-                const SizedBox(width: 2),
-                const Text('45', style: TextStyle(fontSize: 10)),
-                const SizedBox(width: 6),
-                const Icon(Icons.remove_red_eye, size: 14),
-                const SizedBox(width: 2),
-                Text(promo.views?.length.toString() ?? 'na'.tr(),
-                    style: const TextStyle(fontSize: 10)),
-                const SizedBox(width: 6),
-                const Icon(Icons.more_vert, size: 16),
+                InDevMode(
+                  child: Row(
+                    children: <Widget>[
+                      const Icon(Icons.favorite_border, size: 14),
+                      const SizedBox(width: 2),
+                      const Text('45', style: TextStyle(fontSize: 10)),
+                      const SizedBox(width: 6),
+                      const Icon(Icons.remove_red_eye, size: 14),
+                      const SizedBox(width: 2),
+                      Text(promo.views?.length.toString() ?? 'na'.tr(),
+                          style: const TextStyle(fontSize: 10)),
+                      const SizedBox(width: 6),
+                      const Icon(Icons.more_vert, size: 16),
+                    ],
+                  ),
+                ),
               ],
             ),
           );
@@ -124,26 +127,26 @@ class PromoAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  String _formatTimeAgo(String timestamp) {
-    final DateTime? date = DateTime.tryParse(timestamp);
+  // String _formatTimeAgo(String timestamp) {
+  //   final DateTime? date = DateTime.tryParse(timestamp);
 
-    if (date == null) {
-      debugPrint('Invalid timestamp: $timestamp');
-      return '';
-    }
+  //   if (date == null) {
+  //     debugPrint('Invalid timestamp: $timestamp');
+  //     return '';
+  //   }
 
-    final Duration duration = DateTime.now().difference(date);
-    if (duration.inDays > 0) {
-      return '${duration.inDays} ${duration.inDays == 1 ? 'day' : 'days'} ago';
-    }
-    if (duration.inHours > 0) {
-      return '${duration.inHours} ${duration.inHours == 1 ? 'hour' : 'hours'} ago';
-    }
-    if (duration.inMinutes > 0) {
-      return '${duration.inMinutes} ${duration.inMinutes == 1 ? 'minute' : 'minutes'} ago';
-    }
-    return 'just now';
-  }
+  //   final Duration duration = DateTime.now().difference(date);
+  //   if (duration.inDays > 0) {
+  //     return '${duration.inDays} ${duration.inDays == 1 ? 'day' : 'days'} ago';
+  //   }
+  //   if (duration.inHours > 0) {
+  //     return '${duration.inHours} ${duration.inHours == 1 ? 'hour' : 'hours'} ago';
+  //   }
+  //   if (duration.inMinutes > 0) {
+  //     return '${duration.inMinutes} ${duration.inMinutes == 1 ? 'minute' : 'minutes'} ago';
+  //   }
+  //   return 'just now';
+  // }
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -151,7 +154,6 @@ class PromoAppBar extends StatelessWidget implements PreferredSizeWidget {
 
 class PromoMedia extends StatelessWidget {
   const PromoMedia({required this.promo, super.key});
-
   final PromoEntity promo;
 
   @override
@@ -168,7 +170,14 @@ class PromoMedia extends StatelessWidget {
             const Center(child: Icon(Icons.broken_image, size: 48)),
       );
     } else {
-      return VideoWidget(videoSource: promo.fileUrl);
+      return Expanded(
+        child: VideoWidget(
+          showTime: true,
+          play: true,
+          videoSource: promo.fileUrl,
+          fit: BoxFit.cover,
+        ),
+      );
     }
   }
 }
@@ -193,24 +202,17 @@ class PromoFooter extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.share_outlined),
-                color: theme.iconTheme.color,
-              ),
-              Expanded(
-                child: Text(
-                  '${promo.title} - \$${promo.price ?? "0"}',
-                  style: theme.textTheme.bodyLarge
-                      ?.copyWith(fontWeight: FontWeight.bold),
-                  overflow: TextOverflow.ellipsis,
+              Center(
+                child: Expanded(
+                  child: Text(
+                    '${promo.title} - \$${promo.price ?? "0"}',
+                    style: theme.textTheme.bodyLarge
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(CupertinoIcons.tag),
-                color: theme.iconTheme.color,
               ),
             ],
           ),

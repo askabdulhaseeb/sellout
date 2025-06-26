@@ -8,23 +8,21 @@ class PromoHomeGridViewTile extends StatelessWidget {
     required this.promo,
     super.key,
   });
-
   final PromoEntity promo;
-
   @override
   Widget build(BuildContext context) {
+    final bool isImage = promo.promoType.toLowerCase() == 'image';
+    final String imageUrl = isImage ? promo.fileUrl : promo.thumbnailUrl ?? '';
     return GestureDetector(
       onTap: () {
-        showBottomSheet(
-          enableDrag: false,
+        showModalBottomSheet(
           context: context,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-          ),
+          isDismissible: false,
+          elevation: 0,
+          useSafeArea: true,
+          isScrollControlled: true,
           builder: (_) {
-            return PromoScreen(
-              promo: promo,
-            );
+            return PromoScreen(promo: promo);
           },
         );
       },
@@ -37,7 +35,7 @@ class PromoHomeGridViewTile extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(12),
           child: CustomNetworkImage(
-            imageURL: promo.thumbnailUrl!,
+            imageURL: imageUrl,
             fit: BoxFit.cover,
             placeholder: promo.title,
           ),

@@ -52,9 +52,12 @@ import '../../../features/personal/promo/domain/entities/promo_entity.dart';
 import '../../../features/personal/review/data/sources/local_review.dart';
 import '../../../features/personal/review/domain/entities/review_entity.dart';
 import '../../../features/personal/setting/view/setting_options/setting_notification/domain/entities/notification_entity.dart';
+import '../../../features/personal/user/profiles/data/sources/local/local_orders.dart';
 import '../../../features/personal/user/profiles/data/sources/local/local_user.dart';
 import '../../../features/personal/user/profiles/data/sources/local/local_visits.dart';
 import '../../../features/personal/user/profiles/domain/entities/business_profile_detail_entity.dart';
+import '../../../features/personal/user/profiles/domain/entities/order_entity.dart';
+import '../../../features/personal/user/profiles/domain/entities/order_payment_detail_entity.dart';
 import '../../../features/personal/user/profiles/domain/entities/supporter_detail_entity.dart';
 import '../../../features/personal/user/profiles/domain/entities/user_stripe_account_entity.dart';
 import '../../enums/chat/chat_participant_role.dart';
@@ -137,9 +140,11 @@ class HiveDB {
     Hive.registerAdapter(UnreadMessageEntityAdapter()); // 55
     Hive.registerAdapter(PromoEntityAdapter()); // 56
     Hive.registerAdapter(NotificationSettingsEntityAdapter()); // 57
-    Hive.registerAdapter(DropdownCategoryEntityAdapter()); //58
-    Hive.registerAdapter(DropdownOptionEntityAdapter()); //59
-    Hive.registerAdapter(FeedEntityAdapter()); //59
+    Hive.registerAdapter(DropdownOptionEntityAdapter()); //58
+    Hive.registerAdapter(DropdownCategoryEntityAdapter()); //59
+    Hive.registerAdapter(FeedEntityAdapter()); //60
+    Hive.registerAdapter(OrderEntityAdapter()); //61
+    Hive.registerAdapter(OrderPaymentDetailEntityAdapter()); //62
 
     // Hive box Open
     await refresh();
@@ -164,6 +169,8 @@ class HiveDB {
     await LocalPromo().refresh();
     await LocalDropDownListings().refresh();
     await LocalColors().refresh();
+    await LocalOrders().refresh();
+
     // await LocalFeed().refresh();
   }
 
@@ -185,6 +192,7 @@ class HiveDB {
     await LocalPromo().clear();
     await LocalDropDownListings().clear();
     await LocalColors().clear();
+    await LocalOrders().clear();
     // await LocalFeed().clear();
     // await LocalCountry().clear();
   }

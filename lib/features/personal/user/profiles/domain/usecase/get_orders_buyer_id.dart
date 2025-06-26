@@ -1,5 +1,5 @@
 import '../../../../../../core/usecase/usecase.dart';
-import '../entities/orderentity.dart';
+import '../entities/order_entity.dart';
 import '../repositories/user_repositories.dart';
 
 class GetOrderByUidUsecase implements UseCase<List<OrderEntity>?, String> {

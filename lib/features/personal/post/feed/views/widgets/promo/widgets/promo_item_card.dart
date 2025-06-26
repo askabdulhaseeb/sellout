@@ -15,18 +15,27 @@ class PromoItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isImage = promo.promoType.toLowerCase() == 'image';
+    final String displayUrl =
+        isImage ? promo.fileUrl : (promo.thumbnailUrl ?? '');
+
     return GestureDetector(
       onTap: () {
-        showBottomSheet(
+        showModalBottomSheet(
           context: context,
-          builder: (BuildContext context) => PromoScreen(promo: promo),
+          isDismissible: false,
+          elevation: 0,
+          useSafeArea: true,
+          isScrollControlled: true,
+          builder: (_) {
+            return PromoScreen(promo: promo);
+          },
         );
       },
       child: Container(
         width: 80,
         margin: const EdgeInsets.only(right: 12),
         child: Column(
-          spacing: 4,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
@@ -40,22 +49,20 @@ class PromoItemCard extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: Stack(
-                  children: <Widget>[
-                    CustomNetworkImage(
-                        imageURL: promo.thumbnailUrl ?? 'na',
-                        fit: BoxFit.cover,
-                        placeholder: promo.title),
-                  ],
+                child: CustomNetworkImage(
+                  imageURL: displayUrl,
+                  fit: BoxFit.cover,
+                  placeholder: promo.title,
+                  size: double.infinity,
                 ),
               ),
             ),
             Text(
-              maxLines: 1,
               title,
-              style: TextTheme.of(context).bodySmall,
+              maxLines: 1,
               overflow: TextOverflow.clip,
               textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
         ),

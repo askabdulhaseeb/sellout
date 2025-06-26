@@ -1,12 +1,9 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:provider/provider.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
-
 import '../../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../provider/promo_provider.dart';
 
@@ -57,12 +54,16 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
     await _startCamera(_cameras[_currentCameraIndex]);
   }
 
-  Future<File> _saveToDocuments(XFile xfile) async {
-    final dir = await getApplicationDocumentsDirectory();
-    final fileName = path.basename(xfile.path);
-    final newPath = path.join(dir.path, fileName);
-    final saved = await File(xfile.path).copy(newPath);
-    debugPrint('✅ Saved at: ${saved.path}');
+  Future<File> _saveFile(XFile xfile, {required bool isVideo}) async {
+    final String extension = isVideo ? '.mp4' : '.jpg';
+    final String fileName =
+        'promo_recorder_${DateTime.now().millisecondsSinceEpoch}$extension';
+    final String newPath = xfile.path.replaceAll(
+      path.basename(xfile.path),
+      fileName,
+    );
+    final File saved = await File(xfile.path).copy(newPath);
+    debugPrint('✅ Saved as: $fileName');
     return saved;
   }
 
@@ -74,7 +75,7 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
     _isCapturingPhoto = true;
     try {
       final XFile xfile = await _controller!.takePicture();
-      final File savedFile = await _saveToDocuments(xfile);
+      final File savedFile = await _saveFile(xfile, isVideo: false);
       _attachFile(savedFile, AttachmentType.image);
     } catch (e) {
       debugPrint('Photo capture error: $e');
@@ -89,7 +90,8 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
     try {
       if (_isRecording) {
         final XFile xfile = await _controller!.stopVideoRecording();
-        final File savedFile = await _saveToDocuments(xfile);
+        await Future.delayed(const Duration(milliseconds: 300));
+        final File savedFile = await _saveFile(xfile, isVideo: true);
         _attachFile(savedFile, AttachmentType.video);
         _stopTimer();
         setState(() => _isRecording = false);
@@ -125,14 +127,14 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
   Future<void> _pickFromGallery() async {
     Provider.of<PromoProvider>(context, listen: false).pickFromGallery(
       context,
-      type: AttachmentType.video,
+      type: AttachmentType.media,
     );
   }
 
   Future<void> _toggleFlash() async {
     if (_controller == null || !_controller!.value.isInitialized) return;
 
-    final newMode = _controller!.value.flashMode == FlashMode.torch
+    final FlashMode newMode = _controller!.value.flashMode == FlashMode.torch
         ? FlashMode.off
         : FlashMode.torch;
     await _controller!.setFlashMode(newMode);
@@ -158,7 +160,7 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
-        children: [
+        children: <Widget>[
           CameraPreview(_controller!),
           _buildTopBar(),
           _buildBottomBar(),
@@ -174,7 +176,7 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
       right: 20,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
+        children: <Widget>[
           IconButton(
             icon: const Icon(Icons.flip_camera_ios, color: Colors.white),
             onPressed: _switchCamera,
@@ -209,7 +211,7 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
       right: 20,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
+        children: <Widget>[
           GestureDetector(
             onTap: _pickFromGallery,
             child: const CircleAvatar(
@@ -241,8 +243,8 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
   }
 
   String _formatTime(int seconds) {
-    final min = (seconds ~/ 60).toString().padLeft(2, '0');
-    final sec = (seconds % 60).toString().padLeft(2, '0');
+    final String min = (seconds ~/ 60).toString().padLeft(2, '0');
+    final String sec = (seconds % 60).toString().padLeft(2, '0');
     return '$min:$sec';
   }
 }

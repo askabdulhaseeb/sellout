@@ -24,6 +24,7 @@ class AppStrings {
   static String get localColorBox => 'com.sellout.local-colors-box';
   static String get localDropDownListingBox => 'com.sellout.dropdown-listings';
   static String get localPostListCache => 'com.sellout.local-post-list-cache';
+  static String get localOrdersBox => 'com.sellout.local-orders-box';
   // [IMAGES]
   // Maketplace CATEGORIES
   static const String clothfootmarketplace =

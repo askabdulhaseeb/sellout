@@ -5,7 +5,7 @@ import '../../../../../../../core/theme/app_theme.dart';
 import '../../../../../promo/domain/entities/promo_entity.dart';
 import '../../../../../promo/view/create_promo/provider/promo_provider.dart';
 import '../../../../../promo/view/home_promo_screen/widgets/promo_grid_view.dart';
-import 'widgets/add_promo_card.dart';
+import 'widgets/create_promo_card.dart';
 import 'widgets/promo_item_card.dart';
 
 class HomePromoListSection extends StatefulWidget {
@@ -39,10 +39,16 @@ class _HomePromoListSectionState extends State<HomePromoListSection> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
+              Text(
+                'promo'.tr(),
+                style: TextTheme.of(context)
+                    .bodyLarge
+                    ?.copyWith(fontWeight: FontWeight.w600),
+              ),
               const Spacer(),
               if (!showMore && !isLoading)
-                TextButton(
-                  onPressed: () => showBottomSheet(
+                GestureDetector(
+                  onTap: () => showBottomSheet(
                     context: context,
                     builder: (BuildContext context) => PromoHomeGridView(
                       promos: pro,
@@ -90,74 +96,36 @@ class _HomePromoListSectionState extends State<HomePromoListSection> {
   }
 }
 
-class _PromoShimmerPlaceholder extends StatefulWidget {
+class _PromoShimmerPlaceholder extends StatelessWidget {
   const _PromoShimmerPlaceholder();
 
   @override
-  State<_PromoShimmerPlaceholder> createState() =>
-      _PromoShimmerPlaceholderState();
-}
-
-class _PromoShimmerPlaceholderState extends State<_PromoShimmerPlaceholder>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _opacityAnim;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 1),
-    )..repeat(reverse: true);
-
-    _opacityAnim = Tween<double>(begin: 0.3, end: 0.6).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _opacityAnim,
-      builder: (context, child) {
-        return Opacity(
-          opacity: _opacityAnim.value,
-          child: Container(
+    return Container(
+      width: 80,
+      margin: const EdgeInsets.only(right: 12),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
             width: 80,
-            margin: const EdgeInsets.only(right: 12),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 80,
-                  height: 90,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Container(
-                  height: 12,
-                  width: 60,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-              ],
+            height: 90,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(10),
             ),
           ),
-        );
-      },
+          const SizedBox(height: 4),
+          Container(
+            height: 12,
+            width: 60,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

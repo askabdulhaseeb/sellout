@@ -67,11 +67,14 @@ class AddPromoCard extends StatelessWidget {
               ],
             ),
           ),
-          Text(
-            'create_yours'.tr(),
-            style: TextTheme.of(context).bodySmall,
-            textAlign: TextAlign.start,
-            overflow: TextOverflow.ellipsis,
+          SizedBox(
+            width: 90,
+            child: Text(
+              'create_yours'.tr(),
+              style: TextTheme.of(context).bodySmall,
+              textAlign: TextAlign.start,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ],
       ),
