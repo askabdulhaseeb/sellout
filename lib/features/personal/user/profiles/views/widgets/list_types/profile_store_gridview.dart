@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/widgets/in_dev_mode.dart';
@@ -16,7 +17,7 @@ class ProfileStoreGridview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (user?.uid == null) {
-      return const Center(child: Text('User not found'));
+      return Center(child: Text('user_not_found'.tr()));
     }
     final GetPostByIdUsecase getPostByIdUsecase = GetPostByIdUsecase(locator());
     return FutureBuilder<DataState<List<PostEntity>>>(
@@ -25,11 +26,11 @@ class ProfileStoreGridview extends StatelessWidget {
       builder: (BuildContext context,
           AsyncSnapshot<DataState<List<PostEntity>>> snapshot) {
         if (!snapshot.hasData || snapshot.data?.entity == null) {
-          return const Center(child: Text('No posts found'));
+          return Center(child: Text('no_posts_found'.tr()));
         }
         final List<PostEntity> posts = snapshot.data!.entity!;
         if (posts.isEmpty) {
-          return const Center(child: Text('No posts found'));
+          return Center(child: Text('no_posts_found'.tr()));
         }
         posts.sort(
             (PostEntity a, PostEntity b) => b.createdAt.compareTo(a.createdAt));

@@ -203,7 +203,7 @@ class CartProvider extends ChangeNotifier {
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
           paymentIntentClientSecret: clientSecret,
-          merchantDisplayName: 'Merchant',
+          merchantDisplayName: 'sellout',
         ),
       );
       await Stripe.instance.presentPaymentSheet();

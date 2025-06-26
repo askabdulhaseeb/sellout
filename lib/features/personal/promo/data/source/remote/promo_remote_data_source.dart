@@ -2,14 +2,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
-import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../user/profiles/domain/entities/supporter_detail_entity.dart';
 import '../../../domain/entities/promo_entity.dart';
 import '../../../domain/params/create_promo_params.dart';
 import '../../model/promo_model.dart';
 import '../local/local_promo.dart';
-import 'package:mime/mime.dart';
 
 abstract class PromoRemoteDataSource {
   Future<DataState<bool>> createPromo(CreatePromoParams promo);
@@ -20,24 +18,15 @@ abstract class PromoRemoteDataSource {
 class PromoRemoteDataSourceImpl implements PromoRemoteDataSource {
   @override
   Future<DataState<bool>> createPromo(CreatePromoParams param) async {
-    debugPrint('👉 Fields: ${param.toMap()}');
-    debugPrint('👉 File path: ${param.attachments?.file.path}');
-    debugPrint('👉 File MIME: ${lookupMimeType(param.attachments!.file.path)}');
-    debugPrint('👉 Thumb path: ${param.thumbNail?.file.path}');
-    debugPrint('👉 Thumb MIME: ${lookupMimeType(param.thumbNail!.file.path)}');
     try {
       final DataState<String> result = await ApiCall<String>().callFormData(
         endpoint: '/promo/create',
         requestType: ApiRequestType.post,
-        fileMap: <String, PickedAttachment>{
-          'file': param.attachments!,
-          'thumbnail': param.thumbNail!,
-        },
+        fileMap: param.getAttachmentsMap(),
         fieldsMap: param.toMap(),
-        isConnectType: false, // ✅ No Content-Type: application/json
-        isAuth: true, // ✅ Adds Bearer token
+        isConnectType: false,
+        isAuth: true,
       );
-
       if (result is DataSuccess<String>) {
         AppLog.info(
           'Promo created successfully: ${result.data}',
@@ -129,12 +118,6 @@ class PromoRemoteDataSourceImpl implements PromoRemoteDataSource {
   @override
   Future<DataState<List<PromoEntity>>> getPromoByid(String uid) async {
     String endpoint = '/promo/query?user_id=$uid';
-    final List<String> supporterIds = LocalAuth.currentUser?.supporters
-            .map((SupporterDetailEntity supporter) => supporter.userID)
-            .toList() ??
-        <String>[];
-
-    debugPrint(jsonEncode(supporterIds));
 
     try {
       final DataState<List<PromoEntity>> result =
@@ -145,22 +128,25 @@ class PromoRemoteDataSourceImpl implements PromoRemoteDataSource {
       );
 
       if (result is DataSuccess) {
-        debugPrint(result.data);
+        // Decode the full response body
         Map<String, dynamic> mapdata = jsonDecode(result.data!);
         List<Map<String, dynamic>> listOfPromoMap =
             List<Map<String, dynamic>>.from(mapdata['data'] ?? <dynamic>[]);
-        // 🔽 Convert all maps to PromoModel
+
+        // Convert map to PromoEntity list
         final List<PromoEntity> promoModels = listOfPromoMap
             .map((Map<String, dynamic> map) => PromoModel.fromMap(map))
             .toList();
-        // 🔽 Save all promos to Hive
+
+        // ✅ Save to Hive using LocalPromo
         await LocalPromo().saveAll(promoModels);
+
         return DataSuccess<List<PromoEntity>>(result.data ?? '', promoModels);
       } else {
         AppLog.error(
           result.exception?.message ??
-              'PromoRemoteDataSourceImpl.getPromoOfFollower - else',
-          name: 'PromoRemoteDataSourceImpl.getPromoOfFollower - failed',
+              'PromoRemoteDataSourceImpl.getPromoByid - else',
+          name: 'PromoRemoteDataSourceImpl.getPromoByid - failed',
           error: result.exception,
         );
         return DataFailer<List<PromoEntity>>(
@@ -170,7 +156,7 @@ class PromoRemoteDataSourceImpl implements PromoRemoteDataSource {
     } catch (e, stc) {
       AppLog.error(
         e.toString(),
-        name: 'PromoRemoteDataSourceImpl.getPromoOfFollower - catch',
+        name: 'PromoRemoteDataSourceImpl.getPromoByid - catch',
         error: e,
         stackTrace: stc,
       );

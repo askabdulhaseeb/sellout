@@ -1,26 +1,22 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
 import '../../../../../../../core/enums/core/status_type.dart';
-import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../order/view/screens/order_detail_screen.dart';
 import '../../../../../post/domain/entities/post_entity.dart';
-import '../../../../../post/domain/params/get_specific_post_param.dart';
-import '../../../domain/entities/orderentity.dart';
+import '../../../domain/entities/order_entity.dart';
 import '../../enums/order_type.dart';
-import '../../providers/profile_provider.dart';
 
 class ProfileOrderListview extends StatelessWidget {
   const ProfileOrderListview({
     required this.filteredOrders,
-    required this.pro,
+    required this.postMap,
     required this.selectedStatus,
     super.key,
   });
 
   final List<OrderEntity> filteredOrders;
-  final ProfileProvider pro;
+  final Map<String, PostEntity> postMap;
   final StatusType selectedStatus;
 
   @override
@@ -30,97 +26,82 @@ class ProfileOrderListview extends StatelessWidget {
       shrinkWrap: true,
       itemCount: filteredOrders.length,
       itemBuilder: (BuildContext context, int index) {
-        return FutureBuilder<DataState<PostEntity>>(
-          future: pro.getPostByPostId(
-              GetSpecificPostParam(postId: filteredOrders[index].postId)),
-          builder: (BuildContext context,
-              AsyncSnapshot<DataState<PostEntity>> postSnapshot) {
-            if (postSnapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (postSnapshot.hasError || !postSnapshot.hasData) {
-              return Center(child: Text('something_wrong'.tr()));
-            }
+        final OrderEntity order = filteredOrders[index];
+        final PostEntity? post = postMap[order.postId];
 
-            final DataState<PostEntity>? post = postSnapshot.data;
-
-            return InkWell(
-              onTap: () => showModalBottomSheet(
-                  context: context,
-                  builder: (BuildContext context) =>
-                      const OrderDetailsScreen()),
-              child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  border:
-                      Border.all(color: ColorScheme.of(context).outlineVariant),
-                  borderRadius: BorderRadius.circular(12),
+        return InkWell(
+          onTap: () => showModalBottomSheet(
+            useSafeArea: true,
+            isScrollControlled: true,
+            context: context,
+            builder: (_) => OrderDetailsScreen(order: order),
+          ),
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              border: Border.all(
+                  color: Theme.of(context).colorScheme.outlineVariant),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: <Widget>[
+                SizedBox(
+                  height: 70,
+                  width: 70,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: CustomNetworkImage(
+                      imageURL: post?.imageURL ?? '',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-                child: Row(
-                  children: <Widget>[
-                    SizedBox(
-                      height: 70,
-                      width: 70,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: CustomNetworkImage(
-                          imageURL: post?.entity?.imageURL ?? '',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        spacing: 4,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(post?.entity?.title ?? '',
-                              maxLines: 1,
-                              style: Theme.of(context).textTheme.labelSmall),
-                          Text(
-                              '\$${filteredOrders[index].price}', // Assuming price exists
-                              style: Theme.of(context).textTheme.labelSmall),
-                          if (selectedStatus.code == OrderType.completed.code)
-                            Text('sale_completed'.tr(),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelSmall
-                                    ?.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary)),
-                          if (selectedStatus.code == OrderType.cancelled.code)
-                            Text('cancelled_order'.tr(),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelSmall
-                                    ?.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .outline)),
-                          if (selectedStatus.code == OrderType.newOrder.code)
-                            Text('congrats_order'.tr(),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelSmall
-                                    ?.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary)),
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.arrow_forward_ios, size: 12),
-                    ),
-                  ],
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    spacing: 4,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(post?.title ?? '',
+                          maxLines: 1,
+                          style: Theme.of(context).textTheme.labelSmall),
+                      Text('\$${order.price}',
+                          style: Theme.of(context).textTheme.labelSmall),
+                      if (selectedStatus.code == OrderType.completed.code)
+                        Text('sale_completed'.tr(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondary)),
+                      if (selectedStatus.code == OrderType.cancelled.code)
+                        Text('cancelled_order'.tr(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.outline)),
+                      if (selectedStatus.code == OrderType.newOrder.code)
+                        Text('congrats_order'.tr(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(
+                                    color: Theme.of(context).primaryColor)),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.arrow_forward_ios, size: 12),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );

@@ -13,7 +13,7 @@ import '../../../../post/domain/usecase/get_specific_post_usecase.dart';
 import '../../../../review/domain/entities/review_entity.dart';
 import '../../../../review/domain/param/get_review_param.dart';
 import '../../../../review/domain/usecase/get_reviews_usecase.dart';
-import '../../domain/entities/orderentity.dart';
+import '../../domain/entities/order_entity.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/usecase/edit_profile_detail_usecase.dart';
 import '../../domain/usecase/edit_profile_picture_usecase.dart';
@@ -162,4 +162,4 @@ class ProfileProvider extends ChangeNotifier {
       isLoading = false;
     }
   }
- }
+}

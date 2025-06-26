@@ -19,7 +19,6 @@ class PromoProvider extends ChangeNotifier {
   PromoProvider(this.getPromoUsecase, this.createPromoUsecase);
   final GetPromoFollowerUseCase getPromoUsecase;
   final CreatePromoUsecase createPromoUsecase;
-
   List<PickedAttachment> attachments = <PickedAttachment>[];
   PostEntity? _post;
   PostEntity? get post => _post;
@@ -27,7 +26,6 @@ class PromoProvider extends ChangeNotifier {
   List<PromoEntity>? get promoList => _promoList;
   PickedAttachment? _thumbNail;
   PickedAttachment? get thumbNail => _thumbNail;
-
   int get pageNumber => attachment?.file == null ? 1 : 2;
   PickedAttachment? attachment;
   CameraController? cameraController;
@@ -36,7 +34,6 @@ class PromoProvider extends ChangeNotifier {
   bool isRearCamera = true;
   bool isFlashOn = false;
   int recordingSeconds = 0;
-  Timer? _timer;
   TextEditingController title = TextEditingController();
   TextEditingController price = TextEditingController();
   String referenceType = '';
@@ -77,24 +74,6 @@ class PromoProvider extends ChangeNotifier {
     );
   }
 
-  Future<void> initCamera() async {
-    cameras = await availableCameras();
-    cameraController = CameraController(cameras.first, ResolutionPreset.high);
-    await cameraController?.initialize();
-    notifyListeners();
-  }
-
-  Future<void> toggleCamera() async {
-    isRearCamera = !isRearCamera;
-    final CameraLensDirection direction =
-        isRearCamera ? CameraLensDirection.back : CameraLensDirection.front;
-    final CameraDescription camera = cameras
-        .firstWhere((CameraDescription cam) => cam.lensDirection == direction);
-    cameraController = CameraController(camera, ResolutionPreset.high);
-    await cameraController?.initialize();
-    notifyListeners();
-  }
-
   Future<void> toggleFlash() async {
     if (cameraController == null || !cameraController!.value.isInitialized) {
       return;
@@ -103,29 +82,6 @@ class PromoProvider extends ChangeNotifier {
     await cameraController!
         .setFlashMode(isFlashOn ? FlashMode.torch : FlashMode.off);
     notifyListeners();
-  }
-
-  Future<void> startRecording(BuildContext context) async {
-    if (cameraController == null || cameraController!.value.isRecordingVideo) {
-      return;
-    }
-
-    try {
-      await cameraController!.startVideoRecording();
-      isRecording = true;
-      recordingSeconds = 0;
-      notifyListeners();
-
-      _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-        recordingSeconds++;
-        notifyListeners();
-      });
-    } catch (e) {
-      _timer?.cancel();
-      isRecording = false;
-      notifyListeners();
-      debugPrint('Error recording video: $e');
-    }
   }
 
   Future<File> _saveFileToDocuments(File file) async {
@@ -216,10 +172,9 @@ class PromoProvider extends ChangeNotifier {
     _setLoading(false);
     if (result is DataSuccess) {
       _setLoading(false);
-      // ignore: use_build_context_synchronously
-      Navigator.pop(context); // pop on success
+      errorMessage = '';
     } else {
-      errorMessage = result.exception?.message ?? 'Failed to create promo';
+      errorMessage = result.exception?.message ?? 'something_wrong';
       _setLoading(false);
     }
   }
