@@ -109,6 +109,7 @@ import '../features/personal/listing/listing_form/domain/repository/add_listing_
 import '../features/personal/listing/listing_form/domain/usecase/add_listing_usecase.dart';
 import '../features/personal/listing/listing_form/domain/usecase/edit_listing_usecase.dart';
 import '../features/personal/listing/listing_form/views/providers/add_listing_form_provider.dart';
+import '../features/personal/order/view/provider/order_provider.dart';
 import '../features/personal/post/data/repositories/post_repository_impl.dart';
 import '../features/personal/post/data/sources/remote/post_remote_api.dart';
 import '../features/personal/post/domain/repositories/post_repository.dart';
@@ -157,6 +158,7 @@ import '../features/personal/user/profiles/domain/usecase/get_my_visiting_usecas
 import '../features/personal/user/profiles/domain/usecase/get_orders_buyer_id.dart';
 import '../features/personal/user/profiles/domain/usecase/get_post_by_id_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/get_user_by_uid.dart';
+import '../features/personal/user/profiles/domain/usecase/update_order_usecase.dart';
 import '../features/personal/user/profiles/views/providers/profile_provider.dart';
 
 final GetIt locator = GetIt.instance;
@@ -290,6 +292,9 @@ void _chat() {
       () => CreateChatGroupProvider(locator()));
   locator.registerLazySingleton<CreatePrivateChatProvider>(
       () => CreatePrivateChatProvider(locator()));
+  locator.registerLazySingleton<UpdateOrderUsecase>(
+      () => UpdateOrderUsecase(locator()));
+  locator.registerLazySingleton<OrderProvider>(() => OrderProvider(locator()));
 }
 
 void _message() {

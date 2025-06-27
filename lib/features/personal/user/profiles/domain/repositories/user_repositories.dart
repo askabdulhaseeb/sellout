@@ -8,6 +8,7 @@ import '../../views/params/add_remove_supporter_params.dart';
 import '../../views/params/update_user_params.dart';
 import '../entities/order_entity.dart';
 import '../entities/user_entity.dart';
+import '../params/update_order_params.dart';
 
 abstract interface class UserProfileRepository {
   Future<DataState<UserEntity?>> byUID(String uid);
@@ -22,4 +23,5 @@ abstract interface class UserProfileRepository {
   Future<DataState<String>> updatePRofileDetail(UpdateUserParams photo);
   Future<DataState<String>> addRemoveSupporters(
       AddRemoveSupporterParams params);
+  Future<DataState<bool>> updateOrder(UpdateOrderParams params);
 }
