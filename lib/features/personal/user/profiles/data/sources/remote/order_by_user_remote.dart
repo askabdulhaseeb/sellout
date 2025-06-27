@@ -1,13 +1,16 @@
+import 'package:flutter/material.dart';
+
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/api_call.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../domain/entities/order_entity.dart';
-import '../../models/order_model.dart';
+import '../../../domain/params/update_order_params.dart';
 import '../local/local_orders.dart';
 
 abstract interface class OrderByUserRemote {
   Future<DataState<List<OrderEntity>>> getOrderByUser(String? userId);
   Future<DataState<bool>> createOrder(List<OrderModel> orderData);
+  Future<DataState<bool>> updateOrder(UpdateOrderParams params);
 }
 
 class OrderByUserRemoteImpl implements OrderByUserRemote {
@@ -21,44 +24,43 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
         );
       }
 
-      final DataState<bool> result = await ApiCall<bool>().call(
-        endpoint: '/orders/query?seller_id=$id',
+      final String endpoint = '/orders/query?seller_id=$id';
+
+      // 🌐 Always hit network
+      final DataState<String> result = await ApiCall<String>().call(
+        endpoint: endpoint,
         requestType: ApiRequestType.get,
         isAuth: true,
       );
 
       if (result is DataSuccess) {
         final String raw = result.data ?? '';
-        final dynamic userable = json.decode(raw);
-        final List<dynamic> list = userable['orders'];
-        final List<OrderEntity> orders = <OrderEntity>[];
+        final dynamic parsed = json.decode(raw);
+        final List<dynamic> ordersJson = parsed['orders'];
+        final List<OrderEntity> orders = ordersJson
+            .map<OrderEntity>((dynamic e) => OrderModel.fromJson(e))
+            .toList();
 
-        for (dynamic element in list) {
-          final OrderEntity order = OrderModel.fromJson(element);
-          orders.add(order);
-        }
-
-        // 🧠 Save orders locally
+        // 🔄 Optional: still save locally
         await LocalOrders().saveAll(orders);
 
         return DataSuccess<List<OrderEntity>>(raw, orders);
       } else {
         return DataFailer<List<OrderEntity>>(
-          result.exception ?? CustomException('Failed to get post by user'),
+          result.exception ?? CustomException('Failed to get orders'),
         );
       }
     } catch (e, stc) {
       AppLog.error(
         e.toString(),
-        name: 'PostByUserRemoteImpl.getOrderByUser - catch',
+        name: 'OrderByUserRemoteImpl.getOrderByUser - catch',
         error: e,
         stackTrace: stc,
       );
+      return DataFailer<List<OrderEntity>>(
+        CustomException('Failed to get Order by user'),
+      );
     }
-
-    return DataFailer<List<OrderEntity>>(
-      CustomException('Failed to get Order by user'),
-    );
   }
 
   @override
@@ -88,6 +90,39 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
           stackTrace: stc);
       return DataFailer<bool>(
         CustomException('Failed to create order'),
+      );
+    }
+  }
+
+  @override
+  Future<DataState<bool>> updateOrder(UpdateOrderParams params) async {
+    try {
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: '/orders/update/status',
+        requestType: ApiRequestType.patch,
+        body: jsonEncode(params.toMap()),
+        isAuth: true,
+      );
+      AppLog.info('order updated: ${result.data ?? ''}');
+      if (result is DataSuccess) {
+        debugPrint(result.data);
+        return DataSuccess<bool>(result.data ?? '', true);
+      } else {
+        AppLog.error(
+          result.exception?.message ?? 'somethig_wrong',
+          name: 'PostByUserRemoteImpl.updateOrder - else',
+        );
+        return DataFailer<bool>(
+          result.exception ?? CustomException('Failed to update order'),
+        );
+      }
+    } catch (e, stc) {
+      AppLog.error(e.toString(),
+          name: 'PostByUserRemoteImpl.updateOrder - catch',
+          error: e,
+          stackTrace: stc);
+      return DataFailer<bool>(
+        CustomException('Failed to Update order'),
       );
     }
   }

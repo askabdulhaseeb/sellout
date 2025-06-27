@@ -50,7 +50,7 @@ enum StatusType {
         return StatusType.accepted;
       case 'reject' || 'rejected':
         return StatusType.rejected;
-      case 'cancel' || 'cancelled' || 'canceled':
+      case 'cancel' || 'cancelled' || 'canceled' || 'cancelled_by_seller':
         return StatusType.cancelled;
       case 'complet' || 'completed' || 'delivered':
         return StatusType.completed;

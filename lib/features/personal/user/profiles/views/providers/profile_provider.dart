@@ -61,7 +61,7 @@ class ProfileProvider extends ChangeNotifier {
     _profilePhoto = LocalAuth.currentUser?.profileImage;
   }
 
-  set isLoading(bool value) {
+  void setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
   }
@@ -90,7 +90,7 @@ class ProfileProvider extends ChangeNotifier {
     return await _getPostByPostIdUsecase(uid);
   }
 
-  Future<DataState<List<OrderEntity>?>> getOrderByUser(String uid) async {
+  Future<DataState<List<OrderEntity>>> getOrderByUser(String uid) async {
     return await _getOrderByIdUsecase(uid);
   }
 
@@ -112,7 +112,7 @@ class ProfileProvider extends ChangeNotifier {
         ),
       ),
     );
-    isLoading = true;
+    setLoading(true);
     if (pickedAttachment != null && pickedAttachment.isNotEmpty) {
       debugPrint(pickedAttachment.length.toString());
       debugPrint(pickedAttachment.first.selectedMedia!.relativePath);
@@ -127,7 +127,7 @@ class ProfileProvider extends ChangeNotifier {
           )),
         );
         notifyListeners();
-        isLoading = false;
+        setLoading(false);
       } else {
         AppLog.error(result.exception!.message,
             name: 'ProfileProvider.updateProfilePicture - else');
@@ -135,13 +135,13 @@ class ProfileProvider extends ChangeNotifier {
           SnackBar(content: Text('something_wrong'.tr())),
         );
 
-        isLoading = false;
+        setLoading(false);
       }
     }
   }
 
-  Future<void> updateProfileDetail(context) async {
-    isLoading = true;
+  Future<void> updateProfileDetail(BuildContext context) async {
+    setLoading(true);
     final UpdateUserParams params = UpdateUserParams(
       uid: _user?.entity?.uid ?? '',
       name: namecontroller.text,
@@ -151,7 +151,7 @@ class ProfileProvider extends ChangeNotifier {
     final DataState<String> result = await _updateProfileDetailUsecase(params);
     if (result is DataSuccess) {
       AppLog.info('profile_updated_successfully'.tr());
-      isLoading = false;
+      setLoading(false);
       Navigator.pop(context);
     } else {
       AppLog.error(result.exception!.message,
@@ -159,7 +159,7 @@ class ProfileProvider extends ChangeNotifier {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('something_wrong'.tr())),
       );
-      isLoading = false;
+      setLoading(false);
     }
   }
 }

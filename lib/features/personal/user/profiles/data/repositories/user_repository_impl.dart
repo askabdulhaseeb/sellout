@@ -5,6 +5,7 @@ import '../../../../post/domain/entities/post_entity.dart';
 import '../../../../post/domain/entities/visit/visiting_entity.dart';
 import '../../domain/entities/order_entity.dart';
 import '../../domain/entities/user_entity.dart';
+import '../../domain/params/update_order_params.dart';
 import '../../domain/repositories/user_repositories.dart';
 import '../../views/params/add_remove_supporter_params.dart';
 import '../../views/params/update_user_params.dart';
@@ -71,5 +72,10 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
   Future<DataState<String>> addRemoveSupporters(
       AddRemoveSupporterParams params) async {
     return await userProfileRemoteSource.addRemoveSupporters(params);
+  }
+
+  @override
+  Future<DataState<bool>> updateOrder(UpdateOrderParams params) async {
+    return await orderByUserRemote.updateOrder(params);
   }
 }

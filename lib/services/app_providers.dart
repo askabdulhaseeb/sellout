@@ -16,6 +16,7 @@ import '../features/personal/listing/listing_form/views/providers/add_listing_fo
 import '../features/personal/chats/chat_dashboard/views/providers/chat_dashboard_provider.dart';
 import '../features/personal/dashboard/views/providers/personal_bottom_nav_provider.dart';
 import '../features/personal/book_visit/view/provider/booking_provider.dart';
+import '../features/personal/order/view/provider/order_provider.dart';
 import '../features/personal/post/feed/views/providers/feed_provider.dart';
 import '../features/personal/promo/view/create_promo/provider/promo_provider.dart';
 import '../features/personal/post/post_detail/views/providers/post_detail_provider.dart';
@@ -68,6 +69,7 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
   ChangeNotifierProvider<ProfileProvider>.value(
       value: ProfileProvider(locator(), locator(), locator(), locator(),
           locator(), locator(), locator())),
+  ChangeNotifierProvider<OrderProvider>.value(value: OrderProvider(locator())),
   //
   ChangeNotifierProvider<FeedProvider>.value(
       value: FeedProvider(

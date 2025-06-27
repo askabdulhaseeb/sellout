@@ -1,20 +1,18 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../../../../../core/enums/core/status_type.dart';
-import '../../../../../../core/sources/data_state.dart';
-import '../../../../../../core/theme/app_theme.dart';
-import '../../../../../../core/widgets/custom_toggle_switch.dart';
-import '../../../../post/data/sources/local/local_post.dart';
-import '../../../../post/domain/entities/post_entity.dart';
+import '../../../../../../../core/sources/data_state.dart';
+import '../../../../../../../core/enums/core/status_type.dart';
+import '../../../../../../../services/get_it.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../data/sources/local/local_orders.dart';
 import '../../domain/entities/order_entity.dart';
 import '../../domain/entities/user_entity.dart';
-import '../providers/profile_provider.dart';
+import '../../domain/usecase/get_orders_buyer_id.dart';
 import 'list_types/profile_order_listview.dart';
+import '../../../../../../../core/widgets/custom_toggle_switch.dart';
 
 class ProfileOrdersSection extends StatefulWidget {
-  const ProfileOrdersSection({super.key, this.user});
+  const ProfileOrdersSection({required this.user, super.key});
   final UserEntity? user;
 
   @override
@@ -22,209 +20,84 @@ class ProfileOrdersSection extends StatefulWidget {
 }
 
 class _ProfileOrdersSectionState extends State<ProfileOrdersSection> {
+  late Future<DataState<List<OrderEntity>>> _futureOrders;
   StatusType selectedStatus = StatusType.pending;
-  late Future<DataState<List<OrderEntity>?>> _futureOrders;
-  List<OrderEntity> allOrders = <OrderEntity>[];
 
   @override
   void initState() {
     super.initState();
-
-    // ✅ Load initial future once
-    final List<OrderEntity> localOrders =
-        LocalOrders().getBySeller(widget.user?.uid ?? '');
-    final ProfileProvider pro =
-        Provider.of<ProfileProvider>(context, listen: false);
-    _futureOrders = pro.getOrderByUser(widget.user?.uid ?? '');
-
-    // ✅ Use local as placeholder immediately
-    allOrders = localOrders;
-  }
-
-  Future<Map<String, PostEntity>> _getPostsMap(List<OrderEntity> orders) async {
-    final Map<String, PostEntity> map = <String, PostEntity>{};
-    for (final OrderEntity order in orders) {
-      final PostEntity? post = await LocalPost().getPost(order.postId);
-      if (post != null) {
-        map[order.postId] = post;
-      }
-    }
-    return map;
-  }
-
-  void _onStatusChanged(StatusType status) {
-    setState(() {
-      selectedStatus = status;
-    });
+    final String uid = widget.user?.uid ?? LocalAuth.uid ?? '';
+    _futureOrders = GetOrderByUidUsecase(locator())(uid);
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<DataState<List<OrderEntity>?>>(
+    return FutureBuilder<DataState<List<OrderEntity>>>(
       future: _futureOrders,
-      initialData: DataSuccess<List<OrderEntity>>('local', allOrders),
+      initialData:
+          LocalOrders().orderBySeller(widget.user?.uid ?? LocalAuth.uid),
       builder: (BuildContext context,
-          AsyncSnapshot<DataState<List<OrderEntity>?>> snapshot) {
-        if (!snapshot.hasData || snapshot.data?.entity == null) {
-          return Center(child: Text('no_orders_found'.tr()));
-        }
-
-        // ✅ Save full orders only once
-        allOrders = snapshot.data!.entity!;
-
+          AsyncSnapshot<DataState<List<OrderEntity>>> snapshot) {
+        final List<OrderEntity> allOrders =
+            snapshot.data?.entity ?? <OrderEntity>[];
         final List<OrderEntity> filteredOrders = allOrders
-            .where(
-                (OrderEntity order) => order.orderStatus == selectedStatus.code)
+            .where((OrderEntity order) =>
+                StatusType.fromJson(order.orderStatus).code ==
+                selectedStatus.code)
             .toList();
-
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            OrderStatusToggle(
-              initialStatus: selectedStatus,
-              onStatusChanged: _onStatusChanged,
+            CustomToggleSwitch<StatusType>(
+              isShaded: false,
+              selectedColors: [
+                Theme.of(context).primaryColor,
+                Theme.of(context).colorScheme.secondary,
+                ColorScheme.of(context).outline
+              ],
+              seletedFontSize: MediaQuery.of(context).size.width * 0.03,
+              labelText: '',
+              labels: const <StatusType>[
+                StatusType.pending,
+                StatusType.completed,
+                StatusType.cancelled
+              ],
+              labelStrs: <String>[
+                'new_order'.tr(),
+                'completed'.tr(),
+                'canceled'.tr(),
+              ],
+              initialValue: selectedStatus,
+              onToggle: (StatusType status) {
+                if (selectedStatus != status) {
+                  setState(() {
+                    selectedStatus = status;
+                  });
+                }
+              },
             ),
+            const SizedBox(height: 8),
             if (filteredOrders.isEmpty)
-              Center(child: Text('no_orders'.tr()))
+              Center(
+                child: Text('no_orders_found'.tr()),
+              )
             else
-              FutureBuilder<Map<String, PostEntity>>(
-                future: _getPostsMap(filteredOrders),
-                builder: (BuildContext context,
-                    AsyncSnapshot<Map<String, PostEntity>> postSnapshot) {
-                  if (!postSnapshot.hasData) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  return SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.5,
-                    child: ProfileOrderListview(
-                      filteredOrders: filteredOrders,
-                      postMap: postSnapshot.data!,
+              SizedBox(
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(0),
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: filteredOrders.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final OrderEntity order = filteredOrders[index];
+                    return ProfileOrderTile(
+                      order: order,
                       selectedStatus: selectedStatus,
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
           ],
-        );
-      },
-    );
-  }
-}
-
-class OrderStatusToggle extends StatelessWidget {
-  const OrderStatusToggle({
-    required this.initialStatus,
-    required this.onStatusChanged,
-    super.key,
-  });
-
-  final StatusType initialStatus;
-  final ValueChanged<StatusType> onStatusChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomToggleSwitch<StatusType>(
-      seletedFontSize: MediaQuery.of(context).size.width * 0.033,
-      labels: const <StatusType>[
-        StatusType.pending,
-        StatusType.accepted,
-        StatusType.rejected,
-      ],
-      labelStrs: <String>[
-        'new_order'.tr(),
-        'completed'.tr(),
-        'cancelled'.tr(),
-      ],
-      labelText: '',
-      initialValue: initialStatus,
-      onToggle: onStatusChanged,
-      selectedColors: <Color>[
-        AppTheme.primaryColor,
-        AppTheme.secondaryColor,
-        ColorScheme.of(context).outline,
-      ],
-      isShaded: false,
-    );
-  }
-}
-
-class OrderListBuilder extends StatefulWidget {
-  const OrderListBuilder({
-    required this.pro,
-    required this.userId,
-    required this.selectedStatus,
-    super.key,
-  });
-
-  final ProfileProvider pro;
-  final String userId;
-  final StatusType selectedStatus;
-
-  @override
-  State<OrderListBuilder> createState() => _OrderListBuilderState();
-}
-
-class _OrderListBuilderState extends State<OrderListBuilder> {
-  late Future<DataState<List<OrderEntity>?>> _futureOrders;
-
-  @override
-  void initState() {
-    super.initState();
-    _futureOrders = widget.pro.getOrderByUser(widget.userId);
-  }
-
-  Future<Map<String, PostEntity>> _getPostsMap(List<OrderEntity> orders) async {
-    final Map<String, PostEntity> map = <String, PostEntity>{};
-    for (final OrderEntity order in orders) {
-      final PostEntity? post = await LocalPost().getPost(order.postId);
-      if (post != null) {
-        map[order.postId] = post;
-      }
-    }
-    return map;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final List<OrderEntity> localOrders =
-        LocalOrders().getBySeller(widget.userId);
-    final DataState<List<OrderEntity>> localState =
-        DataSuccess<List<OrderEntity>>('local', localOrders);
-
-    return FutureBuilder<DataState<List<OrderEntity>?>>(
-      future: _futureOrders,
-      initialData: localState,
-      builder: (BuildContext context,
-          AsyncSnapshot<DataState<List<OrderEntity>?>> snapshot) {
-        if (!snapshot.hasData || snapshot.data?.entity == null) {
-          return Center(child: Text('no_orders_found'.tr()));
-        }
-
-        final List<OrderEntity> filteredOrders = snapshot.data!.entity!
-            .where((OrderEntity order) =>
-                order.orderStatus == widget.selectedStatus.code)
-            .toList();
-        if (filteredOrders.isEmpty) {
-          return Center(child: Text('no_orders'.tr()));
-        }
-
-        return FutureBuilder<Map<String, PostEntity>>(
-          future: _getPostsMap(filteredOrders),
-          builder: (BuildContext context,
-              AsyncSnapshot<Map<String, PostEntity>> postSnapshot) {
-            if (!postSnapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            final Map<String, PostEntity> postMap = postSnapshot.data!;
-            return SizedBox(
-              height: MediaQuery.of(context).size.height * 0.5,
-              child: ProfileOrderListview(
-                filteredOrders: filteredOrders,
-                postMap: postMap,
-                selectedStatus: widget.selectedStatus,
-              ),
-            );
-          },
         );
       },
     );
