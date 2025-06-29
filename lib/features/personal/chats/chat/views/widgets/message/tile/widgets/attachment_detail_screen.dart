@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../../../core/widgets/video_widget.dart';
 import '../../../../../../../../attachment/domain/entities/attachment_entity.dart';
 
@@ -105,25 +106,9 @@ class _AttachmentDetailScreenState extends State<AttachmentDetailScreen> {
 
   Widget _buildMediaContent(AttachmentEntity attachment) {
     if (attachment.type == AttachmentType.image) {
-      return Image.network(
-        attachment.url,
+      return CustomNetworkImage(
+        imageURL: attachment.url,
         fit: BoxFit.contain,
-        loadingBuilder: (BuildContext context, Widget child,
-            ImageChunkEvent? loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Center(
-            child: CircularProgressIndicator(
-              value: loadingProgress.expectedTotalBytes != null
-                  ? loadingProgress.cumulativeBytesLoaded /
-                      loadingProgress.expectedTotalBytes!
-                  : null,
-            ),
-          );
-        },
-        errorBuilder:
-            (BuildContext context, Object error, StackTrace? stackTrace) {
-          return const Center(child: Icon(Icons.error));
-        },
       );
     } else {
       return VideoWidget(

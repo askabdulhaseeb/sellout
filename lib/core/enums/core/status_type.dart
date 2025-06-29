@@ -33,7 +33,9 @@ enum StatusType {
   @HiveField(34)
   shipped('shipped', 'shipped', Colors.green, _greenBG),
   @HiveField(35)
-  active('active', 'active', Colors.green, _greenBG);
+  active('active', 'active', Colors.green, _greenBG),
+  @HiveField(36)
+  onHold('on-hold', 'on-hold', Colors.green, _greenBG);
 
   const StatusType(this.code, this.json, this.color, this.bgColor);
   final String code;
@@ -66,6 +68,8 @@ enum StatusType {
         return StatusType.inActive;
       case 'blocked':
         return StatusType.blocked;
+      case 'on-hold':
+        return StatusType.onHold;
       default:
         return StatusType.pending;
     }

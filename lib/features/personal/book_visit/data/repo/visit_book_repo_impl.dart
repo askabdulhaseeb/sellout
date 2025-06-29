@@ -27,7 +27,7 @@ class BookVisitRepoImpl implements BookVisitRepo {
   }
 
   @override
-  Future<DataState<VisitingEntity>> bookservice(BookServiceParams params) {
+  Future<DataState<bool>> bookservice(BookServiceParams params) {
     return bookvisitapi.bookService(params);
   }
 

@@ -42,18 +42,14 @@ class PostRemoteApiImpl implements PostRemoteApi {
 
       if (request != null) {
         debugPrint('[FeedAPI] Loaded posts from local cache ✅');
-        final Map<String, dynamic> jsonMap = json.decode(request.encodedData);
-        final List<dynamic> listt = jsonMap['response'];
-        final String? nextPageToken = jsonMap['nextPageToken'];
-
-        final List<PostEntity> posts =
-            listt.map<PostEntity>((item) => PostModel.fromJson(item)).toList();
+        final ParsedFeedResult parsed =
+            await compute(_parseFeedResponse, request.encodedData);
 
         return DataSuccess<GetFeedResponse>(
           '',
           GetFeedResponse(
-            nextPageToken: nextPageToken,
-            posts: posts,
+            nextPageToken: parsed.nextPageToken,
+            posts: parsed.posts,
           ),
         );
       }
@@ -73,25 +69,14 @@ class PostRemoteApiImpl implements PostRemoteApi {
             result.exception ?? CustomException('something_wrong'.tr()),
           );
         }
-
-        debugPrint('[FeedAPI] Parsing response data...');
-        final Map<String, dynamic> jsonMap = json.decode(raw);
-        final List<dynamic> listt = jsonMap['response'];
-        final String? nextPageToken = jsonMap['nextPageToken'];
-
-        final List<PostEntity> posts =
-            listt.map<PostEntity>((item) => PostModel.fromJson(item)).toList();
-
-        // Save raw API response
-        await LocalRequestHistory().save(
-          ApiRequestEntity(url: endpoint, encodedData: raw),
-        );
-        debugPrint('[FeedAPI] Next page token: $nextPageToken');
+        debugPrint('[FeedAPI] Parsing response data in isolate...');
+        final ParsedFeedResult parsed = await compute(_parseFeedResponse, raw);
+        debugPrint('[FeedAPI] Next page token: ${parsed.nextPageToken}');
         return DataSuccess<GetFeedResponse>(
           '',
           GetFeedResponse(
-            nextPageToken: nextPageToken,
-            posts: posts,
+            nextPageToken: parsed.nextPageToken,
+            posts: parsed.posts,
           ),
         );
       } else {
@@ -412,4 +397,22 @@ class PostRemoteApiImpl implements PostRemoteApi {
   //     return DataFailer<bool>(CustomException(e.toString()));
   //   }
   // }
+}
+
+class ParsedFeedResult {
+  final List<PostEntity> posts;
+  final String? nextPageToken;
+
+  ParsedFeedResult({required this.posts, this.nextPageToken});
+}
+
+ParsedFeedResult _parseFeedResponse(String rawJson) {
+  final Map<String, dynamic> jsonMap = json.decode(rawJson);
+  final List<dynamic> list = jsonMap['response'];
+  final String? nextPageToken = jsonMap['nextPageToken'];
+
+  final List<PostEntity> posts =
+      list.map<PostEntity>((item) => PostModel.fromJson(item)).toList();
+
+  return ParsedFeedResult(posts: posts, nextPageToken: nextPageToken);
 }

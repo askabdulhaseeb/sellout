@@ -20,7 +20,9 @@ class _HomePromoListSectionState extends State<HomePromoListSection> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<PromoProvider>(context, listen: false).getPromoOfFollower();
+      Future<void>.delayed(const Duration(milliseconds: 200), () {
+        Provider.of<PromoProvider>(context, listen: false).getPromoOfFollower();
+      });
     });
   }
 

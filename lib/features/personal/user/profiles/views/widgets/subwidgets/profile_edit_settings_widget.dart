@@ -21,6 +21,10 @@ class ProfileEditAndSettingsWidget extends StatelessWidget {
         GestureDetector(
           onTap: () {},
           child: PopupMenuButton<int>(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            offset: const Offset(-30, 30),
+            elevation: 15,
             color: Theme.of(context).scaffoldBackgroundColor,
             onSelected: (int value) {
               if (value == 1) {

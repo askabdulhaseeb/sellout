@@ -2,6 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/api_call.dart';
+import '../../../bookings/data/models/booking_model.dart';
+import '../../../bookings/data/sources/local_booking.dart';
 import '../../domain/params/hold_service_params.dart';
 import '../../domain/params/update_appointment_params.dart';
 import '../model/hold_service_payment_model.dart';
@@ -20,7 +22,7 @@ class AppointmentApiImpl implements AppointmentApi {
   ) async {
     try {
       debugPrint(json.encode(params.toMap()));
-      const String endpoint = '/booking/update/status';
+      const String endpoint = '/booking/update/?type=status';
       final DataState<bool> result = await ApiCall<bool>().call(
         endpoint: endpoint,
         requestType: ApiRequestType.patch,
@@ -28,7 +30,17 @@ class AppointmentApiImpl implements AppointmentApi {
         isAuth: true,
         isConnectType: true,
       );
-      return result;
+      if (result is DataSuccess) {
+        final Map<String, dynamic> jsonMap = json.decode(result.data ?? '');
+        final Map<String, dynamic> updatedMap = jsonMap['updatedBooking'];
+        final BookingModel booking = BookingModel.fromMap(updatedMap);
+        await LocalBooking().save(booking);
+        return DataSuccess<bool>(result.data ?? '', true);
+      } else {
+        return DataFailer<bool>(
+          CustomException(result.exception?.message ?? ''),
+        );
+      }
     } catch (e) {
       return DataFailer<bool>(CustomException(e.toString()));
     }

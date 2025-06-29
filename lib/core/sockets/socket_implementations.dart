@@ -1,3 +1,5 @@
+// ignore_for_file: always_specify_types
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';

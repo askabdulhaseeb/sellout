@@ -1,8 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-import 'loader.dart';
-
 class ProfilePhoto extends StatelessWidget {
   const ProfilePhoto({
     required this.url,
@@ -11,6 +9,7 @@ class ProfilePhoto extends StatelessWidget {
     this.size = 24,
     super.key,
   });
+
   final String? url;
   final bool isCircle;
   final double size;
@@ -18,44 +17,46 @@ class ProfilePhoto extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String placeholderText = placeholder.isEmpty
+    final String placeholderText = placeholder.isEmpty
         ? '/'
         : placeholder.length > 1
             ? placeholder.substring(0, 2)
             : placeholder;
-    return isCircle
-        ? CircleAvatar(
-            radius: size,
-            backgroundImage: url == null || (url?.isEmpty ?? true)
-                ? null
-                : CachedNetworkImageProvider(url!),
-            child: url == null || (url?.isEmpty ?? true)
-                ? Text(
-                    placeholderText.toUpperCase(),
-                    style: const TextStyle(fontWeight: FontWeight.w500),
-                  )
-                : null,
-          )
-        : ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: (url ?? '').startsWith('https://') ||
-                    (url ?? '').startsWith('http://')
-                ? CachedNetworkImage(
-                    imageUrl: url ?? '',
-                    height: size * 2,
-                    width: size * 2,
-                    fit: BoxFit.cover,
-                    placeholder: (BuildContext context, String url) =>
-                        const Loader(),
-                    errorWidget:
-                        (BuildContext context, String url, Object error) =>
-                            placeholderWidget(context, placeholderText),
-                  )
-                : placeholderWidget(context, placeholderText),
-          );
+
+    final bool isValidUrl = url != null &&
+        (url!.startsWith('http://') || url!.startsWith('https://'));
+
+    if (isCircle) {
+      return CircleAvatar(
+        radius: size,
+        backgroundImage: isValidUrl ? CachedNetworkImageProvider(url!) : null,
+        backgroundColor: Theme.of(context).dividerColor,
+        child: !isValidUrl
+            ? Text(
+                placeholderText.toUpperCase(),
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              )
+            : null,
+      );
+    }
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: isValidUrl
+          ? CachedNetworkImage(
+              imageUrl: url!,
+              height: size * 2,
+              width: size * 2,
+              fit: BoxFit.cover,
+              placeholder: (_, __) => _staticPlaceholder(context),
+              errorWidget: (_, __, ___) =>
+                  _textPlaceholder(context, placeholderText),
+            )
+          : _textPlaceholder(context, placeholderText),
+    );
   }
 
-  Widget placeholderWidget(BuildContext context, String placeholderText) {
+  Widget _textPlaceholder(BuildContext context, String placeholderText) {
     return Container(
       height: size * 2,
       width: size * 2,
@@ -65,6 +66,14 @@ class ProfilePhoto extends StatelessWidget {
         placeholderText.toUpperCase(),
         style: const TextStyle(fontWeight: FontWeight.w500),
       ),
+    );
+  }
+
+  Widget _staticPlaceholder(BuildContext context) {
+    return Container(
+      height: size * 2,
+      width: size * 2,
+      color: Theme.of(context).dividerColor.withOpacity(0.2),
     );
   }
 }

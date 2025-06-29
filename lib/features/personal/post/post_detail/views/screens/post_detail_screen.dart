@@ -23,7 +23,7 @@ import '../widgets/sellout_bank_guranter_widget.dart';
 
 class PostDetailScreen extends StatelessWidget {
   const PostDetailScreen({super.key});
-  static const String routeName = '/post-detail';
+  static const String routeName = '/product';
 
   @override
   Widget build(BuildContext context) {

@@ -20,8 +20,8 @@ class LocalBooking {
     }
   }
 
-  Future<void> save(BookingEntity user) async {
-    await _box.put(user.bookingID, user);
+  Future<void> save(BookingEntity booking) async {
+    await _box.put(booking.bookingID, booking);
   }
 
   Future<void> clear() async => await _box.clear();

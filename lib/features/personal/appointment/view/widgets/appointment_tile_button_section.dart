@@ -68,18 +68,18 @@ class AppointmentTileButtonSection extends StatelessWidget {
                           ),
                         ),
                         Expanded(
-                          child: CustomElevatedButton(
-                            title: 'change'.tr(),
-                            bgColor: Colors.transparent,
-                            padding: const EdgeInsets.symmetric(vertical: 6),
-                            border: Border.all(
-                                color: Theme.of(context).disabledColor),
-                            margin: const EdgeInsets.all(0),
-                            isLoading: false,
-                            onTap: () async =>
-                                await pro.onChange(context, booking),
-                          ),
-                        ),
+                            child: CustomElevatedButton(
+                          title: 'change'.tr(),
+                          bgColor: Colors.transparent,
+                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          border: Border.all(
+                              color: Theme.of(context).disabledColor),
+                          margin: const EdgeInsets.all(0),
+                          isLoading: false,
+                          onTap: () async {
+                            pro.onChange(context, booking);
+                          },
+                        ))
                       ],
                     ),
                     if (booking.paymentDetail?.status == StatusType.pending)

@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../enums/service_appointment_section_type.dart';
 import '../../providers/services_page_provider.dart';
 import 'pages/service_page_finished_appointment_section.dart';

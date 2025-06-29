@@ -14,6 +14,8 @@ class PersonalCartTotalSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final CartProvider cartPro =
+        Provider.of<CartProvider>(context, listen: false);
     return ValueListenableBuilder<Box<CartEntity>>(
       valueListenable: LocalCart().listenable(),
       builder: (BuildContext context, Box<CartEntity> box, _) {
@@ -44,8 +46,7 @@ class PersonalCartTotalSection extends StatelessWidget {
               CustomElevatedButton(
                 title: 'proceed_to_checkout'.tr(),
                 isLoading: false,
-                onTap: () =>
-                    Provider.of<CartProvider>(context, listen: false).page = 2,
+                onTap: () => cartPro.page = 2,
               ),
               const SizedBox(height: 24),
             ],

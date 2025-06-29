@@ -19,7 +19,7 @@ class OfferMessageTile extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pro = Provider.of<FeedProvider>(context, listen: false);
+    final FeedProvider pro = Provider.of<FeedProvider>(context, listen: false);
     debugPrint(message.offerDetail?.offerId);
     final ValueNotifier<PostEntity?> post = useState<PostEntity?>(null);
     final ValueNotifier<String?> offerStatus =

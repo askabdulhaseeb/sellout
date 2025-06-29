@@ -1,5 +1,8 @@
 class UpdateAppointmentParams {
-  UpdateAppointmentParams({required this.bookingID, required this.newStatus});
+  UpdateAppointmentParams({
+    required this.bookingID,
+    required this.newStatus,
+  });
 
   final String bookingID;
   final String newStatus;
@@ -9,5 +12,10 @@ class UpdateAppointmentParams {
       'status': newStatus,
       'booking_id': bookingID,
     };
+  }
+
+  @override
+  String toString() {
+    return 'UpdateAppointmentParams(bookingID: $bookingID, newStatus: $newStatus)';
   }
 }

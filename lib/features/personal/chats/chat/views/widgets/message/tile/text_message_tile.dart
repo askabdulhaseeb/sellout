@@ -14,6 +14,7 @@ class TextMessageTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(message.type?.code);
     final bool isMe = message.sendBy == LocalAuth.uid;
 
     return Padding(
@@ -36,26 +37,27 @@ class TextMessageTile extends StatelessWidget {
                   case AttachmentType.document:
                     return DocumentTile(attachment: attachment, isMe: isMe);
                   case AttachmentType.contacts:
-                    return ContactMessageTile(attachment: attachment, isMe: isMe);
+                    return ContactMessageTile(
+                        attachment: attachment, isMe: isMe);
                   case AttachmentType.location:
                     return Text('📍 Location: ${attachment.originalName}');
                   default:
                     return const Text('Unknown attachment type');
                 }
               }).toList(),
-
             // Handle image/video attachments in one widget
             if (message.fileUrl.isNotEmpty &&
                 (message.fileUrl.first.type == AttachmentType.image ||
-                 message.fileUrl.first.type == AttachmentType.video))
+                    message.fileUrl.first.type == AttachmentType.video))
               AttachmentMessageWidget(attachments: message.fileUrl),
-
             // Handle text
             if (message.text.isNotEmpty || message.text == ' ')
               Text(
                 message.text,
                 style: const TextStyle(color: Colors.black),
               ),
+              
+              
           ],
         ),
       ),

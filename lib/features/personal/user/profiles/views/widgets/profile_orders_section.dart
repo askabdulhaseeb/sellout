@@ -8,7 +8,7 @@ import '../../data/sources/local/local_orders.dart';
 import '../../domain/entities/order_entity.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/usecase/get_orders_buyer_id.dart';
-import 'list_types/profile_order_listview.dart';
+import 'list_types/profile_order_tile.dart';
 import '../../../../../../../core/widgets/custom_toggle_switch.dart';
 
 class ProfileOrdersSection extends StatefulWidget {
@@ -46,11 +46,11 @@ class _ProfileOrdersSectionState extends State<ProfileOrdersSection> {
                 selectedStatus.code)
             .toList();
         return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             CustomToggleSwitch<StatusType>(
               isShaded: false,
-              selectedColors: [
+              selectedColors: <Color>[
                 Theme.of(context).primaryColor,
                 Theme.of(context).colorScheme.secondary,
                 ColorScheme.of(context).outline

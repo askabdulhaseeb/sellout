@@ -1,8 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import '../../../../business/business_page/domain/params/get_business_bookings_params.dart';
-import '../../../../business/business_page/domain/usecase/get_business_bookings_list_usecase.dart';
+import '../../../../business/business_page/domain/usecase/get_my_bookings_usecase.dart';
 import '../../../../business/core/domain/entity/business_entity.dart';
+import '../../../../business/core/domain/entity/service/service_entity.dart';
+import '../../../book_visit/view/screens/booking_screen.dart';
 import '../../../bookings/domain/entity/booking_entity.dart';
 import '../../../user/profiles/domain/entities/user_entity.dart';
 import '../../../../../core/functions/app_log.dart';
@@ -20,12 +23,20 @@ class AppointmentTileProvider extends ChangeNotifier {
       this._holdServicePaymentUsecase, this._getBookingUsecase);
   final UpdateAppointmentUsecase _updateAppointmentUsecase;
   final HoldServicePaymentUsecase _holdServicePaymentUsecase;
-  final GetBookingsListUsecase _getBookingUsecase;
+  final GetMyBookingsListUsecase _getBookingUsecase;
 //
   BusinessEntity? _business;
   BusinessEntity? get business => _business;
-  void setbusiness(BusinessEntity data) {
+  void setbusiness(BusinessEntity? data) {
     _business = data;
+    notifyListeners();
+  }
+
+//
+  ServiceEntity? _service;
+  ServiceEntity? get service => _service;
+  void setService(ServiceEntity? data) {
+    _service = data;
     notifyListeners();
   }
 
@@ -51,8 +62,8 @@ class AppointmentTileProvider extends ChangeNotifier {
       if (booking.bookingID == null) return;
       setLoading(true);
       final DataState<bool> result =
-          await _updateAppointmentUsecase(UpdateAppointmentParams(
-        bookingID: booking.bookingID!,
+          await _updateAppointmentUsecase.call(UpdateAppointmentParams(
+        bookingID: booking.bookingID ?? '',
         newStatus: 'cancel',
       ));
       if (result is DataSuccess) {
@@ -60,15 +71,14 @@ class AppointmentTileProvider extends ChangeNotifier {
         return;
       } else {
         AppSnackBar.showSnackBar(
-          // ignore: use_build_context_synchronously
-          context, result.exception?.message ?? 'something_wrong',
+          context,
+          result.exception?.message ?? 'something_wrong',
         );
         setLoading(false);
         return;
       }
     } catch (e) {
       AppSnackBar.showSnackBar(
-        // ignore: use_build_context_synchronously
         context,
         e.toString(),
       );
@@ -85,7 +95,18 @@ class AppointmentTileProvider extends ChangeNotifier {
   Future<void> onBookAgain(BuildContext context, BookingEntity booking) async {}
   Future<void> onLeaveReview(
       BuildContext context, BookingEntity booking) async {}
-  Future<void> onChange(BuildContext context, BookingEntity booking) async {}
+  Future<void> onChange(BuildContext context, BookingEntity booking) async {
+    Navigator.pushNamed(
+      context,
+      BookingScreen.routeName,
+      arguments: <String, dynamic>{
+        'booking': booking,
+        'service': service,
+        'business': business
+      },
+    );
+  }
+
   Future<void> onPayNow(BuildContext context, BookingEntity booking) async {
     final HoldServiceParams holdServiceParams = HoldServiceParams(
       currency: user?.currency ?? '',
@@ -126,7 +147,6 @@ class AppointmentTileProvider extends ChangeNotifier {
         ),
       );
       await Stripe.instance.presentPaymentSheet();
-      // ignore: use_build_context_synchronously
       updateBooking(context, holdserviceresponse.bookingId);
       showSuccessBottomSheet(context);
     } on StripeException catch (e) {
@@ -137,7 +157,6 @@ class AppointmentTileProvider extends ChangeNotifier {
       );
     } catch (e) {
       // Handle general errors
-      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Something went wrong')),
       );
