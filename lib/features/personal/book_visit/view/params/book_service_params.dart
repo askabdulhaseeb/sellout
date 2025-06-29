@@ -1,10 +1,8 @@
 class BookServiceParams {
   BookServiceParams({
     required this.servicesAndEmployees,
-    required this.businessId,
   });
   final List<ServiceAndEmployee> servicesAndEmployees;
-  final String businessId;
 
   // Convert to Map
   Map<String, dynamic> toMap() {
@@ -12,7 +10,6 @@ class BookServiceParams {
       'services_and_employees': servicesAndEmployees
           .map((ServiceAndEmployee service) => service.toMap())
           .toList(),
-      'business_id': businessId,
     };
   }
 }

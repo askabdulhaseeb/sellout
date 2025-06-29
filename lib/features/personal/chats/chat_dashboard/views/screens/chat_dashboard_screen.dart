@@ -8,26 +8,42 @@ import '../widgets/chat_dashboard_list_seaction.dart';
 import '../widgets/chat_dashboard_searchable_widget.dart';
 import '../widgets/chat_selectable_page_type_widget.dart';
 
-class ChatDashboardScreen extends StatelessWidget {
+class ChatDashboardScreen extends StatefulWidget {
   const ChatDashboardScreen({super.key});
   static const String routeName = '/chats';
+
+  @override
+  State<ChatDashboardScreen> createState() => _ChatDashboardScreenState();
+}
+
+class _ChatDashboardScreenState extends State<ChatDashboardScreen> {
+  late Future<DataState<List<ChatEntity>>> _future;
+
+  @override
+  void initState() {
+    super.initState();
+    _future = Future.delayed(const Duration(milliseconds: 300), () {
+      return Provider.of<ChatDashboardProvider>(context, listen: false)
+          .getChats();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return PersonalScaffold(
       body: FutureBuilder<DataState<List<ChatEntity>>>(
-          future: Provider.of<ChatDashboardProvider>(context, listen: false)
-              .getChats(),
-          builder: (BuildContext context,
-              AsyncSnapshot<DataState<List<ChatEntity>>> snapshot) {
-            return const Column(
-              children: <Widget>[
-                ChatSelectablePageTypeWidget(),
-                ChatDashboardSearchableWidget(),
-                ChatDashboardListSeaction(),
-              ],
-            );
-          }),
+        future: _future,
+        builder: (BuildContext context,
+            AsyncSnapshot<DataState<List<ChatEntity>>> snapshot) {
+          return const Column(
+            children: <Widget>[
+              ChatSelectablePageTypeWidget(),
+              ChatDashboardSearchableWidget(),
+              ChatDashboardListSeaction(),
+            ],
+          );
+        },
+      ),
     );
   }
 }

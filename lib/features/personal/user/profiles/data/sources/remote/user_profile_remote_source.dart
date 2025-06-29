@@ -28,39 +28,60 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
     if (value.isEmpty) {
       return DataFailer<UserEntity?>(CustomException('User ID is null'));
     }
+
     final String endpoint = '/noAuth/entity/$value';
+
     try {
+      // Check local cache first
       ApiRequestEntity? request = await LocalRequestHistory().request(
-          endpoint: endpoint,
-          duration: kDebugMode
-              ? const Duration(minutes: 10)
-              : const Duration(hours: 1));
+        endpoint: endpoint,
+        duration:
+            kDebugMode ? const Duration(minutes: 10) : const Duration(hours: 1),
+      );
+
       if (request != null) {
         final DataState<UserEntity?> local = LocalUser().userState(value);
         if (local is DataSuccess<UserEntity?> && local.entity != null) {
           return local;
         }
       }
-      //
-      //
+
+      // Call network
       final DataState<bool> result = await ApiCall<bool>().call(
         endpoint: endpoint,
         isAuth: false,
         isConnectType: false,
         requestType: ApiRequestType.get,
       );
-      //
+
       if (result is DataSuccess<bool>) {
-        final String data = result.data ?? '';
-        final UserEntity entity = UserModel.fromRawJson(data);
+        final String rawJson = result.data ?? '';
+
+        if (rawJson.isEmpty) {
+          return DataFailer<UserEntity?>(
+              CustomException('User response empty'));
+        }
+
+        // ⛓️ Offload parsing to a background isolate
+        final UserEntity entity =
+            await compute<String, UserEntity>(_parseUserEntity, rawJson);
+
+        // Save for local caching
         await LocalUser().save(entity);
-        return DataSuccess<UserEntity>(data, entity);
+
+        return DataSuccess<UserEntity>(rawJson, entity);
       }
+
       return DataFailer<UserEntity?>(CustomException('User not found'));
     } catch (e) {
       debugPrint('GetUserAPI.user: catch $e - $endpoint');
+      return DataFailer<UserEntity?>(CustomException('User not found'));
     }
-    return DataFailer<UserEntity?>(CustomException('User not found'));
+  }
+
+// ✅ Helper top-level function for isolate-safe parsing
+  UserEntity _parseUserEntity(String jsonStr) {
+    return UserModel.fromRawJson(jsonStr);
   }
 
   @override

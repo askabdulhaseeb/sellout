@@ -17,7 +17,7 @@ class PersonalCartPageTile extends StatelessWidget {
               title: 'shopping_basket'.tr(),
               isActive: cartPro.page == 1,
               onTap: () {
-                cartPro.page = 1;
+                // cartPro.page = 1;
               }),
           Container(
             height: 3,
@@ -28,7 +28,7 @@ class PersonalCartPageTile extends StatelessWidget {
               title: 'checkout'.tr(),
               isActive: cartPro.page == 2,
               onTap: () {
-                cartPro.page = 2;
+                // cartPro.page = 2;
               }),
           // Container(
           //   height: 3,

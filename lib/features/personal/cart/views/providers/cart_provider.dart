@@ -47,6 +47,14 @@ class CartProvider extends ChangeNotifier {
   CartItemType _basketPage = CartItemType.cart;
   CartItemType get basketPage => _basketPage;
 //
+  // bool _isLoading = false;
+  // bool get isLoading => _isLoading;
+  // void setloading(bool value) {
+  //   _isLoading = value;
+  //   notifyListeners();
+  // }
+
+//
   AddressEntity? _address = (LocalAuth.currentUser?.address != null &&
           LocalAuth.currentUser!.address
               .where((AddressEntity element) => element.isDefault)
@@ -107,7 +115,7 @@ class CartProvider extends ChangeNotifier {
         error: e,
       );
       return DataFailer<CheckOutEntity>(CustomException(e.toString()));
-    }
+    } finally {}
   }
 
   Future<DataState<bool>> updateStatus(CartItemEntity value) async {
@@ -121,7 +129,7 @@ class CartProvider extends ChangeNotifier {
         error: e,
       );
       return DataFailer<bool>(CustomException(e.toString()));
-    }
+    } finally {}
   }
 
   Future<DataState<bool>> removeItem(String id) async {
@@ -134,7 +142,7 @@ class CartProvider extends ChangeNotifier {
         error: e,
       );
       return DataFailer<bool>(CustomException(e.toString()));
-    }
+    } finally {}
   }
 
   Future<DataState<bool>> updateQty(CartItemEntity cartItem, int qty) async {
@@ -184,6 +192,8 @@ class CartProvider extends ChangeNotifier {
   }
 
   Future<DataState<PaymentIntent>> processPayment() async {
+    // setloading(true);
+
     try {
       // Step 1: Get billing details
       final DataState<bool> billingState = await getBillingDetails();
@@ -212,13 +222,14 @@ class CartProvider extends ChangeNotifier {
           await Stripe.instance.retrievePaymentIntent(clientSecret);
       return DataSuccess<PaymentIntent>('', paymentIntent);
     } catch (e, stc) {
-      AppLog.error(
-        e.toString(),
-        name: 'CartProvider.processPayment - Catch',
-        error: e,
-      );
+      AppLog.error(e.toString(),
+          name: 'CartProvider.processPayment - Catch',
+          error: e,
+          stackTrace: stc);
       debugPrint('Error in processPayment: $e\n$stc');
       return DataFailer<PaymentIntent>(CustomException(e.toString()));
+    } finally {
+      // setloading(false);
     }
   }
 

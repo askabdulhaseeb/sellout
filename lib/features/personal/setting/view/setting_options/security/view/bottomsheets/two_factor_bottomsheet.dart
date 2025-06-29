@@ -5,6 +5,7 @@ import '../../../../../../../../services/get_it.dart';
 import '../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../../user/profiles/domain/usecase/edit_profile_detail_usecase.dart';
 import '../../../../../../user/profiles/views/params/update_user_params.dart';
+import '../../../../../../../../core/widgets/custom_switch_list_tile.dart'; // Adjust path as needed
 
 class TwoFactorAuthBottomSheet extends StatefulWidget {
   const TwoFactorAuthBottomSheet({super.key});
@@ -38,6 +39,9 @@ class _TwoFactorAuthBottomSheetState extends State<TwoFactorAuthBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -45,54 +49,48 @@ class _TwoFactorAuthBottomSheetState extends State<TwoFactorAuthBottomSheet> {
         children: <Widget>[
           Text(
             'two_step_verification'.tr(),
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: textTheme.bodyMedium,
           ),
           const SizedBox(height: 4),
           Text(
             'verify_with_4_digit_code'.tr(),
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.outline,
-                  letterSpacing: 0.25,
-                ),
+            style: textTheme.bodySmall?.copyWith(
+              color: colorScheme.outline,
+              letterSpacing: 0.25,
+            ),
           ),
           const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              const Text('Enable 2FA'),
-              Switch(
-                value: isTwoFactorEnabled,
-                onChanged: (bool value) async {
-                  if (uid.isEmpty) {
-                    debugPrint('UID is empty');
-                    return;
-                  }
 
-                  final DataState<String> result = await usecase.call(
-                    UpdateUserParams(
-                      uid: uid,
-                      twoFactorAuth: value,
-                    ),
-                  );
-
-                  debugPrint('2FA update result: $result');
-
-                  if (result is DataSuccess) {
-                    await _updateLocalUser(value);
-
-                    setState(() {
-                      isTwoFactorEnabled = value;
-                    });
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Failed to update 2FA status'),
-                      ),
-                    );
-                  }
-                },
-              ),
-            ],
+          // ✅ Use custom switch tile
+          CustomSwitchListTile(
+            title: 'enable_2fa'.tr(),
+            value: isTwoFactorEnabled,
+            onChanged: (bool value) async {
+              if (uid.isEmpty) {
+                debugPrint('UID is empty');
+                return;
+              }
+              final DataState<String> result = await usecase.call(
+                UpdateUserParams(
+                  uid: uid,
+                  twoFactorAuth: value,
+                ),
+              );
+              debugPrint('2FA update result: $result');
+              if (result is DataSuccess) {
+                await _updateLocalUser(value);
+                setState(() {
+                  isTwoFactorEnabled = value;
+                });
+              } else {
+                // ignore: use_build_context_synchronously
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('something_wrong'.tr()),
+                  ),
+                );
+              }
+            },
           ),
         ],
       ),

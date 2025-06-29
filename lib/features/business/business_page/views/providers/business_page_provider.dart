@@ -12,7 +12,7 @@ import '../../../core/domain/usecase/get_business_by_id_usecase.dart';
 import '../../domain/entities/services_list_responce_entity.dart';
 import '../../domain/params/get_business_bookings_params.dart';
 import '../../domain/params/get_business_serives_param.dart';
-import '../../domain/usecase/get_business_bookings_list_usecase.dart';
+import '../../domain/usecase/get_bookings_by_service_id_usecase.dart';
 import '../../domain/usecase/get_services_list_by_business_id_usecase.dart';
 import '../enum/business_page_tab_type.dart';
 
@@ -23,14 +23,12 @@ class BusinessPageProvider extends ChangeNotifier {
     this._getReviewsUsecase,
     this._getPostByIdUsecase,
     this._getBookingsListUsecase,
-
   );
   final GetBusinessByIdUsecase _byID;
   final GetServicesListByBusinessIdUsecase _servicesListUsecase;
   final GetReviewsUsecase _getReviewsUsecase;
   final GetPostByIdUsecase _getPostByIdUsecase;
-  final GetBookingsListUsecase _getBookingsListUsecase;
-
+  final GetBookingsByServiceIdListUsecase _getBookingsListUsecase;
 
   BusinessEntity? _business;
   BusinessEntity? get business => _business;
@@ -160,4 +158,4 @@ class BusinessPageProvider extends ChangeNotifier {
     );
     return result;
   }
- }
+}

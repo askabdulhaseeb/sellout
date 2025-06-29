@@ -63,4 +63,38 @@ class OrderEntity {
 
   @HiveField(13)
   final String businessId;
+
+  OrderEntity copyWith({
+    String? orderId,
+    String? buyerId,
+    String? sellerId,
+    String? postId,
+    String? orderStatus,
+    String? orderType,
+    double? price,
+    double? totalAmount,
+    int? quantity,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    OrderPaymentDetailEntity? paymentDetail,
+    AddressEntity? shippingAddress,
+    String? businessId,
+  }) {
+    return OrderEntity(
+      orderId: orderId ?? this.orderId,
+      buyerId: buyerId ?? this.buyerId,
+      sellerId: sellerId ?? this.sellerId,
+      postId: postId ?? this.postId,
+      orderStatus: orderStatus ?? this.orderStatus,
+      orderType: orderType ?? this.orderType,
+      price: price ?? this.price,
+      totalAmount: totalAmount ?? this.totalAmount,
+      quantity: quantity ?? this.quantity,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      paymentDetail: paymentDetail ?? this.paymentDetail,
+      shippingAddress: shippingAddress ?? this.shippingAddress,
+      businessId: businessId ?? this.businessId,
+    );
+  }
 }

@@ -24,7 +24,13 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
-    Provider.of<ChatProvider>(context, listen: false).getMessages();
+    Future<void>.delayed(
+        const Duration(
+          milliseconds: 300,
+        ), () {
+      Provider.of<ChatProvider>(context, listen: false).getMessages();
+    });
+
     super.initState();
   }
 

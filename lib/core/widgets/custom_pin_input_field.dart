@@ -30,7 +30,7 @@ class CustomPinInputField extends StatefulWidget {
 class CustomPinInputFieldState extends State<CustomPinInputField> {
   late List<TextEditingController> _controllers;
   late List<FocusNode> _focusNodes;
-  bool _isPasting = false;
+  final bool _isPasting = false;
 
   @override
   void initState() {

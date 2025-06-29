@@ -29,6 +29,8 @@ class BookVisitButton extends StatelessWidget {
           onTap: () {
             if (post != null) {
               if (provider.messageentity == null) {
+                debugPrint('booking visit');
+
                 provider.bookVisit(context, post!.postID);
               } else {
                 provider.updateVisit(
@@ -41,8 +43,8 @@ class BookVisitButton extends StatelessWidget {
                     messageId: provider.messageentity!.messageId);
               }
             } else if (service != null) {
-              provider.bookService(
-                  context, service!.serviceID, service!.businessID);
+              debugPrint('booking service');
+              provider.bookService(context, service!.serviceID);
             } else {
               debugPrint('both null');
             }

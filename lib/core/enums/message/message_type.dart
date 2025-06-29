@@ -36,6 +36,8 @@ enum MessageType {
   removeParticipant('remove_participant', 'remove_participant'),
   @HiveField(14)
   leaveGroup('leave_group', 'leave_group'),
+  @HiveField(15)
+  simple('simple', 'simple'),
   @HiveField(99)
   none('none', 'none');
 
@@ -51,7 +53,8 @@ enum MessageType {
         value != 'remove_participant' &&
         value != 'offer' &&
         value != 'visiting' &&
-        value != 'leave_group') {
+        value != 'leave_group' &&
+        value != 'simple') {
       AppLog.error(
         'MessageType.fromvalue: $value',
         name: 'MessageType.fromJson - if',

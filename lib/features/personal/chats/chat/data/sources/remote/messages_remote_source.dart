@@ -6,6 +6,7 @@ import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/api_call.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../../post/domain/params/share_in_chat_params.dart';
 import '../../../../chat_dashboard/data/models/chat/chat_model.dart';
 import '../../../../chat_dashboard/data/models/chat/participant/chat_participant_model.dart';
 import '../../../../chat_dashboard/data/models/message/message_model.dart';
@@ -31,6 +32,7 @@ abstract interface class MessagesRemoteSource {
   Future<DataState<bool>> acceptGorupInvite(String groupId);
   Future<DataState<bool>> removeParticipants(LeaveGroupParams params);
   Future<DataState<bool>> sendInviteToGroup(SendGroupInviteParams params);
+  Future<DataState<bool>> sharePostToChat(ShareInChatParams params);
 }
 
 class MessagesRemoteSourceImpl implements MessagesRemoteSource {
@@ -296,6 +298,40 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
           error: CustomException(e.toString()),
           stackTrace: stc);
       return DataFailer<bool>(CustomException(e.toString()));
+    }
+  }
+
+  @override
+  Future<DataState<bool>> sharePostToChat(ShareInChatParams params) async {
+    try {
+      final String endpoint = '/chat/share/${params.endPointChatType}';
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.post,
+        body: jsonEncode(params.toMap()),
+      );
+
+      if (result is DataSuccess) {
+        debugPrint('✅ [sharePostToChat] Share success: ${result.data}');
+        return DataSuccess<bool>(result.data ?? '', true);
+      } else {
+        AppLog.error(
+          'Failed to share post to chat. Params: ${params.toMap()}',
+          name: 'MessagesRemoteSourceImpl.sharePostToChat → else',
+          error: result.exception?.message,
+        );
+        return DataFailer<bool>(
+          result.exception ?? CustomException('something_wrong'.tr()),
+        );
+      }
+    } catch (e, stc) {
+      AppLog.error(
+        'Exception occurred while sharing post to chat.',
+        name: 'MessagesRemoteSourceImpl.sharePostToChat → Exception',
+        error: e.toString(),
+        stackTrace: stc,
+      );
+      return DataFailer<bool>(CustomException('something_wrong'.tr()));
     }
   }
 

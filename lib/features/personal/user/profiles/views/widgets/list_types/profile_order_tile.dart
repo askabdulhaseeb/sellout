@@ -24,16 +24,15 @@ class ProfileOrderTile extends StatelessWidget {
       future: LocalPost().getPost(order.postId),
       builder: (BuildContext context, AsyncSnapshot<PostEntity?> snapshot) {
         final PostEntity? post = snapshot.data;
-
         return InkWell(
-          onTap: () => showModalBottomSheet(
-            useSafeArea: true,
-            isScrollControlled: true,
-            context: context,
-            builder: (_) => OrderDetailsScreen(orderId: order.orderId),
-          ),
+          onTap: () {
+            Navigator.pushNamed(context, OrderDetailsScreen.routeName,
+                arguments: <String, dynamic>{
+                  'order-id': order.orderId,
+                });
+          },
           child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+            margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
               border: Border.all(

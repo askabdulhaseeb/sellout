@@ -6,6 +6,7 @@ import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import 'tile/alert_message_tile.dart';
+import 'tile/link_message_tile.dart';
 import 'tile/offer_message_tile.dart';
 import 'tile/visiting_message_tile.dart';
 import 'tile/text_message_tile.dart';
@@ -62,7 +63,7 @@ class MessageTile extends StatelessWidget {
                   ),
                 ),
               MessageType.none == message.type
-                  ? TextMessageTile(message: message)
+                  ? Text(message.displayText)
                   : MessageType.text == message.type
                       ? TextMessageTile(message: message)
                       : MessageType.invitationParticipant == message.type ||
@@ -74,9 +75,13 @@ class MessageTile extends StatelessWidget {
                               ? VisitingMessageTile(message: message)
                               : MessageType.offer == message.type
                                   ? OfferMessageTile(message: message)
-                                  : Text(
-                                      '${message.displayText} - ${message.type?.code.tr()}',
-                                    )
+                                  : MessageType.simple == message.type
+                                      ? SimpleMessageTile(
+                                          message: message,
+                                        )
+                                      : Text(
+                                          '${message.displayText} - ${message.type?.code.tr()}',
+                                        )
             ],
           );
   }

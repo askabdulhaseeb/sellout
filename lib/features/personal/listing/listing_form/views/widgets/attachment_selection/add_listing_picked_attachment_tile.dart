@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../core/widgets/video_widget.dart';
 import '../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../../attachment/domain/entities/picked_attachment.dart';
@@ -59,8 +60,8 @@ class ListingAttachmentTile extends StatelessWidget {
                             File(attachment!.file.path),
                             fit: BoxFit.cover,
                           )
-                        : Image.network(
-                            imageUrl!.url,
+                        : CustomNetworkImage(
+                            imageURL: imageUrl!.url,
                             fit: BoxFit.cover,
                           ),
               ),

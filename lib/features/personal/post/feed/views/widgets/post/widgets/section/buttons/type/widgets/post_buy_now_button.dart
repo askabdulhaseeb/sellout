@@ -69,8 +69,6 @@ class PostBuyNowButton extends StatelessWidget {
     return CustomElevatedButton(
       onTap: () => _buyNow(context),
       title: 'buy_now'.tr(),
-      bgColor: Theme.of(context).primaryColor,
-      textColor: ColorScheme.of(context).onPrimary,
       isLoading: false,
     );
   }

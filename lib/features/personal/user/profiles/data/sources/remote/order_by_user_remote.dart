@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/api_call.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -23,9 +21,7 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
           CustomException('userId is empty'),
         );
       }
-
       final String endpoint = '/orders/query?seller_id=$id';
-
       // 🌐 Always hit network
       final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,
@@ -105,11 +101,22 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
       );
       AppLog.info('order updated: ${result.data ?? ''}');
       if (result is DataSuccess) {
-        debugPrint(result.data);
+        // 🟢 Get existing order from local Hive
+        final OrderEntity? order = LocalOrders().get(params.orderId);
+
+        if (order != null) {
+          // 🟢 Create updated copy with new status
+          final OrderEntity updatedOrder = order.copyWith(
+            orderStatus: params.status,
+          );
+
+          await LocalOrders().save(updatedOrder);
+        }
+
         return DataSuccess<bool>(result.data ?? '', true);
       } else {
         AppLog.error(
-          result.exception?.message ?? 'somethig_wrong',
+          result.exception?.message ?? 'something_wrong',
           name: 'PostByUserRemoteImpl.updateOrder - else',
         );
         return DataFailer<bool>(
@@ -117,12 +124,14 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
         );
       }
     } catch (e, stc) {
-      AppLog.error(e.toString(),
-          name: 'PostByUserRemoteImpl.updateOrder - catch',
-          error: e,
-          stackTrace: stc);
+      AppLog.error(
+        e.toString(),
+        name: 'PostByUserRemoteImpl.updateOrder - catch',
+        error: e,
+        stackTrace: stc,
+      );
       return DataFailer<bool>(
-        CustomException('Failed to Update order'),
+        CustomException('Failed to update order'),
       );
     }
   }

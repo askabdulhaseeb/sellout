@@ -5,6 +5,7 @@ import '../../../more_info/views/screens/personal_more_information_setting_scree
 import '../../../view/setting_options/setting_notification/view/screens/personal_setting_notification_screen.dart';
 import '../../../view/setting_options/security/view/screens/setting_security_screen.dart';
 import '../widgets/personal_setting_tile.dart';
+import 'pages/personal_setting_account.dart';
 
 class PersonalSettingScreen extends StatelessWidget {
   const PersonalSettingScreen({super.key});
@@ -22,7 +23,9 @@ class PersonalSettingScreen extends StatelessWidget {
             child: PersonalSettingTile(
               icon: Icons.person_2_outlined,
               title: 'account'.tr(),
-              onTap: () {},
+              onTap: () {
+                Navigator.pushNamed(context, AccountSettingsScreen.routeName);
+              },
             ),
           ),
           InDevMode(

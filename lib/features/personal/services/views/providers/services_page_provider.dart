@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-
 import '../../../../../core/enums/business/services/service_category_type.dart'
     show ServiceCategoryType;
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/api_call.dart';
 import '../../../../business/business_page/domain/entities/services_list_responce_entity.dart';
 import '../../../../business/business_page/domain/params/get_business_bookings_params.dart';
-import '../../../../business/business_page/domain/usecase/get_business_bookings_list_usecase.dart';
+import '../../../../business/business_page/domain/usecase/get_my_bookings_usecase.dart';
 import '../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../../business/core/domain/usecase/get_business_by_id_usecase.dart';
@@ -27,36 +26,47 @@ class ServicesPageProvider extends ChangeNotifier {
       this._getBusinessByIdUsecase,
       this._getServiceByCategory);
   final GetSpecialOfferUsecase _getSpecialOfferUsecase;
-  final GetBookingsListUsecase _getBookingsListUsecase;
+  final GetMyBookingsListUsecase _getBookingsListUsecase;
   final GetBusinessByIdUsecase _getBusinessByIdUsecase;
   final GetServiceCategoryUsecase _getServiceByCategory;
   //
   final Map<String, bool> _expandedDescriptions = <String, bool>{};
+  bool isDescriptionExpanded(String serviceId) {
+    return _expandedDescriptions[serviceId] ?? false;
+  }
 
-  List<ServiceEntity> _categorizedServices = <ServiceEntity>[];
-  bool _isLoading = false;
-  String? _nextKey;
-  bool _hasMore = true;
+  void toggleDescription(String serviceId) {
+    _expandedDescriptions[serviceId] = !isDescriptionExpanded(serviceId);
+    notifyListeners();
+  }
 
-  // Getter for services
-  List<ServiceEntity> get categorizedServices => _categorizedServices;
-
-  // Getter for loading
-  bool get isLoading => _isLoading;
-
-  // Getter for load more condition
-  bool get hasMore => _hasMore;
+  //
+  ServiceCategoryType? _selectedCategory;
+  ServiceCategoryType? get selectedCategory => _selectedCategory;
+  void setSelectedCategory(ServiceCategoryType category) {
+    _selectedCategory = category;
+    notifyListeners();
+  }
 
   // Set loading state
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
   }
 
+  //
+  List<ServiceEntity> _categorizedServices = <ServiceEntity>[];
+  List<ServiceEntity> get categorizedServices => _categorizedServices;
   void clearCategorizedServices() {
     _categorizedServices = <ServiceEntity>[];
   }
 
+  //
+  bool get hasMore => _hasMore;
+  bool _hasMore = true;
+  String? _nextKey;
   // Initial fetch
   Future<void> fetchServicesByCategory(ServiceCategoryType category) async {
     if (_isLoading) return;
@@ -81,12 +91,9 @@ class ServicesPageProvider extends ChangeNotifier {
   // // Load more for pagination
   // Future<void> loadMoreServices(ServiceCategoryType category) async {
   //   if (_isLoading || !_hasMore) return;
-
   //   _setLoading(true);
-
   //   final DataState<ServicesListResponceEntity> result =
   //       await _getServiceByCategory.call(category);
-
   //   if (result is DataSuccess) {
   //     final ServicesListResponceEntity? servicesEntity = result.entity;
   //     _categorizedServices
@@ -94,19 +101,8 @@ class ServicesPageProvider extends ChangeNotifier {
   //     _nextKey = servicesEntity?.nextKey;
   //     _hasMore = _nextKey != null;
   //   }
-
   //   _setLoading(false);
   // }
-
-  bool isDescriptionExpanded(String serviceId) {
-    return _expandedDescriptions[serviceId] ?? false;
-  }
-
-  void toggleDescription(String serviceId) {
-    _expandedDescriptions[serviceId] = !isDescriptionExpanded(serviceId);
-    notifyListeners();
-  }
-
   //
   Future<List<ServiceEntity>> getSpecialOffer() async {
     try {
@@ -129,14 +125,12 @@ class ServicesPageProvider extends ChangeNotifier {
     return _specialOffer;
   }
 
-  Future<List<BookingEntity>> getBookings({bool isForces = false}) async {
-    if (isForces == false && _bookings.isNotEmpty) return _bookings;
+  Future<List<BookingEntity>> getBookings() async {
     try {
       //
       final DataState<List<BookingEntity>> result =
           await _getBookingsListUsecase(
               GetBookingsParams(userID: LocalAuth.uid));
-
       if (result is DataSuccess) {
         _bookings = result.entity ?? <BookingEntity>[];
         notifyListeners();

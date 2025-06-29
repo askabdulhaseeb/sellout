@@ -1,4 +1,5 @@
 import '../../../../../../core/sources/data_state.dart';
+import '../../../../post/domain/params/share_in_chat_params.dart';
 import '../../domain/entities/getted_message_entity.dart';
 import '../../domain/params/leave_group_params.dart';
 import '../../domain/params/send_invite_to_group_params.dart';
@@ -29,17 +30,23 @@ class MessageRepositoryImpl implements MessageRepository {
   }
 
   @override
-  Future<DataState<bool>> acceptGorupInvite(String groupId)async{
+  Future<DataState<bool>> acceptGorupInvite(String groupId) async {
     return await remoteSource.acceptGorupInvite(groupId);
-    }
+  }
 
   @override
-       Future<DataState<bool>> removeParticipants(LeaveGroupParams params)
-async{
+  Future<DataState<bool>> removeParticipants(LeaveGroupParams params) async {
     return await remoteSource.removeParticipants(params);
-    }
- @override
- Future<DataState<bool>> sendInviteToGroup(SendGroupInviteParams params)async{
+  }
+
+  @override
+  Future<DataState<bool>> sendInviteToGroup(
+      SendGroupInviteParams params) async {
     return await remoteSource.sendInviteToGroup(params);
-    }
+  }
+
+  @override
+  Future<DataState<bool>> sharePostToChat(ShareInChatParams params) async {
+    return await remoteSource.sharePostToChat(params);
+  }
 }

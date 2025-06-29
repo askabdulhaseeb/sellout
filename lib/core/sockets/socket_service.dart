@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:socket_io_client/socket_io_client.dart' as io;
 import '../../features/personal/auth/signin/data/sources/local/local_auth.dart';
 import '../functions/app_log.dart';
 import 'socket_implementations.dart';
@@ -8,7 +8,7 @@ import 'socket_implementations.dart';
 class SocketService with WidgetsBindingObserver {
   SocketService(this._socketImplementations);
   final SocketImplementations _socketImplementations;
-  IO.Socket? socket;
+  io.Socket? socket;
   bool _isInitialized = false;
 
   bool get isConnected => socket?.connected ?? false;
@@ -33,7 +33,7 @@ class SocketService with WidgetsBindingObserver {
 
     if (socket != null && socket!.connected) return;
 
-    socket = IO.io(baseUrl, <String, dynamic>{
+    socket = io.io(baseUrl, <String, dynamic>{
       'transports': <String>['websocket'],
       'autoConnect': true,
       'reconnection': true,

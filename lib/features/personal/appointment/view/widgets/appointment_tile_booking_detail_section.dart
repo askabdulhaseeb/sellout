@@ -1,10 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../business/core/data/sources/local_business.dart';
 import '../../../../business/core/data/sources/service/local_service.dart';
 import '../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../bookings/domain/entity/booking_entity.dart';
+import '../providers/appointment_tile_provider.dart';
 
 class AppointmentTileBookingDetailSection extends StatelessWidget {
   const AppointmentTileBookingDetailSection({required this.booking, super.key});
@@ -12,6 +14,8 @@ class AppointmentTileBookingDetailSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AppointmentTileProvider pro =
+        Provider.of<AppointmentTileProvider>(context, listen: false);
     return FutureBuilder<BusinessEntity?>(
       future: LocalBusiness().getBusiness(booking.businessID ?? ''),
       builder: (
@@ -19,6 +23,7 @@ class AppointmentTileBookingDetailSection extends StatelessWidget {
         AsyncSnapshot<BusinessEntity?> snapshot,
       ) {
         final BusinessEntity? business = snapshot.data;
+        pro.setbusiness(business);
         return Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,6 +43,7 @@ class AppointmentTileBookingDetailSection extends StatelessWidget {
                         builder: (BuildContext context,
                             AsyncSnapshot<ServiceEntity?> serviceSnap) {
                           final ServiceEntity? service = serviceSnap.data;
+                          pro.setService(service);
                           return Text(
                             service?.name ?? 'unknow_service'.tr(),
                             maxLines: 1,

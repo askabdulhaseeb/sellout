@@ -58,57 +58,61 @@ class PersonalCartScreen extends StatelessWidget {
                           ? Expanded(
                               child: Padding(
                                 padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  children: <Widget>[
-                                    const PersonalCheckoutView(),
-                                    const Spacer(),
-                                    CustomElevatedButton(
-                                      title: 'proceed_to_payment'.tr(),
-                                      isLoading: false,
-                                      onTap: () async {
-                                        final CartProvider pro =
-                                            Provider.of<CartProvider>(context,
-                                                listen: false);
-                                        final DataState<PaymentIntent> result =
-                                            await pro.processPayment();
-                                        if (result is DataSuccess) {
-                                          // 🎉 Payment succeeded → Show success bottom sheet
-                                          if (context.mounted) {
-                                            showModalBottomSheet(
-                                              useSafeArea: true,
-                                              isScrollControlled: true,
-                                              context: context,
-                                              enableDrag: false,
-                                              shape:
-                                                  const RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.vertical(
-                                                        top: Radius.circular(
-                                                            20)),
-                                              ),
-                                              builder: (_) =>
-                                                  const PaymentSuccessSheet(),
-                                            );
+                                child: SizedBox(
+                                  child: ListView(
+                                    shrinkWrap: true,
+                                    children: <Widget>[
+                                      const PersonalCheckoutView(),
+                                      const Spacer(),
+                                      CustomElevatedButton(
+                                        title: 'proceed_to_payment'.tr(),
+                                        isLoading: false,
+                                        onTap: () async {
+                                          final CartProvider pro =
+                                              Provider.of<CartProvider>(context,
+                                                  listen: false);
+                                          final DataState<PaymentIntent>
+                                              result =
+                                              await pro.processPayment();
+                                          if (result is DataSuccess) {
+                                            // 🎉 Payment succeeded → Show success bottom sheet
+                                            if (context.mounted) {
+                                              showModalBottomSheet(
+                                                useSafeArea: true,
+                                                isScrollControlled: true,
+                                                context: context,
+                                                enableDrag: false,
+                                                shape:
+                                                    const RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.vertical(
+                                                          top: Radius.circular(
+                                                              20)),
+                                                ),
+                                                builder: (_) =>
+                                                    const PaymentSuccessSheet(),
+                                              );
+                                            }
+                                          } else if (result is DataFailer) {
+                                            // ❌ Payment failed → Show error
+                                            if (context.mounted) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      '${'payment_failed'.tr()}: ${result.exception?.toString()}'),
+                                                  backgroundColor:
+                                                      ColorScheme.of(context)
+                                                          .error,
+                                                ),
+                                              );
+                                            }
                                           }
-                                        } else if (result is DataFailer) {
-                                          // ❌ Payment failed → Show error
-                                          if (context.mounted) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                    '${'payment_failed'.tr()}: ${result.exception?.toString()}'),
-                                                backgroundColor:
-                                                    ColorScheme.of(context)
-                                                        .error,
-                                              ),
-                                            );
-                                          }
-                                        }
-                                      },
-                                    ),
-                                    const SizedBox(height: 24),
-                                  ],
+                                        },
+                                      ),
+                                      const SizedBox(height: 24),
+                                    ],
+                                  ),
                                 ),
                               ),
                             )

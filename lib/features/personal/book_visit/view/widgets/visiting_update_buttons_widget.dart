@@ -109,14 +109,16 @@ class CancelAndChangeButtons extends StatelessWidget {
                 title: 'change_date'.tr(),
                 isLoading: false,
                 textStyle: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).canvasColor,
-                ),
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).canvasColor),
                 onTap: () {
                   pro.setMessageEntity(message);
                   Navigator.pushNamed(context, BookingScreen.routeName,
-                      arguments: <String, PostEntity?>{'post': post});
+                      arguments: <String, dynamic>{
+                        'post': post,
+                        'visit': message.visitingDetail
+                      });
                 },
               ),
             ),

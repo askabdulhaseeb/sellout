@@ -1,7 +1,5 @@
 import 'dart:developer';
-
 import 'package:flutter/foundation.dart';
-
 import '../../../../../../core/enums/chat/chat_page_type.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../domain/entities/chat/chat_entity.dart';
@@ -16,6 +14,7 @@ class ChatDashboardProvider extends ChangeNotifier {
   List<ChatEntity> get chats => _chats;
 
   Future<DataState<List<ChatEntity>>> getChats() async {
+    await Future<void>.delayed(const Duration(seconds: 1));
     final DataState<List<ChatEntity>> result =
         await _getMyChatsUsecase.call(null);
     if (result is DataSuccess) {

@@ -36,7 +36,7 @@ class LocalOrders {
   }
 
   Future<void> save(OrderEntity order) async {
-    await _box.put(order.orderId, order); // assuming order.id is unique
+    await _box.put(order.orderId, order);
   }
 
   Future<void> saveAll(List<OrderEntity> orders) async {

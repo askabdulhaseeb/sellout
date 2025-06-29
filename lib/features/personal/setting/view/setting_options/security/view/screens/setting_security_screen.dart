@@ -57,6 +57,7 @@ class SettingSecurityScreen extends StatelessWidget {
             subtitle: 'verify_with_4_digit_code'.tr(),
             onTap: () {
               showModalBottomSheet(
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                 useSafeArea: true,
                 context: context,
                 shape: const RoundedRectangleBorder(

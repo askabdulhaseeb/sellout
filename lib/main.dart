@@ -38,6 +38,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: appProviders,
       child: MaterialApp(
+        showPerformanceOverlay: true,
         locale: context.locale,
         supportedLocales: context.supportedLocales,
         localizationsDelegates: context.localizationDelegates,
@@ -45,7 +46,7 @@ class MyApp extends StatelessWidget {
         navigatorKey: AppNavigator().navigatorKey,
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,
-        themeMode: kDebugMode ? ThemeMode.light : ThemeMode.light,
+        themeMode: ThemeMode.system,
         routes: AppRoutes.routes,
         // onGenerateRoute: (RouteSettings settings) {},
         //initialRoute: SignupScreen.routeName,

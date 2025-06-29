@@ -35,6 +35,8 @@ class StatusTypeAdapter extends TypeAdapter<StatusType> {
         return StatusType.shipped;
       case 35:
         return StatusType.active;
+      case 36:
+        return StatusType.onHold;
       default:
         return StatusType.pending;
     }
@@ -75,6 +77,9 @@ class StatusTypeAdapter extends TypeAdapter<StatusType> {
         break;
       case StatusType.active:
         writer.writeByte(35);
+        break;
+      case StatusType.onHold:
+        writer.writeByte(36);
         break;
     }
   }

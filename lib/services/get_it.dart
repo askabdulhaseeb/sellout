@@ -1,6 +1,8 @@
 import 'package:get_it/get_it.dart';
 import '../core/sockets/socket_implementations.dart';
 import '../core/sockets/socket_service.dart';
+import '../features/business/business_page/domain/usecase/get_bookings_by_service_id_usecase.dart';
+import '../features/business/business_page/domain/usecase/get_my_bookings_usecase.dart';
 import '../features/personal/appointment/data/repository/appointment_repository.dart';
 import '../features/personal/appointment/data/services/appointment_api.dart';
 import '../features/personal/appointment/domain/repository/appointment_repository.dart';
@@ -15,7 +17,6 @@ import '../features/business/business_page/data/repositories/business_page_servi
 import '../features/business/business_page/data/sources/business_booking_remote.dart';
 import '../features/business/business_page/data/sources/get_service_by_business_id_remote.dart';
 import '../features/business/business_page/domain/repositories/business_page_services_repository.dart';
-import '../features/business/business_page/domain/usecase/get_business_bookings_list_usecase.dart';
 import '../features/business/business_page/domain/usecase/get_services_list_by_business_id_usecase.dart';
 import '../features/business/business_page/views/providers/business_page_provider.dart';
 import '../features/business/core/data/repository/business_repo_impl.dart';
@@ -82,6 +83,7 @@ import '../features/personal/chats/chat/domain/usecase/get_messages_usecase.dart
 import '../features/personal/chats/chat/domain/usecase/leave_group_usecase.dart';
 import '../features/personal/chats/chat/domain/usecase/send_group_invite_usecase.dart';
 import '../features/personal/chats/chat/domain/usecase/send_message_usecase.dart';
+import '../features/personal/chats/chat/domain/usecase/share_to_chat_usecase.dart';
 import '../features/personal/chats/chat/views/providers/chat_provider.dart';
 import '../features/personal/chats/chat_dashboard/data/repositories/chat_repository_impl.dart';
 import '../features/personal/chats/chat_dashboard/data/sources/remote/chat_remote_source.dart';
@@ -307,6 +309,8 @@ void _message() {
   locator
       .registerFactory<SendMessageUsecase>(() => SendMessageUsecase(locator()));
   locator
+      .registerFactory<ShareInChatUsecase>(() => ShareInChatUsecase(locator()));
+  locator
       .registerFactory<LeaveGroupUsecase>(() => LeaveGroupUsecase(locator()));
   locator.registerFactory<SendGroupInviteUsecase>(
       () => SendGroupInviteUsecase(locator()));
@@ -436,8 +440,10 @@ void _booking() {
   // REPOSITORIES
   //
   // USECASES
-  locator.registerFactory<GetBookingsListUsecase>(
-      () => GetBookingsListUsecase(locator()));
+  locator.registerFactory<GetMyBookingsListUsecase>(
+      () => GetMyBookingsListUsecase(locator()));
+  locator.registerFactory<GetBookingsByServiceIdListUsecase>(
+      () => GetBookingsByServiceIdListUsecase(locator()));
   //
   // Providers
 }
