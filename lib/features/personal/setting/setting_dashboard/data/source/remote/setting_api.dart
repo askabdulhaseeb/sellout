@@ -28,11 +28,9 @@ class SettingRemoteApiImpl implements SettingRemoteApi {
         AppLog.error(
           result.exception?.reason ?? 'Unknown error',
           name: 'SettingRemoteApi.changePassword - else',
-          error: result.exception,
+          error: result.exception?.reason,
         );
-        return DataFailer<bool>(
-          CustomException(result.exception?.message ?? 'something_wrong'),
-        );
+        return result;
       }
     } catch (e, stk) {
       AppLog.error(
