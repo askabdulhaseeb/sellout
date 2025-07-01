@@ -145,6 +145,11 @@ import '../features/personal/services/domain/repositories/personal_services_repo
 import '../features/personal/services/domain/usecase/get_service_by_categories_usecase.dart';
 import '../features/personal/services/domain/usecase/get_special_offer_usecase.dart';
 import '../features/personal/services/views/providers/services_page_provider.dart';
+import '../features/personal/setting/setting_dashboard/data/source/remote/setting_api.dart';
+import '../features/personal/setting/setting_dashboard/data/source/repo/setting_repo_impl.dart';
+import '../features/personal/setting/setting_dashboard/domain/repo/setting_repo.dart';
+import '../features/personal/setting/setting_dashboard/domain/usecase/change_password_usecase.dart';
+import '../features/personal/setting/setting_options/security/provider/setting_security_provider.dart';
 import '../features/personal/user/profiles/data/repositories/user_repository_impl.dart';
 import '../features/personal/user/profiles/data/sources/remote/my_visting_remote.dart';
 import '../features/personal/user/profiles/data/sources/remote/order_by_user_remote.dart';
@@ -186,6 +191,7 @@ void setupLocator() {
   _sockets();
   _addaddress();
   _search();
+  _settings();
 }
 
 void _auth() {
@@ -525,7 +531,7 @@ void _bookvisit() {
   locator
       .registerFactory<BookServiceUsecase>(() => BookServiceUsecase(locator()));
 
-  locator.registerFactory<BookingProvider>(() => BookingProvider(
+  locator.registerFactory<BookingProvider>(() => BookingProvider(locator(),
       locator(), locator(), locator(), locator(), locator(), locator()));
 }
 
@@ -587,4 +593,21 @@ void _search() {
   locator
       .registerLazySingleton<SearchProvider>(() => SearchProvider(locator()));
   locator.registerLazySingleton<SearchScreen>(() => const SearchScreen());
+}
+
+void _settings() {
+  // API
+  //
+  locator.registerFactory<SettingRemoteApi>(() => SettingRemoteApiImpl());
+  // REPOSITORIES
+  //
+  locator.registerFactory<SettingRepository>(
+      () => SettingRepositoryImpl(locator()));
+  // USECASES
+  //
+  locator.registerFactory<ChangePasswordUseCase>(
+      () => ChangePasswordUseCase(locator()));
+  // Providers
+  locator.registerLazySingleton<SettingSecurityProvider>(
+      () => SettingSecurityProvider(locator(), locator()));
 }

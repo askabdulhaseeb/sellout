@@ -51,7 +51,9 @@ import '../../../features/personal/promo/data/source/local/local_promo.dart';
 import '../../../features/personal/promo/domain/entities/promo_entity.dart';
 import '../../../features/personal/review/data/sources/local_review.dart';
 import '../../../features/personal/review/domain/entities/review_entity.dart';
-import '../../../features/personal/setting/view/setting_options/setting_notification/domain/entities/notification_entity.dart';
+import '../../../features/personal/setting/setting_dashboard/domain/entities/notification_entity.dart';
+import '../../../features/personal/setting/setting_dashboard/domain/entities/privacy_settings_entity.dart';
+import '../../../features/personal/setting/setting_dashboard/domain/entities/time_away_entity.dart';
 import '../../../features/personal/user/profiles/data/sources/local/local_orders.dart';
 import '../../../features/personal/user/profiles/data/sources/local/local_user.dart';
 import '../../../features/personal/user/profiles/data/sources/local/local_visits.dart';
@@ -145,7 +147,8 @@ class HiveDB {
     Hive.registerAdapter(FeedEntityAdapter()); //60
     Hive.registerAdapter(OrderEntityAdapter()); //61
     Hive.registerAdapter(OrderPaymentDetailEntityAdapter()); //62
-
+    Hive.registerAdapter(PrivacySettingsEntityAdapter()); //63
+    Hive.registerAdapter(TimeAwayEntityAdapter()); //64
     // Hive box Open
     await refresh();
   }

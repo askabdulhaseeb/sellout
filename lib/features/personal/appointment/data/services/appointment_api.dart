@@ -16,13 +16,14 @@ abstract interface class AppointmentApi {
 }
 
 class AppointmentApiImpl implements AppointmentApi {
+  ///does not retuen a booking whn we update time but returns a booking when we update status
   @override
   Future<DataState<bool>> updateAppointment(
     UpdateAppointmentParams params,
   ) async {
     try {
       debugPrint(json.encode(params.toMap()));
-      const String endpoint = '/booking/update/?type=status';
+      final String endpoint = '/booking/update/?type=${params.apiKey}';
       final DataState<bool> result = await ApiCall<bool>().call(
         endpoint: endpoint,
         requestType: ApiRequestType.patch,
@@ -31,10 +32,13 @@ class AppointmentApiImpl implements AppointmentApi {
         isConnectType: true,
       );
       if (result is DataSuccess) {
-        final Map<String, dynamic> jsonMap = json.decode(result.data ?? '');
-        final Map<String, dynamic> updatedMap = jsonMap['updatedBooking'];
-        final BookingModel booking = BookingModel.fromMap(updatedMap);
-        await LocalBooking().save(booking);
+        debugPrint(result.data);
+        if (params.apiKey == 'status') {
+          final Map<String, dynamic> jsonMap = json.decode(result.data ?? '');
+          final Map<String, dynamic> updatedMap = jsonMap['updatedBooking'];
+          final BookingModel booking = BookingModel.fromMap(updatedMap);
+          await LocalBooking().save(booking);
+        }
         return DataSuccess<bool>(result.data ?? '', true);
       } else {
         return DataFailer<bool>(
@@ -63,16 +67,13 @@ class AppointmentApiImpl implements AppointmentApi {
       if (result is DataSuccess) {
         AppLog.info(result.data.toString(),
             name: 'AppointmnetApi.holdServicePayment - if');
-
         final HoldServiceResponse holdServiceModel =
             HoldServiceResponse.fromJson(result.data ?? '');
-
         return DataSuccess<HoldServiceResponse>(
             result.data ?? '', holdServiceModel);
       } else {
         AppLog.error(result.exception?.message ?? 'something_wrong'.tr(),
             name: 'AppointmnetApi.holdServicePayment - else');
-
         return DataFailer<HoldServiceResponse>(result.exception!);
       }
     } catch (e) {

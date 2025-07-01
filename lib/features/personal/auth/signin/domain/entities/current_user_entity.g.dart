@@ -37,24 +37,32 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       profileImage: (fields[43] as List).cast<AttachmentEntity>(),
       lastLoginTime: fields[97] as DateTime,
       createdAt: fields[98] as DateTime,
-      inHiveAt: fields[99] as DateTime,
+      updatedAt: fields[99] as DateTime,
+      inHiveAt: fields[100] as DateTime,
       businessStatus: fields[120] as String?,
       businessName: fields[121] as String?,
       businessID: fields[122] as String?,
       logindetail: fields[123] as LoginDetailEntity,
-      loginActivity: (fields[124] as List).cast<DeviceLoginInfoEntity>(),
+      loginActivity: (fields[154] as List).cast<DeviceLoginInfoEntity>(),
       employeeList: (fields[125] as List).cast<BusinessEmployeeEntity>(),
-      notification: fields[126] as NotificationSettingsEntity?,
-      twoStepAuthEnabled: fields[135] as bool?,
+      notification: fields[152] as NotificationSettingsEntity?,
+      twoStepAuthEnabled: fields[153] as bool?,
       supporters: (fields[140] as List).cast<SupporterDetailEntity>(),
       supporting: (fields[141] as List).cast<SupporterDetailEntity>(),
+      privacySettings: fields[151] as PrivacySettingsEntity?,
+      timeAway: fields[150] as TimeAwayEntity?,
+      accountStatus: fields[20] as String?,
+      accountType: fields[22] as String?,
+      dob: fields[23] as DateTime?,
+      saved: (fields[24] as List).cast<String>(),
+      listOfReviews: (fields[25] as List).cast<int>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, CurrentUserEntity obj) {
     writer
-      ..writeByte(31)
+      ..writeByte(39)
       ..writeByte(1)
       ..write(obj.message)
       ..writeByte(2)
@@ -79,23 +87,31 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       ..write(obj.phoneNumber)
       ..writeByte(19)
       ..write(obj.language)
+      ..writeByte(20)
+      ..write(obj.accountStatus)
+      ..writeByte(22)
+      ..write(obj.accountType)
+      ..writeByte(23)
+      ..write(obj.dob)
+      ..writeByte(24)
+      ..write(obj.saved)
+      ..writeByte(25)
+      ..write(obj.listOfReviews)
       ..writeByte(21)
       ..write(obj.address)
-      ..writeByte(31)
-      ..write(obj.chatIDs)
-      ..writeByte(32)
-      ..write(obj.businessIDs)
+      ..writeByte(43)
+      ..write(obj.profileImage)
       ..writeByte(41)
       ..write(obj.imageVerified)
       ..writeByte(42)
       ..write(obj.verificationImage)
-      ..writeByte(43)
-      ..write(obj.profileImage)
       ..writeByte(97)
       ..write(obj.lastLoginTime)
       ..writeByte(98)
       ..write(obj.createdAt)
       ..writeByte(99)
+      ..write(obj.updatedAt)
+      ..writeByte(100)
       ..write(obj.inHiveAt)
       ..writeByte(120)
       ..write(obj.businessStatus)
@@ -103,20 +119,28 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       ..write(obj.businessName)
       ..writeByte(122)
       ..write(obj.businessID)
-      ..writeByte(123)
-      ..write(obj.logindetail)
-      ..writeByte(124)
-      ..write(obj.loginActivity)
       ..writeByte(125)
       ..write(obj.employeeList)
-      ..writeByte(126)
-      ..write(obj.notification)
-      ..writeByte(135)
-      ..write(obj.twoStepAuthEnabled)
+      ..writeByte(32)
+      ..write(obj.businessIDs)
+      ..writeByte(123)
+      ..write(obj.logindetail)
+      ..writeByte(154)
+      ..write(obj.loginActivity)
+      ..writeByte(31)
+      ..write(obj.chatIDs)
       ..writeByte(140)
       ..write(obj.supporters)
       ..writeByte(141)
-      ..write(obj.supporting);
+      ..write(obj.supporting)
+      ..writeByte(150)
+      ..write(obj.timeAway)
+      ..writeByte(151)
+      ..write(obj.privacySettings)
+      ..writeByte(152)
+      ..write(obj.notification)
+      ..writeByte(153)
+      ..write(obj.twoStepAuthEnabled);
   }
 
   @override

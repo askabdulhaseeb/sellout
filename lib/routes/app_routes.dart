@@ -21,14 +21,25 @@ import '../features/personal/post/post_detail/views/screens/post_detail_screen.d
 import '../features/personal/promo/view/create_promo/screens/create_promo_screen.dart';
 import '../features/personal/review/views/screens/write_review_screen.dart';
 import '../features/personal/search/view/view/search_screen.dart';
-import '../features/personal/setting/more_info/views/screens/personal_more_information_setting_screen.dart';
-import '../features/personal/setting/setting_dashboard/views/screens/pages/edit_setting_account_screen.dart';
-import '../features/personal/setting/setting_dashboard/views/screens/pages/personal_setting_account.dart';
-import '../features/personal/setting/view/setting_options/security/view/screens/setting_security_screen.dart';
-import '../features/personal/setting/view/setting_options/setting_notification/view/screens/pages/personal_setting_email_notification_screen.dart';
-import '../features/personal/setting/view/setting_options/setting_notification/view/screens/pages/personal_setting_push_notification.dart';
-import '../features/personal/setting/view/setting_options/setting_notification/view/screens/personal_setting_notification_screen.dart';
-import '../features/personal/setting/setting_dashboard/views/screens/personal_setting_screen.dart';
+import '../features/personal/setting/setting_dashboard/view/screens/personal_more_information_setting_screen.dart';
+import '../features/personal/setting/setting_options/account_edit/screens/edit_setting_account_screen.dart';
+import '../features/personal/setting/setting_options/account_edit/screens/personal_setting_account.dart';
+import '../features/personal/setting/setting_options/privacy_setting/screen/privacy_screen.dart';
+import '../features/personal/setting/setting_options/security/screens/setting_security_screen.dart';
+import '../features/personal/setting/setting_options/setting_notification/screens/pages/personal_setting_email_notification_screen.dart';
+import '../features/personal/setting/setting_options/setting_notification/screens/pages/personal_setting_push_notification.dart';
+import '../features/personal/setting/setting_options/setting_notification/screens/personal_setting_notification_screen.dart';
+import '../features/personal/setting/setting_dashboard/view/screens/personal_setting_screen.dart';
+import '../features/personal/setting/setting_options/terms&policies/acceptable_user_policy.dart';
+import '../features/personal/setting/setting_options/terms&policies/chnage_password_screen.dart';
+import '../features/personal/setting/setting_options/terms&policies/community_standard_screeen.dart';
+import '../features/personal/setting/setting_options/terms&policies/cookie_policy.dart';
+import '../features/personal/setting/setting_options/terms&policies/dispute_resolution_policy.dart';
+import '../features/personal/setting/setting_options/terms&policies/privacy_policy.dart';
+import '../features/personal/setting/setting_options/terms&policies/terms_condition_screen.dart';
+import '../features/personal/setting/setting_options/time_away/screens/automatic_response_screen.dart';
+import '../features/personal/setting/setting_options/time_away/screens/time_away_screen.dart';
+import '../features/personal/user/profiles/views/params/about_us.dart';
 import '../features/personal/user/profiles/views/screens/edit_profile_screen.dart';
 import 'app_linking.dart';
 
@@ -122,5 +133,18 @@ class AppRoutes {
     AccountSettingsScreen.routeName: (_) => const AccountSettingsScreen(),
     EditAccountSettingScreen.routeName: (_) => const EditAccountSettingScreen(),
     SettingSecurityScreen.routeName: (_) => const SettingSecurityScreen(),
+    PersonalPrivacySettingScreen.routeName: (_) =>
+        const PersonalPrivacySettingScreen(),
+    AutomaticResponseScreen.routeName: (_) => const AutomaticResponseScreen(),
+    TimeAwayScreen.routeName: (_) => const TimeAwayScreen(),
+    PrivacyPolicyScreen.routeName: (_) => const PrivacyPolicyScreen(),
+    TermsOfServiceScreen.routeName: (_) => const TermsOfServiceScreen(),
+    CookiesPolicyScreen.routeName: (_) => const CookiesPolicyScreen(),
+    AcceptableUsePolicyScreen.routeName: (_) =>
+        const AcceptableUsePolicyScreen(),
+    DisputeResolutionScreen.routeName: (_) => const DisputeResolutionScreen(),
+    CommunityStandardsScreen.routeName: (_) => const CommunityStandardsScreen(),
+    AboutUsScreen.routeName: (_) => const AboutUsScreen(),
+    ChangePasswordScreen.routeName: (_) => const ChangePasswordScreen(),
   };
 }

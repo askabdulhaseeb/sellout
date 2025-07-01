@@ -20,51 +20,52 @@ class _AddListingPreviewScreenState extends State<AddListingPreviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('listing_preview'.tr()),
-        centerTitle: true,
-        elevation: 2,
-      ),
-      body: Consumer<AddListingFormProvider>(
-        builder: (BuildContext context, AddListingFormProvider provider, _) {
-          final PostEntity? previewPost = provider.createPostFromFormData();
-
-          if (previewPost == null) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          return SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                const SizedBox(height: 16),
-                CustomToggleSwitch<int>(
-                  initialValue: _previewMode,
-                  labels: const <int>[0, 1],
-                  labelStrs: <String>[
-                    'feed_preview'.tr(),
-                    'detail_preview'.tr()
-                  ],
-                  labelText: '',
-                  onToggle: (int index) {
-                    setState(() {
-                      _previewMode = index;
-                    });
-                  },
-                ),
-                const SizedBox(height: 16),
-                _previewMode == 0
-                    ? AbsorbPointer(child: HomePostTile(post: previewPost))
-                    : AbsorbPointer(
-                        child: PostDetailSection(
-                          post: previewPost,
-                          isMe: false,
-                          visit: null,
+    return PopScope(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('listing_preview'.tr()),
+          centerTitle: true,
+          elevation: 2,
+        ),
+        body: Consumer<AddListingFormProvider>(
+          builder: (BuildContext context, AddListingFormProvider provider, _) {
+            final PostEntity? previewPost = provider.createPostFromFormData();
+            if (previewPost == null) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            return SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  const SizedBox(height: 16),
+                  CustomToggleSwitch<int>(
+                    initialValue: _previewMode,
+                    labels: const <int>[0, 1],
+                    labelStrs: <String>[
+                      'feed_preview'.tr(),
+                      'detail_preview'.tr()
+                    ],
+                    labelText: '',
+                    onToggle: (int index) {
+                      setState(() {
+                        _previewMode = index;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  _previewMode == 0
+                      ? AbsorbPointer(child: HomePostTile(post: previewPost))
+                      : AbsorbPointer(
+                          child: PostDetailSection(
+                            post: previewPost,
+                            isMe: false,
+                            visit: null,
+                          ),
                         ),
-                      ),
-              ],
-            ),
-          );
-        },
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

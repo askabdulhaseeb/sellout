@@ -5,6 +5,8 @@ import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/media_preview/view/screens/media_preview_screen.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../../../attachment/domain/entities/picked_attachment.dart';
+import '../../../../business/core/domain/entity/service/service_entity.dart';
+import '../../../post/domain/entities/post_entity.dart';
 import '../../domain/enums/review_sort_type.dart';
 import '../../domain/param/create_review_params.dart';
 import '../../domain/usecase/create_review_usecase.dart';
@@ -17,7 +19,8 @@ class ReviewProvider extends ChangeNotifier {
   List<ReviewEntity> _reviews = <ReviewEntity>[];
   TextEditingController reviewTitle = TextEditingController();
   TextEditingController reviewdescription = TextEditingController();
-  String postIdentity = '';
+  PostEntity? post;
+  ServiceEntity? service;
   final List<PickedAttachment> _attachments = <PickedAttachment>[];
   int _currentIndex = 0;
   VideoPlayerController? _videoController;
@@ -35,7 +38,7 @@ class ReviewProvider extends ChangeNotifier {
     });
   }
 
-  set isloading(bool value) {
+  void setLoading(bool value) {
     _isloading = value;
     notifyListeners();
   }
@@ -123,15 +126,18 @@ class ReviewProvider extends ChangeNotifier {
     notifyListeners(); // Notify UI to update
   }
 
-  void updatePostidentity(postId) {
-    postIdentity = postId;
-    debugPrint('this is the post id $postId');
+  void setPost(PostEntity value) {
+    post = value;
   }
 
-  Future<void> submitReview(context) async {
-    _isloading = true;
+  void setService(ServiceEntity value) {
+    service = value;
+  }
+
+  Future<void> submitProductReview(BuildContext context) async {
+    setLoading(true);
     final CreateReviewParams params = CreateReviewParams(
-        postId: postIdentity,
+        postId: post?.postID ?? '',
         rating: rating.toString(),
         title: reviewTitle.text,
         text: reviewdescription.text,
@@ -141,12 +147,34 @@ class ReviewProvider extends ChangeNotifier {
     if (result is DataSuccess<bool>) {
       debugPrint('${result.data},${result.entity}');
       Navigator.pop(context);
-      isloading = false;
+      setLoading(false);
     } else {
-      AppLog.error('something_wrong'.tr(),
-          name: 'ReiewProvider.submitreview - else');
+      AppLog.error(result.exception?.reason ?? 'something_wrong'.tr(),
+          name: 'ReiewProvider.submitServiceReview - else');
     }
-    isloading = false;
+    setLoading(false);
+  }
+
+  Future<void> submitServiceReview(BuildContext context) async {
+    setLoading(true);
+    final CreateReviewParams params = CreateReviewParams(
+        rating: rating.toString(),
+        title: reviewTitle.text,
+        text: reviewdescription.text,
+        reviewType: 'service',
+        serviceId: service?.serviceID,
+        attachments: attachments);
+    final DataState<bool> result = await createReviewUsecase(params);
+    if (result is DataSuccess<bool>) {
+      debugPrint('${result.data},${result.entity}');
+      // ignore: use_build_context_synchronously
+      Navigator.pop(context);
+      setLoading(false);
+    } else {
+      AppLog.error(result.exception?.reason ?? 'something_wrong'.tr(),
+          name: 'ReiewProvider.submitServiceReview - else');
+    }
+    setLoading(false);
   }
 
   void disposed() {

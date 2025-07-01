@@ -27,28 +27,30 @@ class AddListingPostButtonWidget extends StatelessWidget {
               ),
             ),
           ),
-          CustomElevatedButton(
-              border: Border.all(color: ColorScheme.of(context).outline),
-              textColor: ColorScheme.of(context).outline,
-              bgColor: Colors.transparent,
-              title: 'preview_listing'.tr(),
-              isLoading: formPro.isLoading,
-              onTap: () async {
-                if (formPro.attachments.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content:
-                        Text('please_add_at_least_one_photo_or_video'.tr()),
-                  ));
-                  return;
-                }
-                Navigator.push(
-                    context,
-                    // ignore: always_specify_types
-                    MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          const AddListingPreviewScreen(),
+          InDevMode(
+            child: CustomElevatedButton(
+                border: Border.all(color: ColorScheme.of(context).outline),
+                textColor: ColorScheme.of(context).outline,
+                bgColor: Colors.transparent,
+                title: 'preview_listing'.tr(),
+                isLoading: formPro.isLoading,
+                onTap: () async {
+                  if (formPro.attachments.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content:
+                          Text('please_add_at_least_one_photo_or_video'.tr()),
                     ));
-              }),
+                    return;
+                  }
+                  Navigator.push(
+                      context,
+                      // ignore: always_specify_types
+                      MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            const AddListingPreviewScreen(),
+                      ));
+                }),
+          ),
           InDevMode(
             child: CustomElevatedButton(
                 border: Border.all(color: ColorScheme.of(context).secondary),

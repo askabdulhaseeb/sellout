@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../post/domain/entities/post_entity.dart';
 import '../providers/review_provider.dart';
 import '../widgets/rating_select_widget.dart';
@@ -19,7 +20,8 @@ class WriteReviewScreen extends StatelessWidget {
         Provider.of<ReviewProvider>(context, listen: false);
     final Map<String, dynamic> args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final PostEntity post = args['post'] ?? '';
+    final PostEntity? post = args['post'];
+    final ServiceEntity? service = args['service'];
     return PopScope(
       onPopInvokedWithResult: (bool didPop, dynamic result) =>
           provider.disposed(),
@@ -34,6 +36,7 @@ class WriteReviewScreen extends StatelessWidget {
             children: <Widget>[
               WriteReviewHeaderSection(
                 post: post,
+                service: service,
               ),
               Text('rate_product'.tr()),
               const RatingSelectWidget(
@@ -54,8 +57,13 @@ class WriteReviewScreen extends StatelessWidget {
               Center(
                 child: CustomElevatedButton(
                   onTap: () {
-                    provider.updatePostidentity(post.postID);
-                    provider.submitReview(context);
+                    if (post != null) {
+                      provider.setPost(post);
+                      provider.submitProductReview(context);
+                    } else if (service != null) {
+                      provider.setService(service);
+                      provider.submitServiceReview(context);
+                    }
                   },
                   title: 'submit'.tr(),
                   isLoading: provider.isloading,

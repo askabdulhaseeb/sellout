@@ -7,6 +7,7 @@ import '../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../book_visit/view/screens/booking_screen.dart';
 import '../../../bookings/domain/entity/booking_entity.dart';
+import '../../../review/views/screens/write_review_screen.dart';
 import '../../../user/profiles/domain/entities/user_entity.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/api_call.dart';
@@ -29,7 +30,6 @@ class AppointmentTileProvider extends ChangeNotifier {
   BusinessEntity? get business => _business;
   void setbusiness(BusinessEntity? data) {
     _business = data;
-    notifyListeners();
   }
 
 //
@@ -37,7 +37,6 @@ class AppointmentTileProvider extends ChangeNotifier {
   ServiceEntity? get service => _service;
   void setService(ServiceEntity? data) {
     _service = data;
-    notifyListeners();
   }
 
 //
@@ -61,11 +60,11 @@ class AppointmentTileProvider extends ChangeNotifier {
     try {
       if (booking.bookingID == null) return;
       setLoading(true);
-      final DataState<bool> result =
-          await _updateAppointmentUsecase.call(UpdateAppointmentParams(
-        bookingID: booking.bookingID ?? '',
-        newStatus: 'cancel',
-      ));
+      final DataState<bool> result = await _updateAppointmentUsecase.call(
+          UpdateAppointmentParams(
+              bookingID: booking.bookingID ?? '',
+              newStatus: 'cancel',
+              apiKey: 'status'));
       if (result is DataSuccess) {
         setLoading(false);
         return;
@@ -92,9 +91,17 @@ class AppointmentTileProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> onBookAgain(BuildContext context, BookingEntity booking) async {}
+  Future<void> onBookAgain(BuildContext context, BookingEntity booking) async {
+    Navigator.pushNamed(context, BookingScreen.routeName,
+        arguments: <String, dynamic>{'service': service, 'business': business});
+  }
+
   Future<void> onLeaveReview(
-      BuildContext context, BookingEntity booking) async {}
+      BuildContext context, BookingEntity booking) async {
+    Navigator.pushNamed(context, WriteReviewScreen.routeName,
+        arguments: <String, dynamic>{'service': service});
+  }
+
   Future<void> onChange(BuildContext context, BookingEntity booking) async {
     Navigator.pushNamed(
       context,

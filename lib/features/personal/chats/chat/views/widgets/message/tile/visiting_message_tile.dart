@@ -30,7 +30,8 @@ class VisitingMessageTile extends StatelessWidget {
                   const SizedBox(
                     height: 10,
                   ),
-                  VisitingUpdateButtonsWidget(message: message, post: post),
+                  VisitingMessageTileUpdateButtonsWidget(
+                      message: message, post: post),
                   Opacity(
                     opacity: 0.6,
                     child: const Text(
