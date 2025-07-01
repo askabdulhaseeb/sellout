@@ -6,6 +6,8 @@ import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../../../business/business_page/domain/params/get_business_bookings_params.dart';
 import '../../../../business/business_page/domain/usecase/get_bookings_by_service_id_usecase.dart';
+import '../../../appointment/domain/params/update_appointment_params.dart';
+import '../../../appointment/domain/usecase/update_appointment_usecase.dart';
 import '../../../bookings/domain/entity/booking_entity.dart';
 import '../../../chats/chat/views/providers/chat_provider.dart';
 import '../../../chats/chat_dashboard/domain/entities/messages/message_entity.dart';
@@ -28,7 +30,8 @@ class BookingProvider extends ChangeNotifier {
       this._bookServiceUsecase,
       this._getUserByUidUsecase,
       this._getVisitByPostUsecase,
-      this._getBookingsListUsecase);
+      this._getBookingsListUsecase,
+      this._updateAppointmentUsecase);
   final BookVisitUseCase _bookVisitUseCase;
   // final UpdateVisitStatusUseCase _updateVisitStatusUseCase;
   final UpdateVisitUseCase _updateVisitUseCase;
@@ -36,6 +39,7 @@ class BookingProvider extends ChangeNotifier {
   final GetUserByUidUsecase _getUserByUidUsecase;
   final GetVisitByPostUsecase _getVisitByPostUsecase;
   final GetBookingsByServiceIdListUsecase _getBookingsListUsecase;
+  final UpdateAppointmentUsecase _updateAppointmentUsecase;
   DateTime _selectedDate = DateTime.now();
   String? _selectedTime;
   bool _isLoading = false;
@@ -357,7 +361,6 @@ class BookingProvider extends ChangeNotifier {
     );
 
     final DataState<VisitingEntity> result = await _updateVisitUseCase(params);
-
     if (result is DataSuccess) {
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
@@ -366,7 +369,6 @@ class BookingProvider extends ChangeNotifier {
           duration: const Duration(seconds: 1),
         ),
       );
-      disposed();
       notifyListeners();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -376,7 +378,6 @@ class BookingProvider extends ChangeNotifier {
         ),
       );
     }
-
     setIsLoading(false);
   }
 
@@ -407,6 +408,33 @@ class BookingProvider extends ChangeNotifier {
       }
     }
     setIsLoading(false);
+  }
+
+  Future<void> updateServiceBooking(
+      BuildContext context, BookingEntity? booking) async {
+    try {
+      final UpdateAppointmentParams params = UpdateAppointmentParams(
+        apiKey: 'booking_time',
+        bookingID: booking?.bookingID ?? '',
+        bookAt: formattedDateTime,
+      );
+      final DataState<bool> result =
+          await _updateAppointmentUsecase.call(params);
+      if (result is DataSuccess) {
+        Navigator.pop(context);
+      } else {
+        AppLog.error('',
+            error: result.exception?.message ?? 'something_wrong',
+            name: 'BookingProvider.updateServiceBooking - else');
+      }
+    } catch (e, stack) {
+      debugPrint('Exception during updateServiceBooking: $e');
+      AppLog.error('',
+          error: e,
+          stackTrace: stack,
+          name: 'BookingProvider.updateServiceBooking - catch');
+      debugPrintStack(stackTrace: stack);
+    }
   }
 
   Future<DataState<UserEntity?>> userbyuid(String uid) async {
@@ -465,9 +493,13 @@ class BookingProvider extends ChangeNotifier {
     }
   }
 
-  void disposed() {
+  void reset() {
     _messageentity = null;
     _selectedDate = DateTime.now();
-    _selectedTime = '';
+    _selectedTime = null;
+    _isLoading = false;
+    selectedEmployee = null;
+    employees.clear();
+    notifyListeners();
   }
 }

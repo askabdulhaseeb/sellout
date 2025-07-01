@@ -23,7 +23,8 @@ import '../features/personal/post/post_detail/views/providers/post_detail_provid
 import '../features/personal/review/views/providers/review_provider.dart';
 import '../features/personal/search/view/provider/search_provider.dart';
 import '../features/personal/services/views/providers/services_page_provider.dart';
-import '../features/personal/setting/view/setting_options/setting_notification/view/providers/push_notification_provider.dart';
+import '../features/personal/setting/setting_dashboard/view/providers/personal_setting_provider.dart';
+import '../features/personal/setting/setting_options/security/provider/setting_security_provider.dart';
 import '../features/personal/user/profiles/views/providers/profile_provider.dart';
 import '../features/personal/auth/signin/views/providers/signin_provider.dart';
 import 'get_it.dart';
@@ -110,8 +111,8 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
   )),
 //
   ChangeNotifierProvider<BookingProvider>.value(
-      value: BookingProvider(
-          locator(), locator(), locator(), locator(), locator(), locator())),
+      value: BookingProvider(locator(), locator(), locator(), locator(),
+          locator(), locator(), locator())),
 //
   ChangeNotifierProvider<AddAddressProvider>.value(
       value: AddAddressProvider(locator(), locator())),
@@ -119,6 +120,8 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
   ChangeNotifierProvider<SearchProvider>.value(
       value: SearchProvider(locator())),
 //
-  ChangeNotifierProvider<PushNotificationProvider>.value(
-      value: PushNotificationProvider(locator())),
+  ChangeNotifierProvider<PersonalSettingProvider>.value(
+      value: PersonalSettingProvider(locator())),
+  ChangeNotifierProvider<SettingSecurityProvider>.value(
+      value: SettingSecurityProvider(locator(), locator())),
 ];

@@ -21,6 +21,7 @@ class _HomePromoListSectionState extends State<HomePromoListSection> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future<void>.delayed(const Duration(milliseconds: 200), () {
+        // ignore: use_build_context_synchronously
         Provider.of<PromoProvider>(context, listen: false).getPromoOfFollower();
       });
     });
@@ -113,7 +114,7 @@ class _PromoShimmerPlaceholder extends StatelessWidget {
             width: 80,
             height: 90,
             decoration: BoxDecoration(
-              color: Colors.grey.shade300,
+              color: Colors.grey,
               borderRadius: BorderRadius.circular(10),
             ),
           ),
@@ -122,7 +123,7 @@ class _PromoShimmerPlaceholder extends StatelessWidget {
             height: 12,
             width: 60,
             decoration: BoxDecoration(
-              color: Colors.grey.shade300,
+              color: Colors.grey,
               borderRadius: BorderRadius.circular(4),
             ),
           ),

@@ -13,8 +13,8 @@ import 'cancel_visiting_dialog.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 
-class VisitingUpdateButtonsWidget extends StatelessWidget {
-  const VisitingUpdateButtonsWidget({
+class VisitingMessageTileUpdateButtonsWidget extends StatelessWidget {
+  const VisitingMessageTileUpdateButtonsWidget({
     required this.message,
     this.post,
     super.key,

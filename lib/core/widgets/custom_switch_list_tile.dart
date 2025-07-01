@@ -36,8 +36,9 @@ class CustomSwitchListTile extends StatelessWidget {
       title: Text(title, style: textTheme.bodyMedium),
       subtitle: subtitle != null
           ? Text(subtitle!,
-              style: textTheme.labelMedium
-                  ?.copyWith(color: colorScheme.outlineVariant))
+              style: textTheme.labelMedium?.copyWith(
+                  color: colorScheme.outline.withValues(alpha: 0.4),
+                  fontWeight: FontWeight.w400))
           : null,
       value: value,
       onChanged: onChanged,

@@ -1,8 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
 import '../../../../../../../core/widgets/in_dev_mode.dart';
-import '../../../../../setting/setting_dashboard/views/screens/personal_setting_screen.dart';
+import '../../../../../setting/setting_dashboard/view/screens/personal_setting_screen.dart';
 import '../../screens/edit_profile_screen.dart';
 
 class ProfileEditAndSettingsWidget extends StatelessWidget {

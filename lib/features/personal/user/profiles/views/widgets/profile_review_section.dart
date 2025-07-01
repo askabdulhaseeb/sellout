@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/linear_rating_widget.dart';
 import '../../../../post/post_detail/views/providers/post_detail_provider.dart';
@@ -32,7 +31,6 @@ class ProfileReviewSection extends StatelessWidget {
       ) {
         final List<ReviewEntity> reviews =
             snapshot.data?.entity ?? LocalReview().reviewsWithQuery(param);
-
         return SingleChildScrollView(
           primary: false,
           child: Column(

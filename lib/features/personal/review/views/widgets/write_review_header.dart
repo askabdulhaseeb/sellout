@@ -1,11 +1,14 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../core/widgets/profile_photo.dart';
+import '../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../post/domain/entities/post_entity.dart';
 
 class WriteReviewHeaderSection extends StatelessWidget {
-  const WriteReviewHeaderSection({required this.post, super.key});
-  final PostEntity post;
-
+  const WriteReviewHeaderSection(
+      {required this.post, required this.service, super.key});
+  final PostEntity? post;
+  final ServiceEntity? service;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -14,11 +17,13 @@ class WriteReviewHeaderSection extends StatelessWidget {
         SizedBox(
             height: 150,
             width: 150,
-            child: ProfilePhoto(url: post.imageURL, placeholder: post.title)),
+            child: ProfilePhoto(
+                url: post?.imageURL ?? service?.thumbnailURL,
+                placeholder: post?.title ?? service?.name ?? 'na'.tr())),
         const SizedBox(height: 4),
         Text(
           textAlign: TextAlign.center,
-          post.title,
+          post?.title ?? service?.name ?? 'na',
           style: Theme.of(context).textTheme.titleMedium,
         ),
         const SizedBox(

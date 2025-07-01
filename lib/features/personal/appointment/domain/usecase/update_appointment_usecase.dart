@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/usecase/usecase.dart';
 import '../params/update_appointment_params.dart';
@@ -9,7 +8,6 @@ class UpdateAppointmentUsecase
     implements UseCase<bool, UpdateAppointmentParams> {
   const UpdateAppointmentUsecase(this._repository);
   final AppointmentRepository _repository;
-
   @override
   Future<DataState<bool>> call(UpdateAppointmentParams param) async {
     try {
