@@ -57,7 +57,6 @@ class SettingSecurityProvider extends ChangeNotifier {
     required String newPassword,
   }) async {
     setLoading(true);
-
     final ChangePasswordParams params = ChangePasswordParams(
       oldPassword: oldPassword,
       password: newPassword,
@@ -66,10 +65,12 @@ class SettingSecurityProvider extends ChangeNotifier {
     setLoading(false);
     if (result is DataSuccess) {
       AppLog.info('password_changed_successfully'.tr());
+      // ignore: use_build_context_synchronously
       Navigator.pop(context);
     } else {
-      AppLog.error(result.exception?.message ?? 'something_wrong',
+      AppLog.error(result.exception?.reason ?? 'something_wrong',
           name: 'SettingSecurityProvider.changePassword - error');
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             content: Text(result.exception?.reason ?? 'something_wrong'.tr())),

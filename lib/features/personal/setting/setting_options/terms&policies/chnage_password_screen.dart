@@ -30,7 +30,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         title: Text('change_password'.tr()),
         centerTitle: true,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Form(
           key: _formKey,
@@ -50,7 +50,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               PasswordTextFormField(
                   controller: _confirmPassword,
                   labelText: 'confirm_password'.tr(),
-                  validator: (String? value) => AppValidator.password(value)),
+                  validator: (String? value) => AppValidator.confirmPassword(
+                      _newPassword.text, _confirmPassword.text)),
               const SizedBox(height: 24),
               CustomElevatedButton(
                 title: 'save_password'.tr(),
