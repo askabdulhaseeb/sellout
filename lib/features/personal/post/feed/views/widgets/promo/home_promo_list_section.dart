@@ -114,7 +114,7 @@ class _PromoShimmerPlaceholder extends StatelessWidget {
             width: 80,
             height: 90,
             decoration: BoxDecoration(
-              color: Colors.grey,
+              color: Theme.of(context).dividerColor,
               borderRadius: BorderRadius.circular(10),
             ),
           ),
@@ -123,7 +123,7 @@ class _PromoShimmerPlaceholder extends StatelessWidget {
             height: 12,
             width: 60,
             decoration: BoxDecoration(
-              color: Colors.grey,
+              color: Theme.of(context).dividerColor,
               borderRadius: BorderRadius.circular(4),
             ),
           ),

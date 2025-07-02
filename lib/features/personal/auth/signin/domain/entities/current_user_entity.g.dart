@@ -33,8 +33,9 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       chatIDs: (fields[31] as List).cast<String>(),
       businessIDs: (fields[32] as List).cast<String>(),
       imageVerified: fields[41] as bool,
-      verificationImage: fields[42] as AttachmentEntity?,
-      profileImage: (fields[43] as List).cast<AttachmentEntity>(),
+      otpVerified: fields[42] as bool,
+      verificationImage: fields[43] as AttachmentEntity?,
+      profileImage: (fields[40] as List).cast<AttachmentEntity>(),
       lastLoginTime: fields[97] as DateTime,
       createdAt: fields[98] as DateTime,
       updatedAt: fields[99] as DateTime,
@@ -62,7 +63,7 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
   @override
   void write(BinaryWriter writer, CurrentUserEntity obj) {
     writer
-      ..writeByte(39)
+      ..writeByte(40)
       ..writeByte(1)
       ..write(obj.message)
       ..writeByte(2)
@@ -99,11 +100,13 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       ..write(obj.listOfReviews)
       ..writeByte(21)
       ..write(obj.address)
-      ..writeByte(43)
+      ..writeByte(40)
       ..write(obj.profileImage)
       ..writeByte(41)
       ..write(obj.imageVerified)
       ..writeByte(42)
+      ..write(obj.otpVerified)
+      ..writeByte(43)
       ..write(obj.verificationImage)
       ..writeByte(97)
       ..write(obj.lastLoginTime)

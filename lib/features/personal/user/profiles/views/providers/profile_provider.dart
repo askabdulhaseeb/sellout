@@ -143,7 +143,6 @@ class ProfileProvider extends ChangeNotifier {
   Future<void> updateProfileDetail(BuildContext context) async {
     setLoading(true);
     final UpdateUserParams params = UpdateUserParams(
-      uid: _user?.entity?.uid ?? '',
       name: namecontroller.text,
       bio: biocontroller.text,
     );

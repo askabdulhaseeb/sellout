@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../../routes/app_linking.dart';
 import '../../../../../order/view/screens/order_detail_screen.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../post/domain/entities/post_entity.dart';
@@ -26,7 +27,7 @@ class ProfileOrderTile extends StatelessWidget {
         final PostEntity? post = snapshot.data;
         return InkWell(
           onTap: () {
-            Navigator.pushNamed(context, OrderDetailsScreen.routeName,
+            AppNavigator.pushNamed(OrderDetailsScreen.routeName,
                 arguments: <String, dynamic>{
                   'order-id': order.orderId,
                 });

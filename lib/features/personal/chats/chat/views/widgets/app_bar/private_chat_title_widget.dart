@@ -18,10 +18,8 @@ class PrivateChatTitleWidget extends StatelessWidget {
         final bool isBusiness = otherPersonId.toUpperCase().startsWith('BU');
         final BusinessEntity? business =
             isBusiness ? LocalBusiness().business(otherPersonId) : null;
-
         final UserEntity? user =
             !isBusiness ? LocalUser().userEntity(otherPersonId) : null;
-
         return Row(
           children: <Widget>[
             ProfilePictureWithStatus(

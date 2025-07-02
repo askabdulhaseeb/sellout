@@ -14,9 +14,25 @@ class AppValidator {
   }
 
   static String? password(String? value) {
-    if ((value?.trim().length ?? 0) < 6 && !kDebugMode) {
-      return 'Password should be greater then 6 digits';
+    final String input = value?.trim() ?? '';
+
+    if (input.isEmpty) {
+      return 'Password cannot be empty';
     }
+
+    if (input.length < 6) {
+      return 'Password should be at least 6 characters long';
+    }
+
+    final bool hasLetter = RegExp(r'[A-Za-z]').hasMatch(input);
+    final bool hasDigit = RegExp(r'\d').hasMatch(input);
+    final bool hasSymbol =
+        RegExp(r'[!@#\$%^&*(),.?":{}|<>_\-\\/\[\]=+;~`]').hasMatch(input);
+
+    if (!hasLetter || !hasDigit || !hasSymbol) {
+      return 'Use a combination of letters, digits, and symbols for a strong password';
+    }
+
     return null;
   }
 
@@ -65,14 +81,17 @@ class AppValidator {
     }
     return null;
   }
+
   static String? validatePhoneOrEmail(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter a phone number or email';
     }
-    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value) && !RegExp(r'^\+?[0-9]{10,}$').hasMatch(value)) {
+    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value) &&
+        !RegExp(r'^\+?[0-9]{10,}$').hasMatch(value)) {
       return 'Please enter a valid phone number or email';
     }
     return null;
   }
+
   static String? retaunNull(String? value) => null;
 }

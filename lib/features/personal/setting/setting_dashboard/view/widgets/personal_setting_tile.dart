@@ -24,21 +24,27 @@ class PersonalSettingTile extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
             border: Border.all(color: Theme.of(context).dividerColor),
-            borderRadius: BorderRadius.circular(6)),
+            borderRadius: BorderRadius.circular(10)),
         margin: const EdgeInsets.symmetric(vertical: 6),
-        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
         child: Row(
           children: <Widget>[
             CircleAvatar(
-              radius: 18,
+              radius: 16,
               backgroundColor: Theme.of(context).dividerColor,
-              child: Icon(icon, color: iconColor),
+              child: Icon(
+                icon,
+                color: iconColor,
+                size: 16,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
                 title,
-                style: TextStyle(color: textColor),
+                style: TextTheme.of(context)
+                    .bodyMedium
+                    ?.copyWith(color: textColor),
                 overflow: TextOverflow.ellipsis,
               ),
             ),

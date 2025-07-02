@@ -123,7 +123,7 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
   Future<DataState<String>> updatePRofileDetail(UpdateUserParams params) async {
     try {
       final DataState<String> result = await ApiCall<String>().call(
-        endpoint: '/user/update/${params.uid}',
+        endpoint: '/user/update/${LocalAuth.uid ?? ''}',
         requestType: ApiRequestType.patch,
         body: json.encode(params.toMap()),
       );

@@ -29,8 +29,8 @@ class CustomToggleSwitch<T> extends StatelessWidget {
   final List<Color>? selectedColors;
   final bool isShaded;
   final double seletedFontSize;
-  final double verticalPadding; // 🌟 New for vertical padding
-  final double horizontalPadding; // 🌟 New for horizontal padding
+  final double verticalPadding;
+  final double horizontalPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -68,12 +68,10 @@ class CustomToggleSwitch<T> extends StatelessWidget {
                         selectedColors!.length > currentIndex)
                     ? selectedColors![currentIndex]
                     : AppTheme.primaryColor;
-
-                final double? buttonWidth = (customWidths != null &&
+                final double buttonWidth = (customWidths != null &&
                         customWidths!.length > currentIndex)
                     ? customWidths![currentIndex]
-                    : (minWidth / labelStrs.length);
-
+                    : (minWidth / labelStrs.length).clamp(0.0, double.infinity);
                 return InkWell(
                   borderRadius: borderRadius,
                   onTap: readOnly

@@ -10,6 +10,7 @@ import '../../../../features/personal/notifications/view/screens/notification_sc
 import '../../../../features/personal/search/view/view/search_screen.dart';
 import '../../../../features/personal/user/profiles/data/sources/local/local_user.dart';
 import '../../../../features/personal/user/profiles/domain/entities/business_profile_detail_entity.dart';
+import '../../../../routes/app_linking.dart';
 import '../../../utilities/app_icons.dart';
 import '../../profile_photo.dart';
 
@@ -73,7 +74,7 @@ personalAppbar(BuildContext context) {
         _IconButton(
             icon: AppIcons.search,
             onPressed: () {
-              Navigator.pushNamed(context, SearchScreen.routeName);
+              AppNavigator.pushNamed(SearchScreen.routeName);
             }),
       ],
     ),
@@ -81,7 +82,7 @@ personalAppbar(BuildContext context) {
       _IconButton(
           icon: AppIcons.notification,
           onPressed: () {
-            Navigator.pushNamed(context, NotificationsScreen.routeName);
+            AppNavigator.pushNamed(NotificationsScreen.routeName);
           }),
       if (me.isNotEmpty)
         ValueListenableBuilder<Box<CartEntity>>(

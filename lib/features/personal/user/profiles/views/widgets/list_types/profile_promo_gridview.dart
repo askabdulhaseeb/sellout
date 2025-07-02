@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../../routes/app_linking.dart';
 import '../../../../../../../services/get_it.dart';
 import '../../../../../promo/data/source/local/local_promo.dart';
 import '../../../../../promo/domain/entities/promo_entity.dart';
@@ -139,7 +140,7 @@ class _SearchBar extends StatelessWidget {
             ),
             label: Text('promo'.tr()),
             onPressed: () {
-              Navigator.pushNamed(context, CreatePromoScreen.routeName);
+              AppNavigator.pushNamed(CreatePromoScreen.routeName);
             },
           ),
         ),

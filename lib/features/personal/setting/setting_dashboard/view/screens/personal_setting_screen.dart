@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/widgets/in_dev_mode.dart';
+import '../../../../../../routes/app_linking.dart';
 import '../../../setting_options/privacy_setting/screen/privacy_screen.dart';
 import 'personal_more_information_setting_screen.dart';
 import '../../../setting_options/setting_notification/screens/personal_setting_notification_screen.dart';
@@ -15,19 +16,24 @@ class PersonalSettingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(centerTitle: true, title: Text('settings'.tr()).tr()),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text('settings'.tr(),
+                style: TextTheme.of(context)
+                    .titleMedium
+                    ?.copyWith(fontWeight: FontWeight.w500))
+            .tr(),
+      ),
       body: ListView(
         physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.all(16),
         children: <Widget>[
-          InDevMode(
-            child: PersonalSettingTile(
-              icon: Icons.person_2_outlined,
-              title: 'account'.tr(),
-              onTap: () {
-                Navigator.pushNamed(context, AccountSettingsScreen.routeName);
-              },
-            ),
+          PersonalSettingTile(
+            icon: Icons.person_2_outlined,
+            title: 'account'.tr(),
+            onTap: () {
+              AppNavigator.pushNamed(AccountSettingsScreen.routeName);
+            },
           ),
           PersonalSettingTile(
             icon: Icons.notifications_none,
@@ -52,14 +58,12 @@ class PersonalSettingScreen extends StatelessWidget {
                   context, PersonalPrivacySettingScreen.routeName);
             },
           ),
-          InDevMode(
-            child: PersonalSettingTile(
-              icon: Icons.security,
-              title: 'security'.tr(),
-              onTap: () {
-                Navigator.pushNamed(context, SettingSecurityScreen.routeName);
-              },
-            ),
+          PersonalSettingTile(
+            icon: Icons.security,
+            title: 'security'.tr(),
+            onTap: () {
+              AppNavigator.pushNamed(SettingSecurityScreen.routeName);
+            },
           ),
           InDevMode(
             child: PersonalSettingTile(

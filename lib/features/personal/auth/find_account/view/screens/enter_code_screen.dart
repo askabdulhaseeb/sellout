@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../core/theme/app_theme.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/custom_pin_input_field.dart';
 import '../../../../../../core/widgets/sellout_title.dart';
@@ -12,84 +13,108 @@ class EnterCodeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final TextTheme textTheme = theme.textTheme;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Colors.transparent,
-        leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded),
-            onPressed: () => Navigator.pop(context)),
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: const SellOutTitle(),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const SizedBox(height: 10),
-            Text('enter_code_title'.tr(),
-                style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(
-              height: 4,
-            ),
-            Text('enter_code_description'.tr(),
-                textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(color: Colors.grey)),
-            const SizedBox(
-              height: 12,
-            ),
-            Text('sent_code_to'.tr(),
-                textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(color: Colors.grey)),
-            Consumer<FindAccountProvider>(
-              builder: (BuildContext context, FindAccountProvider pro, _) =>
-                  Text(pro.email ?? '',
-                      style: Theme.of(context).textTheme.bodySmall),
-            ),
-            const SizedBox(
-              height: 20,
+              height: 10,
               width: double.infinity,
             ),
+            Text('enter_code_title'.tr(), style: textTheme.titleMedium),
+            const SizedBox(height: 4),
+            Text(
+              'enter_code_description'.tr(),
+              textAlign: TextAlign.center,
+              style: textTheme.bodySmall
+                  ?.copyWith(color: ColorScheme.of(context).outline),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'sent_code_to'.tr(),
+              textAlign: TextAlign.center,
+              style: textTheme.bodySmall
+                  ?.copyWith(color: ColorScheme.of(context).outline),
+            ),
+            const SizedBox(height: 4),
+            Consumer<FindAccountProvider>(
+              builder: (_, FindAccountProvider provider, __) => Text(
+                provider.email ?? '',
+                style: textTheme.bodySmall,
+              ),
+            ),
+            const SizedBox(height: 20),
             CustomPinInputField(
+              fontSize: 14,
+              pinLength: 6,
               onChanged: (String value) {
                 context.read<FindAccountProvider>().pin.text = value;
               },
-              fontSize: 14,
-              pinLength: 6,
             ),
-            TextButton(onPressed: null, child: Text('didnot_get_code'.tr())),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Consumer<FindAccountProvider>(
-                  builder:
-                      (BuildContext context, FindAccountProvider prov, _) =>
-                          TextButton(
-                    onPressed: () => prov.sendemailforOtp(context),
-                    child: Text(
-                      'resend_code'.tr(),
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ),
-                ),
-                Text(
-                  '${context.watch<FindAccountProvider>().resentCodeSeconds}',
-                ),
-              ],
-            )
+            const SizedBox(height: 12),
+            TextButton(
+              onPressed: null,
+              child: Text(
+                'didnot_get_code'.tr(),
+                style: textTheme.bodyMedium
+                    ?.copyWith(color: AppTheme.primaryColor),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Consumer<FindAccountProvider>(
+              builder: (_, FindAccountProvider provider, __) {
+                final bool canResend = provider.resentCodeSeconds == 0;
+                final int minutes = provider.resentCodeSeconds ~/ 60;
+                final int seconds = provider.resentCodeSeconds % 60;
+                return canResend
+                    ? InkWell(
+                        onTap: () => provider.sendemailforOtp(context),
+                        child: Text(
+                          'resend_code'.tr(),
+                          style: textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      )
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            '${'resend_code'.tr()}: ',
+                            style: textTheme.bodyMedium?.copyWith(
+                                color: ColorScheme.of(context).outline),
+                          ),
+                          Text(
+                            '${minutes.toString()}:${seconds.toString().padLeft(2, '0')}',
+                            style: textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: ColorScheme.of(context).outline),
+                          ),
+                        ],
+                      );
+              },
+            ),
+            const SizedBox(height: 20),
           ],
         ),
       ),
       bottomSheet: BottomAppBar(
         height: 100,
-        color: Theme.of(context).scaffoldBackgroundColor,
+        color: theme.scaffoldBackgroundColor,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
@@ -100,23 +125,20 @@ class EnterCodeScreen extends StatelessWidget {
                 isLoading: false,
                 textColor: ColorScheme.of(context).onSurface,
                 bgColor: ColorScheme.of(context).surface,
-                border: Border.all(color: Theme.of(context).dividerColor),
+                border: Border.all(color: theme.dividerColor),
                 onTap: () => Navigator.pop(context),
               ),
             ),
             Consumer<FindAccountProvider>(
-              builder: (BuildContext context, FindAccountProvider prov, _) =>
-                  Expanded(
+              builder: (_, FindAccountProvider provider, __) => Expanded(
                 child: CustomElevatedButton(
                   margin: const EdgeInsets.all(10),
                   title: 'confirm'.tr(),
-                  isLoading: prov.isLoading,
-                  onTap: () async {
-                    prov.verifyOtp(context);
-                  },
+                  isLoading: provider.isLoading,
+                  onTap: () => provider.verifyOtp(context),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),

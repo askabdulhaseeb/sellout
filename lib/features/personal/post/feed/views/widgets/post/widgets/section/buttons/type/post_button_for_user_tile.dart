@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../../../core/widgets/in_dev_mode.dart';
+import '../../../../../../../../../../../routes/app_linking.dart';
 import '../../../../../../../../../book_visit/view/screens/booking_screen.dart';
 import '../../../../../../../../../listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../../../../../../../../../listing/listing_form/views/screens/add_listing_form_screen.dart';
@@ -48,7 +49,7 @@ class PostButtonsForUser extends StatelessWidget {
                   pro.setListingType(post?.type);
                   pro.setPost(post);
                   pro.updateVariables();
-                  Navigator.pushNamed(context, AddListingFormScreen.routeName);
+                  AppNavigator.pushNamed(AddListingFormScreen.routeName);
                 },
                 title: 'edit_listing'.tr()),
           ),
@@ -63,7 +64,7 @@ class PostButtonsForUser extends StatelessWidget {
               title: 'calender'.tr(),
               isLoading: false,
               onTap: () {
-                Navigator.pushNamed(context, BookingScreen.routeName,
+                AppNavigator.pushNamed(BookingScreen.routeName,
                     arguments: <String, dynamic>{
                       'post': post,
                       'visit': visit,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/widgets/scaffold/personal_scaffold.dart';
-import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../auth/signin/domain/repositories/signin_repository.dart';
 import '../../data/sources/local/local_user.dart';
 import '../providers/profile_provider.dart';
@@ -18,23 +17,32 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return PersonalScaffold(
       body: FutureBuilder<DataState<UserEntity?>?>(
-          future: Provider.of<ProfileProvider>(context, listen: false)
-              .getUserByUid(),
-          initialData: LocalUser().userState(LocalAuth.uid ?? ''),
-          builder: (BuildContext context,
-              AsyncSnapshot<DataState<UserEntity?>?> snapshot) {
-            final UserEntity? user = snapshot.data?.entity;
-            return SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  ProfileHeaderSection(user: user),
-                  ProfileScoreSection(user: user),
-                  ProfileGridTypeSelectionSection(user: user),
-                  ProfileGridSection(user: user),
-                ],
-              ),
+        future:
+            Provider.of<ProfileProvider>(context, listen: false).getUserByUid(),
+        builder: (BuildContext context,
+            AsyncSnapshot<DataState<UserEntity?>?> snapshot) {
+          // Show loader until data is fully fetched
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Center(
+              child:
+                  CircularProgressIndicator(), // You can replace this with your custom loader
             );
-          }),
+          }
+
+          final UserEntity? user = snapshot.data?.entity;
+
+          return SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                ProfileHeaderSection(user: user),
+                ProfileScoreSection(user: user),
+                ProfileGridTypeSelectionSection(user: user),
+                ProfileGridSection(user: user),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }
