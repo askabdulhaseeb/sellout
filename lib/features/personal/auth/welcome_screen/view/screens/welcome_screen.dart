@@ -32,29 +32,51 @@ class WelcomeScreen extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-    
-            child: Column(
-              children: <Widget>[const SizedBox(width: double.infinity,),
-                Container(padding:const EdgeInsets.all(30),height: 200,width:200,child:  Image.asset(AppStrings.selloutLogo)),
-                const SellOutTitle(size: 35),
-                Text('Sellout_welcome_description'.tr(),style: TextTheme.of(context).titleMedium?.copyWith(fontSize: 18,
-                  color: ColorScheme.of(context).outline,fontWeight: FontWeight.w400),maxLines: 2,
-                  textAlign: TextAlign.center,),
-              ],
+        child: Column(
+          children: <Widget>[
+            const SizedBox(
+              width: double.infinity,
             ),
-      ),bottomSheet: BottomAppBar(color: Theme.of(context).scaffoldBackgroundColor,height: 170,child: Column(children: [   CustomElevatedButton(
-                  title: 'login'.tr(),
-                  isLoading: false,
- onTap: () async =>
-                      await AppNavigator.pushNamed(SignInScreen.routeName),                ),
-                CustomElevatedButton(
-                  title: 'create_account'.tr(),
-                  isLoading: false,
-                  bgColor: Colors.transparent,
-                  border: Border.all(color: Theme.of(context).dividerColor),
-                  onTap: () async =>
-                      await AppNavigator.pushNamed(SignupScreen.routeName),
-                ),],),),
+            Container(
+                padding: const EdgeInsets.all(30),
+                height: 200,
+                width: 200,
+                child: Image.asset(AppStrings.selloutLogo)),
+            const SellOutTitle(size: 35),
+            Text(
+              'Sellout_welcome_description'.tr(),
+              style: TextTheme.of(context).titleMedium?.copyWith(
+                  fontSize: 18,
+                  color: ColorScheme.of(context).outline,
+                  fontWeight: FontWeight.w400),
+              maxLines: 2,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+      bottomSheet: BottomAppBar(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        height: 170,
+        child: Column(
+          children: [
+            CustomElevatedButton(
+              title: 'login'.tr(),
+              isLoading: false,
+              onTap: () async =>
+                  await AppNavigator.pushNamed(SignInScreen.routeName),
+            ),
+            CustomElevatedButton(
+              title: 'create_account'.tr(),
+              isLoading: false,
+              bgColor: Colors.transparent,
+              border: Border.all(color: Theme.of(context).dividerColor),
+              onTap: () async =>
+                  await AppNavigator.pushNamed(SignupScreen.routeName),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

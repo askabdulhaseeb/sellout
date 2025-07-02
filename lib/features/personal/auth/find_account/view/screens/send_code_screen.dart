@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/sellout_title.dart';
+import '../../../../../../routes/app_linking.dart';
 import 'enter_code_screen.dart';
 
 class SendCodeScreen extends StatefulWidget {
@@ -109,7 +110,7 @@ class _SendCodeScreenState extends State<SendCodeScreen> {
                 title: 'continue'.tr(),
                 isLoading: false,
                 onTap: () {
-                  Navigator.pushNamed(context, EnterCodeScreen.routeName);
+                  AppNavigator.pushNamed(EnterCodeScreen.routeName);
                 },
               ),
             ),

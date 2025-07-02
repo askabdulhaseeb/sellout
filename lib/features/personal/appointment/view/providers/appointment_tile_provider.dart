@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import '../../../../../routes/app_linking.dart';
 import '../../../../business/business_page/domain/params/get_business_bookings_params.dart';
 import '../../../../business/business_page/domain/usecase/get_my_bookings_usecase.dart';
 import '../../../../business/core/domain/entity/business_entity.dart';
@@ -92,13 +93,13 @@ class AppointmentTileProvider extends ChangeNotifier {
   }
 
   Future<void> onBookAgain(BuildContext context, BookingEntity booking) async {
-    Navigator.pushNamed(context, BookingScreen.routeName,
+    AppNavigator.pushNamed(BookingScreen.routeName,
         arguments: <String, dynamic>{'service': service, 'business': business});
   }
 
   Future<void> onLeaveReview(
       BuildContext context, BookingEntity booking) async {
-    Navigator.pushNamed(context, WriteReviewScreen.routeName,
+    AppNavigator.pushNamed(WriteReviewScreen.routeName,
         arguments: <String, dynamic>{'service': service});
   }
 

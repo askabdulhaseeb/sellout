@@ -70,13 +70,16 @@ class CurrentUserEntity {
   final List<AddressEntity> address; // Physical addresses
 
   // ──────────────────────────────── IMAGES ────────────────────────────────
-  @HiveField(43)
+  @HiveField(40)
   List<AttachmentEntity> profileImage; // List of profile pictures
 
   @HiveField(41)
   final bool imageVerified; // Image verification status
 
   @HiveField(42)
+  final bool? otpVerified; // email verification status
+
+  @HiveField(43)
   final AttachmentEntity? verificationImage; // ID/KYC image
 
   // ──────────────────────────────── DATES ────────────────────────────────
@@ -156,6 +159,7 @@ class CurrentUserEntity {
     required this.chatIDs,
     required this.businessIDs,
     required this.imageVerified,
+    required this.otpVerified,
     required this.verificationImage,
     required this.profileImage,
     required this.lastLoginTime,
@@ -186,6 +190,10 @@ class CurrentUserEntity {
       List<AddressEntity>? address,
       bool? twoStepAuthEnabled,
       List<SupporterDetailEntity>? supporting,
+      DateTime? dob,
+      String? phoneNumber,
+      String? countryCode,
+      String? displayName,
       TimeAwayEntity? timeAway}) {
     return CurrentUserEntity(
       message: message,
@@ -193,17 +201,18 @@ class CurrentUserEntity {
       userID: userID,
       email: email,
       userName: userName,
-      displayName: displayName,
+      displayName: displayName ?? this.displayName,
       currency: currency,
       privacy: privacy,
       countryAlpha3: countryAlpha3,
-      countryCode: countryCode,
-      phoneNumber: phoneNumber,
+      countryCode: countryCode ?? this.countryCode,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
       language: language,
       address: address ?? this.address,
       chatIDs: chatIDs,
       businessIDs: businessIDs,
       imageVerified: imageVerified,
+      otpVerified: otpVerified,
       verificationImage: verificationImage,
       profileImage: profileImage,
       lastLoginTime: lastLoginTime,
@@ -224,7 +233,7 @@ class CurrentUserEntity {
       timeAway: timeAway,
       accountStatus: accountStatus,
       accountType: accountType,
-      dob: dob,
+      dob: dob ?? this.dob,
       saved: saved,
       listOfReviews: listOfReviews,
     );

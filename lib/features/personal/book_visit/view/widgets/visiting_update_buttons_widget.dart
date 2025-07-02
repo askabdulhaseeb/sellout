@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/enums/core/status_type.dart';
+import '../../../../../routes/app_linking.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../chats/chat/domain/entities/getted_message_entity.dart';
 import '../../../chats/chat_dashboard/domain/entities/messages/message_entity.dart';
@@ -114,7 +115,7 @@ class CancelAndChangeButtons extends StatelessWidget {
                     color: Theme.of(context).canvasColor),
                 onTap: () {
                   pro.setMessageEntity(message);
-                  Navigator.pushNamed(context, BookingScreen.routeName,
+                  AppNavigator.pushNamed(BookingScreen.routeName,
                       arguments: <String, dynamic>{
                         'post': post,
                         'visit': message.visitingDetail

@@ -1,5 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
+import '../../../../../../routes/app_linking.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../terms&policies/chnage_password_screen.dart';
 import '../bottomsheets/login_activity_bottomsheet.dart';
 import '../bottomsheets/two_factor_bottomsheet.dart';
 
@@ -11,7 +16,7 @@ class SettingSecurityScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('security'.tr()),
+        title: const AppBarTitle(titleKey: 'security'),
         centerTitle: true,
         elevation: 0,
         leading: IconButton(
@@ -37,18 +42,15 @@ class SettingSecurityScreen extends StatelessWidget {
           const SizedBox(height: 20),
           const Divider(),
           _SecurityTile(
-            title: 'email'.tr(),
-            subtitle: 'check_email_is_correct'.tr(),
-            onTap: () {
-              // TODO: navigate to email screen
-            },
-          ),
+              title: 'email'.tr(),
+              subtitle: 'check_email_is_correct'.tr(),
+              onTap: () => _showEmailBottomSheet(context)),
           const Divider(),
           _SecurityTile(
             title: 'password'.tr(),
             subtitle: 'protect_with_stronger_password'.tr(),
             onTap: () {
-              // TODO: navigate to password screen
+              AppNavigator.pushNamed(ChangePasswordScreen.routeName);
             },
           ),
           const Divider(),
@@ -56,15 +58,7 @@ class SettingSecurityScreen extends StatelessWidget {
             title: 'two_step_verification'.tr(),
             subtitle: 'verify_with_4_digit_code'.tr(),
             onTap: () {
-              showModalBottomSheet(
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                useSafeArea: true,
-                context: context,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-                ),
-                builder: (_) => const TwoFactorAuthBottomSheet(),
-              );
+              const TwoFactorAuthBottomSheet();
             },
           ),
           const Divider(),
@@ -126,4 +120,43 @@ class _SecurityTile extends StatelessWidget {
         ),
         tileColor: Theme.of(context).scaffoldBackgroundColor);
   }
+}
+
+void _showEmailBottomSheet(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+    builder: (BuildContext context) {
+      return Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Icon(
+              Icons.email_outlined,
+              size: 40,
+              color: Theme.of(context).primaryColor,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              LocalAuth.currentUser?.email ?? 'na'.tr(),
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: CustomElevatedButton(
+                  onTap: () => Navigator.pop(context),
+                  isLoading: false,
+                  title: 'close'.tr()),
+            ),
+          ],
+        ),
+      );
+    },
+  );
 }

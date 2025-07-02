@@ -5,6 +5,7 @@ import '../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../core/widgets/in_dev_mode.dart';
+import '../../../../../../../routes/app_linking.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../post/domain/entities/post_entity.dart';
 import '../../../../../post/domain/entities/visit/visiting_entity.dart';
@@ -25,7 +26,7 @@ class ProfileVisitGridviewTile extends StatelessWidget {
             Expanded(
               child: GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, PostDetailScreen.routeName,
+                  AppNavigator.pushNamed(PostDetailScreen.routeName,
                       arguments: <String, dynamic>{
                         'pid': post?.postID,
                         'visit': visit,

@@ -173,8 +173,6 @@ class HiveDB {
     await LocalDropDownListings().refresh();
     await LocalColors().refresh();
     await LocalOrders().refresh();
-
-    // await LocalFeed().refresh();
   }
 
   static Future<void> signout() async {
@@ -196,7 +194,6 @@ class HiveDB {
     await LocalDropDownListings().clear();
     await LocalColors().clear();
     await LocalOrders().clear();
-    // await LocalFeed().clear();
     // await LocalCountry().clear();
   }
 }

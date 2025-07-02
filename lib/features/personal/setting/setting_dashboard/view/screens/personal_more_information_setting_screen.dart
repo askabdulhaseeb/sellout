@@ -34,49 +34,49 @@ class PersonalSettingMoreInformationScreen extends StatelessWidget {
             icon: Icons.privacy_tip_outlined,
             title: 'privacy_policy'.tr(),
             onTap: () {
-              Navigator.pushNamed(context, PrivacyPolicyScreen.routeName);
+              AppNavigator.pushNamed(PrivacyPolicyScreen.routeName);
             },
           ),
           PersonalSettingTile(
             icon: Icons.text_format_sharp,
             title: 'terms_and_conditions'.tr(),
             onTap: () {
-              Navigator.pushNamed(context, TermsOfServiceScreen.routeName);
+              AppNavigator.pushNamed(TermsOfServiceScreen.routeName);
             },
           ),
           PersonalSettingTile(
             icon: Icons.cookie,
             title: 'cookies_policy'.tr(),
             onTap: () {
-              Navigator.pushNamed(context, CookiesPolicyScreen.routeName);
+              AppNavigator.pushNamed(CookiesPolicyScreen.routeName);
             },
           ),
           PersonalSettingTile(
             icon: Icons.lock_person_outlined,
             title: 'acceptable_use_policy'.tr(),
             onTap: () {
-              Navigator.pushNamed(context, AcceptableUsePolicyScreen.routeName);
+              AppNavigator.pushNamed(AcceptableUsePolicyScreen.routeName);
             },
           ),
           PersonalSettingTile(
             icon: Icons.display_settings_rounded,
             title: 'dispute_resolution_procedure'.tr(),
             onTap: () {
-              Navigator.pushNamed(context, DisputeResolutionScreen.routeName);
+              AppNavigator.pushNamed(DisputeResolutionScreen.routeName);
             },
           ),
           PersonalSettingTile(
             icon: Icons.groups_2_outlined,
             title: 'community_standards'.tr(),
             onTap: () {
-              Navigator.pushNamed(context, CommunityStandardsScreen.routeName);
+              AppNavigator.pushNamed(CommunityStandardsScreen.routeName);
             },
           ),
           PersonalSettingTile(
             icon: Icons.timelapse_sharp,
             title: 'time_away'.tr(),
             onTap: () {
-              Navigator.pushNamed(context, TimeAwayScreen.routeName);
+              AppNavigator.pushNamed(TimeAwayScreen.routeName);
             },
           ),
           InDevMode(
@@ -90,7 +90,7 @@ class PersonalSettingMoreInformationScreen extends StatelessWidget {
             icon: Icons.info_outline,
             title: 'about'.tr(),
             onTap: () {
-              Navigator.pushNamed(context, AboutUsScreen.routeName);
+              AppNavigator.pushNamed(AboutUsScreen.routeName);
             },
           ),
           InDevMode(

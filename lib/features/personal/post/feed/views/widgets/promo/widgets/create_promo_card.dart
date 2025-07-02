@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../core/theme/app_theme.dart';
+import '../../../../../../../../routes/app_linking.dart';
 import '../../../../../../promo/view/create_promo/screens/create_promo_screen.dart';
 
 class AddPromoCard extends StatelessWidget {
@@ -10,7 +11,7 @@ class AddPromoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, CreatePromoScreen.routeName);
+        AppNavigator.pushNamed(CreatePromoScreen.routeName);
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

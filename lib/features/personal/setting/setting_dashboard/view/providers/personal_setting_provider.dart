@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
+import '../../../../../../core/widgets/phone_number/domain/entities/phone_number_entity.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../user/profiles/domain/usecase/edit_profile_detail_usecase.dart';
 import '../../../../user/profiles/views/params/update_user_params.dart';
@@ -29,22 +30,45 @@ class PersonalSettingProvider extends ChangeNotifier {
   bool newItems = false;
   bool mentions = false;
   bool forumMessages = false;
-  // Privacy
+  // Privacy Settings
   bool thirdPartyTracking =
       LocalAuth.currentUser?.privacySettings?.thirdPartyTracking ?? false;
   bool personalizedContent =
       LocalAuth.currentUser?.privacySettings?.personalizedContent ?? true;
+  // Update account
+  String? _name;
+  DateTime? _dob;
+  PhoneNumberEntity? _phone;
+  String? _country;
+  String? _gender;
+  String? _language;
+
   //
   bool _isLoading = false;
 
   /// Getters
   bool get isLoading => _isLoading;
+  // account varibales
+  String? get name => _name;
+  DateTime? get dob => _dob;
+  PhoneNumberEntity? get phone => _phone;
+  String? get country => _country;
+  String? get gender => _gender;
+  String? get language => _language;
 
   /// Setters
   void setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
   }
+
+  void setName(String? value) => _name = value;
+  void setDob(DateTime? value) => _dob = value;
+  void setPhone(PhoneNumberEntity? value) => _phone = value;
+  void setCountry(String? value) => _country = value;
+  void setGender(String? value) => _gender = value;
+
+  void setLanguage(String? value) => _language = value;
 
   /// Toggles (UI Only)
   void toggleSellOutUpdates(bool value) =>
@@ -76,7 +100,6 @@ class PersonalSettingProvider extends ChangeNotifier {
     setLoading(true);
     final DataState<String> result = await _updateProfileDetailUsecase(
       UpdateUserParams(
-        uid: LocalAuth.uid ?? '',
         privacySettings: PrivacySettingsModel(thirdPartyTracking: value),
       ),
     );
@@ -98,7 +121,6 @@ class PersonalSettingProvider extends ChangeNotifier {
     setLoading(true);
     final DataState<String> result = await _updateProfileDetailUsecase(
       UpdateUserParams(
-        uid: LocalAuth.uid ?? '',
         privacySettings: PrivacySettingsModel(
           personalizedContent: value,
         ),
@@ -123,7 +145,6 @@ class PersonalSettingProvider extends ChangeNotifier {
     setLoading(true);
     final DataState<String> result = await _updateProfileDetailUsecase(
       UpdateUserParams(
-        uid: LocalAuth.uid ?? '',
         pushNotification: value,
       ),
     );
@@ -144,7 +165,6 @@ class PersonalSettingProvider extends ChangeNotifier {
     setLoading(true);
     final DataState<String> result = await _updateProfileDetailUsecase(
       UpdateUserParams(
-        uid: LocalAuth.uid ?? '',
         emailNotification: value,
       ),
     );
@@ -171,7 +191,7 @@ class PersonalSettingProvider extends ChangeNotifier {
     final TimeAwayModel timeAway =
         TimeAwayModel(startDate: startDate, endDate: endDate, message: message);
     final DataState<String> result = await _updateProfileDetailUsecase(
-      UpdateUserParams(uid: LocalAuth.uid ?? '', timeAway: timeAway),
+      UpdateUserParams(timeAway: timeAway),
     );
     setLoading(false);
     if (result is DataSuccess) {
@@ -182,5 +202,36 @@ class PersonalSettingProvider extends ChangeNotifier {
       AppLog.error(result.exception?.message ?? 'Unknown error');
     }
     notifyListeners();
+  }
+
+  // UpdateProfile
+  Future<void> updateProfileDetail(BuildContext context) async {
+    setLoading(true);
+
+    final UpdateUserParams params = UpdateUserParams(
+      name: _name,
+      dob: _dob,
+      phone: _phone,
+    );
+
+    final DataState<String> result = await _updateProfileDetailUsecase(params);
+
+    if (result is DataSuccess) {
+      AppLog.info('profile_updated_successfully'.tr());
+      LocalAuth.currentUser?.copyWith(dob: _dob);
+      LocalAuth.currentUser?.copyWith(
+          phoneNumber: _phone?.number, countryCode: _phone?.countryCode);
+      LocalAuth.currentUser?.copyWith(displayName: _name);
+
+      if (context.mounted) Navigator.pop(context);
+    } else {
+      AppLog.error(result.exception!.message,
+          name: 'ProfileProvider.updateProfileDetail - error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('something_wrong'.tr())),
+      );
+    }
+
+    setLoading(false);
   }
 }

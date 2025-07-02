@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../core/widgets/in_dev_mode.dart';
+import '../../../../../../../routes/app_linking.dart';
 import '../../../../../setting/setting_dashboard/view/screens/personal_setting_screen.dart';
 import '../../screens/edit_profile_screen.dart';
 
@@ -27,7 +28,7 @@ class ProfileEditAndSettingsWidget extends StatelessWidget {
             color: Theme.of(context).scaffoldBackgroundColor,
             onSelected: (int value) {
               if (value == 1) {
-                Navigator.pushNamed(context, EditProfileScreen.routeName);
+                AppNavigator.pushNamed(EditProfileScreen.routeName);
               } else if (value == 2) {
                 Navigator.of(context)
                     .pushNamed(PersonalSettingScreen.routeName);

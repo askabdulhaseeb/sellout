@@ -7,7 +7,9 @@ import '../../../../setting/setting_dashboard/data/models/notification_model.dar
 import '../../../../setting/setting_dashboard/data/models/privacy_setting_model.dart';
 import '../../../../setting/setting_dashboard/data/models/time_away_model.dart';
 import '../../../../user/profiles/data/models/supporter_detail_model.dart';
+import '../../../../user/profiles/domain/entities/supporter_detail_entity.dart';
 import '../../domain/entities/current_user_entity.dart';
+import '../../domain/entities/login_info_entity.dart';
 import 'address_model.dart';
 import 'login_detail_model.dart';
 import 'login_info_model.dart';
@@ -31,6 +33,7 @@ class CurrentUserModel extends CurrentUserEntity {
     required super.chatIDs,
     required super.businessIDs,
     required super.imageVerified,
+    required super.otpVerified,
     required super.verificationImage,
     required super.profileImage,
     required super.lastLoginTime,
@@ -64,7 +67,7 @@ class CurrentUserModel extends CurrentUserEntity {
     final userData = json['item'] ?? <String, dynamic>{};
     final dynamic addressData = userData['address'];
 
-    List<AddressEntity> addressList = [];
+    List<AddressEntity> addressList = <AddressEntity>[];
     if (addressData is List) {
       addressList = addressData.map((e) => AddressModel.fromJson(e)).toList();
     } else if (addressData is Map<String, dynamic>) {
@@ -76,11 +79,13 @@ class CurrentUserModel extends CurrentUserEntity {
       token: json['token'] ?? '',
       userID: userData['user_id'] ?? userData['owner_id'] ?? '',
       email: userData['email'] ?? userData['owner_email'] ?? '',
+      otpVerified:
+          userData['otp_verified'] == null ? userData['otp_verified'] : false,
       userName: userData['user_name'] ?? '',
       displayName: userData['display_name'] ?? '',
       currency: userData['currency'] ?? 'gbp',
       accountStatus: userData['account_status'] ?? '',
-      listOfReviews: List<int>.from(userData['list_of_reviews'] ?? []),
+      listOfReviews: List<int>.from(userData['list_of_reviews'] ?? <dynamic>[]),
       privacy: PrivacyType.fromJson(userData['profile_type'] ?? 'public'),
       countryAlpha3: userData['country_alpha_3'] ?? '',
       countryCode: userData['country_code'] ?? '',
@@ -88,15 +93,16 @@ class CurrentUserModel extends CurrentUserEntity {
       language: userData['language'] ?? 'en',
       address: addressList,
       chatIDs: List<String>.from(
-          (userData['chat_ids'] ?? []).map((e) => e.toString())),
+          (userData['chat_ids'] ?? <dynamic>[]).map((e) => e.toString())),
       businessIDs: List<String>.from(
-          (userData['business_ids'] ?? []).map((e) => e.toString())),
+          (userData['business_ids'] ?? <dynamic>[]).map((e) => e.toString())),
       imageVerified: userData['image_verified'] ?? false,
       verificationImage: userData['verification_pic'] != null
           ? AttachmentModel.fromJson(userData['verification_pic'])
           : null,
       profileImage: List<AttachmentModel>.from(
-        (userData['profile_pic'] ?? []).map((x) => AttachmentModel.fromJson(x)),
+        (userData['profile_pic'] ?? <dynamic>[])
+            .map((x) => AttachmentModel.fromJson(x)),
       ),
       lastLoginTime: userData['last_login_time']?.toString().toDateTime() ??
           DateTime.now(),
@@ -111,12 +117,12 @@ class CurrentUserModel extends CurrentUserEntity {
       loginActivity: (userData['login_activity'] as List<dynamic>?)
               ?.map((e) => DeviceLoginInfoModel.fromJson(e))
               .toList() ??
-          [],
+          <DeviceLoginInfoEntity>[],
       notification: userData['notifications'] != null
           ? NotificationSettingsModel.fromMap(userData['notifications'])
           : null,
       employeeList: List<BusinessEmployeeModel>.from(
-        (userData['employees'] ?? [])
+        (userData['employees'] ?? <dynamic>[])
             .map((e) => BusinessEmployeeModel.fromJson(e)),
       ),
       twoStepAuthEnabled:
@@ -124,14 +130,14 @@ class CurrentUserModel extends CurrentUserEntity {
       supporters: (userData['supporters'] as List<dynamic>?)
               ?.map((e) => SupporterDetailModel.fromMap(e).toEntity())
               .toList() ??
-          [],
+          <SupporterDetailEntity>[],
       supporting: (userData['supporting'] as List<dynamic>?)
               ?.map((e) => SupporterDetailModel.fromMap(e).toEntity())
               .toList() ??
-          [],
+          <SupporterDetailEntity>[],
       accountType: userData['account_type'] ?? 'personal',
-      dob: userData['dob']?.toString().toDateTime(),
-      saved: List<String>.from((userData['saved'] ?? [])),
+      dob: DateTime.tryParse(userData['dob']),
+      saved: List<String>.from((userData['saved'] ?? <dynamic>[])),
       privacySettings: userData['privacy'] != null
           ? PrivacySettingsModel.fromJson(userData['privacy'])
           : PrivacySettingsModel.fromJson(json),

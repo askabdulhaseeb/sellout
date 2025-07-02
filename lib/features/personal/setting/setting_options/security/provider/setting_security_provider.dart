@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
-import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../user/profiles/domain/usecase/edit_profile_detail_usecase.dart';
 import '../../../../user/profiles/views/params/update_user_params.dart';
 import '../../../setting_dashboard/domain/usecase/change_password_usecase.dart';
@@ -32,7 +31,6 @@ class SettingSecurityProvider extends ChangeNotifier {
     setLoading(true);
 
     final UpdateUserParams params = UpdateUserParams(
-      uid: LocalAuth.uid ?? '',
       twoFactorAuth: twoFactorAuth,
     );
 

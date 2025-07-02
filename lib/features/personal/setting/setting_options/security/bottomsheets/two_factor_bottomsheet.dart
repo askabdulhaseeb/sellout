@@ -72,7 +72,6 @@ class _TwoFactorAuthBottomSheetState extends State<TwoFactorAuthBottomSheet> {
               }
               final DataState<String> result = await usecase.call(
                 UpdateUserParams(
-                  uid: uid,
                   twoFactorAuth: value,
                 ),
               );

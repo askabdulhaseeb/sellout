@@ -64,7 +64,7 @@ class _LoadingTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -106,11 +106,10 @@ class _LoadingTile extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Container(
-            height: 200,
+            height: 300,
             width: double.infinity,
             decoration: BoxDecoration(
               color: Theme.of(context).dividerColor,
-              borderRadius: BorderRadius.circular(12),
             ),
           ),
           const SizedBox(height: 12),

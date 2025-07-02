@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../core/widgets/custom_Switch_list_tile.dart';
 import '../../../../../../core/widgets/in_dev_mode.dart';
+import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../setting_dashboard/view/providers/personal_setting_provider.dart';
 
 class PersonalPrivacySettingScreen extends StatelessWidget {
@@ -17,7 +18,7 @@ class PersonalPrivacySettingScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('privacy_settings_title'.tr()),
+        title: const AppBarTitle(titleKey: 'privacy_settings_title'),
         centerTitle: true,
       ),
       body: ListView(

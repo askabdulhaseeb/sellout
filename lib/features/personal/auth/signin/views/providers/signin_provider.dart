@@ -23,9 +23,7 @@ class SigninProvider extends ChangeNotifier {
   final LoginUsecase loginUsecase;
   final VerifyTwoFactorUseCase verifyTwoFactorUseCase;
   final ResendTwoFactorUseCase resendTwoFactorUseCase;
-
   //
-  final GlobalKey<FormState> signInFormKey = GlobalKey<FormState>();
   final TextEditingController email = TextEditingController(
     text: kDebugMode ? 'ahmershurahbeeljan@gmail.com' : '',
   );
@@ -50,10 +48,7 @@ class SigninProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> signIn() async {
-    if (!signInFormKey.currentState!.validate()) {
-      return;
-    }
+  Future<void> signIn(BuildContext context) async {
     isLoading = true;
     try {
       final DataState<bool> result = await loginUsecase(

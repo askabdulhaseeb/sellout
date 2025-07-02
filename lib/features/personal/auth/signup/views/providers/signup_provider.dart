@@ -14,7 +14,6 @@ import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../dashboard/views/screens/dashboard_screen.dart';
 import '../../../../user/profiles/domain/usecase/edit_profile_detail_usecase.dart';
 import '../../../../user/profiles/views/params/update_user_params.dart';
-import '../../../signin/data/sources/local/local_auth.dart';
 import '../../../signin/domain/params/login_params.dart';
 import '../../../signin/domain/usecase/login_usecase.dart';
 import '../../domain/usecase/register_user_usecase.dart';
@@ -419,7 +418,6 @@ class SignupProvider extends ChangeNotifier {
 
   Future<bool> dateOfBirth(BuildContext context) async {
     final UpdateUserParams params = UpdateUserParams(
-      uid: LocalAuth.uid ?? '',
       dob: dob,
     );
     isLoading = true;

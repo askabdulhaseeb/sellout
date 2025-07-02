@@ -2,10 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../core/widgets/sellout_title.dart';
 import '../providers/find_account_provider.dart';
-import 'send_code_screen.dart';
 
 class ConfirmEmailScreen extends StatelessWidget {
   const ConfirmEmailScreen({super.key});
@@ -29,6 +27,7 @@ class ConfirmEmailScreen extends StatelessWidget {
           children: <Widget>[
             const SizedBox(height: 10),
             Text('confirm_email_title'.tr(),
+                textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(
               height: 8,
@@ -59,23 +58,23 @@ class ConfirmEmailScreen extends StatelessWidget {
         ),
       ),
       bottomSheet: BottomAppBar(
-        color: Theme.of(context).scaffoldBackgroundColor,
         height: 100,
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            InDevMode(
-                child: CustomElevatedButton(
-              margin: const EdgeInsets.all(10),
-              title: 'try_another_way'.tr(),
-              isLoading: false,
-              textColor: ColorScheme.of(context).onSurface,
-              bgColor: ColorScheme.of(context).surface,
-              border: Border.all(color: Theme.of(context).dividerColor),
-              onTap: () =>
-                  Navigator.pushNamed(context, SendCodeScreen.routeName),
-            )),
+            // InDevMode(
+            //     child: CustomElevatedButton(
+            //   margin: const EdgeInsets.all(10),
+            //   title: 'try_another_way'.tr(),
+            //   isLoading: false,
+            //   textColor: ColorScheme.of(context).onSurface,
+            //   bgColor: ColorScheme.of(context).surface,
+            //   border: Border.all(color: Theme.of(context).dividerColor),
+            //   onTap: () =>
+            //        AppNavigator.pushNamed( SendCodeScreen.routeName),
+            // )),
             Consumer<FindAccountProvider>(
               builder: (BuildContext context, FindAccountProvider pro, _) =>
                   CustomElevatedButton(

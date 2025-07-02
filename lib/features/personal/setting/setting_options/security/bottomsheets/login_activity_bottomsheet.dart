@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/theme/app_theme.dart';
+import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../auth/signin/domain/entities/login_info_entity.dart';
 
@@ -14,9 +15,8 @@ class LoginActivityScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        title: Text('login_activity'.tr()),
-      ),
+          centerTitle: true,
+          title: const AppBarTitle(titleKey: 'login_activity')),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: ListView.separated(
