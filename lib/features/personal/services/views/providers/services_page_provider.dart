@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/enums/business/services/service_category_type.dart'
-    show ServiceCategoryType;
+import '../../../../../core/enums/business/services/service_category_type.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/api_call.dart';
 import '../../../../business/business_page/domain/entities/services_list_responce_entity.dart';
@@ -13,6 +12,9 @@ import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../bookings/data/sources/local_booking.dart';
 import '../../../bookings/domain/entity/booking_entity.dart';
 import '../../../location/domain/entities/location_entity.dart';
+import '../../../search/domain/entities/search_entity.dart';
+import '../../../search/domain/params/search_enum.dart';
+import '../../../search/domain/usecase/search_usecase.dart';
 import '../../domain/params/get_categorized_services_params.dart';
 import '../../domain/usecase/get_service_by_categories_usecase.dart';
 import '../../domain/usecase/get_special_offer_usecase.dart';
@@ -24,7 +26,9 @@ class ServicesPageProvider extends ChangeNotifier {
       this._getSpecialOfferUsecase,
       this._getBookingsListUsecase,
       this._getBusinessByIdUsecase,
-      this._getServiceByCategory);
+      this._getServiceByCategory,
+      this._searchUsecase);
+  final SearchUsecase _searchUsecase;
   final GetSpecialOfferUsecase _getSpecialOfferUsecase;
   final GetMyBookingsListUsecase _getBookingsListUsecase;
   final GetBusinessByIdUsecase _getBusinessByIdUsecase;
@@ -88,21 +92,39 @@ class ServicesPageProvider extends ChangeNotifier {
     _setLoading(false);
   }
 
-  // // Load more for pagination
-  // Future<void> loadMoreServices(ServiceCategoryType category) async {
-  //   if (_isLoading || !_hasMore) return;
-  //   _setLoading(true);
-  //   final DataState<ServicesListResponceEntity> result =
-  //       await _getServiceByCategory.call(category);
-  //   if (result is DataSuccess) {
-  //     final ServicesListResponceEntity? servicesEntity = result.entity;
-  //     _categorizedServices
-  //         .addAll(servicesEntity?.services ?? <ServiceEntity>[]);
-  //     _nextKey = servicesEntity?.nextKey;
-  //     _hasMore = _nextKey != null;
-  //   }
-  //   _setLoading(false);
-  // }
+  //
+  final List<ServiceEntity> _serviceResults = <ServiceEntity>[];
+  String _serviceQuery = '';
+  String? _serviceNextKey;
+  final ScrollController _serviceScrollController = ScrollController();
+  final TextEditingController search = TextEditingController();
+
+  List<ServiceEntity> get serviceResults => _serviceResults;
+  String get serviceQuery => _serviceQuery;
+  ScrollController get serviceScrollController => _serviceScrollController;
+  Future<void> searchServices(String query) async {
+    if (query.isEmpty) return;
+    _isLoading = true;
+    notifyListeners();
+
+    final DataState<SearchEntity> result = await _searchUsecase.call(
+      SearchParams(
+        entityType: SearchEntityType.services,
+        query: query,
+        pageSize: 20,
+        lastEvaluatedKey: '',
+      ),
+    );
+
+    if (result is DataSuccess<SearchEntity>) {
+      searchedServices.clear();
+      searchedServices.addAll(result.entity?.services ?? <ServiceEntity>[]);
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
   //
   Future<List<ServiceEntity>> getSpecialOffer() async {
     try {
@@ -158,7 +180,7 @@ class ServicesPageProvider extends ChangeNotifier {
   }
 
   //
-  TextEditingController search = TextEditingController();
+  final List<ServiceEntity> searchedServices = <ServiceEntity>[];
   List<ServiceEntity> _specialOffer = <ServiceEntity>[];
   List<ServiceEntity> get specialOffer => _specialOffer;
 

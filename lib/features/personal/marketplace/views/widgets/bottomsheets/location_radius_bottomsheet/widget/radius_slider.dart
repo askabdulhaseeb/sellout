@@ -16,10 +16,9 @@ class RadiusSlider extends StatelessWidget {
               child: Slider(
                 thumbColor: AppTheme.primaryColor,
                 activeColor: AppTheme.primaryColor,
-                value: provider.selectedRadius,
-                min: 1.0,
-                max: 10.0,
-                divisions: 9,
+                value: provider.selectedRadius.toDouble(),
+                min: 1,
+                max: 10,
                 label: '${provider.selectedRadius.toStringAsFixed(1)} km',
                 onChanged: (double value) {
                   provider.setRadius(value);

@@ -30,6 +30,8 @@ class CustomTextFormField extends StatefulWidget {
     this.textAlign = TextAlign.start,
     this.style,
     this.border,
+    //
+    this.focusNode,
     super.key,
   }) : _controller = controller;
 
@@ -59,6 +61,8 @@ class CustomTextFormField extends StatefulWidget {
   final TextAlign textAlign;
   final InputBorder? border;
   final TextStyle? style;
+  final FocusNode? focusNode;
+
   @override
   CustomTextFormFieldState createState() => CustomTextFormFieldState();
 }
@@ -103,6 +107,8 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
             ),
           if (widget.labelText.isNotEmpty) const SizedBox(height: 2),
           TextFormField(
+            //
+            focusNode: widget.focusNode,
             initialValue: widget.initialValue,
             controller: widget._controller,
             readOnly: widget.readOnly,
@@ -132,54 +138,62 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
             onFieldSubmitted: widget.onFieldSubmitted,
             cursorColor: Theme.of(context).colorScheme.secondary,
             decoration: InputDecoration(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-              filled: true,
-              fillColor: widget.color ?? Theme.of(context).scaffoldBackgroundColor,
-              hintText: widget.hint,
-              prefixText:
-                  widget.prefixText == null ? null : '${widget.prefixText!} ',
-              prefixIcon: widget.prefixIcon,
-              hintStyle: TextStyle(color: Colors.grey.shade400),
-              suffixIcon: widget.suffixIcon ??
-                  (((widget._controller?.text.isEmpty ?? true) ||
-                          !widget.showSuffixIcon ||
-                          widget.showSuffixIcon == false ||
-                          widget.readOnly)
-                      ? (widget.maxLength == null
-                          ? null
-                          : widget.isExpanded
-                              ? null
-                              : Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      '${(widget._controller?.text ?? '').length}/${widget.maxLength}',
-                                      style: TextStyle(
-                                        color: Theme.of(context).disabledColor,
-                                        fontSize: 16,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                filled: true,
+                fillColor:
+                    widget.color ?? Theme.of(context).scaffoldBackgroundColor,
+                hintText: widget.hint,
+                prefixText:
+                    widget.prefixText == null ? null : '${widget.prefixText!} ',
+                prefixIcon: widget.prefixIcon,
+                hintStyle: TextTheme.of(context)
+                    .bodyMedium
+                    ?.copyWith(color: ColorScheme.of(context).outlineVariant),
+                suffixIcon: widget.suffixIcon ??
+                    (((widget._controller?.text.isEmpty ?? true) ||
+                            !widget.showSuffixIcon ||
+                            widget.showSuffixIcon == false ||
+                            widget.readOnly)
+                        ? (widget.maxLength == null
+                            ? null
+                            : widget.isExpanded
+                                ? null
+                                : Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text(
+                                        '${(widget._controller?.text ?? '').length}/${widget.maxLength}',
+                                        style: TextStyle(
+                                          color:
+                                              Theme.of(context).disabledColor,
+                                          fontSize: 16,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ))
-                      : IconButton(
-                          splashRadius: 16,
-                          onPressed: () => setState(() {
-                            widget._controller?.clear();
-                          }),
-                          icon: const Icon(CupertinoIcons.clear, size: 18),
-                        )),
-              focusColor: Theme.of(context).primaryColor,
-              errorBorder: OutlineInputBorder(
-                borderSide:
-                    BorderSide(color: Theme.of(context).colorScheme.error),
-                borderRadius: BorderRadius.circular(4.0),
-              ),
-              border: widget.border ??
-                  OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.transparent),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-            ),
+                                    ],
+                                  ))
+                        : IconButton(
+                            splashRadius: 16,
+                            onPressed: () => setState(() {
+                              widget._controller?.clear();
+                            }),
+                            icon: const Icon(CupertinoIcons.clear, size: 18),
+                          )),
+                focusColor: Theme.of(context).primaryColor,
+                errorBorder: OutlineInputBorder(
+                  borderSide:
+                      BorderSide(color: Theme.of(context).colorScheme.error),
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
+                border: widget.border ??
+                    OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide:
+                      BorderSide(color: ColorScheme.of(context).outlineVariant),
+                  borderRadius: BorderRadius.circular(8),
+                )),
           ),
         ],
       ),

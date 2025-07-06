@@ -32,7 +32,8 @@ class AddListingAttachmentSelectionWidget extends StatelessWidget {
                   padding: const EdgeInsets.all(32),
                   margin: const EdgeInsets.symmetric(vertical: 16),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
+                    border: Border.all(
+                        color: ColorScheme.of(context).outlineVariant),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
@@ -68,7 +69,6 @@ class AddListingAttachmentSelectionWidget extends StatelessWidget {
                       shrinkWrap: true,
                       itemBuilder: (BuildContext context, int index) {
                         final dynamic item = allAttachments[index];
-
                         if (item is PickedAttachment) {
                           return ListingAttachmentTile(attachment: item);
                         } else if (item is AttachmentEntity) {

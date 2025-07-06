@@ -20,6 +20,9 @@ class ServicesPageExploreSearchingSection extends StatelessWidget {
               controller: pro.search,
               prefixIcon: const Icon(Icons.search),
               hint: 'search'.tr(),
+              onChanged: (String value) {
+                pro.searchServices(value.trim());
+              },
             ),
             LocationInputButton(
               validator: (_) => null,

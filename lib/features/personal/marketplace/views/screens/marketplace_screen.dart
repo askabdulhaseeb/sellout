@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/widgets/scaffold/personal_scaffold.dart';
-import '../../../post/domain/entities/post_entity.dart';
 import '../providers/marketplace_provider.dart';
-import '../widgets/explore_categories_section.dart';
-import '../widgets/explore_header.dart';
-import '../widgets/filters/filter_container.dart';
-import '../widgets/marketpace_grid_section.dart';
-import '../widgets/marketplace_header_buttons.dart';
+import '../widgets/choicechip_section/choicechip_section.dart';
+import '../widgets/marketplace_top_section.dart';
 
 class MarketPlaceScreen extends StatefulWidget {
   const MarketPlaceScreen({super.key});
@@ -20,48 +16,28 @@ class MarketPlaceScreen extends StatefulWidget {
 class _MarketPlaceScreenState extends State<MarketPlaceScreen> {
   @override
   void initState() {
-    final MarketPlaceProvider marketPro =
-        Provider.of<MarketPlaceProvider>(context, listen: false);
-    marketPro.loadPosts();
     super.initState();
+    // Load all posts (represented by empty json string)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<MarketPlaceProvider>().loadChipsPosts('');
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final MarketPlaceProvider marketPro = context.watch<MarketPlaceProvider>();
-
     return PersonalScaffold(
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          spacing: 6,
-          children: <Widget>[
-            MarketPlaceTopSection(marketPro: marketPro),
-            MarketPlacePostsGrid(posts: marketPro.posts ?? <PostEntity>[]),
-          ],
-        ),
+      body: Consumer<MarketPlaceProvider>(
+        builder: (BuildContext context, MarketPlaceProvider pro, _) {
+          return const CustomScrollView(
+            slivers: <Widget>[
+              SliverToBoxAdapter(child: MarketPlaceTopSection()),
+              SliverToBoxAdapter(
+                child: MarketChoiceChipSection(),
+              ),
+            ],
+          );
+        },
       ),
     );
-  }
-}
-
-class MarketPlaceTopSection extends StatelessWidget {
-  const MarketPlaceTopSection({required this.marketPro, super.key});
-  final MarketPlaceProvider marketPro;
-
-  @override
-  Widget build(BuildContext context) {
-    if (marketPro.marketplaceCategory != null) {
-      return const FilterContainer();
-    } else {
-      return const Column(
-        children: <Widget>[
-          ExploreHeader(),
-          MarketPlaceHeaderButtons(),
-          ExploreCategoriesSection(),
-        ],
-      );
-    }
   }
 }

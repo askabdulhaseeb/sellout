@@ -1,0 +1,42 @@
+import 'package:flutter/cupertino.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
+import '../../../../../../../listing/listing_form/views/widgets/category/subcateogry_selectable_widget.dart';
+import '../../../../../../domain/entities/location_name_entity.dart';
+import '../../../../../providers/marketplace_provider.dart';
+import '../../../../bottomsheets/location_radius_bottomsheet/widget/marketplace_location_field.dart';
+
+class MarketFilterFoodDrinkCategoryAndLocationWIdget extends StatelessWidget {
+  const MarketFilterFoodDrinkCategoryAndLocationWIdget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final MarketPlaceProvider marketPro =
+        Provider.of<MarketPlaceProvider>(context, listen: false);
+    return Row(
+      spacing: 4,
+      children: <Widget>[
+        Expanded(
+          child: SubCategorySelectableWidget(
+            title: false,
+            listType: marketPro.marketplaceCategory,
+            subCategory: marketPro.selectedCategory,
+            onSelected: marketPro.setSelectedCategory,
+          ),
+        ),
+        Expanded(
+          child: MarketplaceLocationField(
+            initialText: marketPro.selectedLocationName,
+            onLocationSelected: (LocationNameEntity location) async {
+              final LatLng coords =
+                  await marketPro.getLocationCoordinates(location.description);
+              marketPro.updateLocation(coords, location.description);
+            },
+          ),
+        )
+      ],
+    );
+  }
+}
