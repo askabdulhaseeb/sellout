@@ -12,7 +12,7 @@ class PostByFiltersParams {
     this.category,
   });
   final String? category;
-  final double? distance;
+  final int? distance;
   final double? clientLat;
   final double? clientLng;
   final String? address;

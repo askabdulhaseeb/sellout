@@ -1,10 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../../../../../../core/theme/app_theme.dart';
 import '../../enums/sort_enums.dart';
 
 class SortBottomSheet extends StatefulWidget {
-  const SortBottomSheet({required this.onSortSelected, super.key});
-  final Function(SortOption) onSortSelected;
+  const SortBottomSheet(
+      {
+      //required this.onSortSelected,
+      super.key});
+  // final Function(SortOption) onSortSelected;
 
   @override
   SortBottomSheetState createState() => SortBottomSheetState();
@@ -16,13 +20,19 @@ class SortBottomSheetState extends State<SortBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
+      height: 400,
+      decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          backgroundBlendMode: BlendMode.color),
       child: Column(
         children: <Widget>[
-          Text(
-            'sort'.tr(),
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
+          Padding(
+              padding: const EdgeInsets.only(top: 16, bottom: 10),
+              child: Text(
+                'sort'.tr(),
+                style:
+                    TextTheme.of(context).titleMedium?.copyWith(fontSize: 14),
+              )),
           const Divider(),
           SizedBox(
             child: ListView(
@@ -35,7 +45,7 @@ class SortBottomSheetState extends State<SortBottomSheet> {
                     setState(() {
                       selectedOption = SortOption.dateAscending;
                     });
-                    widget.onSortSelected(SortOption.dateAscending);
+                    // widget.onSortSelected(SortOption.dateAscending);
                   },
                 ),
                 ListTile(
@@ -45,7 +55,7 @@ class SortBottomSheetState extends State<SortBottomSheet> {
                     setState(() {
                       selectedOption = SortOption.dateDescending;
                     });
-                    widget.onSortSelected(SortOption.dateDescending);
+                    // widget.onSortSelected(SortOption.dateDescending);
                   },
                 ),
                 ListTile(
@@ -55,7 +65,7 @@ class SortBottomSheetState extends State<SortBottomSheet> {
                     setState(() {
                       selectedOption = SortOption.priceAscending;
                     });
-                    widget.onSortSelected(SortOption.priceAscending);
+                    // widget.onSortSelected(SortOption.priceAscending);
                   },
                 ),
                 ListTile(
@@ -65,7 +75,7 @@ class SortBottomSheetState extends State<SortBottomSheet> {
                     setState(() {
                       selectedOption = SortOption.priceDescending;
                     });
-                    widget.onSortSelected(SortOption.priceDescending);
+                    // widget.onSortSelected(SortOption.priceDescending);
                   },
                 ),
               ],
@@ -86,13 +96,16 @@ class SortBottomSheetState extends State<SortBottomSheet> {
         shape: BoxShape.rectangle,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: isSelected ? Colors.red : Colors.grey,
+          color: isSelected
+              ? AppTheme.primaryColor
+              : ColorScheme.of(context).outline,
           width: 2,
         ),
-        color: isSelected ? Colors.white : Colors.transparent,
+        color:
+            isSelected ? ColorScheme.of(context).surface : Colors.transparent,
       ),
       child: isSelected
-          ? const Icon(Icons.check, color: Colors.red, size: 18)
+          ? const Icon(Icons.check, color: AppTheme.primaryColor, size: 18)
           : null,
     );
   }

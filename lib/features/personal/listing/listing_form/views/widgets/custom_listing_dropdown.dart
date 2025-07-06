@@ -154,9 +154,20 @@ class _CustomListingDropDownState extends State<CustomListingDropDown> {
             onTap: _showPicker,
             child: InputDecorator(
               decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    color: ColorScheme.of(context).outlineVariant,
+                  ),
+                ),
                 hintText: widget.hint.tr(),
+                hintStyle: TextTheme.of(context)
+                    .bodyMedium
+                    ?.copyWith(color: ColorScheme.of(context).outlineVariant),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(6),
+                  borderSide:
+                      BorderSide(color: ColorScheme.of(context).outlineVariant),
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 12,
@@ -172,13 +183,13 @@ class _CustomListingDropDownState extends State<CustomListingDropDown> {
                       style: displayLabel != null
                           ? null
                           : TextStyle(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .outline
-                                  .withValues(alpha: 0.5)),
+                              color: ColorScheme.of(context).outlineVariant),
                     ),
                   ),
-                  const Icon(Icons.keyboard_arrow_down_rounded),
+                  Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    color: ColorScheme.of(context).outline,
+                  ),
                 ],
               ),
             ),

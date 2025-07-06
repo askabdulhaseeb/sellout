@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../../core/enums/core/attachment_type.dart';
+import '../../../../../../../core/theme/app_theme.dart';
 import '../../providers/add_listing_form_provider.dart';
 
 class AddListingAttachmentSelectionButton extends StatelessWidget {
@@ -13,6 +14,7 @@ class AddListingAttachmentSelectionButton extends StatelessWidget {
     return Row(
       children: <Widget>[
         button(
+            context: context,
             icon: Icons.photo_outlined,
             text: 'add_photos'.tr(),
             onPressed: () async => await Provider.of<AddListingFormProvider>(
@@ -24,6 +26,7 @@ class AddListingAttachmentSelectionButton extends StatelessWidget {
                 )),
         const SizedBox(width: 16),
         button(
+            context: context,
             icon: Icons.videocam_outlined,
             text: 'add_videos'.tr(),
             onPressed: () async => await Provider.of<AddListingFormProvider>(
@@ -38,6 +41,7 @@ class AddListingAttachmentSelectionButton extends StatelessWidget {
   }
 
   Widget button({
+    required BuildContext context,
     required IconData icon,
     required String text,
     required VoidCallback onPressed,
@@ -48,7 +52,7 @@ class AddListingAttachmentSelectionButton extends StatelessWidget {
         opacity: 0.8,
         child: Container(
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
+            border: Border.all(color: ColorScheme.of(context).outlineVariant),
             color: Colors.transparent,
             borderRadius: radius,
           ),
@@ -63,11 +67,18 @@ class AddListingAttachmentSelectionButton extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Icon(icon),
+                    Icon(
+                      icon,
+                      color: AppTheme.primaryColor,
+                    ),
                     const SizedBox(height: 8),
                     Text(
                       text,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: AppTheme.primaryColor,
+                      ),
                     ),
                   ],
                 ),

@@ -18,6 +18,7 @@ class PersonalScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: appBar ?? personalAppbar(context),
       body: body,
       bottomNavigationBar:

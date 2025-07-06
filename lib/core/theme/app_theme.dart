@@ -4,6 +4,7 @@ class AppTheme {
   static const Color primaryColor = Color(0xFFBF1017);
   static const Color lightPrimary = Color.fromARGB(255, 249, 222, 222);
   static const Color secondaryColor = Color(0xFF00B49E);
+  static const Color outlineVarient = Color(0XFFE1E1E1);
   // static const Color accentColor = Color(0xFF00B49E);
 
   static const Color lightScaffldColor = Colors.white;
@@ -20,6 +21,7 @@ class AppTheme {
       colorScheme: ColorScheme.fromSeed(
         seedColor: primaryColor,
         secondary: secondaryColor,
+        outlineVariant: outlineVarient,
         brightness: Brightness.light,
       ),
       // brightness: Brightness.light,
@@ -46,10 +48,10 @@ class AppTheme {
       ),
       shadowColor: Colors.white30,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: primaryColor,
-        secondary: secondaryColor,
-        brightness: Brightness.dark,
-      ),
+          seedColor: primaryColor,
+          secondary: secondaryColor,
+          brightness: Brightness.dark,
+          outlineVariant: outlineVarient),
       brightness: Brightness.dark,
       textTheme: const TextTheme(
         titleLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),

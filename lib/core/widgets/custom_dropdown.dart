@@ -120,29 +120,31 @@ class _Widget<T> extends StatelessWidget {
                 ),
               Container(
                 width: width ?? double.infinity,
-                height: height,
+                height: height ?? 48,
                 decoration: BoxDecoration(
                   backgroundBlendMode: BlendMode.color,
                   color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     // width: 0.5,
-                    color: Theme.of(context).hintColor,
+                    color: ColorScheme.of(context).outlineVariant,
                   ),
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton2<T>(
                     iconStyleData: IconStyleData(
-                        icon: Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      color: ColorScheme.of(context).onSurface,
-                    )),
+                      icon: Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: ColorScheme.of(context).outline,
+                      ),
+                    ),
                     isExpanded: true,
                     hint: Text(
                       hint ?? 'select_item'.tr(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextTheme.of(context).bodyMedium,
+                      style: TextTheme.of(context).bodyMedium?.copyWith(
+                          color: ColorScheme.of(context).outlineVariant),
                     ),
                     items: items,
                     value: selectedItem,
@@ -179,9 +181,11 @@ class _Widget<T> extends StatelessWidget {
                                           horizontal: 10,
                                           vertical: 8,
                                         ),
-                                        hintText: 'Search for an item...',
-                                        hintStyle:
-                                            const TextStyle(fontSize: 12),
+                                        hintStyle: TextTheme.of(context)
+                                            .bodyMedium
+                                            ?.copyWith(
+                                                color: ColorScheme.of(context)
+                                                    .outlineVariant),
                                         border: OutlineInputBorder(
                                           borderRadius:
                                               BorderRadius.circular(8),

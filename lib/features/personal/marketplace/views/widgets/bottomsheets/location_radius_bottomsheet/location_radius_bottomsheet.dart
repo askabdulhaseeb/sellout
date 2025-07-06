@@ -13,38 +13,42 @@ import 'widget/update_location_button.dart';
 
 class LocationRadiusBottomSheet extends StatelessWidget {
   LocationRadiusBottomSheet({super.key});
-  final TextEditingController _locationController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final MarketPlaceProvider provider = context.watch<MarketPlaceProvider>();
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      child: Column(
-        children: <Widget>[
-          const LocationHeader(),
-          const SizedBox(height: 8),
-          MarketplaceLocationField(
-            controller: _locationController,
-            initialText: provider.selectedLocationName,
-            onLocationSelected: (LocationNameEntity location) async {
-              final LatLng coords =
-                  await provider.getLocationCoordinates(location.description);
-              provider.updateLocation(coords, location.description);
-            },
-          ),
-          const SizedBox(height: 8),
-          const LocationMap(),
-          const SizedBox(height: 4),
-          const RadiusOptions(),
-          if (provider.radiusType == RadiusType.local) const RadiusSlider(),
-          const UpdateLocationButton(),
-        ],
+    return SingleChildScrollView(
+      child: Container(
+        padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 16,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+        ),
+        height: MediaQuery.of(context).size.height,
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+        ),
+        child: Column(
+          children: <Widget>[
+            const LocationHeader(),
+            const SizedBox(height: 8),
+            MarketplaceLocationField(
+              initialText: provider.selectedLocationName,
+              onLocationSelected: (LocationNameEntity location) async {
+                final LatLng coords =
+                    await provider.getLocationCoordinates(location.description);
+                provider.updateLocation(coords, location.description);
+              },
+            ),
+            const SizedBox(height: 8),
+            const LocationMap(),
+            const Spacer(),
+            const RadiusOptions(),
+            if (provider.radiusType == RadiusType.local) const RadiusSlider(),
+            const UpdateLocationButton(),
+          ],
+        ),
       ),
     );
   }

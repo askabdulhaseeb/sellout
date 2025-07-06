@@ -13,9 +13,8 @@ class UpdateLocationButton extends StatelessWidget {
       builder: (BuildContext context, MarketPlaceProvider pro, Widget? child) =>
           CustomElevatedButton(
         isLoading: pro.isLoading,
-        onTap: () async {
-          await pro.loadPosts();
-          // ignore: use_build_context_synchronously
+        onTap: () {
+          pro.locationSheetApplyButton();
           Navigator.pop(context);
         },
         title: 'Update Location'.tr(),

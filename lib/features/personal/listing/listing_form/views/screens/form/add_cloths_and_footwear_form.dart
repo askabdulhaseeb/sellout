@@ -57,6 +57,7 @@ class _AddClothsAndFootwearFormState extends State<AddClothsAndFootwearForm> {
                 listType: formPro.listingType,
                 subCategory: formPro.selectedCategory,
                 onSelected: formPro.setSelectedCategory,
+                cid: formPro.selectedClothSubCategory,
               ),
               const AddListingSizeColorWidget(),
               const AddListingBrandField(),

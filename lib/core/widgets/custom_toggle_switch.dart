@@ -16,6 +16,7 @@ class CustomToggleSwitch<T> extends StatelessWidget {
     this.seletedFontSize = 14,
     this.verticalPadding = 12,
     this.horizontalPadding = 16,
+    this.unseletedColor = Colors.grey,
     super.key,
   });
 
@@ -31,6 +32,7 @@ class CustomToggleSwitch<T> extends StatelessWidget {
   final double seletedFontSize;
   final double verticalPadding;
   final double horizontalPadding;
+  final Color unseletedColor;
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +92,7 @@ class CustomToggleSwitch<T> extends StatelessWidget {
                           : Colors.transparent,
                       border: Border.all(
                         width: 2,
-                        color: isSelected ? selectedColor : Colors.grey,
+                        color: isSelected ? selectedColor : unseletedColor,
                       ),
                     ),
                     child: Center(

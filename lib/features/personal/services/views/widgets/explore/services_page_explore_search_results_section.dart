@@ -25,9 +25,9 @@ class ServiceSearchResults extends StatelessWidget {
               child: ListView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                itemCount: pro.specialOffer.length,
+                itemCount: pro.searchedServices.length,
                 itemBuilder: (BuildContext context, int index) {
-                  final ServiceEntity service = pro.specialOffer[index];
+                  final ServiceEntity service = pro.searchedServices[index];
                   return ServiceCard(service: service);
                 },
               ),

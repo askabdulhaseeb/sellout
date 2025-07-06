@@ -15,12 +15,16 @@ class SubCategorySelectableWidget extends StatefulWidget {
     required this.listType,
     required this.subCategory,
     required this.onSelected,
+    this.cid,
+    this.title = true,
     super.key,
   });
 
   final ListingType? listType;
   final SubCategoryEntity? subCategory;
   final void Function(SubCategoryEntity?) onSelected;
+  final String? cid;
+  final bool title;
 
   @override
   State<SubCategorySelectableWidget> createState() =>
@@ -52,30 +56,38 @@ class _SubCategorySelectableWidgetState
         if (provider.isLoading) return const Loader();
 
         List<ListingEntity> selectedList = <ListingEntity>[];
-        if (widget.listType != null) {
+
+        if (widget.listType == ListingType.clothAndFoot) {
+          // Apply special filter by CIDs (cloth and foot filteration)
+          selectedList = provider.listings
+              .where((ListingEntity e) => e.cid == widget.cid)
+              .toList();
+        } else if (widget.listType != null) {
+          // Normal filter by type
           selectedList = provider.listings
               .where((ListingEntity e) => e.type == widget.listType)
               .toList();
         }
-
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(
-              'category'.tr(),
-              style: const TextStyle(fontWeight: FontWeight.w500),
-            ),
-            const SizedBox(height: 4),
+            if (widget.title)
+              Text(
+                'category'.tr(),
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
+            if (widget.title) const SizedBox(height: 4),
             InkWell(
               onTap: () => _handleCategorySelection(selectedList, context),
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: BorderRadius.circular(10),
               child: Container(
-                height: 50,
+                height: 48,
                 width: double.infinity,
                 padding: const EdgeInsets.only(left: 26, right: 10),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8),
+                  border:
+                      Border.all(color: ColorScheme.of(context).outlineVariant),
                 ),
                 child: Row(
                   children: <Widget>[
@@ -84,10 +96,17 @@ class _SubCategorySelectableWidgetState
                         selectedSubCategory?.title ?? 'select_category'.tr(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextTheme.of(context).bodyMedium,
+                        style: selectedSubCategory == null
+                            ? TextTheme.of(context).bodyMedium?.copyWith(
+                                  color: ColorScheme.of(context).outlineVariant,
+                                )
+                            : TextTheme.of(context).bodyMedium,
                       ),
                     ),
-                    const Icon(Icons.keyboard_arrow_down_rounded),
+                    Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: ColorScheme.of(context).outline,
+                    ),
                   ],
                 ),
               ),

@@ -1,33 +1,47 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
 import '../../../../../core/theme/app_theme.dart';
+import '../providers/marketplace_provider.dart';
+import 'bottomsheets/filter_bottomsheet/filter_bottomsheet.dart';
 import 'bottomsheets/location_radius_bottomsheet/location_radius_bottomsheet.dart';
+import 'bottomsheets/sort_bottomsheet.dart';
 
 class MarketPlaceHeaderButtons extends StatelessWidget {
   const MarketPlaceHeaderButtons({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final MarketPlaceProvider pro =
+        Provider.of<MarketPlaceProvider>(context, listen: false);
     return SizedBox(
       height: 40,
       child: ListView(
+        padding: const EdgeInsets.only(left: 16),
         scrollDirection: Axis.horizontal,
         children: <Widget>[
           _HeaderButton(
-            onPressed: () => showBottomSheet(
+            onPressed: () => showModalBottomSheet(
+              enableDrag: false,
+              isDismissible: false,
+              useSafeArea: true,
+              isScrollControlled: true,
               context: context,
               builder: (BuildContext context) => LocationRadiusBottomSheet(),
             ),
             icon: CupertinoIcons.location_solid,
-            label: 'location',
+            label:
+                '${'location'.tr()} - ${pro.selectedRadius.toInt().toString()} km',
           ),
           const SizedBox(
             width: 4,
           ),
           _HeaderButton(
-            onPressed: () {},
+            onPressed: () => showModalBottomSheet(
+              context: context,
+              builder: (BuildContext context) => const SortBottomSheet(),
+            ),
             icon: CupertinoIcons.sort_down,
             label: 'sort',
           ),
@@ -35,7 +49,17 @@ class MarketPlaceHeaderButtons extends StatelessWidget {
             width: 4,
           ),
           _HeaderButton(
-            onPressed: () {},
+            onPressed: () => showModalBottomSheet(
+              shape: const RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.vertical(top: Radius.circular(15))),
+              enableDrag: false,
+              isDismissible: false,
+              useSafeArea: true,
+              context: context,
+              builder: (BuildContext context) =>
+                  const MarketPlaceFilterBottomSheet(),
+            ),
             icon: Icons.tune,
             label: 'filter',
           ),
@@ -55,19 +79,17 @@ class _HeaderButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final TextStyle? textStyle = theme.textTheme.bodyMedium?.copyWith(
-      fontWeight: FontWeight.w500,
-    );
+    final TextStyle? textStyle = theme.textTheme.bodySmall;
 
     return ElevatedButton.icon(
       style: ElevatedButton.styleFrom(
-        elevation: 0,
+        elevation: 1000,
         backgroundColor: theme.scaffoldBackgroundColor,
         foregroundColor: AppTheme.primaryColor,
-        side: BorderSide(color: theme.colorScheme.outline),
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+        side: BorderSide(color: theme.colorScheme.outlineVariant),
+        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(8),
         ),
       ),
       onPressed: onPressed,
