@@ -24,7 +24,7 @@ class LocalPromo {
   }
 
   Future<void> saveAll(List<PromoEntity> promos) async {
-    final Map<String, PromoEntity> map = {
+    final Map<String, PromoEntity> map = <String, PromoEntity>{
       for (PromoEntity promo in promos) promo.promoId: promo,
     };
     await _box.putAll(map);
@@ -41,7 +41,7 @@ class LocalPromo {
     if (userId.isEmpty) {
       return DataFailer<List<PromoEntity>>(CustomException('userId is empty'));
     }
-    final List<PromoEntity> promos = _box.values.where((promo) {
+    final List<PromoEntity> promos = _box.values.where((PromoEntity promo) {
       return promo.createdBy == userId;
     }).toList();
 
@@ -54,10 +54,10 @@ class LocalPromo {
     final GetPromoByIdUsecase usecase = GetPromoByIdUsecase(locator());
     final DataState<List<PromoEntity>> result = await usecase(userId);
     if (result is DataSuccess) {
-      await saveAll(result.entity ?? []);
+      await saveAll(result.entity ?? <PromoEntity>[]);
       return result.entity!;
     } else {
-      return getByUserId(userId).entity ?? [];
+      return getByUserId(userId).entity ?? <PromoEntity>[];
     }
   }
 }

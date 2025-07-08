@@ -41,8 +41,8 @@ class CustomPinInputFieldState extends State<CustomPinInputField> {
     );
     _focusNodes = List<FocusNode>.generate(
       widget.pinLength,
-      (index) {
-        final node = FocusNode();
+      (int index) {
+        final FocusNode node = FocusNode();
         node.addListener(() {
           if (node.hasFocus) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -128,7 +128,7 @@ class CustomPinInputFieldState extends State<CustomPinInputField> {
               children: List<Widget>.generate(widget.pinLength, (int index) {
                 return RawKeyboardListener(
                   focusNode: FocusNode(skipTraversal: true),
-                  onKey: (event) => _handleKeyEvent(event, index),
+                  onKey: (RawKeyEvent event) => _handleKeyEvent(event, index),
                   child: SizedBox(
                     width: 30,
                     height: 40,
@@ -145,7 +145,7 @@ class CustomPinInputFieldState extends State<CustomPinInputField> {
                             fontSize: widget.fontSize,
                             fontWeight: FontWeight.bold,
                           ),
-                      inputFormatters: [
+                      inputFormatters: <TextInputFormatter>[
                         FilteringTextInputFormatter.digitsOnly,
                         LengthLimitingTextInputFormatter(1),
                       ],
@@ -191,7 +191,9 @@ class CustomPinInputFieldState extends State<CustomPinInputField> {
                         }
 
                         _updatePinCode();
-                        field.didChange(_controllers.map((c) => c.text).join());
+                        field.didChange(_controllers
+                            .map((TextEditingController c) => c.text)
+                            .join());
                       },
                     ),
                   ),

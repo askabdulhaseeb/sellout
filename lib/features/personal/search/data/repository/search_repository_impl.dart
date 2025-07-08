@@ -5,14 +5,11 @@ import '../../domain/repository/search_repository.dart';
 import '../source/search_remote_source.dart';
 
 class SearchRepositoryImpl implements SearchRepository {
-
   SearchRepositoryImpl(this._remoteDataSource);
-   SearchRemoteDataSource _remoteDataSource;
+  final SearchRemoteDataSource _remoteDataSource;
 
   @override
-  Future<DataState<SearchEntity>> search(
-       SearchParams params
-  ) async {
+  Future<DataState<SearchEntity>> search(SearchParams params) async {
     return await _remoteDataSource.searchData(params);
   }
 }

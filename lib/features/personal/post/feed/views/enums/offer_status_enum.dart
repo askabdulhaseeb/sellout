@@ -7,6 +7,7 @@ enum OfferStatus {
   final String value;
   const OfferStatus(this.value);
 }
+
 extension OfferStatusExtension on OfferStatus {
   String toJson() {
     return value; // Use the assigned string value

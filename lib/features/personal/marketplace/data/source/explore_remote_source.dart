@@ -6,6 +6,7 @@ import '../../../../../core/sources/api_call.dart';
 import '../../../post/data/models/post_model.dart';
 import '../../../post/domain/entities/post_entity.dart';
 import '../../domain/entities/location_name_entity.dart';
+import '../../domain/params/filter_params.dart';
 import '../../domain/params/post_by_filter_params.dart';
 import '../models/location_name_model.dart';
 
@@ -80,7 +81,7 @@ class ExploreRemoteSourceImpl implements ExploreRemoteSource {
       }
       if (params.filters.isNotEmpty) {
         final String filtersStr = jsonEncode(
-          params.filters.map((e) => e.toMap()).toList(),
+          params.filters.map((FilterParam e) => e.toMap()).toList(),
         );
         // Append raw JSON
         endpoint += 'filters=$filtersStr&';

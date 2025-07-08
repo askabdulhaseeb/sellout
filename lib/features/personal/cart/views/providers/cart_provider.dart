@@ -207,7 +207,6 @@ class CartProvider extends ChangeNotifier {
           CustomException('Client secret is missing'),
         );
       }
-
       final String clientSecret = _orderBilling!.clientSecret;
       // Step 3: Show Stripe payment sheet
       await Stripe.instance.initPaymentSheet(

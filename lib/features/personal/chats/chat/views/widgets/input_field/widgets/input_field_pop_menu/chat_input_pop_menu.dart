@@ -11,7 +11,8 @@ class AttachmentMenuButton extends StatelessWidget {
   const AttachmentMenuButton({super.key});
 
   /// Handles selection of attachment options
-  Future<void> _handleAttachment(BuildContext context, ChatPopMenuOptions option) async {
+  Future<void> _handleAttachment(
+      BuildContext context, ChatPopMenuOptions option) async {
     switch (option) {
       case ChatPopMenuOptions.camera:
         showCameraPickerBottomSheet(context);
@@ -67,13 +68,14 @@ class AttachmentMenuButton extends StatelessWidget {
       },
     ];
 
-    return PopupMenuButton<ChatPopMenuOptions>(padding:const EdgeInsets.all(0),child:Icon(Icons.add_circle_outline_outlined, color: iconColor) ,
+    return PopupMenuButton<ChatPopMenuOptions>(
+      padding: const EdgeInsets.all(0),
       color: Theme.of(context).scaffoldBackgroundColor,
-      
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
-      onSelected: (ChatPopMenuOptions option) => _handleAttachment(context, option),
+      onSelected: (ChatPopMenuOptions option) =>
+          _handleAttachment(context, option),
       itemBuilder: (_) => menuItems.map((Map<String, dynamic> item) {
         return _buildMenuItem(
           context,
@@ -83,6 +85,7 @@ class AttachmentMenuButton extends StatelessWidget {
           iconColor: iconColor,
         );
       }).toList(),
+      child: Icon(Icons.add_circle_outline_outlined, color: iconColor),
     );
   }
 

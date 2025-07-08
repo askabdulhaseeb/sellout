@@ -70,7 +70,9 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
   Future<void> _capturePhoto() async {
     if (_isCapturingPhoto ||
         _controller == null ||
-        !_controller!.value.isInitialized) return;
+        !_controller!.value.isInitialized) {
+      return;
+    }
 
     _isCapturingPhoto = true;
     try {

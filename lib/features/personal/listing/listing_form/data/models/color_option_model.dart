@@ -29,15 +29,16 @@ class ColorOptionModel extends ColorOptionEntity {
 
   /// Parse the outer colors map -> list of models
   static List<ColorOptionModel> listFromApi(Map<String, dynamic> apiMap) {
-    final Map<String, dynamic> colorsMap = apiMap['colors'] ?? {};
-    return colorsMap.entries.map((entry) {
+    final Map<String, dynamic> colorsMap =
+        apiMap['colors'] ?? <String, dynamic>{};
+    return colorsMap.entries.map((MapEntry<String, dynamic> entry) {
       // You can also double-check that entry.key matches value['value']
       return ColorOptionModel.fromJson(entry.value);
     }).toList();
   }
 
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'label': label,
       'value': value,
       'shade': shade,

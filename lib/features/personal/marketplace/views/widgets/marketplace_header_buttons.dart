@@ -28,7 +28,8 @@ class MarketPlaceHeaderButtons extends StatelessWidget {
               useSafeArea: true,
               isScrollControlled: true,
               context: context,
-              builder: (BuildContext context) => LocationRadiusBottomSheet(),
+              builder: (BuildContext context) =>
+                  const LocationRadiusBottomSheet(),
             ),
             icon: CupertinoIcons.location_solid,
             label:

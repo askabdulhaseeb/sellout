@@ -43,7 +43,7 @@ class VisitingMessageTileUpdateButtonsWidget extends StatelessWidget {
 
         final bool isHost = freshMessage.visitingDetail!.hostID ==
             LocalAuth.currentUser?.userID;
-        final StatusType? status = freshMessage.visitingDetail!.status;
+        final StatusType status = freshMessage.visitingDetail!.status;
 
         return Column(
           children: <Widget>[

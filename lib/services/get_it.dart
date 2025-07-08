@@ -118,6 +118,7 @@ import '../features/personal/post/domain/repositories/post_repository.dart';
 import '../features/personal/post/domain/usecase/add_to_cart_usecase.dart';
 import '../features/personal/post/domain/usecase/create_offer_usecase.dart';
 import '../features/personal/post/domain/usecase/get_feed_usecase.dart';
+import '../features/personal/post/domain/usecase/offer_payment_usecase.dart';
 import '../features/personal/promo/domain/usecase/get_promo_of_followers_usecase.dart';
 import '../features/personal/post/domain/usecase/get_specific_post_usecase.dart';
 import '../features/personal/post/domain/usecase/update_offer_usecase.dart';
@@ -319,11 +320,13 @@ void _message() {
       .registerFactory<ShareInChatUsecase>(() => ShareInChatUsecase(locator()));
   locator
       .registerFactory<LeaveGroupUsecase>(() => LeaveGroupUsecase(locator()));
+  locator.registerFactory<OfferPaymentUsecase>(
+      () => OfferPaymentUsecase(locator()));
   locator.registerFactory<SendGroupInviteUsecase>(
       () => SendGroupInviteUsecase(locator()));
   locator.registerFactory<AcceptGorupInviteUsecase>(
       () => AcceptGorupInviteUsecase(locator()));
-  locator.registerLazySingleton(() => ChatProvider(
+  locator.registerFactory(() => ChatProvider(
         locator(),
         locator(),
         locator(),

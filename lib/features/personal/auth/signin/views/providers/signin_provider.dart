@@ -3,9 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
-import '../../../../../../core/sockets/socket_service.dart';
 import '../../../../../../routes/app_linking.dart';
-import '../../../../../../services/get_it.dart';
 import '../../../../dashboard/views/screens/dashboard_screen.dart';
 import '../../data/sources/local/local_auth.dart';
 import '../../domain/params/device_details.dart';
@@ -65,8 +63,6 @@ class SigninProvider extends ChangeNotifier {
           AppNavigator.pushNamed(VerifyTwoFactorScreen.routeName);
         } else if (LocalAuth.uid == null) {
         } else {
-          final SocketService socketService = SocketService(locator());
-          socketService.connect();
           isLoading = false;
           await AppNavigator.pushNamedAndRemoveUntil(
             DashboardScreen.routeName,
@@ -101,8 +97,6 @@ class SigninProvider extends ChangeNotifier {
         if (jsonMap['require_2fa'] == true) {
           AppNavigator.pushNamed(VerifyTwoFactorScreen.routeName);
         } else {
-          final SocketService socketService = SocketService(locator());
-          socketService.connect();
           isLoading = false;
           await AppNavigator.pushNamedAndRemoveUntil(
             DashboardScreen.routeName,

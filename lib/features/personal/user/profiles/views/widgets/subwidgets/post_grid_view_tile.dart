@@ -58,35 +58,41 @@ class PostGridViewTile extends StatelessWidget {
             child: Row(
               children: <Widget>[
                 Column(
-                  spacing: 4,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     SizedBox(
                       width: 100,
                       child: Text(
-                        overflow: TextOverflow.ellipsis,
                         post.title,
+                        overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                         style: const TextStyle(fontWeight: FontWeight.w500),
                       ),
                     ),
+                    const SizedBox(height: 4),
                     RatingDisplayWidget(
                       fontSize: 10,
                       size: 12,
                       ratingList: post.listOfReviews!,
                     ),
-                    Text(
-                      post.priceStr,
-                      maxLines: 1,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    const SizedBox(height: 4),
+                    SizedBox(
+                      width: 100,
+                      child: Text(
+                        post.priceStr,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ],
                 ),
                 const Spacer(),
                 Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    if (isMe == true)
+                    if (isMe)
                       CustomIconButton(
                         iconSize: 20,
                         iconColor: Theme.of(context).primaryColor,
@@ -106,7 +112,7 @@ class PostGridViewTile extends StatelessWidget {
                               context, AddListingFormScreen.routeName);
                         },
                       ),
-                    if (isMe == true)
+                    if (isMe)
                       CustomIconButton(
                         iconSize: 20,
                         iconColor: Theme.of(context).colorScheme.secondary,

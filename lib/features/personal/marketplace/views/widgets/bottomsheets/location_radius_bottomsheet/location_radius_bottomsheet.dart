@@ -12,7 +12,7 @@ import 'widget/radius_slider.dart';
 import 'widget/update_location_button.dart';
 
 class LocationRadiusBottomSheet extends StatelessWidget {
-  LocationRadiusBottomSheet({super.key});
+  const LocationRadiusBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {

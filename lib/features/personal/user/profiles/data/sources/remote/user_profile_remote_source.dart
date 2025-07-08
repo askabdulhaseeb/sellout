@@ -62,11 +62,10 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
               CustomException('User response empty'));
         }
 
-        // ⛓️ Offload parsing to a background isolate
-        final UserEntity entity =
-            await compute<String, UserEntity>(_parseUserEntity, rawJson);
+        // ⛔ No isolate: just parse normally
+        final UserEntity entity = UserModel.fromRawJson(rawJson);
 
-        // Save for local caching
+        // Save to local cache
         await LocalUser().save(entity);
 
         return DataSuccess<UserEntity>(rawJson, entity);
@@ -77,11 +76,6 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
       debugPrint('GetUserAPI.user: catch $e - $endpoint');
       return DataFailer<UserEntity?>(CustomException('User not found'));
     }
-  }
-
-// ✅ Helper top-level function for isolate-safe parsing
-  UserEntity _parseUserEntity(String jsonStr) {
-    return UserModel.fromRawJson(jsonStr);
   }
 
   @override

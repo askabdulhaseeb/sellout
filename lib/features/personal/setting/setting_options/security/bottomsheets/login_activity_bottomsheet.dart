@@ -32,7 +32,7 @@ class LoginActivityScreen extends StatelessWidget {
 }
 
 class LoginActivityTile extends StatelessWidget {
-  const LoginActivityTile({super.key, required this.item});
+  const LoginActivityTile({required this.item, super.key});
 
   final DeviceLoginInfoEntity item;
 

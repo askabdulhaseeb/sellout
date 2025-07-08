@@ -107,7 +107,7 @@ class _ContactsBottomSheetState extends State<_ContactsBottomSheet> {
     if (_error) {
       return const Padding(
         padding: EdgeInsets.all(16),
-        child: Text("Cannot access contacts."),
+        child: Text('Cannot access contacts.'),
       );
     }
 

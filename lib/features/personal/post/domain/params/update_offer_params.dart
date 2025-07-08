@@ -1,42 +1,41 @@
 class UpdateOfferParams {
   UpdateOfferParams({
     required this.chatID,
-    required this.offerStatus,
     required this.messageId,
     required this.offerId,
-    required this.businessId,
-    required this.offerAmount,
-    required this.quantity,
-    required this.minOffer,
-    required this.size,
-    required this.color,
+    this.offerStatus,
+    this.offerAmount,
+    this.quantity,
+    this.size,
+    this.color,
   });
+
   final int? offerAmount;
   final int? quantity;
-  final int? minOffer;
-  final String offerStatus;
+  final String? offerStatus;
   final String offerId;
-  final String businessId;
   final String messageId;
   final String chatID;
-  final String size;
-  final String color;
+  final String? size;
+  final String? color;
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'offer_amount': offerAmount,
-      'offer_status': offerStatus,
-      'business_id': businessId,
+    final Map<String, dynamic> map = <String, dynamic>{
       'message_id': messageId,
-      'quantity': quantity,
-      if (size != '') 'size': size,
-      if (color != '') 'color': color
     };
+
+    if (offerAmount != null) map['offer_amount'] = offerAmount;
+    if (quantity != null) map['quantity'] = quantity;
+    if (offerStatus != null) map['offer_status'] = offerStatus;
+    if (size != null && size!.isNotEmpty) map['size'] = size;
+    if (color != null && color!.isNotEmpty) map['color'] = color;
+
+    return map;
   }
 
   Map<String, dynamic> updateStatus() {
-    return <String, dynamic>{
-      'offer_status': offerStatus,
-    };
+    final Map<String, dynamic> map = <String, dynamic>{};
+    if (offerStatus != null) map['offer_status'] = offerStatus;
+    return map;
   }
 }

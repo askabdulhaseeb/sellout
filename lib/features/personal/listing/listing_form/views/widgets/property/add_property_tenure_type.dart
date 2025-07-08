@@ -33,9 +33,9 @@ class AddListingTenureTypeSelection extends StatelessWidget {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider addPro, _) {
         final List<String> stringValues =
-            tenureTypes.map((e) => e.value).toList();
+            tenureTypes.map((TenureType e) => e.value).toList();
         final List<String> localizedValues =
-            tenureTypes.map((e) => e.localized).toList();
+            tenureTypes.map((TenureType e) => e.localized).toList();
 
         return CustomToggleSwitch<String>(
           isShaded: false,

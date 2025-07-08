@@ -115,7 +115,6 @@ class VerifyTwoFactorScreen extends StatelessWidget {
                     onTap: () {
                       if (verifyTwoStepAuthFormKey.currentState!.validate()) {
                         pro.verifyTwoFactorAuth();
-                        ;
                       }
                     },
                   ),

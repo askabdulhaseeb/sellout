@@ -109,7 +109,7 @@ class _PromoShimmerPlaceholder extends StatelessWidget {
       margin: const EdgeInsets.only(right: 12),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+        children: <Widget>[
           Container(
             width: 80,
             height: 90,

@@ -5,18 +5,12 @@ import '../../domain/entities/search_entity.dart';
 
 class SearchModel extends SearchEntity {
   SearchModel({
-    List<PostModel>? posts,
-    List<UserModel>? users,
-    List<ServiceModel>? services,
-    required int count,
-    String? lastEvaluatedKey,
-  }) : super(
-          posts: posts,
-          users: users,
-          services: services,
-          count: count,
-          lastEvaluatedKey: lastEvaluatedKey,
-        );
+    required super.count,
+    List<PostModel>? super.posts,
+    List<UserModel>? super.users,
+    List<ServiceModel>? super.services,
+    super.lastEvaluatedKey,
+  });
 
   factory SearchModel.fromJson(Map<String, dynamic> json, String entityType) {
     final List itemsJson = json['items'] as List<dynamic>? ?? <dynamic>[];

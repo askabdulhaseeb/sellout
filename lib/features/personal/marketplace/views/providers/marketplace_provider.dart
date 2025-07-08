@@ -132,6 +132,7 @@ class MarketPlaceProvider extends ChangeNotifier {
   void setPosts(List<PostEntity>? value) {
     _posts = value;
     debugPrint('Loaded ${posts?.length} posts');
+    setFilteringBool(true);
     notifyListeners();
   }
 
@@ -280,7 +281,7 @@ class MarketPlaceProvider extends ChangeNotifier {
   String? _selectedColor;
   bool _isLoading = false;
   List<PostEntity>? _posts;
-  List<PostEntity> _choicePosts = [];
+  List<PostEntity> _choicePosts = <PostEntity>[];
   String? _listingItemCategory;
   String? _age;
   String? _readyToLeave;

@@ -47,7 +47,7 @@ extension StringDateTimeExt on String {
   DateTime toDateTime() {
     try {
       // Handles "10:00 AM 2025-06-30"
-      final format = DateFormat('hh:mm a yyyy-MM-dd');
+      final DateFormat format = DateFormat('hh:mm a yyyy-MM-dd');
       return format.parse(this).toLocal();
     } catch (_) {
       try {

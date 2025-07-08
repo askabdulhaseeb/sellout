@@ -136,7 +136,7 @@ class CurrentUserModel extends CurrentUserEntity {
               .toList() ??
           <SupporterDetailEntity>[],
       accountType: userData['account_type'] ?? 'personal',
-      dob: DateTime.tryParse(userData['dob']),
+      dob: userData['dob'] != null ? DateTime.tryParse(userData['dob']) : null,
       saved: List<String>.from((userData['saved'] ?? <dynamic>[])),
       privacySettings: userData['privacy'] != null
           ? PrivacySettingsModel.fromJson(userData['privacy'])

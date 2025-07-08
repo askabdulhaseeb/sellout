@@ -6,7 +6,6 @@ import '../../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../post/domain/entities/post_entity.dart';
 import '../../../../../user/profiles/data/sources/local/local_user.dart';
-import '../../../../../user/profiles/data/models/user_model.dart';
 import '../../../../chat_dashboard/views/widgets/chat_profile_with_status.dart';
 import '../../providers/chat_provider.dart';
 

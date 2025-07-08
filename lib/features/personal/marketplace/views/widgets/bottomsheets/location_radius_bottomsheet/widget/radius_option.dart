@@ -11,7 +11,7 @@ class RadiusOptions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<MarketPlaceProvider>(
-      builder: (context, marketPro, _) {
+      builder: (BuildContext context, MarketPlaceProvider marketPro, _) {
         return Column(
           children: <Widget>[
             Row(
