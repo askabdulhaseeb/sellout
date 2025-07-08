@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../../../core/enums/business/services/service_category_type.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/api_call.dart';
@@ -12,6 +16,7 @@ import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../bookings/data/sources/local_booking.dart';
 import '../../../bookings/domain/entity/booking_entity.dart';
 import '../../../location/domain/entities/location_entity.dart';
+import '../../../marketplace/views/enums/sort_enums.dart';
 import '../../../search/domain/entities/search_entity.dart';
 import '../../../search/domain/params/search_enum.dart';
 import '../../../search/domain/usecase/search_usecase.dart';
@@ -94,14 +99,10 @@ class ServicesPageProvider extends ChangeNotifier {
 
   //
   final List<ServiceEntity> _serviceResults = <ServiceEntity>[];
-  String _serviceQuery = '';
-  String? _serviceNextKey;
-  final ScrollController _serviceScrollController = ScrollController();
+  // String? _serviceNextKey;
   final TextEditingController search = TextEditingController();
 
   List<ServiceEntity> get serviceResults => _serviceResults;
-  String get serviceQuery => _serviceQuery;
-  ScrollController get serviceScrollController => _serviceScrollController;
   Future<void> searchServices(String query) async {
     if (query.isEmpty) return;
     _isLoading = true;
@@ -109,11 +110,13 @@ class ServicesPageProvider extends ChangeNotifier {
 
     final DataState<SearchEntity> result = await _searchUsecase.call(
       SearchParams(
-        entityType: SearchEntityType.services,
-        query: query,
-        pageSize: 20,
-        lastEvaluatedKey: '',
-      ),
+          entityType: SearchEntityType.services,
+          query: query,
+          pageSize: 5,
+          sortBy: SortOption.dateAscending,
+          lastEvaluatedKey: '',
+          lat: _selectedLocation.latitude,
+          lon: _selectedLocation.longitude),
     );
 
     if (result is DataSuccess<SearchEntity>) {
@@ -219,5 +222,41 @@ class ServicesPageProvider extends ChangeNotifier {
   void setServiceAppointmentSectionType(ServiceAppointmentSectionType value) {
     _serviceAppointmentSectionType = value;
     notifyListeners();
+  }
+
+  ///
+  ///
+  ///
+  ///
+  LatLng _selectedLocation = const LatLng(0, 0);
+  String _selectedLocationName = '';
+  LatLng get selectedLocation => _selectedLocation;
+  String get selectedLocationName => _selectedLocationName;
+  Future<LatLng> getLocationCoordinates(String address) async {
+    final bool hasConnection = await _checkInternetConnection();
+    if (!hasConnection) throw 'NO_INTERNET';
+    final List<Location> locations = await locationFromAddress(address)
+        .timeout(const Duration(seconds: 10), onTimeout: () {
+      throw 'TIMEOUT';
+    });
+
+    if (locations.isEmpty) throw 'NO_RESULTS';
+    return LatLng(locations.first.latitude, locations.first.longitude);
+  }
+  // Default radius type: worldwide or local
+
+  void updateLocation(LatLng location, String name) {
+    _selectedLocation = location;
+    _selectedLocationName = name;
+    notifyListeners();
+  }
+
+  Future<bool> _checkInternetConnection() async {
+    try {
+      await InternetAddress.lookup('google.com');
+      return true;
+    } on SocketException {
+      return false;
+    }
   }
 }

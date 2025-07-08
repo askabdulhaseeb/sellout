@@ -54,7 +54,7 @@ enum ReportType {
   static ReportType fromCode(String? code) {
     if (code == null) return ReportType.spam;
     return ReportType.values.firstWhere(
-      (e) => e.code == code,
+      (ReportType e) => e.code == code,
       orElse: () => ReportType.spam,
     );
   }

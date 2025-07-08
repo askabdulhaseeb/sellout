@@ -15,7 +15,7 @@ class TimeAwayModel extends TimeAwayEntity {
     );
   }
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => <String, dynamic>{
         'start_date': startDate,
         'end_date': endDate,
         'message': message,

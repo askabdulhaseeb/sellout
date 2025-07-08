@@ -16,9 +16,9 @@ class AvailabilityTimeDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider =
+    final AddListingFormProvider provider =
         Provider.of<AddListingFormProvider>(context, listen: false);
-    final timeSlots = provider.generateTimeSlots();
+    final List<String> timeSlots = provider.generateTimeSlots();
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -31,7 +31,7 @@ class AvailabilityTimeDialog extends StatelessWidget {
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
+          children: <Widget>[
             Text(
               'set_time_range'.tr(),
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -40,7 +40,7 @@ class AvailabilityTimeDialog extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
-              children: [
+              children: <Widget>[
                 Expanded(
                   child: CustomDropdown<String>(
                     padding: const EdgeInsets.symmetric(vertical: 4),
@@ -50,12 +50,12 @@ class AvailabilityTimeDialog extends StatelessWidget {
                         : null,
                     hint: 'start_time'.tr(),
                     validator: (_) => null,
-                    onChanged: (newValue) {
+                    onChanged: (String? newValue) {
                       if (newValue != null) {
                         provider.updateOpeningTime(entity.day, newValue);
                       }
                     },
-                    items: timeSlots.map((item) {
+                    items: timeSlots.map((String item) {
                       return DropdownMenuItem<String>(
                         value: item,
                         child: Text(
@@ -76,13 +76,13 @@ class AvailabilityTimeDialog extends StatelessWidget {
                         : null,
                     hint: 'end_time'.tr(),
                     validator: (_) => null,
-                    onChanged: (newValue) {
+                    onChanged: (String? newValue) {
                       if (newValue != null) {
                         provider.setClosingTime(entity.day, newValue);
                       }
                     },
-                    items: timeSlots.map((item) {
-                      final isEnabled = entity.openingTime.isEmpty
+                    items: timeSlots.map((String item) {
+                      final bool isEnabled = entity.openingTime.isEmpty
                           ? false
                           : provider.isClosingTimeValid(
                               entity.openingTime, item);

@@ -29,7 +29,7 @@ class OfferDetailModel extends OfferDetailEntity {
       currency: json['currency'] ?? '',
       offerId: json['offer_id'] ?? '',
       offerPrice: int.tryParse(json['offer_price']?.toString() ?? '0') ?? 0,
-      quantity: json['quantity'] ?? 0,
+      quantity: json['quantity'] ?? 1,
     );
   }
 }

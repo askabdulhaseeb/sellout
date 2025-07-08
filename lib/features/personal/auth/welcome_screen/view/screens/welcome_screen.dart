@@ -59,7 +59,7 @@ class WelcomeScreen extends StatelessWidget {
         color: Theme.of(context).scaffoldBackgroundColor,
         height: 170,
         child: Column(
-          children: [
+          children: <Widget>[
             CustomElevatedButton(
               title: 'login'.tr(),
               isLoading: false,

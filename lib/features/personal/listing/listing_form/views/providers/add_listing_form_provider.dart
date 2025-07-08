@@ -1267,7 +1267,7 @@ class AddListingFormProvider extends ChangeNotifier {
   LocationEntity? _selectedCollectionLocation;
   // Cloth and Foot
   String _selectedClothSubCategory = ListingType.clothAndFoot.cids.first;
-  List<ColorOptionEntity> _colors = <ColorOptionEntity>[];
+  final List<ColorOptionEntity> _colors = <ColorOptionEntity>[];
   // Vehicle
   String? _transmissionType;
   String? _fuelType;

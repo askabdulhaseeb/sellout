@@ -136,7 +136,7 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
               builder: (BuildContext context, CreateChatGroupProvider pro,
                       Widget? child) =>
                   Column(
-                children: [
+                children: <Widget>[
                   if (pro.selectedUserIds.length >= 2)
                     CustomElevatedButton(
                       isLoading: false,

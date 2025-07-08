@@ -53,7 +53,7 @@ class OrderPaymentDetailModel extends OrderPaymentDetailEntity {
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'method': method,
       'status': status,
       'timestamp': timestamp.toIso8601String(),

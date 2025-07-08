@@ -27,11 +27,10 @@ class BusinessModel extends BusinessEntity {
     required super.listOfReviews,
     required super.createdAt,
     required super.updatedAt,
-     super.supporters,
-     super.supportings,
+    super.supporters,
+    super.supportings,
     super.location,
     super.travelDetail,
-
   });
 
   factory BusinessModel.fromRawJson(String str) =>
@@ -76,14 +75,17 @@ class BusinessModel extends BusinessEntity {
         createdAt: json['created_at']?.toString().toDateTime(),
         updatedAt:
             (json['updated_at'] ?? json['created_at'])?.toString().toDateTime(),
-     supporters: (json['supporters'] as List<dynamic>?)
-    ?.map((e) => e != null ? SupporterDetailModel.fromMap(e).toEntity() : [])
-    .whereType<SupporterDetailEntity>()
-    .toList(),
-supportings: (json['supporting'] as List<dynamic>?)
-    ?.map((e) => e != null ? SupporterDetailModel.fromMap(e).toEntity() : [])
-    .whereType<SupporterDetailEntity>()
-    .toList(),
-
+        supporters: (json['supporters'] as List<dynamic>?)
+            ?.map((e) => e != null
+                ? SupporterDetailModel.fromMap(e).toEntity()
+                : <dynamic>[])
+            .whereType<SupporterDetailEntity>()
+            .toList(),
+        supportings: (json['supporting'] as List<dynamic>?)
+            ?.map((e) => e != null
+                ? SupporterDetailModel.fromMap(e).toEntity()
+                : <dynamic>[])
+            .whereType<SupporterDetailEntity>()
+            .toList(),
       );
 }

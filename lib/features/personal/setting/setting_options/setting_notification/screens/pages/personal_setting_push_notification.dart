@@ -32,7 +32,7 @@ class PersonalSettingPushNotificationScreen extends StatelessWidget {
           const Divider(),
           InDevMode(
             child: Column(
-              children: [
+              children: <Widget>[
                 CustomSwitchListTile(
                   title: 'sellout_updates'.tr(),
                   subtitle: 'sellout_updates_subtitle'.tr(),

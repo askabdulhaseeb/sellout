@@ -216,7 +216,8 @@ class BookVisitApiImpl implements BookVisitApi {
       return;
     }
 
-    final List<MessageEntity> updatedMessages = getted.messages.map((msg) {
+    final List<MessageEntity> updatedMessages =
+        getted.messages.map((MessageEntity msg) {
       if (msg.visitingDetail?.visitingID == visitingEntity.visitingID) {
         debugPrint(
             '🔄 Updating visitingID: ${visitingEntity.visitingID} with new status: ${visitingEntity.status}');
@@ -240,7 +241,7 @@ class BookVisitApiImpl implements BookVisitApi {
     // Optional verify
     final GettedMessageEntity? stored = localChat.entity(chatId);
     if (stored != null) {
-      for (final msg in stored.messages) {
+      for (final MessageEntity msg in stored.messages) {
         debugPrint(
             '📌 Stored visitingID: ${msg.visitingDetail?.visitingID}, status: ${msg.visitingDetail?.status}');
       }

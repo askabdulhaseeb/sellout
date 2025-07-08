@@ -39,7 +39,16 @@ class AddressModel extends AddressEntity {
         country: json['country'] ?? 'UK',
         isDefault: json['is_default'] ?? false,
       );
-
+  String toOfferJson() => json.encode(<String, dynamic>{
+        'recipient_name': super.recipientName,
+        'address_1': super.address,
+        'town_city': super.townCity,
+        'phone_number': super.phoneNumber,
+        'postal_code': super.postalCode,
+        'address_category': super.category,
+        'country': super.country,
+        'is_default': super.isDefault,
+      });
   String checkoutAddressToJson() => json.encode(<String, dynamic>{
         'buyer_address': <String, dynamic>{
           'recipient_name': super.recipientName,

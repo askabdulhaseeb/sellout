@@ -13,6 +13,50 @@ part 'current_user_entity.g.dart';
 
 @HiveType(typeId: 0)
 class CurrentUserEntity {
+  // 2FA status
+
+  CurrentUserEntity({
+    required this.message,
+    required this.token,
+    required this.userID,
+    required this.email,
+    required this.userName,
+    required this.displayName,
+    required this.currency,
+    required this.privacy,
+    required this.countryAlpha3,
+    required this.countryCode,
+    required this.phoneNumber,
+    required this.language,
+    required this.address,
+    required this.chatIDs,
+    required this.businessIDs,
+    required this.imageVerified,
+    required this.otpVerified,
+    required this.verificationImage,
+    required this.profileImage,
+    required this.lastLoginTime,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.inHiveAt,
+    required this.businessStatus,
+    required this.businessName,
+    required this.businessID,
+    required this.logindetail,
+    required this.loginActivity,
+    required this.employeeList,
+    required this.notification,
+    required this.twoStepAuthEnabled,
+    required this.supporters,
+    required this.supporting,
+    required this.privacySettings,
+    required this.timeAway,
+    required this.accountStatus,
+    required this.accountType,
+    required this.dob,
+    required this.saved,
+    required this.listOfReviews,
+  });
   // ──────────────────────────────── BASIC INFO ────────────────────────────────
   @HiveField(1)
   final String message; // Response message (e.g., "Login successful")
@@ -140,50 +184,7 @@ class CurrentUserEntity {
   final NotificationSettingsEntity? notification; // Notification preferences
 
   @HiveField(153)
-  final bool? twoStepAuthEnabled; // 2FA status
-
-  CurrentUserEntity({
-    required this.message,
-    required this.token,
-    required this.userID,
-    required this.email,
-    required this.userName,
-    required this.displayName,
-    required this.currency,
-    required this.privacy,
-    required this.countryAlpha3,
-    required this.countryCode,
-    required this.phoneNumber,
-    required this.language,
-    required this.address,
-    required this.chatIDs,
-    required this.businessIDs,
-    required this.imageVerified,
-    required this.otpVerified,
-    required this.verificationImage,
-    required this.profileImage,
-    required this.lastLoginTime,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.inHiveAt,
-    required this.businessStatus,
-    required this.businessName,
-    required this.businessID,
-    required this.logindetail,
-    required this.loginActivity,
-    required this.employeeList,
-    required this.notification,
-    required this.twoStepAuthEnabled,
-    required this.supporters,
-    required this.supporting,
-    required this.privacySettings,
-    required this.timeAway,
-    required this.accountStatus,
-    required this.accountType,
-    required this.dob,
-    required this.saved,
-    required this.listOfReviews,
-  });
+  final bool? twoStepAuthEnabled;
 
   CurrentUserEntity copyWith(
       {String? token,

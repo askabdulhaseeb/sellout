@@ -9,7 +9,7 @@ class GetServiceCategoryParams {
   final String? nextKey;
 
   Map<String, dynamic> toMap() {
-    final Map<String, dynamic> map = {};
+    final Map<String, dynamic> map = <String, dynamic>{};
     if (nextKey != null) {
       map['nextKey'] = nextKey;
     }

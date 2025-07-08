@@ -44,7 +44,7 @@ class TextMessageTile extends StatelessWidget {
                   default:
                     return const Text('Unknown attachment type');
                 }
-              }).toList(),
+              }),
             // Handle image/video attachments in one widget
             if (message.fileUrl.isNotEmpty &&
                 (message.fileUrl.first.type == AttachmentType.image ||
@@ -56,8 +56,6 @@ class TextMessageTile extends StatelessWidget {
                 message.text,
                 style: const TextStyle(color: Colors.black),
               ),
-              
-              
           ],
         ),
       ),

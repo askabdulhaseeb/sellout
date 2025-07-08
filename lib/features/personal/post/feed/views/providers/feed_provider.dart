@@ -162,26 +162,23 @@ class FeedProvider extends ChangeNotifier {
   }
 
   Future<DataState<bool>> updateOffer({
-    required String businessId,
     required BuildContext context,
-    required String offerStatus,
     required String offerId,
     required String messageID,
-    required int? quantity,
-    required int? offerAmount,
-    required int? minoffer,
     required String chatId,
+    String? offerStatus,
+    int? quantity,
+    int? offerAmount,
+    // required int? minoffer,
     String size = '',
     String color = '',
   }) async {
     setIsLoading(true);
     final UpdateOfferParams params = UpdateOfferParams(
       chatID: chatId,
-      minOffer: minoffer,
       offerAmount: offerAmount,
-      quantity: quantity,
-      businessId: businessId,
       offerStatus: offerStatus,
+      quantity: quantity,
       messageId: messageID,
       offerId: offerId,
       size: size,

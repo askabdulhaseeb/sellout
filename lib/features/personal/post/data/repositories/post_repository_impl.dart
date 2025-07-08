@@ -5,6 +5,7 @@ import '../../domain/params/add_to_cart_param.dart';
 import '../../domain/params/create_offer_params.dart';
 import '../../domain/params/feed_response_params.dart';
 import '../../domain/params/get_feed_params.dart';
+import '../../domain/params/offer_payment_params.dart';
 import '../../domain/params/update_offer_params.dart';
 import '../../domain/repositories/post_repository.dart';
 import '../sources/remote/post_remote_api.dart';
@@ -39,6 +40,11 @@ class PostRepositoryImpl implements PostRepository {
   @override
   Future<DataState<bool>> updateOffer(UpdateOfferParams param) async {
     return await remoteApi.updateOffer(param);
+  }
+
+  @override
+  Future<DataState<String>> offerPayment(OfferPaymentParams param) async {
+    return await remoteApi.offerPayment(param);
   }
 
   @override
