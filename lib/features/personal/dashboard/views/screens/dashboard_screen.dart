@@ -27,6 +27,8 @@ class DashboardScreen extends StatelessWidget {
         return const WelcomeScreen();
       } else if (!isOtpVerified) {
         return const SignupScreen();
+      } else if (user?.dob == null) {
+        return const SignupScreen(); // or another screen to fill DOB
       } else {
         return screen;
       }

@@ -100,9 +100,9 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
                 title: '',
                 hint: '',
                 height: 48,
-                width: 140,
+                width: 125,
                 isSearchable: false,
-                padding: const EdgeInsets.symmetric(horizontal: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 0),
                 items: countries
                     .where((CountryEntity e) => e.isActive)
                     .map((CountryEntity e) {
@@ -110,8 +110,10 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
                     value: e,
                     child: Row(
                       children: <Widget>[
-                        Text(e.shortName.toUpperCase()),
-                        Text(' (${e.countryCode})'),
+                        Text(e.shortName.toUpperCase(),
+                            style: TextTheme.of(context).bodyMedium),
+                        Text(' (${e.countryCode})',
+                            style: TextTheme.of(context).bodyMedium),
                       ],
                     ),
                   );
