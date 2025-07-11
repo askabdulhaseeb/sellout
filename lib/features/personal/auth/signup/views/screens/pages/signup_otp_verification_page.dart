@@ -40,7 +40,7 @@ class SignupOtpVerificationPage extends StatelessWidget {
                 Text('${'resend_code'.tr()}: ${pro.resentCodeSeconds}s'),
                 TextButton(
                   onPressed:
-                      (pro.resendCodeTimer?.isActive ?? true) || pro.isLoading
+                      (pro.resendCodeTimer?.isActive ?? false) || pro.isLoading
                           ? null
                           : () async => pro.sendOtp(context),
                   child: Text('resend_code'.tr()),

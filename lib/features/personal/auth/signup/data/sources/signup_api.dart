@@ -67,11 +67,13 @@ class SignupApiImpl implements SignupApi {
       if (response is DataSuccess<bool>) {
         final String str = response.data ?? '';
         if (str.isEmpty) {
+          AppLog.info(str, name: 'SignupApiImpl.signupSendOTP - Success');
           return DataFailer<String>(CustomException('something_wrong'.tr()));
         }
         return DataSuccess<String>(str, '');
       } else {
-        AppLog.error('SignupApiImpl.signupSendOTP - else',
+        AppLog.error('',
+            name: 'SignupApiImpl.signupSendOTP - else',
             error: response.exception?.message ?? 'something_wrong'.tr());
 
         return DataFailer<String>(CustomException(
@@ -97,6 +99,7 @@ class SignupApiImpl implements SignupApi {
       );
       if (response is DataSuccess<bool>) {
         final String str = response.data ?? '';
+
         // final dynamic data = json.decode(str);
         // print('new user id: ${data['message']} - $data');
         return DataSuccess<bool>(str, true);

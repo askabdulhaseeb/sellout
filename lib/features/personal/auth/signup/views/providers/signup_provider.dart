@@ -153,14 +153,14 @@ class SignupProvider extends ChangeNotifier {
 
   // ignore: always_specify_types
   void navigateToVerify(context) {
-    if (_currentPage == SignupPageType.basicInfo && LocalAuth.uid != null) {
-      _moveNext(context);
-      sendOtp(context);
-    }
     if (_currentPage == SignupPageType.otp &&
-        (LocalAuth.currentUser?.otpVerified == true)) {
-      _moveNext(context);
-    }
+        LocalAuth.currentUser?.otpVerified == true) {
+      _currentPage = SignupPageType.dateOfBirth;
+    } else if (_currentPage == SignupPageType.basicInfo &&
+        LocalAuth.uid != null) {
+      _currentPage = SignupPageType.otp;
+    } else {}
+    notifyListeners();
   }
 
   Future<void> onNext(BuildContext context) async {
@@ -373,6 +373,9 @@ class SignupProvider extends ChangeNotifier {
         SignupOptParams(uid: LocalAuth.uid ?? '', otp: otp.text),
       );
       if (result is DataSuccess) {
+        final CurrentUserEntity currentUser =
+            LocalAuth.currentUser!.copyWith(otpVerified: true);
+        LocalAuth().signin(currentUser);
         return true;
       } else {
         AppLog.error(
@@ -385,6 +388,7 @@ class SignupProvider extends ChangeNotifier {
           context,
           result.exception?.message ?? 'something_wrong'.tr(),
         );
+        return false;
       }
     } catch (e) {
       AppLog.error(

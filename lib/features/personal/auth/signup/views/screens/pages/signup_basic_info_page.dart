@@ -12,24 +12,9 @@ import '../../../../../../../core/widgets/phone_number/views/phone_number_input_
 import '../../../../signin/views/screens/sign_in_screen.dart';
 import '../../providers/signup_provider.dart';
 
-class SignupBasicInfoPage extends StatefulWidget {
+class SignupBasicInfoPage extends StatelessWidget {
   const SignupBasicInfoPage({super.key});
   static const String routeName = '/signup-basic-info';
-
-  @override
-  State<SignupBasicInfoPage> createState() => _SignupBasicInfoPageState();
-}
-
-class _SignupBasicInfoPageState extends State<SignupBasicInfoPage> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final SignupProvider provider =
-          Provider.of<SignupProvider>(context, listen: false);
-      provider.navigateToVerify(context);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
