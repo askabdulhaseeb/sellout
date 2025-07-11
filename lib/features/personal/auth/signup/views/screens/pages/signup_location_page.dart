@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../../core/functions/permission_fun.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../providers/signup_provider.dart';

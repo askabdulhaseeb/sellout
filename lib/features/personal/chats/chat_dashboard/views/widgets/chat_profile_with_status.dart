@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import '../../../../../../../../core/widgets/profile_photo.dart';
-import '../../../../../../../../core/sockets/socket_implementations.dart';
 import '../../../../../../../../services/get_it.dart';
+import '../../../../../../core/sockets/socket_implementations.dart';
 
 class ProfilePictureWithStatus extends HookWidget {
   const ProfilePictureWithStatus({

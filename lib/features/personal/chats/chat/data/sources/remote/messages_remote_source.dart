@@ -94,19 +94,16 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
       );
 
       if (result is DataSuccess) {
-        debugPrint('New Message - Success: ${result.data}');
         final Map<String, dynamic> responseData = jsonDecode(result.data ?? '');
         final Map<String, dynamic> data = responseData['items'];
-
         final MessageModel newMsg = MessageModel.fromJson(data);
         final String chatId = data['chat_id'];
 
-        // Get existing entity from local storage
-        // final GettedMessageEntity? existingEntity = LocalChatMessage().entity(chatId);
+        // 🔍 Fetch existing chat messages
         final List<MessageEntity> existingMessages =
             LocalChatMessage().messages(chatId);
 
-        // 🔒 Check if the message already exists
+        // 🔄 Check for duplicates
         final bool isDuplicate = existingMessages.any(
           (MessageEntity m) => m.messageId == newMsg.messageId,
         );
@@ -115,7 +112,7 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
           existingMessages.add(newMsg);
         }
 
-        // Create updated entity
+        // 💾 Save updated message list
         final GettedMessageEntity updatedEntity = GettedMessageEntity(
           chatID: chatId,
           messages: existingMessages,
@@ -125,13 +122,25 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
             paginationKey: data['message_id'],
           ),
         );
-
-        // Save updated entity to local storage
         LocalChatMessage().save(updatedEntity, chatId);
+
+        // ✅ Update lastMessage in chat
+        final ChatEntity? localChat = LocalChat().chatEntity(chatId);
+        if (localChat != null) {
+          final ChatEntity updatedChat =
+              localChat.copyWith(lastMessage: newMsg);
+          LocalChat().save(updatedChat);
+        }
+        // 📗 Success log
+        AppLog.info(
+          '📤 Message sent & saved locally | chatId: $chatId | messageId: ${newMsg.messageId}',
+          name: 'MessagesRemoteSourceImpl.sendMessage',
+        );
+
         return DataSuccess<bool>(result.data ?? '', true);
       } else {
         AppLog.error(
-          'New Message - ERROR',
+          '🚫 Message send failed from server',
           name: 'MessagesRemoteSourceImpl.sendMessage - else',
           error: result.exception,
         );
@@ -141,7 +150,7 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
       }
     } catch (e) {
       AppLog.error(
-        'New Message - ERROR',
+        '❌ Message send crashed',
         name: 'MessagesRemoteSourceImpl.sendMessage - catch',
         error: CustomException(e.toString()),
       );

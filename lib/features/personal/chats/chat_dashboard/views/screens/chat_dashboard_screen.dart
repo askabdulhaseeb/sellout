@@ -22,10 +22,8 @@ class _ChatDashboardScreenState extends State<ChatDashboardScreen> {
   @override
   void initState() {
     super.initState();
-    _future = Future.delayed(const Duration(milliseconds: 300), () {
-      return Provider.of<ChatDashboardProvider>(context, listen: false)
-          .getChats();
-    });
+    _future =
+        Provider.of<ChatDashboardProvider>(context, listen: false).getChats();
   }
 
   @override

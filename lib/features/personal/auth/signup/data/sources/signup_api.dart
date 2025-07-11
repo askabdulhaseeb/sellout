@@ -69,15 +69,18 @@ class SignupApiImpl implements SignupApi {
         if (str.isEmpty) {
           return DataFailer<String>(CustomException('something_wrong'.tr()));
         }
-        final dynamic data = json.decode(str);
-        final String entity = data['result']['Attributes']['otp'].toString();
-        return DataSuccess<String>(str, entity);
+        return DataSuccess<String>(str, '');
       } else {
+        AppLog.error('SignupApiImpl.signupSendOTP - else',
+            error: response.exception?.message ?? 'something_wrong'.tr());
+
         return DataFailer<String>(CustomException(
           response.exception?.message ?? 'something_wrong'.tr(),
         ));
       }
-    } catch (e) {
+    } catch (e, stc) {
+      AppLog.error('SignupApiImpl.signupSendOTP - catch',
+          error: e, stackTrace: stc);
       return DataFailer<String>(CustomException(e.toString()));
     }
   }

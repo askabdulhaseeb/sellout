@@ -10,7 +10,7 @@ import '../../../../../../../../../domain/entities/post_entity.dart';
 import '../../../../../../../../../domain/params/add_to_cart_param.dart';
 import '../../../../../../../../../domain/usecase/add_to_cart_usecase.dart';
 
-class PostAddToBasketButton extends StatelessWidget {
+class PostAddToBasketButton extends StatefulWidget {
   const PostAddToBasketButton({
     required this.post,
     required this.quantity,
@@ -20,39 +20,49 @@ class PostAddToBasketButton extends StatelessWidget {
   final PostEntity post;
   final int quantity;
 
-  Future<void> _addToBasket(BuildContext context, PostEntity post) async {
+  @override
+  State<PostAddToBasketButton> createState() => _PostAddToBasketButtonState();
+}
+
+class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
+  bool isLoading = false;
+
+  Future<void> _addToBasket(BuildContext context) async {
+    if (isLoading) return;
+    setState(() => isLoading = true);
+
     try {
-      if (post.sizeColors.isNotEmpty) {
+      if (widget.post.sizeColors.isNotEmpty) {
         await showDialog(
           context: context,
-          builder: (BuildContext context) {
-            return AddToCartDialog(post: post);
-          },
+          builder: (_) => AddToCartDialog(post: widget.post),
         );
       } else {
         final AddToCartUsecase usecase = AddToCartUsecase(locator());
         final DataState<bool> result = await usecase(
-          AddToCartParam(post: post, quantity: quantity),
+          AddToCartParam(post: widget.post, quantity: widget.quantity),
         );
 
         if (result is DataSuccess) {
-          AppSnackBar.showSnackBar(
-            // ignore: use_build_context_synchronously
-            context,
-            'successfull_add_to_basket'.tr(),
-            backgroundColor: Colors.green,
-          );
+          if (mounted) {
+            AppSnackBar.showSnackBar(
+              context,
+              'successfull_add_to_basket'.tr(),
+              backgroundColor: Colors.green,
+            );
+          }
         } else {
           AppLog.error(
             result.exception?.message ?? 'AddToCartError',
             name: 'post_add_to_basket_button.dart',
             error: result.exception,
           );
-          AppSnackBar.showSnackBar(
-            // ignore: use_build_context_synchronously
-            context,
-            result.exception?.message ?? 'something_wrong'.tr(),
-          );
+          if (mounted) {
+            AppSnackBar.showSnackBar(
+              context,
+              result.exception?.message ?? 'something_wrong'.tr(),
+            );
+          }
         }
       }
     } catch (e, stackTrace) {
@@ -62,25 +72,30 @@ class PostAddToBasketButton extends StatelessWidget {
         error: e,
         stackTrace: stackTrace,
       );
-      // ignore: use_build_context_synchronously
-      AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
+      if (mounted) {
+        AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
+      }
     }
+
+    if (mounted) setState(() => isLoading = false);
   }
 
   @override
   Widget build(BuildContext context) {
+    final Color color = Theme.of(context).primaryColor;
+
     return CustomElevatedButton(
-      onTap: () => _addToBasket(context, post),
+      onTap: () => _addToBasket(context),
       title: 'add_to_basket'.tr(),
+      isLoading: isLoading,
       bgColor: Colors.transparent,
-      border: Border.all(color: Theme.of(context).primaryColor),
-      textColor: Theme.of(context).primaryColor,
+      border: Border.all(color: color),
+      textColor: color,
       textStyle: TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.bold,
-        color: Theme.of(context).primaryColor,
+        color: color,
       ),
-      isLoading: false,
     );
   }
 }

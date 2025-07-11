@@ -5,22 +5,43 @@ import '../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../user/profiles/views/widgets/subwidgets/post_grid_view_tile.dart';
 import '../../provider/search_provider.dart';
 
-class SearchPostsSection extends StatelessWidget {
+class SearchPostsSection extends StatefulWidget {
   const SearchPostsSection({super.key});
+
+  @override
+  State<SearchPostsSection> createState() => _SearchPostsSectionState();
+}
+
+class _SearchPostsSectionState extends State<SearchPostsSection> {
+  late TextEditingController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TextEditingController(); // Do NOT assign text here
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final SearchProvider provider = context.watch<SearchProvider>();
-    final TextEditingController controller = TextEditingController(
-      text: provider.postQuery,
-    );
 
     return Column(
       children: <Widget>[
-        CustomTextFormField(
-          controller: controller,
-          hint: 'search'.tr(),
-          onChanged: provider.searchPosts,
+        Stack(
+          alignment: Alignment.centerRight,
+          children: [
+            CustomTextFormField(
+              controller: controller,
+              hint: 'search'.tr(),
+              onChanged: provider.searchPosts,
+            ),
+          ],
         ),
         Expanded(
           child: NotificationListener<ScrollNotification>(
@@ -28,7 +49,7 @@ class SearchPostsSection extends StatelessWidget {
               if (!provider.isLoading &&
                   scrollInfo.metrics.pixels >=
                       scrollInfo.metrics.maxScrollExtent - 100) {
-                provider.searchPosts(provider.postQuery, isLoadMore: true);
+                provider.searchPosts(controller.text.trim(), isLoadMore: true);
               }
               return false;
             },

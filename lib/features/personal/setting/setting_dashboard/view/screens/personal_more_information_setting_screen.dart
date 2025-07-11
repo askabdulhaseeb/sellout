@@ -1,10 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../core/sockets/socket_service.dart';
 import '../../../../../../core/sources/local/hive_db.dart';
 import '../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../routes/app_linking.dart';
-import '../../../../../../services/get_it.dart';
 import '../../../../dashboard/views/screens/dashboard_screen.dart';
 import '../../../../user/profiles/views/params/about_us.dart';
 import '../../../setting_options/terms&policies/acceptable_user_policy.dart';
@@ -114,8 +112,6 @@ class PersonalSettingMoreInformationScreen extends StatelessWidget {
             displayTrailingIcon: false,
             title: 'logout'.tr(),
             onTap: () async {
-              final SocketService socketService = SocketService(locator());
-              socketService.disconnect();
               await HiveDB.signout();
               AppNavigator.pushNamedAndRemoveUntil(
                   DashboardScreen.routeName, (_) => false);

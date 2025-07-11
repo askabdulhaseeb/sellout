@@ -25,6 +25,13 @@ class AppStrings {
   static String get localDropDownListingBox => 'com.sellout.dropdown-listings';
   static String get localPostListCache => 'com.sellout.local-post-list-cache';
   static String get localOrdersBox => 'com.sellout.local-orders-box';
+  // Socket Events
+  static String get newMessage => 'new_message';
+  static String get updatedMessage => 'updated_message';
+  static String get getOnlineUsers => 'getOnlineUsers';
+  static String get newNotification => 'new-notification';
+  static String get lastSeen => 'lastSeen';
+
   // [IMAGES]
   // Maketplace CATEGORIES
   static const String clothfootmarketplace =

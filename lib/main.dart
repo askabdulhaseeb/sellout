@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
+import 'core/sockets/socket_service.dart';
 import 'core/theme/app_theme.dart';
 import 'services/app_providers.dart';
 import 'core/sources/local/hive_db.dart';
@@ -21,6 +22,7 @@ void main() async {
   await Stripe.instance.applySettings();
   setupLocator();
   await EasyLocalization.ensureInitialized();
+  SocketService(locator()).initAndListen();
   runApp(EasyLocalization(
     supportedLocales: const <Locale>[AppLocalization.en],
     path: AppLocalization.filePath,

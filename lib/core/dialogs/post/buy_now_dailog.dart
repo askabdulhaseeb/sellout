@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
 import '../../../features/personal/cart/views/screens/personal_cart_screen.dart';
 import '../../../features/personal/post/domain/entities/post_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/color_entity.dart';
