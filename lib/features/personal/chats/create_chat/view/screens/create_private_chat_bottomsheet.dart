@@ -45,7 +45,6 @@ class CreatePrivateChatBottomsheet extends StatelessWidget {
           itemBuilder: (BuildContext context, int index) {
             final SupporterDetailEntity supporter = supporters[index];
             final String userId = supporter.userID;
-
             return FutureBuilder<DataState<UserEntity?>>(
               future: getUserByUidUsecase(userId),
               builder: (BuildContext context,

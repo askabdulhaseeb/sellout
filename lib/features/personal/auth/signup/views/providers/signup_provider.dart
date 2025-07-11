@@ -14,6 +14,7 @@ import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../dashboard/views/screens/dashboard_screen.dart';
 import '../../../../user/profiles/domain/usecase/edit_profile_detail_usecase.dart';
 import '../../../../user/profiles/views/params/update_user_params.dart';
+import '../../../signin/data/sources/local/local_auth.dart';
 import '../../../signin/domain/params/login_params.dart';
 import '../../../signin/domain/usecase/login_usecase.dart';
 import '../../domain/usecase/register_user_usecase.dart';
@@ -47,19 +48,6 @@ class SignupProvider extends ChangeNotifier {
   final VerifyUserByImageUsecase _verifyUserByImageUsecase;
 
   //
-  String? _uid;
-  set uid(String? value) {
-    _uid = value;
-    // notifyListeners();
-  }
-
-  String? _getOTP;
-  set getOTP(String? value) {
-    _getOTP = value;
-    notifyListeners();
-  }
-
-  //
   final TextEditingController name = TextEditingController(
     text: kDebugMode ? 'ahmershurahbeeljan+test@gmail.com' : '',
   );
@@ -87,7 +75,6 @@ class SignupProvider extends ChangeNotifier {
   }
 
   //
-  final GlobalKey<FormState> basicInfoFormKey = GlobalKey<FormState>();
   //
   PickedAttachment? _attachment;
   PickedAttachment? get attachment => _attachment;
@@ -128,7 +115,6 @@ class SignupProvider extends ChangeNotifier {
   static const int _codeSendingTime = 60;
   int _resentCodeSeconds = _codeSendingTime;
   int get resentCodeSeconds => _resentCodeSeconds;
-
   set resentCodeSeconds(int value) {
     _resentCodeSeconds = value;
     notifyListeners();
@@ -155,9 +141,6 @@ class SignupProvider extends ChangeNotifier {
   }
 
   Future<bool> isValidBasicInfo(BuildContext context) async {
-    if (!(basicInfoFormKey.currentState?.validate() ?? false)) {
-      return false;
-    }
     if ((_phoneNumber?.fullNumber.length ?? 0) < 5) {
       AppSnackBar.showSnackBar(
         context,
@@ -168,7 +151,22 @@ class SignupProvider extends ChangeNotifier {
     return await basicInfoPushData(context);
   }
 
+  // ignore: always_specify_types
+  void navigateToVerify(context) {
+    if (_currentPage == SignupPageType.basicInfo && LocalAuth.uid != null) {
+      _moveNext(context);
+      sendOtp(context);
+    }
+    if (_currentPage == SignupPageType.otp &&
+        (LocalAuth.currentUser?.otpVerified == true)) {
+      _moveNext(context);
+    }
+  }
+
   Future<void> onNext(BuildContext context) async {
+    if (_currentPage == SignupPageType.basicInfo && LocalAuth.uid != null) {
+      _moveNext(context);
+    }
     if (_currentPage == SignupPageType.basicInfo) {
       if (await isValidBasicInfo(context)) {
         // ignore: use_build_context_synchronously
@@ -203,18 +201,13 @@ class SignupProvider extends ChangeNotifier {
     final SignupPageType? page = _currentPage.next();
     if (page != null) {
       currentPage = page;
-      print('Current page before next: $_currentPage');
-      print('Next page: $page');
+      debugPrint('Current page before next: $_currentPage');
+      debugPrint('Next page: $page');
     }
     if (_isLoading) {
       isLoading = false;
     }
     if (page == null) {
-      isLoading = true;
-      await _loginUsecase(LoginParams(
-        email: email.text,
-        password: password.text,
-      ));
       reset();
       AppNavigator.pushNamedAndRemoveUntil(
         DashboardScreen.routeName,
@@ -225,6 +218,7 @@ class SignupProvider extends ChangeNotifier {
 
   void onBack(BuildContext context) {
     final SignupPageType? page = _currentPage.previous();
+
     if (page != null) {
       currentPage = page;
       notifyListeners();
@@ -254,14 +248,12 @@ class SignupProvider extends ChangeNotifier {
     required AttachmentType type,
   }) async {
     final ImagePicker picker = ImagePicker();
-
     try {
       final XFile? pickedFile = await picker.pickImage(
         source: ImageSource.camera,
         preferredCameraDevice: CameraDevice.front,
         imageQuality: 85, // adjust if you want to control size/quality
       );
-
       if (pickedFile != null) {
         File file = File(pickedFile.path);
         _attachment = PickedAttachment(file: file, type: AttachmentType.image);
@@ -288,7 +280,10 @@ class SignupProvider extends ChangeNotifier {
       );
       final DataState<String> result = await _registerUserUsecase(params);
       if (result is DataSuccess) {
-        _uid = result.entity?.toString();
+        _loginUsecase(LoginParams(
+          email: email.text,
+          password: password.text,
+        ));
         startResendCodeTimer();
         return true;
       } else {
@@ -317,7 +312,7 @@ class SignupProvider extends ChangeNotifier {
   }
 
   Future<bool> sendOtp(BuildContext context) async {
-    if (_uid == null) {
+    if (LocalAuth.uid == null) {
       AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
       return false;
     }
@@ -325,10 +320,9 @@ class SignupProvider extends ChangeNotifier {
     try {
       //
       final DataState<String> result = await _sendPhoneOtpUsecase(
-        SignupOptParams(uid: _uid ?? ''),
+        SignupOptParams(uid: LocalAuth.uid ?? ''),
       );
       if (result is DataSuccess) {
-        getOTP = result.entity;
         startResendCodeTimer();
         return true;
       } else {
@@ -357,7 +351,7 @@ class SignupProvider extends ChangeNotifier {
   }
 
   Future<bool> verifyOtp(BuildContext context) async {
-    if (_uid == null) {
+    if (LocalAuth.uid == null) {
       AppLog.error(
         'uid is null',
         name: 'SignupProvider.verifyOtp - uid',
@@ -373,24 +367,12 @@ class SignupProvider extends ChangeNotifier {
       AppSnackBar.showSnackBar(context, 'otp_requirement'.tr());
       return false;
     }
-    if (_getOTP != null) {
-      AppLog.error(
-        'otp not match',
-        name: 'SignupProvider.verifyOtp - otp',
-      );
-      AppSnackBar.showSnackBar(context, 'otp_not_match'.tr());
-      return false;
-    }
     try {
       //
       final DataState<bool> result = await _verifyPhoneOtpUsecase(
-        SignupOptParams(uid: _uid ?? '', otp: otp.text),
+        SignupOptParams(uid: LocalAuth.uid ?? '', otp: otp.text),
       );
       if (result is DataSuccess) {
-        await _loginUsecase(LoginParams(
-          email: email.text,
-          password: password.text,
-        ));
         return true;
       } else {
         AppLog.error(
@@ -515,8 +497,6 @@ class SignupProvider extends ChangeNotifier {
 
   /// reset
   reset() {
-    _uid = null;
-    _getOTP = null;
     name.text = '';
     username.text = '';
     email.text = '';

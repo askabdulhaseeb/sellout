@@ -9,7 +9,7 @@ class OfferPaymentParams {
   final AddressModel buyerAddress;
 
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'offer_id': offerId,
       'buyer_address': buyerAddress.toOfferJson(),
     };

@@ -10,15 +10,31 @@ class SocketService with WidgetsBindingObserver {
   final SocketImplementations _socketImplementations;
   io.Socket? socket;
   bool _isInitialized = false;
-
   bool get isConnected => socket?.connected ?? false;
-
-  void initAndConnect() {
+  void initAndListen() {
     if (_isInitialized) return;
 
     _isInitialized = true;
     WidgetsBinding.instance.addObserver(this);
-    connect();
+
+    // 👂 Listen to UID changes
+    LocalAuth.uidNotifier.addListener(() {
+      final String? uid = LocalAuth.uidNotifier.value;
+      if (uid != null) {
+        AppLog.info('🔓 UID set. Connecting socket...');
+        connect();
+      } else {
+        AppLog.info('🔒 UID is null. Disconnecting socket...');
+        disconnect();
+      }
+    });
+
+    // 🔁 Handle first-time check
+    if (LocalAuth.uid != null) {
+      connect();
+    } else {
+      AppLog.info('🔒 No UID at startup. Socket will not connect.');
+    }
   }
 
   void connect() {
@@ -51,10 +67,10 @@ class SocketService with WidgetsBindingObserver {
       AppLog.error('🚨 Connect error: $data');
     });
     socket!.onDisconnect((_) {
-      AppLog.error('❌ Disconnected from server');
+      AppLog.error(' Disconnected from server');
     });
     socket!.onDisconnect((_) {
-      AppLog.error('❌ Disconnected from server',
+      AppLog.error(' Disconnected from server',
           name: 'SocketService.disconnect');
     });
     socket!.on('getOnlineUsers', (dynamic data) async {

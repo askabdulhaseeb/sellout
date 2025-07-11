@@ -5,22 +5,43 @@ import '../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../services/views/widgets/service_card/service_card.dart';
 import '../../provider/search_provider.dart';
 
-class SearchServicesSection extends StatelessWidget {
+class SearchServicesSection extends StatefulWidget {
   const SearchServicesSection({super.key});
+
+  @override
+  State<SearchServicesSection> createState() => _SearchServicesSectionState();
+}
+
+class _SearchServicesSectionState extends State<SearchServicesSection> {
+  late TextEditingController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final SearchProvider provider = context.watch<SearchProvider>();
-    final TextEditingController controller = TextEditingController(
-      text: provider.serviceQuery,
-    );
 
     return Column(
       children: <Widget>[
-        CustomTextFormField(
-          controller: controller,
-          hint: 'search'.tr(),
-          onChanged: provider.searchServices,
+        Stack(
+          alignment: Alignment.centerRight,
+          children: [
+            CustomTextFormField(
+              controller: controller,
+              hint: 'search'.tr(),
+              onChanged: provider.searchServices,
+            ),
+          ],
         ),
         Expanded(
           child: NotificationListener<ScrollNotification>(
@@ -28,7 +49,7 @@ class SearchServicesSection extends StatelessWidget {
               if (!provider.isLoading &&
                   scrollInfo.metrics.pixels >=
                       scrollInfo.metrics.maxScrollExtent - 100) {
-                provider.searchServices(provider.currentQuery,
+                provider.searchServices(controller.text.trim(),
                     isLoadMore: true);
               }
               return false;

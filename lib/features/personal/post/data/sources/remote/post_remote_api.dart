@@ -1,12 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/params/report_params.dart';
 import '../../../../../../core/sources/api_call.dart';
 import '../../../../../../core/sources/local/local_request_history.dart';
 import '../../../../../../services/get_it.dart';
-
 import '../../../../cart/domain/usecase/cart/get_cart_usecase.dart';
 import '../../../../chats/chat/data/sources/local/local_message.dart';
 import '../../../../chats/chat_dashboard/domain/entities/messages/message_entity.dart';
@@ -44,52 +42,54 @@ class PostRemoteApiImpl implements PostRemoteApi {
         duration: Duration.zero,
       );
 
+      String? rawData;
+
       if (request != null) {
         debugPrint('[FeedAPI] Loaded posts from local cache ✅');
-        final ParsedFeedResult parsed =
-            await compute(_parseFeedResponse, request.encodedData);
-
-        return DataSuccess<GetFeedResponse>(
-          '',
-          GetFeedResponse(
-            nextPageToken: parsed.nextPageToken,
-            posts: parsed.posts,
-          ),
+        rawData = request.encodedData;
+      } else {
+        debugPrint(
+            '[FeedAPI] No valid cache found. Fetching from network 🌐...');
+        final DataState<String> result = await ApiCall<String>().call(
+          endpoint: endpoint,
+          requestType: ApiRequestType.get,
+          isAuth: false,
         );
-      }
 
-      debugPrint('[FeedAPI] No valid cache found. Fetching from network 🌐...');
-      final DataState<String> result = await ApiCall<String>().call(
-        endpoint: endpoint,
-        requestType: ApiRequestType.get,
-        isAuth: false,
-      );
-
-      if (result is DataSuccess) {
-        final String raw = result.data ?? '';
-        if (raw.isEmpty) {
-          debugPrint('[FeedAPI] Empty response received ⚠️');
+        if (result is DataSuccess) {
+          rawData = result.data ?? '';
+          if (rawData.isEmpty) {
+            debugPrint('[FeedAPI] Empty response received ⚠️');
+            return DataFailer<GetFeedResponse>(
+              result.exception ?? CustomException('something_wrong'.tr()),
+            );
+          }
+        } else {
+          debugPrint(
+              '[FeedAPI] Network call failed ❌: ${result.exception?.message}');
           return DataFailer<GetFeedResponse>(
             result.exception ?? CustomException('something_wrong'.tr()),
           );
         }
-        debugPrint('[FeedAPI] Parsing response data in isolate...');
-        final ParsedFeedResult parsed = await compute(_parseFeedResponse, raw);
-        debugPrint('[FeedAPI] Next page token: ${parsed.nextPageToken}');
-        return DataSuccess<GetFeedResponse>(
-          '',
-          GetFeedResponse(
-            nextPageToken: parsed.nextPageToken,
-            posts: parsed.posts,
-          ),
-        );
-      } else {
-        debugPrint(
-            '[FeedAPI] Network call failed ❌: ${result.exception?.message}');
-        return DataFailer<GetFeedResponse>(
-          result.exception ?? CustomException('something_wrong'.tr()),
-        );
       }
+
+      // ✅ Parse response here directly
+      final Map<String, dynamic> jsonMap = json.decode(rawData);
+      final List<dynamic> list = jsonMap['response'] ?? <dynamic>[];
+      final String? nextPageToken = jsonMap['nextPageToken'];
+
+      final List<PostEntity> posts =
+          list.map<PostEntity>((item) => PostModel.fromJson(item)).toList();
+
+      debugPrint('[FeedAPI] Next page token: $nextPageToken');
+
+      return DataSuccess<GetFeedResponse>(
+        '',
+        GetFeedResponse(
+          nextPageToken: nextPageToken,
+          posts: posts,
+        ),
+      );
     } catch (e) {
       debugPrint('[FeedAPI] Exception occurred 💥: $e');
       return DataFailer<GetFeedResponse>(
@@ -449,21 +449,4 @@ class PostRemoteApiImpl implements PostRemoteApi {
   //     return DataFailer<bool>(CustomException(e.toString()));
   //   }
   // }
-}
-
-class ParsedFeedResult {
-  ParsedFeedResult({required this.posts, this.nextPageToken});
-  final List<PostEntity> posts;
-  final String? nextPageToken;
-}
-
-ParsedFeedResult _parseFeedResponse(String rawJson) {
-  final Map<String, dynamic> jsonMap = json.decode(rawJson);
-  final List<dynamic> list = jsonMap['response'];
-  final String? nextPageToken = jsonMap['nextPageToken'];
-
-  final List<PostEntity> posts =
-      list.map<PostEntity>((item) => PostModel.fromJson(item)).toList();
-
-  return ParsedFeedResult(posts: posts, nextPageToken: nextPageToken);
 }

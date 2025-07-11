@@ -136,7 +136,7 @@ class _PostDetailAttachmentSliderState
                   border: Border.all(
                     color: isSelected
                         ? Theme.of(context).primaryColor
-                        : Theme.of(context).colorScheme.secondary,
+                        : Colors.transparent,
                     width: 2,
                   ),
                   boxShadow: <BoxShadow>[

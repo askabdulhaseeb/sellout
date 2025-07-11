@@ -6,7 +6,6 @@ import '../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/password_textformfield.dart';
 import '../../../../../../core/widgets/sellout_title.dart';
-import '../../../../../../routes/app_linking.dart';
 import '../../../find_account/view/screens/find_account_screen.dart';
 import '../../../signup/views/screens/signup_screen.dart';
 import '../providers/signin_provider.dart';
@@ -90,7 +89,8 @@ class SignInScreen extends StatelessWidget {
                   if (!signInFormKey.currentState!.validate()) {
                     return;
                   }
-                  await AppNavigator.pushNamed(SignupScreen.routeName);
+                  await Navigator.pushReplacementNamed(
+                      context, SignupScreen.routeName);
                 }),
             CustomElevatedButton(
               title: 'login'.tr(),

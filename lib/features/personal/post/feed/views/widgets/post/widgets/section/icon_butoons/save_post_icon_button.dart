@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../../../../services/get_it.dart';
+import '../../../../../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../../../../../domain/usecase/save_post_usecase.dart';
 
 class SavePostIconButton extends StatefulWidget {
@@ -21,12 +23,17 @@ class _SavePostIconButtonState extends State<SavePostIconButton> {
   bool isSaved = false;
   bool isLoading = false;
 
+  @override
+  void initState() {
+    super.initState();
+    final List<String>? savedPosts = LocalAuth.currentUser?.saved;
+    isSaved = savedPosts?.contains(widget.postId) ?? false;
+  }
+
   Future<void> _handleSave() async {
     if (isLoading || isSaved) return;
 
-    setState(() {
-      isLoading = true;
-    });
+    setState(() => isLoading = true);
 
     final SavePostUsecase savePostUsecase = SavePostUsecase(locator());
     final DataState<bool> result = await savePostUsecase.call(widget.postId);
@@ -36,20 +43,21 @@ class _SavePostIconButtonState extends State<SavePostIconButton> {
     if (result is DataSuccess && result.entity == true) {
       setState(() {
         isSaved = true;
+        final UserEntity? user = LocalUser().userEntity(LocalAuth.uid ?? '');
+        user?.saved.add(widget.postId);
+        LocalUser().save(user!);
       });
     } else {
       AppSnackBar.showSnackBar(context, 'save_post_failed'.tr());
     }
 
-    setState(() {
-      isLoading = false;
-    });
+    setState(() => isLoading = false);
   }
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      onPressed: _handleSave,
+      onPressed: isSaved ? null : _handleSave,
       icon: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
         transitionBuilder: (Widget child, Animation<double> animation) {
@@ -57,14 +65,14 @@ class _SavePostIconButtonState extends State<SavePostIconButton> {
         },
         child: isLoading
             ? const SizedBox(
-                key: ValueKey('loading'),
+                key: ValueKey<String>('loading'),
                 width: 24,
                 height: 24,
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
             : Icon(
                 isSaved ? Icons.bookmark_added : Icons.bookmark_add_outlined,
-                key: ValueKey(isSaved),
+                key: ValueKey<bool>(isSaved),
               ),
       ),
     );

@@ -8,21 +8,26 @@ import '../../features/personal/chats/chat/data/models/message_last_evaluated_ke
 import '../../features/personal/chats/chat/data/sources/local/local_message.dart';
 import '../../features/personal/chats/chat/domain/entities/getted_message_entity.dart';
 import '../../features/personal/chats/chat_dashboard/data/models/message/message_model.dart';
+import '../../features/personal/chats/chat_dashboard/data/sources/local/local_chat.dart';
 import '../../features/personal/chats/chat_dashboard/data/sources/local/local_unseen_messages.dart';
+import '../../features/personal/chats/chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../features/personal/chats/chat_dashboard/domain/entities/messages/message_entity.dart';
+import '../../features/personal/chats/chat_dashboard/domain/usecase/get_my_chats_usecase.dart';
+import '../../services/get_it.dart';
 import '../functions/app_log.dart';
+import '../sources/api_call.dart';
 
 class SocketImplementations {
   // NEW MESSAGES
   Future<void> handleNewMessage(Map<String, dynamic> data) async {
     final MessageModel newMsg = MessageModel.fromJson(data);
     final String chatId = data['chat_id'];
-    // Get existing entity from local storage
-    // final GettedMessageEntity? existingEntity = LocalChatMessage().entity(chatId);
+
+    //  Fetch existing chat messages
     final List<MessageEntity> existingMessages =
         LocalChatMessage().messages(chatId);
 
-    // 🔒 Check if the message already exists
+    //  Check for duplicates
     final bool isDuplicate = existingMessages.any(
       (MessageEntity m) => m.messageId == newMsg.messageId,
     );
@@ -31,7 +36,29 @@ class SocketImplementations {
       existingMessages.add(newMsg);
     }
 
-    // Create updated entity
+    //  Ensure chat exists locally
+    ChatEntity? localChat = LocalChat().chatEntity(chatId);
+    if (localChat == null) {
+      final getMyChats = GetMyChatsUsecase(locator());
+      final result = await getMyChats.call([chatId]);
+
+      if (result is DataSuccess<List<ChatEntity>>) {
+        final fetchedChat = result.entity?.firstWhere(
+          (ChatEntity chat) => chat.chatId == chatId,
+        );
+        if (fetchedChat != null) {
+          LocalChat().save(fetchedChat);
+          localChat = fetchedChat;
+        }
+      } else {
+        AppLog.error(
+          '❌ Failed to fetch chat from server | chatId: $chatId',
+          name: 'SocketImpl.handleNewMessage',
+        );
+      }
+    }
+
+    // 💾 Save to local message store
     final GettedMessageEntity updatedEntity = GettedMessageEntity(
       chatID: chatId,
       messages: existingMessages,
@@ -41,10 +68,22 @@ class SocketImplementations {
         paginationKey: data['message_id'],
       ),
     );
-
-    // Save updated entity to local storage
     LocalChatMessage().save(updatedEntity, chatId);
+
+    // ✅ Update local chat lastMessage
+    if (localChat != null) {
+      final updatedChat = localChat.copyWith(lastMessage: newMsg);
+      LocalChat().save(updatedChat);
+    }
+
+    //  Unread count
     await LocalUnreadMessagesService().increment(chatId);
+
+    //  Final Log
+    AppLog.info(
+      '🟢 New message saved | chatId: $chatId | messageId: ${newMsg.messageId}',
+      name: 'SocketImpl.handleNewMessage',
+    );
   }
 
   // UPDATE MESSAGES

@@ -9,14 +9,32 @@ import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../core/widgets/password_textformfield.dart';
 import '../../../../../../../core/widgets/phone_number/domain/entities/phone_number_entity.dart';
 import '../../../../../../../core/widgets/phone_number/views/phone_number_input_field.dart';
+import '../../../../signin/views/screens/sign_in_screen.dart';
 import '../../providers/signup_provider.dart';
 
-class SignupBasicInfoPage extends StatelessWidget {
+class SignupBasicInfoPage extends StatefulWidget {
   const SignupBasicInfoPage({super.key});
   static const String routeName = '/signup-basic-info';
 
   @override
+  State<SignupBasicInfoPage> createState() => _SignupBasicInfoPageState();
+}
+
+class _SignupBasicInfoPageState extends State<SignupBasicInfoPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final SignupProvider provider =
+          Provider.of<SignupProvider>(context, listen: false);
+      provider.navigateToVerify(context);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final GlobalKey<FormState> basicInfoFormKey = GlobalKey<FormState>();
+
     return Consumer<SignupProvider>(
       builder: (BuildContext context, SignupProvider pro, _) {
         return Scaffold(
@@ -24,7 +42,7 @@ class SignupBasicInfoPage extends StatelessWidget {
           extendBodyBehindAppBar: false,
           appBar: null,
           body: Form(
-            key: pro.basicInfoFormKey,
+            key: basicInfoFormKey,
             child: AutofillGroup(
               child: ListView(
                 children: <Widget>[
@@ -93,7 +111,8 @@ class SignupBasicInfoPage extends StatelessWidget {
                         TextSpan(
                           text: 'sign_in'.tr(),
                           recognizer: TapGestureRecognizer()
-                            ..onTap = () => Navigator.of(context).pop(),
+                            ..onTap = () => Navigator.pushNamed(
+                                context, SignInScreen.routeName),
                           style: TextStyle(
                             color: Theme.of(context).primaryColor,
                             fontWeight: FontWeight.bold,
@@ -106,7 +125,13 @@ class SignupBasicInfoPage extends StatelessWidget {
                   CustomElevatedButton(
                     title: 'next'.tr(),
                     isLoading: pro.isLoading,
-                    onTap: () => pro.onNext(context),
+                    onTap: () {
+                      if (!(basicInfoFormKey.currentState?.validate() ??
+                          false)) {
+                        return;
+                      }
+                      pro.onNext(context);
+                    },
                   ),
                   const SizedBox(height: 12),
                   RichText(

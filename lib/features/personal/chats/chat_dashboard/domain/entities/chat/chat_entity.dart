@@ -56,4 +56,36 @@ class ChatEntity {
     final String meID = LocalAuth.uid ?? '';
     return persons.firstWhere((String e) => e != meID, orElse: () => meID);
   }
+
+  // ✅ copyWith method
+  ChatEntity copyWith({
+    DateTime? updatedAt,
+    DateTime? createdAt,
+    List<ChatParticipantEntity>? participants,
+    List<String>? ids,
+    String? createdBy,
+    MessageEntity? lastMessage,
+    OfferAmountInfoEntity? productInfo,
+    List<String>? persons,
+    String? chatId,
+    ChatType? type,
+    List<dynamic>? deletedBy,
+    GroupInfoEntity? groupInfo,
+    DateTime? inHiveAt,
+  }) {
+    return ChatEntity(
+      updatedAt: updatedAt ?? this.updatedAt,
+      createdAt: createdAt ?? this.createdAt,
+      participants: participants ?? this.participants,
+      ids: ids ?? this.ids,
+      createdBy: createdBy ?? this.createdBy,
+      lastMessage: lastMessage ?? this.lastMessage,
+      productInfo: productInfo ?? this.productInfo,
+      persons: persons ?? this.persons,
+      chatId: chatId ?? this.chatId,
+      type: type ?? this.type,
+      deletedBy: deletedBy ?? this.deletedBy,
+      groupInfo: groupInfo ?? this.groupInfo,
+    );
+  }
 }

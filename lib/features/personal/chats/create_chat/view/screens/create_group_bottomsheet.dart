@@ -50,211 +50,220 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
 
   Widget _buildChooseMembers(CreateChatGroupProvider provider,
       List<SupporterDetailEntity> supporters) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        leading: BackButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: Text('choose_members'.tr(),
-            style: TextTheme.of(context).titleMedium),
-      ),
-      body: Stack(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(bottom: 60),
-            child: ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              itemCount: supporters.length,
-              itemBuilder: (BuildContext context, int index) {
-                final SupporterDetailEntity supporter = supporters[index];
-                final String userId = supporter.userID;
-                return FutureBuilder<DataState<UserEntity?>>(
-                  future: getUserByUidUsecase(userId),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<DataState<UserEntity?>> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return ListTile(
-                        title: Text('loading...'.tr()),
-                        leading: const CircularProgressIndicator(),
-                      );
-                    }
-                    if (snapshot.hasError ||
-                        snapshot.data == null ||
-                        snapshot.data!.entity == null) {
-                      return const ListTile(title: Text('Error loading user'));
-                    }
-                    final UserEntity user = snapshot.data!.entity!;
-                    return ListTile(
-                      minTileHeight: 70,
-                      leading: ProfilePhoto(
-                        size: 30,
-                        url: user.profilePhotoURL,
-                        placeholder: user.displayName,
-                      ),
-                      title: Text(
-                        user.displayName,
-                        style: TextTheme.of(context).bodyMedium,
-                        maxLines: 1,
-                      ),
-                      trailing: Consumer<CreateChatGroupProvider>(
-                        builder: (BuildContext context,
-                            CreateChatGroupProvider p, _) {
-                          final bool isSelected = p.isSelected(user.uid);
-                          return AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 300),
-                            child: IconButton(
-                              key: ValueKey<bool>(isSelected),
-                              icon: Icon(
-                                isSelected
-                                    ? Icons.cancel_outlined
-                                    : Icons.add_circle_outline,
-                                color: isSelected
-                                    ? AppTheme.secondaryColor
-                                    : AppTheme.primaryColor,
-                              ),
-                              onPressed: () {
-                                p.toggleSupporter(user.uid);
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
+    return PopScope(
+      onPopInvokedWithResult: (bool didPop, dynamic result) => provider.reset(),
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          leading: BackButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
-          Positioned(
-            bottom: 10,
-            left: 16,
-            right: 16,
-            child: Consumer<CreateChatGroupProvider>(
-              builder: (BuildContext context, CreateChatGroupProvider pro,
-                      Widget? child) =>
-                  Column(
-                children: <Widget>[
-                  if (pro.selectedUserIds.length >= 2)
-                    CustomElevatedButton(
-                      isLoading: false,
-                      onTap: () {
-                        setState(() => step = 2);
-                      },
-                      title: 'next'.tr(),
-                    ),
-                ],
+          title: Text('choose_members'.tr(),
+              style: TextTheme.of(context).titleMedium),
+        ),
+        body: Stack(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(bottom: 60),
+              child: ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                itemCount: supporters.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final SupporterDetailEntity supporter = supporters[index];
+                  final String userId = supporter.userID;
+                  return FutureBuilder<DataState<UserEntity?>>(
+                    future: getUserByUidUsecase(userId),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<DataState<UserEntity?>> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return ListTile(
+                          title: Text('loading...'.tr()),
+                          leading: const CircularProgressIndicator(),
+                        );
+                      }
+                      if (snapshot.hasError ||
+                          snapshot.data == null ||
+                          snapshot.data!.entity == null) {
+                        return const ListTile(
+                            title: Text('Error loading user'));
+                      }
+                      final UserEntity user = snapshot.data!.entity!;
+                      return ListTile(
+                        minTileHeight: 70,
+                        leading: ProfilePhoto(
+                          size: 30,
+                          url: user.profilePhotoURL,
+                          placeholder: user.displayName,
+                        ),
+                        title: Text(
+                          user.displayName,
+                          style: TextTheme.of(context).bodyMedium,
+                          maxLines: 1,
+                        ),
+                        trailing: Consumer<CreateChatGroupProvider>(
+                          builder: (BuildContext context,
+                              CreateChatGroupProvider p, _) {
+                            final bool isSelected = p.isSelected(user.uid);
+                            return AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 300),
+                              child: IconButton(
+                                key: ValueKey<bool>(isSelected),
+                                icon: Icon(
+                                  isSelected
+                                      ? Icons.cancel_outlined
+                                      : Icons.add_circle_outline,
+                                  color: isSelected
+                                      ? AppTheme.secondaryColor
+                                      : AppTheme.primaryColor,
+                                ),
+                                onPressed: () {
+                                  p.toggleSupporter(user.uid);
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
             ),
-          ),
-        ],
+            Positioned(
+              bottom: 10,
+              left: 16,
+              right: 16,
+              child: Consumer<CreateChatGroupProvider>(
+                builder: (BuildContext context, CreateChatGroupProvider pro,
+                        Widget? child) =>
+                    Column(
+                  children: <Widget>[
+                    if (pro.selectedUserIds.length >= 2)
+                      CustomElevatedButton(
+                        isLoading: false,
+                        onTap: () {
+                          setState(() => step = 2);
+                        },
+                        title: 'next'.tr(),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildGroupDetails(CreateChatGroupProvider provider) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded),
-          onPressed: () {
-            setState(() => step = 1);
-          },
+    return PopScope(
+      onPopInvokedWithResult: (bool didPop, dynamic result) => provider.reset(),
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded),
+            onPressed: () {
+              setState(() => step = 1);
+            },
+          ),
+          centerTitle: true,
+          title: Text('group_details'.tr(),
+              style: TextTheme.of(context).titleMedium),
         ),
-        centerTitle: true,
-        title: Text('group_details'.tr(),
-            style: TextTheme.of(context).titleMedium),
-      ),
-      body: Stack(
-        children: <Widget>[
-          Positioned.fill(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              physics: const BouncingScrollPhysics(),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: <Widget>[
-                    InkWell(
-                      onTap: () {
-                        provider.setImages(context, type: AttachmentType.image);
-                      },
-                      child: IgnorePointer(
-                        child: CustomTextFormField(
-                            readOnly: true,
-                            hint: 'group_photo_hint'.tr(),
-                            controller: TextEditingController(),
-                            contentPadding: const EdgeInsets.all(6),
-                            prefixIcon: Consumer<CreateChatGroupProvider>(
-                              builder: (BuildContext context,
-                                      CreateChatGroupProvider pro,
-                                      Widget? child) =>
-                                  Container(
-                                padding: const EdgeInsets.all(4.0),
-                                margin: const EdgeInsets.all(4.0),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .outlineVariant,
+        body: Stack(
+          children: <Widget>[
+            Positioned.fill(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                physics: const BouncingScrollPhysics(),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: <Widget>[
+                      InkWell(
+                        onTap: () {
+                          provider.setImages(context,
+                              type: AttachmentType.image);
+                        },
+                        child: IgnorePointer(
+                          child: CustomTextFormField(
+                              readOnly: true,
+                              hint: 'group_photo_hint'.tr(),
+                              controller: TextEditingController(),
+                              contentPadding: const EdgeInsets.all(6),
+                              prefixIcon: Consumer<CreateChatGroupProvider>(
+                                builder: (BuildContext context,
+                                        CreateChatGroupProvider pro,
+                                        Widget? child) =>
+                                    Container(
+                                  padding: const EdgeInsets.all(4.0),
+                                  margin: const EdgeInsets.all(4.0),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .outlineVariant,
+                                    ),
                                   ),
+                                  child: provider.attachments.isNotEmpty
+                                      ? ClipOval(
+                                          child: Image.file(
+                                            File(pro
+                                                .attachments.first.file.path),
+                                            width: 30,
+                                            height: 30,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        )
+                                      : const Icon(Icons.camera_alt, size: 30),
                                 ),
-                                child: provider.attachments.isNotEmpty
-                                    ? ClipOval(
-                                        child: Image.file(
-                                          File(pro.attachments.first.file.path),
-                                          width: 30,
-                                          height: 30,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      )
-                                    : const Icon(Icons.camera_alt, size: 30),
-                              ),
-                            )),
+                              )),
+                        ),
                       ),
-                    ),
-                    CustomTextFormField(
-                      labelText: 'group_name'.tr(),
-                      controller: provider.groupTitle,
-                      validator: (String? value) =>
-                          (value == null || value.trim().isEmpty)
-                              ? 'group_name_required'.tr()
-                              : null,
-                    ),
-                    CustomTextFormField(
-                      labelText: 'group_description'.tr(),
-                      controller: provider.groupDescription,
-                      validator: (String? value) =>
-                          (value == null || value.trim().isEmpty)
-                              ? 'group_description_required'.tr()
-                              : null,
-                    ),
-                    const SizedBox(
-                      height: 100,
-                    ),
-                  ],
+                      CustomTextFormField(
+                        labelText: 'group_name'.tr(),
+                        controller: provider.groupTitle,
+                        validator: (String? value) =>
+                            (value == null || value.trim().isEmpty)
+                                ? 'group_name_required'.tr()
+                                : null,
+                      ),
+                      CustomTextFormField(
+                        labelText: 'group_description'.tr(),
+                        controller: provider.groupDescription,
+                        validator: (String? value) =>
+                            (value == null || value.trim().isEmpty)
+                                ? 'group_description_required'.tr()
+                                : null,
+                      ),
+                      const SizedBox(
+                        height: 100,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          Positioned(
-            bottom: 2,
-            left: 16,
-            right: 16,
-            child: CustomElevatedButton(
-              isLoading: provider.isLoading,
-              title: 'Create Group'.tr(),
-              onTap: () {
-                if (_formKey.currentState!.validate()) {
-                  provider.createChat(context);
-                }
-              },
+            Positioned(
+              bottom: 2,
+              left: 16,
+              right: 16,
+              child: CustomElevatedButton(
+                isLoading: provider.isLoading,
+                title: 'Create Group'.tr(),
+                onTap: () {
+                  if (_formKey.currentState!.validate()) {
+                    provider.createChat(context);
+                  }
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

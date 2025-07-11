@@ -1,14 +1,12 @@
 {
-    "java.compile.nullAnalysis.mode": "automatic",
-    "cmake.sourceDirectory": "/Users/askabdulhaseeb/Flutter/Upwork/sellout/linux",
-    "java.configuration.updateBuildConfiguration": "automatic",
-
-      "editor.formatOnSave": true,
-    "editor.formatOnType": true,
-
-    // 🟣 Dart-specific formatter
-    "[dart]": {
-        "editor.defaultFormatter": "Dart-Code.dart-code",
-        "editor.formatOnSave": true
-    }
+  "java.compile.nullAnalysis.mode": "automatic",
+  "cmake.sourceDirectory": "/Users/askabdulhaseeb/Flutter/Upwork/sellout/linux",
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "editor.formatOnSave": true,
+  "editor.formatOnType": true,
+  // 🟣 Dart-specific formatter
+  "[dart]": {
+    "editor.defaultFormatter": "Dart-Code.dart-code",
+    "editor.formatOnSave": true
+  }
 }
