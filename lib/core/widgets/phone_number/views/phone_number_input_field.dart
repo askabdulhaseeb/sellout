@@ -61,19 +61,21 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
     }
   }
 
-  _init() async {
+  Future<void> _init() async {
     getCountiesUsecase = GetCountiesUsecase(locator());
     await LocalCountry().refresh();
     await countiries();
+    if (!mounted) return; // ✅ check before calling setState
     _postInit();
   }
 
-  countiries() async {
+  Future<void> countiries() async {
     DataState<List<CountryEntity>> cou =
         await getCountiesUsecase!.call(const Duration(days: 1));
     if (cou is DataSuccess) {
       countries = cou.entity ?? LocalCountry().activeCounties;
     }
+    if (!mounted) return; // ✅ check before calling setState
     setState(() {});
   }
 
