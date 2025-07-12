@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../../core/extension/datetime_ext.dart';
 import '../../../../../../../core/theme/app_theme.dart';
+import '../../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../providers/signup_provider.dart';
 
@@ -23,11 +23,12 @@ class SignupDobPage extends StatelessWidget {
             ).tr(),
             const Text('birthday_policy').tr(),
             const SizedBox(height: 20),
+
+            // Date Picker Field
             InkWell(
               onTap: pro.isLoading
                   ? null
                   : () async {
-                      // Adaptive date picker
                       final DateTime? date = await showDatePicker(
                         context: context,
                         initialDate: DateTime(2000),
@@ -46,7 +47,7 @@ class SignupDobPage extends StatelessWidget {
                         },
                       );
                       if (date != null) {
-                        pro.dob = date;
+                        pro.setDob(date);
                       }
                     },
               borderRadius: BorderRadius.circular(8),
@@ -63,21 +64,62 @@ class SignupDobPage extends StatelessWidget {
                   children: <Widget>[
                     Expanded(
                       child: pro.dob == null
-                          ? const SizedBox()
-                          : Text(pro.dob?.dateWithFullMonth ?? 'non'),
+                          ? Text(
+                              'select_dob'.tr(),
+                              style:
+                                  TextStyle(color: Theme.of(context).hintColor),
+                            )
+                          : Text(pro.dob!.dateWithFullMonth),
                     ),
                     const Icon(Icons.calendar_month_outlined),
                   ],
                 ),
               ),
             ),
+
+            const Padding(
+              padding: EdgeInsets.only(top: 4),
+              child: Text(
+                'Please select your date of birth',
+                style: TextStyle(color: Colors.red, fontSize: 12),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Gender Dropdown
+            CustomDropdown<String>(
+              title: 'Gender',
+              items: <DropdownMenuItem<String>>[
+                const DropdownMenuItem<String>(
+                    value: 'Male', child: Text('Male')),
+                const DropdownMenuItem<String>(
+                    value: 'Female', child: const Text('Female')),
+                const DropdownMenuItem<String>(
+                    value: 'Other', child: Text('Other')),
+              ],
+              selectedItem: pro.gender,
+              onChanged: (String? value) {
+                if (value == null) return;
+                pro.setGender(value);
+              },
+              validator: (_) {
+                if (pro.gender?.isEmpty ?? true) {
+                  return 'Please select your gender';
+                }
+                return null;
+              },
+            ),
+
             const Spacer(),
+
+            // Next Button
             CustomElevatedButton(
               title: 'next'.tr(),
-              isLoading: false,
-              isDisable: pro.dob == null || pro.isLoading,
+              isLoading: pro.isLoading,
+              isDisable: false,
               onTap: () async {
-                if (pro.dob != null) {
+                if (pro.dob != null && (pro.gender?.isNotEmpty ?? false)) {
                   pro.onNext(context);
                 }
               },

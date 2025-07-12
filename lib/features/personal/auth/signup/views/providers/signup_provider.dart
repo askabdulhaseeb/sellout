@@ -67,12 +67,22 @@ class SignupProvider extends ChangeNotifier {
     text: kDebugMode ? '1234567890' : '',
   );
   final TextEditingController otp = TextEditingController();
-  DateTime? _dob = DateTime(2000, 1, 1);
+  //
+  DateTime? _dob;
   DateTime? get dob => _dob;
-  set dob(DateTime? value) {
+  void setDob(DateTime? value) {
     _dob = value;
     notifyListeners();
   }
+
+  //
+  String? _gender;
+  String? get gender => _gender;
+  void setGender(String? value) {
+    _gender = value;
+    notifyListeners();
+  }
+  //
 
   //
   //
@@ -153,13 +163,16 @@ class SignupProvider extends ChangeNotifier {
 
   // ignore: always_specify_types
   void navigateToVerify(context) {
-    if (_currentPage == SignupPageType.otp &&
-        LocalAuth.currentUser?.otpVerified == true) {
-      _currentPage = SignupPageType.dateOfBirth;
-    } else if (_currentPage == SignupPageType.basicInfo &&
-        LocalAuth.uid != null) {
-      _currentPage = SignupPageType.otp;
-    } else {}
+    if (LocalAuth.uid != null) {
+      if (_currentPage == SignupPageType.otp &&
+          LocalAuth.currentUser?.otpVerified == true) {
+        _currentPage = SignupPageType.dateOfBirth;
+      } else if (_currentPage == SignupPageType.basicInfo &&
+          LocalAuth.currentUser?.otpVerified != true) {
+        _currentPage = SignupPageType.otp;
+      } else {}
+    }
+
     notifyListeners();
   }
 
@@ -409,6 +422,9 @@ class SignupProvider extends ChangeNotifier {
     isLoading = true;
     final DataState<String> result = await _updateProfileDetailUsecase(params);
     if (result is DataSuccess) {
+      final CurrentUserEntity currentUser =
+          LocalAuth.currentUser!.copyWith(dob: dob);
+      LocalAuth().signin(currentUser);
       AppLog.info('profile_updated_successfully'.tr());
       isLoading = false;
 
