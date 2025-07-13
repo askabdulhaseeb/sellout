@@ -77,10 +77,10 @@ class SignupDobPage extends StatelessWidget {
               ),
             ),
 
-            const Padding(
+            Padding(
               padding: EdgeInsets.only(top: 4),
               child: Text(
-                'Please select your date of birth',
+                'please_select_dob'.tr(),
                 style: TextStyle(color: Colors.red, fontSize: 12),
               ),
             ),
@@ -89,15 +89,11 @@ class SignupDobPage extends StatelessWidget {
 
             // Gender Dropdown
             CustomDropdown<String>(
-              title: 'Gender',
-              items: <DropdownMenuItem<String>>[
-                const DropdownMenuItem<String>(
-                    value: 'Male', child: Text('Male')),
-                const DropdownMenuItem<String>(
-                    value: 'Female', child: const Text('Female')),
-                const DropdownMenuItem<String>(
-                    value: 'Other', child: Text('Other')),
-              ],
+              title: 'gender'.tr(),
+              items: pro.genderOptions
+                  .map((String option) => DropdownMenuItem<String>(
+                      value: option, child: Text(option)))
+                  .toList(),
               selectedItem: pro.gender,
               onChanged: (String? value) {
                 if (value == null) return;
@@ -105,7 +101,7 @@ class SignupDobPage extends StatelessWidget {
               },
               validator: (_) {
                 if (pro.gender?.isEmpty ?? true) {
-                  return 'Please select your gender';
+                  return 'please_select_gender'.tr();
                 }
                 return null;
               },

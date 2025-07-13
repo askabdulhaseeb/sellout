@@ -165,8 +165,9 @@ class PromoMedia extends StatelessWidget {
         placeholder: (_, __) => const Center(
           child: CircularProgressIndicator(strokeWidth: 1.5),
         ),
-        errorWidget: (_, __, ___) =>
-            const Center(child: Icon(Icons.broken_image, size: 48)),
+        errorWidget: (_, __, ___) => const Center(
+          child: Icon(Icons.image_not_supported, size: 48, color: Colors.grey),
+        ),
       );
     } else {
       return Expanded(
