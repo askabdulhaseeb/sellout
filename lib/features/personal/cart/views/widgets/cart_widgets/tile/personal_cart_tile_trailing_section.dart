@@ -41,9 +41,9 @@ class _PersonalCartTileTrailingSectionState
             ? const Loader()
             : GestureDetector(
                 onTap: () async {
-                  setState(() {
-                    _isLoading = true;
-                  });
+                  if (mounted) {
+                    setState(() => _isLoading = true);
+                  }
                   try {
                     await Provider.of<CartProvider>(context, listen: false)
                         .removeItem(widget.item.cartItemID);

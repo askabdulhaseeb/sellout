@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'order_payment_detail_entity.dart';
+part of '../../../../order/domain/entities/order_payment_detail_entity.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator

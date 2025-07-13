@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../routes/app_linking.dart';
+import '../../../setting_options/buyer_orders/screens/personal_setting_buyer_order_screen.dart';
 import '../../../setting_options/privacy_setting/screen/privacy_screen.dart';
 import 'personal_more_information_setting_screen.dart';
 import '../../../setting_options/setting_notification/screens/personal_setting_notification_screen.dart';
@@ -90,7 +91,7 @@ class PersonalSettingScreen extends StatelessWidget {
             child: PersonalSettingTile(
               icon: Icons.wallet,
               title: 'postage'.tr(),
-              onTap: () {},
+              onTap: () {}, //
             ),
           ),
           InDevMode(
@@ -103,8 +104,9 @@ class PersonalSettingScreen extends StatelessWidget {
           InDevMode(
             child: PersonalSettingTile(
               icon: Icons.shopping_bag_outlined,
-              title: 'purchases'.tr(),
-              onTap: () {},
+              title: 'your_orders'.tr(),
+              onTap: () => Navigator.of(context)
+                  .pushNamed(PersonalSettingBuyerOrderScreen.routeName),
             ),
           ),
           PersonalSettingTile(

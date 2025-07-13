@@ -1,8 +1,8 @@
-import '../../../../../../../core/functions/app_log.dart';
-import '../../../../../../../core/sources/api_call.dart';
-import '../../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../../../core/functions/app_log.dart';
+import '../../../../../../core/sources/api_call.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../domain/entities/order_entity.dart';
-import '../../../domain/params/update_order_params.dart';
+import '../../../../user/profiles/domain/params/update_order_params.dart';
 import '../local/local_orders.dart';
 
 abstract interface class OrderByUserRemote {

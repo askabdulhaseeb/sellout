@@ -3,15 +3,12 @@ import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../post/domain/entities/post_entity.dart';
 import '../../../../post/domain/entities/visit/visiting_entity.dart';
-import '../../domain/entities/order_entity.dart';
 import '../../domain/entities/user_entity.dart';
-import '../../domain/params/update_order_params.dart';
 import '../../domain/repositories/user_repositories.dart';
 import '../../views/params/add_remove_supporter_params.dart';
 import '../../views/params/update_user_params.dart';
-import '../models/order_model.dart';
 import '../sources/remote/my_visting_remote.dart';
-import '../sources/remote/order_by_user_remote.dart';
+import '../../../../order/data/source/remote/order_by_user_remote.dart';
 import '../sources/remote/post_by_user_remote.dart';
 import '../sources/remote/user_profile_remote_source.dart';
 
@@ -48,16 +45,6 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
   }
 
   @override
-  Future<DataState<List<OrderEntity>>> getOrderByUser(String? uid) async {
-    return await orderByUserRemote.getOrderByUser(uid);
-  }
-
-  @override
-  Future<DataState<bool>> createOrder(List<OrderModel> orderData) async {
-    return await orderByUserRemote.createOrder(orderData);
-  }
-
-  @override
   Future<DataState<List<AttachmentEntity>>> updateProfilePicture(
       PickedAttachment photo) async {
     return await userProfileRemoteSource.updateProfilePicture(photo);
@@ -72,10 +59,5 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
   Future<DataState<String>> addRemoveSupporters(
       AddRemoveSupporterParams params) async {
     return await userProfileRemoteSource.addRemoveSupporters(params);
-  }
-
-  @override
-  Future<DataState<bool>> updateOrder(UpdateOrderParams params) async {
-    return await orderByUserRemote.updateOrder(params);
   }
 }

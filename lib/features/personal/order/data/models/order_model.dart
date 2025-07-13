@@ -1,4 +1,4 @@
-import '../../../../auth/signin/data/models/address_model.dart';
+import '../../../auth/signin/data/models/address_model.dart';
 import '../../domain/entities/order_entity.dart';
 import 'order_payment_detail_model.dart';
 

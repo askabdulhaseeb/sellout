@@ -2,10 +2,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/data_state.dart';
-import '../../../user/profiles/data/sources/local/local_orders.dart';
-import '../../../user/profiles/domain/entities/order_entity.dart';
+import '../../data/source/local/local_orders.dart';
+import '../../domain/entities/order_entity.dart';
 import '../../../user/profiles/domain/params/update_order_params.dart';
-import '../../../user/profiles/domain/usecase/update_order_usecase.dart';
+import '../../domain/usecase/update_order_usecase.dart';
 
 class OrderProvider extends ChangeNotifier {
   OrderProvider(
