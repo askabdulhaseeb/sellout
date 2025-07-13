@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/sources/local/hive_db.dart';
 import '../../../../../../core/widgets/in_dev_mode.dart';
+import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../dashboard/views/screens/dashboard_screen.dart';
 import '../../../../user/profiles/views/params/about_us.dart';
@@ -22,7 +23,8 @@ class PersonalSettingMoreInformationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('more_information').tr(),
+        centerTitle: true,
+        title: const AppBarTitle(titleKey: 'more_information'),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),

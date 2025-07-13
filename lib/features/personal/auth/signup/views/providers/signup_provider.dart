@@ -14,7 +14,6 @@ import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../dashboard/views/screens/dashboard_screen.dart';
 import '../../../../user/profiles/domain/usecase/edit_profile_detail_usecase.dart';
 import '../../../../user/profiles/views/params/update_user_params.dart';
-import '../../../signin/data/sources/local/local_auth.dart';
 import '../../../signin/domain/params/login_params.dart';
 import '../../../signin/domain/usecase/login_usecase.dart';
 import '../../domain/usecase/register_user_usecase.dart';
@@ -48,43 +47,64 @@ class SignupProvider extends ChangeNotifier {
   final VerifyUserByImageUsecase _verifyUserByImageUsecase;
 
   //
-  final TextEditingController name = TextEditingController(
-    text: kDebugMode ? 'ahmershurahbeeljan+test@gmail.com' : '',
-  );
-  final TextEditingController username = TextEditingController(
-    text: kDebugMode ? 'ahmershurahbeeljan+test@gmail.com' : '',
-  );
-  final TextEditingController email = TextEditingController(
-    text: kDebugMode ? 'ahmershurahbeeljan+test@gmail.com' : '',
-  );
-  final TextEditingController password = TextEditingController(
-    text: kDebugMode ? 'Shurahbeel_69' : '',
-  );
-  final TextEditingController confirmPassword = TextEditingController(
-    text: kDebugMode ? 'Shurahbeel_69' : '',
-  );
-  final TextEditingController phone = TextEditingController(
-    text: kDebugMode ? '1234567890' : '',
-  );
-  final TextEditingController otp = TextEditingController();
+  String? _uid;
+  set uid(String? value) {
+    _uid = value;
+    // notifyListeners();
+  }
+
   //
   DateTime? _dob;
   DateTime? get dob => _dob;
-  void setDob(DateTime? value) {
-    _dob = value;
+  void setDob(DateTime date) {
+    _dob = date;
     notifyListeners();
   }
 
   //
   String? _gender;
   String? get gender => _gender;
-  void setGender(String? value) {
+  final List<String> genderOptions = <String>['Male', 'Female', 'Other'];
+  void setGender(String value) {
     _gender = value;
     notifyListeners();
   }
-  //
 
   //
+  String? _getOTP;
+  set getOTP(String? value) {
+    _getOTP = value;
+    notifyListeners();
+  }
+
+  //
+  final TextEditingController name = TextEditingController(
+    text: kDebugMode ? 'John Snow' : '',
+  );
+  final TextEditingController username = TextEditingController(
+    text: kDebugMode ? 'john_snow' : '',
+  );
+  final TextEditingController email = TextEditingController(
+    text: kDebugMode ? 'jone_snow@gmail.com' : '',
+  );
+  final TextEditingController password = TextEditingController(
+    text: kDebugMode ? '1234567890' : '',
+  );
+  final TextEditingController confirmPassword = TextEditingController(
+    text: kDebugMode ? '1234567890' : '',
+  );
+  final TextEditingController phone = TextEditingController(
+    text: kDebugMode ? '1234567890' : '',
+  );
+  final TextEditingController otp = TextEditingController();
+  // DateTime? _dob = DateTime(2000, 1, 1);
+  // set dob(DateTime? value) {
+  //   _dob = value;
+  //   notifyListeners();
+  // }
+
+  //
+  final GlobalKey<FormState> basicInfoFormKey = GlobalKey<FormState>();
   //
   PickedAttachment? _attachment;
   PickedAttachment? get attachment => _attachment;
@@ -108,7 +128,7 @@ class SignupProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  SignupPageType _currentPage = SignupPageType.basicInfo;
+  SignupPageType _currentPage = SignupPageType.dateOfBirth;
   SignupPageType get currentPage => _currentPage;
   set currentPage(SignupPageType value) {
     _currentPage = value;
@@ -151,6 +171,9 @@ class SignupProvider extends ChangeNotifier {
   }
 
   Future<bool> isValidBasicInfo(BuildContext context) async {
+    if (!(basicInfoFormKey.currentState?.validate() ?? false)) {
+      return false;
+    }
     if ((_phoneNumber?.fullNumber.length ?? 0) < 5) {
       AppSnackBar.showSnackBar(
         context,
@@ -161,25 +184,7 @@ class SignupProvider extends ChangeNotifier {
     return await basicInfoPushData(context);
   }
 
-  // ignore: always_specify_types
-  void navigateToVerify(context) {
-    if (LocalAuth.uid != null) {
-      if (_currentPage == SignupPageType.otp &&
-          LocalAuth.currentUser?.otpVerified == true) {
-        _currentPage = SignupPageType.dateOfBirth;
-      } else if (_currentPage == SignupPageType.basicInfo &&
-          LocalAuth.currentUser?.otpVerified != true) {
-        _currentPage = SignupPageType.otp;
-      } else {}
-    }
-
-    notifyListeners();
-  }
-
   Future<void> onNext(BuildContext context) async {
-    if (_currentPage == SignupPageType.basicInfo && LocalAuth.uid != null) {
-      _moveNext(context);
-    }
     if (_currentPage == SignupPageType.basicInfo) {
       if (await isValidBasicInfo(context)) {
         // ignore: use_build_context_synchronously
@@ -214,13 +219,18 @@ class SignupProvider extends ChangeNotifier {
     final SignupPageType? page = _currentPage.next();
     if (page != null) {
       currentPage = page;
-      debugPrint('Current page before next: $_currentPage');
-      debugPrint('Next page: $page');
     }
     if (_isLoading) {
       isLoading = false;
+    } else {
+      notifyListeners();
     }
     if (page == null) {
+      isLoading = true;
+      await _loginUsecase(LoginParams(
+        email: email.text,
+        password: password.text,
+      ));
       reset();
       AppNavigator.pushNamedAndRemoveUntil(
         DashboardScreen.routeName,
@@ -231,7 +241,6 @@ class SignupProvider extends ChangeNotifier {
 
   void onBack(BuildContext context) {
     final SignupPageType? page = _currentPage.previous();
-
     if (page != null) {
       currentPage = page;
       notifyListeners();
@@ -256,17 +265,48 @@ class SignupProvider extends ChangeNotifier {
     });
   }
 
+  Future<bool> enableLocation(BuildContext context) async {
+    try {
+      // Request permission (this will show the system dialog)
+      final PermissionStatus status =
+          await Permission.locationWhenInUse.request();
+
+      if (status == PermissionStatus.granted) {
+        // Permission granted
+        return true;
+      } else if (status == PermissionStatus.permanentlyDenied) {
+        // Show message + open settings
+        // ignore: use_build_context_synchronously
+        AppSnackBar.showSnackBar(context,
+            'Permission permanently denied. Please enable from settings.');
+        await openAppSettings();
+      } else {
+        // Permission denied or other status
+        // ignore: use_build_context_synchronously
+        AppSnackBar.showSnackBar(context, 'Location permission denied.');
+      }
+
+      return false;
+    } catch (e) {
+      // ignore: use_build_context_synchronously
+      AppSnackBar.showSnackBar(context, 'Error: ${e.toString()}');
+      return false;
+    }
+  }
+
   Future<void> setImage(
     BuildContext context, {
     required AttachmentType type,
   }) async {
     final ImagePicker picker = ImagePicker();
+
     try {
       final XFile? pickedFile = await picker.pickImage(
         source: ImageSource.camera,
         preferredCameraDevice: CameraDevice.front,
         imageQuality: 85, // adjust if you want to control size/quality
       );
+
       if (pickedFile != null) {
         File file = File(pickedFile.path);
         _attachment = PickedAttachment(file: file, type: AttachmentType.image);
@@ -293,10 +333,7 @@ class SignupProvider extends ChangeNotifier {
       );
       final DataState<String> result = await _registerUserUsecase(params);
       if (result is DataSuccess) {
-        _loginUsecase(LoginParams(
-          email: email.text,
-          password: password.text,
-        ));
+        _uid = result.entity?.toString();
         startResendCodeTimer();
         return true;
       } else {
@@ -325,7 +362,7 @@ class SignupProvider extends ChangeNotifier {
   }
 
   Future<bool> sendOtp(BuildContext context) async {
-    if (LocalAuth.uid == null) {
+    if (_uid == null) {
       AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
       return false;
     }
@@ -333,9 +370,10 @@ class SignupProvider extends ChangeNotifier {
     try {
       //
       final DataState<String> result = await _sendPhoneOtpUsecase(
-        SignupOptParams(uid: LocalAuth.uid ?? ''),
+        SignupOptParams(uid: _uid ?? ''),
       );
       if (result is DataSuccess) {
+        getOTP = result.entity;
         startResendCodeTimer();
         return true;
       } else {
@@ -364,7 +402,7 @@ class SignupProvider extends ChangeNotifier {
   }
 
   Future<bool> verifyOtp(BuildContext context) async {
-    if (LocalAuth.uid == null) {
+    if (_uid == null) {
       AppLog.error(
         'uid is null',
         name: 'SignupProvider.verifyOtp - uid',
@@ -380,15 +418,20 @@ class SignupProvider extends ChangeNotifier {
       AppSnackBar.showSnackBar(context, 'otp_requirement'.tr());
       return false;
     }
+    if (_getOTP != null) {
+      AppLog.error(
+        'otp not match',
+        name: 'SignupProvider.verifyOtp - otp',
+      );
+      AppSnackBar.showSnackBar(context, 'otp_not_match'.tr());
+      return false;
+    }
     try {
       //
       final DataState<bool> result = await _verifyPhoneOtpUsecase(
-        SignupOptParams(uid: LocalAuth.uid ?? '', otp: otp.text),
+        SignupOptParams(uid: _uid ?? '', otp: otp.text),
       );
       if (result is DataSuccess) {
-        final CurrentUserEntity currentUser =
-            LocalAuth.currentUser!.copyWith(otpVerified: true);
-        LocalAuth().signin(currentUser);
         return true;
       } else {
         AppLog.error(
@@ -401,7 +444,6 @@ class SignupProvider extends ChangeNotifier {
           context,
           result.exception?.message ?? 'something_wrong'.tr(),
         );
-        return false;
       }
     } catch (e) {
       AppLog.error(
@@ -419,15 +461,10 @@ class SignupProvider extends ChangeNotifier {
     final UpdateUserParams params = UpdateUserParams(
       dob: dob,
     );
-    isLoading = true;
     final DataState<String> result = await _updateProfileDetailUsecase(params);
     if (result is DataSuccess) {
-      final CurrentUserEntity currentUser =
-          LocalAuth.currentUser!.copyWith(dob: dob);
-      LocalAuth().signin(currentUser);
       AppLog.info('profile_updated_successfully'.tr());
-      isLoading = false;
-
+      Navigator.pop(context);
       return true;
     } else {
       AppLog.error(result.exception!.message,
@@ -435,7 +472,6 @@ class SignupProvider extends ChangeNotifier {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('something_wrong'.tr())),
       );
-      isLoading = false;
       return false;
     }
   }
@@ -449,74 +485,30 @@ class SignupProvider extends ChangeNotifier {
       AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
       return false;
     }
-
-    isLoading = true;
-    try {
-      final DataState<bool> result =
-          await _verifyUserByImageUsecase(_attachment!);
-
-      if (result is DataSuccess) {
-        AppLog.info('image_verified_successfully'.tr());
-        isLoading = false;
-        return true;
-      } else {
-        AppLog.error(
-          result is DataFailer
-              ? result.exception?.message ?? 'Unknown error'
-              : 'Verification failed',
-          name: 'SignupProvider.verifyImage - failure',
-        );
-        // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('something_wrong'.tr())),
-        );
-        isLoading = false;
-        return false;
-      }
-    } catch (e, stack) {
-      AppLog.error(
-        'verifyImage exception: $e',
-        name: 'SignupProvider.verifyImage - catch',
-        error: stack,
-      );
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('something_wrong'.tr())),
-      );
-      isLoading = false;
-      return false;
+    final DataState<bool> result =
+        await _verifyUserByImageUsecase(_attachment!);
+    if (result is DataSuccess) {
+      AppLog.info('image_verified_successfully'.tr());
+      Navigator.pop(context);
+      return true;
     }
-  }
 
-  Future<bool> enableLocation(BuildContext context) async {
-    try {
-      final PermissionStatus status =
-          await Permission.locationWhenInUse.request();
-
-      if (status == PermissionStatus.granted) {
-        AppSnackBar.showSnackBar(context, 'Location permission granted.');
-        return true;
-      }
-
-      if (status == PermissionStatus.permanentlyDenied) {
-        AppSnackBar.showSnackBar(
-          context,
-          'Permission permanently denied. Please enable it from settings.',
-        );
-        await openAppSettings();
-      } else {
-        AppSnackBar.showSnackBar(context, 'Location permission denied.');
-      }
-
-      return false;
-    } catch (e) {
-      AppSnackBar.showSnackBar(context, 'Error: ${e.toString()}');
-      return false;
-    }
+    AppLog.error(
+      result is DataFailer
+          ? result.exception?.message ?? 'Unknown error'
+          : 'Verification failed',
+      name: 'SignupProvider.verifyImage - failure',
+    );
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('something_wrong'.tr())),
+    );
+    return false;
   }
 
   /// reset
   reset() {
+    _uid = null;
+    _getOTP = null;
     name.text = '';
     username.text = '';
     email.text = '';
@@ -528,7 +520,7 @@ class SignupProvider extends ChangeNotifier {
     _attachment = null;
     _phoneNumber = null;
     _isLoading = false;
-    _currentPage = SignupPageType.basicInfo;
+    _currentPage = SignupPageType.dateOfBirth;
     _resendCodeTimer?.cancel();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
