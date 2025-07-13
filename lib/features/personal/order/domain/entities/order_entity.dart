@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
-import '../../../../auth/signin/data/models/address_model.dart';
+import '../../../auth/signin/data/models/address_model.dart';
 import 'order_payment_detail_entity.dart';
-part 'order_entity.g.dart';
+part '../../../user/profiles/domain/entities/order_entity.g.dart';
 
 @HiveType(typeId: 61)
 class OrderEntity {

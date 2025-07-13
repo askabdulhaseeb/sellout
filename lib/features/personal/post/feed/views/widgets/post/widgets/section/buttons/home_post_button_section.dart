@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../../../../core/widgets/app_snakebar.dart';
@@ -30,7 +31,7 @@ class PostButtonSection extends StatelessWidget {
         : GestureDetector(
             onTap: () {
               if (LocalAuth.currentUser?.userID == null) {
-                AppSnackBar.showSnackBar(context, 'please_login_first');
+                AppSnackBar.showSnackBar(context, 'please_login_first'.tr());
               }
             },
             child: AbsorbPointer(

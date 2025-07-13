@@ -6,7 +6,7 @@ import '../../../../../../../routes/app_linking.dart';
 import '../../../../../order/view/screens/order_detail_screen.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../post/domain/entities/post_entity.dart';
-import '../../../domain/entities/order_entity.dart';
+import '../../../../../order/domain/entities/order_entity.dart';
 import '../../enums/order_type.dart';
 
 class ProfileOrderTile extends StatelessWidget {

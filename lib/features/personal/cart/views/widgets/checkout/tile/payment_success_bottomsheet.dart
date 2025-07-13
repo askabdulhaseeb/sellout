@@ -25,6 +25,8 @@ class _PaymentSuccessSheetState extends State<PaymentSuccessSheet> {
   Widget build(BuildContext context) {
     final CartProvider pro = Provider.of<CartProvider>(context, listen: false);
     return Scaffold(
+      extendBody: false,
+      extendBodyBehindAppBar: false,
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
@@ -35,7 +37,7 @@ class _PaymentSuccessSheetState extends State<PaymentSuccessSheet> {
       ),
       body: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(20, 24, 20, 40),
+        padding: const EdgeInsets.fromLTRB(20, 24, 20, 150),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
