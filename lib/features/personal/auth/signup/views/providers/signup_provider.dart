@@ -102,7 +102,6 @@ class SignupProvider extends ChangeNotifier {
   //   _dob = value;
   //   notifyListeners();
   // }
-
   //
   final GlobalKey<FormState> basicInfoFormKey = GlobalKey<FormState>();
   //
@@ -128,7 +127,7 @@ class SignupProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  SignupPageType _currentPage = SignupPageType.dateOfBirth;
+  SignupPageType _currentPage = SignupPageType.basicInfo;
   SignupPageType get currentPage => _currentPage;
   set currentPage(SignupPageType value) {
     _currentPage = value;
@@ -520,7 +519,7 @@ class SignupProvider extends ChangeNotifier {
     _attachment = null;
     _phoneNumber = null;
     _isLoading = false;
-    _currentPage = SignupPageType.dateOfBirth;
+    _currentPage = SignupPageType.basicInfo;
     _resendCodeTimer?.cancel();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();

@@ -8,6 +8,7 @@ import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../../attachment/domain/entities/picked_attachment_option.dart';
 import '../../../../../attachment/views/screens/pickable_attachment_screen.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../order/domain/params/get_order_params.dart';
 import '../../../../post/domain/entities/post_entity.dart';
 import '../../../../post/domain/usecase/get_specific_post_usecase.dart';
 import '../../../../review/domain/entities/review_entity.dart';
@@ -91,7 +92,8 @@ class ProfileProvider extends ChangeNotifier {
   }
 
   Future<DataState<List<OrderEntity>>> getOrderByUser(String uid) async {
-    return await _getOrderByIdUsecase(uid);
+    return await _getOrderByIdUsecase(
+        GetOrderParams(user: 'seller_id', uid: uid));
   }
 
   Future<List<ReviewEntity>> getReviews(String? uid) async {

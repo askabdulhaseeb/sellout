@@ -6,6 +6,7 @@ import '../../../../../../../services/get_it.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../order/data/source/local/local_orders.dart';
 import '../../../../order/domain/entities/order_entity.dart';
+import '../../../../order/domain/params/get_order_params.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../../../order/domain/usecase/get_orders_buyer_id.dart';
 import 'list_types/profile_order_tile.dart';
@@ -27,7 +28,8 @@ class _ProfileOrdersSectionState extends State<ProfileOrdersSection> {
   void initState() {
     super.initState();
     final String uid = widget.user?.uid ?? LocalAuth.uid ?? '';
-    _futureOrders = GetOrderByUidUsecase(locator())(uid);
+    _futureOrders = GetOrderByUidUsecase(locator())(
+        GetOrderParams(user: 'seller_id', uid: uid));
   }
 
   @override

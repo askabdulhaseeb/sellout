@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../core/enums/core/status_type.dart';
+import '../../../../order/domain/entities/order_entity.dart';
 import '../providers/personal_setting_buyer_order_provider.dart';
+import '../widgets/setting_order_tile.dart';
 
 class PersonalSettingBuyerOrderScreen extends StatefulWidget {
   const PersonalSettingBuyerOrderScreen({super.key});
@@ -27,8 +30,9 @@ class _PersonalSettingBuyerOrderScreenState
     return Scaffold(
       appBar: AppBar(title: const Text('Orders')),
       body: Consumer<PersonalSettingBuyerOrderProvider>(
-        builder: (context, provider, _) {
-          final orders = provider.orders;
+        builder: (BuildContext context,
+            PersonalSettingBuyerOrderProvider provider, _) {
+          final List<OrderEntity> orders = provider.orders;
           if (provider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -36,9 +40,9 @@ class _PersonalSettingBuyerOrderScreenState
             return const Center(child: Text('No orders found.'));
           }
           return ListView.builder(
-            itemCount: orders.length,
-            itemBuilder: (_, index) => Text(orders[index].orderId),
-          );
+              itemCount: orders.length,
+              itemBuilder: (_, int index) => BuyerOrderTIle(
+                  order: orders[index], selectedStatus: StatusType.accepted));
         },
       ),
     );

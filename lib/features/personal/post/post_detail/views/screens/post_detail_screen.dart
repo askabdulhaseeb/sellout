@@ -1,8 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
+import '../../../../../../core/widgets/shadow_container.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../../../data/sources/local/local_post.dart';
@@ -12,6 +14,7 @@ import '../../../feed/views/widgets/post/widgets/section/buttons/home_post_butto
 import '../../../feed/views/widgets/post/widgets/section/buttons/type/post_button_for_user_tile.dart';
 import '../providers/post_detail_provider.dart';
 import '../widgets/condition_delivery_detail.dart';
+import '../widgets/pets_detail/post_pets_detail_widget.dart';
 import '../widgets/post_detail_attachment_slider.dart';
 import '../widgets/post_detail_description_section.dart';
 import '../widgets/post_detail_postage_return_section.dart';
@@ -103,16 +106,41 @@ class PostDetailSection extends StatelessWidget {
               post: post,
             ),
             ConditionDeliveryWidget(post: post),
+            if (post.listID == ListingType.pets.json)
+              PostPetDetailWidget(
+                post: post,
+              ),
             PostDetailDescriptionSection(post: post),
             // PostDetailTileListSection(post: post),
-            PostDetailPostageReturnSection(post: post),
-            const SelloutBankGuranterWidget(),
-            const ReturnPolicyDetails(),
+            ReturnPosrtageAndExtraDetailsSection(post: post),
             // const UserMeetupSafetyGuildlineSection(),
             PostDetailReviewOverviewSection(post: post),
             const SizedBox(height: 200),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ReturnPosrtageAndExtraDetailsSection extends StatelessWidget {
+  const ReturnPosrtageAndExtraDetailsSection({
+    super.key,
+    required this.post,
+  });
+
+  final PostEntity post;
+
+  @override
+  Widget build(BuildContext context) {
+    return ShadowContainer(
+      margin: const EdgeInsets.all(4),
+      child: Column(
+        children: <Widget>[
+          PostDetailPostageReturnSection(post: post),
+          const SelloutBankGuranterWidget(),
+          const ReturnPolicyDetails(),
+        ],
       ),
     );
   }

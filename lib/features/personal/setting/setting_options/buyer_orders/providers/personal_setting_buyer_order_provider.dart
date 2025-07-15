@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../order/domain/entities/order_entity.dart';
+import '../../../../order/domain/params/get_order_params.dart';
 import '../../../../order/domain/usecase/get_orders_buyer_id.dart';
 
 class PersonalSettingBuyerOrderProvider extends ChangeNotifier {
@@ -28,9 +29,8 @@ class PersonalSettingBuyerOrderProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final DataState<List<OrderEntity>> result =
-          await _buyerOrderUsecase.call(uid);
-
+      final DataState<List<OrderEntity>> result = await _buyerOrderUsecase
+          .call(GetOrderParams(user: 'buyer_id', uid: uid));
       if (result is DataSuccess) {
         _orders = result.entity ?? <OrderEntity>[];
       } else {
