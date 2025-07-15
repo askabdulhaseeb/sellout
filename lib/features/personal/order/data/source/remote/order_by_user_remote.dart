@@ -1,34 +1,27 @@
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
-import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../domain/entities/order_entity.dart';
 import '../../../../user/profiles/domain/params/update_order_params.dart';
+import '../../../domain/params/get_order_params.dart';
 import '../local/local_orders.dart';
 
 abstract interface class OrderByUserRemote {
-  Future<DataState<List<OrderEntity>>> getOrderByUser(String? userId);
+  Future<DataState<List<OrderEntity>>> getOrderByUser(GetOrderParams? userId);
   Future<DataState<bool>> createOrder(List<OrderModel> orderData);
   Future<DataState<bool>> updateOrder(UpdateOrderParams params);
 }
 
 class OrderByUserRemoteImpl implements OrderByUserRemote {
   @override
-  Future<DataState<List<OrderEntity>>> getOrderByUser(String? userId) async {
+  Future<DataState<List<OrderEntity>>> getOrderByUser(
+      GetOrderParams? params) async {
     try {
-      final String id = userId ?? LocalAuth.uid ?? '';
-      if (id.isEmpty) {
-        return DataFailer<List<OrderEntity>>(
-          CustomException('userId is empty'),
-        );
-      }
-      final String endpoint = '/orders/query?seller_id=$id';
+      final String endpoint = '/orders/query?${params?.user}=${params?.uid}';
       // 🌐 Always hit network
       final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,
         requestType: ApiRequestType.get,
-        isAuth: true,
       );
-
       if (result is DataSuccess) {
         final String raw = result.data ?? '';
         final dynamic parsed = json.decode(raw);
@@ -36,7 +29,6 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
         final List<OrderEntity> orders = ordersJson
             .map<OrderEntity>((dynamic e) => OrderModel.fromJson(e))
             .toList();
-
         // 🔄 Optional: still save locally
         await LocalOrders().saveAll(orders);
 

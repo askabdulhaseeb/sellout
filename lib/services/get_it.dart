@@ -262,7 +262,6 @@ void _profile() {
       () => UserProfileRemoteSourceImpl());
   locator.registerFactory<PostByUserRemote>(() => PostByUserRemoteImpl());
   locator.registerFactory<MyVisitingRemote>(() => MyVisitingRemoteImpl());
-  locator.registerFactory<OrderByUserRemote>(() => OrderByUserRemoteImpl());
   locator.registerFactory<UserProfileRepository>(() =>
       UserProfileRepositoryImpl(locator(), locator(), locator(), locator()));
   locator.registerFactory<GetUserByUidUsecase>(
@@ -274,8 +273,6 @@ void _profile() {
   locator.registerFactory<GetImHostUsecase>(() => GetImHostUsecase(locator()));
   locator
       .registerFactory<GetPostByIdUsecase>(() => GetPostByIdUsecase(locator()));
-  locator.registerFactory<GetOrderByUidUsecase>(
-      () => GetOrderByUidUsecase(locator()));
   locator.registerFactory<UpdateProfilePictureUsecase>(
       () => UpdateProfilePictureUsecase(locator()));
   locator.registerFactory<UpdateProfileDetailUsecase>(
@@ -305,8 +302,6 @@ void _chat() {
       () => CreateChatGroupProvider(locator()));
   locator.registerLazySingleton<CreatePrivateChatProvider>(
       () => CreatePrivateChatProvider(locator()));
-
-  locator.registerLazySingleton<OrderProvider>(() => OrderProvider(locator()));
 }
 
 void _message() {
