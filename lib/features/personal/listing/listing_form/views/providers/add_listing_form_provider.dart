@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
@@ -1331,6 +1334,29 @@ class AddListingFormProvider extends ChangeNotifier {
   final GlobalKey<FormState> _foodAndDrinkKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _propertyKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _petKey = GlobalKey<FormState>();
+
+//
+  Future<LatLng> getLocationCoordinates(String address) async {
+    final bool hasConnection = await _checkInternetConnection();
+    if (!hasConnection) throw 'NO_INTERNET';
+    final List<Location> locations = await locationFromAddress(address)
+        .timeout(const Duration(seconds: 10), onTimeout: () {
+      throw 'TIMEOUT';
+    });
+
+    if (locations.isEmpty) throw 'NO_RESULTS';
+    return LatLng(locations.first.latitude, locations.first.longitude);
+  }
+  // Default radius type: worldwide or local
+
+  Future<bool> _checkInternetConnection() async {
+    try {
+      await InternetAddress.lookup('google.com');
+      return true;
+    } on SocketException {
+      return false;
+    }
+  }
 
   @override
   void dispose() {

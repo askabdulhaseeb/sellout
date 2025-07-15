@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../../../core/widgets/location_field.dart';
 import '../../../../../../../listing/listing_form/views/widgets/category/subcateogry_selectable_widget.dart';
 import '../../../../../../domain/entities/location_name_entity.dart';
 import '../../../../../providers/marketplace_provider.dart';
-import '../../../../bottomsheets/location_radius_bottomsheet/widget/marketplace_location_field.dart';
 
 class MarketFilterClothFootCategoryAndLocationWIdget extends StatelessWidget {
   const MarketFilterClothFootCategoryAndLocationWIdget({
@@ -28,7 +28,7 @@ class MarketFilterClothFootCategoryAndLocationWIdget extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: MarketplaceLocationField(
+          child: LocationField(
             initialText: marketPro.selectedLocationName,
             onLocationSelected: (LocationNameEntity location) async {
               final LatLng coords =

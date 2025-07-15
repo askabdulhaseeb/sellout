@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../domain/entities/post_entity.dart';
+import '../../../../../../domain/entities/post_entity.dart';
 
-class PostPetDetailWidget extends StatelessWidget {
-  const PostPetDetailWidget({super.key, required this.post});
+class PostVehicleDetailWidget extends StatelessWidget {
+  const PostVehicleDetailWidget({super.key, required this.post});
   final PostEntity post;
 
   @override
@@ -15,22 +15,17 @@ class PostPetDetailWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              _detailItem('age'.tr(), post.age ?? 'na'.tr()),
-              _detailItem('breed'.tr(), post.breed ?? 'na'.tr()),
+              _detailItem('fuel_type'.tr(), post.fuelType ?? 'na'.tr()),
+              _detailItem('body_type'.tr(), post.bodyType ?? 'na'.tr()),
               _detailItem(
-                'vaccination_up_to_date'.tr(),
+                'engine'.tr(),
                 _boolToYesNo(post.vaccinationUpToDate),
               ),
-              _detailItem(
-                  'ready_to_leave'.tr(), post.readyToLeave ?? 'na'.tr()),
-              _detailItem(
-                'health_checked'.tr(),
-                _boolToYesNo(post.healthChecked),
-              ),
-              _detailItem(
-                'worm_flee_treated'.tr(),
-                _boolToYesNo(post.wormAndFleaTreated),
-              ),
+              // _detailItem('gearbox'.tr(), post.address ?? 'na'.tr()),
+              _detailItem('milage'.tr(), post.mileage.toString()),
+              _detailItem('doors'.tr(), post.doors.toString()),
+              _detailItem('seats'.tr(), post.seats.toString()),
+              _detailItem('emission'.tr(), post.emission ?? 'na'.tr()),
             ],
           ),
         ),
@@ -47,7 +42,7 @@ class PostPetDetailWidget extends StatelessWidget {
   Widget _detailItem(String title, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[

@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../core/widgets/custom_toggle_switch.dart';
 import '../../../../post/domain/entities/post_entity.dart';
 import '../../../../post/feed/views/widgets/post/widgets/home_post_tile.dart';
-import '../../../../post/post_detail/views/screens/post_detail_screen.dart';
+import '../../../../post/post_detail/views/widgets/post_details_sections/general/general_post_detail_section.dart';
 import '../providers/add_listing_form_provider.dart';
 
 class AddListingPreviewScreen extends StatefulWidget {
@@ -55,7 +55,7 @@ class _AddListingPreviewScreenState extends State<AddListingPreviewScreen> {
                   _previewMode == 0
                       ? AbsorbPointer(child: HomePostTile(post: previewPost))
                       : AbsorbPointer(
-                          child: PostDetailSection(
+                          child: GeneralPostDetailSection(
                             post: previewPost,
                             isMe: false,
                             visit: null,

@@ -4,11 +4,11 @@ import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../../services/get_it.dart';
-import '../../../../../domain/entities/location_name_entity.dart';
-import '../../../../../domain/usecase/location_name_usecase.dart';
+import '../../features/personal/marketplace/domain/entities/location_name_entity.dart';
+import '../../features/personal/marketplace/domain/usecase/location_name_usecase.dart';
 
-class MarketplaceLocationField extends StatefulWidget {
-  const MarketplaceLocationField({
+class LocationField extends StatefulWidget {
+  const LocationField({
     required this.onLocationSelected,
     super.key,
     this.initialText,
@@ -18,11 +18,10 @@ class MarketplaceLocationField extends StatefulWidget {
   final String? initialText;
 
   @override
-  State<MarketplaceLocationField> createState() =>
-      _MarketplaceLocationFieldState();
+  State<LocationField> createState() => _LocationFieldState();
 }
 
-class _MarketplaceLocationFieldState extends State<MarketplaceLocationField> {
+class _LocationFieldState extends State<LocationField> {
   final TextEditingController controller = TextEditingController();
 
   final Debouncer _debouncer = Debouncer(milliseconds: 300);

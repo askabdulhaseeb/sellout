@@ -2,27 +2,15 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
-import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
-import '../../../../../../core/widgets/shadow_container.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../../../listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../../../data/sources/local/local_post.dart';
 import '../../../domain/entities/post_entity.dart';
 import '../../../domain/entities/visit/visiting_entity.dart';
-import '../../../feed/views/widgets/post/widgets/section/buttons/home_post_button_section.dart';
-import '../../../feed/views/widgets/post/widgets/section/buttons/type/post_button_for_user_tile.dart';
 import '../providers/post_detail_provider.dart';
-import '../widgets/condition_delivery_detail.dart';
-import '../widgets/pets_detail/post_pets_detail_widget.dart';
-import '../widgets/post_detail_attachment_slider.dart';
-import '../widgets/post_detail_description_section.dart';
-import '../widgets/post_detail_postage_return_section.dart';
-import '../widgets/post_detail_return_policy_details.dart';
-import '../widgets/post_rating_section.dart';
-import '../widgets/reviews/post_detail_review_overview_section.dart';
-import '../widgets/post_detail_title_amount_section.dart';
-import '../widgets/sellout_bank_guranter_widget.dart';
+import '../widgets/post_details_sections/general/general_post_detail_section.dart';
+import '../widgets/post_details_sections/pets/pets_post_detail_section.dart';
+import '../widgets/post_details_sections/vehicle/vehicle_post_detail_section.dart';
 
 class PostDetailScreen extends StatelessWidget {
   const PostDetailScreen({super.key});
@@ -60,87 +48,14 @@ class PostDetailScreen extends StatelessWidget {
               post?.createdBy == (LocalAuth.currentUser?.businessID ?? '-');
           return post == null
               ? const SizedBox()
-              : PostDetailSection(post: post, isMe: isMe, visit: visit);
+              : (post.listID == ListingType.pets.json
+                  ? PetsPostDetailSection(post: post, isMe: isMe, visit: visit)
+                  : post.listID == ListingType.vehicle.json
+                      ? VehiclePostDetailSection(
+                          post: post, isMe: isMe, visit: visit)
+                      : GeneralPostDetailSection(
+                          post: post, isMe: isMe, visit: visit));
         },
-      ),
-    );
-  }
-}
-
-class PostDetailSection extends StatelessWidget {
-  const PostDetailSection({
-    required this.post,
-    required this.isMe,
-    required this.visit,
-    super.key,
-  });
-
-  final PostEntity post;
-  final bool isMe;
-  final VisitingEntity? visit;
-
-  @override
-  Widget build(BuildContext context) {
-    AppLog.info('PostID: ${post.postID} ');
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: SingleChildScrollView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        child: Column(
-          spacing: 4,
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            PostDetailAttachmentSlider(
-                attachments: post.fileUrls.isNotEmpty
-                    ? post.fileUrls
-                    : Provider.of<AddListingFormProvider>(context).attachments),
-            PostDetailTitleAmountSection(post: post),
-            if (isMe == true) PostButtonsForUser(visit: visit, post: post),
-            if (isMe == false)
-              PostButtonSection(
-                post: post,
-                padding: const EdgeInsets.symmetric(vertical: 8),
-              ),
-            PostRatingSection(
-              post: post,
-            ),
-            ConditionDeliveryWidget(post: post),
-            if (post.listID == ListingType.pets.json)
-              PostPetDetailWidget(
-                post: post,
-              ),
-            PostDetailDescriptionSection(post: post),
-            // PostDetailTileListSection(post: post),
-            ReturnPosrtageAndExtraDetailsSection(post: post),
-            // const UserMeetupSafetyGuildlineSection(),
-            PostDetailReviewOverviewSection(post: post),
-            const SizedBox(height: 200),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class ReturnPosrtageAndExtraDetailsSection extends StatelessWidget {
-  const ReturnPosrtageAndExtraDetailsSection({
-    super.key,
-    required this.post,
-  });
-
-  final PostEntity post;
-
-  @override
-  Widget build(BuildContext context) {
-    return ShadowContainer(
-      margin: const EdgeInsets.all(4),
-      child: Column(
-        children: <Widget>[
-          PostDetailPostageReturnSection(post: post),
-          const SelloutBankGuranterWidget(),
-          const ReturnPolicyDetails(),
-        ],
       ),
     );
   }
