@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../core/widgets/location_field.dart';
 import '../../../../marketplace/domain/entities/location_name_entity.dart';
-import '../../../../marketplace/views/widgets/bottomsheets/location_radius_bottomsheet/widget/marketplace_location_field.dart';
 import '../../providers/services_page_provider.dart';
 
 class ServicesPageExploreSearchingSection extends StatelessWidget {
@@ -25,7 +25,7 @@ class ServicesPageExploreSearchingSection extends StatelessWidget {
                 pro.searchServices(value.trim());
               },
             ),
-            MarketplaceLocationField(
+            LocationField(
               initialText: pro.selectedLocationName,
               onLocationSelected: (LocationNameEntity location) async {
                 final LatLng coords =

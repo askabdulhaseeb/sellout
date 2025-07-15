@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/widgets/location_field.dart';
 import '../../../../domain/entities/location_name_entity.dart';
 import '../../../../domain/enum/radius_type.dart';
 import '../../../providers/marketplace_provider.dart';
 import 'widget/location_header.dart';
 import 'widget/location_map.dart';
-import 'widget/marketplace_location_field.dart';
 import 'widget/radius_option.dart';
 import 'widget/radius_slider.dart';
 import 'widget/update_location_button.dart';
@@ -33,7 +33,7 @@ class LocationRadiusBottomSheet extends StatelessWidget {
           children: <Widget>[
             const LocationHeader(),
             const SizedBox(height: 8),
-            MarketplaceLocationField(
+            LocationField(
               initialText: provider.selectedLocationName,
               onLocationSelected: (LocationNameEntity location) async {
                 final LatLng coords =
