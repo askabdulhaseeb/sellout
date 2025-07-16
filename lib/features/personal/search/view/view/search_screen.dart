@@ -62,12 +62,17 @@ class _SearchScreenState extends State<SearchScreen> {
           child: Column(
             children: <Widget>[
               CustomToggleSwitch<SearchEntityType>(
+                verticalPadding: 6,
+                isShaded: false,
+                unseletedBorderColor: ColorScheme.of(context).outlineVariant,
+                unseletedTextColor: ColorScheme.of(context).onSurface,
+                borderWidth: 1,
                 seletedFontSize: screenWidth * 0.035,
                 labels: SearchEntityType.values,
                 labelStrs: <String>[
                   'posts'.tr(),
                   'services'.tr(),
-                  'users'.tr()
+                  'accounts'.tr()
                 ],
                 labelText: '',
                 initialValue: provider.currentType,

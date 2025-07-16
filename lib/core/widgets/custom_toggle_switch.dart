@@ -16,10 +16,12 @@ class CustomToggleSwitch<T> extends StatelessWidget {
     this.seletedFontSize = 14,
     this.verticalPadding = 12,
     this.horizontalPadding = 16,
-    this.unseletedColor = Colors.grey,
+    this.unseletedBorderColor,
+    this.unseletedTextColor,
+    this.borderWidth,
+    this.borderRad = 8,
     super.key,
   });
-
   final List<T> labels;
   final bool readOnly;
   final T? initialValue;
@@ -32,12 +34,15 @@ class CustomToggleSwitch<T> extends StatelessWidget {
   final double seletedFontSize;
   final double verticalPadding;
   final double horizontalPadding;
-  final Color unseletedColor;
+  final Color? unseletedBorderColor;
+  final Color? unseletedTextColor;
+  final double? borderWidth;
+  final double borderRad;
 
   @override
   Widget build(BuildContext context) {
     final double minWidth = MediaQuery.of(context).size.width - 52;
-    final BorderRadius borderRadius = BorderRadius.circular(8);
+    final BorderRadius borderRadius = BorderRadius.circular(borderRad);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
@@ -91,8 +96,11 @@ class CustomToggleSwitch<T> extends StatelessWidget {
                           ? selectedColor.withValues(alpha: isShaded ? 0.1 : 0)
                           : Colors.transparent,
                       border: Border.all(
-                        width: 2,
-                        color: isSelected ? selectedColor : unseletedColor,
+                        width: borderWidth ?? 2,
+                        color: isSelected
+                            ? selectedColor
+                            : unseletedBorderColor ??
+                                ColorScheme.of(context).outline,
                       ),
                     ),
                     child: Center(
@@ -103,7 +111,10 @@ class CustomToggleSwitch<T> extends StatelessWidget {
                         style: TextStyle(
                           fontSize: seletedFontSize,
                           fontWeight: FontWeight.w500,
-                          color: isSelected ? selectedColor : Colors.grey,
+                          color: isSelected
+                              ? selectedColor
+                              : unseletedTextColor ??
+                                  ColorScheme.of(context).outline,
                         ),
                       ),
                     ),

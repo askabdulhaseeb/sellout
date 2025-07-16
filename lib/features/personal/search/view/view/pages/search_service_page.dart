@@ -2,8 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/widgets/costom_textformfield.dart';
-import '../../../../services/views/widgets/service_card/service_card.dart';
 import '../../provider/search_provider.dart';
+import '../../widget/services_grid_tile.dart';
 
 class SearchServicesSection extends StatefulWidget {
   const SearchServicesSection({super.key});
@@ -37,6 +37,8 @@ class _SearchServicesSectionState extends State<SearchServicesSection> {
           alignment: Alignment.centerRight,
           children: [
             CustomTextFormField(
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
               controller: controller,
               hint: 'search'.tr(),
               onChanged: provider.searchServices,
@@ -59,11 +61,19 @@ class _SearchServicesSectionState extends State<SearchServicesSection> {
               slivers: <Widget>[
                 SliverPadding(
                   padding: const EdgeInsets.all(8),
-                  sliver: SliverList(
+                  sliver: SliverGrid(
                     delegate: SliverChildBuilderDelegate(
                       (BuildContext context, int index) =>
-                          ServiceCard(service: provider.serviceResults[index]),
+                          SearchServiceGridTile(
+                              service: provider.serviceResults[index]),
                       childCount: provider.serviceResults.length,
+                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 6.0,
+                      mainAxisSpacing: 6.0,
+                      childAspectRatio: 0.8,
                     ),
                   ),
                 ),

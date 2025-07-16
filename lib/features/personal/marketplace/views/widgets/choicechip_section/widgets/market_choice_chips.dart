@@ -12,70 +12,68 @@ class MarketplaceChoiceChips extends StatefulWidget {
 }
 
 class _MarketplaceChoiceChipsState extends State<MarketplaceChoiceChips> {
-  String? selectedJson;
+  String? selectedCid;
 
   @override
   void initState() {
     super.initState();
-    selectedJson = null;
+    selectedCid = null;
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<MarketPlaceProvider>(context, listen: false)
-          .loadChipsPosts('');
+      context.read<MarketPlaceProvider>().loadChipsPosts('');
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<MarketPlaceProvider>(
-      builder: (_, __, ___) {
-        final List<String?> jsons = <String?>[
-          null,
-          ...ListingType.values.map((ListingType e) => e.json)
-        ];
+    /// Gather all cids from ListingType enums
+    final Set<String> allCids = <String>{
+      'all',
+      for (final ListingType type in ListingType.values) ...type.cids
+    };
 
-        return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Container(
-            margin: const EdgeInsets.all(0),
-            padding: const EdgeInsets.only(left: 14),
-            height: 50,
-            child: Row(
-              children: jsons.map((String? json) {
-                final bool isSelected = selectedJson == json;
-                final String label = json?.tr() ?? 'all'.tr();
-                return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  child: ChoiceChip(
-                    showCheckmark: false,
-                    label: Text(
-                      label,
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: isSelected
-                                ? Theme.of(context).colorScheme.surface
-                                : Theme.of(context).colorScheme.onSurface,
-                          ),
-                    ),
-                    selected: isSelected,
-                    selectedColor: Theme.of(context).colorScheme.onSurface,
-                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    onSelected: (_) {
-                      setState(() {
-                        selectedJson = json;
-                      });
-                      context
-                          .read<MarketPlaceProvider>()
-                          .loadChipsPosts(json ?? '');
-                    },
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-        );
-      },
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Container(
+        padding: const EdgeInsets.only(left: 14),
+        height: 50,
+        child: Row(
+          children: allCids.map((String cid) {
+            final bool isSelected =
+                selectedCid == cid || (cid == 'all' && selectedCid == null);
+            final String label = cid == 'all' ? 'all'.tr() : cid.tr();
+
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 4),
+              child: ChoiceChip(
+                showCheckmark: false,
+                label: Text(
+                  label,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.surface
+                            : Theme.of(context).colorScheme.onSurface,
+                      ),
+                ),
+                selected: isSelected,
+                selectedColor: Theme.of(context).colorScheme.onSurface,
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                onSelected: (_) {
+                  setState(() {
+                    selectedCid = cid == 'all' ? null : cid;
+                  });
+                  context
+                      .read<MarketPlaceProvider>()
+                      .loadChipsPosts(cid == 'all' ? '' : cid);
+                },
+              ),
+            );
+          }).toList(),
+        ),
+      ),
     );
   }
 }
