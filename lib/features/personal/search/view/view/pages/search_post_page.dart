@@ -35,8 +35,11 @@ class _SearchPostsSectionState extends State<SearchPostsSection> {
       children: <Widget>[
         Stack(
           alignment: Alignment.centerRight,
-          children: [
+          children: <Widget>[
             CustomTextFormField(
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+              prefixIcon: const Icon(Icons.search),
               controller: controller,
               hint: 'search'.tr(),
               onChanged: provider.searchPosts,

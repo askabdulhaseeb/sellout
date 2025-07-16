@@ -30,7 +30,7 @@ class MarketFilterClothFootToggleWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8)),
               child: Center(
                 child: CustomToggleSwitch<String>(
-                    unseletedColor: Colors.transparent,
+                    unseletedBorderColor: Colors.transparent,
                     verticalPadding: 6,
                     isShaded: false,
                     customWidths: <double>[

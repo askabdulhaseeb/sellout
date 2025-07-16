@@ -74,7 +74,7 @@ class PostGridViewTile extends StatelessWidget {
                     RatingDisplayWidget(
                       fontSize: 10,
                       size: 12,
-                      ratingList: post.listOfReviews!,
+                      ratingList: post.listOfReviews ?? [],
                     ),
                     const SizedBox(height: 4),
                     SizedBox(

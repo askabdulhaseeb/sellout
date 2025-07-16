@@ -15,14 +15,17 @@ enum ListingType {
       'clothes-foot',
       4,
       AppIcons.tShirt,
-      <String>['clothes', 'footwear', 'clothes-foot'],
+      <String>[
+        'clothes',
+        'footwear',
+      ],
       AppStrings.clothfootmarketplace),
   @HiveField(2)
   vehicle('vehicles', 'vehicles', 4, AppIcons.car, <String>['vehicles'],
       AppStrings.vehiclemarketplace),
   @HiveField(3)
   foodAndDrink('food_drink', 'food-drink', 4, AppIcons.food,
-      <String>['food', 'drink', 'food-drink'], AppStrings.fooddrinkmarketplace),
+      <String>['food', 'drink'], AppStrings.fooddrinkmarketplace),
   @HiveField(4)
   property('property_buy_sell', 'property', 4, AppIcons.key,
       <String>['sale', 'rent'], AppStrings.propertymarketplace),
