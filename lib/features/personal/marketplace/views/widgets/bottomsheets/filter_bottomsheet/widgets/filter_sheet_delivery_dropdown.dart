@@ -17,6 +17,10 @@ class FilterSheetDeliveryTypeTile extends StatelessWidget {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           subtitle: DropdownButtonFormField<DeliveryType>(
+            icon: Icon(
+              Icons.keyboard_arrow_down_rounded,
+              color: ColorScheme.of(context).outline,
+            ),
             value: pro.selectedDeliveryType,
             isExpanded: true,
             hint: Text(
@@ -37,7 +41,7 @@ class FilterSheetDeliveryTypeTile extends StatelessWidget {
               return DropdownMenuItem<DeliveryType>(
                 value: type,
                 child: Text(
-                  type.code.tr(),
+                  type.code.tr(), // make sure `code` exists in your enum
                   style: Theme.of(context)
                       .textTheme
                       .bodyMedium

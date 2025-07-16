@@ -3,10 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/theme/app_theme.dart';
+import '../../domain/enum/radius_type.dart';
 import '../providers/marketplace_provider.dart';
 import 'bottomsheets/filter_bottomsheet/filter_bottomsheet.dart';
 import 'bottomsheets/location_radius_bottomsheet/location_radius_bottomsheet.dart';
-import 'bottomsheets/sort_bottomsheet.dart';
+import 'bottomsheets/sort_bottomsheet/sort_bottomsheet.dart';
 
 class MarketPlaceHeaderButtons extends StatelessWidget {
   const MarketPlaceHeaderButtons({super.key});
@@ -22,19 +23,18 @@ class MarketPlaceHeaderButtons extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         children: <Widget>[
           _HeaderButton(
-            onPressed: () => showModalBottomSheet(
-              enableDrag: false,
-              isDismissible: false,
-              useSafeArea: true,
-              isScrollControlled: true,
-              context: context,
-              builder: (BuildContext context) =>
-                  const LocationRadiusBottomSheet(),
-            ),
-            icon: CupertinoIcons.location_solid,
-            label:
-                '${'location'.tr()} - ${pro.selectedRadius.toInt().toString()} km',
-          ),
+              onPressed: () => showModalBottomSheet(
+                    enableDrag: false,
+                    isDismissible: false,
+                    useSafeArea: true,
+                    isScrollControlled: true,
+                    context: context,
+                    builder: (BuildContext context) =>
+                        const LocationRadiusBottomSheet(),
+                  ),
+              icon: CupertinoIcons.location_solid,
+              label:
+                  '${'location'.tr()}${pro.radiusType == RadiusType.local ? ' -  ${pro.selectedRadius.toInt()} km' : ''}'),
           const SizedBox(
             width: 4,
           ),
@@ -51,12 +51,10 @@ class MarketPlaceHeaderButtons extends StatelessWidget {
           ),
           _HeaderButton(
             onPressed: () => showModalBottomSheet(
-              shape: const RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(15))),
               enableDrag: false,
               isDismissible: false,
               useSafeArea: true,
+              isScrollControlled: true,
               context: context,
               builder: (BuildContext context) =>
                   const MarketPlaceFilterBottomSheet(),

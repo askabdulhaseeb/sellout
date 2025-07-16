@@ -21,7 +21,8 @@ class MarketPlaceTopSection extends StatelessWidget {
             children: <Widget>[
               const MarketPlaceHeader(),
               const MarketPlaceHeaderButtons(),
-              const MarketPlaceCategoriesSection(),
+              if (!marketPro.isFilteringPosts)
+                const MarketPlaceCategoriesSection(),
               if (marketPro.isFilteringPosts) const MarketPlacePostsGrid(),
             ],
           );

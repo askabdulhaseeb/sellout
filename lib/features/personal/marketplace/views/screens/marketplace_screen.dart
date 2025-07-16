@@ -28,12 +28,13 @@ class _MarketPlaceScreenState extends State<MarketPlaceScreen> {
     return PersonalScaffold(
       body: Consumer<MarketPlaceProvider>(
         builder: (BuildContext context, MarketPlaceProvider pro, _) {
-          return const CustomScrollView(
+          return CustomScrollView(
             slivers: <Widget>[
-              SliverToBoxAdapter(child: MarketPlaceTopSection()),
-              SliverToBoxAdapter(
-                child: MarketChoiceChipSection(),
-              ),
+              const SliverToBoxAdapter(child: MarketPlaceTopSection()),
+              if (!pro.isFilteringPosts)
+                const SliverToBoxAdapter(
+                  child: MarketChoiceChipSection(),
+                ),
             ],
           );
         },

@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../../core/functions/app_log.dart';
 import '../../../../../../listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../../../../../domain/entities/post_entity.dart';
 import '../../../../../domain/entities/visit/visiting_entity.dart';
 import '../../../../../feed/views/widgets/post/widgets/section/buttons/home_post_button_section.dart';
 import '../../../../../feed/views/widgets/post/widgets/section/buttons/type/post_button_for_user_tile.dart';
-import '../../condition_delivery_detail.dart';
-import '../pets/widgets/post_pets_detail_widget.dart';
+
 import '../../post_detail_attachment_slider.dart';
 import '../../post_detail_description_section.dart';
 import '../../post_detail_postage_return_delivery.dart';
@@ -17,8 +15,8 @@ import '../../post_rating_section.dart';
 import '../../reviews/post_detail_review_overview_section.dart';
 import 'widgets/post_property_detail_widget.dart';
 
-class PetsPostDetailSection extends StatelessWidget {
-  const PetsPostDetailSection({
+class PropertyPostDetailSection extends StatelessWidget {
+  const PropertyPostDetailSection({
     required this.post,
     required this.isMe,
     required this.visit,
@@ -55,17 +53,9 @@ class PetsPostDetailSection extends StatelessWidget {
             PostRatingSection(
               post: post,
             ),
-            if ((ListingType.pets.json == post.listID ||
-                post.listID == ListingType.property.json))
-              ConditionDeliveryWidget(post: post),
-            if (post.listID == ListingType.pets.json)
-              PostPetDetailWidget(
-                post: post,
-              ),
-            if (post.listID == ListingType.property.json)
-              PostPropertyDetailWidget(
-                post: post,
-              ),
+            PostPropertyDetailWidget(
+              post: post,
+            ),
             PostDetailDescriptionSection(post: post),
             // PostDetailTileListSection(post: post),
             ReturnPosrtageAndExtraDetailsSection(post: post),

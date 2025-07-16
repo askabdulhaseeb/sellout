@@ -59,10 +59,13 @@ class ExploreRemoteSourceImpl implements ExploreRemoteSource {
       PostByFiltersParams params) async {
     try {
       String endpoint = 'post/filter?';
-
+      if (params.sort != null) {
+        endpoint += 'sort=${params.sort?.json}&';
+      }
       if (params.distance != null) {
         endpoint += 'distance=${params.distance}&';
       }
+
       if (params.clientLat != null) {
         endpoint += 'clientLat=${params.clientLat}&';
       }

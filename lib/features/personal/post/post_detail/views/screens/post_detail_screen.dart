@@ -10,6 +10,7 @@ import '../../../domain/entities/visit/visiting_entity.dart';
 import '../providers/post_detail_provider.dart';
 import '../widgets/post_details_sections/general/general_post_detail_section.dart';
 import '../widgets/post_details_sections/pets/pets_post_detail_section.dart';
+import '../widgets/post_details_sections/property/property_post_detail_section.dart';
 import '../widgets/post_details_sections/vehicle/vehicle_post_detail_section.dart';
 
 class PostDetailScreen extends StatelessWidget {
@@ -53,8 +54,11 @@ class PostDetailScreen extends StatelessWidget {
                   : post.listID == ListingType.vehicle.json
                       ? VehiclePostDetailSection(
                           post: post, isMe: isMe, visit: visit)
-                      : GeneralPostDetailSection(
-                          post: post, isMe: isMe, visit: visit));
+                      : post.listID == ListingType.property.json
+                          ? PropertyPostDetailSection(
+                              post: post, isMe: isMe, visit: visit)
+                          : GeneralPostDetailSection(
+                              post: post, isMe: isMe, visit: visit));
         },
       ),
     );

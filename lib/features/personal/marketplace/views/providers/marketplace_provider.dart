@@ -14,6 +14,7 @@ import '../../domain/enum/radius_type.dart';
 import '../../domain/params/filter_params.dart';
 import '../../domain/params/post_by_filter_params.dart';
 import '../../domain/usecase/post_by_filters_usecase.dart';
+import '../enums/sort_enums.dart';
 
 class MarketPlaceProvider extends ChangeNotifier {
   MarketPlaceProvider(this._getPostByFiltersUsecase);
@@ -68,7 +69,35 @@ class MarketPlaceProvider extends ChangeNotifier {
     return false;
   }
 
+  Future<bool> loadFilteredContainerPosts(String category) async {
+    setLoading(true);
+    try {
+      final DataState<List<PostEntity>> result =
+          await _getPostByFiltersUsecase(_buildPostByFiltersParams());
+      if (result is DataSuccess<List<PostEntity>>) {
+        setFilterContainerPosts(result.entity ?? <PostEntity>[]);
+        return true;
+      } else {
+        debugPrint(
+            'Failed: ${result.exception?.message ?? 'something_wrong'.tr()}');
+      }
+    } catch (e) {
+      debugPrint('Unexpected error: $e');
+    } finally {
+      setLoading(false);
+    }
+    return false;
+  }
+
 // button
+  void filterSortedPosts(SortOption? option) async {
+    final bool success = await loadPosts();
+    if (success) {
+      _selectedSortOption = option;
+      setFilteringBool(true);
+    }
+  }
+
   void filterSheetApplyButton() async {
     final bool success = await loadPosts();
     if (success) {
@@ -131,14 +160,20 @@ class MarketPlaceProvider extends ChangeNotifier {
 
   void setPosts(List<PostEntity>? value) {
     _posts = value;
-    debugPrint('Loaded ${posts?.length} posts');
+    debugPrint('Loaded normal filter and soretd posts: ${posts?.length}');
     setFilteringBool(true);
     notifyListeners();
   }
 
   void setChoiceChipPosts(List<PostEntity> value) {
     _choicePosts = value;
-    debugPrint('Loaded ${posts?.length} posts');
+    debugPrint('Loaded chips posts ${posts?.length} ');
+    notifyListeners();
+  }
+
+  void setFilterContainerPosts(List<PostEntity> value) {
+    _filteredContainerPosts = value;
+    debugPrint('Loaded filter container posts: ${posts?.length} ');
     notifyListeners();
   }
 
@@ -186,6 +221,11 @@ class MarketPlaceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setRating(int? value) {
+    _rating = value;
+    notifyListeners();
+  }
+
   void setFilteringBool(bool value) {
     _isFilteringPosts = value;
   }
@@ -219,51 +259,40 @@ class MarketPlaceProvider extends ChangeNotifier {
   void resetFilters() {
     // Marketplace Main Category
     _marketplaceCategory = null;
-
     // Cloth & Foot
     _cLothFootCategory = ListingType.clothAndFoot.cids.first;
     _selectedSize = null;
     _selectedColor = null;
-
     // Items
     _listingItemCategory = null;
-
     // Pets
     _age = null;
     _readyToLeave = null;
     _petCategory = null;
-
     // Property
     _propertyCategory = ListingType.property.cids.first;
     _propertyType = null;
     _energyRating = null;
-
     // Food & Drink
     _foodDrinkCategory = ListingType.foodAndDrink.cids.first;
-
     // Vehicles
     _make = null;
     _year = null;
-
     // Location
     _selectedLocation = const LatLng(0, 0);
     _selectedLocationName = '';
     _selectedRadius = 5;
     _radiusType = RadiusType.local;
-
     // Post data
     _posts = null;
     _selectedCategory = null;
     _addedFilterKey = null;
-
     // Delivery & Condition
     _selectedDeliveryType = null;
     _selectedConditionType = null;
-
     // UI
     _isLoading = false;
     _isFilteringPosts = false;
-
     // Text controllers
     postFilterController.clear();
     minPriceController.clear();
@@ -274,14 +303,15 @@ class MarketPlaceProvider extends ChangeNotifier {
 
 //variables
   ListingType? _marketplaceCategory;
+  List<PostEntity>? _posts;
+  List<PostEntity> _choicePosts = <PostEntity>[];
+  List<PostEntity> _filteredContainerPosts = <PostEntity>[];
+  bool _isLoading = false;
   String _cLothFootCategory = ListingType.clothAndFoot.cids.first;
   String _propertyCategory = ListingType.property.cids.first;
   String _foodDrinkCategory = ListingType.foodAndDrink.cids.first;
   String? _selectedSize;
   String? _selectedColor;
-  bool _isLoading = false;
-  List<PostEntity>? _posts;
-  List<PostEntity> _choicePosts = <PostEntity>[];
   String? _listingItemCategory;
   String? _age;
   String? _readyToLeave;
@@ -291,25 +321,31 @@ class MarketPlaceProvider extends ChangeNotifier {
   LatLng _selectedLocation = const LatLng(0, 0);
   String _selectedLocationName = '';
   double _selectedRadius = 5;
-  RadiusType _radiusType = RadiusType.local;
+  RadiusType _radiusType = RadiusType.worldwide;
   DeliveryType? _selectedDeliveryType;
   ConditionType? _selectedConditionType;
+  int? _rating;
   bool _isFilteringPosts = false;
   SubCategoryEntity? _selectedCategory;
   String? _addedFilterKey;
   String? _petCategory;
   String? _energyRating;
+  SortOption? _selectedSortOption;
 
 // Getters
   ListingType? get marketplaceCategory => _marketplaceCategory;
+  bool get isFilteringPosts => _isFilteringPosts;
+  List<PostEntity>? get posts => _posts;
+  List<PostEntity>? get choicePosts => _choicePosts;
+  List<PostEntity> get filteredContainerPosts => _filteredContainerPosts;
+  bool get isLoading => _isLoading;
+
   String? get cLothFootCategory => _cLothFootCategory;
   String? get propertyCategory => _propertyCategory;
   String? get foodDrinkCategory => _foodDrinkCategory;
   String? get selectedSize => _selectedSize;
   String? get selectedColor => _selectedColor;
-  bool get isLoading => _isLoading;
-  List<PostEntity>? get posts => _posts;
-  List<PostEntity>? get choicePosts => _choicePosts;
+
   String? get listingItemCategory => _listingItemCategory;
   String? get age => _age;
   String? get readyToLeave => _readyToLeave;
@@ -322,11 +358,13 @@ class MarketPlaceProvider extends ChangeNotifier {
   RadiusType get radiusType => _radiusType;
   DeliveryType? get selectedDeliveryType => _selectedDeliveryType;
   ConditionType? get selectedConditionType => _selectedConditionType;
-  bool get isFilteringPosts => _isFilteringPosts;
+  int? get rating => _rating;
   SubCategoryEntity? get selectedCategory => _selectedCategory;
   String? get addedFilterKey => _addedFilterKey;
   String? get petCategory => _petCategory;
   String? get energyRating => _energyRating;
+  SortOption? get selectedSortOption => _selectedSortOption;
+
 // textfield controllers
   TextEditingController postFilterController = TextEditingController();
   TextEditingController minPriceController = TextEditingController();
@@ -335,14 +373,16 @@ class MarketPlaceProvider extends ChangeNotifier {
 //params
   PostByFiltersParams _buildPostByFiltersParams() {
     return PostByFiltersParams(
-      address: _selectedCategory?.address,
+      sort: _selectedSortOption,
+      // address: _selectedCategory?.address,
       clientLat: _selectedLocation != const LatLng(0, 0)
           ? _selectedLocation.latitude
           : null,
       clientLng: _selectedLocation != const LatLng(0, 0)
           ? _selectedLocation.longitude
           : null,
-      distance: _selectedRadius.toInt(),
+      distance:
+          _radiusType == RadiusType.local ? _selectedRadius.toInt() : null,
       category: _marketplaceCategory?.json ?? '',
       filters: _buildFilters(),
     );
@@ -363,6 +403,13 @@ class MarketPlaceProvider extends ChangeNotifier {
         attribute: 'delivery_type',
         operator: 'eq',
         value: _selectedDeliveryType?.json ?? '',
+      ));
+    }
+    if (_rating != null) {
+      filters.add(FilterParam(
+        attribute: 'average_rating',
+        operator: 'lt',
+        value: _rating.toString(),
       ));
     }
 
