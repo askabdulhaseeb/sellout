@@ -1,46 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:provider/provider.dart';
+import '../../../../enums/customer_review_type.dart';
+import '../../../../providers/marketplace_provider.dart';
 
-class FilterSheetCustomerReviewTile extends StatefulWidget {
+class FilterSheetCustomerReviewTile extends StatelessWidget {
   const FilterSheetCustomerReviewTile({super.key});
-
-  @override
-  State<FilterSheetCustomerReviewTile> createState() =>
-      _FilterSheetCustomerReviewTileState();
-}
-
-class _FilterSheetCustomerReviewTileState
-    extends State<FilterSheetCustomerReviewTile> {
-  String? selectedValue;
-
-  final List<String> options = <String>[
-    'all_stars',
-    '5_stars',
-    '4_stars',
-    '3_stars',
-    '2_stars',
-    '1_star',
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final MarketPlaceProvider provider =
+        Provider.of<MarketPlaceProvider>(context);
     return ListTile(
       title: Text(
         'customer_review'.tr(),
         style: Theme.of(context).textTheme.titleMedium,
       ),
-      subtitle: DropdownButtonFormField<String>(
-        value: selectedValue,
+      subtitle: DropdownButtonFormField<ReviewFilterParam>(
+        value: ReviewFilterParamExtension.fromJson(provider.rating),
         isExpanded: true,
         hint: Text(
           'select_customer_review'.tr(),
-          style: TextTheme.of(context)
+          style: Theme.of(context)
+              .textTheme
               .bodyMedium
-              ?.copyWith(color: ColorScheme.of(context).outline),
+              ?.copyWith(color: Theme.of(context).colorScheme.outline),
         ),
         icon: Icon(
           Icons.keyboard_arrow_down_rounded,
-          color: ColorScheme.of(context).outline,
+          color: Theme.of(context).colorScheme.outline,
         ),
         decoration: const InputDecoration(
           isDense: true,
@@ -49,21 +36,20 @@ class _FilterSheetCustomerReviewTileState
           focusedBorder: InputBorder.none,
           contentPadding: EdgeInsets.zero,
         ),
-        items: options.map((String key) {
-          return DropdownMenuItem<String>(
-            value: key,
+        items: ReviewFilterParam.values.map((ReviewFilterParam param) {
+          return DropdownMenuItem<ReviewFilterParam>(
+            value: param,
             child: Text(
-              key.tr(),
-              style: TextTheme.of(context)
+              param.text.tr(), // show '5 Stars', etc. with localization
+              style: Theme.of(context)
+                  .textTheme
                   .bodyMedium
-                  ?.copyWith(color: ColorScheme.of(context).outline),
+                  ?.copyWith(color: Theme.of(context).colorScheme.outline),
             ),
           );
         }).toList(),
-        onChanged: (String? newValue) {
-          setState(() {
-            selectedValue = newValue;
-          });
+        onChanged: (ReviewFilterParam? newValue) {
+          provider.setRating(newValue?.jsonValue); // ✅ fixed here
         },
       ),
     );

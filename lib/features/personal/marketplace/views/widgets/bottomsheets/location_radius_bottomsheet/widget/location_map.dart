@@ -41,8 +41,7 @@ class _LocationMapState extends State<LocationMap> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 200,
+    return Expanded(
       child: Consumer<MarketPlaceProvider>(
         builder: (BuildContext context, MarketPlaceProvider provider, _) {
           return GoogleMap(

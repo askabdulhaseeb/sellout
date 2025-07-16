@@ -17,6 +17,10 @@ class FilterSheetConditionTile extends StatelessWidget {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           subtitle: DropdownButtonFormField<ConditionType>(
+            icon: Icon(
+              Icons.keyboard_arrow_down_rounded,
+              color: ColorScheme.of(context).outline,
+            ),
             value: pro.selectedConditionType,
             isExpanded: true,
             decoration: const InputDecoration(

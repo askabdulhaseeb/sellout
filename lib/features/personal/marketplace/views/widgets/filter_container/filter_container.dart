@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../providers/marketplace_provider.dart';
+import 'filter_container_gridview.dart';
 import 'widgets/cloth_foot_filter/cloth_foot_filter_widget.dart';
 import 'widgets/food_drink_filter/food_drink_filter_widget.dart';
 import 'widgets/item_filter/item_filter_widget.dart';
@@ -54,6 +55,7 @@ class FilterContainer extends StatelessWidget {
                 ],
               ),
             ),
+            const MarketPlaceFilterContainerPostsGrid()
           ],
         );
       },

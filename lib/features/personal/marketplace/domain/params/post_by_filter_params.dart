@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../../views/enums/sort_enums.dart';
 import 'filter_params.dart';
 
 class PostByFiltersParams {
@@ -10,6 +11,7 @@ class PostByFiltersParams {
     this.address,
     this.lastKey,
     this.category,
+    this.sort,
   });
   final String? category;
   final int? distance;
@@ -18,6 +20,7 @@ class PostByFiltersParams {
   final String? address;
   final String? lastKey;
   final List<FilterParam> filters;
+  final SortOption? sort;
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -26,6 +29,7 @@ class PostByFiltersParams {
       'clientLng': clientLng,
       'address': address,
       'lastKey': lastKey,
+      'sort': sort,
       'filters': filters.map((FilterParam x) => x.toMap()).toList(),
     };
   }
