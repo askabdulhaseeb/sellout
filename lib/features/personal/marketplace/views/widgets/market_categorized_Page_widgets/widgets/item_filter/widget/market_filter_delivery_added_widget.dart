@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../../../../../../core/widgets/in_dev_mode.dart';
 import '../../market_filter_address_dropdown.dart';
 import 'delivery_filter_dropdown.dart';
 
@@ -15,7 +14,7 @@ class ItemFilterDeliveryAddedWidget extends StatelessWidget {
           child: DeliveryFilterDropdown(),
         ),
         Expanded(
-          child: InDevMode(child: AddedFilterDropdown()),
+          child: AddedFilterDropdown(),
         )
       ],
     );

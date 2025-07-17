@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../listing/listing_form/views/providers/add_listing_form_provider.dart';
-import '../../../post/domain/entities/post_entity.dart';
 import '../enums/marketplace_filter_type.dart';
 import '../providers/marketplace_provider.dart';
 
@@ -44,7 +43,6 @@ class MarketPlaceCategoriesSection extends StatelessWidget {
                   await addListingPro.fetchDropdownListings(
                     '/category/${category.json}?list-id=',
                   );
-                  marketplacePro.setPosts(<PostEntity>[]);
                   marketplacePro.setMarketplaceCategory(
                       ListingType.fromJson(category.json));
                 },

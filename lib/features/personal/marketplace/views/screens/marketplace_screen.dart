@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../providers/marketplace_provider.dart';
-import '../widgets/choicechip_section/choicechip_section.dart';
-import '../widgets/marketplace_top_section.dart';
+import 'pages/market_categorized_filteration_page.dart';
+import 'pages/marketplace_main_page.dart';
 
 class MarketPlaceScreen extends StatefulWidget {
   const MarketPlaceScreen({super.key});
@@ -26,18 +26,16 @@ class _MarketPlaceScreenState extends State<MarketPlaceScreen> {
   @override
   Widget build(BuildContext context) {
     return PersonalScaffold(
-      body: Consumer<MarketPlaceProvider>(
-        builder: (BuildContext context, MarketPlaceProvider pro, _) {
-          return CustomScrollView(
-            slivers: <Widget>[
-              const SliverToBoxAdapter(child: MarketPlaceTopSection()),
-              if (!pro.isFilteringPosts)
-                const SliverToBoxAdapter(
-                  child: MarketChoiceChipSection(),
-                ),
-            ],
-          );
-        },
+      body: SingleChildScrollView(
+        child: Consumer<MarketPlaceProvider>(
+          builder: (BuildContext context, MarketPlaceProvider pro, _) {
+            if (pro.marketplaceCategory == null) {
+              return const MarketPlaceMainPage();
+            } else {
+              return const MarketCategorizedFilterationPage();
+            }
+          },
+        ),
       ),
     );
   }
