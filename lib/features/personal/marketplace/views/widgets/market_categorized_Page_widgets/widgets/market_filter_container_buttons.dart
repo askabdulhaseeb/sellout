@@ -22,7 +22,7 @@ class MarketFilterButtons extends StatelessWidget {
               title: 'search'.tr(),
               isLoading: marketPro.isLoading,
               onTap: () {
-                marketPro.loadPosts();
+                marketPro.loadFilteredContainerPosts();
               }),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

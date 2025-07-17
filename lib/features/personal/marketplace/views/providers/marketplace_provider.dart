@@ -14,6 +14,7 @@ import '../../domain/enum/radius_type.dart';
 import '../../domain/params/filter_params.dart';
 import '../../domain/params/post_by_filter_params.dart';
 import '../../domain/usecase/post_by_filters_usecase.dart';
+import '../enums/added_filter_options.dart';
 import '../enums/sort_enums.dart';
 
 class MarketPlaceProvider extends ChangeNotifier {
@@ -69,7 +70,7 @@ class MarketPlaceProvider extends ChangeNotifier {
     return false;
   }
 
-  Future<bool> loadFilteredContainerPosts(String category) async {
+  Future<bool> loadFilteredContainerPosts() async {
     setLoading(true);
     try {
       final DataState<List<PostEntity>> result =
@@ -230,8 +231,8 @@ class MarketPlaceProvider extends ChangeNotifier {
     _isFilteringPosts = value;
   }
 
-  void setAddedFilterKey(String? key) {
-    _addedFilterKey = key;
+  void setAddedFilterOption(AddedFilterOption? key) {
+    _addedFilterOption = key;
     notifyListeners();
   }
 
@@ -257,8 +258,9 @@ class MarketPlaceProvider extends ChangeNotifier {
   }
 
   void resetFilters() {
-    // Marketplace Main Category
-    _marketplaceCategory = null;
+    // // Marketplace Main Category
+    // _marketplaceCategory = null;
+    _selectedCategory = null;
     // Cloth & Foot
     _cLothFootCategory = ListingType.clothAndFoot.cids.first;
     _selectedSize = null;
@@ -286,7 +288,7 @@ class MarketPlaceProvider extends ChangeNotifier {
     // Post data
     _posts = null;
     _selectedCategory = null;
-    _addedFilterKey = null;
+    _addedFilterOption = null;
     // Delivery & Condition
     _selectedDeliveryType = null;
     _selectedConditionType = null;
@@ -327,10 +329,10 @@ class MarketPlaceProvider extends ChangeNotifier {
   int? _rating;
   bool _isFilteringPosts = false;
   SubCategoryEntity? _selectedCategory;
-  String? _addedFilterKey;
+  AddedFilterOption? _addedFilterOption;
   String? _petCategory;
   String? _energyRating;
-  SortOption? _selectedSortOption;
+  SortOption? _selectedSortOption = SortOption.dateAscending;
 
 // Getters
   ListingType? get marketplaceCategory => _marketplaceCategory;
@@ -360,7 +362,7 @@ class MarketPlaceProvider extends ChangeNotifier {
   ConditionType? get selectedConditionType => _selectedConditionType;
   int? get rating => _rating;
   SubCategoryEntity? get selectedCategory => _selectedCategory;
-  String? get addedFilterKey => _addedFilterKey;
+  AddedFilterOption? get addedFilterOption => _addedFilterOption;
   String? get petCategory => _petCategory;
   String? get energyRating => _energyRating;
   SortOption? get selectedSortOption => _selectedSortOption;
@@ -374,7 +376,7 @@ class MarketPlaceProvider extends ChangeNotifier {
   PostByFiltersParams _buildPostByFiltersParams() {
     return PostByFiltersParams(
       sort: _selectedSortOption,
-      // address: _selectedCategory?.address,
+      address: _selectedCategory?.address,
       clientLat: _selectedLocation != const LatLng(0, 0)
           ? _selectedLocation.latitude
           : null,
@@ -390,6 +392,7 @@ class MarketPlaceProvider extends ChangeNotifier {
 
   List<FilterParam> _buildFilters() {
     final List<FilterParam> filters = <FilterParam>[];
+    // filters.add(FilterParam(attribute: '', operator: 'eq', value: ''));
 // filter bottom sheet filters
     if (_selectedConditionType != null) {
       filters.add(FilterParam(
@@ -437,18 +440,18 @@ class MarketPlaceProvider extends ChangeNotifier {
     }
 
 // Item section filters
-    if (listingItemCategory != null && listingItemCategory!.isNotEmpty) {
+    if (_listingItemCategory != null && _listingItemCategory!.isNotEmpty) {
       filters.add(FilterParam(
         attribute: 'list_id',
         operator: 'eq',
-        value: listingItemCategory ?? '',
+        value: _listingItemCategory ?? '',
       ));
     }
-    if (addedFilterKey != null && addedFilterKey!.isNotEmpty) {
+    if (_addedFilterOption != null) {
       filters.add(FilterParam(
         attribute: 'created_at',
         operator: 'lt',
-        value: addedFilterKey ?? '',
+        value: _addedFilterOption?.formattedDate ?? '',
       ));
     }
     if (minPriceController.text.trim().isNotEmpty) {
@@ -473,11 +476,11 @@ class MarketPlaceProvider extends ChangeNotifier {
         value: postFilterController.text.trim(),
       ));
     }
-    if (selectedColor != null && selectedColor!.isNotEmpty) {
+    if (_selectedColor != null && _selectedColor!.isNotEmpty) {
       filters.add(FilterParam(
         attribute: 'colour',
         operator: 'eq',
-        value: selectedColor!,
+        value: _selectedColor!,
       ));
     }
 
