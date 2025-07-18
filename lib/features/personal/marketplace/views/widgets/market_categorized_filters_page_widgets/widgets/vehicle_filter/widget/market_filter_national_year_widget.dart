@@ -20,7 +20,7 @@ class MarketFilterNationYearWidget extends StatelessWidget {
         children: <Widget>[
           Expanded(
             child: InDevMode(
-                child: CustomListingDropDown(
+                child: CustomListingDropDown<MarketPlaceProvider>(
               hint: 'national',
               categoryKey: '',
               selectedValue: marketPro.make,
@@ -29,7 +29,7 @@ class MarketFilterNationYearWidget extends StatelessWidget {
           ),
           Expanded(
             child: InDevMode(
-                child: CustomListingDropDown(
+                child: CustomListingDropDown<MarketPlaceProvider>(
               hint: 'year',
               categoryKey: '',
               selectedValue: marketPro.year,

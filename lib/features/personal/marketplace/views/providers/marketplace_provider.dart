@@ -132,7 +132,8 @@ class MarketPlaceProvider extends ChangeNotifier {
 
   void setClothFootCategory(String category) {
     _cLothFootCategory = category;
-    setSize(null);
+    _selectedSize = '';
+    _selectedSubCategory = null;
     notifyListeners();
   }
 
@@ -148,6 +149,7 @@ class MarketPlaceProvider extends ChangeNotifier {
 
   void setSize(String? size) {
     _selectedSize = size;
+    notifyListeners();
   }
 
   void setColor(String? color) {
@@ -180,26 +182,32 @@ class MarketPlaceProvider extends ChangeNotifier {
 
   void setItemCategory(String? value) {
     _listingItemCategory = value;
+    notifyListeners();
   }
 
   void setAge(String? value) {
     _age = value;
+    notifyListeners();
   }
 
   void setReadyToLeave(String? value) {
     _readyToLeave = value;
+    notifyListeners();
   }
 
   void setMake(String? value) {
     _make = value;
+    notifyListeners();
   }
 
   void setYear(String? value) {
     _year = value;
+    notifyListeners();
   }
 
   void setPropertyType(String? value) {
     _propertyType = value;
+    notifyListeners();
   }
 
   void setRadiusType(RadiusType value) {
@@ -229,6 +237,7 @@ class MarketPlaceProvider extends ChangeNotifier {
 
   void setFilteringBool(bool value) {
     _isFilteringPosts = value;
+    notifyListeners();
   }
 
   void setAddedFilterOption(AddedFilterOption? key) {
@@ -237,7 +246,7 @@ class MarketPlaceProvider extends ChangeNotifier {
   }
 
   void setSelectedCategory(SubCategoryEntity? category) {
-    _selectedCategory = category;
+    _selectedSubCategory = category;
     notifyListeners();
   }
 
@@ -260,10 +269,10 @@ class MarketPlaceProvider extends ChangeNotifier {
   void resetFilters() {
     // // Marketplace Main Category
     // _marketplaceCategory = null;
-    _selectedCategory = null;
+    _selectedSubCategory = null;
     // Cloth & Foot
     _cLothFootCategory = ListingType.clothAndFoot.cids.first;
-    _selectedSize = null;
+    _selectedSize = '';
     _selectedColor = null;
     // Items
     _listingItemCategory = null;
@@ -287,7 +296,7 @@ class MarketPlaceProvider extends ChangeNotifier {
     _radiusType = RadiusType.local;
     // Post data
     _posts = null;
-    _selectedCategory = null;
+    _selectedSubCategory = null;
     _addedFilterOption = null;
     // Delivery & Condition
     _selectedDeliveryType = null;
@@ -328,7 +337,7 @@ class MarketPlaceProvider extends ChangeNotifier {
   ConditionType? _selectedConditionType;
   int? _rating;
   bool _isFilteringPosts = false;
-  SubCategoryEntity? _selectedCategory;
+  SubCategoryEntity? _selectedSubCategory;
   AddedFilterOption? _addedFilterOption;
   String? _petCategory;
   String? _energyRating;
@@ -361,7 +370,7 @@ class MarketPlaceProvider extends ChangeNotifier {
   DeliveryType? get selectedDeliveryType => _selectedDeliveryType;
   ConditionType? get selectedConditionType => _selectedConditionType;
   int? get rating => _rating;
-  SubCategoryEntity? get selectedCategory => _selectedCategory;
+  SubCategoryEntity? get selectedSubCategory => _selectedSubCategory;
   AddedFilterOption? get addedFilterOption => _addedFilterOption;
   String? get petCategory => _petCategory;
   String? get energyRating => _energyRating;
@@ -376,7 +385,7 @@ class MarketPlaceProvider extends ChangeNotifier {
   PostByFiltersParams _buildPostByFiltersParams() {
     return PostByFiltersParams(
       sort: _selectedSortOption,
-      address: _selectedCategory?.address,
+      address: _selectedSubCategory?.address,
       clientLat: _selectedLocation != const LatLng(0, 0)
           ? _selectedLocation.latitude
           : null,

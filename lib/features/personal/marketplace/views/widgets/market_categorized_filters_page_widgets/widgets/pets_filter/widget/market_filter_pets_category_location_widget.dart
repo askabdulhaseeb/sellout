@@ -6,8 +6,8 @@ import '../../../../../../../listing/listing_form/views/widgets/custom_listing_d
 import '../../../../../../domain/entities/location_name_entity.dart';
 import '../../../../../providers/marketplace_provider.dart';
 
-class MarketFilterVehicleCategoryAndLocationWIdget extends StatelessWidget {
-  const MarketFilterVehicleCategoryAndLocationWIdget({
+class MarketFilterpetsCategoryAndLocationWIdget extends StatelessWidget {
+  const MarketFilterpetsCategoryAndLocationWIdget({
     super.key,
   });
 
@@ -19,9 +19,9 @@ class MarketFilterVehicleCategoryAndLocationWIdget extends StatelessWidget {
       spacing: 4,
       children: <Widget>[
         Expanded(
-            child: CustomListingDropDown(
+            child: CustomListingDropDown<MarketPlaceProvider>(
                 hint: 'category',
-                categoryKey: 'vehicles',
+                categoryKey: 'pets',
                 selectedValue: marketPro.petCategory,
                 onChanged: (String? p0) => marketPro.setPetCategory(p0))),
         Expanded(
