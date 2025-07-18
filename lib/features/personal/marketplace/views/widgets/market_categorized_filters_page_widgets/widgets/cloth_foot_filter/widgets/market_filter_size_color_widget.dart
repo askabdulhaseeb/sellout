@@ -19,7 +19,7 @@ class MarketFilterSizeColorWidget extends StatelessWidget {
         children: <Widget>[
           Expanded(
             flex: 2,
-            child: CustomListingDropDown(
+            child: CustomListingDropDown<MarketPlaceProvider>(
               hint: 'size',
               categoryKey: marketPro.cLothFootCategory == 'clothes'
                   ? 'clothes_sizes'

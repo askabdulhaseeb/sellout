@@ -17,7 +17,7 @@ class MarketFilterAgeLeaveWidget extends StatelessWidget {
         spacing: 4,
         children: <Widget>[
           Expanded(
-            child: CustomListingDropDown(
+            child: CustomListingDropDown<MarketPlaceProvider>(
               hint: 'age',
               categoryKey: 'age',
               selectedValue: marketPro.age,
@@ -25,7 +25,7 @@ class MarketFilterAgeLeaveWidget extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: CustomListingDropDown(
+            child: CustomListingDropDown<MarketPlaceProvider>(
               hint: 'ready_to_leave',
               categoryKey: 'ready_to_leave',
               selectedValue: marketPro.readyToLeave,

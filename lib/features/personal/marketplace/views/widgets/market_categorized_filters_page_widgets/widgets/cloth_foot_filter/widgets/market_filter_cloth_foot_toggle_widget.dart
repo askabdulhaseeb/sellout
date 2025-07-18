@@ -41,7 +41,8 @@ class MarketFilterClothFootToggleWidget extends StatelessWidget {
                     labelStrs: subCategories.map((String e) => e.tr()).toList(),
                     labelText: '',
                     initialValue: marketPro.cLothFootCategory,
-                    onToggle: marketPro.setClothFootCategory),
+                    onToggle: (String p0) =>
+                        marketPro.setClothFootCategory(p0)),
               ),
             ),
           ),

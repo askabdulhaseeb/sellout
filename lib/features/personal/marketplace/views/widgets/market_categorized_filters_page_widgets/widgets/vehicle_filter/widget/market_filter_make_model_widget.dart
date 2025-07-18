@@ -19,7 +19,7 @@ class MarketFilterMakeModelWidget extends StatelessWidget {
         spacing: 4,
         children: <Widget>[
           Expanded(
-              child: CustomListingDropDown(
+              child: CustomListingDropDown<MarketPlaceProvider>(
             hint: 'make',
             categoryKey: 'make',
             selectedValue: marketPro.make,
@@ -27,7 +27,7 @@ class MarketFilterMakeModelWidget extends StatelessWidget {
           )),
           Expanded(
             child: InDevMode(
-                child: CustomListingDropDown(
+                child: CustomListingDropDown<MarketPlaceProvider>(
               hint: 'model',
               categoryKey: 'model',
               selectedValue: marketPro.year,

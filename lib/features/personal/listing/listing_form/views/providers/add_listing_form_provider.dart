@@ -31,13 +31,11 @@ import '../../../../post/domain/entities/size_color/size_color_entity.dart';
 import '../../data/models/listing_model.dart';
 import '../../data/models/sub_category_model.dart';
 import '../../data/sources/remote/dropdown_listing_api.dart';
-import '../../data/sources/remote/listing_api.dart';
 import '../../domain/entities/color_options_entity.dart';
 import '../../domain/entities/sub_category_entity.dart';
 import '../../domain/usecase/add_listing_usecase.dart';
 import '../../domain/usecase/edit_listing_usecase.dart';
 import '../params/add_listing_param.dart';
-import '../params/get_categories_params.dart';
 import '../widgets/property/add_property_tenure_type.dart';
 
 class AddListingFormProvider extends ChangeNotifier {
@@ -325,7 +323,6 @@ class AddListingFormProvider extends ChangeNotifier {
 
   Future<void> updateVariables() async {
     // Category and access
-    _selectedCategory = findCategoryByAddress(_listings, post?.address ?? '');
     _accessCode = post?.accessCode ?? '';
     // Age and pet-related
     _age = post?.age;
@@ -894,12 +891,6 @@ class AddListingFormProvider extends ChangeNotifier {
 
   void setMeetupLocation(LocationModel value) {
     _selectedMeetupLocation = value;
-  }
-
-  Future<void> fetchCategories(String listID, String listIdType) async {
-    final GetCategoriesParams params =
-        GetCategoriesParams(listId: listID, listIdType: listIdType);
-    _listings = await ListingAPI().listing(params);
   }
 
   // Cloth and Foot
