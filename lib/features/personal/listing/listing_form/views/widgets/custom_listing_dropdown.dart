@@ -1,7 +1,7 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../core/widgets/custom_dropdown.dart';
 import '../../data/sources/local/local_dropdown_listings.dart';
 import '../../domain/entities/dropdown_listings_entity.dart';
 
@@ -133,150 +133,28 @@ class _CustomListingDropDownState<T extends ChangeNotifier>
       return const Center(child: CircularProgressIndicator(strokeWidth: 2.0));
     }
 
+    // Map DropdownOptionEntity to DropdownMenuItem<String>
+    final List<DropdownMenuItem<String>> dropdownItems = filteredOptions
+        .map((DropdownOptionEntity opt) => DropdownMenuItem<String>(
+              value: opt.value,
+              child: Text(opt.label),
+            ))
+        .toList();
+
     return Consumer<T>(
-      builder: (BuildContext context, provider, _) {
-        return Container(
-          padding: widget.padding ?? const EdgeInsets.symmetric(vertical: 8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              if (widget.title.isNotEmpty) ...<Widget>[
-                Text(
-                  widget.title.tr(),
-                  style: const TextStyle(fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(height: 2),
-              ],
-              GestureDetector(
-                onTap: _showPicker,
-                child: InputDecorator(
-                  decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                        color: ColorScheme.of(context).outlineVariant,
-                      ),
-                    ),
-                    hintText: widget.hint.tr(),
-                    hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: ColorScheme.of(context).outlineVariant,
-                        ),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: ColorScheme.of(context).outlineVariant,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Text(
-                          displayLabel ?? widget.hint.tr(),
-                          overflow: TextOverflow.ellipsis,
-                          style: displayLabel != null
-                              ? null
-                              : TextStyle(
-                                  color: ColorScheme.of(context).outlineVariant,
-                                ),
-                        ),
-                      ),
-                      Icon(
-                        Icons.keyboard_arrow_down_rounded,
-                        color: ColorScheme.of(context).outline,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+      builder: (BuildContext context, T provider, _) {
+        return CustomDropdown<String>(
+          width: 200,
+          title: widget.title,
+          items: dropdownItems,
+          selectedItem: widget.selectedValue,
+          onChanged: widget.onChanged,
+          validator: (bool? val) => null, // Add your validation logic if needed
+          isSearchable: true,
+          hint: widget.hint,
+          padding: widget.padding,
         );
       },
-    );
-  }
-
-  Future<void> _showPicker() async {
-    final DropdownOptionEntity? result =
-        await showModalBottomSheet<DropdownOptionEntity>(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      isScrollControlled: true,
-      builder: (BuildContext context) => _OptionsPicker(
-        title: widget.title,
-        options: filteredOptions,
-      ),
-    );
-
-    if (result != null) {
-      widget.onChanged(result.value);
-    }
-  }
-}
-
-class _OptionsPicker extends StatelessWidget {
-  const _OptionsPicker({required this.title, required this.options});
-  final String title;
-  final List<DropdownOptionEntity> options;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.7,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              title.tr(),
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          const Divider(height: 1),
-          Expanded(
-            child: ListView.builder(
-              itemCount: options.length,
-              itemBuilder: (BuildContext context, int index) {
-                final DropdownOptionEntity opt = options[index];
-                return ListTile(
-                  title: Text(opt.label),
-                  trailing: opt.children.isNotEmpty
-                      ? const Icon(Icons.chevron_right)
-                      : null,
-                  onTap: () async {
-                    if (opt.children.isNotEmpty) {
-                      final DropdownOptionEntity? childResult =
-                          await showModalBottomSheet<DropdownOptionEntity>(
-                        context: context,
-                        builder: (BuildContext ctx) => _OptionsPicker(
-                          title: opt.label,
-                          options: opt.children,
-                        ),
-                      );
-                      if (childResult != null) {
-                        Navigator.pop(context, childResult);
-                      }
-                    } else {
-                      Navigator.pop(context, opt);
-                    }
-                  },
-                );
-              },
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
