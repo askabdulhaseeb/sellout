@@ -5,6 +5,8 @@ import 'filter_params.dart';
 class PostByFiltersParams {
   PostByFiltersParams({
     required this.filters,
+    this.size,
+    this.colors,
     this.distance,
     this.clientLat,
     this.clientLng,
@@ -13,13 +15,15 @@ class PostByFiltersParams {
     this.category,
     this.sort,
   });
+  final List<FilterParam> filters;
+  final List<String>? size;
+  final List<String>? colors;
   final String? category;
   final int? distance;
   final double? clientLat;
   final double? clientLng;
   final String? address;
   final String? lastKey;
-  final List<FilterParam> filters;
   final SortOption? sort;
 
   Map<String, dynamic> toMap() {
@@ -30,6 +34,8 @@ class PostByFiltersParams {
       'address': address,
       'lastKey': lastKey,
       'sort': sort,
+      'size': size,
+      'colors': colors,
       'filters': filters.map((FilterParam x) => x.toMap()).toList(),
     };
   }
