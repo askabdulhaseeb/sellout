@@ -14,7 +14,7 @@ dependencies:
 
   cupertino_icons: ^1.0.8
   easy_localization: ^3.0.7
-
+  dropdown_search: ^6.0.2
   dropdown_button2: ^2.3.9
 
   app_links: ^6.3.2

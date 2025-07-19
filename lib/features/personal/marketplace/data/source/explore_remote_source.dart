@@ -8,6 +8,7 @@ import '../../../post/domain/entities/post_entity.dart';
 import '../../domain/entities/location_name_entity.dart';
 import '../../domain/params/filter_params.dart';
 import '../../domain/params/post_by_filter_params.dart';
+import '../../views/enums/sort_enums.dart';
 import '../models/location_name_model.dart';
 
 abstract class ExploreRemoteSource {
@@ -59,13 +60,18 @@ class ExploreRemoteSourceImpl implements ExploreRemoteSource {
       PostByFiltersParams params) async {
     try {
       String endpoint = 'post/filter?';
-      if (params.sort != null) {
+      if (params.sort != SortOption.dateAscending) {
         endpoint += 'sort=${params.sort?.json}&';
       }
       if (params.distance != null) {
         endpoint += 'distance=${params.distance}&';
       }
-
+      if (params.size!.isNotEmpty) {
+        endpoint += 'size=${json.encode(params.size)}&';
+      }
+      if (params.colors!.isNotEmpty) {
+        endpoint += 'color=${json.encode(params.colors)}&';
+      }
       if (params.clientLat != null) {
         endpoint += 'clientLat=${params.clientLat}&';
       }

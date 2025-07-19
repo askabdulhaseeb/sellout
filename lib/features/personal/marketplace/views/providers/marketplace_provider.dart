@@ -132,7 +132,7 @@ class MarketPlaceProvider extends ChangeNotifier {
 
   void setClothFootCategory(String category) {
     _cLothFootCategory = category;
-    _selectedSize = '';
+    _selectedSize = [];
     _selectedSubCategory = null;
     notifyListeners();
   }
@@ -147,12 +147,12 @@ class MarketPlaceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setSize(String? size) {
+  void setSize(List<String> size) {
     _selectedSize = size;
     notifyListeners();
   }
 
-  void setColor(String? color) {
+  void setColor(List<String> color) {
     _selectedColor = color;
     notifyListeners();
   }
@@ -272,8 +272,8 @@ class MarketPlaceProvider extends ChangeNotifier {
     _selectedSubCategory = null;
     // Cloth & Foot
     _cLothFootCategory = ListingType.clothAndFoot.cids.first;
-    _selectedSize = '';
-    _selectedColor = null;
+    _selectedSize = [];
+    _selectedColor = [];
     // Items
     _listingItemCategory = null;
     // Pets
@@ -321,8 +321,8 @@ class MarketPlaceProvider extends ChangeNotifier {
   String _cLothFootCategory = ListingType.clothAndFoot.cids.first;
   String _propertyCategory = ListingType.property.cids.first;
   String _foodDrinkCategory = ListingType.foodAndDrink.cids.first;
-  String? _selectedSize;
-  String? _selectedColor;
+  List<String> _selectedSize = <String>[];
+  List<String> _selectedColor = <String>[];
   String? _listingItemCategory;
   String? _age;
   String? _readyToLeave;
@@ -354,8 +354,8 @@ class MarketPlaceProvider extends ChangeNotifier {
   String? get cLothFootCategory => _cLothFootCategory;
   String? get propertyCategory => _propertyCategory;
   String? get foodDrinkCategory => _foodDrinkCategory;
-  String? get selectedSize => _selectedSize;
-  String? get selectedColor => _selectedColor;
+  List<String> get selectedSize => _selectedSize;
+  List<String> get selectedColor => _selectedColor;
 
   String? get listingItemCategory => _listingItemCategory;
   String? get age => _age;
@@ -384,6 +384,8 @@ class MarketPlaceProvider extends ChangeNotifier {
 //params
   PostByFiltersParams _buildPostByFiltersParams() {
     return PostByFiltersParams(
+      size: _selectedSize,
+      colors: _selectedColor,
       sort: _selectedSortOption,
       address: _selectedSubCategory?.address,
       clientLat: _selectedLocation != const LatLng(0, 0)
@@ -485,21 +487,20 @@ class MarketPlaceProvider extends ChangeNotifier {
         value: postFilterController.text.trim(),
       ));
     }
-    if (_selectedColor != null && _selectedColor!.isNotEmpty) {
-      filters.add(FilterParam(
-        attribute: 'colour',
-        operator: 'eq',
-        value: _selectedColor!,
-      ));
-    }
-
-    if (_marketplaceCategory == ListingType.clothAndFoot) {
-      filters.add(FilterParam(
-        attribute: 'type',
-        operator: 'eq',
-        value: _cLothFootCategory,
-      ));
-    }
+    // if (_selectedColor != null && _selectedColor!.isNotEmpty) {
+    //   filters.add(FilterParam(
+    //     attribute: 'colour',
+    //     operator: 'eq',
+    //     value: _selectedColor!,
+    //   ));
+    // }
+    // if (_marketplaceCategory == ListingType.clothAndFoot) {
+    //   filters.add(FilterParam(
+    //     attribute: 'type',
+    //     operator: 'eq',
+    //     value: _cLothFootCategory,
+    //   ));
+    // }
 // property section filters
     if (_propertyType != null && _propertyType!.isNotEmpty) {
       filters.add(FilterParam(
