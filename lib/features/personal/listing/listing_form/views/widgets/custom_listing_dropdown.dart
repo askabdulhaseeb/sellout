@@ -149,7 +149,7 @@ class _CustomListingDropDownState<T extends ChangeNotifier>
           items: dropdownItems,
           selectedItem: widget.selectedValue,
           onChanged: widget.onChanged,
-          validator: (bool? val) => null, // Add your validation logic if needed
+          validator: (bool? val) => null,
           isSearchable: true,
           hint: widget.hint,
           padding: widget.padding,

@@ -141,12 +141,12 @@ class _Widget<T> extends StatelessWidget {
                     ),
                     isExpanded: true,
                     hint: Text(
-                      hint ?? 'select_item'.tr(),
+                      hint ?? 'select_item',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextTheme.of(context).bodyMedium?.copyWith(
                           color: ColorScheme.of(context).outlineVariant),
-                    ),
+                    ).tr(),
                     items: items,
                     value: selectedItem,
                     onChanged: onChanged,
@@ -154,22 +154,18 @@ class _Widget<T> extends StatelessWidget {
                       padding:
                           padding ?? const EdgeInsets.symmetric(horizontal: 12),
                     ),
-                    dropdownSearchData: ((width ?? 101) < 150) ||
-                            (isSearchable == false)
+                    dropdownSearchData: isSearchable == false
                         ? null
                         : DropdownSearchData<T>(
                             searchController: _search,
                             searchInnerWidgetHeight: 70,
-                            searchInnerWidget: Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 4),
-                              child: CustomTextFormField(
-                                dense: true,
-                                style: TextTheme.of(context).labelMedium,
-                                contentPadding: const EdgeInsets.all(4),
-                                controller: _search,
-                                isExpanded: true,
-                              ),
+                            searchInnerWidget: CustomTextFormField(
+                              fieldPadding: const EdgeInsets.all(4),
+                              dense: true,
+                              style: TextTheme.of(context).labelMedium,
+                              contentPadding: const EdgeInsets.all(4),
+                              controller: _search,
+                              isExpanded: true,
                             ),
                             searchMatchFn: (
                               DropdownMenuItem<T> item,
@@ -184,15 +180,16 @@ class _Widget<T> extends StatelessWidget {
                           ),
                     style: TextTheme.of(context).bodyMedium,
                     dropdownStyleData: DropdownStyleData(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          border: Border.all(
-                              color: ColorScheme.of(context)
-                                  .outline
-                                  .withValues(alpha: 0.2))),
-                      offset: Offset(0, height ?? 48),
-                    ),
+                        maxHeight: 200,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            border: Border.all(
+                                color: ColorScheme.of(context)
+                                    .outline
+                                    .withValues(alpha: 0.2))),
+                        offset: const Offset(0, -10),
+                        isOverButton: true),
                     menuItemStyleData: const MenuItemStyleData(
                       height: 40,
                     ),
