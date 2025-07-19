@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'costom_textformfield.dart';
 
 class CustomDropdown<T> extends FormField<bool> {
   CustomDropdown({
@@ -158,47 +159,16 @@ class _Widget<T> extends StatelessWidget {
                         ? null
                         : DropdownSearchData<T>(
                             searchController: _search,
-                            searchInnerWidgetHeight: 50,
+                            searchInnerWidgetHeight: 70,
                             searchInnerWidget: Container(
-                              height: 50,
-                              padding: const EdgeInsets.only(
-                                top: 8,
-                                bottom: 4,
-                                right: 8,
-                                left: 8,
-                              ),
-                              child: Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: TextFormField(
-                                      expands: true,
-                                      maxLines: null,
-                                      controller: _search,
-                                      decoration: InputDecoration(
-                                        isDense: true,
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                          horizontal: 10,
-                                          vertical: 8,
-                                        ),
-                                        hintStyle: TextTheme.of(context)
-                                            .bodyMedium
-                                            ?.copyWith(
-                                                color: ColorScheme.of(context)
-                                                    .outlineVariant),
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(),
-                                    child: const Text('Close'),
-                                  ),
-                                ],
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 4),
+                              child: CustomTextFormField(
+                                dense: true,
+                                style: TextTheme.of(context).labelMedium,
+                                contentPadding: const EdgeInsets.all(4),
+                                controller: _search,
+                                isExpanded: true,
                               ),
                             ),
                             searchMatchFn: (
@@ -212,10 +182,23 @@ class _Widget<T> extends StatelessWidget {
                                   .contains(searchValue.toLowerCase().trim());
                             },
                           ),
-                    menuItemStyleData: const MenuItemStyleData(height: 40),
+                    style: TextTheme.of(context).bodyMedium,
+                    dropdownStyleData: DropdownStyleData(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          border: Border.all(
+                              color: ColorScheme.of(context)
+                                  .outline
+                                  .withValues(alpha: 0.2))),
+                      offset: Offset(0, height ?? 48),
+                    ),
+                    menuItemStyleData: const MenuItemStyleData(
+                      height: 40,
+                    ),
                   ),
                 ),
-              ),
+              )
             ],
           );
   }

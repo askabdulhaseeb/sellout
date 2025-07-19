@@ -30,6 +30,8 @@ class CustomTextFormField extends StatefulWidget {
     this.textAlign = TextAlign.start,
     this.style,
     this.border,
+    this.fieldPadding,
+    this.dense,
     //
     this.focusNode,
     super.key,
@@ -62,6 +64,8 @@ class CustomTextFormField extends StatefulWidget {
   final InputBorder? border;
   final TextStyle? style;
   final FocusNode? focusNode;
+  final EdgeInsetsGeometry? fieldPadding;
+  final bool? dense;
 
   @override
   CustomTextFormFieldState createState() => CustomTextFormFieldState();
@@ -95,7 +99,7 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: widget.fieldPadding ?? const EdgeInsets.symmetric(vertical: 8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -138,6 +142,7 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
             onFieldSubmitted: widget.onFieldSubmitted,
             cursorColor: Theme.of(context).colorScheme.secondary,
             decoration: InputDecoration(
+                isDense: widget.dense ?? false,
                 contentPadding: widget.contentPadding ??
                     const EdgeInsets.symmetric(horizontal: 12),
                 filled: true,
