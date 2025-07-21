@@ -13,7 +13,7 @@ class ServiceCardButton extends StatelessWidget {
     super.key,
   });
 
-  final BusinessEntity business;
+  final BusinessEntity? business;
   final ServiceEntity service;
 
   @override
@@ -23,12 +23,12 @@ class ServiceCardButton extends StatelessWidget {
       children: <Widget>[
         CustomElevatedButton(
           title: 'book'.tr(),
-          bgColor: business.routine == null
+          bgColor: business?.routine == null
               ? Theme.of(context).disabledColor
               : Theme.of(context).primaryColor,
           isLoading: false,
           onTap: () {
-            if (business.routine != null) {
+            if (business?.routine != null) {
               AppNavigator.pushNamed(BookingScreen.routeName,
                   arguments: <String, dynamic>{
                     'service': service,

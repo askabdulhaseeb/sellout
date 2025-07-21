@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../core/widgets/profile_photo.dart';
 import '../../../../../../../core/widgets/rating_display_widget.dart';
@@ -12,7 +13,7 @@ class ServiceCardBusinessInfo extends StatelessWidget {
     super.key,
   });
 
-  final BusinessEntity business;
+  final BusinessEntity? business;
   final TextTheme txt;
   final ServiceEntity service;
 
@@ -25,8 +26,8 @@ class ServiceCardBusinessInfo extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           ProfilePhoto(
-            url: business.logo?.url,
-            placeholder: business.displayName ?? '',
+            url: business?.logo?.url,
+            placeholder: business?.displayName ?? 'na'.tr(),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,7 +35,8 @@ class ServiceCardBusinessInfo extends StatelessWidget {
               Row(
                 spacing: 4,
                 children: <Widget>[
-                  Text(business.displayName ?? '', style: txt.titleMedium),
+                  Text(business?.displayName ?? 'na'.tr(),
+                      style: txt.titleMedium),
                   RatingDisplayWidget(
                     size: 12,
                     ratingList: service.listOfReviews,
@@ -43,7 +45,7 @@ class ServiceCardBusinessInfo extends StatelessWidget {
                 ],
               ),
               Text(
-                business.address?.firstAddress ?? '',
+                business?.address?.firstAddress ?? 'na'.tr(),
                 overflow: TextOverflow.ellipsis,
                 style: TextTheme.of(context).bodySmall,
               ),

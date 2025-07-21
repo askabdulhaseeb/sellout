@@ -28,7 +28,10 @@ class ServicesPageExploreCategoriesSection extends StatelessWidget {
                   ),
                 );
               },
-              child: Text('see_all'.tr()),
+              child: Text(
+                'see_all'.tr(),
+                style: TextTheme.of(context).bodyMedium,
+              ),
             ),
           ],
         ),

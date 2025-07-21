@@ -252,9 +252,8 @@ void _servicePage() {
       () => GetSpecialOfferUsecase(locator()));
   locator.registerFactory<GetServiceCategoryUsecase>(
       () => GetServiceCategoryUsecase(locator()));
-  locator.registerLazySingleton<ServicesPageProvider>(() =>
-      ServicesPageProvider(
-          locator(), locator(), locator(), locator(), locator()));
+  locator.registerLazySingleton<ServicesPageProvider>(
+      () => ServicesPageProvider(locator(), locator(), locator(), locator()));
 }
 
 void _profile() {
