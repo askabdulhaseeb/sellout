@@ -22,7 +22,7 @@ class ServicesPageExploreSearchingSection extends StatelessWidget {
               prefixIcon: const Icon(Icons.search),
               hint: 'search'.tr(),
               onChanged: (String value) {
-                pro.searchServices(value.trim());
+                pro.querySearching();
               },
             ),
             LocationField(

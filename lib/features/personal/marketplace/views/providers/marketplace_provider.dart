@@ -8,6 +8,7 @@ import '../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../core/sources/data_state.dart';
+import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../listing/listing_form/data/models/sub_category_model.dart';
 import '../../../listing/listing_form/data/sources/remote/dropdown_listing_api.dart';
 import '../../../post/domain/entities/post_entity.dart';
@@ -121,12 +122,14 @@ class MarketPlaceProvider extends ChangeNotifier {
     }
   }
 
-  void resetLocationBottomsheet() async {
+  void resetLocationBottomsheet(BuildContext context) async {
     final bool success = await loadPosts();
     if (success) {
       _radiusType = RadiusType.worldwide;
       _selectedRadius = 10;
-      _selectedLocation = const LatLng(0, 0);
+      _selectedLocation = LatLng(LocalAuth.currentUser?.location?.latitude ?? 0,
+          LocalAuth.currentUser?.location?.longitude ?? 0);
+      Navigator.pop(context);
     }
   }
 
@@ -319,7 +322,8 @@ class MarketPlaceProvider extends ChangeNotifier {
     _vehicleCatgory = null;
     vehicleModel.clear();
     // Location
-    _selectedLocation = const LatLng(0, 0);
+    _selectedLocation = LatLng(LocalAuth.currentUser?.location?.latitude ?? 0,
+        LocalAuth.currentUser?.location?.longitude ?? 0);
     _selectedLocationName = '';
     _selectedRadius = 5;
     _radiusType = RadiusType.worldwide;
@@ -359,7 +363,9 @@ class MarketPlaceProvider extends ChangeNotifier {
   String? _year;
   String? _vehicleCatgory;
   String? _propertyType;
-  LatLng _selectedLocation = const LatLng(0, 0);
+  LatLng _selectedLocation = LatLng(
+      LocalAuth.currentUser?.location?.latitude ?? 0,
+      LocalAuth.currentUser?.location?.longitude ?? 0);
   String _selectedLocationName = '';
   double _selectedRadius = 5;
   RadiusType _radiusType = RadiusType.worldwide;

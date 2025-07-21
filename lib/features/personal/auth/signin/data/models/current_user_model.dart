@@ -3,6 +3,7 @@ import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../../core/extension/string_ext.dart';
 import '../../../../../attachment/data/attchment_model.dart';
 import '../../../../../business/core/data/models/business_employee_model.dart';
+import '../../../../location/data/models/location_model.dart';
 import '../../../../setting/setting_dashboard/data/models/notification_model.dart';
 import '../../../../setting/setting_dashboard/data/models/privacy_setting_model.dart';
 import '../../../../setting/setting_dashboard/data/models/time_away_model.dart';
@@ -56,6 +57,7 @@ class CurrentUserModel extends CurrentUserEntity {
     required super.timeAway,
     required super.accountStatus,
     required super.listOfReviews,
+    required super.location,
   }) : super(
             inHiveAt: DateTime
                 .now()); //The named parameter 'accountStatus' is required, but there's no corresponding argument.Try adding the required argument.dartmissing_required_argumentThe named parameter 'listOfReviews' is required, but there's no corresponding argument.Try adding the required argument.
@@ -121,6 +123,10 @@ class CurrentUserModel extends CurrentUserEntity {
       notification: userData['notifications'] != null
           ? NotificationSettingsModel.fromMap(userData['notifications'])
           : null,
+      location:
+          (userData.containsKey('location') && userData['location'] != null)
+              ? LocationModel.fromJson(userData['location'])
+              : null,
       employeeList: List<BusinessEmployeeModel>.from(
         (userData['employees'] ?? <dynamic>[])
             .map((e) => BusinessEmployeeModel.fromJson(e)),

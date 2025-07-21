@@ -74,7 +74,7 @@ class PostGridViewTile extends StatelessWidget {
                     RatingDisplayWidget(
                       fontSize: 10,
                       size: 12,
-                      ratingList: post.listOfReviews ?? [],
+                      ratingList: post.listOfReviews ?? <double>[],
                     ),
                     const SizedBox(height: 4),
                     SizedBox(
@@ -193,7 +193,9 @@ class PostGridViewTileBasketButton extends StatelessWidget {
     }
 
     return CustomIconButton(
-        iconColor: Theme.of(context).colorScheme.onPrimary,
+        iconSize: 14,
+        bgColor: ColorScheme.of(context).surface,
+        iconColor: Theme.of(context).colorScheme.onSurface,
         icon: CupertinoIcons.cart,
         onPressed: () {
           addToBasket(context, post);

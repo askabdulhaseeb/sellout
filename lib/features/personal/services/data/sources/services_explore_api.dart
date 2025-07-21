@@ -5,6 +5,7 @@ import '../../../../../core/sources/local/local_request_history.dart';
 import '../../../../business/core/data/models/service/service_model.dart';
 import '../../../../business/core/data/sources/service/local_service.dart';
 import '../../../../business/core/domain/entity/service/service_entity.dart';
+import '../../../marketplace/domain/params/filter_params.dart';
 import '../../domain/params/services_by_filters_params.dart';
 
 abstract interface class ServicesExploreApi {
@@ -92,6 +93,13 @@ class ServicesExploreApiImpl implements ServicesExploreApi {
       }
       if (params.category != null && params.category!.isNotEmpty) {
         endpoint += 'category=${params.category}&';
+      }
+      if (params.filters.isNotEmpty) {
+        final String filtersStr = jsonEncode(
+          params.filters.map((FilterParam e) => e.toMap()).toList(),
+        );
+        // Append raw JSON
+        endpoint += 'filters=$filtersStr&';
       }
 
       if (endpoint.endsWith('&')) {

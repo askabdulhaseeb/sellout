@@ -43,7 +43,6 @@ class _SearchUsersSectionState extends State<SearchUsersSection> {
               prefixIcon: const Icon(CupertinoIcons.search),
               controller: controller,
               hint: 'search'.tr(),
-              autoFocus: true,
               onChanged: provider.searchUsers,
             ),
           ],

@@ -35,7 +35,6 @@ class BusinessModel extends BusinessEntity {
 
   factory BusinessModel.fromRawJson(String str) =>
       BusinessModel.fromJson(json.decode(str));
-
   factory BusinessModel.fromJson(Map<String, dynamic> json) => BusinessModel(
         businessID: json['business_id'],
         location: json['location'] != null
@@ -53,7 +52,11 @@ class BusinessModel extends BusinessEntity {
             ?.map((x) => BusinessEmployeeModel.fromJson(x))
             .toList(),
         address: json['address'] != null
-            ? BusinessAddressModel.fromJson(json['address'])
+            ? (json['address'] is List
+                ? (json['address'] as List).isNotEmpty
+                    ? BusinessAddressModel.fromJson(json['address'][0])
+                    : null
+                : BusinessAddressModel.fromJson(json['address']))
             : null,
         displayName: json['display_name'],
         ownerID: json['owner_id'],
