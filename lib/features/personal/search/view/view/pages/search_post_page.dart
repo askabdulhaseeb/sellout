@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/widgets/costom_textformfield.dart';
@@ -39,7 +40,7 @@ class _SearchPostsSectionState extends State<SearchPostsSection> {
             CustomTextFormField(
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-              prefixIcon: const Icon(Icons.search),
+              prefixIcon: const Icon(CupertinoIcons.search),
               controller: controller,
               hint: 'search'.tr(),
               onChanged: provider.searchPosts,

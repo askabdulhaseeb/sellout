@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../theme/app_theme.dart';
+
 class CustomTextFormField extends StatefulWidget {
   const CustomTextFormField({
     required TextEditingController? controller,
@@ -184,7 +186,7 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
                             }),
                             icon: const Icon(CupertinoIcons.clear, size: 18),
                           )),
-                focusColor: Theme.of(context).primaryColor,
+                focusColor: AppTheme.primaryColor,
                 errorBorder: OutlineInputBorder(
                   borderSide:
                       BorderSide(color: Theme.of(context).colorScheme.error),

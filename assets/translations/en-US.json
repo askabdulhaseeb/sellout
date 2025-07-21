@@ -943,6 +943,8 @@
   "bedrooms": "bedrooms",
   "bathrooms": "bathrooms",
   "no_results": "Nothing to show here",
+  "showing_result_for": "Showing results for",
+  "start_search": "Start Search",
   "next": "Next",
   "closed": "Closed",
   "default": "Default",
