@@ -17,6 +17,8 @@ class MarketPlaceFilterBottomSheet extends StatelessWidget {
     final MarketPlaceProvider pro =
         Provider.of<MarketPlaceProvider>(context, listen: false);
     return BottomSheet(
+      showDragHandle: false,
+      enableDrag: false,
       onClosing: () {},
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {

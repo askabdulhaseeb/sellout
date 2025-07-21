@@ -15,7 +15,7 @@ class MarketplaceChoiceGridWidget extends StatelessWidget {
         final List<PostEntity>? posts = marketPro.choicePosts;
         if (marketPro.isLoading) {
           return GridView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.all(16.0),
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: 4,
@@ -25,7 +25,7 @@ class MarketplaceChoiceGridWidget extends StatelessWidget {
               mainAxisSpacing: 12,
               childAspectRatio: 0.8,
             ),
-            itemBuilder: (_, __) => const _LoadingPostTile(),
+            itemBuilder: (_, __) => const LoadingPostTile(),
           );
         }
         if (posts == null || posts.isEmpty) {
@@ -57,46 +57,57 @@ class MarketplaceChoiceGridWidget extends StatelessWidget {
   }
 }
 
-class _LoadingPostTile extends StatelessWidget {
-  const _LoadingPostTile();
+class LoadingPostTile extends StatelessWidget {
+  const LoadingPostTile({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context)
-            .colorScheme
-            .surfaceContainerHighest
-            .withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      padding: const EdgeInsets.all(8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(8),
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Expanded(
+          child: Container(
+            width: double.infinity,
+            height: 330,
+            decoration: BoxDecoration(
+              color: Theme.of(context).dividerColor,
+              borderRadius: BorderRadius.circular(8),
             ),
           ),
-          const SizedBox(height: 8),
-          Container(
-            width: 100,
-            height: 12,
-            color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
+        ),
+        SizedBox(
+          height: 80,
+          child: Column(
+            spacing: 6,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              const SizedBox(height: 2),
+              Container(
+                width: 100,
+                height: 15,
+                decoration: BoxDecoration(
+                    color: Theme.of(context).dividerColor,
+                    borderRadius: BorderRadius.circular(2)),
+              ),
+              Container(
+                width: 100,
+                height: 15,
+                decoration: BoxDecoration(
+                    color: Theme.of(context).dividerColor,
+                    borderRadius: BorderRadius.circular(2)),
+              ),
+              Container(
+                width: 40,
+                height: 15,
+                decoration: BoxDecoration(
+                    color: Theme.of(context).dividerColor,
+                    borderRadius: BorderRadius.circular(2)),
+              ),
+            ],
           ),
-          const SizedBox(height: 4),
-          Container(
-            width: 40,
-            height: 12,
-            color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

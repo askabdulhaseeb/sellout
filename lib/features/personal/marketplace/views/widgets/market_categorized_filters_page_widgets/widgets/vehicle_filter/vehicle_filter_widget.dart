@@ -14,8 +14,8 @@ class VehicleFIlterWidget extends StatelessWidget {
     return const Column(
       children: <Widget>[
         // MarketFilterSearchField(),
-        MarketFilterVehicleCategoryAndLocationWIdget(),
         MarketFilterNationYearWidget(),
+        MarketFilterVehicleCategoryAndLocationWIdget(),
         MarketFilterMakeModelWidget(),
         MarketFilterPriceWIdget(),
       ],

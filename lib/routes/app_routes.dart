@@ -15,6 +15,7 @@ import '../features/personal/auth/signin/views/screens/sign_in_screen.dart';
 import '../features/personal/auth/signup/views/screens/signup_screen.dart';
 import '../features/personal/dashboard/views/screens/dashboard_screen.dart';
 import '../features/personal/book_visit/view/screens/booking_screen.dart';
+import '../features/personal/marketplace/views/screens/pages/market_categorized_filteration_page.dart';
 import '../features/personal/notifications/view/screens/notification_screen.dart';
 import '../features/personal/order/view/screens/order_detail_screen.dart';
 import '../features/personal/post/post_detail/views/screens/post_detail_screen.dart';
@@ -98,6 +99,9 @@ class AppRoutes {
     // POST
     PostDetailScreen.routeName: (_) => const PostDetailScreen(),
     CreatePromoScreen.routeName: (_) => const CreatePromoScreen(),
+    //MarketPlace
+    MarketCategorizedFilterationPage.routeName: (_) =>
+        const MarketCategorizedFilterationPage(),
     //CHAT
     ChatScreen.routeName: (_) => const ChatScreen(),
     //BOOKING

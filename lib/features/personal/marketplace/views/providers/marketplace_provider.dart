@@ -9,6 +9,7 @@ import '../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../../listing/listing_form/data/models/sub_category_model.dart';
+import '../../../listing/listing_form/data/sources/remote/dropdown_listing_api.dart';
 import '../../../post/domain/entities/post_entity.dart';
 import '../../domain/enum/radius_type.dart';
 import '../../domain/params/filter_params.dart';
@@ -28,7 +29,6 @@ class MarketPlaceProvider extends ChangeNotifier {
       final PostByFiltersParams params = _buildPostByFiltersParams();
       final DataState<List<PostEntity>> result =
           await _getPostByFiltersUsecase(params);
-
       if (result is DataSuccess<List<PostEntity>>) {
         setPosts(result.entity);
         return true;
@@ -47,8 +47,9 @@ class MarketPlaceProvider extends ChangeNotifier {
   }
 
   Future<bool> loadChipsPosts(String category) async {
-    setLoading(true);
     try {
+      setLoading(true);
+      setChoiceChipPosts(<PostEntity>[]);
       final PostByFiltersParams params = PostByFiltersParams(
         category: category,
         filters: <FilterParam>[],
@@ -57,6 +58,7 @@ class MarketPlaceProvider extends ChangeNotifier {
           await _getPostByFiltersUsecase(params);
       if (result is DataSuccess<List<PostEntity>>) {
         setChoiceChipPosts(result.entity ?? <PostEntity>[]);
+
         return true;
       } else {
         debugPrint(
@@ -71,8 +73,8 @@ class MarketPlaceProvider extends ChangeNotifier {
   }
 
   Future<bool> loadFilteredContainerPosts() async {
-    setLoading(true);
     try {
+      setLoading(true);
       final DataState<List<PostEntity>> result =
           await _getPostByFiltersUsecase(_buildPostByFiltersParams());
       if (result is DataSuccess<List<PostEntity>>) {
@@ -81,6 +83,8 @@ class MarketPlaceProvider extends ChangeNotifier {
       } else {
         debugPrint(
             'Failed: ${result.exception?.message ?? 'something_wrong'.tr()}');
+        setFilterContainerPosts(<PostEntity>[]);
+        setLoading(false);
       }
     } catch (e) {
       debugPrint('Unexpected error: $e');
@@ -117,6 +121,15 @@ class MarketPlaceProvider extends ChangeNotifier {
     }
   }
 
+  void resetLocationBottomsheet() async {
+    final bool success = await loadPosts();
+    if (success) {
+      _radiusType = RadiusType.worldwide;
+      _selectedRadius = 10;
+      _selectedLocation = const LatLng(0, 0);
+    }
+  }
+
   void locationSheetApplyButton() async {
     final bool success = await loadPosts();
     if (success) {
@@ -132,7 +145,8 @@ class MarketPlaceProvider extends ChangeNotifier {
 
   void setClothFootCategory(String category) {
     _cLothFootCategory = category;
-    _selectedSize = [];
+    _selectedSize = <String>[];
+    _selectedColor = <String>[];
     _selectedSubCategory = null;
     notifyListeners();
   }
@@ -161,10 +175,17 @@ class MarketPlaceProvider extends ChangeNotifier {
     _isLoading = value;
   }
 
-  void setPosts(List<PostEntity>? value) {
+  void setPosts(
+    List<PostEntity>? value,
+  ) {
     _posts = value;
     debugPrint('Loaded normal filter and soretd posts: ${posts?.length}');
-    setFilteringBool(true);
+    if (queryController.text.isNotEmpty && queryController.text != '') {
+      setFilteringBool(true);
+    }
+    if (queryController.text.isEmpty || queryController.text == '') {
+      setFilteringBool(false);
+    }
     notifyListeners();
   }
 
@@ -202,6 +223,11 @@ class MarketPlaceProvider extends ChangeNotifier {
 
   void setYear(String? value) {
     _year = value;
+    notifyListeners();
+  }
+
+  void setVehicleCategory(String? value) {
+    _vehicleCatgory = value;
     notifyListeners();
   }
 
@@ -263,7 +289,8 @@ class MarketPlaceProvider extends ChangeNotifier {
 // reset functions
   void clearMarketplaceCategory() {
     _marketplaceCategory = null;
-    notifyListeners();
+    _filteredContainerPosts = <PostEntity>[];
+    resetFilters();
   }
 
   void resetFilters() {
@@ -272,8 +299,8 @@ class MarketPlaceProvider extends ChangeNotifier {
     _selectedSubCategory = null;
     // Cloth & Foot
     _cLothFootCategory = ListingType.clothAndFoot.cids.first;
-    _selectedSize = [];
-    _selectedColor = [];
+    _selectedSize = <String>[];
+    _selectedColor = <String>[];
     // Items
     _listingItemCategory = null;
     // Pets
@@ -289,11 +316,13 @@ class MarketPlaceProvider extends ChangeNotifier {
     // Vehicles
     _make = null;
     _year = null;
+    _vehicleCatgory = null;
+    vehicleModel.clear();
     // Location
     _selectedLocation = const LatLng(0, 0);
     _selectedLocationName = '';
     _selectedRadius = 5;
-    _radiusType = RadiusType.local;
+    _radiusType = RadiusType.worldwide;
     // Post data
     _posts = null;
     _selectedSubCategory = null;
@@ -305,7 +334,7 @@ class MarketPlaceProvider extends ChangeNotifier {
     _isLoading = false;
     _isFilteringPosts = false;
     // Text controllers
-    postFilterController.clear();
+    queryController.clear();
     minPriceController.clear();
     maxPriceController.clear();
 
@@ -328,6 +357,7 @@ class MarketPlaceProvider extends ChangeNotifier {
   String? _readyToLeave;
   String? _make;
   String? _year;
+  String? _vehicleCatgory;
   String? _propertyType;
   LatLng _selectedLocation = const LatLng(0, 0);
   String _selectedLocationName = '';
@@ -362,6 +392,8 @@ class MarketPlaceProvider extends ChangeNotifier {
   String? get readyToLeave => _readyToLeave;
   String? get make => _make;
   String? get year => _year;
+  String? get vehicleCatgory => _vehicleCatgory;
+
   String? get propertyType => _propertyType;
   LatLng get selectedLocation => _selectedLocation;
   String get selectedLocationName => _selectedLocationName;
@@ -377,13 +409,15 @@ class MarketPlaceProvider extends ChangeNotifier {
   SortOption? get selectedSortOption => _selectedSortOption;
 
 // textfield controllers
-  TextEditingController postFilterController = TextEditingController();
   TextEditingController minPriceController = TextEditingController();
   TextEditingController maxPriceController = TextEditingController();
+  TextEditingController queryController = TextEditingController();
+  TextEditingController vehicleModel = TextEditingController();
 
 //params
   PostByFiltersParams _buildPostByFiltersParams() {
     return PostByFiltersParams(
+      query: queryController.text,
       size: _selectedSize,
       colors: _selectedColor,
       sort: _selectedSortOption,
@@ -450,7 +484,7 @@ class MarketPlaceProvider extends ChangeNotifier {
       ));
     }
 
-// Item section filters
+    /// Item section filters
     if (_listingItemCategory != null && _listingItemCategory!.isNotEmpty) {
       filters.add(FilterParam(
         attribute: 'list_id',
@@ -479,29 +513,8 @@ class MarketPlaceProvider extends ChangeNotifier {
         value: maxPriceController.text.trim(),
       ));
     }
-// clothes and footwear filters
-    if (postFilterController.text.trim().isNotEmpty) {
-      filters.add(FilterParam(
-        attribute: 'title',
-        operator: 'eq',
-        value: postFilterController.text.trim(),
-      ));
-    }
-    // if (_selectedColor != null && _selectedColor!.isNotEmpty) {
-    //   filters.add(FilterParam(
-    //     attribute: 'colour',
-    //     operator: 'eq',
-    //     value: _selectedColor!,
-    //   ));
-    // }
-    // if (_marketplaceCategory == ListingType.clothAndFoot) {
-    //   filters.add(FilterParam(
-    //     attribute: 'type',
-    //     operator: 'eq',
-    //     value: _cLothFootCategory,
-    //   ));
-    // }
-// property section filters
+
+    /// property section filters
     if (_propertyType != null && _propertyType!.isNotEmpty) {
       filters.add(FilterParam(
         attribute: 'property_type',
@@ -523,7 +536,8 @@ class MarketPlaceProvider extends ChangeNotifier {
         value: _propertyCategory,
       ));
     }
-// vehicle section filters
+
+    /// vehicle section filters
     if (_make != null && _make!.isNotEmpty) {
       filters.add(FilterParam(
         attribute: 'make',
@@ -538,7 +552,22 @@ class MarketPlaceProvider extends ChangeNotifier {
         value: _year!,
       ));
     }
-// food & drink section
+    if (_vehicleCatgory != null && _vehicleCatgory!.isNotEmpty) {
+      filters.add(FilterParam(
+        attribute: 'vehicles_category',
+        operator: 'eq',
+        value: _vehicleCatgory!,
+      ));
+    }
+    if (vehicleModel.text.isNotEmpty) {
+      filters.add(FilterParam(
+        attribute: 'model',
+        operator: 'eq',
+        value: vehicleModel.text,
+      ));
+    }
+
+    /// food & drink section
     if (_marketplaceCategory == ListingType.foodAndDrink) {
       filters.add(FilterParam(
         attribute: 'type',
@@ -547,6 +576,24 @@ class MarketPlaceProvider extends ChangeNotifier {
       ));
     }
     return filters;
+  }
+
+  /// Listing api
+  Future<void> fetchDropdownListings() async {
+    try {
+      setLoading(true);
+      String endpoint = '/category/${_marketplaceCategory?.json}?list-id=';
+      await DropDownListingAPI()
+          .fetchAndStore(endpoint)
+          .timeout(const Duration(seconds: 10));
+      loadFilteredContainerPosts();
+      setLoading(false);
+    } catch (e) {
+      debugPrint('Error fetching dropdown listings: $e');
+      // Optionally handle error
+    } finally {
+      setLoading(false);
+    }
   }
 
   /// location api

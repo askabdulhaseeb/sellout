@@ -144,7 +144,6 @@ class _CustomListingDropDownState<T extends ChangeNotifier>
     return Consumer<T>(
       builder: (BuildContext context, T provider, _) {
         return CustomDropdown<String>(
-          width: 200,
           title: widget.title,
           items: dropdownItems,
           selectedItem: widget.selectedValue,
