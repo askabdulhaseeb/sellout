@@ -2,6 +2,7 @@ import 'package:hive/hive.dart';
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../business/core/domain/entity/business_employee_entity.dart';
+import '../../../../location/domain/entities/location_entity.dart';
 import '../../../../setting/setting_dashboard/domain/entities/notification_entity.dart';
 import '../../../../setting/setting_dashboard/domain/entities/privacy_settings_entity.dart';
 import '../../../../setting/setting_dashboard/domain/entities/time_away_entity.dart';
@@ -56,6 +57,7 @@ class CurrentUserEntity {
     required this.dob,
     required this.saved,
     required this.listOfReviews,
+    required this.location,
   });
   // ──────────────────────────────── BASIC INFO ────────────────────────────────
   @HiveField(1)
@@ -162,6 +164,9 @@ class CurrentUserEntity {
   @HiveField(154)
   final List<DeviceLoginInfoEntity> loginActivity; // Device login logs
 
+  @HiveField(155)
+  final LocationEntity? location; // device location while loging in
+
   // ──────────────────────────────── COMMUNICATION ────────────────────────────────
   @HiveField(31)
   final List<String> chatIDs; // Chat thread IDs
@@ -198,46 +203,46 @@ class CurrentUserEntity {
       bool? otpVerified,
       TimeAwayEntity? timeAway}) {
     return CurrentUserEntity(
-      message: message,
-      token: token ?? this.token,
-      otpVerified: otpVerified ?? this.otpVerified,
-      countryCode: countryCode ?? this.countryCode,
-      phoneNumber: phoneNumber ?? this.phoneNumber,
-      displayName: displayName ?? this.displayName,
-      address: address ?? this.address,
-      supporting: supporting ?? this.supporting,
-      dob: dob ?? this.dob,
-      userID: userID,
-      email: email,
-      userName: userName,
-      currency: currency,
-      privacy: privacy,
-      countryAlpha3: countryAlpha3,
-      language: language,
-      chatIDs: chatIDs,
-      businessIDs: businessIDs,
-      imageVerified: imageVerified,
-      verificationImage: verificationImage,
-      profileImage: profileImage,
-      lastLoginTime: lastLoginTime,
-      createdAt: createdAt,
-      updatedAt: updatedAt,
-      inHiveAt: inHiveAt,
-      businessStatus: businessStatus,
-      businessName: businessName,
-      businessID: businessID,
-      logindetail: logindetail,
-      loginActivity: loginActivity,
-      employeeList: employeeList,
-      notification: notification,
-      twoStepAuthEnabled: twoStepAuthEnabled,
-      supporters: supporters,
-      privacySettings: privacySettings,
-      timeAway: timeAway,
-      accountStatus: accountStatus,
-      accountType: accountType,
-      saved: saved,
-      listOfReviews: listOfReviews,
-    );
+        message: message,
+        token: token ?? this.token,
+        otpVerified: otpVerified ?? this.otpVerified,
+        countryCode: countryCode ?? this.countryCode,
+        phoneNumber: phoneNumber ?? this.phoneNumber,
+        displayName: displayName ?? this.displayName,
+        address: address ?? this.address,
+        supporting: supporting ?? this.supporting,
+        dob: dob ?? this.dob,
+        userID: userID,
+        email: email,
+        userName: userName,
+        currency: currency,
+        privacy: privacy,
+        countryAlpha3: countryAlpha3,
+        language: language,
+        chatIDs: chatIDs,
+        businessIDs: businessIDs,
+        imageVerified: imageVerified,
+        verificationImage: verificationImage,
+        profileImage: profileImage,
+        lastLoginTime: lastLoginTime,
+        createdAt: createdAt,
+        updatedAt: updatedAt,
+        inHiveAt: inHiveAt,
+        businessStatus: businessStatus,
+        businessName: businessName,
+        businessID: businessID,
+        logindetail: logindetail,
+        loginActivity: loginActivity,
+        employeeList: employeeList,
+        notification: notification,
+        twoStepAuthEnabled: twoStepAuthEnabled,
+        supporters: supporters,
+        privacySettings: privacySettings,
+        timeAway: timeAway,
+        accountStatus: accountStatus,
+        accountType: accountType,
+        saved: saved,
+        listOfReviews: listOfReviews,
+        location: location);
   }
 }

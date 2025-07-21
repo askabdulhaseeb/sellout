@@ -44,6 +44,8 @@ class _LocationMapState extends State<LocationMap> {
     return Expanded(
       child: Consumer<MarketPlaceProvider>(
         builder: (BuildContext context, MarketPlaceProvider provider, _) {
+          debugPrint(
+              'location latitude ${provider.selectedLocation.latitude.toString()}');
           return GoogleMap(
             initialCameraPosition: CameraPosition(
               target: provider.selectedLocation,

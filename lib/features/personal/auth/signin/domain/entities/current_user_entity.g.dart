@@ -57,13 +57,14 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       dob: fields[23] as DateTime?,
       saved: (fields[24] as List).cast<String>(),
       listOfReviews: (fields[25] as List).cast<int>(),
+      location: fields[155] as LocationEntity?,
     );
   }
 
   @override
   void write(BinaryWriter writer, CurrentUserEntity obj) {
     writer
-      ..writeByte(40)
+      ..writeByte(41)
       ..writeByte(1)
       ..write(obj.message)
       ..writeByte(2)
@@ -130,6 +131,8 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       ..write(obj.logindetail)
       ..writeByte(154)
       ..write(obj.loginActivity)
+      ..writeByte(155)
+      ..write(obj.location)
       ..writeByte(31)
       ..write(obj.chatIDs)
       ..writeByte(140)

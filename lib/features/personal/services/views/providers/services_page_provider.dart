@@ -68,6 +68,18 @@ class ServicesPageProvider extends ChangeNotifier {
   }
 
   //
+  bool? _selectedIsMobileService;
+
+// Getter (optional)
+  bool? get selectedIsMobileService => _selectedIsMobileService;
+
+// Setter to update value and notify listeners
+  void setSelectedIsMobileService(bool? value) {
+    _selectedIsMobileService = value;
+    notifyListeners();
+  }
+
+  //
   // Initial fetch
   Future<void> fetchServicesByCategory(ServiceCategoryType category) async {
     if (_isLoading) return;
@@ -93,24 +105,34 @@ class ServicesPageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  List<ServiceEntity> get serviceResults => _serviceResults;
+
   TextEditingController search = TextEditingController();
 
-  List<ServiceEntity> get serviceResults => _serviceResults;
-  Future<void> searchServices(String query) async {
-    if (query.isEmpty) return;
-    _isLoading = true;
-    notifyListeners();
+  Future<void> querySearching() async {
+    // Only search if the query is not empty or just whitespace
+    if (search.text.trim().isNotEmpty) {
+      _isLoading = true;
+      notifyListeners();
+      await searchServices();
+    } else {
+      // If empty, clear the previous results
+      searchedServices.clear();
+      notifyListeners();
+    }
+  }
 
+  Future<void> searchServices() async {
+    searchedServices.clear();
     final DataState<List<ServiceEntity>> result =
         await _getServiceByCategory.call(
       ServiceByFiltersParams(
-          filters: <FilterParam>[],
-          query: query,
+          filters: getFilterParams(),
+          query: search.text,
           sort: _selectedSortOption,
           clientLat: _selectedLocation.latitude,
           clientLng: _selectedLocation.longitude),
     );
-
     if (result is DataSuccess) {
       searchedServices.clear();
       searchedServices.addAll(result.entity ?? <ServiceEntity>[]);
@@ -216,11 +238,31 @@ class ServicesPageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  List<FilterParam> getFilterParams() {
+    final params = <FilterParam>[];
+
+    if (_selectedIsMobileService != null) {
+      params.add(
+        FilterParam(
+          attribute: 'mobile_service',
+          operator: 'eq',
+          value: _selectedIsMobileService.toString(),
+        ),
+      );
+    }
+
+    // Add more filters below as needed...
+
+    return params;
+  }
+
   ///
   ///
   ///
   ///
-  LatLng _selectedLocation = const LatLng(0, 0);
+  LatLng _selectedLocation = LatLng(
+      LocalAuth.currentUser?.location?.latitude ?? 0,
+      LocalAuth.currentUser?.location?.longitude ?? 0);
   String _selectedLocationName = '';
   LatLng get selectedLocation => _selectedLocation;
   String get selectedLocationName => _selectedLocationName;

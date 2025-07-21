@@ -16,7 +16,7 @@ class LocationHeader extends StatelessWidget {
         children: <Widget>[
           TextButton(
             onPressed: () {
-              pro.resetLocationBottomsheet();
+              pro.resetLocationBottomsheet(context);
             },
             child: Text('cancel'.tr(),
                 style: TextTheme.of(context).bodyMedium?.copyWith(
