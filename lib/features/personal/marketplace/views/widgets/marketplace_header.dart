@@ -1,7 +1,6 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../../../core/widgets/costom_textformfield.dart';
+import 'marketplace_search_field.dart';
 
 class MarketPlaceHeader extends StatelessWidget {
   const MarketPlaceHeader({super.key});
@@ -15,13 +14,7 @@ class MarketPlaceHeader extends StatelessWidget {
         children: <Widget>[
           Row(
             children: <Widget>[
-              Expanded(
-                child: CustomTextFormField(
-                  hint: 'search'.tr(),
-                  controller: TextEditingController(),
-                  prefixIcon: const Icon(CupertinoIcons.search),
-                ),
-              ),
+              const MarketplaceSearchField(),
               const SizedBox(
                 width: 4,
               ),

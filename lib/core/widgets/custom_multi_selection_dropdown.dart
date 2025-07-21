@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../theme/app_theme.dart';
 
 class MultiSelectionDropdown<T> extends StatefulWidget {
@@ -87,7 +86,8 @@ class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
                               } else {
                                 tempSelected.add(item.value as T);
                               }
-                              Future.delayed(const Duration(microseconds: 100));
+                              Future<void>.delayed(
+                                  const Duration(microseconds: 100));
                               // Immediately update local UI
                               setOverlayState(() {});
 
@@ -142,9 +142,11 @@ class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
   void _closeDropdown() {
     _dropdownOverlay?.remove();
     _dropdownOverlay = null;
-    setState(() {
-      _isDropdownOpen = false;
-    });
+    if (!mounted) {
+      setState(() {
+        _isDropdownOpen = false;
+      });
+    }
   }
 
   @override

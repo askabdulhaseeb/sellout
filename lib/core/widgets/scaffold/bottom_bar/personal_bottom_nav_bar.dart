@@ -34,6 +34,8 @@ class _PersonalBottomNavBarState extends State<PersonalBottomNavBar> {
     return Consumer<PersonalBottomNavProvider>(
       builder: (BuildContext context, PersonalBottomNavProvider navPro, _) {
         return BottomNavigationBar(
+          elevation: 0,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           showSelectedLabels: false,
           showUnselectedLabels: false,
           type: BottomNavigationBarType.fixed,
@@ -46,11 +48,17 @@ class _PersonalBottomNavBarState extends State<PersonalBottomNavBar> {
             return BottomNavigationBarItem(
               icon: Stack(
                 children: <Widget>[
-                Padding(
+                  Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Icon(type.icon,),
+                    child: Icon(
+                      type.icon,
+                    ),
                   ),
-       if (type == PersonalBottomNavBarType.list[4])   const Positioned(top: 0,right: 0,child:  TotalUnreadMessagesBadgeWidget())
+                  if (type == PersonalBottomNavBarType.list[4])
+                    const Positioned(
+                        top: 0,
+                        right: 0,
+                        child: TotalUnreadMessagesBadgeWidget())
                 ],
               ),
               activeIcon: Stack(
@@ -59,8 +67,11 @@ class _PersonalBottomNavBarState extends State<PersonalBottomNavBar> {
                     padding: const EdgeInsets.all(8.0),
                     child: Icon(type.activeIcon),
                   ),
-                   if (type == PersonalBottomNavBarType.list[4])    const Positioned(top: 0,right: 0,child:  TotalUnreadMessagesBadgeWidget())
-              
+                  if (type == PersonalBottomNavBarType.list[4])
+                    const Positioned(
+                        top: 0,
+                        right: 0,
+                        child: TotalUnreadMessagesBadgeWidget())
                 ],
               ),
               label: type.code.tr(),

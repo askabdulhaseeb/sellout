@@ -30,6 +30,7 @@ class DashboardScreen extends StatelessWidget {
     ];
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Consumer<PersonalBottomNavProvider>(
         builder: (BuildContext context, PersonalBottomNavProvider navPro, _) {
           return screens[navPro.currentTabIndex];

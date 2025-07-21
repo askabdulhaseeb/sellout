@@ -11,12 +11,12 @@ import '../../domain/params/post_by_filter_params.dart';
 import '../../views/enums/sort_enums.dart';
 import '../models/location_name_model.dart';
 
-abstract class ExploreRemoteSource {
+abstract class MarketPlaceRemoteSource {
   Future<DataState<List<LocationNameEntity>>> fetchLocationNames(String params);
   Future<DataState<List<PostEntity>>> postByFilters(PostByFiltersParams params);
 }
 
-class ExploreRemoteSourceImpl implements ExploreRemoteSource {
+class MarketPlaceRemoteSourceImpl implements MarketPlaceRemoteSource {
   @override
   Future<DataState<List<LocationNameModel>>> fetchLocationNames(
       String params) async {
@@ -41,14 +41,14 @@ class ExploreRemoteSourceImpl implements ExploreRemoteSource {
         return DataSuccess<List<LocationNameModel>>('', locationData);
       } else {
         AppLog.error(response.exception?.message ?? 'something_wrong'.tr(),
-            name: 'locationrepositoryimpl.locationbyname - else');
+            name: 'MarketPlaceRemoteSourceImpl.locationbyname - else');
         return DataFailer<List<LocationNameModel>>(
           CustomException('Location fetching Failed'),
         );
       }
     } catch (e, stc) {
       AppLog.error('$e,$stc',
-          name: 'locationrepositoryimpl.locationbyname - else');
+          name: 'MarketPlaceRemoteSourceImpl.locationbyname - else');
       return DataFailer<List<LocationNameModel>>(
         CustomException('Location fetching Failed: $e'),
       );
@@ -66,10 +66,13 @@ class ExploreRemoteSourceImpl implements ExploreRemoteSource {
       if (params.distance != null) {
         endpoint += 'distance=${params.distance}&';
       }
-      if (params.size!.isNotEmpty) {
+      if (params.size.isNotEmpty) {
         endpoint += 'size=${json.encode(params.size)}&';
       }
-      if (params.colors!.isNotEmpty) {
+      if (params.query != '') {
+        endpoint += 'query=${json.encode(params.query)}&';
+      }
+      if (params.colors.isNotEmpty) {
         endpoint += 'color=${json.encode(params.colors)}&';
       }
       if (params.clientLat != null) {
@@ -122,8 +125,11 @@ class ExploreRemoteSourceImpl implements ExploreRemoteSource {
           CustomException('No data received from API.'),
         );
       }
-    } catch (e) {
-      debugPrint('Error in postByFilters: $e');
+    } catch (e, stc) {
+      AppLog.error('',
+          name: 'MarketPlaceRemoteSourceImpl.postByFilters - catch',
+          error: e,
+          stackTrace: stc);
       return DataFailer<List<PostEntity>>(
         CustomException('Failed to load posts'),
       );

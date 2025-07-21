@@ -180,18 +180,25 @@ class _Widget<T> extends StatelessWidget {
                           ),
                     style: TextTheme.of(context).bodyMedium,
                     dropdownStyleData: DropdownStyleData(
-                        maxHeight: 200,
+                        elevation: 0,
+                        maxHeight: 250,
                         decoration: BoxDecoration(
+                            boxShadow: <BoxShadow>[
+                              BoxShadow(
+                                  color:
+                                      Theme.of(context).scaffoldBackgroundColor)
+                            ],
                             borderRadius: BorderRadius.circular(8),
+                            backgroundBlendMode: BlendMode.color,
                             color: Theme.of(context).scaffoldBackgroundColor,
                             border: Border.all(
                                 color: ColorScheme.of(context)
                                     .outline
                                     .withValues(alpha: 0.2))),
-                        offset: const Offset(0, -10),
-                        isOverButton: true),
+                        offset: const Offset(0, 0),
+                        isOverButton: false),
                     menuItemStyleData: const MenuItemStyleData(
-                      height: 40,
+                      height: 60,
                     ),
                   ),
                 ),

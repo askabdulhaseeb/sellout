@@ -3,11 +3,11 @@ import '../../../post/domain/entities/post_entity.dart';
 import '../../domain/entities/location_name_entity.dart';
 import '../../domain/params/post_by_filter_params.dart';
 import '../../domain/repository/marketplace_repo.dart';
-import '../source/explore_remote_source.dart';
+import '../source/marketplace_remote_source.dart';
 
 class MarketPlaceRepoImpl implements MarketPlaceRepo {
   MarketPlaceRepoImpl(this.remoteSource);
-  final ExploreRemoteSource remoteSource;
+  final MarketPlaceRemoteSource remoteSource;
 
   @override
   Future<DataState<List<LocationNameEntity>>> fetchLocationNames(

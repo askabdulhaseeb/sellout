@@ -100,7 +100,7 @@ import '../features/personal/chats/create_chat/view/provider/create_private_chat
 import '../features/personal/chats/create_chat/view/provider/create_chat_group_provider.dart';
 import '../features/personal/listing/listing_form/views/widgets/attachment_selection/cept_group_invite_usecase.dart';
 import '../features/personal/marketplace/data/repository/marketplace_repo_impl.dart';
-import '../features/personal/marketplace/data/source/explore_remote_source.dart';
+import '../features/personal/marketplace/data/source/marketplace_remote_source.dart';
 import '../features/personal/marketplace/domain/repository/marketplace_repo.dart';
 import '../features/personal/marketplace/domain/usecase/location_name_usecase.dart';
 import '../features/personal/marketplace/domain/usecase/post_by_filters_usecase.dart';
@@ -507,7 +507,8 @@ void _country() {
 }
 
 void _marketplace() {
-  locator.registerFactory<ExploreRemoteSource>(() => ExploreRemoteSourceImpl());
+  locator.registerFactory<MarketPlaceRemoteSource>(
+      () => MarketPlaceRemoteSourceImpl());
   locator.registerFactory<GetPostByFiltersUsecase>(
       () => GetPostByFiltersUsecase(locator()));
 

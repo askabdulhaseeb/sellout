@@ -1,9 +1,9 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../../listing/listing_form/views/widgets/custom_listing_dropdown.dart';
 import '../../../../../providers/marketplace_provider.dart';
+import 'year_picker_dropdown.dart';
 
 class MarketFilterMakeModelWidget extends StatelessWidget {
   const MarketFilterMakeModelWidget({
@@ -26,13 +26,11 @@ class MarketFilterMakeModelWidget extends StatelessWidget {
             onChanged: (String? p0) => marketPro.setMake(p0),
           )),
           Expanded(
-            child: InDevMode(
-                child: CustomListingDropDown<MarketPlaceProvider>(
-              hint: 'model',
-              categoryKey: 'model',
-              selectedValue: marketPro.year,
-              onChanged: (String? p0) => marketPro.setYear(p0),
-            )),
+            child: CustomYearDropdown(
+              hintText: 'year'.tr(),
+              selectedYear: marketPro.year,
+              onChanged: (String? value) => marketPro.setYear(value),
+            ),
           ),
         ],
       ),

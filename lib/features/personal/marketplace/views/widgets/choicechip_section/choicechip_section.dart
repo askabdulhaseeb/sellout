@@ -4,7 +4,6 @@ import 'widgets/market_choice_chips.dart';
 
 class MarketChoiceChipSection extends StatefulWidget {
   const MarketChoiceChipSection({super.key});
-
   @override
   State<MarketChoiceChipSection> createState() =>
       _MarketChoiceChipSectionState();

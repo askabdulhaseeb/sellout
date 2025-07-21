@@ -2,21 +2,20 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/enums/listing/core/listing_type.dart';
-import '../../../listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../enums/marketplace_filter_type.dart';
 import '../providers/marketplace_provider.dart';
+import '../screens/pages/market_categorized_filteration_page.dart';
 
 class MarketPlaceCategoriesSection extends StatelessWidget {
   const MarketPlaceCategoriesSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final MarketPlaceProvider marketplacePro =
-        context.read<MarketPlaceProvider>();
+    final MarketPlaceProvider marketPro = context.read<MarketPlaceProvider>();
     final ThemeData theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -36,15 +35,11 @@ class MarketPlaceCategoriesSection extends StatelessWidget {
               final MarketPlaceFilterTypes category =
                   MarketPlaceFilterTypes.values[index];
               return InkWell(
-                onTap: () async {
-                  final AddListingFormProvider addListingPro =
-                      Provider.of<AddListingFormProvider>(context,
-                          listen: false);
-                  await addListingPro.fetchDropdownListings(
-                    '/category/${category.json}?list-id=',
-                  );
-                  marketplacePro.setMarketplaceCategory(
+                onTap: () {
+                  marketPro.setMarketplaceCategory(
                       ListingType.fromJson(category.json));
+                  Navigator.pushNamed(
+                      context, MarketCategorizedFilterationPage.routeName);
                 },
                 child: Container(
                   decoration: BoxDecoration(

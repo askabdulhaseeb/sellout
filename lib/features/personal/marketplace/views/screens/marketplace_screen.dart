@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../providers/marketplace_provider.dart';
-import 'pages/market_categorized_filteration_page.dart';
-import 'pages/marketplace_main_page.dart';
+import '../widgets/choicechip_section/choicechip_section.dart';
+import '../widgets/marketpace_grid_section.dart';
+import '../widgets/marketplace_categories_section.dart';
+import '../widgets/marketplace_header.dart';
+import '../widgets/marketplace_header_buttons.dart';
 
 class MarketPlaceScreen extends StatefulWidget {
   const MarketPlaceScreen({super.key});
@@ -17,7 +20,6 @@ class _MarketPlaceScreenState extends State<MarketPlaceScreen> {
   @override
   void initState() {
     super.initState();
-    // Load all posts (represented by empty json string)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<MarketPlaceProvider>().loadChipsPosts('');
     });
@@ -25,18 +27,20 @@ class _MarketPlaceScreenState extends State<MarketPlaceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return PersonalScaffold(
-      body: SingleChildScrollView(
-        child: Consumer<MarketPlaceProvider>(
-          builder: (BuildContext context, MarketPlaceProvider pro, _) {
-            if (pro.marketplaceCategory == null) {
-              return const MarketPlaceMainPage();
-            } else {
-              return const MarketCategorizedFilterationPage();
-            }
-          },
-        ),
-      ),
-    );
+    return PersonalScaffold(body: Consumer<MarketPlaceProvider>(
+      builder: (BuildContext context, MarketPlaceProvider pro, _) {
+        return SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              const MarketPlaceHeader(),
+              const MarketPlaceHeaderButtons(),
+              if (!pro.isFilteringPosts) const MarketPlaceCategoriesSection(),
+              if (pro.isFilteringPosts) const MarketPlacePostsGrid(),
+              if (!pro.isFilteringPosts) const MarketChoiceChipSection(),
+            ],
+          ),
+        );
+      },
+    ));
   }
 }

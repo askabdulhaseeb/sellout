@@ -13,28 +13,30 @@ class MarketFilterpetsCategoryAndLocationWIdget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final MarketPlaceProvider marketPro =
-        Provider.of<MarketPlaceProvider>(context, listen: false);
-    return Row(
-      spacing: 4,
-      children: <Widget>[
-        Expanded(
-            child: CustomListingDropDown<MarketPlaceProvider>(
-                hint: 'category',
-                categoryKey: 'pets',
-                selectedValue: marketPro.petCategory,
-                onChanged: (String? p0) => marketPro.setPetCategory(p0))),
-        Expanded(
-          child: LocationField(
-            initialText: marketPro.selectedLocationName,
-            onLocationSelected: (LocationNameEntity location) async {
-              final LatLng coords =
-                  await marketPro.getLocationCoordinates(location.description);
-              marketPro.updateLocation(coords, location.description);
-            },
-          ),
-        )
-      ],
-    );
+    return Consumer<MarketPlaceProvider>(
+        builder: (BuildContext context, MarketPlaceProvider marketPro,
+                Widget? child) =>
+            Row(
+              spacing: 4,
+              children: <Widget>[
+                Expanded(
+                    child: CustomListingDropDown<MarketPlaceProvider>(
+                        hint: 'category',
+                        categoryKey: 'pets',
+                        selectedValue: marketPro.petCategory,
+                        onChanged: (String? p0) =>
+                            marketPro.setPetCategory(p0))),
+                Expanded(
+                  child: LocationField(
+                    initialText: marketPro.selectedLocationName,
+                    onLocationSelected: (LocationNameEntity location) async {
+                      final LatLng coords = await marketPro
+                          .getLocationCoordinates(location.description);
+                      marketPro.updateLocation(coords, location.description);
+                    },
+                  ),
+                )
+              ],
+            ));
   }
 }

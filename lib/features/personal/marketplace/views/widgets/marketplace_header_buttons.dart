@@ -51,7 +51,7 @@ class MarketPlaceHeaderButtons extends StatelessWidget {
           ),
           _HeaderButton(
             onPressed: () => showModalBottomSheet(
-              enableDrag: false,
+              showDragHandle: false,
               isDismissible: false,
               useSafeArea: true,
               isScrollControlled: true,
