@@ -12,10 +12,12 @@ class LocationField extends StatefulWidget {
     required this.onLocationSelected,
     super.key,
     this.initialText,
+    this.icon,
   });
 
   final ValueChanged<LocationNameEntity> onLocationSelected;
   final String? initialText;
+  final Icon? icon;
 
   @override
   State<LocationField> createState() => _LocationFieldState();
@@ -207,6 +209,7 @@ class _LocationFieldState extends State<LocationField> {
     return CompositedTransformTarget(
       link: _layerLink,
       child: CustomTextFormField(
+        prefixIcon: widget.icon,
         key: _fieldKey,
         focusNode: _focusNode,
         controller: controller,
@@ -220,7 +223,7 @@ class _LocationFieldState extends State<LocationField> {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 ),
               )
-            : const Icon(Icons.search),
+            : null,
         onChanged: (String value) =>
             _debouncer.run(() => _fetchSuggestions(value)),
         autoFocus: false,

@@ -15,10 +15,10 @@ class ServicesScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Text(
-                'services',
-                style: Theme.of(context).textTheme.titleLarge,
-              ).tr(),
+              const Text('services',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w600))
+                  .tr(),
               const SizedBox(height: 8),
               const ServicesPageTypeToggleSection(),
             ],

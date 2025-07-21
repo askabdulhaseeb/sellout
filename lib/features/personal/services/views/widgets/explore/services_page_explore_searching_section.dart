@@ -26,6 +26,7 @@ class ServicesPageExploreSearchingSection extends StatelessWidget {
               },
             ),
             LocationField(
+              icon: const Icon(Icons.location_on_outlined),
               initialText: pro.selectedLocationName,
               onLocationSelected: (LocationNameEntity location) async {
                 final LatLng coords =

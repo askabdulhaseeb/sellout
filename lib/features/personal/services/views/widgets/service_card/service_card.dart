@@ -25,12 +25,8 @@ class ServiceCard extends StatelessWidget {
           AsyncSnapshot<DataState<BusinessEntity?>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data?.entity == null) {
-          return const Center(child: Text('No business data available'));
         }
-        final BusinessEntity business = snapshot.data!.entity!;
+        final BusinessEntity? business = snapshot.data!.entity;
         final TextTheme txt = Theme.of(context).textTheme;
         // final ColorScheme clrsch = Theme.of(context).colorScheme;
         return Column(
