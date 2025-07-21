@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../../../../../core/widgets/in_dev_mode.dart';
 import '../market_filter_price_widget.dart';
 import '../marketplace_filter_searchfield.dart';
 import 'widget/market_filter_food_drink_category_location_widget.dart';
-import 'widget/market_filter_food_drink_toggle_button.dart';
 
 class FoodDrinkFilterSection extends StatelessWidget {
   const FoodDrinkFilterSection({
@@ -17,11 +15,11 @@ class FoodDrinkFilterSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        InDevMode(
-          child: MarketFilterFoodDrinkToggleWidget(
-            screenWidth: screenWidth,
-          ),
-        ),
+        // InDevMode(
+        //   child: MarketFilterFoodDrinkToggleWidget(
+        //     screenWidth: screenWidth,
+        //   ),
+        // ),
         const MarketFilterSearchField(),
         const MarketFilterFoodDrinkCategoryAndLocationWIdget(),
         const MarketFilterPriceWIdget()

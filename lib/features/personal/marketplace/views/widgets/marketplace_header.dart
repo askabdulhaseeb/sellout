@@ -1,5 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../../../core/theme/app_theme.dart';
+import '../providers/marketplace_provider.dart';
+import 'market_private_search_dialog.dart';
+import 'marketplace_header_buttons.dart';
 import 'marketplace_search_field.dart';
 
 class MarketPlaceHeader extends StatelessWidget {
@@ -7,31 +13,47 @@ class MarketPlaceHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color primaryColor = Theme.of(context).colorScheme.primary;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(
-        children: <Widget>[
-          Row(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              const MarketplaceSearchField(),
-              const SizedBox(
-                width: 4,
+              Row(
+                children: <Widget>[
+                  const MarketplaceSearchField(),
+                  const SizedBox(
+                    width: 4,
+                  ),
+                  GestureDetector(
+                    onTap: () => showPrivateSearchDialog(context),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        border:
+                            Border.all(width: 2, color: AppTheme.primaryColor),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(CupertinoIcons.eye_slash,
+                          color: Theme.of(context).colorScheme.onSurface,
+                          size: 26),
+                    ),
+                  ),
+                ],
               ),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  border: Border.all(width: 1, color: primaryColor),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: Icon(CupertinoIcons.eye_slash,
-                    color: Theme.of(context).colorScheme.onSurface, size: 26),
-              ),
-            ],
-          ),
-          const Divider(),
-        ],
-      ),
-    );
+              const Divider(),
+              const MarketPlaceHeaderButtons(),
+              Consumer<MarketPlaceProvider>(builder: (BuildContext context,
+                  MarketPlaceProvider pro, Widget? child) {
+                if (pro.queryController.text.isNotEmpty) {
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 16, 0, 0),
+                    child: Text(
+                        '${'showing_result_for'.tr()} "${pro.queryController.text}"'),
+                  );
+                } else {
+                  return const SizedBox.shrink();
+                }
+              })
+            ]));
   }
 }

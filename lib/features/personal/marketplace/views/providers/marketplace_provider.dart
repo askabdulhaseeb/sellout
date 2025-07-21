@@ -413,6 +413,8 @@ class MarketPlaceProvider extends ChangeNotifier {
   TextEditingController maxPriceController = TextEditingController();
   TextEditingController queryController = TextEditingController();
   TextEditingController vehicleModel = TextEditingController();
+  TextEditingController accessCodeController = TextEditingController();
+  TextEditingController usernameController = TextEditingController();
 
 //params
   PostByFiltersParams _buildPostByFiltersParams() {
@@ -444,6 +446,13 @@ class MarketPlaceProvider extends ChangeNotifier {
         attribute: 'item_condition',
         operator: 'eq',
         value: _selectedConditionType?.json ?? '',
+      ));
+    }
+    if (accessCodeController.text.isNotEmpty) {
+      filters.add(FilterParam(
+        attribute: 'access_code',
+        operator: 'eq',
+        value: accessCodeController.text,
       ));
     }
     if (_selectedDeliveryType != null) {

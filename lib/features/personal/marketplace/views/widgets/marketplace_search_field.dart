@@ -40,11 +40,12 @@ class _MarketplaceSearchFieldState extends State<MarketplaceSearchField> {
       builder: (BuildContext context, MarketPlaceProvider pro, Widget? child) =>
           Expanded(
         child: CustomTextFormField(
+          autoFocus: false,
           onChanged: (String value) => _onSearchChanged(pro, value),
           controller: pro.queryController,
           hint: 'search'.tr(),
           prefixIcon: const Icon(CupertinoIcons.search),
-          suffixIcon: pro.isLoading
+          suffixIcon: (pro.isLoading && pro.queryController.text.isNotEmpty)
               ? const Padding(
                   padding: EdgeInsets.all(6.0),
                   child: SizedBox(

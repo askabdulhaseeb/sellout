@@ -109,7 +109,6 @@ class _CustomListingMultiDropdownState<T extends ChangeNotifier>
               child: Text(opt.label),
             ))
         .toList();
-
     return Consumer<T>(
       builder: (BuildContext context, T provider, _) {
         return MultiSelectionDropdown<String>(

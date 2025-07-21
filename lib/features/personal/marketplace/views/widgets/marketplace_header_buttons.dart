@@ -19,7 +19,6 @@ class MarketPlaceHeaderButtons extends StatelessWidget {
     return SizedBox(
       height: 40,
       child: ListView(
-        padding: const EdgeInsets.only(left: 16),
         scrollDirection: Axis.horizontal,
         children: <Widget>[
           _HeaderButton(
@@ -82,11 +81,11 @@ class _HeaderButton extends StatelessWidget {
 
     return ElevatedButton.icon(
       style: ElevatedButton.styleFrom(
-        elevation: 1000,
+        elevation: 0,
         backgroundColor: theme.scaffoldBackgroundColor,
         foregroundColor: AppTheme.primaryColor,
         side: BorderSide(color: theme.colorScheme.outlineVariant),
-        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 16),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
