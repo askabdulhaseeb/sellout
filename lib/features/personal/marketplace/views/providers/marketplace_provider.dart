@@ -26,12 +26,14 @@ class MarketPlaceProvider extends ChangeNotifier {
 //Api calls
   Future<bool> loadPosts() async {
     setLoading(true);
+    setMainPageKey('');
     try {
       final PostByFiltersParams params = _buildPostByFiltersParams();
       final DataState<List<PostEntity>> result =
           await _getPostByFiltersUsecase(params);
       if (result is DataSuccess<List<PostEntity>>) {
         setPosts(result.entity);
+        setMainPageKey(result.data);
         return true;
       } else {
         setPosts(<PostEntity>[]);
@@ -47,18 +49,20 @@ class MarketPlaceProvider extends ChangeNotifier {
     return false;
   }
 
-  Future<bool> loadChipsPosts(String category) async {
+  Future<bool> loadChipsPosts() async {
+    setMainPageKey('');
     try {
       setLoading(true);
       setChoiceChipPosts(<PostEntity>[]);
       final PostByFiltersParams params = PostByFiltersParams(
-        category: category,
+        category: _chipsCategory ?? '',
         filters: <FilterParam>[],
       );
       final DataState<List<PostEntity>> result =
           await _getPostByFiltersUsecase(params);
       if (result is DataSuccess<List<PostEntity>>) {
         setChoiceChipPosts(result.entity ?? <PostEntity>[]);
+        setMainPageKey(result.data);
 
         return true;
       } else {
@@ -73,13 +77,48 @@ class MarketPlaceProvider extends ChangeNotifier {
     return false;
   }
 
+  Future<void> loadMorePosts() async {
+    if (isLoading || mainPageKey == null || mainPageKey!.isEmpty) return;
+    try {
+      setLoading(true);
+      final PostByFiltersParams params = PostByFiltersParams(
+        filters: <FilterParam>[],
+        lastKey: mainPageKey,
+      );
+
+      final DataState<List<PostEntity>> result =
+          await _getPostByFiltersUsecase(params);
+
+      if (result is DataSuccess<List<PostEntity>>) {
+        final List<PostEntity> newPosts = result.entity ?? <PostEntity>[];
+
+        if (newPosts.isEmpty) {
+          _mainPageKey = null; // No more data
+        } else {
+          choicePosts?.addAll(newPosts); // Append new posts
+          setChoiceChipPosts(List<PostEntity>.from(choicePosts ?? []));
+          setMainPageKey(result.data); // 👈 Update lastKey
+        }
+      } else {
+        debugPrint(
+            'Failed to load more: ${result.exception?.message ?? 'something_wrong'.tr()}');
+      }
+    } catch (e) {
+      debugPrint('Error loading more posts: $e');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   Future<bool> loadFilteredContainerPosts() async {
+    setMainPageKey('');
     try {
       setLoading(true);
       final DataState<List<PostEntity>> result =
           await _getPostByFiltersUsecase(_buildPostByFiltersParams());
       if (result is DataSuccess<List<PostEntity>>) {
         setFilterContainerPosts(result.entity ?? <PostEntity>[]);
+        setMainPageKey(result.data);
         return true;
       } else {
         debugPrint(
@@ -176,6 +215,11 @@ class MarketPlaceProvider extends ChangeNotifier {
 
   void setLoading(bool value) {
     _isLoading = value;
+  }
+
+  void choiceChipsCategory(String? value) {
+    _chipsCategory = value;
+    loadChipsPosts();
   }
 
   void setPosts(
@@ -289,6 +333,10 @@ class MarketPlaceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setMainPageKey(String? val) {
+    _mainPageKey = val;
+  }
+
 // reset functions
   void clearMarketplaceCategory() {
     _marketplaceCategory = null;
@@ -347,6 +395,8 @@ class MarketPlaceProvider extends ChangeNotifier {
 
 //variables
   ListingType? _marketplaceCategory;
+  String? _chipsCategory;
+
   List<PostEntity>? _posts;
   List<PostEntity> _choicePosts = <PostEntity>[];
   List<PostEntity> _filteredContainerPosts = <PostEntity>[];
@@ -378,9 +428,11 @@ class MarketPlaceProvider extends ChangeNotifier {
   String? _petCategory;
   String? _energyRating;
   SortOption? _selectedSortOption = SortOption.dateAscending;
+  String? _mainPageKey;
 
 // Getters
   ListingType? get marketplaceCategory => _marketplaceCategory;
+  String? get chipsCategory => _chipsCategory;
   bool get isFilteringPosts => _isFilteringPosts;
   List<PostEntity>? get posts => _posts;
   List<PostEntity>? get choicePosts => _choicePosts;
@@ -413,6 +465,7 @@ class MarketPlaceProvider extends ChangeNotifier {
   String? get petCategory => _petCategory;
   String? get energyRating => _energyRating;
   SortOption? get selectedSortOption => _selectedSortOption;
+  String? get mainPageKey => _mainPageKey;
 
 // textfield controllers
   TextEditingController minPriceController = TextEditingController();
@@ -425,6 +478,7 @@ class MarketPlaceProvider extends ChangeNotifier {
 //params
   PostByFiltersParams _buildPostByFiltersParams() {
     return PostByFiltersParams(
+      lastKey: _mainPageKey,
       query: queryController.text,
       size: _selectedSize,
       colors: _selectedColor,

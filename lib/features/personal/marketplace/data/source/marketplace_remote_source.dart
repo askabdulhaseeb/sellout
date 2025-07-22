@@ -60,7 +60,7 @@ class MarketPlaceRemoteSourceImpl implements MarketPlaceRemoteSource {
       PostByFiltersParams params) async {
     try {
       String endpoint = 'post/filter?';
-      if (params.sort != SortOption.dateAscending) {
+      if (params.sort != SortOption.dateAscending && params.sort != null) {
         endpoint += 'sort=${params.sort?.json}&';
       }
       if (params.distance != null) {
@@ -69,7 +69,7 @@ class MarketPlaceRemoteSourceImpl implements MarketPlaceRemoteSource {
       if (params.size.isNotEmpty) {
         endpoint += 'size=${json.encode(params.size)}&';
       }
-      if (params.query != '') {
+      if (params.query != '' && params.query != null) {
         endpoint += 'query=${json.encode(params.query)}&';
       }
       if (params.colors.isNotEmpty) {
@@ -89,7 +89,9 @@ class MarketPlaceRemoteSourceImpl implements MarketPlaceRemoteSource {
       }
       if (params.lastKey != null && params.lastKey!.isNotEmpty) {
         // Append raw lastKey JSON
-        endpoint += 'lastKey=${params.lastKey}&';
+        endpoint += 'lastKey=${jsonEncode(<String, String?>{
+              'post_id': params.lastKey
+            })}&';
       }
       if (params.filters.isNotEmpty) {
         final String filtersStr = jsonEncode(
@@ -119,7 +121,12 @@ class MarketPlaceRemoteSourceImpl implements MarketPlaceRemoteSource {
             .map((dynamic item) =>
                 PostModel.fromJson(item as Map<String, dynamic>))
             .toList();
-        return DataSuccess<List<PostEntity>>(result.data ?? '', posts);
+        final String pageKey = (jsonData.containsKey('lastKey') &&
+                jsonData['lastKey'] != null &&
+                jsonData['lastKey']['post_id'] != null)
+            ? jsonData['lastKey']['post_id'] as String
+            : '';
+        return DataSuccess<List<PostEntity>>(pageKey, posts);
       } else {
         return DataFailer<List<PostEntity>>(
           CustomException('No data received from API.'),
