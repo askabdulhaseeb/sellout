@@ -1,0 +1,504 @@
+{
+  "clothes_brands": [
+    {
+      "label": "Levi's",
+      "value": "levis",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/a/ad/Levi%27s_logo.svg"
+    },
+    {
+      "label": "Nike",
+      "value": "nike",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg"
+    },
+    {
+      "label": "Adidas",
+      "value": "adidas",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg"
+    },
+    {
+      "label": "Zara",
+      "value": "zara",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/c/c7/Zara_Logo.svg"
+    },
+    {
+      "label": "H&M",
+      "value": "hm",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/5/53/H%26M-Logo.svg"
+    },
+    {
+      "label": "Gucci",
+      "value": "gucci",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/7/75/Gucci_Logo.svg"
+    },
+    {
+      "label": "Prada",
+      "value": "prada",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/41/Prada-Logo.svg"
+    },
+    {
+      "label": "Under Armour",
+      "value": "under_armour",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/6/61/Under_armour_logo.svg"
+    },
+    {
+      "label": "Reebok",
+      "value": "reebok",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/3/3e/Reebok_2019_logo.svg"
+    },
+    {
+      "label": "Puma",
+      "value": "puma",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/f/fd/Puma_AG.svg"
+    },
+    {
+      "label": "Calvin Klein",
+      "value": "calvin_klein",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Calvin_klein_logo.svg"
+    },
+    {
+      "label": "Tommy Hilfiger",
+      "value": "tommy_hilfiger",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/3/3e/Tommy_Hilfiger_logo.svg"
+    },
+    {
+      "label": "Armani",
+      "value": "armani",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4f/Armani_Logo.svg"
+    },
+    {
+      "label": "Burberry",
+      "value": "burberry",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/6/60/Burberry_Logo.svg"
+    },
+    {
+      "label": "The North Face",
+      "value": "the_north_face",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/f/f7/The_North_Face_logo.svg"
+    },
+    {
+      "label": "Columbia",
+      "value": "columbia",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Columbia_Sportswear_logo.svg"
+    },
+    {
+      "label": "New Balance",
+      "value": "new_balance",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/8/89/New_Balance_logo.svg"
+    },
+    {
+      "label": "Lacoste",
+      "value": "lacoste",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/0/04/Lacoste_logo.svg"
+    },
+    {
+      "label": "Champion",
+      "value": "champion",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/6/67/Champion_%28sportswear%29_logo.svg"
+    },
+    {
+      "label": "Wrangler",
+      "value": "wrangler",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/0/04/Wrangler_logo.svg"
+    },
+    {
+      "label": "Diesel",
+      "value": "diesel",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/f/f2/Diesel_logo.svg"
+    },
+    {
+      "label": "Brand 22",
+      "value": "brand_22",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 23",
+      "value": "brand_23",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 24",
+      "value": "brand_24",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 25",
+      "value": "brand_25",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 26",
+      "value": "brand_26",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 27",
+      "value": "brand_27",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 28",
+      "value": "brand_28",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 29",
+      "value": "brand_29",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 30",
+      "value": "brand_30",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 31",
+      "value": "brand_31",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 32",
+      "value": "brand_32",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 33",
+      "value": "brand_33",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 34",
+      "value": "brand_34",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 35",
+      "value": "brand_35",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 36",
+      "value": "brand_36",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 37",
+      "value": "brand_37",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 38",
+      "value": "brand_38",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 39",
+      "value": "brand_39",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 40",
+      "value": "brand_40",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 41",
+      "value": "brand_41",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 42",
+      "value": "brand_42",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 43",
+      "value": "brand_43",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 44",
+      "value": "brand_44",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 45",
+      "value": "brand_45",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 46",
+      "value": "brand_46",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 47",
+      "value": "brand_47",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 48",
+      "value": "brand_48",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 49",
+      "value": "brand_49",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 50",
+      "value": "brand_50",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 51",
+      "value": "brand_51",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 52",
+      "value": "brand_52",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 53",
+      "value": "brand_53",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 54",
+      "value": "brand_54",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 55",
+      "value": "brand_55",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 56",
+      "value": "brand_56",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 57",
+      "value": "brand_57",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 58",
+      "value": "brand_58",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 59",
+      "value": "brand_59",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 60",
+      "value": "brand_60",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 61",
+      "value": "brand_61",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 62",
+      "value": "brand_62",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 63",
+      "value": "brand_63",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 64",
+      "value": "brand_64",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 65",
+      "value": "brand_65",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 66",
+      "value": "brand_66",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 67",
+      "value": "brand_67",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 68",
+      "value": "brand_68",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 69",
+      "value": "brand_69",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 70",
+      "value": "brand_70",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 71",
+      "value": "brand_71",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 72",
+      "value": "brand_72",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 73",
+      "value": "brand_73",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 74",
+      "value": "brand_74",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 75",
+      "value": "brand_75",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 76",
+      "value": "brand_76",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 77",
+      "value": "brand_77",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 78",
+      "value": "brand_78",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 79",
+      "value": "brand_79",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 80",
+      "value": "brand_80",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 81",
+      "value": "brand_81",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 82",
+      "value": "brand_82",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 83",
+      "value": "brand_83",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 84",
+      "value": "brand_84",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 85",
+      "value": "brand_85",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 86",
+      "value": "brand_86",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 87",
+      "value": "brand_87",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 88",
+      "value": "brand_88",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 89",
+      "value": "brand_89",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 90",
+      "value": "brand_90",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 91",
+      "value": "brand_91",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 92",
+      "value": "brand_92",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 93",
+      "value": "brand_93",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 94",
+      "value": "brand_94",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 95",
+      "value": "brand_95",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 96",
+      "value": "brand_96",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 97",
+      "value": "brand_97",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 98",
+      "value": "brand_98",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Brand 99",
+      "value": "brand_99",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Generic_clothing_icon.svg"
+    },
+    {
+      "label": "Other",
+      "value": "other",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/e/e7/Question_mark_white_icon.svg"
+    }
+  ]
+}

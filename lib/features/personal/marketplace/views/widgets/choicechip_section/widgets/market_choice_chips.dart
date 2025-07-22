@@ -20,7 +20,7 @@ class _MarketplaceChoiceChipsState extends State<MarketplaceChoiceChips> {
     selectedJson = null;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<MarketPlaceProvider>(context, listen: false)
-          .loadChipsPosts('');
+          .choiceChipsCategory('');
     });
   }
 
@@ -67,7 +67,7 @@ class _MarketplaceChoiceChipsState extends State<MarketplaceChoiceChips> {
                       });
                       context
                           .read<MarketPlaceProvider>()
-                          .loadChipsPosts(json ?? '');
+                          .choiceChipsCategory(json);
                     },
                   ),
                 );
