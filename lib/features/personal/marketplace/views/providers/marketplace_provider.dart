@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -12,6 +13,7 @@ import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../listing/listing_form/data/models/sub_category_model.dart';
 import '../../../listing/listing_form/data/sources/remote/dropdown_listing_api.dart';
 import '../../../post/domain/entities/post_entity.dart';
+import '../../../post/post_detail/views/screens/post_detail_screen.dart';
 import '../../domain/enum/radius_type.dart';
 import '../../domain/params/filter_params.dart';
 import '../../domain/params/post_by_filter_params.dart';
@@ -42,6 +44,34 @@ class MarketPlaceProvider extends ChangeNotifier {
       }
     } catch (e) {
       setPosts(<PostEntity>[]);
+      debugPrint('Unexpected error: $e');
+    } finally {
+      setLoading(false);
+    }
+    return false;
+  }
+
+  Future<bool> loadPrivatePost(BuildContext context) async {
+    try {
+      final PostByFiltersParams params =
+          PostByFiltersParams(filters: <FilterParam>[
+        FilterParam(
+            attribute: 'access_code',
+            operator: 'eq',
+            value: accessCodeController.text)
+      ]);
+      final DataState<List<PostEntity>> result =
+          await _getPostByFiltersUsecase(params);
+      if (result is DataSuccess<List<PostEntity>>) {
+        Navigator.pushNamed(context, PostDetailScreen.routeName,
+            arguments: <String, dynamic>{'pid': result.entity?.first.postID});
+        return true;
+      } else {
+        setPosts(<PostEntity>[]);
+        debugPrint(
+            'Failed: ${result.exception?.message ?? 'something_wrong'.tr()}');
+      }
+    } catch (e) {
       debugPrint('Unexpected error: $e');
     } finally {
       setLoading(false);
@@ -96,7 +126,7 @@ class MarketPlaceProvider extends ChangeNotifier {
           _mainPageKey = null; // No more data
         } else {
           choicePosts?.addAll(newPosts); // Append new posts
-          setChoiceChipPosts(List<PostEntity>.from(choicePosts ?? []));
+          setChoiceChipPosts(List<PostEntity>.from(choicePosts ?? <dynamic>[]));
           setMainPageKey(result.data); // 👈 Update lastKey
         }
       } else {
@@ -480,7 +510,8 @@ class MarketPlaceProvider extends ChangeNotifier {
   TextEditingController maxPriceController = TextEditingController();
   TextEditingController queryController = TextEditingController();
   TextEditingController vehicleModel = TextEditingController();
-  TextEditingController accessCodeController = TextEditingController();
+  TextEditingController accessCodeController =
+      TextEditingController(text: kDebugMode ? '7DB79C' : null);
   TextEditingController usernameController = TextEditingController();
 
 //params
@@ -514,13 +545,6 @@ class MarketPlaceProvider extends ChangeNotifier {
         attribute: 'item_condition',
         operator: 'eq',
         value: _selectedConditionType?.json ?? '',
-      ));
-    }
-    if (accessCodeController.text.isNotEmpty) {
-      filters.add(FilterParam(
-        attribute: 'access_code',
-        operator: 'eq',
-        value: accessCodeController.text,
       ));
     }
     if (_selectedDeliveryType != null) {
