@@ -63,23 +63,23 @@ class MarketPlaceRemoteSourceImpl implements MarketPlaceRemoteSource {
       if (params.sort != SortOption.dateAscending && params.sort != null) {
         endpoint += 'sort=${params.sort?.json}&';
       }
+      if (params.query != '' && params.query != null) {
+        endpoint += 'query=${params.query}&';
+      }
       if (params.distance != null) {
         endpoint += 'distance=${params.distance}&';
-      }
-      if (params.size.isNotEmpty) {
-        endpoint += 'size=${json.encode(params.size)}&';
-      }
-      if (params.query != '' && params.query != null) {
-        endpoint += 'query=${json.encode(params.query)}&';
-      }
-      if (params.colors.isNotEmpty) {
-        endpoint += 'color=${json.encode(params.colors)}&';
       }
       if (params.clientLat != null) {
         endpoint += 'clientLat=${params.clientLat}&';
       }
       if (params.clientLng != null) {
         endpoint += 'clientLng=${params.clientLng}&';
+      }
+      if (params.size.isNotEmpty) {
+        endpoint += 'size=${json.encode(params.size)}&';
+      }
+      if (params.colors.isNotEmpty) {
+        endpoint += 'color=${json.encode(params.colors)}&';
       }
       if (params.address != null && params.address!.isNotEmpty) {
         endpoint += 'address=${params.address}&';

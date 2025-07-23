@@ -9,6 +9,7 @@ import '../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../core/sources/data_state.dart';
+import '../../../../../core/widgets/app_snakebar.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../listing/listing_form/data/models/sub_category_model.dart';
 import '../../../listing/listing_form/data/sources/remote/dropdown_listing_api.dart';
@@ -67,11 +68,14 @@ class MarketPlaceProvider extends ChangeNotifier {
             arguments: <String, dynamic>{'pid': result.entity?.first.postID});
         return true;
       } else {
+        AppSnackBar.showSnackBar(
+            context, 'no_posts_found_with_this_access_code'.tr());
         setPosts(<PostEntity>[]);
         debugPrint(
             'Failed: ${result.exception?.message ?? 'something_wrong'.tr()}');
       }
     } catch (e) {
+      AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
       debugPrint('Unexpected error: $e');
     } finally {
       setLoading(false);
@@ -198,8 +202,8 @@ class MarketPlaceProvider extends ChangeNotifier {
       _selectedRadius = 10;
       _selectedLocation = LatLng(LocalAuth.currentUser?.location?.latitude ?? 0,
           LocalAuth.currentUser?.location?.longitude ?? 0);
-      Navigator.pop(context);
     }
+    Navigator.pop(context);
   }
 
   void locationSheetApplyButton() async {

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../providers/marketplace_provider.dart';
-import '../widgets/choicechip_section/choicechip_section.dart';
-import '../widgets/marketpace_grid_section.dart';
+import '../widgets/marketplace_choicechip_section/choicechip_section.dart';
+import '../widgets/marketplace_search_section_widgets/marketpace_search_grid_section.dart';
 import '../widgets/marketplace_categories_section.dart';
-import '../widgets/marketplace_header.dart';
+import '../widgets/marketplace_search_section_widgets/marketplace_header_section/marketplace_header.dart';
 
 class MarketPlaceScreen extends StatefulWidget {
   const MarketPlaceScreen({super.key});
@@ -44,7 +44,10 @@ class _MarketPlaceScreenState extends State<MarketPlaceScreen> {
               const SliverToBoxAdapter(child: MarketPlaceHeader()),
               if (!pro.isFilteringPosts)
                 const SliverToBoxAdapter(child: MarketPlaceCategoriesSection()),
-              if (pro.isFilteringPosts) const MarketPlacePostsGrid(),
+              if (pro.isFilteringPosts)
+                const SliverToBoxAdapter(
+                  child: MarketPlaceSearchGrid(),
+                ),
               if (!pro.isFilteringPosts)
                 const SliverToBoxAdapter(child: MarketChoiceChipSection()),
               if (pro.isLoading)

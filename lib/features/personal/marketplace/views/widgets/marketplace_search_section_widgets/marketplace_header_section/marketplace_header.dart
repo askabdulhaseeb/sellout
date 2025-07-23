@@ -2,11 +2,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../core/theme/app_theme.dart';
-import '../providers/marketplace_provider.dart';
-import 'market_private_search_dialog.dart';
-import 'marketplace_header_buttons.dart';
-import 'marketplace_search_field.dart';
+import '../../../../../../../core/theme/app_theme.dart';
+import '../../../providers/marketplace_provider.dart';
+import '../../market_private_search_dialog.dart';
+import 'widgets/marketplace_header_buttons.dart';
+import '../marketplace_search_field.dart';
 
 class MarketPlaceHeader extends StatelessWidget {
   const MarketPlaceHeader({super.key});
