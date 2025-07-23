@@ -190,6 +190,7 @@ class MarketPlaceProvider extends ChangeNotifier {
     _selectedSize = <String>[];
     _selectedColor = <String>[];
     _selectedSubCategory = null;
+    _brand = null;
     notifyListeners();
   }
 
@@ -337,6 +338,11 @@ class MarketPlaceProvider extends ChangeNotifier {
     _mainPageKey = val;
   }
 
+  void setBrand(String? val) {
+    _brand = val;
+    notifyListeners();
+  }
+
 // reset functions
   void clearMarketplaceCategory() {
     _marketplaceCategory = null;
@@ -352,6 +358,7 @@ class MarketPlaceProvider extends ChangeNotifier {
     _cLothFootCategory = ListingType.clothAndFoot.cids.first;
     _selectedSize = <String>[];
     _selectedColor = <String>[];
+    _brand = '';
     // Items
     _listingItemCategory = null;
     // Pets
@@ -396,7 +403,6 @@ class MarketPlaceProvider extends ChangeNotifier {
 //variables
   ListingType? _marketplaceCategory;
   String? _chipsCategory;
-
   List<PostEntity>? _posts;
   List<PostEntity> _choicePosts = <PostEntity>[];
   List<PostEntity> _filteredContainerPosts = <PostEntity>[];
@@ -428,6 +434,7 @@ class MarketPlaceProvider extends ChangeNotifier {
   String? _petCategory;
   String? _energyRating;
   SortOption? _selectedSortOption = SortOption.dateAscending;
+  String? _brand;
   String? _mainPageKey;
 
 // Getters
@@ -465,6 +472,7 @@ class MarketPlaceProvider extends ChangeNotifier {
   String? get petCategory => _petCategory;
   String? get energyRating => _energyRating;
   SortOption? get selectedSortOption => _selectedSortOption;
+  String? get brand => _brand;
   String? get mainPageKey => _mainPageKey;
 
 // textfield controllers
@@ -643,6 +651,17 @@ class MarketPlaceProvider extends ChangeNotifier {
         operator: 'eq',
         value: _foodDrinkCategory,
       ));
+    }
+
+    /// cloth foot section
+    if (_brand != null && _brand != '') {
+      filters.add(FilterParam(
+        attribute: 'brand',
+        operator: 'eq',
+        value: _brand ?? '',
+      ));
+
+      ///
     }
     return filters;
   }

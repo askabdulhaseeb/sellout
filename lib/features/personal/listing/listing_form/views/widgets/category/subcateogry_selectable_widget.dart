@@ -8,7 +8,6 @@ import '../../../../../../../core/widgets/loader.dart';
 import '../../../data/sources/remote/listing_api.dart';
 import '../../../domain/entities/listing_entity.dart';
 import '../../../domain/entities/sub_category_entity.dart';
-import '../../params/get_categories_params.dart';
 import 'category_selection_bottom_sheet.dart';
 
 class SubCategorySelectableWidget<T extends ChangeNotifier>
@@ -39,7 +38,7 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
     extends State<SubCategorySelectableWidget<T>> {
   SubCategoryEntity? selectedSubCategory;
   SubCategoryEntity? selectedSubSubCategory;
-  List<ListingEntity> allListings = [];
+  List<ListingEntity> allListings = <ListingEntity>[];
   bool isLoading = true;
 
   @override
@@ -65,12 +64,7 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
     setState(() => isLoading = true);
 
     try {
-      final listings = await ListingAPI().listing(
-        GetCategoriesParams(
-          listId: widget.cid ?? '',
-          listIdType: widget.listType?.json ?? '',
-        ),
-      );
+      final List<ListingEntity> listings = await ListingAPI().listing();
 
       setState(() {
         allListings = listings;
@@ -84,16 +78,20 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
 
   List<ListingEntity> _filteredListings() {
     if (widget.listType == ListingType.clothAndFoot) {
-      return allListings.where((e) => e.cid == widget.cid).toList();
+      return allListings
+          .where((ListingEntity e) => e.cid == widget.cid)
+          .toList();
     } else if (widget.listType != null) {
-      return allListings.where((e) => e.type == widget.listType).toList();
+      return allListings
+          .where((ListingEntity e) => e.listId == widget.listType?.json)
+          .toList();
     }
     return allListings;
   }
 
   @override
   Widget build(BuildContext context) {
-    final builder = _buildMainUI;
+    final Widget Function(BuildContext context) builder = _buildMainUI;
 
     // If a provider is passed, wrap with Consumer
     if (widget.listenProvider != null) {
@@ -112,7 +110,7 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         if (widget.title)
           Text('category'.tr(),
               style: const TextStyle(fontWeight: FontWeight.w500)),
@@ -129,7 +127,7 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
               border: Border.all(color: ColorScheme.of(context).outlineVariant),
             ),
             child: Row(
-              children: [
+              children: <Widget>[
                 Expanded(
                   child: Text(
                     selectedSubCategory?.title ?? 'select_category'.tr(),
@@ -158,7 +156,8 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
             title: 'sub_category'.tr(),
             selectedItem: selectedSubSubCategory,
             items: selectedSubCategory!.subCategory
-                .map((e) => DropdownMenuItem<SubCategoryEntity>(
+                .map((SubCategoryEntity e) =>
+                    DropdownMenuItem<SubCategoryEntity>(
                       value: e,
                       child: Text(e.title),
                     ))

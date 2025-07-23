@@ -109,6 +109,7 @@ flutter:
     - assets/images/marketplace_filters/
     - assets/jsons/
     - assets/jsons/foot_brands.json
+    - assets/jsons/clothes_brands.json
     - assets/translations/
     
   # example:
