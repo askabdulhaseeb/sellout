@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
-import '../../../../enums/customer_review_type.dart';
-import '../../../../providers/marketplace_provider.dart';
+import '../../../../../../enums/customer_review_type.dart';
+import '../../../../../../providers/marketplace_provider.dart';
 
 class FilterSheetCustomerReviewTile extends StatelessWidget {
   const FilterSheetCustomerReviewTile({super.key});

@@ -3,8 +3,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
-import '../../../../../domain/enum/radius_type.dart';
-import '../../../../providers/marketplace_provider.dart';
+import '../../../../../../../domain/enum/radius_type.dart';
+import '../../../../../../providers/marketplace_provider.dart';
 
 class LocationMap extends StatefulWidget {
   const LocationMap({super.key});

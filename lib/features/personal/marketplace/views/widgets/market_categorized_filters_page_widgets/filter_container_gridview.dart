@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../../post/domain/entities/post_entity.dart';
 import '../../../../user/profiles/views/widgets/subwidgets/post_grid_view_tile.dart';
 import '../../providers/marketplace_provider.dart';
-import '../choicechip_section/widgets/market_choice_chip_grid.dart';
+import '../marketplace_choicechip_section/widgets/market_choice_chip_grid.dart';
 
 class MarketPlaceFilterContainerPostsGrid extends StatelessWidget {
   const MarketPlaceFilterContainerPostsGrid({super.key});

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/theme/app_theme.dart';
-import '../../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../providers/marketplace_provider.dart';
-import 'widgets/filter_Sheet_condition_dropdown.dart';
-import 'widgets/filter_Sheet_price_range.dart';
+import '../../../../../../../../../core/theme/app_theme.dart';
+import '../../../../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../providers/marketplace_provider.dart';
+import 'widgets/filter_sheet_condition_dropdown.dart';
 import 'widgets/filter_sheet_delivery_dropdown.dart';
+import 'widgets/filter_sheet_price_range.dart';
 import 'widgets/filter_sheet_review_dropdown.dart';
 
 class MarketPlaceFilterBottomSheet extends StatelessWidget {
@@ -61,13 +61,11 @@ class MarketPlaceFilterBottomSheet extends StatelessWidget {
                 child: SingleChildScrollView(
                   padding: EdgeInsets.all(16),
                   child: Column(
+                    spacing: 8,
                     children: <Widget>[
                       FilterSheetCustomerReviewTile(),
-                      SizedBox(height: 8),
                       ExpandablePriceRangeTile(),
-                      SizedBox(height: 8),
                       FilterSheetConditionTile(),
-                      SizedBox(height: 8),
                       FilterSheetDeliveryTypeTile(),
                     ],
                   ),

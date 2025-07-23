@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../post/domain/entities/post_entity.dart';
-import '../../../user/profiles/views/widgets/subwidgets/post_grid_view_tile.dart';
-import '../providers/marketplace_provider.dart';
+import '../../../../post/domain/entities/post_entity.dart';
+import '../../../../user/profiles/views/widgets/subwidgets/post_grid_view_tile.dart';
+import '../../providers/marketplace_provider.dart';
 
-class MarketPlacePostsGrid extends StatelessWidget {
-  const MarketPlacePostsGrid({super.key});
+class MarketPlaceSearchGrid extends StatelessWidget {
+  const MarketPlaceSearchGrid({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +18,7 @@ class MarketPlacePostsGrid extends StatelessWidget {
         }
 
         return GridView.builder(
+          physics: const NeverScrollableScrollPhysics(),
           padding: const EdgeInsets.all(16),
           itemCount: posts.length,
           shrinkWrap: true,

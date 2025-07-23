@@ -47,90 +47,101 @@ class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
     final Size size = renderBox.size;
     final Offset offset = renderBox.localToGlobal(Offset.zero);
 
-    List<T> tempSelected =
-        List<T>.from(widget.selectedItems); // <-- Copy selection locally
+    List<T> tempSelected = List<T>.from(widget.selectedItems);
 
     _dropdownOverlay = OverlayEntry(
-      builder: (BuildContext context) => Positioned(
-        width: widget.width ?? size.width,
-        left: offset.dx,
-        top: offset.dy + size.height + 4,
-        child: CompositedTransformFollower(
-          link: _layerLink,
-          showWhenUnlinked: false,
-          offset: Offset(0, size.height + 4),
-          child: Material(
-            elevation: 4,
-            borderRadius: BorderRadius.circular(8),
-            color: Theme.of(context).scaffoldBackgroundColor,
-            child: SizedBox(
-              height: 220,
-              child: StatefulBuilder(
-                builder: (BuildContext context, setOverlayState) {
-                  return SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Wrap(
-                        spacing: 16,
-                        runSpacing: 16,
-                        children: widget.items.map((DropdownMenuItem<T> item) {
-                          final bool isSelected =
-                              tempSelected.contains(item.value);
-                          final ColorScheme colorScheme =
-                              Theme.of(context).colorScheme;
+      builder: (BuildContext context) {
+        return GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: _closeDropdown, // Closes dropdown on outside tap
+          child: Stack(
+            children: [
+              // The actual dropdown panel
+              Positioned(
+                width: widget.width ?? size.width,
+                left: offset.dx,
+                top: offset.dy + size.height + 4,
+                child: CompositedTransformFollower(
+                  link: _layerLink,
+                  showWhenUnlinked: false,
+                  offset: Offset(0, size.height + 4),
+                  child: Material(
+                    elevation: 4,
+                    borderRadius: BorderRadius.circular(8),
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    child: SizedBox(
+                      height: 220,
+                      child: StatefulBuilder(
+                        builder: (BuildContext context, setOverlayState) {
+                          return SingleChildScrollView(
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Wrap(
+                                spacing: 16,
+                                runSpacing: 16,
+                                children: widget.items
+                                    .map((DropdownMenuItem<T> item) {
+                                  final bool isSelected =
+                                      tempSelected.contains(item.value);
+                                  final ColorScheme colorScheme =
+                                      Theme.of(context).colorScheme;
 
-                          return GestureDetector(
-                            onTap: () {
-                              if (isSelected) {
-                                tempSelected.remove(item.value);
-                              } else {
-                                tempSelected.add(item.value as T);
-                              }
-                              Future<void>.delayed(
-                                  const Duration(microseconds: 100));
-                              // Immediately update local UI
-                              setOverlayState(() {});
+                                  return GestureDetector(
+                                    onTap: () {
+                                      if (isSelected) {
+                                        tempSelected.remove(item.value);
+                                      } else {
+                                        tempSelected.add(item.value as T);
+                                      }
 
-                              // Notify parent
-                              widget.onChanged?.call(tempSelected);
-                            },
-                            child: Container(
-                              width: 48,
-                              height: 48,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: isSelected
-                                      ? AppTheme.primaryColor
-                                      : Colors.transparent,
-                                  width: isSelected ? 3 : 1,
-                                ),
-                                color: Theme.of(context).colorScheme.surface,
-                              ),
-                              alignment: Alignment.center,
-                              child: Center(
-                                child: DefaultTextStyle(
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: colorScheme.onSurface,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                  child: item.child,
-                                ),
+                                      Future<void>.delayed(
+                                          const Duration(microseconds: 100));
+                                      setOverlayState(() {});
+                                      widget.onChanged?.call(tempSelected);
+                                    },
+                                    child: Container(
+                                      width: 48,
+                                      height: 48,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: isSelected
+                                              ? AppTheme.primaryColor
+                                              : Colors.transparent,
+                                          width: isSelected ? 3 : 1,
+                                        ),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .surface,
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: Center(
+                                        child: DefaultTextStyle(
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            color: colorScheme.onSurface,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                          child: item.child,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
                               ),
                             ),
                           );
-                        }).toList(),
+                        },
                       ),
                     ),
-                  );
-                },
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-        ),
-      ),
+        );
+      },
     );
 
     Overlay.of(context).insert(_dropdownOverlay!);
