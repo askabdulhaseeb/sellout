@@ -142,10 +142,15 @@ class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
   void _closeDropdown() {
     _dropdownOverlay?.remove();
     _dropdownOverlay = null;
-    if (!mounted) {
-      setState(() {
-        _isDropdownOpen = false;
-      });
+
+    try {
+      if (mounted) {
+        setState(() {
+          _isDropdownOpen = false;
+        });
+      }
+    } catch (e) {
+      // Widget already disposed — do nothing
     }
   }
 

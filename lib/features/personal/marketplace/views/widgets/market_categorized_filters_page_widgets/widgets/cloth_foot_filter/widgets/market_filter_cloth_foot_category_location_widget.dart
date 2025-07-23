@@ -20,82 +20,71 @@ class _MarketFilterClothFootCategoryAndLocationWIdgetState
   String? selectedItem;
 
   @override
-  void initState() {
-    super.initState();
-    loadFootBrands();
-  }
-
-  Future<void> loadFootBrands() async {
-    final String response =
-        await rootBundle.loadString('assets/jsons/foot_brands.json');
-    final List<dynamic> data = json.decode(response);
-    final List<Map<String, dynamic>> brands =
-        List<Map<String, dynamic>>.from(data);
-
-    setState(() {
-      dropdownItems = brands
-          .map((Map<String, dynamic> brand) => brand['label'].toString())
-          .toList();
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Consumer<MarketPlaceProvider>(
       builder:
           (BuildContext context, MarketPlaceProvider marketPro, Widget? child) {
-        return Row(
-          children: <Widget>[
-            Expanded(
-              child: SubCategorySelectableWidget<MarketPlaceProvider>(
-                listenProvider:
-                    Provider.of<MarketPlaceProvider>(context, listen: false),
-                title: false,
-                listType: marketPro.marketplaceCategory,
-                subCategory: marketPro.selectedSubCategory,
-                onSelected: marketPro.setSelectedCategory,
-                cid: marketPro.cLothFootCategory ?? '',
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 6),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: SubCategorySelectableWidget<MarketPlaceProvider>(
+                  listenProvider:
+                      Provider.of<MarketPlaceProvider>(context, listen: false),
+                  title: false,
+                  listType: marketPro.marketplaceCategory,
+                  subCategory: marketPro.selectedSubCategory,
+                  onSelected: marketPro.setSelectedCategory,
+                  cid: marketPro.cLothFootCategory ?? '',
+                ),
               ),
-            ),
-            const SizedBox(width: 10),
-            FootBrandDropdown()
-          ],
+              const SizedBox(width: 4),
+              const BrandDropdown()
+            ],
+          ),
         );
       },
     );
   }
 }
 
-class FootBrandDropdown extends StatefulWidget {
-  const FootBrandDropdown({super.key});
+class BrandDropdown extends StatefulWidget {
+  const BrandDropdown({super.key});
 
   @override
-  State<FootBrandDropdown> createState() => _FootBrandDropdownState();
+  State<BrandDropdown> createState() => _BrandDropdownState();
 }
 
-class _FootBrandDropdownState extends State<FootBrandDropdown> {
+class _BrandDropdownState extends State<BrandDropdown> {
   String? selectedItem;
   List<DropdownMenuItem<String>> dropdownItems = <DropdownMenuItem<String>>[];
 
   @override
-  void initState() {
-    super.initState();
-    loadFootBrands();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final MarketPlaceProvider provider =
+        Provider.of<MarketPlaceProvider>(context, listen: false);
+    loadBrands(provider.cLothFootCategory ?? 'clothes'); // default to cloth
   }
 
-  Future<void> loadFootBrands() async {
+  Future<void> loadBrands(String type) async {
+    final String fileName =
+        type == 'footwear' ? 'foot_brands.json' : 'clothes_brands.json';
     final String response =
-        await rootBundle.loadString('assets/jsons/foot_brands.json');
-    final List<dynamic> data = json.decode(response);
-    final List<Map<String, dynamic>> brands =
-        List<Map<String, dynamic>>.from(data);
+        await rootBundle.loadString('assets/jsons/$fileName');
+    final Map<String, dynamic> jsonData = json.decode(response);
+    final List<dynamic> data = jsonData['${type}_brands'];
 
     setState(() {
-      dropdownItems = brands.map((Map<String, dynamic> brand) {
-        final String label = brand['label'] ?? '';
+      dropdownItems = data.map((dynamic brand) {
+        final Map<String, dynamic> brandMap = brand as Map<String, dynamic>;
+        final String label = brandMap['label'] ?? '';
         return DropdownMenuItem<String>(
           value: label,
-          child: Text(label),
+          child: Text(
+            label,
+          ),
         );
       }).toList();
     });
@@ -103,17 +92,33 @@ class _FootBrandDropdownState extends State<FootBrandDropdown> {
 
   @override
   Widget build(BuildContext context) {
+    final MarketPlaceProvider provider =
+        Provider.of<MarketPlaceProvider>(context);
+
+    // Reload if the category changes (optional)
+    if ((provider.cLothFootCategory ?? 'cloth') == 'foot' &&
+        dropdownItems.isNotEmpty &&
+        dropdownItems.first.value != 'Nike') {
+      loadBrands('foot');
+    } else if ((provider.cLothFootCategory ?? 'cloth') == 'cloth' &&
+        dropdownItems.isNotEmpty &&
+        dropdownItems.first.value != 'Zara') {
+      loadBrands('cloth');
+    }
+
     return Expanded(
       child: CustomDropdown<String>(
-          title: '',
-          selectedItem: selectedItem,
-          items: dropdownItems,
-          onChanged: (String? value) {
-            setState(() {
-              selectedItem = value;
-            });
-          },
-          validator: (bool? val) => null),
+        hint: 'Brands',
+        title: '',
+        selectedItem: selectedItem,
+        items: dropdownItems,
+        onChanged: (String? value) {
+          setState(() {
+            selectedItem = value;
+          });
+        },
+        validator: (bool? val) => null,
+      ),
     );
   }
 }

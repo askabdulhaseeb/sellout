@@ -1,0 +1,384 @@
+{
+  "clothes_brands": [
+    {
+      "label": "Nike",
+      "value": "nike"
+    },
+    {
+      "label": "Adidas",
+      "value": "adidas"
+    },
+    {
+      "label": "Zara",
+      "value": "zara"
+    },
+    {
+      "label": "H&M",
+      "value": "hm"
+    },
+    {
+      "label": "Levi's",
+      "value": "levis"
+    },
+    {
+      "label": "Gap",
+      "value": "gap"
+    },
+    {
+      "label": "Old Navy",
+      "value": "old_navy"
+    },
+    {
+      "label": "American Eagle",
+      "value": "american_eagle"
+    },
+    {
+      "label": "Forever 21",
+      "value": "forever_21"
+    },
+    {
+      "label": "Abercrombie & Fitch",
+      "value": "abercrombie_fitch"
+    },
+    {
+      "label": "Urban Outfitters",
+      "value": "urban_outfitters"
+    },
+    {
+      "label": "Banana Republic",
+      "value": "banana_republic"
+    },
+    {
+      "label": "Tommy Hilfiger",
+      "value": "tommy_hilfiger"
+    },
+    {
+      "label": "Calvin Klein",
+      "value": "calvin_klein"
+    },
+    {
+      "label": "Ralph Lauren",
+      "value": "ralph_lauren"
+    },
+    {
+      "label": "Lacoste",
+      "value": "lacoste"
+    },
+    {
+      "label": "Polo Ralph Lauren",
+      "value": "polo_ralph_lauren"
+    },
+    {
+      "label": "Hollister",
+      "value": "hollister"
+    },
+    {
+      "label": "Uniqlo",
+      "value": "uniqlo"
+    },
+    {
+      "label": "Next",
+      "value": "next"
+    },
+    {
+      "label": "Marks & Spencer",
+      "value": "marks_spencer"
+    },
+    {
+      "label": "Primark",
+      "value": "primark"
+    },
+    {
+      "label": "Superdry",
+      "value": "superdry"
+    },
+    {
+      "label": "River Island",
+      "value": "river_island"
+    },
+    {
+      "label": "Topshop",
+      "value": "topshop"
+    },
+    {
+      "label": "Burberry",
+      "value": "burberry"
+    },
+    {
+      "label": "ASOS",
+      "value": "asos"
+    },
+    {
+      "label": "Boohoo",
+      "value": "boohoo"
+    },
+    {
+      "label": "PrettyLittleThing",
+      "value": "prettylittlething"
+    },
+    {
+      "label": "New Look",
+      "value": "new_look"
+    },
+    {
+      "label": "Jack Wills",
+      "value": "jack_wills"
+    },
+    {
+      "label": "George at ASDA",
+      "value": "george_asda"
+    },
+    {
+      "label": "JD Sports",
+      "value": "jd_sports"
+    },
+    {
+      "label": "House of Fraser",
+      "value": "house_of_fraser"
+    },
+    {
+      "label": "Reiss",
+      "value": "reiss"
+    },
+    {
+      "label": "FatFace",
+      "value": "fatface"
+    },
+    {
+      "label": "Peacocks",
+      "value": "peacocks"
+    },
+    {
+      "label": "Next Clearance",
+      "value": "next_clearance"
+    },
+    {
+      "label": "Dorothy Perkins",
+      "value": "dorothy_perkins"
+    },
+    {
+      "label": "Burton",
+      "value": "burton"
+    },
+    {
+      "label": "Bonanza Satrangi",
+      "value": "bonanza_satrangi"
+    },
+    {
+      "label": "Khaadi",
+      "value": "khaadi"
+    },
+    {
+      "label": "Sana Safinaz",
+      "value": "sana_safinaz"
+    },
+    {
+      "label": "Gul Ahmed",
+      "value": "gul_ahmed"
+    },
+    {
+      "label": "Alkaram Studio",
+      "value": "alkaram"
+    },
+    {
+      "label": "Limelight",
+      "value": "limelight"
+    },
+    {
+      "label": "Sapphire",
+      "value": "sapphire"
+    },
+    {
+      "label": "Junaid Jamshed",
+      "value": "j_junaid_jamshed"
+    },
+    {
+      "label": "Nishat Linen",
+      "value": "nishat_linen"
+    },
+    {
+      "label": "Beechtree",
+      "value": "beechtree"
+    },
+    {
+      "label": "Ethnic",
+      "value": "ethnic"
+    },
+    {
+      "label": "Outfitters",
+      "value": "outfitters"
+    },
+    {
+      "label": "Breakout",
+      "value": "breakout"
+    },
+    {
+      "label": "Leisure Club",
+      "value": "leisure_club"
+    },
+    {
+      "label": "Outfitters Junior",
+      "value": "outfitters_junior"
+    },
+    {
+      "label": "Rang Ja",
+      "value": "rang_ja"
+    },
+    {
+      "label": "Minnie Minors",
+      "value": "minnie_minors"
+    },
+    {
+      "label": "Bareeze",
+      "value": "bareeze"
+    },
+    {
+      "label": "Maria B",
+      "value": "maria_b"
+    },
+    {
+      "label": "Charizma",
+      "value": "charizma"
+    },
+    {
+      "label": "Zellbury",
+      "value": "zellbury"
+    },
+    {
+      "label": "Generation",
+      "value": "generation"
+    },
+    {
+      "label": "Cross Stitch",
+      "value": "cross_stitch"
+    },
+    {
+      "label": "Ego",
+      "value": "ego"
+    },
+    {
+      "label": "Kayseria",
+      "value": "kayseria"
+    },
+    {
+      "label": "So Kamal",
+      "value": "so_kamal"
+    },
+    {
+      "label": "Anaya",
+      "value": "anaya"
+    },
+    {
+      "label": "Baroque",
+      "value": "baroque"
+    },
+    {
+      "label": "Warda",
+      "value": "warda"
+    },
+    {
+      "label": "Zeena",
+      "value": "zeena"
+    },
+    {
+      "label": "Saya",
+      "value": "saya"
+    },
+    {
+      "label": "Firdous",
+      "value": "firdous"
+    },
+    {
+      "label": "Cambridge",
+      "value": "cambridge"
+    },
+    {
+      "label": "Royal Tag",
+      "value": "royal_tag"
+    },
+    {
+      "label": "Monark",
+      "value": "monark"
+    },
+    {
+      "label": "Denizen",
+      "value": "denizen"
+    },
+    {
+      "label": "Hiba",
+      "value": "hiba"
+    },
+    {
+      "label": "Bonkers",
+      "value": "bonkers"
+    },
+    {
+      "label": "One",
+      "value": "one"
+    },
+    {
+      "label": "Diners",
+      "value": "diners"
+    },
+    {
+      "label": "Edenrobe",
+      "value": "edenrobe"
+    },
+    {
+      "label": "Chinyere",
+      "value": "chinyere"
+    },
+    {
+      "label": "Laam",
+      "value": "laam"
+    },
+    {
+      "label": "Kapray",
+      "value": "kapray"
+    },
+    {
+      "label": "Motifz",
+      "value": "motifz"
+    },
+    {
+      "label": "House of Ittehad",
+      "value": "ittehad"
+    },
+    {
+      "label": "Satrangi",
+      "value": "satrangi"
+    },
+    {
+      "label": "Imrozia",
+      "value": "imrozia"
+    },
+    {
+      "label": "Zeen",
+      "value": "zeen"
+    },
+    {
+      "label": "Miniso",
+      "value": "miniso"
+    },
+    {
+      "label": "Outfitters Man",
+      "value": "outfitters_man"
+    },
+    {
+      "label": "Outfitters Woman",
+      "value": "outfitters_woman"
+    },
+    {
+      "label": "Hush Puppies",
+      "value": "hush_puppies"
+    },
+    {
+      "label": "Servis",
+      "value": "servis"
+    },
+    {
+      "label": "Borjan",
+      "value": "borjan"
+    }
+  ]
+}

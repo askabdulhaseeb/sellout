@@ -17,8 +17,6 @@ class ItemFilterWidget extends StatelessWidget {
           children: <Widget>[
             const MarketFilterSearchField(),
             SubCategorySelectableWidget<MarketPlaceProvider>(
-              listenProvider:
-                  Provider.of<MarketPlaceProvider>(context, listen: false),
               title: false,
               listType: marketPro.marketplaceCategory,
               subCategory: marketPro.selectedSubCategory,

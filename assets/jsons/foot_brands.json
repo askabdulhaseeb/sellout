@@ -1,504 +1,396 @@
 {
-  "foot_brands": [
+  "footwear_brands": [
     {
       "label": "Nike",
-      "value": "nike",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg"
+      "value": "nike"
     },
     {
       "label": "Adidas",
-      "value": "adidas",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg"
+      "value": "adidas"
     },
     {
       "label": "Puma",
-      "value": "puma",
-      "logo": "https://upload.wikimedia.org/wikipedia/en/4/49/Puma_AG.svg"
+      "value": "puma"
     },
     {
       "label": "Reebok",
-      "value": "reebok",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/1/16/Reebok_2019_logo.svg"
-    },
-    {
-      "label": "New Balance",
-      "value": "new_balance",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/8/89/New_Balance_logo.svg"
-    },
-    {
-      "label": "Converse",
-      "value": "converse",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/5/54/Converse_logo.svg"
-    },
-    {
-      "label": "Vans",
-      "value": "vans",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/48/Vans_logo.svg"
-    },
-    {
-      "label": "ASICS",
-      "value": "asics",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/6/6b/ASICS_Logo.svg"
+      "value": "reebok"
     },
     {
       "label": "Under Armour",
-      "value": "under_armour",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Under_armour_logo.svg"
+      "value": "under_armour"
+    },
+    {
+      "label": "New Balance",
+      "value": "new_balance"
+    },
+    {
+      "label": "Converse",
+      "value": "converse"
     },
     {
       "label": "Skechers",
-      "value": "skechers",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Skechers_logo.svg"
+      "value": "skechers"
     },
     {
-      "label": "Nike 11",
-      "value": "nike_11",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg"
+      "label": "Vans",
+      "value": "vans"
     },
     {
-      "label": "Adidas 12",
-      "value": "adidas_12",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg"
+      "label": "Fila",
+      "value": "fila"
     },
     {
-      "label": "Puma 13",
-      "value": "puma_13",
-      "logo": "https://upload.wikimedia.org/wikipedia/en/4/49/Puma_AG.svg"
+      "label": "ASICS",
+      "value": "asics"
     },
     {
-      "label": "Reebok 14",
-      "value": "reebok_14",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/1/16/Reebok_2019_logo.svg"
+      "label": "Brooks",
+      "value": "brooks"
     },
     {
-      "label": "New Balance 15",
-      "value": "new_balance_15",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/8/89/New_Balance_logo.svg"
+      "label": "Saucony",
+      "value": "saucony"
     },
     {
-      "label": "Converse 16",
-      "value": "converse_16",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/5/54/Converse_logo.svg"
+      "label": "Hoka One One",
+      "value": "hoka_one_one"
     },
     {
-      "label": "Vans 17",
-      "value": "vans_17",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/48/Vans_logo.svg"
+      "label": "Timberland",
+      "value": "timberland"
     },
     {
-      "label": "ASICS 18",
-      "value": "asics_18",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/6/6b/ASICS_Logo.svg"
+      "label": "DC Shoes",
+      "value": "dc_shoes"
     },
     {
-      "label": "Under Armour 19",
-      "value": "under_armour_19",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Under_armour_logo.svg"
+      "label": "Jordan",
+      "value": "jordan"
     },
     {
-      "label": "Skechers 20",
-      "value": "skechers_20",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Skechers_logo.svg"
+      "label": "Dr. Martens",
+      "value": "dr_martens"
     },
     {
-      "label": "Nike 21",
-      "value": "nike_21",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg"
+      "label": "Clarks",
+      "value": "clarks"
     },
     {
-      "label": "Adidas 22",
-      "value": "adidas_22",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg"
+      "label": "Bata",
+      "value": "bata"
     },
     {
-      "label": "Puma 23",
-      "value": "puma_23",
-      "logo": "https://upload.wikimedia.org/wikipedia/en/4/49/Puma_AG.svg"
+      "label": "Borjan",
+      "value": "borjan"
     },
     {
-      "label": "Reebok 24",
-      "value": "reebok_24",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/1/16/Reebok_2019_logo.svg"
+      "label": "Hush Puppies",
+      "value": "hush_puppies"
     },
     {
-      "label": "New Balance 25",
-      "value": "new_balance_25",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/8/89/New_Balance_logo.svg"
+      "label": "Service Shoes",
+      "value": "service_shoes"
     },
     {
-      "label": "Converse 26",
-      "value": "converse_26",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/5/54/Converse_logo.svg"
+      "label": "Ndure",
+      "value": "ndure"
     },
     {
-      "label": "Vans 27",
-      "value": "vans_27",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/48/Vans_logo.svg"
+      "label": "Urban Sole",
+      "value": "urban_sole"
     },
     {
-      "label": "ASICS 28",
-      "value": "asics_28",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/6/6b/ASICS_Logo.svg"
+      "label": "ECS",
+      "value": "ecs"
     },
     {
-      "label": "Under Armour 29",
-      "value": "under_armour_29",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Under_armour_logo.svg"
+      "label": "Metro Shoes",
+      "value": "metro_shoes"
     },
     {
-      "label": "Skechers 30",
-      "value": "skechers_30",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Skechers_logo.svg"
+      "label": "Stylo",
+      "value": "stylo"
     },
     {
-      "label": "Nike 31",
-      "value": "nike_31",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg"
+      "label": "Nike SB",
+      "value": "nike_sb"
     },
     {
-      "label": "Adidas 32",
-      "value": "adidas_32",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg"
+      "label": "Superdry",
+      "value": "superdry"
     },
     {
-      "label": "Puma 33",
-      "value": "puma_33",
-      "logo": "https://upload.wikimedia.org/wikipedia/en/4/49/Puma_AG.svg"
+      "label": "K-Swiss",
+      "value": "k_swiss"
     },
     {
-      "label": "Reebok 34",
-      "value": "reebok_34",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/1/16/Reebok_2019_logo.svg"
+      "label": "Champion",
+      "value": "champion"
     },
     {
-      "label": "New Balance 35",
-      "value": "new_balance_35",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/8/89/New_Balance_logo.svg"
+      "label": "Lacoste",
+      "value": "lacoste"
     },
     {
-      "label": "Converse 36",
-      "value": "converse_36",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/5/54/Converse_logo.svg"
+      "label": "U.S. Polo Assn.",
+      "value": "us_polo"
     },
     {
-      "label": "Vans 37",
-      "value": "vans_37",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/48/Vans_logo.svg"
+      "label": "Gucci",
+      "value": "gucci"
     },
     {
-      "label": "ASICS 38",
-      "value": "asics_38",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/6/6b/ASICS_Logo.svg"
+      "label": "Balenciaga",
+      "value": "balenciaga"
     },
     {
-      "label": "Under Armour 39",
-      "value": "under_armour_39",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Under_armour_logo.svg"
+      "label": "Chanel",
+      "value": "chanel"
     },
     {
-      "label": "Skechers 40",
-      "value": "skechers_40",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Skechers_logo.svg"
+      "label": "Prada",
+      "value": "prada"
     },
     {
-      "label": "Nike 41",
-      "value": "nike_41",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg"
+      "label": "Tommy Hilfiger",
+      "value": "tommy_hilfiger"
     },
     {
-      "label": "Adidas 42",
-      "value": "adidas_42",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg"
+      "label": "Zara",
+      "value": "zara"
     },
     {
-      "label": "Puma 43",
-      "value": "puma_43",
-      "logo": "https://upload.wikimedia.org/wikipedia/en/4/49/Puma_AG.svg"
+      "label": "Louis Vuitton",
+      "value": "louis_vuitton"
     },
     {
-      "label": "Reebok 44",
-      "value": "reebok_44",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/1/16/Reebok_2019_logo.svg"
+      "label": "Diesel",
+      "value": "diesel"
     },
     {
-      "label": "New Balance 45",
-      "value": "new_balance_45",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/8/89/New_Balance_logo.svg"
+      "label": "Crocs",
+      "value": "crocs"
     },
     {
-      "label": "Converse 46",
-      "value": "converse_46",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/5/54/Converse_logo.svg"
+      "label": "Birkenstock",
+      "value": "birkenstock"
     },
     {
-      "label": "Vans 47",
-      "value": "vans_47",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/48/Vans_logo.svg"
+      "label": "Toms",
+      "value": "toms"
     },
     {
-      "label": "ASICS 48",
-      "value": "asics_48",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/6/6b/ASICS_Logo.svg"
+      "label": "Red Wing",
+      "value": "red_wing"
     },
     {
-      "label": "Under Armour 49",
-      "value": "under_armour_49",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Under_armour_logo.svg"
+      "label": "Johnston & Murphy",
+      "value": "johnston_murphy"
     },
     {
-      "label": "Skechers 50",
-      "value": "skechers_50",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Skechers_logo.svg"
+      "label": "Kurt Geiger",
+      "value": "kurt_geiger"
     },
     {
-      "label": "Nike 51",
-      "value": "nike_51",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg"
+      "label": "Grenson",
+      "value": "grenson"
     },
     {
-      "label": "Adidas 52",
-      "value": "adidas_52",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg"
+      "label": "Church's",
+      "value": "churchs"
     },
     {
-      "label": "Puma 53",
-      "value": "puma_53",
-      "logo": "https://upload.wikimedia.org/wikipedia/en/4/49/Puma_AG.svg"
+      "label": "Loake",
+      "value": "loake"
     },
     {
-      "label": "Reebok 54",
-      "value": "reebok_54",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/1/16/Reebok_2019_logo.svg"
+      "label": "Base London",
+      "value": "base_london"
     },
     {
-      "label": "New Balance 55",
-      "value": "new_balance_55",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/8/89/New_Balance_logo.svg"
+      "label": "Solovair",
+      "value": "solovair"
     },
     {
-      "label": "Converse 56",
-      "value": "converse_56",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/5/54/Converse_logo.svg"
+      "label": "Oliver Sweeney",
+      "value": "oliver_sweeney"
     },
     {
-      "label": "Vans 57",
-      "value": "vans_57",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/48/Vans_logo.svg"
+      "label": "Jeffery West",
+      "value": "jeffery_west"
     },
     {
-      "label": "ASICS 58",
-      "value": "asics_58",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/6/6b/ASICS_Logo.svg"
+      "label": "Yeezy",
+      "value": "yeezy"
     },
     {
-      "label": "Under Armour 59",
-      "value": "under_armour_59",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Under_armour_logo.svg"
+      "label": "Merrell",
+      "value": "merrell"
     },
     {
-      "label": "Skechers 60",
-      "value": "skechers_60",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Skechers_logo.svg"
+      "label": "Keen",
+      "value": "keen"
     },
     {
-      "label": "Nike 61",
-      "value": "nike_61",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg"
+      "label": "Dior",
+      "value": "dior"
     },
     {
-      "label": "Adidas 62",
-      "value": "adidas_62",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg"
+      "label": "Off-White",
+      "value": "off_white"
     },
     {
-      "label": "Puma 63",
-      "value": "puma_63",
-      "logo": "https://upload.wikimedia.org/wikipedia/en/4/49/Puma_AG.svg"
+      "label": "Steve Madden",
+      "value": "steve_madden"
     },
     {
-      "label": "Reebok 64",
-      "value": "reebok_64",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/1/16/Reebok_2019_logo.svg"
+      "label": "Cole Haan",
+      "value": "cole_haan"
     },
     {
-      "label": "New Balance 65",
-      "value": "new_balance_65",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/8/89/New_Balance_logo.svg"
+      "label": "Sperry",
+      "value": "sperry"
     },
     {
-      "label": "Converse 66",
-      "value": "converse_66",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/5/54/Converse_logo.svg"
+      "label": "Rockport",
+      "value": "rockport"
     },
     {
-      "label": "Vans 67",
-      "value": "vans_67",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/48/Vans_logo.svg"
+      "label": "Allen Edmonds",
+      "value": "allen_edmonds"
     },
     {
-      "label": "ASICS 68",
-      "value": "asics_68",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/6/6b/ASICS_Logo.svg"
+      "label": "Florsheim",
+      "value": "florsheim"
     },
     {
-      "label": "Under Armour 69",
-      "value": "under_armour_69",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Under_armour_logo.svg"
+      "label": "Airwalk",
+      "value": "airwalk"
     },
     {
-      "label": "Skechers 70",
-      "value": "skechers_70",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Skechers_logo.svg"
+      "label": "Etnies",
+      "value": "etnies"
     },
     {
-      "label": "Nike 71",
-      "value": "nike_71",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg"
+      "label": "Globe",
+      "value": "globe"
     },
     {
-      "label": "Adidas 72",
-      "value": "adidas_72",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg"
+      "label": "Heelys",
+      "value": "heelys"
     },
     {
-      "label": "Puma 73",
-      "value": "puma_73",
-      "logo": "https://upload.wikimedia.org/wikipedia/en/4/49/Puma_AG.svg"
+      "label": "Mountain Gear",
+      "value": "mountain_gear"
     },
     {
-      "label": "Reebok 74",
-      "value": "reebok_74",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/1/16/Reebok_2019_logo.svg"
+      "label": "Asim Jofa",
+      "value": "asim_jofa"
     },
     {
-      "label": "New Balance 75",
-      "value": "new_balance_75",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/8/89/New_Balance_logo.svg"
+      "label": "Bonanza Satrangi",
+      "value": "bonanza_satrangi"
     },
     {
-      "label": "Converse 76",
-      "value": "converse_76",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/5/54/Converse_logo.svg"
+      "label": "Mochari",
+      "value": "mochari"
     },
     {
-      "label": "Vans 77",
-      "value": "vans_77",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/48/Vans_logo.svg"
+      "label": "J.",
+      "value": "jdot"
     },
     {
-      "label": "ASICS 78",
-      "value": "asics_78",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/6/6b/ASICS_Logo.svg"
+      "label": "Outfitters",
+      "value": "outfitters"
     },
     {
-      "label": "Under Armour 79",
-      "value": "under_armour_79",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Under_armour_logo.svg"
+      "label": "Levi's",
+      "value": "levis"
     },
     {
-      "label": "Skechers 80",
-      "value": "skechers_80",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Skechers_logo.svg"
+      "label": "Next",
+      "value": "next"
     },
     {
-      "label": "Nike 81",
-      "value": "nike_81",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg"
+      "label": "Marks & Spencer",
+      "value": "marks_spencer"
     },
     {
-      "label": "Adidas 82",
-      "value": "adidas_82",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg"
+      "label": "River Island",
+      "value": "river_island"
     },
     {
-      "label": "Puma 83",
-      "value": "puma_83",
-      "logo": "https://upload.wikimedia.org/wikipedia/en/4/49/Puma_AG.svg"
+      "label": "Topshop",
+      "value": "topshop"
     },
     {
-      "label": "Reebok 84",
-      "value": "reebok_84",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/1/16/Reebok_2019_logo.svg"
+      "label": "Ted Baker",
+      "value": "ted_baker"
     },
     {
-      "label": "New Balance 85",
-      "value": "new_balance_85",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/8/89/New_Balance_logo.svg"
+      "label": "AllSaints",
+      "value": "allsaints"
     },
     {
-      "label": "Converse 86",
-      "value": "converse_86",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/5/54/Converse_logo.svg"
+      "label": "Burberry",
+      "value": "burberry"
     },
     {
-      "label": "Vans 87",
-      "value": "vans_87",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/48/Vans_logo.svg"
+      "label": "Barbour",
+      "value": "barbour"
     },
     {
-      "label": "ASICS 88",
-      "value": "asics_88",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/6/6b/ASICS_Logo.svg"
+      "label": "Hackett",
+      "value": "hackett"
     },
     {
-      "label": "Under Armour 89",
-      "value": "under_armour_89",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Under_armour_logo.svg"
+      "label": "Ben Sherman",
+      "value": "ben_sherman"
     },
     {
-      "label": "Skechers 90",
-      "value": "skechers_90",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Skechers_logo.svg"
+      "label": "Paul Smith",
+      "value": "paul_smith"
     },
     {
-      "label": "Nike 91",
-      "value": "nike_91",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg"
+      "label": "Charles & Keith",
+      "value": "charles_keith"
     },
     {
-      "label": "Adidas 92",
-      "value": "adidas_92",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg"
+      "label": "Apex",
+      "value": "apex"
     },
     {
-      "label": "Puma 93",
-      "value": "puma_93",
-      "logo": "https://upload.wikimedia.org/wikipedia/en/4/49/Puma_AG.svg"
+      "label": "Urban Decay",
+      "value": "urban_decay"
     },
     {
-      "label": "Reebok 94",
-      "value": "reebok_94",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/1/16/Reebok_2019_logo.svg"
+      "label": "ALDO",
+      "value": "aldo"
     },
     {
-      "label": "New Balance 95",
-      "value": "new_balance_95",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/8/89/New_Balance_logo.svg"
+      "label": "Nine West",
+      "value": "nine_west"
     },
     {
-      "label": "Converse 96",
-      "value": "converse_96",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/5/54/Converse_logo.svg"
+      "label": "DKNY",
+      "value": "dkny"
     },
     {
-      "label": "Vans 97",
-      "value": "vans_97",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/48/Vans_logo.svg"
+      "label": "Giordano",
+      "value": "giordano"
     },
     {
-      "label": "ASICS 98",
-      "value": "asics_98",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/6/6b/ASICS_Logo.svg"
+      "label": "Pedro",
+      "value": "pedro"
     },
     {
-      "label": "Under Armour 99",
-      "value": "under_armour_99",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Under_armour_logo.svg"
+      "label": "Payless",
+      "value": "payless"
     },
     {
-      "label": "Other",
-      "value": "other",
-      "logo": ""
+      "label": "Caterpillar",
+      "value": "caterpillar"
     }
   ]
 }
