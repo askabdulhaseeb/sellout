@@ -9,20 +9,21 @@ class FilterSheetConditionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<MarketPlaceProvider>(
-      builder: (BuildContext context, MarketPlaceProvider pro, _) {
-        return ListTile(
-          title: Text(
-            'condition'.tr(),
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          subtitle: DropdownButtonFormField<ConditionType>(
+    return ListTile(
+      title: Text(
+        'condition'.tr(),
+        style: Theme.of(context).textTheme.titleMedium,
+      ),
+      subtitle: Consumer<MarketPlaceProvider>(
+        builder: (BuildContext context, MarketPlaceProvider pro, _) {
+          return DropdownButtonFormField<ConditionType>(
             icon: Icon(
               Icons.keyboard_arrow_down_rounded,
               color: ColorScheme.of(context).outline,
             ),
             value: pro.selectedConditionType,
             isExpanded: true,
+            dropdownColor: Theme.of(context).cardColor,
             decoration: const InputDecoration(
               border: InputBorder.none,
               enabledBorder: InputBorder.none,
@@ -45,16 +46,16 @@ class FilterSheetConditionTile extends StatelessWidget {
                   style: Theme.of(context)
                       .textTheme
                       .bodyMedium
-                      ?.copyWith(color: ColorScheme.of(context).outline),
+                      ?.copyWith(color: ColorScheme.of(context).onSurface),
                 ),
               );
             }).toList(),
             onChanged: (ConditionType? newValue) {
-              pro.setSelectedConditionType(newValue);
+              pro.setConditionType(newValue);
             },
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

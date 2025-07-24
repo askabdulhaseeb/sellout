@@ -1,5 +1,4 @@
 enum ReviewFilterParam {
-  all,
   five,
   four,
   three,
@@ -10,8 +9,6 @@ enum ReviewFilterParam {
 extension ReviewFilterParamExtension on ReviewFilterParam {
   String get text {
     switch (this) {
-      case ReviewFilterParam.all:
-        return 'all_stars';
       case ReviewFilterParam.five:
         return '5_stars';
       case ReviewFilterParam.four:
@@ -27,8 +24,6 @@ extension ReviewFilterParamExtension on ReviewFilterParam {
 
   int? get jsonValue {
     switch (this) {
-      case ReviewFilterParam.all:
-        return null;
       case ReviewFilterParam.five:
         return 5;
       case ReviewFilterParam.four:
@@ -43,7 +38,7 @@ extension ReviewFilterParamExtension on ReviewFilterParam {
   }
 
   /// Convert from int? to enum value
-  static ReviewFilterParam fromJson(int? value) {
+  static ReviewFilterParam? fromJson(int? value) {
     switch (value) {
       case 5:
         return ReviewFilterParam.five;
@@ -56,7 +51,7 @@ extension ReviewFilterParamExtension on ReviewFilterParam {
       case 1:
         return ReviewFilterParam.one;
       default:
-        return ReviewFilterParam.all;
+        return null;
     }
   }
 }
