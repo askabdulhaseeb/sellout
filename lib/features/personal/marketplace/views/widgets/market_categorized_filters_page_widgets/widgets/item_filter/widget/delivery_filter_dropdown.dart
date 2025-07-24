@@ -26,7 +26,7 @@ class DeliveryFilterDropdown extends StatelessWidget {
               )
               .toList(),
           selectedItem: marketPro.selectedDeliveryType,
-          onChanged: marketPro.setSelectedDeliveryType,
+          onChanged: marketPro.setDeliveryType,
           validator: (_) => null,
         );
       },

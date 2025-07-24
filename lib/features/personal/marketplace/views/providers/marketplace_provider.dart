@@ -184,15 +184,16 @@ class MarketPlaceProvider extends ChangeNotifier {
     }
   }
 
-  void filterSheetResetButton() async {
-    final bool success = await loadPosts();
-    if (success) {
-      _selectedConditionType = null;
-      _selectedDeliveryType = null;
-      minPriceController.clear();
-      maxPriceController.clear();
-      setFilteringBool(false);
-    }
+  void filterSheetResetButton(BuildContext context) async {
+    _selectedConditionType = null;
+    _rating = null;
+    _selectedDeliveryType = null;
+    minPriceController.clear();
+    maxPriceController.clear();
+    _isFilteringPosts = false;
+    await loadPosts();
+    Navigator.pop(context);
+    notifyListeners();
   }
 
   void resetLocationBottomsheet(BuildContext context) async {
@@ -328,12 +329,12 @@ class MarketPlaceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setSelectedDeliveryType(DeliveryType? value) {
+  void setDeliveryType(DeliveryType? value) {
     _selectedDeliveryType = value;
     notifyListeners();
   }
 
-  void setSelectedConditionType(ConditionType? value) {
+  void setConditionType(ConditionType? value) {
     _selectedConditionType = value;
     notifyListeners();
   }

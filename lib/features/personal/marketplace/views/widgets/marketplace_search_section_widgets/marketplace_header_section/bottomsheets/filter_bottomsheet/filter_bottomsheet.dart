@@ -44,8 +44,7 @@ class MarketPlaceFilterBottomSheet extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      pro.filterSheetResetButton();
-                      Navigator.pop(context);
+                      pro.filterSheetResetButton(context);
                     },
                     child: Text(
                       'reset'.tr(),

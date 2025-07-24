@@ -8,50 +8,48 @@ class FilterSheetCustomerReviewTile extends StatelessWidget {
   const FilterSheetCustomerReviewTile({super.key});
   @override
   Widget build(BuildContext context) {
-    final MarketPlaceProvider provider =
-        Provider.of<MarketPlaceProvider>(context);
     return ListTile(
-      title: Text(
-        'customer_review'.tr(),
-        style: Theme.of(context).textTheme.titleMedium,
-      ),
-      subtitle: DropdownButtonFormField<ReviewFilterParam>(
-        value: ReviewFilterParamExtension.fromJson(provider.rating),
-        isExpanded: true,
-        hint: Text(
-          'select_customer_review'.tr(),
-          style: Theme.of(context)
-              .textTheme
-              .bodyMedium
-              ?.copyWith(color: Theme.of(context).colorScheme.outline),
+        title: Text(
+          'customer_review'.tr(),
+          style: Theme.of(context).textTheme.titleMedium,
         ),
-        icon: Icon(
-          Icons.keyboard_arrow_down_rounded,
-          color: Theme.of(context).colorScheme.outline,
-        ),
-        decoration: const InputDecoration(
-          isDense: true,
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          contentPadding: EdgeInsets.zero,
-        ),
-        items: ReviewFilterParam.values.map((ReviewFilterParam param) {
-          return DropdownMenuItem<ReviewFilterParam>(
-            value: param,
-            child: Text(
-              param.text.tr(), // show '5 Stars', etc. with localization
+        subtitle: Consumer<MarketPlaceProvider>(
+          builder: (BuildContext context, MarketPlaceProvider pro, _) =>
+              DropdownButtonFormField<ReviewFilterParam>(
+            value: ReviewFilterParamExtension.fromJson(pro.rating),
+            isExpanded: true,
+            hint: Text(
+              'select_customer_review'.tr(),
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium
                   ?.copyWith(color: Theme.of(context).colorScheme.outline),
             ),
-          );
-        }).toList(),
-        onChanged: (ReviewFilterParam? newValue) {
-          provider.setRating(newValue?.jsonValue); // ✅ fixed here
-        },
-      ),
-    );
+            icon: Icon(
+              Icons.keyboard_arrow_down_rounded,
+              color: Theme.of(context).colorScheme.outline,
+            ),
+            decoration: const InputDecoration(
+              isDense: true,
+              border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              contentPadding: EdgeInsets.zero,
+            ),
+            items: ReviewFilterParam.values.map((ReviewFilterParam param) {
+              return DropdownMenuItem<ReviewFilterParam>(
+                value: param,
+                child: Text(
+                  param.text.tr(),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface),
+                ),
+              );
+            }).toList(),
+            onChanged: (ReviewFilterParam? newValue) {
+              pro.setRating(newValue?.jsonValue);
+            },
+          ),
+        ));
   }
 }
