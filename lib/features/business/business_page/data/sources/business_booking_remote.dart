@@ -102,7 +102,7 @@ class BusinessBookingRemoteImpl implements BusinessBookingRemote {
     try {
       final String endpoint = '/booking/get/query?${params.query}';
 
-      // ❌ Do NOT check LocalRequestHistory
+      //  Do NOT check LocalRequestHistory
       return await _fetchAndParseBookings(endpoint);
     } catch (e) {
       return DataSuccess<List<BookingEntity>>(

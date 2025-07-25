@@ -150,7 +150,7 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
       }
     } catch (e) {
       AppLog.error(
-        '❌ Message send crashed',
+        ' Message send crashed',
         name: 'MessagesRemoteSourceImpl.sendMessage - catch',
         error: CustomException(e.toString()),
       );

@@ -391,6 +391,10 @@
     {
       "label": "Caterpillar",
       "value": "caterpillar"
+    },
+    {
+      "label": "Other",
+      "value": "other"
     }
   ]
 }

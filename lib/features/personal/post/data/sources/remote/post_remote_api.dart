@@ -66,7 +66,7 @@ class PostRemoteApiImpl implements PostRemoteApi {
           }
         } else {
           debugPrint(
-              '[FeedAPI] Network call failed ❌: ${result.exception?.message}');
+              '[FeedAPI] Network call failed : ${result.exception?.message}');
           return DataFailer<GetFeedResponse>(
             result.exception ?? CustomException('something_wrong'.tr()),
           );

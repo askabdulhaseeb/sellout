@@ -52,7 +52,7 @@ class SocketImplementations {
         }
       } else {
         AppLog.error(
-          '❌ Failed to fetch chat from server | chatId: $chatId',
+          ' Failed to fetch chat from server | chatId: $chatId',
           name: 'SocketImpl.handleNewMessage',
         );
       }

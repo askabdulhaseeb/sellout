@@ -1,4 +1,4 @@
-enum ChatPopMenuOptions {
+enum SendMessagePopMenuOptions {
   camera,
   mediaLibrary,
   // location,

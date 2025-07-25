@@ -379,6 +379,10 @@
     {
       "label": "Borjan",
       "value": "borjan"
+    },
+    {
+      "label": "Other",
+      "value": "other"
     }
   ]
 }

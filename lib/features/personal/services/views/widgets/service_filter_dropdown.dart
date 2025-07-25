@@ -18,7 +18,7 @@ class _FillterButtonWithBottomSheetState
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: _showSortBottomSheet,
+      onPressed: _showFILTERBottomSheet,
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.transparent,
         shadowColor: Colors.transparent,
@@ -42,7 +42,7 @@ class _FillterButtonWithBottomSheetState
     );
   }
 
-  void _showSortBottomSheet() {
+  void _showFILTERBottomSheet() {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(

@@ -41,8 +41,7 @@ class ServicesExploreFilterBottomSheet extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      // pro.filterSheetResetButton();
-                      Navigator.pop(context);
+                      pro.resetFilters();
                     },
                     child: Text(
                       'reset'.tr(),
