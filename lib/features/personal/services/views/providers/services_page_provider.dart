@@ -256,6 +256,11 @@ class ServicesPageProvider extends ChangeNotifier {
     return params;
   }
 
+  void resetFilters() {
+    _selectedIsMobileService = null;
+    searchServices();
+  }
+
   ///
   ///
   ///

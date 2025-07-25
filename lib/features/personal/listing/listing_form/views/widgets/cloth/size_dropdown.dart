@@ -18,8 +18,8 @@ class SizeDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.zero, // ensure no padding around
-      child: CustomListingDropDown(
+      padding: EdgeInsets.zero,
+      child: CustomListingDropDown<AddListingFormProvider>(
         hint: 'size'.tr(),
         categoryKey: formPro.selectedClothSubCategory == 'clothes'
             ? 'clothes_sizes'

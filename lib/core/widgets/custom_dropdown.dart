@@ -11,7 +11,7 @@ class CustomDropdown<T> extends FormField<bool> {
     required this.selectedItem,
     required this.onChanged,
     required FormFieldValidator<bool> validator,
-    this.isSearchable = true,
+    this.isSearchable = false,
     this.padding,
     this.height,
     this.width,

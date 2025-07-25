@@ -80,10 +80,10 @@ class ServicesExploreApiImpl implements ServicesExploreApi {
         endpoint += 'sort=${params.sort?.json}&';
       }
       if (params.distance != null) {
-        endpoint += 'distance=${params.distance}&';
+        endpoint += 'distance=1000&';
       }
       if (params.query != '') {
-        endpoint += 'query=${json.encode(params.query)}&';
+        endpoint += 'query=${params.query}&';
       }
       if (params.clientLat != null) {
         endpoint += 'lat=${params.clientLat}&';

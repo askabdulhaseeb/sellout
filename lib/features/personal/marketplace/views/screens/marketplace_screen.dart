@@ -52,10 +52,12 @@ class _MarketPlaceScreenState extends State<MarketPlaceScreen> {
                 const SliverToBoxAdapter(child: MarketChoiceChipSection()),
               if (pro.isLoading)
                 const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: CircularProgressIndicator(),
-                  ),
+                  child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 0.5,
+                      )),
                 ),
             ],
           );

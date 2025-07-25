@@ -1,10 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../field_input_bottomsheets/chat_input_camera_bottomsheet.dart';
-import '../field_input_bottomsheets/chat_input_contacts_bottomsheet.dart';
-import '../field_input_bottomsheets/chat_input_documents_bottomsheet.dart';
-import '../field_input_bottomsheets/media_type_selection_bottomsheet.dart';
-import 'enum/chat_pop_menu_enums.dart';
+import '../send_message_panel_bottomsheets/send_message_camera_bottomsheet.dart';
+import '../send_message_panel_bottomsheets/send_message_contacts_bottomsheet.dart';
+import '../send_message_panel_bottomsheets/send_message_documents_bottomsheet.dart';
+import '../send_message_panel_bottomsheets/media_type_selection_bottomsheet.dart';
+import 'enum/send_message_pop_menu_enums.dart';
 
 /// A button widget showing a popup menu to pick various attachments (camera, documents, contacts, etc.)
 class AttachmentMenuButton extends StatelessWidget {
@@ -12,25 +12,25 @@ class AttachmentMenuButton extends StatelessWidget {
 
   /// Handles selection of attachment options
   Future<void> _handleAttachment(
-      BuildContext context, ChatPopMenuOptions option) async {
+      BuildContext context, SendMessagePopMenuOptions option) async {
     switch (option) {
-      case ChatPopMenuOptions.camera:
+      case SendMessagePopMenuOptions.camera:
         showCameraPickerBottomSheet(context);
         break;
 
-      case ChatPopMenuOptions.mediaLibrary:
+      case SendMessagePopMenuOptions.mediaLibrary:
         showMediaBottomSheet(context);
         break;
 
-      // case ChatPopMenuOptions.location:
+      // case SendMessagePopMenuOptions.location:
       //   // TODO: Implement location picking logic
       //   break;
 
-      case ChatPopMenuOptions.document:
+      case SendMessagePopMenuOptions.document:
         await pickDocument(context);
         break;
 
-      case ChatPopMenuOptions.contacts:
+      case SendMessagePopMenuOptions.contacts:
         showContactsBottomSheet(context);
         break;
     }
@@ -42,44 +42,44 @@ class AttachmentMenuButton extends StatelessWidget {
     // List of menu items with values, icons, and localized titles
     final List<Map<String, dynamic>> menuItems = <Map<String, dynamic>>[
       <String, dynamic>{
-        'option': ChatPopMenuOptions.camera,
+        'option': SendMessagePopMenuOptions.camera,
         'icon': Icons.photo_camera_outlined,
         'title': 'photo_camera'.tr(),
       },
       <String, dynamic>{
-        'option': ChatPopMenuOptions.mediaLibrary,
+        'option': SendMessagePopMenuOptions.mediaLibrary,
         'icon': Icons.photo_library_outlined,
         'title': 'photo_video_library'.tr(),
       },
       // <String, dynamic>{
-      //   'option': ChatPopMenuOptions.location,
+      //   'option': SendMessagePopMenuOptions.location,
       //   'icon': Icons.location_on_outlined,
       //   'title': 'location'.tr(),
       // },
       <String, dynamic>{
-        'option': ChatPopMenuOptions.document,
+        'option': SendMessagePopMenuOptions.document,
         'icon': Icons.insert_drive_file_outlined,
         'title': 'document'.tr(),
       },
       <String, dynamic>{
-        'option': ChatPopMenuOptions.contacts,
+        'option': SendMessagePopMenuOptions.contacts,
         'icon': Icons.contact_page_outlined,
         'title': 'contacts'.tr(),
       },
     ];
 
-    return PopupMenuButton<ChatPopMenuOptions>(
+    return PopupMenuButton<SendMessagePopMenuOptions>(
       padding: const EdgeInsets.all(0),
       color: Theme.of(context).scaffoldBackgroundColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
-      onSelected: (ChatPopMenuOptions option) =>
+      onSelected: (SendMessagePopMenuOptions option) =>
           _handleAttachment(context, option),
       itemBuilder: (_) => menuItems.map((Map<String, dynamic> item) {
         return _buildMenuItem(
           context,
-          option: item['option'] as ChatPopMenuOptions,
+          option: item['option'] as SendMessagePopMenuOptions,
           icon: item['icon'] as IconData,
           title: item['title'] as String,
           iconColor: iconColor,
@@ -90,14 +90,14 @@ class AttachmentMenuButton extends StatelessWidget {
   }
 
   /// Builds a popup menu item widget
-  PopupMenuItem<ChatPopMenuOptions> _buildMenuItem(
+  PopupMenuItem<SendMessagePopMenuOptions> _buildMenuItem(
     BuildContext context, {
-    required ChatPopMenuOptions option,
+    required SendMessagePopMenuOptions option,
     required IconData icon,
     required String title,
     Color? iconColor,
   }) {
-    return PopupMenuItem<ChatPopMenuOptions>(
+    return PopupMenuItem<SendMessagePopMenuOptions>(
       value: option,
       child: Row(
         children: <Widget>[

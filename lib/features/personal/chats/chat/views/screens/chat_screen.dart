@@ -11,7 +11,7 @@ import '../../../chat_dashboard/domain/entities/chat/participant/chat_participan
 import '../../../chat_dashboard/domain/entities/chat/participant/invitation_entity.dart';
 import '../providers/chat_provider.dart';
 import '../widgets/app_bar/chat_app_bar.dart';
-import '../widgets/input_field/chat_input_field.dart';
+import '../widgets/send_message_panel/send_message_panel.dart';
 import '../widgets/message/messages_list.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -53,7 +53,7 @@ class _ChatScreenState extends State<ChatScreen> {
           child: Column(
             children: <Widget>[
               Expanded(child: MessagesList()),
-              SendMessageWidget()
+              ChatInteractionPanel()
             ],
           ),
         ),
@@ -62,8 +62,8 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 }
 
-class SendMessageWidget extends StatelessWidget {
-  const SendMessageWidget({super.key});
+class ChatInteractionPanel extends StatelessWidget {
+  const ChatInteractionPanel({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +85,7 @@ class SendMessageWidget extends StatelessWidget {
 
         if (pro.chat?.type == ChatType.group) {
           if (isParticipant) {
-            return const ChatInputField();
+            return const SendMessagePanel();
           } else if (isInvited) {
             return const GroupInviteActionWidget();
           } else {
@@ -95,7 +95,7 @@ class SendMessageWidget extends StatelessWidget {
 
         if (pro.chat?.type == ChatType.private ||
             pro.chat?.type == ChatType.product) {
-          return const ChatInputField();
+          return const SendMessagePanel();
         }
 
         // Default fallback
