@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../../core/widgets/video_widget.dart';
 import '../../../../../../../../../attachment/domain/entities/picked_attachment.dart';
-import '../../../../../providers/chat_provider.dart';
+import '../../../../../providers/send_message_provider.dart';
 
 class ChatAttachmentsListView extends StatelessWidget {
   const ChatAttachmentsListView({required this.attachments, super.key});
@@ -63,8 +63,8 @@ class CustomMediaTile extends StatelessWidget {
           right: 4,
           child: GestureDetector(
             onTap: () {
-              final ChatProvider pro =
-                  Provider.of<ChatProvider>(context, listen: false);
+              final SendMessageProvider pro =
+                  Provider.of<SendMessageProvider>(context, listen: false);
               pro.removePickedAttachment(media);
             },
             child: Container(

@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../attachment/domain/entities/attachment_entity.dart';
-import '../../../../providers/chat_provider.dart';
+import '../../../../providers/send_message_provider.dart';
 
 void showMediaBottomSheet(BuildContext context) {
   showModalBottomSheet(
@@ -15,8 +15,8 @@ void showMediaBottomSheet(BuildContext context) {
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
     builder: (BuildContext context) {
-      final ChatProvider chatPro =
-          Provider.of<ChatProvider>(context, listen: false);
+      final SendMessageProvider chatPro =
+          Provider.of<SendMessageProvider>(context, listen: false);
       return Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

@@ -8,7 +8,7 @@ import '../../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../attachment/domain/entities/picked_attachment.dart';
-import '../../../../providers/chat_provider.dart';
+import '../../../../providers/send_message_provider.dart';
 
 void showContactsBottomSheet(BuildContext context) async {
   showModalBottomSheet(
@@ -101,8 +101,8 @@ class _ContactsBottomSheetState extends State<_ContactsBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final ChatProvider chatProvider =
-        Provider.of<ChatProvider>(context, listen: false);
+    final SendMessageProvider msgPro =
+        Provider.of<SendMessageProvider>(context, listen: false);
 
     if (_error) {
       return const Padding(
@@ -198,7 +198,7 @@ class _ContactsBottomSheetState extends State<_ContactsBottomSheet> {
               padding: const EdgeInsets.all(16),
               child: CustomElevatedButton(
                 title: 'send'.tr(),
-                isLoading: chatProvider.isLoading,
+                isLoading: msgPro.isLoading,
                 bgColor: _selectedContact != null &&
                         _selectedContact!.phones.isNotEmpty
                     ? AppTheme.primaryColor
@@ -212,8 +212,8 @@ class _ContactsBottomSheetState extends State<_ContactsBottomSheet> {
                         type: AttachmentType.contacts,
                         file: file,
                       );
-                      chatProvider.addAttachment(attachment);
-                      await chatProvider.sendMessage(context);
+                      msgPro.addAttachment(attachment);
+                      await msgPro.sendMessage(context);
                       Navigator.pop(context);
                     }
                   }

@@ -1,7 +1,7 @@
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../providers/chat_provider.dart';
+import '../../../../providers/send_message_provider.dart';
 
 class EmojiPickerIconButton extends StatelessWidget {
   const EmojiPickerIconButton({super.key});
@@ -31,7 +31,8 @@ class _EmojiPickerBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chatPro = Provider.of<ChatProvider>(context, listen: false);
+    final SendMessageProvider chatPro =
+        Provider.of<SendMessageProvider>(context, listen: false);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
