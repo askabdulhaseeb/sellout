@@ -63,7 +63,7 @@ class _LocationMapState extends State<LocationMap> {
                     Circle(
                       circleId: const CircleId('radius'),
                       center: provider.selectedLocation,
-                      radius: provider.selectedRadius * 10000000000,
+                      radius: provider.selectedRadius * 1000,
                       fillColor: Colors.black.withValues(alpha: 0.1),
                       strokeWidth: 2,
                       strokeColor: Colors.black,

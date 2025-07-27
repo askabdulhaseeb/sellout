@@ -32,7 +32,13 @@ class AppStrings {
   static String get newNotification => 'new-notification';
   static String get lastSeen => 'lastSeen';
   // audio
-  static const String recordingStart = 'assets/audio/ui-pop-sound-316482.mp3';
+  static const String recordingDeleteSound =
+      'assets/audio/delete_recording_sound.mp3';
+  static const String recordingShareSound =
+      'assets/audio/share_recording_sound.mp3';
+  static const String recordingStartSound =
+      'assets/audio/start_recording_sound.mp3';
+
   // [IMAGES]
   // Maketplace CATEGORIES
   static const String clothfootmarketplace =

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
@@ -18,6 +19,7 @@ import '../../domain/usecase/get_messages_usecase.dart';
 import '../../domain/usecase/leave_group_usecase.dart';
 import '../../domain/usecase/send_group_invite_usecase.dart';
 import '../screens/chat_screen.dart';
+import 'send_message_provider.dart';
 
 class ChatProvider extends ChangeNotifier {
   ChatProvider(
@@ -50,8 +52,9 @@ class ChatProvider extends ChangeNotifier {
   }
 
 //
-  void setChat(ChatEntity? value) {
+  void setChat(BuildContext context, ChatEntity? value) {
     _chat = value;
+    Provider.of<SendMessageProvider>(context, listen: false).setChat(value);
     _key = MessageLastEvaluatedKeyModel(
       chatID: _chat?.chatId ?? '',
       createdAt: 'null',
@@ -107,7 +110,7 @@ class ChatProvider extends ChangeNotifier {
   }
 
   Future<void> openChat(BuildContext context, ChatEntity chat) async {
-    setChat(chat);
+    setChat(context, chat);
     getMessages();
     Navigator.of(context).pushNamed(ChatScreen.routeName);
   }
@@ -127,7 +130,7 @@ class ChatProvider extends ChangeNotifier {
         await _acceptGroupInviteUsecase.call(chat?.chatId ?? '');
     try {
       if (result is DataSuccess) {
-        setChat(LocalChat().chatEntity(chat?.chatId ?? ''));
+        setChat(context, LocalChat().chatEntity(chat?.chatId ?? ''));
         debugPrint('provider chat is updated');
         setLoading(false);
       } else {
@@ -146,14 +149,14 @@ class ChatProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> leaveGroup() async {
+  Future<void> leaveGroup(BuildContext context) async {
     setLoading(true);
     LeaveGroupParams leaveparams =
         LeaveGroupParams(chatId: chat?.chatId ?? '', removalType: 'leave');
     final DataState<bool> result = await _leaveGroupparams.call(leaveparams);
     try {
       if (result is DataSuccess) {
-        setChat(LocalChat().chatEntity(chat?.chatId ?? ''));
+        setChat(context, LocalChat().chatEntity(chat?.chatId ?? ''));
         debugPrint('you left the group${leaveparams.chatId}');
         setLoading(false);
       } else {
@@ -168,7 +171,8 @@ class ChatProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> removeFromGroup(String? partcicpantId) async {
+  Future<void> removeFromGroup(
+      BuildContext context, String? partcicpantId) async {
     setLoading(true);
     LeaveGroupParams leaveparams = LeaveGroupParams(
       participantId: partcicpantId,
@@ -178,7 +182,7 @@ class ChatProvider extends ChangeNotifier {
     final DataState<bool> result = await _leaveGroupparams.call(leaveparams);
     try {
       if (result is DataSuccess) {
-        setChat(LocalChat().chatEntity(chat?.chatId ?? ''));
+        setChat(context, LocalChat().chatEntity(chat?.chatId ?? ''));
         debugPrint(
             'you removed ${leaveparams.participantId} from group${leaveparams.chatId}');
         setLoading(false);

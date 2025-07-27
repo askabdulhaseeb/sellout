@@ -62,7 +62,7 @@ class GroupDetailScreen extends StatelessWidget {
                           color: AppTheme.primaryColor),
                       title: Text('leave_group'.tr(),
                           style: Theme.of(context).textTheme.titleMedium),
-                      onTap: () => pro.leaveGroup(),
+                      onTap: () => pro.leaveGroup(context),
                     ),
                   if (_isAdmin(pro))
                     ListTile(
