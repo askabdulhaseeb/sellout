@@ -14,54 +14,55 @@ class MarketPlaceHeaderButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final MarketPlaceProvider pro =
-        Provider.of<MarketPlaceProvider>(context, listen: false);
-    return SizedBox(
-      height: 40,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: <Widget>[
-          _HeaderButton(
+    return Consumer<MarketPlaceProvider>(
+      builder: (BuildContext context, MarketPlaceProvider pro, Widget? child) =>
+          SizedBox(
+        height: 40,
+        child: ListView(
+          scrollDirection: Axis.horizontal,
+          children: <Widget>[
+            _HeaderButton(
+                onPressed: () => showModalBottomSheet(
+                      enableDrag: false,
+                      isDismissible: false,
+                      useSafeArea: true,
+                      isScrollControlled: true,
+                      context: context,
+                      builder: (BuildContext context) =>
+                          const LocationRadiusBottomSheet(),
+                    ),
+                icon: CupertinoIcons.location_solid,
+                label:
+                    '${'location'.tr()}${pro.radiusType == RadiusType.local ? ' -  ${pro.selectedRadius.toInt()} km' : ''}'),
+            const SizedBox(
+              width: 4,
+            ),
+            _HeaderButton(
               onPressed: () => showModalBottomSheet(
-                    enableDrag: false,
-                    isDismissible: false,
-                    useSafeArea: true,
-                    isScrollControlled: true,
-                    context: context,
-                    builder: (BuildContext context) =>
-                        const LocationRadiusBottomSheet(),
-                  ),
-              icon: CupertinoIcons.location_solid,
-              label:
-                  '${'location'.tr()}${pro.radiusType == RadiusType.local ? ' -  ${pro.selectedRadius.toInt()} km' : ''}'),
-          const SizedBox(
-            width: 4,
-          ),
-          _HeaderButton(
-            onPressed: () => showModalBottomSheet(
-              context: context,
-              builder: (BuildContext context) => const SortBottomSheet(),
+                context: context,
+                builder: (BuildContext context) => const SortBottomSheet(),
+              ),
+              icon: CupertinoIcons.sort_down,
+              label: 'sort',
             ),
-            icon: CupertinoIcons.sort_down,
-            label: 'sort',
-          ),
-          const SizedBox(
-            width: 4,
-          ),
-          _HeaderButton(
-            onPressed: () => showModalBottomSheet(
-              showDragHandle: false,
-              isDismissible: false,
-              useSafeArea: true,
-              isScrollControlled: true,
-              context: context,
-              builder: (BuildContext context) =>
-                  const MarketPlaceFilterBottomSheet(),
+            const SizedBox(
+              width: 4,
             ),
-            icon: Icons.tune,
-            label: 'filter',
-          ),
-        ],
+            _HeaderButton(
+              onPressed: () => showModalBottomSheet(
+                showDragHandle: false,
+                isDismissible: false,
+                useSafeArea: true,
+                isScrollControlled: true,
+                context: context,
+                builder: (BuildContext context) =>
+                    const MarketPlaceFilterBottomSheet(),
+              ),
+              icon: Icons.tune,
+              label: 'filter',
+            ),
+          ],
+        ),
       ),
     );
   }

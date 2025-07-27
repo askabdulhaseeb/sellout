@@ -18,7 +18,7 @@ class PrivateChatDashboardTile extends StatelessWidget {
 
     return GestureDetector(
       onTap: () async {
-        pro.setChat(chat);
+        pro.setChat(context, chat);
         await LocalUnreadMessagesService().clearCount(chat.chatId);
         Navigator.of(context).pushNamed(ChatScreen.routeName);
       },

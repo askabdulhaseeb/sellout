@@ -13,13 +13,17 @@ class GroupChatDashbordTile extends StatelessWidget {
   final ChatEntity chat;
   @override
   Widget build(BuildContext context) {
-    return InkWell( onTap: ()async {
-          Provider.of<ChatProvider>(context, listen: false).setChat(chat);
-                  await LocalUnreadMessagesService().clearCount(chat.chatId);
-          Navigator.of(context).pushNamed(ChatScreen.routeName);
-        },
-      child: Container(      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        child: Column(mainAxisSize: MainAxisSize.min,
+    return InkWell(
+      onTap: () async {
+        Provider.of<ChatProvider>(context, listen: false)
+            .setChat(context, chat);
+        await LocalUnreadMessagesService().clearCount(chat.chatId);
+        Navigator.of(context).pushNamed(ChatScreen.routeName);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Row(
               children: <Widget>[
@@ -51,12 +55,14 @@ class GroupChatDashbordTile extends StatelessWidget {
                     Text(
                       chat.lastMessage?.createdAt.timeAgo ?? '',
                       style: const TextStyle(fontSize: 10),
-                    ), UnreadMessageBadgeWidget(chatId: chat.chatId),
+                    ),
+                    UnreadMessageBadgeWidget(chatId: chat.chatId),
                   ],
                 ),
               ],
             ),
-    const Divider()     ],
+            const Divider()
+          ],
         ),
       ),
     );

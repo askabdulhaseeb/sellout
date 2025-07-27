@@ -34,6 +34,10 @@ class SendMessageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setChat(ChatEntity? val) {
+    _chat = val;
+  }
+
   void startRecording() {
     isRecordingAudio.value = true;
     notifyListeners();

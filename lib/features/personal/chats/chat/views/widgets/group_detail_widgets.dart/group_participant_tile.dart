@@ -72,7 +72,7 @@ class ParticipantTile extends StatelessWidget {
                         ?.copyWith(color: AppTheme.primaryColor),
                     isLoading: false,
                     onTap: () {
-                      pro.removeFromGroup(participant?.uid ?? '');
+                      pro.removeFromGroup(context, participant?.uid ?? '');
                     },
                   ),
                 )
