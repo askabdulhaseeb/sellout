@@ -5,9 +5,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../attachment/domain/entities/picked_attachment.dart';
-import '../../../../providers/chat_provider.dart';
+import '../../../../providers/send_message_provider.dart';
 
-void showCameraPickerBottomSheet(BuildContext context) async {final ChatProvider chatPro =Provider.of<ChatProvider>(context,listen:false);
+void showCameraPickerBottomSheet(BuildContext context) async {
+  final SendMessageProvider chatPro =
+      Provider.of<SendMessageProvider>(context, listen: false);
   showModalBottomSheet(
     context: context,
     shape: const RoundedRectangleBorder(
@@ -20,26 +22,28 @@ void showCameraPickerBottomSheet(BuildContext context) async {final ChatProvider
           children: <Widget>[
             ListTile(
               leading: const Icon(Icons.photo_camera),
-              title:  Text('take_photo'.tr()),
+              title: Text('take_photo'.tr()),
               onTap: () async {
                 Navigator.pop(context);
-                final PickedAttachment? picked = await pickFromCamera(isVideo: false);
+                final PickedAttachment? picked =
+                    await pickFromCamera(isVideo: false);
                 if (picked != null) {
-                 chatPro.addAttachment(picked);
-                 chatPro.sendMessage(context);
+                  chatPro.addAttachment(picked);
+                  chatPro.sendMessage(context);
                 }
               },
             ),
             ListTile(
               leading: const Icon(Icons.videocam),
-              title:  Text('record_video'.tr()),
+              title: Text('record_video'.tr()),
               onTap: () async {
                 Navigator.pop(context);
-                final PickedAttachment? picked = await pickFromCamera(isVideo: true);
+                final PickedAttachment? picked =
+                    await pickFromCamera(isVideo: true);
                 if (picked != null) {
-                 chatPro.addAttachment(picked);
-                 chatPro.sendMessage(context);
-                 }
+                  chatPro.addAttachment(picked);
+                  chatPro.sendMessage(context);
+                }
               },
             ),
           ],

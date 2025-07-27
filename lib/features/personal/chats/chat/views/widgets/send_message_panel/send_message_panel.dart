@@ -1,110 +1,57 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/widgets/costom_textformfield.dart';
-import '../../providers/chat_provider.dart';
-import 'widgets/send_message_panel_bottomsheets/send_message_emogi_picker_bottomsheet.dart';
-import 'widgets/send_message_panel_pop_menu/send_message_pop_menu.dart';
+import '../../providers/send_message_provider.dart';
+import 'widgets/send_message_attachment_bottomsheets/send_message_emogi_picker_bottomsheet.dart';
+import 'widgets/send_message_attachment_bottomsheets/send_message_voice_note/send_message_voice_note_trigger_button.dart';
+import 'widgets/send_message_attachment_menu/send_message_attachment_menu_button.dart';
+import 'widgets/send_message_button.dart';
+import 'widgets/send_message_field.dart';
 
 class SendMessagePanel extends StatelessWidget {
   const SendMessagePanel({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: Theme.of(context).dividerColor,
-      ),
-      child: Consumer<ChatProvider>(
-        builder: (BuildContext context, ChatProvider chatPro, _) {
-          final bool hasText = chatPro.message.text.trim().isNotEmpty;
-          final bool hasAttachments = chatPro.attachments.isNotEmpty;
+    final double w = MediaQuery.of(context).size.width;
+    final SendMessageProvider msgPro =
+        Provider.of<SendMessageProvider>(context);
 
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: <Widget>[
-              if (!hasText) const AttachmentMenuButton(),
-              const EmojiPickerIconButton(),
-              const Expanded(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  child: ChatInputField(),
-                ),
-              ),
-              if (!hasText && !hasAttachments) const RecordVoiceNoteWidget(),
-              if (hasText || hasAttachments) const SendMessageButton(),
-            ],
+    return Container(
+      height: 80,
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(color: Theme.of(context).dividerColor),
+      child: ValueListenableBuilder<TextEditingValue>(
+        valueListenable: msgPro.message,
+        builder: (BuildContext context, TextEditingValue messageValue, _) {
+          final bool hasText = messageValue.text.trim().isNotEmpty;
+
+          return ValueListenableBuilder<bool>(
+            valueListenable: msgPro.isRecordingAudio,
+            builder: (BuildContext context, bool isRecording, _) {
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  if (!isRecording)
+                    SizedBox(
+                      width: w * 0.8,
+                      child: Row(
+                        children: <Widget>[
+                          if (!hasText) const SendMessageAttachmentMenuButton(),
+                          const EmojiPickerIconButton(),
+                          const Expanded(child: SendMessageFIeld()),
+                        ],
+                      ),
+                    ),
+                  if (hasText)
+                    const SendMessageButton()
+                  else
+                    const Expanded(child: VoiceRecordTrigger()),
+                ],
+              );
+            },
           );
         },
       ),
-    );
-  }
-}
-
-class SendMessageButton extends StatelessWidget {
-  const SendMessageButton({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<ChatProvider>(
-      builder: (_, ChatProvider chatPro, __) {
-        return IconButton(
-          icon: chatPro.isLoading
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Icon(Icons.send_outlined),
-          onPressed: () async {
-            if (!chatPro.isLoading) {
-              await chatPro.sendMessage(context);
-            }
-          },
-        );
-      },
-    );
-  }
-}
-
-class RecordVoiceNoteWidget extends StatelessWidget {
-  const RecordVoiceNoteWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<ChatProvider>(
-      builder: (_, ChatProvider chatPro, __) {
-        return IconButton(
-          icon: const Icon(Icons.mic_none_outlined),
-          onPressed: chatPro.startRecording,
-        );
-      },
-    );
-  }
-}
-
-class ChatInputField extends StatelessWidget {
-  const ChatInputField({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<ChatProvider>(
-      builder: (_, ChatProvider chatPro, __) {
-        return Expanded(
-          child: CustomTextFormField(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(5),
-              borderSide: BorderSide.none,
-            ),
-            color: Theme.of(context).scaffoldBackgroundColor,
-            controller: chatPro.message,
-            minLines: 1,
-            maxLines: 5,
-            hint: 'your_message_here'.tr(),
-          ),
-        );
-      },
     );
   }
 }

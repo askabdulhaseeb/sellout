@@ -31,7 +31,8 @@ class AppStrings {
   static String get getOnlineUsers => 'getOnlineUsers';
   static String get newNotification => 'new-notification';
   static String get lastSeen => 'lastSeen';
-
+  // audio
+  static const String recordingStart = 'assets/audio/ui-pop-sound-316482.mp3';
   // [IMAGES]
   // Maketplace CATEGORIES
   static const String clothfootmarketplace =

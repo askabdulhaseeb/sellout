@@ -85,6 +85,7 @@ import '../features/personal/chats/chat/domain/usecase/send_group_invite_usecase
 import '../features/personal/chats/chat/domain/usecase/send_message_usecase.dart';
 import '../features/personal/chats/chat/domain/usecase/share_to_chat_usecase.dart';
 import '../features/personal/chats/chat/views/providers/chat_provider.dart';
+import '../features/personal/chats/chat/views/providers/send_message_provider.dart';
 import '../features/personal/chats/chat_dashboard/data/repositories/chat_repository_impl.dart';
 import '../features/personal/chats/chat_dashboard/data/sources/remote/chat_remote_source.dart';
 import '../features/personal/chats/chat_dashboard/domain/repositories/chat_repository.dart';
@@ -328,8 +329,8 @@ void _message() {
         locator(),
         locator(),
         locator(),
-        locator(),
       ));
+  locator.registerFactory(() => SendMessageProvider(locator()));
 }
 
 void _feed() {

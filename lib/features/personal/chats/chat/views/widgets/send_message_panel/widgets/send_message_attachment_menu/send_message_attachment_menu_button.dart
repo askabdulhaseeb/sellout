@@ -1,14 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../send_message_panel_bottomsheets/send_message_camera_bottomsheet.dart';
-import '../send_message_panel_bottomsheets/send_message_contacts_bottomsheet.dart';
-import '../send_message_panel_bottomsheets/send_message_documents_bottomsheet.dart';
-import '../send_message_panel_bottomsheets/media_type_selection_bottomsheet.dart';
+import '../send_message_attachment_bottomsheets/send_message_camera_bottomsheet.dart';
+import '../send_message_attachment_bottomsheets/send_message_contacts_bottomsheet.dart';
+import '../send_message_attachment_bottomsheets/send_message_document_bottomsheet.dart';
+import '../send_message_attachment_bottomsheets/media_type_selection_bottomsheet.dart';
 import 'enum/send_message_pop_menu_enums.dart';
 
 /// A button widget showing a popup menu to pick various attachments (camera, documents, contacts, etc.)
-class AttachmentMenuButton extends StatelessWidget {
-  const AttachmentMenuButton({super.key});
+class SendMessageAttachmentMenuButton extends StatelessWidget {
+  const SendMessageAttachmentMenuButton({super.key});
 
   /// Handles selection of attachment options
   Future<void> _handleAttachment(
