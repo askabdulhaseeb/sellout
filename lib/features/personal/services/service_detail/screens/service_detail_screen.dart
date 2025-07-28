@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../business/core/domain/entity/service/service_entity.dart';
-import '../../services_screen/ervice_detail_cancellation_policy.dart';
+import '../widget/service_detail_cancellation_policy.dart';
 import '../widget/service_card/service_card.dart';
 import '../widget/review_section/service_detail_review_overview_section.dart';
 import '../widget/service_detail_payment_tiles_widget.dart';

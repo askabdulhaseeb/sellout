@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/widgets/costom_textformfield.dart';
 import '../../provider/search_provider.dart';
-import '../../widget/services_grid_tile.dart';
+import '../../../../services/services_screen/widgets/explore/services_grid_tile.dart';
 
 class SearchServicesSection extends StatefulWidget {
   const SearchServicesSection({super.key});
@@ -36,7 +36,7 @@ class _SearchServicesSectionState extends State<SearchServicesSection> {
       children: <Widget>[
         Stack(
           alignment: Alignment.centerRight,
-          children: [
+          children: <Widget>[
             CustomTextFormField(
               prefixIcon: const Icon(CupertinoIcons.search),
               contentPadding:
@@ -65,9 +65,8 @@ class _SearchServicesSectionState extends State<SearchServicesSection> {
                   padding: const EdgeInsets.all(8),
                   sliver: SliverGrid(
                     delegate: SliverChildBuilderDelegate(
-                      (BuildContext context, int index) =>
-                          SearchServiceGridTile(
-                              service: provider.serviceResults[index]),
+                      (BuildContext context, int index) => ServiceGridTile(
+                          service: provider.serviceResults[index]),
                       childCount: provider.serviceResults.length,
                     ),
                     gridDelegate:
