@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../bookings/domain/entity/booking_entity.dart';
 import '../../../../../core/enums/core/status_type.dart';
 import '../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../core/widgets/loader.dart';
+import '../../../../../core/widgets/loaders/loader.dart';
 import '../providers/appointment_tile_provider.dart';
 
 class AppointmentTileButtonSection extends StatelessWidget {

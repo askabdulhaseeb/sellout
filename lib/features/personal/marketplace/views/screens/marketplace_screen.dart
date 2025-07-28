@@ -50,15 +50,17 @@ class _MarketPlaceScreenState extends State<MarketPlaceScreen> {
                 ),
               if (!pro.isFilteringPosts)
                 const SliverToBoxAdapter(child: MarketChoiceChipSection()),
-              if (pro.isLoading)
+              if (pro.isLoading &&
+                  ((pro.choicePosts?.isNotEmpty ?? false) ||
+                      (pro.posts?.isNotEmpty ?? false)))
                 const SliverToBoxAdapter(
-                  child: SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 0.5,
-                      )),
-                ),
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Center(
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
+                )
             ],
           );
         },

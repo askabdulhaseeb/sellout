@@ -32,13 +32,11 @@ class _MarketplaceChoiceChipsState extends State<MarketplaceChoiceChips> {
           null,
           ...ListingType.values.map((ListingType e) => e.json)
         ];
-
         return SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Container(
             margin: const EdgeInsets.all(0),
             padding: const EdgeInsets.only(left: 14),
-            height: 50,
             child: Row(
               children: jsons.map((String? json) {
                 final bool isSelected = selectedJson == json;
@@ -46,6 +44,8 @@ class _MarketplaceChoiceChipsState extends State<MarketplaceChoiceChips> {
                 return Container(
                   margin: const EdgeInsets.symmetric(horizontal: 4),
                   child: ChoiceChip(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                     showCheckmark: false,
                     label: Text(
                       label,

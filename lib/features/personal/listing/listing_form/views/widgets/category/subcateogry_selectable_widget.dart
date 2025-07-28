@@ -1,10 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/\enums/listing/core/listing_type.dart';
+import '../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../core/widgets/custom_dropdown.dart';
-import '../../../../../../../core/widgets/loader.dart';
+import '../../../../../../../core/widgets/loaders/loader.dart';
 import '../../../data/sources/remote/listing_api.dart';
 import '../../../domain/entities/listing_entity.dart';
 import '../../../domain/entities/sub_category_entity.dart';
@@ -62,10 +62,8 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
 
   Future<void> _fetchCategories() async {
     setState(() => isLoading = true);
-
     try {
       final List<ListingEntity> listings = await ListingAPI().listing();
-
       setState(() {
         allListings = listings;
         isLoading = false;

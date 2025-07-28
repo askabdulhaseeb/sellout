@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../../../core/extension/datetime_ext.dart';
 import '../../../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../../../core/widgets/loader.dart';
 import '../../../../../../../../../core/widgets/profile_photo.dart';
 import '../../../../../../../../../services/get_it.dart';
 import '../../../../../../../../business/business_page/views/screens/user_business_profile_screen.dart';
@@ -57,11 +56,6 @@ class _UserHeaderState extends State<_UserHeader> {
       builder: (BuildContext context,
           AsyncSnapshot<DataState<UserEntity?>> snapshot) {
         final UserEntity? user = snapshot.data?.entity;
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SizedBox(height: 50, child: Loader());
-        }
-
         return SizedBox(
           height: 50,
           child: GestureDetector(
@@ -127,11 +121,6 @@ class _BusinessHeaderState extends State<_BusinessHeader> {
       future: _businessFuture,
       builder: (BuildContext context, AsyncSnapshot<BusinessEntity?> snapshot) {
         final BusinessEntity? business = snapshot.data;
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SizedBox(height: 50, child: Loader());
-        }
-
         return SizedBox(
           height: 50,
           child: GestureDetector(

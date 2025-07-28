@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/app_snakebar.dart';
-import '../../../../../../../core/widgets/loader.dart';
+import '../../../../../../../core/widgets/loaders/loader.dart';
 import '../../../../../post/domain/entities/post_entity.dart';
 import '../../../../data/sources/local_cart.dart';
 import '../../../providers/cart_provider.dart';

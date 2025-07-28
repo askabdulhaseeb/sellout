@@ -67,7 +67,7 @@ class PostGridViewTile extends StatelessWidget {
                         post.title,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
-                        style: const TextStyle(fontWeight: FontWeight.w500),
+                        style: const TextStyle(fontWeight: FontWeight.w400),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -88,11 +88,11 @@ class PostGridViewTile extends StatelessWidget {
                     ),
                   ],
                 ),
-                const Spacer(),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    if (isMe)
+                if (isMe) const Spacer(),
+                if (isMe)
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
                       CustomIconButton(
                         iconSize: 20,
                         iconColor: Theme.of(context).primaryColor,
@@ -112,7 +112,6 @@ class PostGridViewTile extends StatelessWidget {
                               context, AddListingFormScreen.routeName);
                         },
                       ),
-                    if (isMe)
                       CustomIconButton(
                         iconSize: 20,
                         iconColor: Theme.of(context).colorScheme.secondary,
@@ -125,8 +124,8 @@ class PostGridViewTile extends StatelessWidget {
                         icon: CupertinoIcons.speaker,
                         onPressed: () {},
                       ),
-                  ],
-                )
+                    ],
+                  )
               ],
             ),
           ),

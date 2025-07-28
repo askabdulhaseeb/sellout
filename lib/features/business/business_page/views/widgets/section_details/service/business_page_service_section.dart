@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../core/widgets/loader.dart';
+import '../../../../../../../core/widgets/loaders/loader.dart';
 import '../../../../../core/data/sources/service/local_service.dart';
 import '../../../../../core/domain/entity/business_entity.dart';
 import '../../../../../core/domain/entity/service/service_entity.dart';

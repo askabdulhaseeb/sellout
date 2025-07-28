@@ -52,37 +52,6 @@ class MarketPlaceProvider extends ChangeNotifier {
     return false;
   }
 
-  Future<bool> loadPrivatePost(BuildContext context) async {
-    try {
-      final PostByFiltersParams params =
-          PostByFiltersParams(filters: <FilterParam>[
-        FilterParam(
-            attribute: 'access_code',
-            operator: 'eq',
-            value: accessCodeController.text)
-      ]);
-      final DataState<List<PostEntity>> result =
-          await _getPostByFiltersUsecase(params);
-      if (result is DataSuccess<List<PostEntity>>) {
-        Navigator.pushNamed(context, PostDetailScreen.routeName,
-            arguments: <String, dynamic>{'pid': result.entity?.first.postID});
-        return true;
-      } else {
-        AppSnackBar.showSnackBar(
-            context, 'no_posts_found_with_this_access_code'.tr());
-        setPosts(<PostEntity>[]);
-        debugPrint(
-            'Failed: ${result.exception?.message ?? 'something_wrong'.tr()}');
-      }
-    } catch (e) {
-      AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
-      debugPrint('Unexpected error: $e');
-    } finally {
-      setLoading(false);
-    }
-    return false;
-  }
-
   Future<bool> loadChipsPosts() async {
     setMainPageKey('');
     try {
@@ -102,6 +71,30 @@ class MarketPlaceProvider extends ChangeNotifier {
       } else {
         debugPrint(
             'Failed: ${result.exception?.message ?? 'something_wrong'.tr()}');
+      }
+    } catch (e) {
+      debugPrint('Unexpected error: $e');
+    } finally {
+      setLoading(false);
+    }
+    return false;
+  }
+
+  Future<bool> loadFilteredContainerPosts() async {
+    setMainPageKey('');
+    try {
+      setLoading(true);
+      final DataState<List<PostEntity>> result =
+          await _getPostByFiltersUsecase(_buildPostByFiltersParams());
+      if (result is DataSuccess<List<PostEntity>>) {
+        setFilterContainerPosts(result.entity ?? <PostEntity>[]);
+        setMainPageKey(result.data);
+        return true;
+      } else {
+        debugPrint(
+            'Failed: ${result.exception?.message ?? 'something_wrong'.tr()}');
+        setFilterContainerPosts(<PostEntity>[]);
+        setLoading(false);
       }
     } catch (e) {
       debugPrint('Unexpected error: $e');
@@ -144,23 +137,30 @@ class MarketPlaceProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> loadFilteredContainerPosts() async {
-    setMainPageKey('');
+  Future<bool> loadPrivatePost(BuildContext context) async {
     try {
-      setLoading(true);
+      final PostByFiltersParams params =
+          PostByFiltersParams(filters: <FilterParam>[
+        FilterParam(
+            attribute: 'access_code',
+            operator: 'eq',
+            value: accessCodeController.text)
+      ]);
       final DataState<List<PostEntity>> result =
-          await _getPostByFiltersUsecase(_buildPostByFiltersParams());
+          await _getPostByFiltersUsecase(params);
       if (result is DataSuccess<List<PostEntity>>) {
-        setFilterContainerPosts(result.entity ?? <PostEntity>[]);
-        setMainPageKey(result.data);
+        Navigator.pushNamed(context, PostDetailScreen.routeName,
+            arguments: <String, dynamic>{'pid': result.entity?.first.postID});
         return true;
       } else {
+        AppSnackBar.showSnackBar(
+            context, 'no_posts_found_with_this_access_code'.tr());
+        setPosts(<PostEntity>[]);
         debugPrint(
             'Failed: ${result.exception?.message ?? 'something_wrong'.tr()}');
-        setFilterContainerPosts(<PostEntity>[]);
-        setLoading(false);
       }
     } catch (e) {
+      AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
       debugPrint('Unexpected error: $e');
     } finally {
       setLoading(false);
@@ -169,7 +169,7 @@ class MarketPlaceProvider extends ChangeNotifier {
   }
 
 // button
-  void filterSortedPosts(SortOption? option) async {
+  void SortCheckButton(SortOption? option) async {
     final bool success = await loadPosts();
     if (success) {
       _selectedSortOption = option;
@@ -197,6 +197,8 @@ class MarketPlaceProvider extends ChangeNotifier {
   }
 
   void resetLocationBottomsheet(BuildContext context) async {
+    setFilteringBool(false);
+    Navigator.pop(context);
     final bool success = await loadPosts();
     if (success) {
       _radiusType = RadiusType.worldwide;
@@ -204,13 +206,15 @@ class MarketPlaceProvider extends ChangeNotifier {
       _selectedLocation = LatLng(LocalAuth.currentUser?.location?.latitude ?? 0,
           LocalAuth.currentUser?.location?.longitude ?? 0);
     }
-    Navigator.pop(context);
   }
 
-  void locationSheetApplyButton() async {
+  void locationSheetApplyButton(BuildContext context) async {
     final bool success = await loadPosts();
     if (success) {
       setFilteringBool(true);
+    } else {
+      AppSnackBar.showSnackBar(context, 'something_wrong'.tr(),
+          backgroundColor: ColorScheme.of(context).error);
     }
   }
 
@@ -262,7 +266,7 @@ class MarketPlaceProvider extends ChangeNotifier {
     List<PostEntity>? value,
   ) {
     _posts = value;
-    debugPrint('Loaded normal filter and soretd posts: ${posts?.length}');
+    debugPrint('Loaded normal filter and sorted posts: ${posts?.length}');
     if (queryController.text.isNotEmpty && queryController.text != '') {
       setFilteringBool(true);
     }
@@ -393,7 +397,7 @@ class MarketPlaceProvider extends ChangeNotifier {
     _cLothFootCategory = ListingType.clothAndFoot.cids.first;
     _selectedSize = <String>[];
     _selectedColor = <String>[];
-    _brand = '';
+    _brand = null;
     // Items
     _listingItemCategory = null;
     // Pets
@@ -658,6 +662,7 @@ class MarketPlaceProvider extends ChangeNotifier {
         value: _year!,
       ));
     }
+
     if (_vehicleCatgory != null && _vehicleCatgory!.isNotEmpty) {
       filters.add(FilterParam(
         attribute: 'vehicles_category',
@@ -665,6 +670,7 @@ class MarketPlaceProvider extends ChangeNotifier {
         value: _vehicleCatgory!,
       ));
     }
+
     if (vehicleModel.text.isNotEmpty) {
       filters.add(FilterParam(
         attribute: 'model',
@@ -687,11 +693,19 @@ class MarketPlaceProvider extends ChangeNotifier {
       filters.add(FilterParam(
         attribute: 'brand',
         operator: 'eq',
-        value: _brand ?? '',
+        value: _brand!,
       ));
-
-      ///
     }
+    if (_marketplaceCategory == ListingType.clothAndFoot) {
+      filters.add(FilterParam(
+        attribute: 'type',
+        operator: 'eq',
+        value: _cLothFootCategory,
+      ));
+    }
+
+    ///
+
     return filters;
   }
 
