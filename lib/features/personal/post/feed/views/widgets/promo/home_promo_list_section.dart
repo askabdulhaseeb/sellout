@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/theme/app_theme.dart';
+import '../../../../../../../core/widgets/loaders/promo_tile_loader.dart';
 import '../../../../../promo/domain/entities/promo_entity.dart';
 import '../../../../../promo/view/create_promo/provider/promo_provider.dart';
 import '../../../../../promo/view/home_promo_screen/widgets/promo_grid_view.dart';
@@ -77,7 +78,7 @@ class _HomePromoListSectionState extends State<HomePromoListSection> {
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   itemCount: 4, // Number of shimmer placeholders
                   itemBuilder: (BuildContext context, int index) {
-                    return const _PromoShimmerPlaceholder();
+                    return const PromoTileLoader();
                   },
                 )
               : ListView.builder(
@@ -95,40 +96,6 @@ class _HomePromoListSectionState extends State<HomePromoListSection> {
                 ),
         ),
       ],
-    );
-  }
-}
-
-class _PromoShimmerPlaceholder extends StatelessWidget {
-  const _PromoShimmerPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 80,
-      margin: const EdgeInsets.only(right: 12),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            width: 80,
-            height: 90,
-            decoration: BoxDecoration(
-              color: Theme.of(context).dividerColor,
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-          const SizedBox(height: 4),
-          Container(
-            height: 12,
-            width: 60,
-            decoration: BoxDecoration(
-              color: Theme.of(context).dividerColor,
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../core/widgets/custom_network_image.dart';
-import '../../../../../../core/widgets/loader.dart';
+import '../../../../../../core/widgets/loaders/loader.dart';
 import '../../../../../../core/widgets/rating_display_widget.dart';
 import '../../../../../business/core/data/sources/local_business.dart';
 import '../../../../../business/core/domain/entity/business_entity.dart';

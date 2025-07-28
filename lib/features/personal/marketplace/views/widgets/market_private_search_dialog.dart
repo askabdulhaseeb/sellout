@@ -22,30 +22,35 @@ void showPrivateSearchDialog(BuildContext context) {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Align(
-                alignment: Alignment.centerLeft,
-                child: IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Icons.arrow_back)),
+              Row(
+                children: <Widget>[
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close),
+                  ),
+                  const Spacer(),
+                  Text(
+                    'private'.tr(),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.primaryColor,
+                      fontSize: 18,
+                    ),
+                  ),
+                  const Spacer(),
+                  const SizedBox(width: 48),
+                ],
               ),
-              Text(
-                'private'.tr(),
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryColor,
-                  fontSize: 18,
-                ),
-              ),
-              const SizedBox(height: 20),
               // InDevMode(
               //   child: CustomTextFormField(
               //     labelText: 'username'.tr(),
               //     controller: pro.usernameController,
               //   ),
               // ),
+
               CustomTextFormField(
+                fieldPadding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 32.0),
                 labelText: 'access_code'.tr(),
                 controller: pro.accessCodeController,
               ),

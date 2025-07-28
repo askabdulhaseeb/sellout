@@ -15,13 +15,14 @@ class MarketPlaceCategoriesSection extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text('discover_categories'.tr(), style: theme.textTheme.titleSmall),
           const SizedBox(height: 8),
           GridView.builder(
+            padding: const EdgeInsets.all(0),
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -78,7 +79,6 @@ class MarketPlaceCategoriesSection extends StatelessWidget {
               );
             },
           ),
-          const SizedBox(height: 12),
           const Divider(),
         ],
       ),

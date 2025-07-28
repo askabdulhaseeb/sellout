@@ -37,9 +37,6 @@ class ServiceCardButton extends StatelessWidget {
             }
           },
         ),
-        const Divider(
-          thickness: 2,
-        )
       ],
     );
   }

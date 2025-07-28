@@ -60,12 +60,16 @@ class _BrandDropdownState extends State<BrandDropdown> {
   String? selectedItem;
   List<DropdownMenuItem<String>> dropdownItems = <DropdownMenuItem<String>>[];
 
+  String? lastCategory;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final MarketPlaceProvider provider =
         Provider.of<MarketPlaceProvider>(context, listen: false);
-    loadBrands(provider.cLothFootCategory ?? 'clothes'); // default to cloth
+    final String category = provider.cLothFootCategory ?? 'clothes';
+    lastCategory = category;
+    loadBrands(category); // Initial load
   }
 
   Future<void> loadBrands(String type) async {
@@ -82,42 +86,38 @@ class _BrandDropdownState extends State<BrandDropdown> {
         final String label = brandMap['label'] ?? '';
         return DropdownMenuItem<String>(
           value: label,
-          child: Text(
-            label,
-          ),
+          child: Text(label),
         );
       }).toList();
+
+      // Reset selected item when new items are loaded
+      selectedItem = null;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final MarketPlaceProvider provider =
-        Provider.of<MarketPlaceProvider>(context);
-
-    // Reload if the category changes (optional)
-    if ((provider.cLothFootCategory ?? 'cloth') == 'foot' &&
-        dropdownItems.isNotEmpty &&
-        dropdownItems.first.value != 'Nike') {
-      loadBrands('foot');
-    } else if ((provider.cLothFootCategory ?? 'cloth') == 'cloth' &&
-        dropdownItems.isNotEmpty &&
-        dropdownItems.first.value != 'Zara') {
-      loadBrands('cloth');
-    }
-
     return Expanded(
-      child: CustomDropdown<String>(
-        hint: 'Brands',
-        title: '',
-        selectedItem: selectedItem,
-        items: dropdownItems,
-        onChanged: (String? value) {
-          setState(() {
-            selectedItem = value;
-          });
+      child: Consumer<MarketPlaceProvider>(
+        builder: (BuildContext context, MarketPlaceProvider provider, _) {
+          final String currentCategory =
+              provider.cLothFootCategory ?? 'clothes';
+
+          // If category changed, reload the brands
+          if (currentCategory != lastCategory) {
+            lastCategory = currentCategory;
+            loadBrands(currentCategory);
+          }
+
+          return CustomDropdown<String>(
+            hint: 'Brands',
+            title: '',
+            selectedItem: provider.brand,
+            items: dropdownItems,
+            onChanged: (String? p0) => provider.setBrand(p0),
+            validator: (bool? val) => null,
+          );
         },
-        validator: (bool? val) => null,
       ),
     );
   }

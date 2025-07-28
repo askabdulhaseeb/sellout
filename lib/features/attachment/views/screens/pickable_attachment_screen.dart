@@ -3,7 +3,7 @@ import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/functions/app_log.dart';
-import '../../../../core/widgets/loader.dart';
+import '../../../../core/widgets/loaders/loader.dart';
 import '../../domain/entities/picked_attachment_option.dart';
 import '../providers/picked_media_provider.dart';
 import '../widgets/picked_media_display_limits_widget.dart';

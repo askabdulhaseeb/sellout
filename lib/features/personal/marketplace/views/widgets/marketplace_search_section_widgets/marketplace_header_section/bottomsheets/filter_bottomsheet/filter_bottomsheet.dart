@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:provider/provider.dart';
-import '../../../../../../../../../core/theme/app_theme.dart';
-import '../../../../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../providers/marketplace_provider.dart';
+import 'widgets/filter_sheet_button.dart';
 import 'widgets/filter_sheet_condition_dropdown.dart';
 import 'widgets/filter_sheet_delivery_dropdown.dart';
+import 'widgets/filter_sheet_header_sections.dart';
 import 'widgets/filter_sheet_price_range.dart';
 import 'widgets/filter_sheet_review_dropdown.dart';
 
@@ -14,8 +11,6 @@ class MarketPlaceFilterBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final MarketPlaceProvider pro =
-        Provider.of<MarketPlaceProvider>(context, listen: false);
     return BottomSheet(
       showDragHandle: false,
       enableDrag: false,
@@ -28,35 +23,10 @@ class MarketPlaceFilterBottomSheet extends StatelessWidget {
             color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
-          child: Column(
+          child: const Column(
             children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  CloseButton(onPressed: () {
-                    Navigator.pop(context);
-                  }),
-                  Text(
-                    'filter'.tr(),
-                    style: TextTheme.of(context)
-                        .bodyLarge
-                        ?.copyWith(fontWeight: FontWeight.w600),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      pro.filterSheetResetButton(context);
-                    },
-                    child: Text(
-                      'reset'.tr(),
-                      style: TextTheme.of(context)
-                          .labelSmall
-                          ?.copyWith(color: AppTheme.primaryColor),
-                    ),
-                  ),
-                ],
-              ),
-              const Divider(height: 0),
-              const Expanded(
+              FilterSheetHeaderSection(),
+              Expanded(
                 child: SingleChildScrollView(
                   padding: EdgeInsets.all(16),
                   child: Column(
@@ -70,17 +40,7 @@ class MarketPlaceFilterBottomSheet extends StatelessWidget {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: CustomElevatedButton(
-                  onTap: () {
-                    pro.filterSheetApplyButton();
-                    Navigator.pop(context);
-                  },
-                  title: 'apply'.tr(),
-                  isLoading: pro.isLoading,
-                ),
-              )
+              FilterSheetSheetButton()
             ],
           ),
         );

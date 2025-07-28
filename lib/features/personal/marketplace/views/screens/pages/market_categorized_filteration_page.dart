@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../core/widgets/loaders/loader.dart';
 import '../../providers/marketplace_provider.dart';
 import '../../widgets/market_categorized_filters_page_widgets/filter_container.dart';
 import '../../widgets/market_categorized_filters_page_widgets/filter_container_gridview.dart';
@@ -53,7 +54,7 @@ class _MarketCategorizedFilterationPageState
                 child: SingleChildScrollView(
                   controller: _scrollController,
                   child: marketPro.isLoading
-                      ? const Center(child: CircularProgressIndicator())
+                      ? const Center(child: Loader())
                       : Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
@@ -63,8 +64,7 @@ class _MarketCategorizedFilterationPageState
                             if (marketPro.isLoading)
                               const Padding(
                                 padding: EdgeInsets.all(16),
-                                child:
-                                    Center(child: CircularProgressIndicator()),
+                                child: Center(child: Loader()),
                               ),
                           ],
                         ),
