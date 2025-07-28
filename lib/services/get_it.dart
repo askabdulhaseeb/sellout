@@ -148,7 +148,7 @@ import '../features/personal/services/data/sources/services_explore_api.dart';
 import '../features/personal/services/domain/repositories/personal_services_repository.dart';
 import '../features/personal/services/domain/usecase/get_service_by_categories_usecase.dart';
 import '../features/personal/services/domain/usecase/get_special_offer_usecase.dart';
-import '../features/personal/services/views/providers/services_page_provider.dart';
+import '../features/personal/services/services_screen/providers/services_page_provider.dart';
 import '../features/personal/setting/setting_dashboard/data/source/remote/setting_api.dart';
 import '../features/personal/setting/setting_dashboard/data/source/repo/setting_repo_impl.dart';
 import '../features/personal/setting/setting_dashboard/domain/repo/setting_repo.dart';

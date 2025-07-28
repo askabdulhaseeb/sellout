@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../providers/services_page_provider.dart';
-import '../service_card/service_card.dart';
+import '../../../service_detail/widget/service_card/service_card.dart';
 
 class ServiceSearchResults extends StatelessWidget {
   const ServiceSearchResults({super.key});

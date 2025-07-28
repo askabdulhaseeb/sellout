@@ -8,7 +8,7 @@ import '../../../chats/chat_dashboard/views/screens/chat_dashboard_screen.dart';
 import '../../../marketplace/views/screens/marketplace_screen.dart';
 import '../../../post/feed/views/screens/home_screen.dart';
 import '../../../user/profiles/views/screens/profile_screen.dart';
-import '../../../services/views/screens/services_screen.dart';
+import '../../../services/services_screen/screens/services_screen.dart';
 import '../providers/personal_bottom_nav_provider.dart';
 
 class DashboardScreen extends StatelessWidget {
