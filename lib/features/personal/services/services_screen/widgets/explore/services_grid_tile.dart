@@ -1,11 +1,11 @@
-import '../../../../../core/widgets/custom_network_image.dart';
-import '../../../../../core/widgets/rating_display_widget.dart';
+import '../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../core/widgets/rating_display_widget.dart';
 import 'package:flutter/material.dart';
-import '../../../../business/core/domain/entity/service/service_entity.dart';
-import '../../../services/service_detail/screens/service_detail_screen.dart';
+import '../../../../../business/core/domain/entity/service/service_entity.dart';
+import '../../../service_detail/screens/service_detail_screen.dart';
 
-class SearchServiceGridTile extends StatelessWidget {
-  const SearchServiceGridTile({required this.service, super.key});
+class ServiceGridTile extends StatelessWidget {
+  const ServiceGridTile({required this.service, super.key});
   final ServiceEntity service;
 
   @override

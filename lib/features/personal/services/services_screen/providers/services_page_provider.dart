@@ -69,17 +69,24 @@ class ServicesPageProvider extends ChangeNotifier {
 
   //
   bool? _selectedIsMobileService;
-
-// Getter (optional)
   bool? get selectedIsMobileService => _selectedIsMobileService;
-
-// Setter to update value and notify listeners
   void setSelectedIsMobileService(bool? value) {
     _selectedIsMobileService = value;
     notifyListeners();
   }
 
   //
+  int? _rating;
+  int? get rating => _rating;
+  void setRating(int? value) {
+    _rating = value;
+    notifyListeners();
+  }
+
+  //
+  TextEditingController minPriceController = TextEditingController();
+  TextEditingController maxPriceController = TextEditingController();
+
   // Initial fetch
   Future<void> fetchServicesByCategory(ServiceCategoryType category) async {
     if (_isLoading) return;
@@ -239,8 +246,7 @@ class ServicesPageProvider extends ChangeNotifier {
   }
 
   List<FilterParam> getFilterParams() {
-    final params = <FilterParam>[];
-
+    final List<FilterParam> params = <FilterParam>[];
     if (_selectedIsMobileService != null) {
       params.add(
         FilterParam(
@@ -250,7 +256,29 @@ class ServicesPageProvider extends ChangeNotifier {
         ),
       );
     }
-
+    if (_rating != null) {
+      params.add(
+        FilterParam(
+          attribute: 'average_rating',
+          operator: 'eq',
+          value: _rating.toString(),
+        ),
+      );
+    }
+    if (minPriceController.text.trim().isNotEmpty) {
+      params.add(FilterParam(
+        attribute: 'price',
+        operator: 'gt',
+        value: minPriceController.text.trim(),
+      ));
+    }
+    if (maxPriceController.text.trim().isNotEmpty) {
+      params.add(FilterParam(
+        attribute: 'price',
+        operator: 'lt',
+        value: maxPriceController.text.trim(),
+      ));
+    }
     // Add more filters below as needed...
 
     return params;

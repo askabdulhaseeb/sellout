@@ -16,7 +16,7 @@ class ServiceDetailCancellationPolicyWidget extends StatelessWidget {
           height: 6,
         ),
         Text(
-          'This appointment requires a cancellation fee',
+          'require_cancellation_fee'.tr(),
           style: TextTheme.of(context)
               .bodySmall
               ?.copyWith(color: ColorScheme.of(context).outline),
@@ -25,7 +25,7 @@ class ServiceDetailCancellationPolicyWidget extends StatelessWidget {
           height: 12,
         ),
         Text(
-          'You may cancel your appointment up to 2 hours prior to avoid paying the fee.',
+          'Cancel_appointment_before_two_hours'.tr(),
           style: TextTheme.of(context)
               .bodySmall
               ?.copyWith(color: ColorScheme.of(context).outline),
