@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 import '../../features/personal/auth/signin/data/sources/local/local_auth.dart';
+import '../../features/personal/notifications/data/models/notification_model.dart';
+import '../../features/personal/notifications/data/source/local_notification.dart';
 import '../functions/app_log.dart';
 import 'socket_implementations.dart';
 
@@ -84,7 +86,8 @@ class SocketService with WidgetsBindingObserver {
 
     socket!.on('new-notification', (dynamic data) async {
       AppLog.info('🔔 New notification: $data',
-          name: 'SocketService.getOnlineUsers');
+          name: 'SocketService.new-notification');
+      LocalNotifications.saveNotification(NotificationModel.fromRawJson(data));
     });
 
     socket!.on('lastSeen', (dynamic data) {

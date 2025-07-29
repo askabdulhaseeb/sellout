@@ -140,23 +140,6 @@ class SocketImplementations {
     debugPrint(onlineUsers.value.toString());
   }
 
-  // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  //     FlutterLocalNotificationsPlugin();
-  // Future<void> showLocalNotification(String title, String body) async {
-  //   const AndroidNotificationDetails androidPlatformChannelSpecifics =
-  //       AndroidNotificationDetails(
-  //     'your_channel_id',
-  //     'Your Channel Name',
-  //     importance: Importance.max,
-  //     priority: Priority.high,
-  //   );
-  //   const NotificationDetails platformChannelSpecifics =
-  //       NotificationDetails(android: androidPlatformChannelSpecifics);
-  //   await flutterLocalNotificationsPlugin.show(
-  //     0,
-  //     title,
-  //     body,
-  //     platformChannelSpecifics,
-  //   );
-  // }
+  // Notifictions
+//   Future<void> handleNotification(Map<String, dynamic> data) async {}
 }
