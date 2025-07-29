@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../core/enums/business/services/service_category_type.dart';
+import '../../../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import 'service_category_tile.dart';
 
 class AllServiceCategoriesGridScreen extends StatelessWidget {
@@ -12,7 +13,9 @@ class AllServiceCategoriesGridScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('categories'.tr()),
+        title: AppBarTitle(
+          titleKey: 'service_categories'.tr(),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
