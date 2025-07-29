@@ -13,16 +13,16 @@ class FoodDrinkFilterSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       children: <Widget>[
         // InDevMode(
         //   child: MarketFilterFoodDrinkToggleWidget(
         //     screenWidth: screenWidth,
         //   ),
         // ),
-        const MarketFilterSearchField(),
-        const MarketFilterFoodDrinkCategoryAndLocationWIdget(),
-        const MarketFilterPriceWIdget()
+        MarketFilterSearchField(),
+        MarketFilterFoodDrinkCategoryAndLocationWIdget(),
+        MarketFilterPriceWIdget()
       ],
     );
   }

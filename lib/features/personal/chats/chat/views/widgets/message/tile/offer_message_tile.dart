@@ -202,9 +202,9 @@ class OfferBuyNowButton extends StatelessWidget {
           isLoading: false,
           onTap: () async {
             try {
-              final AddressEntity? _address = address;
+              final AddressEntity? addressRes = address;
 
-              if (_address == null) {
+              if (addressRes == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
@@ -235,7 +235,7 @@ class OfferBuyNowButton extends StatelessWidget {
 
               final OfferPaymentParams params = OfferPaymentParams(
                 offerId: offerId,
-                buyerAddress: AddressModel.fromEntity(_address),
+                buyerAddress: AddressModel.fromEntity(addressRes),
               );
 
               final DataState<String> result =

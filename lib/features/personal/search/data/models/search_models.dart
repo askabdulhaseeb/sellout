@@ -13,23 +13,25 @@ class SearchModel extends SearchEntity {
   });
 
   factory SearchModel.fromJson(Map<String, dynamic> json, String entityType) {
-    final List itemsJson = json['items'] as List<dynamic>? ?? <dynamic>[];
+    final List<dynamic> itemsJson =
+        json['items'] as List<dynamic>? ?? <dynamic>[];
 
     if (entityType == 'posts') {
       return SearchModel(
-        posts: itemsJson.map((e) => PostModel.fromJson(e)).toList(),
+        posts: itemsJson.map((dynamic e) => PostModel.fromJson(e)).toList(),
         count: json['count'] ?? 0,
         lastEvaluatedKey: json['last_evaluated_key'],
       );
     } else if (entityType == 'users') {
       return SearchModel(
-        users: itemsJson.map((e) => UserModel.fromJson(e)).toList(),
+        users: itemsJson.map((dynamic e) => UserModel.fromJson(e)).toList(),
         count: json['count'] ?? 0,
         lastEvaluatedKey: json['last_evaluated_key'],
       );
     } else if (entityType == 'services') {
       return SearchModel(
-        services: itemsJson.map((e) => ServiceModel.fromJson(e)).toList(),
+        services:
+            itemsJson.map((dynamic e) => ServiceModel.fromJson(e)).toList(),
         count: json['count'] ?? 0,
         lastEvaluatedKey: json['last_evaluated_key'],
       );

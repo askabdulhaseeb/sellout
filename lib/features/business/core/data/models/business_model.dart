@@ -49,11 +49,11 @@ class BusinessModel extends BusinessEntity {
             ? BusinessTravelDetailModel.fromJson(json['travel_detail'])
             : null,
         employees: (json['employees'] as List<dynamic>?)
-            ?.map((x) => BusinessEmployeeModel.fromJson(x))
+            ?.map((dynamic x) => BusinessEmployeeModel.fromJson(x))
             .toList(),
         address: json['address'] != null
             ? (json['address'] is List
-                ? (json['address'] as List).isNotEmpty
+                ? (json['address'] as List<dynamic>).isNotEmpty
                     ? BusinessAddressModel.fromJson(json['address'][0])
                     : null
                 : BusinessAddressModel.fromJson(json['address']))
@@ -64,9 +64,10 @@ class BusinessModel extends BusinessEntity {
         phoneNumber: json['phone_number'],
         companyNo: json['company_no'],
         routine: (json['routine'] as List<dynamic>?)
-            ?.map((x) => RoutineModel.fromJson(x))
+            ?.map((dynamic x) => RoutineModel.fromJson(x))
             .toList(),
-        listOfReviews: (json['list_of_reviews'] as List<dynamic>?)?.map((x) {
+        listOfReviews:
+            (json['list_of_reviews'] as List<dynamic>?)?.map((dynamic x) {
           if (x is int) {
             return x.toDouble();
           } else if (x is double) {
@@ -79,13 +80,13 @@ class BusinessModel extends BusinessEntity {
         updatedAt:
             (json['updated_at'] ?? json['created_at'])?.toString().toDateTime(),
         supporters: (json['supporters'] as List<dynamic>?)
-            ?.map((e) => e != null
+            ?.map((dynamic e) => e != null
                 ? SupporterDetailModel.fromMap(e).toEntity()
                 : <dynamic>[])
             .whereType<SupporterDetailEntity>()
             .toList(),
         supportings: (json['supporting'] as List<dynamic>?)
-            ?.map((e) => e != null
+            ?.map((dynamic e) => e != null
                 ? SupporterDetailModel.fromMap(e).toEntity()
                 : <dynamic>[])
             .whereType<SupporterDetailEntity>()

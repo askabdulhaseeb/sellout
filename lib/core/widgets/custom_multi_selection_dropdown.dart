@@ -55,7 +55,7 @@ class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
           behavior: HitTestBehavior.translucent,
           onTap: _closeDropdown, // Closes dropdown on outside tap
           child: Stack(
-            children: [
+            children: <Widget>[
               // The actual dropdown panel
               Positioned(
                 width: widget.width ?? size.width,
