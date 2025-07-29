@@ -1199,7 +1199,7 @@ class AddListingFormProvider extends ChangeNotifier {
 
   //
   /// Controller
-  List<ListingEntity> _listings = <ListingEntity>[];
+  final List<ListingEntity> _listings = <ListingEntity>[];
   bool _isDropdownLoading = false;
   PostEntity? _post;
   ListingType? _listingType;
