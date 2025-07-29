@@ -4,8 +4,9 @@ import 'package:provider/provider.dart';
 import '../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../providers/services_page_provider.dart';
-import 'widgets/filter_sheet_review_dropdown.dart';
-import 'widgets/service_filter_mobile_service_dropdown.dart';
+import 'widgets/services_filter_sheet_price_range.dart';
+import 'widgets/services_filter_sheet_review_dropdown.dart';
+import 'widgets/services_filter_mobile_service_dropdown.dart';
 
 class ServicesExploreFilterBottomSheet extends StatelessWidget {
   const ServicesExploreFilterBottomSheet({super.key});
@@ -62,6 +63,8 @@ class ServicesExploreFilterBottomSheet extends StatelessWidget {
                       FilterSheetMobileServiceTile(),
                       SizedBox(height: 8),
                       ServiceFilterSheetCustomerReviewTile(),
+                      SizedBox(height: 8),
+                      ServicesExpandablePriceRangeTile(),
                     ],
                   ),
                 ),

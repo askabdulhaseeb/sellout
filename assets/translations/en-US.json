@@ -952,6 +952,8 @@
   "Cancel_appointment_before_two_hours": "You may cancel your appointment up to 2 hours prior to avoid paying the fee.",
   "require_cancellation_fee": "This appointment requires a cancellation fee",
   "cancellations": "Cancellation",
+  "nearby": "Nearby",
+  "top_rated": "Top Rated",
   "next": "Next",
   "closed": "Closed",
   "default": "Default",
