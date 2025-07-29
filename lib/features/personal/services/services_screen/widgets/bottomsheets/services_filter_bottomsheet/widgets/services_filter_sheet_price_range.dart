@@ -4,15 +4,16 @@ import 'package:provider/provider.dart';
 import '../../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../providers/services_page_provider.dart';
 
-class ExpandablePriceRangeTile extends StatefulWidget {
-  const ExpandablePriceRangeTile({super.key});
+class ServicesExpandablePriceRangeTile extends StatefulWidget {
+  const ServicesExpandablePriceRangeTile({super.key});
 
   @override
-  State<ExpandablePriceRangeTile> createState() =>
-      _ExpandablePriceRangeTileState();
+  State<ServicesExpandablePriceRangeTile> createState() =>
+      _ServicesExpandablePriceRangeTileState();
 }
 
-class _ExpandablePriceRangeTileState extends State<ExpandablePriceRangeTile> {
+class _ServicesExpandablePriceRangeTileState
+    extends State<ServicesExpandablePriceRangeTile> {
   bool _isExpanded = false;
 
   @override

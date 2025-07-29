@@ -47,7 +47,7 @@ class _SortButtonWithBottomSheetState extends State<SortButtonWithBottomSheet> {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
       ),
       builder: (BuildContext context) => const SortBottomSheet(),
     );
@@ -61,23 +61,20 @@ class SortBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final ServicesPageProvider provider =
         Provider.of<ServicesPageProvider>(context);
-    ;
 
     return Container(
       height: 400,
       decoration: BoxDecoration(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
         color: Theme.of(context).scaffoldBackgroundColor,
       ),
       child: Column(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(top: 16, bottom: 10),
+            padding: const EdgeInsets.only(top: 10, bottom: 4),
             child: Text(
               'sort'.tr(),
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge
-                  ?.copyWith(fontSize: 14),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(),
             ),
           ),
           const Divider(),

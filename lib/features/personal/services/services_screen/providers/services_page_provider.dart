@@ -104,7 +104,7 @@ class ServicesPageProvider extends ChangeNotifier {
   //
   final List<ServiceEntity> _serviceResults = <ServiceEntity>[];
   // String? _serviceNextKey;
-  ServiceSortOption? _selectedSortOption;
+  ServiceSortOption? _selectedSortOption = ServiceSortOption.nearby;
   ServiceSortOption? get selectedSortOption => _selectedSortOption;
 
   void setSortOption(ServiceSortOption option) {
@@ -113,9 +113,7 @@ class ServicesPageProvider extends ChangeNotifier {
   }
 
   List<ServiceEntity> get serviceResults => _serviceResults;
-
   TextEditingController search = TextEditingController();
-
   Future<void> querySearching() async {
     // Only search if the query is not empty or just whitespace
     if (search.text.trim().isNotEmpty) {
@@ -125,6 +123,8 @@ class ServicesPageProvider extends ChangeNotifier {
     } else {
       // If empty, clear the previous results
       searchedServices.clear();
+      resetFilters();
+      setSortOption(ServiceSortOption.nearby);
       notifyListeners();
     }
   }
@@ -260,7 +260,7 @@ class ServicesPageProvider extends ChangeNotifier {
       params.add(
         FilterParam(
           attribute: 'average_rating',
-          operator: 'eq',
+          operator: 'lt',
           value: _rating.toString(),
         ),
       );
@@ -286,6 +286,9 @@ class ServicesPageProvider extends ChangeNotifier {
 
   void resetFilters() {
     _selectedIsMobileService = null;
+    minPriceController.clear();
+    maxPriceController.clear();
+    _rating = null;
     searchServices();
   }
 

@@ -39,11 +39,23 @@ class FilterSheetMobileServiceTile extends StatelessWidget {
             items: <DropdownMenuItem<bool>>[
               DropdownMenuItem<bool>(
                 value: true,
-                child: Text('yes'.tr()),
+                child: Text(
+                  'yes'.tr(),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(color: Theme.of(context).colorScheme.outline),
+                ),
               ),
               DropdownMenuItem<bool>(
                 value: false,
-                child: Text('no'.tr()),
+                child: Text(
+                  'no'.tr(),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(color: Theme.of(context).colorScheme.outline),
+                ),
               ),
             ],
             onChanged: (bool? newValue) {

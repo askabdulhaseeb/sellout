@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../domain/params/service_sort_options.dart';
-import 'bottomsheets/services_filter_bottomsheet/filter_bottomsheet.dart';
+import 'bottomsheets/services_filter_bottomsheet/services_filter_bottomsheet.dart';
 
 class FillterButtonWithBottomSheet extends StatefulWidget {
   const FillterButtonWithBottomSheet({super.key});

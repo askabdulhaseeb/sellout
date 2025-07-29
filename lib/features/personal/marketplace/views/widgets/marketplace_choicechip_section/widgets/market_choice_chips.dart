@@ -32,47 +32,45 @@ class _MarketplaceChoiceChipsState extends State<MarketplaceChoiceChips> {
           null,
           ...ListingType.values.map((ListingType e) => e.json)
         ];
-        return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Container(
-            margin: const EdgeInsets.all(0),
-            padding: const EdgeInsets.only(left: 14),
-            child: Row(
-              children: jsons.map((String? json) {
-                final bool isSelected = selectedJson == json;
-                final String label = json?.tr() ?? 'all'.tr();
-                return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  child: ChoiceChip(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                    showCheckmark: false,
-                    label: Text(
-                      label,
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: isSelected
-                                ? Theme.of(context).colorScheme.surface
-                                : Theme.of(context).colorScheme.onSurface,
-                          ),
-                    ),
-                    selected: isSelected,
-                    selectedColor: Theme.of(context).colorScheme.onSurface,
-                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    onSelected: (_) {
-                      setState(() {
-                        selectedJson = json;
-                      });
-                      context
-                          .read<MarketPlaceProvider>()
-                          .choiceChipsCategory(json);
-                    },
-                  ),
-                );
-              }).toList(),
-            ),
+        return SizedBox(
+          height: 40, // Ensures consistent height for chips
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: jsons.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 4),
+            itemBuilder: (_, int index) {
+              final String? json = jsons[index];
+              final bool isSelected = selectedJson == json;
+              final String label = json?.tr() ?? 'all'.tr();
+
+              return ChoiceChip(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                showCheckmark: false,
+                label: Text(
+                  label,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.surface
+                            : Theme.of(context).colorScheme.onSurface,
+                      ),
+                ),
+                selected: isSelected,
+                selectedColor: Theme.of(context).colorScheme.onSurface,
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                onSelected: (_) {
+                  setState(() {
+                    selectedJson = json;
+                  });
+                  context.read<MarketPlaceProvider>().choiceChipsCategory(json);
+                },
+              );
+            },
           ),
         );
       },

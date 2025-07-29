@@ -1,6 +1,6 @@
 enum ServiceSortOption {
   nearby(code: 'nearby', json: 'nearby'),
-  rating(code: 'rating', json: 'rating'),
+  rating(code: 'top_rated', json: 'rating'),
   priceAscending(code: 'lowest_price', json: 'low_to_high'),
   priceDescending(code: 'highest_price', json: 'high_to_low');
 
