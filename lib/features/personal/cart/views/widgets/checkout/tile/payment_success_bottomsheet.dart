@@ -144,7 +144,8 @@ class CartPaymentSuccessDetailsSection extends StatelessWidget {
                   item: pro.orderBilling?.items[index]);
             },
           ),
-        )
+        ),
+        const SizedBox(height: 200)
       ],
     );
   }
