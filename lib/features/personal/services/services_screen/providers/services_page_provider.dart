@@ -104,7 +104,7 @@ class ServicesPageProvider extends ChangeNotifier {
   //
   final List<ServiceEntity> _serviceResults = <ServiceEntity>[];
   // String? _serviceNextKey;
-  ServiceSortOption? _selectedSortOption = ServiceSortOption.nearby;
+  ServiceSortOption? _selectedSortOption = ServiceSortOption.bestMatch;
   ServiceSortOption? get selectedSortOption => _selectedSortOption;
 
   void setSortOption(ServiceSortOption option) {
@@ -124,7 +124,7 @@ class ServicesPageProvider extends ChangeNotifier {
       // If empty, clear the previous results
       searchedServices.clear();
       resetFilters();
-      setSortOption(ServiceSortOption.nearby);
+      setSortOption(ServiceSortOption.bestMatch);
       notifyListeners();
     }
   }
