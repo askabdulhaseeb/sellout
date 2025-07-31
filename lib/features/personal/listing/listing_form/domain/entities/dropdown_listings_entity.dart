@@ -36,6 +36,7 @@ class DropdownOptionEntity {
       );
     }
   }
+  
   @HiveField(0)
   final String label;
 
@@ -59,8 +60,7 @@ class DropdownOptionEntity {
 }
 
 @HiveType(typeId: 59)
-class DropdownCategoryEntity {
-  const DropdownCategoryEntity({
+class DropdownCategoryEntity {const DropdownCategoryEntity({
     required this.key,
     required this.options,
   });
@@ -71,6 +71,7 @@ class DropdownCategoryEntity {
       options: map.entries.map(DropdownOptionEntity.fromMap).toList(),
     );
   }
+  
   @HiveField(0)
   final String key;
 

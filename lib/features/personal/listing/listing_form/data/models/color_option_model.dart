@@ -23,7 +23,9 @@ class ColorOptionModel extends ColorOptionEntity {
       label: json['label'] ?? '',
       value: json['value'] ?? '',
       shade: json['shade'] ?? '',
-      tag: (json['tag'] as List<dynamic>).map((e) => e.toString()).toList(),
+      tag: (json['tag'] as List<dynamic>)
+          .map((dynamic e) => e.toString())
+          .toList(),
     );
   }
 

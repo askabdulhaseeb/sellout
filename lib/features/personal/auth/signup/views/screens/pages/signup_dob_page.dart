@@ -78,10 +78,10 @@ class SignupDobPage extends StatelessWidget {
             ),
 
             Padding(
-              padding: EdgeInsets.only(top: 4),
+              padding: const EdgeInsets.only(top: 4),
               child: Text(
                 'please_select_dob'.tr(),
-                style: TextStyle(color: Colors.red, fontSize: 12),
+                style: const TextStyle(color: Colors.red, fontSize: 12),
               ),
             ),
 
