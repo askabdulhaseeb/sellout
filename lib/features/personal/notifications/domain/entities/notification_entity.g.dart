@@ -24,7 +24,7 @@ class NotificationEntityAdapter extends TypeAdapter<NotificationEntity> {
       deliverTo: fields[4] as String,
       message: fields[5] as String,
       isViewed: fields[6] as bool,
-      metadata: (fields[7] as Map).cast<String, dynamic>(),
+      metadata: fields[7] as NotificationMetadataModel,
       notificationFor: fields[8] as String,
       timestamps: fields[9] as DateTime,
     );

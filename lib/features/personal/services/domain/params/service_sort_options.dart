@@ -1,4 +1,5 @@
 enum ServiceSortOption {
+  bestMatch(code: 'best_match', json: 'best_match'),
   nearby(code: 'nearby', json: 'nearby'),
   rating(code: 'top_rated', json: 'rating'),
   priceAscending(code: 'lowest_price', json: 'low_to_high'),

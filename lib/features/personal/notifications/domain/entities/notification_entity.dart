@@ -1,4 +1,6 @@
 import 'package:hive/hive.dart';
+import '../../data/models/notification_metadata_model.dart';
+import 'notification_metadata_entity.dart';
 part 'notification_entity.g.dart';
 
 @HiveType(typeId: 65)
@@ -37,7 +39,7 @@ class NotificationEntity {
   final bool isViewed;
 
   @HiveField(7)
-  final Map<String, dynamic> metadata;
+  final NotificationMetadataEntity metadata;
 
   @HiveField(8)
   final String notificationFor;

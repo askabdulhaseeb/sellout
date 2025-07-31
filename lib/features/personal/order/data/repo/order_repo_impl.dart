@@ -20,6 +20,11 @@ class OrderRepositoryImpl implements OrderRepository {
   }
 
   @override
+  Future<DataState<List<OrderEntity>>> getOrderByOrderId(String? params) async {
+    return await orderByUserRemote.getOrderByOrderId(params);
+  }
+
+  @override
   Future<DataState<bool>> createOrder(List<OrderModel> orderData) async {
     return await orderByUserRemote.createOrder(orderData);
   }

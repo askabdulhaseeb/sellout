@@ -4,35 +4,35 @@ import '../../domain/entities/notification_entity.dart';
 import '../models/notification_model.dart';
 
 class LocalNotifications {
-  static final String _boxName = AppStrings.localNotificationBox;
-  static Box<NotificationEntity>? _box;
+  static final String boxTitle = AppStrings.localNotificationBox;
+  static Box<NotificationEntity> get _box =>
+      Hive.box<NotificationEntity>(boxTitle);
 
-  /// Opens the Hive box (only once)
-  static Future<void> refresh() async {
-    if (!Hive.isBoxOpen(_boxName)) {
-      _box = await Hive.openBox<NotificationEntity>(_boxName);
+  static Future<Box<NotificationEntity>> get openBox async =>
+      await Hive.openBox<NotificationEntity>(boxTitle);
+
+  /// Opens the Hive box
+  Future<Box<NotificationEntity>> refresh() async {
+    final bool isOpen = Hive.isBoxOpen(boxTitle);
+    if (isOpen) {
+      return _box;
     } else {
-      _box = Hive.box<NotificationEntity>(_boxName);
+      return await Hive.openBox<NotificationEntity>(boxTitle);
     }
   }
 
   /// Clears all notifications
-  static Future<void> clear() async {
-    await refresh();
-    await _box!.clear();
-  }
+  Future<void> clear() async => await _box.clear();
 
   /// Saves a notification based on its ID (updates if already exists)
-  static Future<void> saveNotification(NotificationModel notification) async {
-    await refresh();
-    await _box!.put(notification.notificationId, notification);
+  static Future<void> saveNotification(NotificationEntity notification) async {
+    await _box.put(notification.notificationId, notification);
   }
 
   /// Get all notifications as a list
   static Future<List<NotificationModel>> getAllNotifications() async {
-    await refresh();
-    return _box!.values
-        .map((e) => NotificationModel(
+    return _box.values
+        .map((NotificationEntity e) => NotificationModel(
               notificationId: e.notificationId,
               userId: e.userId,
               type: e.type,
@@ -49,16 +49,14 @@ class LocalNotifications {
 
   /// Deletes a single notification by ID
   static Future<void> deleteNotification(String id) async {
-    await refresh();
-    await _box!.delete(id);
+    await _box.delete(id);
   }
 
   /// Marks a notification as viewed
   static Future<void> markAsViewed(String id) async {
-    await refresh();
-    final notification = _box!.get(id);
+    final NotificationEntity? notification = _box.get(id);
     if (notification != null) {
-      final updated = NotificationModel(
+      final NotificationModel updated = NotificationModel(
         notificationId: notification.notificationId,
         userId: notification.userId,
         type: notification.type,
@@ -70,13 +68,12 @@ class LocalNotifications {
         notificationFor: notification.notificationFor,
         timestamps: notification.timestamps,
       );
-      await _box!.put(id, updated);
+      await _box.put(id, updated);
     }
   }
 
   /// Get count of unread notifications
   static Future<int> getUnreadCount() async {
-    await refresh();
-    return _box!.values.where((e) => !e.isViewed).length;
+    return _box.values.where((NotificationEntity e) => !e.isViewed).length;
   }
 }

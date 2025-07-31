@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/functions/app_log.dart';
 import '../../../../business/core/domain/entity/service/service_entity.dart';
 import '../widget/service_detail_cancellation_policy.dart';
 import '../widget/service_card/service_card.dart';
@@ -13,6 +14,10 @@ class ServiceDetailScreen extends StatelessWidget {
     final Map<String, dynamic> args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final ServiceEntity service = args['service'];
+    AppLog.info(
+      'Opened Service : ${service.serviceID}',
+      name: 'ServiceDetailScreen',
+    );
     return Scaffold(
         appBar: AppBar(
           elevation: 0,

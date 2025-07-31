@@ -7,6 +7,7 @@ import '../local/local_orders.dart';
 
 abstract interface class OrderByUserRemote {
   Future<DataState<List<OrderEntity>>> getOrderByUser(GetOrderParams? userId);
+  Future<DataState<List<OrderEntity>>> getOrderByOrderId(String? params);
   Future<DataState<bool>> createOrder(List<OrderModel> orderData);
   Future<DataState<bool>> updateOrder(UpdateOrderParams params);
 }
@@ -31,6 +32,44 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
             .toList();
         // 🔄 Optional: still save locally
         await LocalOrders().saveAll(orders);
+
+        return DataSuccess<List<OrderEntity>>(raw, orders);
+      } else {
+        return DataFailer<List<OrderEntity>>(
+          result.exception ?? CustomException('Failed to get orders'),
+        );
+      }
+    } catch (e, stc) {
+      AppLog.error(
+        e.toString(),
+        name: 'OrderByUserRemoteImpl.getOrderByUser - catch',
+        error: e,
+        stackTrace: stc,
+      );
+      return DataFailer<List<OrderEntity>>(
+        CustomException('Failed to get Order by user'),
+      );
+    }
+  }
+
+  @override
+  Future<DataState<List<OrderEntity>>> getOrderByOrderId(String? params) async {
+    try {
+      final String endpoint = '/orders/${params}';
+      // 🌐 Always hit network
+      final DataState<String> result = await ApiCall<String>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.get,
+      );
+      if (result is DataSuccess) {
+        final String raw = result.data ?? '';
+        final dynamic parsed = json.decode(raw);
+        final List<dynamic> ordersJson = parsed['orders'];
+        final List<OrderEntity> orders = ordersJson
+            .map<OrderEntity>((dynamic e) => OrderModel.fromJson(e))
+            .toList();
+        // 🔄 Optional: still save locally
+        await LocalOrders().save(orders.first);
 
         return DataSuccess<List<OrderEntity>>(raw, orders);
       } else {

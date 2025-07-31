@@ -6,7 +6,7 @@ import '../params/get_order_params.dart';
 
 abstract interface class OrderRepository {
   Future<DataState<List<OrderEntity>>> getOrderByUser(GetOrderParams? uid);
+  Future<DataState<List<OrderEntity>>> getOrderByOrderId(String? params);
   Future<DataState<bool>> createOrder(List<OrderModel> orderData);
-
   Future<DataState<bool>> updateOrder(UpdateOrderParams params);
 }

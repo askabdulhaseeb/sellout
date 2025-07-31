@@ -87,7 +87,7 @@ class SocketService with WidgetsBindingObserver {
     socket!.on('new-notification', (dynamic data) async {
       AppLog.info('🔔 New notification: $data',
           name: 'SocketService.new-notification');
-      LocalNotifications.saveNotification(NotificationModel.fromRawJson(data));
+      LocalNotifications.saveNotification(NotificationModel.fromMap(data));
     });
 
     socket!.on('lastSeen', (dynamic data) {
