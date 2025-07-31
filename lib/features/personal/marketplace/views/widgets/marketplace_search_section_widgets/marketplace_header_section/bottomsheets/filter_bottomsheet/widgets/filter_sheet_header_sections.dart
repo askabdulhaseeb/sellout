@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../providers/marketplace_provider.dart';

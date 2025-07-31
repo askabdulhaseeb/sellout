@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../../domain/entities/post_entity.dart';
 
 class PostVehicleDetailWidget extends StatelessWidget {
-  const PostVehicleDetailWidget({super.key, required this.post});
+  const PostVehicleDetailWidget({required this.post, super.key});
   final PostEntity post;
 
   @override

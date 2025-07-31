@@ -5,8 +5,7 @@ import '../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../attachment/domain/entities/attachment_entity.dart';
 
 class ContactMessageTile extends StatefulWidget {
-  const ContactMessageTile(
-      {required this.attachment, required this.isMe, super.key});
+  const ContactMessageTile({required this.attachment, required this.isMe, super.key});
   final AttachmentEntity attachment;
   final bool isMe;
   @override

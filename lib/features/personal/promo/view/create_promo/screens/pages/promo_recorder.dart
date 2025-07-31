@@ -92,7 +92,7 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
     try {
       if (_isRecording) {
         final XFile xfile = await _controller!.stopVideoRecording();
-        await Future.delayed(const Duration(milliseconds: 300));
+        await Future<int>.delayed(const Duration(milliseconds: 300));
         final File savedFile = await _saveFile(xfile, isVideo: true);
         _attachFile(savedFile, AttachmentType.video);
         _stopTimer();
