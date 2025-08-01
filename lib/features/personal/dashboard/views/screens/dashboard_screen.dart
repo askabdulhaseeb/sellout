@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../../auth/signin/views/screens/sign_in_screen.dart';
+import '../../../auth/welcome_screen/view/screens/welcome_screen.dart';
 import '../../../listing/start_listing/views/screens/start_listing_screen.dart';
 import '../../../chats/chat_dashboard/views/screens/chat_dashboard_screen.dart';
 import '../../../marketplace/views/screens/marketplace_screen.dart';
@@ -24,9 +24,9 @@ class DashboardScreen extends StatelessWidget {
       const HomeScreen(),
       const MarketPlaceScreen(),
       const ServicesScreen(),
-      uid == null ? const SignInScreen() : const StartListingScreen(),
-      uid == null ? const SignInScreen() : const ChatDashboardScreen(),
-      uid == null ? const SignInScreen() : const ProfileScreen(),
+      uid == null ? const WelcomeScreen() : const StartListingScreen(),
+      uid == null ? const WelcomeScreen() : const ChatDashboardScreen(),
+      uid == null ? const WelcomeScreen() : const ProfileScreen(),
     ];
 
     return Scaffold(

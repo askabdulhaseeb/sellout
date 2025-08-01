@@ -19,7 +19,7 @@ class VoiceRecordTrigger extends StatefulWidget {
 
 class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
   final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
-  late SendMessageProvider msgPro;
+  late SendMessageProvider msgPro; // not initialized
 
   late final RecorderController _waveformController;
   final GlobalKey _deleteKey = GlobalKey();
@@ -33,6 +33,7 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
     super.initState();
     _isDisposed = false;
     _initializeRecorder();
+    msgPro = Provider.of<SendMessageProvider>(context, listen: false);
     _waveformController = RecorderController();
   }
 

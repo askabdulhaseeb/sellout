@@ -6,12 +6,10 @@ import '../../../review/domain/param/get_review_param.dart';
 import '../../../review/domain/usecase/get_reviews_usecase.dart';
 
 class ServiceDetailProvider extends ChangeNotifier {
-  final GetReviewsUsecase _getReviewsUsecase;
-
   ServiceDetailProvider(this._getReviewsUsecase);
 
-  List<ReviewEntity> _reviews = [];
-
+  final GetReviewsUsecase _getReviewsUsecase;
+  List<ReviewEntity> _reviews = <ReviewEntity>[];
   List<ReviewEntity> get reviews => _reviews;
 
   void setReviews(List<ReviewEntity> reviews) {
@@ -25,7 +23,8 @@ class ServiceDetailProvider extends ChangeNotifier {
         return DataSuccess<List<ReviewEntity>>('', _reviews);
       }
 
-      final result = await _getReviewsUsecase(param);
+      final DataState<List<ReviewEntity>> result =
+          await _getReviewsUsecase(param);
 
       if (result is DataSuccess<List<ReviewEntity>>) {
         setReviews(result.entity ?? <ReviewEntity>[]);

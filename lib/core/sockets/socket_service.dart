@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 import '../../features/personal/auth/signin/data/sources/local/local_auth.dart';
+import '../../features/personal/chats/chat/data/sources/local/local_message.dart';
+import '../../features/personal/chats/chat_dashboard/data/models/message/message_model.dart';
 import '../../features/personal/notifications/data/models/notification_model.dart';
 import '../../features/personal/notifications/data/source/local_notification.dart';
 import '../functions/app_log.dart';
@@ -97,13 +99,13 @@ class SocketService with WidgetsBindingObserver {
     socket!.on('newMessage', (dynamic data) async {
       AppLog.info('📨 New message received: $data',
           name: 'SocketService.newMessage');
-      await _socketImplementations.handleNewMessage(data);
+      await LocalChatMessage.saveMessage(MessageModel.fromJson(data));
     });
 
     socket!.on('updatedMessage', (dynamic data) async {
       AppLog.info('📝 Message update arrived: $data',
           name: 'SocketService.updatedMessage');
-      await _socketImplementations.handleUpdatedMessage(data);
+      await LocalChatMessage.saveMessage(MessageModel.fromJson(data));
     });
 
     socket!.onAny((String event, dynamic data) {

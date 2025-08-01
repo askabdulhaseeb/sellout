@@ -17,7 +17,7 @@ class LocalNotifications {
     if (isOpen) {
       return _box;
     } else {
-      return await Hive.openBox<NotificationEntity>(boxTitle);
+      return await Hive.openBox(boxTitle);
     }
   }
 
@@ -30,7 +30,7 @@ class LocalNotifications {
   }
 
   /// Get all notifications as a list
-  static Future<List<NotificationModel>> getAllNotifications() async {
+  static Future<List<NotificationEntity>> getAllNotifications() async {
     return _box.values
         .map((NotificationEntity e) => NotificationModel(
               notificationId: e.notificationId,

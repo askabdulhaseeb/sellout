@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../providers/send_message_provider.dart';
 
