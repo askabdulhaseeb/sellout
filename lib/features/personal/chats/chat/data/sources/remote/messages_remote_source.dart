@@ -13,13 +13,11 @@ import '../../../../chat_dashboard/data/models/message/message_model.dart';
 import '../../../../chat_dashboard/data/sources/local/local_chat.dart';
 import '../../../../chat_dashboard/domain/entities/chat/participant/chat_participant_entity.dart';
 import '../../../../chat_dashboard/domain/entities/chat/participant/invitation_entity.dart';
-import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../domain/entities/getted_message_entity.dart';
 import '../../../domain/params/leave_group_params.dart';
 import '../../../domain/params/send_invite_to_group_params.dart';
 import '../../../domain/params/send_message_param.dart';
 import '../../models/getted_message_model.dart';
-import '../../models/message_last_evaluated_key.dart';
 import '../local/local_message.dart';
 
 abstract interface class MessagesRemoteSource {
@@ -98,45 +96,11 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
         final Map<String, dynamic> data = responseData['items'];
         final MessageModel newMsg = MessageModel.fromJson(data);
         final String chatId = data['chat_id'];
-
-        // 🔍 Fetch existing chat messages
-        final List<MessageEntity> existingMessages =
-            LocalChatMessage().messages(chatId);
-
-        // 🔄 Check for duplicates
-        final bool isDuplicate = existingMessages.any(
-          (MessageEntity m) => m.messageId == newMsg.messageId,
-        );
-
-        if (!isDuplicate) {
-          existingMessages.add(newMsg);
-        }
-
-        // 💾 Save updated message list
-        final GettedMessageEntity updatedEntity = GettedMessageEntity(
-          chatID: chatId,
-          messages: existingMessages,
-          lastEvaluatedKey: MessageLastEvaluatedKeyModel(
-            chatID: chatId,
-            createdAt: data['created_at'],
-            paginationKey: data['message_id'],
-          ),
-        );
-        LocalChatMessage().save(updatedEntity, chatId);
-
-        // ✅ Update lastMessage in chat
-        final ChatEntity? localChat = LocalChat().chatEntity(chatId);
-        if (localChat != null) {
-          final ChatEntity updatedChat =
-              localChat.copyWith(lastMessage: newMsg);
-          LocalChat().save(updatedChat);
-        }
-        // 📗 Success log
+        await LocalChatMessage.saveMessage(newMsg);
         AppLog.info(
           '📤 Message sent & saved locally | chatId: $chatId | messageId: ${newMsg.messageId}',
           name: 'MessagesRemoteSourceImpl.sendMessage',
         );
-
         return DataSuccess<bool>(result.data ?? '', true);
       } else {
         AppLog.error(

@@ -42,7 +42,7 @@ class ReviewRemoteApiImpl implements ReviewRemoteApi {
       // Cloud Fresh Data
       final DataState<bool> response = await ApiCall<bool>().call(
         endpoint: endpoint,
-        requestType: ApiRequestType.get,isAuth: false
+        requestType: ApiRequestType.get,
       );
       if (response is DataSuccess) {
         final String raw = response.data ?? '';
@@ -65,6 +65,7 @@ class ReviewRemoteApiImpl implements ReviewRemoteApi {
         }
         return DataSuccess<List<ReviewEntity>>(raw, reviews);
       } else {
+        print(response.data);
         AppLog.error(
           response.exception?.message ?? 'something_wrong'.tr(),
           name: 'ReviewRemoteApiImpl.getReviews - else',

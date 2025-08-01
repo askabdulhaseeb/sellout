@@ -23,7 +23,7 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
-  List<NotificationModel> notifications = <NotificationModel>[];
+  List<NotificationEntity> notifications = <NotificationModel>[];
 
   @override
   void initState() {

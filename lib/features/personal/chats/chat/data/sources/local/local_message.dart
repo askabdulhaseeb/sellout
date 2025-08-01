@@ -1,5 +1,4 @@
 import 'package:hive_flutter/hive_flutter.dart';
-
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
@@ -25,6 +24,43 @@ class LocalChatMessage {
   }
 
   Future<void> clear() async => await _box.clear();
+
+  static Future<void> saveMessage(MessageEntity message) async {
+    final String chatId = message.chatId;
+    final GettedMessageEntity? existingEntity = _box.get(chatId);
+    if (existingEntity == null) {
+      final GettedMessageEntity newEntity = GettedMessageEntity(
+        chatID: chatId,
+        messages: <MessageEntity>[message],
+        lastEvaluatedKey: null,
+      );
+      await _box.put(chatId, newEntity);
+      AppLog.info('🆕 New chat saved with 1 message.');
+    } else {
+      updateMessage(chatId, message);
+    }
+  }
+
+  static Future<void> updateMessage(
+      String chatId, MessageEntity updatedMessage) async {
+    final GettedMessageEntity? existingEntity = _box.get(chatId);
+
+    if (existingEntity == null) {
+      AppLog.error('⚠️ Tried to update message, but chatID not found.');
+      return;
+    }
+
+    final List<MessageEntity> updatedMessages =
+        existingEntity.messages.map((MessageEntity msg) {
+      if (msg.messageId == updatedMessage.messageId) {
+        return updatedMessage;
+      }
+      return msg;
+    }).toList();
+    final updatedEntity = existingEntity.copyWith(messages: updatedMessages);
+    await _box.put(chatId, updatedEntity);
+    AppLog.info('✏️ Message updated locally.');
+  }
 
   Future<void> save(GettedMessageEntity value, String chatID) async {
     final String id = value.lastEvaluatedKey?.chatID ?? chatID;
