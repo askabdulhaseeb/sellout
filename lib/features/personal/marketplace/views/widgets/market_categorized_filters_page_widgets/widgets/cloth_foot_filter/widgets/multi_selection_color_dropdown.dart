@@ -69,10 +69,23 @@ class _MultiColorDropdownState extends State<MultiColorDropdown> {
           items: colors.map((ColorOptionEntity color) {
             return DropdownMenuItem<String>(
               value: color.value,
-              child: CircleAvatar(
-                backgroundColor: Color(
-                  int.parse('0xFF${color.value.replaceAll('#', '')}'),
-                ),
+              child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                alignment: WrapAlignment.center,
+                runAlignment: WrapAlignment.spaceEvenly,
+                spacing: 2,
+                children: <Widget>[
+                  CircleAvatar(
+                    radius: 5,
+                    backgroundColor: Color(
+                      int.parse('0xFF${color.value.replaceAll('#', '')}'),
+                    ),
+                  ),
+                  Text(
+                    color.label,
+                    style: TextTheme.of(context).labelSmall,
+                  )
+                ],
               ),
             );
           }).toList(),

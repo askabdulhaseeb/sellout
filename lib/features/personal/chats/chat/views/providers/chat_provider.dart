@@ -1,13 +1,16 @@
 import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../listing/listing_form/views/widgets/attachment_selection/cept_group_invite_usecase.dart';
 import '../../../chat_dashboard/data/sources/local/local_chat.dart';
 import '../../../chat_dashboard/domain/entities/chat/chat_entity.dart';
+import '../../../chat_dashboard/domain/entities/chat/participant/chat_participant_entity.dart';
 import '../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../chat_dashboard/domain/usecase/get_my_chats_usecase.dart';
 import '../../data/models/message_last_evaluated_key.dart';
@@ -89,6 +92,91 @@ class ChatProvider extends ChangeNotifier {
       // Show error message
       _isLoading = false;
       return false;
+    }
+  }
+
+  List<MessageEntity> getFilteredMessages(GettedMessageEntity messages) {
+    final List<MessageEntity> allMessages = messages.messages;
+    if (chat?.type != ChatType.group) return allMessages;
+
+    final DateTime? joinedAt = _getJoinedAt();
+    return joinedAt == null
+        ? <MessageEntity>[]
+        : _filterMessagesAfter(allMessages, joinedAt);
+  }
+
+  // Calculate time difference between consecutive messages
+  Duration calculateTimeDifference(MessageEntity current, MessageEntity? next) {
+    return (next != null && current.sendBy == next.sendBy)
+        ? current.createdAt.difference(next.createdAt)
+        : const Duration(days: 5);
+  }
+
+  // Helper to filter messages after join time
+  List<MessageEntity> _filterMessagesAfter(
+      List<MessageEntity> messages, DateTime threshold) {
+    return messages
+        .where((MessageEntity m) => m.createdAt.isAfter(threshold))
+        .toList();
+  }
+
+  // Get user's join time for groups
+  DateTime? _getJoinedAt() {
+    final String userId = LocalAuth.uid ?? '';
+    final List<ChatParticipantEntity> participants =
+        _chat?.groupInfo?.participants ?? <ChatParticipantEntity>[];
+
+    for (final ChatParticipantEntity p in participants) {
+      if (p.uid == userId) {
+        return p.chatAt;
+      }
+    }
+
+    // If not a participant, return null
+    return null;
+  }
+
+  // Static method to compare message lists
+  static bool areListsEqual(List<MessageEntity> a, List<MessageEntity> b) {
+    if (a.length != b.length) return false;
+    for (int i = 0; i < a.length; i++) {
+      if (a[i].messageId != b[i].messageId ||
+          a[i].updatedAt != b[i].updatedAt) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  void handleMessagesUpdate(
+    Box<GettedMessageEntity> box,
+    String chatId,
+    ChatProvider provider,
+    ValueNotifier<List<MessageEntity>> currentMessages,
+    ScrollController scrollController,
+  ) {
+    final GettedMessageEntity? updated = box.get(chatId);
+    if (updated == null) return;
+    final List<MessageEntity> newMessages =
+        provider.getFilteredMessages(updated);
+    if (ChatProvider.areListsEqual(currentMessages.value, newMessages)) return;
+
+    final bool shouldScrollToBottom = scrollController.hasClients &&
+        scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 50;
+
+    currentMessages.value = newMessages;
+
+    if (shouldScrollToBottom) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (scrollController.hasClients) {
+          scrollController.animateTo(
+            scrollController.position.minScrollExtent,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeOut,
+          );
+        }
+      });
     }
   }
 

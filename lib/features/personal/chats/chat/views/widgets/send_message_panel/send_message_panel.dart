@@ -17,7 +17,6 @@ class SendMessagePanel extends StatelessWidget {
         Provider.of<SendMessageProvider>(context);
 
     return Container(
-      height: 80,
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(color: Theme.of(context).dividerColor),
       child: ValueListenableBuilder<TextEditingValue>(

@@ -1,8 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
-
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/utilities/app_string.dart';
-
+import '../../../domain/entities/messages/message_entity.dart';
 import '../../models/chat/chat_model.dart';
 
 // getOnlineUsers
@@ -34,9 +33,23 @@ class LocalChat {
   DataState<ChatEntity?> chatState(String value) {
     final ChatEntity? entity = _box.get(value);
     if (entity != null) {
+      //entity.lastMessage
       return DataSuccess<ChatEntity?>(value, entity);
     } else {
       return DataFailer<ChatEntity?>(CustomException('Loading...'));
     }
+  }
+
+  Future<void> updateLastMessage(String chatId, MessageEntity newMsg) async {
+    final ChatEntity? existing = _box.get(chatId);
+    if (existing == null) return;
+
+    final ChatEntity updated = existing.copyWith(
+      lastMessage: newMsg,
+      // If you also store `updatedAt`, you can update that here too.
+      // updatedAt: DateTime.now(),
+    );
+
+    await _box.put(chatId, updated);
   }
 }
