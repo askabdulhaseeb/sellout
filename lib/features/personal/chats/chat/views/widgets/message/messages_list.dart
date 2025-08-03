@@ -1,142 +1,129 @@
 import 'dart:async';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/enums/chat/chat_type.dart';
 import '../../../../../../../core/utilities/app_string.dart';
-import '../../../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../../../chat_dashboard/domain/entities/chat/participant/chat_participant_entity.dart';
 import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../domain/entities/getted_message_entity.dart';
+import '../../helpers/date_label_helper.dart';
 import '../../providers/chat_provider.dart';
-import 'message_tile.dart';
 
 class MessagesList extends HookWidget {
   const MessagesList({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final ChatProvider chatPro = context.watch<ChatProvider>();
+    final ChatProvider chatProvider = context.watch<ChatProvider>();
     final ScrollController scrollController = useScrollController();
     final ValueNotifier<List<MessageEntity>> messages =
-        useState<List<MessageEntity>>(<MessageEntity>[]);
+        useState(<MessageEntity>[]);
+    final ValueNotifier<bool> isAtBottom = useState(false);
+    final ObjectRef<int> prevMsgCountRef = useRef(0);
+    final String? chatId = chatProvider.chat?.chatId;
 
-    final String? chatId = chatPro.chat?.chatId;
+    final Map<String, Duration> timeDiffMap = useMemoized(() {
+      final Map<String, Duration> map = <String, Duration>{};
+      final List<MessageEntity> list = messages.value;
+      if (list.isEmpty) return map;
+      for (int i = 0; i < list.length; i++) {
+        final MessageEntity current = list[i];
+        final MessageEntity? next = i < list.length - 1 ? list[i + 1] : null;
 
+        final Duration diff = (next != null && current.sendBy == next.sendBy)
+            ? next.createdAt.difference(current.createdAt).abs()
+            : const Duration(days: 5);
+
+        map[current.messageId] = diff;
+      }
+      return map;
+    }, <Object?>[messages.value]);
+
+    final List<Widget> messageWidgets = useMemoized(
+      () => DateLabelHelper.buildLabeledWidgets(messages.value, timeDiffMap),
+      <Object?>[messages.value, timeDiffMap],
+    );
+
+    // Track bottom status
     useEffect(() {
-      if (chatId == null) return null;
+      void listener() {
+        isAtBottom.value = scrollController.position.pixels <= 50;
+      }
 
+      scrollController.addListener(listener);
+      return () => scrollController.removeListener(listener);
+    }, <Object?>[]);
+
+    // Initial load
+    useEffect(() {
+      if (chatId == null) {
+        messages.value = <MessageEntity>[];
+        return null;
+      }
       final Box<GettedMessageEntity> box =
           Hive.box<GettedMessageEntity>(AppStrings.localChatMessagesBox);
+      final GettedMessageEntity? stored = box.get(chatId);
 
-      final GettedMessageEntity? existing = box.get(chatId);
-      if (existing != null) {
-        if (chatPro.chat?.type == ChatType.group) {
-          final DateTime? chatAt = _getJoinedAt(chatPro);
-          messages.value = _filterMessages(existing.sortedMessage(), chatAt);
-        } else {
-          messages.value = existing.sortedMessage();
-        }
-      }
-
-      final StreamSubscription<BoxEvent> subscription =
-          box.watch(key: chatId).listen((BoxEvent event) {
-        final GettedMessageEntity? updated = box.get(chatId);
-        if (updated != null) {
-          final List<MessageEntity> newMessages;
-          if (chatPro.chat?.type == ChatType.group) {
-            final DateTime? chatAt = _getJoinedAt(chatPro);
-            newMessages = _filterMessages(updated.sortedMessage(), chatAt);
-          } else {
-            newMessages = updated.sortedMessage();
-          }
-
-          final bool wasNearBottom = scrollController.hasClients &&
-              scrollController.position.pixels >=
-                  scrollController.position.maxScrollExtent - 50;
-
-          if (!_areListsEqual(messages.value, newMessages)) {
-            messages.value = newMessages;
-
-            if (wasNearBottom) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (scrollController.hasClients) {
-                  scrollController.animateTo(
-                    scrollController.position.minScrollExtent,
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.easeOut,
-                  );
-                }
-              });
-            }
-          }
+      Future<void>.microtask(() {
+        if (stored != null) {
+          messages.value = chatProvider.getFilteredMessages(stored);
+          prevMsgCountRef.value = messages.value.length;
         }
       });
 
-      scrollController.addListener(() {
-        if (scrollController.position.pixels <=
-            scrollController.position.minScrollExtent + 100) {
-          chatPro.loadMessages();
-        }
+      final StreamSubscription<BoxEvent> sub =
+          box.watch(key: chatId).listen((_) {
+        chatProvider.handleMessagesUpdate(
+          box,
+          chatId,
+          chatProvider,
+          messages,
+          scrollController,
+        );
       });
-
-      return subscription.cancel;
+      return sub.cancel;
     }, <Object?>[chatId]);
 
-    return ListView.builder(
-      padding: const EdgeInsets.all(0),
-      physics: const BouncingScrollPhysics(),
-      controller: scrollController,
-      reverse: true,
-      itemCount: messages.value.length,
-      itemBuilder: (BuildContext context, int index) {
-        final MessageEntity current = messages.value[index];
-        final MessageEntity? next =
-            index > 0 ? messages.value[index - 1] : null;
-
-        return MessageTile(
-          key: ValueKey<String>(current.messageId),
-          message: current,
-          timeDiff: (next != null && current.sendBy == next.sendBy)
-              ? current.createdAt.difference(next.createdAt)
-              : const Duration(days: 5),
-        );
-      },
-    );
-  }
-
-  DateTime? _getJoinedAt(ChatProvider chatPro) {
-    final String userId = LocalAuth.uid ?? '';
-    final List<ChatParticipantEntity> participants =
-        chatPro.chat?.groupInfo?.participants ?? <ChatParticipantEntity>[];
-
-    for (final ChatParticipantEntity p in participants) {
-      if (p.uid == userId) {
-        return p.chatAt;
+    // Auto-scroll new messages
+    useEffect(() {
+      if (messages.value.length > prevMsgCountRef.value &&
+          isAtBottom.value &&
+          scrollController.hasClients) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          scrollController.animateTo(
+            0.0, // since reverse:true, 0.0 is the bottom
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        });
       }
-    }
+      prevMsgCountRef.value = messages.value.length;
 
-    // If not a participant, return null
-    return null;
-  }
+      return null;
+    }, <Object?>[messages.value]);
 
-  List<MessageEntity> _filterMessages(
-      List<MessageEntity> messages, DateTime? chatAt) {
-    if (chatAt == null) return <MessageEntity>[];
-    return messages
-        .where((MessageEntity m) => m.createdAt.isAfter(chatAt))
-        .toList();
-  }
-
-  bool _areListsEqual(List<MessageEntity> a, List<MessageEntity> b) {
-    if (a.length != b.length) return false;
-    for (int i = 0; i < a.length; i++) {
-      if (a[i].messageId != b[i].messageId ||
-          a[i].updatedAt != b[i].updatedAt) {
-        return false;
+    // Pagination (load older messages when reaching top — reversed view!)
+    useEffect(() {
+      void listener() {
+        if (scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 50) {
+          chatProvider.loadMessages();
+        }
       }
-    }
-    return true;
+
+      scrollController.addListener(listener);
+      return () => scrollController.removeListener(listener);
+    }, <Object?>[]);
+    return messages.value.isEmpty
+        ? Center(child: Text('no_messages_yet'.tr()))
+        : ListView.builder(
+            controller: scrollController,
+            physics: const BouncingScrollPhysics(),
+            padding: EdgeInsets.zero,
+            reverse: true, // <-- this will start from bottom
+            itemCount: messageWidgets.length,
+            itemBuilder: (_, int i) => messageWidgets.reversed.toList()[i],
+          );
   }
 }

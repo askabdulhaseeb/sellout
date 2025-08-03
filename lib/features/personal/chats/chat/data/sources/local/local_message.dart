@@ -1,6 +1,8 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/utilities/app_string.dart';
+import '../../../../chat_dashboard/data/sources/local/local_chat.dart';
+import '../../../../chat_dashboard/data/sources/local/local_unseen_messages.dart';
 import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../domain/entities/getted_message_entity.dart';
 
@@ -28,14 +30,17 @@ class LocalChatMessage {
   static Future<void> saveMessage(MessageEntity message) async {
     final String chatId = message.chatId;
     final GettedMessageEntity? existingEntity = _box.get(chatId);
-
     if (existingEntity == null) {
       final GettedMessageEntity newEntity = GettedMessageEntity(
         chatID: chatId,
         messages: <MessageEntity>[message],
         lastEvaluatedKey: null,
       );
+
       await _box.put(chatId, newEntity);
+      await LocalChat().updateLastMessage(chatId, newEntity.messages.last);
+      LocalUnreadMessagesService().increment(chatId);
+
       AppLog.info('🆕 New chat saved with 1 message.');
     } else {
       await updateMessage(chatId, message);
@@ -50,14 +55,16 @@ class LocalChatMessage {
     final List<MessageEntity> updatedMessages =
         List<MessageEntity>.from(entity.messages);
 
-    final int existingIndex = updatedMessages
-        .indexWhere((msg) => msg.messageId == newMessage.messageId);
+    final int existingIndex = updatedMessages.indexWhere(
+        (MessageEntity msg) => msg.messageId == newMessage.messageId);
 
     if (existingIndex != -1) {
       updatedMessages[existingIndex] = newMessage;
       AppLog.info('✏️ Message updated in local DB');
     } else {
       updatedMessages.add(newMessage);
+      LocalUnreadMessagesService().increment(chatId);
+      await LocalChat().updateLastMessage(chatId, newMessage);
       AppLog.info('➕ Message added to existing chat');
     }
 

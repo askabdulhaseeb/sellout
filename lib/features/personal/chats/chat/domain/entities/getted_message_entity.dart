@@ -1,7 +1,6 @@
 import 'package:hive/hive.dart';
 import '../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import 'message_last_evaluated_key_entity.dart';
-
 part 'getted_message_entity.g.dart';
 
 @HiveType(typeId: 33)
