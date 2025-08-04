@@ -20,6 +20,7 @@ class MarketFilterMakeModelWidget extends StatelessWidget {
         children: <Widget>[
           Expanded(
               child: CustomListingDropDown<MarketPlaceProvider>(
+            validator: (bool? p0) => null,
             hint: 'make',
             categoryKey: 'make',
             selectedValue: marketPro.make,

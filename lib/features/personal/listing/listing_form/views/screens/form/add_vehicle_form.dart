@@ -49,6 +49,7 @@ class _AddVehicleFormState extends State<AddVehicleForm> {
             children: <Widget>[
               const AddListingBasicInfoSection(),
               CustomListingDropDown(
+                  validator: (bool? p0) => null,
                   title: 'category',
                   categoryKey: 'vehicles',
                   hint: 'select_category',

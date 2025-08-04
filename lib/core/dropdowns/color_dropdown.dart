@@ -10,6 +10,7 @@ class ColorDropdown extends StatefulWidget {
   const ColorDropdown({
     required this.selectedColor,
     required this.onColorChanged,
+    required this.validator,
     this.colorRadius,
     super.key,
     this.title = '',
@@ -19,6 +20,7 @@ class ColorDropdown extends StatefulWidget {
   final String? selectedColor;
   final ValueChanged<String?> onColorChanged;
   final double? colorRadius;
+  final String? Function(bool?) validator;
   final EdgeInsetsGeometry? padding;
   @override
   State<ColorDropdown> createState() => _ColorDropdownState();
@@ -63,7 +65,7 @@ class _ColorDropdownState extends State<ColorDropdown> {
 
         return CustomDropdown<String>(
           title: widget.title,
-          validator: (_) => null,
+          validator: widget.validator,
           hint: 'color'.tr(),
           selectedItem: widget.selectedColor,
           padding: widget.padding ?? const EdgeInsets.symmetric(vertical: 4),

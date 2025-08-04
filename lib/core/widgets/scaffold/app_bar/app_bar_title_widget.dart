@@ -11,6 +11,7 @@ class AppBarTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(titleKey.tr(),
+        overflow: TextOverflow.ellipsis,
         style: TextTheme.of(context)
             .titleMedium
             ?.copyWith(fontWeight: FontWeight.w500));

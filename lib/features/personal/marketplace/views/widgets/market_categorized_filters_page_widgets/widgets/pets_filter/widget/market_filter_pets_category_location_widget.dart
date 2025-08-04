@@ -21,6 +21,7 @@ class MarketFilterpetsCategoryAndLocationWIdget extends StatelessWidget {
               children: <Widget>[
                 Expanded(
                     child: CustomListingDropDown<MarketPlaceProvider>(
+                        validator: (bool? p0) => null,
                         hint: 'category',
                         categoryKey: 'pets',
                         selectedValue: marketPro.petCategory,

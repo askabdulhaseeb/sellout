@@ -211,6 +211,7 @@ class SizeColorInputRow extends StatelessWidget {
         Expanded(
           flex: 2,
           child: ColorDropdown(
+            validator: (bool? p0) => null,
             selectedColor: selectedColor,
             onColorChanged: onColorChanged,
           ),

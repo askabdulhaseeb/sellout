@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-import '../../data/models/notification_metadata_model.dart';
 import 'notification_metadata_entity.dart';
 part 'notification_entity.g.dart';
 

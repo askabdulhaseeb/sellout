@@ -20,6 +20,7 @@ class SizeDropdown extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.zero,
       child: CustomListingDropDown<AddListingFormProvider>(
+        validator: (bool? p0) => null,
         hint: 'size'.tr(),
         categoryKey: formPro.selectedClothSubCategory == 'clothes'
             ? 'clothes_sizes'

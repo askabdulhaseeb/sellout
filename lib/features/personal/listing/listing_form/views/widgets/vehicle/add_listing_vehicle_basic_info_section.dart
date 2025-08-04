@@ -5,6 +5,7 @@ import '../../../../../../../core/dropdowns/color_dropdown.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../../post/feed/views/providers/feed_provider.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../custom_listing_dropdown.dart';
 
@@ -49,6 +50,7 @@ class _AddListingVehicleBasicInfoSectionState
 
             /// Body type dynamic dropdown *second part of address
             CustomListingDropDown(
+              validator: (bool? p0) => null,
               hint: 'body_type',
               parentValue: formPro.selectedVehicleCategory,
               categoryKey: 'body_type',
@@ -59,6 +61,7 @@ class _AddListingVehicleBasicInfoSectionState
 
             /// Emission standard dynamic dropdown
             CustomListingDropDown(
+              validator: (bool? p0) => null,
               hint: 'emission_standards',
               categoryKey: 'emission_standards',
               selectedValue: formPro.emission,
@@ -68,6 +71,7 @@ class _AddListingVehicleBasicInfoSectionState
 
             /// Make dynamic dropdown
             CustomListingDropDown(
+              validator: (bool? p0) => null,
               hint: 'make',
               categoryKey: 'make',
               selectedValue: formPro.make,
@@ -88,6 +92,7 @@ class _AddListingVehicleBasicInfoSectionState
 
             /// Fuel type dynamic dropdown
             CustomListingDropDown(
+              validator: (bool? p0) => null,
               hint: 'fuel_type',
               categoryKey: 'fuel_type',
               selectedValue: formPro.fuelTYpe,
@@ -96,7 +101,8 @@ class _AddListingVehicleBasicInfoSectionState
             ),
 
             /// Transmission dynamic dropdown
-            CustomListingDropDown(
+            CustomListingDropDown<FeedProvider>(
+              validator: (bool? p0) => null,
               hint: 'transmission',
               categoryKey: 'transmission',
               selectedValue: formPro.transmissionType,
@@ -106,6 +112,7 @@ class _AddListingVehicleBasicInfoSectionState
             ),
 
             ColorDropdown(
+              validator: (bool? p0) => null,
               title: 'color'.tr(),
               selectedColor: formPro.selectedVehicleColor,
               onColorChanged: (String? value) =>

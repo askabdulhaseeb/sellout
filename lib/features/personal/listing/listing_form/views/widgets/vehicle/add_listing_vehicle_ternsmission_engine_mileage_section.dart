@@ -39,6 +39,7 @@ class AddListingVehicleTernsmissionEngineMileageSection
                 const SizedBox(width: 8),
                 Expanded(
                   child: CustomListingDropDown(
+                    validator: (bool? p0) => null,
                     hint: 'mileage_unit',
                     categoryKey: 'mileage_unit',
                     selectedValue: formPro.selectedMileageUnit,

@@ -19,6 +19,7 @@ class MarketFilterPropertyTypeandAddedWidget extends StatelessWidget {
         children: <Widget>[
           Expanded(
             child: CustomListingDropDown<MarketPlaceProvider>(
+              validator: (bool? p0) => null,
               hint: 'property_type',
               categoryKey: 'property_type',
               selectedValue: marketPro.propertyType,

@@ -46,6 +46,7 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
               keyboardType: TextInputType.number,
             ),
             CustomListingDropDown(
+              validator: (bool? p0) => null,
               hint: 'select_category',
               categoryKey: 'property_type',
               selectedValue: formPro.selectedPropertyType,
@@ -53,6 +54,7 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
               title: 'category',
             ),
             CustomListingDropDown(
+                validator: (bool? p0) => null,
                 hint: 'energy_rating',
                 categoryKey: 'energy_rating',
                 onChanged: (String? p0) => formPro.setEnergyRating(p0),

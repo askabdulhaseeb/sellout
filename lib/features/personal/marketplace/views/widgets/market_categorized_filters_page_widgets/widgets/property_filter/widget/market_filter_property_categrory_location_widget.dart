@@ -21,6 +21,7 @@ class MarketFilterpropertyCategoryAndLocationWIdget extends StatelessWidget {
               children: <Widget>[
                 Expanded(
                     child: CustomListingDropDown<MarketPlaceProvider>(
+                        validator: (bool? p0) => null,
                         hint: 'energy_rating',
                         categoryKey: 'energy_rating',
                         selectedValue: marketPro.energyRating,

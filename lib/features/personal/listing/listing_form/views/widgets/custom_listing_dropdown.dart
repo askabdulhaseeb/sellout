@@ -14,6 +14,7 @@ class CustomListingDropDown<T extends ChangeNotifier> extends StatefulWidget {
     this.padding,
     this.hint = '',
     this.parentValue,
+    required this.validator,
     super.key,
   });
 
@@ -24,6 +25,7 @@ class CustomListingDropDown<T extends ChangeNotifier> extends StatefulWidget {
   final String hint;
   final EdgeInsetsGeometry? padding;
   final String? parentValue;
+  final String? Function(bool?) validator;
 
   @override
   State<CustomListingDropDown<T>> createState() =>
@@ -148,7 +150,7 @@ class _CustomListingDropDownState<T extends ChangeNotifier>
           items: dropdownItems,
           selectedItem: widget.selectedValue,
           onChanged: widget.onChanged,
-          validator: (bool? val) => null,
+          validator: widget.validator,
           isSearchable: true,
           hint: widget.hint,
           padding: widget.padding,
