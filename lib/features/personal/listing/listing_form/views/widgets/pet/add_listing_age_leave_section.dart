@@ -23,6 +23,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
               children: <Widget>[
                 Expanded(
                   child: CustomListingDropDown(
+                    validator: (bool? p0) => null,
                     hint: 'age',
                     categoryKey: 'age',
                     selectedValue: formPro.age,
@@ -33,6 +34,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                 const SizedBox(width: 16),
                 Expanded(
                   child: CustomListingDropDown(
+                    validator: (bool? p0) => null,
                     hint: 'ready_to_leave',
                     categoryKey: 'ready_to_leave',
                     selectedValue: formPro.time,
@@ -43,12 +45,14 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
               ],
             ),
             CustomListingDropDown(
+                validator: (bool? p0) => null,
                 title: 'category',
                 hint: 'select_category',
                 categoryKey: 'pets',
                 selectedValue: formPro.petCategory,
                 onChanged: (String? p0) => formPro.setPetCategory(p0)),
             CustomListingDropDown(
+                validator: (bool? p0) => null,
                 parentValue: formPro.petCategory,
                 title: 'breed',
                 hint: 'breed',

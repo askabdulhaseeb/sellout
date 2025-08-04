@@ -109,6 +109,7 @@ class ServicesPageProvider extends ChangeNotifier {
 
   void setSortOption(ServiceSortOption option) {
     _selectedSortOption = option;
+    searchServices();
     notifyListeners();
   }
 

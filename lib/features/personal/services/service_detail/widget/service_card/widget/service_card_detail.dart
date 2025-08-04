@@ -18,12 +18,33 @@ class ServiceCardDetail extends StatelessWidget {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(8.0),
       child: Column(
+        spacing: 6,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            spacing: 12,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
-              Expanded(
+              InkWell(
+                  onTap: () {
+                    Provider.of<CreatePrivateChatProvider>(context,
+                            listen: false)
+                        .startPrivateChat(context, service.businessID);
+                  },
+                  child: const Icon(CupertinoIcons.chat_bubble, size: 16)),
+              InkWell(
+                  onTap: () {},
+                  child: const Icon(CupertinoIcons.share, size: 16)),
+              InkWell(
+                  onTap: () {},
+                  child: const Icon(CupertinoIcons.archivebox, size: 16)),
+            ],
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Flexible(
                 child: Text(
                   service.name,
                   overflow: TextOverflow.ellipsis,
@@ -33,28 +54,12 @@ class ServiceCardDetail extends StatelessWidget {
                       ?.copyWith(fontWeight: FontWeight.w600),
                 ),
               ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  IconButton(
-                      padding: const EdgeInsets.all(0),
-                      onPressed: () {
-                        Provider.of<CreatePrivateChatProvider>(context,
-                                listen: false)
-                            .startPrivateChat(context, service.businessID);
-                      },
-                      icon: const Icon(CupertinoIcons.chat_bubble, size: 20)),
-                  IconButton(
-                      onPressed: () {},
-                      icon: const Icon(CupertinoIcons.share, size: 20)),
-                  IconButton(
-                      onPressed: () {},
-                      icon: const Icon(CupertinoIcons.archivebox, size: 20)),
-                ],
-              ),
+              Text('${service.currency} ${service.price.toString()}',
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: TextTheme.of(context).bodyMedium),
             ],
           ),
-          const SizedBox(height: 5),
           ExpandableText(
             text: service.description,
           ),
