@@ -21,7 +21,7 @@ class MakeOfferBottomSheet extends StatefulWidget {
 }
 
 class _MakeOfferBottomSheetState extends State<MakeOfferBottomSheet> {
-  TextEditingController priceController = TextEditingController(text: '0');
+  TextEditingController priceController = TextEditingController();
   int quantity = 1;
   final GlobalKey<FormState> createOfferFormKey = GlobalKey<FormState>();
   @override
@@ -85,7 +85,8 @@ class _MakeOfferBottomSheetState extends State<MakeOfferBottomSheet> {
                     ),
                     QuantityCounter(
                       quantity: quantity,
-                      maxQuantity: widget.post.quantity,
+                      maxQuantity: widget.selectedColor?.quantity ??
+                          widget.post.quantity,
                       onChanged: (int newValue) {
                         setState(() {
                           quantity = newValue;
@@ -165,7 +166,14 @@ class OfferPriceField extends StatelessWidget {
                     color: theme.primaryColor,
                     fontWeight: FontWeight.w700,
                   ),
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
+                    hint: Text(
+                      '0',
+                      style: TextTheme.of(context).headlineSmall?.copyWith(
+                            color: ColorScheme.of(context).outlineVariant,
+                            fontWeight: FontWeight.w700,
+                          ),
+                    ),
                     isDense: true,
                     border: InputBorder.none,
                     enabledBorder: InputBorder.none,
