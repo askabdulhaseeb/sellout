@@ -6,6 +6,7 @@ import '../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../enums/gender_type.dart';
 import '../../providers/signup_provider.dart';
 
 class SignupDobPage extends StatelessWidget {
@@ -78,19 +79,19 @@ class SignupDobPage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             // Gender Dropdown
-            CustomDropdown<String>(
+            CustomDropdown<Gender>(
               title: 'gender'.tr(),
-              items: pro.genderOptions
-                  .map((String option) => DropdownMenuItem<String>(
-                      value: option, child: Text(option.tr())))
+              items: Gender.values
+                  .map((Gender option) => DropdownMenuItem<Gender>(
+                      value: option, child: Text(option.code.tr())))
                   .toList(),
               selectedItem: pro.gender,
-              onChanged: (String? value) {
+              onChanged: (Gender? value) {
                 if (value == null) return;
                 pro.setGender(value);
               },
               validator: (_) {
-                if (pro.gender?.isEmpty ?? true) {
+                if (pro.gender == null) {
                   return 'please_select_gender'.tr();
                 }
                 return null;

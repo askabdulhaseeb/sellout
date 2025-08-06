@@ -20,6 +20,7 @@ import '../../domain/usecase/register_user_usecase.dart';
 import '../../domain/usecase/send_opt_usecase.dart';
 import '../../domain/usecase/verify_opt_usecase.dart';
 import '../../domain/usecase/verify_user_by_image_usecase.dart';
+import '../enums/gender_type.dart';
 import '../enums/signup_page_type.dart';
 import '../params/signup_basic_info_params.dart';
 import '../params/signup_send_opt_params.dart';
@@ -62,10 +63,11 @@ class SignupProvider extends ChangeNotifier {
   }
 
   //
-  String? _gender;
-  String? get gender => _gender;
-  final List<String> genderOptions = <String>['male', 'female', 'other'];
-  void setGender(String value) {
+
+  Gender? _gender;
+  Gender? get gender => _gender;
+
+  void setGender(Gender value) {
     _gender = value;
     notifyListeners();
   }
@@ -461,7 +463,8 @@ class SignupProvider extends ChangeNotifier {
   }
 
   Future<bool> dateOfBirth(BuildContext context) async {
-    final UpdateUserParams params = UpdateUserParams(dob: dob, gender: gender);
+    final UpdateUserParams params =
+        UpdateUserParams(dob: dob, gender: gender?.json ?? Gender.other.json);
     final DataState<String> result = await _updateProfileDetailUsecase(params);
     if (result is DataSuccess) {
       AppLog.info('profile_updated_successfully'.tr());
