@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../setting_dashboard/domain/params/create_account_session_params.dart';
@@ -17,8 +15,8 @@ class BalanceProvider extends ChangeNotifier {
   Future<void> startStripeSetupFlow() async {
     isSettingUpStripe = true;
     notifyListeners();
-    final String sessionSecretKey = await getSessionSecret();
-    await launchStripeOnboarding(sessionSecretKey);
+    // final String sessionSecretKey = await getSessionSecret();
+    // await launchStripeOnboarding(sessionSecretKey);
     isSettingUpStripe = false;
     notifyListeners();
   }
@@ -49,17 +47,5 @@ class BalanceProvider extends ChangeNotifier {
     }
 
     return ''; // return null if failed
-  }
-
-  Future<void> launchStripeOnboarding(String sessionSecret) async {
-    final String url =
-        'https://connect.stripe.com/setup/s/accs_secret__SoWvNDUKPIiZdm8cF2tIjrm68TzGlfkRKqK2FqRi5xkPz7d';
-    final Uri uri = Uri.parse(url);
-
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      // Show snackbar or fallback
-    }
   }
 }
