@@ -1,6 +1,4 @@
 import 'package:hive/hive.dart';
-
-import '../post_entity.dart';
 part 'offer_detail_entity.g.dart';
 
 @HiveType(typeId: 19)
@@ -9,7 +7,6 @@ class OfferDetailEntity {
     required this.postTitle,
     required this.size,
     required this.color,
-    required this.post,
     required this.price,
     required this.minOfferAmount,
     required this.currency,
@@ -25,8 +22,6 @@ class OfferDetailEntity {
   final String size;
   @HiveField(2)
   final String color;
-  @HiveField(3)
-  final PostEntity post;
   @HiveField(4)
   final int price;
   @HiveField(5)

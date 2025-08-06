@@ -113,6 +113,7 @@ class SignupBasicInfoPage extends StatelessWidget {
                     onTap: () {
                       if (!(basicInfoFormKey.currentState?.validate() ??
                           false)) {
+                        debugPrint('basic info not validated');
                         return;
                       }
                       pro.onNext(context);

@@ -26,6 +26,7 @@ import '../features/personal/services/service_detail/screens/service_detail_scre
 import '../features/personal/setting/setting_dashboard/view/screens/personal_more_information_setting_screen.dart';
 import '../features/personal/setting/setting_options/account_edit/screens/edit_setting_account_screen.dart';
 import '../features/personal/setting/setting_options/account_edit/screens/personal_setting_account.dart';
+import '../features/personal/setting/setting_options/balance_screen/screens/balance_screen.dart';
 import '../features/personal/setting/setting_options/buyer_orders/screens/personal_setting_buyer_order_screen.dart';
 import '../features/personal/setting/setting_options/privacy_setting/screen/privacy_screen.dart';
 import '../features/personal/setting/setting_options/security/screens/setting_security_screen.dart';
@@ -153,6 +154,7 @@ class AppRoutes {
     CommunityStandardsScreen.routeName: (_) => const CommunityStandardsScreen(),
     AboutUsScreen.routeName: (_) => const AboutUsScreen(),
     ChangePasswordScreen.routeName: (_) => const ChangePasswordScreen(),
+    BalanceScreen.routeName: (_) => const BalanceScreen(),
     PersonalSettingBuyerOrderScreen.routeName: (_) =>
         const PersonalSettingBuyerOrderScreen()
   };

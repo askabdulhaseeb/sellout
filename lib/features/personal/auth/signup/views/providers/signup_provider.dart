@@ -64,7 +64,7 @@ class SignupProvider extends ChangeNotifier {
   //
   String? _gender;
   String? get gender => _gender;
-  final List<String> genderOptions = <String>['Male', 'Female', 'Other'];
+  final List<String> genderOptions = <String>['male', 'female', 'other'];
   void setGender(String value) {
     _gender = value;
     notifyListeners();
@@ -170,10 +170,8 @@ class SignupProvider extends ChangeNotifier {
   }
 
   Future<bool> isValidBasicInfo(BuildContext context) async {
-    if (!(basicInfoFormKey.currentState?.validate() ?? false)) {
-      return false;
-    }
     if ((_phoneNumber?.fullNumber.length ?? 0) < 5) {
+      debugPrint('${'invalid_value'.tr()}: ${'phone_number'.tr()}');
       AppSnackBar.showSnackBar(
         context,
         '${'invalid_value'.tr()}: ${'phone_number'.tr()}',
@@ -184,7 +182,9 @@ class SignupProvider extends ChangeNotifier {
   }
 
   Future<void> onNext(BuildContext context) async {
+    debugPrint('on next function called');
     if (_currentPage == SignupPageType.basicInfo) {
+      debugPrint('before is valid basic info');
       if (await isValidBasicInfo(context)) {
         // ignore: use_build_context_synchronously
         _moveNext(context);
@@ -320,6 +320,7 @@ class SignupProvider extends ChangeNotifier {
 
   /// api calls
   Future<bool> basicInfoPushData(BuildContext context) async {
+    debugPrint('basic info push data initiated');
     isLoading = true;
     try {
       //
@@ -333,6 +334,9 @@ class SignupProvider extends ChangeNotifier {
       final DataState<String> result = await _registerUserUsecase(params);
       if (result is DataSuccess) {
         _uid = result.entity?.toString();
+        _loginUsecase
+            .call(LoginParams(email: email.text, password: password.text));
+        debugPrint('signin success');
         startResendCodeTimer();
         return true;
       } else {
@@ -457,13 +461,10 @@ class SignupProvider extends ChangeNotifier {
   }
 
   Future<bool> dateOfBirth(BuildContext context) async {
-    final UpdateUserParams params = UpdateUserParams(
-      dob: dob,
-    );
+    final UpdateUserParams params = UpdateUserParams(dob: dob, gender: gender);
     final DataState<String> result = await _updateProfileDetailUsecase(params);
     if (result is DataSuccess) {
       AppLog.info('profile_updated_successfully'.tr());
-      Navigator.pop(context);
       return true;
     } else {
       AppLog.error(result.exception!.message,
@@ -488,10 +489,8 @@ class SignupProvider extends ChangeNotifier {
         await _verifyUserByImageUsecase(_attachment!);
     if (result is DataSuccess) {
       AppLog.info('image_verified_successfully'.tr());
-      Navigator.pop(context);
       return true;
     }
-
     AppLog.error(
       result is DataFailer
           ? result.exception?.message ?? 'Unknown error'
@@ -516,6 +515,7 @@ class SignupProvider extends ChangeNotifier {
     phone.text = '';
     otp.text = '';
     _dob = DateTime(2000, 1, 1);
+    _gender = null;
     _attachment = null;
     _phoneNumber = null;
     _isLoading = false;

@@ -52,7 +52,7 @@ class MessageEntity {
   @HiveField(12)
   final OfferDetailEntity? offerDetail;
 
-  String? get postImage => offerDetail?.post.imageURL;
+  String? get postImage => fileUrl.first.url;
   MessageEntity copyWith({
     List<String>? persons,
     List<AttachmentEntity>? fileUrl,
