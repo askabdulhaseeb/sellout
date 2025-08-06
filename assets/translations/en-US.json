@@ -965,12 +965,12 @@
   "please_select_gender": "PLease Select gender",
   "price_is_required": "Price is required",
   "sellout_earnings": "SellOut Earnings",
+  "male": "Male",
+  "female": "Female",
+  "other": "Other",
   "next": "Next",
   "closed": "Closed",
   "default": "Default",
   "none": "none",
-  "male": "Male",
-  "female": "Female",
-  "other": "Other",
   "na": "N/A"
 }
