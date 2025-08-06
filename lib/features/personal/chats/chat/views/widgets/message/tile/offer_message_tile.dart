@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../core/bottom_sheets/address/address_bottom_sheet.dart';
+import '../../../../../../../../core/helper_functions/currency_symbol_helper.dart';
 import '../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../core/widgets/custom_elevated_button.dart';
@@ -13,8 +14,6 @@ import '../../../../../../../../services/get_it.dart';
 import '../../../../../../auth/signin/data/models/address_model.dart';
 import '../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../../cart/views/providers/cart_provider.dart';
-import '../../../../../../post/data/sources/local/local_post.dart';
-import '../../../../../../post/domain/entities/post_entity.dart';
 import '../../../../../../post/domain/params/offer_payment_params.dart';
 import '../../../../../../post/domain/usecase/offer_payment_usecase.dart';
 import '../../../../../../post/feed/views/enums/offer_status_enum.dart';
@@ -30,17 +29,9 @@ class OfferMessageTile extends HookWidget {
   Widget build(BuildContext context) {
     final FeedProvider pro = Provider.of<FeedProvider>(context, listen: false);
     debugPrint(message.offerDetail?.offerId);
-    final ValueNotifier<PostEntity?> post = useState<PostEntity?>(null);
     final ValueNotifier<String?> offerStatus =
         useState<String?>(message.offerDetail?.offerStatus);
     useEffect(() {
-      LocalPost()
-          .getPost(message.visitingDetail?.postID ??
-              message.offerDetail?.post.postID ??
-              '')
-          .then((PostEntity? fetchedPost) {
-        post.value = fetchedPost;
-      });
       return null;
     }, <Object?>[]);
     useEffect(() {
@@ -51,10 +42,6 @@ class OfferMessageTile extends HookWidget {
 
       return null;
     }, <Object?>[message.offerDetail?.offerStatus]);
-
-    final String price = post.value?.priceStr ??
-        message.offerDetail?.post.price.toString() ??
-        'na'.tr();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: ShadowContainer(
@@ -68,7 +55,7 @@ class OfferMessageTile extends HookWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child:
-                        CustomNetworkImage(imageURL: message.postImage ?? ''),
+                        CustomNetworkImage(imageURL: message.fileUrl.first.url),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -79,14 +66,12 @@ class OfferMessageTile extends HookWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          post.value?.title ??
-                              message.offerDetail?.post.title ??
-                              'na'.tr(),
+                          message.offerDetail?.postTitle ?? 'na'.tr(),
                           style: const TextStyle(fontWeight: FontWeight.w500),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '${message.offerDetail?.currency.toUpperCase()} $price',
+                          '${currencySymbolHelper(message.offerDetail?.currency)} ${message.offerDetail?.price}',
                           style: const TextStyle(fontWeight: FontWeight.w500),
                         ),
                       ],
@@ -108,14 +93,14 @@ class OfferMessageTile extends HookWidget {
                         children: <Widget>[
                           Text(
                             maxLines: 2,
-                            '${message.offerDetail?.currency.toUpperCase()} ${message.offerDetail?.offerPrice.toString()}',
+                            '${currencySymbolHelper(message.offerDetail?.currency)} ${message.offerDetail?.offerPrice.toString()}',
                             style: TextTheme.of(context)
                                 .labelSmall
                                 ?.copyWith(fontWeight: FontWeight.w700),
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            price,
+                            '${currencySymbolHelper(message.offerDetail?.currency)} ${message.offerDetail?.price}',
                             style: TextTheme.of(context).labelSmall?.copyWith(
                                   decoration: TextDecoration.lineThrough,
                                 ),

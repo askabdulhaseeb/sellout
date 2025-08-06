@@ -32,8 +32,7 @@ class MultiSelectionDropdown<T> extends StatefulWidget {
 
 class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
   final LayerLink _layerLink = LayerLink();
-  OverlayEntry? _dropdownOverlay;
-  bool _isDropdownOpen = false;
+  final bool _isDropdownOpen = false;
   void _toggleDropdown() {
     showModalBottomSheet(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,

@@ -17,9 +17,7 @@ class VisitingMessageTile extends StatelessWidget {
     const TextStyle boldStyle =
         TextStyle(fontWeight: FontWeight.bold, fontSize: 16);
     return FutureBuilder<PostEntity?>(
-        future: LocalPost().getPost(message.visitingDetail?.postID ??
-            message.offerDetail?.post.postID ??
-            ''),
+        future: LocalPost().getPost(message.visitingDetail?.postID ?? ''),
         builder: (BuildContext context, AsyncSnapshot<PostEntity?> snapshot) {
           final PostEntity? post = snapshot.data;
           return Padding(
@@ -64,9 +62,7 @@ class VisitingMessageTile extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
                         child: CustomNetworkImage(
-                          imageURL: message.offerDetail?.post.imageURL ??
-                              post?.fileUrls.first.url ??
-                              '',
+                          imageURL: post?.fileUrls.first.url ?? '',
                         ),
                       ),
                     ),
@@ -75,14 +71,12 @@ class VisitingMessageTile extends StatelessWidget {
                     children: <Widget>[
                       Expanded(
                         child: Text(
-                          message.offerDetail?.post.title ??
-                              post?.title ??
-                              'na',
+                          post?.title ?? 'na',
                           style: boldStyle,
                         ),
                       ),
                       Text(
-                        '${message.offerDetail?.post.currency ?? post?.currency} ${message.offerDetail?.post.price ?? post?.price}',
+                        '${message.offerDetail?.currency ?? post?.currency} ${message.offerDetail?.price ?? post?.price}',
                         style: boldStyle,
                       ),
                     ],

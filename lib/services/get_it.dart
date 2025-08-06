@@ -150,9 +150,10 @@ import '../features/personal/services/domain/usecase/get_service_by_categories_u
 import '../features/personal/services/domain/usecase/get_special_offer_usecase.dart';
 import '../features/personal/services/services_screen/providers/services_page_provider.dart';
 import '../features/personal/setting/setting_dashboard/data/source/remote/setting_api.dart';
-import '../features/personal/setting/setting_dashboard/data/source/repo/setting_repo_impl.dart';
+import '../features/personal/setting/setting_dashboard/data/repo/setting_repo_impl.dart';
 import '../features/personal/setting/setting_dashboard/domain/repo/setting_repo.dart';
 import '../features/personal/setting/setting_dashboard/domain/usecase/change_password_usecase.dart';
+import '../features/personal/setting/setting_dashboard/domain/usecase/connect_account_session_usecase.dart';
 import '../features/personal/setting/setting_options/buyer_orders/providers/personal_setting_buyer_order_provider.dart';
 import '../features/personal/setting/setting_options/security/provider/setting_security_provider.dart';
 import '../features/personal/user/profiles/data/repositories/user_repository_impl.dart';
@@ -607,6 +608,8 @@ void _settings() {
   //
   locator.registerFactory<ChangePasswordUseCase>(
       () => ChangePasswordUseCase(locator()));
+  locator.registerFactory<ConnectAccountSessionUseCase>(
+      () => ConnectAccountSessionUseCase(locator()));
   // Providers
   locator.registerLazySingleton<SettingSecurityProvider>(
       () => SettingSecurityProvider(locator(), locator()));

@@ -84,14 +84,16 @@ class PersonalSettingScreen extends StatelessWidget {
             child: PersonalSettingTile(
               icon: Icons.balance,
               title: 'balance'.tr(),
-              onTap: () {},
+              onTap: () {
+                // AppNavigator.pushNamed(BalanceScreen.routeName);
+              },
             ),
           ),
           InDevMode(
             child: PersonalSettingTile(
               icon: Icons.wallet,
               title: 'postage'.tr(),
-              onTap: () {}, //
+              onTap: () {},
             ),
           ),
           InDevMode(
