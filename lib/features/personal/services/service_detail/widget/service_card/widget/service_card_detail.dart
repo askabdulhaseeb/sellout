@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/expandable_text_widget.dart';
+import '../../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../../../chats/create_chat/view/provider/create_private_chat_provider.dart';
 
@@ -32,12 +33,16 @@ class ServiceCardDetail extends StatelessWidget {
                         .startPrivateChat(context, service.businessID);
                   },
                   child: const Icon(CupertinoIcons.chat_bubble, size: 16)),
-              InkWell(
-                  onTap: () {},
-                  child: const Icon(CupertinoIcons.share, size: 16)),
-              InkWell(
-                  onTap: () {},
-                  child: const Icon(CupertinoIcons.archivebox, size: 16)),
+              InDevMode(
+                child: InkWell(
+                    onTap: () {},
+                    child: const Icon(CupertinoIcons.share, size: 16)),
+              ),
+              InDevMode(
+                child: InkWell(
+                    onTap: () {},
+                    child: const Icon(CupertinoIcons.archivebox, size: 16)),
+              ),
             ],
           ),
           Row(
