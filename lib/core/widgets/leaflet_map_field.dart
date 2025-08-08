@@ -1,11 +1,14 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../../../../../../../../../../core/widgets/costom_textformfield.dart';
-import '../../../../../../../../location/domain/entities/location_entity.dart';
+import '../../features/personal/marketplace/domain/enum/radius_type.dart';
+import '../theme/app_theme.dart';
+import 'costom_textformfield.dart';
+import '../../features/personal/location/domain/entities/location_entity.dart';
 
 enum MapDisplayMode {
   alwaysShowMap,
@@ -23,6 +26,7 @@ class LocationDropdown extends StatefulWidget {
     this.displayMode = MapDisplayMode.showMapAfterSelection,
     this.showMapCircle,
     this.circleRadius,
+    this.radiusType = RadiusType.worldwide,
   });
   final void Function(LocationEntity, LatLng) onLocationSelected;
   final String? initialText;
@@ -31,6 +35,7 @@ class LocationDropdown extends StatefulWidget {
   final bool? showMapCircle;
   final double? circleRadius;
   final LatLng selectedLatLng;
+  final RadiusType radiusType;
 
   @override
   State<LocationDropdown> createState() => _LocationFieldState();
@@ -80,7 +85,7 @@ class _LocationFieldState extends State<LocationDropdown> {
         id: suggestion['place_id']?.toString() ?? '',
         title: displayName.toString().split(',').first,
         address: displayName,
-        url: 'www.test.com',
+        url: 'https://maps.google.com/?q=${lat},${lon}',
         latitude: lat,
         longitude: lon,
       );
@@ -89,9 +94,11 @@ class _LocationFieldState extends State<LocationDropdown> {
         _selectedLatLng = latLng;
       });
 
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
+      Future.microtask(() {
+        try {
           _mapController.move(latLng, 15);
+        } catch (e) {
+          debugPrint('Map move error: $e');
         }
       });
 
@@ -108,7 +115,6 @@ class _LocationFieldState extends State<LocationDropdown> {
           suggestionsCallback: _fetchSuggestions,
           itemBuilder: (BuildContext context, Map<String, dynamic> suggestion) {
             return ListTile(
-              leading: const Icon(Icons.location_on, color: Colors.blue),
               title: Text(
                 suggestion['display_name'] ?? '',
                 maxLines: 1,
@@ -129,9 +135,9 @@ class _LocationFieldState extends State<LocationDropdown> {
                   const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             );
           },
-          emptyBuilder: (BuildContext context) => const Padding(
-            padding: EdgeInsets.symmetric(vertical: 12),
-            child: Text('No locations found', textAlign: TextAlign.center),
+          emptyBuilder: (BuildContext context) => Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Text('no_location_found'.tr(), textAlign: TextAlign.center),
           ),
           loadingBuilder: (BuildContext context) => const Padding(
             padding: EdgeInsets.symmetric(vertical: 12),
@@ -143,7 +149,7 @@ class _LocationFieldState extends State<LocationDropdown> {
               child: Column(
                 children: <Widget>[
                   const Icon(Icons.error_outline, color: Colors.red),
-                  Text('Failed to load: $error'),
+                  Text('${'something_wrong'.tr()}: $error'),
                 ],
               ),
             );
@@ -186,7 +192,7 @@ class _LocationFieldState extends State<LocationDropdown> {
                 mapController: _mapController,
                 options: MapOptions(
                   initialCenter: _selectedLatLng,
-                  initialZoom: 16,
+                  initialZoom: 11,
                 ),
                 children: <Widget>[
                   TileLayer(
@@ -200,20 +206,25 @@ class _LocationFieldState extends State<LocationDropdown> {
                         width: 40,
                         height: 40,
                         point: _selectedLatLng,
-                        child: const Icon(Icons.location_pin,
-                            color: Colors.red, size: 40),
+                        child: widget.showMapCircle == false
+                            ? const Icon(Icons.location_pin,
+                                color: AppTheme.primaryColor, size: 40)
+                            : const Icon(Icons.circle,
+                                color: Colors.blue, size: 25),
                       ),
                     ],
                   ),
-                  if (widget.showMapCircle == true)
+                  if (widget.showMapCircle == true &&
+                      widget.radiusType == RadiusType.local)
                     CircleLayer(
                       circles: <CircleMarker<Object>>[
                         CircleMarker(
                           point: _selectedLatLng,
                           radius: (widget.circleRadius ?? 0) * 1000,
                           useRadiusInMeter: true,
-                          color: Colors.blue.withAlpha(50),
-                          borderColor: Colors.blue,
+                          color:
+                              AppTheme.darkScaffldColor.withValues(alpha: 0.3),
+                          borderColor: AppTheme.darkScaffldColor,
                           borderStrokeWidth: 2,
                         ),
                       ],

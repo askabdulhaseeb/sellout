@@ -2,7 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../../core/theme/app_theme.dart';
+import '../../../../../../../../core/utilities/app_string.dart';
+import '../../../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../../../../domain/enum/radius_type.dart';
 import '../../../../providers/marketplace_provider.dart';
 import '../bottomsheets/filter_bottomsheet/filter_bottomsheet.dart';
@@ -30,9 +31,9 @@ class MarketPlaceHeaderButtons extends StatelessWidget {
                       builder: (BuildContext context) =>
                           const LocationRadiusBottomSheet(),
                     ),
-                icon: CupertinoIcons.location_solid,
+                icon: AppStrings.selloutMarketplaceLocationIcon,
                 label:
-                    '${'location'.tr()}${pro.radiusType == RadiusType.local ? ' -  ${pro.selectedRadius.toInt()} km' : ''}'),
+                    '${'location'.tr()}${pro.radiusType == RadiusType.local ? '-${pro.selectedRadius.toInt()} km' : ''}'),
             const SizedBox(
               width: 4,
             ),
@@ -41,7 +42,7 @@ class MarketPlaceHeaderButtons extends StatelessWidget {
                 context: context,
                 builder: (BuildContext context) => const SortBottomSheet(),
               ),
-              icon: CupertinoIcons.sort_down,
+              icon: AppStrings.selloutMarketplaceSortIcon,
               label: 'sort',
             ),
             const SizedBox(
@@ -57,7 +58,7 @@ class MarketPlaceHeaderButtons extends StatelessWidget {
                 builder: (BuildContext context) =>
                     const MarketPlaceFilterBottomSheet(),
               ),
-              icon: Icons.tune,
+              icon: AppStrings.selloutMarketplaceFilterIcon,
               label: 'filter',
             ),
           ],
@@ -70,7 +71,7 @@ class MarketPlaceHeaderButtons extends StatelessWidget {
 class _HeaderButton extends StatelessWidget {
   const _HeaderButton(
       {required this.icon, required this.label, required this.onPressed});
-  final IconData icon;
+  final String icon;
   final String label;
   final VoidCallback onPressed;
 
@@ -85,7 +86,6 @@ class _HeaderButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           elevation: 0,
           backgroundColor: theme.scaffoldBackgroundColor,
-          foregroundColor: AppTheme.primaryColor,
           side: BorderSide(color: theme.colorScheme.outlineVariant),
           padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
           shape: RoundedRectangleBorder(
@@ -93,7 +93,7 @@ class _HeaderButton extends StatelessWidget {
           ),
         ),
         onPressed: onPressed,
-        icon: Icon(icon, size: 14),
+        icon: CustomSvgIcon(assetPath: icon, size: 14),
         label: Text(
           label.tr(),
           style: textStyle,

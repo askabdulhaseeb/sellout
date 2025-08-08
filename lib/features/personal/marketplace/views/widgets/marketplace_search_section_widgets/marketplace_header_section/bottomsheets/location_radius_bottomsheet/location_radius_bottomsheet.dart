@@ -5,7 +5,7 @@ import '../../../../../../../location/domain/entities/location_entity.dart';
 import '../../../../../../domain/entities/location_name_entity.dart';
 import '../../../../../../domain/enum/radius_type.dart';
 import '../../../../../providers/marketplace_provider.dart';
-import 'widget/leaflet_map_field.dart';
+import '../../../../../../../../../core/widgets/leaflet_map_field.dart';
 import 'widget/location_header.dart';
 import 'widget/radius_option.dart';
 import 'widget/radius_slider.dart';
@@ -37,6 +37,7 @@ class LocationRadiusBottomSheet extends StatelessWidget {
               const LocationHeader(),
               const SizedBox(height: 8),
               LocationDropdown(
+                radiusType: provider.radiusType,
                 selectedLatLng: provider.selectedlatlng,
                 circleRadius: provider.selectedRadius,
                 displayMode: MapDisplayMode.alwaysShowMap,

@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../../../core/widgets/leaflet_map_field.dart';
 import '../../../../../../../listing/listing_form/views/widgets/custom_listing_dropdown.dart';
+import '../../../../../../../location/domain/entities/location_entity.dart';
 import '../../../../../providers/marketplace_provider.dart';
 
 class MarketFilterpropertyCategoryAndLocationWIdget extends StatelessWidget {
@@ -24,16 +27,16 @@ class MarketFilterpropertyCategoryAndLocationWIdget extends StatelessWidget {
                         selectedValue: marketPro.energyRating,
                         onChanged: (String? p0) =>
                             marketPro.setEnergyRating(p0))),
-                // Expanded(
-                //   child: LocationField(
-                //     initialText: marketPro.selectedLocationName,
-                //     onLocationSelected: (LocationNameEntity location) async {
-                //       final LatLng coords = await marketPro
-                //           .getLocationCoordinates(location.description);
-                //       marketPro.updateLocation(coords, location.description);
-                //     },
-                //   ),
-                // )
+                Expanded(
+                  child: LocationDropdown(
+                    selectedLatLng: marketPro.selectedlatlng,
+                    displayMode: MapDisplayMode.neverShowMap,
+                    initialText: marketPro.selectedLocationName,
+                    onLocationSelected: (LocationEntity p0, LatLng p1) {
+                      marketPro.updateLocation(p1, p0.address ?? '');
+                    },
+                  ),
+                )
               ],
             ));
   }

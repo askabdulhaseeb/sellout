@@ -1,7 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../../../../core/widgets/leaflet_map_field.dart';
+import '../../../../../../../location/domain/entities/location_entity.dart';
 import '../../../../../providers/marketplace_provider.dart';
 
 class MarketFilterVehicleCategoryAndLocationWIdget extends StatelessWidget {
@@ -23,16 +26,16 @@ class MarketFilterVehicleCategoryAndLocationWIdget extends StatelessWidget {
               hint: 'model'.tr(),
             ),
           ),
-          // Expanded(
-          //   child: LocationField(
-          //     initialText: marketPro.selectedLocationName,
-          //     onLocationSelected: (LocationNameEntity location) async {
-          //       final LatLng coords = await marketPro
-          //           .getLocationCoordinates(location.description);
-          //       marketPro.updateLocation(coords, location.description);
-          //     },
-          //   ),
-          // )
+          Expanded(
+            child: LocationDropdown(
+              selectedLatLng: marketPro.selectedlatlng,
+              displayMode: MapDisplayMode.neverShowMap,
+              initialText: marketPro.selectedLocationName,
+              onLocationSelected: (LocationEntity p0, LatLng p1) {
+                marketPro.updateLocation(p1, p0.address ?? '');
+              },
+            ),
+          )
         ],
       ),
     );
