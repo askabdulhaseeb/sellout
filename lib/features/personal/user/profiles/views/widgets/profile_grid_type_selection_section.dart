@@ -14,30 +14,122 @@ class ProfileGridTypeSelectionSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isMe = (LocalAuth.uid ?? '') == (user?.uid ?? '-');
+    final List<ProfilePageTabType> allTabs = ProfilePageTabType.list(isMe);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      child: Consumer<ProfileProvider>(
-          builder: (BuildContext context, ProfileProvider userPro, _) {
-        final List<ProfilePageTabType> list = ProfilePageTabType.list(isMe);
-        return SizedBox(
-          height: 32,
-          width: double.infinity,
-          child: ListView.builder(
-            shrinkWrap: true,
-            primary: false,
-            scrollDirection: Axis.horizontal,
-            itemCount: list.length,
-            itemBuilder: (BuildContext context, int index) {
-              final ProfilePageTabType type = list[index];
-              return _IconButton(
-                isSelected: userPro.displayType == type,
-                title: type.code.tr(),
-                onPressed: () => userPro.displayType = type,
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          final double availableWidth = constraints.maxWidth;
+          const double moreButtonWidth = 80;
+          const double minTabWidth = 80;
+
+          int maxVisibleTabs = allTabs.length;
+          double totalTabWidth = allTabs.length * minTabWidth;
+
+          if (totalTabWidth > availableWidth) {
+            maxVisibleTabs = ((availableWidth - moreButtonWidth) ~/ minTabWidth)
+                .clamp(0, allTabs.length);
+          }
+
+          final List<ProfilePageTabType> visibleTabs =
+              allTabs.take(maxVisibleTabs).toList();
+          final List<ProfilePageTabType> hiddenTabs =
+              allTabs.skip(visibleTabs.length).toList();
+
+          return Consumer<ProfileProvider>(
+            builder: (BuildContext context, ProfileProvider userPro, _) {
+              final int totalTabs =
+                  visibleTabs.length + (hiddenTabs.isNotEmpty ? 1 : 0);
+              final double tabWidth = availableWidth / totalTabs;
+
+              return SizedBox(
+                height: 36,
+                child: Row(
+                  children: <Widget>[
+                    ...visibleTabs.map(
+                      (ProfilePageTabType type) => SizedBox(
+                        width: tabWidth,
+                        child: _IconButton(
+                          title: type.code.tr(),
+                          isSelected: userPro.displayType == type,
+                          onPressed: () => userPro.displayType = type,
+                        ),
+                      ),
+                    ),
+                    if (hiddenTabs.isNotEmpty)
+                      SizedBox(
+                        width: tabWidth,
+                        child: PopupMenuButton<ProfilePageTabType>(
+                          tooltip: 'More',
+                          offset: const Offset(0, 36),
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          onSelected: (ProfilePageTabType type) {
+                            userPro.displayType = type;
+                          },
+                          itemBuilder: (BuildContext context) {
+                            return hiddenTabs
+                                .map(
+                                  (ProfilePageTabType type) =>
+                                      PopupMenuItem<ProfilePageTabType>(
+                                    value: type,
+                                    child: Text(type.code.tr()),
+                                  ),
+                                )
+                                .toList();
+                          },
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(8),
+                            onTap: null,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(
+                                      'more'.tr(),
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: hiddenTabs
+                                                .contains(userPro.displayType)
+                                            ? Theme.of(context).primaryColor
+                                            : Theme.of(context).disabledColor,
+                                        fontWeight: hiddenTabs
+                                                .contains(userPro.displayType)
+                                            ? FontWeight.bold
+                                            : FontWeight.normal,
+                                      ),
+                                    ),
+                                    Icon(
+                                      Icons.keyboard_arrow_down_outlined,
+                                      size: 18,
+                                      color: hiddenTabs
+                                              .contains(userPro.displayType)
+                                          ? Theme.of(context).primaryColor
+                                          : Theme.of(context).disabledColor,
+                                    ),
+                                  ],
+                                ),
+                                Container(
+                                  height: 2,
+                                  color:
+                                      hiddenTabs.contains(userPro.displayType)
+                                          ? AppTheme.primaryColor
+                                          : Theme.of(context).dividerColor,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               );
             },
-          ),
-        );
-      }),
+          );
+        },
+      ),
     );
   }
 }
@@ -46,11 +138,12 @@ class _IconButton extends StatelessWidget {
   const _IconButton({
     required this.title,
     required this.isSelected,
-    required this.onPressed,
+    this.onPressed,
   });
+
   final String title;
   final bool isSelected;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +165,6 @@ class _IconButton extends StatelessWidget {
           ),
           Container(
             height: 2,
-            width: 68,
             decoration: BoxDecoration(
               color: isSelected
                   ? AppTheme.primaryColor

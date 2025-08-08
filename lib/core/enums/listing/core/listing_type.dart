@@ -5,13 +5,13 @@ part 'listing_type.g.dart';
 @HiveType(typeId: 9)
 enum ListingType {
   @HiveField(0)
-  items('items', 'items', 4, AppStrings.selloutAddListingItemIcon,
+  items('items', 'items', 10, AppStrings.selloutAddListingItemIcon,
       <String>['items'], AppStrings.popularmarketplace),
   @HiveField(1)
   clothAndFoot(
       'cloth_foot',
       'clothes-foot',
-      4,
+      10,
       AppStrings.selloutAddListingClothFootIcon,
       <String>[
         'clothes',
@@ -19,13 +19,13 @@ enum ListingType {
       ],
       AppStrings.clothfootmarketplace),
   @HiveField(2)
-  vehicle('vehicles', 'vehicles', 4, AppStrings.selloutAddListingVehicleIcon,
+  vehicle('vehicles', 'vehicles', 10, AppStrings.selloutAddListingVehicleIcon,
       <String>['vehicles'], AppStrings.vehiclemarketplace),
   @HiveField(3)
   foodAndDrink(
       'food_drink',
       'food-drink',
-      4,
+      10,
       AppStrings.selloutAddListingFoodDrinkIcon,
       <String>['food', 'drink'],
       AppStrings.fooddrinkmarketplace),
@@ -33,12 +33,12 @@ enum ListingType {
   property(
       'property_buy_sell',
       'property',
-      4,
+      10,
       AppStrings.selloutAddListingPropertyIcon,
       <String>['sale', 'rent'],
       AppStrings.propertymarketplace),
   @HiveField(5)
-  pets('pets', 'pets', 4, AppStrings.selloutAddListingPetsIcon,
+  pets('pets', 'pets', 10, AppStrings.selloutAddListingPetsIcon,
       <String>['pets'], AppStrings.petsmarketplaceex);
 
   const ListingType(

@@ -69,7 +69,6 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
         isLoading = false;
       });
     } catch (e) {
-      setState(() => isLoading = false);
       AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
     }
   }
