@@ -11,7 +11,8 @@ import '../../../../features/personal/search/view/view/search_screen.dart';
 import '../../../../features/personal/user/profiles/data/sources/local/local_user.dart';
 import '../../../../features/personal/user/profiles/domain/entities/business_profile_detail_entity.dart';
 import '../../../../routes/app_linking.dart';
-import '../../../utilities/app_icons.dart';
+import '../../../utilities/app_string.dart';
+import '../../custom_svg_icon.dart';
 import '../../profile_photo.dart';
 
 personalAppbar(BuildContext context) {
@@ -35,44 +36,48 @@ personalAppbar(BuildContext context) {
                 final UserEntity? user = snapshot.data;
                 return user == null
                     ? const SizedBox()
-                    : Container(
-                        width: 62,
-                        margin: const EdgeInsets.only(right: 8),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 7,
-                          horizontal: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Theme.of(context).dividerColor,
-                        ),
-                        child: GestureDetector(
-                          onTap: () async =>
-                              await showProfileMenu(context, user),
-                          onLongPress: () async =>
-                              await showProfileMenu(context, user),
-                          onDoubleTap: () async =>
-                              await showProfileMenu(context, user),
-                          child: Row(
-                            children: <Widget>[
-                              const SizedBox(width: 4),
-                              CircleAvatar(
-                                radius: 12,
-                                backgroundColor: Theme.of(context).primaryColor,
-                                child: ProfilePhoto(
-                                  url: user.profilePhotoURL,
-                                  isCircle: true,
-                                  size: 10,
-                                ),
-                              ),
-                              const Icon(Icons.keyboard_arrow_down_rounded)
-                            ],
-                          ),
-                        ),
+                    : _IconButton(
+                        icon: AppStrings.selloutMyUsersListIcon,
+                        onPressed: () async =>
+                            await showProfileMenu(context, user),
                       );
+                // Container(
+                //   width: 62,
+                //   margin: const EdgeInsets.only(right: 8),
+                //   padding: const EdgeInsets.symmetric(
+                //     vertical: 7,
+                //     horizontal: 4,
+                //   ),
+                //   decoration: BoxDecoration(
+                //     borderRadius: BorderRadius.circular(10),
+                //     color: Theme.of(context).dividerColor,
+                //   ),
+                //   child: GestureDetector(
+                //     onTap: () async => await showProfileMenu(context, user),
+                //     onLongPress: () async =>
+                //         await showProfileMenu(context, user),
+                //     onDoubleTap: () async =>
+                //         await showProfileMenu(context, user),
+                //     child: Row(
+                //       children: <Widget>[
+                //         const SizedBox(width: 4),
+                //         CircleAvatar(
+                //           radius: 12,
+                //           backgroundColor: Theme.of(context).primaryColor,
+                //           child: ProfilePhoto(
+                //             url: user.profilePhotoURL,
+                //             isCircle: true,
+                //             size: 10,
+                //           ),
+                //         ),
+                //         const Icon(Icons.keyboard_arrow_down_rounded)
+                //       ],
+                //     ),
+                //   ),
+                // );
               }),
         _IconButton(
-            icon: AppIcons.search,
+            icon: AppStrings.selloutSearchIcon,
             onPressed: () {
               AppNavigator.pushNamed(SearchScreen.routeName);
             }),
@@ -80,7 +85,7 @@ personalAppbar(BuildContext context) {
     ),
     actions: <Widget>[
       _IconButton(
-          icon: AppIcons.notification,
+          icon: AppStrings.selloutNotificationBellIcon,
           onPressed: () {
             AppNavigator.pushNamed(NotificationsScreen.routeName);
           }),
@@ -96,7 +101,7 @@ personalAppbar(BuildContext context) {
                 clipBehavior: Clip.none,
                 children: <Widget>[
                   _IconButton(
-                    icon: AppIcons.cart,
+                    icon: AppStrings.selloutShoppingCartIcon,
                     onPressed: () => Navigator.of(context)
                         .pushNamed(PersonalCartScreen.routeName),
                   ),
@@ -185,7 +190,7 @@ Future<void> showProfileMenu(BuildContext context, UserEntity user) async {
 
 class _IconButton extends StatelessWidget {
   const _IconButton({required this.icon, required this.onPressed});
-  final IconData icon;
+  final String icon;
   final Function()? onPressed;
 
   @override
@@ -194,14 +199,17 @@ class _IconButton extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: InkWell(
         onTap: onPressed,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: const EdgeInsets.all(6),
+          padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             color: Theme.of(context).dividerColor,
             borderRadius: BorderRadius.circular(10),
           ),
-          child: FittedBox(child: Icon(icon)),
+          child: CustomSvgIcon(
+            assetPath: icon,
+            size: 18,
+          ),
         ),
       ),
     );

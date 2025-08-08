@@ -64,7 +64,11 @@ dependencies:
   flutter_sound: ^9.28.0
   audio_waveforms: ^1.0.5
   url_launcher: ^6.3.2
-  
+  flutter_map: ^8.2.1
+  latlong2: ^0.9.1
+  flutter_typeahead: ^5.2.0
+  flutter_svg: ^2.2.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -106,6 +110,7 @@ flutter:
     - prod.env
     - dev.env
     - assets/icons/
+    - assets/icons/svg_icons/
     - assets/audio/
     - assets/images/
     - assets/images/payment_methods/

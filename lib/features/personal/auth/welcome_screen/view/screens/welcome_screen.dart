@@ -49,7 +49,7 @@ class WelcomeScreen extends StatelessWidget {
                   fontSize: 18,
                   color: ColorScheme.of(context).outline,
                   fontWeight: FontWeight.w400),
-              maxLines: 2,
+              maxLines: 4,
               textAlign: TextAlign.center,
             ),
           ],

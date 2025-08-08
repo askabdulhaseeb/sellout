@@ -3,6 +3,30 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AppStrings {
   // static var local;
+  // Svg Icons
+  static const String selloutMyUsersListIcon =
+      'assets/icons/svg_icons/selloutMyUsersListIcon.svg';
+  static const String selloutNotificationBellIcon =
+      'assets/icons/svg_icons/selloutNotificationBellIcon.svg';
+  static const String selloutSearchIcon =
+      'assets/icons/svg_icons/selloutSearchIcon.svg';
+  static const String selloutShoppingCartIcon =
+      'assets/icons/svg_icons/selloutShoppingCartIcon.svg';
+  static const String selloutServiceChatIcon =
+      'assets/icons/svg_icons/selloutServiceChatIcon.svg';
+  static const String selloutOrderChatIcon =
+      'assets/icons/svg_icons/selloutOrderChatIcon.svg';
+  static const String selloutGroupChatIcon =
+      'assets/icons/svg_icons/selloutGroupChatIcon.svg';
+  static const String selloutAddChatIcon =
+      'assets/icons/svg_icons/selloutAddChatIcon.svg';
+  static const String selloutShareIcon =
+      'assets/icons/svg_icons/selloutShareIcon.svg';
+  static const String selloutSaveIcon =
+      'assets/icons/svg_icons/selloutSaveIcon.svg';
+  static const String selloutMOreMenuIcon =
+      'assets/icons/svg_icons/selloutMOreMenuIcon.svg.';
+  static const String se = '.svg';
 
   // Hive Boxes
   static String get localAuthBox => 'com.sellout.local-auth';

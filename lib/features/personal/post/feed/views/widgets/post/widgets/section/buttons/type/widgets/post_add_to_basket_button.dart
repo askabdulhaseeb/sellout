@@ -89,10 +89,10 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
       title: 'add_to_basket'.tr(),
       isLoading: isLoading,
       bgColor: Colors.transparent,
-      border: Border.all(color: color),
+      border: Border.all(color: color, width: 2),
       textColor: color,
       textStyle: TextStyle(
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: FontWeight.bold,
         color: color,
       ),

@@ -24,10 +24,7 @@ class PostButtonSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return post.createdBy == LocalAuth.currentUser?.userID ||
             post.createdBy == LocalAuth.currentUser?.businessID
-        ? Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            child: PostButtonsForUser(visit: visit, post: post),
-          )
+        ? PostButtonsForUser(visit: visit, post: post)
         : GestureDetector(
             onTap: () {
               if (LocalAuth.currentUser?.userID == null) {
@@ -36,15 +33,11 @@ class PostButtonSection extends StatelessWidget {
             },
             child: AbsorbPointer(
               absorbing: LocalAuth.currentUser?.userID == null,
-              child: Padding(
-                padding: padding ??
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                child: (post.type == ListingType.pets ||
-                        post.type == ListingType.vehicle ||
-                        post.type == ListingType.property)
-                    ? PostVehicleButtonTile(post: post)
-                    : PostItemButtonTile(post: post),
-              ),
+              child: (post.type == ListingType.pets ||
+                      post.type == ListingType.vehicle ||
+                      post.type == ListingType.property)
+                  ? PostVehicleButtonTile(post: post)
+                  : PostItemButtonTile(post: post),
             ),
           );
   }

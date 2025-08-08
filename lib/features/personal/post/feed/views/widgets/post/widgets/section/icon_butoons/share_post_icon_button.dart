@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../../../../core/sources/data_state.dart';
+import '../../../../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../../../../../../../../../core/widgets/profile_photo.dart';
 import '../../../../../../../../../../routes/app_routes.dart';
 import '../../../../../../../../../../services/get_it.dart';
@@ -70,7 +72,7 @@ class _SharePostButtonState extends State<SharePostButton> {
       elevation: 10,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
       color: Theme.of(context).scaffoldBackgroundColor,
-      icon: Icon(Icons.adaptive.share),
+      icon: const CustomSvgIcon(assetPath: AppStrings.selloutShareIcon),
       onSelected: _handleShare,
       itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
         PopupMenuItem<String>(
@@ -87,7 +89,7 @@ class _SharePostButtonState extends State<SharePostButton> {
           value: 'group',
           child: Row(
             children: <Widget>[
-              const Icon(Icons.group, size: 20),
+              const CustomSvgIcon(assetPath: AppStrings.selloutShareIcon),
               const SizedBox(width: 8),
               Text('share_in_group'.tr()),
             ],

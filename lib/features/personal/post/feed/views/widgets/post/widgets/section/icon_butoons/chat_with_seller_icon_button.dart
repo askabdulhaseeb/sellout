@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../../../../core/utilities/app_string.dart';
+import '../../../../../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../../../../../../../chats/create_chat/view/provider/create_private_chat_provider.dart';
 
 class ChatwithSellerIconButton extends StatelessWidget {
@@ -15,8 +17,14 @@ class ChatwithSellerIconButton extends StatelessWidget {
     final bool isLoading =
         Provider.of<CreatePrivateChatProvider>(context).isLoading;
 
-    return IconButton(
-      icon: AnimatedSwitcher(
+    return InkWell(
+      onTap: isLoading
+          ? null
+          : () {
+              Provider.of<CreatePrivateChatProvider>(context, listen: false)
+                  .startPrivateChat(context, userId);
+            },
+      child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
         child: isLoading
             ? const SizedBox(
@@ -26,14 +34,11 @@ class ChatwithSellerIconButton extends StatelessWidget {
                   strokeWidth: 2,
                 ),
               )
-            : const Icon(Icons.chat_outlined),
+            : CustomSvgIcon(
+                assetPath: AppStrings.selloutOrderChatIcon,
+                color: ColorScheme.of(context).onSurface,
+              ),
       ),
-      onPressed: isLoading
-          ? null
-          : () {
-              Provider.of<CreatePrivateChatProvider>(context, listen: false)
-                  .startPrivateChat(context, userId);
-            },
     );
   }
 }
