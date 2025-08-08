@@ -52,6 +52,14 @@ class AppStrings {
       'assets/icons/svg_icons/selloutBottombarServicesFilledIcon.svg';
   static const String selloutBottombarServicesOutlineIcon =
       'assets/icons/svg_icons/selloutBottombarServicesOutlineIcon.svg';
+  static const String selloutMarketplaceFilterIcon =
+      'assets/icons/svg_icons/selloutMarketplaceFilterIcon.svg';
+  static const String selloutMarketplaceLocationIcon =
+      'assets/icons/svg_icons/selloutMarketplaceLocationIcon.svg';
+  static const String selloutMarketplaceSortIcon =
+      'assets/icons/svg_icons/selloutMarketplaceSortIcon.svg';
+  static const String sellout =
+      'assets/icons/svg_icons/selloutBottombarServicesOutlineIcon.svg';
 
   // png icons
   static const String selloutAddListingItemIcon =

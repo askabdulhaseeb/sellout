@@ -94,7 +94,9 @@ class ProfileGridTypeSelectionSection extends StatelessWidget {
                                         color: hiddenTabs
                                                 .contains(userPro.displayType)
                                             ? Theme.of(context).primaryColor
-                                            : Theme.of(context).disabledColor,
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .outlineVariant,
                                         fontWeight: hiddenTabs
                                                 .contains(userPro.displayType)
                                             ? FontWeight.bold
@@ -107,7 +109,9 @@ class ProfileGridTypeSelectionSection extends StatelessWidget {
                                       color: hiddenTabs
                                               .contains(userPro.displayType)
                                           ? Theme.of(context).primaryColor
-                                          : Theme.of(context).disabledColor,
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .outlineVariant,
                                     ),
                                   ],
                                 ),
@@ -116,7 +120,9 @@ class ProfileGridTypeSelectionSection extends StatelessWidget {
                                   color:
                                       hiddenTabs.contains(userPro.displayType)
                                           ? AppTheme.primaryColor
-                                          : Theme.of(context).dividerColor,
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .outlineVariant,
                                 ),
                               ],
                             ),
@@ -159,7 +165,7 @@ class _IconButton extends StatelessWidget {
               fontSize: 14,
               color: isSelected
                   ? Theme.of(context).primaryColor
-                  : Theme.of(context).disabledColor,
+                  : Theme.of(context).colorScheme.outlineVariant,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
           ),
@@ -168,7 +174,7 @@ class _IconButton extends StatelessWidget {
             decoration: BoxDecoration(
               color: isSelected
                   ? AppTheme.primaryColor
-                  : Theme.of(context).dividerColor,
+                  : Theme.of(context).colorScheme.outlineVariant,
             ),
           ),
         ],
