@@ -1,10 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../core/widgets/costom_textformfield.dart';
-import '../../../../../../../../../core/widgets/location_field.dart';
-import '../../../../../../domain/entities/location_name_entity.dart';
 import '../../../../../providers/marketplace_provider.dart';
 
 class MarketFilterVehicleCategoryAndLocationWIdget extends StatelessWidget {
@@ -26,16 +23,16 @@ class MarketFilterVehicleCategoryAndLocationWIdget extends StatelessWidget {
               hint: 'model'.tr(),
             ),
           ),
-          Expanded(
-            child: LocationField(
-              initialText: marketPro.selectedLocationName,
-              onLocationSelected: (LocationNameEntity location) async {
-                final LatLng coords = await marketPro
-                    .getLocationCoordinates(location.description);
-                marketPro.updateLocation(coords, location.description);
-              },
-            ),
-          )
+          // Expanded(
+          //   child: LocationField(
+          //     initialText: marketPro.selectedLocationName,
+          //     onLocationSelected: (LocationNameEntity location) async {
+          //       final LatLng coords = await marketPro
+          //           .getLocationCoordinates(location.description);
+          //       marketPro.updateLocation(coords, location.description);
+          //     },
+          //   ),
+          // )
         ],
       ),
     );

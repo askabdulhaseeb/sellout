@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/sources/data_state.dart';
+import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../../domain/entities/chat/chat_entity.dart';
 import '../providers/chat_dashboard_provider.dart';
@@ -35,6 +36,7 @@ class _ChatDashboardScreenState extends State<ChatDashboardScreen> {
             AsyncSnapshot<DataState<List<ChatEntity>>> snapshot) {
           return const Column(
             children: <Widget>[
+              AppBarTitle(titleKey: 'messages'),
               ChatSelectablePageTypeWidget(),
               ChatDashboardSearchableWidget(),
               ChatDashboardListSeaction(),

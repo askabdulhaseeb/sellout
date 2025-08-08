@@ -18,8 +18,7 @@ class MarketPlaceHeaderButtons extends StatelessWidget {
       builder: (BuildContext context, MarketPlaceProvider pro, Widget? child) =>
           SizedBox(
         height: 40,
-        child: ListView(
-          scrollDirection: Axis.horizontal,
+        child: Row(
           children: <Widget>[
             _HeaderButton(
                 onPressed: () => showModalBottomSheet(
@@ -78,24 +77,27 @@ class _HeaderButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final TextStyle? textStyle = theme.textTheme.bodySmall;
+    final TextStyle? textStyle =
+        theme.textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w400);
 
-    return ElevatedButton.icon(
-      style: ElevatedButton.styleFrom(
-        elevation: 0,
-        backgroundColor: theme.scaffoldBackgroundColor,
-        foregroundColor: AppTheme.primaryColor,
-        side: BorderSide(color: theme.colorScheme.outlineVariant),
-        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+    return Expanded(
+      child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          elevation: 0,
+          backgroundColor: theme.scaffoldBackgroundColor,
+          foregroundColor: AppTheme.primaryColor,
+          side: BorderSide(color: theme.colorScheme.outlineVariant),
+          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
         ),
-      ),
-      onPressed: onPressed,
-      icon: Icon(icon, size: 18),
-      label: Text(
-        label.tr(),
-        style: textStyle,
+        onPressed: onPressed,
+        icon: Icon(icon, size: 14),
+        label: Text(
+          label.tr(),
+          style: textStyle,
+        ),
       ),
     );
   }

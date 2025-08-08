@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../../../core/widgets/location_field.dart';
+import '../../../../../../../location/domain/entities/location_entity.dart';
 import '../../../../../../domain/entities/location_name_entity.dart';
 import '../../../../../../domain/enum/radius_type.dart';
 import '../../../../../providers/marketplace_provider.dart';
+import 'widget/leaflet_map_field.dart';
 import 'widget/location_header.dart';
-import 'widget/location_map.dart';
 import 'widget/radius_option.dart';
 import 'widget/radius_slider.dart';
 import 'widget/update_location_button.dart';
@@ -17,37 +17,47 @@ class LocationRadiusBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final MarketPlaceProvider provider = context.watch<MarketPlaceProvider>();
-    return SingleChildScrollView(
+
+    return Padding(
+      padding: MediaQuery.of(context).viewInsets,
       child: Container(
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 16,
-          bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+        constraints: BoxConstraints(
+          maxHeight:
+              MediaQuery.of(context).size.height * 0.9, // prevent overflow
         ),
-        height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
         ),
-        child: Column(
-          children: <Widget>[
-            const LocationHeader(),
-            const SizedBox(height: 8),
-            LocationField(
-              initialText: provider.selectedLocationName,
-              onLocationSelected: (LocationNameEntity location) async {
-                final LatLng coords =
-                    await provider.getLocationCoordinates(location.description);
-                provider.updateLocation(coords, location.description);
-              },
-            ),
-            const SizedBox(height: 8),
-            const LocationMap(),
-            const Spacer(),
-            const RadiusOptions(),
-            if (provider.radiusType == RadiusType.local) const RadiusSlider(),
-            const UpdateLocationButton(),
-          ],
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const LocationHeader(),
+              const SizedBox(height: 8),
+              LocationDropdown(
+                selectedLatLng: provider.selectedlatlng,
+                circleRadius: provider.selectedRadius,
+                displayMode: MapDisplayMode.alwaysShowMap,
+                showMapCircle: true,
+                initialText: provider.selectedLocationName,
+                onLocationSelected: (LocationEntity p0, LatLng p1) =>
+                    (LocationNameEntity location) async {
+                  provider.updateLocation(p1, location.description);
+                },
+              ),
+              const SizedBox(height: 24),
+              const RadiusOptions(),
+              if (provider.radiusType == RadiusType.local) ...[
+                const SizedBox(height: 8),
+                const RadiusSlider(),
+              ],
+              const SizedBox(height: 24),
+              const UpdateLocationButton(),
+              const SizedBox(height: 12),
+            ],
+          ),
         ),
       ),
     );

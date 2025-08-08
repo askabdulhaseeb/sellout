@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/widgets/custom_icon_button.dart';
+import '../../../../../../core/utilities/app_string.dart';
+import '../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../../../../../core/widgets/searchable_textfield.dart';
 import '../../../create_chat/view/screens/create_group_bottomsheet.dart';
 import '../providers/chat_dashboard_provider.dart';
@@ -18,41 +19,48 @@ class ChatDashboardSearchableWidget extends StatelessWidget {
           children: <Widget>[
             Expanded(
               child: SearchableTextfield(
+                controller: pagePro.searchController,
                 onChanged: (String value) {
-                  // TODO: search chat
+                  pagePro.updateSearchQuery();
                 },
               ),
             ),
             const SizedBox(width: 8),
             pagePro.currentPage == ChatPageType.orders
-                ? CustomIconButton(
-                    borderRadius: BorderRadius.circular(12),
-                    padding: const EdgeInsets.all(11.5),
-                    borderColor: ColorScheme.of(context).outlineVariant,
-                    bgColor: Colors.transparent,
-                    icon: Icons.mark_chat_unread_outlined,
-                    onPressed: () => Navigator.push(
+                ? GestureDetector(
+                    onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute<CreateGroupBottomSheet>(
                             builder: (BuildContext context) =>
-                                const CreateGroupBottomSheet())))
-                //  IconButton(
-                //     onPressed: () {},
-                //     icon: const Icon(Icons.mark_chat_unread_outlined),
-                //   )
+                                const CreateGroupBottomSheet())),
+                    child: Container(
+                        padding: const EdgeInsets.all(11),
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                color: ColorScheme.of(context).outlineVariant),
+                            borderRadius: BorderRadius.circular(12)),
+                        child: const CustomSvgIcon(
+                            assetPath: AppStrings.selloutAddChatIcon)))
                 : pagePro.currentPage == ChatPageType.services
                     ? IconButton(
                         onPressed: () {},
                         icon: const Icon(Icons.card_membership_sharp),
                       )
-                    : IconButton(
-                        onPressed: () => Navigator.push(
+                    : GestureDetector(
+                        onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute<CreateGroupBottomSheet>(
                                 builder: (BuildContext context) =>
                                     const CreateGroupBottomSheet())),
-                        icon: const Icon(Icons.group_add_outlined),
-                      ),
+                        child: Container(
+                            padding: const EdgeInsets.all(11),
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color:
+                                        ColorScheme.of(context).outlineVariant),
+                                borderRadius: BorderRadius.circular(12)),
+                            child: const CustomSvgIcon(
+                                assetPath: AppStrings.selloutAddChatIcon)))
           ],
         ),
       );

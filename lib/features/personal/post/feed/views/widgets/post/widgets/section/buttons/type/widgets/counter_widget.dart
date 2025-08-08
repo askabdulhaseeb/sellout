@@ -35,19 +35,18 @@ class _PostCounterWidgetState extends State<PostCounterWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final BorderRadius borderRadius = BorderRadius.circular(8);
+    final BorderRadius borderRadius = BorderRadius.circular(6);
     final BoxDecoration decoration = BoxDecoration(
-      border: Border.all(color: Theme.of(context).primaryColor),
+      border: Border.all(color: Theme.of(context).primaryColor, width: 2),
       borderRadius: borderRadius,
     );
 
     return Container(
-      height: 50,
+      height: 47,
       padding: const EdgeInsets.all(2),
       decoration: BoxDecoration(
-        border: Border.all(color: Theme.of(context).disabledColor),
-        borderRadius: borderRadius,
-      ),
+          border: Border.all(color: Theme.of(context).primaryColor, width: 2),
+          borderRadius: BorderRadius.circular(8)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[

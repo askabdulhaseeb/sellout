@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong2/latlong.dart';
 import '../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../core/enums/listing/core/listing_type.dart';
@@ -202,7 +202,7 @@ class MarketPlaceProvider extends ChangeNotifier {
     if (success) {
       _radiusType = RadiusType.worldwide;
       _selectedRadius = 10;
-      _selectedLocation = LatLng(LocalAuth.currentUser?.location?.latitude ?? 0,
+      _selectedlatlng = LatLng(LocalAuth.currentUser?.location?.latitude ?? 0,
           LocalAuth.currentUser?.location?.longitude ?? 0);
     }
   }
@@ -212,8 +212,8 @@ class MarketPlaceProvider extends ChangeNotifier {
     if (success) {
       setFilteringBool(true);
     } else {
-      AppSnackBar.showSnackBar(context, 'something_wrong'.tr(),
-          backgroundColor: ColorScheme.of(context).error);
+      // AppSnackBar.showSnackBar(context, 'something_wrong'.tr(),
+      //     backgroundColor: ColorScheme.of(context).error);
     }
   }
 
@@ -415,7 +415,7 @@ class MarketPlaceProvider extends ChangeNotifier {
     _vehicleCatgory = null;
     vehicleModel.clear();
     // Location
-    _selectedLocation = LatLng(LocalAuth.currentUser?.location?.latitude ?? 0,
+    _selectedlatlng = LatLng(LocalAuth.currentUser?.location?.latitude ?? 0,
         LocalAuth.currentUser?.location?.longitude ?? 0);
     _selectedLocationName = '';
     _selectedRadius = 5;
@@ -457,7 +457,7 @@ class MarketPlaceProvider extends ChangeNotifier {
   String? _year;
   String? _vehicleCatgory;
   String? _propertyType;
-  LatLng _selectedLocation = LatLng(
+  LatLng _selectedlatlng = LatLng(
       LocalAuth.currentUser?.location?.latitude ?? 0,
       LocalAuth.currentUser?.location?.longitude ?? 0);
   String _selectedLocationName = '';
@@ -498,7 +498,7 @@ class MarketPlaceProvider extends ChangeNotifier {
   String? get vehicleCatgory => _vehicleCatgory;
 
   String? get propertyType => _propertyType;
-  LatLng get selectedLocation => _selectedLocation;
+  LatLng get selectedlatlng => _selectedlatlng;
   String get selectedLocationName => _selectedLocationName;
   double get selectedRadius => _selectedRadius;
   RadiusType get radiusType => _radiusType;
@@ -531,11 +531,11 @@ class MarketPlaceProvider extends ChangeNotifier {
       colors: _selectedColor,
       sort: _selectedSortOption,
       address: _selectedSubCategory?.address,
-      clientLat: _selectedLocation != const LatLng(0, 0)
-          ? _selectedLocation.latitude
+      clientLat: _selectedlatlng != const LatLng(0, 0)
+          ? _selectedlatlng.latitude
           : null,
-      clientLng: _selectedLocation != const LatLng(0, 0)
-          ? _selectedLocation.longitude
+      clientLng: _selectedlatlng != const LatLng(0, 0)
+          ? _selectedlatlng.longitude
           : null,
       distance:
           _radiusType == RadiusType.local ? _selectedRadius.toInt() : null,
@@ -740,9 +740,9 @@ class MarketPlaceProvider extends ChangeNotifier {
   }
   // Default radius type: worldwide or local
 
-  void updateLocation(LatLng location, String name) {
-    _selectedLocation = location;
-    _selectedLocationName = name;
+  void updateLocation(LatLng Latlng, String location) {
+    _selectedlatlng = Latlng;
+    _selectedLocationName = location;
     notifyListeners();
   }
 

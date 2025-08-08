@@ -1,16 +1,19 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../routes/app_linking.dart';
 import '../../../../../../../services/get_it.dart';
+import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../promo/data/source/local/local_promo.dart';
 import '../../../../../promo/domain/entities/promo_entity.dart';
 import '../../../../../promo/domain/usecase/get_promo_by_id_usecase.dart';
 import '../../../../../promo/view/create_promo/screens/create_promo_screen.dart';
 import '../../../../../promo/view/home_promo_screen/widgets/promo_gridview_tile.dart';
 import '../../../domain/entities/user_entity.dart';
+import '../../providers/profile_provider.dart';
 
 class ProfilePromoGridview extends StatefulWidget {
   const ProfilePromoGridview({required this.user, super.key});
@@ -50,6 +53,8 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
 
   @override
   Widget build(BuildContext context) {
+    final ProfileProvider pro =
+        Provider.of<ProfileProvider>(context, listen: false);
     if (widget.user?.uid == null) {
       return const Center(child: Text('User not found'));
     }
@@ -79,7 +84,8 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
 
         return Column(
           children: <Widget>[
-            _SearchBar(controller: _searchController),
+            if (pro.user?.uid == LocalAuth.uid)
+              _SearchBar(controller: _searchController),
             const SizedBox(height: 10),
             if (_filteredPromos.isEmpty)
               const Center(child: Text('no_promo_found'))
@@ -112,18 +118,19 @@ class _SearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      spacing: 4,
       children: <Widget>[
         Expanded(
+          flex: 3,
           child: CustomTextFormField(
+            dense: true,
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 7, horizontal: 4),
             hint: 'search'.tr(),
-            contentPadding: EdgeInsets.zero,
             controller: controller,
           ),
         ),
-        const SizedBox(width: 4),
-        SizedBox(
-          height: 50,
-          width: 100,
+        Expanded(
           child: ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.onPrimary,

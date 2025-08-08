@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../../../core/extension/datetime_ext.dart';
 import '../../../../../../../../../core/sources/data_state.dart';
+import '../../../../../../../../../core/utilities/app_string.dart';
+import '../../../../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../../../../../../../../core/widgets/profile_photo.dart';
 import '../../../../../../../../../services/get_it.dart';
 import '../../../../../../../../business/business_page/views/screens/user_business_profile_screen.dart';
@@ -19,7 +21,7 @@ class PostHeaderSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: post.businessID == null ||
               (post.businessID ?? '').isEmpty ||
               post.businessID == 'null'
@@ -187,13 +189,12 @@ class _MoreButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: () {
-        final RenderBox button = context.findRenderObject() as RenderBox;
-        final Offset position = button.localToGlobal(Offset.zero);
-        homePostTileShowMoreButton(context, position, postID);
-      },
-      icon: Icon(Icons.adaptive.more),
-    );
+    return InkWell(
+        onTap: () {
+          final RenderBox button = context.findRenderObject() as RenderBox;
+          final Offset position = button.localToGlobal(Offset.zero);
+          homePostTileShowMoreButton(context, position, postID);
+        },
+        child: const CustomSvgIcon(assetPath: AppStrings.selloutMOreMenuIcon));
   }
 }

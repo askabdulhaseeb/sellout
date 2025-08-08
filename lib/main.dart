@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
         themeMode: ThemeMode.system,
         routes: AppRoutes.routes,
         // onGenerateRoute: (RouteSettings settings) {},
-        //initialRoute: SignupScreen.routeName,
+        // initialRoute: SignupScreen.routeName,
       ),
     );
   }
