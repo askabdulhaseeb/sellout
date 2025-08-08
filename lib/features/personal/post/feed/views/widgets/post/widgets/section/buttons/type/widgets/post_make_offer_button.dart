@@ -24,8 +24,7 @@ class _PostMakeOfferButtonState extends State<PostMakeOfferButton> {
   void _openMakeOfferBottomSheet(BuildContext context) {
     showModalBottomSheet(
       isScrollControlled: true,
-      isDismissible: false,
-      enableDrag: false,
+      useSafeArea: true,
       context: context,
       builder: (_) => MakeOfferBottomSheet(
         post: widget.post,
