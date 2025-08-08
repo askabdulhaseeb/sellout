@@ -1,37 +1,45 @@
-import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import '../../../utilities/app_icons.dart';
 import '../../../utilities/app_string.dart';
 part 'listing_type.g.dart';
 
 @HiveType(typeId: 9)
 enum ListingType {
   @HiveField(0)
-  items('items', 'items', 4, AppIcons.shoppingBag, <String>['items'],
-      AppStrings.popularmarketplace),
+  items('items', 'items', 4, AppStrings.selloutAddListingItemIcon,
+      <String>['items'], AppStrings.popularmarketplace),
   @HiveField(1)
   clothAndFoot(
       'cloth_foot',
       'clothes-foot',
       4,
-      AppIcons.tShirt,
+      AppStrings.selloutAddListingClothFootIcon,
       <String>[
         'clothes',
         'footwear',
       ],
       AppStrings.clothfootmarketplace),
   @HiveField(2)
-  vehicle('vehicles', 'vehicles', 4, AppIcons.car, <String>['vehicles'],
-      AppStrings.vehiclemarketplace),
+  vehicle('vehicles', 'vehicles', 4, AppStrings.selloutAddListingVehicleIcon,
+      <String>['vehicles'], AppStrings.vehiclemarketplace),
   @HiveField(3)
-  foodAndDrink('food_drink', 'food-drink', 4, AppIcons.food,
-      <String>['food', 'drink'], AppStrings.fooddrinkmarketplace),
+  foodAndDrink(
+      'food_drink',
+      'food-drink',
+      4,
+      AppStrings.selloutAddListingFoodDrinkIcon,
+      <String>['food', 'drink'],
+      AppStrings.fooddrinkmarketplace),
   @HiveField(4)
-  property('property_buy_sell', 'property', 4, AppIcons.key,
-      <String>['sale', 'rent'], AppStrings.propertymarketplace),
+  property(
+      'property_buy_sell',
+      'property',
+      4,
+      AppStrings.selloutAddListingPropertyIcon,
+      <String>['sale', 'rent'],
+      AppStrings.propertymarketplace),
   @HiveField(5)
-  pets('pets', 'pets', 4, AppIcons.pet, <String>['pets'],
-      AppStrings.petsmarketplaceex);
+  pets('pets', 'pets', 4, AppStrings.selloutAddListingPetsIcon,
+      <String>['pets'], AppStrings.petsmarketplaceex);
 
   const ListingType(
     this.code,
@@ -45,7 +53,7 @@ enum ListingType {
   final String code;
   final String json;
   final int noOfPhotos;
-  final IconData icon;
+  final String icon;
   final List<String> cids;
   final String imagePath;
 

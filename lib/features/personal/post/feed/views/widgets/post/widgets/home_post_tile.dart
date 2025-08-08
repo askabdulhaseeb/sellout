@@ -24,28 +24,28 @@ class HomePostTile extends StatelessWidget {
         Navigator.of(context).pushNamed(PostDetailScreen.routeName,
             arguments: <String, dynamic>{'pid': post.postID, 'visit': visit});
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Column(
-          children: <Widget>[
-            PostHeaderSection(post: post),
-            AttachmentsSlider(
-              attachments:
-                  pro.attachments.isNotEmpty ? pro.attachments : post.fileUrls,
-            ),
-            HomePostIconBottonSection(post: post),
-            HomePostTitleSection(post: post),
-            PostButtonSection(
+      child: Column(
+        children: <Widget>[
+          PostHeaderSection(post: post),
+          AttachmentsSlider(
+            attachments:
+                pro.attachments.isNotEmpty ? pro.attachments : post.fileUrls,
+          ),
+          HomePostIconBottonSection(post: post),
+          HomePostTitleSection(post: post),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+            child: PostButtonSection(
               post: post,
               visit: visit,
             ),
-            Container(
-              height: 4,
-              width: double.infinity,
-              color: Theme.of(context).dividerColor,
-            )
-          ],
-        ),
+          ),
+          Container(
+            height: 4,
+            width: double.infinity,
+            color: Theme.of(context).dividerColor,
+          )
+        ],
       ),
     );
   }

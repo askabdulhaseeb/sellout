@@ -53,7 +53,7 @@ class _AddClothsAndFootwearFormState extends State<AddClothsAndFootwearForm> {
             children: <Widget>[
               const AddListingBasicInfoSection(),
               const AddListingClothSubcatSelectionSection(),
-              SubCategorySelectableWidget(
+              SubCategorySelectableWidget<AddListingFormProvider>(
                 listType: formPro.listingType,
                 subCategory: formPro.selectedCategory,
                 onSelected: formPro.setSelectedCategory,

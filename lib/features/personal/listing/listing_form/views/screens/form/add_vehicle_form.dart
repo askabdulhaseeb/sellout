@@ -48,7 +48,7 @@ class _AddVehicleFormState extends State<AddVehicleForm> {
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: <Widget>[
               const AddListingBasicInfoSection(),
-              CustomListingDropDown(
+              CustomListingDropDown<AddListingFormProvider>(
                   validator: (bool? p0) => null,
                   title: 'category',
                   categoryKey: 'vehicles',

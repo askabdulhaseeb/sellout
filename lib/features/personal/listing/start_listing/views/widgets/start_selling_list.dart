@@ -50,10 +50,16 @@ class StartSellingList extends StatelessWidget {
                   ),
                   child: Row(
                     children: <Widget>[
-                      CircleAvatar(
-                        backgroundColor: Theme.of(context).dividerColor,
-                        radius: 18,
-                        child: Icon(type.icon),
+                      Container(
+                        height: 40,
+                        width: 40,
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Theme.of(context).dividerColor),
+                        child: Image.asset(
+                          type.icon,
+                        ),
                       ),
                       const SizedBox(width: 16),
                       Text(

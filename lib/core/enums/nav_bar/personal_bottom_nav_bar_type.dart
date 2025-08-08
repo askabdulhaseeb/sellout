@@ -1,12 +1,18 @@
-import 'package:flutter/material.dart';
+import '../../utilities/app_string.dart';
 
 enum PersonalBottomNavBarType {
-  home('home', 0, Icons.home_outlined, Icons.home),
-  explore('explore', 1, Icons.explore_outlined, Icons.explore),
-  services('services', 2, Icons.shopping_bag_outlined, Icons.shopping_bag),
-  add('add', 3, Icons.add_circle_outline, Icons.add_circle),
-  chats('chats', 4, Icons.chat_outlined, Icons.chat),
-  profile('profile', 5, Icons.person_outline, Icons.person);
+  home('home', 0, AppStrings.selloutBottombarHomeOutlineIcon,
+      AppStrings.selloutBottombarHomeFilledIcon),
+  explore('explore', 1, AppStrings.selloutBottombarMarketplaceOutlineIcon,
+      AppStrings.selloutBottombarMarketplaceOutlineIcon),
+  services('services', 2, AppStrings.selloutBottombarServicesOutlineIcon,
+      AppStrings.selloutBottombarServicesFilledIcon),
+  add('add', 3, AppStrings.selloutBottombarListingOutlineIcon,
+      AppStrings.selloutBottombarListingFilledIcon),
+  chats('chats', 4, AppStrings.selloutBottombarChatsOutlineIcon,
+      AppStrings.selloutBottombarChatsFilledIcon),
+  profile('profile', 5, AppStrings.selloutBottombarProfileOutlineIcon,
+      AppStrings.selloutBottombarProfileFilledIcon);
 
   const PersonalBottomNavBarType(
     this.code,
@@ -16,8 +22,8 @@ enum PersonalBottomNavBarType {
   );
   final String code;
   final int number;
-  final IconData icon;
-  final IconData activeIcon;
+  final String icon;
+  final String activeIcon;
 
   static List<PersonalBottomNavBarType> get list => <PersonalBottomNavBarType>[
         home,

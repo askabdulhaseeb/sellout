@@ -78,20 +78,28 @@ class _SharePostButtonState extends State<SharePostButton> {
         PopupMenuItem<String>(
           value: 'message',
           child: Row(
+            spacing: 8,
             children: <Widget>[
-              const Icon(Icons.message, size: 20),
-              const SizedBox(width: 8),
-              Text('share_as_message'.tr()),
+              const CustomSvgIcon(
+                  size: 16, assetPath: AppStrings.selloutShareAsMessageIcon),
+              Text(
+                'share_as_message'.tr(),
+                style: TextTheme.of(context).bodySmall,
+              ),
             ],
           ),
         ),
         PopupMenuItem<String>(
           value: 'group',
           child: Row(
+            spacing: 8,
             children: <Widget>[
-              const CustomSvgIcon(assetPath: AppStrings.selloutShareIcon),
-              const SizedBox(width: 8),
-              Text('share_in_group'.tr()),
+              const CustomSvgIcon(
+                  size: 16, assetPath: AppStrings.selloutShareInGroupIcon),
+              Text(
+                'share_in_group'.tr(),
+                style: TextTheme.of(context).bodySmall,
+              ),
             ],
           ),
         ),

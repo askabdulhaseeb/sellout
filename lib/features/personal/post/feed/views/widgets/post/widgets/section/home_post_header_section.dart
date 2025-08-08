@@ -21,7 +21,7 @@ class PostHeaderSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.all(8.0),
       child: post.businessID == null ||
               (post.businessID ?? '').isEmpty ||
               post.businessID == 'null'

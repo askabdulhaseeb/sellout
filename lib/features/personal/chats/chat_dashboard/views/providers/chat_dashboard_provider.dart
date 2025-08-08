@@ -35,28 +35,28 @@ class ChatDashboardProvider extends ChangeNotifier {
     return result;
   }
 
-  void updateSearchQuery() {
-    if (searchController.text.isEmpty) {
-      _filteredChats = _chats;
-    } else {
-      _filteredChats = _chats.where((ChatEntity chat) {
-        // 🧠 Different search logic for groups vs orders
-        if (_page == ChatPageType.groups) {
-          final String title = chat.groupInfo?.title ?? '';
-          return title
-              .toLowerCase()
-              .contains(searchController.text.toLowerCase());
-        } else {
-          final String title = '';
-          return title
-              .toLowerCase()
-              .contains(searchController.text.toLowerCase());
-        }
-      }).toList();
-    }
+  // void updateSearchQuery() {
+  //   if (searchController.text.isEmpty) {
+  //     _filteredChats = _chats;
+  //   } else {
+  //     _filteredChats = _chats.where((ChatEntity chat) {
+  //       // 🧠 Different search logic for groups vs orders
+  //       if (_page == ChatPageType.groups) {
+  //         final String title = chat.groupInfo?.title ?? '';
+  //         return title
+  //             .toLowerCase()
+  //             .contains(searchController.text.toLowerCase());
+  //       } else {
+  //         final String title = '';
+  //         return title
+  //             .toLowerCase()
+  //             .contains(searchController.text.toLowerCase());
+  //       }
+  //     }).toList();
+  //   }
 
-    notifyListeners();
-  }
+  //   notifyListeners();
+  // }
 
   // 🔁 Tab Controller
   ChatPageType _page = ChatPageType.orders;

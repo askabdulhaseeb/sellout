@@ -40,7 +40,6 @@ class MessagesList extends HookWidget {
       }
       return map;
     }, <Object?>[messages.value]);
-
     // Build message widgets (optimized reversal)
     final List<Widget> messageWidgets = useMemoized(
       () {

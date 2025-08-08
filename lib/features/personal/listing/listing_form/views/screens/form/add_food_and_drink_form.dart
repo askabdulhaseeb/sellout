@@ -48,7 +48,7 @@ class _AddFoodAndDrinkFormState extends State<AddFoodAndDrinkForm> {
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: <Widget>[
               const AddListingBasicInfoSection(),
-              SubCategorySelectableWidget(
+              SubCategorySelectableWidget<AddListingFormProvider>(
                 listType: formPro.listingType,
                 subCategory: formPro.selectedCategory,
                 onSelected: formPro.setSelectedCategory,
