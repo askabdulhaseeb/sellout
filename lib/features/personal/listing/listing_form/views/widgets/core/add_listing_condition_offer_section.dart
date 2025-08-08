@@ -53,6 +53,7 @@ class AddListingConditionOfferSection extends StatelessWidget {
                 validator: (String? value) => AppValidator.isEmpty(value),
               ),
             CustomToggleSwitch<PrivacyType>(
+              horizontalPadding: 2,
               isShaded: false,
               labels: PrivacyType.list,
               labelStrs: PrivacyType.list

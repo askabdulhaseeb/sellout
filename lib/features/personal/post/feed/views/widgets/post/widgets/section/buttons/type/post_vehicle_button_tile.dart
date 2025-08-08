@@ -24,26 +24,24 @@ class PostVehicleButtonTile extends StatelessWidget {
             },
           ),
         if (post.acceptOffers == true)
-          Row(
+          Column(
             children: <Widget>[
-              Expanded(child: PostMakeOfferButton(post: post)),
-              const SizedBox(width: 12),
-              Expanded(
-                child: CustomElevatedButton(
-                  title: 'book_visit'.tr(),
-                  bgColor: Colors.transparent,
-                  border: Border.all(color: Theme.of(context).primaryColor),
-                  textStyle: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  isLoading: false,
-                  onTap: () {
-                    AppNavigator.pushNamed(BookingScreen.routeName,
-                        arguments: <String, dynamic>{'post': post});
-                  },
+              PostMakeOfferButton(post: post),
+              CustomElevatedButton(
+                title: 'book_visit'.tr(),
+                bgColor: Colors.transparent,
+                border:
+                    Border.all(color: Theme.of(context).primaryColor, width: 2),
+                textStyle: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).primaryColor,
                 ),
+                isLoading: false,
+                onTap: () {
+                  AppNavigator.pushNamed(BookingScreen.routeName,
+                      arguments: <String, dynamic>{'post': post});
+                },
               ),
             ],
           ),

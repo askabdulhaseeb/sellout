@@ -20,9 +20,7 @@ class ChatDashboardSearchableWidget extends StatelessWidget {
             Expanded(
               child: SearchableTextfield(
                 controller: pagePro.searchController,
-                onChanged: (String value) {
-                  pagePro.updateSearchQuery();
-                },
+                onChanged: (String value) {},
               ),
             ),
             const SizedBox(width: 8),

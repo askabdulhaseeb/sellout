@@ -48,7 +48,7 @@ class _AddItemFormState extends State<AddItemForm> {
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: <Widget>[
               const AddListingBasicInfoSection(),
-              SubCategorySelectableWidget(
+              SubCategorySelectableWidget<AddListingFormProvider>(
                 listType: formPro.listingType,
                 subCategory: formPro.selectedCategory,
                 onSelected: formPro.setSelectedCategory,

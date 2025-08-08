@@ -19,7 +19,7 @@ class ChatSelectablePageTypeWidget extends StatelessWidget {
               final bool isSelected = pagePro.currentPage == tab;
               final Color? color = isSelected
                   ? Theme.of(context).primaryColor
-                  : ColorScheme.of(context).outlineVariant;
+                  : ColorScheme.of(context).outline;
               return Expanded(
                 child: Padding(
                   padding:

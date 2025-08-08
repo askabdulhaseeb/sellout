@@ -111,6 +111,7 @@ flutter:
     - dev.env
     - assets/icons/
     - assets/icons/svg_icons/
+    - assets/icons/png_icons/
     - assets/audio/
     - assets/images/
     - assets/images/payment_methods/

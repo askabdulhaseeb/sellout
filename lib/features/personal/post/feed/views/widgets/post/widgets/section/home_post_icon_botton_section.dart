@@ -12,18 +12,21 @@ class HomePostIconBottonSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isMine = post.createdBy == LocalAuth.uid;
-    return Row(
-      children: <Widget>[
-        if (!isMine) ChatwithSellerIconButton(userId: post.createdBy),
-        SharePostButton(
-          post: post,
-        ),
-        const Spacer(),
-        if (!isMine)
-          SavePostIconButton(
-            postId: post.postID,
-          )
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8),
+      child: Row(
+        children: <Widget>[
+          if (!isMine) ChatwithSellerIconButton(userId: post.createdBy),
+          SharePostButton(
+            post: post,
+          ),
+          const Spacer(),
+          if (!isMine)
+            SavePostIconButton(
+              postId: post.postID,
+            )
+        ],
+      ),
     );
   }
 }

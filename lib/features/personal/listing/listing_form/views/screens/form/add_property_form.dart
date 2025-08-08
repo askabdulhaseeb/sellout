@@ -47,12 +47,6 @@ class _AddPropertyFormState extends State<AddPropertyForm> {
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: <Widget>[
               const AddListingBasicInfoSection(),
-              //  const AddListingPropertySubacatSelectionSection(),
-              // SubCategorySelectableWidget(
-              //   listType: formPro.listingType,
-              //   subCategory: formPro.selectedCategory,
-              //   onSelected: formPro.setSelectedCategory,
-              // ),
               const AddListingPropertyBedBathWidget(),
               const AddPropertyGPAWidget(),
               const AddListingConditionOfferSection(),

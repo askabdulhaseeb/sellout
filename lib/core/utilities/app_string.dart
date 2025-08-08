@@ -25,8 +25,49 @@ class AppStrings {
   static const String selloutSaveIcon =
       'assets/icons/svg_icons/selloutSaveIcon.svg';
   static const String selloutMOreMenuIcon =
-      'assets/icons/svg_icons/selloutMOreMenuIcon.svg.';
-  static const String se = '.svg';
+      'assets/icons/svg_icons/selloutMOreMenuIcon.svg';
+  static const String selloutShareAsMessageIcon =
+      'assets/icons/svg_icons/selloutShareAsMessageIcon.svg';
+  static const String selloutShareInGroupIcon =
+      'assets/icons/svg_icons/selloutShareInGroupIcon.svg';
+  static const String selloutBottombarChatsFilledIcon =
+      'assets/icons/svg_icons/selloutBottombarChatsFilledIcon.svg';
+  static const String selloutBottombarChatsOutlineIcon =
+      'assets/icons/svg_icons/selloutBottombarChatsOutlineIcon.svg';
+  static const String selloutBottombarHomeOutlineIcon =
+      'assets/icons/svg_icons/selloutBottombarHomeOutlineIcon.svg';
+  static const String selloutBottombarHomeFilledIcon =
+      'assets/icons/svg_icons/selloutBottombarHomeFilledIcon.svg';
+  static const String selloutBottombarListingOutlineIcon =
+      'assets/icons/svg_icons/selloutBottombarListingOutlineIcon.svg';
+  static const String selloutBottombarListingFilledIcon =
+      'assets/icons/svg_icons/selloutBottombarListingFilledIcon.svg';
+  static const String selloutBottombarMarketplaceOutlineIcon =
+      'assets/icons/svg_icons/selloutBottombarMarketplaceOutlineIcon.svg';
+  static const String selloutBottombarProfileFilledIcon =
+      'assets/icons/svg_icons/selloutBottombarProfileFilledIcon.svg';
+  static const String selloutBottombarProfileOutlineIcon =
+      'assets/icons/svg_icons/selloutBottombarProfileOutlineIcon.svg';
+  static const String selloutBottombarServicesFilledIcon =
+      'assets/icons/svg_icons/selloutBottombarServicesFilledIcon.svg';
+  static const String selloutBottombarServicesOutlineIcon =
+      'assets/icons/svg_icons/selloutBottombarServicesOutlineIcon.svg';
+
+  // png icons
+  static const String selloutAddListingItemIcon =
+      'assets/icons/png_icons/selloutAddListingItemIcon.png';
+  static const String selloutAddListingClothFootIcon =
+      'assets/icons/png_icons/selloutAddListingClothFootIcon.png';
+  static const String selloutAddListingFoodDrinkIcon =
+      'assets/icons/png_icons/selloutAddListingFoodDrinkIcon.png';
+  static const String selloutAddListingPetsIcon =
+      'assets/icons/png_icons/selloutAddListingPetsIcon.png';
+  static const String selloutAddListingPropertyIcon =
+      'assets/icons/png_icons/selloutAddListingPropertyIcon.png';
+  static const String selloutAddListingVehicleIcon =
+      'assets/icons/png_icons/selloutAddListingVehicleIcon.png';
+
+  static const String sel = '';
 
   // Hive Boxes
   static String get localAuthBox => 'com.sellout.local-auth';

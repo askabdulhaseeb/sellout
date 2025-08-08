@@ -5,6 +5,7 @@ import '../../../../features/personal/auth/signin/data/sources/local/local_auth.
 import '../../../../features/personal/chats/chat_dashboard/views/widgets/unseen_message_badge.dart';
 import '../../../../features/personal/dashboard/views/providers/personal_bottom_nav_provider.dart';
 import '../../../../features/personal/user/profiles/data/sources/local/local_user.dart';
+import '../../custom_svg_icon.dart';
 
 class PersonalBottomNavBar extends StatefulWidget {
   const PersonalBottomNavBar({super.key});
@@ -50,8 +51,9 @@ class _PersonalBottomNavBarState extends State<PersonalBottomNavBar> {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Icon(
-                      type.icon,
+                    child: CustomSvgIcon(
+                      size: 20,
+                      assetPath: type.icon,
                     ),
                   ),
                   if (type == PersonalBottomNavBarType.list[4])
@@ -65,7 +67,10 @@ class _PersonalBottomNavBarState extends State<PersonalBottomNavBar> {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Icon(type.activeIcon),
+                    child: CustomSvgIcon(
+                      size: 20,
+                      assetPath: type.activeIcon,
+                    ),
                   ),
                   if (type == PersonalBottomNavBarType.list[4])
                     const Positioned(
