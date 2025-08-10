@@ -12,33 +12,34 @@ import 'type/post_vehicle_button_tile.dart';
 class PostButtonSection extends StatelessWidget {
   const PostButtonSection({
     required this.post,
-    this.padding,
     this.visit,
     super.key,
   });
   final PostEntity post;
   final VisitingEntity? visit;
-  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
-    return post.createdBy == LocalAuth.currentUser?.userID ||
-            post.createdBy == LocalAuth.currentUser?.businessID
-        ? PostButtonsForUser(visit: visit, post: post)
-        : GestureDetector(
-            onTap: () {
-              if (LocalAuth.currentUser?.userID == null) {
-                AppSnackBar.showSnackBar(context, 'please_login_first'.tr());
-              }
-            },
-            child: AbsorbPointer(
-              absorbing: LocalAuth.currentUser?.userID == null,
-              child: (post.type == ListingType.pets ||
-                      post.type == ListingType.vehicle ||
-                      post.type == ListingType.property)
-                  ? PostVehicleButtonTile(post: post)
-                  : PostItemButtonTile(post: post),
-            ),
-          );
+    return Padding(
+        padding: const EdgeInsetsGeometry.all(16),
+        child: post.createdBy == LocalAuth.currentUser?.userID ||
+                post.createdBy == LocalAuth.currentUser?.businessID
+            ? PostButtonsForUser(visit: visit, post: post)
+            : GestureDetector(
+                onTap: () {
+                  if (LocalAuth.currentUser?.userID == null) {
+                    AppSnackBar.showSnackBar(
+                        context, 'please_login_first'.tr());
+                  }
+                },
+                child: AbsorbPointer(
+                  absorbing: LocalAuth.currentUser?.userID == null,
+                  child: (post.type == ListingType.pets ||
+                          post.type == ListingType.vehicle ||
+                          post.type == ListingType.property)
+                      ? PostVehicleButtonTile(post: post)
+                      : PostItemButtonTile(post: post),
+                ),
+              ));
   }
 }

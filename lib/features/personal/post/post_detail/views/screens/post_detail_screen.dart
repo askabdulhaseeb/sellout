@@ -25,14 +25,20 @@ class PostDetailScreen extends StatelessWidget {
     final VisitingEntity? visit = args['visit'] as VisitingEntity?;
     return Scaffold(
       appBar: AppBar(
-        leadingWidth: 110,
-        leading: TextButton.icon(
-          style: TextButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant),
-          icon: Icon(Icons.arrow_back_ios,
-              color: Theme.of(context).colorScheme.onSurfaceVariant),
-          onPressed: () => Navigator.pop(context),
-          label: Text('go_back'.tr()),
+        leadingWidth: 200,
+        leading: InkWell(
+          onTap: () => Navigator.pop(context),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Icon(Icons.arrow_back_ios_new_rounded,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant),
+                Text('go_back'.tr()),
+              ],
+            ),
+          ),
         ),
       ),
       body: FutureBuilder<DataState<PostEntity>>(

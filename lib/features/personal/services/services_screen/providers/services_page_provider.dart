@@ -1,7 +1,5 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong2/latlong.dart';
 import '../../../../../core/enums/business/services/service_category_type.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/api_call.dart';
@@ -138,8 +136,8 @@ class ServicesPageProvider extends ChangeNotifier {
           filters: getFilterParams(),
           query: search.text,
           sort: _selectedSortOption,
-          clientLat: _selectedLocation.latitude,
-          clientLng: _selectedLocation.longitude),
+          clientLat: _selectedLatLng.latitude,
+          clientLng: _selectedLatLng.longitude),
     );
     if (result is DataSuccess) {
       searchedServices.clear();
@@ -297,37 +295,16 @@ class ServicesPageProvider extends ChangeNotifier {
   ///
   ///
   ///
-  LatLng _selectedLocation = LatLng(
+  LatLng _selectedLatLng = LatLng(
       LocalAuth.currentUser?.location?.latitude ?? 0,
       LocalAuth.currentUser?.location?.longitude ?? 0);
   String _selectedLocationName = '';
-  LatLng get selectedLocation => _selectedLocation;
+  LatLng get selectedLatLng => _selectedLatLng;
   String get selectedLocationName => _selectedLocationName;
-  Future<LatLng> getLocationCoordinates(String address) async {
-    final bool hasConnection = await _checkInternetConnection();
-    if (!hasConnection) throw 'NO_INTERNET';
-    final List<Location> locations = await locationFromAddress(address)
-        .timeout(const Duration(seconds: 10), onTimeout: () {
-      throw 'TIMEOUT';
-    });
-
-    if (locations.isEmpty) throw 'NO_RESULTS';
-    return LatLng(locations.first.latitude, locations.first.longitude);
-  }
-  // Default radius type: worldwide or local
 
   void updateLocation(LatLng location, String name) {
-    _selectedLocation = location;
+    _selectedLatLng = location;
     _selectedLocationName = name;
     notifyListeners();
-  }
-
-  Future<bool> _checkInternetConnection() async {
-    try {
-      await InternetAddress.lookup('google.com');
-      return true;
-    } on SocketException {
-      return false;
-    }
   }
 }
