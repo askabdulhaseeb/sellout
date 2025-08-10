@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../../../../../../../core/functions/app_log.dart';
-import '../../../../../../listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../../../../../domain/entities/post_entity.dart';
 import '../../../../../domain/entities/visit/visiting_entity.dart';
 import '../../../../../feed/views/widgets/post/widgets/section/buttons/home_post_button_section.dart';
@@ -29,38 +27,39 @@ class GeneralPostDetailSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AppLog.info('PostID: ${post.postID} ');
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: SingleChildScrollView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        child: Column(
-          spacing: 4,
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            PostDetailAttachmentSlider(
-                attachments: post.fileUrls.isNotEmpty
-                    ? post.fileUrls
-                    : Provider.of<AddListingFormProvider>(context).attachments),
-            PostDetailTitleAmountSection(post: post),
-            if (isMe == true) PostButtonsForUser(visit: visit, post: post),
-            if (isMe == false)
-              PostButtonSection(
-                post: post,
-                padding: const EdgeInsets.symmetric(vertical: 8),
-              ),
-            PostRatingSection(
+    return SingleChildScrollView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      child: Column(
+        spacing: 4,
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          PostDetailAttachmentSlider(attachments: post.fileUrls),
+          PostDetailTitleAmountSection(post: post),
+          if (isMe == true) PostButtonsForUser(visit: visit, post: post),
+          if (isMe == false)
+            PostButtonSection(
               post: post,
             ),
-            ConditionDeliveryWidget(post: post),
-            PostDetailDescriptionSection(post: post),
-            // PostDetailTileListSection(post: post),
-            ReturnPosrtageAndExtraDetailsSection(post: post),
-            // const UserMeetupSafetyGuildlineSection(),
-            PostDetailReviewOverviewSection(post: post),
-            const SizedBox(height: 200),
-          ],
-        ),
+          PostRatingSection(
+            post: post,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                ConditionDeliveryWidget(post: post),
+                PostDetailDescriptionSection(post: post),
+                // PostDetailTileListSection(post: post),
+                ReturnPosrtageAndExtraDetailsSection(post: post),
+                // const UserMeetupSafetyGuildlineSection(),
+                PostDetailReviewOverviewSection(post: post),
+                const SizedBox(height: 200),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

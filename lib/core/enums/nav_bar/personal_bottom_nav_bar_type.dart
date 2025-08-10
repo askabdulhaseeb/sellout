@@ -4,7 +4,7 @@ enum PersonalBottomNavBarType {
   home('home', 0, AppStrings.selloutBottombarHomeOutlineIcon,
       AppStrings.selloutBottombarHomeFilledIcon),
   explore('explore', 1, AppStrings.selloutBottombarMarketplaceOutlineIcon,
-      AppStrings.selloutBottombarMarketplaceOutlineIcon),
+      AppStrings.selloutBottombarMarketplaceFilledIcon),
   services('services', 2, AppStrings.selloutBottombarServicesOutlineIcon,
       AppStrings.selloutBottombarServicesFilledIcon),
   add('add', 3, AppStrings.selloutBottombarListingOutlineIcon,

@@ -62,14 +62,78 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
 
   Future<void> _fetchCategories() async {
     setState(() => isLoading = true);
+
     try {
       final List<ListingEntity> listings = await ListingAPI().listing();
+
+      if (!mounted) return;
+
+      if (listings.isEmpty) {
+        AppSnackBar.showSnackBar(
+          context,
+          'no_categories_found'.tr(),
+        );
+      }
+
       setState(() {
         allListings = listings;
         isLoading = false;
       });
-    } catch (e) {
-      AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
+    } catch (e, stack) {
+      debugPrint('Error fetching listings: $e\n$stack');
+
+      if (!mounted) return;
+      setState(() => isLoading = false);
+
+      AppSnackBar.showSnackBar(
+        context,
+        'failed_to_load_categories'.tr(),
+      );
+    }
+  }
+
+  Future<void> _handleCategorySelection(
+      List<ListingEntity> selectedList, BuildContext context) async {
+    if (selectedList.isEmpty) {
+      AppSnackBar.showSnackBar(
+        context,
+        'no_categories_available'.tr(),
+      );
+      return;
+    }
+
+    final List<SubCategoryEntity> subCategories =
+        selectedList.first.subCategory;
+
+    if (subCategories.isEmpty) {
+      AppSnackBar.showSnackBar(
+        context,
+        'no_subcategories_available'.tr(),
+      );
+      return;
+    }
+
+    final SubCategoryEntity? selected =
+        await showModalBottomSheet<SubCategoryEntity>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => CategorySelectionBottomSheet(
+        subCategories: subCategories,
+      ),
+    );
+
+    if (selected == null) {
+      // User closed bottom sheet without selecting
+      return;
+    }
+
+    setState(() {
+      selectedSubCategory = selected;
+      selectedSubSubCategory = null;
+    });
+
+    if (selected.subCategory.isEmpty) {
+      widget.onSelected(selected);
     }
   }
 
@@ -168,40 +232,5 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
           ),
       ],
     );
-  }
-
-  Future<void> _handleCategorySelection(
-      List<ListingEntity> selectedList, BuildContext context) async {
-    if (selectedList.isEmpty) {
-      AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
-      return;
-    }
-
-    final List<SubCategoryEntity> subCategories =
-        selectedList.first.subCategory;
-
-    if (subCategories.isEmpty) {
-      AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
-      return;
-    }
-
-    final SubCategoryEntity? selected =
-        await showModalBottomSheet<SubCategoryEntity>(
-      context: context,
-      builder: (_) => CategorySelectionBottomSheet(
-        subCategories: subCategories,
-      ),
-    );
-
-    if (selected != null) {
-      setState(() {
-        selectedSubCategory = selected;
-        selectedSubSubCategory = null;
-      });
-
-      if (selected.subCategory.isEmpty) {
-        widget.onSelected(selected);
-      }
-    }
   }
 }

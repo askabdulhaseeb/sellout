@@ -44,6 +44,8 @@ class AppStrings {
       'assets/icons/svg_icons/selloutBottombarListingFilledIcon.svg';
   static const String selloutBottombarMarketplaceOutlineIcon =
       'assets/icons/svg_icons/selloutBottombarMarketplaceOutlineIcon.svg';
+  static const String selloutBottombarMarketplaceFilledIcon =
+      'assets/icons/svg_icons/selloutBottombarMarketplaceFilledIcon.svg';
   static const String selloutBottombarProfileFilledIcon =
       'assets/icons/svg_icons/selloutBottombarProfileFilledIcon.svg';
   static const String selloutBottombarProfileOutlineIcon =

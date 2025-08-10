@@ -1,14 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_radio_button_list_tile.dart';
-import '../../../../../../../core/widgets/location_field.dart';
+import '../../../../../../../core/widgets/leaflet_map_field.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../../../../location/data/models/location_model.dart';
-import '../../../../../marketplace/domain/entities/location_name_entity.dart';
+import '../../../../../location/domain/entities/location_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
 
 class AddListingDeliverySelectionWidget extends StatelessWidget {
@@ -75,34 +74,29 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
             ),
           ),
           CustomRadioButtonListTile<DeliveryType>(
-            title: DeliveryType.collocation.code.tr(),
-            selectedValue: formPro.deliveryType,
-            value: DeliveryType.collocation,
-            onChanged: formPro.setDeliveryType,
-            subtitle: LocationField(
-              onLocationSelected: (LocationNameEntity location) async {
-                final LatLng coords =
-                    await formPro.getLocationCoordinates(location.description);
-                formPro.setCollectionLocation(LocationModel(
-                    address: location.structuredFormatting.secondaryText,
-                    id: location.placeId,
-                    title: location.structuredFormatting.mainText,
-                    url:
-                        'https://maps.google.com/?q=${coords.latitude},${coords.longitude}',
-                    latitude: coords.latitude,
-                    longitude: coords.longitude));
-              },
-              initialText: formPro.selectedmeetupLocation?.address,
-            ),
+              title: DeliveryType.collocation.code.tr(),
+              selectedValue: formPro.deliveryType,
+              value: DeliveryType.collocation,
+              onChanged: formPro.setDeliveryType,
+              subtitle: LocationDropdown(
+                selectedLatLng: LatLng(
+                    formPro.selectedCollectionLocation?.latitude ?? 0,
+                    formPro.selectedCollectionLocation?.longitude ?? 0),
+                displayMode: MapDisplayMode.neverShowMap,
+                initialText: formPro.selectedCollectionLocation?.address ?? '',
+                onLocationSelected: (LocationEntity p0, LatLng p1) {
+                  formPro.setCollectionLocation(p0);
+                },
+              )
 
-            //  LocationInputButton(
-            //   validator: (bool? value) =>
-            //       formPro.deliveryType == DeliveryType.collocation &&
-            //               (value == null)
-            //           ? 'location_is_required'.tr()
-            //           : null,
-            // ),
-          ),
+              //  LocationInputButton(
+              //   validator: (bool? value) =>
+              //       formPro.deliveryType == DeliveryType.collocation &&
+              //               (value == null)
+              //           ? 'location_is_required'.tr()
+              //           : null,
+              // ),
+              ),
         ],
       );
     });

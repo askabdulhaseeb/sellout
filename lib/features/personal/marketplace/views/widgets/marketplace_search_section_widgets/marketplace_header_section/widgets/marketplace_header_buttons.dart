@@ -32,8 +32,9 @@ class MarketPlaceHeaderButtons extends StatelessWidget {
                           const LocationRadiusBottomSheet(),
                     ),
                 icon: AppStrings.selloutMarketplaceLocationIcon,
-                label:
-                    '${'location'.tr()}${pro.radiusType == RadiusType.local ? '-${pro.selectedRadius.toInt()} km' : ''}'),
+                label: pro.radiusType == RadiusType.worldwide
+                    ? 'location'.tr()
+                    : '${pro.selectedRadius.toInt()} km'),
             const SizedBox(
               width: 4,
             ),
