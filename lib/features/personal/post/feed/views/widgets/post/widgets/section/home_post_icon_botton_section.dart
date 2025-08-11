@@ -13,7 +13,7 @@ class HomePostIconBottonSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isMine = post.createdBy == LocalAuth.uid;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: <Widget>[
           if (!isMine) ChatwithSellerIconButton(userId: post.createdBy),

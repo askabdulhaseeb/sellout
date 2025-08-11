@@ -36,7 +36,7 @@ class SortBottomSheet extends StatelessWidget {
               leading: _buildLeadingIcon(context, isSelected),
               title: Text(option.code.tr()),
               onTap: () {
-                provider.SortCheckButton(option);
+                provider.sortCheckButton(option);
                 Navigator.pop(context); // close sheet on selection
               },
             );

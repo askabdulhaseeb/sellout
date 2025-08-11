@@ -252,7 +252,7 @@ class _ThumbnailItemKeepAliveState extends State<_ThumbnailItemKeepAlive>
       child: GestureDetector(
         onTap: widget.onTap,
         child: Card(
-          color: Colors.transparent,
+          color: Theme.of(context).dividerColor,
           elevation: widget.selected ? 5 : 0,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8),

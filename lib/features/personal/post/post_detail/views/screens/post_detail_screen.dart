@@ -25,7 +25,7 @@ class PostDetailScreen extends StatelessWidget {
     final VisitingEntity? visit = args['visit'] as VisitingEntity?;
     return Scaffold(
       appBar: AppBar(
-        leadingWidth: 200,
+        leadingWidth: 80,
         leading: InkWell(
           onTap: () => Navigator.pop(context),
           child: Padding(
@@ -34,8 +34,9 @@ class PostDetailScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Icon(Icons.arrow_back_ios_new_rounded,
+                    size: 16,
                     color: Theme.of(context).colorScheme.onSurfaceVariant),
-                Text('go_back'.tr()),
+                Text('back'.tr()),
               ],
             ),
           ),

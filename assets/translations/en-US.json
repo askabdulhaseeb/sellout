@@ -66,6 +66,7 @@
   "delivery_fee_is_required": "Delivery Fee is required",
   "location_is_required": "Location is required",
   "please_note_that_delivery_must_be_tracked": "Please note that delivery must be tracked and signed for. Thank You",
+  "no_data_found": "No data found",
   "post": "Post",
   "select_type": "Select Type",
   "orders": "Orders",

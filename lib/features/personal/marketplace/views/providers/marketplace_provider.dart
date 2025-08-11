@@ -1,8 +1,6 @@
-import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:latlong2/latlong.dart';
 import '../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../core/enums/listing/core/item_condition_type.dart';
@@ -12,6 +10,7 @@ import '../../../../../core/widgets/app_snakebar.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../listing/listing_form/data/models/sub_category_model.dart';
 import '../../../listing/listing_form/data/sources/remote/dropdown_listing_api.dart';
+import '../../../location/domain/entities/location_entity.dart';
 import '../../../post/domain/entities/post_entity.dart';
 import '../../../post/post_detail/views/screens/post_detail_screen.dart';
 import '../../domain/enum/radius_type.dart';
@@ -168,19 +167,23 @@ class MarketPlaceProvider extends ChangeNotifier {
   }
 
 // button
-  void SortCheckButton(SortOption? option) async {
-    final bool success = await loadPosts();
-    if (success) {
-      _selectedSortOption = option;
-      setFilteringBool(true);
-    }
+  void sortCheckButton(SortOption? option) async {
+    _selectedSortOption = option;
+    await loadPosts();
   }
 
   void filterSheetApplyButton() async {
-    final bool success = await loadPosts();
-    if (success) {
-      setFilteringBool(true);
-    }
+    await loadPosts();
+  }
+
+  void locationSheetApplyButton(BuildContext context) async {
+    await loadPosts();
+  }
+
+  void updateLocation(LatLng? latlng, LocationEntity? location) {
+    _selectedlatlng = latlng;
+    _selectedLocation = location;
+    notifyListeners();
   }
 
   void filterSheetResetButton(BuildContext context) async {
@@ -204,16 +207,6 @@ class MarketPlaceProvider extends ChangeNotifier {
       _selectedRadius = 10;
       _selectedlatlng = LatLng(LocalAuth.currentUser?.location?.latitude ?? 0,
           LocalAuth.currentUser?.location?.longitude ?? 0);
-    }
-  }
-
-  void locationSheetApplyButton(BuildContext context) async {
-    final bool success = await loadPosts();
-    if (success) {
-      setFilteringBool(true);
-    } else {
-      // AppSnackBar.showSnackBar(context, 'something_wrong'.tr(),
-      //     backgroundColor: ColorScheme.of(context).error);
     }
   }
 
@@ -417,7 +410,7 @@ class MarketPlaceProvider extends ChangeNotifier {
     // Location
     _selectedlatlng = LatLng(LocalAuth.currentUser?.location?.latitude ?? 0,
         LocalAuth.currentUser?.location?.longitude ?? 0);
-    _selectedLocationName = '';
+    _selectedLocation = null;
     _selectedRadius = 5;
     _radiusType = RadiusType.worldwide;
     // Post data
@@ -457,10 +450,10 @@ class MarketPlaceProvider extends ChangeNotifier {
   String? _year;
   String? _vehicleCatgory;
   String? _propertyType;
-  LatLng _selectedlatlng = LatLng(
+  LatLng? _selectedlatlng = LatLng(
       LocalAuth.currentUser?.location?.latitude ?? 0,
       LocalAuth.currentUser?.location?.longitude ?? 0);
-  String _selectedLocationName = '';
+  LocationEntity? _selectedLocation;
   double _selectedRadius = 5;
   RadiusType _radiusType = RadiusType.worldwide;
   DeliveryType? _selectedDeliveryType;
@@ -498,8 +491,8 @@ class MarketPlaceProvider extends ChangeNotifier {
   String? get vehicleCatgory => _vehicleCatgory;
 
   String? get propertyType => _propertyType;
-  LatLng get selectedlatlng => _selectedlatlng;
-  String get selectedLocationName => _selectedLocationName;
+  LatLng? get selectedlatlng => _selectedlatlng;
+  LocationEntity? get selectedLocation => _selectedLocation;
   double get selectedRadius => _selectedRadius;
   RadiusType get radiusType => _radiusType;
   DeliveryType? get selectedDeliveryType => _selectedDeliveryType;
@@ -532,10 +525,10 @@ class MarketPlaceProvider extends ChangeNotifier {
       sort: _selectedSortOption,
       address: _selectedSubCategory?.address,
       clientLat: _selectedlatlng != const LatLng(0, 0)
-          ? _selectedlatlng.latitude
+          ? _selectedlatlng?.latitude
           : null,
       clientLng: _selectedlatlng != const LatLng(0, 0)
-          ? _selectedlatlng.longitude
+          ? _selectedlatlng?.longitude
           : null,
       distance:
           _radiusType == RadiusType.local ? _selectedRadius.toInt() : null,
@@ -723,35 +716,6 @@ class MarketPlaceProvider extends ChangeNotifier {
       // Optionally handle error
     } finally {
       setLoading(false);
-    }
-  }
-
-  /// location api
-  Future<LatLng> getLocationCoordinates(String address) async {
-    final bool hasConnection = await _checkInternetConnection();
-    if (!hasConnection) throw 'NO_INTERNET';
-    final List<Location> locations = await locationFromAddress(address)
-        .timeout(const Duration(seconds: 10), onTimeout: () {
-      throw 'TIMEOUT';
-    });
-
-    if (locations.isEmpty) throw 'NO_RESULTS';
-    return LatLng(locations.first.latitude, locations.first.longitude);
-  }
-  // Default radius type: worldwide or local
-
-  void updateLocation(LatLng Latlng, String location) {
-    _selectedlatlng = Latlng;
-    _selectedLocationName = location;
-    notifyListeners();
-  }
-
-  Future<bool> _checkInternetConnection() async {
-    try {
-      await InternetAddress.lookup('google.com');
-      return true;
-    } on SocketException {
-      return false;
     }
   }
 }

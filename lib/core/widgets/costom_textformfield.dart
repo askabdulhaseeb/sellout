@@ -201,6 +201,13 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
                   borderSide:
                       BorderSide(color: ColorScheme.of(context).outlineVariant),
                   borderRadius: BorderRadius.circular(8),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    width: 2,
+                    color: AppTheme.primaryColor,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
                 )),
           ),
         ],

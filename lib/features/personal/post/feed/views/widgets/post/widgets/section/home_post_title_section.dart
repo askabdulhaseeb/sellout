@@ -10,7 +10,7 @@ class HomePostTitleSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 2),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
