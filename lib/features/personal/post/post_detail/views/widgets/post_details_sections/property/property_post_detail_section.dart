@@ -23,7 +23,7 @@ class PropertyPostDetailSection extends StatelessWidget {
 
   final PostEntity post;
   final bool isMe;
-  final VisitingEntity? visit;
+  final List<VisitingEntity>? visit;
 
   @override
   Widget build(BuildContext context) {

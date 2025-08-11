@@ -11,7 +11,7 @@ import 'section/home_post_title_section.dart';
 class HomePostTile extends StatelessWidget {
   const HomePostTile({required this.post, this.visit, super.key});
   final PostEntity post;
-  final VisitingEntity? visit;
+  final List<VisitingEntity>? visit;
 
   @override
   Widget build(BuildContext context) {

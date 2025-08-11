@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../core/utilities/app_string.dart';
 import '../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../core/widgets/custom_network_image.dart';
@@ -84,7 +85,7 @@ class AddServiceAttachmentSection extends StatelessWidget {
                                   ),
                                 ),
                                 CustomIconButton(
-                                  icon: Icons.delete,
+                                  icon: AppStrings.applePayBlack,
                                   iconColor: Theme.of(context).primaryColor,
                                   padding: const EdgeInsets.all(4),
                                   bgColor: Colors.white,

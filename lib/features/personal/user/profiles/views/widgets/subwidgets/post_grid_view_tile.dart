@@ -1,10 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/dialogs/cart/add_to_cart_dialog.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/data_state.dart';
+import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
@@ -21,6 +21,7 @@ import '../../../../../post/post_detail/views/screens/post_detail_screen.dart';
 class PostGridViewTile extends StatelessWidget {
   const PostGridViewTile({required this.post, super.key});
   final PostEntity post;
+
   @override
   Widget build(BuildContext context) {
     final bool isMe = (post.createdBy == (LocalAuth.uid ?? '') ||
@@ -36,39 +37,34 @@ class PostGridViewTile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Expanded(
+          AspectRatio(
+            aspectRatio: 1,
             child: Stack(
               alignment: Alignment.topRight,
               children: <Widget>[
-                SizedBox(
-                  width: double.infinity,
-                  height: 330,
+                Positioned.fill(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: CustomNetworkImage(
                         fit: BoxFit.cover, imageURL: post.imageURL),
                   ),
                 ),
-                if (isMe != true) PostGridViewTileBasketButton(post: post)
+                if (!isMe) PostGridViewTileBasketButton(post: post)
               ],
             ),
           ),
-          SizedBox(
-            height: 80,
-            child: Row(
-              children: <Widget>[
-                Column(
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    SizedBox(
-                      width: 100,
-                      child: Text(
-                        post.title,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        style: const TextStyle(fontWeight: FontWeight.w400),
-                      ),
+                    Text(
+                      post.title,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: const TextStyle(fontWeight: FontWeight.w400),
                     ),
                     const SizedBox(height: 4),
                     RatingDisplayWidget(
@@ -77,57 +73,53 @@ class PostGridViewTile extends StatelessWidget {
                       ratingList: post.listOfReviews ?? <double>[],
                     ),
                     const SizedBox(height: 4),
-                    SizedBox(
-                      width: 100,
-                      child: Text(
-                        post.priceStr,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                    Text(
+                      post.priceStr,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
-                if (isMe) const Spacer(),
-                if (isMe)
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      CustomIconButton(
-                        iconSize: 20,
-                        iconColor: Theme.of(context).primaryColor,
-                        padding: const EdgeInsets.all(4),
-                        margin: const EdgeInsets.all(4),
-                        bgColor: Theme.of(context).primaryColor.withAlpha(40),
-                        icon: CupertinoIcons.pencil_circle,
-                        onPressed: () {
-                          final AddListingFormProvider pro =
-                              Provider.of<AddListingFormProvider>(context,
-                                  listen: false);
-                          pro.reset();
-                          pro.setListingType(post.type);
-                          pro.setPost(post);
-                          pro.updateVariables();
-                          Navigator.pushNamed(
-                              context, AddListingFormScreen.routeName);
-                        },
-                      ),
-                      CustomIconButton(
-                        iconSize: 20,
-                        iconColor: Theme.of(context).colorScheme.secondary,
-                        padding: const EdgeInsets.all(4),
-                        margin: const EdgeInsets.all(4),
-                        bgColor: Theme.of(context)
-                            .colorScheme
-                            .secondary
-                            .withAlpha(40),
-                        icon: CupertinoIcons.speaker,
-                        onPressed: () {},
-                      ),
-                    ],
-                  )
-              ],
-            ),
+              ),
+              if (isMe)
+                Column(
+                  spacing: 2,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    const SizedBox(height: 2),
+                    CustomIconButton(
+                      iconSize: 16,
+                      iconColor: Theme.of(context).primaryColor,
+                      padding: const EdgeInsets.all(4),
+                      margin: EdgeInsets.zero,
+                      bgColor: Theme.of(context).primaryColor.withAlpha(40),
+                      icon: AppStrings.selloutPostGridTileEditIcon,
+                      onPressed: () {
+                        final AddListingFormProvider pro =
+                            Provider.of<AddListingFormProvider>(context,
+                                listen: false);
+                        pro.reset();
+                        pro.setListingType(post.type);
+                        pro.setPost(post);
+                        pro.updateVariables();
+                        Navigator.pushNamed(
+                            context, AddListingFormScreen.routeName);
+                      },
+                    ),
+                    CustomIconButton(
+                      iconSize: 16,
+                      iconColor: Theme.of(context).colorScheme.secondary,
+                      padding: const EdgeInsets.all(4),
+                      margin: EdgeInsets.zero,
+                      bgColor:
+                          Theme.of(context).colorScheme.secondary.withAlpha(40),
+                      icon: AppStrings.selloutPostGridTilePromoteIcon,
+                      onPressed: () {},
+                    ),
+                  ],
+                )
+            ],
           ),
         ],
       ),
@@ -136,11 +128,7 @@ class PostGridViewTile extends StatelessWidget {
 }
 
 class PostGridViewTileBasketButton extends StatelessWidget {
-  const PostGridViewTileBasketButton({
-    required this.post,
-    super.key,
-  });
-
+  const PostGridViewTileBasketButton({required this.post, super.key});
   final PostEntity post;
 
   @override
@@ -161,7 +149,6 @@ class PostGridViewTileBasketButton extends StatelessWidget {
           );
           if (result is DataSuccess) {
             AppSnackBar.showSnackBar(
-              // ignore: use_build_context_synchronously
               context,
               'successfull_add_to_basket'.tr(),
               backgroundColor: Colors.green,
@@ -173,7 +160,6 @@ class PostGridViewTileBasketButton extends StatelessWidget {
               error: result.exception,
             );
             AppSnackBar.showSnackBar(
-              // ignore: use_build_context_synchronously
               context,
               result.exception?.message ?? 'something_wrong'.tr(),
             );
@@ -186,18 +172,16 @@ class PostGridViewTileBasketButton extends StatelessWidget {
           error: e,
           stackTrace: stackTrace,
         );
-        // ignore: use_build_context_synchronously
         AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
       }
     }
 
     return CustomIconButton(
-        iconSize: 14,
-        bgColor: ColorScheme.of(context).surface,
-        iconColor: Theme.of(context).colorScheme.onSurface,
-        icon: CupertinoIcons.cart,
-        onPressed: () {
-          addToBasket(context, post);
-        });
+      iconSize: 14,
+      bgColor: ColorScheme.of(context).surface,
+      iconColor: Theme.of(context).colorScheme.onSurface,
+      icon: AppStrings.amex,
+      onPressed: () => addToBasket(context, post),
+    );
   }
 }

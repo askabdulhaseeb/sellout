@@ -16,7 +16,7 @@ class PostButtonSection extends StatelessWidget {
     super.key,
   });
   final PostEntity post;
-  final VisitingEntity? visit;
+  final List<VisitingEntity>? visit;
 
   @override
   Widget build(BuildContext context) {
