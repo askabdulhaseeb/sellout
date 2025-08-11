@@ -21,7 +21,7 @@ class PostButtonSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsetsGeometry.all(16),
+        padding: const EdgeInsetsGeometry.symmetric(horizontal: 16),
         child: post.createdBy == LocalAuth.currentUser?.userID ||
                 post.createdBy == LocalAuth.currentUser?.businessID
             ? PostButtonsForUser(visit: visit, post: post)

@@ -32,11 +32,11 @@ class MarketFilterFoodDrinkCategoryAndLocationWIdget extends StatelessWidget {
           ),
           Expanded(
             child: LocationDropdown(
-              selectedLatLng: marketPro.selectedlatlng,
+              selectedLatLng: marketPro.selectedlatlng ?? const LatLng(0, 0),
               displayMode: MapDisplayMode.neverShowMap,
-              initialText: marketPro.selectedLocationName,
+              initialText: marketPro.selectedLocation?.title ?? '',
               onLocationSelected: (LocationEntity p0, LatLng p1) {
-                marketPro.updateLocation(p1, p0.address ?? '');
+                marketPro.updateLocation(p1, p0);
               },
             ),
           )

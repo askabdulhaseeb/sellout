@@ -19,8 +19,6 @@ class MarketPlaceCategoriesSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text('discover_categories'.tr(), style: theme.textTheme.titleSmall),
-          const SizedBox(height: 8),
           GridView.builder(
             padding: const EdgeInsets.all(0),
             shrinkWrap: true,

@@ -40,15 +40,20 @@ class MarketPlaceHeader extends StatelessWidget {
                   ),
                 ],
               ),
-              const Divider(),
-              const MarketPlaceHeaderButtons(),
               Consumer<MarketPlaceProvider>(builder: (BuildContext context,
                   MarketPlaceProvider pro, Widget? child) {
                 if (pro.queryController.text.isNotEmpty) {
-                  return Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 16, 0, 0),
-                    child: Text(
-                        '${'showing_result_for'.tr()} "${pro.queryController.text}"'),
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      const Divider(),
+                      const MarketPlaceHeaderButtons(),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                        child: Text(
+                            '${'showing_result_for'.tr()} "${pro.queryController.text}"'),
+                      ),
+                    ],
                   );
                 } else {
                   return const SizedBox.shrink();
