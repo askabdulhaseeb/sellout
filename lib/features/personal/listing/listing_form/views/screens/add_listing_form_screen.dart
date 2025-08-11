@@ -2,6 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
+import '../../../../../../core/theme/app_theme.dart';
+import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../providers/add_listing_form_provider.dart';
 import 'form/add_cloths_and_footwear_form.dart';
 import 'form/add_food_and_drink_form.dart';
@@ -27,17 +29,54 @@ class _AddListingFormScreenState extends State<AddListingFormScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
-            Provider.of<AddListingFormProvider>(context, listen: false)
-                    .listingType
-                    ?.code
-                    .tr() ??
-                'select_type'.tr(),
-          ),
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        ),
+            centerTitle: true,
+            leading: BackButton(
+              onPressed: () => Navigator.pop(context),
+              color: AppTheme.primaryColor,
+            ),
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                AppBarTitle(
+                  titleKey: 'start_listing'.tr(),
+                ),
+              ],
+            ),
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            bottom: PreferredSize(
+              preferredSize: const Size(double.infinity, 20),
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    Provider.of<AddListingFormProvider>(context, listen: false)
+                            .listingType
+                            ?.code
+                            .tr() ??
+                        'select_type'.tr(),
+                    style: TextTheme.of(context).bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w500,
+                          color: AppTheme.primaryColor,
+                        ),
+                  ),
+                  Divider(
+                    indent: 10,
+                    endIndent: 10,
+                    color: Theme.of(context).dividerColor,
+                  )
+                ],
+              ),
+            )
+            //  Container(
+            //   height: 100,
+            //   decoration:
+            //       BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
+            //   child: Center(
+            //     child:
+            //   ),
+            // ),
+            ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Selector<AddListingFormProvider, ListingType?>(

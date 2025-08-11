@@ -17,110 +17,77 @@ class ProfileHeaderSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isMe = user?.uid == (LocalAuth.uid ?? '-');
-    return AspectRatio(
-      aspectRatio: 3 / 1,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 6),
-        child: Row(
-          children: <Widget>[
-            AspectRatio(
-              aspectRatio: 1 / 1,
-              child: ProfilePhoto(
-                url: user?.profilePhotoURL,
-                placeholder: user?.displayName ?? '',
-              ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Row(
+        spacing: 4,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          // Profile photo
+          SizedBox(
+            width: 112,
+            height: 106,
+            child: ProfilePhoto(
+              url: user?.profilePhotoURL,
+              placeholder: user?.displayName ?? '',
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Expanded(
-                        child: Text(
-                          maxLines: 2,
-                          user?.displayName ?? '',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
+          ),
+          // Info column
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                // Top section with name + rating
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      user?.displayName ?? '',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
                       ),
-                      if (isMe) const ProfileEditAndSettingsWidget()
-                    ],
-                  ),
-                  RatingDisplayWidget(
-                    ratingList: user?.listOfReviews ?? <double>[],
-                    onTap: () async {
-                      final List<ReviewEntity> reviews =
-                          await Provider.of<ProfileProvider>(context,
-                                  listen: false)
-                              .getReviews(user?.uid);
-                      // ignore: use_build_context_synchronously
-                      Navigator.of(context).push(
-                        MaterialPageRoute<ReviewListScreenParam>(
-                          builder: (BuildContext context) => ReviewListScreen(
-                            param: ReviewListScreenParam(reviews: reviews),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  const Spacer(),
-                  Text(
-                    overflow: TextOverflow.ellipsis,
-                    user?.username ?? '',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
                     ),
+                    RatingDisplayWidget(
+                      size: 12,
+                      fontSize: 12,
+                      ratingList: user?.listOfReviews ?? <double>[],
+                      onTap: () async {
+                        final List<ReviewEntity> reviews =
+                            await Provider.of<ProfileProvider>(context,
+                                    listen: false)
+                                .getReviews(user?.uid);
+                        // ignore: use_build_context_synchronously
+                        Navigator.of(context).push(
+                          MaterialPageRoute<ReviewListScreenParam>(
+                            builder: (BuildContext context) => ReviewListScreen(
+                              param: ReviewListScreenParam(reviews: reviews),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                // Username
+                Text(
+                  user?.username ?? '',
+                  maxLines: 5,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          if (isMe) const ProfileEditAndSettingsWidget(),
+        ],
       ),
     );
   }
-
-  // void showMenuDialog(BuildContext context) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         shape:
-  //             RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-  //         contentPadding: EdgeInsets.zero,
-  //         content: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: <Widget>[
-  //             ListTile(
-  //               leading: const Icon(Icons.edit, color: Colors.blue),
-  //               title: const Text('Edit Profile'),
-  //               onTap: () {
-  //                 Navigator.pop(context);
-  //                 Navigator.pushNamed(
-  //                     context, '/editProfile'); // Replace with actual route
-  //               },
-  //             ),
-  //             const Divider(height: 1),
-  //             ListTile(
-  //               leading: const Icon(Icons.settings, color: Colors.blue),
-  //               title: const Text('Settings'),
-  //               onTap: () {
-  //                 Navigator.pop(context);
-  //                 Navigator.pushNamed(
-  //                     context, '/settings'); // Replace with actual route
-  //               },
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
 }

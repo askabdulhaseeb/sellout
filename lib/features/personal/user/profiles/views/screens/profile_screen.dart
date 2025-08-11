@@ -30,7 +30,6 @@ class ProfileScreen extends StatelessWidget {
           }
 
           final UserEntity? user = snapshot.data?.entity;
-
           return SingleChildScrollView(
             child: Column(
               children: <Widget>[

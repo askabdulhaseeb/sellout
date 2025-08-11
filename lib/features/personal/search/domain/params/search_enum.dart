@@ -6,7 +6,7 @@ class SearchParams {
   SearchParams({
     required this.entityType,
     required this.query,
-    this.sortBy = SortOption.dateAscending,
+    this.sortBy = SortOption.newlyList,
     this.pageSize = 4,
     this.lastEvaluatedKey,
     this.lat,

@@ -18,9 +18,8 @@ class _MarketplaceSearchFieldState extends State<MarketplaceSearchField> {
   String _lastQuery = '';
 
   void _onSearchChanged(MarketPlaceProvider provider, String query) {
-    if (_lastQuery == query) return; // Only trigger if query is different
+    if (_lastQuery == query) return;
     _lastQuery = query;
-
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
     _debounce = Timer(const Duration(milliseconds: 500), () {

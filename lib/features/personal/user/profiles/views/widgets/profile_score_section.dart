@@ -15,10 +15,11 @@ class ProfileScoreSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isMe = user?.uid == (LocalAuth.uid ?? '-');
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: SizedBox(
           height: 35,
           child: Row(
+            spacing: 4,
             children: <Widget>[
               if (isMe)
                 Expanded(
@@ -99,36 +100,30 @@ class _ScoreButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: InkWell(
-        onTap: onPressed,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: Theme.of(context).disabledColor,
-              width: 0.5,
+    return InkWell(
+      onTap: onPressed,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outlineVariant,
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              count,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
             ),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                count,
-                style:
-                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                title,
-                style:
-                    const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
-              ),
-            ],
-          ),
+            const SizedBox(width: 4),
+            Text(
+              title,
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+            ),
+          ],
         ),
       ),
     );

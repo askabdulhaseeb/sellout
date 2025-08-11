@@ -14,6 +14,6 @@ class AppBarTitle extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
         style: TextTheme.of(context)
             .titleMedium
-            ?.copyWith(fontWeight: FontWeight.w500));
+            ?.copyWith(fontWeight: FontWeight.w500, fontSize: 18));
   }
 }
