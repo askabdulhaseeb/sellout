@@ -42,7 +42,7 @@ class LocationRadiusBottomSheet extends StatelessWidget {
               const SizedBox(height: 8),
               LocationDropdown(
                   radiusType: provider.radiusType,
-                  selectedLatLng: provider.selectedlatlng!,
+                  selectedLatLng: provider.selectedlatlng,
                   circleRadius: provider.selectedRadius,
                   displayMode: MapDisplayMode.alwaysShowMap,
                   showMapCircle: true,

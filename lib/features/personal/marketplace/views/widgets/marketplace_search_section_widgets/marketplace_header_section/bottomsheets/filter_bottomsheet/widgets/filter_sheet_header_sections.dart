@@ -26,7 +26,7 @@ class FilterSheetHeaderSection extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              pro.filterSheetResetButton(context);
+              pro.filterSheetResetButton();
             },
             child: Text(
               'reset'.tr(),

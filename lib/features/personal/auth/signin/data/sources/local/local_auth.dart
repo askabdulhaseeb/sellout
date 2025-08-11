@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:latlong2/latlong.dart';
 import '../../../domain/entities/current_user_entity.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 export '../../../domain/entities/current_user_entity.dart';
@@ -30,6 +31,8 @@ class LocalAuth {
   static String? get token => currentUser?.token;
   static String? get uid => currentUser?.userID;
   static String get currency => currentUser?.currency ?? 'gbp';
+  static LatLng get latlng => LatLng(currentUser?.location?.latitude ?? 0,
+      currentUser?.location?.longitude ?? 0);
 
   Future<void> signout() async {
     await _box.clear();

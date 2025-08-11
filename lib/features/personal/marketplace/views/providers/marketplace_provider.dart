@@ -168,7 +168,7 @@ class MarketPlaceProvider extends ChangeNotifier {
 
 // button
   void sortCheckButton(SortOption? option) async {
-    _selectedSortOption = option;
+    setSort(option);
     await loadPosts();
   }
 
@@ -186,28 +186,19 @@ class MarketPlaceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void filterSheetResetButton(BuildContext context) async {
+  void filterSheetResetButton() {
     _selectedConditionType = null;
     _rating = null;
     _selectedDeliveryType = null;
     minPriceController.clear();
     maxPriceController.clear();
-    _isFilteringPosts = false;
-    await loadPosts();
-    Navigator.pop(context);
-    notifyListeners();
   }
 
-  void resetLocationBottomsheet(BuildContext context) async {
-    setFilteringBool(false);
-    Navigator.pop(context);
-    final bool success = await loadPosts();
-    if (success) {
-      _radiusType = RadiusType.worldwide;
-      _selectedRadius = 10;
-      _selectedlatlng = LatLng(LocalAuth.currentUser?.location?.latitude ?? 0,
-          LocalAuth.currentUser?.location?.longitude ?? 0);
-    }
+  void resetLocationBottomsheet() async {
+    _radiusType = RadiusType.worldwide;
+    _selectedRadius = 10;
+    _selectedlatlng = LocalAuth.latlng;
+    updateLocation(null, null);
   }
 
 // set functions
@@ -228,6 +219,10 @@ class MarketPlaceProvider extends ChangeNotifier {
   void setProperyyCategory(String category) {
     _propertyCategory = category;
     notifyListeners();
+  }
+
+  void setSort(SortOption? val) {
+    _selectedSortOption = val;
   }
 
   void setFoodDrinkCategory(String category) {
@@ -342,6 +337,11 @@ class MarketPlaceProvider extends ChangeNotifier {
 
   void setFilteringBool(bool value) {
     _isFilteringPosts = value;
+    if (value == false) {
+      filterSheetResetButton();
+      resetLocationBottomsheet();
+      setSort(SortOption.newlyList);
+    }
     notifyListeners();
   }
 
@@ -408,8 +408,7 @@ class MarketPlaceProvider extends ChangeNotifier {
     _vehicleCatgory = null;
     vehicleModel.clear();
     // Location
-    _selectedlatlng = LatLng(LocalAuth.currentUser?.location?.latitude ?? 0,
-        LocalAuth.currentUser?.location?.longitude ?? 0);
+    _selectedlatlng = LocalAuth.latlng;
     _selectedLocation = null;
     _selectedRadius = 5;
     _radiusType = RadiusType.worldwide;
@@ -450,9 +449,7 @@ class MarketPlaceProvider extends ChangeNotifier {
   String? _year;
   String? _vehicleCatgory;
   String? _propertyType;
-  LatLng? _selectedlatlng = LatLng(
-      LocalAuth.currentUser?.location?.latitude ?? 0,
-      LocalAuth.currentUser?.location?.longitude ?? 0);
+  LatLng? _selectedlatlng = LocalAuth.latlng;
   LocationEntity? _selectedLocation;
   double _selectedRadius = 5;
   RadiusType _radiusType = RadiusType.worldwide;
@@ -464,7 +461,7 @@ class MarketPlaceProvider extends ChangeNotifier {
   AddedFilterOption? _addedFilterOption;
   String? _petCategory;
   String? _energyRating;
-  SortOption? _selectedSortOption = SortOption.dateAscending;
+  SortOption? _selectedSortOption = SortOption.newlyList;
   String? _brand;
   String? _mainPageKey;
 

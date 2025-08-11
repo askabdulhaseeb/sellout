@@ -68,6 +68,7 @@ class _PersonalBottomNavBarState extends State<PersonalBottomNavBar> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: CustomSvgIcon(
+                      color: Theme.of(context).primaryColor,
                       size: 20,
                       assetPath: type.activeIcon,
                     ),

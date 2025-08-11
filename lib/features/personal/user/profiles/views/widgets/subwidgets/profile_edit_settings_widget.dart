@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../core/widgets/in_dev_mode.dart';
+import '../../../../../../../core/utilities/app_string.dart';
+import '../../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../../../../../../routes/app_linking.dart';
 import '../../../../../setting/setting_dashboard/view/screens/personal_setting_screen.dart';
 import '../../screens/edit_profile_screen.dart';
@@ -13,11 +14,10 @@ class ProfileEditAndSettingsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        const InDevMode(
-            child: Icon(
-          Icons.home_outlined,
-        )),
+        const CustomSvgIcon(
+            size: 20, assetPath: AppStrings.selloutProfileBankIcon),
         GestureDetector(
           onTap: () {},
           child: PopupMenuButton<int>(
@@ -41,10 +41,10 @@ class ProfileEditAndSettingsWidget extends StatelessWidget {
                   spacing: 2,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    const Icon(
-                      Icons.edit,
-                      size: 14,
-                    ),
+                    const CustomSvgIcon(
+                        size: 20,
+                        assetPath:
+                            AppStrings.selloutProfileHeaderMoreEditProfileIcon),
                     Text('edit_profile'.tr()),
                   ],
                 ),
@@ -55,16 +55,18 @@ class ProfileEditAndSettingsWidget extends StatelessWidget {
                   spacing: 2,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    const Icon(
-                      Icons.settings,
-                      size: 14,
+                    const CustomSvgIcon(
+                      size: 20,
+                      assetPath:
+                          AppStrings.selloutProfileHeaderMoreSettingsIcon,
                     ),
                     Text('settings'.tr()),
                   ],
                 ),
               ),
             ],
-            icon: const Icon(Icons.more_vert),
+            icon: const CustomSvgIcon(
+                size: 20, assetPath: AppStrings.selloutProfileHeaderMoreIcon),
           ),
         )
       ],

@@ -60,7 +60,7 @@ class MarketPlaceRemoteSourceImpl implements MarketPlaceRemoteSource {
       PostByFiltersParams params) async {
     try {
       String endpoint = 'post/filter?';
-      if (params.sort != SortOption.dateAscending && params.sort != null) {
+      if (params.sort != SortOption.newlyList && params.sort != null) {
         endpoint += 'sort=${params.sort?.json}&';
       }
       if (params.query != '' && params.query != null) {

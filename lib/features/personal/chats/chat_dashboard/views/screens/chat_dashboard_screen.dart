@@ -37,6 +37,9 @@ class _ChatDashboardScreenState extends State<ChatDashboardScreen> {
           return const Column(
             children: <Widget>[
               AppBarTitle(titleKey: 'messages'),
+              SizedBox(
+                height: 8,
+              ),
               ChatSelectablePageTypeWidget(),
               ChatDashboardSearchableWidget(),
               ChatDashboardListSeaction(),

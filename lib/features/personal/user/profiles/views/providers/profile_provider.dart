@@ -78,7 +78,7 @@ class ProfileProvider extends ChangeNotifier {
       'Profile Provider: User loaded: ${_user?.entity?.displayName}',
       name: 'ProfileProvider.getUserByUid',
     );
-    displayType = ProfilePageTabType.store;
+    displayType = ProfilePageTabType.orders;
     return _user;
   }
 

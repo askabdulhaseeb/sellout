@@ -5,6 +5,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../../features/personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../features/personal/marketplace/domain/enum/radius_type.dart';
 import '../theme/app_theme.dart';
 import 'costom_textformfield.dart';
@@ -34,7 +35,7 @@ class LocationDropdown extends StatefulWidget {
   final MapDisplayMode displayMode;
   final bool? showMapCircle;
   final double? circleRadius;
-  final LatLng selectedLatLng;
+  final LatLng? selectedLatLng;
   final RadiusType radiusType;
 
   @override
@@ -50,7 +51,7 @@ class _LocationFieldState extends State<LocationDropdown> {
   @override
   void initState() {
     super.initState();
-    _selectedLatLng = widget.selectedLatLng;
+    _selectedLatLng = widget.selectedLatLng ?? LocalAuth.latlng;
     if (widget.initialText != null) {
       _controller.text = widget.initialText!;
     }
@@ -192,7 +193,7 @@ class _LocationFieldState extends State<LocationDropdown> {
                 mapController: _mapController,
                 options: MapOptions(
                   initialCenter: _selectedLatLng,
-                  initialZoom: 11,
+                  initialZoom: 9,
                 ),
                 children: <Widget>[
                   TileLayer(

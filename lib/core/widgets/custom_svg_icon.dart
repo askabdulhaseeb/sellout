@@ -3,8 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class CustomSvgIcon extends StatelessWidget {
   const CustomSvgIcon({
-    super.key,
     required this.assetPath,
+    super.key,
     this.size = 24.0,
     this.color,
     this.fit = BoxFit.contain,
@@ -25,8 +25,8 @@ class CustomSvgIcon extends StatelessWidget {
       assetPath,
       width: size,
       height: size,
-      colorFilter:
-          color != null ? ColorFilter.mode(color!, BlendMode.srcIn) : null,
+      colorFilter: ColorFilter.mode(
+          color ?? Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
       fit: fit,
       alignment: alignment,
       semanticsLabel: semanticLabel,
