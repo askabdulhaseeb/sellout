@@ -17,7 +17,7 @@ class PostButtonsForUser extends StatelessWidget {
     super.key,
   });
 
-  final VisitingEntity? visit;
+  final List<VisitingEntity>? visit;
   final PostEntity? post;
 
   @override
@@ -54,7 +54,7 @@ class PostButtonsForUser extends StatelessWidget {
                 title: 'edit_listing'.tr()),
           ),
         ]),
-        if (visit?.visitingTime != null)
+        if (visit?.first != null)
           CustomElevatedButton(
               textColor: Theme.of(context).primaryColor,
               border: Border.all(

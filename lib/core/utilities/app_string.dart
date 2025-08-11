@@ -74,6 +74,12 @@ class AppStrings {
       'assets/icons/svg_icons/selloutStartListingImageIcon.svg';
   static const String selloutStartListingVideoIcon =
       'assets/icons/svg_icons/selloutStartListingVideoIcon.svg';
+  static const String selloutCalenderIcon =
+      'assets/icons/svg_icons/selloutCalenderIcon.svg';
+  static const String selloutPostGridTileEditIcon =
+      'assets/icons/svg_icons/selloutPostGridTileEditIcon.svg';
+  static const String selloutPostGridTilePromoteIcon =
+      'assets/icons/svg_icons/selloutPostGridTilePromoteIcon.svg';
 
   // png icons
   static const String selloutAddListingItemIcon =

@@ -3,6 +3,7 @@ import '../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../core/enums/listing/core/privacy_type.dart';
+import '../../../../../core/helper_functions/currency_symbol_helper.dart';
 import '../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../location/domain/entities/location_entity.dart';
 import 'discount_entity.dart';
@@ -243,7 +244,8 @@ class PostEntity {
   final DateTime inHiveAt;
 
   String get imageURL => fileUrls.isEmpty ? '' : fileUrls.first.url;
-  String get priceStr => '$currency $price'.toUpperCase();
+  String get priceStr =>
+      '${currencySymbolHelper(currency)}$price'.toUpperCase();
 
   double get discountedPrice {
     if (hasDiscount) {

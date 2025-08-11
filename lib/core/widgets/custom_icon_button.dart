@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'custom_svg_icon.dart';
+
 class CustomIconButton extends StatelessWidget {
   const CustomIconButton({
     required this.icon,
@@ -15,7 +17,7 @@ class CustomIconButton extends StatelessWidget {
     super.key,
   });
 
-  final IconData icon;
+  final String icon;
   final Color? bgColor;
   final Color? iconColor;
   final VoidCallback onPressed;
@@ -46,8 +48,8 @@ class CustomIconButton extends StatelessWidget {
                 width: borderWidth ?? 1.0,
               ),
             ),
-            child: Icon(
-              icon,
+            child: CustomSvgIcon(
+              assetPath: icon,
               color: iconColor,
               size: iconSize ?? 24,
             ),
