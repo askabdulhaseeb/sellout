@@ -288,6 +288,7 @@ void _profile() {
         locator(),
         locator(),
         locator(),
+        locator(),
       ));
 }
 

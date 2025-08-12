@@ -75,7 +75,7 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
   //
   ChangeNotifierProvider<ProfileProvider>.value(
       value: ProfileProvider(locator(), locator(), locator(), locator(),
-          locator(), locator(), locator())),
+          locator(), locator(), locator(), locator())),
   ChangeNotifierProvider<OrderProvider>.value(value: OrderProvider(locator())),
   //
   ChangeNotifierProvider<FeedProvider>.value(

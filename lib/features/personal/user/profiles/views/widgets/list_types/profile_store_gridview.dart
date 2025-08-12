@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../../services/get_it.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../post/domain/entities/post_entity.dart';
@@ -35,8 +34,9 @@ class ProfileStoreGridview extends StatelessWidget {
         posts.sort(
             (PostEntity a, PostEntity b) => b.createdAt.compareTo(a.createdAt));
         return Column(
+          spacing: 8,
           children: <Widget>[
-            InDevMode(child: ProfileFilterSection(user: user)),
+            ProfileFilterSection(user: user),
             GridView.builder(
               itemCount: posts.length,
               shrinkWrap: true,
