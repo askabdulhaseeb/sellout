@@ -180,7 +180,7 @@ class PostGridViewTileBasketButton extends StatelessWidget {
       iconSize: 14,
       bgColor: ColorScheme.of(context).surface,
       iconColor: Theme.of(context).colorScheme.onSurface,
-      icon: AppStrings.amex,
+      icon: AppStrings.selloutShoppingCartIcon,
       onPressed: () => addToBasket(context, post),
     );
   }

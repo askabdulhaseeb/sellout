@@ -14,6 +14,7 @@ import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../marketplace/domain/params/filter_params.dart';
 import '../../../../marketplace/domain/params/post_by_filter_params.dart';
 import '../../../../marketplace/domain/usecase/post_by_filters_usecase.dart';
+import '../../../../marketplace/views/enums/sort_enums.dart';
 import '../../../../order/domain/params/get_order_params.dart';
 import '../../../../post/domain/entities/post_entity.dart';
 import '../../../../post/domain/usecase/get_specific_post_usecase.dart';
@@ -53,7 +54,7 @@ class ProfileProvider extends ChangeNotifier {
   //---------------------------------------------------------------------------------variables
 
   bool _isLoading = false;
-  int? _rating;
+  SortOption? _sort = SortOption.newlyList;
   final TextEditingController _minPriceController = TextEditingController();
   final TextEditingController _maxPriceController = TextEditingController();
   ConditionType? _selectedConditionType;
@@ -64,18 +65,21 @@ class ProfileProvider extends ChangeNotifier {
   DataState<UserEntity?>? _user;
   String? _mainPageKey;
   ListingType? _category;
+  List<PostEntity>? _storePosts = <PostEntity>[];
+
   //---------------------------------------------------------------------------------getters
 
   UserEntity? get user => _user?.entity;
   ProfilePageTabType get displayType => _displayType;
   bool get isLoading => _isLoading;
-  int? get rating => _rating;
+  SortOption? get sort => _sort;
   TextEditingController get minPriceController => _minPriceController;
   TextEditingController get maxPriceController => _maxPriceController;
   ConditionType? get selectedConditionType => _selectedConditionType;
   DeliveryType? get selectedDeliveryType => _selectedDeliveryType;
   String? get mainPageKey => _mainPageKey;
   ListingType? get category => _category;
+  List<PostEntity>? get storePosts => _storePosts;
 
   //---------------------------------------------------------------------------------text controllers
   TextEditingController namecontroller =
@@ -92,8 +96,8 @@ class ProfileProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setRating(int? newRating) {
-    _rating = newRating;
+  void setSort(SortOption? val) {
+    _sort = val;
     notifyListeners();
   }
 
@@ -109,7 +113,20 @@ class ProfileProvider extends ChangeNotifier {
 
   void setCategory(ListingType? type) {
     _category = type;
+    loadStorePosts();
+  }
+
+  void setPosts(
+    List<PostEntity> value,
+  ) {
+    _storePosts = value;
+    if (queryController.text.isNotEmpty && queryController.text != '') {}
+    if (queryController.text.isEmpty || queryController.text == '') {}
     notifyListeners();
+  }
+
+  void setMainPageKey(String? val) {
+    _mainPageKey = val;
   }
 
   set displayType(ProfilePageTabType value) {
@@ -118,20 +135,22 @@ class ProfileProvider extends ChangeNotifier {
   }
 
   //---------------------------------------------------------------------------------buttons
-  void filterSheetResetButton() {
-    _rating = null;
+  void storefilterSheetResetButton() async {
     _minPriceController.clear();
     _maxPriceController.clear();
     _selectedConditionType = null;
     _selectedDeliveryType = null;
-    notifyListeners();
+    _sort = null;
+    await loadStorePosts();
   }
 
-  Future<void> filterSheetApplyButton() async {
-    setLoading(true);
-    await Future<void>.delayed(
-        const Duration(seconds: 1)); // Example async task
-    setLoading(false);
+  void resetStoreCategoryButton() {
+    _category = null;
+    loadStorePosts();
+  }
+
+  Future<void> storefilterSheetApplyButton() async {
+    await loadStorePosts();
   }
   //---------------------------------------------------------------------------------api usecases
 
@@ -227,24 +246,49 @@ class ProfileProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> loadPosts() async {
+  Future<bool> loadStorePosts() async {
     setLoading(true);
-    // setMainPageKey('');
+    setMainPageKey('');
     try {
       final PostByFiltersParams params = _buildPostByFiltersParams();
       final DataState<List<PostEntity>> result =
           await _getPostByFiltersUsecase(params);
       if (result is DataSuccess<List<PostEntity>>) {
-        // setPosts(result.entity);
-        // setMainPageKey(result.data);
+        setPosts(result.entity ?? <PostEntity>[]);
+        setMainPageKey(result.data);
         return true;
       } else {
-        // setPosts(<PostEntity>[]);
+        setPosts(<PostEntity>[]);
         debugPrint(
             'Failed: ${result.exception?.message ?? 'something_wrong'.tr()}');
       }
     } catch (e) {
-      // setPosts(<PostEntity>[]);
+      setPosts(<PostEntity>[]);
+      debugPrint('Unexpected error: $e');
+    } finally {
+      setLoading(false);
+    }
+    return false;
+  }
+
+  Future<bool> loadViewingPosts() async {
+    setLoading(true);
+    setMainPageKey('');
+    try {
+      final PostByFiltersParams params = _buildPostByFiltersParams();
+      final DataState<List<PostEntity>> result =
+          await _getPostByFiltersUsecase(params);
+      if (result is DataSuccess<List<PostEntity>>) {
+        setPosts(result.entity ?? <PostEntity>[]);
+        setMainPageKey(result.data);
+        return true;
+      } else {
+        setPosts(<PostEntity>[]);
+        debugPrint(
+            'Failed: ${result.exception?.message ?? 'something_wrong'.tr()}');
+      }
+    } catch (e) {
+      setPosts(<PostEntity>[]);
       debugPrint('Unexpected error: $e');
     } finally {
       setLoading(false);
@@ -257,6 +301,7 @@ class ProfileProvider extends ChangeNotifier {
       lastKey: _mainPageKey,
       query: queryController.text,
       category: _category?.json ?? '',
+      sort: sort,
       filters: _buildFilters(),
     );
   }
@@ -265,6 +310,20 @@ class ProfileProvider extends ChangeNotifier {
     final List<FilterParam> filters = <FilterParam>[];
     // filters.add(FilterParam(attribute: '', operator: 'eq', value: ''));
 // filter bottom sheet filters
+
+    filters.add(FilterParam(
+      attribute: 'created_by',
+      operator: 'eq',
+      value: LocalAuth.uid ?? '',
+    ));
+
+    filters.add(FilterParam(
+      attribute: 'list_id',
+      operator: 'eq',
+      valueList: ListingType.storeList.map((ListingType e) => e.json).toList(),
+      value: _category?.json ?? '',
+    ));
+
     if (_selectedConditionType != null) {
       filters.add(FilterParam(
         attribute: 'item_condition',
@@ -277,13 +336,6 @@ class ProfileProvider extends ChangeNotifier {
         attribute: 'delivery_type',
         operator: 'eq',
         value: _selectedDeliveryType?.json ?? '',
-      ));
-    }
-    if (_rating != null) {
-      filters.add(FilterParam(
-        attribute: 'average_rating',
-        operator: 'lt',
-        value: _rating.toString(),
       ));
     }
 

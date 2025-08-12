@@ -37,6 +37,7 @@ class ProfileFilterSection extends StatelessWidget {
           ),
           Expanded(
               child: CustomFilterButton(
+                  iconFirst: false,
                   onPressed: () => showModalBottomSheet(
                         context: context,
                         showDragHandle: false,
@@ -47,9 +48,10 @@ class ProfileFilterSection extends StatelessWidget {
                             const StoreCategoryBottomSheet(),
                       ),
                   label: 'category'.tr(),
-                  icon: Icons.tune)),
+                  icon: AppStrings.selloutDropDownIcon)),
           Expanded(
               child: CustomFilterButton(
+                  iconFirst: true,
                   onPressed: () => showModalBottomSheet(
                         context: context,
                         showDragHandle: false,
@@ -60,7 +62,7 @@ class ProfileFilterSection extends StatelessWidget {
                             const StoreFilterBottomSheet(),
                       ),
                   label: 'filter'.tr(),
-                  icon: Icons.tune)),
+                  icon: AppStrings.selloutFilterIcon)),
         ],
       ),
     );
@@ -72,15 +74,19 @@ class CustomFilterButton extends StatelessWidget {
     required this.onPressed,
     required this.label,
     required this.icon,
+    this.iconFirst = true,
     super.key,
   });
+
   final VoidCallback onPressed;
   final String label;
-  final IconData icon;
+  final String icon;
+  final bool iconFirst;
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
+
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: ColorScheme.of(context).outlineVariant),
@@ -90,21 +96,20 @@ class CustomFilterButton extends StatelessWidget {
       child: GestureDetector(
         onTap: onPressed,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          spacing: 6,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Icon(
-              icon,
-              size: 12,
-            ),
-            Text(
-              label,
-              style: textTheme.labelMedium,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
+            mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 6,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              if (iconFirst) CustomSvgIcon(assetPath: icon, size: 12),
+              Text(
+                label,
+                style: textTheme.labelMedium?.copyWith(
+                  color: ColorScheme.of(context).outline,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              if (!iconFirst) CustomSvgIcon(assetPath: icon, size: 12),
+            ]),
       ),
     );
   }
