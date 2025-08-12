@@ -1,6 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import '../../../../../../core/enums/listing/core/delivery_type.dart';
+import '../../../../../../core/enums/listing/core/item_condition_type.dart';
+import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
@@ -8,6 +11,9 @@ import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../../attachment/domain/entities/picked_attachment_option.dart';
 import '../../../../../attachment/views/screens/pickable_attachment_screen.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../marketplace/domain/params/filter_params.dart';
+import '../../../../marketplace/domain/params/post_by_filter_params.dart';
+import '../../../../marketplace/domain/usecase/post_by_filters_usecase.dart';
 import '../../../../order/domain/params/get_order_params.dart';
 import '../../../../post/domain/entities/post_entity.dart';
 import '../../../../post/domain/usecase/get_specific_post_usecase.dart';
@@ -33,6 +39,7 @@ class ProfileProvider extends ChangeNotifier {
     this._getPostByPostIdUsecase,
     this._updateProfilePictureUsecase,
     this._updateProfileDetailUsecase,
+    this._getPostByFiltersUsecase,
   );
   final GetUserByUidUsecase _getUserByUidUsecase;
   final GetPostByIdUsecase _getPostByIdUsecase;
@@ -41,25 +48,43 @@ class ProfileProvider extends ChangeNotifier {
   final GetOrderByUidUsecase _getOrderByIdUsecase;
   final UpdateProfilePictureUsecase _updateProfilePictureUsecase;
   final UpdateProfileDetailUsecase _updateProfileDetailUsecase;
-  DataState<UserEntity?>? _user;
-  UserEntity? get user => _user?.entity;
+  final GetPostByFiltersUsecase _getPostByFiltersUsecase;
 
+  //---------------------------------------------------------------------------------variables
+
+  bool _isLoading = false;
+  int? _rating;
+  final TextEditingController _minPriceController = TextEditingController();
+  final TextEditingController _maxPriceController = TextEditingController();
+  ConditionType? _selectedConditionType;
+  DeliveryType? _selectedDeliveryType;
+  ProfilePageTabType _displayType =
+      kDebugMode ? ProfilePageTabType.viewing : ProfilePageTabType.orders;
+  List<AttachmentEntity>? profilePhoto;
+  DataState<UserEntity?>? _user;
+  String? _mainPageKey;
+  ListingType? _category;
+  //---------------------------------------------------------------------------------getters
+
+  UserEntity? get user => _user?.entity;
+  ProfilePageTabType get displayType => _displayType;
+  bool get isLoading => _isLoading;
+  int? get rating => _rating;
+  TextEditingController get minPriceController => _minPriceController;
+  TextEditingController get maxPriceController => _maxPriceController;
+  ConditionType? get selectedConditionType => _selectedConditionType;
+  DeliveryType? get selectedDeliveryType => _selectedDeliveryType;
+  String? get mainPageKey => _mainPageKey;
+  ListingType? get category => _category;
+
+  //---------------------------------------------------------------------------------text controllers
   TextEditingController namecontroller =
       TextEditingController(text: LocalAuth.currentUser?.displayName);
   TextEditingController biocontroller = TextEditingController();
-
-  ProfilePageTabType _displayType =
-      kDebugMode ? ProfilePageTabType.viewing : ProfilePageTabType.orders;
-  ProfilePageTabType get displayType => _displayType;
-
-  bool _isLoading = false;
-  bool get isLoading => _isLoading;
-
-  List<AttachmentEntity>? _profilePhoto;
-  List<AttachmentEntity>? get profilePhoto => _profilePhoto;
+  TextEditingController queryController = TextEditingController();
 
   void setProfilePhoto() {
-    _profilePhoto = LocalAuth.currentUser?.profileImage;
+    profilePhoto = LocalAuth.currentUser?.profileImage;
   }
 
   void setLoading(bool value) {
@@ -67,10 +92,48 @@ class ProfileProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setRating(int? newRating) {
+    _rating = newRating;
+    notifyListeners();
+  }
+
+  void setConditionType(ConditionType? type) {
+    _selectedConditionType = type;
+    notifyListeners();
+  }
+
+  void setDeliveryType(DeliveryType? type) {
+    _selectedDeliveryType = type;
+    notifyListeners();
+  }
+
+  void setCategory(ListingType? type) {
+    _category = type;
+    notifyListeners();
+  }
+
   set displayType(ProfilePageTabType value) {
     _displayType = value;
     notifyListeners();
   }
+
+  //---------------------------------------------------------------------------------buttons
+  void filterSheetResetButton() {
+    _rating = null;
+    _minPriceController.clear();
+    _maxPriceController.clear();
+    _selectedConditionType = null;
+    _selectedDeliveryType = null;
+    notifyListeners();
+  }
+
+  Future<void> filterSheetApplyButton() async {
+    setLoading(true);
+    await Future<void>.delayed(
+        const Duration(seconds: 1)); // Example async task
+    setLoading(false);
+  }
+  //---------------------------------------------------------------------------------api usecases
 
   Future<DataState<UserEntity?>?> getUserByUid({String? uid}) async {
     _user = await _getUserByUidUsecase(uid ?? LocalAuth.uid ?? '');
@@ -162,5 +225,82 @@ class ProfileProvider extends ChangeNotifier {
       );
       setLoading(false);
     }
+  }
+
+  Future<bool> loadPosts() async {
+    setLoading(true);
+    // setMainPageKey('');
+    try {
+      final PostByFiltersParams params = _buildPostByFiltersParams();
+      final DataState<List<PostEntity>> result =
+          await _getPostByFiltersUsecase(params);
+      if (result is DataSuccess<List<PostEntity>>) {
+        // setPosts(result.entity);
+        // setMainPageKey(result.data);
+        return true;
+      } else {
+        // setPosts(<PostEntity>[]);
+        debugPrint(
+            'Failed: ${result.exception?.message ?? 'something_wrong'.tr()}');
+      }
+    } catch (e) {
+      // setPosts(<PostEntity>[]);
+      debugPrint('Unexpected error: $e');
+    } finally {
+      setLoading(false);
+    }
+    return false;
+  }
+
+  PostByFiltersParams _buildPostByFiltersParams() {
+    return PostByFiltersParams(
+      lastKey: _mainPageKey,
+      query: queryController.text,
+      category: _category?.json ?? '',
+      filters: _buildFilters(),
+    );
+  }
+
+  List<FilterParam> _buildFilters() {
+    final List<FilterParam> filters = <FilterParam>[];
+    // filters.add(FilterParam(attribute: '', operator: 'eq', value: ''));
+// filter bottom sheet filters
+    if (_selectedConditionType != null) {
+      filters.add(FilterParam(
+        attribute: 'item_condition',
+        operator: 'eq',
+        value: _selectedConditionType?.json ?? '',
+      ));
+    }
+    if (_selectedDeliveryType != null) {
+      filters.add(FilterParam(
+        attribute: 'delivery_type',
+        operator: 'eq',
+        value: _selectedDeliveryType?.json ?? '',
+      ));
+    }
+    if (_rating != null) {
+      filters.add(FilterParam(
+        attribute: 'average_rating',
+        operator: 'lt',
+        value: _rating.toString(),
+      ));
+    }
+
+    if (minPriceController.text.trim().isNotEmpty) {
+      filters.add(FilterParam(
+        attribute: 'price',
+        operator: 'gt',
+        value: minPriceController.text.trim(),
+      ));
+    }
+    if (maxPriceController.text.trim().isNotEmpty) {
+      filters.add(FilterParam(
+        attribute: 'price',
+        operator: 'lt',
+        value: maxPriceController.text.trim(),
+      ));
+    }
+    return filters;
   }
 }

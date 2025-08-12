@@ -1,8 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../../../../core/utilities/app_string.dart';
 import '../../../../../../core/widgets/costom_textformfield.dart';
-import '../../../../../../core/widgets/custom_dropdown.dart';
+import '../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../data/models/user_model.dart';
+import '../providers/profile_provider.dart';
+import 'gridview_filter_bottomsheets/store_category_bottomsheet.dart';
+import 'gridview_filter_bottomsheets/store_filter_bottomsheet.dart';
 
 class ProfileFilterSection extends StatelessWidget {
   const ProfileFilterSection({required this.user, super.key});
@@ -11,43 +16,51 @@ class ProfileFilterSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    return Center(
-      child: Row(
+    return Consumer<ProfileProvider>(
+      builder: (BuildContext context, ProfileProvider pro, Widget? child) =>
+          Row(
+        spacing: 4,
         children: <Widget>[
-          Expanded(
+          Flexible(
             child: CustomTextFormField(
-              isExpanded: true,
+              dense: true,
               contentPadding: const EdgeInsets.all(4),
-              controller: TextEditingController(),
+              fieldPadding: const EdgeInsets.all(0),
+              controller: pro.queryController,
               hint: 'search'.tr(),
               style: textTheme.bodySmall,
-              prefixIcon: const Icon(
-                Icons.search,
-                size: 20,
+              prefix: const CustomSvgIcon(
+                assetPath: AppStrings.selloutSearchIcon,
+                size: 16,
               ),
             ),
           ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: SizedBox(
-                height: 50,
-                child: CustomDropdown<dynamic>(
-                  items: const <DropdownMenuItem<Object?>>[],
-                  validator: (bool? value) => null,
-                  hint: 'Select Category',
-                  selectedItem: const <String>[
-                    'Category',
-                    'Option 1',
-                    'Option 2'
-                  ],
-                  title: 'Category',
-                  onChanged: (Object? p0) {},
-                )),
-          ),
-          const SizedBox(width: 10),
           Expanded(
               child: CustomFilterButton(
-                  onPressed: () {}, label: 'filter'.tr(), icon: Icons.tune)),
+                  onPressed: () => showModalBottomSheet(
+                        context: context,
+                        showDragHandle: false,
+                        isDismissible: false,
+                        useSafeArea: true,
+                        isScrollControlled: true,
+                        builder: (BuildContext context) =>
+                            const StoreCategoryBottomSheet(),
+                      ),
+                  label: 'category'.tr(),
+                  icon: Icons.tune)),
+          Expanded(
+              child: CustomFilterButton(
+                  onPressed: () => showModalBottomSheet(
+                        context: context,
+                        showDragHandle: false,
+                        isDismissible: false,
+                        useSafeArea: true,
+                        isScrollControlled: true,
+                        builder: (BuildContext context) =>
+                            const StoreFilterBottomSheet(),
+                      ),
+                  label: 'filter'.tr(),
+                  icon: Icons.tune)),
         ],
       ),
     );
@@ -69,23 +82,22 @@ class CustomFilterButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     return Container(
-      height: 50,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
-        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(color: ColorScheme.of(context).outlineVariant),
         borderRadius: BorderRadius.circular(8),
       ),
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      padding: const EdgeInsets.all(6),
       child: GestureDetector(
         onTap: onPressed,
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          spacing: 6,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Icon(
               icon,
-              size: 16,
+              size: 12,
             ),
-            const SizedBox(width: 8),
             Text(
               label,
               style: textTheme.labelMedium,
