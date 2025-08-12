@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../post/domain/entities/post_entity.dart';
 import '../../../domain/entities/user_entity.dart';
+import '../../enums/profile_page_tab_type.dart';
 import '../../providers/profile_provider.dart';
-import '../profile_filter_section.dart';
+import '../profile_filter_buttons.dart';
 import '../subwidgets/post_grid_view_tile.dart';
 
 class ProfileStoreGridview extends StatefulWidget {
@@ -29,7 +30,10 @@ class _ProfileStoreGridviewState extends State<ProfileStoreGridview> {
     return Column(
       spacing: 8,
       children: <Widget>[
-        ProfileFilterSection(user: widget.user),
+        ProfileFilterSection(
+          user: widget.user,
+          pageType: ProfilePageTabType.viewing,
+        ),
         Consumer<ProfileProvider>(
           builder: (BuildContext context, ProfileProvider pro, _) {
             final List<PostEntity>? posts = pro.storePosts;

@@ -10,8 +10,8 @@ import '../../../../../marketplace/views/enums/sort_enums.dart';
 import '../../providers/profile_provider.dart';
 
 class StoreFilterBottomSheet extends StatelessWidget {
-  const StoreFilterBottomSheet({super.key});
-
+  const StoreFilterBottomSheet({required this.isStore, super.key});
+  final bool isStore;
   @override
   Widget build(BuildContext context) {
     return BottomSheet(
@@ -26,24 +26,36 @@ class StoreFilterBottomSheet extends StatelessWidget {
             color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
-          child: const Column(
+          child: Column(
             children: <Widget>[
-              StoreFilterSheetHeaderSection(),
+              StoreFilterSheetHeaderSection(
+                isStore: isStore,
+              ),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     spacing: 8,
                     children: <Widget>[
-                      StoreFilterSheetCustomerReviewTile(),
-                      ExpandablePriceRangeTile(),
-                      StoreFilterSheetConditionTile(),
-                      StoreFilterSheetDeliveryTypeTile(),
+                      StoreFilterSheetCustomerReviewTile(
+                        isStore: isStore,
+                      ),
+                      ExpandablePriceRangeTile(
+                        isStore: isStore,
+                      ),
+                      StoreFilterSheetConditionTile(
+                        isStore: isStore,
+                      ),
+                      StoreFilterSheetDeliveryTypeTile(
+                        isStore: isStore,
+                      ),
                     ],
                   ),
                 ),
               ),
-              StoreFilterSheetSheetButton()
+              StoreFilterSheetApplyButton(
+                isStore: isStore,
+              )
             ],
           ),
         );
@@ -53,7 +65,8 @@ class StoreFilterBottomSheet extends StatelessWidget {
 }
 
 class StoreFilterSheetCustomerReviewTile extends StatelessWidget {
-  const StoreFilterSheetCustomerReviewTile({super.key});
+  const StoreFilterSheetCustomerReviewTile({required this.isStore, super.key});
+  final bool isStore;
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -64,7 +77,7 @@ class StoreFilterSheetCustomerReviewTile extends StatelessWidget {
         subtitle: Consumer<ProfileProvider>(
           builder: (BuildContext context, ProfileProvider pro, _) =>
               DropdownButtonFormField<SortOption>(
-            value: pro.sort,
+            value: isStore ? pro.storeSort : pro.viewingSort,
             isExpanded: true,
             hint: Text(
               'sort_by_choice'.tr(),
@@ -95,7 +108,11 @@ class StoreFilterSheetCustomerReviewTile extends StatelessWidget {
               );
             }).toList(),
             onChanged: (SortOption? newValue) {
-              pro.setSort(newValue);
+              if (isStore) {
+                pro.setStoreSort(newValue);
+              } else {
+                pro.setViewingSort(newValue);
+              }
             },
           ),
         ));
@@ -103,7 +120,8 @@ class StoreFilterSheetCustomerReviewTile extends StatelessWidget {
 }
 
 class ExpandablePriceRangeTile extends StatefulWidget {
-  const ExpandablePriceRangeTile({super.key});
+  const ExpandablePriceRangeTile({required this.isStore, super.key});
+  final bool isStore;
 
   @override
   State<ExpandablePriceRangeTile> createState() =>
@@ -117,6 +135,15 @@ class _ExpandablePriceRangeTileState extends State<ExpandablePriceRangeTile> {
   Widget build(BuildContext context) {
     final ProfileProvider marketPro =
         Provider.of<ProfileProvider>(context, listen: false);
+
+    final TextEditingController minPriceController = widget.isStore
+        ? marketPro.storeMinPriceController
+        : marketPro.viewingMinPriceController;
+
+    final TextEditingController maxPriceController = widget.isStore
+        ? marketPro.storeMaxPriceController
+        : marketPro.viewingMaxPriceController;
+
     return Column(
       children: <Widget>[
         ListTile(
@@ -131,9 +158,10 @@ class _ExpandablePriceRangeTileState extends State<ExpandablePriceRangeTile> {
           ),
           subtitle: Text(
             !_isExpanded ? 'select_price_range'.tr() : '',
-            style: TextTheme.of(context)
+            style: Theme.of(context)
+                .textTheme
                 .bodyMedium
-                ?.copyWith(color: ColorScheme.of(context).outline),
+                ?.copyWith(color: Theme.of(context).colorScheme.outline),
           ),
           trailing: Column(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -153,7 +181,7 @@ class _ExpandablePriceRangeTileState extends State<ExpandablePriceRangeTile> {
               children: <Widget>[
                 Expanded(
                   child: CustomTextFormField(
-                    controller: marketPro.minPriceController,
+                    controller: minPriceController,
                     keyboardType: TextInputType.number,
                     labelText: 'min_price'.tr(),
                   ),
@@ -161,7 +189,7 @@ class _ExpandablePriceRangeTileState extends State<ExpandablePriceRangeTile> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: CustomTextFormField(
-                    controller: marketPro.maxPriceController,
+                    controller: maxPriceController,
                     keyboardType: TextInputType.number,
                     labelText: 'max_price'.tr(),
                   ),
@@ -176,7 +204,8 @@ class _ExpandablePriceRangeTileState extends State<ExpandablePriceRangeTile> {
 }
 
 class StoreFilterSheetConditionTile extends StatelessWidget {
-  const StoreFilterSheetConditionTile({super.key});
+  final bool isStore;
+  const StoreFilterSheetConditionTile({required this.isStore, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -187,12 +216,16 @@ class StoreFilterSheetConditionTile extends StatelessWidget {
       ),
       subtitle: Consumer<ProfileProvider>(
         builder: (BuildContext context, ProfileProvider pro, _) {
+          final ConditionType? selectedType = isStore
+              ? pro.storeSelectedConditionType
+              : pro.viewingSelectedConditionType;
+
           return DropdownButtonFormField<ConditionType>(
             icon: Icon(
               Icons.keyboard_arrow_down_rounded,
-              color: ColorScheme.of(context).outline,
+              color: Theme.of(context).colorScheme.outline,
             ),
-            value: pro.selectedConditionType,
+            value: selectedType,
             isExpanded: true,
             dropdownColor: Theme.of(context).cardColor,
             decoration: const InputDecoration(
@@ -207,22 +240,24 @@ class StoreFilterSheetConditionTile extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium
-                  ?.copyWith(color: ColorScheme.of(context).outline),
+                  ?.copyWith(color: Theme.of(context).colorScheme.outline),
             ),
             items: ConditionType.values.map((ConditionType type) {
               return DropdownMenuItem<ConditionType>(
                 value: type,
                 child: Text(
                   type.code.tr(),
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: ColorScheme.of(context).onSurface),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface),
                 ),
               );
             }).toList(),
             onChanged: (ConditionType? newValue) {
-              pro.setConditionType(newValue);
+              if (isStore) {
+                pro.setStoreConditionType(newValue);
+              } else {
+                pro.setViewingConditionType(newValue);
+              }
             },
           );
         },
@@ -232,7 +267,8 @@ class StoreFilterSheetConditionTile extends StatelessWidget {
 }
 
 class StoreFilterSheetDeliveryTypeTile extends StatelessWidget {
-  const StoreFilterSheetDeliveryTypeTile({super.key});
+  final bool isStore;
+  const StoreFilterSheetDeliveryTypeTile({required this.isStore, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -242,44 +278,51 @@ class StoreFilterSheetDeliveryTypeTile extends StatelessWidget {
         style: Theme.of(context).textTheme.titleMedium,
       ),
       subtitle: Consumer<ProfileProvider>(
-        builder: (BuildContext context, ProfileProvider pro, _) =>
-            DropdownButtonFormField<DeliveryType>(
-          icon: Icon(
-            Icons.keyboard_arrow_down_rounded,
-            color: ColorScheme.of(context).outline,
-          ),
-          value: pro.selectedDeliveryType,
-          isExpanded: true,
-          hint: Text(
-            'select_delivery_type'.tr(),
-            style: Theme.of(context)
-                .textTheme
-                .bodyMedium
-                ?.copyWith(color: ColorScheme.of(context).outline),
-          ),
-          decoration: const InputDecoration(
-            isDense: true,
-            border: InputBorder.none,
-            enabledBorder: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            contentPadding: EdgeInsets.zero,
-          ),
-          items: DeliveryType.values.map((DeliveryType type) {
-            return DropdownMenuItem<DeliveryType>(
-              value: type,
-              child: Text(
-                type.code.tr(),
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(color: ColorScheme.of(context).onSurface),
-              ),
-            );
-          }).toList(),
-          onChanged: (DeliveryType? newValue) {
-            pro.setDeliveryType(newValue);
-          },
-        ),
+        builder: (BuildContext context, ProfileProvider pro, _) {
+          final DeliveryType? selectedType = isStore
+              ? pro.storeSelectedDeliveryType
+              : pro.viewingSelectedDeliveryType;
+
+          return DropdownButtonFormField<DeliveryType>(
+            icon: Icon(
+              Icons.keyboard_arrow_down_rounded,
+              color: Theme.of(context).colorScheme.outline,
+            ),
+            value: selectedType,
+            isExpanded: true,
+            hint: Text(
+              'select_delivery_type'.tr(),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: Theme.of(context).colorScheme.outline),
+            ),
+            decoration: const InputDecoration(
+              isDense: true,
+              border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              contentPadding: EdgeInsets.zero,
+            ),
+            items: DeliveryType.values.map((DeliveryType type) {
+              return DropdownMenuItem<DeliveryType>(
+                value: type,
+                child: Text(
+                  type.code.tr(),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface),
+                ),
+              );
+            }).toList(),
+            onChanged: (DeliveryType? newValue) {
+              if (isStore) {
+                pro.setStoreDeliveryType(newValue);
+              } else {
+                pro.setViewingDeliveryType(newValue);
+              }
+            },
+          );
+        },
       ),
     );
   }
@@ -287,9 +330,10 @@ class StoreFilterSheetDeliveryTypeTile extends StatelessWidget {
 
 class StoreFilterSheetHeaderSection extends StatelessWidget {
   const StoreFilterSheetHeaderSection({
+    required this.isStore,
     super.key,
   });
-
+  final bool isStore;
   @override
   Widget build(BuildContext context) {
     return Consumer<ProfileProvider>(
@@ -307,7 +351,11 @@ class StoreFilterSheetHeaderSection extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              pro.storefilterSheetApplyButton();
+              if (isStore) {
+                pro.storefilterSheetApplyButton();
+              } else {
+                pro.viewingfilterSheetApplyButton();
+              }
             },
             child: Text(
               'reset'.tr(),
@@ -322,10 +370,14 @@ class StoreFilterSheetHeaderSection extends StatelessWidget {
   }
 }
 
-class StoreFilterSheetSheetButton extends StatelessWidget {
-  const StoreFilterSheetSheetButton({
+class StoreFilterSheetApplyButton extends StatelessWidget {
+  // <-- control variable
+
+  const StoreFilterSheetApplyButton({
+    required this.isStore,
     super.key,
   });
+  final bool isStore;
 
   @override
   Widget build(BuildContext context) {
@@ -334,7 +386,11 @@ class StoreFilterSheetSheetButton extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: CustomElevatedButton(
           onTap: () {
-            pro.storefilterSheetApplyButton();
+            if (isStore) {
+              pro.storefilterSheetApplyButton(); // Apply store filter
+            } else {
+              pro.viewingfilterSheetApplyButton(); // Apply viewing filter (example)
+            }
             Navigator.pop(context);
           },
           title: 'apply'.tr(),

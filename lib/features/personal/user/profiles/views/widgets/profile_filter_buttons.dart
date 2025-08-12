@@ -5,16 +5,20 @@ import '../../../../../../core/utilities/app_string.dart';
 import '../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../data/models/user_model.dart';
+import '../enums/profile_page_tab_type.dart';
 import '../providers/profile_provider.dart';
 import 'gridview_filter_bottomsheets/store_category_bottomsheet.dart';
 import 'gridview_filter_bottomsheets/store_filter_bottomsheet.dart';
 
 class ProfileFilterSection extends StatelessWidget {
-  const ProfileFilterSection({required this.user, super.key});
+  const ProfileFilterSection(
+      {required this.user, required this.pageType, super.key});
   final UserEntity? user;
+  final ProfilePageTabType? pageType;
 
   @override
   Widget build(BuildContext context) {
+    final bool isStore = pageType == ProfilePageTabType.store;
     final TextTheme textTheme = Theme.of(context).textTheme;
     return Consumer<ProfileProvider>(
       builder: (BuildContext context, ProfileProvider pro, Widget? child) =>
@@ -26,12 +30,19 @@ class ProfileFilterSection extends StatelessWidget {
               dense: true,
               contentPadding: const EdgeInsets.all(4),
               fieldPadding: const EdgeInsets.all(0),
-              controller: pro.queryController,
+              controller: isStore
+                  ? pro.storeQueryController
+                  : pro.viewingQueryController,
               hint: 'search'.tr(),
               style: textTheme.bodySmall,
-              prefix: const CustomSvgIcon(
-                assetPath: AppStrings.selloutSearchIcon,
-                size: 16,
+              prefix: const Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  CustomSvgIcon(
+                    assetPath: AppStrings.selloutSearchIcon,
+                    size: 16,
+                  ),
+                ],
               ),
             ),
           ),
@@ -45,7 +56,9 @@ class ProfileFilterSection extends StatelessWidget {
                         useSafeArea: true,
                         isScrollControlled: true,
                         builder: (BuildContext context) =>
-                            const StoreCategoryBottomSheet(),
+                            StoreCategoryBottomSheet(
+                          isStore: isStore,
+                        ),
                       ),
                   label: 'category'.tr(),
                   icon: AppStrings.selloutDropDownIcon)),
@@ -59,7 +72,9 @@ class ProfileFilterSection extends StatelessWidget {
                         useSafeArea: true,
                         isScrollControlled: true,
                         builder: (BuildContext context) =>
-                            const StoreFilterBottomSheet(),
+                            StoreFilterBottomSheet(
+                          isStore: isStore,
+                        ),
                       ),
                   label: 'filter'.tr(),
                   icon: AppStrings.selloutFilterIcon)),

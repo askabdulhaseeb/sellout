@@ -52,40 +52,65 @@ class ProfileProvider extends ChangeNotifier {
   final GetPostByFiltersUsecase _getPostByFiltersUsecase;
 
   //---------------------------------------------------------------------------------variables
-
-  bool _isLoading = false;
-  SortOption? _sort = SortOption.newlyList;
-  final TextEditingController _minPriceController = TextEditingController();
-  final TextEditingController _maxPriceController = TextEditingController();
-  ConditionType? _selectedConditionType;
-  DeliveryType? _selectedDeliveryType;
+  DataState<UserEntity?>? _user;
   ProfilePageTabType _displayType =
       kDebugMode ? ProfilePageTabType.viewing : ProfilePageTabType.orders;
   List<AttachmentEntity>? profilePhoto;
-  DataState<UserEntity?>? _user;
-  String? _mainPageKey;
-  ListingType? _category;
-  List<PostEntity>? _storePosts = <PostEntity>[];
+  bool _isLoading = false;
+// Store Variables
+  SortOption? _storeSort;
+  TextEditingController _storeMinPriceController = TextEditingController();
+  TextEditingController _storeMaxPriceController = TextEditingController();
+  ConditionType? _storeSelectedConditionType;
+  DeliveryType? _storeSelectedDeliveryType;
+  String? _storeMainPageKey;
+  ListingType? _storeCategory;
+  List<PostEntity>? _storePosts;
+
+// Viewing Variables
+  SortOption? _viewingSort;
+  TextEditingController _viewingMinPriceController = TextEditingController();
+  TextEditingController _viewingMaxPriceController = TextEditingController();
+  ConditionType? _viewingSelectedConditionType;
+  DeliveryType? _viewingSelectedDeliveryType;
+  String? _viewingMainPageKey;
+  ListingType? _viewingCategory;
+  List<PostEntity>? _viewingPosts;
 
   //---------------------------------------------------------------------------------getters
 
   UserEntity? get user => _user?.entity;
   ProfilePageTabType get displayType => _displayType;
   bool get isLoading => _isLoading;
-  SortOption? get sort => _sort;
-  TextEditingController get minPriceController => _minPriceController;
-  TextEditingController get maxPriceController => _maxPriceController;
-  ConditionType? get selectedConditionType => _selectedConditionType;
-  DeliveryType? get selectedDeliveryType => _selectedDeliveryType;
-  String? get mainPageKey => _mainPageKey;
-  ListingType? get category => _category;
+// Store Getters
+  SortOption? get storeSort => _storeSort;
+  TextEditingController get storeMinPriceController => _storeMinPriceController;
+  TextEditingController get storeMaxPriceController => _storeMaxPriceController;
+  ConditionType? get storeSelectedConditionType => _storeSelectedConditionType;
+  DeliveryType? get storeSelectedDeliveryType => _storeSelectedDeliveryType;
+  String? get storeMainPageKey => _storeMainPageKey;
+  ListingType? get storeCategory => _storeCategory;
   List<PostEntity>? get storePosts => _storePosts;
+
+// Viewing Getters
+  SortOption? get viewingSort => _viewingSort;
+  TextEditingController get viewingMinPriceController =>
+      _viewingMinPriceController;
+  TextEditingController get viewingMaxPriceController =>
+      _viewingMaxPriceController;
+  ConditionType? get viewingSelectedConditionType =>
+      _viewingSelectedConditionType;
+  DeliveryType? get viewingSelectedDeliveryType => _viewingSelectedDeliveryType;
+  String? get viewingMainPageKey => _viewingMainPageKey;
+  ListingType? get viewingCategory => _viewingCategory;
+  List<PostEntity>? get viewingPosts => _viewingPosts;
 
   //---------------------------------------------------------------------------------text controllers
   TextEditingController namecontroller =
       TextEditingController(text: LocalAuth.currentUser?.displayName);
   TextEditingController biocontroller = TextEditingController();
-  TextEditingController queryController = TextEditingController();
+  TextEditingController storeQueryController = TextEditingController();
+  TextEditingController viewingQueryController = TextEditingController();
 
   void setProfilePhoto() {
     profilePhoto = LocalAuth.currentUser?.profileImage;
@@ -96,37 +121,72 @@ class ProfileProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setSort(SortOption? val) {
-    _sort = val;
+  void setStoreSort(SortOption? val) {
+    _storeSort = val;
     notifyListeners();
   }
 
-  void setConditionType(ConditionType? type) {
-    _selectedConditionType = type;
+  void setViewingSort(SortOption? val) {
+    _viewingSort = val;
     notifyListeners();
   }
 
-  void setDeliveryType(DeliveryType? type) {
-    _selectedDeliveryType = type;
+  void setStoreConditionType(ConditionType? type) {
+    _storeSelectedConditionType = type;
     notifyListeners();
   }
 
-  void setCategory(ListingType? type) {
-    _category = type;
+  void setViewingConditionType(ConditionType? type) {
+    _viewingSelectedConditionType = type;
+    notifyListeners();
+  }
+
+  void setStoreDeliveryType(DeliveryType? type) {
+    _storeSelectedDeliveryType = type;
+    notifyListeners();
+  }
+
+  void setViewingDeliveryType(DeliveryType? type) {
+    _viewingSelectedDeliveryType = type;
+    notifyListeners();
+  }
+
+  void setStoreCategory(ListingType? type) {
+    _storeCategory = type;
     loadStorePosts();
   }
 
-  void setPosts(
+  void setViewingCategory(ListingType? type) {
+    _viewingCategory = type;
+    loadViewingPosts();
+  }
+
+  void setStorePosts(
     List<PostEntity> value,
   ) {
     _storePosts = value;
-    if (queryController.text.isNotEmpty && queryController.text != '') {}
-    if (queryController.text.isEmpty || queryController.text == '') {}
+    if (storeQueryController.text.isNotEmpty &&
+        storeQueryController.text != '') {}
+    if (storeQueryController.text.isEmpty || storeQueryController.text == '') {}
     notifyListeners();
   }
 
-  void setMainPageKey(String? val) {
-    _mainPageKey = val;
+  void setViewingPosts(
+    List<PostEntity> value,
+  ) {
+    _storePosts = value;
+    if (storeQueryController.text.isNotEmpty &&
+        storeQueryController.text != '') {}
+    if (storeQueryController.text.isEmpty || storeQueryController.text == '') {}
+    notifyListeners();
+  }
+
+  void setStoreMainPageKey(String? val) {
+    _storeMainPageKey = val;
+  }
+
+  void setViewingMainPageKey(String? val) {
+    _viewingMainPageKey = val;
   }
 
   set displayType(ProfilePageTabType value) {
@@ -136,20 +196,38 @@ class ProfileProvider extends ChangeNotifier {
 
   //---------------------------------------------------------------------------------buttons
   void storefilterSheetResetButton() async {
-    _minPriceController.clear();
-    _maxPriceController.clear();
-    _selectedConditionType = null;
-    _selectedDeliveryType = null;
-    _sort = null;
+    _storeMinPriceController.clear();
+    _storeMaxPriceController.clear();
+    _storeSelectedConditionType = null;
+    _storeSelectedDeliveryType = null;
+    _storeSort = null;
+    await loadStorePosts();
+  }
+
+  void viewingfilterSheetResetButton() async {
+    _viewingMinPriceController.clear();
+    _viewingMaxPriceController.clear();
+    _viewingSelectedConditionType = null;
+    _viewingSelectedDeliveryType = null;
+    _viewingSort = null;
     await loadStorePosts();
   }
 
   void resetStoreCategoryButton() {
-    _category = null;
+    _storeCategory = null;
+    loadStorePosts();
+  }
+
+  void resetViewingCategoryButton() {
+    _viewingCategory = null;
     loadStorePosts();
   }
 
   Future<void> storefilterSheetApplyButton() async {
+    await loadStorePosts();
+  }
+
+  Future<void> viewingfilterSheetApplyButton() async {
     await loadStorePosts();
   }
   //---------------------------------------------------------------------------------api usecases
@@ -248,22 +326,22 @@ class ProfileProvider extends ChangeNotifier {
 
   Future<bool> loadStorePosts() async {
     setLoading(true);
-    setMainPageKey('');
+    setStoreMainPageKey('');
     try {
-      final PostByFiltersParams params = _buildPostByFiltersParams();
+      final PostByFiltersParams params = _buildStorePostByFiltersParams();
       final DataState<List<PostEntity>> result =
           await _getPostByFiltersUsecase(params);
       if (result is DataSuccess<List<PostEntity>>) {
-        setPosts(result.entity ?? <PostEntity>[]);
-        setMainPageKey(result.data);
+        setStorePosts(result.entity ?? <PostEntity>[]);
+        setStoreMainPageKey(result.data);
         return true;
       } else {
-        setPosts(<PostEntity>[]);
+        setStorePosts(<PostEntity>[]);
         debugPrint(
             'Failed: ${result.exception?.message ?? 'something_wrong'.tr()}');
       }
     } catch (e) {
-      setPosts(<PostEntity>[]);
+      setStorePosts(<PostEntity>[]);
       debugPrint('Unexpected error: $e');
     } finally {
       setLoading(false);
@@ -273,22 +351,22 @@ class ProfileProvider extends ChangeNotifier {
 
   Future<bool> loadViewingPosts() async {
     setLoading(true);
-    setMainPageKey('');
+    setViewingMainPageKey('');
     try {
-      final PostByFiltersParams params = _buildPostByFiltersParams();
+      final PostByFiltersParams params = _buildViewingPostByFiltersParams();
       final DataState<List<PostEntity>> result =
           await _getPostByFiltersUsecase(params);
       if (result is DataSuccess<List<PostEntity>>) {
-        setPosts(result.entity ?? <PostEntity>[]);
-        setMainPageKey(result.data);
+        setViewingPosts(result.entity ?? <PostEntity>[]);
+        setViewingMainPageKey(result.data);
         return true;
       } else {
-        setPosts(<PostEntity>[]);
+        setViewingPosts(<PostEntity>[]);
         debugPrint(
             'Failed: ${result.exception?.message ?? 'something_wrong'.tr()}');
       }
     } catch (e) {
-      setPosts(<PostEntity>[]);
+      setViewingPosts(<PostEntity>[]);
       debugPrint('Unexpected error: $e');
     } finally {
       setLoading(false);
@@ -296,17 +374,17 @@ class ProfileProvider extends ChangeNotifier {
     return false;
   }
 
-  PostByFiltersParams _buildPostByFiltersParams() {
+  PostByFiltersParams _buildStorePostByFiltersParams() {
     return PostByFiltersParams(
-      lastKey: _mainPageKey,
-      query: queryController.text,
-      category: _category?.json ?? '',
-      sort: sort,
-      filters: _buildFilters(),
+      lastKey: _storeMainPageKey,
+      query: storeQueryController.text,
+      category: _storeCategory?.json ?? '',
+      sort: _storeSort,
+      filters: _buildStoreFilters(),
     );
   }
 
-  List<FilterParam> _buildFilters() {
+  List<FilterParam> _buildStoreFilters() {
     final List<FilterParam> filters = <FilterParam>[];
     // filters.add(FilterParam(attribute: '', operator: 'eq', value: ''));
 // filter bottom sheet filters
@@ -321,36 +399,95 @@ class ProfileProvider extends ChangeNotifier {
       attribute: 'list_id',
       operator: 'eq',
       valueList: ListingType.storeList.map((ListingType e) => e.json).toList(),
-      value: _category?.json ?? '',
+      value: _storeCategory?.json ?? '',
     ));
 
-    if (_selectedConditionType != null) {
+    if (_storeSelectedConditionType != null) {
       filters.add(FilterParam(
         attribute: 'item_condition',
         operator: 'eq',
-        value: _selectedConditionType?.json ?? '',
+        value: _storeSelectedConditionType?.json ?? '',
       ));
     }
-    if (_selectedDeliveryType != null) {
+    if (_storeSelectedDeliveryType != null) {
       filters.add(FilterParam(
         attribute: 'delivery_type',
         operator: 'eq',
-        value: _selectedDeliveryType?.json ?? '',
+        value: _storeSelectedDeliveryType?.json ?? '',
       ));
     }
 
-    if (minPriceController.text.trim().isNotEmpty) {
+    if (_storeMinPriceController.text.trim().isNotEmpty) {
       filters.add(FilterParam(
         attribute: 'price',
         operator: 'gt',
-        value: minPriceController.text.trim(),
+        value: _storeMinPriceController.text.trim(),
       ));
     }
-    if (maxPriceController.text.trim().isNotEmpty) {
+    if (_storeMaxPriceController.text.trim().isNotEmpty) {
       filters.add(FilterParam(
         attribute: 'price',
         operator: 'lt',
-        value: maxPriceController.text.trim(),
+        value: _storeMaxPriceController.text.trim(),
+      ));
+    }
+    return filters;
+  }
+
+  PostByFiltersParams _buildViewingPostByFiltersParams() {
+    return PostByFiltersParams(
+      lastKey: _storeMainPageKey,
+      query: storeQueryController.text,
+      sort: _viewingSort,
+      filters: _buildViewingFilters(),
+    );
+  }
+
+  List<FilterParam> _buildViewingFilters() {
+    final List<FilterParam> filters = <FilterParam>[];
+    // filters.add(FilterParam(attribute: '', operator: 'eq', value: ''));
+// filter bottom sheet filters
+
+    filters.add(FilterParam(
+      attribute: 'created_by',
+      operator: 'eq',
+      value: LocalAuth.uid ?? '',
+    ));
+
+    filters.add(FilterParam(
+      attribute: 'list_id',
+      operator: 'eq',
+      valueList: ListingType.storeList.map((ListingType e) => e.json).toList(),
+      value: _viewingCategory?.json ?? '',
+    ));
+
+    if (_viewingSelectedConditionType != null) {
+      filters.add(FilterParam(
+        attribute: 'item_condition',
+        operator: 'eq',
+        value: _viewingSelectedConditionType?.json ?? '',
+      ));
+    }
+    if (_viewingSelectedDeliveryType != null) {
+      filters.add(FilterParam(
+        attribute: 'delivery_type',
+        operator: 'eq',
+        value: _viewingSelectedDeliveryType?.json ?? '',
+      ));
+    }
+
+    if (viewingMinPriceController.text.trim().isNotEmpty) {
+      filters.add(FilterParam(
+        attribute: 'price',
+        operator: 'gt',
+        value: viewingMinPriceController.text.trim(),
+      ));
+    }
+    if (_viewingMaxPriceController.text.trim().isNotEmpty) {
+      filters.add(FilterParam(
+        attribute: 'price',
+        operator: 'lt',
+        value: _viewingMaxPriceController.text.trim(),
       ));
     }
     return filters;
