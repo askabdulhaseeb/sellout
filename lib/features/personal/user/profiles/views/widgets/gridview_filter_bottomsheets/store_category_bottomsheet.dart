@@ -6,13 +6,13 @@ import '../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../providers/profile_provider.dart';
 
 class StoreCategoryBottomSheet extends StatelessWidget {
-  const StoreCategoryBottomSheet({super.key});
-
+  const StoreCategoryBottomSheet({required this.isStore, super.key});
+  final bool isStore;
   @override
   Widget build(BuildContext context) {
     final ProfileProvider profileProvider =
         Provider.of<ProfileProvider>(context);
-    final ListingType? selectedCategory = profileProvider.category;
+    final ListingType? selectedCategory = profileProvider.storeCategory;
 
     return Container(
       height: 400,
@@ -39,13 +39,17 @@ class StoreCategoryBottomSheet extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    profileProvider.resetStoreCategoryButton();
+                    if (isStore) {
+                      profileProvider.resetStoreCategoryButton();
+                    } else {
+                      profileProvider.resetViewingCategoryButton();
+                    }
                     Navigator.pop(context);
                   },
                   child: Text(
                     'reset'.tr(),
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontSize: 14,
+                        fontSize: 12,
                         decoration: TextDecoration.underline,
                         decorationColor: AppTheme.primaryColor,
                         color: AppTheme.primaryColor),
@@ -61,8 +65,8 @@ class StoreCategoryBottomSheet extends StatelessWidget {
               leading: _buildLeadingIcon(context, isSelected),
               title: Text(type.code.tr()),
               onTap: () {
-                profileProvider.setCategory(type);
-                Navigator.pop(context); // Close bottom sheet
+                profileProvider.setStoreCategory(type);
+                Navigator.pop(context);
               },
             );
           }),
