@@ -45,90 +45,100 @@ class ProfileGridTypeSelectionSection extends StatelessWidget {
 
               return SizedBox(
                 height: 36,
-                child: Row(
-                  children: <Widget>[
-                    ...visibleTabs.map(
-                      (ProfilePageTabType type) => SizedBox(
-                        width: tabWidth,
-                        child: _IconButton(
-                          title: type.code.tr(),
-                          isSelected: userPro.displayType == type,
-                          onPressed: () => userPro.displayType = type,
-                        ),
-                      ),
-                    ),
-                    if (hiddenTabs.isNotEmpty)
-                      SizedBox(
-                        width: tabWidth,
-                        child: PopupMenuButton<ProfilePageTabType>(
-                          tooltip: 'More',
-                          offset: const Offset(0, 36),
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          onSelected: (ProfilePageTabType type) {
-                            userPro.displayType = type;
-                          },
-                          itemBuilder: (BuildContext context) {
-                            return hiddenTabs
-                                .map(
-                                  (ProfilePageTabType type) =>
-                                      PopupMenuItem<ProfilePageTabType>(
-                                    value: type,
-                                    child: Text(type.code.tr()),
-                                  ),
-                                )
-                                .toList();
-                          },
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(8),
-                            onTap: null,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      'more'.tr(),
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: hiddenTabs
-                                                .contains(userPro.displayType)
-                                            ? Theme.of(context).primaryColor
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .outlineVariant,
-                                        fontWeight: hiddenTabs
-                                                .contains(userPro.displayType)
-                                            ? FontWeight.bold
-                                            : FontWeight.normal,
-                                      ),
-                                    ),
-                                    Icon(
-                                      Icons.keyboard_arrow_down_outlined,
-                                      size: 18,
-                                      color: hiddenTabs
-                                              .contains(userPro.displayType)
-                                          ? Theme.of(context).primaryColor
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .outlineVariant,
-                                    ),
-                                  ],
-                                ),
-                                Container(
-                                  height: 2,
-                                  color:
-                                      hiddenTabs.contains(userPro.displayType)
-                                          ? AppTheme.primaryColor
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .outlineVariant,
-                                ),
-                              ],
+                child: Column(
+                  children: [
+                    Row(
+                      children: <Widget>[
+                        ...visibleTabs.map(
+                          (ProfilePageTabType type) => SizedBox(
+                            width: tabWidth,
+                            child: _IconButton(
+                              title: type.code.tr(),
+                              isSelected: userPro.displayType == type,
+                              onPressed: () => userPro.displayType = type,
                             ),
                           ),
                         ),
-                      ),
+                        if (hiddenTabs.isNotEmpty)
+                          SizedBox(
+                            width: tabWidth,
+                            child: PopupMenuButton<ProfilePageTabType>(
+                              tooltip: 'More',
+                              offset: const Offset(0, 36),
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              onSelected: (ProfilePageTabType type) {
+                                userPro.displayType = type;
+                              },
+                              itemBuilder: (BuildContext context) {
+                                return hiddenTabs
+                                    .map(
+                                      (ProfilePageTabType type) =>
+                                          PopupMenuItem<ProfilePageTabType>(
+                                        value: type,
+                                        child: Text(type.code.tr()),
+                                      ),
+                                    )
+                                    .toList();
+                              },
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(8),
+                                onTap: null,
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text(
+                                          'more'.tr(),
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: hiddenTabs.contains(
+                                                    userPro.displayType)
+                                                ? Theme.of(context).primaryColor
+                                                : Theme.of(context)
+                                                    .colorScheme
+                                                    .outline,
+                                            fontWeight: hiddenTabs.contains(
+                                                    userPro.displayType)
+                                                ? FontWeight.bold
+                                                : FontWeight.normal,
+                                          ),
+                                        ),
+                                        Icon(
+                                          Icons.keyboard_arrow_down_outlined,
+                                          size: 18,
+                                          color: hiddenTabs
+                                                  .contains(userPro.displayType)
+                                              ? Theme.of(context).primaryColor
+                                              : Theme.of(context)
+                                                  .colorScheme
+                                                  .outline,
+                                        ),
+                                      ],
+                                    ),
+                                    Container(
+                                      height: 1,
+                                      color: hiddenTabs
+                                              .contains(userPro.displayType)
+                                          ? AppTheme.primaryColor
+                                          : Colors.transparent,
+                                    ),
+                                    Container(
+                                      height: 1,
+                                      decoration: BoxDecoration(
+                                          color: ColorScheme.of(context)
+                                              .outlineVariant),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ],
                 ),
               );
@@ -165,18 +175,21 @@ class _IconButton extends StatelessWidget {
               fontSize: 14,
               color: isSelected
                   ? Theme.of(context).primaryColor
-                  : Theme.of(context).colorScheme.outlineVariant,
+                  : Theme.of(context).colorScheme.outline,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
           ),
           Container(
-            height: 2,
+            height: 1,
             decoration: BoxDecoration(
-              color: isSelected
-                  ? AppTheme.primaryColor
-                  : Theme.of(context).colorScheme.outlineVariant,
+              color: isSelected ? AppTheme.primaryColor : Colors.transparent,
             ),
           ),
+          Container(
+            height: 1,
+            decoration:
+                BoxDecoration(color: ColorScheme.of(context).outlineVariant),
+          )
         ],
       ),
     );

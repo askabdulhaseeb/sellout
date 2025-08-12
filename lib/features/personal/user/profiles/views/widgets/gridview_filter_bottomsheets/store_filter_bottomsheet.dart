@@ -6,7 +6,7 @@ import '../../../../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../marketplace/views/enums/customer_review_type.dart';
+import '../../../../../marketplace/views/enums/sort_enums.dart';
 import '../../providers/profile_provider.dart';
 
 class StoreFilterBottomSheet extends StatelessWidget {
@@ -58,16 +58,16 @@ class StoreFilterSheetCustomerReviewTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
         title: Text(
-          'customer_review'.tr(),
+          'sort_by'.tr(),
           style: Theme.of(context).textTheme.titleMedium,
         ),
         subtitle: Consumer<ProfileProvider>(
           builder: (BuildContext context, ProfileProvider pro, _) =>
-              DropdownButtonFormField<ReviewFilterParam>(
-            value: ReviewFilterParamExtension.fromJson(pro.rating),
+              DropdownButtonFormField<SortOption>(
+            value: pro.sort,
             isExpanded: true,
             hint: Text(
-              'select_customer_review'.tr(),
+              'sort_by_choice'.tr(),
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium
@@ -84,18 +84,18 @@ class StoreFilterSheetCustomerReviewTile extends StatelessWidget {
               focusedBorder: InputBorder.none,
               contentPadding: EdgeInsets.zero,
             ),
-            items: ReviewFilterParam.values.map((ReviewFilterParam param) {
-              return DropdownMenuItem<ReviewFilterParam>(
+            items: SortOption.values.map((SortOption param) {
+              return DropdownMenuItem<SortOption>(
                 value: param,
                 child: Text(
-                  param.text.tr(),
+                  param.code.tr(),
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Theme.of(context).colorScheme.onSurface),
                 ),
               );
             }).toList(),
-            onChanged: (ReviewFilterParam? newValue) {
-              pro.setRating(newValue?.jsonValue);
+            onChanged: (SortOption? newValue) {
+              pro.setSort(newValue);
             },
           ),
         ));
@@ -307,7 +307,7 @@ class StoreFilterSheetHeaderSection extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              pro.filterSheetResetButton();
+              pro.storefilterSheetApplyButton();
             },
             child: Text(
               'reset'.tr(),
@@ -334,7 +334,7 @@ class StoreFilterSheetSheetButton extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: CustomElevatedButton(
           onTap: () {
-            pro.filterSheetApplyButton();
+            pro.storefilterSheetApplyButton();
             Navigator.pop(context);
           },
           title: 'apply'.tr(),

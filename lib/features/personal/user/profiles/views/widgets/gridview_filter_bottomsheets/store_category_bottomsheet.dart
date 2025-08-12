@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../core/enums/listing/core/listing_type.dart';
-
 import '../../providers/profile_provider.dart';
 
 class StoreCategoryBottomSheet extends StatelessWidget {
@@ -25,16 +24,38 @@ class StoreCategoryBottomSheet extends StatelessWidget {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 16, bottom: 10),
-            child: Text(
-              'choose_category'.tr(),
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge
-                  ?.copyWith(fontSize: 14),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                BackButton(
+                  onPressed: () => Navigator.pop(context),
+                ),
+                Text(
+                  'choose_category'.tr(),
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge
+                      ?.copyWith(fontSize: 14),
+                ),
+                TextButton(
+                  onPressed: () {
+                    profileProvider.resetStoreCategoryButton();
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'reset'.tr(),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontSize: 14,
+                        decoration: TextDecoration.underline,
+                        decorationColor: AppTheme.primaryColor,
+                        color: AppTheme.primaryColor),
+                  ),
+                ),
+              ],
             ),
           ),
           const Divider(),
-          ...ListingType.values.map((ListingType type) {
+          ...ListingType.storeList.map((ListingType type) {
             final bool isSelected = selectedCategory == type;
             return ListTile(
               leading: _buildLeadingIcon(context, isSelected),

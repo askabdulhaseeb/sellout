@@ -80,6 +80,10 @@ class AppStrings {
       'assets/icons/svg_icons/selloutPostGridTileEditIcon.svg';
   static const String selloutPostGridTilePromoteIcon =
       'assets/icons/svg_icons/selloutPostGridTilePromoteIcon.svg';
+  static const String selloutFilterIcon =
+      'assets/icons/svg_icons/selloutFilterIcon.svg';
+  static const String selloutDropDownIcon =
+      'assets/icons/svg_icons/selloutDropDownIcon.svg';
 
   // png icons
   static const String selloutAddListingItemIcon =
