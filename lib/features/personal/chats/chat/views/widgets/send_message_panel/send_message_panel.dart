@@ -25,9 +25,7 @@ class SendMessagePanel extends StatelessWidget {
           final bool hasText = messageValue.text.trim().isNotEmpty;
 
           return ValueListenableBuilder<bool>(
-            valueListenable: msgPro
-                .isRecordingAudio, // The argument type 'bool' can't be assigned to the parameter type 'ValueListenable<bool>'. dartargument_type_not_assignable
-
+            valueListenable: msgPro.isRecordingAudio,
             builder: (BuildContext context, bool isRecording, _) {
               return Row(
                 crossAxisAlignment: CrossAxisAlignment.center,

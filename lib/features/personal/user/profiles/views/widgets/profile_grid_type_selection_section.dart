@@ -89,7 +89,7 @@ class ProfileGridTypeSelectionSection extends StatelessWidget {
                                   children: <Widget>[
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          vertical: 6.0),
+                                          vertical: 4.0),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
@@ -175,7 +175,7 @@ class _IconButton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6.0),
+            padding: const EdgeInsets.symmetric(vertical: 4.0),
             child: Text(
               title,
               style: TextStyle(

@@ -45,15 +45,16 @@ class PrivateChatTitleWidget extends StatelessWidget {
                         : (user?.displayName ?? ''),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 14),
                   ),
-                  Opacity(
-                    opacity: 0.5,
-                    child: const Text(
-                      'tap_here_to_open_profile',
-                      style: TextStyle(fontSize: 12),
-                    ).tr(),
-                  )
+                  Text('tap_here_to_open_profile'.tr(),
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: ColorScheme.of(context)
+                              .onSurface
+                              .withValues(alpha: 0.3)))
                 ],
               ),
             )

@@ -84,6 +84,22 @@ class AppStrings {
       'assets/icons/svg_icons/selloutFilterIcon.svg';
   static const String selloutDropDownIcon =
       'assets/icons/svg_icons/selloutDropDownIcon.svg';
+  static const String selloutChatEmogiIcon =
+      'assets/icons/svg_icons/selloutChatEmogiIcon.svg';
+  static const String selloutChatMicIcon =
+      'assets/icons/svg_icons/selloutChatMicIcon.svg';
+  static const String selloutChatPopMenuIcon =
+      'assets/icons/svg_icons/selloutChatPopMenuIcon.svg';
+  static const String selloutChatSendIcon =
+      'assets/icons/svg_icons/selloutChatSendIcon.svg';
+  static const String selloutChatMenuDocumentIcon =
+      'assets/icons/svg_icons/selloutChatMenuDocumentIcon.svg';
+  static const String selloutChatMenuContactIcon =
+      'assets/icons/svg_icons/selloutChatMenuContactIcon.svg';
+  static const String selloutChatMenuPhotoIcon =
+      'assets/icons/svg_icons/selloutChatMenuPhotoIcon.svg';
+  static const String selloutChatMenuVideoIcon =
+      'assets/icons/svg_icons/selloutChatMenuVideoIcon.svg';
 
   // png icons
   static const String selloutAddListingItemIcon =

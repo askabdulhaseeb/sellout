@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../../../../../core/utilities/app_string.dart';
+import '../../../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../../providers/send_message_provider.dart';
 
 class SendMessageButton extends StatelessWidget {
@@ -17,7 +19,7 @@ class SendMessageButton extends StatelessWidget {
                   height: 20,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
-              : const Icon(Icons.send_outlined),
+              : const CustomSvgIcon(assetPath: AppStrings.selloutChatSendIcon),
           onPressed: () async {
             if (!msgPro.isLoading) {
               await msgPro.sendMessage(context);
