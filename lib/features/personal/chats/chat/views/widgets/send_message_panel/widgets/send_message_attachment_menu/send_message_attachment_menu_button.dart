@@ -1,5 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../../../../../../../../../core/utilities/app_string.dart';
+import '../../../../../../../../../core/widgets/custom_svg_icon.dart';
 import '../send_message_attachment_bottomsheets/send_message_camera_bottomsheet.dart';
 import '../send_message_attachment_bottomsheets/send_message_contacts_bottomsheet.dart';
 import '../send_message_attachment_bottomsheets/send_message_document_bottomsheet.dart';
@@ -43,12 +45,12 @@ class SendMessageAttachmentMenuButton extends StatelessWidget {
     final List<Map<String, dynamic>> menuItems = <Map<String, dynamic>>[
       <String, dynamic>{
         'option': SendMessagePopMenuOptions.camera,
-        'icon': Icons.photo_camera_outlined,
+        'icon': AppStrings.selloutChatMenuPhotoIcon,
         'title': 'photo_camera'.tr(),
       },
       <String, dynamic>{
         'option': SendMessagePopMenuOptions.mediaLibrary,
-        'icon': Icons.photo_library_outlined,
+        'icon': AppStrings.selloutChatMenuVideoIcon,
         'title': 'photo_video_library'.tr(),
       },
       // <String, dynamic>{
@@ -58,12 +60,12 @@ class SendMessageAttachmentMenuButton extends StatelessWidget {
       // },
       <String, dynamic>{
         'option': SendMessagePopMenuOptions.document,
-        'icon': Icons.insert_drive_file_outlined,
+        'icon': AppStrings.selloutChatMenuDocumentIcon,
         'title': 'document'.tr(),
       },
       <String, dynamic>{
         'option': SendMessagePopMenuOptions.contacts,
-        'icon': Icons.contact_page_outlined,
+        'icon': AppStrings.selloutChatMenuContactIcon,
         'title': 'contacts'.tr(),
       },
     ];
@@ -74,18 +76,19 @@ class SendMessageAttachmentMenuButton extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
+      offset: const Offset(0, -240),
       onSelected: (SendMessagePopMenuOptions option) =>
           _handleAttachment(context, option),
       itemBuilder: (_) => menuItems.map((Map<String, dynamic> item) {
         return _buildMenuItem(
           context,
           option: item['option'] as SendMessagePopMenuOptions,
-          icon: item['icon'] as IconData,
+          icon: item['icon'] as String,
           title: item['title'] as String,
           iconColor: iconColor,
         );
       }).toList(),
-      child: Icon(Icons.add_circle_outline_outlined, color: iconColor),
+      child: const CustomSvgIcon(assetPath: AppStrings.selloutChatPopMenuIcon),
     );
   }
 
@@ -93,7 +96,7 @@ class SendMessageAttachmentMenuButton extends StatelessWidget {
   PopupMenuItem<SendMessagePopMenuOptions> _buildMenuItem(
     BuildContext context, {
     required SendMessagePopMenuOptions option,
-    required IconData icon,
+    required String icon,
     required String title,
     Color? iconColor,
   }) {
@@ -101,7 +104,7 @@ class SendMessageAttachmentMenuButton extends StatelessWidget {
       value: option,
       child: Row(
         children: <Widget>[
-          Icon(icon, color: iconColor, size: 18),
+          CustomSvgIcon(assetPath: icon, color: iconColor, size: 18),
           const SizedBox(width: 12),
           Text(title, style: Theme.of(context).textTheme.labelMedium),
         ],

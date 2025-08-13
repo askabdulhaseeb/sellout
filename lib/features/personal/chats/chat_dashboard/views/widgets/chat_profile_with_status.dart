@@ -32,15 +32,15 @@ class ProfilePictureWithStatus extends HookWidget {
         Padding(
           padding: const EdgeInsets.all(2),
           child: ProfilePhoto(
-            size: 25,
+            size: 20,
             url: postImageUrl,
             placeholder: userDisplayName.isNotEmpty ? userDisplayName : '',
           ),
         ),
         if (isProduct)
           Positioned(
-            bottom: 3,
-            right: 3,
+            bottom: 2,
+            right: 2,
             child: ProfilePhoto(
               isCircle: true,
               size: 14,
@@ -52,7 +52,7 @@ class ProfilePictureWithStatus extends HookWidget {
           bottom: 0,
           right: 0,
           child: CircleAvatar(
-            radius: 7,
+            radius: 6,
             backgroundColor: isOnline ? Colors.green : Colors.grey,
           ),
         ),

@@ -82,13 +82,16 @@ class MessagesList extends HookWidget {
 
         // Wait for next frame to ensure UI is updated
         WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (messages.value.isEmpty)
+            return; // Prevent calling .last on empty list
+
           final bool isMyMessage = messages.value.last.sendBy == myUserId;
           if (!scrollController.hasClients) return;
 
           if (isMyMessage) {
             scrollController.jumpTo(scrollController.position.minScrollExtent);
           } else {
-            // // For others' messages, maintain relative position
+            // For others' messages, maintain relative position
             // final double newPosition =
             //     scrollPositionState.value.offset + contentHeightDelta;
             // scrollController.jumpTo(

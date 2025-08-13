@@ -7,6 +7,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
 import '../../../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../../../core/utilities/app_string.dart';
+import '../../../../../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../../../../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../../providers/send_message_provider.dart';
 
@@ -64,9 +65,19 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
     try {
       msgPro.startRecording();
       await _playSound(AppStrings.recordingStartSound);
+
+      // Delete old recording if it exists
+      if (_recordPath != null) {
+        final File oldFile = File(_recordPath!);
+        if (await oldFile.exists()) {
+          await oldFile.delete();
+        }
+      }
+
       final Directory dir = await getApplicationDocumentsDirectory();
       _recordPath =
           '${dir.path}/audio_${DateTime.now().millisecondsSinceEpoch}.aac';
+
       _waveformController
         ..refresh()
         ..record();
@@ -85,8 +96,10 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
       // Stop recording
       if (_recorder.isRecording) {
         await _recorder.stopRecorder();
+        await Future<void>.delayed(const Duration(microseconds: 500));
         final SendMessageProvider msgPro =
             Provider.of<SendMessageProvider>(context, listen: false);
+
         msgPro.stopRecording();
         await _playSound(AppStrings.recordingShareSound);
       }
@@ -183,7 +196,7 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: const BoxConstraints(minHeight: 60),
+      constraints: const BoxConstraints(minHeight: 80),
       child: Stack(
         alignment: Alignment.center,
         children: <Widget>[
@@ -214,11 +227,11 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
                   },
                   child: _isOverDeleteZone(micOffset)
                       ? Icon(Icons.delete_forever_rounded,
-                          key: const ValueKey('delete_forever'),
+                          key: const ValueKey<String>('delete_forever'),
                           color: Theme.of(context).colorScheme.error,
                           size: 36)
                       : Icon(Icons.delete_outline_rounded,
-                          key: const ValueKey('delete_outline'),
+                          key: const ValueKey<String>('delete_outline'),
                           color: Theme.of(context).colorScheme.error,
                           size: 36),
                 ),
@@ -238,9 +251,10 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
                         size: const Size(double.infinity, 40),
                         recorderController: _waveformController,
                         waveStyle: const WaveStyle(
+                          showDurationLabel: true,
                           labelSpacing: 0.1,
-                          waveThickness: 4,
-                          waveColor: AppTheme.secondaryColor,
+                          waveThickness: 2,
+                          waveColor: AppTheme.primaryColor,
                           extendWaveform: true,
                           showMiddleLine: false,
                         ),
@@ -267,7 +281,6 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
               },
               onLongPressEnd: (LongPressEndDetails details) async {
                 if (_isDisposed) return;
-
                 if (_isOverDeleteZone(details.globalPosition)) {
                   await _deleteRecording();
                 } else {
@@ -276,19 +289,15 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
               },
               child: Transform.translate(
                 offset: micOffset,
-                child: Container(
-                  padding:
-                      EdgeInsets.all(msgPro.isRecordingAudio.value ? 16 : 0),
-                  decoration: BoxDecoration(
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  margin: EdgeInsets.only(
+                      bottom: msgPro.isRecordingAudio.value ? 50 : 0),
+                  decoration: const BoxDecoration(shape: BoxShape.circle),
+                  child: CustomSvgIcon(
+                    assetPath: AppStrings.selloutChatMicIcon,
                     color: msgPro.isRecordingAudio.value
-                        ? AppTheme.secondaryColor
-                        : Colors.transparent,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.mic_none_outlined,
-                    color: msgPro.isRecordingAudio.value
-                        ? Theme.of(context).colorScheme.onSecondary
+                        ? Theme.of(context).colorScheme.primary
                         : Theme.of(context).colorScheme.onSurface,
                   ),
                 ),

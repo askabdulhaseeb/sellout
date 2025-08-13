@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -384,11 +382,6 @@ class ProfileProvider extends ChangeNotifier {
     return PostByFiltersParams(
       lastKey: _storeMainPageKey,
       query: storeQueryController.text,
-      category: _storeCategory != null
-          ? _storeCategory?.json
-          : json.encode(
-              ListingType.storeList.map((ListingType e) => e.json).toList(),
-            ),
       sort: _storeSort,
       filters: _buildStoreFilters(),
     );
@@ -405,12 +398,12 @@ class ProfileProvider extends ChangeNotifier {
       value: LocalAuth.uid ?? '',
     ));
 
-    // filters.add(FilterParam(
-    //   attribute: 'list_id',
-    //   operator: 'eq',
-    //   valueList: ListingType.storeList.map((ListingType e) => e.json).toList(),
-    //   value: _storeCategory?.json ?? '',
-    // ));
+    filters.add(FilterParam(
+      attribute: 'list_id',
+      operator: _storeCategory != null ? 'eq' : 'inc',
+      valueList: ListingType.storeList.map((ListingType e) => e.json).toList(),
+      value: _storeCategory?.json ?? '',
+    ));
 
     if (_storeSelectedConditionType != null) {
       filters.add(FilterParam(
@@ -449,11 +442,6 @@ class ProfileProvider extends ChangeNotifier {
       lastKey: _storeMainPageKey,
       query: storeQueryController.text,
       sort: _viewingSort,
-      category: _viewingCategory != null
-          ? _viewingCategory?.json
-          : json.encode(
-              ListingType.viewingList.map((ListingType e) => e.json).toList(),
-            ),
       filters: _buildViewingFilters(),
     );
   }
@@ -469,13 +457,13 @@ class ProfileProvider extends ChangeNotifier {
       value: LocalAuth.uid ?? '',
     ));
 
-    // filters.add(FilterParam(
-    //   attribute: 'list_id',
-    //   operator: 'eq',
-    //   valueList:
-    //       ListingType.viewingList.map((ListingType e) => e.json).toList(),
-    //   value: _viewingCategory?.json ?? '',
-    // ));
+    filters.add(FilterParam(
+      attribute: 'list_id',
+      operator: _viewingCategory != null ? 'eq' : 'inc',
+      valueList:
+          ListingType.viewingList.map((ListingType e) => e.json).toList(),
+      value: _viewingCategory?.json ?? '',
+    ));
 
     if (_viewingSelectedConditionType != null) {
       filters.add(FilterParam(
