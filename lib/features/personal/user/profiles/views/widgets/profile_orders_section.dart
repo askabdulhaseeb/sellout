@@ -51,13 +51,17 @@ class _ProfileOrdersSectionState extends State<ProfileOrdersSection> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             CustomToggleSwitch<StatusType>(
+              borderWidth: 1,
+              horizontalPadding: 2,
+              verticalPadding: 6,
               isShaded: false,
               selectedColors: <Color>[
                 Theme.of(context).primaryColor,
                 Theme.of(context).colorScheme.secondary,
-                ColorScheme.of(context).outline
+                ColorScheme.of(context).onSurface
               ],
-              seletedFontSize: MediaQuery.of(context).size.width * 0.03,
+              seletedFontSize: 14,
+              unseletedBorderColor: ColorScheme.of(context).outlineVariant,
               labelText: '',
               labels: const <StatusType>[
                 StatusType.pending,

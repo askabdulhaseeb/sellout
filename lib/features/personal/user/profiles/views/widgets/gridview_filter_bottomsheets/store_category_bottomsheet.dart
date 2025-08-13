@@ -12,60 +12,64 @@ class StoreCategoryBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final ProfileProvider profileProvider =
         Provider.of<ProfileProvider>(context);
-    final ListingType? selectedCategory = profileProvider.storeCategory;
-
+    final ListingType? selectedCategory = isStore
+        ? profileProvider.storeCategory
+        : profileProvider.viewingCategory;
+    final List<ListingType> categoryOptions =
+        isStore ? ListingType.viewingList : ListingType.storeList;
     return Container(
-      height: 400,
       decoration: BoxDecoration(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
         color: Theme.of(context).scaffoldBackgroundColor,
         backgroundBlendMode: BlendMode.color,
       ),
       child: Column(
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(top: 16, bottom: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                BackButton(
-                  onPressed: () => Navigator.pop(context),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              BackButton(
+                onPressed: () => Navigator.pop(context),
+              ),
+              Text(
+                'choose_category'.tr(),
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge
+                    ?.copyWith(fontSize: 14),
+              ),
+              TextButton(
+                onPressed: () {
+                  if (isStore) {
+                    profileProvider.resetStoreCategoryButton();
+                  } else {
+                    profileProvider.resetViewingCategoryButton();
+                  }
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  'reset'.tr(),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontSize: 12,
+                      decoration: TextDecoration.underline,
+                      decorationColor: AppTheme.primaryColor,
+                      color: AppTheme.primaryColor),
                 ),
-                Text(
-                  'choose_category'.tr(),
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleLarge
-                      ?.copyWith(fontSize: 14),
-                ),
-                TextButton(
-                  onPressed: () {
-                    if (isStore) {
-                      profileProvider.resetStoreCategoryButton();
-                    } else {
-                      profileProvider.resetViewingCategoryButton();
-                    }
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    'reset'.tr(),
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontSize: 12,
-                        decoration: TextDecoration.underline,
-                        decorationColor: AppTheme.primaryColor,
-                        color: AppTheme.primaryColor),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
           const Divider(),
-          ...ListingType.storeList.map((ListingType type) {
+          ...categoryOptions.map((ListingType type) {
             final bool isSelected = selectedCategory == type;
             return ListTile(
               leading: _buildLeadingIcon(context, isSelected),
               title: Text(type.code.tr()),
               onTap: () {
-                profileProvider.setStoreCategory(type);
+                if (isStore) {
+                  profileProvider.setStoreCategory(type);
+                } else {
+                  profileProvider.setViewingCategory(type);
+                }
                 Navigator.pop(context);
               },
             );
