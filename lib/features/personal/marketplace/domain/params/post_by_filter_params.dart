@@ -19,7 +19,7 @@ class PostByFiltersParams {
   final List<String> size;
   final List<String> colors;
   final String? query;
-  final String? category;
+  final dynamic category;
   final int? distance;
   final double? clientLat;
   final double? clientLng;

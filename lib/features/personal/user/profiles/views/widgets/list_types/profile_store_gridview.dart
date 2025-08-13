@@ -32,7 +32,7 @@ class _ProfileStoreGridviewState extends State<ProfileStoreGridview> {
       children: <Widget>[
         ProfileFilterSection(
           user: widget.user,
-          pageType: ProfilePageTabType.viewing,
+          pageType: ProfilePageTabType.store,
         ),
         Consumer<ProfileProvider>(
           builder: (BuildContext context, ProfileProvider pro, _) {

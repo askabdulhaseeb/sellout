@@ -87,37 +87,42 @@ class ProfileGridTypeSelectionSection extends StatelessWidget {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: <Widget>[
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        Text(
-                                          'more'.tr(),
-                                          style: TextStyle(
-                                            fontSize: 14,
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 6.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Text(
+                                            'more'.tr(),
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: hiddenTabs.contains(
+                                                      userPro.displayType)
+                                                  ? Theme.of(context)
+                                                      .primaryColor
+                                                  : Theme.of(context)
+                                                      .colorScheme
+                                                      .outline,
+                                              fontWeight: hiddenTabs.contains(
+                                                      userPro.displayType)
+                                                  ? FontWeight.bold
+                                                  : FontWeight.normal,
+                                            ),
+                                          ),
+                                          Icon(
+                                            Icons.keyboard_arrow_down_outlined,
+                                            size: 18,
                                             color: hiddenTabs.contains(
                                                     userPro.displayType)
                                                 ? Theme.of(context).primaryColor
                                                 : Theme.of(context)
                                                     .colorScheme
                                                     .outline,
-                                            fontWeight: hiddenTabs.contains(
-                                                    userPro.displayType)
-                                                ? FontWeight.bold
-                                                : FontWeight.normal,
                                           ),
-                                        ),
-                                        Icon(
-                                          Icons.keyboard_arrow_down_outlined,
-                                          size: 18,
-                                          color: hiddenTabs
-                                                  .contains(userPro.displayType)
-                                              ? Theme.of(context).primaryColor
-                                              : Theme.of(context)
-                                                  .colorScheme
-                                                  .outline,
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                     Container(
                                       height: 1,
@@ -169,14 +174,17 @@ class _IconButton extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 14,
-              color: isSelected
-                  ? Theme.of(context).primaryColor
-                  : Theme.of(context).colorScheme.outline,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6.0),
+            child: Text(
+              title,
+              style: TextStyle(
+                fontSize: 14,
+                color: isSelected
+                    ? Theme.of(context).primaryColor
+                    : Theme.of(context).colorScheme.outline,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
             ),
           ),
           Container(

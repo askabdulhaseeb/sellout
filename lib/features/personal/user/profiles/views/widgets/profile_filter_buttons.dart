@@ -9,6 +9,7 @@ import '../enums/profile_page_tab_type.dart';
 import '../providers/profile_provider.dart';
 import 'gridview_filter_bottomsheets/store_category_bottomsheet.dart';
 import 'gridview_filter_bottomsheets/store_filter_bottomsheet.dart';
+import 'dart:async';
 
 class ProfileFilterSection extends StatelessWidget {
   const ProfileFilterSection(
@@ -18,43 +19,18 @@ class ProfileFilterSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isStore = pageType == ProfilePageTabType.store;
-    final TextTheme textTheme = Theme.of(context).textTheme;
+    final bool isStore = (pageType!.code == ProfilePageTabType.store.code);
     return Consumer<ProfileProvider>(
       builder: (BuildContext context, ProfileProvider pro, Widget? child) =>
           Row(
         spacing: 4,
         children: <Widget>[
-          Flexible(
-            child: CustomTextFormField(
-              dense: true,
-              contentPadding: const EdgeInsets.all(4),
-              fieldPadding: const EdgeInsets.all(0),
-              controller: isStore
-                  ? pro.storeQueryController
-                  : pro.viewingQueryController,
-              hint: 'search'.tr(),
-              style: textTheme.bodySmall,
-              prefix: const Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  CustomSvgIcon(
-                    assetPath: AppStrings.selloutSearchIcon,
-                    size: 16,
-                  ),
-                ],
-              ),
-            ),
-          ),
+          Flexible(child: ProfilePostSearchField(isStore: isStore)),
           Expanded(
               child: CustomFilterButton(
                   iconFirst: false,
                   onPressed: () => showModalBottomSheet(
                         context: context,
-                        showDragHandle: false,
-                        isDismissible: false,
-                        useSafeArea: true,
-                        isScrollControlled: true,
                         builder: (BuildContext context) =>
                             StoreCategoryBottomSheet(
                           isStore: isStore,
@@ -126,6 +102,66 @@ class CustomFilterButton extends StatelessWidget {
               if (!iconFirst) CustomSvgIcon(assetPath: icon, size: 12),
             ]),
       ),
+    );
+  }
+}
+
+class ProfilePostSearchField extends StatefulWidget {
+  const ProfilePostSearchField({
+    required this.isStore,
+    super.key,
+  });
+  final bool isStore;
+
+  @override
+  State<ProfilePostSearchField> createState() => _ProfilePostSearchFieldState();
+}
+
+class _ProfilePostSearchFieldState extends State<ProfilePostSearchField> {
+  Timer? _debounce;
+
+  void _onSearchChanged(ProfileProvider pro, String value) {
+    // Debounce to prevent too many API calls
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (widget.isStore) {
+        pro.loadStorePosts(); // ← Add query to API if needed
+      } else {
+        pro.loadViewingPosts(); // ← Add query to API if needed
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ProfileProvider pro =
+        Provider.of<ProfileProvider>(context, listen: false);
+    final TextEditingController controller =
+        widget.isStore ? pro.storeQueryController : pro.viewingQueryController;
+
+    return CustomTextFormField(
+      dense: true,
+      contentPadding: const EdgeInsets.all(4),
+      fieldPadding: const EdgeInsets.all(0),
+      controller: controller,
+      hint: 'search'.tr(),
+      style: TextTheme.of(context).bodyMedium,
+      prefix: const Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          CustomSvgIcon(
+            assetPath: AppStrings.selloutSearchIcon,
+            size: 16,
+          ),
+        ],
+      ),
+      onChanged: (String value) => _onSearchChanged(pro, value),
     );
   }
 }

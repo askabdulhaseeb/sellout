@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -59,8 +61,10 @@ class ProfileProvider extends ChangeNotifier {
   bool _isLoading = false;
 // Store Variables
   SortOption? _storeSort;
-  TextEditingController _storeMinPriceController = TextEditingController();
-  TextEditingController _storeMaxPriceController = TextEditingController();
+  final TextEditingController _storeMinPriceController =
+      TextEditingController();
+  final TextEditingController _storeMaxPriceController =
+      TextEditingController();
   ConditionType? _storeSelectedConditionType;
   DeliveryType? _storeSelectedDeliveryType;
   String? _storeMainPageKey;
@@ -69,8 +73,10 @@ class ProfileProvider extends ChangeNotifier {
 
 // Viewing Variables
   SortOption? _viewingSort;
-  TextEditingController _viewingMinPriceController = TextEditingController();
-  TextEditingController _viewingMaxPriceController = TextEditingController();
+  final TextEditingController _viewingMinPriceController =
+      TextEditingController();
+  final TextEditingController _viewingMaxPriceController =
+      TextEditingController();
   ConditionType? _viewingSelectedConditionType;
   DeliveryType? _viewingSelectedDeliveryType;
   String? _viewingMainPageKey;
@@ -378,7 +384,11 @@ class ProfileProvider extends ChangeNotifier {
     return PostByFiltersParams(
       lastKey: _storeMainPageKey,
       query: storeQueryController.text,
-      category: _storeCategory?.json ?? '',
+      category: _storeCategory != null
+          ? _storeCategory?.json
+          : json.encode(
+              ListingType.storeList.map((ListingType e) => e.json).toList(),
+            ),
       sort: _storeSort,
       filters: _buildStoreFilters(),
     );
@@ -395,12 +405,12 @@ class ProfileProvider extends ChangeNotifier {
       value: LocalAuth.uid ?? '',
     ));
 
-    filters.add(FilterParam(
-      attribute: 'list_id',
-      operator: 'eq',
-      valueList: ListingType.storeList.map((ListingType e) => e.json).toList(),
-      value: _storeCategory?.json ?? '',
-    ));
+    // filters.add(FilterParam(
+    //   attribute: 'list_id',
+    //   operator: 'eq',
+    //   valueList: ListingType.storeList.map((ListingType e) => e.json).toList(),
+    //   value: _storeCategory?.json ?? '',
+    // ));
 
     if (_storeSelectedConditionType != null) {
       filters.add(FilterParam(
@@ -439,6 +449,11 @@ class ProfileProvider extends ChangeNotifier {
       lastKey: _storeMainPageKey,
       query: storeQueryController.text,
       sort: _viewingSort,
+      category: _viewingCategory != null
+          ? _viewingCategory?.json
+          : json.encode(
+              ListingType.viewingList.map((ListingType e) => e.json).toList(),
+            ),
       filters: _buildViewingFilters(),
     );
   }
@@ -454,12 +469,13 @@ class ProfileProvider extends ChangeNotifier {
       value: LocalAuth.uid ?? '',
     ));
 
-    filters.add(FilterParam(
-      attribute: 'list_id',
-      operator: 'eq',
-      valueList: ListingType.storeList.map((ListingType e) => e.json).toList(),
-      value: _viewingCategory?.json ?? '',
-    ));
+    // filters.add(FilterParam(
+    //   attribute: 'list_id',
+    //   operator: 'eq',
+    //   valueList:
+    //       ListingType.viewingList.map((ListingType e) => e.json).toList(),
+    //   value: _viewingCategory?.json ?? '',
+    // ));
 
     if (_viewingSelectedConditionType != null) {
       filters.add(FilterParam(
