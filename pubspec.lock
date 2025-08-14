@@ -971,7 +971,7 @@ packages:
     source: hosted
     version: "4.9.0"
   just_audio:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: just_audio
       sha256: "679637a3ec5b6e00f36472f5a3663667df00ee4822cbf5dafca0f568c710960a"
@@ -982,10 +982,10 @@ packages:
     dependency: transitive
     description:
       name: just_audio_platform_interface
-      sha256: "4cd94536af0219fa306205a58e78d67e02b0555283c1c094ee41e402a14a5c4a"
+      sha256: "2532c8d6702528824445921c5ff10548b518b13f808c2e34c2fd54793b999a6a"
       url: "https://pub.dev"
     source: hosted
-    version: "4.5.0"
+    version: "4.6.0"
   just_audio_web:
     dependency: transitive
     description:
@@ -994,14 +994,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.4.16"
-  just_waveform:
-    dependency: transitive
-    description:
-      name: just_waveform
-      sha256: "8c65acd24f13b866e3377f07f8869e823f3f2d8b734938f4e6688075af40b4f2"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.7"
   latlong2:
     dependency: "direct main"
     description:
@@ -1434,70 +1426,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.0"
-  record:
-    dependency: transitive
-    description:
-      name: record
-      sha256: daeb3f9b3fea9797094433fe6e49a879d8e4ca4207740bc6dc7e4a58764f0817
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.0.0"
-  record_android:
-    dependency: transitive
-    description:
-      name: record_android
-      sha256: "97d7122455f30de89a01c6c244c839085be6b12abca251fc0e78f67fed73628b"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.3.3"
-  record_ios:
-    dependency: transitive
-    description:
-      name: record_ios
-      sha256: "73706ebbece6150654c9d6f57897cf9b622c581148304132ba85dba15df0fdfb"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.0"
-  record_linux:
-    dependency: transitive
-    description:
-      name: record_linux
-      sha256: "0626678a092c75ce6af1e32fe7fd1dea709b92d308bc8e3b6d6348e2430beb95"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.1"
-  record_macos:
-    dependency: transitive
-    description:
-      name: record_macos
-      sha256: "02240833fde16c33fcf2c589f3e08d4394b704761b4a3bb609d872ff3043fbbd"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.0"
-  record_platform_interface:
-    dependency: transitive
-    description:
-      name: record_platform_interface
-      sha256: c1ad38f51e4af88a085b3e792a22c685cb3e7c23fc37aa7ce44c4cf18f25fe89
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.3.0"
-  record_web:
-    dependency: transitive
-    description:
-      name: record_web
-      sha256: a12856d0b3dd03d336b4b10d7520a8b3e21649a06a8f95815318feaa8f07adbb
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.9"
-  record_windows:
-    dependency: transitive
-    description:
-      name: record_windows
-      sha256: "85a22fc97f6d73ecd67c8ba5f2f472b74ef1d906f795b7970f771a0914167e99"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.6"
   rxdart:
     dependency: transitive
     description:
@@ -1975,14 +1903,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "15.0.0"
-  voice_note_kit:
-    dependency: "direct main"
-    description:
-      name: voice_note_kit
-      sha256: "599cabcb1ca9abd6ce48d539c8d6371b29804b79579514111b4fa5cf68ce3f9f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.3.3"
   watcher:
     dependency: transitive
     description:

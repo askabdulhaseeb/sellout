@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
@@ -32,8 +34,8 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
   @override
   void initState() {
     super.initState();
-    _isDisposed = false;
     _initializeRecorder();
+    _isDisposed = false;
     msgPro = Provider.of<SendMessageProvider>(context, listen: false);
     _waveformController = RecorderController();
   }
@@ -62,27 +64,40 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
 
   Future<void> _startRecording() async {
     if (_isDisposed) return;
+
     try {
+      // 1. Check microphone permission first
+      PermissionStatus status = await Permission.microphone.status;
+      if (!status.isGranted) {
+        status = await Permission.microphone.request();
+      }
+      if (!status.isGranted) {
+        debugPrint('Microphone permission denied');
+        return; // Don't start recording at all
+      }
+
+      // 2. Start UI state
       msgPro.startRecording();
       await _playSound(AppStrings.recordingStartSound);
 
-      // Delete old recording if it exists
+      // 3. Delete old recording if it exists
       if (_recordPath != null) {
         final File oldFile = File(_recordPath!);
-        if (await oldFile.exists()) {
-          await oldFile.delete();
-        }
+        if (await oldFile.exists()) await oldFile.delete();
       }
 
+      // 4. Create new file path
       final Directory dir = await getApplicationDocumentsDirectory();
       _recordPath =
           '${dir.path}/audio_${DateTime.now().millisecondsSinceEpoch}.aac';
 
+      // 5. Start waveform and recorder
       _waveformController
         ..refresh()
         ..record();
       await _recorder.startRecorder(toFile: _recordPath);
-
+      _startTimer();
+      // 6. Update state only if still active
       if (!_isDisposed) {
         setState(() => msgPro.isRecordingAudio.value = true);
       }
@@ -99,7 +114,6 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
         await Future<void>.delayed(const Duration(microseconds: 500));
         final SendMessageProvider msgPro =
             Provider.of<SendMessageProvider>(context, listen: false);
-
         msgPro.stopRecording();
         await _playSound(AppStrings.recordingShareSound);
       }
@@ -121,6 +135,21 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
       // Reset state
       _resetRecordingState();
     }
+  }
+
+  Timer? _recordingTimer;
+  Duration _recordingDuration = Duration.zero;
+
+  void _startTimer() {
+    _recordingDuration = Duration.zero;
+    _recordingTimer?.cancel();
+    _recordingTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted) {
+        setState(() {
+          _recordingDuration += const Duration(seconds: 1);
+        });
+      }
+    });
   }
 
   Future<void> _deleteRecording() async {
@@ -152,19 +181,24 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
 
   void _resetRecordingState() {
     if (_isDisposed) return;
-
     setState(() {
       msgPro.isRecordingAudio.value = false;
       micOffset = Offset.zero;
       _recordPath = null;
     });
-
     // Reset waveform
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_isDisposed) {
+        _recordingTimer?.cancel();
         _waveformController.reset();
       }
     });
+  }
+
+  String _formatDuration(Duration d) {
+    final String minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final String seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return '$minutes:$seconds';
   }
 
   bool _isOverDeleteZone(Offset globalPosition) {
@@ -251,8 +285,6 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
                         size: const Size(double.infinity, 40),
                         recorderController: _waveformController,
                         waveStyle: const WaveStyle(
-                          showDurationLabel: true,
-                          labelSpacing: 0.1,
                           waveThickness: 2,
                           waveColor: AppTheme.primaryColor,
                           extendWaveform: true,
@@ -263,6 +295,22 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
                   )
                 : const SizedBox.shrink(),
           ),
+          if (msgPro.isRecordingAudio.value)
+            Positioned(
+              top: 0,
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.6),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  _formatDuration(_recordingDuration),
+                  style: const TextStyle(color: Colors.green, fontSize: 16),
+                ),
+              ),
+            ),
 
           /// 🎤 Mic button
           Positioned(
