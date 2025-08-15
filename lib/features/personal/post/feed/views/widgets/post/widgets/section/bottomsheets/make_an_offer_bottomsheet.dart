@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../../../../core/helper_functions/currency_symbol_helper.dart';
+import '../../../../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../../../domain/entities/post_entity.dart';
 import '../../../../../../../domain/entities/size_color/color_entity.dart';
@@ -44,7 +44,7 @@ class _MakeOfferBottomSheetState extends State<MakeOfferBottomSheet> {
               children: <Widget>[
                 /// Starting price
                 Text(
-                  '${'starting_price'.tr()}: ${currencySymbolHelper(widget.post.currency)}.${widget.post.minOfferAmount} (${'per_unit'.tr()})',
+                  '${'starting_price'.tr()}: ${CountryHelper.currencySymbolHelper(widget.post.currency)}.${widget.post.minOfferAmount} (${'per_unit'.tr()})',
                   style: Theme.of(context)
                       .textTheme
                       .bodyMedium
@@ -80,9 +80,9 @@ class _MakeOfferBottomSheetState extends State<MakeOfferBottomSheet> {
                 /// Total offer summary
                 Text(
                   '${'you_are_offering'.tr()} '
-                  '${currencySymbolHelper(widget.post.currency)}${priceController.text} '
+                  '${CountryHelper.currencySymbolHelper(widget.post.currency)}${priceController.text} '
                   '× $quantity ${'units'.tr()} = '
-                  '${currencySymbolHelper(widget.post.currency)}${(int.tryParse(priceController.text) ?? 0) * quantity}',
+                  '${CountryHelper.currencySymbolHelper(widget.post.currency)}${(int.tryParse(priceController.text) ?? 0) * quantity}',
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -151,7 +151,7 @@ class OfferPriceField extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    currencySymbolHelper(currency),
+                    CountryHelper.currencySymbolHelper(currency),
                     style: theme.textTheme.labelSmall?.copyWith(
                       color: theme.colorScheme.outline,
                       fontWeight: FontWeight.w700,

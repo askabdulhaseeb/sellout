@@ -8,6 +8,7 @@ import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/functions/permission_fun.dart';
 import '../../../../../core/sources/api_call.dart';
 import '../../../../../core/widgets/app_snakebar.dart';
+import '../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../attachment/domain/entities/picked_attachment_option.dart';
 import '../../../../attachment/views/screens/pickable_attachment_screen.dart';

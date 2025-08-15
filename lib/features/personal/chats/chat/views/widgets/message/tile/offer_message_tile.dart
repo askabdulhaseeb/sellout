@@ -4,7 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../core/bottom_sheets/address/address_bottom_sheet.dart';
-import '../../../../../../../../core/helper_functions/currency_symbol_helper.dart';
+import '../../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../core/widgets/custom_elevated_button.dart';
@@ -71,7 +71,7 @@ class OfferMessageTile extends HookWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '${currencySymbolHelper(message.offerDetail?.currency)} ${message.offerDetail?.price}',
+                          '${CountryHelper.currencySymbolHelper(message.offerDetail?.currency)} ${message.offerDetail?.price}',
                           style: const TextStyle(fontWeight: FontWeight.w500),
                         ),
                       ],
@@ -93,14 +93,14 @@ class OfferMessageTile extends HookWidget {
                         children: <Widget>[
                           Text(
                             maxLines: 2,
-                            '${currencySymbolHelper(message.offerDetail?.currency)} ${message.offerDetail?.offerPrice.toString()}',
+                            '${CountryHelper.currencySymbolHelper(message.offerDetail?.currency)} ${message.offerDetail?.offerPrice.toString()}',
                             style: TextTheme.of(context)
                                 .labelSmall
                                 ?.copyWith(fontWeight: FontWeight.w700),
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            '${currencySymbolHelper(message.offerDetail?.currency)} ${message.offerDetail?.price}',
+                            '${CountryHelper.currencySymbolHelper(message.offerDetail?.currency)} ${message.offerDetail?.price}',
                             style: TextTheme.of(context).labelSmall?.copyWith(
                                   decoration: TextDecoration.lineThrough,
                                 ),

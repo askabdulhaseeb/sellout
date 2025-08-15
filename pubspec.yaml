@@ -42,6 +42,8 @@ dependencies:
   video_player: ^2.9.2
   flutter_contacts: ^1.1.9+2
   open_file: ^3.2.1
+  saver_gallery: ^4.0.1
+
 
   flutter_sound: ^9.28.0
   audio_waveforms: ^1.0.5

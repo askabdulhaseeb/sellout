@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../../../../../../../core/helper_functions/currency_symbol_helper.dart';
+import '../../../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../domain/entities/post_entity.dart';
 
 class HomePostTitleSection extends StatelessWidget {
@@ -28,7 +27,7 @@ class HomePostTitleSection extends StatelessWidget {
                 ),
               ),
               Text(
-                '${currencySymbolHelper(post.currency)}${post.price.toString()}',
+                '${CountryHelper.currencySymbolHelper(post.currency)}${post.price.toString()}',
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,

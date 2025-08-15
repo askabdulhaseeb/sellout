@@ -200,34 +200,39 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
     );
   }
 
-  Widget _buildLoadingUI(bool isMe, ColorScheme colorScheme) => Container(
-        height: 50,
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        decoration: BoxDecoration(
-          color: colorScheme.surface.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: <Widget>[
-            IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.play_circle_fill_outlined,
-                color: !isMe ? AppTheme.primaryColor : colorScheme.secondary,
-                size: 30,
-              ),
-            ),
-            Expanded(
-              child: Container(
-                height: 20,
-                decoration: BoxDecoration(
-                  color: colorScheme.surface.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(6),
+  Widget _buildLoadingUI(bool isMe, ColorScheme colorScheme) => Column(
+        children: [
+          Row(
+            children: <Widget>[
+              IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.play_circle_fill_outlined,
+                  color: !isMe ? AppTheme.primaryColor : colorScheme.secondary,
+                  size: 30,
                 ),
               ),
+              Expanded(
+                child: Container(
+                  height: 20,
+                  decoration: BoxDecoration(
+                    color: colorScheme.surface.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Text(
+              '00:00 / 00:00',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: colorScheme.outline,
+                  ),
             ),
-          ],
-        ),
+          ),
+        ],
       );
 
   Widget _buildPlayerUI(bool isMe, ColorScheme colorScheme) => Column(

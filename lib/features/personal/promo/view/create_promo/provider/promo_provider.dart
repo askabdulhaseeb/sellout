@@ -4,6 +4,7 @@ import 'package:path/path.dart' as p;
 import 'package:flutter/material.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
+import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../post/domain/entities/post_entity.dart';
 import '../../../domain/entities/promo_entity.dart';

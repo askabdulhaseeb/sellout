@@ -1,4 +1,4 @@
-import '../../../../../../core/helper_functions/country_code_helper.dart';
+import '../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 
 class ConnectAccountSessionParams {
@@ -16,7 +16,7 @@ class ConnectAccountSessionParams {
   Map<String, dynamic> toMap() {
     final Map<String, String> data = <String, String>{
       'email': LocalAuth.currentUser?.email ?? '',
-      'country': CountryCodeHelper.getCountryCode(
+      'country': CountryHelper.getCountryCode(
               LocalAuth.currentUser?.countryCode ?? '') ??
           '',
       'entity_id': LocalAuth.uid ?? '',
