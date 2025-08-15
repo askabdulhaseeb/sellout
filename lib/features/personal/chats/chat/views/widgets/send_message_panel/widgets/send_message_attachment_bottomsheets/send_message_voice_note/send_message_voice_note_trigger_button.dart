@@ -1,15 +1,16 @@
-import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
+import 'package:just_audio/just_audio.dart';
+
+import '../../../../../../../../../../core/helper_functions/duration_format_helper.dart';
 import '../../../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../../../core/utilities/app_string.dart';
-import '../../../../../../../../../../core/widgets/custom_svg_icon.dart';
+import '../../../../../../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../../providers/send_message_provider.dart';
 
@@ -21,338 +22,281 @@ class VoiceRecordTrigger extends StatefulWidget {
 }
 
 class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
+  // Recorder & waveform
   final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
-  late SendMessageProvider msgPro; // not initialized
-
   late final RecorderController _waveformController;
-  final GlobalKey _deleteKey = GlobalKey();
 
-  Offset micOffset = Offset.zero;
+  // Send message provider
+  late final SendMessageProvider _msgPro;
+
+  // State
+  bool _isRecording = false;
   String? _recordPath;
-  bool _isDisposed = false;
+  Duration _duration = Duration.zero;
 
   @override
   void initState() {
     super.initState();
-    _initializeRecorder();
-    _isDisposed = false;
-    msgPro = Provider.of<SendMessageProvider>(context, listen: false);
+
+    _msgPro = Provider.of<SendMessageProvider>(context, listen: false);
     _waveformController = RecorderController();
+    _initializeRecorder();
   }
 
   Future<void> _initializeRecorder() async {
-    try {
-      await _recorder.openRecorder();
-      await _recorder
-          .setSubscriptionDuration(const Duration(milliseconds: 100));
-    } catch (e) {
-      debugPrint('Recorder initialization error: $e');
-    }
+    final PermissionStatus status = await Permission.microphone.request();
+    if (!status.isGranted) return;
+    await _recorder.openRecorder();
+    await _recorder.setSubscriptionDuration(const Duration(milliseconds: 100));
   }
 
   Future<void> _playSound(String assetPath) async {
     final AudioPlayer player = AudioPlayer();
     try {
-      await player.setAsset(assetPath);
-      await player.play();
+      await player.setAsset(assetPath); // Load asset
+      await player.play(); // Play immediately
     } catch (e) {
-      debugPrint('Sound playback error: $e');
+      debugPrint('Error playing sound $assetPath: $e');
     } finally {
-      await player.dispose();
+      player.dispose(); // Dispose after playing
     }
   }
 
   Future<void> _startRecording() async {
-    if (_isDisposed) return;
+    final Directory dir = await getApplicationDocumentsDirectory();
+    _recordPath =
+        '${dir.path}/audio_${DateTime.now().millisecondsSinceEpoch}.aac';
+    await _recorder.startRecorder(toFile: _recordPath, codec: Codec.aacADTS);
+    _waveformController.record();
+    _playSound(AppStrings.recordingStartSound);
+    _msgPro.startRecording();
+    // Listen to real duration
+    _recorder.onProgress!.listen((RecordingDisposition event) {
+      setState(() {
+        _duration = event.duration;
+      });
+    });
 
-    try {
-      // 1. Check microphone permission first
-      PermissionStatus status = await Permission.microphone.status;
-      if (!status.isGranted) {
-        status = await Permission.microphone.request();
-      }
-      if (!status.isGranted) {
-        debugPrint('Microphone permission denied');
-        return; // Don't start recording at all
-      }
-
-      // 2. Start UI state
-      msgPro.startRecording();
-      await _playSound(AppStrings.recordingStartSound);
-
-      // 3. Delete old recording if it exists
-      if (_recordPath != null) {
-        final File oldFile = File(_recordPath!);
-        if (await oldFile.exists()) await oldFile.delete();
-      }
-
-      // 4. Create new file path
-      final Directory dir = await getApplicationDocumentsDirectory();
-      _recordPath =
-          '${dir.path}/audio_${DateTime.now().millisecondsSinceEpoch}.aac';
-
-      // 5. Start waveform and recorder
-      _waveformController
-        ..refresh()
-        ..record();
-      await _recorder.startRecorder(toFile: _recordPath);
-      _startTimer();
-      // 6. Update state only if still active
-      if (!_isDisposed) {
-        setState(() => msgPro.isRecordingAudio.value = true);
-      }
-    } catch (e) {
-      debugPrint('Recording start error: $e');
-    }
+    setState(() {
+      _isRecording = true;
+    });
   }
 
   Future<void> _stopRecording() async {
+    if (_recorder.isRecording) await _recorder.stopRecorder();
     try {
-      // Stop recording
-      if (_recorder.isRecording) {
-        await _recorder.stopRecorder();
-        await Future<void>.delayed(const Duration(microseconds: 500));
-        final SendMessageProvider msgPro =
-            Provider.of<SendMessageProvider>(context, listen: false);
-        msgPro.stopRecording();
-        await _playSound(AppStrings.recordingShareSound);
-      }
+      await _waveformController.stop();
+    } catch (_) {}
 
-      final SendMessageProvider msgPro =
-          Provider.of<SendMessageProvider>(context, listen: false);
-      if (_recordPath != null) {
-        final File file = File(_recordPath!);
-        if (await file.exists()) {
-          msgPro.addAttachment(
-            PickedAttachment(file: file, type: AttachmentType.audio),
-          );
-          msgPro.sendMessage(context);
-        }
-      }
-    } catch (e) {
-      debugPrint('Recording stop error: $e');
-    } finally {
-      // Reset state
-      _resetRecordingState();
-    }
+    _msgPro.stopRecording();
+
+    setState(() {
+      _isRecording = false;
+      _duration = Duration.zero;
+    });
   }
 
-  Timer? _recordingTimer;
-  Duration _recordingDuration = Duration.zero;
-
-  void _startTimer() {
-    _recordingDuration = Duration.zero;
-    _recordingTimer?.cancel();
-    _recordingTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted) {
-        setState(() {
-          _recordingDuration += const Duration(seconds: 1);
-        });
+  Future<void> _sendRecording() async {
+    await _stopRecording();
+    if (_recordPath != null) {
+      final File file = File(_recordPath!);
+      if (await file.exists()) {
+        _msgPro.addAttachment(
+          PickedAttachment(file: file, type: AttachmentType.audio),
+        );
+        _playSound(AppStrings.recordingShareSound);
+        _msgPro.sendMessage(context);
       }
-    });
+    }
+
+    _recordPath = null;
   }
 
   Future<void> _deleteRecording() async {
-    try {
-      // Stop recording
-      if (_recorder.isRecording) {
-        await _recorder.stopRecorder();
-        final SendMessageProvider msgPro =
-            Provider.of<SendMessageProvider>(context, listen: false);
-        msgPro.stopRecording();
-      }
-
-      // Play delete sound
-      await _playSound(AppStrings.recordingDeleteSound);
-
-      // Process deletion
-
-      if (_recordPath != null) {
-        final File file = File(_recordPath!);
-        if (await file.exists()) await file.delete();
-      }
-    } catch (e) {
-      debugPrint('Deletion error: $e');
-    } finally {
-      // Reset state
-      _resetRecordingState();
+    await _stopRecording();
+    if (_recordPath != null) {
+      final File file = File(_recordPath!);
+      if (await file.exists()) await file.delete();
     }
-  }
-
-  void _resetRecordingState() {
-    if (_isDisposed) return;
-    setState(() {
-      msgPro.isRecordingAudio.value = false;
-      micOffset = Offset.zero;
-      _recordPath = null;
-    });
-    // Reset waveform
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_isDisposed) {
-        _recordingTimer?.cancel();
-        _waveformController.reset();
-      }
-    });
-  }
-
-  String _formatDuration(Duration d) {
-    final String minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
-    final String seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
-    return '$minutes:$seconds';
-  }
-
-  bool _isOverDeleteZone(Offset globalPosition) {
-    final BuildContext? context = _deleteKey.currentContext;
-    if (context == null) return false;
-
-    final RenderBox? renderBox = context.findRenderObject() as RenderBox?;
-    if (renderBox == null) return false;
-
-    final Offset position = renderBox.localToGlobal(Offset.zero);
-    final Size size = renderBox.size;
-    final Rect rect = Rect.fromLTWH(
-      position.dx,
-      position.dy,
-      size.width,
-      size.height,
-    );
-    return rect.contains(globalPosition);
+    _playSound(AppStrings.recordingDeleteSound);
+    _recordPath = null;
   }
 
   @override
   void dispose() {
-    _isDisposed = true;
     _recorder.closeRecorder();
     _waveformController.dispose();
+    _duration = Duration.zero;
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(minHeight: 80),
-      child: Stack(
-        alignment: Alignment.center,
+    return Expanded(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          /// 🗑️ Trash delete zone
-          if (msgPro.isRecordingAudio.value)
-            Positioned(
-              top: 0,
-              left: 10,
-              bottom: 0,
-              child: AnimatedContainer(
-                key: _deleteKey,
-                duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.error.withOpacity(
-                        _isOverDeleteZone(micOffset) ? 0.4 : 0.05,
-                      ),
-                  shape: BoxShape.circle,
-                ),
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 250),
-                  transitionBuilder:
-                      (Widget child, Animation<double> animation) {
-                    return FadeTransition(
-                      opacity: animation,
-                      child: ScaleTransition(scale: animation, child: child),
-                    );
-                  },
-                  child: _isOverDeleteZone(micOffset)
-                      ? Icon(Icons.delete_forever_rounded,
-                          key: const ValueKey<String>('delete_forever'),
-                          color: Theme.of(context).colorScheme.error,
-                          size: 36)
-                      : Icon(Icons.delete_outline_rounded,
-                          key: const ValueKey<String>('delete_outline'),
-                          color: Theme.of(context).colorScheme.error,
-                          size: 36),
+          if (_isRecording)
+            CustomIconButton(
+              bgColor: AppTheme.primaryColor.withValues(alpha: 0.1),
+              onPressed: _deleteRecording,
+              icon: Icons.delete,
+              iconColor: Theme.of(context).colorScheme.error,
+            ),
+          if (_isRecording)
+            Expanded(
+              child: AudioWaveforms(
+                size: const Size(double.infinity, 40),
+                recorderController: _waveformController,
+                waveStyle: const WaveStyle(
+                  waveThickness: 2,
+                  scaleFactor: 50,
+                  waveColor: AppTheme.primaryColor,
+                  extendWaveform: true,
+                  showMiddleLine: false,
                 ),
               ),
             ),
-
-          /// 📈 Audio waveform
-          AnimatedSize(
-            duration: const Duration(milliseconds: 300),
-            child: msgPro.isRecordingAudio.value
-                ? Positioned(
-                    child: Container(
-                      height: 50,
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 70),
-                      child: AudioWaveforms(
-                        size: const Size(double.infinity, 40),
-                        recorderController: _waveformController,
-                        waveStyle: const WaveStyle(
-                          waveThickness: 2,
-                          waveColor: AppTheme.primaryColor,
-                          extendWaveform: true,
-                          showMiddleLine: false,
-                        ),
-                      ),
-                    ),
-                  )
-                : const SizedBox.shrink(),
-          ),
-          if (msgPro.isRecordingAudio.value)
-            Positioned(
-              top: 0,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  _formatDuration(_recordingDuration),
-                  style: const TextStyle(color: Colors.green, fontSize: 16),
-                ),
-              ),
-            ),
-
-          /// 🎤 Mic button
-          Positioned(
-            right: 10,
-            bottom: 0,
-            top: 0,
-            child: GestureDetector(
-              onLongPressStart: (_) async {
-                if (_isDisposed) return;
-                setState(() => msgPro.isRecordingAudio.value = true);
-                await _startRecording();
-              },
-              onLongPressMoveUpdate: (LongPressMoveUpdateDetails details) {
-                if (_isDisposed) return;
-                setState(() => micOffset = details.offsetFromOrigin);
-              },
-              onLongPressEnd: (LongPressEndDetails details) async {
-                if (_isDisposed) return;
-                if (_isOverDeleteZone(details.globalPosition)) {
-                  await _deleteRecording();
-                } else {
-                  await _stopRecording();
-                }
-              },
-              child: Transform.translate(
-                offset: micOffset,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  margin: EdgeInsets.only(
-                      bottom: msgPro.isRecordingAudio.value ? 50 : 0),
-                  decoration: const BoxDecoration(shape: BoxShape.circle),
-                  child: CustomSvgIcon(
-                    assetPath: AppStrings.selloutChatMicIcon,
-                    color: msgPro.isRecordingAudio.value
-                        ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-              ),
-            ),
+          _RecordingMicWidget(
+            isRecording: _isRecording,
+            duration: _duration,
+            onStartRecording: _startRecording,
+            onSendRecording: _sendRecording,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _RecordingMicWidget extends StatelessWidget {
+  const _RecordingMicWidget({
+    required this.isRecording,
+    required this.duration,
+    required this.onStartRecording,
+    required this.onSendRecording,
+  });
+  final bool isRecording;
+  final Duration duration;
+  final VoidCallback onStartRecording;
+  final VoidCallback onSendRecording;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!isRecording) {
+      return CustomIconButton(
+        margin: const EdgeInsets.all(0),
+        padding: const EdgeInsets.all(0),
+        bgColor: Colors.transparent,
+        onPressed: onStartRecording,
+        icon: AppStrings.selloutChatMicIcon,
+        iconColor: Theme.of(context).colorScheme.onSurface,
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: AppTheme.secondaryColor.withValues(alpha: 0.3),
+      ),
+      child: Row(
+        children: <Widget>[
+          Text(
+            DurationFormatHelper.format(duration),
+            style: TextStyle(
+              color: ColorScheme.of(context).onSecondary,
+              fontSize: 12,
+            ),
+          ),
+          const SizedBox(width: 8),
+          _PulsatingMic(
+            isRecording: isRecording,
+            color: AppTheme.secondaryColor,
+            onPressed: onSendRecording,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PulsatingMic extends StatefulWidget {
+  const _PulsatingMic({
+    required this.isRecording,
+    required this.onPressed,
+    required this.color,
+  });
+  final bool isRecording;
+  final VoidCallback onPressed;
+  final Color color;
+
+  @override
+  State<_PulsatingMic> createState() => _PulsatingMicState();
+}
+
+class _PulsatingMicState extends State<_PulsatingMic>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+
+    _animation = TweenSequence<double>(
+      [
+        TweenSequenceItem<double>(
+            tween: Tween<double>(begin: 1.0, end: 1.3), weight: 50),
+        TweenSequenceItem<double>(
+            tween: Tween<double>(begin: 1.3, end: 1.0), weight: 50),
+      ],
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+
+    if (widget.isRecording) {
+      _controller.repeat();
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _PulsatingMic oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isRecording) {
+      _controller.repeat();
+    } else {
+      _controller.stop();
+      _controller.value = 1.0;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (BuildContext context, Widget? child) {
+        return Transform.scale(
+          scale: _animation.value,
+          child: child,
+        );
+      },
+      child: CustomIconButton(
+        margin: const EdgeInsets.all(0),
+        padding: const EdgeInsets.all(0),
+        bgColor: Colors.transparent,
+        onPressed: widget.onPressed,
+        icon: AppStrings.selloutChatMicIcon,
+        iconColor: widget.color,
       ),
     );
   }

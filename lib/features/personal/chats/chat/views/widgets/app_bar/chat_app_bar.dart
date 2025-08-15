@@ -17,7 +17,7 @@ chatAppBar(BuildContext context) {
       children: <Widget>[
         CustomIconButton(
           bgColor: Colors.transparent,
-          padding: const EdgeInsets.all(0),
+          padding: const EdgeInsets.all(6),
           icon: Icons.arrow_back_ios_new_rounded,
           iconSize: 16,
           onPressed: () {

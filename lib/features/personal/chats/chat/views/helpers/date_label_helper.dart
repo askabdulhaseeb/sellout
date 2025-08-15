@@ -24,6 +24,7 @@ class DateLabelHelper {
       }
       widgets.add(
         MessageTile(
+          key: PageStorageKey<String>(m.messageId),
           message: m,
           timeDiff: timeDiffMap[m.messageId] ?? const Duration(days: 5),
         ),
