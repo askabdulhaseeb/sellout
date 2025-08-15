@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../routes/app_linking.dart';
+import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../../attachment/domain/entities/picked_attachment_option.dart';
 import '../../../../../attachment/views/screens/pickable_attachment_screen.dart';

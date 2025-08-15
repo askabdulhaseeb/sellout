@@ -3,6 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
 
+import '../../../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../providers/send_message_provider.dart';
 

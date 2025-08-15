@@ -7,17 +7,19 @@ import 'package:provider/provider.dart';
 import '../../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../../../../core/widgets/custom_memory_image.dart';
+import '../../../../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
+import '../../../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../providers/send_message_provider.dart';
 
 void showContactsBottomSheet(BuildContext context) async {
   showModalBottomSheet(
+    showDragHandle: false,
+    useSafeArea: true,
     context: context,
     isScrollControlled: true,
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-    ),
     builder: (BuildContext context) {
       return _ContactsBottomSheet();
     },
@@ -34,13 +36,26 @@ class _ContactsBottomSheetState extends State<_ContactsBottomSheet> {
   List<Contact> _filteredContacts = <Contact>[];
   Contact? _selectedContact;
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
   bool _loading = true;
   bool _error = false;
+
+  final Map<String, int> _letterIndexMap = <String, int>{};
+  String _activeLetter = ''; // currently active letter
 
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_updateActiveLetterOnScroll);
     _fetchContacts();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_updateActiveLetterOnScroll);
+    _scrollController.dispose();
+    super.dispose();
   }
 
   void _fetchContacts() async {
@@ -50,8 +65,9 @@ class _ContactsBottomSheetState extends State<_ContactsBottomSheet> {
     }
 
     try {
-      final List<Contact> contacts =
-          await FlutterContacts.getContacts(withProperties: true).timeout(
+      final List<Contact> contacts = await FlutterContacts.getContacts(
+              withProperties: true, withPhoto: true)
+          .timeout(
         const Duration(seconds: 30),
         onTimeout: () {
           setState(() => _error = true);
@@ -59,10 +75,26 @@ class _ContactsBottomSheetState extends State<_ContactsBottomSheet> {
         },
       );
 
+      contacts.sort(
+          (Contact a, Contact b) => a.displayName.compareTo(b.displayName));
+
+      _letterIndexMap.clear();
+      for (int i = 0; i < contacts.length; i++) {
+        final String firstLetter = contacts[i].displayName.isEmpty
+            ? '#'
+            : contacts[i].displayName[0].toUpperCase();
+        if (!_letterIndexMap.containsKey(firstLetter)) {
+          _letterIndexMap[firstLetter] = i;
+        }
+      }
+
       setState(() {
         _allContacts = contacts;
         _filteredContacts = contacts;
         _loading = false;
+        _activeLetter = _allContacts.isNotEmpty
+            ? _allContacts.first.displayName[0].toUpperCase()
+            : '';
       });
     } catch (e) {
       setState(() {
@@ -72,19 +104,38 @@ class _ContactsBottomSheetState extends State<_ContactsBottomSheet> {
     }
   }
 
+  void _scrollToLetter(String letter) {
+    if (_letterIndexMap.containsKey(letter)) {
+      final int index = _letterIndexMap[letter]!;
+      _scrollController.animateTo(
+        index * 72.0, // approximate height of each ListTile
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+      );
+      setState(() => _activeLetter = letter);
+    }
+  }
+
+  void _updateActiveLetterOnScroll() {
+    if (_allContacts.isEmpty) return;
+
+    final double offset = _scrollController.offset;
+    final int index = (offset / 72.0).floor().clamp(0, _allContacts.length - 1);
+    final String letter = _allContacts[index].displayName.isEmpty
+        ? '#'
+        : _allContacts[index].displayName[0].toUpperCase();
+
+    if (letter != _activeLetter) {
+      setState(() => _activeLetter = letter);
+    }
+  }
+
   void _filterContacts(String query) {
     setState(() {
       _filteredContacts = _allContacts.where((Contact c) {
         return c.displayName.toLowerCase().contains(query.toLowerCase());
       }).toList();
     });
-  }
-
-  String _getInitials(String name) {
-    final List<String> parts = name.trim().split(' ');
-    return parts.length == 1
-        ? parts[0][0].toUpperCase()
-        : (parts[0][0] + parts[1][0]).toUpperCase();
   }
 
   Future<File?> _exportContactAsVcf(Contact contact) async {
@@ -118,110 +169,186 @@ class _ContactsBottomSheetState extends State<_ContactsBottomSheet> {
       );
     }
 
-    return SafeArea(
-      child: Padding(
-        padding:
-            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            const SizedBox(height: 12),
-            Container(
-              height: 5,
-              width: 50,
-              decoration: BoxDecoration(
-                color: Theme.of(context)
-                    .colorScheme
-                    .secondary
-                    .withValues(alpha: 0.4),
-                borderRadius: BorderRadius.circular(10),
-              ),
+    return Padding(
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          AppBar(
+            centerTitle: true,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.pop(context),
+              color: Theme.of(context).colorScheme.primary,
             ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: CustomTextFormField(
-                controller: _searchController,
-                onChanged: _filterContacts,
-                prefixIcon: IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () => Navigator.pop(context),
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                hint: 'search'.tr(),
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
+            title: const AppBarTitle(titleKey: 'choose_contact'),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: CustomTextFormField(
+              controller: _searchController,
+              onChanged: _filterContacts,
+              hint: 'search'.tr(),
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _filteredContacts.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final Contact contact = _filteredContacts[index];
-                  final bool isSelected = _selectedContact == contact;
+          ),
+          Expanded(
+            child: Row(
+              children: <Widget>[
+                // Contacts List
+                Expanded(
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    itemCount: _filteredContacts.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final Contact contact = _filteredContacts[index];
+                      final bool isSelected = _selectedContact == contact;
 
-                  return ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
-                      child: Text(
-                        _getInitials(contact.displayName),
-                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                              color: Theme.of(context).colorScheme.onSecondary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                    ),
-                    title: Text(contact.displayName,
-                        style: Theme.of(context).textTheme.bodyLarge),
-                    subtitle: Text(
-                      contact.phones.isNotEmpty
-                          ? contact.phones.first.number
-                          : 'no_phone_number'.tr(),
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                    trailing: Icon(
-                      isSelected
-                          ? Icons.check_circle
-                          : Icons.radio_button_unchecked,
-                      color: isSelected
-                          ? Theme.of(context).colorScheme.primary
-                          : Theme.of(context).colorScheme.outline,
-                    ),
-                    onTap: () {
-                      setState(() {
-                        _selectedContact = contact;
-                      });
-                    },
-                  );
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: CustomElevatedButton(
-                title: 'send'.tr(),
-                isLoading: msgPro.isLoading,
-                bgColor: _selectedContact != null &&
-                        _selectedContact!.phones.isNotEmpty
-                    ? AppTheme.primaryColor
-                    : Theme.of(context).disabledColor,
-                onTap: () async {
-                  final Contact? contact = _selectedContact;
-                  if (contact != null && contact.phones.isNotEmpty) {
-                    final File? file = await _exportContactAsVcf(contact);
-                    if (file != null) {
-                      final PickedAttachment attachment = PickedAttachment(
-                        type: AttachmentType.contacts,
-                        file: file,
+                      return ListTile(
+                        leading: CustomMemoryImage(
+                          displayName: contact.displayName,
+                          photo: contact.photo,
+                        ),
+                        title: Text(contact.displayName,
+                            style: Theme.of(context).textTheme.bodyLarge),
+                        subtitle: Text(
+                          contact.phones.isNotEmpty
+                              ? contact.phones.first.number
+                              : 'no_phone_number'.tr(),
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        trailing: Icon(
+                          isSelected
+                              ? Icons.check_circle
+                              : Icons.radio_button_unchecked,
+                          color: isSelected
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context).colorScheme.outline,
+                        ),
+                        onTap: () {
+                          setState(() {
+                            _selectedContact = contact;
+                          });
+                        },
                       );
-                      msgPro.addAttachment(attachment);
-                      await msgPro.sendMessage(context);
-                      Navigator.pop(context);
-                    }
+                    },
+                  ),
+                ),
+
+                // Alphabet Slider
+                SizedBox(
+                  width: 24,
+                  child: AlphabetSlider(
+                    activeLetter: _activeLetter,
+                    onLetterTap: _scrollToLetter,
+                    availableLetters: _letterIndexMap.keys.toSet(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: CustomElevatedButton(
+              title: 'send'.tr(),
+              isLoading: msgPro.isLoading,
+              bgColor: _selectedContact != null &&
+                      _selectedContact!.phones.isNotEmpty
+                  ? AppTheme.primaryColor
+                  : Theme.of(context).disabledColor,
+              onTap: () async {
+                final Contact? contact = _selectedContact;
+                if (contact != null && contact.phones.isNotEmpty) {
+                  final File? file = await _exportContactAsVcf(contact);
+                  if (file != null) {
+                    final PickedAttachment attachment = PickedAttachment(
+                      type: AttachmentType.contacts,
+                      file: file,
+                    );
+                    msgPro.addAttachment(attachment);
+                    await msgPro.sendMessage(context);
+                    Navigator.pop(context);
                   }
-                },
+                }
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class AlphabetSlider extends StatelessWidget {
+  const AlphabetSlider({
+    required this.onLetterTap,
+    required this.availableLetters,
+    required this.activeLetter,
+    super.key,
+  });
+
+  final void Function(String letter) onLetterTap;
+  final Set<String> availableLetters;
+  final String activeLetter; // currently active/tapped letter
+
+  final List<String> _alphabet = const <String>[
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'F',
+    'G',
+    'H',
+    'I',
+    'J',
+    'K',
+    'L',
+    'M',
+    'N',
+    'O',
+    'P',
+    'Q',
+    'R',
+    'S',
+    'T',
+    'U',
+    'V',
+    'W',
+    'X',
+    'Y',
+    'Z'
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: _alphabet.map((String letter) {
+          final bool enabled = availableLetters.contains(letter);
+          final bool isActive = letter == activeLetter;
+
+          return GestureDetector(
+            onTap: enabled ? () => onLetterTap(letter) : null,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: Text(
+                letter,
+                style: TextStyle(
+                  fontSize: isActive ? 18 : 12,
+                  fontWeight: isActive ? FontWeight.bold : FontWeight.bold,
+                  color: enabled
+                      ? (isActive
+                          ? Theme.of(context).primaryColor
+                          : Theme.of(context).colorScheme.outline)
+                      : Theme.of(context).colorScheme.outlineVariant,
+                ),
               ),
             ),
-          ],
-        ),
+          );
+        }).toList(),
       ),
     );
   }

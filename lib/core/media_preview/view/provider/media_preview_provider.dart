@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../features/attachment/domain/entities/attachment_entity.dart';
 import '../../../../features/attachment/domain/entities/picked_attachment.dart';
 import '../../../../features/attachment/domain/entities/picked_attachment_option.dart';
 import '../../../../features/attachment/views/screens/pickable_attachment_screen.dart';

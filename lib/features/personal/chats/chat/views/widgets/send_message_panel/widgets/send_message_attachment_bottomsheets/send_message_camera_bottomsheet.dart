@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../../../core/enums/core/attachment_type.dart';
 import '../../../../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../providers/send_message_provider.dart';
 
@@ -29,7 +30,6 @@ void showCameraPickerBottomSheet(BuildContext context) async {
                     await pickFromCamera(isVideo: false);
                 if (picked != null) {
                   chatPro.addAttachment(picked);
-                  chatPro.sendMessage(context);
                 }
               },
             ),
@@ -42,7 +42,6 @@ void showCameraPickerBottomSheet(BuildContext context) async {
                     await pickFromCamera(isVideo: true);
                 if (picked != null) {
                   chatPro.addAttachment(picked);
-                  chatPro.sendMessage(context);
                 }
               },
             ),

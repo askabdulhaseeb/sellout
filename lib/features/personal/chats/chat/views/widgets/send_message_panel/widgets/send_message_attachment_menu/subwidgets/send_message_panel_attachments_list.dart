@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../../core/widgets/video_widget.dart';
+import '../../../../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../../providers/send_message_provider.dart';
 
-class ChatAttachmentsListView extends StatelessWidget {
-  const ChatAttachmentsListView({required this.attachments, super.key});
+class SendMessagePanelAttachmentsList extends StatelessWidget {
+  const SendMessagePanelAttachmentsList({required this.attachments, super.key});
   final List<PickedAttachment> attachments;
 
   @override
