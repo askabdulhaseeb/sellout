@@ -266,8 +266,8 @@ class _ContactsBottomSheetState extends State<_ContactsBottomSheet> {
                       type: AttachmentType.contacts,
                       file: file,
                     );
-                    msgPro.addAttachment(attachment);
-                    await msgPro.sendMessage(context);
+                    msgPro.addContact(attachment);
+                    await msgPro.sendContact(context);
                     Navigator.pop(context);
                   }
                 }
