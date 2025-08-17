@@ -5,8 +5,8 @@ import 'video_widget.dart';
 
 class AttachmentsSlider extends StatefulWidget {
   const AttachmentsSlider({
-    super.key,
     required this.attachments,
+    super.key,
     this.aspectRatio = 4 / 3,
     this.width,
     this.height,
@@ -37,13 +37,13 @@ class _AttachmentsSliderState extends State<AttachmentsSlider> {
       width: widget.width ?? MediaQuery.of(context).size.width,
       child: Stack(
         alignment: Alignment.topRight,
-        children: [
+        children: <Widget>[
           PageView.builder(
             itemCount: totalLength,
-            onPageChanged: (index) {
+            onPageChanged: (int index) {
               setState(() => _currentIndex = index);
             },
-            itemBuilder: (context, index) {
+            itemBuilder: (BuildContext context, int index) {
               final AttachmentEntity entity = widget.attachments[index];
 
               return SizedBox.expand(

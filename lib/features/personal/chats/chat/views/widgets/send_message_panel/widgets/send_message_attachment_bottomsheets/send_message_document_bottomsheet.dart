@@ -20,8 +20,8 @@ Future<void> pickDocument(BuildContext context) async {
     File file = File(result.files.single.path!);
     final PickedAttachment attachment =
         PickedAttachment(file: file, type: AttachmentType.document);
-    pro.addAttachment(attachment);
-    pro.sendMessage(context);
+    pro.addDocument(attachment);
+    pro.sendDocument(context);
     // Use the `file` here as you want,
     // like send it to a provider, upload to server, etc.
   } else {

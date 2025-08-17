@@ -47,17 +47,15 @@ class CustomMediaTile extends StatelessWidget {
             border: Border.all(color: Theme.of(context).colorScheme.outline),
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: media.type == AttachmentType.image
-                ? Image.file(media.file, fit: BoxFit.cover)
-                : VideoWidget(
-                    showTime: true,
-                    videoSource: media.file.path,
-                    play: false,
-                  ),
-          ),
+              borderRadius: BorderRadius.circular(8),
+              child: media.type == AttachmentType.image
+                  ? Image.file(media.file, fit: BoxFit.cover)
+                  : VideoWidget(
+                      showTime: true,
+                      videoSource: media.file.path,
+                      play: false,
+                    )),
         ),
-
         // Positioned close button
         Positioned(
           top: 4,

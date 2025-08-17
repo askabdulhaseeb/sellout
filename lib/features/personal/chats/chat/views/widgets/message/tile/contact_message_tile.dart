@@ -1,9 +1,10 @@
 import 'dart:convert';
-
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../../../../../../../../core/theme/app_theme.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../../../../../../../core/widgets/custom_memory_image.dart';
 import '../../../../../../../attachment/domain/entities/attachment_entity.dart';
 
@@ -22,25 +23,52 @@ class ContactMessageTile extends StatefulWidget {
 }
 
 class _ContactMessageTileState extends State<ContactMessageTile> {
-  Future<Map<String, String>>? _detailsFuture;
+  bool _isDownloading = false;
+  bool _isDownloaded = false;
+  Map<String, String>? _contactDetails;
 
-  @override
-  void initState() {
-    super.initState();
-    _detailsFuture = _parseVcfFromUrl(widget.attachment.url);
+  Future<void> _downloadAndParseContact() async {
+    try {
+      setState(() => _isDownloading = true);
+
+      final Directory dir = await getApplicationDocumentsDirectory();
+      final String filePath = '${dir.path}/${widget.attachment.originalName}';
+      final File file = File(filePath);
+
+      // Download only if not already saved
+      if (!file.existsSync()) {
+        final http.Response response =
+            await http.get(Uri.parse(widget.attachment.url));
+        if (response.statusCode == 200) {
+          await file.writeAsBytes(response.bodyBytes);
+        } else {
+          throw Exception('Failed to download VCF');
+        }
+      }
+
+      // Parse contact details
+      final String content = await file.readAsString();
+      _contactDetails = _parseVcf(content);
+
+      setState(() {
+        _isDownloaded = true;
+      });
+    } catch (e) {
+      debugPrint('Error downloading contact: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to download contact')),
+      );
+    } finally {
+      if (mounted) setState(() => _isDownloading = false);
+    }
   }
 
-  Future<Map<String, String>> _parseVcfFromUrl(String url) async {
-    final http.Response response = await http.get(Uri.parse(url));
-    if (response.statusCode != 200) throw Exception('Failed to load VCF');
-
-    final String content = response.body;
+  Map<String, String> _parseVcf(String content) {
     final List<String> lines = content.split('\n');
-
     String? name;
     String? phone;
     String? email;
-    String? photo; // Optional photo (if stored as base64 in VCF)
+    String? photo;
 
     for (final String line in lines) {
       if (line.startsWith('FN:')) {
@@ -50,7 +78,7 @@ class _ContactMessageTileState extends State<ContactMessageTile> {
       } else if (line.startsWith('EMAIL')) {
         email = line.split(':').last.trim();
       } else if (line.startsWith('PHOTO')) {
-        photo = line.split(':').last.trim(); // Can decode base64 if needed
+        photo = line.split(':').last.trim();
       }
     }
 
@@ -64,69 +92,61 @@ class _ContactMessageTileState extends State<ContactMessageTile> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Map<String, String>>(
-      future: _detailsFuture,
-      builder: (context, snapshot) {
-        final ThemeData theme = Theme.of(context);
-        final ColorScheme colorScheme = theme.colorScheme;
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
 
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
+    // Show dummy values until downloaded
+    final String displayName = _contactDetails?['name'] ??
+        widget.attachment.originalName.replaceAll('.vcf', '');
+    final String displayPhone = _contactDetails?['phone'] ?? '••• ••• ••••';
+    final Uint8List? displayPhoto =
+        (_contactDetails != null && _contactDetails!['photo']!.isNotEmpty)
+            ? const Base64Decoder().convert(_contactDetails!['photo']!)
+            : null;
 
-        if (snapshot.hasError || !snapshot.hasData) {
-          return Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: widget.isMe
-                  ? AppTheme.secondaryColor.withOpacity(0.2)
-                  : AppTheme.primaryColor.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Text('Failed to load contact details'),
-          );
-        }
-
-        final Map<String, String> data = snapshot.data!;
-        final String contactName = data['name'] ??
-            widget.attachment.originalName.replaceAll('.vcf', '');
-
-        return Container(
-          padding: const EdgeInsets.all(2),
-          decoration: BoxDecoration(
-            // color: widget.isMe
-            //     ? AppTheme.secondaryColor.withOpacity(0.2)
-            //     : AppTheme.primaryColor.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(12),
+    return Container(
+      padding: const EdgeInsets.all(2),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        spacing: 6,
+        children: <Widget>[
+          CustomMemoryImage(
+            showLoader: true,
+            size: 70,
+            displayName: displayName,
+            photo: displayPhoto,
           ),
-          child: Row(
-            spacing: 6,
-            children: <Widget>[
-              CustomMemoryImage(
-                  size: 70,
-                  displayName: contactName,
-                  photo: const Base64Decoder().convert(data['photo']!)),
-              // Contact details
-              Expanded(
-                child: Column(
-                  spacing: 4,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      contactName,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
-                        color: colorScheme.onSurface,
-                      ),
-                    ),
-                    Text(data['phone'] ?? 'na'.tr()),
-                  ],
+          Expanded(
+            child: Column(
+              spacing: 4,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  displayName,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: colorScheme.onSurface,
+                  ),
                 ),
-              ),
-            ],
+                Text('${'contact'.tr()}: $displayPhone'),
+              ],
+            ),
           ),
-        );
-      },
+          if (_isDownloading)
+            const SizedBox(
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          else if (!_isDownloaded)
+            IconButton(
+              icon: Icon(Icons.download, size: 20, color: colorScheme.outline),
+              onPressed: _downloadAndParseContact,
+            ),
+        ],
+      ),
     );
   }
 }

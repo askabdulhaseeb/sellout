@@ -51,7 +51,8 @@ class CustomMemoryImage extends StatelessWidget {
             errorBuilder: (_, __, ___) {
               return _buildInitials(backgroundColor, initialsStyle);
             },
-            frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+            frameBuilder: (BuildContext context, Widget child, int? frame,
+                bool wasSynchronouslyLoaded) {
               if (showLoader && frame == null) {
                 return Center(
                   child: SizedBox(

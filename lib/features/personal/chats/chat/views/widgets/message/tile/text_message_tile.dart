@@ -35,7 +35,7 @@ class TextMessageTile extends StatelessWidget {
                   case AttachmentType.audio:
                     return AudioMessageWidget(message: message);
                   case AttachmentType.document:
-                    return DocumentTile(attachment: attachment, isMe: isMe);
+                    return DocumentTile(message: message);
                   case AttachmentType.contacts:
                     return ContactMessageTile(
                         attachment: attachment, isMe: isMe);

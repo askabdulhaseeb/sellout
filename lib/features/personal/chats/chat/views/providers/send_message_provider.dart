@@ -22,12 +22,17 @@ class SendMessageProvider extends ChangeNotifier {
   final ValueNotifier<bool> isRecordingAudio = ValueNotifier<bool>(false);
   final TextEditingController _message = TextEditingController();
   final List<PickedAttachment> _attachments = <PickedAttachment>[];
+  final List<PickedAttachment> _document = <PickedAttachment>[];
+  final List<PickedAttachment> _contact = <PickedAttachment>[];
+
   TextSelection lastSelection = const TextSelection.collapsed(offset: 0);
 
   //getters
   bool get isLoading => _isLoading;
   ChatEntity? get chat => _chat;
   List<PickedAttachment> get attachments => _attachments;
+  List<PickedAttachment> get document => _document;
+  List<PickedAttachment> get contact => _contact;
   TextEditingController get message => _message;
   // set functions
   void setLoading(bool value) {
@@ -135,6 +140,16 @@ class SendMessageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addDocument(PickedAttachment attachment) {
+    _document.add(attachment);
+    notifyListeners();
+  }
+
+  void addContact(PickedAttachment attachment) {
+    _contact.add(attachment);
+    notifyListeners();
+  }
+
   Future<void> sendMessage(BuildContext context) async {
     setLoading(true);
     final SendMessageParam param = SendMessageParam(
@@ -148,6 +163,50 @@ class SendMessageProvider extends ChangeNotifier {
     if (result is DataSuccess) {
       _message.clear();
       _attachments.clear();
+      setLoading(false);
+    } else {
+      AppSnackBar.showSnackBar(
+          // ignore: use_build_context_synchronously
+          context,
+          result.exception?.message ?? 'something_wrong'.tr());
+    }
+    setLoading(false);
+  }
+
+  Future<void> sendDocument(BuildContext context) async {
+    setLoading(true);
+    final SendMessageParam param = SendMessageParam(
+      chatID: _chat?.chatId ?? '',
+      text: 'null',
+      persons: _chat?.persons ?? <String>[],
+      files: _document,
+      source: 'application',
+    );
+    final DataState<bool> result = await _sendMessageUsecase(param);
+    if (result is DataSuccess) {
+      _document.clear();
+      setLoading(false);
+    } else {
+      AppSnackBar.showSnackBar(
+          // ignore: use_build_context_synchronously
+          context,
+          result.exception?.message ?? 'something_wrong'.tr());
+    }
+    setLoading(false);
+  }
+
+  Future<void> sendContact(BuildContext context) async {
+    setLoading(true);
+    final SendMessageParam param = SendMessageParam(
+      chatID: _chat?.chatId ?? '',
+      text: 'null',
+      persons: _chat?.persons ?? <String>[],
+      files: _contact,
+      source: 'application',
+    );
+    final DataState<bool> result = await _sendMessageUsecase(param);
+    if (result is DataSuccess) {
+      _contact.clear();
       setLoading(false);
     } else {
       AppSnackBar.showSnackBar(
