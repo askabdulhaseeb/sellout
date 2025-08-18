@@ -4,7 +4,7 @@ import '../../../../../domain/entities/post_entity.dart';
 import '../../../../../domain/entities/visit/visiting_entity.dart';
 import '../../../../../feed/views/widgets/post/widgets/section/buttons/home_post_button_section.dart';
 import '../../../../../feed/views/widgets/post/widgets/section/buttons/type/post_button_for_user_tile.dart';
-import '../../condition_delivery_detail.dart';
+import '../../post_detail_condition_delivery_detail.dart';
 import '../../post_detail_attachment_slider.dart';
 import '../../post_detail_description_section.dart';
 import '../../post_detail_postage_return_delivery.dart';

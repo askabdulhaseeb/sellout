@@ -37,7 +37,7 @@ import '../../../features/personal/listing/listing_form/domain/entities/sub_cate
 import '../../../features/personal/auth/signin/data/models/address_model.dart';
 import '../../../features/personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../../features/personal/location/domain/entities/location_entity.dart';
-import '../../../features/personal/notifications/data/source/local_notification.dart';
+import '../../../features/personal/notifications/data/source/local/local_notification.dart';
 import '../../../features/personal/notifications/domain/entities/notification_entity.dart';
 import '../../../features/personal/notifications/domain/entities/notification_metadata_entity.dart';
 import '../../../features/personal/post/data/sources/local/local_post.dart';

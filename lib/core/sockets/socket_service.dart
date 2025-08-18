@@ -5,7 +5,7 @@ import '../../features/personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../features/personal/chats/chat/data/sources/local/local_message.dart';
 import '../../features/personal/chats/chat_dashboard/data/models/message/message_model.dart';
 import '../../features/personal/notifications/data/models/notification_model.dart';
-import '../../features/personal/notifications/data/source/local_notification.dart';
+import '../../features/personal/notifications/data/source/local/local_notification.dart';
 import '../functions/app_log.dart';
 import 'socket_implementations.dart';
 
@@ -25,10 +25,10 @@ class SocketService with WidgetsBindingObserver {
     LocalAuth.uidNotifier.addListener(() {
       final String? uid = LocalAuth.uidNotifier.value;
       if (uid != null) {
-        AppLog.info('🔓 UID set. Connecting socket...');
+        AppLog.info('🔓 UID set. Connecting socket...', name: 'socket');
         connect();
       } else {
-        AppLog.info('🔒 UID is null. Disconnecting socket...');
+        AppLog.info('🔒 UID is null. Disconnecting socket...', name: 'socket');
         disconnect();
       }
     });
@@ -37,7 +37,8 @@ class SocketService with WidgetsBindingObserver {
     if (LocalAuth.uid != null) {
       connect();
     } else {
-      AppLog.info('🔒 No UID at startup. Socket will not connect.');
+      AppLog.info('🔒 No UID at startup. Socket will not connect.',
+          name: 'socket');
     }
   }
 

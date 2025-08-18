@@ -6,8 +6,8 @@ import '../../../../../../../../../book_visit/view/screens/booking_screen.dart';
 import '../../../../../../../../domain/entities/post_entity.dart';
 import 'widgets/post_make_offer_button.dart';
 
-class PostVehicleButtonTile extends StatelessWidget {
-  const PostVehicleButtonTile({required this.post, super.key});
+class ViewingPostButtonTile extends StatelessWidget {
+  const ViewingPostButtonTile({required this.post, super.key});
   final PostEntity post;
 
   @override

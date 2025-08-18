@@ -10,6 +10,7 @@ class RatingDisplayWidget extends StatelessWidget {
     this.size = 16,
     this.onTap,
     this.fontSize,
+    this.prefixColor,
     super.key,
   });
   final int maxRating;
@@ -20,6 +21,7 @@ class RatingDisplayWidget extends StatelessWidget {
   final bool displayRating;
   final VoidCallback? onTap;
   final double? fontSize;
+  final Color? prefixColor;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +40,7 @@ class RatingDisplayWidget extends StatelessWidget {
               child: Text(
                 rating.toStringAsFixed(1),
                 style: TextStyle(
-                    color: Theme.of(context).primaryColor,
+                    color: prefixColor ?? Theme.of(context).primaryColor,
                     fontSize: fontSize ?? 14),
               ),
             ),

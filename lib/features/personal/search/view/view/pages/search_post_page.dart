@@ -73,7 +73,7 @@ class _SearchPostsSectionState extends State<SearchPostsSection> {
                       crossAxisCount: 2,
                       crossAxisSpacing: 6.0,
                       mainAxisSpacing: 6.0,
-                      childAspectRatio: 0.75,
+                      childAspectRatio: 0.66,
                     ),
                   ),
                 ),

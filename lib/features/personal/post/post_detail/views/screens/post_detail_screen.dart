@@ -1,17 +1,21 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../data/sources/local/local_post.dart';
 import '../../../domain/entities/post_entity.dart';
 import '../../../domain/entities/visit/visiting_entity.dart';
+import '../../../feed/views/widgets/post/widgets/section/buttons/home_post_button_section.dart';
+import '../../../feed/views/widgets/post/widgets/section/buttons/type/post_button_for_user_tile.dart';
 import '../providers/post_detail_provider.dart';
-import '../widgets/post_details_sections/general/general_post_detail_section.dart';
-import '../widgets/post_details_sections/pets/pets_post_detail_section.dart';
-import '../widgets/post_details_sections/property/property_post_detail_section.dart';
-import '../widgets/post_details_sections/vehicle/vehicle_post_detail_section.dart';
+import '../widgets/post_detail_condition_delivery_detail.dart';
+import '../widgets/post_detail_attachment_slider.dart';
+import '../widgets/post_detail_description_section.dart';
+import '../widgets/post_detail_postage_return_delivery.dart';
+import '../widgets/post_detail_seller_section.dart';
+import '../widgets/post_detail_title_amount_section.dart';
+import '../widgets/reviews/post_detail_review_overview_section.dart';
 
 class PostDetailScreen extends StatelessWidget {
   const PostDetailScreen({super.key});
@@ -56,16 +60,23 @@ class PostDetailScreen extends StatelessWidget {
               post?.createdBy == (LocalAuth.currentUser?.businessID ?? '-');
           return post == null
               ? const SizedBox()
-              : (post.listID == ListingType.pets.json
-                  ? PetsPostDetailSection(post: post, isMe: isMe, visit: visit)
-                  : post.listID == ListingType.vehicle.json
-                      ? VehiclePostDetailSection(
-                          post: post, isMe: isMe, visit: visit)
-                      : post.listID == ListingType.property.json
-                          ? PropertyPostDetailSection(
-                              post: post, isMe: isMe, visit: visit)
-                          : GeneralPostDetailSection(
-                              post: post, isMe: isMe, visit: visit));
+              : SingleChildScrollView(
+                  child: Column(children: <Widget>[
+                    PostDetailAttachmentSlider(attachments: post.fileUrls),
+                    PostDetailTitleAmountSection(post: post),
+                    if (isMe == true)
+                      PostButtonsForUser(visit: visit, post: post),
+                    if (isMe == false)
+                      PostButtonSection(
+                        post: post,
+                      ),
+                    ConditionDeliveryWidget(post: post),
+                    PostDetailDescriptionSection(post: post),
+                    ReturnPosrtageAndExtraDetailsSection(post: post),
+                    PostDetailSellerSection(post: post),
+                    PostDetailReviewOverviewSection(post: post),
+                  ]),
+                );
         },
       ),
     );

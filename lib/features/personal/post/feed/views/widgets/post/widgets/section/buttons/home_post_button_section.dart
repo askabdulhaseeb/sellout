@@ -6,8 +6,8 @@ import '../../../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../../../domain/entities/post_entity.dart';
 import '../../../../../../../domain/entities/visit/visiting_entity.dart';
 import 'type/post_button_for_user_tile.dart';
-import 'type/post_item_button_tile.dart';
-import 'type/post_vehicle_button_tile.dart';
+import 'type/store_post_button_tile.dart';
+import 'type/viewing_post_button_tile.dart';
 
 class PostButtonSection extends StatelessWidget {
   const PostButtonSection({
@@ -37,8 +37,8 @@ class PostButtonSection extends StatelessWidget {
                   child: (post.type == ListingType.pets ||
                           post.type == ListingType.vehicle ||
                           post.type == ListingType.property)
-                      ? PostVehicleButtonTile(post: post)
-                      : PostItemButtonTile(post: post),
+                      ? ViewingPostButtonTile(post: post)
+                      : StorePostButtonTile(post: post),
                 ),
               ));
   }

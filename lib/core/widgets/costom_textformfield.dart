@@ -35,6 +35,7 @@ class CustomTextFormField extends StatefulWidget {
     this.fieldPadding,
     this.dense,
     this.prefix,
+    this.borderRadius,
     //
     this.focusNode,
     super.key,
@@ -70,6 +71,7 @@ class CustomTextFormField extends StatefulWidget {
   final EdgeInsetsGeometry? fieldPadding;
   final bool? dense;
   final Widget? prefix;
+  final double? borderRadius;
 
   @override
   CustomTextFormFieldState createState() => CustomTextFormFieldState();
@@ -193,24 +195,26 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
                 errorBorder: OutlineInputBorder(
                   borderSide:
                       BorderSide(color: Theme.of(context).colorScheme.error),
-                  borderRadius: BorderRadius.circular(4.0),
+                  borderRadius:
+                      BorderRadius.circular(widget.borderRadius ?? 4.0),
                 ),
                 border: widget.border ??
                     OutlineInputBorder(
                       borderSide: const BorderSide(color: Colors.transparent),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius:
+                          BorderRadius.circular(widget.borderRadius ?? 8),
                     ),
                 enabledBorder: OutlineInputBorder(
                   borderSide:
                       BorderSide(color: ColorScheme.of(context).outlineVariant),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(widget.borderRadius ?? 8),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: const BorderSide(
                     width: 2,
                     color: AppTheme.primaryColor,
                   ),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(widget.borderRadius ?? 8),
                 )),
           ),
         ],

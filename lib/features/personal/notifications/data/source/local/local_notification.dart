@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
-import '../../../../../core/utilities/app_string.dart';
-import '../../domain/entities/notification_entity.dart';
-import '../models/notification_model.dart';
+import '../../../../../../core/utilities/app_string.dart';
+import '../../../domain/entities/notification_entity.dart';
+import '../../models/notification_model.dart';
 
 class LocalNotifications {
   static final String boxTitle = AppStrings.localNotificationBox;

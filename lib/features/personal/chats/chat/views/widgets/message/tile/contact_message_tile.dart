@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../../../../../core/widgets/custom_memory_image.dart';
 import '../../../../../../../attachment/domain/entities/attachment_entity.dart';
 
@@ -90,12 +91,37 @@ class _ContactMessageTileState extends State<ContactMessageTile> {
     };
   }
 
+  Future<void> _openDialer(String phone) async {
+    final Uri uri = Uri(scheme: 'tel', path: phone);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    }
+  }
+
+  Future<void> _openSms(String phone) async {
+    final Uri uri = Uri(scheme: 'sms', path: phone);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    }
+  }
+
+  Future<void> _openContacts() async {
+    // This just opens the phone's contacts app if available
+    final Uri uri = Uri(scheme: 'content', path: 'contacts/people');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Unable to open contacts app')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
 
-    // Show dummy values until downloaded
     final String displayName = _contactDetails?['name'] ??
         widget.attachment.originalName.replaceAll('.vcf', '');
     final String displayPhone = _contactDetails?['phone'] ?? '••• ••• ••••';
@@ -110,7 +136,7 @@ class _ContactMessageTileState extends State<ContactMessageTile> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
-        spacing: 6,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           CustomMemoryImage(
             showLoader: true,
@@ -118,9 +144,9 @@ class _ContactMessageTileState extends State<ContactMessageTile> {
             displayName: displayName,
             photo: displayPhoto,
           ),
+          const SizedBox(width: 6),
           Expanded(
             child: Column(
-              spacing: 4,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
@@ -131,6 +157,23 @@ class _ContactMessageTileState extends State<ContactMessageTile> {
                   ),
                 ),
                 Text('${'contact'.tr()}: $displayPhone'),
+                if (_isDownloaded)
+                  Row(
+                    children: <Widget>[
+                      IconButton(
+                        icon: const Icon(Icons.contacts, size: 20),
+                        onPressed: _openContacts,
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.phone, size: 20),
+                        onPressed: () => _openDialer(displayPhone),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.sms, size: 20),
+                        onPressed: () => _openSms(displayPhone),
+                      ),
+                    ],
+                  ),
               ],
             ),
           ),
