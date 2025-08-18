@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../domain/entities/post_entity.dart';
+import '../../../domain/entities/post_entity.dart';
 
 class PostPropertyDetailWidget extends StatelessWidget {
   const PostPropertyDetailWidget({required this.post, super.key});

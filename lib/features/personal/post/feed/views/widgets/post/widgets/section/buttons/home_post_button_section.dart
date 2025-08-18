@@ -32,14 +32,16 @@ class PostButtonSection extends StatelessWidget {
                         context, 'please_login_first'.tr());
                   }
                 },
-                child: AbsorbPointer(
-                  absorbing: LocalAuth.currentUser?.userID == null,
-                  child: (post.type == ListingType.pets ||
-                          post.type == ListingType.vehicle ||
-                          post.type == ListingType.property)
-                      ? ViewingPostButtonTile(post: post)
-                      : StorePostButtonTile(post: post),
-                ),
+                child: LocalAuth.uid == post.createdBy
+                    ? PostButtonsForUser(post: post)
+                    : AbsorbPointer(
+                        absorbing: LocalAuth.currentUser?.userID == null,
+                        child: (post.type == ListingType.pets ||
+                                post.type == ListingType.vehicle ||
+                                post.type == ListingType.property)
+                            ? ViewingPostButtonTile(post: post)
+                            : StorePostButtonTile(post: post),
+                      ),
               ));
   }
 }

@@ -14,69 +14,78 @@ class ConditionDeliveryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
-        spacing: 6,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            spacing: 8,
             children: <Widget>[
               PostRatingSection(post: post),
-              Icon(Icons.circle,
-                  size: 8, color: ColorScheme.of(context).outlineVariant),
-              Text.rich(
-                maxLines: 1,
-                TextSpan(children: <InlineSpan>[
-                  TextSpan(
-                    text: '${'condition'.tr()}: ',
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelSmall
-                        ?.copyWith(color: ColorScheme.of(context).outline),
-                  ),
-                  TextSpan(
-                    text: post.condition.code.tr(),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        overflow: TextOverflow.ellipsis,
-                        color: AppTheme.primaryColor,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ]),
+              _buildInfoItem(
+                context,
+                iconColor: colorScheme.outlineVariant,
+                label: 'condition'.tr(),
+                value: post.condition.code.tr(),
               ),
-              Icon(Icons.circle,
-                  size: 8, color: ColorScheme.of(context).outlineVariant),
-              Text.rich(
-                maxLines: 1,
-                TextSpan(children: <InlineSpan>[
-                  TextSpan(
-                    text: '${'delivery'.tr()}: ',
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelSmall
-                        ?.copyWith(color: ColorScheme.of(context).outline),
-                  ),
-                  TextSpan(
-                    text: post.deliveryType.code.tr(),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        overflow: TextOverflow.ellipsis,
-                        color: AppTheme.primaryColor,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ]),
+              _buildInfoItem(
+                context,
+                iconColor: colorScheme.outlineVariant,
+                label: 'delivery'.tr(),
+                value: 'uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu',
               ),
             ],
           ),
+          const SizedBox(height: 6),
           Text(
-            '${'return'.tr()}:${'dummy data'}',
-            style: TextTheme.of(context)
-                .bodyMedium
-                ?.copyWith(fontWeight: FontWeight.w500),
-          )
+            '${'return'.tr()}: dummy data',
+            style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
+          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildInfoItem(BuildContext context,
+      {required Color iconColor,
+      required String label,
+      required String value}) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
+    return Row(
+      children: <Widget>[
+        Icon(Icons.circle, size: 8, color: iconColor),
+        const SizedBox(width: 6),
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 100),
+          child: Text.rich(
+            TextSpan(
+              children: <InlineSpan>[
+                TextSpan(
+                  text: '$label: ',
+                  style: textTheme.labelSmall
+                      ?.copyWith(color: colorScheme.outline),
+                ),
+                TextSpan(
+                  text: value,
+                  style: textTheme.bodySmall?.copyWith(
+                    overflow: TextOverflow.ellipsis,
+                    color: AppTheme.primaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
     );
   }
 }

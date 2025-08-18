@@ -100,6 +100,18 @@ class AppStrings {
       'assets/icons/svg_icons/selloutChatMenuPhotoIcon.svg';
   static const String selloutChatMenuVideoIcon =
       'assets/icons/svg_icons/selloutChatMenuVideoIcon.svg';
+  static const String selloutPostDetailAreaIcon =
+      'assets/icons/svg_icons/selloutPostDetailAreaIcon.svg';
+  static const String selloutPostDetailBathroomIcon =
+      'assets/icons/svg_icons/selloutPostDetailBathroomIcon.svg';
+  static const String selloutPostDetailBedroomIcon =
+      'assets/icons/svg_icons/selloutPostDetailBedroomIcon.svg';
+  static const String selloutPostDetailGardenIcon =
+      'assets/icons/svg_icons/selloutPostDetailGardenIcon.svg';
+  static const String selloutPostDetailTenureIcon =
+      'assets/icons/svg_icons/selloutPostDetailTenureIcon.svg';
+  static const String selloutPostDetailhomeIcon =
+      'assets/icons/svg_icons/selloutPostDetailhomeIcon.svg';
 
   // png icons
   static const String selloutAddListingItemIcon =
