@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../domain/entities/post_entity.dart';
+import '../../../domain/entities/post_entity.dart';
 
 class PostVehicleDetailWidget extends StatelessWidget {
   const PostVehicleDetailWidget({required this.post, super.key});
@@ -8,28 +8,24 @@ class PostVehicleDetailWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              _detailItem('fuel_type'.tr(), post.fuelType ?? 'na'.tr()),
-              _detailItem('body_type'.tr(), post.bodyType ?? 'na'.tr()),
-              _detailItem(
-                'engine'.tr(),
-                _boolToYesNo(post.vaccinationUpToDate),
-              ),
-              // _detailItem('gearbox'.tr(), post.address ?? 'na'.tr()),
-              _detailItem('milage'.tr(), post.mileage.toString()),
-              _detailItem('doors'.tr(), post.doors.toString()),
-              _detailItem('seats'.tr(), post.seats.toString()),
-              _detailItem('emission'.tr(), post.emission ?? 'na'.tr()),
-            ],
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          _detailItem('fuel_type'.tr(), post.fuelType ?? 'na'.tr()),
+          _detailItem('body_type'.tr(), post.bodyType ?? 'na'.tr()),
+          _detailItem(
+            'engine'.tr(),
+            _boolToYesNo(post.vaccinationUpToDate),
           ),
-        ),
-      ],
+          // _detailItem('gearbox'.tr(), post.address ?? 'na'.tr()),
+          _detailItem('milage'.tr(), post.mileage.toString()),
+          _detailItem('doors'.tr(), post.doors.toString()),
+          _detailItem('seats'.tr(), post.seats.toString()),
+          _detailItem('emission'.tr(), post.emission ?? 'na'.tr()),
+        ],
+      ),
     );
   }
 

@@ -1,21 +1,17 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/sources/data_state.dart';
-import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../data/sources/local/local_post.dart';
 import '../../../domain/entities/post_entity.dart';
 import '../../../domain/entities/visit/visiting_entity.dart';
-import '../../../feed/views/widgets/post/widgets/section/buttons/home_post_button_section.dart';
-import '../../../feed/views/widgets/post/widgets/section/buttons/type/post_button_for_user_tile.dart';
 import '../providers/post_detail_provider.dart';
-import '../widgets/post_detail_condition_delivery_detail.dart';
-import '../widgets/post_detail_attachment_slider.dart';
-import '../widgets/post_detail_description_section.dart';
-import '../widgets/post_detail_postage_return_delivery.dart';
-import '../widgets/post_detail_seller_section.dart';
-import '../widgets/post_detail_title_amount_section.dart';
-import '../widgets/reviews/post_detail_review_overview_section.dart';
+import '../widgets/post_details_sections/cloth_foot_post_detail_section.dart';
+import '../widgets/post_details_sections/food_drink_post_Detail_section.dart';
+import '../widgets/post_details_sections/item_post_detail_section.dart';
+import '../widgets/post_details_sections/property_post_detail_section.dart';
+import '../widgets/post_details_sections/vehicle_post_detail_section.dart';
 
 class PostDetailScreen extends StatelessWidget {
   const PostDetailScreen({super.key});
@@ -56,27 +52,24 @@ class PostDetailScreen extends StatelessWidget {
         ) {
           final PostEntity? post =
               snapshot.data?.entity ?? LocalPost().post(postID);
-          final bool isMe =
-              post?.createdBy == (LocalAuth.currentUser?.businessID ?? '-');
           return post == null
               ? const SizedBox()
-              : SingleChildScrollView(
-                  child: Column(children: <Widget>[
-                    PostDetailAttachmentSlider(attachments: post.fileUrls),
-                    PostDetailTitleAmountSection(post: post),
-                    if (isMe == true)
-                      PostButtonsForUser(visit: visit, post: post),
-                    if (isMe == false)
-                      PostButtonSection(
-                        post: post,
-                      ),
-                    ConditionDeliveryWidget(post: post),
-                    PostDetailDescriptionSection(post: post),
-                    ReturnPosrtageAndExtraDetailsSection(post: post),
-                    PostDetailSellerSection(post: post),
-                    PostDetailReviewOverviewSection(post: post),
-                  ]),
-                );
+              : post.listID == ListingType.items.json
+                  ? ItemPostDetailSection(post: post, visit: visit)
+                  : post.listID == ListingType.clothAndFoot.json
+                      ? ClothFootPostDetailSection(post: post, visit: visit)
+                      : post.listID == ListingType.foodAndDrink.json
+                          ? FoodDrinkPostDetailSection(post: post, visit: visit)
+                          : post.listID == ListingType.property.json
+                              ? FoodDrinkPostDetailSection(
+                                  post: post, visit: visit)
+                              : post.listID == ListingType.pets.json
+                                  ? PropertyPostDetailSection(
+                                      post: post, visit: visit)
+                                  : post.listID == ListingType.vehicle.json
+                                      ? VehiclePostDetailSection(
+                                          post: post, visit: visit)
+                                      : const SizedBox.shrink();
         },
       ),
     );
