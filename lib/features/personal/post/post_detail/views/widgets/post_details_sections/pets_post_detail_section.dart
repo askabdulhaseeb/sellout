@@ -8,11 +8,11 @@ import '../post_detail_condition_delivery_detail.dart';
 import '../post_detail_description_section.dart';
 import '../post_detail_seller_section.dart';
 import '../post_detail_title_amount_section.dart';
-import '../post_vehicle_detail_widget.dart';
+import '../post_pets_detail_widget.dart';
 import '../reviews/post_detail_review_overview_section.dart';
 
-class VehiclePostDetailSection extends StatelessWidget {
-  const VehiclePostDetailSection({
+class PetsPostDetailSection extends StatelessWidget {
+  const PetsPostDetailSection({
     required this.post,
     required this.visit,
     super.key,
@@ -33,8 +33,8 @@ class VehiclePostDetailSection extends StatelessWidget {
           visit: visit,
           post: post,
         ),
-        PostVehicleDetailWidget(post: post),
-        // PostPetDetailWidget(post: post),
+        // PostVehicleDetailWidget(post: post),
+        PostPetDetailWidget(post: post),
         // PostDetailPropertyKeyFeaturesWidget(
         //   post: post,
         // ),

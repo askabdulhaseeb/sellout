@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/sources/local/hive_db.dart';
+import '../../../../../../core/utilities/app_string.dart';
 import '../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../../routes/app_linking.dart';
@@ -31,49 +32,49 @@ class PersonalSettingMoreInformationScreen extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         children: <Widget>[
           PersonalSettingTile(
-            icon: Icons.privacy_tip_outlined,
+            icon: AppStrings.selloutPrivacyPolicyIcon,
             title: 'privacy_policy'.tr(),
             onTap: () {
               AppNavigator.pushNamed(PrivacyPolicyScreen.routeName);
             },
           ),
           PersonalSettingTile(
-            icon: Icons.text_format_sharp,
+            icon: AppStrings.selloutTermsConditionIcon,
             title: 'terms_and_conditions'.tr(),
             onTap: () {
               AppNavigator.pushNamed(TermsOfServiceScreen.routeName);
             },
           ),
           PersonalSettingTile(
-            icon: Icons.cookie,
+            icon: AppStrings.selloutCookiesPolicyIcon,
             title: 'cookies_policy'.tr(),
             onTap: () {
               AppNavigator.pushNamed(CookiesPolicyScreen.routeName);
             },
           ),
           PersonalSettingTile(
-            icon: Icons.lock_person_outlined,
+            icon: AppStrings.selloutSupportPersonIcon,
             title: 'acceptable_use_policy'.tr(),
             onTap: () {
               AppNavigator.pushNamed(AcceptableUsePolicyScreen.routeName);
             },
           ),
           PersonalSettingTile(
-            icon: Icons.display_settings_rounded,
+            icon: AppStrings.selloutSupportPersonIcon,
             title: 'dispute_resolution_procedure'.tr(),
             onTap: () {
               AppNavigator.pushNamed(DisputeResolutionScreen.routeName);
             },
           ),
           PersonalSettingTile(
-            icon: Icons.groups_2_outlined,
+            icon: AppStrings.selloutCommunityGuidlinesIcon,
             title: 'community_standards'.tr(),
             onTap: () {
               AppNavigator.pushNamed(CommunityStandardsScreen.routeName);
             },
           ),
           PersonalSettingTile(
-            icon: Icons.timelapse_sharp,
+            icon: AppStrings.selloutSupportPersonIcon,
             title: 'time_away'.tr(),
             onTap: () {
               AppNavigator.pushNamed(TimeAwayScreen.routeName);
@@ -81,13 +82,13 @@ class PersonalSettingMoreInformationScreen extends StatelessWidget {
           ),
           InDevMode(
             child: PersonalSettingTile(
-              icon: Icons.support_agent,
+              icon: AppStrings.selloutSupportPersonIcon,
               title: 'support'.tr(),
               onTap: () {},
             ),
           ),
           PersonalSettingTile(
-            icon: Icons.info_outline,
+            icon: AppStrings.selloutAboutIcon,
             title: 'about'.tr(),
             onTap: () {
               AppNavigator.pushNamed(AboutUsScreen.routeName);
@@ -95,20 +96,20 @@ class PersonalSettingMoreInformationScreen extends StatelessWidget {
           ),
           InDevMode(
             child: PersonalSettingTile(
-              icon: Icons.no_accounts,
+              icon: AppStrings.selloutDeleteAccountSettingIcon,
               title: 'deactivate_account'.tr(),
               onTap: () {},
             ),
           ),
-          InDevMode(
-            child: PersonalSettingTile(
-              icon: Icons.delete_outline_outlined,
-              title: 'delete_account'.tr(),
-              onTap: () {},
-            ),
-          ),
+          // InDevMode(
+          //   child: PersonalSettingTile(
+          //     icon: Icons.delete_outline_outlined,
+          //     title: 'delete_account'.tr(),
+          //     onTap: () {},
+          //   ),
+          // ),
           PersonalSettingTile(
-            icon: Icons.logout,
+            icon: AppStrings.selloutLogoutIcon,
             iconColor: Theme.of(context).primaryColor,
             textColor: Theme.of(context).primaryColor,
             displayTrailingIcon: false,

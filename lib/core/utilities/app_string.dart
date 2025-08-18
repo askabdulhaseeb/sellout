@@ -138,6 +138,22 @@ class AppStrings {
       'assets/icons/svg_icons/selloutPrivacySettingIcon.svg';
   static const String selloutSecuritySettingIcon =
       'assets/icons/svg_icons/selloutSecuritySettingIcon.svg';
+  static const String selloutAboutIcon =
+      'assets/icons/svg_icons/selloutAboutIcon.svg';
+  static const String selloutCommunityGuidlinesIcon =
+      'assets/icons/svg_icons/selloutCommunityGuidlinesIcon.svg';
+  static const String selloutCookiesPolicyIcon =
+      'assets/icons/svg_icons/selloutCookiesPolicyIcon.svg';
+  static const String selloutDeleteAccountSettingIcon =
+      'assets/icons/svg_icons/selloutDeleteAccountSettingIcon.svg';
+  static const String selloutLogoutIcon =
+      'assets/icons/svg_icons/selloutLogoutIcon.svg';
+  static const String selloutPrivacyPolicyIcon =
+      'assets/icons/svg_icons/selloutPrivacyPolicyIcon.svg';
+  static const String selloutSupportPersonIcon =
+      'assets/icons/svg_icons/selloutSupportPersonIcon.svg';
+  static const String selloutTermsConditionIcon =
+      'assets/icons/svg_icons/selloutTermsConditionIcon.svg';
   // png icons
   static const String selloutAddListingItemIcon =
       'assets/icons/png_icons/selloutAddListingItemIcon.png';

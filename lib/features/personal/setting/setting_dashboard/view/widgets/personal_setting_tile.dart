@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../../core/widgets/custom_svg_icon.dart';
 
 class PersonalSettingTile extends StatelessWidget {
   const PersonalSettingTile({
@@ -8,14 +9,16 @@ class PersonalSettingTile extends StatelessWidget {
     this.displayTrailingIcon = true,
     this.iconColor,
     this.textColor,
+    this.bgColor,
     super.key,
   });
-  final IconData icon;
+  final String icon;
   final String title;
   final VoidCallback onTap;
   final bool displayTrailingIcon;
   final Color? iconColor;
   final Color? textColor;
+  final Color? bgColor;
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +34,9 @@ class PersonalSettingTile extends StatelessWidget {
           children: <Widget>[
             CircleAvatar(
               radius: 16,
-              backgroundColor: Theme.of(context).dividerColor,
-              child: Icon(
-                icon,
+              backgroundColor: bgColor ?? Theme.of(context).dividerColor,
+              child: CustomSvgIcon(
+                assetPath: icon,
                 color: iconColor,
                 size: 16,
               ),

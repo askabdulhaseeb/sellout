@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../../../../../../core/utilities/app_string.dart';
 import '../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../setting_options/buyer_orders/screens/personal_setting_buyer_order_screen.dart';
@@ -30,14 +31,14 @@ class PersonalSettingScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         children: <Widget>[
           PersonalSettingTile(
-            icon: Icons.person_2_outlined,
+            icon: AppStrings.selloutAccountSettingIcon,
             title: 'account'.tr(),
             onTap: () {
               AppNavigator.pushNamed(AccountSettingsScreen.routeName);
             },
           ),
           PersonalSettingTile(
-            icon: Icons.notifications_none,
+            icon: AppStrings.selloutNotificationSettingIcon,
             title: 'notification'.tr(),
             onTap: () {
               Navigator.pushNamed(
@@ -46,13 +47,13 @@ class PersonalSettingScreen extends StatelessWidget {
           ),
           InDevMode(
             child: PersonalSettingTile(
-              icon: Icons.payment,
+              icon: AppStrings.selloutPaymentSettingIcon,
               title: 'payment'.tr(),
               onTap: () {},
             ),
           ),
           PersonalSettingTile(
-            icon: Icons.privacy_tip_outlined,
+            icon: AppStrings.selloutPrivacySettingIcon,
             title: 'privacy'.tr(),
             onTap: () {
               Navigator.pushNamed(
@@ -60,7 +61,7 @@ class PersonalSettingScreen extends StatelessWidget {
             },
           ),
           PersonalSettingTile(
-            icon: Icons.security,
+            icon: AppStrings.selloutSecuritySettingIcon,
             title: 'security'.tr(),
             onTap: () {
               AppNavigator.pushNamed(SettingSecurityScreen.routeName);
@@ -68,21 +69,21 @@ class PersonalSettingScreen extends StatelessWidget {
           ),
           InDevMode(
             child: PersonalSettingTile(
-              icon: Icons.contact_page_outlined,
+              icon: AppStrings.selloutContactSettingIcon,
               title: 'contact'.tr(),
               onTap: () {},
             ),
           ),
           InDevMode(
             child: PersonalSettingTile(
-              icon: Icons.card_membership,
+              icon: AppStrings.selloutMembershipSettingIcon,
               title: 'membership_subscription'.tr(),
               onTap: () {},
             ),
           ),
           InDevMode(
             child: PersonalSettingTile(
-              icon: Icons.balance,
+              icon: AppStrings.selloutBalanaceSettingIcon,
               title: 'balance'.tr(),
               onTap: () {
                 // AppNavigator.pushNamed(BalanceScreen.routeName);
@@ -91,28 +92,28 @@ class PersonalSettingScreen extends StatelessWidget {
           ),
           InDevMode(
             child: PersonalSettingTile(
-              icon: Icons.wallet,
+              icon: AppStrings.selloutPaymentSettingIcon,
               title: 'postage'.tr(),
               onTap: () {},
             ),
           ),
           InDevMode(
             child: PersonalSettingTile(
-              icon: Icons.checklist_outlined,
+              icon: AppStrings.selloutOrderReceiptSettingIcon,
               title: 'order_receipts'.tr(),
               onTap: () {},
             ),
           ),
           InDevMode(
             child: PersonalSettingTile(
-              icon: Icons.shopping_bag_outlined,
+              icon: AppStrings.selloutYouorderSettingIcon,
               title: 'your_orders'.tr(),
               onTap: () => Navigator.of(context)
                   .pushNamed(PersonalSettingBuyerOrderScreen.routeName),
             ),
           ),
           PersonalSettingTile(
-            icon: Icons.info_outline,
+            icon: AppStrings.selloutMoreSettingIcon,
             title: 'more_information'.tr(),
             onTap: () => Navigator.of(context)
                 .pushNamed(PersonalSettingMoreInformationScreen.routeName),

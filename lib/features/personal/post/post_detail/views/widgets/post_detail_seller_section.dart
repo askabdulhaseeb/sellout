@@ -67,7 +67,7 @@ class _PostDetailSellerSectionState extends State<PostDetailSellerSection> {
 
     return Container(
       margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: ColorScheme.of(context).outlineVariant),
@@ -102,8 +102,6 @@ class _PostDetailSellerSectionState extends State<PostDetailSellerSection> {
               ),
               Row(
                 spacing: 4,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
                   Icon(
                     CupertinoIcons.star_fill,
