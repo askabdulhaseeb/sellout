@@ -112,7 +112,32 @@ class AppStrings {
       'assets/icons/svg_icons/selloutPostDetailTenureIcon.svg';
   static const String selloutPostDetailhomeIcon =
       'assets/icons/svg_icons/selloutPostDetailhomeIcon.svg';
-
+  static const String selloutAddToCartIcon =
+      'assets/icons/svg_icons/selloutAddToCartIcon.svg';
+  static const String selloutVoiceNoteSpeakerIcon =
+      'assets/icons/svg_icons/selloutVoiceNoteSpeakerIcon.svg';
+  static const String selloutAccountSettingIcon =
+      'assets/icons/svg_icons/selloutAccountSettingIcon.svg';
+  static const String selloutBalanaceSettingIcon =
+      'assets/icons/svg_icons/selloutBalanaceSettingIcon.svg';
+  static const String selloutContactSettingIcon =
+      'assets/icons/svg_icons/selloutContactSettingIcon.svg';
+  static const String selloutMembershipSettingIcon =
+      'assets/icons/svg_icons/selloutMembershipSettingIcon.svg';
+  static const String selloutMoreSettingIcon =
+      'assets/icons/svg_icons/selloutMoreSettingIcon.svg';
+  static const String selloutNotificationSettingIcon =
+      'assets/icons/svg_icons/selloutNotificationSettingIcon.svg';
+  static const String selloutOrderReceiptSettingIcon =
+      'assets/icons/svg_icons/selloutOrderReceiptSettingIcon.svg';
+  static const String selloutYouorderSettingIcon =
+      'assets/icons/svg_icons/YouorderSettingIcon.svg';
+  static const String selloutPaymentSettingIcon =
+      'assets/icons/svg_icons/selloutPaymentSettingIcon.svg';
+  static const String selloutPrivacySettingIcon =
+      'assets/icons/svg_icons/selloutPrivacySettingIcon.svg';
+  static const String selloutSecuritySettingIcon =
+      'assets/icons/svg_icons/selloutSecuritySettingIcon.svg';
   // png icons
   static const String selloutAddListingItemIcon =
       'assets/icons/png_icons/selloutAddListingItemIcon.png';
