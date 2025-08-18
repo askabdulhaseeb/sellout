@@ -74,7 +74,7 @@ class _SearchServicesSectionState extends State<SearchServicesSection> {
                       crossAxisCount: 2,
                       crossAxisSpacing: 6.0,
                       mainAxisSpacing: 6.0,
-                      childAspectRatio: 0.8,
+                      childAspectRatio: 0.66,
                     ),
                   ),
                 ),

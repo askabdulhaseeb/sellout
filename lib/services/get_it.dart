@@ -112,6 +112,11 @@ import '../features/personal/listing/listing_form/domain/repository/add_listing_
 import '../features/personal/listing/listing_form/domain/usecase/add_listing_usecase.dart';
 import '../features/personal/listing/listing_form/domain/usecase/edit_listing_usecase.dart';
 import '../features/personal/listing/listing_form/views/providers/add_listing_form_provider.dart';
+import '../features/personal/notifications/data/repo/notification_repo_impl.dart';
+import '../features/personal/notifications/data/source/remote/remote_notification.dart';
+import '../features/personal/notifications/domain/repo/notification_repo.dart';
+import '../features/personal/notifications/domain/usecase/get_all_notifications_usecase.dart';
+import '../features/personal/notifications/view/provider/notification_provider.dart';
 import '../features/personal/order/data/repo/order_repo_impl.dart';
 import '../features/personal/order/domain/repo/order_repo.dart';
 import '../features/personal/order/view/provider/order_provider.dart';
@@ -198,6 +203,7 @@ void setupLocator() {
   _search();
   _settings();
   _order();
+  _notification();
 }
 
 void _auth() {
@@ -634,4 +640,22 @@ void _order() {
   locator.registerLazySingleton<OrderProvider>(() => OrderProvider(locator()));
   locator.registerLazySingleton<PersonalSettingBuyerOrderProvider>(
       () => PersonalSettingBuyerOrderProvider(locator()));
+}
+
+void _notification() {
+  // API
+  //
+  locator.registerFactory<NotificationRemote>(() => NotificationRemoteImpl());
+  // REPOSITORIES
+  //
+  locator.registerFactory<NotificationRepository>(
+      () => NotificationRepositoryImpl(locator()));
+  // USECASES
+  //
+  locator.registerFactory<GetAllNotificationsUseCase>(
+      () => GetAllNotificationsUseCase(locator()));
+
+  // Providers
+  locator.registerLazySingleton<NotificationProvider>(
+      () => NotificationProvider(locator()));
 }

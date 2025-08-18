@@ -1,4 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../domain/entities/promo_entity.dart';
@@ -29,18 +28,13 @@ class PromoHomeGridViewTile extends StatelessWidget {
         );
       },
       child: Column(
+        spacing: 4,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Container(
-            height: 120, // Add fixed/min height
-            width: double.infinity,
-            decoration: BoxDecoration(
-              border: Border.all(color: Theme.of(context).dividerColor),
-              borderRadius: BorderRadius.circular(12),
-              color: Theme.of(context).dividerColor,
-            ),
+          AspectRatio(
+            aspectRatio: 1,
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(8),
               child: CustomNetworkImage(
                 imageURL: imageUrl,
                 fit: BoxFit.cover,
@@ -48,29 +42,11 @@ class PromoHomeGridViewTile extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Expanded(
-                  child: Text(
-                    promo.title,
-                    style: TextTheme.of(context).bodyLarge,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '${'na'.tr()} ${promo.price.toString()}',
-                  style: TextTheme.of(context)
-                      .bodyLarge
-                      ?.copyWith(fontWeight: FontWeight.w500),
-                ),
-              ],
-            ),
+          Text(
+            promo.title,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+            style: const TextStyle(fontWeight: FontWeight.w500),
           ),
         ],
       ),

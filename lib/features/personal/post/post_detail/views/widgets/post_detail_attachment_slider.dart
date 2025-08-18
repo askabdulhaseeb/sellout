@@ -70,43 +70,47 @@ class _PostDetailAttachmentSliderState
       return Center(child: Text('no_attachments'.tr()));
     }
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        AspectRatio(
-          aspectRatio: 1,
-          child: PageView.builder(
-            key: const PageStorageKey<String>('main_attachments'),
-            controller: _pageController,
-            onPageChanged: _onPageChanged,
-            itemCount: widget.attachments.length,
-            itemBuilder: (BuildContext context, int index) {
-              final AttachmentEntity attachment = widget.attachments[index];
-              return MainAttachmentDisplayKeepAlive(
-                attachment: attachment,
-                isVideo: _isVideo(attachment),
-              );
-            },
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          AspectRatio(
+            aspectRatio: 1,
+            child: PageView.builder(
+              key: const PageStorageKey<String>('main_attachments'),
+              controller: _pageController,
+              onPageChanged: _onPageChanged,
+              itemCount: widget.attachments.length,
+              itemBuilder: (BuildContext context, int index) {
+                final AttachmentEntity attachment = widget.attachments[index];
+                return MainAttachmentDisplayKeepAlive(
+                  attachment: attachment,
+                  isVideo: _isVideo(attachment),
+                );
+              },
+            ),
           ),
-        ),
-        if (widget.showThumbnails && widget.attachments.length > 1) ...<Widget>[
-          const SizedBox(height: 10),
-          AttachmentThumbnails(
-            attachments: widget.attachments,
-            selectedIndex: selectedIndex,
-            onSelect: (int index) {
-              _pageController.animateToPage(
-                index,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-              );
-              setState(() => selectedIndex = index);
-            },
-            isVideo: _isVideo,
-            controller: _thumbController,
-          ),
+          if (widget.showThumbnails &&
+              widget.attachments.length > 1) ...<Widget>[
+            const SizedBox(height: 10),
+            AttachmentThumbnails(
+              attachments: widget.attachments,
+              selectedIndex: selectedIndex,
+              onSelect: (int index) {
+                _pageController.animateToPage(
+                  index,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
+                setState(() => selectedIndex = index);
+              },
+              isVideo: _isVideo,
+              controller: _thumbController,
+            ),
+          ],
         ],
-      ],
+      ),
     );
   }
 }
@@ -135,22 +139,16 @@ class _MainAttachmentDisplayKeepAliveState
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-      decoration: BoxDecoration(
+    return AspectRatio(
+      aspectRatio: 1,
+      child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
-      ),
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: widget.isVideo
-              ? VideoWidget(videoSource: widget.attachment.url, play: true)
-              : CustomNetworkImage(
-                  imageURL: widget.attachment.url,
-                  fit: BoxFit.cover,
-                ),
-        ),
+        child: widget.isVideo
+            ? VideoWidget(videoSource: widget.attachment.url, play: true)
+            : CustomNetworkImage(
+                imageURL: widget.attachment.url,
+                fit: BoxFit.cover,
+              ),
       ),
     );
   }
@@ -192,8 +190,7 @@ class AttachmentThumbnails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
+    return SizedBox(
       height: 100,
       child: ListView.builder(
         key: const PageStorageKey<String>('thumbnails_list'),

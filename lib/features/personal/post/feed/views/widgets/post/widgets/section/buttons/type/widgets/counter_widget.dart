@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../../../../../../../../../../core/theme/app_theme.dart';
+import '../../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 
 class PostCounterWidget extends StatefulWidget {
   const PostCounterWidget({
@@ -41,44 +43,35 @@ class _PostCounterWidgetState extends State<PostCounterWidget> {
       borderRadius: borderRadius,
     );
 
-    return Container(
-      height: 47,
-      padding: const EdgeInsets.all(2),
-      decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).primaryColor, width: 2),
-          borderRadius: BorderRadius.circular(8)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          InkWell(
-            borderRadius: borderRadius,
-            onTap: () => _updateQuantity(quantity - 1),
-            child: Container(
-              margin: const EdgeInsets.all(6),
-              padding: const EdgeInsets.all(4),
-              decoration: decoration,
-              child: Icon(Icons.remove,
-                  size: 12, color: Theme.of(context).primaryColor),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text(quantity.toString(),
-                style: TextTheme.of(context).titleMedium),
-          ),
-          InkWell(
-            borderRadius: borderRadius,
-            onTap: () => _updateQuantity(quantity + 1),
-            child: Container(
-              margin: const EdgeInsets.all(6),
-              padding: const EdgeInsets.all(4),
-              decoration: decoration,
-              child: Icon(Icons.add,
-                  size: 12, color: Theme.of(context).primaryColor),
-            ),
-          ),
-        ],
+    return CustomElevatedButton(
+      prefixSuffixPadding: const EdgeInsets.symmetric(horizontal: 4),
+      rowAlignment: MainAxisAlignment.spaceBetween,
+      bgColor: Theme.of(context).scaffoldBackgroundColor,
+      border: Border.all(color: AppTheme.primaryColor, width: 2),
+      isLoading: false,
+      onTap: () {},
+      prefix: InkWell(
+        borderRadius: borderRadius,
+        onTap: () => _updateQuantity(quantity - 1),
+        child: Container(
+          padding: const EdgeInsets.all(2),
+          decoration: decoration,
+          child: Icon(Icons.remove,
+              size: 12, color: Theme.of(context).primaryColor),
+        ),
       ),
+      suffix: InkWell(
+        borderRadius: borderRadius,
+        onTap: () => _updateQuantity(quantity + 1),
+        child: Container(
+          padding: const EdgeInsets.all(2),
+          decoration: decoration,
+          child:
+              Icon(Icons.add, size: 12, color: Theme.of(context).primaryColor),
+        ),
+      ),
+      title: quantity.toString(),
+      textStyle: const TextStyle(fontSize: 16),
     );
   }
 }

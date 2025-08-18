@@ -5,15 +5,15 @@ import 'widgets/post_add_to_basket_button.dart';
 import 'widgets/post_buy_now_button.dart';
 import 'widgets/post_make_offer_button.dart';
 
-class PostItemButtonTile extends StatefulWidget {
-  const PostItemButtonTile({required this.post, super.key});
+class StorePostButtonTile extends StatefulWidget {
+  const StorePostButtonTile({required this.post, super.key});
   final PostEntity post;
 
   @override
-  State<PostItemButtonTile> createState() => _PostItemButtonTileState();
+  State<StorePostButtonTile> createState() => _StorePostButtonTileState();
 }
 
-class _PostItemButtonTileState extends State<PostItemButtonTile> {
+class _StorePostButtonTileState extends State<StorePostButtonTile> {
   int quantity = 1;
 
   @override

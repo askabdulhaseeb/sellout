@@ -17,8 +17,8 @@ class ServiceGridTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           // Image
-          SizedBox(
-            height: 140,
+          AspectRatio(
+            aspectRatio: 1,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(6),
               child: CustomNetworkImage(
@@ -28,7 +28,6 @@ class ServiceGridTile extends StatelessWidget {
               ),
             ),
           ),
-
           // Name
           Text(
             service.name,
@@ -38,8 +37,14 @@ class ServiceGridTile extends StatelessWidget {
           ),
           // Review
           RatingDisplayWidget(
-              fontSize: 10, size: 12, ratingList: service.listOfReviews)
+              fontSize: 10, size: 12, ratingList: service.listOfReviews),
           // Price
+          Text(
+            service.priceStr,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+            style: const TextStyle(fontWeight: FontWeight.w500),
+          ),
         ],
       ),
     );

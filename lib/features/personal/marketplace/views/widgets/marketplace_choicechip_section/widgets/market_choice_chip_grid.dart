@@ -35,7 +35,7 @@ class MarketplaceChoiceGridWidget extends StatelessWidget {
             crossAxisCount: 2,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
-            childAspectRatio: 0.8,
+            childAspectRatio: 0.66,
           ),
           itemBuilder: (BuildContext context, int index) {
             return PostGridViewTile(post: posts[index]);

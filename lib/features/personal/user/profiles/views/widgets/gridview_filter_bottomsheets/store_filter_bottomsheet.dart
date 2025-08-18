@@ -267,8 +267,8 @@ class StoreFilterSheetConditionTile extends StatelessWidget {
 }
 
 class StoreFilterSheetDeliveryTypeTile extends StatelessWidget {
-  final bool isStore;
   const StoreFilterSheetDeliveryTypeTile({required this.isStore, super.key});
+  final bool isStore;
 
   @override
   Widget build(BuildContext context) {

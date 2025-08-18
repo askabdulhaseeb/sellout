@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../routes/app_linking.dart';
 import '../../../../../../../services/get_it.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -56,7 +57,7 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
     final ProfileProvider pro =
         Provider.of<ProfileProvider>(context, listen: false);
     if (widget.user?.uid == null) {
-      return const Center(child: Text('User not found'));
+      return const Center(child: Text('user_not_found'));
     }
 
     final GetPromoByIdUsecase getPromoByIdUsecase =
@@ -68,7 +69,7 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
       builder: (BuildContext context,
           AsyncSnapshot<DataState<List<PromoEntity>>> snapshot) {
         if (!snapshot.hasData || snapshot.data?.entity == null) {
-          return const Center(child: Text('No promos found'));
+          Center(child: Text('no_promo_found'.tr()));
         }
 
         _allPromos = snapshot.data!.entity!;
@@ -88,7 +89,7 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
               _SearchBar(controller: _searchController),
             const SizedBox(height: 10),
             if (_filteredPromos.isEmpty)
-              const Center(child: Text('no_promo_found'))
+              Center(child: Text('no_promo_found'.tr()))
             else
               GridView.builder(
                 shrinkWrap: true,
@@ -96,9 +97,9 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
                 itemCount: _filteredPromos.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 1,
+                  crossAxisSpacing: 6,
+                  mainAxisSpacing: 6,
+                  childAspectRatio: 0.84,
                 ),
                 itemBuilder: (BuildContext context, int index) {
                   return PromoHomeGridViewTile(promo: _filteredPromos[index]);
@@ -117,36 +118,43 @@ class _SearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
+
     return Row(
-      spacing: 4,
       children: <Widget>[
         Expanded(
-          flex: 3,
+          flex: 5,
           child: CustomTextFormField(
+            borderRadius: 4,
             dense: true,
-            contentPadding:
-                const EdgeInsets.symmetric(vertical: 7, horizontal: 4),
+            contentPadding: const EdgeInsets.all(6),
+            fieldPadding: const EdgeInsets.all(0),
             hint: 'search'.tr(),
+            style: TextTheme.of(context).bodyMedium,
             controller: controller,
           ),
         ),
+        const SizedBox(width: 8),
         Expanded(
-          child: ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.onPrimary,
-              backgroundColor: Theme.of(context).primaryColor,
-              padding: const EdgeInsets.all(2),
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(6),
-              ),
+          flex: 2,
+          child: CustomElevatedButton(
+            prefixSuffixPadding: const EdgeInsets.all(4),
+            margin: const EdgeInsets.all(0),
+            borderRadius: BorderRadius.circular(4),
+            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
+            isLoading: false,
+            title: 'promo'.tr(),
+            textStyle: TextStyle(
+              fontSize: 12,
+              color: colorScheme.onPrimary,
             ),
-            icon: Icon(
+            prefix: Icon(
               CupertinoIcons.add_circled,
-              color: Theme.of(context).colorScheme.onPrimary,
+              size: 18,
+              color: colorScheme.onPrimary,
             ),
-            label: Text('promo'.tr()),
-            onPressed: () {
+            onTap: () {
               AppNavigator.pushNamed(CreatePromoScreen.routeName);
             },
           ),

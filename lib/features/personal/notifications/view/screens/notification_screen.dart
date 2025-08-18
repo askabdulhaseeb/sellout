@@ -9,10 +9,11 @@ import '../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../services/get_it.dart';
 import '../../../user/profiles/data/models/user_model.dart';
 import '../../../user/profiles/domain/usecase/get_user_by_uid.dart';
-import '../../data/models/notification_model.dart';
-import '../../data/source/local_notification.dart';
 import '../../domain/entities/notification_entity.dart';
 import '../../domain/enums/notification_type.dart';
+import 'package:provider/provider.dart';
+import '../provider/notification_provider.dart';
+import '../../../../../core/usecase/usecase.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -23,68 +24,66 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
-  List<NotificationEntity> notifications = <NotificationModel>[];
-
   @override
   void initState() {
     super.initState();
-    loadNotifications();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<NotificationProvider>().fetchNotificationsByType();
+    });
   }
 
-  Future<void> loadNotifications() async {
-    notifications = await LocalNotifications.getAllNotifications();
-    setState(() {});
-  }
-
-  NotificationType selectedFilter = NotificationType.all;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         elevation: 0,
-        title: const AppBarTitle(
-          titleKey: 'notifications',
-        ),
+        title: const AppBarTitle(titleKey: 'notifications'),
         centerTitle: true,
       ),
-      body: Column(
-        children: <Widget>[
-          CustomToggleSwitch<NotificationType>(
-            isShaded: false,
-            horizontalPadding: 1,
-            borderWidth: 1,
-            unseletedBorderColor: ColorScheme.of(context).outlineVariant,
-            unseletedTextColor: ColorScheme.of(context).onSurface,
-            verticalPadding: 4,
-            borderRad: 6,
-            seletedFontSize: 12,
-            labels:
-                NotificationType.values.map((NotificationType e) => e).toList(),
-            labelStrs: NotificationType.values
-                .map((NotificationType e) => e.code.tr())
-                .toList(),
-            labelText: '',
-            initialValue: selectedFilter,
-            onToggle: (NotificationType value) {
-              setState(() {
-                selectedFilter = value;
-              });
-            },
-            selectedColors: List<Color>.filled(
-                NotificationType.values.length, AppTheme.primaryColor),
-          ),
-          SizedBox(
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: notifications.length,
-              itemBuilder: (BuildContext context, int index) =>
-                  NotificationWidget(
-                notification: notifications[index],
+      body: Consumer<NotificationProvider>(
+        builder: (BuildContext context, NotificationProvider provider, _) {
+          if (provider.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final List<NotificationEntity> notifications = provider.notifications;
+          return Column(
+            children: <Widget>[
+              CustomToggleSwitch<NotificationType>(
+                isShaded: false,
+                horizontalPadding: 1,
+                borderWidth: 1,
+                unseletedBorderColor: ColorScheme.of(context).outlineVariant,
+                unseletedTextColor: ColorScheme.of(context).onSurface,
+                verticalPadding: 4,
+                borderRad: 6,
+                seletedFontSize: 12,
+                labels: NotificationType.values.toList(),
+                labelStrs: NotificationType.values
+                    .map((NotificationType e) => e.code.tr())
+                    .toList(),
+                labelText: '',
+                initialValue: provider.selectedNotificationType,
+                onToggle: (NotificationType value) {
+                  provider.setNotificationType(value);
+                  provider.fetchNotificationsByType();
+                },
+                selectedColors: List<Color>.filled(
+                    NotificationType.values.length, AppTheme.primaryColor),
               ),
-            ),
-          ),
-        ],
+              Expanded(
+                child: ListView.builder(
+                  itemCount: notifications.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return NotificationWidget(
+                      notification: notifications[index],
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -114,6 +113,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(widget.notification.type);
     return FutureBuilder<DataState<UserEntity?>>(
       future: userFuture,
       builder: (BuildContext context,
@@ -121,48 +121,71 @@ class _NotificationWidgetState extends State<NotificationWidget> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
-
         if (!snapshot.hasData || snapshot.data?.data == null) {
-          return const SizedBox(); // or show error/fallback UI
+          return const SizedBox();
         }
-
         final UserEntity user = snapshot.data!.entity!;
-
         return Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(
             children: <Widget>[
-              CustomNetworkImage(
-                imageURL: user.profilePhotoURL ?? '',
-                size: 70,
+              ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: CustomNetworkImage(
+                  imageURL: user.profilePhotoURL ?? '',
+                  size: 60,
+                ),
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(user.displayName),
                     Text(
-                      '', // can show notification message here
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      user.displayName,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(),
+                    ),
+                    Text(
+                      'sold! bought by ****',
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
                             color: Theme.of(context)
                                 .colorScheme
                                 .onSurface
                                 .withValues(alpha: 0.5),
                           ),
                     ),
-                    CustomElevatedButton(
-                      margin: const EdgeInsets.all(3),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 4),
-                      textStyle: Theme.of(context)
-                          .textTheme
-                          .bodySmall
-                          ?.copyWith(
-                              color: Theme.of(context).colorScheme.onPrimary),
-                      title: 'view'.tr(),
-                      isLoading: false,
-                      onTap: () {},
+                    Row(
+                      children: <Widget>[
+                        CustomElevatedButton(
+                          borderRadius: BorderRadius.circular(6),
+                          margin: const EdgeInsets.all(2),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 4),
+                          textStyle: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary),
+                          title: 'view'.tr(),
+                          isLoading: false,
+                          onTap: () {},
+                        ),
+                        // CustomElevatedButton(
+                        //   margin: const EdgeInsets.all(3),
+                        //   padding: const EdgeInsets.symmetric(
+                        //       horizontal: 24, vertical: 4),
+                        //   textStyle: Theme.of(context)
+                        //       .textTheme
+                        //       .bodySmall
+                        //       ?.copyWith(
+                        //           color:
+                        //               Theme.of(context).colorScheme.onPrimary),
+                        //   title: 'view'.tr(),
+                        //   isLoading: false,
+                        //   onTap: () {},
+                        // ),
+                      ],
                     ),
                   ],
                 ),

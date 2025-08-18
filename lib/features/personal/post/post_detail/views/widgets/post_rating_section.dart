@@ -9,23 +9,21 @@ class PostRatingSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Row(
-        spacing: 4,
-        children: <Widget>[
-          RatingDisplayWidget(
-            ratingList: post.listOfReviews ?? <double>[],
-            displayStars: false,
-            displayPrefix: false,
-          ),
-          Icon(
-            CupertinoIcons.star_fill,
-            size: 14,
-            color: Theme.of(context).primaryColor,
-          ),
-        ],
-      ),
+    return Row(
+      spacing: 4,
+      children: <Widget>[
+        Icon(
+          CupertinoIcons.star_fill,
+          size: 14,
+          color: Theme.of(context).primaryColor,
+        ),
+        RatingDisplayWidget(
+          prefixColor: ColorScheme.of(context).outline,
+          ratingList: post.listOfReviews ?? <double>[],
+          displayStars: false,
+          displayPrefix: false,
+        ),
+      ],
     );
   }
 }
