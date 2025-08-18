@@ -7,6 +7,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../core/helper_functions/duration_format_helper.dart';
 import '../../../../../../../../../core/theme/app_theme.dart';
+import '../../../../../../../../../core/utilities/app_string.dart';
+import '../../../../../../../../../core/widgets/custom_icon_button.dart';
+import '../../../../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../../providers/send_message_provider.dart';
@@ -238,16 +241,18 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
   Widget _buildPlayerUI(bool isMe, ColorScheme colorScheme) => Column(
         children: <Widget>[
           Row(
+            spacing: 2,
             children: <Widget>[
-              IconButton(
+              CustomIconButton(
+                padding: const EdgeInsets.all(0),
+                margin: const EdgeInsets.all(0),
                 onPressed: _playPause,
-                icon: Icon(
-                  _playerController.playerState.isPlaying
-                      ? Icons.pause_circle
-                      : Icons.play_circle_fill_outlined,
-                  color: !isMe ? AppTheme.primaryColor : colorScheme.secondary,
-                  size: 30,
-                ),
+                icon: _playerController.playerState.isPlaying
+                    ? Icons.pause_circle
+                    : Icons.play_circle_fill_outlined,
+                iconColor: AppTheme.primaryColor,
+                bgColor: Colors.transparent,
+                iconSize: 40,
               ),
               Expanded(
                 child: AudioFileWaveforms(
@@ -257,20 +262,29 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
                   size: const Size(150, 40),
                   playerController: _playerController,
                   playerWaveStyle: PlayerWaveStyle(
+                    scaleFactor: 5,
                     fixedWaveColor: colorScheme.outline,
-                    liveWaveColor:
-                        !isMe ? AppTheme.primaryColor : colorScheme.secondary,
+                    liveWaveColor: AppTheme.primaryColor,
                     showSeekLine: false,
                     seekLineColor: Colors.transparent,
                   ),
                 ),
               ),
+              CustomSvgIcon(
+                color: _playerController.playerState.isPlaying
+                    ? Theme.of(context).primaryColor
+                    : colorScheme.outline,
+                assetPath: AppStrings.selloutVoiceNoteSpeakerIcon,
+                size: 18,
+              )
             ],
           ),
           Align(
-            alignment: Alignment.bottomRight,
+            alignment: Alignment.bottomLeft,
             child: Text(
-              '${DurationFormatHelper.format(_currentPos)} / ${DurationFormatHelper.format(_totalDur)}',
+              _playerController.playerState.isPlaying
+                  ? DurationFormatHelper.format(_currentPos)
+                  : DurationFormatHelper.format(_totalDur),
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: colorScheme.outline,
                   ),

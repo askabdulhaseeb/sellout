@@ -8,30 +8,51 @@ import '../send_message_attachment_bottomsheets/send_message_document_bottomshee
 import '../send_message_attachment_bottomsheets/media_type_selection_bottomsheet.dart';
 import 'enum/send_message_pop_menu_enums.dart';
 
-/// A button widget showing a popup menu to pick various attachments (camera, documents, contacts, etc.)
-class SendMessageAttachmentMenuButton extends StatelessWidget {
+class SendMessageAttachmentMenuButton extends StatefulWidget {
   const SendMessageAttachmentMenuButton({super.key});
 
-  /// Handles selection of attachment options
+  @override
+  State<SendMessageAttachmentMenuButton> createState() =>
+      _SendMessageAttachmentMenuButtonState();
+}
+
+class _SendMessageAttachmentMenuButtonState
+    extends State<SendMessageAttachmentMenuButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _rotationController;
+  late Animation<double> _rotationAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _rotationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    );
+    // Rotate slightly by 15 degrees (pi/12 radians)
+    _rotationAnimation = Tween<double>(begin: 0, end: 0.35) // ~15°
+        .animate(CurvedAnimation(
+            parent: _rotationController, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _rotationController.dispose();
+    super.dispose();
+  }
+
   Future<void> _handleAttachment(
       BuildContext context, SendMessagePopMenuOptions option) async {
     switch (option) {
       case SendMessagePopMenuOptions.camera:
         showCameraPickerBottomSheet(context);
         break;
-
       case SendMessagePopMenuOptions.mediaLibrary:
         showMediaBottomSheet(context);
         break;
-
-      // case SendMessagePopMenuOptions.location:
-      //   // TODO: Implement location picking logic
-      //   break;
-
       case SendMessagePopMenuOptions.document:
         await pickDocument(context);
         break;
-
       case SendMessagePopMenuOptions.contacts:
         showContactsBottomSheet(context);
         break;
@@ -41,29 +62,24 @@ class SendMessageAttachmentMenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color? iconColor = Theme.of(context).iconTheme.color;
-    // List of menu items with values, icons, and localized titles
+
     final List<Map<String, dynamic>> menuItems = <Map<String, dynamic>>[
-      <String, dynamic>{
+      {
         'option': SendMessagePopMenuOptions.camera,
         'icon': AppStrings.selloutChatMenuPhotoIcon,
         'title': 'photo_camera'.tr(),
       },
-      <String, dynamic>{
+      {
         'option': SendMessagePopMenuOptions.mediaLibrary,
         'icon': AppStrings.selloutChatMenuVideoIcon,
         'title': 'photo_video_library'.tr(),
       },
-      // <String, dynamic>{
-      //   'option': SendMessagePopMenuOptions.location,
-      //   'icon': Icons.location_on_outlined,
-      //   'title': 'location'.tr(),
-      // },
-      <String, dynamic>{
+      {
         'option': SendMessagePopMenuOptions.document,
         'icon': AppStrings.selloutChatMenuDocumentIcon,
         'title': 'document'.tr(),
       },
-      <String, dynamic>{
+      {
         'option': SendMessagePopMenuOptions.contacts,
         'icon': AppStrings.selloutChatMenuContactIcon,
         'title': 'contacts'.tr(),
@@ -71,15 +87,18 @@ class SendMessageAttachmentMenuButton extends StatelessWidget {
     ];
 
     return PopupMenuButton<SendMessagePopMenuOptions>(
-      padding: const EdgeInsets.all(0),
+      padding: EdgeInsets.zero,
       color: Theme.of(context).scaffoldBackgroundColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       offset: const Offset(0, -240),
-      onSelected: (SendMessagePopMenuOptions option) =>
-          _handleAttachment(context, option),
-      itemBuilder: (_) => menuItems.map((Map<String, dynamic> item) {
+      onSelected: (option) {
+        _rotationController.reverse();
+        _handleAttachment(context, option);
+      },
+      onCanceled: () => _rotationController.reverse(),
+      onOpened: () =>
+          _rotationController.forward(), // rotate slightly when open
+      itemBuilder: (_) => menuItems.map((item) {
         return _buildMenuItem(
           context,
           option: item['option'] as SendMessagePopMenuOptions,
@@ -88,11 +107,19 @@ class SendMessageAttachmentMenuButton extends StatelessWidget {
           iconColor: iconColor,
         );
       }).toList(),
-      child: const CustomSvgIcon(assetPath: AppStrings.selloutChatPopMenuIcon),
+      child: AnimatedBuilder(
+        animation: _rotationAnimation,
+        builder: (context, child) {
+          return Transform.rotate(
+            angle: _rotationAnimation.value,
+            child: child,
+          );
+        },
+        child: CustomSvgIcon(assetPath: AppStrings.selloutChatPopMenuIcon),
+      ),
     );
   }
 
-  /// Builds a popup menu item widget
   PopupMenuItem<SendMessagePopMenuOptions> _buildMenuItem(
     BuildContext context, {
     required SendMessagePopMenuOptions option,

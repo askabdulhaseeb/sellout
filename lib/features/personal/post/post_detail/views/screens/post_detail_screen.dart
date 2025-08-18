@@ -10,6 +10,7 @@ import '../providers/post_detail_provider.dart';
 import '../widgets/post_details_sections/cloth_foot_post_detail_section.dart';
 import '../widgets/post_details_sections/food_drink_post_Detail_section.dart';
 import '../widgets/post_details_sections/item_post_detail_section.dart';
+import '../widgets/post_details_sections/pets_post_detail_section.dart';
 import '../widgets/post_details_sections/property_post_detail_section.dart';
 import '../widgets/post_details_sections/vehicle_post_detail_section.dart';
 
@@ -61,10 +62,10 @@ class PostDetailScreen extends StatelessWidget {
                       : post.listID == ListingType.foodAndDrink.json
                           ? FoodDrinkPostDetailSection(post: post, visit: visit)
                           : post.listID == ListingType.property.json
-                              ? FoodDrinkPostDetailSection(
+                              ? PropertyPostDetailSection(
                                   post: post, visit: visit)
                               : post.listID == ListingType.pets.json
-                                  ? PropertyPostDetailSection(
+                                  ? PetsPostDetailSection(
                                       post: post, visit: visit)
                                   : post.listID == ListingType.vehicle.json
                                       ? VehiclePostDetailSection(

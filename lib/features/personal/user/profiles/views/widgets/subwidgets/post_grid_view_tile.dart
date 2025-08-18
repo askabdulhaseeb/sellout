@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/dialogs/cart/add_to_cart_dialog.dart';
+import '../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/utilities/app_string.dart';
@@ -49,7 +50,10 @@ class PostGridViewTile extends StatelessWidget {
                         fit: BoxFit.cover, imageURL: post.imageURL),
                   ),
                 ),
-                if (!isMe) PostGridViewTileBasketButton(post: post)
+                if (!isMe &&
+                    ListingType.viewingList
+                        .contains(ListingType.fromJson(post.listID)))
+                  PostGridViewTileBasketButton(post: post)
               ],
             ),
           ),
@@ -177,10 +181,11 @@ class PostGridViewTileBasketButton extends StatelessWidget {
     }
 
     return CustomIconButton(
+      borderColor: Theme.of(context).dividerColor,
       iconSize: 14,
       bgColor: ColorScheme.of(context).surface,
       iconColor: Theme.of(context).colorScheme.onSurface,
-      icon: AppStrings.selloutShoppingCartIcon,
+      icon: AppStrings.selloutAddToCartIcon,
       onPressed: () => addToBasket(context, post),
     );
   }

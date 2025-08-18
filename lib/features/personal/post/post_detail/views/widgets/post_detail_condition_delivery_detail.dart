@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/theme/app_theme.dart';
 import '../../../domain/entities/post_entity.dart';
 import 'post_rating_section.dart';
@@ -20,31 +21,42 @@ class ConditionDeliveryWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
+        spacing: 6,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               PostRatingSection(post: post),
-              _buildInfoItem(
-                context,
-                iconColor: colorScheme.outlineVariant,
-                label: 'condition'.tr(),
-                value: post.condition.code.tr(),
-              ),
-              _buildInfoItem(
-                context,
-                iconColor: colorScheme.outlineVariant,
-                label: 'delivery'.tr(),
-                value: 'uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu',
-              ),
+              if (post.listID == ListingType.items.json ||
+                  post.listID == ListingType.clothAndFoot.json ||
+                  post.listID == ListingType.vehicle.json ||
+                  post.listID == ListingType.property.json)
+                _buildInfoItem(
+                  context,
+                  iconColor: colorScheme.outlineVariant,
+                  label: 'condition'.tr(),
+                  value: post.condition.code.tr(),
+                ),
+              if (post.listID == ListingType.items.json ||
+                  post.listID == ListingType.clothAndFoot.json ||
+                  post.listID == ListingType.foodAndDrink.json ||
+                  post.listID == ListingType.pets.json ||
+                  post.listID == ListingType.vehicle.json)
+                _buildInfoItem(
+                  context,
+                  iconColor: colorScheme.outlineVariant,
+                  label: 'delivery'.tr(),
+                  value: post.deliveryType.code.tr(),
+                ),
             ],
           ),
-          const SizedBox(height: 6),
-          Text(
-            '${'return'.tr()}: dummy data',
-            style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
-          ),
+          if (post.listID == ListingType.items.json)
+            Text(
+              '${'return'.tr()}: dummy data',
+              style:
+                  textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
+            ),
         ],
       ),
     );
@@ -58,11 +70,12 @@ class ConditionDeliveryWidget extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
         Icon(Icons.circle, size: 8, color: iconColor),
         const SizedBox(width: 6),
         ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 100),
+          constraints: const BoxConstraints(maxWidth: 130),
           child: Text.rich(
             TextSpan(
               children: <InlineSpan>[
