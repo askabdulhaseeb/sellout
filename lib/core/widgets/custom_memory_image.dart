@@ -25,7 +25,7 @@ class CustomMemoryImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color backgroundColor =
-        color ?? Theme.of(context).colorScheme.outline;
+        color ?? Theme.of(context).colorScheme.outlineVariant;
     final TextStyle initialsStyle = textStyle ??
         Theme.of(context)
             .textTheme

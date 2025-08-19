@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/sources/data_state.dart';
+import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../../core/widgets/scaffold/personal_scaffold.dart';
-import '../../domain/entities/chat/chat_entity.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../providers/chat_dashboard_provider.dart';
 import '../widgets/chat_dashboard_list_seaction.dart';
 import '../widgets/chat_dashboard_searchable_widget.dart';
@@ -18,35 +18,28 @@ class ChatDashboardScreen extends StatefulWidget {
 }
 
 class _ChatDashboardScreenState extends State<ChatDashboardScreen> {
-  late Future<DataState<List<ChatEntity>>> _future;
-
   @override
   void initState() {
     super.initState();
-    _future =
-        Provider.of<ChatDashboardProvider>(context, listen: false).getChats();
+
+    Provider.of<ChatDashboardProvider>(context, listen: false).getChats();
   }
 
   @override
   Widget build(BuildContext context) {
-    return PersonalScaffold(
-      body: FutureBuilder<DataState<List<ChatEntity>>>(
-        future: _future,
-        builder: (BuildContext context,
-            AsyncSnapshot<DataState<List<ChatEntity>>> snapshot) {
-          return const Column(
-            children: <Widget>[
-              AppBarTitle(titleKey: 'messages'),
-              SizedBox(
-                height: 8,
-              ),
-              ChatSelectablePageTypeWidget(),
-              ChatDashboardSearchableWidget(),
-              ChatDashboardListSeaction(),
-            ],
-          );
-        },
-      ),
-    );
+    AppLog.info('${LocalAuth.token}', name: "token");
+
+    return const PersonalScaffold(
+        body: Column(
+      children: <Widget>[
+        AppBarTitle(titleKey: 'messages'),
+        SizedBox(
+          height: 8,
+        ),
+        ChatSelectablePageTypeWidget(),
+        ChatDashboardSearchableWidget(),
+        ChatDashboardListSeaction(),
+      ],
+    ));
   }
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../../../../core/widgets/video_widget.dart';
-import '../../../../../../../../../attachment/domain/entities/attachment_entity.dart';
-import '../../../../../../../../../attachment/domain/entities/picked_attachment.dart';
-import '../../../../../providers/send_message_provider.dart';
+import '../../../../../../../../../../../core/widgets/video_widget.dart';
+import '../../../../../../../../../../attachment/domain/entities/attachment_entity.dart';
+import '../../../../../../../../../../attachment/domain/entities/picked_attachment.dart';
+import '../../../../../../providers/send_message_provider.dart';
 
 class SendMessagePanelAttachmentsList extends StatelessWidget {
   const SendMessagePanelAttachmentsList({required this.attachments, super.key});

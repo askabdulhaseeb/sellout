@@ -24,6 +24,7 @@ class SendMessageProvider extends ChangeNotifier {
   final List<PickedAttachment> _attachments = <PickedAttachment>[];
   final List<PickedAttachment> _document = <PickedAttachment>[];
   final List<PickedAttachment> _contact = <PickedAttachment>[];
+  final List<PickedAttachment> _voiceNote = <PickedAttachment>[];
 
   TextSelection lastSelection = const TextSelection.collapsed(offset: 0);
 
@@ -33,6 +34,8 @@ class SendMessageProvider extends ChangeNotifier {
   List<PickedAttachment> get attachments => _attachments;
   List<PickedAttachment> get document => _document;
   List<PickedAttachment> get contact => _contact;
+  List<PickedAttachment> get voiceNote => _voiceNote;
+
   TextEditingController get message => _message;
   // set functions
   void setLoading(bool value) {
@@ -150,6 +153,11 @@ class SendMessageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addVoiceNote(PickedAttachment attachment) {
+    _voiceNote.add(attachment);
+    notifyListeners();
+  }
+
   Future<void> sendMessage(BuildContext context) async {
     setLoading(true);
     final SendMessageParam param = SendMessageParam(
@@ -207,6 +215,28 @@ class SendMessageProvider extends ChangeNotifier {
     final DataState<bool> result = await _sendMessageUsecase(param);
     if (result is DataSuccess) {
       _contact.clear();
+      setLoading(false);
+    } else {
+      AppSnackBar.showSnackBar(
+          // ignore: use_build_context_synchronously
+          context,
+          result.exception?.message ?? 'something_wrong'.tr());
+    }
+    setLoading(false);
+  }
+
+  Future<void> sendVoiceNote(BuildContext context) async {
+    setLoading(true);
+    final SendMessageParam param = SendMessageParam(
+      chatID: _chat?.chatId ?? '',
+      text: 'null',
+      persons: _chat?.persons ?? <String>[],
+      files: _voiceNote,
+      source: 'application',
+    );
+    final DataState<bool> result = await _sendMessageUsecase(param);
+    if (result is DataSuccess) {
+      _voiceNote.clear();
       setLoading(false);
     } else {
       AppSnackBar.showSnackBar(

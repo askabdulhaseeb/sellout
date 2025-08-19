@@ -25,7 +25,6 @@ import '../params/update_visit_params.dart';
 class BookingProvider extends ChangeNotifier {
   BookingProvider(
       this._bookVisitUseCase,
-      // this._updateVisitStatusUseCase,
       this._updateVisitUseCase,
       this._bookServiceUsecase,
       this._getUserByUidUsecase,
@@ -33,7 +32,6 @@ class BookingProvider extends ChangeNotifier {
       this._getBookingsListUsecase,
       this._updateAppointmentUsecase);
   final BookVisitUseCase _bookVisitUseCase;
-  // final UpdateVisitStatusUseCase _updateVisitStatusUseCase;
   final UpdateVisitUseCase _updateVisitUseCase;
   final BookServiceUsecase _bookServiceUsecase;
   final GetUserByUidUsecase _getUserByUidUsecase;

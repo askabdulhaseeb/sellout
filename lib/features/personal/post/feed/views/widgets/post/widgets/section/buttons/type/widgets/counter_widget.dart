@@ -54,7 +54,7 @@ class _PostCounterWidgetState extends State<PostCounterWidget> {
         borderRadius: borderRadius,
         onTap: () => _updateQuantity(quantity - 1),
         child: Container(
-          padding: const EdgeInsets.all(2),
+          padding: const EdgeInsets.all(4),
           decoration: decoration,
           child: Icon(Icons.remove,
               size: 12, color: Theme.of(context).primaryColor),
@@ -64,7 +64,7 @@ class _PostCounterWidgetState extends State<PostCounterWidget> {
         borderRadius: borderRadius,
         onTap: () => _updateQuantity(quantity + 1),
         child: Container(
-          padding: const EdgeInsets.all(2),
+          padding: const EdgeInsets.all(4),
           decoration: decoration,
           child:
               Icon(Icons.add, size: 12, color: Theme.of(context).primaryColor),
