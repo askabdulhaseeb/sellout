@@ -7,13 +7,13 @@ import 'package:provider/provider.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:just_audio/just_audio.dart';
 
-import '../../../../../../../../../core/helper_functions/duration_format_helper.dart';
-import '../../../../../../../../../core/theme/app_theme.dart';
-import '../../../../../../../../../core/utilities/app_string.dart';
-import '../../../../../../../../../core/widgets/custom_icon_button.dart';
-import '../../../../../../../../attachment/domain/entities/attachment_entity.dart';
-import '../../../../../../../../attachment/domain/entities/picked_attachment.dart';
-import '../../../../providers/send_message_provider.dart';
+import '../../../../../../../../../../core/helper_functions/duration_format_helper.dart';
+import '../../../../../../../../../../core/theme/app_theme.dart';
+import '../../../../../../../../../../core/utilities/app_string.dart';
+import '../../../../../../../../../../core/widgets/custom_icon_button.dart';
+import '../../../../../../../../../attachment/domain/entities/attachment_entity.dart';
+import '../../../../../../../../../attachment/domain/entities/picked_attachment.dart';
+import '../../../../../providers/send_message_provider.dart';
 
 class VoiceRecordTrigger extends StatefulWidget {
   const VoiceRecordTrigger({super.key});
@@ -102,11 +102,11 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
     if (_recordPath != null) {
       final File file = File(_recordPath!);
       if (await file.exists()) {
-        _msgPro.addAttachment(
+        _msgPro.addVoiceNote(
           PickedAttachment(file: file, type: AttachmentType.audio),
         );
         _playSound(AppStrings.recordingShareSound);
-        _msgPro.sendMessage(context);
+        _msgPro.sendVoiceNote(context);
       }
     }
 

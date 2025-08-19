@@ -209,9 +209,9 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
             children: <Widget>[
               IconButton(
                 onPressed: () {},
-                icon: Icon(
+                icon: const Icon(
                   Icons.play_circle_fill_outlined,
-                  color: !isMe ? AppTheme.primaryColor : colorScheme.secondary,
+                  color: AppTheme.primaryColor,
                   size: 30,
                 ),
               ),
@@ -229,7 +229,7 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
           Align(
             alignment: Alignment.bottomRight,
             child: Text(
-              '00:00 / 00:00',
+              '00:00',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: colorScheme.outline,
                   ),

@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../../../core/utilities/app_string.dart';
-import '../../../../../../../../../core/widgets/custom_svg_icon.dart';
+import '../../../../../../../../../../core/utilities/app_string.dart';
+import '../../../../../../../../../../core/widgets/custom_svg_icon.dart';
 import '../send_message_attachment_bottomsheets/send_message_camera_bottomsheet.dart';
-import '../send_message_attachment_bottomsheets/send_message_contacts_bottomsheet.dart';
+import '../send_message_attachment_bottomsheets/send_contacts_bottomsheet/send_message_contacts_bottomsheet.dart';
 import '../send_message_attachment_bottomsheets/send_message_document_bottomsheet.dart';
 import '../send_message_attachment_bottomsheets/media_type_selection_bottomsheet.dart';
 import 'enum/send_message_pop_menu_enums.dart';

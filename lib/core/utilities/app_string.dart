@@ -131,7 +131,7 @@ class AppStrings {
   static const String selloutOrderReceiptSettingIcon =
       'assets/icons/svg_icons/selloutOrderReceiptSettingIcon.svg';
   static const String selloutYouorderSettingIcon =
-      'assets/icons/svg_icons/YouorderSettingIcon.svg';
+      'assets/icons/svg_icons/selloutYouorderSettingIcon.svg';
   static const String selloutPaymentSettingIcon =
       'assets/icons/svg_icons/selloutPaymentSettingIcon.svg';
   static const String selloutPrivacySettingIcon =

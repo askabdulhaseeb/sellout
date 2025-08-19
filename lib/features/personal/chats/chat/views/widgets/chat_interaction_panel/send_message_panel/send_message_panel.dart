@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../providers/send_message_provider.dart';
+import '../../../providers/send_message_provider.dart';
 import 'widgets/send_message_attachment_bottomsheets/send_message_emogi_picker_bottomsheet.dart';
 import 'widgets/send_message_attachment_menu/subwidgets/send_message_panel_attachments_list.dart';
 import 'widgets/send_message_voice_note/send_message_voice_note_trigger_button.dart';
