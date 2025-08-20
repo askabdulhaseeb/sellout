@@ -11,6 +11,8 @@ class OfferDetailModel extends OfferDetailEntity {
     required super.currency,
     required super.offerId,
     required super.offerPrice,
+    required super.buyerId,
+    required super.sellerId,
     required super.quantity,
   });
 
@@ -25,6 +27,8 @@ class OfferDetailModel extends OfferDetailEntity {
       offerStatus: json['offer_status'] ?? '',
       currency: json['currency'] ?? '',
       offerId: json['offer_id'] ?? '',
+      sellerId: json['seller_id'] ?? '',
+      buyerId: json['buyer_id'] ?? '',
       offerPrice: int.tryParse(json['offer_price']?.toString() ?? '0') ?? 0,
       quantity: json['quantity'] ?? 1,
     );

@@ -25,11 +25,8 @@ class LocalChat {
 
   Future<void> save(ChatEntity value) async =>
       await _box.put(value.chatId, value);
-
   Future<void> clear() async => await _box.clear();
-
   ChatEntity? chatEntity(String value) => _box.get(value);
-
   DataState<ChatEntity?> chatState(String value) {
     final ChatEntity? entity = _box.get(value);
     if (entity != null) {

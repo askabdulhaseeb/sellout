@@ -38,10 +38,12 @@ class OfferMessageTileButtons extends HookWidget {
   Widget build(BuildContext context) {
     return Consumer<FeedProvider>(
       builder: (BuildContext context, FeedProvider pro, _) {
-        final bool isBuyer = message.sendBy == LocalAuth.currentUser?.userID;
+        final bool isBuyer = message.offerDetail?.buyerId == LocalAuth.uid;
+        final bool isSeller = message.offerDetail?.sellerId == LocalAuth.uid;
+
         return Column(
           children: <Widget>[
-            if (!isBuyer)
+            if (isSeller)
               Row(
                 spacing: 4,
                 children: <Widget>[
@@ -109,7 +111,8 @@ class OfferMessageTileButtons extends HookWidget {
                   ),
                 ],
               ),
-            if (isBuyer) const SizedBox.shrink()
+            if (isBuyer)
+              OfferBuyNowButton(offerId: message.offerDetail?.offerId ?? '')
           ],
         );
       },
@@ -148,7 +151,8 @@ class OfferBuyNowButton extends StatelessWidget {
     return Consumer<CartProvider>(
       builder: (BuildContext context, CartProvider cartPro, _) {
         return CustomElevatedButton(
-          padding: const EdgeInsets.all(4),
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          borderRadius: BorderRadius.circular(6),
           title: 'buy_now'.tr(),
           isLoading: false,
           onTap: () async {
