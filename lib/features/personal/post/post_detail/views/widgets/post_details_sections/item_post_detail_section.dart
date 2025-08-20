@@ -29,6 +29,7 @@ class ItemPostDetailSection extends StatelessWidget {
         PostDetailAttachmentSlider(attachments: post.fileUrls),
         PostDetailTitleAmountSection(post: post),
         PostButtonSection(
+          detailWidget: true,
           visit: visit,
           post: post,
         ),

@@ -10,8 +10,10 @@ import '../../../../../../../../../domain/entities/size_color/size_color_entity.
 import '../../../bottomsheets/make_an_offer_bottomsheet.dart';
 
 class PostMakeOfferButton extends StatefulWidget {
-  const PostMakeOfferButton({required this.post, super.key});
+  const PostMakeOfferButton(
+      {required this.post, required this.detailWidget, super.key});
   final PostEntity post;
+  final bool detailWidget;
 
   @override
   State<PostMakeOfferButton> createState() => _PostMakeOfferButtonState();
@@ -43,9 +45,9 @@ class _PostMakeOfferButtonState extends State<PostMakeOfferButton> {
         onNextTap: (String? size, String? color) {
           selectedSize = size;
           selectedColor = widget.post.sizeColors
-              .firstWhere((e) => e.value == size)
+              .firstWhere((SizeColorEntity e) => e.value == size)
               .colors
-              .firstWhere((c) => c.code == color);
+              .firstWhere((ColorEntity c) => c.code == color);
           _openMakeOfferBottomSheet(context);
         },
       ),
@@ -57,7 +59,7 @@ class _PostMakeOfferButtonState extends State<PostMakeOfferButton> {
     return CustomElevatedButton(
       bgColor: Theme.of(context).primaryColor,
       onTap: () {
-        if (widget.post.sizeColors.isNotEmpty) {
+        if (widget.post.sizeColors.isNotEmpty && !widget.detailWidget) {
           _openSelectionDialog(context);
         } else {
           _openMakeOfferBottomSheet(context);
@@ -128,7 +130,9 @@ class _SelectSizeColorDialogState extends State<SelectSizeColorDialog> {
                         });
                       },
                       validator: (_) {
-                        if (selectedSize == null) return 'Size is required';
+                        if (selectedSize == null) {
+                          return 'size_is_required'.tr();
+                        }
                         return null;
                       },
                     ),
@@ -138,8 +142,8 @@ class _SelectSizeColorDialogState extends State<SelectSizeColorDialog> {
                     child: CustomDropdown<ColorEntity>(
                       title: 'color'.tr(),
                       hint: 'color'.tr(),
-                      items: (selectedSize?.colors ?? [])
-                          .where((e) => e.quantity > 0)
+                      items: (selectedSize?.colors ?? <ColorEntity>[])
+                          .where((ColorEntity e) => e.quantity > 0)
                           .map(
                             (ColorEntity e) => DropdownMenuItem<ColorEntity>(
                               value: e,
@@ -157,7 +161,9 @@ class _SelectSizeColorDialogState extends State<SelectSizeColorDialog> {
                         });
                       },
                       validator: (_) {
-                        if (selectedColor == null) return 'Color is required';
+                        if (selectedColor == null) {
+                          return 'color_is_required'.tr();
+                        }
                         return null;
                       },
                     ),

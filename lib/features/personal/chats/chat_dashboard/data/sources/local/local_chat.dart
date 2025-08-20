@@ -52,4 +52,14 @@ class LocalChat {
 
     await _box.put(chatId, updated);
   }
+
+  Future<void> updatePinnedMessage(MessageEntity newMsg) async {
+    final ChatEntity? existing = _box.get(newMsg.chatId);
+    if (existing == null) return;
+    final ChatEntity updated = existing.copyWith(
+      pinnedMessage: newMsg,
+    );
+
+    await _box.put(newMsg.chatId, updated);
+  }
 }

@@ -1,11 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
 import '../../../features/personal/post/domain/entities/post_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/color_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/size_color_entity.dart';
 import '../../../features/personal/post/domain/params/add_to_cart_param.dart';
 import '../../../features/personal/post/domain/usecase/add_to_cart_usecase.dart';
+import '../../../features/personal/post/feed/views/widgets/post/widgets/section/buttons/type/size_chart_button_tile.dart';
 import '../../../services/get_it.dart';
 import '../../extension/string_ext.dart';
 import '../../functions/app_log.dart';
@@ -13,7 +13,6 @@ import '../../sources/api_call.dart';
 import '../../widgets/app_snakebar.dart';
 import '../../widgets/custom_dropdown.dart';
 import '../../widgets/custom_elevated_button.dart';
-import '../../widgets/custom_network_image.dart';
 
 class AddToCartDialog extends StatefulWidget {
   const AddToCartDialog({required this.post, super.key});
@@ -31,33 +30,34 @@ class _AddToCartDialogState extends State<AddToCartDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              const SizedBox(width: 24),
-              const Text(
-                'select_size_color',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Column(
+          spacing: 6,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                const SizedBox(width: 24),
+                const Text(
+                  'select_size_color',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ).tr(),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
                 ),
-              ).tr(),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ),
-          // Sizing
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Row(
+              ],
+            ),
+            // Sizing
+            Row(
               children: <Widget>[
                 Expanded(
                   child: CustomDropdown<SizeColorEntity>(
@@ -111,58 +111,13 @@ class _AddToCartDialogState extends State<AddToCartDialog> {
                 ),
               ],
             ),
-          ),
-          // Chart
-          if (widget.post.sizeChartUrl != null)
-            Container(
-              padding: const EdgeInsets.all(0),
-              margin: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  ListTile(
-                    onTap: () => setState(() {
-                      showSizeColor = !showSizeColor;
-                    }),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                    visualDensity:
-                        const VisualDensity(horizontal: -4, vertical: -4),
-                    title: const Text(
-                      'size_chart',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ).tr(),
-                    subtitle: const Text(
-                      'size_chart_subtitle',
-                      style: TextStyle(fontSize: 11),
-                    ).tr(),
-                    trailing: Icon(
-                      showSizeColor
-                          ? Icons.keyboard_arrow_up
-                          : Icons.keyboard_arrow_down,
-                    ),
-                  ),
-                  if (showSizeColor)
-                    AspectRatio(
-                      aspectRatio: 4 / 3,
-                      child: CustomNetworkImage(
-                        imageURL: widget.post.sizeChartUrl?.url,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          //
-          // Add to cart button
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: CustomElevatedButton(
+            // Chart
+            if (widget.post.sizeChartUrl != null)
+              SizeChartButtonTile(
+                  sizeChartURL: widget.post.sizeChartUrl?.url ?? ''), //
+            // Add to cart button
+
+            CustomElevatedButton(
               title: 'add_to_basket'.tr(),
               isLoading: isLoading,
               onTap: () async {
@@ -210,8 +165,8 @@ class _AddToCartDialogState extends State<AddToCartDialog> {
                 });
               },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

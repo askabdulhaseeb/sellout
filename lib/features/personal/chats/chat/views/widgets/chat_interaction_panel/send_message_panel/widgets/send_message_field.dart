@@ -12,6 +12,7 @@ class SendMessageFIeld extends StatelessWidget {
     return Consumer<SendMessageProvider>(
       builder: (_, SendMessageProvider msgPro, __) {
         return CustomTextFormField(
+          readOnly: msgPro.isLoading ? true : false,
           controller: msgPro.message,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(5),

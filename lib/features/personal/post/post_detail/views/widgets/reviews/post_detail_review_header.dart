@@ -1,8 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../core/widgets/rating_display_widget.dart';
-import '../../../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../../../../review/views/screens/write_review_screen.dart';
 import '../../../../domain/entities/post_entity.dart';
 
 class PostDetailRatingHeader extends StatelessWidget {
@@ -16,13 +14,13 @@ class PostDetailRatingHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      spacing: 2,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         const Text(
           'customer_reviews',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ).tr(),
-        const SizedBox(height: 2),
         Row(
           children: <Widget>[
             RatingDisplayWidget(
@@ -34,29 +32,12 @@ class PostDetailRatingHeader extends StatelessWidget {
               width: 4,
             ),
             RatingDisplayWidget(
+              ratingColor: ColorScheme.of(context).onSurface,
               ratingList: post.listOfReviews ?? <double>[],
               displayStars: false,
               displayPrefix: false,
             ),
             Text('out_of_5'.tr()),
-            const Spacer(),
-            if (LocalAuth.currentUser?.userID != post.createdBy &&
-                LocalAuth.currentUser?.businessID != post.createdBy)
-              TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(
-                      context,
-                      WriteReviewScreen.routeName,
-                      arguments: <String, PostEntity>{'post': post},
-                    );
-                  },
-                  child: Text(
-                    'write_review'.tr(),
-                    style: TextStyle(
-                        decorationColor: Theme.of(context).primaryColor,
-                        decoration: TextDecoration.underline,
-                        color: Theme.of(context).primaryColor),
-                  ))
           ],
         ),
       ],

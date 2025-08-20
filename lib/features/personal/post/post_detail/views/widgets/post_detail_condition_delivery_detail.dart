@@ -19,7 +19,7 @@ class ConditionDeliveryWidget extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: Column(
         spacing: 6,
         crossAxisAlignment: CrossAxisAlignment.start,

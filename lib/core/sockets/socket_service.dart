@@ -4,6 +4,7 @@ import 'package:socket_io_client/socket_io_client.dart' as io;
 import '../../features/personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../features/personal/chats/chat/data/sources/local/local_message.dart';
 import '../../features/personal/chats/chat_dashboard/data/models/message/message_model.dart';
+import '../../features/personal/chats/chat_dashboard/data/sources/local/local_chat.dart';
 import '../../features/personal/notifications/data/models/notification_model.dart';
 import '../../features/personal/notifications/data/source/local/local_notification.dart';
 import '../functions/app_log.dart';
@@ -109,6 +110,11 @@ class SocketService with WidgetsBindingObserver {
       await LocalChatMessage.saveMessage(MessageModel.fromJson(data));
     });
 
+    socket!.on('update-pinned-message', (dynamic data) async {
+      AppLog.info('📝Pinned Message update arrived: $data',
+          name: 'SocketService.updatedPinnedMessage');
+      await LocalChat().updatePinnedMessage(MessageModel.fromJson(data));
+    });
     socket!.onAny((String event, dynamic data) {
       debugPrint('📡 Event: $event');
       debugPrint('📦 Data: $data');

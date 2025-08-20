@@ -40,6 +40,7 @@ class MessagesList extends HookWidget {
       }
       return map;
     }, <Object?>[messages.value]);
+
     // Build message widgets (optimized reversal)
     final List<Widget> messageWidgets = useMemoized(
       () {
@@ -71,7 +72,6 @@ class MessagesList extends HookWidget {
 
       final StreamSubscription<BoxEvent> sub =
           box.watch(key: chatId).listen((_) {
-        // Update messages
         chatProvider.handleMessagesUpdate(
           box,
           chatId,
@@ -80,22 +80,13 @@ class MessagesList extends HookWidget {
           scrollController,
         );
 
-        // Wait for next frame to ensure UI is updated
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (messages.value.isEmpty)
-            return; // Prevent calling .last on empty list
-
+          if (messages.value.isEmpty) return;
           final bool isMyMessage = messages.value.last.sendBy == myUserId;
           if (!scrollController.hasClients) return;
 
           if (isMyMessage) {
             scrollController.jumpTo(scrollController.position.minScrollExtent);
-          } else {
-            // For others' messages, maintain relative position
-            // final double newPosition =
-            //     scrollPositionState.value.offset + contentHeightDelta;
-            // scrollController.jumpTo(
-            //     newPosition.clamp(newMinScrollExtent, newMaxScrollExtent));
           }
         });
       });
@@ -116,17 +107,29 @@ class MessagesList extends HookWidget {
       return () => scrollController.removeListener(listener);
     }, <Object?>[]);
 
-    return messages.value.isEmpty
-        ? Center(child: Text('no_messages_yet'.tr()))
-        : ListView.builder(
-            key: const PageStorageKey<String>(
-                'chat_messages_list'), // <— add this
-            controller: scrollController,
-            physics: const BouncingScrollPhysics(),
-            padding: EdgeInsets.zero,
-            reverse: true,
-            itemCount: messageWidgets.length,
-            itemBuilder: (_, int i) => messageWidgets[i],
-          );
+    // Return a SliverFillRemaining or SliverList
+    if (messages.value.isEmpty) {
+      return SliverFillRemaining(
+        hasScrollBody: false,
+        child: Center(child: Text('no_messages_yet'.tr())),
+      );
+    }
+
+    return SliverFillRemaining(
+      hasScrollBody: true,
+      child: CustomScrollView(
+        controller: scrollController,
+        reverse: true,
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (_, int i) => messageWidgets[i],
+              childCount: messageWidgets.length,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
