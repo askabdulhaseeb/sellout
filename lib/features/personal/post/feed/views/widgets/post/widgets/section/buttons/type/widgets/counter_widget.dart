@@ -24,7 +24,19 @@ class _PostCounterWidgetState extends State<PostCounterWidget> {
   @override
   void initState() {
     super.initState();
-    quantity = widget.initialQuantity;
+    quantity = widget.initialQuantity; // start with the parent's value
+  }
+
+  @override
+  void didUpdateWidget(covariant PostCounterWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // If parent updates the initial quantity or max quantity, reset quantity
+    if (oldWidget.initialQuantity != widget.initialQuantity ||
+        oldWidget.maxQuantity != widget.maxQuantity) {
+      setState(() {
+        quantity = widget.initialQuantity;
+      });
+    }
   }
 
   void _updateQuantity(int newQuantity) {

@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../features/personal/review/domain/entities/review_entity.dart';
-
+import '../theme/app_theme.dart';
 
 class LinearRatingGraphWidget extends StatelessWidget {
   const LinearRatingGraphWidget({
@@ -18,11 +18,11 @@ class LinearRatingGraphWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-      Opacity(
+        Opacity(
           opacity: 0.6,
           child: Text(
             '${reviews.length} ${'global_reviews'.tr()}',
-            style: const TextStyle(fontWeight: FontWeight.w500),
+            style: const TextStyle(fontWeight: FontWeight.w400),
           ),
         ),
         const SizedBox(height: 6),
@@ -119,7 +119,10 @@ class _LinearProgressTile extends StatelessWidget {
               width: 40,
               child: Align(
                 alignment: Alignment.centerRight,
-                child: Text('$percent%'),
+                child: Text(
+                  '$percent%',
+                  style: const TextStyle(color: AppTheme.primaryColor),
+                ),
               ),
             ),
           ],

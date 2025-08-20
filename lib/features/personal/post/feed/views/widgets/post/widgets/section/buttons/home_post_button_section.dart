@@ -12,12 +12,13 @@ import 'type/viewing_post_button_tile.dart';
 class PostButtonSection extends StatelessWidget {
   const PostButtonSection({
     required this.post,
+    required this.detailWidget,
     this.visit,
     super.key,
   });
   final PostEntity post;
   final List<VisitingEntity>? visit;
-
+  final bool detailWidget;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -39,8 +40,14 @@ class PostButtonSection extends StatelessWidget {
                         child: (post.type == ListingType.pets ||
                                 post.type == ListingType.vehicle ||
                                 post.type == ListingType.property)
-                            ? ViewingPostButtonTile(post: post)
-                            : StorePostButtonTile(post: post),
+                            ? ViewingPostButtonTile(
+                                post: post,
+                                detailWidget: detailWidget,
+                              )
+                            : StorePostButtonTile(
+                                post: post,
+                                detailWidget: detailWidget,
+                              ),
                       ),
               ));
   }

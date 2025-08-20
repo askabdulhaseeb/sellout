@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../../../../../core/dialogs/post/buy_now_dailog.dart';
+import '../../../../../../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../../../../../core/widgets/app_snakebar.dart';
@@ -8,18 +9,24 @@ import '../../../../../../../../../../../../core/widgets/custom_elevated_button.
 import '../../../../../../../../../../../../services/get_it.dart';
 import '../../../../../../../../../../cart/views/screens/personal_cart_screen.dart';
 import '../../../../../../../../../domain/entities/post_entity.dart';
+import '../../../../../../../../../domain/entities/size_color/color_entity.dart';
+import '../../../../../../../../../domain/entities/size_color/size_color_entity.dart';
 import '../../../../../../../../../domain/params/add_to_cart_param.dart';
 import '../../../../../../../../../domain/usecase/add_to_cart_usecase.dart';
 
 class PostBuyNowButton extends StatefulWidget {
   const PostBuyNowButton({
     required this.post,
-    required this.quantity,
+    required this.detailWidget,
+    required this.detailWidgetSize,
+    required this.detailWidgetColor,
     super.key,
   });
 
   final PostEntity post;
-  final int quantity;
+  final bool detailWidget;
+  final SizeColorEntity? detailWidgetSize;
+  final ColorEntity? detailWidgetColor;
 
   @override
   State<PostBuyNowButton> createState() => _PostBuyNowButtonState();
@@ -33,19 +40,45 @@ class _PostBuyNowButtonState extends State<PostBuyNowButton> {
     setState(() => isLoading = true);
 
     try {
-      if (widget.post.sizeColors.isNotEmpty) {
+      if (widget.post.sizeColors.isNotEmpty && !widget.detailWidget) {
         // Show selection dialog
         await showDialog(
           context: context,
           builder: (_) => BuyNowDialog(post: widget.post),
         );
+      } else if (widget.post.listID == ListingType.clothAndFoot.json) {
+        // Direct add to cart
+        final AddToCartUsecase usecase = AddToCartUsecase(locator());
+        final DataState<bool> result = await usecase(
+          AddToCartParam(
+              post: widget.post,
+              color: widget.detailWidgetColor,
+              size: widget.detailWidgetSize,
+              quantity: 1),
+        );
+        if (result is DataSuccess) {
+          if (mounted) {
+            await Navigator.of(context).pushNamed(PersonalCartScreen.routeName);
+          }
+        } else {
+          AppLog.error(
+            result.exception?.message ?? 'AddToCartError',
+            name: 'post_buy_now_button.dart',
+            error: result.exception,
+          );
+          if (mounted) {
+            AppSnackBar.showSnackBar(
+              context,
+              result.exception?.message ?? 'something_wrong'.tr(),
+            );
+          }
+        }
       } else {
         // Direct add to cart
         final AddToCartUsecase usecase = AddToCartUsecase(locator());
         final DataState<bool> result = await usecase(
-          AddToCartParam(post: widget.post, quantity: widget.quantity),
+          AddToCartParam(post: widget.post),
         );
-
         if (result is DataSuccess) {
           if (mounted) {
             await Navigator.of(context).pushNamed(PersonalCartScreen.routeName);

@@ -31,6 +31,7 @@ class FoodDrinkPostDetailSection extends StatelessWidget {
         PostDetailTitleAmountSection(post: post),
         ConditionDeliveryWidget(post: post),
         PostButtonSection(
+          detailWidget: true,
           visit: visit,
           post: post,
         ),

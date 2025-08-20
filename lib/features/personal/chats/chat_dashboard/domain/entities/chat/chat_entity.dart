@@ -23,6 +23,7 @@ class ChatEntity {
     this.participants,
     this.deletedBy,
     this.groupInfo,
+    this.pinnedMessage,
   }) : inHiveAt = DateTime.now();
 
   @HiveField(0)
@@ -49,6 +50,8 @@ class ChatEntity {
   final List<dynamic>? deletedBy;
   @HiveField(11)
   final GroupInfoEntity? groupInfo;
+  @HiveField(14)
+  final MessageEntity? pinnedMessage;
   @HiveField(99)
   final DateTime inHiveAt;
 
@@ -65,6 +68,7 @@ class ChatEntity {
     List<String>? ids,
     String? createdBy,
     MessageEntity? lastMessage,
+    MessageEntity? pinnedMessage,
     OfferAmountInfoEntity? productInfo,
     List<String>? persons,
     String? chatId,
@@ -80,6 +84,7 @@ class ChatEntity {
       ids: ids ?? this.ids,
       createdBy: createdBy ?? this.createdBy,
       lastMessage: lastMessage ?? this.lastMessage,
+      pinnedMessage: pinnedMessage ?? this.pinnedMessage,
       productInfo: productInfo ?? this.productInfo,
       persons: persons ?? this.persons,
       chatId: chatId ?? this.chatId,

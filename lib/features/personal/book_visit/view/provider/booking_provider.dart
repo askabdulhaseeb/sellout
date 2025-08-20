@@ -342,18 +342,18 @@ class BookingProvider extends ChangeNotifier {
     required String query,
     required BuildContext context,
     required String visitingId,
-    required String messageId,
-    required String chatID,
+    String? messageId,
+    String? chatID,
     String? status,
   }) async {
     setIsLoading(true);
 
     final UpdateVisitParams params = UpdateVisitParams(
       query: query,
-      chatId: chatID,
+      chatId: chatID ?? '',
       visitingId: visitingId,
       datetime: formattedDateTime,
-      messageId: messageId,
+      messageId: messageId ?? '',
       status: status,
       businessId: 'null',
     );

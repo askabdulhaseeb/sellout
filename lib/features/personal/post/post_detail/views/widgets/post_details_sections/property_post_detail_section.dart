@@ -27,45 +27,34 @@ class PropertyPostDetailSection extends StatelessWidget {
     AppLog.info('PostID: ${post.postID} ');
     return SingleChildScrollView(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      child: Column(
-        spacing: 4,
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          PostDetailAttachmentSlider(attachments: post.fileUrls),
-          PostDetailTitleAmountSection(post: post),
-          PostButtonSection(
-            post: post,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                PostDetailAttachmentSlider(attachments: post.fileUrls),
-                PostDetailTitleAmountSection(post: post),
-                ConditionDeliveryWidget(post: post),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            PostDetailAttachmentSlider(attachments: post.fileUrls),
+            PostDetailTitleAmountSection(post: post),
+            ConditionDeliveryWidget(post: post),
 
-                PostButtonSection(
-                  visit: visit,
-                  post: post,
-                ),
-                // PostVehicleDetailWidget(post: post),
-                // PostPetDetailWidget(post: post),
-                PostDetailPropertyKeyFeaturesWidget(
-                  post: post,
-                ),
-                PostDetailDescriptionSection(post: post),
-                // const PostDetailSafetyTipsWidget(),
-                // ReturnPosrtageAndExtraDetailsSection(post: post),
-                PostDetailPropertyLocationLocationWidget(
-                    location: post.meetUpLocation),
-                PostDetailSellerSection(post: post),
-                PostDetailReviewOverviewSection(post: post),
-              ],
+            PostButtonSection(
+              detailWidget: true,
+              visit: visit,
+              post: post,
             ),
-          ),
-        ],
+            // PostVehicleDetailWidget(post: post),
+            // PostPetDetailWidget(post: post),
+            PostDetailPropertyKeyFeaturesWidget(
+              post: post,
+            ),
+            PostDetailDescriptionSection(post: post),
+            // const PostDetailSafetyTipsWidget(),
+            // ReturnPosrtageAndExtraDetailsSection(post: post),
+            PostDetailPropertyLocationLocationWidget(
+                location: post.meetUpLocation),
+            PostDetailSellerSection(post: post),
+            PostDetailReviewOverviewSection(post: post),
+          ],
+        ),
       ),
     );
   }

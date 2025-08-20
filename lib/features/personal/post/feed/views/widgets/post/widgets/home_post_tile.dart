@@ -29,6 +29,7 @@ class HomePostTile extends StatelessWidget {
           HomePostIconBottonSection(post: post),
           HomePostTitleSection(post: post),
           PostButtonSection(
+            detailWidget: false,
             post: post,
             visit: visit,
           ),

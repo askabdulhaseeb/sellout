@@ -14,7 +14,7 @@ class PostGridLoader extends StatelessWidget {
         crossAxisCount: 2,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
-        childAspectRatio: 0.8,
+        childAspectRatio: 0.66,
       ),
       itemBuilder: (_, __) => const LoadingPostTile(),
     );
@@ -29,10 +29,10 @@ class LoadingPostTile extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Expanded(
+        AspectRatio(
+          aspectRatio: 1,
           child: Container(
             width: double.infinity,
-            height: 330,
             decoration: BoxDecoration(
               color: Theme.of(context).dividerColor,
               borderRadius: BorderRadius.circular(8),

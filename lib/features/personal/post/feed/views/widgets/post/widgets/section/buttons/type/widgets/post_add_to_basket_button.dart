@@ -1,24 +1,31 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../../../../../core/dialogs/cart/add_to_cart_dialog.dart';
+import '../../../../../../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../../../../services/get_it.dart';
 import '../../../../../../../../../domain/entities/post_entity.dart';
+import '../../../../../../../../../domain/entities/size_color/color_entity.dart';
+import '../../../../../../../../../domain/entities/size_color/size_color_entity.dart';
 import '../../../../../../../../../domain/params/add_to_cart_param.dart';
 import '../../../../../../../../../domain/usecase/add_to_cart_usecase.dart';
 
 class PostAddToBasketButton extends StatefulWidget {
   const PostAddToBasketButton({
     required this.post,
-    required this.quantity,
+    required this.detailWidget,
+    required this.detailWidgetColor,
+    required this.detailWidgetSize,
     super.key,
   });
 
   final PostEntity post;
-  final int quantity;
+  final bool detailWidget;
+  final SizeColorEntity? detailWidgetSize;
+  final ColorEntity? detailWidgetColor;
 
   @override
   State<PostAddToBasketButton> createState() => _PostAddToBasketButtonState();
@@ -32,17 +39,46 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
     setState(() => isLoading = true);
 
     try {
-      if (widget.post.sizeColors.isNotEmpty) {
+      if (widget.post.sizeColors.isNotEmpty && !widget.detailWidget) {
         await showDialog(
           context: context,
           builder: (_) => AddToCartDialog(post: widget.post),
         );
+      } else if (widget.post.listID == ListingType.clothAndFoot.json) {
+        final AddToCartUsecase usecase = AddToCartUsecase(locator());
+        final DataState<bool> result = await usecase(
+          AddToCartParam(
+              post: widget.post,
+              color: widget.detailWidgetColor,
+              size: widget.detailWidgetSize,
+              quantity: 1),
+        );
+        if (result is DataSuccess) {
+          if (mounted) {
+            AppSnackBar.showSnackBar(
+              context,
+              'successfull_add_to_basket'.tr(),
+              backgroundColor: Colors.green,
+            );
+          }
+        } else {
+          AppLog.error(
+            result.exception?.message ?? 'AddToCartError',
+            name: 'post_add_to_basket_button.dart',
+            error: result.exception,
+          );
+          if (mounted) {
+            AppSnackBar.showSnackBar(
+              context,
+              result.exception?.message ?? 'something_wrong'.tr(),
+            );
+          }
+        }
       } else {
         final AddToCartUsecase usecase = AddToCartUsecase(locator());
         final DataState<bool> result = await usecase(
-          AddToCartParam(post: widget.post, quantity: widget.quantity),
+          AddToCartParam(post: widget.post),
         );
-
         if (result is DataSuccess) {
           if (mounted) {
             AppSnackBar.showSnackBar(

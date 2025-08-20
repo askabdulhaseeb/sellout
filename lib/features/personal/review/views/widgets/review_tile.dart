@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
 import '../../../../../core/extension/datetime_ext.dart';
 import '../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../core/widgets/profile_photo.dart';
@@ -81,7 +80,7 @@ class ReviewTile extends StatelessWidget {
                     ),
                   ),
                 ),
-              const Divider(),
+              // const Divider(),
             ],
           ),
         );
