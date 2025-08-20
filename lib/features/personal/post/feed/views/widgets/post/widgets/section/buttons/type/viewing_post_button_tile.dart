@@ -7,8 +7,10 @@ import '../../../../../../../../domain/entities/post_entity.dart';
 import 'widgets/post_make_offer_button.dart';
 
 class ViewingPostButtonTile extends StatelessWidget {
-  const ViewingPostButtonTile({required this.post, super.key});
+  const ViewingPostButtonTile(
+      {required this.post, required this.detailWidget, super.key});
   final PostEntity post;
+  final bool? detailWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,10 @@ class ViewingPostButtonTile extends StatelessWidget {
         if (post.acceptOffers == true)
           Column(
             children: <Widget>[
-              PostMakeOfferButton(post: post),
+              PostMakeOfferButton(
+                post: post,
+                detailWidget: detailWidget ?? false,
+              ),
               CustomElevatedButton(
                 title: 'book_visit'.tr(),
                 bgColor: Colors.transparent,
