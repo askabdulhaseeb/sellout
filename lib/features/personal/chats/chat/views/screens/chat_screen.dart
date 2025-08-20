@@ -42,7 +42,6 @@ class _ChatScreenState extends State<ChatScreen> {
               // Use Slivers inside a CustomScrollView
               Expanded(
                 child: CustomScrollView(
-                  scrollBehavior: const ScrollBehavior(),
                   slivers: <Widget>[
                     // SliverAppBar with dynamic bottom
                     SliverAppBar(
@@ -56,7 +55,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         toolbarHeight: 150,
                         pinned: true,
                         automaticallyImplyLeading: false,
-                        floating: true,
+                        floating: false,
                         flexibleSpace: chat?.pinnedMessage == null
                             ? null
                             : ChatPinnedOfferMessage(chat: chat!),

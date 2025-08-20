@@ -13,6 +13,8 @@ class OfferDetailEntity {
     required this.offerId,
     required this.offerPrice,
     required this.quantity,
+    required this.buyerId,
+    required this.sellerId,
     this.offerStatus,
   });
 
@@ -36,4 +38,8 @@ class OfferDetailEntity {
   int offerPrice;
   @HiveField(10)
   int quantity;
+  @HiveField(11)
+  final String buyerId;
+  @HiveField(12)
+  final String sellerId;
 }
