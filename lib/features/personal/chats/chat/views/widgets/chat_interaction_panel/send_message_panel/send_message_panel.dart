@@ -29,6 +29,7 @@ class SendMessagePanel extends StatelessWidget {
             final bool hasText = messageValue.text.trim().isNotEmpty;
             final bool haveAttachments = msgPro.attachments.isNotEmpty;
             return Column(
+              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 if (haveAttachments)
                   SendMessagePanelAttachmentsList(

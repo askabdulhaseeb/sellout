@@ -28,14 +28,15 @@ class OfferDetailEntityAdapter extends TypeAdapter<OfferDetailEntity> {
       quantity: fields[10] as int,
       buyerId: fields[11] as String,
       sellerId: fields[12] as String,
-      offerStatus: fields[6] as String?,
+      postId: fields[13] as String,
+      offerStatus: fields[6] as StatusType?,
     );
   }
 
   @override
   void write(BinaryWriter writer, OfferDetailEntity obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.postTitle)
       ..writeByte(1)
@@ -59,7 +60,9 @@ class OfferDetailEntityAdapter extends TypeAdapter<OfferDetailEntity> {
       ..writeByte(11)
       ..write(obj.buyerId)
       ..writeByte(12)
-      ..write(obj.sellerId);
+      ..write(obj.sellerId)
+      ..writeByte(13)
+      ..write(obj.postId);
   }
 
   @override

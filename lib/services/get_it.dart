@@ -121,6 +121,7 @@ import '../features/personal/order/data/repo/order_repo_impl.dart';
 import '../features/personal/order/domain/repo/order_repo.dart';
 import '../features/personal/order/view/provider/order_provider.dart';
 import '../features/personal/post/data/repositories/post_repository_impl.dart';
+import '../features/personal/post/data/sources/remote/offer_remote_api.dart';
 import '../features/personal/post/data/sources/remote/post_remote_api.dart';
 import '../features/personal/post/domain/repositories/post_repository.dart';
 import '../features/personal/post/domain/usecase/add_to_cart_usecase.dart';
@@ -316,7 +317,7 @@ void _message() {
   locator
       .registerFactory<MessagesRemoteSource>(() => MessagesRemoteSourceImpl());
   locator.registerFactory<MessageRepository>(
-      () => MessageRepositoryImpl(locator()));
+      () => MessageRepositoryImpl(locator(), locator()));
   locator
       .registerFactory<GetMessagesUsecase>(() => GetMessagesUsecase(locator()));
   locator
@@ -325,6 +326,7 @@ void _message() {
       .registerFactory<ShareInChatUsecase>(() => ShareInChatUsecase(locator()));
   locator
       .registerFactory<LeaveGroupUsecase>(() => LeaveGroupUsecase(locator()));
+
   locator.registerFactory<OfferPaymentUsecase>(
       () => OfferPaymentUsecase(locator()));
   locator.registerFactory<SendGroupInviteUsecase>(
@@ -343,7 +345,10 @@ void _message() {
 
 void _feed() {
   locator.registerFactory<PostRemoteApi>(() => PostRemoteApiImpl());
-  locator.registerFactory<PostRepository>(() => PostRepositoryImpl(locator()));
+  locator.registerFactory<OfferRemoteApi>(() => OfferRemoteApiImpl());
+
+  locator.registerFactory<PostRepository>(
+      () => PostRepositoryImpl(locator(), locator()));
   locator.registerFactory<PromoRemoteDataSource>(
       () => PromoRemoteDataSourceImpl());
   locator

@@ -72,9 +72,15 @@ class MessageTile extends StatelessWidget {
                               MessageType.leaveGroup == message.type
                           ? AlartMessageTile(message: message)
                           : MessageType.visiting == message.type
-                              ? VisitingMessageTile(message: message)
+                              ? VisitingMessageTile(
+                                  message: message,
+                                  showButtons: false,
+                                )
                               : MessageType.offer == message.type
-                                  ? OfferMessageTile(message: message)
+                                  ? OfferMessageTile(
+                                      message: message,
+                                      showButtons: false,
+                                    )
                                   : MessageType.simple == message.type
                                       ? SimpleMessageTile(
                                           message: message,

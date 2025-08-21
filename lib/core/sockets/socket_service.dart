@@ -101,20 +101,27 @@ class SocketService with WidgetsBindingObserver {
     socket!.on('newMessage', (dynamic data) async {
       AppLog.info('📨 New message received: $data',
           name: 'SocketService.newMessage');
-      await LocalChatMessage.saveMessage(MessageModel.fromJson(data));
+      await LocalChatMessage().saveMessage(MessageModel.fromJson(data));
     });
 
     socket!.on('updatedMessage', (dynamic data) async {
       AppLog.info('📝 Message update arrived: $data',
           name: 'SocketService.updatedMessage');
-      await LocalChatMessage.saveMessage(MessageModel.fromJson(data));
+      await LocalChatMessage().saveMessage(MessageModel.fromJson(data));
     });
 
     socket!.on('update-pinned-message', (dynamic data) async {
-      AppLog.info('📝Pinned Message update arrived: $data',
+      AppLog.info('📝 Updated Pinned Message  arrived: $data',
           name: 'SocketService.updatedPinnedMessage');
       await LocalChat().updatePinnedMessage(MessageModel.fromJson(data));
     });
+
+    socket!.on('new-pinned-message', (dynamic data) async {
+      AppLog.info('📝 New Pinned Message arrived: $data',
+          name: 'SocketService.newPinnedMessage');
+      await LocalChat().updatePinnedMessage(MessageModel.fromJson(data));
+    });
+
     socket!.onAny((String event, dynamic data) {
       debugPrint('📡 Event: $event');
       debugPrint('📦 Data: $data');

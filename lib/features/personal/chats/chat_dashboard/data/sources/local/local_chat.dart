@@ -40,7 +40,6 @@ class LocalChat {
   Future<void> updateLastMessage(String chatId, MessageEntity newMsg) async {
     final ChatEntity? existing = _box.get(chatId);
     if (existing == null) return;
-
     final ChatEntity updated = existing.copyWith(
       lastMessage: newMsg,
       // If you also store `updatedAt`, you can update that here too.
@@ -56,7 +55,6 @@ class LocalChat {
     final ChatEntity updated = existing.copyWith(
       pinnedMessage: newMsg,
     );
-
     await _box.put(newMsg.chatId, updated);
   }
 }

@@ -5,8 +5,8 @@ import '../../../chat_dashboard/data/sources/local/local_unseen_messages.dart';
 import '../providers/chat_provider.dart';
 import '../widgets/app_bar/chat_app_bar.dart';
 import '../widgets/chat_interaction_panel/chat_interaction_panel.dart';
+import '../widgets/group_detail_widgets.dart/pinned_message.dart/pinned_message.dart';
 import '../widgets/message/messages_list.dart';
-import '../widgets/message/tile/offer_message_tile.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -17,6 +17,8 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  final ScrollController scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -29,61 +31,24 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     final ChatEntity? chat =
         Provider.of<ChatProvider>(context, listen: false).chat;
-
     return PopScope(
-      onPopInvokedWithResult: (bool didPop, dynamic result) {
-        LocalUnreadMessagesService().clearCount(chat?.chatId ?? '');
+      onPopInvokedWithResult: (bool didPop, Object? result) {
+        LocalUnreadMessagesService().clearCount(chat!.chatId);
       },
       child: Scaffold(
-        extendBodyBehindAppBar: false,
-        body: SafeArea(
-          child: Column(
-            children: <Widget>[
-              // Use Slivers inside a CustomScrollView
-              Expanded(
-                child: CustomScrollView(
-                  slivers: <Widget>[
-                    // SliverAppBar with dynamic bottom
-                    SliverAppBar(
-                      backgroundColor: Colors.transparent,
-                      automaticallyImplyLeading: false,
-                      pinned: true,
-                      title: chatAppBar(context),
-                    ),
-                    if (chat?.pinnedMessage != null)
-                      SliverAppBar(
-                        toolbarHeight: 150,
-                        pinned: true,
-                        automaticallyImplyLeading: false,
-                        floating: false,
-                        flexibleSpace: chat?.pinnedMessage == null
-                            ? null
-                            : ChatPinnedOfferMessage(chat: chat!),
-                      ),
-                    // Messages list as a sliver
-                    const MessagesList(),
-                  ],
-                ),
-              ),
-              // Keep interaction panel fixed at bottom
-              const ChatInteractionPanel(),
+          resizeToAvoidBottomInset: true,
+          extendBody: false,
+          extendBodyBehindAppBar: false,
+          appBar: chatAppBar(context),
+          body: CustomScrollView(
+            controller: scrollController,
+            slivers: <Widget>[
+              if (chat?.pinnedMessage != null)
+                ChatPinnedMessage(chatId: chat!.chatId),
+              MessagesList(chat: chat),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class ChatPinnedOfferMessage extends StatelessWidget {
-  const ChatPinnedOfferMessage({required this.chat, super.key});
-  final ChatEntity chat;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[OfferMessageTile(message: chat.pinnedMessage!)],
+          bottomNavigationBar: const ChatInteractionPanel()),
     );
   }
 }

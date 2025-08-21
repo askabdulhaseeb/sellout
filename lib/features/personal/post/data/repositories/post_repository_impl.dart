@@ -5,18 +5,18 @@ import '../../domain/params/add_to_cart_param.dart';
 import '../../domain/params/create_offer_params.dart';
 import '../../domain/params/feed_response_params.dart';
 import '../../domain/params/get_feed_params.dart';
-import '../../domain/params/offer_payment_params.dart';
-import '../../domain/params/update_offer_params.dart';
 import '../../domain/repositories/post_repository.dart';
+import '../sources/remote/offer_remote_api.dart';
 import '../sources/remote/post_remote_api.dart';
 
 class PostRepositoryImpl implements PostRepository {
-  PostRepositoryImpl(this.remoteApi);
-  final PostRemoteApi remoteApi;
+  PostRepositoryImpl(this.postRemoteApi, this.offerRemoteApi);
+  final PostRemoteApi postRemoteApi;
+  final OfferRemoteApi offerRemoteApi;
 
   @override
   Future<DataState<GetFeedResponse>> getFeed(GetFeedParams params) async {
-    return await remoteApi.getFeed(params);
+    return await postRemoteApi.getFeed(params);
   }
 
   @override
@@ -24,41 +24,26 @@ class PostRepositoryImpl implements PostRepository {
     String id, {
     bool silentUpdate = false,
   }) async {
-    return await remoteApi.getPost(id);
+    return await postRemoteApi.getPost(id);
   }
 
   @override
   Future<DataState<bool>> addToCart(AddToCartParam param) async {
-    return await remoteApi.addToCart(param);
+    return await postRemoteApi.addToCart(param);
   }
 
   @override
   Future<DataState<bool>> createOffer(CreateOfferparams param) async {
-    return await remoteApi.createOffer(param);
-  }
-
-  @override
-  Future<DataState<bool>> updateOffer(UpdateOfferParams param) async {
-    return await remoteApi.updateOffer(param);
-  }
-
-  @override
-  Future<DataState<String>> offerPayment(OfferPaymentParams param) async {
-    return await remoteApi.offerPayment(param);
+    return await offerRemoteApi.createOffer(param);
   }
 
   @override
   Future<DataState<bool>> reportPost(ReportParams params) async {
-    return await remoteApi.reportPost(params);
+    return await postRemoteApi.reportPost(params);
   }
 
   @override
   Future<DataState<bool>> savePost(String params) async {
-    return await remoteApi.savePost(params);
+    return await postRemoteApi.savePost(params);
   }
-
-  // @override
-  // Future<DataState<bool>> updateOfferStatus(UpdateOfferParams param) async {
-  //   return await remoteApi.updateOfferStatus(param);
-  // }
 }

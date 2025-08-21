@@ -6,16 +6,14 @@ import '../../../../../chat_dashboard/domain/entities/messages/message_entity.da
 import 'widgets/offer_status_button.dart';
 
 class OfferMessageTile extends StatelessWidget {
-  const OfferMessageTile({required this.message, super.key});
+  const OfferMessageTile(
+      {required this.message, required this.showButtons, super.key});
   final MessageEntity message;
-
+  final bool showButtons;
   @override
   Widget build(BuildContext context) {
-    // final FeedProvider pro = Provider.of<FeedProvider>(context, listen: false);
-    final String? offerStatus = message.offerDetail?.offerStatus;
     debugPrint(message.offerDetail?.offerId);
-    return Container(
-      height: 150,
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
       child: Column(
         spacing: 6,
@@ -24,8 +22,8 @@ class OfferMessageTile extends StatelessWidget {
               height: 1,
               width: double.infinity,
               color: Theme.of(context).dividerColor),
-          OfferMessageTileDetail(message: message, offerStatus: offerStatus),
-          OfferMessageTileButtons(message: message),
+          OfferMessageTileDetail(message: message),
+          if (showButtons) OfferMessageTileButtons(message: message),
           Container(
               height: 1,
               width: double.infinity,
@@ -39,12 +37,10 @@ class OfferMessageTile extends StatelessWidget {
 class OfferMessageTileDetail extends StatelessWidget {
   const OfferMessageTileDetail({
     required this.message,
-    required this.offerStatus,
     super.key,
   });
 
   final MessageEntity message;
-  final String? offerStatus;
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +70,28 @@ class OfferMessageTileDetail extends StatelessWidget {
                   '${CountryHelper.currencySymbolHelper(message.offerDetail?.currency)} ${message.offerDetail?.price}',
                   style: const TextStyle(fontWeight: FontWeight.w500),
                 ),
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
+                          color: ColorScheme.of(context).outlineVariant)),
+                  child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    alignment: WrapAlignment.center,
+                    spacing: 4,
+                    children: <Widget>[
+                      const Icon(
+                        Icons.circle,
+                        size: 8,
+                      ),
+                      Text(
+                        'offer_given_by_seller'.tr(),
+                        style: TextTheme.of(context).labelSmall,
+                      ),
+                    ],
+                  ),
+                )
               ],
             ),
           ),
@@ -109,7 +127,7 @@ class OfferMessageTileDetail extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 4),
-              Text(offerStatus ?? 'na'.tr()),
+              Text(message.offerDetail?.offerStatus?.code.tr() ?? 'na'.tr()),
             ],
           ),
         ),

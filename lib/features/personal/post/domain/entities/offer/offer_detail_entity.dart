@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import '../../../../../../core/enums/core/status_type.dart';
 part 'offer_detail_entity.g.dart';
 
 @HiveType(typeId: 19)
@@ -15,6 +16,7 @@ class OfferDetailEntity {
     required this.quantity,
     required this.buyerId,
     required this.sellerId,
+    required this.postId,
     this.offerStatus,
   });
 
@@ -29,7 +31,7 @@ class OfferDetailEntity {
   @HiveField(5)
   final int minOfferAmount;
   @HiveField(6)
-  String? offerStatus;
+  StatusType? offerStatus;
   @HiveField(7)
   final String currency;
   @HiveField(8)
@@ -42,4 +44,6 @@ class OfferDetailEntity {
   final String buyerId;
   @HiveField(12)
   final String sellerId;
+  @HiveField(13)
+  final String postId;
 }

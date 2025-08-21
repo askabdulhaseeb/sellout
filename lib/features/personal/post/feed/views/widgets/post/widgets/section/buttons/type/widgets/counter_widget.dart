@@ -24,7 +24,7 @@ class _PostCounterWidgetState extends State<PostCounterWidget> {
   @override
   void initState() {
     super.initState();
-    quantity = widget.initialQuantity; // start with the parent's value
+    quantity = widget.initialQuantity;
   }
 
   @override

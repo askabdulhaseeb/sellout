@@ -69,10 +69,11 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
       builder: (BuildContext context,
           AsyncSnapshot<DataState<List<PromoEntity>>> snapshot) {
         if (!snapshot.hasData || snapshot.data?.entity == null) {
-          Center(child: Text('no_promo_found'.tr()));
+          return Center(child: Text('no_promo_found'.tr()));
         }
 
-        _allPromos = snapshot.data!.entity!;
+        // Ensure safe access
+        _allPromos = snapshot.data!.entity ?? [];
         _allPromos.sort((PromoEntity a, PromoEntity b) =>
             b.createdAt.compareTo(a.createdAt));
         _filteredPromos = _searchController.text.isEmpty
@@ -131,7 +132,7 @@ class _SearchBar extends StatelessWidget {
             contentPadding: const EdgeInsets.all(6),
             fieldPadding: const EdgeInsets.all(0),
             hint: 'search'.tr(),
-            style: TextTheme.of(context).bodyMedium,
+            style: theme.textTheme.bodyMedium,
             controller: controller,
           ),
         ),

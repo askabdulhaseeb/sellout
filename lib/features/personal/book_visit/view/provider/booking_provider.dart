@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../../../business/business_page/domain/params/get_business_bookings_params.dart';
@@ -9,7 +8,6 @@ import '../../../../business/business_page/domain/usecase/get_bookings_by_servic
 import '../../../appointment/domain/params/update_appointment_params.dart';
 import '../../../appointment/domain/usecase/update_appointment_usecase.dart';
 import '../../../bookings/domain/entity/booking_entity.dart';
-import '../../../chats/chat/views/providers/chat_provider.dart';
 import '../../../chats/chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../post/domain/entities/visit/visiting_entity.dart';
 import '../../../user/profiles/data/models/user_model.dart';
@@ -320,13 +318,13 @@ class BookingProvider extends ChangeNotifier {
 
     final BookVisitParams params =
         BookVisitParams(dateTime: formattedDateTime, postId: postID);
-    final DataState<VisitingEntity> result =
-        await _bookVisitUseCase.call(params);
+    final DataState<bool> result = await _bookVisitUseCase.call(params);
 
     if (result is DataSuccess) {
-      final String chatId = result.data ?? '';
-      await Provider.of<ChatProvider>(context, listen: false)
-          .createOrOpenChatById(context, chatId);
+      Navigator.pop(context);
+      // final String chatId = result.data ?? '';
+      // await Provider.of<ChatProvider>(context, listen: false)
+      //     .createOrOpenChatById(context, chatId);
     } else if (result is DataFailer) {
       AppLog.error(
         result.exception?.message ?? 'ERROR - BookingProvider.BookVisit',

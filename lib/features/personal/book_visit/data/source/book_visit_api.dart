@@ -13,7 +13,7 @@ import '../../view/params/book_visit_params.dart';
 import '../../view/params/update_visit_params.dart';
 
 abstract interface class BookVisitApi {
-  Future<DataState<VisitingEntity>> bookVisit(BookVisitParams params);
+  Future<DataState<bool>> bookVisit(BookVisitParams params);
   Future<DataState<bool>> bookService(BookServiceParams params);
   // Future<DataState<VisitingEntity>> updateVisitStatus(UpdateVisitParams params);
   Future<DataState<VisitingEntity>> updateVisit(UpdateVisitParams params);
@@ -22,7 +22,7 @@ abstract interface class BookVisitApi {
 
 class BookVisitApiImpl implements BookVisitApi {
   @override
-  Future<DataState<VisitingEntity>> bookVisit(BookVisitParams params) async {
+  Future<DataState<bool>> bookVisit(BookVisitParams params) async {
     const String endpoint = '/visit/create';
     try {
       final DataState<String> result = await ApiCall<String>().call(
@@ -31,30 +31,29 @@ class BookVisitApiImpl implements BookVisitApi {
         body: json.encode(params.toMap()),
       );
       if (result is DataSuccess<String>) {
-        final Map<String, dynamic> decodedData =
-            json.decode(result.data ?? '{}');
-        final VisitingEntity? visitingItem = decodedData.containsKey('items')
-            ? VisitingModel.fromJson(decodedData['items'])
-            : null;
-        final String chatId = decodedData['chat_id'] ?? '';
-        return DataSuccess<VisitingEntity>(chatId, visitingItem);
+        // final Map<String, dynamic> data = jsonDecode(result.data ?? '');
+        // final String chatID = data['chat_id'];
+        // AppLog.info(
+        //   '${result.data}',
+        //   name: 'BookVisitApiImpl.bookVisit - success',
+        // );
+        return DataSuccess<bool>('', true);
       } else {
         AppLog.error(
           result.exception?.message ?? 'ERROR - BookVisitApiImpl.bookVisit',
-          name: 'BookVisitApiImpl.bookVisit - failed',
+          name: 'BookVisitApiImpl.bookVisit - failed ${result.data}',
           error: result.exception,
         );
-        return DataFailer<VisitingEntity>(
+        return DataFailer<bool>(
           result.exception ?? CustomException('something_wrong'.tr()),
         );
       }
-    } catch (e) {
-      AppLog.error(
-        e.toString(),
-        name: 'BookVisitApiImpl.bookVisit - catch',
-        error: e,
-      );
-      return DataFailer<VisitingEntity>(CustomException(e.toString()));
+    } catch (e, stc) {
+      AppLog.error(e.toString(),
+          name: 'BookVisitApiImpl.bookVisit - catch',
+          error: e,
+          stackTrace: stc);
+      return DataFailer<bool>(CustomException(e.toString()));
     }
   }
 

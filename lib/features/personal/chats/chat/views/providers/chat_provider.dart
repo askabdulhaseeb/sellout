@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
@@ -146,38 +145,6 @@ class ChatProvider extends ChangeNotifier {
       }
     }
     return true;
-  }
-
-  void handleMessagesUpdate(
-    Box<GettedMessageEntity> box,
-    String chatId,
-    ChatProvider provider,
-    ValueNotifier<List<MessageEntity>> currentMessages,
-    ScrollController scrollController,
-  ) {
-    final GettedMessageEntity? updated = box.get(chatId);
-    if (updated == null) return;
-    final List<MessageEntity> newMessages =
-        provider.getFilteredMessages(updated);
-    if (ChatProvider.areListsEqual(currentMessages.value, newMessages)) return;
-
-    final bool shouldScrollToBottom = scrollController.hasClients &&
-        scrollController.position.pixels >=
-            scrollController.position.maxScrollExtent - 50;
-
-    currentMessages.value = newMessages;
-
-    if (shouldScrollToBottom) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (scrollController.hasClients) {
-          scrollController.animateTo(
-            scrollController.position.minScrollExtent,
-            duration: const Duration(milliseconds: 500),
-            curve: Curves.easeOut,
-          );
-        }
-      });
-    }
   }
 
   Future<void> createOrOpenChatById(BuildContext context, String chatId) async {

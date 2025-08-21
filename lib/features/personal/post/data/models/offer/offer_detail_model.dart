@@ -1,3 +1,4 @@
+import '../../../../../../core/enums/core/status_type.dart';
 import '../../../domain/entities/offer/offer_detail_entity.dart';
 
 class OfferDetailModel extends OfferDetailEntity {
@@ -14,6 +15,7 @@ class OfferDetailModel extends OfferDetailEntity {
     required super.buyerId,
     required super.sellerId,
     required super.quantity,
+    required super.postId,
   });
 
   factory OfferDetailModel.fromJson(Map<String, dynamic> json) {
@@ -24,13 +26,14 @@ class OfferDetailModel extends OfferDetailEntity {
       price: int.tryParse(json['price']?.toString() ?? '0') ?? 0,
       minOfferAmount:
           int.tryParse(json['min_offer_amount']?.toString() ?? '0') ?? 0,
-      offerStatus: json['offer_status'] ?? '',
+      offerStatus: StatusType.fromJson(json['offer_status']),
       currency: json['currency'] ?? '',
       offerId: json['offer_id'] ?? '',
       sellerId: json['seller_id'] ?? '',
       buyerId: json['buyer_id'] ?? '',
       offerPrice: int.tryParse(json['offer_price']?.toString() ?? '0') ?? 0,
       quantity: json['quantity'] ?? 1,
+      postId: json['post_id'] ?? '',
     );
   }
 }
