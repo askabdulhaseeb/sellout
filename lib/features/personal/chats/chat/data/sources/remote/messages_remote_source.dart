@@ -96,7 +96,7 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
         final Map<String, dynamic> data = responseData['items'];
         final MessageModel newMsg = MessageModel.fromJson(data);
         final String chatId = data['chat_id'];
-        await LocalChatMessage.saveMessage(newMsg);
+        await LocalChatMessage().saveMessage(newMsg);
         AppLog.info(
           '📤 Message sent & saved locally | chatId: $chatId | messageId: ${newMsg.messageId}',
           name: 'MessagesRemoteSourceImpl.sendMessage',

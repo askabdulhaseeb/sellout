@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../core/bottom_sheets/address/address_bottom_sheet.dart';
+import '../../../../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../../core/widgets/custom_elevated_button.dart';
@@ -11,12 +12,14 @@ import '../../../../../../../../../services/get_it.dart';
 import '../../../../../../../auth/signin/data/models/address_model.dart';
 import '../../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../../../cart/views/providers/cart_provider.dart';
+import '../../../../../../../post/domain/entities/post_entity.dart';
 import '../../../../../../../post/domain/params/offer_payment_params.dart';
 import '../../../../../../../post/domain/usecase/offer_payment_usecase.dart';
 import '../../../../../../../post/feed/views/enums/offer_status_enum.dart';
 import '../../../../../../../post/feed/views/providers/feed_provider.dart';
+import '../../../../../../../post/feed/views/widgets/post/widgets/section/bottomsheets/make_an_offer_bottomsheet.dart';
+import '../../../../../../../user/profiles/domain/usecase/get_post_by_id_usecase.dart';
 import '../../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
-import 'counter_offer_bottomsheet.dart';
 
 class OfferMessageTileButtons extends HookWidget {
   const OfferMessageTileButtons({
@@ -24,15 +27,6 @@ class OfferMessageTileButtons extends HookWidget {
     super.key,
   });
   final MessageEntity message;
-  void showOfferBottomSheet(BuildContext context, MessageEntity message) {
-    showBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return CounterBottomSheet(message: message);
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,79 +34,82 @@ class OfferMessageTileButtons extends HookWidget {
       builder: (BuildContext context, FeedProvider pro, _) {
         final bool isBuyer = message.offerDetail?.buyerId == LocalAuth.uid;
         final bool isSeller = message.offerDetail?.sellerId == LocalAuth.uid;
-
         return Column(
           children: <Widget>[
             if (isSeller)
-              Row(
-                spacing: 4,
+              Column(
                 children: <Widget>[
-                  // Decline button
-                  Expanded(
-                    child: CustomElevatedButton(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: Theme.of(context).primaryColor),
-                      textColor: Theme.of(context).primaryColor,
-                      textStyle: TextTheme.of(context).bodySmall?.copyWith(
-                          color: AppTheme.primaryColor,
-                          fontWeight: FontWeight.w500),
-                      bgColor: Colors.transparent,
-                      title: 'decline'.tr(),
-                      isLoading: false,
-                      onTap: () {
-                        pro.updateOffer(
-                          chatId: message.chatId,
-                          context: context,
-                          offerStatus: OfferStatus.reject.value,
-                          offerId: message.offerDetail!.offerId,
-                          messageID: message.messageId,
-                        );
-                      },
+                  if (isSeller &&
+                      message.offerDetail?.offerStatus == StatusType.pending)
+                    Row(
+                      spacing: 4,
+                      children: <Widget>[
+                        // Decline button
+                        Expanded(
+                          child: CustomElevatedButton(
+                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                                color: Theme.of(context).primaryColor),
+                            textColor: Theme.of(context).primaryColor,
+                            textStyle: TextTheme.of(context)
+                                .bodySmall
+                                ?.copyWith(
+                                    color: AppTheme.primaryColor,
+                                    fontWeight: FontWeight.w500),
+                            bgColor: Colors.transparent,
+                            title: 'decline'.tr(),
+                            isLoading: false,
+                            onTap: () {
+                              pro.updateOffer(
+                                chatId: message.chatId,
+                                context: context,
+                                offerStatus: OfferStatus.reject.value,
+                                offerId: message.offerDetail!.offerId,
+                                messageID: message.messageId,
+                              );
+                            },
+                          ),
+                        ),
+                        // Counter offer button
+                        OfferCounterButton(message: message),
+                        // Accept button
+                        Expanded(
+                          child: CustomElevatedButton(
+                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            borderRadius: BorderRadius.circular(6),
+                            title: 'accept'.tr(),
+                            textStyle: TextTheme.of(context)
+                                .bodySmall
+                                ?.copyWith(
+                                    color: ColorScheme.of(context).onPrimary,
+                                    fontWeight: FontWeight.w500),
+                            isLoading: false,
+                            onTap: () {
+                              pro.updateOffer(
+                                chatId: message.chatId,
+                                context: context,
+                                offerStatus: OfferStatus.accept.name,
+                                offerId: message.offerDetail!.offerId,
+                                messageID: message.messageId,
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  // Counter offer button
-                  Expanded(
-                    child: CustomElevatedButton(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      borderRadius: BorderRadius.circular(6),
-                      textStyle: TextTheme.of(context).bodySmall?.copyWith(
-                          color: AppTheme.primaryColor,
-                          fontWeight: FontWeight.w500),
-                      border: Border.all(color: Colors.transparent),
-                      bgColor: AppTheme.primaryColor.withValues(alpha: 0.1),
-                      title: 'counter'.tr(),
-                      isLoading: false,
-                      onTap: () {
-                        showOfferBottomSheet(context, message);
-                      },
-                    ),
-                  ),
-                  // Accept button
-                  Expanded(
-                    child: CustomElevatedButton(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      borderRadius: BorderRadius.circular(6),
-                      title: 'accept'.tr(),
-                      textStyle: TextTheme.of(context).bodySmall?.copyWith(
-                          color: ColorScheme.of(context).onPrimary,
-                          fontWeight: FontWeight.w500),
-                      isLoading: false,
-                      onTap: () {
-                        pro.updateOffer(
-                          chatId: message.chatId,
-                          context: context,
-                          offerStatus: OfferStatus.accept.name,
-                          offerId: message.offerDetail!.offerId,
-                          messageID: message.messageId,
-                        );
-                      },
-                    ),
-                  ),
                 ],
               ),
             if (isBuyer)
-              OfferBuyNowButton(offerId: message.offerDetail?.offerId ?? '')
+              Column(
+                children: <Widget>[
+                  OfferCounterButton(message: message),
+                  if (isBuyer &&
+                      message.offerDetail?.offerStatus == StatusType.accepted)
+                    OfferBuyNowButton(
+                        offerId: message.offerDetail?.offerId ?? ''),
+                ],
+              )
           ],
         );
       },
@@ -158,7 +155,6 @@ class OfferBuyNowButton extends StatelessWidget {
           onTap: () async {
             try {
               final AddressEntity? addressRes = address;
-
               if (addressRes == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -224,6 +220,71 @@ class OfferBuyNowButton extends StatelessWidget {
           },
         );
       },
+    );
+  }
+}
+
+class OfferCounterButton extends StatelessWidget {
+  const OfferCounterButton({required this.message, super.key});
+  final MessageEntity message;
+  @override
+  Widget build(BuildContext context) {
+    void showOfferBottomSheet(BuildContext context, MessageEntity message) {
+      final GetPostByIdUsecase getPostByIdUsecase =
+          GetPostByIdUsecase(locator());
+
+      showBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (BuildContext context) {
+          return FutureBuilder<DataState<List<PostEntity>>>(
+            future: getPostByIdUsecase.call(message.offerDetail?.postId),
+            builder: (BuildContext context,
+                AsyncSnapshot<DataState<List<PostEntity>>> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Container(
+                  height: 200,
+                  color: Colors.white,
+                  child: const Center(child: CircularProgressIndicator()),
+                );
+              } else if (snapshot.hasError) {
+                return Container(
+                  height: 200,
+                  color: Colors.white,
+                  child: Center(child: Text('Error: ${snapshot.error}')),
+                );
+              } else if (!snapshot.hasData ||
+                  snapshot.data!.entity == null ||
+                  snapshot.data!.entity!.isEmpty) {
+                return Container(
+                  height: 200,
+                  color: Colors.white,
+                  child: Center(child: Text('no_post_found'.tr())),
+                );
+              } else {
+                final PostEntity post = snapshot.data!.entity!.first;
+                return MakeOfferBottomSheet(post: post, message: message);
+              }
+            },
+          );
+        },
+      );
+    }
+
+    return Expanded(
+      child: CustomElevatedButton(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        borderRadius: BorderRadius.circular(6),
+        textStyle: TextTheme.of(context).bodySmall?.copyWith(
+            color: AppTheme.primaryColor, fontWeight: FontWeight.w500),
+        border: Border.all(color: Colors.transparent),
+        bgColor: AppTheme.primaryColor.withValues(alpha: 0.1),
+        title: 'counter'.tr(),
+        isLoading: false,
+        onTap: () {
+          showOfferBottomSheet(context, message);
+        },
+      ),
     );
   }
 }

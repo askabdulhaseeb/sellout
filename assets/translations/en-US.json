@@ -986,6 +986,8 @@
   "view": "View",
   "return": "Return",
   "next": "Next",
+  "offer_given_by_seller": "Offer given by seller",
+  "offer_given_by_buyer": "Offer given by buyer",
   "message": "Message",
   "offer_amount_too_low": "Offered amount must exceed the minimum offer amount",
   "size_is_required": "Size is required",

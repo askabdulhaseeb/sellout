@@ -35,7 +35,7 @@ class ProductChatTitleWidget extends StatelessWidget {
               postImageUrl: post?.imageURL ?? '',
               userImageUrl: isBusiness
                   ? (business?.logo?.url ?? '')
-                  : (user?.profilePhotoURL ?? ''),
+                  : (user?.profilePhotoURL ?? user?.displayName ?? ''),
               userDisplayName: isBusiness
                   ? (business?.displayName ?? '')
                   : (user?.displayName ?? post?.title ?? ''),

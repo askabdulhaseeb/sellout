@@ -10,7 +10,7 @@ class BookVisitRepoImpl implements BookVisitRepo {
   BookVisitRepoImpl(this.bookvisitapi);
   final BookVisitApi bookvisitapi;
   @override
-  Future<DataState<VisitingEntity>> bookvisit(BookVisitParams params) {
+  Future<DataState<bool>> bookvisit(BookVisitParams params) {
     return bookvisitapi.bookVisit(params);
   }
 

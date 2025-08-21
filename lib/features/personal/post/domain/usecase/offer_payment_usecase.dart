@@ -1,10 +1,10 @@
 import '../../../../../core/usecase/usecase.dart';
+import '../../../chats/chat/domain/repositories/message_reposity.dart';
 import '../params/offer_payment_params.dart';
-import '../repositories/post_repository.dart';
 
 class OfferPaymentUsecase implements UseCase<String, OfferPaymentParams> {
   const OfferPaymentUsecase(this.repository);
-  final PostRepository repository;
+  final MessageRepository repository;
 
   @override
   Future<DataState<String>> call(OfferPaymentParams post) async {

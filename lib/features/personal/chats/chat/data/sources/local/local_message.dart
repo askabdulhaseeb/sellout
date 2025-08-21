@@ -9,8 +9,10 @@ import '../../../domain/entities/getted_message_entity.dart';
 // getOnlineUsers
 class LocalChatMessage {
   static final String boxTitle = AppStrings.localChatMessagesBox;
+
   static Box<GettedMessageEntity> get _box =>
       Hive.box<GettedMessageEntity>(boxTitle);
+
   static Box<GettedMessageEntity> get boxLive => _box;
 
   static Future<Box<GettedMessageEntity>> get openBox async =>
@@ -27,7 +29,7 @@ class LocalChatMessage {
 
   Future<void> clear() async => await _box.clear();
 
-  static Future<void> saveMessage(MessageEntity message) async {
+  Future<void> saveMessage(MessageEntity message) async {
     final String chatId = message.chatId;
     final GettedMessageEntity? existingEntity = _box.get(chatId);
     if (existingEntity == null) {
@@ -47,8 +49,7 @@ class LocalChatMessage {
     }
   }
 
-  static Future<void> updateMessage(
-      String chatId, MessageEntity newMessage) async {
+  Future<void> updateMessage(String chatId, MessageEntity newMessage) async {
     final GettedMessageEntity? entity = _box.get(chatId);
     if (entity == null) return;
 
