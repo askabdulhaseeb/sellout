@@ -7,7 +7,7 @@ import '../../../../../../../../../../../../core/widgets/scaffold/app_bar/app_ba
 import '../../../../../../../../../domain/entities/post_entity.dart';
 import '../../../../../../../../../domain/entities/size_color/color_entity.dart';
 import '../../../../../../../../../domain/entities/size_color/size_color_entity.dart';
-import '../../../bottomsheets/make_an_offer_bottomsheet.dart';
+import '../../../bottomsheets/make_offer_bottomsheet/make_an_offer_bottomsheet.dart';
 
 class PostMakeOfferButton extends StatefulWidget {
   const PostMakeOfferButton(

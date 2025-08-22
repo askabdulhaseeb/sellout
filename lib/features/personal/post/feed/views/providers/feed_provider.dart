@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -166,6 +168,8 @@ class FeedProvider extends ChangeNotifier {
     required String offerId,
     required String messageID,
     required String chatId,
+    String? currency,
+    bool counterOffer = false,
     String? offerStatus,
     int? quantity,
     int? offerAmount,
@@ -175,6 +179,8 @@ class FeedProvider extends ChangeNotifier {
   }) async {
     setIsLoading(true);
     final UpdateOfferParams params = UpdateOfferParams(
+      currency: currency ?? '',
+      counterOffer: counterOffer,
       chatID: chatId,
       offerAmount: offerAmount,
       offerStatus: offerStatus,
@@ -184,6 +190,7 @@ class FeedProvider extends ChangeNotifier {
       size: size,
       color: color,
     );
+    debugPrint(jsonEncode(params.toMap()));
     try {
       final DataState<bool> result = await _updateOfferUsecase.call(params);
       if (result is DataSuccess && result.data != null) {

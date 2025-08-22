@@ -50,6 +50,7 @@ import '../../../features/personal/post/domain/entities/post_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/color_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/size_color_entity.dart';
 import '../../../features/personal/post/domain/entities/visit/visiting_entity.dart';
+import '../../../features/personal/post/feed/views/enums/counter_offer_enum.dart';
 import '../../../features/personal/promo/data/source/local/local_promo.dart';
 import '../../../features/personal/promo/domain/entities/promo_entity.dart';
 import '../../../features/personal/review/data/sources/local_review.dart';
@@ -154,6 +155,7 @@ class HiveDB {
     Hive.registerAdapter(TimeAwayEntityAdapter()); //64
     Hive.registerAdapter(NotificationEntityAdapter()); //65
     Hive.registerAdapter(NotificationMetadataEntityAdapter()); //66
+    Hive.registerAdapter(CounterOfferEnumAdapter()); //67
 
     // Hive box Open
     await refresh();

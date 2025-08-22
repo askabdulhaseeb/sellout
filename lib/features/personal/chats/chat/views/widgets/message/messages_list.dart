@@ -10,8 +10,9 @@ import '../../helpers/date_label_helper.dart';
 import '../../providers/chat_provider.dart';
 
 class MessagesList extends StatelessWidget {
-  const MessagesList({required this.chat, super.key});
+  const MessagesList({required this.chat, required this.controller, super.key});
   final ChatEntity? chat;
+  final ScrollController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +20,7 @@ class MessagesList extends StatelessWidget {
     final String? chatId = chatProvider.chat?.chatId;
 
     if (chatId == null) {
-      return SliverFillRemaining(
-        child: Center(child: Text('no_messages_yet'.tr())),
-      );
+      return Center(child: Text('no_messages_yet'.tr()));
     }
     final Box<GettedMessageEntity> box =
         Hive.box<GettedMessageEntity>(AppStrings.localChatMessagesBox);
@@ -34,9 +33,7 @@ class MessagesList extends StatelessWidget {
             : chatProvider.getFilteredMessages(stored);
 
         if (messages.isEmpty) {
-          return SliverFillRemaining(
-            child: Center(child: Text('no_messages_yet'.tr())),
-          );
+          return Center(child: Text('no_messages_yet'.tr()));
         }
         // Calculate time gaps only once
         final Map<String, Duration> timeDiffMap = <String, Duration>{};
@@ -52,13 +49,12 @@ class MessagesList extends StatelessWidget {
         // Build widgets (reversed chat order)
         final List<Widget> widgets =
             DateLabelHelper.buildLabeledWidgets(messages, timeDiffMap);
-        return SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (BuildContext context, int index) {
-              return widgets[index]; // your message widget
-            },
-            childCount: widgets.length,
-          ),
+        return ListView.builder(
+          controller: controller,
+          itemBuilder: (BuildContext context, int index) {
+            return widgets[index]; // your message widget
+          },
+          itemCount: widgets.length,
         );
       },
     );
