@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
-import 'widgets/offer_status_button.dart';
+import '../../pinned_message.dart/widgets/offer_buttons/offer_message_tile_buttons.dart';
 
 class OfferMessageTile extends StatelessWidget {
   const OfferMessageTile(
@@ -70,28 +70,35 @@ class OfferMessageTileDetail extends StatelessWidget {
                   '${CountryHelper.currencySymbolHelper(message.offerDetail?.currency)} ${message.offerDetail?.price}',
                   style: const TextStyle(fontWeight: FontWeight.w500),
                 ),
-                Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(
-                          color: ColorScheme.of(context).outlineVariant)),
-                  child: Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    alignment: WrapAlignment.center,
-                    spacing: 4,
-                    children: <Widget>[
-                      const Icon(
-                        Icons.circle,
-                        size: 8,
-                      ),
-                      Text(
-                        'offer_given_by_seller'.tr(),
-                        style: TextTheme.of(context).labelSmall,
-                      ),
-                    ],
-                  ),
-                )
+                if (message.offerDetail?.counterBy != null)
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+                    decoration: BoxDecoration(
+                        color: ColorScheme.of(context)
+                            .outlineVariant
+                            .withValues(alpha: 0.4),
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: ColorScheme.of(context).outlineVariant)),
+                    child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      alignment: WrapAlignment.center,
+                      spacing: 4,
+                      children: <Widget>[
+                        Icon(
+                          Icons.circle,
+                          size: 10,
+                          color: message.offerDetail?.counterBy?.color,
+                        ),
+                        Text(
+                          message.offerDetail?.counterBy?.code.tr() ??
+                              'na'.tr(),
+                          style: TextTheme.of(context).labelSmall,
+                        ),
+                      ],
+                    ),
+                  )
               ],
             ),
           ),
@@ -100,7 +107,7 @@ class OfferMessageTileDetail extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            border: Border.all(),
+            border: Border.all(color: ColorScheme.of(context).outlineVariant),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Column(
@@ -127,7 +134,10 @@ class OfferMessageTileDetail extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 4),
-              Text(message.offerDetail?.offerStatus?.code.tr() ?? 'na'.tr()),
+              Text(
+                message.offerDetail?.offerStatus?.code.tr() ?? 'na'.tr(),
+                style: TextTheme.of(context).labelSmall,
+              ),
             ],
           ),
         ),

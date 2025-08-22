@@ -59,7 +59,7 @@ class OfferRemoteApiImpl implements OfferRemoteApi {
         body: json.encode(param.toMap()),
       );
       if (result is DataSuccess) {
-        AppLog.error('${result.data}',
+        AppLog.info('${result.data}',
             name: 'OfferRemoteApi.updateOffer - success');
         return DataSuccess<bool>(result.data!, true);
       } else {

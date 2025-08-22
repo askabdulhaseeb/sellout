@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import '../../../../../../core/enums/core/status_type.dart';
+import '../../../feed/views/enums/counter_offer_enum.dart';
 part 'offer_detail_entity.g.dart';
 
 @HiveType(typeId: 19)
@@ -13,11 +14,14 @@ class OfferDetailEntity {
     required this.currency,
     required this.offerId,
     required this.offerPrice,
+    required this.offerStatus,
     required this.quantity,
     required this.buyerId,
     required this.sellerId,
     required this.postId,
-    this.offerStatus,
+    required this.counterBy,
+    required this.counterAmount,
+    required this.counterCurrency,
   });
 
   @HiveField(0)
@@ -46,4 +50,10 @@ class OfferDetailEntity {
   final String sellerId;
   @HiveField(13)
   final String postId;
+  @HiveField(14)
+  final CounterOfferEnum? counterBy;
+  @HiveField(15)
+  final int? counterAmount;
+  @HiveField(16)
+  final String? counterCurrency;
 }

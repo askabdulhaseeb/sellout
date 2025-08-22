@@ -13,7 +13,7 @@ import '../../../../../../../../../domain/entities/post_entity.dart';
 import '../../../../../../../../../domain/entities/size_color/color_entity.dart';
 import '../../../../../../../../../domain/params/create_offer_params.dart';
 import '../../../../../../../../../domain/usecase/create_offer_usecase.dart';
-import '../../../bottomsheets/make_an_offer_bottomsheet.dart';
+import '../../../bottomsheets/make_offer_bottomsheet/make_an_offer_bottomsheet.dart';
 
 class OfferCreationButton extends StatelessWidget {
   const OfferCreationButton({

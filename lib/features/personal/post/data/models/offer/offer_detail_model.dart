@@ -1,5 +1,6 @@
 import '../../../../../../core/enums/core/status_type.dart';
 import '../../../domain/entities/offer/offer_detail_entity.dart';
+import '../../../feed/views/enums/counter_offer_enum.dart';
 
 class OfferDetailModel extends OfferDetailEntity {
   OfferDetailModel({
@@ -16,6 +17,9 @@ class OfferDetailModel extends OfferDetailEntity {
     required super.sellerId,
     required super.quantity,
     required super.postId,
+    required super.counterBy,
+    required super.counterAmount,
+    required super.counterCurrency,
   });
 
   factory OfferDetailModel.fromJson(Map<String, dynamic> json) {
@@ -34,6 +38,12 @@ class OfferDetailModel extends OfferDetailEntity {
       offerPrice: int.tryParse(json['offer_price']?.toString() ?? '0') ?? 0,
       quantity: json['quantity'] ?? 1,
       postId: json['post_id'] ?? '',
+      counterBy: json['counter_by'] == null
+          ? null
+          : CounterOfferEnum.fromMap(json['counter_by']),
+      counterAmount:
+          int.tryParse(json['counter_amount']?.toString() ?? '0') ?? 0,
+      counterCurrency: json['counter_currency'] ?? '',
     );
   }
 }

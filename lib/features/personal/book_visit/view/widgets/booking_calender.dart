@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme.dart';
 import '../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../bookings/domain/entity/booking_entity.dart';
@@ -141,13 +142,20 @@ class BookingDatePickerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CalendarDatePicker(
-      initialDate: initialDate,
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2100),
-      selectableDayPredicate: (DateTime date) =>
-          date.isAfter(DateTime.now().subtract(const Duration(days: 1))),
-      onDateChanged: onDateChanged,
+    return Theme(
+      data: Theme.of(context).copyWith(
+        colorScheme: Theme.of(context).colorScheme.copyWith(
+              primary: AppTheme.primaryColor,
+            ),
+      ),
+      child: CalendarDatePicker(
+        initialDate: initialDate,
+        firstDate: DateTime.now(),
+        lastDate: DateTime(2100),
+        selectableDayPredicate: (DateTime date) =>
+            date.isAfter(DateTime.now().subtract(const Duration(days: 1))),
+        onDateChanged: onDateChanged,
+      ),
     );
   }
 }
@@ -208,7 +216,7 @@ class BookingSlotSelectorWidget extends StatelessWidget {
                   : (bool selected) {
                       onSlotSelected(selected ? time : null);
                     },
-              selectedColor: Theme.of(context).colorScheme.primary,
+              selectedColor: AppTheme.primaryColor,
               backgroundColor: isBooked
                   ? Theme.of(context).disabledColor.withValues(alpha: 0.2)
                   : Theme.of(context).colorScheme.surface,

@@ -3,11 +3,13 @@ class UpdateOfferParams {
     required this.chatID,
     required this.messageId,
     required this.offerId,
+    required this.currency,
     this.offerStatus,
     this.offerAmount,
     this.quantity,
     this.size,
     this.color,
+    this.counterOffer = false,
   });
 
   final int? offerAmount;
@@ -18,6 +20,8 @@ class UpdateOfferParams {
   final String chatID;
   final String? size;
   final String? color;
+  final bool counterOffer;
+  final String currency;
 
   Map<String, dynamic> toMap() {
     final Map<String, dynamic> map = <String, dynamic>{
@@ -25,11 +29,13 @@ class UpdateOfferParams {
     };
 
     if (offerAmount != null) map['offer_amount'] = offerAmount;
+    if (chatID != '') map['chat_id'] = chatID;
+    if (currency != '') map['currency'] = currency;
     if (quantity != null) map['quantity'] = quantity;
     if (offerStatus != null) map['offer_status'] = offerStatus;
     if (size != null && size!.isNotEmpty) map['size'] = size;
     if (color != null && color!.isNotEmpty) map['color'] = color;
-
+    if (counterOffer == true) map['counter_offer'] = true;
     return map;
   }
 
