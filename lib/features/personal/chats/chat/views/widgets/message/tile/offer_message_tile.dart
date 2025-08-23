@@ -13,7 +13,8 @@ class OfferMessageTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     debugPrint(message.offerDetail?.offerId);
-    return Padding(
+    return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
       child: Column(
         spacing: 6,

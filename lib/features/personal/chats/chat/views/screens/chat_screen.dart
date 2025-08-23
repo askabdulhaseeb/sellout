@@ -56,33 +56,20 @@ class _ChatScreenState extends State<ChatScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: chatAppBar(context),
-        body: Stack(
+        body: Column(
           children: <Widget>[
-            // Animate list padding when pinned message appears/disappears
-            AnimatedPadding(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              padding: EdgeInsets.only(top: showPinned ? 140 : 0),
+            if (chat?.pinnedMessage != null)
+              ChatPinnedMessage(
+                chatId: chat!.chatId,
+                showPinned: showPinned,
+              ),
+            Expanded(
               child: MessagesList(
                 chat: chat,
                 controller: scrollController,
               ),
             ),
-
             // Smooth floating pinned message
-            if (chat?.pinnedMessage != null)
-              AnimatedPositioned(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-                top: showPinned ? 0 : -160, // Slide up when hidden
-                left: 0,
-                right: 0,
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 200),
-                  opacity: showPinned ? 1.0 : 0.0,
-                  child: ChatPinnedMessage(chatId: chat!.chatId),
-                ),
-              ),
           ],
         ),
         bottomNavigationBar: const ChatInteractionPanel(),

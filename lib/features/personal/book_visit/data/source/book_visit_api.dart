@@ -31,13 +31,13 @@ class BookVisitApiImpl implements BookVisitApi {
         body: json.encode(params.toMap()),
       );
       if (result is DataSuccess<String>) {
-        // final Map<String, dynamic> data = jsonDecode(result.data ?? '');
-        // final String chatID = data['chat_id'];
-        // AppLog.info(
-        //   '${result.data}',
-        //   name: 'BookVisitApiImpl.bookVisit - success',
-        // );
-        return DataSuccess<bool>('', true);
+        final Map<String, dynamic> data = jsonDecode(result.data ?? '');
+        final String chatID = data['chat_id'];
+        AppLog.info(
+          '${result.data}',
+          name: 'BookVisitApiImpl.bookVisit - success',
+        );
+        return DataSuccess<bool>(chatID, true);
       } else {
         AppLog.error(
           result.exception?.message ?? 'ERROR - BookVisitApiImpl.bookVisit',
