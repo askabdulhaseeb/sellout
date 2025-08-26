@@ -40,11 +40,11 @@ class _ChatScreenState extends State<ChatScreen> {
           Provider.of<ChatProvider>(context, listen: false);
       final ScrollDirection direction =
           scrollController.position.userScrollDirection;
-      if (direction == ScrollDirection.reverse && pro.expandedPinnedMessage) {
-        pro.setPinnedMessageExpansion(false);
+      if (direction == ScrollDirection.reverse && pro.showPinnedMessage) {
+        pro.setPinnedMessageVisibility(false);
       } else if (direction == ScrollDirection.forward &&
-          !pro.expandedPinnedMessage) {
-        pro.setPinnedMessageExpansion(true);
+          !pro.showPinnedMessage) {
+        pro.setPinnedMessageVisibility(true);
       }
     });
   }
@@ -81,7 +81,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   left: 0,
                   right: 0,
                   bottom: 0,
-                  top: pro.expandedPinnedMessage ? 150 : 0,
+                  top: pro.showPinnedMessage ? 150 : 0,
                   duration: const Duration(milliseconds: 300),
                   child: MessagesList(
                     chat: chat,
