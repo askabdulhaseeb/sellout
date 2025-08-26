@@ -316,11 +316,9 @@ class BookingProvider extends ChangeNotifier {
 
   Future<void> bookVisit(BuildContext context, String postID) async {
     setIsLoading(true);
-
     final BookVisitParams params =
         BookVisitParams(dateTime: formattedDateTime, postId: postID);
     final DataState<bool> result = await _bookVisitUseCase.call(params);
-
     if (result is DataSuccess) {
       final String chatId = result.data ?? '';
       await Provider.of<ChatProvider>(context, listen: false)
@@ -332,7 +330,6 @@ class BookingProvider extends ChangeNotifier {
         error: result.exception,
       );
     }
-
     setIsLoading(false);
   }
 
@@ -359,21 +356,9 @@ class BookingProvider extends ChangeNotifier {
     final DataState<VisitingEntity> result = await _updateVisitUseCase(params);
     if (result is DataSuccess) {
       // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('visit_updated'.tr()),
-          duration: const Duration(seconds: 1),
-        ),
-      );
+
       notifyListeners();
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(result.exception?.message ?? 'something_wrong'.tr()),
-          duration: const Duration(seconds: 1),
-        ),
-      );
-    }
+    } else {}
     setIsLoading(false);
   }
 

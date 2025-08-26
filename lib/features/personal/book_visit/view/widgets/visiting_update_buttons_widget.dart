@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 import '../../../../../core/widgets/custom_elevated_button.dart';
 import 'cancel_visiting_dialog.dart';
 
-class VisitingMessageTileUpdateButtonsWidget extends StatelessWidget {
+class VisitingMessageTileUpdateButtonsWidget extends StatefulWidget {
   const VisitingMessageTileUpdateButtonsWidget({
     required this.message,
     this.post,
@@ -22,23 +22,65 @@ class VisitingMessageTileUpdateButtonsWidget extends StatelessWidget {
   final PostEntity? post;
 
   @override
+  State<VisitingMessageTileUpdateButtonsWidget> createState() =>
+      _VisitingMessageTileUpdateButtonsWidgetState();
+}
+
+class _VisitingMessageTileUpdateButtonsWidgetState
+    extends State<VisitingMessageTileUpdateButtonsWidget> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final StatusType status = widget.message.visitingDetail!.status;
+      if (status == StatusType.accepted) {
+        _checkAndUpdateVisit();
+      }
+    });
+  }
+
+  void _checkAndUpdateVisit() {
+    final BookingProvider pro =
+        Provider.of<BookingProvider>(context, listen: false);
+    final DateTime? visitTime = widget.message.visitingDetail?.dateTime;
+    if (visitTime == null) return;
+    final DateTime now = DateTime.now();
+    if (now.isAfter(visitTime)) {
+      _updateVisit(pro);
+    } else {
+      final Duration delay = visitTime.difference(now);
+      Future<void>.delayed(delay, () => _updateVisit(pro));
+    }
+  }
+
+  void _updateVisit(BookingProvider pro) {
+    pro.updateVisit(
+      query: 'status',
+      status: 'happened',
+      chatID: widget.message.chatId,
+      context: context,
+      visitingId: widget.message.visitingDetail?.visitingID ?? '',
+      messageId: widget.message.messageId,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (message.visitingDetail == null) {
+    if (widget.message.visitingDetail == null) {
       return const SizedBox();
     }
 
     final bool isHost =
-        message.visitingDetail!.hostID == LocalAuth.currentUser?.userID;
-    final StatusType status = message.visitingDetail!.status;
+        widget.message.visitingDetail!.hostID == LocalAuth.currentUser?.userID;
+    final StatusType status = widget.message.visitingDetail!.status;
 
     return Column(
       children: <Widget>[
         if (!isHost && status == StatusType.pending)
-          CancelAndChangeButtons(message: message, post: post),
+          CancelAndChangeButtons(message: widget.message, post: widget.post),
         if (isHost && status == StatusType.pending)
-          HostPendingButtons(message: message),
-        if (isHost && status == StatusType.accepted)
-          HostDoneButton(message: message),
+          HostPendingButtons(message: widget.message),
+        // HostDoneButton(message: widget.message),
       ],
     );
   }
@@ -58,35 +100,39 @@ class CancelAndChangeButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     final BookingProvider pro =
         Provider.of<BookingProvider>(context, listen: false);
+    final DateTime? createdAt = message.visitingDetail!.createdAt;
+    final bool cancellationTimeOver =
+        createdAt != null && DateTime.now().difference(createdAt).inHours >= 24;
 
     return Column(
       children: <Widget>[
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            Expanded(
-              child: CustomElevatedButton(
-                margin: const EdgeInsets.all(4),
-                padding: const EdgeInsets.all(4),
-                bgColor: Colors.transparent,
-                border: Border.all(color: Theme.of(context).primaryColor),
-                textColor: Theme.of(context).primaryColor,
-                textStyle: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).primaryColor,
+            if (!cancellationTimeOver)
+              Expanded(
+                child: CustomElevatedButton(
+                  margin: const EdgeInsets.all(4),
+                  padding: const EdgeInsets.all(4),
+                  bgColor: Colors.transparent,
+                  border: Border.all(color: Theme.of(context).primaryColor),
+                  textColor: Theme.of(context).primaryColor,
+                  textStyle: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) =>
+                          CancelVisitingDialog(pro: pro, message: message),
+                    );
+                  },
+                  isLoading: false,
+                  title: 'cancel_viewing'.tr(),
                 ),
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (_) =>
-                        CancelVisitingDialog(pro: pro, message: message),
-                  );
-                },
-                isLoading: false,
-                title: 'cancel_viewing'.tr(),
               ),
-            ),
             Expanded(
               child: CustomElevatedButton(
                 padding: const EdgeInsets.all(4),
@@ -180,51 +226,6 @@ class HostPendingButtons extends StatelessWidget {
                 },
                 isLoading: false,
                 title: 'accept_viewing'.tr(),
-              ),
-            ),
-          ],
-        ),
-        const Divider(),
-      ],
-    );
-  }
-}
-
-class HostDoneButton extends StatelessWidget {
-  const HostDoneButton({required this.message, super.key});
-
-  final MessageEntity message;
-
-  @override
-  Widget build(BuildContext context) {
-    final BookingProvider pro =
-        Provider.of<BookingProvider>(context, listen: false);
-
-    return Column(
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: CustomElevatedButton(
-                padding: const EdgeInsets.all(4),
-                margin: const EdgeInsets.all(4),
-                title: 'visiting_done'.tr(),
-                isLoading: false,
-                textStyle: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).canvasColor,
-                ),
-                onTap: () {
-                  pro.updateVisit(
-                    query: 'status',
-                    status: 'happened',
-                    chatID: message.chatId,
-                    context: context,
-                    visitingId: message.visitingDetail?.visitingID ?? '',
-                    messageId: message.messageId,
-                  );
-                },
               ),
             ),
           ],

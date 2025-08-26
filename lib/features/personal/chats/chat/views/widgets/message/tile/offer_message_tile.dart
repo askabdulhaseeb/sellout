@@ -14,21 +14,19 @@ class OfferMessageTile extends StatelessWidget {
   Widget build(BuildContext context) {
     debugPrint(message.offerDetail?.offerId);
     return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+      decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          border: Border.all(
+              color: showButtons
+                  ? Colors.transparent
+                  : ColorScheme.of(context).outlineVariant),
+          borderRadius: BorderRadius.circular(8)),
+      padding: const EdgeInsets.all(8),
       child: Column(
         spacing: 6,
         children: <Widget>[
-          Container(
-              height: 1,
-              width: double.infinity,
-              color: Theme.of(context).dividerColor),
           OfferMessageTileDetail(message: message),
           if (showButtons) OfferMessageTileButtons(message: message),
-          Container(
-              height: 1,
-              width: double.infinity,
-              color: Theme.of(context).dividerColor),
         ],
       ),
     );
@@ -68,8 +66,11 @@ class OfferMessageTileDetail extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${CountryHelper.currencySymbolHelper(message.offerDetail?.currency)} ${message.offerDetail?.price}',
-                  style: const TextStyle(fontWeight: FontWeight.w500),
+                  '${CountryHelper.currencySymbolHelper(message.offerDetail?.currency)}.${message.offerDetail?.price} X ${message.offerDetail?.quantity}',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: ColorScheme.of(context).outline,
+                      fontSize: 12),
                 ),
                 if (message.offerDetail?.counterBy != null)
                   Container(

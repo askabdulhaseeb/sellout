@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../../core/utilities/app_string.dart';
 import '../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../routes/app_linking.dart';
+import '../../../setting_options/balance_screen/screens/balance_screen.dart';
 import '../../../setting_options/buyer_orders/screens/personal_setting_buyer_order_screen.dart';
 import '../../../setting_options/privacy_setting/screen/privacy_screen.dart';
 import 'personal_more_information_setting_screen.dart';
@@ -86,7 +87,7 @@ class PersonalSettingScreen extends StatelessWidget {
               icon: AppStrings.selloutBalanaceSettingIcon,
               title: 'balance'.tr(),
               onTap: () {
-                // AppNavigator.pushNamed(BalanceScreen.routeName);
+                AppNavigator.pushNamed(BalanceScreen.routeName);
               },
             ),
           ),

@@ -39,7 +39,7 @@ class CurrentUserModel extends CurrentUserEntity {
     required super.profileImage,
     required super.lastLoginTime,
     required super.createdAt,
-    required super.updatedAt, //No associated named super constructor parameter.Try changing the name to the name of an existing named super constructor parameter, or creating such named parameter.
+    required super.updatedAt,
     required super.businessStatus,
     required super.businessName,
     required super.businessID,

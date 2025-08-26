@@ -12,16 +12,35 @@ class CountryHelper {
     }
   }
 
-  static String? getCountryCode(String countryInput) {
-    final Map<String, String> _countryCodeMap = <String, String>{
-      'PAKISTAN': 'PK',
-      'PAK': 'PK',
-      'UNITED STATES': 'US',
-      'USA': 'US',
-      'UNITED KINGDOM': 'GB',
-      'UK': 'GB',
-    };
+  /// Returns a valid ISO Alpha-2 country code from various inputs.
+  static String? getCountryAlpha2(String countryInput) {
+    if (countryInput.isEmpty) return null;
+
     final String upper = countryInput.trim().toUpperCase();
-    return _countryCodeMap[upper];
+
+    // If already Alpha-2 (2 letters), return as is
+    if (upper.length == 2) return upper;
+
+    // Alpha-3 codes to Alpha-2
+    const Map<String, String> alpha3ToAlpha2 = {
+      'PAK': 'PK',
+      'USA': 'US',
+      'GBR': 'GB',
+      'IND': 'IN',
+      'CAN': 'CA',
+      // Add more as needed
+    };
+
+    // Full country names to Alpha-2
+    const Map<String, String> fullNameToAlpha2 = {
+      'PAKISTAN': 'PK',
+      'UNITED STATES': 'US',
+      'UNITED KINGDOM': 'GB',
+      'INDIA': 'IN',
+      'CANADA': 'CA',
+      // Add more as needed
+    };
+
+    return alpha3ToAlpha2[upper] ?? fullNameToAlpha2[upper];
   }
 }

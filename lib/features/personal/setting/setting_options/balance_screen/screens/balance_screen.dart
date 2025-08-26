@@ -33,18 +33,15 @@ class BalanceScreenBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<BalanceProvider>(context);
+    final BalanceProvider provider = Provider.of<BalanceProvider>(context);
 
     if (provider.isSettingUpStripe) {
-      // 👇 Show loader while onboarding link is being fetched
       return const StripeSetupLoader();
     }
 
     if (provider.hasStripeAccount) {
-      // 👇 If connected, show balance card
       return const BalanceCard();
     } else {
-      // 👇 If not connected, prompt user to set up Stripe
       return const CreateAccountPrompt();
     }
   }

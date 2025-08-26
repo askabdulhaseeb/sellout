@@ -1,4 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../setting_dashboard/domain/params/create_account_session_params.dart';
@@ -8,15 +10,29 @@ class BalanceProvider extends ChangeNotifier {
   BalanceProvider(this._connectAccountSessionUseCase);
   final ConnectAccountSessionUseCase _connectAccountSessionUseCase;
 
-  bool hasStripeAccount = false; // toggle manually for now
+  bool hasStripeAccount = false;
   bool isSettingUpStripe = false;
 
-  // Call this to simulate or later replace with actual API call
+  static const MethodChannel _channel =
+      MethodChannel('com.sellout.sellout/stripe');
+
   Future<void> startStripeSetupFlow() async {
     isSettingUpStripe = true;
     notifyListeners();
-    // final String sessionSecretKey = await getSessionSecret();
-    // await launchStripeOnboarding(sessionSecretKey);
+
+    // Get the session secret from backend
+    final String sessionSecret = await getSessionSecret();
+
+    if (sessionSecret.isNotEmpty) {
+      try {
+        await _channel.invokeMethod('openConnectOnboarding',
+            <String, String>{'sessionId': sessionSecret});
+        hasStripeAccount = true; // optionally verify via backend
+      } on PlatformException catch (e) {
+        debugPrint('Error launching Stripe onboarding: ${e.message}');
+      }
+    }
+
     isSettingUpStripe = false;
     notifyListeners();
   }
@@ -25,9 +41,9 @@ class BalanceProvider extends ChangeNotifier {
     try {
       final DataState<String> result = await _connectAccountSessionUseCase.call(
         ConnectAccountSessionParams(
-          email: '', // TODO: Fill email
-          country: '', // TODO: Fill country (like 'PK')
-          entityId: '', // TODO: Fill entity ID
+          email: '', // For loggedin user
+          country: '', // For loggedin user
+          entityId: '', // For loggedin user
         ),
       );
 
@@ -43,9 +59,7 @@ class BalanceProvider extends ChangeNotifier {
           name: 'BalanceProvider.getSessionSecret - catch',
           error: e,
           stackTrace: stc);
-      // snackbar or handle exception
     }
-
-    return ''; // return null if failed
+    return '';
   }
 }

@@ -1,7 +1,9 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/utilities/app_string.dart';
+import '../../../../../../../services/get_it.dart';
 import '../../../domain/entities/messages/message_entity.dart';
+import '../../../domain/usecase/get_my_chats_usecase.dart';
 import '../../models/chat/chat_model.dart';
 
 // getOnlineUsers
@@ -39,22 +41,29 @@ class LocalChat {
 
   Future<void> updateLastMessage(String chatId, MessageEntity newMsg) async {
     final ChatEntity? existing = _box.get(chatId);
-    if (existing == null) return;
-    final ChatEntity updated = existing.copyWith(
-      lastMessage: newMsg,
-      // If you also store `updatedAt`, you can update that here too.
-      // updatedAt: DateTime.now(),
-    );
 
-    await _box.put(chatId, updated);
+    if (existing == null) {
+      // If chat does not exist locally, you might fetch it
+      await GetMyChatsUsecase(locator()).call(<String>[chatId]);
+    } else {
+      // If chat exists, update the lastMessage
+      final ChatEntity updated = existing.copyWith(lastMessage: newMsg);
+      await _box.put(chatId, updated);
+    }
   }
 
   Future<void> updatePinnedMessage(MessageEntity newMsg) async {
     final ChatEntity? existing = _box.get(newMsg.chatId);
-    if (existing == null) return;
-    final ChatEntity updated = existing.copyWith(
-      pinnedMessage: newMsg,
-    );
-    await _box.put(newMsg.chatId, updated);
+    if (existing == null) {
+      // If chat does not exist locally, you might fetch it
+      await GetMyChatsUsecase(locator()).call(<String>[newMsg.chatId]);
+    } else {
+      final ChatEntity updated = existing.copyWith(
+        pinnedMessage: newMsg,
+      );
+
+      await _box.put(
+          newMsg.chatId, updated); // This notifies listeners if UI is listening
+    }
   }
 }

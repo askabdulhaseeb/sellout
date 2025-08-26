@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../routes/app_linking.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../listing/listing_form/views/widgets/attachment_selection/cept_group_invite_usecase.dart';
 import '../../../chat_dashboard/data/sources/local/local_chat.dart';
@@ -41,15 +42,26 @@ class ChatProvider extends ChangeNotifier {
   GettedMessageEntity? _gettedMessage;
   DateTime? _chatAt;
   bool _isLoading = false;
+  bool _expandedPinnedMessage = true;
 
 //
 
   GettedMessageEntity? get gettedMessage => _gettedMessage;
   DateTime? get chatAT => _chatAt;
   ChatEntity? get chat => _chat;
+  bool get expandedPinnedMessage => _expandedPinnedMessage;
 //
   void setLoading(bool value) {
     _isLoading = value;
+    notifyListeners();
+  }
+
+  void setPinnedMessageExpansion(bool? val) {
+    if (val == null) {
+      _expandedPinnedMessage = !_expandedPinnedMessage;
+    } else {
+      _expandedPinnedMessage = val;
+    }
     notifyListeners();
   }
 
@@ -167,7 +179,10 @@ class ChatProvider extends ChangeNotifier {
   Future<void> openChat(BuildContext context, ChatEntity chat) async {
     setChat(context, chat);
     getMessages();
-    Navigator.of(context).pushNamed(ChatScreen.routeName);
+    AppNavigator.pushNamedAndRemoveUntil(
+      ChatScreen.routeName,
+      (_) => true,
+    );
   }
 
   Future<bool> loadMessages() async {
