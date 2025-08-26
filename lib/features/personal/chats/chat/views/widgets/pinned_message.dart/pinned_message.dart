@@ -59,18 +59,10 @@ class _OfferMessageTileAnimatedState extends State<OfferMessageTileAnimated>
   Widget build(BuildContext context) {
     return Consumer<ChatProvider>(
       builder: (BuildContext context, ChatProvider pro, _) => AnimatedContainer(
-        height: pro.showPinnedMessage ? 150 : 0,
+        height: pro.showPinnedMessage ? null : 0,
         width: double.infinity,
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
-          // boxShadow: [
-          //   BoxShadow(
-          //     color: ColorScheme.of(context).outline,
-          //     offset: const Offset(0, 4),
-          //     blurRadius: 8,
-          //     spreadRadius: 0,
-          //   ),
-          // ],
         ),
         duration: const Duration(microseconds: 300),
         child: Column(
@@ -115,39 +107,44 @@ class _VisitingMessageTileAnimatedState
   Widget build(BuildContext context) {
     return Consumer<ChatProvider>(
       builder: (BuildContext context, ChatProvider pro, _) {
-        return Stack(
-          clipBehavior: Clip.none,
-          children: <Widget>[
-            Material(
-              shape: DrawerHandleBorder(), // reserves 40px bottom space
-              elevation: 4,
-              color: Theme.of(context).primaryColor,
-              child: Padding(
-                // leave space at the bottom inside the shape
-                padding: const EdgeInsets.only(bottom: 30),
-                child: VisitingMessageTile(
-                  message: widget.message,
-                  showButtons: true,
+        return AnimatedContainer(
+          height: pro.showPinnedMessage ? null : 0,
+          duration: const Duration(microseconds: 300),
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: <Widget>[
+              Material(
+                shape: DrawerHandleBorder(), // reserves 40px bottom space
+                elevation: 4,
+                color: Theme.of(context).primaryColor,
+                child: Padding(
+                  // leave space at the bottom inside the shape
+                  padding: const EdgeInsets.only(bottom: 30),
+                  child: VisitingMessageTile(
+                    collapsable: true,
+                    message: widget.message,
+                    showButtons: true,
+                  ),
                 ),
               ),
-            ),
-            Positioned(
-              bottom: 5,
-              right: 20,
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  debugPrint('visiting pinned tile expand/collapse');
-                  pro.setPinnedMessageExpandedState();
-                },
-                child: const Icon(
-                  Icons.keyboard_double_arrow_down_outlined,
-                  color: Colors.white,
-                  size: 20,
+              Positioned(
+                bottom: 5,
+                right: 20,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () {
+                    debugPrint('visiting pinned tile expand/collapse');
+                    pro.setPinnedMessageExpandedState();
+                  },
+                  child: const Icon(
+                    Icons.keyboard_double_arrow_down_outlined,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );

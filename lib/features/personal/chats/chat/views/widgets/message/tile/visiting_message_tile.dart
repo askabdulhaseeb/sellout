@@ -16,13 +16,13 @@ class VisitingMessageTile extends StatefulWidget {
   const VisitingMessageTile({
     required this.message,
     required this.showButtons,
-    this.isExpanded = false,
+    this.collapsable = false,
     super.key,
   });
 
   final MessageEntity message;
   final bool showButtons;
-  final bool isExpanded;
+  final bool collapsable;
 
   @override
   State<VisitingMessageTile> createState() => _VisitingMessageTileState();
@@ -32,7 +32,8 @@ class _VisitingMessageTileState extends State<VisitingMessageTile> {
   @override
   Widget build(BuildContext context) {
     final ChatProvider pro = Provider.of<ChatProvider>(context);
-    final bool expanded = pro.expandVisitingMessage || widget.isExpanded;
+    final bool expanded = !widget.collapsable ||
+        (widget.collapsable && pro.expandVisitingMessage);
 
     return FutureBuilder<PostEntity?>(
       future: LocalPost().getPost(widget.message.visitingDetail?.postID ?? ''),
@@ -50,10 +51,13 @@ class _VisitingMessageTileState extends State<VisitingMessageTile> {
             widget.message.visitingDetail?.status ?? StatusType.inActive;
 
         return AnimatedContainer(
+          margin: EdgeInsets.all(widget.showButtons ? 0 : 16),
           duration: const Duration(milliseconds: 400),
           curve: Curves.easeInOut,
           padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
           decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(widget.showButtons ? 0 : 12),
+            border: Border.all(color: ColorScheme.of(context).outlineVariant),
             color: Theme.of(context).scaffoldBackgroundColor,
           ),
           child: Column(
@@ -78,7 +82,8 @@ class _VisitingMessageTileState extends State<VisitingMessageTile> {
                           style: const TextStyle(
                               fontSize: 12, color: Colors.black87)),
                     ),
-                    Flexible(
+                    const SizedBox(width: 8),
+                    Expanded(
                       child: Text(
                         title,
                         style: Theme.of(context).textTheme.bodyMedium,
@@ -88,48 +93,49 @@ class _VisitingMessageTileState extends State<VisitingMessageTile> {
                   ],
                 ),
               if (expanded) const SizedBox(height: 12),
-              Row(
-                crossAxisAlignment: expanded
-                    ? CrossAxisAlignment.start
-                    : CrossAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(
-                    height: expanded ? 100 : 60,
-                    width: expanded ? 100 : 60,
-                    child: Stack(
-                      children: <Widget>[
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: CustomNetworkImage(
-                            size: double.infinity,
-                            imageURL: imageUrl,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        if (expanded)
-                          Positioned(
-                            top: 8,
-                            right: 8,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.6),
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Text(
-                                '${CountryHelper.currencySymbolHelper(currency)} $price',
-                                style: const TextStyle(
-                                    color: Colors.white, fontSize: 10),
-                              ),
+              SizedBox(
+                width: double.infinity,
+                child: Row(
+                  crossAxisAlignment: expanded
+                      ? CrossAxisAlignment.center
+                      : CrossAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(
+                      height: expanded ? 100 : 60,
+                      width: expanded ? 100 : 60,
+                      child: Stack(
+                        children: <Widget>[
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: CustomNetworkImage(
+                              size: double.infinity,
+                              imageURL: imageUrl,
+                              fit: BoxFit.cover,
                             ),
                           ),
-                      ],
+                          if (expanded)
+                            Positioned(
+                              top: 8,
+                              right: 8,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.6),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Text(
+                                  '${CountryHelper.currencySymbolHelper(currency)} $price',
+                                  style: const TextStyle(
+                                      color: Colors.white, fontSize: 10),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Container(
+                    const SizedBox(width: 12),
+                    Container(
                       height: expanded ? 100 : 60,
                       padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
@@ -141,8 +147,8 @@ class _VisitingMessageTileState extends State<VisitingMessageTile> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: expanded
-                            ? CrossAxisAlignment.start
-                            : CrossAxisAlignment.center,
+                            ? CrossAxisAlignment.center
+                            : CrossAxisAlignment.start,
                         children: <Widget>[
                           if (expanded)
                             Text('${'date'.tr()}: ',
@@ -163,13 +169,13 @@ class _VisitingMessageTileState extends State<VisitingMessageTile> {
                         ],
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               if (expanded) const SizedBox(height: 12),
               if (expanded) VisitingTileTags(post: post),
               if (expanded) const SizedBox(height: 12),
-              if (expanded)
+              if (expanded && widget.showButtons)
                 Text('we_looke_forward_to_seeing_you'.tr(),
                     style: const TextStyle(fontSize: 13)),
             ],
