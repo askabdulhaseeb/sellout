@@ -59,7 +59,7 @@ class _OfferMessageTileAnimatedState extends State<OfferMessageTileAnimated>
   Widget build(BuildContext context) {
     return Consumer<ChatProvider>(
       builder: (BuildContext context, ChatProvider pro, _) => AnimatedContainer(
-        height: pro.expandedPinnedMessage ? 150 : 0,
+        height: pro.showPinnedMessage ? 150 : 0,
         width: double.infinity,
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
@@ -138,7 +138,7 @@ class _VisitingMessageTileAnimatedState
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
                   debugPrint('visiting pinned tile expand/collapse');
-                  pro.setPinnedMessageExpansion(null);
+                  pro.setPinnedMessageExpandedState();
                 },
                 child: const Icon(
                   Icons.keyboard_double_arrow_down_outlined,

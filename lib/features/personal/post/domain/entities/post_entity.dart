@@ -41,19 +41,23 @@ class PostEntity {
     required this.localDelivery,
     required this.internationalDelivery,
     //
-    required this.sizeChartUrl,
+    required this.meetUpLocation,
+    required this.availability,
+    //
     required this.fileUrls,
     required this.hasDiscount,
     required this.discounts,
+    //cloth foot
+    required this.sizeChartUrl,
     required this.sizeColors,
-    //
+    required this.brand,
+    //vehicle
     required this.year,
     required this.doors,
     required this.seats,
     required this.mileage,
     required this.make,
     required this.model,
-    required this.brand,
     required this.bodyType,
     required this.emission,
     required this.fuelType,
@@ -63,12 +67,11 @@ class PostEntity {
     required this.interiorColor,
     required this.exteriorColor,
     required this.vehiclesCategory,
-    required this.meetUpLocation,
-    required this.availability,
+    //property
     required this.bathroom,
     required this.bedroom,
     required this.energyRating,
-    //
+    //pets
     required this.age,
     required this.breed,
     required this.healthChecked,

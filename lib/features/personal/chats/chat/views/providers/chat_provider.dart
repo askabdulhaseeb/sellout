@@ -42,26 +42,33 @@ class ChatProvider extends ChangeNotifier {
   GettedMessageEntity? _gettedMessage;
   DateTime? _chatAt;
   bool _isLoading = false;
-  bool _expandedPinnedMessage = true;
+  bool _expandVisitingMessage = true;
+  bool _showPinnedMessage = true;
 
 //
 
   GettedMessageEntity? get gettedMessage => _gettedMessage;
   DateTime? get chatAT => _chatAt;
   ChatEntity? get chat => _chat;
-  bool get expandedPinnedMessage => _expandedPinnedMessage;
+  bool get expandVisitingMessage => _expandVisitingMessage;
+  bool get showPinnedMessage => _showPinnedMessage;
 //
   void setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
   }
 
-  void setPinnedMessageExpansion(bool? val) {
+  void setPinnedMessageVisibility(bool? val) {
     if (val == null) {
-      _expandedPinnedMessage = !_expandedPinnedMessage;
+      _showPinnedMessage = !_showPinnedMessage;
     } else {
-      _expandedPinnedMessage = val;
+      _showPinnedMessage = val;
     }
+    notifyListeners();
+  }
+
+  void setPinnedMessageExpandedState() {
+    _expandVisitingMessage = !_expandVisitingMessage;
     notifyListeners();
   }
 
