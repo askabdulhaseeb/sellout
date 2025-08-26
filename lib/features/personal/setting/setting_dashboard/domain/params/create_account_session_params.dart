@@ -16,8 +16,8 @@ class ConnectAccountSessionParams {
   Map<String, dynamic> toMap() {
     final Map<String, String> data = <String, String>{
       'email': LocalAuth.currentUser?.email ?? '',
-      'country': CountryHelper.getCountryCode(
-              LocalAuth.currentUser?.countryCode ?? '') ??
+      'country': CountryHelper.getCountryAlpha2(
+              LocalAuth.currentUser?.countryAlpha3 ?? '') ??
           '',
       'entity_id': LocalAuth.uid ?? '',
     };

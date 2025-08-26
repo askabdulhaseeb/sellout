@@ -40,7 +40,7 @@ class DateLabelHelper {
     final DateTime messageDate = DateTime(time.year, time.month, time.day);
 
     if (now.difference(time).inMinutes < 5 && messageDate == today) {
-      return 'now'.tr(); // you can also add key "now" in json
+      return 'new_messages'.tr(); // you can also add key "now" in json
     }
     if (messageDate == today) return 'today'.tr();
     if (messageDate == yesterday) return 'yesterday'.tr();

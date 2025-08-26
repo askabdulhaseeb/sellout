@@ -8,6 +8,7 @@ import '../../../../../../../../../domain/entities/post_entity.dart';
 import '../../../../../../../../../domain/entities/size_color/color_entity.dart';
 import '../../../../../../../../../domain/entities/size_color/size_color_entity.dart';
 import '../../../bottomsheets/make_offer_bottomsheet/make_an_offer_bottomsheet.dart';
+import '../size_chart_button_tile.dart';
 
 class PostMakeOfferButton extends StatefulWidget {
   const PostMakeOfferButton(
@@ -59,7 +60,7 @@ class _PostMakeOfferButtonState extends State<PostMakeOfferButton> {
     return CustomElevatedButton(
       bgColor: Theme.of(context).primaryColor,
       onTap: () {
-        if (widget.post.sizeColors.isNotEmpty && !widget.detailWidget) {
+        if (widget.post.sizeColors.isNotEmpty && widget.detailWidget == false) {
           _openSelectionDialog(context);
         } else {
           _openMakeOfferBottomSheet(context);
@@ -105,6 +106,7 @@ class _SelectSizeColorDialogState extends State<SelectSizeColorDialog> {
         child: Form(
           key: _formKey,
           child: Column(
+            spacing: 10,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Row(
@@ -170,7 +172,8 @@ class _SelectSizeColorDialogState extends State<SelectSizeColorDialog> {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              SizeChartButtonTile(
+                  sizeChartURL: widget.post.sizeChartUrl?.url ?? ''),
               CustomElevatedButton(
                 isLoading: false,
                 title: 'next'.tr(),

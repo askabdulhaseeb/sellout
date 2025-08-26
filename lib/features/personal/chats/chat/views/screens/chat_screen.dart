@@ -19,7 +19,12 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final ScrollController scrollController = ScrollController();
-  bool showPinned = true;
+
+  bool _isAtBottom() {
+    if (!scrollController.hasClients) return false;
+    return scrollController.offset >=
+        scrollController.position.maxScrollExtent - 50; // 50px tolerance
+  }
 
   @override
   void initState() {
@@ -30,50 +35,71 @@ class _ChatScreenState extends State<ChatScreen> {
       Provider.of<ChatProvider>(context, listen: false).getMessages();
     });
 
-    // Listen to scroll direction to hide/show pinned message dynamically
     scrollController.addListener(() {
+      final ChatProvider pro =
+          Provider.of<ChatProvider>(context, listen: false);
       final ScrollDirection direction =
           scrollController.position.userScrollDirection;
-      if (direction == ScrollDirection.reverse && showPinned) {
-        setState(() => showPinned = false);
-      } else if (direction == ScrollDirection.forward && !showPinned) {
-        setState(() => showPinned = true);
+      if (direction == ScrollDirection.reverse && pro.expandedPinnedMessage) {
+        pro.setPinnedMessageExpansion(false);
+      } else if (direction == ScrollDirection.forward &&
+          !pro.expandedPinnedMessage) {
+        pro.setPinnedMessageExpansion(true);
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final ChatEntity? chat =
-        Provider.of<ChatProvider>(context, listen: false).chat;
+    return Consumer<ChatProvider>(
+      builder: (BuildContext context, ChatProvider pro, _) {
+        final ChatEntity? chat = pro.chat;
 
-    return PopScope(
-      onPopInvokedWithResult: (bool didPop, Object? result) {
-        if (chat != null) {
-          LocalUnreadMessagesService().clearCount(chat.chatId);
-        }
-      },
-      child: Scaffold(
-        resizeToAvoidBottomInset: true,
-        appBar: chatAppBar(context),
-        body: Column(
-          children: <Widget>[
-            if (chat?.pinnedMessage != null)
-              ChatPinnedMessage(
-                chatId: chat!.chatId,
-                showPinned: showPinned,
-              ),
-            Expanded(
-              child: MessagesList(
-                chat: chat,
-                controller: scrollController,
-              ),
+        // After messages list updates, scroll to bottom if already at bottom
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_isAtBottom()) {
+            if (scrollController.hasClients) {
+              scrollController.jumpTo(
+                scrollController.position.maxScrollExtent,
+              );
+            }
+          }
+        });
+
+        return PopScope(
+          onPopInvokedWithResult: (bool didPop, Object? result) {
+            if (chat != null) {
+              LocalUnreadMessagesService().clearCount(chat.chatId);
+            }
+          },
+          child: Scaffold(
+            resizeToAvoidBottomInset: true,
+            appBar: chatAppBar(context),
+            body: Stack(
+              children: <Widget>[
+                AnimatedPositioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  top: pro.expandedPinnedMessage ? 150 : 0,
+                  duration: const Duration(milliseconds: 300),
+                  child: MessagesList(
+                    chat: chat,
+                    controller: scrollController,
+                  ),
+                ),
+                if (chat?.pinnedMessage != null)
+                  Positioned(
+                      left: 0,
+                      right: 0,
+                      top: 0,
+                      child: ChatPinnedMessage(chatId: chat!.chatId)),
+              ],
             ),
-            // Smooth floating pinned message
-          ],
-        ),
-        bottomNavigationBar: const ChatInteractionPanel(),
-      ),
+            bottomNavigationBar: const ChatInteractionPanel(),
+          ),
+        );
+      },
     );
   }
 }
