@@ -47,41 +47,34 @@ class _VisitingMessageTileState extends State<VisitingMessageTile> {
         final String date =
             widget.message.visitingDetail?.dateTime.dateWithMonthOnly ?? '';
         final String time = widget.message.visitingDetail?.visitingTime ?? '';
+        final String meet = post?.meetUpLocation?.address ?? '';
         final StatusType status =
             widget.message.visitingDetail?.status ?? StatusType.inActive;
 
         return AnimatedContainer(
-          margin: EdgeInsets.all(widget.showButtons ? 0 : 16),
           duration: const Duration(milliseconds: 400),
           curve: Curves.easeInOut,
-          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          margin: EdgeInsets.all(widget.showButtons ? 0 : 16),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(widget.showButtons ? 0 : 12),
-            border: Border.all(color: ColorScheme.of(context).outlineVariant),
+            borderRadius: widget.showButtons
+                ? const BorderRadius.vertical(bottom: Radius.circular(12))
+                : BorderRadius.circular(12),
+            border:
+                Border.all(color: Theme.of(context).colorScheme.outlineVariant),
             color: Theme.of(context).scaffoldBackgroundColor,
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               if (widget.showButtons)
                 VisitingMessageTileUpdateButtonsWidget(
                     message: widget.message, post: post),
-              if (expanded)
+
+              if (expanded) ...<Widget>[
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFFF4D5),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(status.code.tr(),
-                          style: const TextStyle(
-                              fontSize: 12, color: Colors.black87)),
-                    ),
+                    VisitingTileStatusWidget(status: status),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -92,86 +85,21 @@ class _VisitingMessageTileState extends State<VisitingMessageTile> {
                     ),
                   ],
                 ),
-              if (expanded) const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                child: Row(
-                  crossAxisAlignment: expanded
-                      ? CrossAxisAlignment.center
-                      : CrossAxisAlignment.start,
-                  children: <Widget>[
-                    SizedBox(
-                      height: expanded ? 100 : 60,
-                      width: expanded ? 100 : 60,
-                      child: Stack(
-                        children: <Widget>[
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: CustomNetworkImage(
-                              size: double.infinity,
-                              imageURL: imageUrl,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          if (expanded)
-                            Positioned(
-                              top: 8,
-                              right: 8,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.6),
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Text(
-                                  '${CountryHelper.currencySymbolHelper(currency)} $price',
-                                  style: const TextStyle(
-                                      color: Colors.white, fontSize: 10),
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Container(
-                      height: expanded ? 100 : 60,
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                            color:
-                                Theme.of(context).colorScheme.outlineVariant),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: expanded
-                            ? CrossAxisAlignment.center
-                            : CrossAxisAlignment.start,
-                        children: <Widget>[
-                          if (expanded)
-                            Text('${'date'.tr()}: ',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w500)),
-                          Text(date,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).primaryColor)),
-                          if (expanded)
-                            Text('${'time'.tr()}: ',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w500)),
-                          Text(time,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).primaryColor)),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                const SizedBox(height: 12),
+              ],
+
+              // Details Row
+              VisitingCardDetailWidget(
+                status: status,
+                meet: meet,
+                expanded: expanded,
+                imageUrl: imageUrl,
+                currency: currency,
+                price: price,
+                date: date,
+                time: time,
               ),
+
               if (expanded) const SizedBox(height: 12),
               if (expanded) VisitingTileTags(post: post),
               if (expanded) const SizedBox(height: 12),
@@ -182,6 +110,176 @@ class _VisitingMessageTileState extends State<VisitingMessageTile> {
           ),
         );
       },
+    );
+  }
+}
+
+class VisitingTileStatusWidget extends StatelessWidget {
+  const VisitingTileStatusWidget({
+    required this.status,
+    super.key,
+  });
+
+  final StatusType status;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF4D5),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(status.code.tr(),
+          style: const TextStyle(
+              fontSize: 8, color: Colors.black87, fontWeight: FontWeight.bold)),
+    );
+  }
+}
+
+class VisitingCardDetailWidget extends StatelessWidget {
+  const VisitingCardDetailWidget({
+    required this.expanded,
+    required this.imageUrl,
+    required this.currency,
+    required this.price,
+    required this.date,
+    required this.time,
+    required this.status,
+    required this.meet,
+    super.key,
+  });
+
+  final bool expanded;
+  final String imageUrl;
+  final String currency;
+  final double price;
+  final String date;
+  final String time;
+  final StatusType status;
+  final String meet;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        SizedBox(
+          height: expanded ? 100 : 60,
+          width: expanded ? 100 : 60,
+          child: Stack(
+            children: <Widget>[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: CustomNetworkImage(
+                  size: double.infinity,
+                  imageURL: imageUrl,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              if (expanded)
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.6),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Text(
+                      '${CountryHelper.currencySymbolHelper(currency)} $price',
+                      style: const TextStyle(color: Colors.white, fontSize: 10),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Container(
+            height: expanded ? 100 : 60,
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                  color: Theme.of(context).colorScheme.outlineVariant),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: expanded
+                  ? CrossAxisAlignment.start
+                  : CrossAxisAlignment.center,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: expanded
+                      ? MainAxisAlignment.start
+                      : MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    if (expanded)
+                      Text('${'date'.tr()}: ',
+                          style: const TextStyle(fontWeight: FontWeight.w500)),
+                    Flexible(
+                      child: Text(
+                        date,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
+                    if (!expanded) VisitingTileStatusWidget(status: status),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: <Widget>[
+                    if (expanded)
+                      Text('${'time'.tr()}: ',
+                          style: const TextStyle(fontWeight: FontWeight.w500)),
+                    Flexible(
+                      child: Text(
+                        time,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                if (expanded)
+                  Row(
+                    children: <Widget>[
+                      if (expanded)
+                        Text('${'meet'.tr()}: ',
+                            style:
+                                const TextStyle(fontWeight: FontWeight.w500)),
+                      Flexible(
+                        child: Text(
+                          meet,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -72,6 +72,11 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void resetPinnedMessageExpandedState() {
+    _expandVisitingMessage = true;
+    notifyListeners();
+  }
+
 //
   void setChat(BuildContext context, ChatEntity? value) {
     _chat = value;

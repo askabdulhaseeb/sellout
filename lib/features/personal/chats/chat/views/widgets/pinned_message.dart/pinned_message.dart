@@ -7,7 +7,7 @@ import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart'
 import '../../providers/chat_provider.dart';
 import '../message/tile/offer_message_tile.dart';
 import '../message/tile/visiting_message_tile.dart';
-import 'widgets/clipper/visiting_notch_clipper.dart';
+import 'widgets/shape_borders/visiting_tile_handle_border.dart.dart';
 
 class ChatPinnedMessage extends StatelessWidget {
   const ChatPinnedMessage({
@@ -107,43 +107,46 @@ class _VisitingMessageTileAnimatedState
   Widget build(BuildContext context) {
     return Consumer<ChatProvider>(
       builder: (BuildContext context, ChatProvider pro, _) {
-        return AnimatedContainer(
-          height: pro.showPinnedMessage ? null : 0,
-          duration: const Duration(microseconds: 300),
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: <Widget>[
-              Material(
-                shape: DrawerHandleBorder(), // reserves 40px bottom space
-                elevation: 4,
-                color: Theme.of(context).primaryColor,
-                child: Padding(
-                  // leave space at the bottom inside the shape
-                  padding: const EdgeInsets.only(bottom: 30),
-                  child: VisitingMessageTile(
-                    collapsable: true,
-                    message: widget.message,
-                    showButtons: true,
+        return PopScope(
+          onPopInvokedWithResult: (bool didPop, dynamic result) =>
+              pro.resetPinnedMessageExpandedState(),
+          child: AnimatedContainer(
+            height: pro.showPinnedMessage ? null : 0,
+            duration: const Duration(microseconds: 300),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: <Widget>[
+                Material(
+                  shape: const VisitileTileWithHandleBorder(),
+                  elevation: pro.showPinnedMessage ? 4 : 0,
+                  color: Theme.of(context).primaryColor,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 30),
+                    child: VisitingMessageTile(
+                      collapsable: true,
+                      message: widget.message,
+                      showButtons: true,
+                    ),
                   ),
                 ),
-              ),
-              Positioned(
-                bottom: 5,
-                right: 20,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () {
-                    debugPrint('visiting pinned tile expand/collapse');
-                    pro.setPinnedMessageExpandedState();
-                  },
-                  child: const Icon(
-                    Icons.keyboard_double_arrow_down_outlined,
-                    color: Colors.white,
-                    size: 20,
+                Positioned(
+                  bottom: 5,
+                  right: 20,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () {
+                      debugPrint('visiting pinned tile expand/collapse');
+                      pro.setPinnedMessageExpandedState();
+                    },
+                    child: const Icon(
+                      Icons.keyboard_double_arrow_down_outlined,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
