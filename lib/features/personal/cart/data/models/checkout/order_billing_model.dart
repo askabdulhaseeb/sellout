@@ -3,7 +3,6 @@ import '../../../domain/entities/checkout/order_billing_entity.dart';
 class OrderBillingModel extends OrderBillingEntity {
   factory OrderBillingModel.fromMap(Map<String, dynamic> json) {
     return OrderBillingModel(
-      clientSecret: json['clientSecret'],
       billingDetails: BillingDetailsModel.fromMap(json['billingDetails']),
       items: List<OrderItemModel>.from(
         json['items'].map((item) => OrderItemModel.fromMap(item)),
@@ -11,20 +10,16 @@ class OrderBillingModel extends OrderBillingEntity {
     );
   }
   OrderBillingModel({
-    required super.clientSecret,
     required super.billingDetails,
     required super.items,
   });
   factory OrderBillingModel.fromEntity(OrderBillingEntity entity) {
     return OrderBillingModel(
-        clientSecret: entity.clientSecret,
-        billingDetails: entity.billingDetails,
-        items: entity.items);
+        billingDetails: entity.billingDetails, items: entity.items);
   }
 }
 
 class BillingDetailsModel extends BillingDetailsEntity {
-
   factory BillingDetailsModel.fromMap(Map<String, dynamic> json) {
     return BillingDetailsModel(
       subtotal: json['subtotal'],
@@ -66,7 +61,6 @@ class BillingDetailsModel extends BillingDetailsEntity {
 }
 
 class OrderItemModel extends OrderItemEntity {
-
   factory OrderItemModel.fromMap(Map<String, dynamic> json) {
     return OrderItemModel(
       name: json['name'],

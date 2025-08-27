@@ -75,3 +75,15 @@ enum StatusType {
     }
   }
 }
+
+Color getStatusColor(BuildContext context, StatusType statusJson) {
+  if (statusJson == StatusType.pending) {
+    return Theme.of(context).primaryColor;
+  } else if (statusJson == StatusType.delivered) {
+    return Theme.of(context).colorScheme.secondary;
+  } else if (statusJson == StatusType.cancelled) {
+    return Theme.of(context).colorScheme.outline;
+  } else {
+    return Theme.of(context).colorScheme.outline;
+  }
+}

@@ -44,8 +44,7 @@ class _ProfileOrdersSectionState extends State<ProfileOrdersSection> {
             snapshot.data?.entity ?? <OrderEntity>[];
         final List<OrderEntity> filteredOrders = allOrders
             .where((OrderEntity order) =>
-                StatusType.fromJson(order.orderStatus).code ==
-                selectedStatus.code)
+                order.orderStatus.code == selectedStatus.code)
             .toList();
         return Column(
           crossAxisAlignment: CrossAxisAlignment.center,

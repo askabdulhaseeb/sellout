@@ -1,10 +1,8 @@
 class OrderBillingEntity {
   OrderBillingEntity({
-    required this.clientSecret,
     required this.billingDetails,
     required this.items,
   });
-  final String clientSecret;
   final BillingDetailsEntity billingDetails;
   final List<OrderItemEntity> items;
 }

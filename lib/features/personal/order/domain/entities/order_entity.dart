@@ -1,7 +1,8 @@
 import 'package:hive/hive.dart';
+import '../../../../../core/enums/core/status_type.dart';
 import '../../../auth/signin/data/models/address_model.dart';
 import 'order_payment_detail_entity.dart';
-part '../../../user/profiles/domain/entities/order_entity.g.dart';
+part 'order_entity.g.dart';
 
 @HiveType(typeId: 61)
 class OrderEntity {
@@ -35,7 +36,7 @@ class OrderEntity {
   final String postId;
 
   @HiveField(4)
-  final String orderStatus;
+  final StatusType orderStatus;
 
   @HiveField(5)
   final String orderType;
@@ -69,7 +70,7 @@ class OrderEntity {
     String? buyerId,
     String? sellerId,
     String? postId,
-    String? orderStatus,
+    StatusType? orderStatus,
     String? orderType,
     double? price,
     double? totalAmount,

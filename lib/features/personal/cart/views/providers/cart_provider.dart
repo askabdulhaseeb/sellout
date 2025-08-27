@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import '../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/data_state.dart';
+import '../../../../../core/widgets/app_snakebar.dart';
 import '../../../auth/signin/data/models/address_model.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../data/models/cart/cart_model.dart';
@@ -17,6 +19,7 @@ import '../../domain/usecase/cart/get_cart_usecase.dart';
 import '../../domain/usecase/cart/remove_from_cart_usecase.dart';
 import '../../domain/usecase/checkout/get_checkout_usecase.dart';
 import '../../domain/usecase/checkout/pay_intent_usecase.dart';
+import '../widgets/checkout/tile/payment_success_bottomsheet.dart';
 
 class CartProvider extends ChangeNotifier {
   CartProvider(
@@ -163,72 +166,97 @@ class CartProvider extends ChangeNotifier {
     }
   }
 
-  Future<DataState<bool>> getBillingDetails() async {
+  Future<void> processPayment(BuildContext context) async {
     try {
-      final DataState<bool> state = await _payIntentUsecase.call(address!);
-      if (state is DataSuccess) {
-        Map<String, dynamic> jsonMap = jsonDecode(state.data ?? '');
-        _orderBilling = OrderBillingModel.fromMap(jsonMap);
+      final DataState<String> billingDetails = await getBillingDetails();
+
+      if (billingDetails is DataFailer<String>) {
+        // Show a snackbar or dialog with the failure reason
+        AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
+        return;
       }
-      return state;
-    } catch (e, stc) {
-      AppLog.error('Getting billing detail error',
-          name: 'CartProvider.getBillingDetails - catch');
-      debugPrint('Error in getBillingDetails: $e\n$stc');
-      return DataFailer<bool>(CustomException(e.toString()));
+
+      final String? clientSecret = billingDetails.entity;
+      if (clientSecret == null || clientSecret.isEmpty) {
+        AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
+        return;
+      }
+
+      final PaymentIntent intent =
+          await presentStripePaymentSheet(clientSecret, context);
+
+      // Optional: Check status of payment intent
+      if (intent.status == PaymentIntentsStatus.Succeeded) {
+        if (context.mounted) {
+          showModalBottomSheet(
+            useSafeArea: true,
+            isScrollControlled: true,
+            context: context,
+            enableDrag: false,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            builder: (_) => const PaymentSuccessSheet(),
+          );
+        }
+      } else {
+        AppSnackBar.showSnackBar(context, 'payment_not_completed'.tr());
+      }
+    } catch (e, st) {
+      AppLog.error('Payment processing error',
+          name: 'CartProvider.processPayment', error: e, stackTrace: st);
+      AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
     }
   }
 
-  Future<PaymentIntent> presentStripePaymentSheet(String clientSecret) async {
-    await Stripe.instance.initPaymentSheet(
-      paymentSheetParameters: SetupPaymentSheetParameters(
-          paymentIntentClientSecret: clientSecret,
-          merchantDisplayName: LocalAuth.currentUser?.userName),
-    );
-    await Stripe.instance.presentPaymentSheet();
-    final PaymentIntent paymentIntent =
-        await Stripe.instance.retrievePaymentIntent(clientSecret);
-    return paymentIntent;
+  Future<DataState<String>> getBillingDetails() async {
+    try {
+      final DataState<String> state = await _payIntentUsecase.call(address!);
+
+      if (state is DataSuccess<String>) {
+        try {
+          final Map<String, dynamic> jsonMap = jsonDecode(state.data ?? '{}');
+          _orderBilling = OrderBillingModel.fromMap(jsonMap);
+        } catch (decodeErr) {
+          return DataFailer<String>(CustomException('Invalid billing JSON'));
+        }
+      }
+      return state;
+    } catch (e, st) {
+      AppLog.error('Getting billing detail error',
+          name: 'CartProvider.getBillingDetails', error: e, stackTrace: st);
+      debugPrint('Error in getBillingDetails: $e\n$st');
+      return DataFailer<String>(CustomException(e.toString()));
+    }
   }
 
-  Future<DataState<PaymentIntent>> processPayment() async {
-    // setloading(true);
-
+  Future<PaymentIntent> presentStripePaymentSheet(
+      String clientSecret, BuildContext context) async {
     try {
-      // Step 1: Get billing details
-      final DataState<bool> billingState = await getBillingDetails();
-      if (billingState is DataFailer) {
-        // Billing failed, return the failure
-        return DataFailer<PaymentIntent>(billingState.exception!);
-      }
-      // Step 2: Billing succeeded, ensure we have orderBilling
-      if (_orderBilling?.clientSecret == null) {
-        return DataFailer<PaymentIntent>(
-          CustomException('Client secret is missing'),
-        );
-      }
-      final String clientSecret = _orderBilling!.clientSecret;
-      // Step 3: Show Stripe payment sheet
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
           paymentIntentClientSecret: clientSecret,
-          merchantDisplayName: 'sellout',
+          merchantDisplayName: LocalAuth.currentUser?.userName ?? 'My Store',
         ),
       );
+
       await Stripe.instance.presentPaymentSheet();
-      // Step 4: Retrieve PaymentIntent
-      final PaymentIntent paymentIntent =
-          await Stripe.instance.retrievePaymentIntent(clientSecret);
-      return DataSuccess<PaymentIntent>('', paymentIntent);
-    } catch (e, stc) {
-      AppLog.error(e.toString(),
-          name: 'CartProvider.processPayment - Catch',
+
+      return await Stripe.instance.retrievePaymentIntent(clientSecret);
+    } on StripeException catch (e, st) {
+      AppLog.error('Stripe error',
+          name: 'CartProvider.presentStripePaymentSheet',
           error: e,
-          stackTrace: stc);
-      debugPrint('Error in processPayment: $e\n$stc');
-      return DataFailer<PaymentIntent>(CustomException(e.toString()));
-    } finally {
-      // setloading(false);
+          stackTrace: st);
+      AppSnackBar.showSnackBar(context, 'payment_failed'.tr());
+      rethrow; // let processPayment decide what to do
+    } catch (e, st) {
+      AppLog.error('Unknown payment error',
+          name: 'CartProvider.presentStripePaymentSheet',
+          error: e,
+          stackTrace: st);
+      AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
+      rethrow;
     }
   }
 

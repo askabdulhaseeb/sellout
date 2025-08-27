@@ -1,11 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/enums/cart/cart_item_type.dart';
-import '../../../../../core/sources/api_call.dart';
 import '../../../../../core/widgets/custom_elevated_button.dart';
-import '../widgets/checkout/tile/payment_success_bottomsheet.dart';
 import 'checkout/personal_checkout_screen.dart';
 import '../providers/cart_provider.dart';
 import '../widgets/cart_widgets/cart_save_later_toggle_section.dart';
@@ -59,11 +56,11 @@ class PersonalCartScreen extends StatelessWidget {
                               child: Padding(
                                 padding: const EdgeInsets.all(16),
                                 child: SizedBox(
-                                  child: ListView(
-                                    shrinkWrap: true,
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
                                       const PersonalCheckoutView(),
-                                      const Spacer(),
                                       CustomElevatedButton(
                                         title: 'proceed_to_payment'.tr(),
                                         isLoading: false,
@@ -71,43 +68,7 @@ class PersonalCartScreen extends StatelessWidget {
                                           final CartProvider pro =
                                               Provider.of<CartProvider>(context,
                                                   listen: false);
-                                          final DataState<PaymentIntent>
-                                              result =
-                                              await pro.processPayment();
-                                          if (result is DataSuccess) {
-                                            // 🎉 Payment succeeded → Show success bottom sheet
-                                            if (context.mounted) {
-                                              showModalBottomSheet(
-                                                useSafeArea: true,
-                                                isScrollControlled: true,
-                                                context: context,
-                                                enableDrag: false,
-                                                shape:
-                                                    const RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.vertical(
-                                                          top: Radius.circular(
-                                                              20)),
-                                                ),
-                                                builder: (_) =>
-                                                    const PaymentSuccessSheet(),
-                                              );
-                                            }
-                                          } else if (result is DataFailer) {
-                                            // ❌ Payment failed → Show error
-                                            if (context.mounted) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                  content: Text(
-                                                      '${'payment_failed'.tr()}: ${result.exception?.toString()}'),
-                                                  backgroundColor:
-                                                      ColorScheme.of(context)
-                                                          .error,
-                                                ),
-                                              );
-                                            }
-                                          }
+                                          await pro.processPayment(context);
                                         },
                                       ),
                                       const SizedBox(height: 24),

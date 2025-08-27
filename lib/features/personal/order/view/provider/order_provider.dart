@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../../../../../core/enums/core/status_type.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../data/source/local/local_orders.dart';
@@ -13,17 +14,17 @@ class OrderProvider extends ChangeNotifier {
   );
   final UpdateOrderUsecase _updateOrderUsecase;
   //
-  OrderEntity? _order;
+  OrderEntity? _sellerOrder;
 
-  OrderEntity? get order => _order;
+  OrderEntity? get order => _sellerOrder;
 
   void loadOrder(String orderId) {
-    _order = LocalOrders().get(orderId);
+    _sellerOrder = LocalOrders().get(orderId);
     notifyListeners();
   }
 
   void refreshOrder(String orderId) {
-    _order = LocalOrders().get(orderId);
+    _sellerOrder = LocalOrders().get(orderId);
     notifyListeners();
   }
 
@@ -36,7 +37,7 @@ class OrderProvider extends ChangeNotifier {
   }
 
   //
-  Future<void> updateOrder(String orderId, String status) async {
+  Future<void> updateSellerOrder(String orderId, StatusType status) async {
     setLoading(true);
     final UpdateOrderParams params =
         UpdateOrderParams(orderId: orderId, status: status);

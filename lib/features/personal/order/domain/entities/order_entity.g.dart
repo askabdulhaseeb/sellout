@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of '../../../../order/domain/entities/order_entity.dart';
+part of 'order_entity.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
@@ -21,7 +21,7 @@ class OrderEntityAdapter extends TypeAdapter<OrderEntity> {
       buyerId: fields[1] as String,
       sellerId: fields[2] as String,
       postId: fields[3] as String,
-      orderStatus: fields[4] as String,
+      orderStatus: fields[4] as StatusType,
       orderType: fields[5] as String,
       price: fields[6] as double,
       totalAmount: fields[7] as double,

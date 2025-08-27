@@ -14,9 +14,9 @@ import '../../../../../core/sources/data_state.dart';
 import '../../../user/profiles/domain/usecase/get_user_by_uid.dart';
 import '../provider/order_provider.dart';
 
-class OrderDetailsScreen extends StatelessWidget {
-  const OrderDetailsScreen({super.key});
-  static String routeName = '/order-screen';
+class OrderSellerScreen extends StatelessWidget {
+  const OrderSellerScreen({super.key});
+  static String routeName = '/order-seller-screen';
 
   @override
   Widget build(BuildContext context) {
@@ -218,8 +218,8 @@ class ViewInvoiceButton extends StatelessWidget {
             style: TextStyle(
               decoration: TextDecoration.underline,
               fontSize: 10,
-              decorationColor: _getStatusColor(context, order.orderStatus),
-              color: _getStatusColor(context, order.orderStatus),
+              decorationColor: getStatusColor(context, order.orderStatus),
+              color: getStatusColor(context, order.orderStatus),
             ),
           ),
         );
@@ -242,21 +242,22 @@ class OrderActionButtonsList extends StatelessWidget {
               OrderActionButton(
                 isLoading: orderPro.isLoading,
                 keyName: 'post_now',
-                color: _getStatusColor(context, order.orderStatus),
-                onTap: () => orderPro.updateOrder(order.orderId, 'delivered'),
+                color: getStatusColor(context, order.orderStatus),
+                onTap: () => orderPro.updateSellerOrder(
+                    order.orderId, StatusType.delivered),
               ),
             if (order.orderStatus == StatusType.delivered.json)
               OrderActionButton(
                 isLoading: orderPro.isLoading,
                 keyName: 'posted',
-                color: _getStatusColor(context, order.orderStatus),
+                color: getStatusColor(context, order.orderStatus),
                 onTap: () {},
               ),
-            if (StatusType.fromJson(order.orderStatus) == StatusType.cancelled)
+            if (order.orderStatus == StatusType.cancelled)
               OrderActionButton(
                 isLoading: orderPro.isLoading,
                 keyName: 'cancelled',
-                color: _getStatusColor(context, order.orderStatus),
+                color: getStatusColor(context, order.orderStatus),
                 onTap: () {},
               ),
             OrderActionButton(
@@ -276,7 +277,8 @@ class OrderActionButtonsList extends StatelessWidget {
                 isLoading: orderPro.isLoading,
                 keyName: 'cancel_order',
                 color: Theme.of(context).colorScheme.outline,
-                onTap: () => orderPro.updateOrder(order.orderId, 'cancelled'),
+                onTap: () => orderPro.updateSellerOrder(
+                    order.orderId, StatusType.cancelled),
               ),
             OrderActionButton(
               isLoading: orderPro.isLoading,
@@ -510,17 +512,5 @@ class _OrderRecieverNameAddressWidgetState
         ],
       ),
     );
-  }
-}
-
-Color _getStatusColor(BuildContext context, String statusJson) {
-  if (statusJson == StatusType.pending.json) {
-    return Theme.of(context).primaryColor;
-  } else if (statusJson == StatusType.delivered.json) {
-    return Theme.of(context).colorScheme.secondary;
-  } else if (statusJson == StatusType.cancelled.json) {
-    return Theme.of(context).colorScheme.outline;
-  } else {
-    return Theme.of(context).colorScheme.outline;
   }
 }

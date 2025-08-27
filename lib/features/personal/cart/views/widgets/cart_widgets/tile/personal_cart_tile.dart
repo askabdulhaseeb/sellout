@@ -184,7 +184,7 @@ class _SaveLaterWidgetState extends State<SaveLaterWidget> {
             } catch (e) {
               AppSnackBar.showSnackBar(context, e.toString());
             }
-            setState(() {});
+            // setState(() {});
           },
           child: Text(
             widget.item.type.tileActionCode.tr(),
