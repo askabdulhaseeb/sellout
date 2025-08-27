@@ -1,3 +1,4 @@
+import '../../../../../core/enums/core/status_type.dart';
 import '../../../auth/signin/data/models/address_model.dart';
 import '../../domain/entities/order_entity.dart';
 import 'order_payment_detail_model.dart';
@@ -9,7 +10,7 @@ class OrderModel extends OrderEntity {
         buyerId: json['buyer_id'] ?? '',
         sellerId: json['seller_id'] ?? '',
         postId: json['post_id'] ?? '',
-        orderStatus: json['order_status'] ?? '',
+        orderStatus: StatusType.fromJson(json['order_status']),
         orderType: json['order_type'] ?? '',
         price: (json['price'] as num).toDouble(),
         totalAmount: (json['total_amount'] as num).toDouble(),

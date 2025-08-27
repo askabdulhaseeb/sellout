@@ -17,7 +17,9 @@ import '../features/personal/dashboard/views/screens/dashboard_screen.dart';
 import '../features/personal/book_visit/view/screens/booking_screen.dart';
 import '../features/personal/marketplace/views/screens/pages/market_categorized_filteration_page.dart';
 import '../features/personal/notifications/view/screens/notification_screen.dart';
-import '../features/personal/order/view/screens/order_detail_screen.dart';
+import '../features/personal/order/view/screens/order_buyer_screen.dart';
+import '../features/personal/order/view/screens/order_seller_screen.dart';
+import '../features/personal/order/view/screens/your_order_screen.dart';
 import '../features/personal/post/post_detail/views/screens/post_detail_screen.dart';
 import '../features/personal/promo/view/create_promo/screens/create_promo_screen.dart';
 import '../features/personal/review/views/screens/write_review_screen.dart';
@@ -27,7 +29,6 @@ import '../features/personal/setting/setting_dashboard/view/screens/personal_mor
 import '../features/personal/setting/setting_options/account_edit/screens/edit_setting_account_screen.dart';
 import '../features/personal/setting/setting_options/account_edit/screens/personal_setting_account.dart';
 import '../features/personal/setting/setting_options/balance_screen/screens/balance_screen.dart';
-import '../features/personal/setting/setting_options/buyer_orders/screens/personal_setting_buyer_order_screen.dart';
 import '../features/personal/setting/setting_options/privacy_setting/screen/privacy_screen.dart';
 import '../features/personal/setting/setting_options/security/screens/setting_security_screen.dart';
 import '../features/personal/setting/setting_options/setting_notification/screens/pages/personal_setting_email_notification_screen.dart';
@@ -127,7 +128,7 @@ class AppRoutes {
     ServiceDetailScreen.routeName: (_) => const ServiceDetailScreen(),
     SearchScreen.routeName: (_) => const SearchScreen(),
     NotificationsScreen.routeName: (_) => const NotificationsScreen(),
-    OrderDetailsScreen.routeName: (_) => const OrderDetailsScreen(),
+    OrderSellerScreen.routeName: (_) => const OrderSellerScreen(),
     // SETTINGS
     PersonalSettingScreen.routeName: (_) => const PersonalSettingScreen(),
     PersonalSettingMoreInformationScreen.routeName: (_) =>
@@ -155,7 +156,7 @@ class AppRoutes {
     AboutUsScreen.routeName: (_) => const AboutUsScreen(),
     ChangePasswordScreen.routeName: (_) => const ChangePasswordScreen(),
     BalanceScreen.routeName: (_) => const BalanceScreen(),
-    PersonalSettingBuyerOrderScreen.routeName: (_) =>
-        const PersonalSettingBuyerOrderScreen()
+    YourOrdersScreen.routeName: (_) => const YourOrdersScreen(),
+    OrderBuyerScreen.routeName: (_) => const OrderBuyerScreen(),
   };
 }

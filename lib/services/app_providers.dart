@@ -26,7 +26,6 @@ import '../features/personal/review/views/providers/review_provider.dart';
 import '../features/personal/search/view/provider/search_provider.dart';
 import '../features/personal/services/services_screen/providers/services_page_provider.dart';
 import '../features/personal/setting/setting_dashboard/view/providers/personal_setting_provider.dart';
-import '../features/personal/setting/setting_options/buyer_orders/providers/personal_setting_buyer_order_provider.dart';
 import '../features/personal/setting/setting_options/security/provider/setting_security_provider.dart';
 import '../features/personal/user/profiles/views/providers/profile_provider.dart';
 import '../features/personal/auth/signin/views/providers/signin_provider.dart';
@@ -133,8 +132,8 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
       value: SettingSecurityProvider(locator(), locator())),
   ChangeNotifierProvider<MarketPlaceProvider>.value(
       value: MarketPlaceProvider(locator())),
-  ChangeNotifierProvider<PersonalSettingBuyerOrderProvider>.value(
-      value: PersonalSettingBuyerOrderProvider(locator())),
+  // ChangeNotifierProvider<PersonalSettingBuyerOrderProvider>.value(
+  //     value: PersonalSettingBuyerOrderProvider(locator())),
   ChangeNotifierProvider<NotificationProvider>.value(
       value: NotificationProvider(locator())),
 ]; //

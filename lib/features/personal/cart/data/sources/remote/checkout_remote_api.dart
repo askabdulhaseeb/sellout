@@ -10,7 +10,7 @@ import '../../models/checkout/check_out_model.dart';
 
 abstract interface class CheckoutRemoteAPI {
   Future<DataState<CheckOutEntity>> getCheckout(AddressModel address);
-  Future<DataState<bool>> cartPayIntent(AddressModel param);
+  Future<DataState<String>> cartPayIntent(AddressModel param);
 }
 
 class CheckoutRemoteAPIImpl implements CheckoutRemoteAPI {
@@ -30,9 +30,9 @@ class CheckoutRemoteAPIImpl implements CheckoutRemoteAPI {
         );
       } else {
         AppLog.error(
-          'Failed to get checkout',
+          address.checkoutAddressToJson(),
           name: 'CheckoutRemoteAPIImpl.getCheckout - Else',
-          error: result.exception,
+          error: result.exception?.reason ?? 'something_wrong'.tr(),
         );
         return DataFailer<CheckOutEntity>(
             result.exception ?? CustomException('something_wrong'.tr()));
@@ -48,27 +48,27 @@ class CheckoutRemoteAPIImpl implements CheckoutRemoteAPI {
   }
 
   @override
-  Future<DataState<bool>> cartPayIntent(AddressModel param) async {
+  Future<DataState<String>> cartPayIntent(AddressModel param) async {
     try {
       debugPrint(LocalAuth.token);
       const String endpoint = '/payment/cart';
-      final DataState<bool> result = await ApiCall<bool>().call(
+      final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,
-        requestType: ApiRequestType.post,
         isAuth: true,
+        requestType: ApiRequestType.post,
         body: param.checkoutAddressToJson(),
       );
-      debugPrint(param.checkoutAddressToJson());
-      if (result is DataSuccess<bool>) {
-        AppLog.info(result.data ?? '');
-        return result;
+      if (result is DataSuccess<String>) {
+        final Map<String, dynamic> responseMap = jsonDecode(result.data ?? '');
+        final String clientSecret = responseMap['clientSecret'];
+        return DataSuccess<String>(result.data ?? '', clientSecret);
       } else {
         AppLog.error(
-          'Failed to add paymnet address',
+          param.checkoutAddressToJson(),
           name: 'CheckoutRemoteAPIImpl.paymentAddress - Else',
-          error: CustomException('Failed to add payment Address'),
+          error: result.exception?.reason ?? 'something_wrong'.tr(),
         );
-        return DataFailer<bool>(
+        return DataFailer<String>(
             CustomException('Failed to add payment Address'));
       }
     } catch (e) {
@@ -77,7 +77,7 @@ class CheckoutRemoteAPIImpl implements CheckoutRemoteAPI {
         name: 'CheckoutRemoteAPIImpl.paymentAddress - Catch',
         error: e,
       );
-      return DataFailer<bool>(CustomException(e.toString()));
+      return DataFailer<String>(CustomException(e.toString()));
     }
   }
 }

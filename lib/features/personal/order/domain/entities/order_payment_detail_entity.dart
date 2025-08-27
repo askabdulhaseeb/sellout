@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-part '../../../user/profiles/domain/entities/order_payment_detail_entity.g.dart';
+part 'order_payment_detail_entity.g.dart';
 
 @HiveType(typeId: 62)
 class OrderPaymentDetailEntity {

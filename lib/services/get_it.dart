@@ -160,7 +160,6 @@ import '../features/personal/setting/setting_dashboard/data/repo/setting_repo_im
 import '../features/personal/setting/setting_dashboard/domain/repo/setting_repo.dart';
 import '../features/personal/setting/setting_dashboard/domain/usecase/change_password_usecase.dart';
 import '../features/personal/setting/setting_dashboard/domain/usecase/connect_account_session_usecase.dart';
-import '../features/personal/setting/setting_options/buyer_orders/providers/personal_setting_buyer_order_provider.dart';
 import '../features/personal/setting/setting_options/security/provider/setting_security_provider.dart';
 import '../features/personal/user/profiles/data/repositories/user_repository_impl.dart';
 import '../features/personal/user/profiles/data/sources/remote/my_visting_remote.dart';
@@ -643,8 +642,8 @@ void _order() {
       .registerFactory<UpdateOrderUsecase>(() => UpdateOrderUsecase(locator()));
   // Providers
   locator.registerLazySingleton<OrderProvider>(() => OrderProvider(locator()));
-  locator.registerLazySingleton<PersonalSettingBuyerOrderProvider>(
-      () => PersonalSettingBuyerOrderProvider(locator()));
+  // locator.registerLazySingleton<PersonalSettingBuyerOrderProvider>(
+  //     () => PersonalSettingBuyerOrderProvider(locator()));
 }
 
 void _notification() {

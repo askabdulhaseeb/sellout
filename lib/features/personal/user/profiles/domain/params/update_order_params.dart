@@ -1,3 +1,5 @@
+import '../../../../../../core/enums/core/status_type.dart';
+
 class UpdateOrderParams {
   // optional
 
@@ -7,13 +9,13 @@ class UpdateOrderParams {
     this.reason,
   });
   final String orderId;
-  final String status; // 'processing', 'shipped', 'delivered', 'canceled'
+  final StatusType status; // 'processing', 'shipped', 'delivered', 'canceled'
   final String? reason;
 
   Map<String, dynamic> toMap() {
     final Map<String, String> map = <String, String>{
       'order_id': orderId,
-      'status': status,
+      'status': status.json,
     };
 
     if (reason != null) {
