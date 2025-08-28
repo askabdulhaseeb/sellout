@@ -60,7 +60,7 @@ enum StatusType {
         return StatusType.inprogress;
       case 'deliver' || 'delivered':
         return StatusType.delivered;
-      case 'shipped':
+      case 'shipped' || 'dispatched':
         return StatusType.shipped;
       case 'active':
         return StatusType.active;

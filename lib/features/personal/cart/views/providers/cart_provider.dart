@@ -12,6 +12,8 @@ import '../../data/models/cart/cart_model.dart';
 import '../../data/models/checkout/order_billing_model.dart';
 import '../../domain/entities/cart/cart_entity.dart';
 import '../../domain/entities/checkout/check_out_entity.dart';
+import '../../domain/enums/basket_type.dart';
+import '../../domain/enums/cart_type.dart';
 import '../../domain/param/cart_item_update_qty_param.dart';
 import '../../domain/usecase/cart/cart_item_status_update_usecase.dart';
 import '../../domain/usecase/cart/cart_update_qty_usecase.dart';
@@ -36,7 +38,32 @@ class CartProvider extends ChangeNotifier {
   final CartUpdateQtyUsecase _cartUpdateQtyUsecase;
   final GetCheckoutUsecase _getCheckoutUsecase;
   final PayIntentUsecase _payIntentUsecase;
+//---------------------------------------------------------------------------------------------------------------------------------------------
+// varibales
+  CartType _cartType = CartType.basket;
+  BasketType _basketType = BasketType.shoppingBasket;
+
+// getters
+  CartType get cartType => _cartType;
+  BasketType get basketType => _basketType;
+// setters
+  set cartType(CartType type) {
+    if (_cartType != type) {
+      _cartType = type;
+      notifyListeners();
+    }
+  }
+
+  set basketType(BasketType type) {
+    if (_basketType != type) {
+      _basketType = type;
+      notifyListeners();
+    }
+  }
+
+//-------------------------------------------------------------------------------------------------------------------------------------------
   List<CartItemEntity> _cartItems = <CartItemEntity>[];
+
 //
   int _page = 1;
   int get page => _page;

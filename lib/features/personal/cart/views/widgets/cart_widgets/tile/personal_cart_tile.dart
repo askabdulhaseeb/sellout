@@ -5,10 +5,12 @@ import '../../../../../../../core/extension/string_ext.dart';
 import '../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
-import '../../../../../../../core/widgets/shadow_container.dart';
+import '../../../../../../../routes/app_linking.dart';
 import '../../../../../auth/signin/domain/repositories/signin_repository.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../post/domain/entities/post_entity.dart';
+import '../../../../../post/post_detail/views/screens/post_detail_screen.dart';
+import '../../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../../domain/entities/cart/cart_item_entity.dart';
 import '../../../providers/cart_provider.dart';
 import 'personal_cart_tile_qty_section.dart';
@@ -18,125 +20,145 @@ class PersonalCartTile extends StatelessWidget {
   const PersonalCartTile({required this.item, super.key});
   final CartItemEntity item;
 
+  Future<(PostEntity?, UserEntity?)> _loadData() async {
+    final PostEntity? post = await LocalPost().getPost(item.postID);
+    final UserEntity? seller = await LocalUser().user(post?.createdBy ?? '');
+    return (post, seller);
+  }
+
+  double calculateReviewPercentage(List<double> reviews,
+      {double maxRating = 5}) {
+    if (reviews.isEmpty) return 0;
+    double total = reviews.reduce((double a, double b) => a + b);
+    double possibleTotal = maxRating * reviews.length;
+    return (total / possibleTotal) * 100;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-      child: ShadowContainer(
-        padding: const EdgeInsets.all(4),
-        onTap: () {
-          // TODO: POST DETAIL SCREEN
-        },
-        child: FutureBuilder<PostEntity?>(
-          future: LocalPost().getPost(item.postID),
-          builder: (
-            BuildContext context,
-            AsyncSnapshot<PostEntity?> snapshot,
-          ) {
-            final PostEntity? post = snapshot.data;
-            return Column(
-              spacing: 10,
-              children: <Widget>[
-                // SelectItemFromCartWidget(
-                //   post: post,
-                //   item: item,
-                //   onChanged: (bool? value) {},
-                //   value: true,
-                // ),
-                Row(
-                  children: <Widget>[
-                    //image
-                    ClipRRect(
+      child: FutureBuilder<(PostEntity?, UserEntity?)>(
+        future: _loadData(),
+        builder: (BuildContext context,
+            AsyncSnapshot<(PostEntity?, UserEntity?)> snapshot) {
+          final (PostEntity?, UserEntity?)? data = snapshot.data;
+          final PostEntity? post = data?.$1;
+          final UserEntity? seller = data?.$2;
+
+          return Column(
+            children: <Widget>[
+              Divider(color: Theme.of(context).dividerColor),
+
+              // Seller info
+              Text('${'seller'.tr()}: ${seller?.displayName ?? ''}'),
+              Text(
+                  '${calculateReviewPercentage(seller?.listOfReviews ?? <double>[])} ${'positive_feedback'.tr()}'),
+
+              const SizedBox(height: 10),
+
+              Row(
+                children: <Widget>[
+                  // Image
+                  GestureDetector(
+                    onTap: () {
+                      AppNavigator.pushNamed(
+                        PostDetailScreen.routeName,
+                        arguments: <String, String>{'pid': item.postID},
+                      );
+                    },
+                    child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: CustomNetworkImage(
                         imageURL: post?.imageURL,
                         size: 60,
                       ),
                     ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Row(
-                            spacing: 4,
-                            children: <Widget>[
-                              Expanded(
-                                child: Text(
-                                  post?.title ?? '',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.copyWith(fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(width: 4),
+
+                  // Post details
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(
+                                post?.title ?? '',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4),
+                                color: AppTheme.primaryColor
+                                    .withValues(alpha: 0.1),
+                              ),
+                              child: Text(
+                                post?.condition.code.tr() ?? '',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelSmall
+                                    ?.copyWith(fontWeight: FontWeight.w400),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+
+                        // Size and color row
+                        Row(
+                          children: <Widget>[
+                            if (item.size != null)
+                              RichText(
+                                maxLines: 1,
+                                text: TextSpan(
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                  children: <TextSpan>[
+                                    TextSpan(text: '${'size'.tr()}: '),
+                                    TextSpan(text: item.size),
+                                  ],
                                 ),
                               ),
+                            if (item.color != null)
                               Container(
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 4),
-                                padding: const EdgeInsets.all(4),
+                                margin: const EdgeInsets.only(left: 8),
+                                width: 16,
+                                height: 16,
                                 decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(4),
-                                    color: AppTheme.primaryColor
-                                        .withValues(alpha: 0.1)),
-                                child: Text(
-                                  '${post?.condition.code.tr()}',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelSmall
-                                      ?.copyWith(fontWeight: FontWeight.w400),
+                                  color: item.color.toColor(),
+                                  shape: BoxShape.circle,
                                 ),
                               ),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          Row(
-                            children: <Widget>[
-                              if (item.size != null)
-                                RichText(
-                                  maxLines: 1,
-                                  text: TextSpan(
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall,
-                                    children: <TextSpan>[
-                                      const TextSpan(text: 'size:'),
-                                      TextSpan(text: item.size),
-                                    ],
-                                  ),
-                                ),
-                              if (item.color != null)
-                                Container(
-                                  margin: const EdgeInsets.only(left: 8),
-                                  width: 16,
-                                  height: 16,
-                                  decoration: BoxDecoration(
-                                    color: item.color.toColor(),
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          PersonalCartTileQtySection(item: item, post: post),
-                        ],
-                      ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        PersonalCartTileQtySection(item: item, post: post),
+                      ],
                     ),
-                    const SizedBox(width: 12),
-                    PersonalCartTileTrailingSection(item: item, post: post),
-                  ],
-                ),
-                SaveLaterWidget(
-                  item: item,
-                )
-              ],
-            );
-          },
-        ),
+                  ),
+                  const SizedBox(width: 12),
+
+                  PersonalCartTileTrailingSection(item: item, post: post),
+                ],
+              ),
+
+              SaveLaterWidget(item: item),
+              Divider(color: Theme.of(context).dividerColor),
+            ],
+          );
+        },
       ),
     );
   }

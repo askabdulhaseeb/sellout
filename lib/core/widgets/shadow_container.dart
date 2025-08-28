@@ -10,6 +10,7 @@ class ShadowContainer extends StatelessWidget {
     this.borderRadius,
     this.boxShadow,
     this.onTap,
+    this.showShadow = false,
     super.key,
   });
   final Widget child;
@@ -21,6 +22,7 @@ class ShadowContainer extends StatelessWidget {
   final BorderRadiusGeometry? borderRadius;
   final List<BoxShadow>? boxShadow;
   final VoidCallback? onTap;
+  final bool showShadow;
 
   @override
   Widget build(BuildContext context) {
@@ -33,20 +35,26 @@ class ShadowContainer extends StatelessWidget {
             margin ?? const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
         decoration: decoration ??
             BoxDecoration(
+              border: Border.all(
+                  color: !showShadow
+                      ? ColorScheme.of(context).outlineVariant
+                      : Colors.transparent),
               color: color ?? Theme.of(context).scaffoldBackgroundColor,
               borderRadius: borderRadius ?? BorderRadius.circular(8),
-              boxShadow: boxShadow ??
-                  <BoxShadow>[
-                    BoxShadow(
-                      color: Theme.of(context)
-                          .textTheme
-                          .titleLarge!
-                          .color!
-                          .withValues(alpha: 0.2),
-                      blurRadius: 8,
-                      offset: const Offset(0, 0),
-                    ),
-                  ],
+              boxShadow: showShadow
+                  ? boxShadow ??
+                      <BoxShadow>[
+                        BoxShadow(
+                          color: Theme.of(context)
+                              .textTheme
+                              .titleLarge!
+                              .color!
+                              .withValues(alpha: 0.2),
+                          blurRadius: 8,
+                          offset: const Offset(0, 0),
+                        ),
+                      ]
+                  : <BoxShadow>[],
             ),
         child: child,
       ),
