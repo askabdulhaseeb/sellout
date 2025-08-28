@@ -20,8 +20,7 @@ class PersonalCartItemList extends StatelessWidget {
           orElse: () => CartModel(),
         );
         final List<CartItemEntity> items = cart.cartItems;
-
-        return Expanded(
+        return SizedBox(
           child: ListView.builder(
             shrinkWrap: true,
             primary: false,

@@ -17,7 +17,7 @@ import '../features/personal/dashboard/views/screens/dashboard_screen.dart';
 import '../features/personal/book_visit/view/screens/booking_screen.dart';
 import '../features/personal/marketplace/views/screens/pages/market_categorized_filteration_page.dart';
 import '../features/personal/notifications/view/screens/notification_screen.dart';
-import '../features/personal/order/view/screens/order_buyer_screen.dart';
+import '../features/personal/order/view/order_buyer_screen/screen/order_buyer_screen.dart';
 import '../features/personal/order/view/screens/order_seller_screen.dart';
 import '../features/personal/order/view/screens/your_order_screen.dart';
 import '../features/personal/post/post_detail/views/screens/post_detail_screen.dart';

@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../domain/enums/basket_type.dart';
 import '../../providers/cart_provider.dart';
 
 class PersonalCartPageTile extends StatelessWidget {
@@ -10,36 +11,30 @@ class PersonalCartPageTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CartProvider>(
         builder: (BuildContext context, CartProvider cartPro, _) {
+      cartPro.basketType;
+      final List<BasketType> steps = BasketType.list();
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          _IconButton(
-              title: 'shopping_basket'.tr(),
-              isActive: cartPro.page == 1,
-              onTap: () {
-                // cartPro.page = 1;
-              }),
-          Container(
-            height: 3,
-            width: 40,
-            color: Theme.of(context).dividerColor,
-          ),
-          _IconButton(
-              title: 'checkout'.tr(),
-              isActive: cartPro.page == 2,
-              onTap: () {
-                // cartPro.page = 2;
-              }),
-          // Container(
-          //   height: 3,
-          //   width: 40,
-          //   color: Theme.of(context).dividerColor,
-          // ),
-          // _IconButton(
-          //     title: 'payment_options'.tr(),
-          //     isActive: cartPro.page == 3,
-          //     onTap: () {}),
-        ],
+        children: List.generate(steps.length * 2 - 1, (int index) {
+          // Add connector line between buttons
+          if (index.isOdd) {
+            return Container(
+              height: 3,
+              width: 40,
+              color: Theme.of(context).dividerColor,
+            );
+          }
+
+          final int stepIndex = index ~/ 2;
+          final BasketType step = steps[stepIndex];
+          return _IconButton(
+            title: step.code.tr(),
+            isActive: cartPro.page == stepIndex + 1,
+            onTap: () {
+              // cartPro.page = stepIndex + 1;
+            },
+          );
+        }),
       );
     });
   }
@@ -68,11 +63,22 @@ class _IconButton extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Icon(Icons.check_circle_outline_sharp, color: color),
+            Container(
+              padding: const EdgeInsets.all(2),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: color, width: 2),
+              ),
+              child: Icon(
+                Icons.check,
+                color: color,
+                size: 14,
+              ),
+            ),
             Text(
               title,
               textAlign: TextAlign.center,
-              style: TextStyle(color: color),
+              style: TextStyle(color: color, fontSize: 12),
             ),
           ],
         ),

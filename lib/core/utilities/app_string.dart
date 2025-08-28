@@ -167,6 +167,8 @@ class AppStrings {
       'assets/icons/png_icons/selloutAddListingPropertyIcon.png';
   static const String selloutAddListingVehicleIcon =
       'assets/icons/png_icons/selloutAddListingVehicleIcon.png';
+  static const String selloutCartTrashIcon =
+      'assets/icons/svg_icons/selloutCartTrashIcon.svg';
 
   static const String sel = '';
 

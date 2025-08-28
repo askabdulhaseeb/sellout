@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../../../../../core/dialogs/post/buy_now_dailog.dart';
-import '../../../../../../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../../../../../core/widgets/app_snakebar.dart';
@@ -20,6 +19,11 @@ class PostBuyNowButton extends StatefulWidget {
     required this.detailWidget,
     required this.detailWidgetSize,
     required this.detailWidgetColor,
+    this.buyNowText,
+    this.buyNowTextStyle,
+    this.buyNowColor,
+    this.padding,
+    this.margin,
     super.key,
   });
 
@@ -27,6 +31,11 @@ class PostBuyNowButton extends StatefulWidget {
   final bool detailWidget;
   final SizeColorEntity? detailWidgetSize;
   final ColorEntity? detailWidgetColor;
+  final String? buyNowText;
+  final TextStyle? buyNowTextStyle;
+  final Color? buyNowColor;
+  final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry? margin;
 
   @override
   State<PostBuyNowButton> createState() => _PostBuyNowButtonState();
@@ -40,45 +49,25 @@ class _PostBuyNowButtonState extends State<PostBuyNowButton> {
     setState(() => isLoading = true);
 
     try {
+      final AddToCartUsecase usecase = AddToCartUsecase(locator());
+
+      // If product has variants but detailWidget is not showing, open selection dialog
       if (widget.post.sizeColors.isNotEmpty && !widget.detailWidget) {
-        // Show selection dialog
         await showDialog(
           context: context,
           builder: (_) => BuyNowDialog(post: widget.post),
         );
-      } else if (widget.post.listID == ListingType.clothAndFoot.json) {
-        // Direct add to cart
-        final AddToCartUsecase usecase = AddToCartUsecase(locator());
-        final DataState<bool> result = await usecase(
-          AddToCartParam(
-              post: widget.post,
-              color: widget.detailWidgetColor,
-              size: widget.detailWidgetSize,
-              quantity: 1),
-        );
-        if (result is DataSuccess) {
-          if (mounted) {
-            await Navigator.of(context).pushNamed(PersonalCartScreen.routeName);
-          }
-        } else {
-          AppLog.error(
-            result.exception?.message ?? 'AddToCartError',
-            name: 'post_buy_now_button.dart',
-            error: result.exception,
-          );
-          if (mounted) {
-            AppSnackBar.showSnackBar(
-              context,
-              result.exception?.message ?? 'something_wrong'.tr(),
-            );
-          }
-        }
       } else {
-        // Direct add to cart
-        final AddToCartUsecase usecase = AddToCartUsecase(locator());
-        final DataState<bool> result = await usecase(
-          AddToCartParam(post: widget.post),
+        // Prepare add to cart param
+        final AddToCartParam param = AddToCartParam(
+          post: widget.post,
+          color: widget.detailWidgetColor,
+          size: widget.detailWidgetSize,
+          quantity: 1,
         );
+
+        final DataState<bool> result = await usecase(param);
+
         if (result is DataSuccess) {
           if (mounted) {
             await Navigator.of(context).pushNamed(PersonalCartScreen.routeName);
@@ -118,8 +107,12 @@ class _PostBuyNowButtonState extends State<PostBuyNowButton> {
   Widget build(BuildContext context) {
     return CustomElevatedButton(
       onTap: () => _buyNow(context),
-      title: 'buy_now'.tr(),
+      title: widget.buyNowText ?? 'buy_now'.tr(),
       isLoading: isLoading,
+      textStyle: widget.buyNowTextStyle,
+      bgColor: widget.buyNowColor,
+      padding: widget.padding,
+      margin: widget.margin,
     );
   }
 }

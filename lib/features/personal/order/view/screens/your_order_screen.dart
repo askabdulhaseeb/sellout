@@ -11,7 +11,7 @@ import '../../../post/domain/usecase/get_specific_post_usecase.dart';
 import '../../domain/params/get_order_params.dart';
 import '../../domain/usecase/get_orders_buyer_id.dart';
 import '../../domain/entities/order_entity.dart';
-import 'order_buyer_screen.dart';
+import '../order_buyer_screen/screen/order_buyer_screen.dart';
 
 class YourOrdersScreen extends StatefulWidget {
   const YourOrdersScreen({super.key});
@@ -151,7 +151,8 @@ class _YourOrderTileWidgetState extends State<YourOrderTileWidget> {
         if (state is DataSuccess<PostEntity>) {
           final PostEntity post = state.entity!;
           return GestureDetector(
-            onTap: () => AppNavigator.pushNamed(OrderBuyerScreen.routeName),
+            onTap: () => AppNavigator.pushNamed(OrderBuyerScreen.routeName,
+                arguments: <String, OrderEntity>{'order': widget.order}),
             child: Container(
               padding: const EdgeInsets.all(8),
               margin: const EdgeInsets.symmetric(vertical: 4),
@@ -166,27 +167,79 @@ class _YourOrderTileWidgetState extends State<YourOrderTileWidget> {
                       size: 60,
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 4),
                   Expanded(
                     child: Column(
+                      spacing: 4,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text(widget.order.orderStatus.code.tr(),
-                            style: Theme.of(context).textTheme.bodySmall),
+                        Row(
+                          spacing: 4,
+                          children: <Widget>[
+                            Flexible(
+                              child: Text(widget.order.orderStatus.code.tr(),
+                                  maxLines: 1,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelMedium
+                                      ?.copyWith(fontWeight: FontWeight.w500)),
+                            ),
+                            Expanded(
+                              child: Text(
+                                  maxLines: 1,
+                                  DateFormat('yyyy/MM/dd')
+                                      .format(widget.order.updatedAt),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelSmall
+                                      ?.copyWith(
+                                          fontSize: 8,
+                                          color:
+                                              ColorScheme.of(context).outline)),
+                            ),
+                          ],
+                        ),
                         Text(post.title,
-                            style: Theme.of(context).textTheme.labelSmall),
-                        Text(widget.order.totalAmount.toString(),
-                            style: Theme.of(context).textTheme.bodySmall),
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelMedium
+                                ?.copyWith(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12,
+                                    color: ColorScheme.of(context).outline)),
+                        Row(
+                          spacing: 2,
+                          children: <Widget>[
+                            Flexible(
+                              child: Text(post.priceStr,
+                                  maxLines: 1,
+                                  style:
+                                      Theme.of(context).textTheme.labelMedium),
+                            ),
+                            Flexible(
+                              child: Text('Rs+2',
+                                  maxLines: 1,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                          color: ColorScheme.of(context)
+                                              .secondary)),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Expanded(
+                  SizedBox(
+                    width: 110,
                     child: Column(
-                      spacing: 4,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      spacing: 6,
                       children: <Widget>[
                         CustomElevatedButton(
+                          mWidth: 60,
                           margin: const EdgeInsets.all(0),
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 4),
@@ -195,12 +248,13 @@ class _YourOrderTileWidgetState extends State<YourOrderTileWidget> {
                           onTap: () {},
                           textStyle: Theme.of(context)
                               .textTheme
-                              .bodySmall
+                              .labelSmall
                               ?.copyWith(
                                   color:
                                       Theme.of(context).colorScheme.onPrimary),
                         ),
                         CustomElevatedButton(
+                          mWidth: 60,
                           margin: const EdgeInsets.all(0),
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 4),
@@ -209,7 +263,7 @@ class _YourOrderTileWidgetState extends State<YourOrderTileWidget> {
                           onTap: () {},
                           textStyle: Theme.of(context)
                               .textTheme
-                              .bodySmall
+                              .labelSmall
                               ?.copyWith(
                                   color:
                                       Theme.of(context).colorScheme.onPrimary),
