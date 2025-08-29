@@ -1,6 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../core/theme/app_theme.dart';
+import '../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
+import '../../domain/enums/basket_type.dart';
 import '../../domain/enums/cart_type.dart';
 import '../providers/cart_provider.dart';
 import '../widgets/cart_tab_selection_widget.dart';
@@ -19,21 +24,22 @@ class PersonalCartScreen extends StatelessWidget {
       child: Consumer<CartProvider>(
         builder: (BuildContext context, CartProvider cartPro, Widget? child) =>
             Scaffold(
-                appBar: AppBar(
-                  centerTitle: true,
-                  title: const AppBarTitle(titleKey: 'cart'),
-                ),
-                body: Column(
-                  children: <Widget>[
-                    const CartTabSelectionWidget(),
-                    if (pro.cartType == CartType.basket)
-                      const PersonalBasketSection(),
-                    if (pro.cartType == CartType.buyAgain)
-                      const Text('bbbbbbbbbbbbbbbbbbbbbbbbbbbb'),
-                    if (pro.cartType == CartType.saved)
-                      const Text('cccccccccccc')
-                  ],
-                )),
+          appBar: AppBar(
+            centerTitle: true,
+            title: const AppBarTitle(titleKey: 'cart'),
+          ),
+          body: Column(
+            children: <Widget>[
+              const CartTabSelectionWidget(),
+              if (pro.cartType == CartType.basket)
+                const PersonalBasketSection(),
+              if (pro.cartType == CartType.buyAgain)
+                const Text('under construction'),
+              if (pro.cartType == CartType.saved)
+                const Text('under construction')
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -48,8 +54,16 @@ class PersonalBasketSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CartProvider>(
       builder: (BuildContext context, CartProvider pro, Widget? child) =>
-          const Column(
-        children: <Widget>[PersonalCartPageTile(), BasketItemListPage()],
+          Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          spacing: 16,
+          children: <Widget>[
+            const PersonalCartPageTile(),
+            if (pro.basketType == BasketType.shoppingBasket)
+              const BasketItemListPage()
+          ],
+        ),
       ),
     );
   }
@@ -62,6 +76,63 @@ class BasketItemListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const PersonalCartItemList();
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      spacing: 4,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        InkWell(
+          onTap: () {
+            //TODO: delete all items from cart functionality
+          },
+          child: Text(
+            'deselect_all_items'.tr(),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: AppTheme.primaryColor,
+                decoration: TextDecoration.underline,
+                decorationColor: AppTheme.primaryColor),
+          ),
+        ),
+        Container(
+          width: double.infinity,
+          height: 1,
+          color: Theme.of(context).dividerColor,
+        ),
+        const PersonalCartItemList(), //is a listviewbuilder in a sizedbox
+        Container(
+          //need to be attached to bottom
+          padding: const EdgeInsets.all(16),
+          decoration:
+              BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              InDevMode(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[Text('delivery'.tr()), const Text('free')],
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    'subtotal'.tr(),
+                    style: TextTheme.of(context)
+                        .bodyLarge
+                        ?.copyWith(fontWeight: FontWeight.w500),
+                  ),
+                  const Text('j'),
+                ],
+              ),
+              CustomElevatedButton(
+                  title: 'proceed_to_checkout'.tr(),
+                  isLoading: false,
+                  onTap: () {})
+            ],
+          ),
+        ),
+      ],
+    );
   }
 }
