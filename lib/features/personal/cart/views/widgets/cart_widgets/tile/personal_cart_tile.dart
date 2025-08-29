@@ -26,140 +26,148 @@ class PersonalCartTile extends StatelessWidget {
     return (post, seller);
   }
 
-  double calculateReviewPercentage(List<double> reviews,
-      {double maxRating = 5}) {
+  int calculateReviewPercentage(List<double> reviews, {double maxRating = 5}) {
     if (reviews.isEmpty) return 0;
     double total = reviews.reduce((double a, double b) => a + b);
     double possibleTotal = maxRating * reviews.length;
-    return (total / possibleTotal) * 100;
+    return ((total / possibleTotal) * 100).floor();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-      child: FutureBuilder<(PostEntity?, UserEntity?)>(
-        future: _loadData(),
-        builder: (BuildContext context,
-            AsyncSnapshot<(PostEntity?, UserEntity?)> snapshot) {
-          final (PostEntity?, UserEntity?)? data = snapshot.data;
-          final PostEntity? post = data?.$1;
-          final UserEntity? seller = data?.$2;
+    return FutureBuilder<(PostEntity?, UserEntity?)>(
+      future: _loadData(),
+      builder: (BuildContext context,
+          AsyncSnapshot<(PostEntity?, UserEntity?)> snapshot) {
+        final (PostEntity?, UserEntity?)? data = snapshot.data;
+        final PostEntity? post = data?.$1;
+        final UserEntity? seller = data?.$2;
 
-          return Column(
-            children: <Widget>[
-              Divider(color: Theme.of(context).dividerColor),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            // Seller info
+            Text.rich(TextSpan(children: <InlineSpan>[
+              TextSpan(
+                  text: '${'seller'.tr()}: ',
+                  style: TextTheme.of(context).bodyMedium?.copyWith(
+                        color: ColorScheme.of(context).outline,
+                      )),
+              TextSpan(
+                  text: seller?.displayName ?? '',
+                  style: TextTheme.of(context)
+                      .bodyMedium
+                      ?.copyWith(fontWeight: FontWeight.w500)),
+            ])),
+            Text(
+                '${calculateReviewPercentage(seller?.listOfReviews ?? <double>[])}% ${'positive_feedback'.tr()}',
+                style: TextTheme.of(context).bodySmall?.copyWith(
+                      color: ColorScheme.of(context).outline,
+                    )),
+            const SizedBox(height: 10),
+            Row(
+              children: <Widget>[
+                // Image
+                GestureDetector(
+                  onTap: () {
+                    AppNavigator.pushNamed(
+                      PostDetailScreen.routeName,
+                      arguments: <String, String>{'pid': item.postID},
+                    );
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: CustomNetworkImage(
+                      imageURL: post?.imageURL,
+                      size: 60,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 4),
 
-              // Seller info
-              Text('${'seller'.tr()}: ${seller?.displayName ?? ''}'),
-              Text(
-                  '${calculateReviewPercentage(seller?.listOfReviews ?? <double>[])} ${'positive_feedback'.tr()}'),
-
-              const SizedBox(height: 10),
-
-              Row(
-                children: <Widget>[
-                  // Image
-                  GestureDetector(
-                    onTap: () {
-                      AppNavigator.pushNamed(
-                        PostDetailScreen.routeName,
-                        arguments: <String, String>{'pid': item.postID},
-                      );
-                    },
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: CustomNetworkImage(
-                        imageURL: post?.imageURL,
-                        size: 60,
+                // Post details
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        spacing: 4,
+                        children: <Widget>[
+                          Flexible(
+                            child: Text(
+                              post?.title ?? '',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 4, vertical: 2),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              color:
+                                  AppTheme.primaryColor.withValues(alpha: 0.1),
+                            ),
+                            child: Text(
+                              post?.condition.code.tr() ?? '',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall
+                                  ?.copyWith(
+                                      fontWeight: FontWeight.w400, fontSize: 8),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: 4),
+                      const SizedBox(height: 4),
 
-                  // Post details
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: Text(
-                                post?.title ?? '',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(fontWeight: FontWeight.w500),
+                      // Size and color row
+                      Row(
+                        children: <Widget>[
+                          if (item.size != null)
+                            RichText(
+                              maxLines: 1,
+                              text: TextSpan(
+                                style: Theme.of(context).textTheme.bodySmall,
+                                children: <TextSpan>[
+                                  TextSpan(text: '${'size'.tr()}: '),
+                                  TextSpan(text: item.size),
+                                ],
                               ),
                             ),
+                          if (item.color != null)
                             Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 4),
-                              padding: const EdgeInsets.all(4),
+                              margin: const EdgeInsets.only(left: 8),
+                              width: 16,
+                              height: 16,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(4),
-                                color: AppTheme.primaryColor
-                                    .withValues(alpha: 0.1),
-                              ),
-                              child: Text(
-                                post?.condition.code.tr() ?? '',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelSmall
-                                    ?.copyWith(fontWeight: FontWeight.w400),
+                                color: item.color.toColor(),
+                                shape: BoxShape.circle,
                               ),
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-
-                        // Size and color row
-                        Row(
-                          children: <Widget>[
-                            if (item.size != null)
-                              RichText(
-                                maxLines: 1,
-                                text: TextSpan(
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                  children: <TextSpan>[
-                                    TextSpan(text: '${'size'.tr()}: '),
-                                    TextSpan(text: item.size),
-                                  ],
-                                ),
-                              ),
-                            if (item.color != null)
-                              Container(
-                                margin: const EdgeInsets.only(left: 8),
-                                width: 16,
-                                height: 16,
-                                decoration: BoxDecoration(
-                                  color: item.color.toColor(),
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        PersonalCartTileQtySection(item: item, post: post),
-                      ],
-                    ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      PersonalCartTileQtySection(item: item, post: post),
+                    ],
                   ),
-                  const SizedBox(width: 12),
-
-                  PersonalCartTileTrailingSection(item: item, post: post),
-                ],
-              ),
-
-              SaveLaterWidget(item: item),
-              Divider(color: Theme.of(context).dividerColor),
-            ],
-          );
-        },
-      ),
+                ),
+                const SizedBox(width: 12),
+                PersonalCartTileTrailingSection(item: item, post: post),
+              ],
+            ),
+            const SizedBox(height: 12),
+            SaveLaterWidget(item: item),
+          ],
+        );
+      },
     );
   }
 }
@@ -181,15 +189,6 @@ class _SaveLaterWidgetState extends State<SaveLaterWidget> {
     return Row(
       spacing: 4,
       children: <Widget>[
-        Text(
-          'delete',
-          style: TextStyle(color: primaryColor, fontSize: 12),
-        ).tr(),
-        Container(
-          height: 15,
-          width: 1,
-          color: ColorScheme.of(context).outline.withValues(alpha: 0.1),
-        ),
         InkWell(
           onTap: () async {
             try {
@@ -210,7 +209,7 @@ class _SaveLaterWidgetState extends State<SaveLaterWidget> {
           },
           child: Text(
             widget.item.type.tileActionCode.tr(),
-            style: TextStyle(color: secondaryColor, fontSize: 12),
+            style: TextStyle(color: primaryColor, fontSize: 12),
           ).tr(),
         ),
         Container(

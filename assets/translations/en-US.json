@@ -1001,6 +1001,7 @@
   "track_package": "Track Package",
   "delivery_address": "Delivery address",
   "basket": "basket",
+  "deselect_all_items": "Deselect all items",
   "offer_given_by_seller": "Offer given by seller",
   "offer_given_by_buyer": "Offer given by buyer",
   "message": "Message",
