@@ -11,12 +11,10 @@ class ChatwithSellerIconButton extends StatelessWidget {
   });
 
   final String userId;
-
   @override
   Widget build(BuildContext context) {
     final bool isLoading =
         Provider.of<CreatePrivateChatProvider>(context).isLoading;
-
     return InkWell(
       onTap: isLoading
           ? null

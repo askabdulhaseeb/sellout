@@ -64,7 +64,7 @@ class _OfferMessageTileAnimatedState extends State<OfferMessageTileAnimated>
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
         ),
-        duration: const Duration(microseconds: 300),
+        duration: const Duration(microseconds: 1000),
         child: Column(
           children: <Widget>[
             Container(
@@ -112,7 +112,7 @@ class _VisitingMessageTileAnimatedState
               pro.resetPinnedMessageExpandedState(),
           child: AnimatedContainer(
             height: pro.showPinnedMessage ? null : 0,
-            duration: const Duration(microseconds: 300),
+            duration: const Duration(microseconds: 1000),
             child: Stack(
               clipBehavior: Clip.none,
               children: <Widget>[

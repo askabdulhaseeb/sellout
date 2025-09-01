@@ -52,7 +52,7 @@ class _VisitingMessageTileState extends State<VisitingMessageTile> {
             widget.message.visitingDetail?.status ?? StatusType.inActive;
 
         return AnimatedContainer(
-          duration: const Duration(milliseconds: 400),
+          duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
           margin: EdgeInsets.all(widget.showButtons ? 0 : 16),
@@ -65,29 +65,33 @@ class _VisitingMessageTileState extends State<VisitingMessageTile> {
             color: Theme.of(context).scaffoldBackgroundColor,
           ),
           child: Column(
+            spacing: 12,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               if (widget.showButtons)
                 VisitingMessageTileUpdateButtonsWidget(
                     message: widget.message, post: post),
 
-              if (expanded) ...<Widget>[
-                Row(
-                  children: <Widget>[
-                    VisitingTileStatusWidget(status: status),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        title,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-              ],
-
+              Container(
+                  child: expanded
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            VisitingTileStatusWidget(status: status),
+                            Flexible(
+                              child: Text(
+                                maxLines: 1,
+                                title,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(fontWeight: FontWeight.w500),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        )
+                      : null),
               // Details Row
               VisitingCardDetailWidget(
                 status: status,
@@ -100,9 +104,7 @@ class _VisitingMessageTileState extends State<VisitingMessageTile> {
                 time: time,
               ),
 
-              if (expanded) const SizedBox(height: 12),
               if (expanded) VisitingTileTags(post: post),
-              if (expanded) const SizedBox(height: 12),
               if (expanded && widget.showButtons)
                 Text('we_looke_forward_to_seeing_you'.tr(),
                     style: const TextStyle(fontSize: 13)),
@@ -124,16 +126,18 @@ class VisitingTileStatusWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
       margin: const EdgeInsets.symmetric(horizontal: 4),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF4D5),
+        color: status.bgColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Text(status.code.tr(),
-          style: const TextStyle(
-              fontSize: 8, color: Colors.black87, fontWeight: FontWeight.bold)),
+      child: Text('\u25CF ${status.code.tr()}',
+          style: TextStyle(
+              fontSize: 8, color: status.color, fontWeight: FontWeight.bold)),
     );
   }
 }
@@ -165,9 +169,12 @@ class VisitingCardDetailWidget extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        SizedBox(
-          height: expanded ? 100 : 60,
-          width: expanded ? 100 : 60,
+        // Left image block with animated size
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          width: 80,
+          height: 80,
           child: Stack(
             children: <Widget>[
               ClipRRect(
@@ -178,10 +185,15 @@ class VisitingCardDetailWidget extends StatelessWidget {
                   fit: BoxFit.cover,
                 ),
               ),
-              if (expanded)
-                Positioned(
-                  top: 8,
-                  right: 8,
+              // Price badge fades/slides in
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+                top: 4,
+                right: 4,
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 300),
+                  opacity: expanded ? 1.0 : 0.0,
                   child: Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -195,18 +207,24 @@ class VisitingCardDetailWidget extends StatelessWidget {
                     ),
                   ),
                 ),
+              ),
             ],
           ),
         ),
+
         const SizedBox(width: 12),
+
+        // Right detail block with animated height
         Expanded(
-          child: Container(
-            height: expanded ? 100 : 60,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                  color: Theme.of(context).colorScheme.outlineVariant),
+                color: Theme.of(context).colorScheme.outlineVariant,
+              ),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -214,14 +232,20 @@ class VisitingCardDetailWidget extends StatelessWidget {
                   ? CrossAxisAlignment.start
                   : CrossAxisAlignment.center,
               children: <Widget>[
+                // Date row
                 Row(
-                  mainAxisAlignment: expanded
-                      ? MainAxisAlignment.start
-                      : MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    if (expanded)
-                      Text('${'date'.tr()}: ',
-                          style: const TextStyle(fontWeight: FontWeight.w500)),
+                    // Label appears with size animation
+                    AnimatedSize(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                      child: expanded
+                          ? Text('${'date'.tr()}: ',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w500))
+                          : const SizedBox.shrink(),
+                    ),
                     Flexible(
                       child: Text(
                         date,
@@ -233,15 +257,30 @@ class VisitingCardDetailWidget extends StatelessWidget {
                         ),
                       ),
                     ),
-                    if (!expanded) VisitingTileStatusWidget(status: status),
+                    // Status badge only when collapsed
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      child: !expanded
+                          ? VisitingTileStatusWidget(status: status)
+                          : const SizedBox.shrink(),
+                    ),
                   ],
                 ),
+
                 const SizedBox(height: 4),
+
+                // Time row
                 Row(
                   children: <Widget>[
-                    if (expanded)
-                      Text('${'time'.tr()}: ',
-                          style: const TextStyle(fontWeight: FontWeight.w500)),
+                    AnimatedSize(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                      child: expanded
+                          ? Text('${'time'.tr()}: ',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w500))
+                          : const SizedBox.shrink(),
+                    ),
                     Flexible(
                       child: Text(
                         time,
@@ -255,26 +294,32 @@ class VisitingCardDetailWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-                if (expanded)
-                  Row(
-                    children: <Widget>[
-                      if (expanded)
-                        Text('${'meet'.tr()}: ',
-                            style:
-                                const TextStyle(fontWeight: FontWeight.w500)),
-                      Flexible(
-                        child: Text(
-                          meet,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).primaryColor,
-                          ),
+                const SizedBox(height: 4),
+                // Meet row only when expanded
+                Row(
+                  children: <Widget>[
+                    AnimatedSize(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                      child: expanded
+                          ? Text('${'meet'.tr()}: ',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w500))
+                          : null,
+                    ),
+                    Flexible(
+                      child: Text(
+                        meet,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).primaryColor,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
+                )
               ],
             ),
           ),

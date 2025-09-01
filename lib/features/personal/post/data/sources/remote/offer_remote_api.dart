@@ -16,7 +16,6 @@ class OfferRemoteApiImpl implements OfferRemoteApi {
   @override
   Future<DataState<bool>> createOffer(CreateOfferparams param) async {
     const String endpoint = '/offers/create';
-
     try {
       final DataState<bool> result = await ApiCall<bool>().call(
         endpoint: endpoint,

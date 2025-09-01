@@ -38,11 +38,6 @@ class HomePostTile extends StatelessWidget {
             width: double.infinity,
             color: Theme.of(context).dividerColor,
           ),
-          // CustomElevatedButton(
-          //   onTap: () => NotificationRemoteImpl().getAllNotifications(),
-          //   title: '647834538',
-          //   isLoading: false,
-          // )
         ],
       ),
     );

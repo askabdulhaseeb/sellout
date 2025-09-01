@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/enums/nav_bar/business_bottom_nav_bar_type.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../personal/chats/create_chat/view/provider/create_private_chat_provider.dart';

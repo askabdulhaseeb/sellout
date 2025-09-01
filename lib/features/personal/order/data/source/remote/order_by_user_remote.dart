@@ -6,7 +6,7 @@ import '../../../domain/params/get_order_params.dart';
 import '../local/local_orders.dart';
 
 abstract interface class OrderByUserRemote {
-  Future<DataState<List<OrderEntity>>> getOrderByUser(GetOrderParams? userId);
+  Future<DataState<List<OrderEntity>>> getOrderByQuery(GetOrderParams? userId);
   Future<DataState<List<OrderEntity>>> getOrderByOrderId(String? params);
   Future<DataState<bool>> createOrder(List<OrderModel> orderData);
   Future<DataState<bool>> updateOrder(UpdateOrderParams params);
@@ -14,11 +14,11 @@ abstract interface class OrderByUserRemote {
 
 class OrderByUserRemoteImpl implements OrderByUserRemote {
   @override
-  Future<DataState<List<OrderEntity>>> getOrderByUser(
+  Future<DataState<List<OrderEntity>>> getOrderByQuery(
       GetOrderParams? params) async {
+    final String endpoint = params?.endpoint ?? '';
+
     try {
-      final String endpoint = '/orders/query?${params?.user}=${params?.uid}';
-      // 🌐 Always hit network
       final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,
         requestType: ApiRequestType.get,
@@ -36,7 +36,7 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
         return DataSuccess<List<OrderEntity>>(raw, orders);
       } else {
         return DataFailer<List<OrderEntity>>(
-          result.exception ?? CustomException('Failed to get orders'),
+          result.exception ?? CustomException('failed_to_get_orders'),
         );
       }
     } catch (e, stc) {
@@ -47,7 +47,7 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
         stackTrace: stc,
       );
       return DataFailer<List<OrderEntity>>(
-        CustomException('Failed to get Order by user'),
+        CustomException('failed_to_get_order_by_user'),
       );
     }
   }

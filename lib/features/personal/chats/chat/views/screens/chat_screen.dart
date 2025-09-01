@@ -23,7 +23,7 @@ class _ChatScreenState extends State<ChatScreen> {
   bool _isAtBottom() {
     if (!scrollController.hasClients) return false;
     return scrollController.offset >=
-        scrollController.position.maxScrollExtent - 50; // 50px tolerance
+        scrollController.position.maxScrollExtent - 50;
   }
 
   @override
@@ -54,7 +54,6 @@ class _ChatScreenState extends State<ChatScreen> {
     return Consumer<ChatProvider>(
       builder: (BuildContext context, ChatProvider pro, _) {
         final ChatEntity? chat = pro.chat;
-
         // After messages list updates, scroll to bottom if already at bottom
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (_isAtBottom()) {
@@ -68,32 +67,18 @@ class _ChatScreenState extends State<ChatScreen> {
 
         return PopScope(
           onPopInvokedWithResult: (bool didPop, Object? result) {
-            if (chat != null) {
-              LocalUnreadMessagesService().clearCount(chat.chatId);
-            }
+            LocalUnreadMessagesService().clearCount(chat.chatId);
           },
           child: Scaffold(
             resizeToAvoidBottomInset: true,
             appBar: chatAppBar(context),
-            body: Stack(
+            body: Column(
               children: <Widget>[
-                AnimatedPositioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  top: pro.showPinnedMessage ? 150 : 0,
-                  duration: const Duration(milliseconds: 300),
-                  child: MessagesList(
-                    chat: chat,
-                    controller: scrollController,
-                  ),
+                ChatPinnedMessage(chatId: chat!.chatId),
+                MessagesList(
+                  chat: chat,
+                  controller: scrollController,
                 ),
-                if (chat?.pinnedMessage != null)
-                  Positioned(
-                      left: 0,
-                      right: 0,
-                      top: 0,
-                      child: ChatPinnedMessage(chatId: chat!.chatId)),
               ],
             ),
             bottomNavigationBar: const ChatInteractionPanel(),

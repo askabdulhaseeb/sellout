@@ -29,7 +29,7 @@ class _ProfileOrdersSectionState extends State<ProfileOrdersSection> {
     super.initState();
     final String uid = widget.user?.uid ?? LocalAuth.uid ?? '';
     _futureOrders = GetOrderByUidUsecase(locator())(
-        GetOrderParams(user: 'seller_id', uid: uid));
+        GetOrderParams(user: GetOrderUserType.sellerId, value: uid));
   }
 
   @override

@@ -5,12 +5,14 @@ class VisitileTileWithHandleBorder extends ShapeBorder {
     this.handleHeight = 30.0,
     this.handleWidth = 30.0,
     this.handleOffset = 30.0,
-    this.bottomCornerRadius = 20.0, // Bigger rounding for whole bottom
+    this.bottomCornerRadius = 12,
+    this.handleCornerRadius = 8,
   });
   final double handleHeight;
   final double handleWidth;
   final double handleOffset;
   final double bottomCornerRadius;
+  final double handleCornerRadius;
 
   @override
   EdgeInsetsGeometry get dimensions => EdgeInsets.only(bottom: handleHeight);
@@ -37,8 +39,8 @@ class VisitileTileWithHandleBorder extends ShapeBorder {
     );
     final RRect handleShape = RRect.fromRectAndCorners(
       handleRect,
-      bottomLeft: Radius.circular(bottomCornerRadius),
-      bottomRight: Radius.circular(bottomCornerRadius),
+      bottomLeft: Radius.circular(handleCornerRadius),
+      bottomRight: Radius.circular(handleCornerRadius),
     );
 
     path.addRRect(handleShape);

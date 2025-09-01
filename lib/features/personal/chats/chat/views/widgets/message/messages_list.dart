@@ -49,14 +49,15 @@ class MessagesList extends StatelessWidget {
         // Build widgets (reversed chat order)
         final List<Widget> widgets =
             DateLabelHelper.buildLabeledWidgets(messages, timeDiffMap);
-        return ListView.builder(
-          shrinkWrap: true,
-          physics: const AlwaysScrollableScrollPhysics(),
-          controller: controller,
-          itemBuilder: (BuildContext context, int index) {
-            return widgets[index]; // your message widget
-          },
-          itemCount: widgets.length,
+        return Expanded(
+          child: ListView.builder(
+            shrinkWrap: true,
+            controller: controller,
+            itemBuilder: (BuildContext context, int index) {
+              return widgets[index];
+            },
+            itemCount: widgets.length,
+          ),
         );
       },
     );
