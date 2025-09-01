@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../chats/chat_dashboard/domain/entities/messages/message_entity.dart';
+import '../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../chats/chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../provider/booking_provider.dart';
 
 class CancelVisitingDialog extends StatelessWidget {

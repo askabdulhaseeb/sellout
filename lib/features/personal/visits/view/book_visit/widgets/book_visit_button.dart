@@ -2,11 +2,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../business/core/domain/entity/service/service_entity.dart';
-import '../../../bookings/domain/entity/booking_entity.dart';
-import '../../../post/domain/entities/post_entity.dart';
-import '../../../post/domain/entities/visit/visiting_entity.dart';
+import '../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../business/core/domain/entity/service/service_entity.dart';
+import '../../../../bookings/domain/entity/booking_entity.dart';
+import '../../../../post/domain/entities/post_entity.dart';
+import '../../../../post/domain/entities/visit/visiting_entity.dart';
 import '../provider/booking_provider.dart';
 
 class BookVisitButton extends StatelessWidget {

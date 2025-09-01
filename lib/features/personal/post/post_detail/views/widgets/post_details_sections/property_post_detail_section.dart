@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../domain/entities/post_entity.dart';
-import '../../../../domain/entities/visit/visiting_entity.dart';
 import '../../../../feed/views/widgets/post/widgets/section/buttons/home_post_button_section.dart';
 import '../post_detail_attachment_slider.dart';
 import '../post_detail_condition_delivery_detail.dart';
@@ -15,46 +14,40 @@ import '../reviews/post_detail_review_overview_section.dart';
 class PropertyPostDetailSection extends StatelessWidget {
   const PropertyPostDetailSection({
     required this.post,
-    required this.visit,
     super.key,
   });
 
   final PostEntity post;
-  final List<VisitingEntity>? visit;
 
   @override
   Widget build(BuildContext context) {
     AppLog.info('PostID: ${post.postID} ');
     return SingleChildScrollView(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            PostDetailAttachmentSlider(attachments: post.fileUrls),
-            PostDetailTitleAmountSection(post: post),
-            ConditionDeliveryWidget(post: post),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          PostDetailAttachmentSlider(attachments: post.fileUrls),
+          PostDetailTitleAmountSection(post: post),
+          ConditionDeliveryWidget(post: post),
 
-            PostButtonSection(
-              detailWidget: true,
-              visit: visit,
-              post: post,
-            ),
-            // PostVehicleDetailWidget(post: post),
-            // PostPetDetailWidget(post: post),
-            PostDetailPropertyKeyFeaturesWidget(
-              post: post,
-            ),
-            PostDetailDescriptionSection(post: post),
-            // const PostDetailSafetyTipsWidget(),
-            // ReturnPosrtageAndExtraDetailsSection(post: post),
-            PostDetailPropertyLocationLocationWidget(
-                location: post.meetUpLocation),
-            PostDetailSellerSection(post: post),
-            PostDetailReviewOverviewSection(post: post),
-          ],
-        ),
+          PostButtonSection(
+            detailWidget: true,
+            post: post,
+          ),
+          // PostVehicleDetailWidget(post: post),
+          // PostPetDetailWidget(post: post),
+          PostDetailPropertyKeyFeaturesWidget(
+            post: post,
+          ),
+          PostDetailDescriptionSection(post: post),
+          // const PostDetailSafetyTipsWidget(),
+          // ReturnPosrtageAndExtraDetailsSection(post: post),
+          PostDetailPropertyLocationLocationWidget(
+              location: post.meetUpLocation),
+          PostDetailSellerSection(post: post),
+          PostDetailReviewOverviewSection(post: post),
+        ],
       ),
     );
   }

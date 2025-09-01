@@ -1,5 +1,5 @@
 import '../../../../../core/usecase/usecase.dart';
-import '../../view/params/book_visit_params.dart';
+import '../../view/book_visit/params/book_visit_params.dart';
 import '../repo/book_visit_repo.dart';
 
 class BookVisitUseCase implements UseCase<bool, BookVisitParams> {

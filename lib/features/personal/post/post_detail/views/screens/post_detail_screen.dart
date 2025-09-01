@@ -5,7 +5,6 @@ import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../data/sources/local/local_post.dart';
 import '../../../domain/entities/post_entity.dart';
-import '../../../domain/entities/visit/visiting_entity.dart';
 import '../providers/post_detail_provider.dart';
 import '../widgets/post_details_sections/cloth_foot_post_detail_section.dart';
 import '../widgets/post_details_sections/food_drink_post_Detail_section.dart';
@@ -23,7 +22,6 @@ class PostDetailScreen extends StatelessWidget {
     final Map<String, dynamic> args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final String postID = args['pid'] ?? '';
-    final List<VisitingEntity>? visit = args['visit'];
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 80,
@@ -56,20 +54,27 @@ class PostDetailScreen extends StatelessWidget {
           return post == null
               ? const SizedBox()
               : post.listID == ListingType.items.json
-                  ? ItemPostDetailSection(post: post, visit: visit)
+                  ? ItemPostDetailSection(
+                      post: post,
+                    )
                   : post.listID == ListingType.clothAndFoot.json
-                      ? ClothFootPostDetailSection(post: post, visit: visit)
+                      ? ClothFootPostDetailSection(
+                          post: post,
+                        )
                       : post.listID == ListingType.foodAndDrink.json
-                          ? FoodDrinkPostDetailSection(post: post, visit: visit)
+                          ? FoodDrinkPostDetailSection(post: post)
                           : post.listID == ListingType.property.json
                               ? PropertyPostDetailSection(
-                                  post: post, visit: visit)
+                                  post: post,
+                                )
                               : post.listID == ListingType.pets.json
                                   ? PetsPostDetailSection(
-                                      post: post, visit: visit)
+                                      post: post,
+                                    )
                                   : post.listID == ListingType.vehicle.json
                                       ? VehiclePostDetailSection(
-                                          post: post, visit: visit)
+                                          post: post,
+                                        )
                                       : const SizedBox.shrink();
         },
       ),

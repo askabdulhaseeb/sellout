@@ -16,7 +16,7 @@ import '../features/personal/marketplace/views/providers/marketplace_provider.da
 import '../features/personal/listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../features/personal/chats/chat_dashboard/views/providers/chat_dashboard_provider.dart';
 import '../features/personal/dashboard/views/providers/personal_bottom_nav_provider.dart';
-import '../features/personal/book_visit/view/provider/booking_provider.dart';
+import '../features/personal/visits/view/book_visit/provider/booking_provider.dart';
 import '../features/personal/notifications/view/provider/notification_provider.dart';
 import '../features/personal/order/view/provider/order_provider.dart';
 import '../features/personal/post/feed/views/providers/feed_provider.dart';
@@ -29,6 +29,7 @@ import '../features/personal/setting/setting_dashboard/view/providers/personal_s
 import '../features/personal/setting/setting_options/security/provider/setting_security_provider.dart';
 import '../features/personal/user/profiles/views/providers/profile_provider.dart';
 import '../features/personal/auth/signin/views/providers/signin_provider.dart';
+import '../features/personal/visits/view/visit_calender.dart/providers/visit_calender_provider.dart';
 import 'get_it.dart';
 
 final List<SingleChildWidget> appProviders = <SingleChildWidget>[
@@ -132,8 +133,8 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
       value: SettingSecurityProvider(locator(), locator())),
   ChangeNotifierProvider<MarketPlaceProvider>.value(
       value: MarketPlaceProvider(locator())),
-  // ChangeNotifierProvider<PersonalSettingBuyerOrderProvider>.value(
-  //     value: PersonalSettingBuyerOrderProvider(locator())),
+  ChangeNotifierProvider<VisitCalenderProvider>.value(
+      value: VisitCalenderProvider(locator())),
   ChangeNotifierProvider<NotificationProvider>.value(
       value: NotificationProvider(locator())),
 ]; //

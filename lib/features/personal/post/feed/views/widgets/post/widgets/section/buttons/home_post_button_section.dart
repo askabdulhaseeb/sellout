@@ -4,7 +4,6 @@ import '../../../../../../../../../../core/enums/listing/core/listing_type.dart'
 import '../../../../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../../../domain/entities/post_entity.dart';
-import '../../../../../../../domain/entities/visit/visiting_entity.dart';
 import 'type/post_button_for_user_tile.dart';
 import 'type/store_post_button_tile.dart';
 import 'type/viewing_post_button_tile.dart';
@@ -13,11 +12,9 @@ class PostButtonSection extends StatelessWidget {
   const PostButtonSection({
     required this.post,
     required this.detailWidget,
-    this.visit,
     super.key,
   });
   final PostEntity post;
-  final List<VisitingEntity>? visit;
   final bool detailWidget;
   @override
   Widget build(BuildContext context) {
@@ -25,7 +22,7 @@ class PostButtonSection extends StatelessWidget {
         padding: const EdgeInsetsGeometry.symmetric(horizontal: 16),
         child: post.createdBy == LocalAuth.currentUser?.userID ||
                 post.createdBy == LocalAuth.currentUser?.businessID
-            ? PostButtonsForUser(visit: visit, post: post)
+            ? PostButtonsForUser(post: post)
             : GestureDetector(
                 onTap: () {
                   if (LocalAuth.currentUser?.userID == null) {

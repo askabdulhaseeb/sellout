@@ -8,9 +8,9 @@ import '../../../chats/chat/domain/entities/getted_message_entity.dart';
 import '../../../chats/chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../post/data/models/visit/visiting_model.dart';
 import '../../../post/domain/entities/visit/visiting_entity.dart';
-import '../../view/params/book_service_params.dart';
-import '../../view/params/book_visit_params.dart';
-import '../../view/params/update_visit_params.dart';
+import '../../view/book_visit/params/book_service_params.dart';
+import '../../view/book_visit/params/book_visit_params.dart';
+import '../../view/book_visit/params/update_visit_params.dart';
 
 abstract interface class BookVisitApi {
   Future<DataState<bool>> bookVisit(BookVisitParams params);
