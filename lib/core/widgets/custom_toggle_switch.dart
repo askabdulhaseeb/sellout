@@ -44,87 +44,84 @@ class CustomToggleSwitch<T> extends StatelessWidget {
     final double minWidth = MediaQuery.of(context).size.width - 52;
     final BorderRadius borderRadius = BorderRadius.circular(borderRad);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          if (labelText.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 2),
-              child: Text(
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-                labelText,
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        if (labelText.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 2),
+            child: Text(
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              labelText,
+              style: const TextStyle(fontWeight: FontWeight.w500),
             ),
-          Wrap(
-            spacing: labels.length == 2 ? 16 : 4,
-            runSpacing: 16,
-            alignment: WrapAlignment.spaceBetween,
-            runAlignment: WrapAlignment.spaceBetween,
-            children: labelStrs.map(
-              (String e) {
-                final int index = labels.contains(initialValue)
-                    ? labels.indexWhere((T e2) => e2 == initialValue)
-                    : -1;
-                final int currentIndex = labelStrs.indexOf(e);
-                final bool isSelected = index == currentIndex;
-                final Color selectedColor = (selectedColors != null &&
-                        selectedColors!.length > currentIndex)
-                    ? selectedColors![currentIndex]
-                    : AppTheme.primaryColor;
-                final double buttonWidth = (customWidths != null &&
-                        customWidths!.length > currentIndex)
-                    ? customWidths![currentIndex]
-                    : (minWidth / labelStrs.length).clamp(0.0, double.infinity);
-                return InkWell(
-                  borderRadius: borderRadius,
-                  onTap: readOnly
-                      ? null
-                      : () => onToggle?.call(labels[currentIndex]),
-                  child: Container(
-                    width: buttonWidth,
-                    padding: EdgeInsets.symmetric(
-                      vertical: verticalPadding,
-                      horizontal: horizontalPadding,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: borderRadius,
+          ),
+        Wrap(
+          spacing: labels.length == 2 ? 16 : 4,
+          runSpacing: 16,
+          alignment: WrapAlignment.spaceBetween,
+          runAlignment: WrapAlignment.spaceBetween,
+          children: labelStrs.map(
+            (String e) {
+              final int index = labels.contains(initialValue)
+                  ? labels.indexWhere((T e2) => e2 == initialValue)
+                  : -1;
+              final int currentIndex = labelStrs.indexOf(e);
+              final bool isSelected = index == currentIndex;
+              final Color selectedColor = (selectedColors != null &&
+                      selectedColors!.length > currentIndex)
+                  ? selectedColors![currentIndex]
+                  : AppTheme.primaryColor;
+              final double buttonWidth = (customWidths != null &&
+                      customWidths!.length > currentIndex)
+                  ? customWidths![currentIndex]
+                  : (minWidth / labelStrs.length).clamp(0.0, double.infinity);
+              return InkWell(
+                borderRadius: borderRadius,
+                onTap: readOnly
+                    ? null
+                    : () => onToggle?.call(labels[currentIndex]),
+                child: Container(
+                  width: buttonWidth,
+                  padding: EdgeInsets.symmetric(
+                    vertical: verticalPadding,
+                    horizontal: horizontalPadding,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: borderRadius,
+                    color: isSelected
+                        ? selectedColor.withValues(alpha: isShaded ? 0.1 : 0)
+                        : Colors.transparent,
+                    border: Border.all(
+                      width: borderWidth ?? 2,
                       color: isSelected
-                          ? selectedColor.withValues(alpha: isShaded ? 0.1 : 0)
-                          : Colors.transparent,
-                      border: Border.all(
-                        width: borderWidth ?? 2,
+                          ? selectedColor
+                          : unseletedBorderColor ??
+                              ColorScheme.of(context).outline,
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      e,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: seletedFontSize,
+                        fontWeight: FontWeight.w500,
                         color: isSelected
                             ? selectedColor
-                            : unseletedBorderColor ??
+                            : unseletedTextColor ??
                                 ColorScheme.of(context).outline,
                       ),
                     ),
-                    child: Center(
-                      child: Text(
-                        e,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: seletedFontSize,
-                          fontWeight: FontWeight.w500,
-                          color: isSelected
-                              ? selectedColor
-                              : unseletedTextColor ??
-                                  ColorScheme.of(context).outline,
-                        ),
-                      ),
-                    ),
                   ),
-                );
-              },
-            ).toList(),
-          ),
-        ],
-      ),
+                ),
+              );
+            },
+          ).toList(),
+        ),
+      ],
     );
   }
 }
