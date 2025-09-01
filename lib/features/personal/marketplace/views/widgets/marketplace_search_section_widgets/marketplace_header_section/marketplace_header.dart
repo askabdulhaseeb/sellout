@@ -42,22 +42,19 @@ class MarketPlaceHeader extends StatelessWidget {
               ),
               Consumer<MarketPlaceProvider>(builder: (BuildContext context,
                   MarketPlaceProvider pro, Widget? child) {
-                if (pro.queryController.text.isNotEmpty) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      const Divider(),
-                      const MarketPlaceHeaderButtons(),
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const Divider(),
+                    const MarketPlaceHeaderButtons(),
+                    if (pro.queryController.text.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
                         child: Text(
                             '${'showing_result_for'.tr()} "${pro.queryController.text}"'),
                       ),
-                    ],
-                  );
-                } else {
-                  return const SizedBox.shrink();
-                }
+                  ],
+                );
               })
             ]));
   }

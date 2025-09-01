@@ -16,7 +16,7 @@ class OrderRepositoryImpl implements OrderRepository {
   @override
   Future<DataState<List<OrderEntity>>> getOrderByUser(
       GetOrderParams? params) async {
-    return await orderByUserRemote.getOrderByUser(params);
+    return await orderByUserRemote.getOrderByQuery(params);
   }
 
   @override

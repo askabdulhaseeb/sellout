@@ -15,7 +15,9 @@ import '../features/personal/auth/signin/views/screens/sign_in_screen.dart';
 import '../features/personal/auth/signup/views/screens/signup_screen.dart';
 import '../features/personal/dashboard/views/screens/dashboard_screen.dart';
 import '../features/personal/book_visit/view/screens/booking_screen.dart';
+import '../features/personal/marketplace/views/screens/pages/buy_again_screen.dart';
 import '../features/personal/marketplace/views/screens/pages/market_categorized_filteration_page.dart';
+import '../features/personal/marketplace/views/screens/pages/saved_posts_page.dart';
 import '../features/personal/notifications/view/screens/notification_screen.dart';
 import '../features/personal/order/view/order_buyer_screen/screen/order_buyer_screen.dart';
 import '../features/personal/order/view/screens/order_seller_screen.dart';
@@ -158,5 +160,7 @@ class AppRoutes {
     BalanceScreen.routeName: (_) => const BalanceScreen(),
     YourOrdersScreen.routeName: (_) => const YourOrdersScreen(),
     OrderBuyerScreen.routeName: (_) => const OrderBuyerScreen(),
+    SavedPostsPage.routeName: (_) => const SavedPostsPage(),
+    BuyAgainScreen.routeName: (_) => const BuyAgainScreen(),
   };
 }

@@ -257,7 +257,7 @@ class ProfileProvider extends ChangeNotifier {
 
   Future<DataState<List<OrderEntity>>> getOrderByUser(String uid) async {
     return await _getOrderByIdUsecase(
-        GetOrderParams(user: 'seller_id', uid: uid));
+        GetOrderParams(user: GetOrderUserType.sellerId, value: uid));
   }
 
   Future<List<ReviewEntity>> getReviews(String? uid) async {

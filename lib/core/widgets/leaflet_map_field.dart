@@ -189,6 +189,7 @@ class _LocationFieldState extends State<LocationDropdown> {
             borderRadius: BorderRadius.circular(12),
             child: SizedBox(
               height: 250,
+              width: double.infinity,
               child: FlutterMap(
                 mapController: _mapController,
                 options: MapOptions(

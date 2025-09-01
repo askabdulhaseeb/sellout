@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart'; // Ensure this import is added
-import '../../../../../core/sources/api_call.dart';
-import '../../../../../core/widgets/loaders/order_tile_loader.dart';
-import '../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
-import '../../../../../services/get_it.dart';
-import '../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../domain/params/get_order_params.dart';
-import '../../domain/usecase/get_orders_buyer_id.dart';
-import '../../domain/entities/order_entity.dart';
-import '../order_buyer_screen/widgets/buyer_order_tile.dart';
+import 'package:easy_localization/easy_localization.dart';
+import '../../../../../../core/enums/core/status_type.dart';
+import '../../../../../../core/sources/api_call.dart';
+import '../../../../../../core/widgets/loaders/order_tile_loader.dart';
+import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
+import '../../../../../../services/get_it.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../order/domain/entities/order_entity.dart';
+import '../../../../order/domain/params/get_order_params.dart';
+import '../../../../order/domain/usecase/get_orders_buyer_id.dart';
+import '../../../../order/view/order_buyer_screen/widgets/buyer_order_tile.dart'; // Ensure this import is added
 
-class YourOrdersScreen extends StatefulWidget {
-  const YourOrdersScreen({super.key});
-  static String routeName = 'your-orders-screen';
+class BuyAgainScreen extends StatefulWidget {
+  const BuyAgainScreen({super.key});
+  static String routeName = 'buy-again-screen';
 
   @override
-  State<YourOrdersScreen> createState() => _YourOrdersScreenState();
+  State<BuyAgainScreen> createState() => _BuyAgainScreenState();
 }
 
-class _YourOrdersScreenState extends State<YourOrdersScreen> {
+class _BuyAgainScreenState extends State<BuyAgainScreen> {
   late Future<DataState<List<OrderEntity>>> futureOrders;
 
   @override
@@ -26,7 +27,10 @@ class _YourOrdersScreenState extends State<YourOrdersScreen> {
     super.initState();
     final String uid = LocalAuth.uid ?? '';
     futureOrders = GetOrderByUidUsecase(locator()).call(
-      GetOrderParams(user: GetOrderUserType.buyerId, value: uid),
+      GetOrderParams(
+          user: GetOrderUserType.buyerId,
+          value: uid,
+          status: StatusType.delivered),
     );
   }
 
@@ -34,7 +38,7 @@ class _YourOrdersScreenState extends State<YourOrdersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: AppBarTitle(titleKey: 'your_orders'.tr()),
+        title: AppBarTitle(titleKey: 'buy_again'.tr()),
         centerTitle: true,
       ),
       body: FutureBuilder<DataState<List<OrderEntity>>>(
