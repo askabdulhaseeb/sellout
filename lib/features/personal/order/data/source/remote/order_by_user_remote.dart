@@ -1,5 +1,6 @@
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
+import '../../../../../../core/sources/local/local_request_history.dart';
 import '../../../domain/entities/order_entity.dart';
 import '../../../../user/profiles/domain/params/update_order_params.dart';
 import '../../../domain/params/get_order_params.dart';
@@ -17,22 +18,46 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
   Future<DataState<List<OrderEntity>>> getOrderByQuery(
       GetOrderParams? params) async {
     final String endpoint = params?.endpoint ?? '';
+    if (endpoint.isEmpty) {
+      return DataFailer<List<OrderEntity>>(
+        CustomException('invalid_endpoint'),
+      );
+    }
 
     try {
+      final ApiRequestEntity? local = await LocalRequestHistory().request(
+        endpoint: endpoint,
+        duration: const Duration(days: 1),
+      );
+      if (local != null) {
+        final dynamic parsed = json.decode(local.encodedData);
+        final List<dynamic> ordersJson = parsed['orders'] ?? <dynamic>[];
+        final List<OrderEntity> orders = ordersJson
+            .map<OrderEntity>((dynamic e) => OrderModel.fromJson(e))
+            .toList();
+
+        await LocalOrders().saveAll(orders);
+        return DataSuccess<List<OrderEntity>>(local.encodedData, orders);
+      }
       final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,
         requestType: ApiRequestType.get,
       );
-      if (result is DataSuccess) {
+
+      if (result is DataSuccess<String>) {
         final String raw = result.data ?? '';
         final dynamic parsed = json.decode(raw);
-        final List<dynamic> ordersJson = parsed['orders'];
+        final List<dynamic> ordersJson = parsed['orders'] ?? <dynamic>[];
         final List<OrderEntity> orders = ordersJson
             .map<OrderEntity>((dynamic e) => OrderModel.fromJson(e))
             .toList();
-        // 🔄 Optional: still save locally
-        await LocalOrders().saveAll(orders);
 
+        // save fresh response to cache
+        await LocalRequestHistory().save(
+          ApiRequestEntity(url: endpoint, encodedData: raw),
+        );
+
+        await LocalOrders().saveAll(orders);
         return DataSuccess<List<OrderEntity>>(raw, orders);
       } else {
         return DataFailer<List<OrderEntity>>(

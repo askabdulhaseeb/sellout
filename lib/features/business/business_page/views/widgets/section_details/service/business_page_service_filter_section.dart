@@ -20,6 +20,7 @@ class BusinessPageServiceFilterSection extends StatelessWidget {
         spacing: 4,
         children: <Widget>[
           Expanded(
+            flex: 2,
             child: CustomTextFormField(
               dense: true,
               style: Theme.of(context).textTheme.bodySmall,
@@ -30,7 +31,8 @@ class BusinessPageServiceFilterSection extends StatelessWidget {
               onChanged: (String value) {},
             ),
           ),
-          Expanded(
+          Flexible(
+            flex: 1,
             child: CustomElevatedButton(
               bgColor: Colors.transparent,
               border: Border.all(color: Theme.of(context).primaryColor),

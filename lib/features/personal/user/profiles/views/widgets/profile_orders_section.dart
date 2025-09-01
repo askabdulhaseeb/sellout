@@ -1,14 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../core/sources/data_state.dart';
+import 'package:provider/provider.dart';
 import '../../../../../../../core/enums/core/status_type.dart';
-import '../../../../../../../services/get_it.dart';
-import '../../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../../../order/data/source/local/local_orders.dart';
+import '../../../../../../core/widgets/loaders/seller_order_tile_loader.dart';
 import '../../../../order/domain/entities/order_entity.dart';
-import '../../../../order/domain/params/get_order_params.dart';
 import '../../domain/entities/user_entity.dart';
-import '../../../../order/domain/usecase/get_orders_buyer_id.dart';
+import '../providers/profile_provider.dart';
 import 'list_types/profile_order_tile.dart';
 import '../../../../../../../core/widgets/custom_toggle_switch.dart';
 
@@ -21,86 +18,83 @@ class ProfileOrdersSection extends StatefulWidget {
 }
 
 class _ProfileOrdersSectionState extends State<ProfileOrdersSection> {
-  late Future<DataState<List<OrderEntity>>> _futureOrders;
-  StatusType selectedStatus = StatusType.pending;
-
   @override
   void initState() {
     super.initState();
-    final String uid = widget.user?.uid ?? LocalAuth.uid ?? '';
-    _futureOrders = GetOrderByUidUsecase(locator())(
-        GetOrderParams(user: GetOrderUserType.sellerId, value: uid));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final ProfileProvider profileProvider =
+          Provider.of<ProfileProvider>(context, listen: false);
+      profileProvider.getOrdersByStatus(widget.user?.uid ?? '');
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<DataState<List<OrderEntity>>>(
-      future: _futureOrders,
-      initialData:
-          LocalOrders().orderBySeller(widget.user?.uid ?? LocalAuth.uid),
-      builder: (BuildContext context,
-          AsyncSnapshot<DataState<List<OrderEntity>>> snapshot) {
-        final List<OrderEntity> allOrders =
-            snapshot.data?.entity ?? <OrderEntity>[];
-        final List<OrderEntity> filteredOrders = allOrders
-            .where((OrderEntity order) =>
-                order.orderStatus.code == selectedStatus.code)
-            .toList();
+    return Consumer<ProfileProvider>(
+      builder: (BuildContext context, ProfileProvider pro, Widget? child) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             CustomToggleSwitch<StatusType>(
-              borderWidth: 1,
+              borderRad: 8,
+              borderWidth: 0.5,
               horizontalPadding: 2,
               verticalPadding: 6,
-              isShaded: false,
+              isShaded: true,
               selectedColors: <Color>[
-                Theme.of(context).primaryColor,
-                Theme.of(context).colorScheme.secondary,
-                ColorScheme.of(context).onSurface
+                StatusType.processing.color,
+                StatusType.shipped.color,
+                StatusType.delivered.color,
+                StatusType.cancelled.color
               ],
-              seletedFontSize: 14,
-              unseletedBorderColor: ColorScheme.of(context).outlineVariant,
+              seletedFontSize: 12,
+              unseletedBorderColor:
+                  Theme.of(context).colorScheme.outlineVariant,
               labelText: '',
               labels: const <StatusType>[
-                StatusType.pending,
-                StatusType.completed,
+                StatusType.processing,
+                StatusType.shipped,
+                StatusType.delivered,
                 StatusType.cancelled
               ],
               labelStrs: <String>[
                 'new_order'.tr(),
-                'completed'.tr(),
+                'dispatched'.tr(),
+                'delivered'.tr(),
                 'canceled'.tr(),
               ],
-              initialValue: selectedStatus,
-              onToggle: (StatusType status) {
-                if (selectedStatus != status) {
-                  setState(() {
-                    selectedStatus = status;
-                  });
-                }
+              initialValue: pro.status,
+              onToggle: (StatusType val) {
+                pro.setStatus(val);
+                pro.getOrdersByStatus(widget.user?.uid ?? '');
               },
             ),
             const SizedBox(height: 8),
-            if (filteredOrders.isEmpty)
-              Center(
-                child: Text('no_orders_found'.tr()),
+            if (pro.isLoading)
+              ListView.builder(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: 10,
+                itemBuilder: (BuildContext context, int index) {
+                  return const SellerOrderTileLoader();
+                },
               )
+            else if (pro.orders.isEmpty)
+              Center(child: Text('no_orders_found'.tr()))
             else
-              SizedBox(
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(0),
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: filteredOrders.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final OrderEntity order = filteredOrders[index];
-                    return ProfileOrderTile(
-                      order: order,
-                      selectedStatus: selectedStatus,
-                    );
-                  },
-                ),
+              ListView.builder(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: pro.orders.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final OrderEntity order = pro.orders[index];
+                  return SellerOrderTile(
+                    order: order,
+                    selectedStatus: pro.status,
+                  );
+                },
               ),
           ],
         );
