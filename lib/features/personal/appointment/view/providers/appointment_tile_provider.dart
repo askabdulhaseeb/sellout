@@ -6,7 +6,7 @@ import '../../../../business/business_page/domain/params/get_business_bookings_p
 import '../../../../business/business_page/domain/usecase/get_my_bookings_usecase.dart';
 import '../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../business/core/domain/entity/service/service_entity.dart';
-import '../../../book_visit/view/screens/booking_screen.dart';
+import '../../../visits/view/book_visit/screens/booking_screen.dart';
 import '../../../bookings/domain/entity/booking_entity.dart';
 import '../../../review/views/screens/write_review_screen.dart';
 import '../../../user/profiles/domain/entities/user_entity.dart';

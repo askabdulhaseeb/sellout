@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/app_theme.dart';
-import '../../../../business/core/domain/entity/business_entity.dart';
-import '../../../../business/core/domain/entity/service/service_entity.dart';
-import '../../../bookings/domain/entity/booking_entity.dart';
-import '../../../post/domain/entities/post_entity.dart';
-import '../../../post/domain/entities/visit/visiting_entity.dart';
+import '../../../../../../core/theme/app_theme.dart';
+import '../../../../../business/core/domain/entity/business_entity.dart';
+import '../../../../../business/core/domain/entity/service/service_entity.dart';
+import '../../../../bookings/domain/entity/booking_entity.dart';
+import '../../../../post/domain/entities/post_entity.dart';
+import '../../../../post/domain/entities/visit/visiting_entity.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
-import '../../../../../core/enums/routine/day_type.dart';
-import '../../../../business/core/data/models/routine_model.dart';
-import '../../../post/data/models/meetup/availability_model.dart';
-import '../../../../business/core/domain/entity/routine_entity.dart';
-import '../../../post/domain/entities/meetup/availability_entity.dart';
+import '../../../../../../core/enums/routine/day_type.dart';
+import '../../../../../business/core/data/models/routine_model.dart';
+import '../../../../post/data/models/meetup/availability_model.dart';
+import '../../../../../business/core/domain/entity/routine_entity.dart';
+import '../../../../post/domain/entities/meetup/availability_entity.dart';
 import '../provider/booking_provider.dart';
 
 class BookingCalendarWidget extends StatelessWidget {

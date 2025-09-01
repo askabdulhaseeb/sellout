@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../../core/widgets/custom_network_image.dart';
-import '../../../../user/profiles/domain/entities/user_entity.dart';
+import '../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../user/profiles/domain/entities/user_entity.dart';
 import '../../provider/booking_provider.dart';
 
 class EmployeeDropdown extends StatefulWidget {

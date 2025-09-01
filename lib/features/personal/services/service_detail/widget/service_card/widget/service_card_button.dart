@@ -4,7 +4,7 @@ import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../routes/app_linking.dart';
 import '../../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../../../business/core/domain/entity/service/service_entity.dart';
-import '../../../../../book_visit/view/screens/booking_screen.dart';
+import '../../../../../visits/view/book_visit/screens/booking_screen.dart';
 
 class ServiceCardButton extends StatelessWidget {
   const ServiceCardButton({

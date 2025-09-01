@@ -1,9 +1,9 @@
 import '../../../../../core/sources/data_state.dart';
 import '../../../post/domain/entities/visit/visiting_entity.dart';
 import '../../domain/repo/book_visit_repo.dart';
-import '../../view/params/book_service_params.dart';
-import '../../view/params/book_visit_params.dart';
-import '../../view/params/update_visit_params.dart';
+import '../../view/book_visit/params/book_service_params.dart';
+import '../../view/book_visit/params/book_visit_params.dart';
+import '../../view/book_visit/params/update_visit_params.dart';
 import '../source/book_visit_api.dart';
 
 class BookVisitRepoImpl implements BookVisitRepo {

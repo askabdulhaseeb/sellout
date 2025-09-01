@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../../business/core/domain/entity/service/service_entity.dart';
-import '../../../post/domain/entities/post_entity.dart';
+import '../../../../../business/core/domain/entity/service/service_entity.dart';
+import '../../../../post/domain/entities/post_entity.dart';
 import 'subwidgets/employee_dropdown.dart';
+
 class BookViewProductDetail extends StatelessWidget {
   const BookViewProductDetail({
     required this.texttheme,

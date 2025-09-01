@@ -8,14 +8,14 @@ import '../features/personal/auth/find_account/view/screens/new_password_screen.
 import '../features/personal/auth/find_account/view/screens/send_code_screen.dart';
 import '../features/personal/auth/signin/views/screens/verify_two_factor_screen.dart';
 import '../features/personal/auth/welcome_screen/view/screens/welcome_screen.dart';
-import '../features/personal/book_visit/view/screens/calender_screen.dart';
+import '../features/personal/visits/view/visit_calender.dart/screens/visit_calender_screen.dart';
 import '../features/personal/cart/views/screens/personal_cart_screen.dart';
 import '../features/personal/chats/chat/views/screens/chat_screen.dart';
 import '../features/personal/listing/listing_form/views/screens/add_listing_form_screen.dart';
 import '../features/personal/auth/signin/views/screens/sign_in_screen.dart';
 import '../features/personal/auth/signup/views/screens/signup_screen.dart';
 import '../features/personal/dashboard/views/screens/dashboard_screen.dart';
-import '../features/personal/book_visit/view/screens/booking_screen.dart';
+import '../features/personal/visits/view/book_visit/screens/booking_screen.dart';
 import '../features/personal/marketplace/views/screens/pages/buy_again_screen.dart';
 import '../features/personal/marketplace/views/screens/pages/market_categorized_filteration_page.dart';
 import '../features/personal/marketplace/views/screens/pages/saved_posts_page.dart';
@@ -163,6 +163,6 @@ class AppRoutes {
     OrderBuyerScreen.routeName: (_) => const OrderBuyerScreen(),
     SavedPostsPage.routeName: (_) => const SavedPostsPage(),
     BuyAgainScreen.routeName: (_) => const BuyAgainScreen(),
-    CalenderScreen.routeName: (_) => const CalenderScreen(),
+    VisitCalenderScreen.routeName: (_) => const VisitCalenderScreen(),
   };
 }

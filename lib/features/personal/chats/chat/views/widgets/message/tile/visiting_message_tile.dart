@@ -6,7 +6,7 @@ import '../../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../../core/extension/datetime_ext.dart';
 import '../../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../../../core/widgets/custom_network_image.dart';
-import '../../../../../../book_visit/view/widgets/visiting_update_buttons_widget.dart';
+import '../../../../../../visits/view/book_visit/widgets/visiting_update_buttons_widget.dart';
 import '../../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../../post/domain/entities/post_entity.dart';
 import '../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';

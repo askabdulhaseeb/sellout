@@ -5,20 +5,17 @@ import '../../../../../../../../../../../core/enums/listing/core/listing_type.da
 import '../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../../../../../../routes/app_linking.dart';
-import '../../../../../../../../../book_visit/view/screens/calender_screen.dart';
+import '../../../../../../../../../visits/view/visit_calender.dart/screens/visit_calender_screen.dart';
 import '../../../../../../../../../listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../../../../../../../../../listing/listing_form/views/screens/add_listing_form_screen.dart';
 import '../../../../../../../../domain/entities/post_entity.dart';
-import '../../../../../../../../domain/entities/visit/visiting_entity.dart';
 
 class PostButtonsForUser extends StatelessWidget {
   const PostButtonsForUser({
     required this.post,
-    this.visit,
     super.key,
   });
 
-  final List<VisitingEntity>? visit;
   final PostEntity? post;
 
   @override
@@ -66,7 +63,8 @@ class PostButtonsForUser extends StatelessWidget {
               title: 'calender'.tr(),
               isLoading: false,
               onTap: () {
-                Navigator.pushNamed(context, CalenderScreen.routeName);
+                Navigator.pushNamed(context, VisitCalenderScreen.routeName,
+                    arguments: <String, String>{'pid': post?.postID ?? ''});
               })
       ],
     );

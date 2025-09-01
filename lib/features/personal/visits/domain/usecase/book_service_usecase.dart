@@ -1,5 +1,5 @@
 import '../../../../../core/usecase/usecase.dart';
-import '../../view/params/book_service_params.dart';
+import '../../view/book_visit/params/book_service_params.dart';
 import '../repo/book_visit_repo.dart';
 
 class BookServiceUsecase implements UseCase<bool, BookServiceParams> {

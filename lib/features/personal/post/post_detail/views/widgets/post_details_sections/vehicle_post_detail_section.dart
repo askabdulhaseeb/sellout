@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../../core/functions/app_log.dart';
 import '../../../../domain/entities/post_entity.dart';
-import '../../../../domain/entities/visit/visiting_entity.dart';
 import '../../../../feed/views/widgets/post/widgets/section/buttons/home_post_button_section.dart';
 import '../post_detail_attachment_slider.dart';
 import '../post_detail_condition_delivery_detail.dart';
@@ -14,12 +13,10 @@ import '../reviews/post_detail_review_overview_section.dart';
 class VehiclePostDetailSection extends StatelessWidget {
   const VehiclePostDetailSection({
     required this.post,
-    required this.visit,
     super.key,
   });
 
   final PostEntity post;
-  final List<VisitingEntity>? visit;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +28,6 @@ class VehiclePostDetailSection extends StatelessWidget {
         ConditionDeliveryWidget(post: post),
         PostButtonSection(
           detailWidget: true,
-          visit: visit,
           post: post,
         ),
         PostVehicleDetailWidget(post: post),

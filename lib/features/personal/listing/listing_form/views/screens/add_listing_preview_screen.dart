@@ -57,7 +57,6 @@ class _AddListingPreviewScreenState extends State<AddListingPreviewScreen> {
                       : AbsorbPointer(
                           child: ItemPostDetailSection(
                             post: previewPost,
-                            visit: null,
                           ),
                         ),
                 ],
