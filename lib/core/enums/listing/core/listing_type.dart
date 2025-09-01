@@ -74,13 +74,13 @@ enum ListingType {
   }
 
   static List<ListingType> get list => ListingType.values;
-  static List<ListingType> get storeList => values
+  static List<ListingType> get viewingList => values
       .where((ListingType type) =>
           type == pets || type == property || type == vehicle)
       .map((ListingType type) => type)
       .toList();
 
-  static List<ListingType> get viewingList => values
+  static List<ListingType> get storeList => values
       .where((ListingType type) =>
           type == items || type == foodAndDrink || type == clothAndFoot)
       .map((ListingType type) => type)

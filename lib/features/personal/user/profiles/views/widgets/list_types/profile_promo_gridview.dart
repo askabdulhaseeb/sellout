@@ -136,12 +136,11 @@ class _SearchBar extends StatelessWidget {
             controller: controller,
           ),
         ),
-        const SizedBox(width: 8),
         Expanded(
           flex: 2,
           child: CustomElevatedButton(
             prefixSuffixPadding: const EdgeInsets.all(4),
-            margin: const EdgeInsets.all(0),
+            margin: const EdgeInsets.all(6),
             borderRadius: BorderRadius.circular(4),
             padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
             isLoading: false,
@@ -152,7 +151,7 @@ class _SearchBar extends StatelessWidget {
             ),
             prefix: Icon(
               CupertinoIcons.add_circled,
-              size: 18,
+              size: 12,
               color: colorScheme.onPrimary,
             ),
             onTap: () {

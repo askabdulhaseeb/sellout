@@ -36,7 +36,7 @@ class _ProfileOrdersSectionState extends State<ProfileOrdersSection> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             CustomToggleSwitch<StatusType>(
-              borderRad: 8,
+              borderRad: 6,
               borderWidth: 0.5,
               horizontalPadding: 2,
               verticalPadding: 6,
