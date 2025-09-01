@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
-class OrderTileLoader extends StatelessWidget {
-  const OrderTileLoader({super.key});
+class BuyerOrderTileLoader extends StatelessWidget {
+  const BuyerOrderTileLoader({super.key});
 
   @override
   Widget build(BuildContext context) {
     final Color baseColor = Theme.of(context).dividerColor;
     final BorderRadius radius = BorderRadius.circular(2);
-
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -49,7 +48,6 @@ class OrderTileLoader extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 12),
-
           // Button placeholders
           SizedBox(
             width: 110,

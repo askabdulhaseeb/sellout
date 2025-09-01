@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../core/sources/api_call.dart';
-import '../../../../../../core/widgets/loaders/order_tile_loader.dart';
+import '../../../../../../core/widgets/loaders/buyer_order_tile_loader.dart';
 import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -51,7 +51,7 @@ class _BuyAgainScreenState extends State<BuyAgainScreen> {
               itemCount: 10,
               separatorBuilder: (_, __) => const Divider(height: 1),
               itemBuilder: (BuildContext context, int index) {
-                return const OrderTileLoader();
+                return const BuyerOrderTileLoader();
               },
             );
           } else if (snapshot.hasError) {

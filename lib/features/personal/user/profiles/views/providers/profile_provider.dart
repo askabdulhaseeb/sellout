@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import '../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
@@ -80,6 +81,9 @@ class ProfileProvider extends ChangeNotifier {
   String? _viewingMainPageKey;
   ListingType? _viewingCategory;
   List<PostEntity>? _viewingPosts;
+  //order gridview
+  StatusType _status = StatusType.processing;
+  List<OrderEntity> _orders = <OrderEntity>[];
 
   //---------------------------------------------------------------------------------getters
 
@@ -108,6 +112,9 @@ class ProfileProvider extends ChangeNotifier {
   String? get viewingMainPageKey => _viewingMainPageKey;
   ListingType? get viewingCategory => _viewingCategory;
   List<PostEntity>? get viewingPosts => _viewingPosts;
+  // order gridview
+  StatusType get status => _status;
+  List<OrderEntity> get orders => _orders;
 
   //---------------------------------------------------------------------------------text controllers
   TextEditingController namecontroller =
@@ -198,6 +205,15 @@ class ProfileProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+// orders gridview
+  void setStatus(StatusType val) {
+    _status = val;
+  }
+
+  void setOrder(List<OrderEntity> val) {
+    _orders = val;
+  }
+
   //---------------------------------------------------------------------------------buttons
   void storefilterSheetResetButton() async {
     _storeMinPriceController.clear();
@@ -253,11 +269,6 @@ class ProfileProvider extends ChangeNotifier {
   Future<DataState<PostEntity>> getPostByPostId(
       GetSpecificPostParam uid) async {
     return await _getPostByPostIdUsecase(uid);
-  }
-
-  Future<DataState<List<OrderEntity>>> getOrderByUser(String uid) async {
-    return await _getOrderByIdUsecase(
-        GetOrderParams(user: GetOrderUserType.sellerId, value: uid));
   }
 
   Future<List<ReviewEntity>> getReviews(String? uid) async {
@@ -435,6 +446,24 @@ class ProfileProvider extends ChangeNotifier {
       ));
     }
     return filters;
+  }
+
+  Future<void> getOrdersByStatus(
+    String? uid,
+  ) async {
+    setLoading(true);
+    final DataState<List<OrderEntity>> result = await _getOrderByIdUsecase(
+        GetOrderParams(
+            value: uid ?? _user?.entity?.uid ?? '',
+            user: GetOrderUserType.sellerId,
+            status: _status));
+    if (result is DataSuccess) {
+      setOrder(result.entity ?? <OrderEntity>[]);
+    } else {
+      setOrder(<OrderEntity>[]);
+      AppLog.error(result.exception?.message ?? 'something_wrong'.tr());
+    }
+    setLoading(false);
   }
 
   PostByFiltersParams _buildViewingPostByFiltersParams() {

@@ -4,7 +4,7 @@ import '../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../core/sources/api_call.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/custom_network_image.dart';
-import '../../../../../../core/widgets/loaders/order_tile_loader.dart';
+import '../../../../../../core/widgets/loaders/buyer_order_tile_loader.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../post/domain/entities/post_entity.dart';
@@ -38,9 +38,8 @@ class _BuyerOrderTileWidgetState extends State<BuyerOrderTileWidget> {
       builder: (BuildContext context,
           AsyncSnapshot<DataState<PostEntity>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const OrderTileLoader();
+          return const BuyerOrderTileLoader();
         }
-
         if (snapshot.hasError) {
           return SizedBox(
             height: 80,

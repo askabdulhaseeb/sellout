@@ -7,10 +7,9 @@ import '../../../../../order/view/screens/order_seller_screen.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../post/domain/entities/post_entity.dart';
 import '../../../../../order/domain/entities/order_entity.dart';
-import '../../enums/order_type.dart';
 
-class ProfileOrderTile extends StatelessWidget {
-  const ProfileOrderTile({
+class SellerOrderTile extends StatelessWidget {
+  const SellerOrderTile({
     required this.order,
     required this.selectedStatus,
     super.key,
@@ -69,7 +68,7 @@ class ProfileOrderTile extends StatelessWidget {
                         '\$${order.price}',
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
-                      if (selectedStatus == StatusType.completed)
+                      if (selectedStatus == StatusType.delivered)
                         Text(
                           'sale_completed'.tr(),
                           style: Theme.of(context)
@@ -88,7 +87,16 @@ class ProfileOrderTile extends StatelessWidget {
                               ?.copyWith(
                                   color: Theme.of(context).colorScheme.outline),
                         ),
-                      if (selectedStatus.code == OrderType.newOrder.code)
+                      if (selectedStatus == StatusType.shipped)
+                        Text(
+                          'shipped_order'.tr(),
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelSmall
+                              ?.copyWith(
+                                  color: Theme.of(context).colorScheme.outline),
+                        ),
+                      if (selectedStatus.code == StatusType.processing.code)
                         Text(
                           'congrats_order'.tr(),
                           style: Theme.of(context)

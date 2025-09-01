@@ -218,8 +218,8 @@ class ViewInvoiceButton extends StatelessWidget {
             style: TextStyle(
               decoration: TextDecoration.underline,
               fontSize: 10,
-              decorationColor: getStatusColor(context, order.orderStatus),
-              color: getStatusColor(context, order.orderStatus),
+              decorationColor: order.orderStatus.color,
+              color: order.orderStatus.color,
             ),
           ),
         );
@@ -242,7 +242,7 @@ class OrderActionButtonsList extends StatelessWidget {
               OrderActionButton(
                 isLoading: orderPro.isLoading,
                 keyName: 'post_now',
-                color: getStatusColor(context, order.orderStatus),
+                color: order.orderStatus.color,
                 onTap: () => orderPro.updateSellerOrder(
                     order.orderId, StatusType.delivered),
               ),
@@ -250,14 +250,14 @@ class OrderActionButtonsList extends StatelessWidget {
               OrderActionButton(
                 isLoading: orderPro.isLoading,
                 keyName: 'posted',
-                color: getStatusColor(context, order.orderStatus),
+                color: order.orderStatus.color,
                 onTap: () {},
               ),
             if (order.orderStatus == StatusType.cancelled)
               OrderActionButton(
                 isLoading: orderPro.isLoading,
                 keyName: 'cancelled',
-                color: getStatusColor(context, order.orderStatus),
+                color: order.orderStatus.color,
                 onTap: () {},
               ),
             OrderActionButton(
