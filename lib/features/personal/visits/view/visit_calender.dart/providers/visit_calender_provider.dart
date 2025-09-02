@@ -10,13 +10,34 @@ class VisitCalenderProvider extends ChangeNotifier {
   String? _postId;
   List<VisitingEntity> _visits = <VisitingEntity>[];
   bool _loading = false;
+  DateTime _selectedDate = DateTime.now();
+  String _selectedView = 'day';
+  String _selectedFilter = 'all';
 
   String? get postId => _postId;
   List<VisitingEntity> get visits => _visits;
   bool get loading => _loading;
+  DateTime get selecteddate => _selectedDate;
+  String get selectedView => _selectedView;
+  String get selectedFilter => _selectedFilter;
 
   void setPostId(String id) {
     _postId = id;
+    notifyListeners();
+  }
+
+  void setSelectedDate(DateTime date) {
+    _selectedDate = date;
+    notifyListeners();
+  }
+
+  void setSelectedView(String view) {
+    _selectedView = view;
+    notifyListeners();
+  }
+
+  void setSelectedFilter(String filter) {
+    _selectedFilter = filter;
     notifyListeners();
   }
 

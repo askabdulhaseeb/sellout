@@ -152,7 +152,7 @@ import '../features/personal/search/view/view/search_screen.dart';
 import '../features/personal/services/data/repositories/personal_services_repository_impl.dart';
 import '../features/personal/services/data/sources/services_explore_api.dart';
 import '../features/personal/services/domain/repositories/personal_services_repository.dart';
-import '../features/personal/services/domain/usecase/get_service_by_categories_usecase.dart';
+import '../features/personal/services/domain/usecase/get_services_by_query_usecase.dart';
 import '../features/personal/services/domain/usecase/get_special_offer_usecase.dart';
 import '../features/personal/services/services_screen/providers/services_page_provider.dart';
 import '../features/personal/setting/setting_dashboard/data/source/remote/setting_api.dart';
@@ -258,8 +258,8 @@ void _servicePage() {
       () => PersonalServicesRepositoryImpl(locator()));
   locator.registerFactory<GetSpecialOfferUsecase>(
       () => GetSpecialOfferUsecase(locator()));
-  locator.registerFactory<GetServiceCategoryUsecase>(
-      () => GetServiceCategoryUsecase(locator()));
+  locator.registerFactory<GetServicesByQueryUsecase>(
+      () => GetServicesByQueryUsecase(locator()));
   locator.registerLazySingleton<ServicesPageProvider>(
       () => ServicesPageProvider(locator(), locator(), locator(), locator()));
 }

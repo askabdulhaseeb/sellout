@@ -38,7 +38,6 @@ class BusinessProfileScreen extends StatelessWidget {
                       BusinessPageScoreSection(business: business),
                       BusinessPageTableSection(business: business),
                       BusinessPageTapPageSection(business: business),
-                      
                     ],
                   );
           },
