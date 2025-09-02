@@ -73,7 +73,7 @@ class ProfilePhoto extends StatelessWidget {
     return Container(
       height: size * 2,
       width: size * 2,
-      color: Theme.of(context).dividerColor.withOpacity(0.2),
+      color: Theme.of(context).dividerColor.withValues(alpha: 0.2),
     );
   }
 }

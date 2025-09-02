@@ -38,7 +38,7 @@ class CustomMemoryImage extends StatelessWidget {
         height: size,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(size * 0.2),
-          color: backgroundColor.withOpacity(0.1),
+          color: backgroundColor.withValues(alpha: 0.1),
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(size * 0.2),

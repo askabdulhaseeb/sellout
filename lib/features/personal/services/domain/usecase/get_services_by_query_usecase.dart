@@ -3,9 +3,9 @@ import '../../../../business/core/domain/entity/service/service_entity.dart';
 import '../params/services_by_filters_params.dart';
 import '../repositories/personal_services_repository.dart';
 
-class GetServiceCategoryUsecase
+class GetServicesByQueryUsecase
     implements UseCase<List<ServiceEntity>, ServiceByFiltersParams> {
-  const GetServiceCategoryUsecase(this.repository);
+  const GetServicesByQueryUsecase(this.repository);
   final PersonalServicesRepository repository;
 
   @override

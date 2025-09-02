@@ -15,7 +15,7 @@ import '../../../location/domain/entities/location_entity.dart';
 import '../../../marketplace/domain/params/filter_params.dart';
 import '../../domain/params/service_sort_options.dart';
 import '../../domain/params/services_by_filters_params.dart';
-import '../../domain/usecase/get_service_by_categories_usecase.dart';
+import '../../domain/usecase/get_services_by_query_usecase.dart';
 import '../../domain/usecase/get_special_offer_usecase.dart';
 import '../enums/service_appointment_section_type.dart';
 import '../enums/services_page_type.dart';
@@ -30,7 +30,7 @@ class ServicesPageProvider extends ChangeNotifier {
   final GetSpecialOfferUsecase _getSpecialOfferUsecase;
   final GetMyBookingsListUsecase _getBookingsListUsecase;
   final GetBusinessByIdUsecase _getBusinessByIdUsecase;
-  final GetServiceCategoryUsecase _getServiceByCategory;
+  final GetServicesByQueryUsecase _getServiceByCategory;
   //
   final Map<String, bool> _expandedDescriptions = <String, bool>{};
   bool isDescriptionExpanded(String serviceId) {

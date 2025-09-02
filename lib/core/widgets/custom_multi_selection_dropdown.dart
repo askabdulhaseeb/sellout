@@ -87,7 +87,7 @@ class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
                               widget.onChanged?.call(tempSelected);
                             },
                             selectedColor:
-                                AppTheme.primaryColor.withOpacity(0.2),
+                                AppTheme.primaryColor.withValues(alpha: 0.2),
                             backgroundColor:
                                 Theme.of(context).colorScheme.surface,
                           );

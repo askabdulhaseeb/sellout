@@ -2,18 +2,19 @@ import 'package:flutter/material.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../../../personal/bookings/domain/entity/booking_entity.dart';
+import '../../../../personal/marketplace/domain/params/filter_params.dart';
 import '../../../../personal/post/domain/entities/post_entity.dart';
 import '../../../../personal/review/domain/entities/review_entity.dart';
 import '../../../../personal/review/domain/param/get_review_param.dart';
 import '../../../../personal/review/domain/usecase/get_reviews_usecase.dart';
+import '../../../../personal/services/domain/params/services_by_filters_params.dart';
+import '../../../../personal/services/domain/usecase/get_services_by_query_usecase.dart';
 import '../../../../personal/user/profiles/domain/usecase/get_post_by_id_usecase.dart';
 import '../../../core/domain/entity/business_entity.dart';
+import '../../../core/domain/entity/service/service_entity.dart';
 import '../../../core/domain/usecase/get_business_by_id_usecase.dart';
-import '../../domain/entities/services_list_responce_entity.dart';
 import '../../domain/params/get_business_bookings_params.dart';
-import '../../domain/params/get_business_serives_param.dart';
 import '../../domain/usecase/get_bookings_by_service_id_usecase.dart';
-import '../../domain/usecase/get_services_list_by_business_id_usecase.dart';
 import '../enum/business_page_tab_type.dart';
 
 class BusinessPageProvider extends ChangeNotifier {
@@ -25,20 +26,28 @@ class BusinessPageProvider extends ChangeNotifier {
     this._getBookingsListUsecase,
   );
   final GetBusinessByIdUsecase _byID;
-  final GetServicesListByBusinessIdUsecase _servicesListUsecase;
+  final GetServicesByQueryUsecase _servicesListUsecase;
   final GetReviewsUsecase _getReviewsUsecase;
   final GetPostByIdUsecase _getPostByIdUsecase;
   final GetBookingsByServiceIdListUsecase _getBookingsListUsecase;
 
-  BusinessEntity? _business;
   BusinessEntity? get business => _business;
-
-  GetBusinessSerivesParam? _servicesListParam;
-  GetBusinessSerivesParam? get servicesListParam => _servicesListParam;
-
-  final List<PostEntity> _posts = <PostEntity>[];
+  String? get employeeId => _employeeId;
+  String? get serviceQuery => _serviceQuery;
   List<PostEntity> get posts => _posts;
+  List<ServiceEntity> get services => _services;
+  BusinessPageTabType get selectedTab => _selectedTab;
+  bool get isLoading => _isLoading;
+  //------------------------------------------------------------------------------------------
+  BusinessEntity? _business;
+  String? _employeeId;
+  String? _serviceQuery;
+  final List<PostEntity> _posts = <PostEntity>[];
+  final List<ServiceEntity> _services = <ServiceEntity>[];
+  BusinessPageTabType _selectedTab = BusinessPageTabType.services;
+  bool _isLoading = false;
 
+//---------------------------------------------------------------------------------------------
   set posts(List<PostEntity> value) {
     _posts.clear();
     value.sort((PostEntity a, PostEntity b) {
@@ -48,8 +57,12 @@ class BusinessPageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  set servicesListParam(GetBusinessSerivesParam? value) {
-    _servicesListParam = value;
+  void setServices(List<ServiceEntity> value) {
+    _services.clear();
+    value.sort((ServiceEntity a, ServiceEntity b) {
+      return b.createdAt.compareTo(a.createdAt);
+    });
+    _services.addAll(value);
     notifyListeners();
   }
 
@@ -58,20 +71,44 @@ class BusinessPageProvider extends ChangeNotifier {
     reset();
   }
 
-  reset() {
-    _selectedTab = BusinessPageTabType.services;
-    _servicesListParam = null;
-    _posts.clear();
+  set employeeId(String? value) {
+    _employeeId = value;
     notifyListeners();
   }
 
-  BusinessPageTabType _selectedTab = BusinessPageTabType.services;
-  BusinessPageTabType get selectedTab => _selectedTab;
+  set serviceQuery(String? value) {
+    _serviceQuery = value;
+    notifyListeners();
+  }
+
   set selectedTab(BusinessPageTabType value) {
     _selectedTab = value;
     notifyListeners();
   }
 
+  setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
+  reset() {
+    _selectedTab = BusinessPageTabType.services;
+    _posts.clear();
+    notifyListeners();
+  }
+
+//------------------------------------------------------------------------------------
+  ServiceByFiltersParams get servicesParam =>
+      ServiceByFiltersParams(query: _serviceQuery ?? '', filters: <FilterParam>[
+        if (_employeeId != null && _employeeId != '')
+          FilterParam(
+              attribute: 'employee_ids', operator: 'inc', value: _employeeId!),
+        FilterParam(
+            attribute: 'business_id',
+            operator: 'eq',
+            value: _business?.businessID ?? '')
+      ]);
+//------------------------------------------------------------------------------------
   Future<List<ReviewEntity>> getReviews(String? id) async {
     final DataState<List<ReviewEntity>> reviews =
         await _getReviewsUsecase(GetReviewParam(
@@ -93,27 +130,22 @@ class BusinessPageProvider extends ChangeNotifier {
     return business;
   }
 
-  Future<DataState<ServicesListResponceEntity>> getServicesListByBusinessID(
-      String businessID) async {
-    if (businessID.isEmpty) {
-      return DataFailer<ServicesListResponceEntity>(
-          CustomException('Business ID is empty'));
-    }
-    final DataState<ServicesListResponceEntity> result =
-        await _servicesListUsecase(
-      _servicesListParam ?? GetBusinessSerivesParam(businessID: businessID),
+  Future<void> getServicesByQuery() async {
+    setLoading(true);
+    final String businessID = _business?.businessID ?? '';
+    if (businessID.isEmpty && businessID != '') {}
+    final DataState<List<ServiceEntity>> result =
+        await _servicesListUsecase.call(
+      servicesParam,
     );
     if (result is DataSuccess) {
-      _servicesListParam = GetBusinessSerivesParam(
-        businessID: businessID,
-        nextKey: result.entity?.nextKey,
-        sort: _servicesListParam?.sort ?? 'lowToHigh',
-      );
-      return result;
+      setServices(result.entity ?? <ServiceEntity>[]);
+    } else if (result is DataFailer) {
+      setServices(<ServiceEntity>[]);
     } else {
-      return DataFailer<ServicesListResponceEntity>(
-          CustomException('Failed to get services list'));
+      setServices(<ServiceEntity>[]);
     }
+    setLoading(false);
   }
 
   Future<DataState<List<PostEntity>>> getPostByID(String id) async {
