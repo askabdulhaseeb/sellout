@@ -1,49 +1,49 @@
 import 'package:flutter/cupertino.dart';
-
+import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/theme/app_theme.dart';
+import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
-import '../../../../../../../core/widgets/in_dev_mode.dart';
-import '../../../../../post/data/sources/local/local_post.dart';
+import '../../../../../../../routes/app_linking.dart';
 import '../../../../../post/domain/entities/post_entity.dart';
 import '../../../../../post/domain/entities/visit/visiting_entity.dart';
 import '../../../../../post/post_detail/views/screens/post_detail_screen.dart';
+import '../../../data/sources/local/local_visits.dart';
 
 class ProfileVisitGridviewTile extends StatelessWidget {
-  const ProfileVisitGridviewTile({required this.visit, super.key});
-  final VisitingEntity visit;
+  const ProfileVisitGridviewTile({required this.post, super.key});
+  final PostEntity post;
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<PostEntity?>(
-      future: LocalPost().getPost(visit.postID),
-      builder: (BuildContext context, AsyncSnapshot<PostEntity?> snapshot) {
-        final PostEntity? post = snapshot.data;
+    return FutureBuilder<DataState<List<VisitingEntity>>>(
+      future: LocalVisit().visitByPostId(post.postID),
+      builder: (BuildContext context,
+          AsyncSnapshot<DataState<List<VisitingEntity>>> snapshot) {
+        final List<VisitingEntity> visits =
+            snapshot.data?.entity ?? <VisitingEntity>[];
         return Column(
           children: <Widget>[
             Expanded(
               child: GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, PostDetailScreen.routeName,
-                      arguments: <String, dynamic>{
-                        'pid': post?.postID,
-                        'visit': visit,
-                      });
+                  AppNavigator.pushNamed(
+                    PostDetailScreen.routeName,
+                    arguments: <String, dynamic>{
+                      'pid': post.postID,
+                      'visit': visits,
+                    },
+                  );
                 },
-                child: SizedBox(
-                  width: double.infinity,
-                  height: double.infinity,
+                child: AspectRatio(
+                  aspectRatio: 1,
                   child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(8),
-                      topRight: Radius.circular(8),
-                    ),
-                    child: CustomNetworkImage(imageURL: post?.imageURL),
+                    borderRadius: BorderRadius.circular(8),
+                    child: CustomNetworkImage(imageURL: post.imageURL),
                   ),
                 ),
               ),
             ),
-            //
             Row(
               children: <Widget>[
                 Expanded(
@@ -51,25 +51,29 @@ class ProfileVisitGridviewTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        post?.title ?? 'n/a',
+                        post.title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w500, fontSize: 14),
                       ),
                       Text(
-                        post?.priceStr ?? 'n/a',
+                        post.priceStr,
                         maxLines: 1,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 16),
                       ),
                     ],
                   ),
                 ),
-                InDevMode(
-                  child: CustomIconButton(
-                    icon: CupertinoIcons.calendar,
-                    onPressed: () {},
-                    bgColor: AppTheme.lightPrimary,
-                  ),
+                CustomIconButton(
+                  iconSize: 16,
+                  margin: const EdgeInsets.all(4),
+                  padding: const EdgeInsets.all(6),
+                  iconColor: AppTheme.primaryColor,
+                  icon: AppStrings.selloutCalenderIcon,
+                  onPressed: () {},
+                  bgColor: AppTheme.primaryColor.withValues(alpha: 0.1),
                 ),
               ],
             ),

@@ -1,79 +1,94 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-
 import '../../../../features/business/core/data/sources/local_business.dart';
 import '../../../../features/business/core/domain/entity/business_entity.dart';
 import '../../../../features/personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../../../features/personal/cart/data/models/cart/cart_item_model.dart';
 import '../../../../features/personal/cart/data/sources/local_cart.dart';
 import '../../../../features/personal/cart/views/screens/personal_cart_screen.dart';
+import '../../../../features/personal/notifications/view/screens/notification_screen.dart';
+import '../../../../features/personal/search/view/view/search_screen.dart';
 import '../../../../features/personal/user/profiles/data/sources/local/local_user.dart';
 import '../../../../features/personal/user/profiles/domain/entities/business_profile_detail_entity.dart';
-import '../../../utilities/app_icons.dart';
-import '../../in_dev_mode.dart';
+import '../../../../routes/app_linking.dart';
+import '../../../utilities/app_string.dart';
+import '../../custom_svg_icon.dart';
 import '../../profile_photo.dart';
 
 personalAppbar(BuildContext context) {
   final String me = LocalAuth.uid ?? '';
   return AppBar(
+    automaticallyImplyLeading: false,
     centerTitle: false,
     surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     shadowColor: Theme.of(context).dividerColor,
-    title: LocalAuth.currentUser == null
-        ? const SizedBox()
-        : FutureBuilder<UserEntity?>(
-            future: LocalUser().user(me),
-            initialData: LocalUser().userEntity(me),
-            builder: (
-              BuildContext context,
-              AsyncSnapshot<UserEntity?> snapshot,
-            ) {
-              final UserEntity? user = snapshot.data;
-              return user == null
-                  ? const SizedBox()
-                  : Container(
-                      width: 62,
-                      margin: const EdgeInsets.only(right: 8),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 7,
-                        horizontal: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Theme.of(context).dividerColor,
-                      ),
-                      child: GestureDetector(
-                        onTap: () async => await showProfileMenu(context, user),
-                        onLongPress: () async =>
+    title: Row(
+      children: <Widget>[
+        if (LocalAuth.currentUser != null)
+          FutureBuilder<UserEntity?>(
+              future: LocalUser().user(me),
+              initialData: LocalUser().userEntity(me),
+              builder: (
+                BuildContext context,
+                AsyncSnapshot<UserEntity?> snapshot,
+              ) {
+                final UserEntity? user = snapshot.data;
+                return user == null
+                    ? const SizedBox()
+                    : _IconButton(
+                        icon: AppStrings.selloutMyUsersListIcon,
+                        onPressed: () async =>
                             await showProfileMenu(context, user),
-                        onDoubleTap: () async =>
-                            await showProfileMenu(context, user),
-                        child: Row(
-                          children: <Widget>[
-                            const SizedBox(width: 4),
-                            CircleAvatar(
-                              radius: 12,
-                              backgroundColor: Theme.of(context).primaryColor,
-                              child: ProfilePhoto(
-                                url: user.profilePhotoURL,
-                                isCircle: true,
-                                size: 10,
-                              ),
-                            ),
-                            const Icon(Icons.keyboard_arrow_down_rounded)
-                          ],
-                        ),
-                      ),
-                    );
+                      );
+                // Container(
+                //   width: 62,
+                //   margin: const EdgeInsets.only(right: 8),
+                //   padding: const EdgeInsets.symmetric(
+                //     vertical: 7,
+                //     horizontal: 4,
+                //   ),
+                //   decoration: BoxDecoration(
+                //     borderRadius: BorderRadius.circular(10),
+                //     color: Theme.of(context).dividerColor,
+                //   ),
+                //   child: GestureDetector(
+                //     onTap: () async => await showProfileMenu(context, user),
+                //     onLongPress: () async =>
+                //         await showProfileMenu(context, user),
+                //     onDoubleTap: () async =>
+                //         await showProfileMenu(context, user),
+                //     child: Row(
+                //       children: <Widget>[
+                //         const SizedBox(width: 4),
+                //         CircleAvatar(
+                //           radius: 12,
+                //           backgroundColor: Theme.of(context).primaryColor,
+                //           child: ProfilePhoto(
+                //             url: user.profilePhotoURL,
+                //             isCircle: true,
+                //             size: 10,
+                //           ),
+                //         ),
+                //         const Icon(Icons.keyboard_arrow_down_rounded)
+                //       ],
+                //     ),
+                //   ),
+                // );
+              }),
+        _IconButton(
+            icon: AppStrings.selloutSearchIcon,
+            onPressed: () {
+              AppNavigator.pushNamed(SearchScreen.routeName);
             }),
+      ],
+    ),
     actions: <Widget>[
-      InDevMode(
-        child: _IconButton(icon: AppIcons.search, onPressed: () {}),
-      ),
-      InDevMode(
-        child: _IconButton(icon: AppIcons.notification, onPressed: () {}),
-      ),
+      _IconButton(
+          icon: AppStrings.selloutNotificationBellIcon,
+          onPressed: () {
+            AppNavigator.pushNamed(NotificationsScreen.routeName);
+          }),
       if (me.isNotEmpty)
         ValueListenableBuilder<Box<CartEntity>>(
             valueListenable: LocalCart().listenable(),
@@ -86,7 +101,7 @@ personalAppbar(BuildContext context) {
                 clipBehavior: Clip.none,
                 children: <Widget>[
                   _IconButton(
-                    icon: AppIcons.cart,
+                    icon: AppStrings.selloutShoppingCartIcon,
                     onPressed: () => Navigator.of(context)
                         .pushNamed(PersonalCartScreen.routeName),
                   ),
@@ -175,7 +190,7 @@ Future<void> showProfileMenu(BuildContext context, UserEntity user) async {
 
 class _IconButton extends StatelessWidget {
   const _IconButton({required this.icon, required this.onPressed});
-  final IconData icon;
+  final String icon;
   final Function()? onPressed;
 
   @override
@@ -184,14 +199,17 @@ class _IconButton extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: InkWell(
         onTap: onPressed,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: const EdgeInsets.all(6),
+          padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             color: Theme.of(context).dividerColor,
             borderRadius: BorderRadius.circular(10),
           ),
-          child: FittedBox(child: Icon(icon)),
+          child: CustomSvgIcon(
+            assetPath: icon,
+            size: 18,
+          ),
         ),
       ),
     );

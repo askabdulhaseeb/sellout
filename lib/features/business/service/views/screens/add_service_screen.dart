@@ -19,6 +19,8 @@ class AddServiceScreen extends StatefulWidget {
 }
 
 class _AddServiceScreenState extends State<AddServiceScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     // Provider.of<AddServiceProvider>(context, listen: false).reset();
@@ -39,30 +41,46 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final AddServiceProvider pro = Provider.of<AddServiceProvider>(context, listen: false);
+    final AddServiceProvider pro =
+        Provider.of<AddServiceProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
-          title: Text(pro.currentService?.serviceID == null
-              ? 'add_service'.tr()
-              : 'edit_service'.tr()),
-          centerTitle: true),
-      body: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child: SingleChildScrollView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              AddServiceDropdownSection(),
-              AddServiceTimeAndPriceSection(),
-              AddServiceDescriptionSection(),
-              AddServiceAttachmentSection(),
-              AddServiceEmployeeSection(),
-              AddServiceButtonSection(),
-              SizedBox(height: 200),
-            ],
+          title: Text(
+            pro.currentService?.serviceID == null
+                ? 'add_service'.tr()
+                : 'edit_service'.tr(),
+            style: TextTheme.of(context).titleMedium,
           ),
+          centerTitle: true),
+      body: Form(
+        key: _formKey,
+        child: const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                AddServiceDropdownSection(),
+                AddServiceTimeAndPriceSection(),
+                AddServiceDescriptionSection(),
+                AddServiceAttachmentSection(),
+                AddServiceEmployeeSection(),
+                SizedBox(
+                  height: 100,
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+      bottomSheet: BottomAppBar(
+        height: 90,
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: AddServiceButtonSection(
+          formKey: _formKey,
         ),
       ),
     );

@@ -25,6 +25,7 @@ class AddListingConditionOfferSection extends StatelessWidget {
             if (formPro.listingType != ListingType.foodAndDrink &&
                 formPro.listingType != ListingType.pets)
               CustomToggleSwitch<ConditionType>(
+                isShaded: false,
                 labels: ConditionType.list,
                 labelStrs: ConditionType.list
                     .map<String>((ConditionType e) => e.code.tr())
@@ -34,6 +35,7 @@ class AddListingConditionOfferSection extends StatelessWidget {
                 onToggle: formPro.setCondition,
               ),
             CustomToggleSwitch<bool>(
+              isShaded: false,
               labels: const <bool>[true, false],
               labelStrs: <String>['yes'.tr(), 'no'.tr()],
               labelText: 'accept_offers'.tr(),
@@ -51,6 +53,8 @@ class AddListingConditionOfferSection extends StatelessWidget {
                 validator: (String? value) => AppValidator.isEmpty(value),
               ),
             CustomToggleSwitch<PrivacyType>(
+              horizontalPadding: 2,
+              isShaded: false,
               labels: PrivacyType.list,
               labelStrs: PrivacyType.list
                   .map<String>((PrivacyType e) => e.code.tr())

@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/sellout_title.dart';
+import '../../../../../../routes/app_linking.dart';
 import 'enter_code_screen.dart';
 
 class SendCodeScreen extends StatefulWidget {
@@ -87,8 +88,9 @@ class _SendCodeScreenState extends State<SendCodeScreen> {
           ],
         ),
       ),
-      bottomSheet: Container(
-        color: Colors.white,
+      bottomSheet: BottomAppBar(
+        height: 100,
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
@@ -97,8 +99,8 @@ class _SendCodeScreenState extends State<SendCodeScreen> {
                   margin: const EdgeInsets.all(10),
                   title: 'not_you?'.tr(),
                   isLoading: false,
-                  textColor: Colors.grey,
-                  bgColor: Colors.transparent,
+                  textColor: ColorScheme.of(context).onSurface,
+                  bgColor: ColorScheme.of(context).surface,
                   border: Border.all(color: Theme.of(context).dividerColor),
                   onTap: () => Navigator.pop(context)),
             ),
@@ -108,7 +110,7 @@ class _SendCodeScreenState extends State<SendCodeScreen> {
                 title: 'continue'.tr(),
                 isLoading: false,
                 onTap: () {
-                  Navigator.pushNamed(context, EnterCodeScreen.routeName);
+                  AppNavigator.pushNamed(EnterCodeScreen.routeName);
                 },
               ),
             ),

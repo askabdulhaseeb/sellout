@@ -16,7 +16,11 @@ enum AttachmentType {
   @HiveField(4)
   other('other', 'other'),
   @HiveField(5)
-  media('media', 'Media');
+  media('media', 'media'),
+  @HiveField(6)
+  contacts('contact', 'contact'),
+   @HiveField(7)
+  location('location', 'location');
 
   const AttachmentType(this.json, this.title);
 
@@ -34,6 +38,10 @@ enum AttachmentType {
         return AttachmentType.audio;
       case 'document':
         return AttachmentType.document;
+        case 'contact':
+        return AttachmentType.contacts;
+        case 'location':
+        return AttachmentType.location;
       default:
         return AttachmentType.other;
     }

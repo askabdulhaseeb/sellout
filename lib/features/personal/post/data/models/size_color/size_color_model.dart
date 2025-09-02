@@ -11,8 +11,11 @@ class SizeColorModel extends SizeColorEntity {
 
   factory SizeColorModel.fromJson(Map<String, dynamic> json) => SizeColorModel(
         value: json['value'],
-        colors: List<ColorModel>.from((json['colors'] ?? <dynamic>[])
-            .map((dynamic x) => ColorModel.fromJson(x))),
+        colors: List<ColorModel>.from(
+          (json['colors'] ?? <dynamic>[]).map(
+            (dynamic x) => ColorModel.fromJson(x),
+          ),
+        ),
         id: json['id'],
       );
 

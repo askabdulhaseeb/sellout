@@ -1,25 +1,30 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../../../../../core/functions/app_log.dart';
-import '../../../../../../core/functions/permission_fun.dart';
 import '../../../../../../core/sources/api_call.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/phone_number_entity.dart';
 import '../../../../../../routes/app_linking.dart';
+import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../dashboard/views/screens/dashboard_screen.dart';
+import '../../../../user/profiles/domain/usecase/edit_profile_detail_usecase.dart';
+import '../../../../user/profiles/views/params/update_user_params.dart';
 import '../../../signin/domain/params/login_params.dart';
 import '../../../signin/domain/usecase/login_usecase.dart';
 import '../../domain/usecase/register_user_usecase.dart';
 import '../../domain/usecase/send_opt_usecase.dart';
 import '../../domain/usecase/verify_opt_usecase.dart';
+import '../../domain/usecase/verify_user_by_image_usecase.dart';
+import '../enums/gender_type.dart';
 import '../enums/signup_page_type.dart';
 import '../params/signup_basic_info_params.dart';
 import '../params/signup_send_opt_params.dart';
-import '../screens/pages/account_type_page.dart';
 import '../screens/pages/signup_basic_info_page.dart';
 import '../screens/pages/signup_dob_page.dart';
 import '../screens/pages/signup_location_page.dart';
@@ -32,12 +37,17 @@ class SignupProvider extends ChangeNotifier {
     this._sendPhoneOtpUsecase,
     this._verifyPhoneOtpUsecase,
     this._loginUsecase,
+    this._updateProfileDetailUsecase,
+    this._verifyUserByImageUsecase,
   );
 
   final RegisterUserUsecase _registerUserUsecase;
   final SendPhoneOtpUsecase _sendPhoneOtpUsecase;
   final VerifyPhoneOtpUsecase _verifyPhoneOtpUsecase;
   final LoginUsecase _loginUsecase;
+  final UpdateProfileDetailUsecase _updateProfileDetailUsecase;
+  final VerifyUserByImageUsecase _verifyUserByImageUsecase;
+
   //
   String? _uid;
   set uid(String? value) {
@@ -45,6 +55,25 @@ class SignupProvider extends ChangeNotifier {
     // notifyListeners();
   }
 
+  //
+  DateTime? _dob;
+  DateTime? get dob => _dob;
+  void setDob(DateTime date) {
+    _dob = date;
+    notifyListeners();
+  }
+
+  //
+
+  Gender? _gender;
+  Gender? get gender => _gender;
+
+  void setGender(Gender value) {
+    _gender = value;
+    notifyListeners();
+  }
+
+  //
   String? _getOTP;
   set getOTP(String? value) {
     _getOTP = value;
@@ -71,13 +100,11 @@ class SignupProvider extends ChangeNotifier {
     text: kDebugMode ? '1234567890' : '',
   );
   final TextEditingController otp = TextEditingController();
-  DateTime? _dob = DateTime(2000, 1, 1);
-  DateTime? get dob => _dob;
-  set dob(DateTime? value) {
-    _dob = value;
-    notifyListeners();
-  }
-
+  // DateTime? _dob = DateTime(2000, 1, 1);
+  // set dob(DateTime? value) {
+  //   _dob = value;
+  //   notifyListeners();
+  // }
   //
   final GlobalKey<FormState> basicInfoFormKey = GlobalKey<FormState>();
   //
@@ -103,7 +130,7 @@ class SignupProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  SignupPageType _currentPage = SignupPageType.accountType;
+  SignupPageType _currentPage = SignupPageType.basicInfo;
   SignupPageType get currentPage => _currentPage;
   set currentPage(SignupPageType value) {
     _currentPage = value;
@@ -130,26 +157,24 @@ class SignupProvider extends ChangeNotifier {
 
   Widget displayedPage() {
     switch (currentPage) {
-      case SignupPageType.accountType:
-        return const AccountTypeScreen();
+      // case SignupPageType.accountType:
+      //   return const AccountTypeScreen();
       case SignupPageType.basicInfo:
         return const SignupBasicInfoPage();
       case SignupPageType.otp:
         return const SignupOtpVerificationPage();
-      case SignupPageType.photoVerification:
-        return const SignupPhotoVerificationPage();
       case SignupPageType.dateOfBirth:
         return const SignupDobPage();
+      case SignupPageType.photoVerification:
+        return const SignupPhotoVerificationPage();
       case SignupPageType.location:
         return const SignupLocationPage();
     }
   }
 
   Future<bool> isValidBasicInfo(BuildContext context) async {
-    if (!(basicInfoFormKey.currentState?.validate() ?? false)) {
-      return false;
-    }
     if ((_phoneNumber?.fullNumber.length ?? 0) < 5) {
+      debugPrint('${'invalid_value'.tr()}: ${'phone_number'.tr()}');
       AppSnackBar.showSnackBar(
         context,
         '${'invalid_value'.tr()}: ${'phone_number'.tr()}',
@@ -160,13 +185,30 @@ class SignupProvider extends ChangeNotifier {
   }
 
   Future<void> onNext(BuildContext context) async {
+    debugPrint('on next function called');
     if (_currentPage == SignupPageType.basicInfo) {
+      debugPrint('before is valid basic info');
       if (await isValidBasicInfo(context)) {
         // ignore: use_build_context_synchronously
         _moveNext(context);
       }
     } else if (_currentPage == SignupPageType.otp) {
       if (await verifyOtp(context)) {
+        // ignore: use_build_context_synchronously
+        _moveNext(context);
+      }
+    } else if (_currentPage == SignupPageType.dateOfBirth) {
+      if (await dateOfBirth(context)) {
+        // ignore: use_build_context_synchronously
+        _moveNext(context);
+      }
+    } else if (_currentPage == SignupPageType.photoVerification) {
+      if (await verifyImage(context)) {
+        // ignore: use_build_context_synchronously
+        _moveNext(context);
+      }
+    } else if (_currentPage == SignupPageType.location) {
+      if (await enableLocation(context)) {
         // ignore: use_build_context_synchronously
         _moveNext(context);
       }
@@ -209,27 +251,6 @@ class SignupProvider extends ChangeNotifier {
     }
   }
 
-  reset() {
-    _uid = null;
-    _getOTP = null;
-    name.text = '';
-    username.text = '';
-    email.text = '';
-    password.text = '';
-    confirmPassword.text = '';
-    phone.text = '';
-    otp.text = '';
-    _dob = DateTime(2000, 1, 1);
-    _attachment = null;
-    _phoneNumber = null;
-    _isLoading = false;
-    _currentPage = SignupPageType.basicInfo;
-    _resendCodeTimer?.cancel();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      notifyListeners();
-    });
-  }
-
   // Add a tracher for 60s to resend code
   void startResendCodeTimer() {
     _isLoading = false;
@@ -246,37 +267,79 @@ class SignupProvider extends ChangeNotifier {
     });
   }
 
-  Future<void> enableLocation(BuildContext context) async {
+  Future<bool> enableLocation(BuildContext context) async {
     try {
-      //
-      final bool hasLocation = await PermissionFun.hasPermissions(<Permission>[
-        Permission.location,
-        Permission.locationWhenInUse,
-      ]);
-      if (hasLocation) {
+      // Request permission (this will show the system dialog)
+      final PermissionStatus status =
+          await Permission.locationWhenInUse.request();
+
+      if (status == PermissionStatus.granted) {
+        // Permission granted
+        return true;
+      } else if (status == PermissionStatus.permanentlyDenied) {
+        // Show message + open settings
         // ignore: use_build_context_synchronously
-        onNext(context);
+        AppSnackBar.showSnackBar(context,
+            'Permission permanently denied. Please enable from settings.');
+        await openAppSettings();
+      } else {
+        // Permission denied or other status
+        // ignore: use_build_context_synchronously
+        AppSnackBar.showSnackBar(context, 'Location permission denied.');
       }
+
+      return false;
     } catch (e) {
       // ignore: use_build_context_synchronously
-      AppSnackBar.showSnackBar(context, e.toString());
+      AppSnackBar.showSnackBar(context, 'Error: ${e.toString()}');
+      return false;
     }
   }
 
+  Future<void> setImage(
+    BuildContext context, {
+    required AttachmentType type,
+  }) async {
+    final ImagePicker picker = ImagePicker();
+
+    try {
+      final XFile? pickedFile = await picker.pickImage(
+        source: ImageSource.camera,
+        preferredCameraDevice: CameraDevice.front,
+        imageQuality: 85, // adjust if you want to control size/quality
+      );
+
+      if (pickedFile != null) {
+        File file = File(pickedFile.path);
+        _attachment = PickedAttachment(file: file, type: AttachmentType.image);
+        notifyListeners();
+      } else {
+        AppSnackBar.showSnackBar(context, 'No image selected');
+      }
+    } catch (e) {
+      AppSnackBar.showSnackBar(context, 'Error picking image: $e');
+    }
+  }
+
+  /// api calls
   Future<bool> basicInfoPushData(BuildContext context) async {
+    debugPrint('basic info push data initiated');
     isLoading = true;
     try {
       //
       final SignupBasicInfoParams params = SignupBasicInfoParams(
-          name: name.text,
-          username: username.text,
-          email: email.text,
-          phone: _phoneNumber!,
-          password: password.text,
-         );
+        name: name.text,
+        username: username.text,
+        email: email.text,
+        phone: _phoneNumber!,
+        password: password.text,
+      );
       final DataState<String> result = await _registerUserUsecase(params);
       if (result is DataSuccess) {
         _uid = result.entity?.toString();
+        _loginUsecase
+            .call(LoginParams(email: email.text, password: password.text));
+        debugPrint('signin success');
         startResendCodeTimer();
         return true;
       } else {
@@ -398,5 +461,72 @@ class SignupProvider extends ChangeNotifier {
       AppSnackBar.showSnackBar(context, e.toString());
     }
     return false;
+  }
+
+  Future<bool> dateOfBirth(BuildContext context) async {
+    final UpdateUserParams params =
+        UpdateUserParams(dob: dob, gender: gender?.json ?? Gender.other.json);
+    final DataState<String> result = await _updateProfileDetailUsecase(params);
+    if (result is DataSuccess) {
+      AppLog.info('profile_updated_successfully'.tr());
+      return true;
+    } else {
+      AppLog.error(result.exception!.message,
+          name: 'SignUpProvider.dateOfBirth - else');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('something_wrong'.tr())),
+      );
+      return false;
+    }
+  }
+
+  Future<bool> verifyImage(BuildContext context) async {
+    if (_attachment == null) {
+      AppLog.error(
+        'image is null',
+        name: 'SignupProvider.verifyImage - uid',
+      );
+      AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
+      return false;
+    }
+    final DataState<bool> result =
+        await _verifyUserByImageUsecase(_attachment!);
+    if (result is DataSuccess) {
+      AppLog.info('image_verified_successfully'.tr());
+      return true;
+    }
+    AppLog.error(
+      result is DataFailer
+          ? result.exception?.message ?? 'Unknown error'
+          : 'Verification failed',
+      name: 'SignupProvider.verifyImage - failure',
+    );
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('something_wrong'.tr())),
+    );
+    return false;
+  }
+
+  /// reset
+  reset() {
+    _uid = null;
+    _getOTP = null;
+    name.text = '';
+    username.text = '';
+    email.text = '';
+    password.text = '';
+    confirmPassword.text = '';
+    phone.text = '';
+    otp.text = '';
+    _dob = DateTime(2000, 1, 1);
+    _gender = null;
+    _attachment = null;
+    _phoneNumber = null;
+    _isLoading = false;
+    _currentPage = SignupPageType.basicInfo;
+    _resendCodeTimer?.cancel();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 }

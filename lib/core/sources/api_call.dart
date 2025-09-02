@@ -1,19 +1,19 @@
 import 'dart:convert';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:mime/mime.dart';
 import '../../features/attachment/domain/entities/picked_attachment.dart';
 import '../enums/core/api_request_type.dart';
 import '../functions/app_log.dart';
 import 'data_state.dart';
 import '../../features/personal/auth/signin/data/sources/local/local_auth.dart';
 import 'local/local_request_history.dart';
-
 export 'dart:convert';
 export '../enums/core/api_request_type.dart';
 export 'data_state.dart';
+import 'package:http_parser/http_parser.dart';
 
 class ApiCall<T> {
   Future<DataState<T>> call({
@@ -108,9 +108,10 @@ class ApiCall<T> {
         AppLog.error(
           '${response.statusCode} - API: message -> ${decoded['message']} - detail -> ${decoded['details']}',
           name: 'ApiCall.call - else',
-          error: CustomException('ERROR: ${decoded['message']}'),
+          error: CustomException('ERROR: ${decoded['error']}'),
         );
-        return DataFailer<T>(CustomException('ERROR: ${decoded['message']}'));
+        return DataFailer<T>(CustomException('ERROR: ${decoded['message']}',
+            reason: decoded['error']));
       }
     } catch (e) {
       AppLog.error(
@@ -126,6 +127,7 @@ class ApiCall<T> {
     required String endpoint,
     required ApiRequestType requestType,
     String? fileKey,
+    Map<String, PickedAttachment>? fileMap,
     String? baseURL,
     Map<String, String>? fieldsMap,
     List<PickedAttachment>? attachments,
@@ -160,6 +162,24 @@ class ApiCall<T> {
         }
       }
 
+      if (fileMap != null && fileMap.isNotEmpty) {
+        for (final MapEntry<String, PickedAttachment> entry
+            in fileMap.entries) {
+          final String key = entry.key;
+          final File file = entry.value.file;
+          final String mimeType =
+              lookupMimeType(file.path) ?? 'application/octet-stream';
+          final MediaType mediaType = MediaType.parse(mimeType);
+          final http.MultipartFile multipartFile =
+              await http.MultipartFile.fromPath(
+            key,
+            file.path,
+            contentType: mediaType,
+          );
+          request.files.add(multipartFile);
+        }
+      }
+
       /// Request Header
       // [Content-Type]
       final Map<String, String> headers = extraHeader ?? <String, String>{};
@@ -182,7 +202,6 @@ class ApiCall<T> {
 
       /// Send Request
       http.StreamedResponse response = await request.send();
-
       if (response.statusCode >= 200 && response.statusCode < 300) {
         debugPrint('👉🏻 API Call: url - $url');
         final String data = await response.stream.bytesToString();

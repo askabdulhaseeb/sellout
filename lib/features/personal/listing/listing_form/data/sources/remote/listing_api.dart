@@ -15,14 +15,12 @@ class ListingAPI {
           return local;
         }
       }
-
       final DataState<bool> req = await ApiCall<bool>().call(
         endpoint: '/category',
         requestType: ApiRequestType.get,
         isAuth: false,
         isConnectType: false,
       );
-
       if (req is DataSuccess) {
         final List<dynamic> data = json.decode(req.data ?? '');
         return await _decodeData(data);

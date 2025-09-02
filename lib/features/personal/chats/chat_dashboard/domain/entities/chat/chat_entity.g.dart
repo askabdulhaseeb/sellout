@@ -29,13 +29,14 @@ class ChatEntityAdapter extends TypeAdapter<ChatEntity> {
       participants: (fields[2] as List?)?.cast<ChatParticipantEntity>(),
       deletedBy: (fields[10] as List?)?.cast<dynamic>(),
       groupInfo: fields[11] as GroupInfoEntity?,
+      pinnedMessage: fields[14] as MessageEntity?,
     );
   }
 
   @override
   void write(BinaryWriter writer, ChatEntity obj) {
     writer
-      ..writeByte(13)
+      ..writeByte(14)
       ..writeByte(0)
       ..write(obj.updatedAt)
       ..writeByte(1)
@@ -60,6 +61,8 @@ class ChatEntityAdapter extends TypeAdapter<ChatEntity> {
       ..write(obj.deletedBy)
       ..writeByte(11)
       ..write(obj.groupInfo)
+      ..writeByte(14)
+      ..write(obj.pinnedMessage)
       ..writeByte(99)
       ..write(obj.inHiveAt);
   }

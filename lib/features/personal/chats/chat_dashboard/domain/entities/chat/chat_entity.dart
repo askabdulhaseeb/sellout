@@ -1,12 +1,10 @@
 import 'package:hive/hive.dart';
-
 import '../../../../../../../core/enums/chat/chat_type.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../post/domain/entities/offer/offer_amount_info_entity.dart';
 import '../messages/message_entity.dart';
 import 'group/group_into_entity.dart';
 import 'participant/chat_participant_entity.dart';
-
 export '../../../../../../../core/enums/chat/chat_type.dart';
 part 'chat_entity.g.dart';
 
@@ -25,6 +23,7 @@ class ChatEntity {
     this.participants,
     this.deletedBy,
     this.groupInfo,
+    this.pinnedMessage,
   }) : inHiveAt = DateTime.now();
 
   @HiveField(0)
@@ -51,11 +50,47 @@ class ChatEntity {
   final List<dynamic>? deletedBy;
   @HiveField(11)
   final GroupInfoEntity? groupInfo;
+  @HiveField(14)
+  final MessageEntity? pinnedMessage;
   @HiveField(99)
   final DateTime inHiveAt;
 
   String otherPerson() {
     final String meID = LocalAuth.uid ?? '';
     return persons.firstWhere((String e) => e != meID, orElse: () => meID);
+  }
+
+  // ✅ copyWith method
+  ChatEntity copyWith({
+    DateTime? updatedAt,
+    DateTime? createdAt,
+    List<ChatParticipantEntity>? participants,
+    List<String>? ids,
+    String? createdBy,
+    MessageEntity? lastMessage,
+    MessageEntity? pinnedMessage,
+    OfferAmountInfoEntity? productInfo,
+    List<String>? persons,
+    String? chatId,
+    ChatType? type,
+    List<dynamic>? deletedBy,
+    GroupInfoEntity? groupInfo,
+    DateTime? inHiveAt,
+  }) {
+    return ChatEntity(
+      updatedAt: updatedAt ?? this.updatedAt,
+      createdAt: createdAt ?? this.createdAt,
+      participants: participants ?? this.participants,
+      ids: ids ?? this.ids,
+      createdBy: createdBy ?? this.createdBy,
+      lastMessage: lastMessage ?? this.lastMessage,
+      pinnedMessage: pinnedMessage ?? this.pinnedMessage,
+      productInfo: productInfo ?? this.productInfo,
+      persons: persons ?? this.persons,
+      chatId: chatId ?? this.chatId,
+      type: type ?? this.type,
+      deletedBy: deletedBy ?? this.deletedBy,
+      groupInfo: groupInfo ?? this.groupInfo,
+    );
   }
 }

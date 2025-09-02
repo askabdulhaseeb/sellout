@@ -1,57 +1,68 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../core/widgets/in_dev_mode.dart';
-import '../../../../../../../services/get_it.dart';
-import '../../../../../post/data/sources/local/local_post.dart';
+import 'package:provider/provider.dart';
 import '../../../../../post/domain/entities/post_entity.dart';
 import '../../../domain/entities/user_entity.dart';
-import '../../../domain/usecase/get_post_by_id_usecase.dart';
-import '../profile_filter_section.dart';
+import '../../enums/profile_page_tab_type.dart';
+import '../../providers/profile_provider.dart';
+import '../profile_filter_buttons.dart';
 import '../subwidgets/post_grid_view_tile.dart';
 
-class ProfileStoreGridview extends StatelessWidget {
+class ProfileStoreGridview extends StatefulWidget {
   const ProfileStoreGridview({required this.user, super.key});
   final UserEntity? user;
 
   @override
+  State<ProfileStoreGridview> createState() => _ProfileStoreGridviewState();
+}
+
+class _ProfileStoreGridviewState extends State<ProfileStoreGridview> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ProfileProvider>(context, listen: false).loadStorePosts();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (user?.uid == null) {
-      return const Center(child: Text('User not found'));
-    }
-    final GetPostByIdUsecase getPostByIdUsecase = GetPostByIdUsecase(locator());
-    return FutureBuilder<DataState<List<PostEntity>>>(
-      future: getPostByIdUsecase(user!.uid),
-      initialData: LocalPost().postbyUid(user!.uid),
-      builder: (BuildContext context,
-          AsyncSnapshot<DataState<List<PostEntity>>> snapshot) {
-        if (!snapshot.hasData || snapshot.data?.entity == null) {
-          return const Center(child: Text('No posts found'));
-        }
-        final List<PostEntity> posts = snapshot.data!.entity!;
-        if (posts.isEmpty) {
-          return const Center(child: Text('No posts found'));
-        }
-        posts.sort(
-            (PostEntity a, PostEntity b) => b.createdAt.compareTo(a.createdAt));
-        return Column(
-          children: <Widget>[
-            InDevMode(child: ProfileFilterSection(user: user)),
-            GridView.builder(
+    return Column(
+      spacing: 8,
+      children: <Widget>[
+        ProfileFilterSection(
+          user: widget.user,
+          pageType: ProfilePageTabType.store,
+        ),
+        Consumer<ProfileProvider>(
+          builder: (BuildContext context, ProfileProvider pro, _) {
+            final List<PostEntity>? posts = pro.storePosts;
+
+            if (pro.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (posts == null || posts.isEmpty) {
+              return Center(child: Text('no_posts_found'.tr()));
+            }
+
+            return GridView.builder(
               itemCount: posts.length,
               shrinkWrap: true,
               primary: false,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 6.0,
-                  mainAxisSpacing: 6.0,
-                  childAspectRatio: 0.7),
+                crossAxisCount: 2,
+                crossAxisSpacing: 6.0,
+                mainAxisSpacing: 6.0,
+                childAspectRatio: 0.66,
+              ),
               itemBuilder: (BuildContext context, int index) {
                 return PostGridViewTile(post: posts[index]);
               },
-            ),
-          ],
-        );
-      },
+            );
+          },
+        ),
+      ],
     );
   }
 }

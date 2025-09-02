@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../../../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../domain/entities/post_entity.dart';
 
 class HomePostTitleSection extends StatelessWidget {
@@ -9,7 +9,7 @@ class HomePostTitleSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 2),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -26,22 +26,11 @@ class HomePostTitleSection extends StatelessWidget {
                   ),
                 ),
               ),
-              RichText(
-                text: TextSpan(
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  children: <TextSpan>[
-                    TextSpan(
-                      text: post.price.toString(),
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const TextSpan(text: ' '),
-                    TextSpan(
-                        text: post.currency,
-                        style: const TextStyle(fontSize: 15)),
-                  ],
+              Text(
+                '${CountryHelper.currencySymbolHelper(post.currency)}${post.price.toString()}',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],

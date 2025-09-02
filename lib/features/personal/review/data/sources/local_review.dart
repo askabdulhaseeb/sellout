@@ -47,6 +47,10 @@ class LocalReview {
         return _box.values
             .where((ReviewEntity review) => review.sellerID == param.id)
             .toList();
+      case ReviewApiQueryOptionType.serviceID:
+        return _box.values
+            .where((ReviewEntity review) => review.serviceID == param.id)
+            .toList();
       case ReviewApiQueryOptionType.postID:
         return _box.values
             .where((ReviewEntity review) => review.postID == param.id)

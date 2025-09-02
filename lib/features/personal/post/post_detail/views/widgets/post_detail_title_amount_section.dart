@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../domain/entities/post_entity.dart';
 
 class PostDetailTitleAmountSection extends StatelessWidget {
@@ -8,25 +7,28 @@ class PostDetailTitleAmountSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Expanded(
-          child: Text(
-            post.title,
-            maxLines: 3,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Expanded(
+            child: Text(
+              post.title,
+              maxLines: 3,
+              style: TextTheme.of(context)
+                  .titleSmall
+                  ?.copyWith(fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ),
+          Text(
+            post.priceStr.toString(),
             style: TextTheme.of(context)
                 .titleSmall
-                ?.copyWith(fontSize: 16, fontWeight: FontWeight.w500),
+                ?.copyWith(fontSize: 16, fontWeight: FontWeight.w600),
           ),
-        ),
-        Text(
-          post.priceStr.toString(),
-          style: TextTheme.of(context)
-              .titleSmall
-              ?.copyWith(fontSize: 16, fontWeight: FontWeight.w600),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

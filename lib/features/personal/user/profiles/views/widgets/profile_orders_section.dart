@@ -1,17 +1,16 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/sources/data_state.dart';
-import '../../../../../../core/widgets/custom_toggle_switch.dart';
-import '../../domain/entities/orderentity.dart';
+import '../../../../../../../core/enums/core/status_type.dart';
+import '../../../../../../core/widgets/loaders/seller_order_tile_loader.dart';
+import '../../../../order/domain/entities/order_entity.dart';
 import '../../domain/entities/user_entity.dart';
-import '../enums/order_type.dart';
 import '../providers/profile_provider.dart';
-import 'list_types/profile_order_listview.dart';
+import 'list_types/profile_order_tile.dart';
+import '../../../../../../../core/widgets/custom_toggle_switch.dart';
 
 class ProfileOrdersSection extends StatefulWidget {
-  const ProfileOrdersSection({super.key, this.user});
-
+  const ProfileOrdersSection({required this.user, super.key});
   final UserEntity? user;
 
   @override
@@ -19,60 +18,87 @@ class ProfileOrdersSection extends StatefulWidget {
 }
 
 class _ProfileOrdersSectionState extends State<ProfileOrdersSection> {
-  OrderType selectedStatus = OrderType.newOrder;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final ProfileProvider profileProvider =
+          Provider.of<ProfileProvider>(context, listen: false);
+      profileProvider.getOrdersByStatus(widget.user?.uid ?? '');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final ProfileProvider pro = Provider.of<ProfileProvider>(context);
-
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          CustomToggleSwitch<OrderType>(
-            labels: OrderType.list,
-            labelStrs:
-                OrderType.values.map((OrderType e) => e.label.tr()).toList(),
-            labelText: '',
-            initialValue: selectedStatus,
-            onToggle: (OrderType value) {
-              setState(() {
-                selectedStatus = value;
-              });
-            },
-          ),
-          FutureBuilder<DataState<List<OrderEntity>?>>(
-            future: pro.getOrderByUser(widget.user?.uid ?? ''),
-            builder: (BuildContext context,
-                AsyncSnapshot<DataState<List<OrderEntity>?>> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (snapshot.hasError ||
-                  snapshot.data == null ||
-                  snapshot.data!.entity == null) {
-                return const Center(child: Text('No orders found.'));
-              }
-              List<OrderEntity> allOrders = snapshot.data!.entity!;
-              List<OrderEntity> filteredOrders =
-                  allOrders.where((OrderEntity order) {
-                debugPrint('orderStatus: ${order.orderStatus}');
-                return order.orderStatus == selectedStatus.code;
-              }).toList();
-              if (filteredOrders.isEmpty) {
-                return Center(child: Text('no_orders'.tr()));
-              }
-              return SizedBox(
-                height:
-                    MediaQuery.of(context).size.height * 0.5, // Adjust height
-                child: ProfileOrderListview(
-                    filteredOrders: filteredOrders,
-                    pro: pro,
-                    selectedStatus: selectedStatus),
-              );
-            },
-          ),
-        ],
-      ),
+    return Consumer<ProfileProvider>(
+      builder: (BuildContext context, ProfileProvider pro, Widget? child) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            CustomToggleSwitch<StatusType>(
+              borderRad: 6,
+              borderWidth: 0.5,
+              horizontalPadding: 2,
+              verticalPadding: 6,
+              isShaded: true,
+              selectedColors: <Color>[
+                StatusType.processing.color,
+                StatusType.shipped.color,
+                StatusType.delivered.color,
+                StatusType.cancelled.color
+              ],
+              seletedFontSize: 12,
+              unseletedBorderColor:
+                  Theme.of(context).colorScheme.outlineVariant,
+              labelText: '',
+              labels: const <StatusType>[
+                StatusType.processing,
+                StatusType.shipped,
+                StatusType.delivered,
+                StatusType.cancelled
+              ],
+              labelStrs: <String>[
+                'new_order'.tr(),
+                'dispatched'.tr(),
+                'delivered'.tr(),
+                'canceled'.tr(),
+              ],
+              initialValue: pro.status,
+              onToggle: (StatusType val) {
+                pro.setStatus(val);
+                pro.getOrdersByStatus(widget.user?.uid ?? '');
+              },
+            ),
+            const SizedBox(height: 8),
+            if (pro.isLoading)
+              ListView.builder(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: 10,
+                itemBuilder: (BuildContext context, int index) {
+                  return const SellerOrderTileLoader();
+                },
+              )
+            else if (pro.orders.isEmpty)
+              Center(child: Text('no_orders_found'.tr()))
+            else
+              ListView.builder(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: pro.orders.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final OrderEntity order = pro.orders[index];
+                  return SellerOrderTile(
+                    order: order,
+                    selectedStatus: pro.status,
+                  );
+                },
+              ),
+          ],
+        );
+      },
     );
   }
 }

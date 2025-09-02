@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import '../entities/post_entity.dart';
 import '../entities/size_color/color_entity.dart';
 import '../entities/size_color/size_color_entity.dart';

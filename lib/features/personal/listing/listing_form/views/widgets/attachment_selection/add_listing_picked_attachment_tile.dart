@@ -1,18 +1,19 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../core/widgets/video_widget.dart';
 import '../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../providers/add_listing_form_provider.dart';
 
-class AddListingPickedAttachmentTile extends StatelessWidget {
-  const AddListingPickedAttachmentTile({
+class ListingAttachmentTile extends StatelessWidget {
+  const ListingAttachmentTile({
     super.key,
     this.attachment,
     this.imageUrl,
   });
+
   final PickedAttachment? attachment;
   final AttachmentEntity? imageUrl;
 
@@ -33,6 +34,10 @@ class AddListingPickedAttachmentTile extends StatelessWidget {
       context,
       listen: false,
     );
+
+    // Get the video URL for network/video type
+    final Object? videoSource = isLocal ? attachment?.file.uri : imageUrl?.url;
+
     return Padding(
       padding: const EdgeInsets.all(3),
       child: ClipRRect(
@@ -42,15 +47,12 @@ class AddListingPickedAttachmentTile extends StatelessWidget {
           child: Stack(
             children: <Widget>[
               Container(
-                color: ColorScheme.of(context).outline.withAlpha(60),
+                color: ColorScheme.of(context).secondary.withAlpha(60),
                 height: double.infinity,
                 width: double.infinity,
                 child: isVideo
                     ? VideoWidget(
-                        fit: BoxFit.cover,
-                        videoSource: isLocal
-                            ? attachment!.file.uri.path
-                            : imageUrl?.url ?? '',
+                        videoSource: videoSource,
                         play: false,
                       )
                     : isLocal
@@ -58,8 +60,8 @@ class AddListingPickedAttachmentTile extends StatelessWidget {
                             File(attachment!.file.path),
                             fit: BoxFit.cover,
                           )
-                        : Image.network(
-                            imageUrl?.url ?? '',
+                        : CustomNetworkImage(
+                            imageURL: imageUrl!.url,
                             fit: BoxFit.cover,
                           ),
               ),

@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../core/bottom_sheets/address/address_bottom_sheet.dart';
 import '../../../../../../core/bottom_sheets/widgets/address_tile.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';

@@ -46,6 +46,17 @@ class LocalVisit {
     return DataSuccess<List<VisitingEntity>>(me, result);
   }
 
+  Future<DataState<List<VisitingEntity>>> visitByPostId(String postID) async {
+    if (postID.isEmpty) {
+      return DataSuccess('', <VisitingEntity>[]); // or your own empty state
+    }
+
+    final List<VisitingEntity> result =
+        _box.values.where((VisitingEntity e) => e.postID == postID).toList();
+
+    return DataSuccess('', result);
+  }
+
   DataState<List<VisitingEntity>> iMhost() {
     final String me = LocalAuth.uid ?? '';
     if (me.isEmpty) {

@@ -1,4 +1,3 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
@@ -34,7 +33,6 @@ class FindAccountRemoteDataSourceimpl implements FindAccountRemoteDataSource {
                 CustomException('Invalid JSON format'));
           }
         } else {
-
           AppLog.error(
             'something_wrong'.tr(),
             name: 'FindAccountRemoteDataSourceimpl.findAccount - else',
@@ -100,7 +98,7 @@ class FindAccountRemoteDataSourceimpl implements FindAccountRemoteDataSource {
         endpoint: '/userAuth/verify/${params.uid}',
         requestType: ApiRequestType.post,
         body: jsonEncode(params.tomap()),
-        isAuth: true,
+        isAuth: false,
       );
       if (response is DataSuccess<bool>) {
         final String str = response.data ?? '';
@@ -125,7 +123,7 @@ class FindAccountRemoteDataSourceimpl implements FindAccountRemoteDataSource {
   Future<DataState<String>> newPassword(NewPasswordParams params) async {
     try {
       final DataState<bool> response = await ApiCall<bool>().call(
-        endpoint: '/userAuth/forget/password',
+        endpoint: '/userAuth/change/password?source=forget_password',
         requestType: ApiRequestType.post,
         isAuth: false,
         body: jsonEncode(params.toMap()),

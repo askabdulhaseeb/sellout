@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
 import '../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../core/extension/string_ext.dart';
 import '../../../domain/entities/visit/visiting_entity.dart';
@@ -16,6 +19,15 @@ class VisitingModel extends VisitingEntity {
   });
 
   factory VisitingModel.fromJson(Map<String, dynamic> json) {
+    DateTime parseDateTime(String dateTimeStr) {
+      try {
+        return DateFormat('hh:mm a yyyy-MM-dd').parse(dateTimeStr);
+      } catch (e) {
+        debugPrint('Failed to parse date_time: $dateTimeStr');
+        return DateTime.now();
+      }
+    }
+
     final String postID = json['post_id'] ?? json['post']['post_id'] ?? '';
     return VisitingModel(
       visitingID: json['visiting_id'] ?? '',
@@ -25,8 +37,7 @@ class VisitingModel extends VisitingEntity {
       postID: postID,
       status: StatusType.fromJson(json['status']),
       visitingTime: json['visiting_time'] ?? '',
-      dateTime:
-          (json['date_time']?.toString() ?? '').toDateTime() ?? DateTime.now(),
+      dateTime: parseDateTime(json['date_time']),
       createdAt: (json['created_at']?.toString() ?? '').toDateTime(),
     );
   }

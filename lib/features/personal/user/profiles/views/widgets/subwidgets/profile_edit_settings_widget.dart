@@ -1,8 +1,9 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
-import '../../../../../setting/setting_dashboard/views/screens/personal_setting_screen.dart';
+import '../../../../../../../core/utilities/app_string.dart';
+import '../../../../../../../core/widgets/custom_svg_icon.dart';
+import '../../../../../../../routes/app_linking.dart';
+import '../../../../../setting/setting_dashboard/view/screens/personal_setting_screen.dart';
 import '../../screens/edit_profile_screen.dart';
 
 class ProfileEditAndSettingsWidget extends StatelessWidget {
@@ -13,34 +14,37 @@ class ProfileEditAndSettingsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        const Icon(Icons.home_outlined,),
+        const CustomSvgIcon(
+            size: 20, assetPath: AppStrings.selloutProfileBankIcon),
         GestureDetector(
           onTap: () {},
           child: PopupMenuButton<int>(
-            color:
-                Theme.of(context).scaffoldBackgroundColor,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            offset: const Offset(-30, 30),
+            elevation: 15,
+            color: Theme.of(context).scaffoldBackgroundColor,
             onSelected: (int value) {
               if (value == 1) {
-                Navigator.pushNamed(
-                    context, EditProfileScreen.routeName);
+                AppNavigator.pushNamed(EditProfileScreen.routeName);
               } else if (value == 2) {
-                Navigator.of(context).pushNamed(
-                    PersonalSettingScreen.routeName);
+                Navigator.of(context)
+                    .pushNamed(PersonalSettingScreen.routeName);
               }
             },
-            itemBuilder: (BuildContext context) =>
-                <PopupMenuEntry<int>>[
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
               PopupMenuItem<int>(
                 value: 1,
                 child: Row(
                   spacing: 2,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    const Icon(
-                      Icons.edit,
-                      size: 14,
-                    ),
+                    const CustomSvgIcon(
+                        size: 20,
+                        assetPath:
+                            AppStrings.selloutProfileHeaderMoreEditProfileIcon),
                     Text('edit_profile'.tr()),
                   ],
                 ),
@@ -51,16 +55,18 @@ class ProfileEditAndSettingsWidget extends StatelessWidget {
                   spacing: 2,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    const Icon(
-                      Icons.settings,
-                      size: 14,
+                    const CustomSvgIcon(
+                      size: 20,
+                      assetPath:
+                          AppStrings.selloutProfileHeaderMoreSettingsIcon,
                     ),
                     Text('settings'.tr()),
                   ],
                 ),
               ),
             ],
-            icon: const Icon(Icons.more_vert),
+            icon: const CustomSvgIcon(
+                size: 20, assetPath: AppStrings.selloutProfileHeaderMoreIcon),
           ),
         )
       ],

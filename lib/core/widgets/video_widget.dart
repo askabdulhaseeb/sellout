@@ -12,11 +12,12 @@ class VideoWidget extends StatefulWidget {
     this.showTime = false,
   });
 
-  final String videoSource; // File path or URL
+  final dynamic videoSource;
   final bool play;
   final BoxFit fit;
   final double durationFontSize;
   final bool showTime;
+
   @override
   State<VideoWidget> createState() => _VideoWidgetState();
 }
@@ -24,28 +25,62 @@ class VideoWidget extends StatefulWidget {
 class _VideoWidgetState extends State<VideoWidget> {
   VideoPlayerController? _controller;
   bool _initialized = false;
-
-  bool get _isNetwork => widget.videoSource.startsWith('http');
+  bool _hasError = false;
 
   @override
   void initState() {
     super.initState();
+    _initializeVideo();
+  }
 
-    _controller = _isNetwork
-        ? VideoPlayerController.networkUrl(Uri.parse(widget.videoSource))
-        : VideoPlayerController.file(File(widget.videoSource));
+  Future<void> _initializeVideo() async {
+    try {
+      if (widget.videoSource is Uri &&
+              (widget.videoSource as Uri).isScheme('http') ||
+          widget.videoSource is String &&
+              (widget.videoSource as String).startsWith('http')) {
+        final uri = widget.videoSource is Uri
+            ? widget.videoSource
+            : Uri.parse(widget.videoSource);
+        _controller = VideoPlayerController.networkUrl(uri);
+      } else if (widget.videoSource is Uri &&
+          (widget.videoSource as Uri).isScheme('file')) {
+        final Uri uri = widget.videoSource as Uri;
+        final String filePath = uri.toFilePath();
+        if (filePath.isNotEmpty) {
+          _controller = VideoPlayerController.file(File(filePath));
+        } else {
+          throw Exception('Invalid file path for URI.');
+        }
+      } else if (widget.videoSource is String) {
+        final String path = widget.videoSource as String;
+        final File file = File(path);
+        if (file.existsSync()) {
+          _controller = VideoPlayerController.file(file);
+        } else {
+          throw Exception('File not found at $path');
+        }
+      } else {
+        throw Exception('Unsupported URI type or scheme.');
+      }
 
-    _controller!.initialize().then((_) {
+      await _controller!.initialize();
+
       if (mounted) {
         setState(() {
           _initialized = true;
         });
-        if (widget.play) {
-          _controller!.play();
-        }
+
+        if (widget.play) _controller!.play();
         _controller!.setLooping(true);
       }
-    });
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _hasError = true;
+        });
+      }
+    }
   }
 
   @override
@@ -54,6 +89,7 @@ class _VideoWidgetState extends State<VideoWidget> {
     super.dispose();
   }
 
+  // Format video duration
   String _formatDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     final String minutes = twoDigits(duration.inMinutes.remainder(60));
@@ -63,6 +99,10 @@ class _VideoWidgetState extends State<VideoWidget> {
 
   @override
   Widget build(BuildContext context) {
+    if (_hasError) {
+      return const Center(child: Icon(Icons.error, color: Colors.red));
+    }
+
     if (!_initialized) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -100,7 +140,7 @@ class _VideoWidgetState extends State<VideoWidget> {
               ),
             ),
           ),
-        if (widget.showTime == true)
+        if (widget.showTime)
           Positioned(
             bottom: 4,
             right: 4,

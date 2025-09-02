@@ -1,0 +1,156 @@
+import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
+import 'scaffold/app_bar/app_bar_title_widget.dart';
+
+class MultiSelectionDropdown<T> extends StatefulWidget {
+  const MultiSelectionDropdown({
+    required this.title,
+    required this.items,
+    required this.selectedItems,
+    required this.onChanged,
+    this.isSearchable = true,
+    this.padding,
+    this.height,
+    this.width,
+    this.hint,
+    super.key,
+  });
+
+  final String title;
+  final void Function(List<T>)? onChanged;
+  final List<T> selectedItems;
+  final List<DropdownMenuItem<T>> items;
+  final EdgeInsetsGeometry? padding;
+  final String? hint;
+  final double? height;
+  final double? width;
+  final bool isSearchable;
+
+  @override
+  State<MultiSelectionDropdown<T>> createState() => _MultiWidgetState<T>();
+}
+
+class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
+  final LayerLink _layerLink = LayerLink();
+  final bool _isDropdownOpen = false;
+  void _toggleDropdown() {
+    showModalBottomSheet(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        List<T> tempSelected = List<T>.from(widget.selectedItems);
+        return StatefulBuilder(
+          builder: (BuildContext context, setModalState) {
+            return Container(
+              decoration: BoxDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  backgroundBlendMode: BlendMode.color),
+              width: double.infinity,
+              margin: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  AppBarTitle(
+                    titleKey: widget.hint ?? '',
+                  ),
+                  Divider(color: Theme.of(context).dividerColor),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children: widget.items.map((DropdownMenuItem<T> item) {
+                          final bool isSelected =
+                              tempSelected.contains(item.value);
+                          return ChoiceChip(
+                            showCheckmark: false,
+                            side: BorderSide(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .outlineVariant),
+                            label: item.child,
+                            selected: isSelected,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            onSelected: (bool selected) {
+                              setModalState(() {
+                                if (selected) {
+                                  tempSelected.add(item.value as T);
+                                } else {
+                                  tempSelected.remove(item.value);
+                                }
+                              });
+                              widget.onChanged?.call(tempSelected);
+                            },
+                            selectedColor:
+                                AppTheme.primaryColor.withValues(alpha: 0.2),
+                            backgroundColor:
+                                Theme.of(context).colorScheme.surface,
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    return CompositedTransformTarget(
+      link: _layerLink,
+      child: GestureDetector(
+        onTap: _toggleDropdown,
+        child: Container(
+          width: widget.width ?? double.infinity,
+          height: widget.height ?? 48,
+          padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: widget.selectedItems.isNotEmpty
+                ? Theme.of(context).primaryColor.withValues(alpha: 0.1)
+                : Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: widget.selectedItems.isNotEmpty
+                  ? Theme.of(context).primaryColor
+                  : colorScheme.outlineVariant,
+              width: 1.5,
+            ),
+          ),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  widget.hint ?? 'Select',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: widget.selectedItems.isNotEmpty
+                            ? colorScheme.primary
+                            : colorScheme.outlineVariant,
+                      ),
+                ),
+              ),
+              Icon(
+                _isDropdownOpen
+                    ? Icons.keyboard_arrow_up_rounded
+                    : Icons.keyboard_arrow_down_rounded,
+                color: widget.selectedItems.isNotEmpty
+                    ? colorScheme.primary
+                    : colorScheme.outline,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

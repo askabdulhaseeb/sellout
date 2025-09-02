@@ -1,107 +1,65 @@
-import 'dart:async';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/utilities/app_string.dart';
+import '../../../../chat_dashboard/data/models/chat/chat_model.dart';
 import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../domain/entities/getted_message_entity.dart';
+import '../../helpers/date_label_helper.dart';
 import '../../providers/chat_provider.dart';
-import 'message_tile.dart';
 
-class MessagesList extends HookWidget {
-  const MessagesList({super.key});
+class MessagesList extends StatelessWidget {
+  const MessagesList({required this.chat, required this.controller, super.key});
+  final ChatEntity? chat;
+  final ScrollController controller;
 
   @override
   Widget build(BuildContext context) {
-    final ChatProvider chatPro = context.watch<ChatProvider>();
-    final ScrollController scrollController = useScrollController();
-    final ValueNotifier<List<MessageEntity>> messages =
-        useState<List<MessageEntity>>(<MessageEntity>[]);
-    final String? chatId = chatPro.chat?.chatId;
+    final ChatProvider chatProvider = context.watch<ChatProvider>();
+    final String? chatId = chatProvider.chat?.chatId;
 
-    useEffect(() {
-      if (chatId == null) return null;
-      final Box<GettedMessageEntity> box =
-          Hive.box<GettedMessageEntity>(AppStrings.localChatMessagesBox);
-
-      // Initial load
-      final GettedMessageEntity? existing = box.get(chatId);
-      if (existing != null) {
-        messages.value = <MessageEntity>[...existing.sortedByNewestFirst()];
-      }
-
-      final StreamSubscription<BoxEvent> subscription =
-          box.watch(key: chatId).listen((BoxEvent event) {
-        final GettedMessageEntity? updated = box.get(chatId);
-        if (updated != null) {
-          final List<MessageEntity> newMessages = updated.sortedByNewestFirst();
-          final List<MessageEntity> previousMessages = messages.value;
-
-          if (!_areListsEqual(previousMessages, newMessages)) {
-            final bool wasNearBottom = scrollController.hasClients &&
-                scrollController.position.pixels >=
-                    scrollController.position.maxScrollExtent - 50;
-
-            messages.value = newMessages;
-
-            if (wasNearBottom) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (scrollController.hasClients) {
-                  scrollController.animateTo(
-                    scrollController.position.maxScrollExtent,
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeOut,
-                  );
-                }
-              });
-            }
-          }
-        }
-      });
-
-      return subscription.cancel;
-    }, <Object?>[chatId]);
-
-    return Expanded(
-      child: ListView.builder(
-        controller: scrollController,
-        reverse: true, // Keep reverse true for bottom alignment
-        itemCount: messages.value.length,
-        itemBuilder: (BuildContext context, int index) {
-          // Direct index access with proper sorting
-          final MessageEntity current = messages.value[index];
-          final MessageEntity? next =
-              index > 0 ? messages.value[index - 1] : null;
-
-          return MessageTile(
-            key: ValueKey<String>(current.messageId),
-            message: current,
-            timeDiff: (next != null && current.sendBy == next.sendBy)
-                ? current.createdAt.difference(next.createdAt)
-                : const Duration(days: 5),
-          );
-        },
-      ),
-    );
-  }
-
-  bool _areListsEqual(List<MessageEntity> a, List<MessageEntity> b) {
-    if (a.length != b.length) return false;
-    for (int i = 0; i < a.length; i++) {
-      if (a[i].messageId != b[i].messageId) return false;
+    if (chatId == null) {
+      return Center(child: Text('no_messages_yet'.tr()));
     }
-    return true;
-  }
-}
+    final Box<GettedMessageEntity> box =
+        Hive.box<GettedMessageEntity>(AppStrings.localChatMessagesBox);
+    return ValueListenableBuilder<Box<GettedMessageEntity>>(
+      valueListenable: box.listenable(keys: <dynamic>[chatId]),
+      builder: (BuildContext context, Box<GettedMessageEntity> box, _) {
+        final GettedMessageEntity? stored = box.get(chatId);
+        final List<MessageEntity> messages = stored == null
+            ? <MessageEntity>[]
+            : chatProvider.getFilteredMessages(stored);
 
-extension SortedMessages on GettedMessageEntity {
-  List<MessageEntity> sortedByNewestFirst() {
-    final List<MessageEntity> copy = <MessageEntity>[
-      ...this.messages
-    ]; // use this.messages
-    copy.sort((MessageEntity a, MessageEntity b) =>
-        b.createdAt.compareTo(a.createdAt));
-    return copy;
+        if (messages.isEmpty) {
+          return Center(child: Text('no_messages_yet'.tr()));
+        }
+        // Calculate time gaps only once
+        final Map<String, Duration> timeDiffMap = <String, Duration>{};
+        for (int i = 0; i < messages.length; i++) {
+          final MessageEntity current = messages[i];
+          final MessageEntity? next =
+              i < messages.length - 1 ? messages[i + 1] : null;
+          final Duration diff = (next != null && current.sendBy == next.sendBy)
+              ? next.createdAt.difference(current.createdAt).abs()
+              : const Duration(days: 5);
+          timeDiffMap[current.messageId] = diff;
+        }
+        // Build widgets (reversed chat order)
+        final List<Widget> widgets =
+            DateLabelHelper.buildLabeledWidgets(messages, timeDiffMap);
+        return Expanded(
+          child: ListView.builder(
+            shrinkWrap: true,
+            controller: controller,
+            itemBuilder: (BuildContext context, int index) {
+              return widgets[index];
+            },
+            itemCount: widgets.length,
+          ),
+        );
+      },
+    );
   }
 }

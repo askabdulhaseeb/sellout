@@ -7,6 +7,8 @@ import '../params/get_business_serives_param.dart';
 abstract interface class BusinessPageRepository {
   Future<DataState<ServicesListResponceEntity>> businessServices(
       GetBusinessSerivesParam param);
-
-  Future<DataState<List<BookingEntity>>> getBookings(GetBookingsParams params);
+  Future<DataState<List<BookingEntity>>> getMyBookings(
+      GetBookingsParams params);
+  Future<DataState<List<BookingEntity>>> getBookingsByServiceId(
+      GetBookingsParams params);
 }

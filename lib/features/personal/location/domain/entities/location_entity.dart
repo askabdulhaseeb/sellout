@@ -1,5 +1,4 @@
 import 'package:hive_flutter/hive_flutter.dart';
-
 part 'location_entity.g.dart';
 
 @HiveType(typeId: 17)

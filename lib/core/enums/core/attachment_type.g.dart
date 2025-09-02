@@ -25,6 +25,10 @@ class AttachmentTypeAdapter extends TypeAdapter<AttachmentType> {
         return AttachmentType.other;
       case 5:
         return AttachmentType.media;
+      case 6:
+        return AttachmentType.contacts;
+      case 7:
+        return AttachmentType.location;
       default:
         return AttachmentType.image;
     }
@@ -50,6 +54,12 @@ class AttachmentTypeAdapter extends TypeAdapter<AttachmentType> {
         break;
       case AttachmentType.media:
         writer.writeByte(5);
+        break;
+      case AttachmentType.contacts:
+        writer.writeByte(6);
+        break;
+      case AttachmentType.location:
+        writer.writeByte(7);
         break;
     }
   }
