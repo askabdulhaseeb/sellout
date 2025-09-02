@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
@@ -10,6 +11,7 @@ import '../../../auth/signin/data/models/address_model.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../data/models/cart/cart_model.dart';
 import '../../data/models/checkout/order_billing_model.dart';
+import '../../data/sources/local_cart.dart';
 import '../../domain/entities/cart/cart_entity.dart';
 import '../../domain/entities/checkout/check_out_entity.dart';
 import '../../domain/enums/basket_type.dart';
@@ -196,16 +198,10 @@ class CartProvider extends ChangeNotifier {
   Future<void> processPayment(BuildContext context) async {
     try {
       final DataState<String> billingDetails = await getBillingDetails();
-
-      if (billingDetails is DataFailer<String>) {
-        // Show a snackbar or dialog with the failure reason
-        AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
-        return;
-      }
-
       final String? clientSecret = billingDetails.entity;
       if (clientSecret == null || clientSecret.isEmpty) {
         AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
+        debugPrint('client secret empty in provider');
         return;
       }
 
@@ -239,16 +235,14 @@ class CartProvider extends ChangeNotifier {
   Future<DataState<String>> getBillingDetails() async {
     try {
       final DataState<String> state = await _payIntentUsecase.call(address!);
-
       if (state is DataSuccess<String>) {
-        try {
-          final Map<String, dynamic> jsonMap = jsonDecode(state.data ?? '{}');
-          _orderBilling = OrderBillingModel.fromMap(jsonMap);
-        } catch (decodeErr) {
-          return DataFailer<String>(CustomException('Invalid billing JSON'));
-        }
+        final Map<String, dynamic> jsonMap = jsonDecode(state.data ?? '{}');
+        _orderBilling = OrderBillingModel.fromMap(jsonMap);
+        return state;
+      } else {
+        return DataFailer<String>(
+            CustomException('failed to get billingdetails'));
       }
-      return state;
     } catch (e, st) {
       AppLog.error('Getting billing detail error',
           name: 'CartProvider.getBillingDetails', error: e, stackTrace: st);
