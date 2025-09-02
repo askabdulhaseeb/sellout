@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-
 import '../../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../message_bg_widget.dart';
+import 'contact_message_tile.dart';
+import 'document_message_tile.dart';
 import 'widgets/attachment_message_widget.dart';
-import 'widgets/audio_messahe_widget.dart';
+import 'widgets/audio_message_widget.dart';
 
 class TextMessageTile extends StatelessWidget {
   const TextMessageTile({required this.message, super.key});
@@ -13,7 +14,9 @@ class TextMessageTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(message.type?.code);
     final bool isMe = message.sendBy == LocalAuth.uid;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
       child: MessageBgWidget(
@@ -23,13 +26,32 @@ class TextMessageTile extends StatelessWidget {
               isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            message.fileUrl.isNotEmpty
-                ? message.fileUrl.any(
-                        (AttachmentEntity e) => e.type == AttachmentType.audio)
-                    ? AudioMessaheWidget(message: message)
-                    : AttachmentMessageWidget(attachments: message.fileUrl)
-                : const SizedBox(),
-            if (message.text.isNotEmpty)
+            // Handle non-image/video attachments
+            if (message.fileUrl.isNotEmpty &&
+                message.fileUrl.first.type != AttachmentType.image &&
+                message.fileUrl.first.type != AttachmentType.video)
+              ...message.fileUrl.map((AttachmentEntity attachment) {
+                switch (attachment.type) {
+                  case AttachmentType.audio:
+                    return AudioMessageWidget(message: message);
+                  case AttachmentType.document:
+                    return DocumentTile(message: message);
+                  case AttachmentType.contacts:
+                    return ContactMessageTile(
+                        attachment: attachment, isMe: isMe);
+                  case AttachmentType.location:
+                    return Text('📍 Location: ${attachment.originalName}');
+                  default:
+                    return const Text('Unknown attachment type');
+                }
+              }),
+            // Handle image/video attachments in one widget
+            if (message.fileUrl.isNotEmpty &&
+                (message.fileUrl.first.type == AttachmentType.image ||
+                    message.fileUrl.first.type == AttachmentType.video))
+              AttachmentMessageWidget(attachments: message.fileUrl),
+            // Handle text
+            if (message.text.isNotEmpty || message.text == ' ')
               Text(
                 message.text,
                 style: const TextStyle(color: Colors.black),

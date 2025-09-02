@@ -61,19 +61,21 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
     }
   }
 
-  _init() async {
+  Future<void> _init() async {
     getCountiesUsecase = GetCountiesUsecase(locator());
     await LocalCountry().refresh();
     await countiries();
+    if (!mounted) return; // ✅ check before calling setState
     _postInit();
   }
 
-  countiries() async {
+  Future<void> countiries() async {
     DataState<List<CountryEntity>> cou =
         await getCountiesUsecase!.call(const Duration(days: 1));
     if (cou is DataSuccess) {
       countries = cou.entity ?? LocalCountry().activeCounties;
     }
+    if (!mounted) return; // ✅ check before calling setState
     setState(() {});
   }
 
@@ -100,9 +102,9 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
                 title: '',
                 hint: '',
                 height: 48,
-                width: 140,
+                width: 125,
                 isSearchable: false,
-                padding: const EdgeInsets.symmetric(horizontal: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 0),
                 items: countries
                     .where((CountryEntity e) => e.isActive)
                     .map((CountryEntity e) {
@@ -110,8 +112,10 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
                     value: e,
                     child: Row(
                       children: <Widget>[
-                        Text(e.shortName.toUpperCase()),
-                        Text(' (${e.countryCode})'),
+                        Text(e.shortName.toUpperCase(),
+                            style: TextTheme.of(context).bodyMedium),
+                        Text(' (${e.countryCode})',
+                            style: TextTheme.of(context).bodyMedium),
                       ],
                     ),
                   );

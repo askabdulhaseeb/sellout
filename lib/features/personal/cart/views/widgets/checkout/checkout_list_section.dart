@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../domain/entities/checkout/check_out_entity.dart';
 import 'tile/checkout_item_tile.dart';
 

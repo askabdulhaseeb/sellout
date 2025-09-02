@@ -1,121 +1,81 @@
 import 'package:flutter/material.dart';
 import '../../features/attachment/domain/entities/attachment_entity.dart';
-import '../../features/attachment/domain/entities/picked_attachment.dart';
 import 'custom_network_image.dart';
 import 'video_widget.dart';
 
-class AttachmentsSlider extends StatelessWidget {
+class AttachmentsSlider extends StatefulWidget {
   const AttachmentsSlider({
+    required this.attachments,
     super.key,
-    this.attachments,
     this.aspectRatio = 4 / 3,
     this.width,
     this.height,
   });
 
-  final List<dynamic>? attachments;
+  final List<AttachmentEntity> attachments;
   final double aspectRatio;
   final double? width;
   final double? height;
 
   @override
-  Widget build(BuildContext context) {
-    final int totalLength = attachments?.length ?? 0;
+  State<AttachmentsSlider> createState() => _AttachmentsSliderState();
+}
 
-    final List<Widget> items = attachments!
-        .asMap()
-        .entries
-        .map(
-          (MapEntry<int, dynamic> entry) => entry.value is PickedAttachment
-              ? _PickedAttachmentWidget(
-                  file: entry.value,
-                  index: entry.key,
-                  totalLength: totalLength,
-                )
-              : _AttachmentEntityWidget(
-                  entity: (entry.value as AttachmentEntity),
-                  index: entry.key,
-                  totalLength: totalLength,
-                ),
-        )
-        .toList();
+class _AttachmentsSliderState extends State<AttachmentsSlider> {
+  int _currentIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.attachments.isEmpty) {
+      return const SizedBox();
+    }
+
+    final int totalLength = widget.attachments.length;
 
     return SizedBox(
-      height: 300, // Set fixed height or make it dynamic
-      child: PageView(
-        children: items,
+      height: widget.height ?? 300,
+      width: widget.width ?? MediaQuery.of(context).size.width,
+      child: Stack(
+        alignment: Alignment.topRight,
+        children: <Widget>[
+          PageView.builder(
+            itemCount: totalLength,
+            onPageChanged: (int index) {
+              setState(() => _currentIndex = index);
+            },
+            itemBuilder: (BuildContext context, int index) {
+              final AttachmentEntity entity = widget.attachments[index];
+
+              return SizedBox.expand(
+                child: entity.type == AttachmentType.video
+                    ? VideoWidget(videoSource: entity.url, play: true)
+                    : InteractiveViewer(
+                        child: CustomNetworkImage(
+                          imageURL: entity.url,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+              );
+            },
+          ),
+          if (totalLength > 1)
+            Positioned(
+              top: 8,
+              right: 8,
+              child: _SliderCounter(
+                index: _currentIndex,
+                total: totalLength,
+              ),
+            ),
+        ],
       ),
-    );
-  }
-}
-
-class _AttachmentEntityWidget extends StatelessWidget {
-  const _AttachmentEntityWidget({
-    required this.entity,
-    required this.index,
-    required this.totalLength,
-  });
-
-  final AttachmentEntity entity;
-  final int index;
-  final int totalLength;
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.topRight,
-      children: <Widget>[
-        SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: double.infinity,
-          child: entity.type == AttachmentType.video
-              ? VideoWidget(
-                  videoSource: entity.url,
-                  play: true,
-                )
-              : InteractiveViewer(
-                  child: CustomNetworkImage(
-                      imageURL: entity.url, fit: BoxFit.cover),
-                ),
-        ),
-        if (totalLength > 1) _SliderCounter(index: index, total: totalLength),
-      ],
-    );
-  }
-}
-
-class _PickedAttachmentWidget extends StatelessWidget {
-  const _PickedAttachmentWidget({
-    required this.file,
-    required this.index,
-    required this.totalLength,
-  });
-
-  final PickedAttachment file;
-  final int index;
-  final int totalLength;
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.topRight,
-      children: <Widget>[
-        SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: double.infinity,
-          child: InteractiveViewer(
-              child: file.type == AttachmentType.image
-                  ? Image.file(file.file, fit: BoxFit.cover)
-                  : VideoWidget(videoSource: file.file.path)),
-        ),
-        if (totalLength > 1) _SliderCounter(index: index, total: totalLength),
-      ],
     );
   }
 }
 
 class _SliderCounter extends StatelessWidget {
   const _SliderCounter({required this.index, required this.total});
+
   final int index;
   final int total;
 
@@ -123,14 +83,13 @@ class _SliderCounter extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-      margin: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: Colors.black45,
+        color: Colors.black54,
       ),
       child: Text(
-        '${index + 1}/$total',
-        style: const TextStyle(color: Colors.white),
+        '${index + 1} / $total',
+        style: const TextStyle(color: Colors.white, fontSize: 12),
       ),
     );
   }

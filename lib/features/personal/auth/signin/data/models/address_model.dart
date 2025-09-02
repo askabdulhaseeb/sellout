@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import '../../domain/entities/address_entity.dart';
 export '../../domain/entities/address_entity.dart';
 
@@ -39,17 +38,36 @@ class AddressModel extends AddressEntity {
         country: json['country'] ?? 'UK',
         isDefault: json['is_default'] ?? false,
       );
-
-  String checkoutAddressToJson() => json.encode(<String, dynamic>{
-        'buyer_address': <String, dynamic>{
-          'recipient_name': super.recipientName,
-          'address_1': super.address,
-          'town_city': super.townCity,
-          'phone_number': super.phoneNumber,
-          'postal_code': super.postalCode,
-          'address_category': super.category,
-          'country': super.country,
+  String toOfferJson() => json.encode(<String, dynamic>{
+        'recipient_name': super.recipientName,
+        'address_1': super.address,
+        'town_city': super.townCity,
+        'phone_number': super.phoneNumber,
+        'postal_code': super.postalCode,
+        'address_category': super.category,
+        'country': super.country,
+        'is_default': super.isDefault,
+      });
+  String checkoutAddressToJson() => json.encode(<String, Map<String, Object>>{
+        'buyer_address': <String, Object>{
+          'recipient_name': recipientName,
+          'address_1': address,
+          'town_city': townCity,
+          'phone_number': phoneNumber,
+          'postal_code': postalCode,
+          'address_category': category,
+          'country': country,
           'is_default': super.isDefault,
         },
       });
+  Map<String, dynamic> shippingAddressToJson() => <String, dynamic>{
+        'recipient_name': super.recipientName,
+        'address_1': super.address,
+        'town_city': super.townCity,
+        'phone_number': super.phoneNumber,
+        'postal_code': super.postalCode,
+        'address_category': super.category,
+        'country': super.country,
+        'is_default': super.isDefault,
+      };
 }

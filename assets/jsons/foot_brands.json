@@ -1,0 +1,400 @@
+{
+  "footwear_brands": [
+    {
+      "label": "Nike",
+      "value": "nike"
+    },
+    {
+      "label": "Adidas",
+      "value": "adidas"
+    },
+    {
+      "label": "Puma",
+      "value": "puma"
+    },
+    {
+      "label": "Reebok",
+      "value": "reebok"
+    },
+    {
+      "label": "Under Armour",
+      "value": "under_armour"
+    },
+    {
+      "label": "New Balance",
+      "value": "new_balance"
+    },
+    {
+      "label": "Converse",
+      "value": "converse"
+    },
+    {
+      "label": "Skechers",
+      "value": "skechers"
+    },
+    {
+      "label": "Vans",
+      "value": "vans"
+    },
+    {
+      "label": "Fila",
+      "value": "fila"
+    },
+    {
+      "label": "ASICS",
+      "value": "asics"
+    },
+    {
+      "label": "Brooks",
+      "value": "brooks"
+    },
+    {
+      "label": "Saucony",
+      "value": "saucony"
+    },
+    {
+      "label": "Hoka One One",
+      "value": "hoka_one_one"
+    },
+    {
+      "label": "Timberland",
+      "value": "timberland"
+    },
+    {
+      "label": "DC Shoes",
+      "value": "dc_shoes"
+    },
+    {
+      "label": "Jordan",
+      "value": "jordan"
+    },
+    {
+      "label": "Dr. Martens",
+      "value": "dr_martens"
+    },
+    {
+      "label": "Clarks",
+      "value": "clarks"
+    },
+    {
+      "label": "Bata",
+      "value": "bata"
+    },
+    {
+      "label": "Borjan",
+      "value": "borjan"
+    },
+    {
+      "label": "Hush Puppies",
+      "value": "hush_puppies"
+    },
+    {
+      "label": "Service Shoes",
+      "value": "service_shoes"
+    },
+    {
+      "label": "Ndure",
+      "value": "ndure"
+    },
+    {
+      "label": "Urban Sole",
+      "value": "urban_sole"
+    },
+    {
+      "label": "ECS",
+      "value": "ecs"
+    },
+    {
+      "label": "Metro Shoes",
+      "value": "metro_shoes"
+    },
+    {
+      "label": "Stylo",
+      "value": "stylo"
+    },
+    {
+      "label": "Nike SB",
+      "value": "nike_sb"
+    },
+    {
+      "label": "Superdry",
+      "value": "superdry"
+    },
+    {
+      "label": "K-Swiss",
+      "value": "k_swiss"
+    },
+    {
+      "label": "Champion",
+      "value": "champion"
+    },
+    {
+      "label": "Lacoste",
+      "value": "lacoste"
+    },
+    {
+      "label": "U.S. Polo Assn.",
+      "value": "us_polo"
+    },
+    {
+      "label": "Gucci",
+      "value": "gucci"
+    },
+    {
+      "label": "Balenciaga",
+      "value": "balenciaga"
+    },
+    {
+      "label": "Chanel",
+      "value": "chanel"
+    },
+    {
+      "label": "Prada",
+      "value": "prada"
+    },
+    {
+      "label": "Tommy Hilfiger",
+      "value": "tommy_hilfiger"
+    },
+    {
+      "label": "Zara",
+      "value": "zara"
+    },
+    {
+      "label": "Louis Vuitton",
+      "value": "louis_vuitton"
+    },
+    {
+      "label": "Diesel",
+      "value": "diesel"
+    },
+    {
+      "label": "Crocs",
+      "value": "crocs"
+    },
+    {
+      "label": "Birkenstock",
+      "value": "birkenstock"
+    },
+    {
+      "label": "Toms",
+      "value": "toms"
+    },
+    {
+      "label": "Red Wing",
+      "value": "red_wing"
+    },
+    {
+      "label": "Johnston & Murphy",
+      "value": "johnston_murphy"
+    },
+    {
+      "label": "Kurt Geiger",
+      "value": "kurt_geiger"
+    },
+    {
+      "label": "Grenson",
+      "value": "grenson"
+    },
+    {
+      "label": "Church's",
+      "value": "churchs"
+    },
+    {
+      "label": "Loake",
+      "value": "loake"
+    },
+    {
+      "label": "Base London",
+      "value": "base_london"
+    },
+    {
+      "label": "Solovair",
+      "value": "solovair"
+    },
+    {
+      "label": "Oliver Sweeney",
+      "value": "oliver_sweeney"
+    },
+    {
+      "label": "Jeffery West",
+      "value": "jeffery_west"
+    },
+    {
+      "label": "Yeezy",
+      "value": "yeezy"
+    },
+    {
+      "label": "Merrell",
+      "value": "merrell"
+    },
+    {
+      "label": "Keen",
+      "value": "keen"
+    },
+    {
+      "label": "Dior",
+      "value": "dior"
+    },
+    {
+      "label": "Off-White",
+      "value": "off_white"
+    },
+    {
+      "label": "Steve Madden",
+      "value": "steve_madden"
+    },
+    {
+      "label": "Cole Haan",
+      "value": "cole_haan"
+    },
+    {
+      "label": "Sperry",
+      "value": "sperry"
+    },
+    {
+      "label": "Rockport",
+      "value": "rockport"
+    },
+    {
+      "label": "Allen Edmonds",
+      "value": "allen_edmonds"
+    },
+    {
+      "label": "Florsheim",
+      "value": "florsheim"
+    },
+    {
+      "label": "Airwalk",
+      "value": "airwalk"
+    },
+    {
+      "label": "Etnies",
+      "value": "etnies"
+    },
+    {
+      "label": "Globe",
+      "value": "globe"
+    },
+    {
+      "label": "Heelys",
+      "value": "heelys"
+    },
+    {
+      "label": "Mountain Gear",
+      "value": "mountain_gear"
+    },
+    {
+      "label": "Asim Jofa",
+      "value": "asim_jofa"
+    },
+    {
+      "label": "Bonanza Satrangi",
+      "value": "bonanza_satrangi"
+    },
+    {
+      "label": "Mochari",
+      "value": "mochari"
+    },
+    {
+      "label": "J.",
+      "value": "jdot"
+    },
+    {
+      "label": "Outfitters",
+      "value": "outfitters"
+    },
+    {
+      "label": "Levi's",
+      "value": "levis"
+    },
+    {
+      "label": "Next",
+      "value": "next"
+    },
+    {
+      "label": "Marks & Spencer",
+      "value": "marks_spencer"
+    },
+    {
+      "label": "River Island",
+      "value": "river_island"
+    },
+    {
+      "label": "Topshop",
+      "value": "topshop"
+    },
+    {
+      "label": "Ted Baker",
+      "value": "ted_baker"
+    },
+    {
+      "label": "AllSaints",
+      "value": "allsaints"
+    },
+    {
+      "label": "Burberry",
+      "value": "burberry"
+    },
+    {
+      "label": "Barbour",
+      "value": "barbour"
+    },
+    {
+      "label": "Hackett",
+      "value": "hackett"
+    },
+    {
+      "label": "Ben Sherman",
+      "value": "ben_sherman"
+    },
+    {
+      "label": "Paul Smith",
+      "value": "paul_smith"
+    },
+    {
+      "label": "Charles & Keith",
+      "value": "charles_keith"
+    },
+    {
+      "label": "Apex",
+      "value": "apex"
+    },
+    {
+      "label": "Urban Decay",
+      "value": "urban_decay"
+    },
+    {
+      "label": "ALDO",
+      "value": "aldo"
+    },
+    {
+      "label": "Nine West",
+      "value": "nine_west"
+    },
+    {
+      "label": "DKNY",
+      "value": "dkny"
+    },
+    {
+      "label": "Giordano",
+      "value": "giordano"
+    },
+    {
+      "label": "Pedro",
+      "value": "pedro"
+    },
+    {
+      "label": "Payless",
+      "value": "payless"
+    },
+    {
+      "label": "Caterpillar",
+      "value": "caterpillar"
+    },
+    {
+      "label": "Other",
+      "value": "other"
+    }
+  ]
+}

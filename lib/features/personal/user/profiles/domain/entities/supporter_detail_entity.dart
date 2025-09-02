@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-
 import '../../../../../../core/enums/core/status_type.dart';
 part 'supporter_detail_entity.g.dart';
 
@@ -17,4 +16,6 @@ class SupporterDetailEntity {
   final DateTime supportingTime;
   @HiveField(2)
   final StatusType status;
+
+  
 }

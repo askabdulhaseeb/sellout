@@ -1,0 +1,43 @@
+import 'package:flutter/foundation.dart';
+import '../../../../attachment/domain/entities/picked_attachment.dart';
+
+class CreatePromoParams {
+  CreatePromoParams({
+    required this.referenceType,
+    required this.referenceID,
+    required this.title,
+    required this.price,
+    required this.attachments,
+    required this.thumbNail,
+  });
+
+  final String referenceType;
+  final String referenceID;
+  final String title;
+  final String price;
+  final PickedAttachment? attachments;
+  final PickedAttachment? thumbNail;
+
+  Map<String, String> toMap() {
+    final Map<String, String> map = <String, String>{
+      if (referenceID.isNotEmpty) 'reference_type': referenceType.trim(),
+      if (referenceID.isNotEmpty) 'reference_id': referenceID.trim(),
+      'title': title.trim(),
+      'price': price.trim(),
+    };
+
+    debugPrint('👉 CreatePromoParams - toMap: $map');
+    debugPrint('👉 Attachment path: ${attachments?.file.path}');
+    debugPrint('👉 Thumbnail path: ${thumbNail?.file.path}');
+
+    return map;
+  }
+
+  /// ✅ Corrected: attachments map (key -> PickedAttachment)
+  Map<String, PickedAttachment> getAttachmentsMap() {
+    return <String, PickedAttachment>{
+      if (attachments != null) 'file': attachments!,
+      if (thumbNail != null) 'thumbnail': thumbNail!,
+    };
+  }
+}

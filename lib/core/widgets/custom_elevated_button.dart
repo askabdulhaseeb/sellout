@@ -7,6 +7,8 @@ class CustomElevatedButton extends StatelessWidget {
     required this.onTap,
     this.isDisable = false,
     this.prefix,
+    this.suffix,
+    this.rowAlignment,
     this.mWidth,
     this.margin,
     this.padding,
@@ -15,6 +17,8 @@ class CustomElevatedButton extends StatelessWidget {
     this.border,
     this.textStyle,
     this.textColor,
+    this.prefixSuffixPadding,
+    this.fontWeight = FontWeight.w500,
     super.key,
   });
 
@@ -24,6 +28,8 @@ class CustomElevatedButton extends StatelessWidget {
   final bool isLoading;
   final double? mWidth;
   final Widget? prefix;
+  final Widget? suffix;
+  final MainAxisAlignment? rowAlignment;
   final EdgeInsetsGeometry? margin;
   final EdgeInsetsGeometry? padding;
   final Color? bgColor;
@@ -31,6 +37,8 @@ class CustomElevatedButton extends StatelessWidget {
   final BoxBorder? border;
   final TextStyle? textStyle;
   final Color? textColor;
+  final FontWeight fontWeight;
+  final EdgeInsetsGeometry? prefixSuffixPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -62,25 +70,31 @@ class CustomElevatedButton extends StatelessWidget {
                 child: Padding(
                   padding: padding ?? const EdgeInsets.symmetric(vertical: 10),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: rowAlignment ?? MainAxisAlignment.center,
                     children: <Widget>[
                       if (prefix != null)
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          padding:
+                              prefixSuffixPadding ?? const EdgeInsets.all(8.0),
                           child: prefix!,
                         ),
                       Text(
                         title,
                         style: textStyle ??
                             TextStyle(
-                              color: textColor ??
-                                  (bgColor == Colors.transparent
-                                      ? null
-                                      : Colors.white),
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                            ),
+                                color: textColor ??
+                                    (bgColor == Colors.transparent
+                                        ? null
+                                        : Colors.white),
+                                fontSize: 16,
+                                fontWeight: fontWeight),
                       ),
+                      if (suffix != null)
+                        Padding(
+                          padding:
+                              prefixSuffixPadding ?? const EdgeInsets.all(8.0),
+                          child: suffix!,
+                        ),
                     ],
                   ),
                 ),

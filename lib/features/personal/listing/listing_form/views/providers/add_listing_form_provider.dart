@@ -2,15 +2,10 @@ import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
-import '../../../../../../core/enums/listing/pet/age_time_type.dart';
-import '../../../../../../core/enums/listing/vehicle/transmission_type.dart';
-import '../../../../../../core/enums/listing/vehicles/vehicle_body_type.dart';
-import '../../../../../../core/enums/listing/vehicles/vehicle_category_type.dart';
 import '../../../../../../core/enums/routine/day_type.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
@@ -21,7 +16,6 @@ import '../../../../../attachment/domain/entities/picked_attachment_option.dart'
 import '../../../../../attachment/views/screens/pickable_attachment_screen.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../dashboard/views/screens/dashboard_screen.dart';
-import '../../../../location/data/models/location_model.dart';
 import '../../../../location/domain/entities/location_entity.dart';
 import '../../../../post/data/models/meetup/availability_model.dart';
 import '../../../../post/data/models/size_color/size_color_model.dart';
@@ -29,15 +23,16 @@ import '../../../../post/domain/entities/discount_entity.dart';
 import '../../../../post/domain/entities/meetup/availability_entity.dart';
 import '../../../../post/domain/entities/post_entity.dart';
 import '../../../../post/domain/entities/size_color/color_entity.dart';
-import '../../data/models/color_option_model.dart';
+import '../../../../post/domain/entities/size_color/size_color_entity.dart';
 import '../../data/models/listing_model.dart';
 import '../../data/models/sub_category_model.dart';
-import '../../data/sources/remote/listing_api.dart';
+import '../../data/sources/remote/dropdown_listing_api.dart';
 import '../../domain/entities/color_options_entity.dart';
 import '../../domain/entities/sub_category_entity.dart';
 import '../../domain/usecase/add_listing_usecase.dart';
 import '../../domain/usecase/edit_listing_usecase.dart';
 import '../params/add_listing_param.dart';
+import '../widgets/property/add_property_tenure_type.dart';
 
 class AddListingFormProvider extends ChangeNotifier {
   AddListingFormProvider(
@@ -46,7 +41,7 @@ class AddListingFormProvider extends ChangeNotifier {
   );
   final AddListingUsecase _addlistingUSecase;
   final EditListingUsecase _editListingUsecase;
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   List<AvailabilityEntity> _availability = DayType.values.map((DayType day) {
     return AvailabilityModel(
@@ -161,79 +156,80 @@ class AddListingFormProvider extends ChangeNotifier {
         .toList();
   }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   PostEntity? createPostFromFormData() {
+    debugPrint('listing variables preview');
     return PostEntity(
-      engineSize: double.tryParse(engineSize.text),
-      mileageUnit: _selectedMileageUnit,
-      energyRating: selectedEnergyRating,
-      propertytype: '',
-      transmission: '',
-      updatedAt: DateTime.now(),
-      listID: '',
-      postID: '',
-      businessID: LocalAuth.currentUser?.businessID,
-      currency: LocalAuth.currentUser?.currency?.toUpperCase(),
-      type: listingType ?? ListingType.items,
-      listOfReviews: <double>[],
-      collectionLatitude: 23,
-      collectionLongitude: 123,
-      createdAt: DateTime.now(),
-      createdBy: LocalAuth.currentUser?.userID ?? '',
-      currentLatitude: 32,
-      currentLongitude: 323,
-      sizeChartUrl: null,
-      discounts: <DiscountEntity>[],
-      hasDiscount: false,
-      isActive: false,
-      updatedBy: '',
-      title: _title.text,
-      description: _description.text,
-      price: double.tryParse(_price.text) ?? 0.0,
-      quantity: int.tryParse(_quantity.text) ?? 1,
-      minOfferAmount: double.tryParse(_minimumOffer.text) ?? 0.0,
-      localDelivery: int.tryParse(_localDeliveryFee.text) ?? 0,
-      internationalDelivery: int.tryParse(_internationalDeliveryFee.text) ?? 0,
-      accessCode: _accessCode,
-      condition: _condition,
-      acceptOffers: _acceptOffer,
-      privacy: _privacy,
-      deliveryType: _deliveryType,
-      sizeColors: _sizeColorEntities,
-      address: _location.text,
-      categoryType: _selectedClothSubCategory,
-      brand: _brand.text,
-      make: _make.text,
-      model: _model.text,
-      year: int.tryParse(_year.text) ?? 0,
-      mileage: int.tryParse(_mileage.text) ?? 0,
-      emission: _emission.text,
-      doors: int.tryParse(_doors.text) ?? 0,
-      seats: int.tryParse(_seats.text) ?? 0,
-      vehiclesCategory: _selectedVehicleCategory?.json,
-      bodyType: _selectedBodyType?.json,
-      fuelType: _selectedEnergyRating,
-      interiorColor: _selectedVehicleColor,
-      exteriorColor: _selectedVehicleColor,
-      bedroom: int.tryParse(_bedroom.text) ?? 0,
-      bathroom: int.tryParse(_bathroom.text) ?? 0,
-      garden: _garden,
-      parking: _parking,
-      healthChecked: _healthChecked,
-      wormAndFleaTreated: _wormAndFleaTreated,
-      vaccinationUpToDate: _vaccinationUpToDate,
-      readyToLeave: _time?.json,
-      age: _age?.json,
-      breed: _selectedBreed?.title,
-      petsCategory: _selectedCategory?.title.toLowerCase(),
-      propertyCategory: _selectedPropertySubCategory,
-      tenureType: _tenureType,
-      availability: _availability,
-      collectionLocation: _selectedCollectionLocation,
-      meetUpLocation: _selectedMeetupLocation,
-      fileUrls: _post?.fileUrls ?? <AttachmentEntity>[],
-    );
+        engineSize: double.tryParse(engineSize.text),
+        mileageUnit: _selectedMileageUnit,
+        energyRating: selectedEnergyRating,
+        propertytype: '',
+        transmission: '',
+        updatedAt: DateTime.now(),
+        listID: '',
+        postID: '',
+        businessID: LocalAuth.currentUser?.businessID,
+        currency: LocalAuth.currentUser?.currency?.toUpperCase(),
+        type: listingType ?? ListingType.items,
+        listOfReviews: <double>[],
+        collectionLatitude: 23,
+        collectionLongitude: 123,
+        createdAt: DateTime.now(),
+        createdBy: LocalAuth.currentUser?.userID ?? '',
+        currentLatitude: 32,
+        currentLongitude: 323,
+        sizeChartUrl: null,
+        discounts: <DiscountEntity>[],
+        hasDiscount: false,
+        isActive: false,
+        updatedBy: '',
+        title: _title.text,
+        description: _description.text,
+        price: double.tryParse(_price.text) ?? 0.0,
+        quantity: int.tryParse(_quantity.text) ?? 1,
+        minOfferAmount: double.tryParse(_minimumOffer.text) ?? 0.0,
+        localDelivery: int.tryParse(_localDeliveryFee.text) ?? 0,
+        internationalDelivery:
+            int.tryParse(_internationalDeliveryFee.text) ?? 0,
+        accessCode: _accessCode,
+        condition: _condition,
+        acceptOffers: _acceptOffer,
+        privacy: _privacy,
+        deliveryType: _deliveryType,
+        sizeColors: _sizeColorEntities,
+        address: _location.text,
+        categoryType: _selectedClothSubCategory,
+        brand: _brand.text,
+        make: _make,
+        model: _model.text,
+        year: int.tryParse(_year.text) ?? 0,
+        mileage: int.tryParse(_mileage.text) ?? 0,
+        emission: _emission,
+        doors: int.tryParse(_doors.text) ?? 0,
+        seats: int.tryParse(_seats.text) ?? 0,
+        vehiclesCategory: _selectedVehicleCategory,
+        bodyType: _selectedBodyType,
+        fuelType: _selectedEnergyRating,
+        interiorColor: _selectedVehicleColor,
+        exteriorColor: _selectedVehicleColor,
+        bedroom: int.tryParse(_bedroom.text) ?? 0,
+        bathroom: int.tryParse(_bathroom.text) ?? 0,
+        garden: _garden,
+        parking: _parking,
+        healthChecked: _healthChecked,
+        wormAndFleaTreated: _wormAndFleaTreated,
+        vaccinationUpToDate: _vaccinationUpToDate,
+        readyToLeave: _time,
+        age: _age,
+        breed: _breed,
+        petsCategory: _petCategory,
+        propertyCategory: _selectedPropertySubCategory,
+        tenureType: _tenureType,
+        availability: _availability,
+        collectionLocation: _selectedCollectionLocation,
+        meetUpLocation: _selectedMeetupLocation,
+        fileUrls: <AttachmentEntity>[]);
   }
 
   Future<void> reset() async {
@@ -249,12 +245,11 @@ class AddListingFormProvider extends ChangeNotifier {
     _mileage.clear();
     _bedroom.clear();
     _bathroom.clear();
-    _make.clear();
     _model.clear();
     _brand.clear();
     _seats.clear();
     _doors.clear();
-    _emission.clear();
+    _emission = null;
     _location.clear();
     // File attachments
     _attachments = <PickedAttachment>[];
@@ -276,7 +271,8 @@ class AddListingFormProvider extends ChangeNotifier {
     _privacy = PrivacyType.public;
     _deliveryType = DeliveryType.paid;
     _listingType = null;
-    _transmissionType = TransmissionType.auto;
+    _transmissionType = null;
+    _make = null;
 
     // Nullable booleans
     _vaccinationUpToDate = null;
@@ -285,7 +281,8 @@ class AddListingFormProvider extends ChangeNotifier {
 
     // Categories and selections
     _selectedCategory = null;
-    _selectedBreed = null;
+    _breed = null;
+    _petCategory = null;
     _selectedBodyType = null;
     _selectedEnergyRating = null;
     _selectedMileageUnit = null;
@@ -298,7 +295,7 @@ class AddListingFormProvider extends ChangeNotifier {
     _sizeColorEntities = <SizeColorModel>[];
 
     // Strings
-    _tenureType = '';
+    _tenureType = 'freehold';
     _selectedPropertySubCategory = ListingType.property.cids.first;
     _selectedClothSubCategory = ListingType.clothAndFoot.cids.first;
 
@@ -314,30 +311,28 @@ class AddListingFormProvider extends ChangeNotifier {
     _propertyKey.currentState?.reset();
     _foodAndDrinkKey.currentState?.reset();
     _clothesAndFootKey.currentState?.reset();
+
     debugPrint('listing variables reset');
+
     notifyListeners();
   }
 
   Future<void> updateVariables() async {
     // Category and access
-    _selectedCategory = findCategoryByAddress(_listings, post?.address ?? '');
     _accessCode = post?.accessCode ?? '';
     // Age and pet-related
-    _age = AgeTimeType.fromJson(post?.age);
+    _age = post?.age;
     _animalFriendly = _animalFriendly;
     _vaccinationUpToDate = post?.vaccinationUpToDate;
     _wormAndFleaTreated = post?.wormAndFleaTreated;
     _healthChecked = post?.healthChecked;
-    _time = AgeTimeType.fromJson(post?.readyToLeave);
-    _selectedBreed = findCategoryByAddress(listings, post?.address ?? '');
+    _time = post?.readyToLeave;
     // Availability
     _availability = post?.availability ?? <AvailabilityEntity>[];
-
     // Locations
     _selectedMeetupLocation = post?.meetUpLocation;
     _selectedCollectionLocation = post?.collectionLocation;
     _location.text = post?.meetUpLocation?.address ?? '';
-
     // Property details
     _bathroom.text = post?.bathroom.toString() ?? '0';
     _bedroom.text = post?.bedroom.toString() ?? '0';
@@ -346,7 +341,6 @@ class AddListingFormProvider extends ChangeNotifier {
     _selectedPropertySubCategory = post?.propertyCategory.toString() ?? '';
     _selectedPropertyType = post?.propertytype;
     _tenureType = post?.tenureType ?? '';
-
     // Product details
     _title.text = post?.title ?? '';
     _description.text = post?.description ?? '';
@@ -354,27 +348,22 @@ class AddListingFormProvider extends ChangeNotifier {
     _quantity.text = post?.quantity.toString() ?? '1';
     _minimumOffer.text = post?.minOfferAmount.toString() ?? '';
     _isDiscounted = post?.hasDiscount ?? false;
-
     // Brand/Model/Make
     _brand.text = post?.brand ?? '';
-    _make.text = post?.make.toString() ?? '';
+    _make = post?.make.toString() ?? '';
     _model.text = post?.model.toString() ?? '';
-    _selectedBreed = findCategoryByAddress(_listings, post?.breed ?? '');
-
     // Vehicle details
     _engineSize.text = post?.engineSize.toString() ?? '';
     _mileage.text = post?.mileage.toString() ?? '';
     _selectedMileageUnit = post?.mileageUnit;
-    _emission.text = post?.emission ?? '';
+    _emission = post?.emission ?? '';
     _seats.text = post?.seats.toString() ?? '';
     _doors.text = post?.doors.toString() ?? '';
     _year.text = post?.year.toString() ?? '';
-    _transmissionType =
-        TransmissionType.fromJson(post?.transmission) ?? TransmissionType.auto;
-    _selectedVehicleCategory =
-        VehicleCategoryType.fromJson(post?.vehiclesCategory);
+    _transmissionType = post?.transmission ?? '';
+    _selectedVehicleCategory = post?.vehiclesCategory;
     _selectedVehicleColor = post?.vehiclesCategory;
-    _selectedBodyType = VehicleBodyType.fromJson(post?.bodyType ?? '');
+    _selectedBodyType = post?.bodyType ?? '';
 
     // Delivery & fees
     _deliveryType = post?.deliveryType ?? DeliveryType.paid;
@@ -400,16 +389,27 @@ class AddListingFormProvider extends ChangeNotifier {
     // Clothes and sizing
     _selectedClothSubCategory = post?.categoryType ?? '';
     _selectedEnergyRating = post?.energyRating;
-    _sizeColorEntities = post?.sizeColors ?? <SizeColorModel>[];
+    _sizeColorEntities = post?.sizeColors ?? <SizeColorEntity>[];
+    debugPrint('listing variables update variables');
   }
 
   Future<void> submit(BuildContext context) async {
     if (_attachments.isEmpty && (_post?.fileUrls.isEmpty ?? true)) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('please_add_at_least_one_photo_or_video'),
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('please_add_at_least_one_photo_or_video'.tr()),
       ));
       return;
     }
+    if (selectedCategory == null &&
+        (listingType == ListingType.items ||
+            listingType == ListingType.clothAndFoot ||
+            listingType == ListingType.foodAndDrink)) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('select_category'.tr()),
+      ));
+      return;
+    }
+    setLoading(true);
     switch (listingType) {
       case ListingType.items:
         await _onItemSubmit();
@@ -438,7 +438,6 @@ class AddListingFormProvider extends ChangeNotifier {
 
   Future<void> _onItemSubmit() async {
     if (!(_itemKey.currentState?.validate() ?? false)) return;
-    setLoading(true);
     try {
       final AddListingParam param = AddListingParam(
         accessCode: _accessCode,
@@ -465,7 +464,7 @@ class AddListingFormProvider extends ChangeNotifier {
         category: _selectedCategory,
         currentLatitude: 12234,
         currentLongitude: 123456,
-        collectionLocation: selectedmeetupLocation,
+        collectionLocation: selectedCollectionLocation,
       );
       debugPrint(param.toMap().toString());
       debugPrint(sizeColorEntities.toString());
@@ -482,15 +481,11 @@ class AddListingFormProvider extends ChangeNotifier {
       }
     } catch (e) {
       AppLog.error('$e');
-    } finally {
-      setLoading(false);
-    }
-    setLoading(false);
+    } finally {}
   }
 
   Future<void> _onClothesAndFootSubmit() async {
-    if (!(_clothesAndFootKey.currentState?.validate() ?? false)) return;
-    setLoading(true);
+    if (!(clothesAndFootKey.currentState?.validate() ?? false)) return;
     try {
       final AddListingParam param = AddListingParam(
           postID: post?.postID ?? '',
@@ -532,14 +527,11 @@ class AddListingFormProvider extends ChangeNotifier {
       }
     } catch (e) {
       AppLog.error('$e');
-    } finally {
-      setLoading(false);
-    }
+    } finally {}
   }
 
   Future<void> _onVehicleSubmit() async {
     if (!(_vehicleKey.currentState?.validate() ?? false)) return;
-    setLoading(true);
     getAvailabilityData();
     try {
       debugPrint(post?.postID);
@@ -567,11 +559,11 @@ class AddListingFormProvider extends ChangeNotifier {
           listingType: listingType ?? ListingType.vehicle,
           category: _selectedCategory,
           type: selectedClothSubCategory,
-          bodyType: _selectedBodyType?.json,
+          bodyType: _selectedBodyType,
           color: _selectedVehicleColor,
           doors: doors.text,
-          emission: emission.text,
-          make: make.text,
+          emission: _emission,
+          make: _make,
           model: model.text,
           seats: seats.text,
           year: year.text,
@@ -579,7 +571,7 @@ class AddListingFormProvider extends ChangeNotifier {
           currentLatitude: 1234,
           currentLongitude: 1234,
           milageUnit: _selectedMileageUnit,
-          transmission: transmissionType.json);
+          transmission: transmissionType);
       debugPrint(param.toMap().toString());
       debugPrint(sizeColorEntities.toString());
       final DataState<String> result = _post == null
@@ -595,14 +587,11 @@ class AddListingFormProvider extends ChangeNotifier {
       }
     } catch (e) {
       AppLog.error('$e');
-    } finally {
-      setLoading(false);
-    }
+    } finally {}
   }
 
   Future<void> _onFoodAndDrinkSubmit() async {
     if (!(_foodAndDrinkKey.currentState?.validate() ?? false)) return;
-    setLoading(true);
     try {
       final AddListingParam param = AddListingParam(
           postID: post?.postID ?? '',
@@ -641,14 +630,12 @@ class AddListingFormProvider extends ChangeNotifier {
       }
     } catch (e) {
       AppLog.error('$e');
-    } finally {
-      setLoading(false);
-    }
+    } finally {}
   }
 
   Future<void> _onPropertySubmit() async {
     if (!(_propertyKey.currentState?.validate() ?? false)) return;
-    setLoading(true);
+
     getAvailabilityData();
     try {
       final AddListingParam param = AddListingParam(
@@ -700,9 +687,7 @@ class AddListingFormProvider extends ChangeNotifier {
       }
     } catch (e) {
       AppLog.error('$e');
-    } finally {
-      setLoading(false);
-    }
+    } finally {}
   }
 
   Future<void> _onPetSubmit() async {
@@ -713,13 +698,13 @@ class AddListingFormProvider extends ChangeNotifier {
         postID: post?.postID ?? '',
         oldAttachments: post?.fileUrls,
         accessCode: _accessCode,
-        age: age,
+        age: age ?? '',
         breed: selectedCategory?.title ?? '',
         healthChecked: _healthChecked,
         petsCategory: _petCategory,
         wormAndFleaTreated: _wormAndFleaTreated,
         vaccinationUpToDate: _vaccinationUpToDate,
-        readyToLeave: _time?.json,
+        readyToLeave: _time,
         quantity: _quantity.text,
         currency: _post == null ? LocalAuth.currentUser?.currency : null,
         animalFriendly: animalFriendly.toString(),
@@ -758,8 +743,22 @@ class AddListingFormProvider extends ChangeNotifier {
       }
     } catch (e) {
       AppLog.error('$e');
+    } finally {}
+  }
+
+  Future<void> fetchDropdownListings(String endpoint) async {
+    _isDropdownLoading = true;
+    notifyListeners();
+    try {
+      await DropDownListingAPI()
+          .fetchAndStore(endpoint)
+          .timeout(const Duration(seconds: 10));
+    } catch (e) {
+      debugPrint('Error fetching dropdown listings: $e');
+      // Optionally handle error
     } finally {
-      setLoading(false);
+      _isDropdownLoading = false;
+      notifyListeners();
     }
   }
 
@@ -882,16 +881,12 @@ class AddListingFormProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setCollectionLocation(LocationModel value) {
+  void setCollectionLocation(LocationEntity value) {
     _selectedCollectionLocation = value;
   }
 
-  void setMeetupLocation(LocationModel value) {
+  void setMeetupLocation(LocationEntity value) {
     _selectedMeetupLocation = value;
-  }
-
-  Future<void> fetchCategories() async {
-    _listings = await ListingAPI().listing();
   }
 
   // Cloth and Foot
@@ -907,9 +902,13 @@ class AddListingFormProvider extends ChangeNotifier {
   }
 
   // Vehicle
-  void setTransmissionType(TransmissionType? value) {
-    if (value == null) return;
+  void setTransmissionType(String? value) {
     _transmissionType = value;
+    notifyListeners();
+  }
+
+  void setFuelType(String? value) {
+    _fuelType = value;
     notifyListeners();
   }
 
@@ -920,14 +919,15 @@ class AddListingFormProvider extends ChangeNotifier {
 
   void setVehicleColor(String value) {
     _selectedVehicleColor = value;
+    notifyListeners();
   }
 
-  void setBodyType(VehicleBodyType? type) {
+  void setBodyType(String? type) {
     _selectedBodyType = type;
     notifyListeners();
   }
 
-  void setVehicleCategory(VehicleCategoryType? type) {
+  void setVehicleCategory(String? type) {
     _selectedVehicleCategory = type;
     notifyListeners();
   }
@@ -961,12 +961,12 @@ class AddListingFormProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setSelectedTenureType(String? value) {
+  void setSelectedTenureType(String value) {
     _tenureType = value;
     notifyListeners();
   }
 
-  void setTime(AgeTimeType? value) {
+  void setTime(String? value) {
     if (value == null) return;
     _time = value;
     notifyListeners();
@@ -981,15 +981,16 @@ class AddListingFormProvider extends ChangeNotifier {
 // pets
   void setPetCategory(String? category) {
     _petCategory = category;
-  }
-
-  void setPetBreed(SubCategoryEntity category) {
-    _selectedBreed = category;
     notifyListeners();
   }
 
-  void setPetBreeds(SubCategoryEntity category) {
-    _breed = category;
+  void setPetBreed(String? value) {
+    _breed = value;
+    notifyListeners();
+  }
+
+  void setPetBreeds(String category) {
+    _petCategory = category;
     notifyListeners();
   }
 
@@ -1008,13 +1009,22 @@ class AddListingFormProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setAge(AgeTimeType? value) {
+  void setAge(String? value) {
     if (value == null) return;
     _age = value;
     notifyListeners();
   }
 
-//
+  void setemissionType(String? value) {
+    _emission = value;
+    notifyListeners();
+  }
+
+  void seteMake(String? value) {
+    _make = value;
+    notifyListeners();
+  }
+//?
 
   void setLoading(bool value) {
     _isLoading = value;
@@ -1027,10 +1037,10 @@ class AddListingFormProvider extends ChangeNotifier {
     required int quantity,
   }) {
     final int sizeIndex =
-        _sizeColorEntities.indexWhere((SizeColorModel e) => e.value == size);
+        _sizeColorEntities.indexWhere((SizeColorEntity e) => e.value == size);
 
     if (sizeIndex != -1) {
-      final SizeColorModel existingSize = _sizeColorEntities[sizeIndex];
+      final SizeColorEntity existingSize = _sizeColorEntities[sizeIndex];
 
       final int colorIndex =
           existingSize.colors.indexWhere((ColorEntity c) => c.code == color);
@@ -1072,7 +1082,7 @@ class AddListingFormProvider extends ChangeNotifier {
     required String color,
   }) {
     final int sizeIndex =
-        _sizeColorEntities.indexWhere((SizeColorModel e) => e.value == size);
+        _sizeColorEntities.indexWhere((SizeColorEntity e) => e.value == size);
     if (sizeIndex != -1) {
       _sizeColorEntities[sizeIndex]
           .colors
@@ -1089,31 +1099,32 @@ class AddListingFormProvider extends ChangeNotifier {
 
   /// Clears all size-color-quantity data.
 
-  Future<List<ColorOptionEntity>> colorOptions() async {
-    final String jsonString =
-        await rootBundle.loadString('assets/jsons/colors.json');
-    final Map<String, dynamic> colorsMap = jsonDecode(jsonString);
-    final Map<String, dynamic> colors = colorsMap['colors'];
-    return colors.entries.map((MapEntry<String, dynamic> entry) {
-      return ColorOptionModel.fromJson(entry.value);
-    }).toList();
-  }
+  // Future<List<ColorOptionEntity>> colorOptions() async {
+  //   final String jsonString =
+  //       await rootBundle.loadString('assets/jsons/colors.json');
+  //   final Map<String, dynamic> colorsMap = jsonDecode(jsonString);
+  //   final Map<String, dynamic> colors = colorsMap['colors'];
+  //   return colors.entries.map((MapEntry<String, dynamic> entry) {
+  //     return ColorOptionModel.fromJson(entry.value);
+  //   }).toList();
+  // }
 
-  // Load colors into the provider
-  Future<void> fetchColors() async {
-    _colors = await colorOptions();
-    notifyListeners();
-  }
+  // // Load colors into the provider
+  // Future<void> fetchColors() async {
+  //   _colors = await colorOptions();
+  //   notifyListeners();
+  // }
 
   /// Getter
   ListingType? get listingType => _listingType ?? ListingType.items;
+  bool get isDropdownLoading => _isDropdownLoading;
   SubCategoryEntity? get selectedCategory => _selectedCategory;
-  VehicleCategoryType? get selectedVehicleCategory => _selectedVehicleCategory;
+  String? get selectedVehicleCategory => _selectedVehicleCategory;
   PostEntity? get post => _post;
 
   bool get isDiscounted => _isDiscounted;
   List<DiscountEntity> get discounts => _discounts;
-  List<SizeColorModel> get sizeColorEntities => _sizeColorEntities;
+  List<SizeColorEntity> get sizeColorEntities => _sizeColorEntities;
   LocationEntity? get selectedmeetupLocation => _selectedMeetupLocation;
   LocationEntity? get selectedCollectionLocation => _selectedCollectionLocation;
 
@@ -1128,22 +1139,23 @@ class AddListingFormProvider extends ChangeNotifier {
   List<ColorOptionEntity> get colors => _colors;
   String? get selectedVehicleColor => _selectedVehicleColor;
   // Vehicle
-  TransmissionType get transmissionType => _transmissionType;
+  String? get transmissionType => _transmissionType;
+  String? get fuelTYpe => _fuelType;
   String? get selectedMileageUnit => _selectedMileageUnit;
   TextEditingController get engineSize => _engineSize;
   TextEditingController get mileage => _mileage;
-  VehicleBodyType? get selectedBodyType => _selectedBodyType;
-  TextEditingController get make => _make;
+  String? get selectedBodyType => _selectedBodyType;
+  String? get make => _make;
   TextEditingController get model => _model;
   TextEditingController get year => _year;
-  TextEditingController get emission => _emission;
+  String? get emission => _emission;
   TextEditingController get doors => _doors;
   TextEditingController get seats => _seats;
   TextEditingController get location => _location;
   // Property
   TextEditingController get bedroom => _bedroom;
   TextEditingController get bathroom => _bathroom;
-  String? get tenureType => _tenureType;
+  String get tenureType => _tenureType;
   String? get selectedPropertySubCategory => _selectedPropertySubCategory;
   String? get selectedPropertyType => _selectedPropertyType;
   bool get garden => _garden;
@@ -1151,15 +1163,14 @@ class AddListingFormProvider extends ChangeNotifier {
   bool get animalFriendly => _animalFriendly;
   String? get selectedEnergyRating => _selectedEnergyRating;
   // Pet
-  SubCategoryEntity? get selectedBreed => _selectedBreed;
-  AgeTimeType? get age => _age;
+  String? get age => _age;
   String? get petCategory => _petCategory;
   bool? get healthChecked => _healthChecked;
-  SubCategoryEntity? get breed => _breed;
+  String? get breed => _breed;
   // bool? get petsCategory => _petsCategory;
   bool? get wormAndFleaTreated => _wormAndFleaTreated;
   bool? get vaccinationUpToDate => _vaccinationUpToDate;
-  AgeTimeType? get time => _time;
+  String? get time => _time;
   bool get isLoading => _isLoading;
   //
   TextEditingController get title => _title;
@@ -1184,12 +1195,12 @@ class AddListingFormProvider extends ChangeNotifier {
 
   //
   /// Controller
-  List<ListingEntity> _listings = <ListingEntity>[];
-
+  final List<ListingEntity> _listings = <ListingEntity>[];
+  bool _isDropdownLoading = false;
   PostEntity? _post;
   ListingType? _listingType;
   SubCategoryEntity? _selectedCategory;
-  VehicleCategoryType? _selectedVehicleCategory;
+  String? _selectedVehicleCategory;
   bool _isDiscounted = false;
   final List<DiscountEntity> _discounts = <DiscountEntity>[
     DiscountEntity(quantity: 2, discount: 0),
@@ -1236,8 +1247,7 @@ class AddListingFormProvider extends ChangeNotifier {
     return null;
   }
 
-  // Size and Color
-  List<SizeColorModel> _sizeColorEntities = <SizeColorModel>[];
+  List<SizeColorEntity> _sizeColorEntities = <SizeColorModel>[];
   //
   ConditionType _condition = ConditionType.newC;
   bool _acceptOffer = true;
@@ -1247,37 +1257,26 @@ class AddListingFormProvider extends ChangeNotifier {
   LocationEntity? _selectedCollectionLocation;
   // Cloth and Foot
   String _selectedClothSubCategory = ListingType.clothAndFoot.cids.first;
-  List<ColorOptionEntity> _colors = <ColorOptionEntity>[];
+  final List<ColorOptionEntity> _colors = <ColorOptionEntity>[];
   // Vehicle
-  TransmissionType _transmissionType = TransmissionType.auto;
+  String? _transmissionType;
+  String? _fuelType;
   final TextEditingController _engineSize = TextEditingController();
   final TextEditingController _mileage = TextEditingController();
-  final TextEditingController _make = TextEditingController(
-    text: kDebugMode ? 'WolksVegan' : '',
-  );
-  final TextEditingController _model = TextEditingController(
-    text: kDebugMode ? 'Gauche' : '',
-  );
-  final TextEditingController _year = TextEditingController(
-    text: kDebugMode ? '2005' : '',
-  );
-  final TextEditingController _emission = TextEditingController(
-    text: kDebugMode ? 'Toyota' : '',
-  );
-  final TextEditingController _doors = TextEditingController(
-    text: kDebugMode ? '5' : '',
-  );
-  final TextEditingController _seats = TextEditingController(
-    text: kDebugMode ? '4' : '',
-  );
+  String? _make;
+  final TextEditingController _model = TextEditingController();
+  final TextEditingController _year = TextEditingController();
+  String? _emission;
+  final TextEditingController _doors = TextEditingController();
+  final TextEditingController _seats = TextEditingController();
   final TextEditingController _location = TextEditingController();
-  VehicleBodyType? _selectedBodyType;
+  String? _selectedBodyType;
   String? _selectedVehicleColor;
   String? _selectedMileageUnit;
   // Property
   final TextEditingController _bedroom = TextEditingController();
   final TextEditingController _bathroom = TextEditingController();
-  String? _tenureType;
+  String _tenureType = TenureType.freehold.value;
   String _selectedPropertySubCategory = ListingType.property.cids.first;
   String? _selectedEnergyRating;
   String? _selectedPropertyType;
@@ -1286,15 +1285,14 @@ class AddListingFormProvider extends ChangeNotifier {
   bool _parking = true;
   bool _animalFriendly = true;
   // Pet
-  SubCategoryEntity? _selectedBreed;
   String? _petCategory;
   bool? _healthChecked;
-  SubCategoryEntity? _breed;
+  String? _breed;
   // bool _petsCategory;
   bool? _wormAndFleaTreated;
   bool? _vaccinationUpToDate;
-  AgeTimeType? _age;
-  AgeTimeType? _time;
+  String? _age;
+  String? _time;
   bool _isLoading = false;
   //
   List<PickedAttachment> _attachments = <PickedAttachment>[];
@@ -1324,6 +1322,7 @@ class AddListingFormProvider extends ChangeNotifier {
   final GlobalKey<FormState> _propertyKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _petKey = GlobalKey<FormState>();
 
+//
   @override
   void dispose() {
     reset();

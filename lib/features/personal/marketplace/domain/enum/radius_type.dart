@@ -1,0 +1,4 @@
+enum RadiusType {
+  local,
+  worldwide,
+}

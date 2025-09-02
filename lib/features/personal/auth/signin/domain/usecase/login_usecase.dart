@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../../../../../../core/usecase/usecase.dart';
 import '../params/login_params.dart';
 import '../repositories/signin_repository.dart';
@@ -9,9 +11,9 @@ class LoginUsecase implements UseCase<bool, LoginParams> {
   @override
   Future<DataState<bool>> call(LoginParams params) async {
     try {
-      return await repository.signin(params.email, params.password);
+      return await repository.signin(params);
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
     }
     return DataFailer<bool>(CustomException('Error'));
   }

@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../core/widgets/custom_toggle_switch.dart';
 import '../../../../post/domain/entities/post_entity.dart';
 import '../../../../post/feed/views/widgets/post/widgets/home_post_tile.dart';
-import '../../../../post/post_detail/views/screens/post_detail_screen.dart';
+import '../../../../post/post_detail/views/widgets/post_details_sections/item_post_detail_section.dart';
 import '../providers/add_listing_form_provider.dart';
 
 class AddListingPreviewScreen extends StatefulWidget {
@@ -20,51 +20,50 @@ class _AddListingPreviewScreenState extends State<AddListingPreviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Listing Preview'),
-        centerTitle: true,
-        elevation: 2,
-      ),
-      body: Consumer<AddListingFormProvider>(
-        builder: (BuildContext context, AddListingFormProvider provider, _) {
-          final PostEntity? previewPost = provider.createPostFromFormData();
-
-          if (previewPost == null) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          return SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                const SizedBox(height: 16),
-                CustomToggleSwitch<int>(
-                  initialValue: _previewMode,
-                  labels: const <int>[0, 1],
-                  labelStrs: <String>[
-                    'feed_preview'.tr(),
-                    'detail_preview'.tr()
-                  ],
-                  labelText: '',
-                  onToggle: (int index) {
-                    setState(() {
-                      _previewMode = index;
-                    });
-                  },
-                ),
-                const SizedBox(height: 16),
-                _previewMode == 0
-                    ? AbsorbPointer(child: HomePostTile(post: previewPost))
-                    : AbsorbPointer(
-                        child: PostDetailSection(
-                          post: previewPost,
-                          isMe: false,
-                          visit: null,
+    return PopScope(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('listing_preview'.tr()),
+          centerTitle: true,
+          elevation: 2,
+        ),
+        body: Consumer<AddListingFormProvider>(
+          builder: (BuildContext context, AddListingFormProvider provider, _) {
+            final PostEntity? previewPost = provider.createPostFromFormData();
+            if (previewPost == null) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            return SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  const SizedBox(height: 16),
+                  CustomToggleSwitch<int>(
+                    initialValue: _previewMode,
+                    labels: const <int>[0, 1],
+                    labelStrs: <String>[
+                      'feed_preview'.tr(),
+                      'detail_preview'.tr()
+                    ],
+                    labelText: '',
+                    onToggle: (int index) {
+                      setState(() {
+                        _previewMode = index;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  _previewMode == 0
+                      ? AbsorbPointer(child: HomePostTile(post: previewPost))
+                      : AbsorbPointer(
+                          child: ItemPostDetailSection(
+                            post: previewPost,
+                          ),
                         ),
-                      ),
-              ],
-            ),
-          );
-        },
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
 import '../../../../../../core/utilities/app_string.dart';
 import 'post_detail_postage_return_section.dart';
 

@@ -13,6 +13,7 @@ class NewPasswordScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<FormState> passwordFormKey = GlobalKey<FormState>();
     return Consumer<FindAccountProvider>(
       builder: (BuildContext context, FindAccountProvider prov, _) => Scaffold(
         appBar: AppBar(
@@ -28,54 +29,48 @@ class NewPasswordScreen extends StatelessWidget {
         body: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Form(
-            key: prov.passwordFormKey, // Use the provider's form key
-            child: AutofillGroup(
-              child: Column(
-                children: <Widget>[
-                  const SizedBox(height: 10),
-                  Text('new_password_title'.tr(),
-                      style: Theme.of(context).textTheme.titleMedium),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  Text('create_new_password'.tr(),
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall
-                          ?.copyWith(color: Colors.grey)),
-                  Text('six_characters_atleast'.tr(),
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall
-                          ?.copyWith(color: Colors.grey)),
-                  Text('letter_digit_combination'.tr(),
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall
-                          ?.copyWith(color: Colors.grey)),
-                  const SizedBox(
-                    height: 20,
-                    width: double.infinity,
-                  ),
-                  PasswordTextFormField(
-                    controller: prov.newPassword,
-                    autofillHints: const <String>[
-                      AutofillHints.email,
-                      AutofillHints.telephoneNumber
-                    ],
-                    validator: (String? value) =>
-                        AppValidator.validatePhoneOrEmail(value),
-                  ),
-                ],
-              ),
+            key: passwordFormKey,
+            child: Column(
+              children: <Widget>[
+                const SizedBox(height: 10),
+                Text('new_password_title'.tr(),
+                    style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(
+                  height: 4,
+                ),
+                Text('create_new_password'.tr(),
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(color: ColorScheme.of(context).outline)),
+                Text('six_characters_atleast'.tr(),
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(color: ColorScheme.of(context).outline)),
+                Text('letter_digit_combination'.tr(),
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(color: ColorScheme.of(context).outline)),
+                const SizedBox(
+                  height: 20,
+                  width: double.infinity,
+                ),
+                PasswordTextFormField(
+                  controller: prov.newPassword,
+                  validator: (String? value) => AppValidator.password(value),
+                ),
+              ],
             ),
           ),
         ),
-        bottomSheet: Container(
-          color: Colors.white,
+        bottomSheet: BottomAppBar(
+          height: 100,
+          color: Theme.of(context).scaffoldBackgroundColor,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
@@ -84,8 +79,8 @@ class NewPasswordScreen extends StatelessWidget {
                   margin: const EdgeInsets.all(10),
                   title: 'cancel'.tr(),
                   isLoading: false,
-                  bgColor: Colors.transparent,
-                  textColor: Colors.grey,
+                  textColor: ColorScheme.of(context).onSurface,
+                  bgColor: ColorScheme.of(context).surface,
                   border: Border.all(color: Theme.of(context).dividerColor),
                   onTap: () => Navigator.pop(context),
                 ),
@@ -95,7 +90,10 @@ class NewPasswordScreen extends StatelessWidget {
                   margin: const EdgeInsets.all(10),
                   title: 'confirm'.tr(),
                   isLoading: prov.isLoading,
-                  onTap: () => prov.newpassword(context),
+                  onTap: () {
+                    if (!passwordFormKey.currentState!.validate()) return;
+                    prov.newpassword(context);
+                  },
                 ),
               ),
             ],

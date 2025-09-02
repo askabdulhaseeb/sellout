@@ -1,19 +1,16 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/enums/listing/pet/age_time_type.dart';
 import '../../../../../../../core/widgets/custom_dropdown.dart';
-import '../../../../../location/data/models/location_model.dart';
 import '../../providers/add_listing_form_provider.dart';
-import '../location_by_name_field.dart';
+import '../custom_listing_dropdown.dart';
 
 class AddListingPetAgeLeaveWidget extends StatelessWidget {
   const AddListingPetAgeLeaveWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final List<AgeTimeType> age = AgeTimeType.age;
-    final List<AgeTimeType> time = AgeTimeType.time;
+    final TextStyle? textStyle = Theme.of(context).textTheme.bodyMedium;
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         return Column(
@@ -21,85 +18,110 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
             Row(
               children: <Widget>[
                 Expanded(
-                  child: CustomDropdown<AgeTimeType>(
-                    selectedItem: formPro.age,
-                    items: age.map((AgeTimeType value) {
-                      return DropdownMenuItem<AgeTimeType>(
-                        value: value,
-                        child: Text(
-                          value.title,
-                          style: TextTheme.of(context).bodySmall,
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: formPro.setAge,
-                    validator: (_) =>
-                        formPro.age == null ? 'Age is required' : null,
+                  child: CustomListingDropDown<AddListingFormProvider>(
+                    validator: (bool? p0) => null,
+                    hint: 'age',
+                    categoryKey: 'age',
+                    selectedValue: formPro.age,
                     title: 'age'.tr(),
+                    onChanged: formPro.setAge,
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: CustomDropdown<AgeTimeType>(
-                    selectedItem: formPro.time,
-                    items: time.map((AgeTimeType value) {
-                      return DropdownMenuItem<AgeTimeType>(
-                        value: value,
-                        child: Text(
-                          value.title,
-                          style: TextTheme.of(context).bodySmall,
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: formPro.setTime,
-                    validator: (_) =>
-                        formPro.time == null ? 'Time is required' : null,
+                  child: CustomListingDropDown<AddListingFormProvider>(
+                    validator: (bool? p0) => null,
+                    hint: 'ready_to_leave',
+                    categoryKey: 'ready_to_leave',
+                    selectedValue: formPro.time,
                     title: 'ready_to_leave'.tr(),
+                    onChanged: formPro.setTime,
                   ),
                 ),
               ],
             ),
-            LocationInputField(
-              onLocationSelected: (LocationModel location) {
-                formPro.setMeetupLocation(location);
-              },
-              initialLocation: formPro.selectedmeetupLocation,
-            ),
-            // CustomTextFormField(
-            //   controller: formPro.selectedBreed,
-            //   labelText: 'breed',
+            CustomListingDropDown<AddListingFormProvider>(
+                validator: (bool? p0) => null,
+                title: 'category',
+                hint: 'select_category',
+                categoryKey: 'pets',
+                selectedValue: formPro.petCategory,
+                onChanged: (String? p0) => formPro.setPetCategory(p0)),
+            CustomListingDropDown<AddListingFormProvider>(
+                validator: (bool? p0) => null,
+                parentValue: formPro.petCategory,
+                title: 'breed',
+                hint: 'breed',
+                categoryKey: 'breed',
+                selectedValue: formPro.breed,
+                onChanged: (String? p0) => formPro.setPetBreed(p0)),
+            // LocationField(
+            //   onLocationSelected: (LocationNameEntity location) async {
+            //     final LatLng coords =
+            //         await formPro.getLocationCoordinates(location.description);
+            //     formPro.setMeetupLocation(LocationModel(
+            //         address: location.structuredFormatting.secondaryText,
+            //         id: location.placeId,
+            //         title: location.structuredFormatting.mainText,
+            //         url:
+            //             'https://maps.google.com/?q=${coords.latitude},${coords.longitude}',
+            //         latitude: coords.latitude,
+            //         longitude: coords.longitude));
+            //   },
+            //   initialText: formPro.selectedmeetupLocation?.address,
             // ),
             CustomDropdown<bool>(
+              height: 50,
               selectedItem: formPro.vaccinationUpToDate,
-              items: const <DropdownMenuItem<bool>>[
-                DropdownMenuItem<bool>(value: true, child: Text('Yes')),
-                DropdownMenuItem<bool>(value: false, child: Text('No')),
+              items: <DropdownMenuItem<bool>>[
+                DropdownMenuItem<bool>(
+                  value: true,
+                  child: Text('yes'.tr(), style: textStyle),
+                ),
+                DropdownMenuItem<bool>(
+                  value: false,
+                  child: Text('no'.tr(), style: textStyle),
+                ),
               ],
               onChanged: formPro.setVaccinationUpToDate,
               validator: (_) =>
-                  formPro.vaccinationUpToDate == null ? 'Required' : null,
+                  formPro.vaccinationUpToDate == null ? 'required'.tr() : null,
               title: 'vaccination_up_to_date'.tr(),
             ),
             CustomDropdown<bool>(
+              height: 50,
               selectedItem: formPro.wormAndFleaTreated,
-              items: const <DropdownMenuItem<bool>>[
-                DropdownMenuItem<bool>(value: true, child: Text('Yes')),
-                DropdownMenuItem<bool>(value: false, child: Text('No')),
+              items: <DropdownMenuItem<bool>>[
+                DropdownMenuItem<bool>(
+                  value: true,
+                  child: Text('yes'.tr(), style: textStyle),
+                ),
+                DropdownMenuItem<bool>(
+                  value: false,
+                  child: Text('no'.tr(), style: textStyle),
+                ),
               ],
               onChanged: formPro.setWormFleeTreated,
               validator: (_) =>
-                  formPro.wormAndFleaTreated == null ? 'Required' : null,
+                  formPro.wormAndFleaTreated == null ? 'required'.tr() : null,
               title: 'worm_flee_treated'.tr(),
             ),
             CustomDropdown<bool>(
+              height: 50,
               selectedItem: formPro.healthChecked,
-              items: const <DropdownMenuItem<bool>>[
-                DropdownMenuItem<bool>(value: true, child: Text('Yes')),
-                DropdownMenuItem<bool>(value: false, child: Text('No')),
+              items: <DropdownMenuItem<bool>>[
+                DropdownMenuItem<bool>(
+                  value: true,
+                  child: Text('yes'.tr(), style: textStyle),
+                ),
+                DropdownMenuItem<bool>(
+                  value: false,
+                  child: Text('no'.tr(), style: textStyle),
+                ),
               ],
               onChanged: formPro.setHealthChecked,
               validator: (_) =>
-                  formPro.healthChecked == null ? 'Required' : null,
+                  formPro.healthChecked == null ? 'required'.tr() : null,
               title: 'health_checked'.tr(),
             ),
           ],

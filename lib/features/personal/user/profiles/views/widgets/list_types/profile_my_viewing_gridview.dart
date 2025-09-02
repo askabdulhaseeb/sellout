@@ -1,46 +1,69 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../../../post/domain/entities/post_entity.dart';
+import '../../../domain/entities/user_entity.dart';
+import '../../enums/profile_page_tab_type.dart';
+import '../../providers/profile_provider.dart';
+import '../profile_filter_buttons.dart';
+import '../subwidgets/post_grid_view_tile.dart';
 
-import '../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../services/get_it.dart';
-import '../../../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../../../../post/domain/entities/visit/visiting_entity.dart';
-import '../../../data/sources/local/local_visits.dart';
-import '../../../domain/usecase/get_my_host_usecase.dart';
-import '../subwidgets/profile_visit_gridview_tile.dart';
+class ProfileMyViewingGridview extends StatefulWidget {
+  const ProfileMyViewingGridview({required this.user, super.key});
+  final UserEntity? user;
 
-class ProfileMyViewingGridview extends StatelessWidget {
-  const ProfileMyViewingGridview({super.key});
+  @override
+  State<ProfileMyViewingGridview> createState() =>
+      _ProfileMyViewingGridviewState();
+}
+
+class _ProfileMyViewingGridviewState extends State<ProfileMyViewingGridview> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ProfileProvider>(context, listen: false).loadViewingPosts();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final GetImHostUsecase usecase = GetImHostUsecase(locator());
-    return FutureBuilder<DataState<List<VisitingEntity>>>(
-      future: usecase(LocalAuth.uid ?? ''),
-      initialData: LocalVisit().iMhost(),
-      builder: (
-        BuildContext context,
-        AsyncSnapshot<DataState<List<VisitingEntity>>> snapshot,
-      ) {
-        final List<VisitingEntity> visits =
-            snapshot.data?.entity ?? <VisitingEntity>[];
-        visits.sort((VisitingEntity a, VisitingEntity b) =>
-            (b.createdAt ?? b.dateTime).compareTo((a.createdAt ?? a.dateTime)));
-        return visits.isEmpty
-            ? const Center(child: Text('No data Found'))
-            : GridView.builder(
-                itemCount: visits.length,
-                shrinkWrap: true,
-                primary: false,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 6.0,
-                  mainAxisSpacing: 6.0,
-                ),
-                itemBuilder: (BuildContext context, int index) {
-                  return ProfileVisitGridviewTile(visit: visits[index]);
-                },
-              );
-      },
+    return Column(
+      spacing: 8,
+      children: <Widget>[
+        ProfileFilterSection(
+          user: widget.user,
+          pageType: ProfilePageTabType.viewing,
+        ),
+        Consumer<ProfileProvider>(
+          builder: (BuildContext context, ProfileProvider pro, _) {
+            final List<PostEntity>? posts = pro.storePosts;
+
+            if (pro.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (posts == null || posts.isEmpty) {
+              return Center(child: Text('no_posts_found'.tr()));
+            }
+
+            return GridView.builder(
+              itemCount: posts.length,
+              shrinkWrap: true,
+              primary: false,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 6.0,
+                mainAxisSpacing: 6.0,
+                childAspectRatio: 0.66,
+              ),
+              itemBuilder: (BuildContext context, int index) {
+                return PostGridViewTile(post: posts[index]);
+              },
+            );
+          },
+        ),
+      ],
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
+import '../../theme/app_theme.dart';
 part 'status_type.g.dart';
 
 const Color _blueBG = Color.fromARGB(255, 215, 235, 248);
@@ -23,18 +24,22 @@ enum StatusType {
   @HiveField(22)
   rejected('rejected', 'rejected', Colors.red, _redBG),
   @HiveField(23)
-  cancelled('cancelled', 'cancelled', Colors.red, _redBG),
+  cancelled('cancelled', 'cancelled', Colors.black, _redBG),
   //
   @HiveField(31)
   accepted('accepted', 'accepted', Colors.green, _greenBG),
   @HiveField(32)
   completed('completed', 'completed', Colors.green, _greenBG),
   @HiveField(33)
-  delivered('delivered', 'delivered', Colors.green, _greenBG),
+  delivered('delivered', 'delivered', AppTheme.secondaryColor, _greenBG),
   @HiveField(34)
-  shipped('shipped', 'shipped', Colors.green, _greenBG),
+  shipped('shipped', 'shipped', Colors.blue, _greenBG),
   @HiveField(35)
-  active('active', 'active', Colors.green, _greenBG);
+  active('active', 'active', Colors.green, _greenBG),
+  @HiveField(36)
+  onHold('on-hold', 'on-hold', Colors.green, _greenBG),
+  @HiveField(37)
+  processing('processing', 'processing', AppTheme.primaryColor, _greenBG);
 
   const StatusType(this.code, this.json, this.color, this.bgColor);
   final String code;
@@ -51,15 +56,15 @@ enum StatusType {
         return StatusType.accepted;
       case 'reject' || 'rejected':
         return StatusType.rejected;
-      case 'cancel' || 'cancelled':
+      case 'cancel' || 'cancelled' || 'canceled' || 'cancelled_by_seller':
         return StatusType.cancelled;
-      case 'complet' || 'completed':
+      case 'complet' || 'completed' || 'delivered':
         return StatusType.completed;
-      case 'inprogress' || 'processing':
+      case 'inprogress':
         return StatusType.inprogress;
       case 'deliver' || 'delivered':
         return StatusType.delivered;
-      case 'shipped':
+      case 'shipped' || 'dispatched':
         return StatusType.shipped;
       case 'active':
         return StatusType.active;
@@ -67,6 +72,10 @@ enum StatusType {
         return StatusType.inActive;
       case 'blocked':
         return StatusType.blocked;
+      case 'on-hold':
+        return StatusType.onHold;
+      case 'processing':
+        return StatusType.processing;
       default:
         return StatusType.pending;
     }

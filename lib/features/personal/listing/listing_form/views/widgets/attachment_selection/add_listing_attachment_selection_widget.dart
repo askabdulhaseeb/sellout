@@ -19,7 +19,6 @@ class AddListingAttachmentSelectionWidget extends StatelessWidget {
           ...formPro.attachments,
           if (formPro.post?.fileUrls != null) ...formPro.post!.fileUrls,
         ];
-
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
@@ -33,7 +32,8 @@ class AddListingAttachmentSelectionWidget extends StatelessWidget {
                   padding: const EdgeInsets.all(32),
                   margin: const EdgeInsets.symmetric(vertical: 16),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
+                    border: Border.all(
+                        color: ColorScheme.of(context).outlineVariant),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
@@ -61,24 +61,22 @@ class AddListingAttachmentSelectionWidget extends StatelessWidget {
               AspectRatio(
                 aspectRatio: 2 / 1,
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: ListView.builder(
-                    itemCount: allAttachments.length,
-                    scrollDirection: Axis.horizontal,
-                    primary: false,
-                    shrinkWrap: true,
-                    itemBuilder: (BuildContext context, int index) {
-                      final dynamic item = allAttachments[index];
-
-                      if (item is PickedAttachment) {
-                        return AddListingPickedAttachmentTile(attachment: item);
-                      } else if (item is AttachmentEntity) {
-                        return AddListingPickedAttachmentTile(imageUrl: item);
-                      }
-                      return const SizedBox.shrink(); // Fallback widget
-                    },
-                  ),
-                ),
+                    padding: const EdgeInsets.only(top: 8),
+                    child: ListView.builder(
+                      itemCount: allAttachments.length,
+                      scrollDirection: Axis.horizontal,
+                      primary: false,
+                      shrinkWrap: true,
+                      itemBuilder: (BuildContext context, int index) {
+                        final dynamic item = allAttachments[index];
+                        if (item is PickedAttachment) {
+                          return ListingAttachmentTile(attachment: item);
+                        } else if (item is AttachmentEntity) {
+                          return ListingAttachmentTile(imageUrl: item);
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    )),
               ),
           ],
         );

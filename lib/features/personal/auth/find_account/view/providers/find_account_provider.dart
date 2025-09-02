@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../routes/app_linking.dart';
 import '../../../signin/views/screens/sign_in_screen.dart';
 import '../../domain/use_cases/find_account_usecase.dart';
 import '../../domain/use_cases/newpassword_usecase.dart';
@@ -26,8 +27,6 @@ class FindAccountProvider with ChangeNotifier {
   final TextEditingController _newPassword = TextEditingController();
   final TextEditingController _pin = TextEditingController();
   final TextEditingController _phoneOrEmailController = TextEditingController();
-  final GlobalKey<FormState> _findAccountformKey = GlobalKey<FormState>();
-  final GlobalKey<FormState> _passwordFormKey = GlobalKey<FormState>();
   bool _isLoading = false;
   String? email;
   String? _uid;
@@ -40,8 +39,6 @@ class FindAccountProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  GlobalKey<FormState> get findAccountFormKey => _findAccountformKey;
-  GlobalKey<FormState> get passwordFormKey => _passwordFormKey;
   Timer? _resendCodeTimer;
   Timer? get resendCodeTimer => _resendCodeTimer;
   set uid(String? value) {
@@ -61,9 +58,7 @@ class FindAccountProvider with ChangeNotifier {
 
   // Method to find account
   Future<void> findAccount(BuildContext context) async {
-    if (!_findAccountformKey.currentState!.validate()) return;
     isLoading = true;
-
     try {
       final String phoneOrEmail = _phoneOrEmailController.text.trim();
       final DataState<Map<String, dynamic>> result =
@@ -110,16 +105,21 @@ class FindAccountProvider with ChangeNotifier {
   }
 
   // Method to send email for Otp
+
   Future<bool> sendemailforOtp(BuildContext context) async {
+    if (_resendCodeTimer != null && _resendCodeTimer!.isActive) {
+      return false;
+    }
     isLoading = true;
     try {
-      final DataState<String> result = await sendEmailForOtpUsecase(
-        email ?? '',
-      );
+      final DataState<String> result =
+          await sendEmailForOtpUsecase(email ?? '');
+
       if (result is DataSuccess) {
         uid = result.entity;
         startResendCodeTimer();
         Navigator.of(context).pushNamed(EnterCodeScreen.routeName);
+        isLoading = false;
         return true;
       } else {
         AppLog.error(
@@ -135,6 +135,7 @@ class FindAccountProvider with ChangeNotifier {
         error: e,
       );
     }
+
     isLoading = false;
     return false;
   }
@@ -162,7 +163,7 @@ class FindAccountProvider with ChangeNotifier {
           VerifyPinParams(uid: _uid ?? '', otp: pin.text);
       final DataState<bool> result = await verifyOtpUsecase(params);
       if (result is DataSuccess) {
-        Navigator.pushNamed(context, NewPasswordScreen.routeName);
+        AppNavigator.pushNamed(NewPasswordScreen.routeName);
       } else {
         AppLog.error(
           'something_wrong'.tr(),
@@ -191,11 +192,11 @@ class FindAccountProvider with ChangeNotifier {
         uid: _uid ?? '',
         password: newPassword.text.trim(),
       );
-
+      debugPrint(_uid);
       final DataState<String> result = await newPasswordUsecase(params);
-
       if (result is DataSuccess) {
-        Navigator.of(context).pushNamedAndRemoveUntil(
+        reset();
+        AppNavigator.pushNamedAndRemoveUntil(
           SignInScreen.routeName,
           (_) => true,
         );
@@ -237,5 +238,18 @@ class FindAccountProvider with ChangeNotifier {
       }
       notifyListeners();
     });
+  }
+
+  void reset() {
+    _isLoading = false;
+    _uid = null;
+    email = null;
+    _resentCodeSeconds = _codeSendingTime;
+    _resendCodeTimer?.cancel();
+    _phoneOrEmailController.clear();
+    _pin.clear();
+    _newPassword.clear();
+
+    notifyListeners();
   }
 }

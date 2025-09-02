@@ -20,15 +20,4 @@ class GettedMessageModel extends GettedMessageEntity {
               map['lastEvaluatedKey'], chatID),
     );
   }
-
-  GettedMessageModel copyWith({
-    List<MessageModel>? messages,
-    MessageLastEvaluatedKeyModel? lastEvaluatedKey,
-  }) {
-    return GettedMessageModel(
-      chatID: chatID,
-      messages: messages ?? this.messages,
-      lastEvaluatedKey: lastEvaluatedKey ?? this.lastEvaluatedKey,
-    );
-  }
 }

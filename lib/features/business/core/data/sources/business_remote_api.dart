@@ -16,7 +16,7 @@ class BusinessRemoteAPIImpl implements BusinessCoreAPI {
   @override
   Future<DataState<BusinessEntity?>> getBusiness(String businessID) async {
     try {
-      final String endpoint = 'business/$businessID';
+      final String endpoint = '/noAuth/entity/$businessID';
       final ApiRequestEntity? local = await LocalRequestHistory().request(
         endpoint: endpoint,
         duration:
@@ -30,7 +30,7 @@ class BusinessRemoteAPIImpl implements BusinessCoreAPI {
       final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,
         requestType: ApiRequestType.get,
-        isAuth: true,
+        isAuth: false,
       );
       if (result is DataSuccess) {
         final String raw = result.data ?? '';

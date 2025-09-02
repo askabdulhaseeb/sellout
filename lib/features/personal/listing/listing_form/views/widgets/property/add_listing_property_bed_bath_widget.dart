@@ -2,11 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
-import '../../../../../location/data/models/location_model.dart';
 import '../../providers/add_listing_form_provider.dart';
-import '../location_by_name_field.dart';
-import 'energyrating_dropdown.dart';
-import 'property_type_dropdown.dart';
+import '../custom_listing_dropdown.dart';
 
 class AddListingPropertyBedBathWidget extends StatelessWidget {
   const AddListingPropertyBedBathWidget({super.key});
@@ -44,14 +41,36 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
               hint: 'Ex. 350',
               keyboardType: TextInputType.number,
             ),
-            const EnergyRatingDropdown(),
-            const PropertyTypeDropdown(),
-            LocationInputField(
-              onLocationSelected: (LocationModel location) {
-                formPro.setMeetupLocation(location);
-              },
-              initialLocation: formPro.selectedmeetupLocation,
+            CustomListingDropDown<AddListingFormProvider>(
+              validator: (bool? p0) => null,
+              hint: 'select_category',
+              categoryKey: 'property_type',
+              selectedValue: formPro.selectedPropertyType,
+              onChanged: (String? p0) => formPro.setPropertyType(p0),
+              title: 'category',
             ),
+            CustomListingDropDown<AddListingFormProvider>(
+                validator: (bool? p0) => null,
+                hint: 'energy_rating',
+                categoryKey: 'energy_rating',
+                onChanged: (String? p0) => formPro.setEnergyRating(p0),
+                selectedValue: formPro.selectedEnergyRating,
+                title: 'energy_rating'),
+            // LocationField(
+            //   onLocationSelected: (LocationNameEntity location) async {
+            //     final LatLng coords =
+            //         await formPro.getLocationCoordinates(location.description);
+            //     formPro.setMeetupLocation(LocationModel(
+            //         address: location.structuredFormatting.secondaryText,
+            //         id: location.placeId,
+            //         title: location.structuredFormatting.mainText,
+            //         url:
+            //             'https://maps.google.com/?q=${coords.latitude},${coords.longitude}',
+            //         latitude: coords.latitude,
+            //         longitude: coords.longitude));
+            //   },
+            //   initialText: formPro.selectedmeetupLocation?.address,
+            // ),
           ],
         );
       },

@@ -1,90 +1,92 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import '../../../../../../core/functions/app_log.dart';
+import '../../../../../../core/params/report_params.dart';
 import '../../../../../../core/sources/api_call.dart';
 import '../../../../../../core/sources/local/local_request_history.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../cart/domain/usecase/cart/get_cart_usecase.dart';
-import '../../../../chats/chat/data/sources/local/local_message.dart';
-import '../../../../chats/chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../domain/entities/post_entity.dart';
 import '../../../domain/params/add_to_cart_param.dart';
-import '../../../domain/params/create_offer_params.dart';
-import '../../../domain/params/update_offer_params.dart';
+import '../../../domain/params/feed_response_params.dart';
+import '../../../domain/params/get_feed_params.dart';
 import '../../models/post_model.dart';
 import '../local/local_post.dart';
 
 abstract interface class PostRemoteApi {
-  Future<DataState<List<PostEntity>>> getFeed();
+  Future<DataState<GetFeedResponse>> getFeed(GetFeedParams params);
   Future<DataState<PostEntity>> getPost(String id);
   Future<DataState<bool>> addToCart(AddToCartParam param);
-  Future<DataState<bool>> createOffer(CreateOfferparams param);
-  Future<DataState<bool>> updateOffer(UpdateOfferParams param);
-  // Future<DataState<bool>> updateOfferStatus(UpdateOfferParams param);
+  Future<DataState<bool>> reportPost(ReportParams params);
+  Future<DataState<bool>> savePost(String postID);
 }
 
 class PostRemoteApiImpl implements PostRemoteApi {
   @override
-  Future<DataState<List<PostEntity>>> getFeed() async {
-    const String endpoint = '/post';
+  Future<DataState<GetFeedResponse>> getFeed(GetFeedParams params) async {
+    final String endpoint = 'feed?type=${params.type}&key=${params.key}';
+    debugPrint('[FeedAPI] Calling endpoint: $endpoint');
+
     try {
-      ApiRequestEntity? request = await LocalRequestHistory().request(
+      debugPrint('[FeedAPI] Checking local cache for: $endpoint');
+      final ApiRequestEntity? request = await LocalRequestHistory().request(
         endpoint: endpoint,
-        duration:
-            kDebugMode ? const Duration(days: 1) : const Duration(minutes: 30),
+        duration: Duration.zero,
       );
+
+      String? rawData;
+
       if (request != null) {
-        final List<PostEntity> list = LocalPost().all;
-        // AppLog.info(
-        //   'Post length: Lenght: ${list.length}',
-        //   name: 'PostRemoteApiImpl.getFeed - local if',
-        // );
-        if (list.isNotEmpty) {
-          return DataSuccess<List<PostEntity>>(request.encodedData, list);
-        }
-      }
-
-      final DataState<bool> result = await ApiCall<bool>().call(
-        endpoint: endpoint,
-        requestType: ApiRequestType.get,
-        isAuth: false,
-      );
-
-      if (result is DataSuccess) {
-        final String raw = result.data ?? '';
-        if (raw.isEmpty) {
-          return DataFailer<List<PostEntity>>(
-              result.exception ?? CustomException('something_wrong'.tr()));
-        }
-        final List<dynamic> listt = json.decode(raw)['response'];
-        AppLog.info(
-          'Post length: Lenght: ${listt.length}',
-          name: 'PostRemoteApiImpl.getFeed - if',
-        );
-        final List<PostEntity> list = <PostEntity>[];
-        for (final dynamic item in listt) {
-          final PostEntity post = PostModel.fromJson(item);
-          await LocalPost().save(post);
-          list.add(post);
-        }
-        return DataSuccess<List<PostEntity>>(raw, list);
+        debugPrint('[FeedAPI] Loaded posts from local cache ✅');
+        rawData = request.encodedData;
       } else {
-        AppLog.error(
-          '${result.exception?.message}',
-          name: 'PostRemoteApiImpl.getFeed - else',
-          error: result.exception,
+        debugPrint(
+            '[FeedAPI] No valid cache found. Fetching from network 🌐...');
+        final DataState<String> result = await ApiCall<String>().call(
+          endpoint: endpoint,
+          requestType: ApiRequestType.get,
+          isAuth: false,
         );
-        return DataFailer<List<PostEntity>>(
-          result.exception ?? CustomException('something_wrong'.tr()),
-        );
+
+        if (result is DataSuccess) {
+          rawData = result.data ?? '';
+          if (rawData.isEmpty) {
+            debugPrint('[FeedAPI] Empty response received ⚠️');
+            return DataFailer<GetFeedResponse>(
+              result.exception ?? CustomException('something_wrong'.tr()),
+            );
+          }
+        } else {
+          debugPrint(
+              '[FeedAPI] Network call failed : ${result.exception?.message}');
+          return DataFailer<GetFeedResponse>(
+            result.exception ?? CustomException('something_wrong'.tr()),
+          );
+        }
       }
-    } catch (e) {
-      AppLog.error(
-        e.toString(),
-        name: 'PostRemoteApiImpl.getFeed - catch',
-        error: e,
+
+      // ✅ Parse response here directly
+      final Map<String, dynamic> jsonMap = json.decode(rawData);
+      final List<dynamic> list = jsonMap['response'] ?? <dynamic>[];
+      final String? nextPageToken = jsonMap['nextPageToken'];
+
+      final List<PostEntity> posts =
+          list.map<PostEntity>((item) => PostModel.fromJson(item)).toList();
+
+      debugPrint('[FeedAPI] Next page token: $nextPageToken');
+
+      return DataSuccess<GetFeedResponse>(
+        '',
+        GetFeedResponse(
+          nextPageToken: nextPageToken,
+          posts: posts,
+        ),
       );
-      return DataFailer<List<PostEntity>>(CustomException(e.toString()));
+    } catch (e) {
+      debugPrint('[FeedAPI] Exception occurred 💥: $e');
+      return DataFailer<GetFeedResponse>(
+        CustomException(e.toString()),
+      );
     }
   }
 
@@ -182,134 +184,82 @@ class PostRemoteApiImpl implements PostRemoteApi {
   }
 
   @override
-  Future<DataState<bool>> createOffer(CreateOfferparams param) async {
-    const String endpoint = '/offers/create';
-
+  Future<DataState<bool>> reportPost(ReportParams params) async {
+    const String endpoint = '/post/report';
     try {
       final DataState<bool> result = await ApiCall<bool>().call(
         endpoint: endpoint,
-        requestType: ApiRequestType.post,
+        requestType: ApiRequestType.patch,
         isAuth: true,
-        body: json.encode(param.toMap()),
+        body: json.encode(params.toPostReportMap()),
       );
       if (result is DataSuccess) {
-        final Map<String, dynamic> data = jsonDecode(result.data ?? '');
-        final String chatID = data['chat_id'];
-        return DataSuccess<bool>(chatID, true);
+        AppLog.info(
+          result.data ?? '',
+          name: 'PostRemoteApiImpl.reportPost - success',
+        );
+        debugPrint(result.data.toString());
+        debugPrint(params.toString());
+        return DataSuccess<bool>(result.data ?? '', true);
       } else {
         AppLog.error(
-          result.exception?.message ?? 'ERROR - PostRemoteApiImpl.createOffer',
-          name: 'PostRemoteApiImpl.createOffer - failed',
+          result.exception?.message ?? 'PostRemoteApiImpl.reportPost - else',
+          name: 'PostRemoteApiImpl.reportPost - failed',
           error: result.exception,
         );
         return DataFailer<bool>(
           result.exception ?? CustomException('something_wrong'.tr()),
         );
       }
-    } catch (e) {
+    } catch (e, stk) {
+      debugPrint(params.toString());
+
       AppLog.error(
         e.toString(),
-        name: 'PostRemoteApiImpl.createOffer - catch',
+        name: 'PostRemoteApiImpl.reportPost - catch',
         error: e,
+        stackTrace: stk,
       );
       return DataFailer<bool>(CustomException(e.toString()));
     }
   }
 
   @override
-  Future<DataState<bool>> updateOffer(UpdateOfferParams param) async {
-    String endpoint = '/offers/update/${param.offerId}';
-
+  Future<DataState<bool>> savePost(String postID) async {
+    const String endpoint = 'user/save/post';
     try {
       final DataState<bool> result = await ApiCall<bool>().call(
         endpoint: endpoint,
         requestType: ApiRequestType.patch,
         isAuth: true,
-        body: json.encode(param.toMap()),
+        body: json.encode(<String, String>{'post_id': postID}),
       );
 
       if (result is DataSuccess) {
-        debugPrint(result.data);
-        debugPrint(param.toString());
-        Map<String, dynamic> mapdata = jsonDecode(result.data!);
-        String offerStatus = mapdata['updatedAttributes']['offer_status'];
-        int offerAmount = mapdata['updatedAttributes']['offer_amount'];
-
-        MessageEntity message = LocalChatMessage()
-            .messages(param.chatID)
-            .firstWhere((MessageEntity element) =>
-                element.messageId == param.messageId);
-        message.offerDetail?.offerPrice = offerAmount;
-        message.offerDetail!.offerStatus = offerStatus;
-          return DataSuccess<bool>(result.data!, true);
+        AppLog.info(
+          'Post report successful',
+          name: 'PostRemoteApiImpl.reportPost - success',
+        );
+        debugPrint('Post report successful: postID = $postID');
+        return DataSuccess<bool>(result.data ?? '', true);
       } else {
-
         AppLog.error(
-          result.exception?.message ?? 'PostRemoteApiImpl.updateOffer - else',
-          name: 'PostRemoteApiImpl.updateOffer - failed',
+          result.exception?.message ?? 'Unknown error during report',
+          name: 'PostRemoteApiImpl.reportPost - failed',
           error: result.exception,
         );
         return DataFailer<bool>(
           result.exception ?? CustomException('something_wrong'.tr()),
         );
       }
-    } catch (e) {
-      debugPrint(param.toString());
-
+    } catch (e, stk) {
       AppLog.error(
         e.toString(),
-        name: 'PostRemoteApiImpl.updateOffer - catch',
+        name: 'PostRemoteApiImpl.reportPost - catch',
         error: e,
+        stackTrace: stk,
       );
       return DataFailer<bool>(CustomException(e.toString()));
     }
   }
-
-  // @override
-  // Future<DataState<bool>> updateOfferStatus(UpdateOfferParams param) async {
-  //   String endpoint = '/offers/update/offerStatus/${param.offerId}';
-
-  //   try {
-  //     final DataState<bool> result = await ApiCall<bool>().call(
-  //       endpoint: endpoint,
-  //       requestType: ApiRequestType.patch,
-  //       isAuth: true,
-  //       body: json.encode(param.updateStatus()),
-  //     );
-
-  //     if (result is DataSuccess) {
-  //       // ✅ Fetch the existing entity from Hive
-  //       Map<String, dynamic> data = jsonDecode(result.data!);
-  //       final String dataStatus = data['updatedAttributes']['offer_status'];
-  //       final GettedMessageEntity? oldEntity =
-  //           LocalChatMessage().entity(param.offerId);
-
-  //       if (oldEntity != null) {
-  //         final List<MessageEntity> updatedMessages =
-  //             oldEntity.messages.map((MessageEntity msg) {
-  //           if (msg.offerDetail!.offerStatus == param.messageId) {
-  //             msg.offerDetail!.offerStatus = dataStatus;
-  //           }
-  //           return msg;
-  //         }).toList();
-  //         await LocalChatMessage().save(
-  //           GettedMessageEntity(
-  //             chatID: oldEntity.chatID,
-  //             messages: updatedMessages,
-  //             lastEvaluatedKey: oldEntity.lastEvaluatedKey,
-  //           ),
-  //           param.offerId,
-  //         );
-  //       }
-  //       LocalChatMessage().refresh();
-  //       return DataSuccess<bool>(result.data!, true);
-  //     } else {
-  //       return DataFailer<bool>(
-  //         result.exception ?? CustomException('something_wrong'.tr()),
-  //       );
-  //     }
-  //   } catch (e) {
-  //     return DataFailer<bool>(CustomException(e.toString()));
-  //   }
-  // }
 }

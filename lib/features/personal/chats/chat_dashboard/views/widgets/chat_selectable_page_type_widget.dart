@@ -1,8 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../../../core/widgets/shadow_container.dart';
+import '../../../../../../core/widgets/custom_svg_icon.dart';
 import '../providers/chat_dashboard_provider.dart';
 
 class ChatSelectablePageTypeWidget extends StatelessWidget {
@@ -14,32 +13,42 @@ class ChatSelectablePageTypeWidget extends StatelessWidget {
     return Consumer<ChatDashboardProvider>(
       builder: (BuildContext context, ChatDashboardProvider pagePro, _) {
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
+            spacing: 6,
             children: tabs.map((ChatPageType tab) {
               final bool isSelected = pagePro.currentPage == tab;
-              final Color? color =
-                  isSelected ? Theme.of(context).primaryColor : null;
+              final Color color = isSelected
+                  ? Theme.of(context).primaryColor
+                  : ColorScheme.of(context).outline;
               return Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(6),
-                  child: GestureDetector(
-                    onTap: () => pagePro.setCurrentTabIndex(tab),
-                    child: ShadowContainer(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        children: <Widget>[
-                          Icon(tab.icon, color: color),
-                          const SizedBox(height: 4),
-                          Text(
-                            tab.code.tr(),
-                            style: TextStyle(
-                              color: color,
-                              fontWeight: FontWeight.w500,
-                            ),
+                child: GestureDetector(
+                  onTap: () => pagePro.setCurrentTabIndex(tab),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                            color: ColorScheme.of(context).outlineVariant)),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                    ),
+                    child: Column(
+                      children: <Widget>[
+                        CustomSvgIcon(
+                          size: 20,
+                          assetPath: tab.icon,
+                          color: color,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          tab.code.tr(),
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: color,
+                            fontWeight: FontWeight.w500,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

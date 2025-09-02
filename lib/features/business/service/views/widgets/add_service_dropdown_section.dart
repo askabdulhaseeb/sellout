@@ -28,67 +28,71 @@ class AddServiceDropdownSection extends StatelessWidget {
               validator: (String? value) => AppValidator.isEmpty(value),
             ),
             CustomDropdown<ServiceCategoryType?>(
-              title: 'service_category'.tr(),
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              items: ServiceCategoryType.categories().map(
-                (ServiceCategoryType category) {
-                  return DropdownMenuItem<ServiceCategoryType>(
-                    value: category,
-                    child: Text(
-                      '${category.code.tr()} (${category.category})',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  );
-                },
-              ).toList(),
-              selectedItem: pro.selectedCategory,
-              onChanged: (ServiceCategoryType? value) =>
-                  pro.setSelectedCategory(value),
-              validator: (_) => '',
-            ),
+                title: 'service_category'.tr(),
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                items: ServiceCategoryType.categories().map(
+                  (ServiceCategoryType category) {
+                    return DropdownMenuItem<ServiceCategoryType>(
+                      value: category,
+                      child: Text(
+                        '${category.code.tr()} (${category.category})',
+                        style: TextTheme.of(context).bodyLarge,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    );
+                  },
+                ).toList(),
+                selectedItem: pro.selectedCategory,
+                onChanged: (ServiceCategoryType? value) =>
+                    pro.setSelectedCategory(value),
+                validator: (bool? isValid) =>
+                    (pro.selectedCategory == null) ? 'select_type'.tr() : null),
             const SizedBox(height: 8),
             CustomDropdown<ServiceType?>(
-              title: 'service_type'.tr(),
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              items:
-                  (pro.selectedCategory?.serviceTypes ?? <ServiceType>[]).map(
-                (ServiceType type) {
-                  return DropdownMenuItem<ServiceType>(
-                    value: type,
-                    child: Text(
-                      type.code.tr(),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  );
-                },
-              ).toList(),
-              selectedItem: pro.selectedType,
-              onChanged: (ServiceType? value) => pro.setSelectedType(value),
-              validator: (_) => '',
-            ),
+                title: 'service_type'.tr(),
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                items:
+                    (pro.selectedCategory?.serviceTypes ?? <ServiceType>[]).map(
+                  (ServiceType type) {
+                    return DropdownMenuItem<ServiceType>(
+                      value: type,
+                      child: Text(
+                        type.code.tr(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextTheme.of(context).bodyLarge,
+                      ),
+                    );
+                  },
+                ).toList(),
+                selectedItem: pro.selectedType,
+                onChanged: (ServiceType? value) => pro.setSelectedType(value),
+                validator: (bool? isValid) =>
+                    (pro.selectedType == null) ? 'select_type'.tr() : null),
             const SizedBox(height: 8),
             CustomDropdown<ServiceModelType?>(
-              title: 'service_model'.tr(),
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              items: ServiceModelType.models().map(
-                (ServiceModelType type) {
-                  return DropdownMenuItem<ServiceModelType>(
-                    value: type,
-                    child: Text(
-                      type.code.tr(),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  );
-                },
-              ).toList(),
-              selectedItem: pro.selectedModelType,
-              onChanged: (ServiceModelType? value) =>
-                  pro.setSelectedModelType(value),
-              validator: (_) => '',
-            ),
+                title: 'service_model'.tr(),
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                items: ServiceModelType.models().map(
+                  (ServiceModelType type) {
+                    return DropdownMenuItem<ServiceModelType>(
+                      value: type,
+                      child: Text(
+                        type.code.tr(),
+                        style: TextTheme.of(context).bodyLarge,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    );
+                  },
+                ).toList(),
+                selectedItem: pro.selectedModelType,
+                onChanged: (ServiceModelType? value) =>
+                    pro.setSelectedModelType(value),
+                validator: (bool? isValid) => (pro.selectedModelType == null)
+                    ? 'select_type'.tr()
+                    : null),
           ],
         );
       },

@@ -1,16 +1,13 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-
-import '../../utilities/app_icons.dart';
+import '../../utilities/app_string.dart';
 
 enum ChatPageType {
-  orders('orders', Icons.chat_outlined),
-  services('services', AppIcons.story),
-  groups('groups', CupertinoIcons.group);
+  orders('chats', AppStrings.selloutOrderChatIcon),
+  services('services', AppStrings.selloutServiceChatIcon),
+  groups('groups', AppStrings.selloutGroupChatIcon);
 
   const ChatPageType(this.code, this.icon);
   final String code;
-  final IconData icon;
+  final String icon;
 
   static ChatPageType fromJson(String json) => ChatPageType.values.firstWhere(
         (ChatPageType e) => e.code == json,

@@ -16,13 +16,14 @@ class PostDetailPostageReturnSection extends StatelessWidget {
         children: <Widget>[
           const Text(
             'postage_return_and_payment',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ).tr(),
           const Divider(),
           //
           Text(
             'est_delivery',
             style: TextStyle(
+                fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: Theme.of(context)
                     .colorScheme
@@ -32,6 +33,7 @@ class PostDetailPostageReturnSection extends StatelessWidget {
           const SizedBox(
             height: 8,
           ),
+          //TODO:delivey and postage not finalized
           Text(
             'Thu 23 Nov - Fri 14 December',
             style: TextTheme.of(context)
@@ -53,12 +55,13 @@ class PostDetailPostageReturnSection extends StatelessWidget {
           ),
           Text(
             'collection'.tr(),
-            style: TextTheme.of(context).bodyMedium?.copyWith(
+            style: TextStyle(
+                fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: Theme.of(context)
                     .colorScheme
                     .onSurface
-                    .withValues(alpha: 0.7)),
+                    .withValues(alpha: 0.4)),
           ),
           Text(
             'click_collect_at_checkout'.tr(),

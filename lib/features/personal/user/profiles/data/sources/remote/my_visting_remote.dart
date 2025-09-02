@@ -6,6 +6,7 @@ import '../local/local_visits.dart';
 
 abstract interface class MyVisitingRemote {
   Future<DataState<List<VisitingEntity>>> iMvisiter();
+  Future<DataState<List<VisitingEntity>>> postViist();
   Future<DataState<List<VisitingEntity>>> iMhost();
 }
 
@@ -22,8 +23,18 @@ class MyVisitingRemoteImpl implements MyVisitingRemote {
   }
 
   @override
+  Future<DataState<List<VisitingEntity>>> postViist() async {
+    final String endpoint = '/visit/query?visiter_id=$me';
+    final DataState<bool> restul = await ApiCall<bool>().call(
+      endpoint: endpoint,
+      requestType: ApiRequestType.post,
+    );
+    return await _result(restul);
+  }
+
+  @override
   Future<DataState<List<VisitingEntity>>> iMhost() async {
-    final String endpoint = '/visit/query?host_id=$me';
+    final String endpoint = '/visit/query?post_id=$me';
     final DataState<bool> restul = await ApiCall<bool>().call(
       endpoint: endpoint,
       requestType: ApiRequestType.post,

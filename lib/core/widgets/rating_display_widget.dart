@@ -9,6 +9,9 @@ class RatingDisplayWidget extends StatelessWidget {
     this.maxRating = 5,
     this.size = 16,
     this.onTap,
+    this.fontSize,
+    this.prefixColor,
+    this.ratingColor,
     super.key,
   });
   final int maxRating;
@@ -18,6 +21,9 @@ class RatingDisplayWidget extends StatelessWidget {
   final bool displayStars;
   final bool displayRating;
   final VoidCallback? onTap;
+  final double? fontSize;
+  final Color? prefixColor;
+  final Color? ratingColor;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +41,9 @@ class RatingDisplayWidget extends StatelessWidget {
               padding: const EdgeInsets.only(right: 3),
               child: Text(
                 rating.toStringAsFixed(1),
-                style: TextStyle(color: Theme.of(context).primaryColor),
+                style: TextStyle(
+                    color: ratingColor ?? Theme.of(context).primaryColor,
+                    fontSize: fontSize ?? 14),
               ),
             ),
           if (displayPrefix)
@@ -43,7 +51,9 @@ class RatingDisplayWidget extends StatelessWidget {
               padding: const EdgeInsets.only(right: 4),
               child: Text(
                 '(${ratingList.length})',
-                style: TextStyle(color: Theme.of(context).primaryColor),
+                style: TextStyle(
+                    color: prefixColor ?? Theme.of(context).primaryColor,
+                    fontSize: fontSize ?? 14),
               ),
             ),
           if (displayStars)

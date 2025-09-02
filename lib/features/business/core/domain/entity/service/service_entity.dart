@@ -1,5 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
+import '../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../business_employee_entity.dart';
 part 'service_entity.g.dart';
@@ -71,5 +72,7 @@ class ServiceEntity {
 
   String? get thumbnailURL =>
       attachments.isEmpty ? null : attachments.first.url;
+  String get priceStr =>
+      '${CountryHelper.currencySymbolHelper(currency)}$price'.toUpperCase();
   // final List<ServiceReport> serviceReports;
 }

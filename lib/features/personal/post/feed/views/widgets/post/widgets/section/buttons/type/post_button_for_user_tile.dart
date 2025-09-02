@@ -1,22 +1,21 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../../../core/widgets/in_dev_mode.dart';
-import '../../../../../../../../../book_visit/view/screens/view_booking_screen.dart';
+import '../../../../../../../../../../../routes/app_linking.dart';
+import '../../../../../../../../../visits/view/visit_calender.dart/screens/visit_calender_screen.dart';
 import '../../../../../../../../../listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../../../../../../../../../listing/listing_form/views/screens/add_listing_form_screen.dart';
 import '../../../../../../../../domain/entities/post_entity.dart';
-import '../../../../../../../../domain/entities/visit/visiting_entity.dart';
 
 class PostButtonsForUser extends StatelessWidget {
   const PostButtonsForUser({
     required this.post,
-    this.visit,
     super.key,
   });
 
-  final VisitingEntity? visit;
   final PostEntity? post;
 
   @override
@@ -38,7 +37,7 @@ class PostButtonsForUser extends StatelessWidget {
                 border: Border.all(
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
-                bgColor: Colors.white,
+                bgColor: Theme.of(context).scaffoldBackgroundColor,
                 isLoading: false,
                 onTap: () {
                   final AddListingFormProvider pro =
@@ -48,26 +47,24 @@ class PostButtonsForUser extends StatelessWidget {
                   pro.setListingType(post?.type);
                   pro.setPost(post);
                   pro.updateVariables();
-                  Navigator.pushNamed(context, AddListingFormScreen.routeName);
+                  AppNavigator.pushNamed(AddListingFormScreen.routeName);
                 },
                 title: 'edit_listing'.tr()),
           ),
         ]),
-        if (visit?.visitingTime != null)
+        if (ListingType.viewingList
+            .contains(ListingType.fromJson(post?.listID)))
           CustomElevatedButton(
               textColor: Theme.of(context).primaryColor,
               border: Border.all(
                 color: Theme.of(context).primaryColor,
               ),
-              bgColor: Theme.of(context).colorScheme.surface,
+              bgColor: Colors.transparent,
               title: 'calender'.tr(),
               isLoading: false,
               onTap: () {
-                Navigator.pushNamed(context, BookingScreen.routeName,
-                    arguments: <String, dynamic>{
-                      'post': post,
-                      'visit': visit,
-                    });
+                Navigator.pushNamed(context, VisitCalenderScreen.routeName,
+                    arguments: <String, String>{'pid': post?.postID ?? ''});
               })
       ],
     );

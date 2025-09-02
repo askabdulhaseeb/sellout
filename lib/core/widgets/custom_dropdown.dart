@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'costom_textformfield.dart';
 
 class CustomDropdown<T> extends FormField<bool> {
   CustomDropdown({
@@ -10,7 +11,7 @@ class CustomDropdown<T> extends FormField<bool> {
     required this.selectedItem,
     required this.onChanged,
     required FormFieldValidator<bool> validator,
-    this.isSearchable = true,
+    this.isSearchable = false,
     this.padding,
     this.height,
     this.width,
@@ -120,28 +121,32 @@ class _Widget<T> extends StatelessWidget {
                 ),
               Container(
                 width: width ?? double.infinity,
-                height: height,
+                height: height ?? 48,
                 decoration: BoxDecoration(
                   backgroundBlendMode: BlendMode.color,
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(6),
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     // width: 0.5,
-                    color: Theme.of(context).hintColor,
+                    color: ColorScheme.of(context).outlineVariant,
                   ),
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton2<T>(
-                    isExpanded: true,
-                    hint: Text(
-                      hint ?? 'select_item'.tr(),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Theme.of(context).hintColor,
+                    iconStyleData: IconStyleData(
+                      icon: Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: ColorScheme.of(context).outline,
                       ),
                     ),
+                    isExpanded: true,
+                    hint: Text(
+                      hint ?? 'select_item',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextTheme.of(context).bodyMedium?.copyWith(
+                          color: ColorScheme.of(context).outlineVariant),
+                    ).tr(),
                     items: items,
                     value: selectedItem,
                     onChanged: onChanged,
@@ -149,51 +154,18 @@ class _Widget<T> extends StatelessWidget {
                       padding:
                           padding ?? const EdgeInsets.symmetric(horizontal: 12),
                     ),
-                    dropdownSearchData: ((width ?? 101) < 150) ||
-                            (isSearchable == false)
+                    dropdownSearchData: isSearchable == false
                         ? null
                         : DropdownSearchData<T>(
                             searchController: _search,
-                            searchInnerWidgetHeight: 50,
-                            searchInnerWidget: Container(
-                              height: 50,
-                              padding: const EdgeInsets.only(
-                                top: 8,
-                                bottom: 4,
-                                right: 8,
-                                left: 8,
-                              ),
-                              child: Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: TextFormField(
-                                      expands: true,
-                                      maxLines: null,
-                                      controller: _search,
-                                      decoration: InputDecoration(
-                                        isDense: true,
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                          horizontal: 10,
-                                          vertical: 8,
-                                        ),
-                                        hintText: 'Search for an item...',
-                                        hintStyle:
-                                            const TextStyle(fontSize: 12),
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(),
-                                    child: const Text('Close'),
-                                  ),
-                                ],
-                              ),
+                            searchInnerWidgetHeight: 70,
+                            searchInnerWidget: CustomTextFormField(
+                              fieldPadding: const EdgeInsets.all(4),
+                              dense: true,
+                              style: TextTheme.of(context).labelMedium,
+                              contentPadding: const EdgeInsets.all(4),
+                              controller: _search,
+                              isExpanded: true,
                             ),
                             searchMatchFn: (
                               DropdownMenuItem<T> item,
@@ -206,10 +178,31 @@ class _Widget<T> extends StatelessWidget {
                                   .contains(searchValue.toLowerCase().trim());
                             },
                           ),
-                    menuItemStyleData: const MenuItemStyleData(height: 40),
+                    style: TextTheme.of(context).bodyMedium,
+                    dropdownStyleData: DropdownStyleData(
+                        elevation: 0,
+                        maxHeight: 250,
+                        decoration: BoxDecoration(
+                            boxShadow: <BoxShadow>[
+                              BoxShadow(
+                                  color:
+                                      Theme.of(context).scaffoldBackgroundColor)
+                            ],
+                            borderRadius: BorderRadius.circular(8),
+                            backgroundBlendMode: BlendMode.color,
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            border: Border.all(
+                                color: ColorScheme.of(context)
+                                    .outline
+                                    .withValues(alpha: 0.2))),
+                        offset: const Offset(0, 0),
+                        isOverButton: false),
+                    menuItemStyleData: const MenuItemStyleData(
+                      height: 60,
+                    ),
                   ),
                 ),
-              ),
+              )
             ],
           );
   }

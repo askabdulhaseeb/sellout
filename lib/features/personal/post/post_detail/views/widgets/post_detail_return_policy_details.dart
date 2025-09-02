@@ -14,22 +14,22 @@ class ReturnPolicyDetails extends StatelessWidget {
         Text(
           'cancel_within'.tr(),
           style: const TextStyle(fontSize: 14),
-        ).tr(),
+        ),
         Text(
           '30' '${'days'.tr()}',
           style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-        ).tr(),
+        ),
         const SizedBox(
           height: 4,
         ),
         Text(
           'return_postage'.tr(),
           style: const TextStyle(fontSize: 14),
-        ).tr(),
+        ),
         Text(
           'buyer_pay_for_return'.tr(),
           style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-        ).tr(),
+        ),
         const Divider(),
         RichText(
             text: TextSpan(

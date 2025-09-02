@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../domain/entities/user_entity.dart';
 import '../enums/profile_page_tab_type.dart';
 import '../providers/profile_provider.dart';
@@ -22,13 +21,15 @@ class ProfileGridSection extends StatelessWidget {
       child: Consumer<ProfileProvider>(
         builder: (BuildContext context, ProfileProvider profile, _) {
           return profile.displayType == ProfilePageTabType.orders
-              ?  ProfileOrdersSection(user: user)
+              ? ProfileOrdersSection(user: user)
               : profile.displayType == ProfilePageTabType.store
                   ? ProfileStoreGridview(user: user)
                   : profile.displayType == ProfilePageTabType.promos
                       ? ProfilePromoGridview(user: user)
                       : profile.displayType == ProfilePageTabType.viewing
-                          ? const ProfileMyViewingGridview()
+                          ? ProfileMyViewingGridview(
+                              user: user,
+                            )
                           : profile.displayType == ProfilePageTabType.saved
                               ? const ProfileMySavedGridview()
                               : ProfileReviewSection(user: user);

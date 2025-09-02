@@ -23,9 +23,16 @@ class BusinessPageRepositoryImpl implements BusinessPageRepository {
   }
 
   @override
-  Future<DataState<List<BookingEntity>>> getBookings(
+  Future<DataState<List<BookingEntity>>> getMyBookings(
     GetBookingsParams param,
   ) async {
-    return await bookingRemote.getBookings(param);
+    return await bookingRemote.getMyBookings(param);
+  }
+
+  @override
+  Future<DataState<List<BookingEntity>>> getBookingsByServiceId(
+    GetBookingsParams param,
+  ) async {
+    return await bookingRemote.getBookingsByServiceId(param);
   }
 }

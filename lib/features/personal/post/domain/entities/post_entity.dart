@@ -3,11 +3,12 @@ import '../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../core/enums/listing/core/privacy_type.dart';
+import '../../../../../core/helper_functions/country_helper.dart';
 import '../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../location/domain/entities/location_entity.dart';
-import '../../data/models/size_color/size_color_model.dart';
 import 'discount_entity.dart';
 import 'meetup/availability_entity.dart';
+import 'size_color/size_color_entity.dart';
 part 'post_entity.g.dart';
 
 @HiveType(typeId: 20)
@@ -30,7 +31,6 @@ class PostEntity {
     required this.deliveryType,
     required this.listOfReviews,
     required this.categoryType,
-
     //
     required this.currentLongitude,
     required this.currentLatitude,
@@ -41,19 +41,23 @@ class PostEntity {
     required this.localDelivery,
     required this.internationalDelivery,
     //
-    required this.sizeChartUrl,
+    required this.meetUpLocation,
+    required this.availability,
+    //
     required this.fileUrls,
     required this.hasDiscount,
     required this.discounts,
+    //cloth foot
+    required this.sizeChartUrl,
     required this.sizeColors,
-    //
+    required this.brand,
+    //vehicle
     required this.year,
     required this.doors,
     required this.seats,
     required this.mileage,
     required this.make,
     required this.model,
-    required this.brand,
     required this.bodyType,
     required this.emission,
     required this.fuelType,
@@ -63,12 +67,11 @@ class PostEntity {
     required this.interiorColor,
     required this.exteriorColor,
     required this.vehiclesCategory,
-    required this.meetUpLocation,
-    required this.availability,
+    //property
     required this.bathroom,
     required this.bedroom,
     required this.energyRating,
-    //
+    //pets
     required this.age,
     required this.breed,
     required this.healthChecked,
@@ -154,7 +157,7 @@ class PostEntity {
   @HiveField(70)
   final bool hasDiscount;
   @HiveField(71)
-  final List<SizeColorModel> sizeColors;
+  final List<SizeColorEntity> sizeColors;
   @HiveField(72)
   final List<DiscountEntity> discounts;
   //
@@ -244,7 +247,8 @@ class PostEntity {
   final DateTime inHiveAt;
 
   String get imageURL => fileUrls.isEmpty ? '' : fileUrls.first.url;
-  String get priceStr => '$currency $price'.toUpperCase();
+  String get priceStr =>
+      '${CountryHelper.currencySymbolHelper(currency)}$price'.toUpperCase();
 
   double get discountedPrice {
     if (hasDiscount) {

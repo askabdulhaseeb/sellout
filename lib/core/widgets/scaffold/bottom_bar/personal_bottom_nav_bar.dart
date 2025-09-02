@@ -1,10 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../features/personal/auth/signin/data/sources/local/local_auth.dart';
+import '../../../../features/personal/chats/chat_dashboard/views/widgets/unseen_message_badge.dart';
 import '../../../../features/personal/dashboard/views/providers/personal_bottom_nav_provider.dart';
 import '../../../../features/personal/user/profiles/data/sources/local/local_user.dart';
+import '../../custom_svg_icon.dart';
 
 class PersonalBottomNavBar extends StatefulWidget {
   const PersonalBottomNavBar({super.key});
@@ -34,6 +35,8 @@ class _PersonalBottomNavBarState extends State<PersonalBottomNavBar> {
     return Consumer<PersonalBottomNavProvider>(
       builder: (BuildContext context, PersonalBottomNavProvider navPro, _) {
         return BottomNavigationBar(
+          elevation: 0,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           showSelectedLabels: false,
           showUnselectedLabels: false,
           type: BottomNavigationBarType.fixed,
@@ -44,8 +47,39 @@ class _PersonalBottomNavBarState extends State<PersonalBottomNavBar> {
           items: PersonalBottomNavBarType.list
               .map((PersonalBottomNavBarType type) {
             return BottomNavigationBarItem(
-              icon: Icon(type.icon),
-              activeIcon: Icon(type.activeIcon),
+              icon: Stack(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CustomSvgIcon(
+                      size: 20,
+                      assetPath: type.icon,
+                    ),
+                  ),
+                  if (type == PersonalBottomNavBarType.list[4])
+                    const Positioned(
+                        top: 0,
+                        right: 0,
+                        child: TotalUnreadMessagesBadgeWidget())
+                ],
+              ),
+              activeIcon: Stack(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CustomSvgIcon(
+                      color: Theme.of(context).primaryColor,
+                      size: 20,
+                      assetPath: type.activeIcon,
+                    ),
+                  ),
+                  if (type == PersonalBottomNavBarType.list[4])
+                    const Positioned(
+                        top: 0,
+                        right: 0,
+                        child: TotalUnreadMessagesBadgeWidget())
+                ],
+              ),
               label: type.code.tr(),
             );
           }).toList(),

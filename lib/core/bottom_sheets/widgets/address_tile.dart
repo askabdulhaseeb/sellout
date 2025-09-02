@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../features/personal/auth/signin/domain/entities/address_entity.dart';
 
 class AddressTile extends StatelessWidget {

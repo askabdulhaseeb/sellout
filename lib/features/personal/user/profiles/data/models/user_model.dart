@@ -4,6 +4,7 @@ import '../../../../../../core/extension/string_ext.dart';
 import '../../../../../attachment/data/attchment_model.dart';
 import '../../../../auth/signin/data/models/address_model.dart';
 import '../../domain/entities/business_profile_detail_entity.dart';
+import '../../domain/entities/supporter_detail_entity.dart';
 import '../../domain/entities/user_entity.dart';
 import 'business_profile_detail_model.dart';
 import 'supporter_detail_model.dart';
@@ -88,12 +89,12 @@ class UserModel extends UserEntity {
             (json['saved'] ?? <dynamic>[]).map((dynamic x) => x)),
         interest: List<dynamic>.from(
             (json['interest'] ?? <dynamic>[]).map((dynamic x) => x)),
-        supporters: List<SupporterDetailModel>.from(
-            (json['supporters'] ?? <dynamic>[])
-                .map((dynamic x) => SupporterDetailModel.fromMap(x))),
-        supportings: List<SupporterDetailModel>.from(
-            (json['supporting'] ?? <dynamic>[])
-                .map((dynamic x) => SupporterDetailModel.fromMap(x))),
+       supporters: (json['supporters'] as List<dynamic>?)
+    ?.map((e) => SupporterDetailModel.fromMap(e).toEntity())
+    .toList() ?? <SupporterDetailEntity>[],
+supportings: (json['supporting'] as List<dynamic>?)
+    ?.map((e) => SupporterDetailModel.fromMap(e).toEntity())
+    .toList() ?? <SupporterDetailEntity>[],
         businessDetail: json['business_map'] == null
             ? <ProfileBusinessDetailModel>[]
             : List<ProfileBusinessDetailEntity>.from((json['business_map'] ??

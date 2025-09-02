@@ -5,9 +5,16 @@ import '../../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../../../../../../core/widgets/searchable_textfield.dart';
 import '../widgets/start_selling_list.dart';
 
-class StartListingScreen extends StatelessWidget {
+class StartListingScreen extends StatefulWidget {
   const StartListingScreen({super.key});
   static const String routeName = '/add';
+
+  @override
+  State<StartListingScreen> createState() => _StartListingScreenState();
+}
+
+class _StartListingScreenState extends State<StartListingScreen> {
+  String searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +34,13 @@ class StartListingScreen extends StatelessWidget {
               ),
               SearchableTextfield(
                 hintText: 'search_listing'.tr(),
-                onChanged: (String p0) {},
+                onChanged: (String value) {
+                  setState(() {
+                    searchQuery = value.toLowerCase();
+                  });
+                },
               ),
-              const StartSellingList(),
+              StartSellingList(searchQuery: searchQuery),
             ],
           ),
         ),

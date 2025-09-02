@@ -34,13 +34,15 @@ class BusinessEntityAdapter extends TypeAdapter<BusinessEntity> {
       createdAt: fields[14] as DateTime?,
       updatedAt: fields[15] as DateTime?,
       logo: fields[16] as AttachmentEntity?,
+      supporters: (fields[20] as List?)?.cast<SupporterDetailEntity>(),
+      supportings: (fields[21] as List?)?.cast<SupporterDetailEntity>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, BusinessEntity obj) {
     writer
-      ..writeByte(18)
+      ..writeByte(20)
       ..writeByte(0)
       ..write(obj.businessID)
       ..writeByte(1)
@@ -75,6 +77,10 @@ class BusinessEntityAdapter extends TypeAdapter<BusinessEntity> {
       ..write(obj.updatedAt)
       ..writeByte(16)
       ..write(obj.logo)
+      ..writeByte(20)
+      ..write(obj.supporters)
+      ..writeByte(21)
+      ..write(obj.supportings)
       ..writeByte(99)
       ..write(obj.inHiveAt);
   }

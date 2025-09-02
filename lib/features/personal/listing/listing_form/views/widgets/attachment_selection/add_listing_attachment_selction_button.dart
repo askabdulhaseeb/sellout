@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../../core/enums/core/attachment_type.dart';
+import '../../../../../../../core/theme/app_theme.dart';
+import '../../../../../../../core/utilities/app_string.dart';
+import '../../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../providers/add_listing_form_provider.dart';
 
 class AddListingAttachmentSelectionButton extends StatelessWidget {
@@ -13,7 +16,8 @@ class AddListingAttachmentSelectionButton extends StatelessWidget {
     return Row(
       children: <Widget>[
         button(
-            icon: Icons.photo_outlined,
+            context: context,
+            icon: AppStrings.selloutStartListingImageIcon,
             text: 'add_photos'.tr(),
             onPressed: () async => await Provider.of<AddListingFormProvider>(
                         context,
@@ -24,7 +28,8 @@ class AddListingAttachmentSelectionButton extends StatelessWidget {
                 )),
         const SizedBox(width: 16),
         button(
-            icon: Icons.videocam_outlined,
+            context: context,
+            icon: AppStrings.selloutStartListingVideoIcon,
             text: 'add_videos'.tr(),
             onPressed: () async => await Provider.of<AddListingFormProvider>(
                         context,
@@ -38,7 +43,8 @@ class AddListingAttachmentSelectionButton extends StatelessWidget {
   }
 
   Widget button({
-    required IconData icon,
+    required BuildContext context,
+    required String icon,
     required String text,
     required VoidCallback onPressed,
   }) {
@@ -48,7 +54,7 @@ class AddListingAttachmentSelectionButton extends StatelessWidget {
         opacity: 0.8,
         child: Container(
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
+            border: Border.all(color: ColorScheme.of(context).outlineVariant),
             color: Colors.transparent,
             borderRadius: radius,
           ),
@@ -63,11 +69,16 @@ class AddListingAttachmentSelectionButton extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Icon(icon),
+                    CustomSvgIcon(
+                        assetPath: icon, color: AppTheme.primaryColor),
                     const SizedBox(height: 8),
                     Text(
                       text,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: AppTheme.primaryColor,
+                      ),
                     ),
                   ],
                 ),

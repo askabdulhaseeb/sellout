@@ -3,15 +3,17 @@ import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
-import '../../../../../../core/enums/listing/pet/age_time_type.dart';
 import '../../../../../attachment/data/attchment_model.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../location/data/models/location_model.dart';
 import '../../../../location/domain/entities/location_entity.dart';
+import '../../../../post/data/models/size_color/color_model.dart';
 import '../../../../post/data/models/size_color/size_color_model.dart';
 import '../../../../post/domain/entities/discount_entity.dart';
+import '../../../../post/domain/entities/size_color/color_entity.dart';
+import '../../../../post/domain/entities/size_color/size_color_entity.dart';
 import '../../domain/entities/sub_category_entity.dart';
 
 class AddListingParam {
@@ -99,7 +101,7 @@ class AddListingParam {
   final int? currentLongitude;
   final String? brand;
   final String? type;
-  final List<SizeColorModel>? sizeColor;
+  final List<SizeColorEntity>? sizeColor;
   final List<DiscountEntity>? discounts;
   final String? accessCode;
   final String? postID;
@@ -133,14 +135,13 @@ class AddListingParam {
   final String? propertyType;
   final String? animalFriendly;
   //pets
-  final AgeTimeType? age;
+  final String? age;
   final String? readyToLeave;
   final String? breed;
   final bool? healthChecked;
   final bool? vaccinationUpToDate;
   final bool? wormAndFleaTreated;
   final String? petsCategory;
-
   String get acceptOfferJSON => acceptOffer ? 'true' : 'false';
 
   Map<String, String> toMap() {
@@ -223,7 +224,13 @@ class AddListingParam {
   Map<String, String> _listLocMAP() {
     return <String, String>{
       'list_id': listingType.json,
-      'address': category?.address ?? '',
+      'address': listingType == ListingType.vehicle
+          ? '${listingType.json}/$vehicleCategory/$bodyType'
+          : listingType == ListingType.pets
+              ? '${listingType.json}/$petsCategory/$breed'
+              : listingType == ListingType.property
+                  ? '${listingType.json}/$propertyType'
+                  : category?.address ?? '',
       if (currency != null) 'currency': currency ?? '',
       'current_latitude': currentLatitude.toString(),
       'current_longitude': currentLongitude.toString(),
@@ -258,8 +265,16 @@ class AddListingParam {
       'quantity': quantity ?? '',
       'item_condition': condition.json,
       'brand': brand ?? '',
-      'size_colors': jsonEncode(
-          sizeColor?.map((SizeColorModel e) => e.toMap()).toList()), //
+      'size_colors': jsonEncode(sizeColor
+          ?.map((SizeColorEntity e) => SizeColorModel(
+                value: e.value,
+                colors: e.colors
+                    .map((ColorEntity c) => ColorModel.fromEntity(c))
+                    .toList(),
+                id: e.id,
+              ).toMap())
+          .toList()),
+
       'type': type ?? '', //
     };
     mapp.addAll(_titleMAP());
@@ -328,7 +343,7 @@ class AddListingParam {
   _pet() {
     final Map<String, String> mapp = <String, String>{
       'quantity': quantity.toString(),
-      'age': age?.json ?? '',
+      'age': age ?? '',
       'post_privacy': privacyType.json,
       'ready_to_leave': readyToLeave ?? '',
       'breed': breed ?? '',

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_theme.dart';
+
 class CustomToggleSwitch<T> extends StatelessWidget {
   const CustomToggleSwitch({
     required this.labels,
@@ -9,6 +11,15 @@ class CustomToggleSwitch<T> extends StatelessWidget {
     this.customWidths,
     this.initialValue,
     this.readOnly = false,
+    this.selectedColors,
+    this.isShaded = true,
+    this.seletedFontSize = 14,
+    this.verticalPadding = 12,
+    this.horizontalPadding = 16,
+    this.unseletedBorderColor,
+    this.unseletedTextColor,
+    this.borderWidth,
+    this.borderRad = 8,
     super.key,
   });
   final List<T> labels;
@@ -18,73 +29,99 @@ class CustomToggleSwitch<T> extends StatelessWidget {
   final List<String> labelStrs;
   final List<double>? customWidths;
   final void Function(T)? onToggle;
+  final List<Color>? selectedColors;
+  final bool isShaded;
+  final double seletedFontSize;
+  final double verticalPadding;
+  final double horizontalPadding;
+  final Color? unseletedBorderColor;
+  final Color? unseletedTextColor;
+  final double? borderWidth;
+  final double borderRad;
 
   @override
   Widget build(BuildContext context) {
     final double minWidth = MediaQuery.of(context).size.width - 52;
-    final BorderRadius borderRadius = BorderRadius.circular(8);
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          if (labelText.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 2),
-              child: Text(
-                labelText,
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
+    final BorderRadius borderRadius = BorderRadius.circular(borderRad);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        if (labelText.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 2),
+            child: Text(
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              labelText,
+              style: const TextStyle(fontWeight: FontWeight.w500),
             ),
-          Wrap(
-            spacing: labels.length == 2 ? 16 : 8,
-            runSpacing: 16,
-            alignment: WrapAlignment.spaceBetween,
-            runAlignment: WrapAlignment.spaceBetween,
-            children: labelStrs.map(
-              (String e) {
-                final int index = labels.contains(initialValue)
-                    ? labels.indexWhere((T e2) => e2 == initialValue)
-                    : 0;
-                final int currentIndex = labelStrs.indexOf(e);
-                bool isSelected = index == currentIndex;
-                return InkWell(
-                  borderRadius: borderRadius,
-                  onTap: () => onToggle!(labels[currentIndex]),
-                  child: Container(
-                    width: minWidth / labelStrs.length,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 16,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: borderRadius,
+          ),
+        Wrap(
+          spacing: labels.length == 2 ? 16 : 4,
+          runSpacing: 16,
+          alignment: WrapAlignment.spaceBetween,
+          runAlignment: WrapAlignment.spaceBetween,
+          children: labelStrs.map(
+            (String e) {
+              final int index = labels.contains(initialValue)
+                  ? labels.indexWhere((T e2) => e2 == initialValue)
+                  : -1;
+              final int currentIndex = labelStrs.indexOf(e);
+              final bool isSelected = index == currentIndex;
+              final Color selectedColor = (selectedColors != null &&
+                      selectedColors!.length > currentIndex)
+                  ? selectedColors![currentIndex]
+                  : AppTheme.primaryColor;
+              final double buttonWidth = (customWidths != null &&
+                      customWidths!.length > currentIndex)
+                  ? customWidths![currentIndex]
+                  : (minWidth / labelStrs.length).clamp(0.0, double.infinity);
+              return InkWell(
+                borderRadius: borderRadius,
+                onTap: readOnly
+                    ? null
+                    : () => onToggle?.call(labels[currentIndex]),
+                child: Container(
+                  width: buttonWidth,
+                  padding: EdgeInsets.symmetric(
+                    vertical: verticalPadding,
+                    horizontal: horizontalPadding,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: borderRadius,
+                    color: isSelected
+                        ? selectedColor.withValues(alpha: isShaded ? 0.1 : 0)
+                        : Colors.transparent,
+                    border: Border.all(
+                      width: borderWidth ?? 2,
                       color: isSelected
-                          ? Theme.of(context).primaryColor.withOpacity(0.05)
-                          : Colors.transparent,
-                      border: Border.all(
-                        color: isSelected
-                            ? Theme.of(context).primaryColor
-                            : Colors.grey,
-                      ),
+                          ? selectedColor
+                          : unseletedBorderColor ??
+                              ColorScheme.of(context).outline,
                     ),
-                    child: Center(
-                      child: Text(
-                        e,
-                        style: TextStyle(
-                          color: isSelected
-                              ? Theme.of(context).primaryColor
-                              : Colors.grey,
-                        ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      e,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: seletedFontSize,
+                        fontWeight: FontWeight.w500,
+                        color: isSelected
+                            ? selectedColor
+                            : unseletedTextColor ??
+                                ColorScheme.of(context).outline,
                       ),
                     ),
                   ),
-                );
-              },
-            ).toList(),
-          ),
-        ],
-      ),
+                ),
+              );
+            },
+          ).toList(),
+        ),
+      ],
     );
   }
 }

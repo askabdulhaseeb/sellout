@@ -1,12 +1,76 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../../core/widgets/custom_Switch_list_tile.dart';
 import '../../../../../post/domain/entities/discount_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
 
-class AddListingDiscountSection extends StatelessWidget {
+class AddListingDiscountSection extends StatefulWidget {
   const AddListingDiscountSection({super.key});
+
+  @override
+  State<AddListingDiscountSection> createState() =>
+      _AddListingDiscountSectionState();
+}
+
+class _AddListingDiscountSectionState extends State<AddListingDiscountSection> {
+  final Map<int, TextEditingController> _controllers =
+      <int, TextEditingController>{};
+
+  @override
+  void dispose() {
+    for (final TextEditingController controller in _controllers.values) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  Widget buildDiscountField({
+    required double width,
+    required int index,
+    required DiscountEntity discount,
+    required AddListingFormProvider addPro,
+  }) {
+    // Initialize controller if not exists
+    _controllers.putIfAbsent(
+      index,
+      () => TextEditingController(text: discount.discount.toString()),
+    );
+
+// Inside buildDiscountField:
+    return SizedBox(
+      width: width / 3,
+      child: CustomTextFormField(
+        labelText: ' ${discount.quantity} ${'items'.tr()}',
+        controller: _controllers[index],
+        onChanged: (String value) {
+          double parsed = double.tryParse(value) ?? 0.0;
+          if (parsed > 100) {
+            parsed = 100;
+            _controllers[index]!.text = '100';
+            _controllers[index]!.selection = TextSelection.fromPosition(
+              TextPosition(offset: _controllers[index]!.text.length),
+            );
+          }
+          addPro.setDiscounts(
+            discount.copyWith(discount: parsed),
+          );
+        },
+        hint: 'Ex.${discount.quantity * 5}',
+        keyboardType: TextInputType.number,
+        textAlign: TextAlign.end,
+        suffixIcon: const Opacity(
+          opacity: 0.7,
+          child: Icon(Icons.percent),
+        ),
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.allow(RegExp(r'^\d{0,3}(\.\d{0,2})?$')),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,44 +78,25 @@ class AddListingDiscountSection extends StatelessWidget {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider addPro, _) {
         return Column(
-          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            SwitchListTile.adaptive(
-              contentPadding: const EdgeInsets.all(0),
-              title: const Text(
-                'select_discount',
-                style: TextStyle(fontWeight: FontWeight.w500),
-              ).tr(),
+            CustomSwitchListTile(
+              title: 'select_discount'.tr(),
               value: addPro.isDiscounted,
               onChanged: (bool value) => addPro.setIsDiscount(value),
             ),
             if (addPro.isDiscounted)
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: addPro.discounts
-                    .map(
-                      (DiscountEntity e) => SizedBox(
-                        width: width / 3,
-                        child: CustomTextFormField(
-                          labelText: ' ${e.quantity} ${'items'.tr()}',
-                          controller: TextEditingController(
-                            text: e.discount.toString(),
-                          ),
-                          onChanged: (String p0) => addPro.setDiscounts(
-                            e.copyWith(discount: double.tryParse(p0) ?? 0.0),
-                          ),
-                          hint: 'Ex.${e.quantity * 5}',
-                          keyboardType: TextInputType.number,
-                          textAlign: TextAlign.end,
-                          suffixIcon: const Opacity(
-                            opacity: 0.7,
-                            child: Icon(Icons.percent),
-                          ),
-                        ),
-                      ),
-                    )
-                    .toList(),
+                children: List<Widget>.generate(
+                  addPro.discounts.length,
+                  (int index) => buildDiscountField(
+                    width: width,
+                    index: index,
+                    discount: addPro.discounts[index],
+                    addPro: addPro,
+                  ),
+                ),
               ),
           ],
         );

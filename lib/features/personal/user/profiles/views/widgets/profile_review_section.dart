@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/linear_rating_widget.dart';
 import '../../../../post/post_detail/views/providers/post_detail_provider.dart';
@@ -8,8 +7,8 @@ import '../../../../post/post_detail/views/widgets/reviews/post_detail_review_li
 import '../../../../review/data/sources/local_review.dart';
 import '../../../../review/domain/entities/review_entity.dart';
 import '../../../../review/domain/param/get_review_param.dart';
-import '../../../../review/features/reivew_list/views/params/review_list_param.dart';
-import '../../../../review/features/reivew_list/views/screens/review_list_screen.dart';
+import '../../../../review/views/params/review_list_param.dart';
+import '../../../../review/views/screens/review_list_screen.dart';
 import '../../data/models/user_model.dart';
 
 class ProfileReviewSection extends StatelessWidget {
@@ -32,7 +31,6 @@ class ProfileReviewSection extends StatelessWidget {
       ) {
         final List<ReviewEntity> reviews =
             snapshot.data?.entity ?? LocalReview().reviewsWithQuery(param);
-
         return SingleChildScrollView(
           primary: false,
           child: Column(

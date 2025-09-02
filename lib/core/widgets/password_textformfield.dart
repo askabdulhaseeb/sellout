@@ -67,31 +67,35 @@ class PasswordTextFormFieldState extends State<PasswordTextFormField> {
                 : widget.validator!(value),
             onFieldSubmitted: widget.onFieldSubmitted,
             decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.transparent,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-              hintText: '********',
-              hintStyle: TextStyle(color: Colors.grey.shade400),
-              suffixIcon: IconButton(
-                onPressed: () => setState(() {
-                  _notVisible = !_notVisible;
-                }),
-                splashRadius: 16,
-                icon: (_notVisible == true)
-                    ? const Icon(CupertinoIcons.eye)
-                    : const Icon(CupertinoIcons.eye_slash),
-              ),
-              focusColor: Theme.of(context).primaryColor,
-              errorBorder: OutlineInputBorder(
-                borderSide:
-                    BorderSide(color: Theme.of(context).colorScheme.error),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              border: OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.transparent),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-            ),
+                filled: true,
+                fillColor: Colors.transparent,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                hintText: '********',
+                hintStyle: TextStyle(color: Colors.grey.shade400),
+                suffixIcon: IconButton(
+                  onPressed: () => setState(() {
+                    _notVisible = !_notVisible;
+                  }),
+                  splashRadius: 16,
+                  icon: (_notVisible == true)
+                      ? const Icon(CupertinoIcons.eye)
+                      : const Icon(CupertinoIcons.eye_slash),
+                ),
+                focusColor: Theme.of(context).primaryColor,
+                errorBorder: OutlineInputBorder(
+                  borderSide:
+                      BorderSide(color: Theme.of(context).colorScheme.error),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                border: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.transparent),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide:
+                      BorderSide(color: ColorScheme.of(context).outlineVariant),
+                  borderRadius: BorderRadius.circular(8),
+                )),
           ),
         ],
       ),
