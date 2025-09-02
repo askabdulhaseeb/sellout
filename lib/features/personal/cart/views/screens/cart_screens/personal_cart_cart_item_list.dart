@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../data/models/cart/cart_item_model.dart';
 import '../../../data/sources/local_cart.dart';
@@ -20,11 +19,10 @@ class PersonalCartItemList extends StatelessWidget {
           orElse: () => CartModel(),
         );
         final List<CartItemEntity> items = cart.cartItems;
-        return SizedBox(
-          child: ListView.separated(
-            separatorBuilder: (BuildContext context, int index) => Divider(
-              color: Theme.of(context).dividerColor,
-            ),
+
+        return Expanded(
+          child: ListView.builder(
+            padding: const EdgeInsets.all(16),
             shrinkWrap: true,
             primary: false,
             itemCount: items.length,

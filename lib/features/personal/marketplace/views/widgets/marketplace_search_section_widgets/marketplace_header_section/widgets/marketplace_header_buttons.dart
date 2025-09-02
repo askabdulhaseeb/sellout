@@ -37,21 +37,21 @@ class MarketPlaceHeaderButtons extends StatelessWidget {
                     ),
                 icon: AppStrings.selloutMarketplaceLocationIcon,
                 label: pro.radiusType == RadiusType.worldwide
-                    ? 'location'.tr()
+                    ? 'location'
                     : '${pro.selectedRadius.toInt()} km'),
             if (pro.queryController.text.isEmpty)
               _HeaderButton(
                 onPressed: () =>
                     Navigator.pushNamed(context, YourOrdersScreen.routeName),
                 icon: null,
-                label: 'your_orders'.tr(),
+                label: 'your_orders',
               ),
             if (pro.queryController.text.isEmpty)
               _HeaderButton(
                 onPressed: () =>
                     Navigator.pushNamed(context, SavedPostsPage.routeName),
                 icon: null,
-                label: 'saved'.tr(),
+                label: 'saved',
               ),
             if (pro.queryController.text.isEmpty)
               _HeaderButton(
