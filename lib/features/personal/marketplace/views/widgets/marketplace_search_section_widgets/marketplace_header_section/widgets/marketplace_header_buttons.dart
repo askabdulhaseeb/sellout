@@ -37,28 +37,28 @@ class MarketPlaceHeaderButtons extends StatelessWidget {
                     ),
                 icon: AppStrings.selloutMarketplaceLocationIcon,
                 label: pro.radiusType == RadiusType.worldwide
-                    ? 'location'
+                    ? 'location'.tr()
                     : '${pro.selectedRadius.toInt()} km'),
             if (pro.queryController.text.isEmpty)
               _HeaderButton(
                 onPressed: () =>
                     Navigator.pushNamed(context, YourOrdersScreen.routeName),
                 icon: null,
-                label: 'your_orders',
+                label: 'your_orders'.tr(),
               ),
             if (pro.queryController.text.isEmpty)
               _HeaderButton(
                 onPressed: () =>
                     Navigator.pushNamed(context, SavedPostsPage.routeName),
                 icon: null,
-                label: 'saved',
+                label: 'saved'.tr(),
               ),
             if (pro.queryController.text.isEmpty)
               _HeaderButton(
                 onPressed: () =>
                     Navigator.pushNamed(context, BuyAgainScreen.routeName),
                 icon: null,
-                label: 'buy_again',
+                label: 'buy_again'.tr(),
               ),
             if (pro.queryController.text.isNotEmpty)
               _HeaderButton(
@@ -67,7 +67,7 @@ class MarketPlaceHeaderButtons extends StatelessWidget {
                   builder: (BuildContext context) => const SortBottomSheet(),
                 ),
                 icon: AppStrings.selloutMarketplaceSortIcon,
-                label: 'sort',
+                label: 'sort'.tr(),
               ),
             if (pro.queryController.text.isNotEmpty)
               _HeaderButton(
@@ -81,7 +81,7 @@ class MarketPlaceHeaderButtons extends StatelessWidget {
                       const MarketPlaceFilterBottomSheet(),
                 ),
                 icon: AppStrings.selloutMarketplaceFilterIcon,
-                label: 'filter',
+                label: 'filter'.tr(),
               ),
           ],
         ),
@@ -97,15 +97,15 @@ class _HeaderButton extends StatelessWidget {
     this.icon,
   });
 
-  final String? icon; // icon is now nullable
+  final String? icon;
   final String label;
   final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final TextStyle? textStyle =
-        theme.textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w400);
+    final TextStyle? textStyle = theme.textTheme.labelSmall
+        ?.copyWith(fontWeight: FontWeight.w400, fontSize: 10);
 
     return Expanded(
       child: InkWell(
@@ -120,19 +120,22 @@ class _HeaderButton extends StatelessWidget {
                 Border.all(color: theme.colorScheme.outlineVariant, width: 1),
           ),
           child: Row(
+            spacing: 4,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              if (icon != null) ...<Widget>[
+              if (icon != null)
                 CustomSvgIcon(
                   assetPath: icon!,
                   size: 14,
                   color: AppTheme.primaryColor,
                 ),
-                const SizedBox(width: 6),
-              ],
-              Text(
-                label.tr(),
-                style: textStyle,
+              Flexible(
+                child: Text(
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  label,
+                  style: textStyle,
+                ),
               ),
             ],
           ),

@@ -23,7 +23,7 @@ class UpdateLocationButton extends StatelessWidget {
             pro.updateLocation(latlng, selectedLocation);
             Navigator.pop(context);
           },
-          title: 'Update Location'.tr(),
+          title: 'update_location'.tr(),
         ),
       ),
     );
