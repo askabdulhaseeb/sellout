@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../data/sources/local/local_post.dart';
-import '../../../domain/entities/post_entity.dart';
+import '../../../domain/entities/post/post_entity.dart';
 import '../providers/post_detail_provider.dart';
 import '../widgets/post_details_sections/cloth_foot_post_detail_section.dart';
 import '../widgets/post_details_sections/food_drink_post_Detail_section.dart';

@@ -7,7 +7,7 @@ import '../../../../../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../../../../services/get_it.dart';
-import '../../../../../../../../../domain/entities/post_entity.dart';
+import '../../../../../../../../../domain/entities/post/post_entity.dart';
 import '../../../../../../../../../domain/entities/size_color/color_entity.dart';
 import '../../../../../../../../../domain/entities/size_color/size_color_entity.dart';
 import '../../../../../../../../../domain/params/add_to_cart_param.dart';
@@ -39,7 +39,8 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
     setState(() => isLoading = true);
 
     try {
-      if (widget.post.sizeColors.isNotEmpty && !widget.detailWidget) {
+      if (widget.post.clothFootInfo.sizeColors.isNotEmpty &&
+          !widget.detailWidget) {
         await showDialog(
           context: context,
           builder: (_) => AddToCartDialog(post: widget.post),

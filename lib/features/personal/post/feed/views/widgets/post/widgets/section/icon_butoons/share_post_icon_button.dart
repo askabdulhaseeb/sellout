@@ -15,7 +15,7 @@ import '../../../../../../../../chats/chat_dashboard/domain/entities/chat/partic
 import '../../../../../../../../user/profiles/domain/entities/supporter_detail_entity.dart';
 import '../../../../../../../../user/profiles/domain/entities/user_entity.dart';
 import '../../../../../../../../user/profiles/domain/usecase/get_user_by_uid.dart';
-import '../../../../../../../domain/entities/post_entity.dart';
+import '../../../../../../../domain/entities/post/post_entity.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../../domain/params/share_in_chat_params.dart';
 

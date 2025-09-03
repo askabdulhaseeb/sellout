@@ -3,7 +3,7 @@ import '../../../../../../core/theme/app_theme.dart';
 import '../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../../bookings/domain/entity/booking_entity.dart';
-import '../../../../post/domain/entities/post_entity.dart';
+import '../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../post/domain/entities/visit/visiting_entity.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';

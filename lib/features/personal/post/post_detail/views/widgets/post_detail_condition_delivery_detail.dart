@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/theme/app_theme.dart';
-import '../../../domain/entities/post_entity.dart';
+import '../../../domain/entities/post/post_entity.dart';
 import 'post_rating_section.dart';
 
 class ConditionDeliveryWidget extends StatelessWidget {

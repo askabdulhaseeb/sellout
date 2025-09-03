@@ -5,7 +5,7 @@ import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../routes/app_linking.dart';
-import '../../../../../post/domain/entities/post_entity.dart';
+import '../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../post/domain/entities/visit/visiting_entity.dart';
 import '../../../../../post/post_detail/views/screens/post_detail_screen.dart';
 import '../../../data/sources/local/local_visits.dart';

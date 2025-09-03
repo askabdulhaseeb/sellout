@@ -5,7 +5,8 @@ import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../../../../../../core/widgets/loaders/loader.dart';
-import '../../../../../post/domain/entities/post_entity.dart';
+
+import '../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../data/sources/local_cart.dart';
 import '../../../providers/cart_provider.dart';
 

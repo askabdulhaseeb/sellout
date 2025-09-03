@@ -1,6 +1,6 @@
 import '../../../../../core/params/report_params.dart';
 import '../../../../../core/sources/data_state.dart';
-import '../../domain/entities/post_entity.dart';
+import '../../domain/entities/post/post_entity.dart';
 import '../../domain/params/add_to_cart_param.dart';
 import '../../domain/params/create_offer_params.dart';
 import '../../domain/params/feed_response_params.dart';

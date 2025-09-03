@@ -1,7 +1,7 @@
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../auth/signin/domain/repositories/signin_repository.dart';
-import '../../../../post/domain/entities/post_entity.dart';
+import '../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../post/domain/entities/visit/visiting_entity.dart';
 import '../../views/params/add_remove_supporter_params.dart';
 import '../../views/params/update_user_params.dart';

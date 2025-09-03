@@ -4,7 +4,7 @@ import '../../../../../../../../../../../../core/extension/string_ext.dart';
 import '../../../../../../../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
-import '../../../../../../../../../domain/entities/post_entity.dart';
+import '../../../../../../../../../domain/entities/post/post_entity.dart';
 import '../../../../../../../../../domain/entities/size_color/color_entity.dart';
 import '../../../../../../../../../domain/entities/size_color/size_color_entity.dart';
 import '../../../bottomsheets/make_offer_bottomsheet/make_an_offer_bottomsheet.dart';
@@ -45,7 +45,7 @@ class _PostMakeOfferButtonState extends State<PostMakeOfferButton> {
         post: widget.post,
         onNextTap: (String? size, String? color) {
           selectedSize = size;
-          selectedColor = widget.post.sizeColors
+          selectedColor = widget.post.clothFootInfo.sizeColors
               .firstWhere((SizeColorEntity e) => e.value == size)
               .colors
               .firstWhere((ColorEntity c) => c.code == color);
@@ -60,7 +60,8 @@ class _PostMakeOfferButtonState extends State<PostMakeOfferButton> {
     return CustomElevatedButton(
       bgColor: Theme.of(context).primaryColor,
       onTap: () {
-        if (widget.post.sizeColors.isNotEmpty && widget.detailWidget == false) {
+        if (widget.post.clothFootInfo.sizeColors.isNotEmpty &&
+            widget.detailWidget == false) {
           _openSelectionDialog(context);
         } else {
           _openMakeOfferBottomSheet(context);
@@ -115,7 +116,7 @@ class _SelectSizeColorDialogState extends State<SelectSizeColorDialog> {
                     child: CustomDropdown<SizeColorEntity>(
                       title: 'size'.tr(),
                       hint: 'size'.tr(),
-                      items: widget.post.sizeColors
+                      items: widget.post.clothFootInfo.sizeColors
                           .map(
                             (SizeColorEntity e) =>
                                 DropdownMenuItem<SizeColorEntity>(
@@ -173,7 +174,8 @@ class _SelectSizeColorDialogState extends State<SelectSizeColorDialog> {
                 ],
               ),
               SizeChartButtonTile(
-                  sizeChartURL: widget.post.sizeChartUrl?.url ?? ''),
+                  sizeChartURL:
+                      widget.post.clothFootInfo.sizeChartUrl?.url ?? ''),
               CustomElevatedButton(
                 isLoading: false,
                 title: 'next'.tr(),

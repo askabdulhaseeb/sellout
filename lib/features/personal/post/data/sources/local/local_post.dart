@@ -4,7 +4,7 @@ import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/utilities/app_string.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../../domain/entities/post_entity.dart';
+import '../../../domain/entities/post/post_entity.dart';
 import '../../../domain/usecase/get_specific_post_usecase.dart';
 
 class LocalPost {

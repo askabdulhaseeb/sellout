@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../../../core/utilities/app_string.dart';
 import '../../../../../../core/widgets/custom_svg_icon.dart';
-import '../../../domain/entities/post_entity.dart';
+import '../../../domain/entities/post/post_entity.dart';
 
 class PostDetailPropertyKeyFeaturesWidget extends StatelessWidget {
   const PostDetailPropertyKeyFeaturesWidget({super.key, required this.post});
@@ -22,13 +22,14 @@ class PostDetailPropertyKeyFeaturesWidget extends StatelessWidget {
         ?.copyWith(fontWeight: FontWeight.w500);
 
     final List<_Feature> features = <_Feature>[
-      _Feature(
-          AppStrings.selloutPostDetailhomeIcon, '${post.propertyCategory}'),
-      _Feature(AppStrings.selloutPostDetailTenureIcon, '${post.tenureType}'),
+      _Feature(AppStrings.selloutPostDetailhomeIcon,
+          '${post.propertyInfo?.propertyCategory}'),
+      _Feature(AppStrings.selloutPostDetailTenureIcon,
+          '${post.propertyInfo?.tenureType}'),
       _Feature(AppStrings.selloutPostDetailBedroomIcon,
-          '${post.bedroom} ${'bedrooms'.tr()}'),
+          '${post.propertyInfo?.bedroom} ${'bedrooms'.tr()}'),
       _Feature(AppStrings.selloutPostDetailBathroomIcon,
-          '${post.bathroom} ${'bathrooms'.tr()}'),
+          '${post.propertyInfo?.bathroom} ${'bathrooms'.tr()}'),
       const _Feature(AppStrings.selloutPostDetailGardenIcon, '***'),
       const _Feature(AppStrings.selloutPostDetailAreaIcon, '***** sq ft'),
     ];

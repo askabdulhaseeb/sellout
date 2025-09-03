@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../review/views/screens/write_review_screen.dart';
-import '../../../../domain/entities/post_entity.dart';
+import '../../../../domain/entities/post/post_entity.dart';
 
 class PostDetailReviewButtonSection extends StatelessWidget {
   const PostDetailReviewButtonSection({required this.post, super.key});

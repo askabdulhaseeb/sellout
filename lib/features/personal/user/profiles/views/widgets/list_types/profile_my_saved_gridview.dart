@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
-import '../../../../../post/domain/entities/post_entity.dart';
+import '../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../data/sources/local/local_user.dart';
 import '../subwidgets/post_grid_view_tile.dart';
 

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../core/widgets/loaders/home_post_loader.dart';
-import '../../../../domain/entities/post_entity.dart';
+import '../../../../domain/entities/post/post_entity.dart';
 import '../../providers/feed_provider.dart';
 import 'widgets/home_post_tile.dart';
 

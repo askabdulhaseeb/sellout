@@ -10,7 +10,7 @@ import '../../../../chats/chat/views/providers/chat_provider.dart';
 import '../../../../chats/chat/views/screens/chat_screen.dart';
 import '../../../../chats/chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../../../chats/chat_dashboard/domain/usecase/get_my_chats_usecase.dart';
-import '../../../domain/entities/post_entity.dart';
+import '../../../domain/entities/post/post_entity.dart';
 import '../../../domain/params/create_offer_params.dart';
 import '../../../domain/params/feed_response_params.dart';
 import '../../../domain/params/get_feed_params.dart';

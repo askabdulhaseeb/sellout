@@ -2,7 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/loaders/post_grid_loader.dart';
-import '../../../../../post/domain/entities/post_entity.dart';
+
+import '../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../user/profiles/views/widgets/subwidgets/post_grid_view_tile.dart';
 import '../../../providers/marketplace_provider.dart';
 

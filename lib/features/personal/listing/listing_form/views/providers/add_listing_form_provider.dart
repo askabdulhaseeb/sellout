@@ -21,7 +21,7 @@ import '../../../../post/data/models/meetup/availability_model.dart';
 import '../../../../post/data/models/size_color/size_color_model.dart';
 import '../../../../post/domain/entities/discount_entity.dart';
 import '../../../../post/domain/entities/meetup/availability_entity.dart';
-import '../../../../post/domain/entities/post_entity.dart';
+import '../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../post/domain/entities/size_color/color_entity.dart';
 import '../../../../post/domain/entities/size_color/size_color_entity.dart';
 import '../../data/models/listing_model.dart';
@@ -158,79 +158,79 @@ class AddListingFormProvider extends ChangeNotifier {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  PostEntity? createPostFromFormData() {
-    debugPrint('listing variables preview');
-    return PostEntity(
-        engineSize: double.tryParse(engineSize.text),
-        mileageUnit: _selectedMileageUnit,
-        energyRating: selectedEnergyRating,
-        propertytype: '',
-        transmission: '',
-        updatedAt: DateTime.now(),
-        listID: '',
-        postID: '',
-        businessID: LocalAuth.currentUser?.businessID,
-        currency: LocalAuth.currentUser?.currency?.toUpperCase(),
-        type: listingType ?? ListingType.items,
-        listOfReviews: <double>[],
-        collectionLatitude: 23,
-        collectionLongitude: 123,
-        createdAt: DateTime.now(),
-        createdBy: LocalAuth.currentUser?.userID ?? '',
-        currentLatitude: 32,
-        currentLongitude: 323,
-        sizeChartUrl: null,
-        discounts: <DiscountEntity>[],
-        hasDiscount: false,
-        isActive: false,
-        updatedBy: '',
-        title: _title.text,
-        description: _description.text,
-        price: double.tryParse(_price.text) ?? 0.0,
-        quantity: int.tryParse(_quantity.text) ?? 1,
-        minOfferAmount: double.tryParse(_minimumOffer.text) ?? 0.0,
-        localDelivery: int.tryParse(_localDeliveryFee.text) ?? 0,
-        internationalDelivery:
-            int.tryParse(_internationalDeliveryFee.text) ?? 0,
-        accessCode: _accessCode,
-        condition: _condition,
-        acceptOffers: _acceptOffer,
-        privacy: _privacy,
-        deliveryType: _deliveryType,
-        sizeColors: _sizeColorEntities,
-        address: _location.text,
-        categoryType: _selectedClothSubCategory,
-        brand: _brand.text,
-        make: _make,
-        model: _model.text,
-        year: int.tryParse(_year.text) ?? 0,
-        mileage: int.tryParse(_mileage.text) ?? 0,
-        emission: _emission,
-        doors: int.tryParse(_doors.text) ?? 0,
-        seats: int.tryParse(_seats.text) ?? 0,
-        vehiclesCategory: _selectedVehicleCategory,
-        bodyType: _selectedBodyType,
-        fuelType: _selectedEnergyRating,
-        interiorColor: _selectedVehicleColor,
-        exteriorColor: _selectedVehicleColor,
-        bedroom: int.tryParse(_bedroom.text) ?? 0,
-        bathroom: int.tryParse(_bathroom.text) ?? 0,
-        garden: _garden,
-        parking: _parking,
-        healthChecked: _healthChecked,
-        wormAndFleaTreated: _wormAndFleaTreated,
-        vaccinationUpToDate: _vaccinationUpToDate,
-        readyToLeave: _time,
-        age: _age,
-        breed: _breed,
-        petsCategory: _petCategory,
-        propertyCategory: _selectedPropertySubCategory,
-        tenureType: _tenureType,
-        availability: _availability,
-        collectionLocation: _selectedCollectionLocation,
-        meetUpLocation: _selectedMeetupLocation,
-        fileUrls: <AttachmentEntity>[]);
-  }
+  // PostEntity? createPostFromFormData() {
+  //   debugPrint('listing variables preview');
+  //   return PostEntity(
+  //       engineSize: double.tryParse(engineSize.text),
+  //       mileageUnit: _selectedMileageUnit,
+  //       energyRating: selectedEnergyRating,
+  //       propertytype: '',
+  //       transmission: '',
+  //       updatedAt: DateTime.now(),
+  //       listID: '',
+  //       postID: '',
+  //       businessID: LocalAuth.currentUser?.businessID,
+  //       currency: LocalAuth.currentUser?.currency?.toUpperCase(),
+  //       type: listingType ?? ListingType.items,
+  //       listOfReviews: <double>[],
+  //       collectionLatitude: 23,
+  //       collectionLongitude: 123,
+  //       createdAt: DateTime.now(),
+  //       createdBy: LocalAuth.currentUser?.userID ?? '',
+  //       currentLatitude: 32,
+  //       currentLongitude: 323,
+  //       sizeChartUrl: null,
+  //       discounts: <DiscountEntity>[],
+  //       hasDiscount: false,
+  //       isActive: false,
+  //       updatedBy: '',
+  //       title: _title.text,
+  //       description: _description.text,
+  //       price: double.tryParse(_price.text) ?? 0.0,
+  //       quantity: int.tryParse(_quantity.text) ?? 1,
+  //       minOfferAmount: double.tryParse(_minimumOffer.text) ?? 0.0,
+  //       localDelivery: int.tryParse(_localDeliveryFee.text) ?? 0,
+  //       internationalDelivery:
+  //           int.tryParse(_internationalDeliveryFee.text) ?? 0,
+  //       accessCode: _accessCode,
+  //       condition: _condition,
+  //       acceptOffers: _acceptOffer,
+  //       privacy: _privacy,
+  //       deliveryType: _deliveryType,
+  //       sizeColors: _sizeColorEntities,
+  //       address: _location.text,
+  //       categoryType: _selectedClothSubCategory,
+  //       brand: _brand.text,
+  //       make: _make,
+  //       model: _model.text,
+  //       year: int.tryParse(_year.text) ?? 0,
+  //       mileage: int.tryParse(_mileage.text) ?? 0,
+  //       emission: _emission,
+  //       doors: int.tryParse(_doors.text) ?? 0,
+  //       seats: int.tryParse(_seats.text) ?? 0,
+  //       vehiclesCategory: _selectedVehicleCategory,
+  //       bodyType: _selectedBodyType,
+  //       fuelType: _selectedEnergyRating,
+  //       interiorColor: _selectedVehicleColor,
+  //       exteriorColor: _selectedVehicleColor,
+  //       bedroom: int.tryParse(_bedroom.text) ?? 0,
+  //       bathroom: int.tryParse(_bathroom.text) ?? 0,
+  //       garden: _garden,
+  //       parking: _parking,
+  //       healthChecked: _healthChecked,
+  //       wormAndFleaTreated: _wormAndFleaTreated,
+  //       vaccinationUpToDate: _vaccinationUpToDate,
+  //       readyToLeave: _time,
+  //       age: _age,
+  //       breed: _breed,
+  //       petsCategory: _petCategory,
+  //       propertyCategory: _selectedPropertySubCategory,
+  //       tenureType: _tenureType,
+  //       availability: _availability,
+  //       collectionLocation: _selectedCollectionLocation,
+  //       meetUpLocation: _selectedMeetupLocation,
+  //       fileUrls: <AttachmentEntity>[]);
+  // }
 
   Future<void> reset() async {
     // Text fields
@@ -318,65 +318,99 @@ class AddListingFormProvider extends ChangeNotifier {
   }
 
   Future<void> updateVariables() async {
+    if (post == null) return;
+
+    // -------------------------
     // Category and access
+    // -------------------------
     _accessCode = post?.accessCode ?? '';
-    // Age and pet-related
-    _age = post?.age;
-    _animalFriendly = _animalFriendly;
-    _vaccinationUpToDate = post?.vaccinationUpToDate;
-    _wormAndFleaTreated = post?.wormAndFleaTreated;
-    _healthChecked = post?.healthChecked;
-    _time = post?.readyToLeave;
+
+    // -------------------------
+    // Pet-related fields
+    // -------------------------
+    _age = post?.petInfo?.age;
+    _animalFriendly = false;
+    _vaccinationUpToDate = post?.petInfo?.vaccinationUpToDate;
+    _wormAndFleaTreated = post?.petInfo?.wormAndFleaTreated;
+    _healthChecked = post?.petInfo?.healthChecked;
+    _time = post?.petInfo?.readyToLeave;
+
+    // -------------------------
     // Availability
+    // -------------------------
     _availability = post?.availability ?? <AvailabilityEntity>[];
+
+    // -------------------------
     // Locations
+    // -------------------------
     _selectedMeetupLocation = post?.meetUpLocation;
     _selectedCollectionLocation = post?.collectionLocation;
     _location.text = post?.meetUpLocation?.address ?? '';
+
+    // -------------------------
     // Property details
-    _bathroom.text = post?.bathroom.toString() ?? '0';
-    _bedroom.text = post?.bedroom.toString() ?? '0';
-    _garden = post?.garden ?? true;
-    _parking = post?.parking ?? true;
-    _selectedPropertySubCategory = post?.propertyCategory.toString() ?? '';
-    _selectedPropertyType = post?.propertytype;
-    _tenureType = post?.tenureType ?? '';
+    // -------------------------
+    _bathroom.text = post?.propertyInfo?.bathroom?.toString() ?? '0';
+    _bedroom.text = post?.propertyInfo?.bedroom?.toString() ?? '0';
+    _garden = post?.propertyInfo?.garden ?? true;
+    _parking = post?.propertyInfo?.parking ?? true;
+    _selectedPropertySubCategory = post?.propertyInfo?.propertyCategory ?? '';
+    _selectedPropertyType = post?.propertyInfo?.propertyType;
+    _tenureType = post?.propertyInfo?.tenureType ?? '';
+
+    // -------------------------
     // Product details
+    // -------------------------
     _title.text = post?.title ?? '';
     _description.text = post?.description ?? '';
     _price.text = post?.price.toString() ?? '';
     _quantity.text = post?.quantity.toString() ?? '1';
     _minimumOffer.text = post?.minOfferAmount.toString() ?? '';
     _isDiscounted = post?.hasDiscount ?? false;
-    // Brand/Model/Make
-    _brand.text = post?.brand ?? '';
-    _make = post?.make.toString() ?? '';
-    _model.text = post?.model.toString() ?? '';
+
+    // -------------------------
+    // Cloth-related fields
+    // -------------------------
+    _brand.text = post?.clothFootInfo.brand ?? '';
+    _selectedClothSubCategory = post?.categoryType ?? '';
+    _sizeColorEntities = post?.clothFootInfo.sizeColors ?? <SizeColorEntity>[];
+
+    // -------------------------
     // Vehicle details
-    _engineSize.text = post?.engineSize.toString() ?? '';
-    _mileage.text = post?.mileage.toString() ?? '';
-    _selectedMileageUnit = post?.mileageUnit;
-    _emission = post?.emission ?? '';
-    _seats.text = post?.seats.toString() ?? '';
-    _doors.text = post?.doors.toString() ?? '';
-    _year.text = post?.year.toString() ?? '';
-    _transmissionType = post?.transmission ?? '';
-    _selectedVehicleCategory = post?.vehiclesCategory;
-    _selectedVehicleColor = post?.vehiclesCategory;
-    _selectedBodyType = post?.bodyType ?? '';
+    // -------------------------
+    _make = post?.vehicleInfo?.make ?? '';
+    _model.text = post?.vehicleInfo?.model ?? '';
+    _engineSize.text = post?.vehicleInfo?.engineSize?.toString() ?? '';
+    _mileage.text = post?.vehicleInfo?.mileage?.toString() ?? '';
+    _selectedMileageUnit = post?.vehicleInfo?.mileageUnit;
+    _emission = post?.vehicleInfo?.emission ?? '';
+    _seats.text = post?.vehicleInfo?.seats?.toString() ?? '';
+    _doors.text = post?.vehicleInfo?.doors?.toString() ?? '';
+    _year.text = post?.vehicleInfo?.year?.toString() ?? '';
+    _transmissionType = post?.vehicleInfo?.transmission ?? '';
+    _selectedVehicleCategory = post?.vehicleInfo?.vehiclesCategory;
+    _selectedVehicleColor = post?.vehicleInfo?.exteriorColor;
+    _selectedBodyType = post?.vehicleInfo?.bodyType ?? '';
+    _selectedEnergyRating = post?.propertyInfo?.energyRating ?? '';
 
+    // -------------------------
     // Delivery & fees
+    // -------------------------
     _deliveryType = post?.deliveryType ?? DeliveryType.paid;
-    _localDeliveryFee.text = post?.localDelivery.toString() ?? '';
+    _localDeliveryFee.text = post?.localDelivery?.toString() ?? '';
     _internationalDeliveryFee.text =
-        post?.internationalDelivery.toString() ?? '';
+        post?.internationalDelivery?.toString() ?? '';
 
+    // -------------------------
     // Listing, privacy, and condition
+    // -------------------------
     _listingType = ListingType.fromJson(post?.listID);
     _privacy = post?.privacy ?? PrivacyType.supporters;
     _condition = post?.condition ?? ConditionType.newC;
 
+    // -------------------------
     // Discounts
+    // -------------------------
     debugPrint(post?.discounts.toString());
     for (DiscountEntity element in _discounts) {
       final DiscountEntity? matching = post?.discounts.firstWhere(
@@ -386,11 +420,7 @@ class AddListingFormProvider extends ChangeNotifier {
       element.discount = matching?.discount ?? 0;
     }
 
-    // Clothes and sizing
-    _selectedClothSubCategory = post?.categoryType ?? '';
-    _selectedEnergyRating = post?.energyRating;
-    _sizeColorEntities = post?.sizeColors ?? <SizeColorEntity>[];
-    debugPrint('listing variables update variables');
+    debugPrint('listing variables updated successfully');
   }
 
   Future<void> submit(BuildContext context) async {

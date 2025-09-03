@@ -1,5 +1,5 @@
 import '../../../../../core/sources/data_state.dart';
-import '../../../post/domain/entities/post_entity.dart';
+import '../../../post/domain/entities/post/post_entity.dart';
 import '../entities/location_name_entity.dart';
 import '../params/post_by_filter_params.dart';
 

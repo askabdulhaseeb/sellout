@@ -7,7 +7,8 @@ import '../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../core/widgets/loaders/buyer_order_tile_loader.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../../../services/get_it.dart';
-import '../../../../post/domain/entities/post_entity.dart';
+import '../../../../post/domain/entities/post/post_entity.dart';
+
 import '../../../../post/domain/usecase/get_specific_post_usecase.dart';
 import '../../../../post/feed/views/widgets/post/widgets/section/buttons/type/widgets/post_buy_now_button.dart';
 import '../../../domain/entities/order_entity.dart';

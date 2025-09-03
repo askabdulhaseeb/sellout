@@ -8,7 +8,7 @@ import '../../../../../../../../../../../routes/app_linking.dart';
 import '../../../../../../../../../visits/view/visit_calender.dart/screens/visit_calender_screen.dart';
 import '../../../../../../../../../listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../../../../../../../../../listing/listing_form/views/screens/add_listing_form_screen.dart';
-import '../../../../../../../../domain/entities/post_entity.dart';
+import '../../../../../../../../domain/entities/post/post_entity.dart';
 
 class PostButtonsForUser extends StatelessWidget {
   const PostButtonsForUser({

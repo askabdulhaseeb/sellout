@@ -8,7 +8,7 @@ import '../../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../visits/view/book_visit/widgets/visiting_update_buttons_widget.dart';
 import '../../../../../../post/data/sources/local/local_post.dart';
-import '../../../../../../post/domain/entities/post_entity.dart';
+import '../../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../providers/chat_provider.dart';
 
@@ -344,24 +344,22 @@ class VisitingTileTags extends StatelessWidget {
         children: <Widget>[
           _buildTag(post?.condition.code ?? '***', context),
           if (post?.listID == ListingType.vehicle.json)
-            _buildTag(post?.year.toString() ?? '****', context),
+            _buildTag(post?.vehicleInfo?.year.toString() ?? '****', context),
           if (post?.listID == ListingType.vehicle.json)
-            _buildTag(post?.brand ?? '******', context),
+            _buildTag(post?.vehicleInfo?.bodyType ?? '******', context),
           if (post?.listID == ListingType.vehicle.json)
-            _buildTag(post?.model ?? '******', context),
+            _buildTag(post?.vehicleInfo?.model ?? '******', context),
           if (post?.listID == ListingType.pets.json)
-            _buildTag(post?.petsCategory.toString() ?? '****', context),
+            _buildTag(post?.petInfo?.breed.toString() ?? '****', context),
           if (post?.listID == ListingType.pets.json)
-            _buildTag(post?.breed ?? '******', context),
+            _buildTag(post?.petInfo?.age ?? '******', context),
           if (post?.listID == ListingType.pets.json)
-            _buildTag(post?.age ?? '******', context),
-          if (post?.listID == ListingType.pets.json)
-            _buildTag('${'health_checked'.tr()}: ${yesNo(post?.healthChecked)}',
-                context),
+            _buildTag(post?.petInfo?.breed ?? '******', context),
           if (post?.listID == ListingType.property.json)
-            _buildTag(post?.propertyCategory ?? '******', context),
+            _buildTag(
+                post?.propertyInfo?.propertyCategory ?? '******', context),
           if (post?.listID == ListingType.property.json)
-            _buildTag(post?.propertytype ?? '******', context),
+            _buildTag(post?.propertyInfo?.propertyType ?? '******', context),
         ],
       ),
     );

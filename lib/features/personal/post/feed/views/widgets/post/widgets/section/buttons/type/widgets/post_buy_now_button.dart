@@ -7,7 +7,7 @@ import '../../../../../../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../../../../services/get_it.dart';
 import '../../../../../../../../../../cart/views/screens/personal_cart_screen.dart';
-import '../../../../../../../../../domain/entities/post_entity.dart';
+import '../../../../../../../../../domain/entities/post/post_entity.dart';
 import '../../../../../../../../../domain/entities/size_color/color_entity.dart';
 import '../../../../../../../../../domain/entities/size_color/size_color_entity.dart';
 import '../../../../../../../../../domain/params/add_to_cart_param.dart';
@@ -52,7 +52,8 @@ class _PostBuyNowButtonState extends State<PostBuyNowButton> {
       final AddToCartUsecase usecase = AddToCartUsecase(locator());
 
       // If product has variants but detailWidget is not showing, open selection dialog
-      if (widget.post.sizeColors.isNotEmpty && !widget.detailWidget) {
+      if (widget.post.clothFootInfo.sizeColors.isNotEmpty &&
+          !widget.detailWidget) {
         await showDialog(
           context: context,
           builder: (_) => BuyNowDialog(post: widget.post),

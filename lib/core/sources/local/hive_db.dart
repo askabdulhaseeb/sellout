@@ -46,7 +46,11 @@ import '../../../features/personal/post/domain/entities/feed/feed_entity.dart';
 import '../../../features/personal/post/domain/entities/meetup/availability_entity.dart';
 import '../../../features/personal/post/domain/entities/offer/offer_amount_info_entity.dart';
 import '../../../features/personal/post/domain/entities/offer/offer_detail_entity.dart';
-import '../../../features/personal/post/domain/entities/post_entity.dart';
+import '../../../features/personal/post/domain/entities/post/post_cloth_foot_entity.dart';
+import '../../../features/personal/post/domain/entities/post/post_entity.dart';
+import '../../../features/personal/post/domain/entities/post/post_pet_entity.dart';
+import '../../../features/personal/post/domain/entities/post/post_property_entity.dart';
+import '../../../features/personal/post/domain/entities/post/post_vehicle_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/color_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/size_color_entity.dart';
 import '../../../features/personal/post/domain/entities/visit/visiting_entity.dart';
@@ -156,6 +160,10 @@ class HiveDB {
     Hive.registerAdapter(NotificationEntityAdapter()); //65
     Hive.registerAdapter(NotificationMetadataEntityAdapter()); //66
     Hive.registerAdapter(CounterOfferEnumAdapter()); //67
+    Hive.registerAdapter(PostClothFootEntityAdapter()); //68
+    Hive.registerAdapter(PostVehicleEntityAdapter()); //69
+    Hive.registerAdapter(PostPetEntityAdapter()); //70
+    Hive.registerAdapter(PostPropertyEntityAdapter()); //71
 
     // Hive box Open
     await refresh();

@@ -11,7 +11,8 @@ import '../../../../../../core/sources/api_call.dart';
 import '../../../../../../core/widgets/shadow_container.dart';
 import '../../../../../../core/widgets/step_progress_indicator.dart';
 import '../../../../../../services/get_it.dart' show locator;
-import '../../../../post/domain/entities/post_entity.dart';
+import '../../../../post/domain/entities/post/post_entity.dart';
+
 import '../../../../post/domain/usecase/get_specific_post_usecase.dart';
 import '../../../../post/feed/views/widgets/post/widgets/section/buttons/type/widgets/post_buy_now_button.dart';
 import '../../../domain/entities/order_entity.dart';

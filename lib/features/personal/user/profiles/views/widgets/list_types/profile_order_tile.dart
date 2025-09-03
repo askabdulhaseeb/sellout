@@ -5,8 +5,9 @@ import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../routes/app_linking.dart';
 import '../../../../../order/view/screens/order_seller_screen.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
-import '../../../../../post/domain/entities/post_entity.dart';
+
 import '../../../../../order/domain/entities/order_entity.dart';
+import '../../../../../post/domain/entities/post/post_entity.dart';
 
 class SellerOrderTile extends StatelessWidget {
   const SellerOrderTile({

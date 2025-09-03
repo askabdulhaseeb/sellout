@@ -1,7 +1,7 @@
 // import 'package:hive/hive.dart';
 // import '../../../../../../core/utilities/app_string.dart';
 // import '../../../domain/entities/feed/feed_entity.dart';
-// import '../../../domain/entities/post_entity.dart';
+//
 
 // class LocalFeed {
 //   static String boxTitle = AppStrings.localPostListCache;

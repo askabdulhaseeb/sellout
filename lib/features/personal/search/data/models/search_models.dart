@@ -1,4 +1,4 @@
-import '../../../post/data/models/post_model.dart';
+import '../../../post/data/models/post/post_model.dart';
 import '../../../user/profiles/data/models/user_model.dart';
 import '../../../../business/core/data/models/service/service_model.dart';
 import '../../domain/entities/search_entity.dart';
