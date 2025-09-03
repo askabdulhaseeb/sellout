@@ -64,9 +64,9 @@ class MarketPlaceProvider extends ChangeNotifier {
       if (result is DataSuccess<List<PostEntity>>) {
         setChoiceChipPosts(result.entity ?? <PostEntity>[]);
         setMainPageKey(result.data);
-
         return true;
       } else {
+        setChoiceChipPosts(<PostEntity>[]);
         debugPrint(
             'Failed: ${result.exception?.message ?? 'something_wrong'.tr()}');
       }
@@ -120,9 +120,9 @@ class MarketPlaceProvider extends ChangeNotifier {
         if (newPosts.isEmpty) {
           _mainPageKey = null; // No more data
         } else {
-          choicePosts?.addAll(newPosts); // Append new posts
+          choicePosts?.addAll(newPosts);
           setChoiceChipPosts(List<PostEntity>.from(choicePosts ?? <dynamic>[]));
-          setMainPageKey(result.data); // 👈 Update lastKey
+          setMainPageKey(result.data);
         }
       } else {
         debugPrint(
@@ -153,7 +153,6 @@ class MarketPlaceProvider extends ChangeNotifier {
       } else {
         AppSnackBar.showSnackBar(
             context, 'no_posts_found_with_this_access_code'.tr());
-        setPosts(<PostEntity>[]);
         debugPrint(
             'Failed: ${result.exception?.message ?? 'something_wrong'.tr()}');
       }
@@ -183,6 +182,8 @@ class MarketPlaceProvider extends ChangeNotifier {
   void updateLocation(LatLng? latlng, LocationEntity? location) {
     _selectedlatlng = latlng;
     _selectedLocation = location;
+    debugPrint(
+        'Updated LatLng: $_selectedlatlng, Location: $_selectedLocation in marketplaceProvider');
     notifyListeners();
   }
 
@@ -339,7 +340,6 @@ class MarketPlaceProvider extends ChangeNotifier {
     _isFilteringPosts = value;
     if (value == false) {
       filterSheetResetButton();
-      resetLocationBottomsheet();
       setSort(SortOption.newlyList);
     }
     notifyListeners();
@@ -410,8 +410,6 @@ class MarketPlaceProvider extends ChangeNotifier {
     // Location
     _selectedlatlng = LocalAuth.latlng;
     _selectedLocation = null;
-    _selectedRadius = 5;
-    _radiusType = RadiusType.worldwide;
     // Post data
     _posts = null;
     _selectedSubCategory = null;

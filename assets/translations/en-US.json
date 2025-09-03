@@ -1008,6 +1008,7 @@
   "offer_given_by_seller": "Offer given by seller",
   "offer_given_by_buyer": "Offer given by buyer",
   "message": "Message",
+  "update_location": "Update location",
   "offer_amount_too_low": "Offered amount must exceed the minimum offer amount",
   "size_is_required": "Size is required",
   "color_is_required": "Color is required",

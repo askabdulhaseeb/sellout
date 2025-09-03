@@ -45,7 +45,6 @@ class LocationDropdown extends StatefulWidget {
 class _LocationFieldState extends State<LocationDropdown> {
   final TextEditingController _controller = TextEditingController();
   final MapController _mapController = MapController();
-
   late LatLng _selectedLatLng;
 
   @override
@@ -194,13 +193,13 @@ class _LocationFieldState extends State<LocationDropdown> {
                 mapController: _mapController,
                 options: MapOptions(
                   initialCenter: _selectedLatLng,
-                  initialZoom: 9,
+                  initialZoom: 6,
                 ),
                 children: <Widget>[
                   TileLayer(
                     urlTemplate:
                         'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    userAgentPackageName: 'com.example.app',
+                    userAgentPackageName: 'com.sellout.sellout',
                   ),
                   MarkerLayer(
                     markers: <Marker>[
