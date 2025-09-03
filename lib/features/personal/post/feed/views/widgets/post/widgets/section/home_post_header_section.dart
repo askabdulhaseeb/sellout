@@ -20,123 +20,81 @@ class PostHeaderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isUserPost = post.businessID == null ||
+        (post.businessID ?? '').isEmpty ||
+        post.businessID == 'null';
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: post.businessID == null ||
-              (post.businessID ?? '').isEmpty ||
-              post.businessID == 'null'
-          ? _UserHeader(post: post)
-          : _BusinessHeader(post: post),
+      child: isUserPost
+          ? _Header<UserEntity?>(
+              future: GetUserByUidUsecase(locator())(post.createdBy)
+                  .then((DataState<UserEntity?> state) => state.entity)
+                  .catchError((_) => null),
+              localEntity: LocalUser().userState(post.createdBy).entity,
+              name: (UserEntity? user) => user?.displayName ?? 'null',
+              photoUrl: (UserEntity? user) => user?.profilePhotoURL,
+              onTap: (UserEntity? user) => Navigator.of(context).push(
+                MaterialPageRoute<UserProfileScreen>(
+                  builder: (_) => UserProfileScreen(uid: post.createdBy),
+                ),
+              ),
+              post: post,
+            )
+          : _Header<BusinessEntity?>(
+              future: LocalBusiness().getBusiness(post.businessID ?? ''),
+              localEntity: null,
+              name: (BusinessEntity? business) =>
+                  business?.displayName ?? 'null',
+              photoUrl: (BusinessEntity? business) => business?.logo?.url,
+              onTap: (BusinessEntity? business) => Navigator.of(context).push(
+                MaterialPageRoute<UserBusinessProfileScreen>(
+                  builder: (_) => UserBusinessProfileScreen(
+                      businessID: post.businessID ?? ''),
+                ),
+              ),
+              post: post,
+              showBusinessBadge: true,
+            ),
     );
   }
 }
 
-class _UserHeader extends StatefulWidget {
-  const _UserHeader({required this.post});
+class _Header<T> extends StatelessWidget {
+  const _Header({
+    required this.future,
+    required this.localEntity,
+    required this.name,
+    required this.photoUrl,
+    required this.onTap,
+    required this.post,
+    this.showBusinessBadge = false,
+  });
+
+  final Future<T> future;
+  final T? localEntity;
+  final String Function(T? entity) name;
+  final String? Function(T? entity) photoUrl;
+  final void Function(T? entity) onTap;
   final PostEntity post;
-
-  @override
-  State<_UserHeader> createState() => _UserHeaderState();
-}
-
-class _UserHeaderState extends State<_UserHeader> {
-  late Future<DataState<UserEntity?>> _userFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    final GetUserByUidUsecase getUserByUidUsecase =
-        GetUserByUidUsecase(locator());
-    _userFuture = getUserByUidUsecase(widget.post.createdBy);
-  }
+  final bool showBusinessBadge;
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<DataState<UserEntity?>>(
-      future: _userFuture,
-      initialData: LocalUser().userState(widget.post.createdBy),
-      builder: (BuildContext context,
-          AsyncSnapshot<DataState<UserEntity?>> snapshot) {
-        final UserEntity? user = snapshot.data?.entity;
+    return FutureBuilder<T>(
+      future: future,
+      initialData: localEntity,
+      builder: (BuildContext context, AsyncSnapshot<T> snapshot) {
+        final T? entity = snapshot.data;
         return SizedBox(
           height: 50,
           child: GestureDetector(
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<UserProfileScreen>(
-                builder: (_) => UserProfileScreen(uid: widget.post.createdBy),
-              ),
-            ),
+            onTap: () => onTap(entity),
             child: Row(
               children: <Widget>[
                 ProfilePhoto(
-                  url: user?.profilePhotoURL,
-                  placeholder: user?.displayName ?? '',
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        user?.displayName ?? 'null',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      Text(widget.post.createdAt.timeAgo),
-                    ],
-                  ),
-                ),
-                _MoreButton(widget.post.postID),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _BusinessHeader extends StatefulWidget {
-  const _BusinessHeader({required this.post});
-  final PostEntity post;
-
-  @override
-  State<_BusinessHeader> createState() => _BusinessHeaderState();
-}
-
-class _BusinessHeaderState extends State<_BusinessHeader> {
-  late Future<BusinessEntity?> _businessFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _businessFuture = LocalBusiness().getBusiness(widget.post.businessID ?? '');
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<BusinessEntity?>(
-      future: _businessFuture,
-      builder: (BuildContext context, AsyncSnapshot<BusinessEntity?> snapshot) {
-        final BusinessEntity? business = snapshot.data;
-        return SizedBox(
-          height: 50,
-          child: GestureDetector(
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<UserBusinessProfileScreen>(
-                builder: (BuildContext context) => UserBusinessProfileScreen(
-                    businessID: widget.post.businessID ?? ''),
-              ),
-            ),
-            child: Row(
-              children: <Widget>[
-                ProfilePhoto(
-                  url: business?.logo?.url,
-                  placeholder: business?.displayName ?? '',
+                  url: photoUrl(entity),
+                  placeholder: name(entity),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
@@ -147,7 +105,7 @@ class _BusinessHeaderState extends State<_BusinessHeader> {
                         children: <Widget>[
                           Flexible(
                             child: Text(
-                              business?.displayName ?? 'null',
+                              name(entity),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
@@ -156,24 +114,26 @@ class _BusinessHeaderState extends State<_BusinessHeader> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 4),
-                          CircleAvatar(
-                            radius: 8,
-                            backgroundColor: Theme.of(context).primaryColor,
-                            child: const FittedBox(
-                              child: Text(
-                                'B',
-                                style: TextStyle(color: Colors.white),
+                          if (showBusinessBadge) ...<Widget>[
+                            const SizedBox(width: 4),
+                            CircleAvatar(
+                              radius: 8,
+                              backgroundColor: Theme.of(context).primaryColor,
+                              child: const FittedBox(
+                                child: Text(
+                                  'B',
+                                  style: TextStyle(color: Colors.white),
+                                ),
                               ),
                             ),
-                          ),
+                          ],
                         ],
                       ),
-                      Text(widget.post.createdAt.timeAgo),
+                      Text(post.createdAt.timeAgo),
                     ],
                   ),
                 ),
-                _MoreButton(widget.post.postID),
+                _MoreButton(post.postID),
               ],
             ),
           ),
@@ -190,11 +150,12 @@ class _MoreButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-        onTap: () {
-          final RenderBox button = context.findRenderObject() as RenderBox;
-          final Offset position = button.localToGlobal(Offset.zero);
-          homePostTileShowMoreButton(context, position, postID);
-        },
-        child: const CustomSvgIcon(assetPath: AppStrings.selloutMOreMenuIcon));
+      onTap: () {
+        final RenderBox button = context.findRenderObject() as RenderBox;
+        final Offset position = button.localToGlobal(Offset.zero);
+        homePostTileShowMoreButton(context, position, postID);
+      },
+      child: const CustomSvgIcon(assetPath: AppStrings.selloutMOreMenuIcon),
+    );
   }
 }

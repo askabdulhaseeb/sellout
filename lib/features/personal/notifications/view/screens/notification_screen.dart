@@ -43,45 +43,42 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       ),
       body: Consumer<NotificationProvider>(
         builder: (BuildContext context, NotificationProvider provider, _) {
-          if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
           final List<NotificationEntity> notifications = provider.notifications;
-          return Column(
-            children: <Widget>[
-              CustomToggleSwitch<NotificationType>(
-                isShaded: false,
-                horizontalPadding: 1,
-                borderWidth: 1,
-                unseletedBorderColor: ColorScheme.of(context).outlineVariant,
-                unseletedTextColor: ColorScheme.of(context).onSurface,
-                verticalPadding: 4,
-                borderRad: 6,
-                seletedFontSize: 12,
-                labels: NotificationType.values.toList(),
-                labelStrs: NotificationType.values
-                    .map((NotificationType e) => e.code.tr())
-                    .toList(),
-                labelText: '',
-                initialValue: provider.selectedNotificationType,
-                onToggle: (NotificationType value) {
-                  provider.setNotificationType(value);
-                  provider.fetchNotificationsByType();
-                },
-                selectedColors: List<Color>.filled(
-                    NotificationType.values.length, AppTheme.primaryColor),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: notifications.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return NotificationWidget(
-                      notification: notifications[index],
-                    );
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: <Widget>[
+                CustomToggleSwitch<NotificationType>(
+                  isShaded: false,
+                  borderWidth: 1,
+                  unseletedBorderColor: ColorScheme.of(context).outlineVariant,
+                  unseletedTextColor: ColorScheme.of(context).onSurface,
+                  borderRad: 6,
+                  labels: NotificationType.values.toList(),
+                  labelStrs: NotificationType.values
+                      .map((NotificationType e) => e.code.tr())
+                      .toList(),
+                  labelText: '',
+                  initialValue: provider.selectedNotificationType,
+                  onToggle: (NotificationType value) {
+                    provider.setNotificationType(value);
+                    provider.fetchNotificationsByType();
                   },
+                  selectedColors: List<Color>.filled(
+                      NotificationType.values.length, AppTheme.primaryColor),
                 ),
-              ),
-            ],
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: notifications.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return NotificationWidget(
+                        notification: notifications[index],
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           );
         },
       ),

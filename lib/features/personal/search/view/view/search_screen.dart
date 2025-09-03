@@ -45,7 +45,6 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -62,12 +61,12 @@ class _SearchScreenState extends State<SearchScreen> {
           child: Column(
             children: <Widget>[
               CustomToggleSwitch<SearchEntityType>(
+                margin: 0,
                 verticalPadding: 6,
                 isShaded: false,
                 unseletedBorderColor: ColorScheme.of(context).outlineVariant,
                 unseletedTextColor: ColorScheme.of(context).onSurface,
                 borderWidth: 1,
-                seletedFontSize: screenWidth * 0.035,
                 labels: SearchEntityType.values,
                 labelStrs: <String>[
                   'posts'.tr(),

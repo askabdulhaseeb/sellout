@@ -33,10 +33,6 @@ class MarketFilterClothFootToggleWidget extends StatelessWidget {
                     unseletedBorderColor: Colors.transparent,
                     verticalPadding: 6,
                     isShaded: false,
-                    customWidths: <double>[
-                      screenWidth * 0.39,
-                      screenWidth * 0.39
-                    ],
                     labels: subCategories,
                     labelStrs: subCategories.map((String e) => e.tr()).toList(),
                     labelText: '',

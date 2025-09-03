@@ -10,41 +10,44 @@ import 'post_report_success_bottomsheet.dart';
 void showPostReportBottomSheet(BuildContext context, String postId) {
   showModalBottomSheet(
     context: context,
+    isScrollControlled: true,
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
     ),
     builder: (BuildContext context) {
-      return ListView(
-        shrinkWrap: true,
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        children: <Widget>[
-          Center(
-            child: Container(
-              width: 40,
-              height: 4,
-              margin: const EdgeInsets.only(bottom: 12),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.outlineVariant,
-                borderRadius: BorderRadius.circular(2),
+      return SafeArea(
+        child: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          children: <Widget>[
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Text(
-              'report'.tr(),
-              style: TextTheme.of(context).titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: ColorScheme.of(context).onSurface,
-                  ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Text(
+                'report'.tr(),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+              ),
             ),
-          ),
-          ...ReportType.values.map(
-            (ReportType type) => _buildReportItem(context, type, postId),
-          ),
-        ],
+            ...ReportType.values.map(
+              (ReportType type) => _buildReportItem(context, type, postId),
+            ),
+          ],
+        ),
       );
     },
   );
@@ -53,21 +56,21 @@ void showPostReportBottomSheet(BuildContext context, String postId) {
 Widget _buildReportItem(BuildContext context, ReportType type, String postId) {
   return ListTile(
     title: Text(
-      type.code.tr(), // show localized name
-      style: TextTheme.of(context).bodyMedium?.copyWith(
+      type.code.tr(),
+      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             fontSize: 14,
-            color: ColorScheme.of(context).onSurface,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
     ),
     trailing: Icon(
       Icons.chevron_right,
-      color: ColorScheme.of(context).onSurface,
+      color: Theme.of(context).colorScheme.onSurface,
     ),
     onTap: () => _handleReportTap(context, type, postId),
   );
 }
 
-void _handleReportTap(
+Future<void> _handleReportTap(
     BuildContext context, ReportType type, String postId) async {
   final ReportUsecase reportUsecase = ReportUsecase(locator());
   final DataState<bool> result = await reportUsecase.call(
@@ -78,13 +81,13 @@ void _handleReportTap(
     ),
   );
 
+  if (!context.mounted) return; // Prevent context issues
+
   if (result is DataSuccess) {
-    // ignore: use_build_context_synchronously
     Navigator.pop(context);
-    // ignore: use_build_context_synchronously
-    showReportSuccessBottomSHeet(context, type.title);
+    if (!context.mounted) return;
+    showReportSuccessBottomSheet(context, type.title);
   } else {
-    // ignore: use_build_context_synchronously
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('report_failed'.tr())),
     );

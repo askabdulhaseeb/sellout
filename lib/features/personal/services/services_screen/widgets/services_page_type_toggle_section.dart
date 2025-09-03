@@ -22,7 +22,6 @@ class ServicesPageTypeToggleSection extends StatelessWidget {
               unseletedBorderColor:
                   Theme.of(context).colorScheme.outlineVariant,
               unseletedTextColor: Theme.of(context).colorScheme.onSurface,
-              seletedFontSize: MediaQuery.of(context).size.width * 0.032,
               isShaded: false,
               selectedColors: const <Color>[
                 AppTheme.primaryColor,
