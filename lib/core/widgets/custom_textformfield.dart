@@ -161,7 +161,7 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
                 prefixIcon: widget.prefixIcon,
                 hintStyle: TextTheme.of(context)
                     .bodyMedium
-                    ?.copyWith(color: ColorScheme.of(context).outlineVariant),
+                    ?.copyWith(color: ColorScheme.of(context).outline),
                 suffixIcon: widget.suffixIcon ??
                     (((widget._controller?.text.isEmpty ?? true) ||
                             !widget.showSuffixIcon ||

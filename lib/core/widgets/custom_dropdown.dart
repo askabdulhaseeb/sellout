@@ -1,8 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'costom_textformfield.dart';
+import 'custom_textformfield.dart';
 
 class CustomDropdown<T> extends FormField<bool> {
   CustomDropdown({
@@ -100,110 +99,103 @@ class _Widget<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return items.isEmpty
-        ? kDebugMode
-            ? Text(
-                '$title is disabled - display only in testing Mode',
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        if (title.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.w500),
+            ),
+          ),
+        Container(
+          width: width ?? double.infinity,
+          height: height ?? 48,
+          decoration: BoxDecoration(
+            backgroundBlendMode: BlendMode.color,
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              // width: 0.5,
+              color: ColorScheme.of(context).outlineVariant,
+            ),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton2<T>(
+              iconStyleData: IconStyleData(
+                icon: Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: items.isEmpty
+                      ? ColorScheme.of(context).outlineVariant
+                      : ColorScheme.of(context).outline,
+                ),
+              ),
+              isExpanded: true,
+              hint: Text(
+                hint ?? 'select_item',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-              )
-            : const SizedBox()
-        : Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              if (title.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Text(
-                    title,
-                    style: const TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                ),
-              Container(
-                width: width ?? double.infinity,
-                height: height ?? 48,
-                decoration: BoxDecoration(
-                  backgroundBlendMode: BlendMode.color,
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    // width: 0.5,
-                    color: ColorScheme.of(context).outlineVariant,
-                  ),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton2<T>(
-                    iconStyleData: IconStyleData(
-                      icon: Icon(
-                        Icons.keyboard_arrow_down_rounded,
-                        color: ColorScheme.of(context).outline,
+                style: TextTheme.of(context)
+                    .bodyMedium
+                    ?.copyWith(color: ColorScheme.of(context).outline),
+              ).tr(),
+              items: items.isEmpty ? <DropdownMenuItem<T>>[] : items,
+              value: selectedItem,
+              onChanged: onChanged,
+              buttonStyleData: ButtonStyleData(
+                padding: padding ?? const EdgeInsets.symmetric(horizontal: 12),
+              ),
+              dropdownSearchData: isSearchable == false
+                  ? null
+                  : DropdownSearchData<T>(
+                      searchController: _search,
+                      searchInnerWidgetHeight: 70,
+                      searchInnerWidget: CustomTextFormField(
+                        fieldPadding: const EdgeInsets.all(4),
+                        dense: true,
+                        style: TextTheme.of(context).labelMedium,
+                        contentPadding: const EdgeInsets.all(4),
+                        controller: _search,
+                        isExpanded: true,
                       ),
+                      searchMatchFn: (
+                        DropdownMenuItem<T> item,
+                        String searchValue,
+                      ) {
+                        return item.value
+                            .toString()
+                            .toLowerCase()
+                            .trim()
+                            .contains(searchValue.toLowerCase().trim());
+                      },
                     ),
-                    isExpanded: true,
-                    hint: Text(
-                      hint ?? 'select_item',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextTheme.of(context).bodyMedium?.copyWith(
-                          color: ColorScheme.of(context).outlineVariant),
-                    ).tr(),
-                    items: items,
-                    value: selectedItem,
-                    onChanged: onChanged,
-                    buttonStyleData: ButtonStyleData(
-                      padding:
-                          padding ?? const EdgeInsets.symmetric(horizontal: 12),
-                    ),
-                    dropdownSearchData: isSearchable == false
-                        ? null
-                        : DropdownSearchData<T>(
-                            searchController: _search,
-                            searchInnerWidgetHeight: 70,
-                            searchInnerWidget: CustomTextFormField(
-                              fieldPadding: const EdgeInsets.all(4),
-                              dense: true,
-                              style: TextTheme.of(context).labelMedium,
-                              contentPadding: const EdgeInsets.all(4),
-                              controller: _search,
-                              isExpanded: true,
-                            ),
-                            searchMatchFn: (
-                              DropdownMenuItem<T> item,
-                              String searchValue,
-                            ) {
-                              return item.value
-                                  .toString()
-                                  .toLowerCase()
-                                  .trim()
-                                  .contains(searchValue.toLowerCase().trim());
-                            },
-                          ),
-                    style: TextTheme.of(context).bodyMedium,
-                    dropdownStyleData: DropdownStyleData(
-                        elevation: 0,
-                        maxHeight: 250,
-                        decoration: BoxDecoration(
-                            boxShadow: <BoxShadow>[
-                              BoxShadow(
-                                  color:
-                                      Theme.of(context).scaffoldBackgroundColor)
-                            ],
-                            borderRadius: BorderRadius.circular(8),
-                            backgroundBlendMode: BlendMode.color,
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            border: Border.all(
-                                color: ColorScheme.of(context)
-                                    .outline
-                                    .withValues(alpha: 0.2))),
-                        offset: const Offset(0, 0),
-                        isOverButton: false),
-                    menuItemStyleData: const MenuItemStyleData(
-                      height: 60,
-                    ),
-                  ),
-                ),
-              )
-            ],
-          );
+              style: TextTheme.of(context).bodyMedium,
+              dropdownStyleData: DropdownStyleData(
+                  elevation: 0,
+                  maxHeight: 250,
+                  decoration: BoxDecoration(
+                      boxShadow: <BoxShadow>[
+                        BoxShadow(
+                            color: Theme.of(context).scaffoldBackgroundColor)
+                      ],
+                      borderRadius: BorderRadius.circular(8),
+                      backgroundBlendMode: BlendMode.color,
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      border: Border.all(
+                          color: ColorScheme.of(context)
+                              .outline
+                              .withValues(alpha: 0.2))),
+                  offset: const Offset(0, 0),
+                  isOverButton: false),
+              menuItemStyleData: const MenuItemStyleData(
+                height: 60,
+              ),
+            ),
+          ),
+        )
+      ],
+    );
   }
 }

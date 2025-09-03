@@ -19,13 +19,13 @@ class ProfileMySavedGridview extends StatelessWidget {
         }
 
         if (!snapshot.hasData || snapshot.data == null) {
-          return Center(child: Text('my_saved_posts'.tr()));
+          return Center(child: Text('no_posts_found'.tr()));
         }
 
         final List<String> saved = snapshot.data?.saved ?? <String>[];
 
         if (saved.isEmpty) {
-          return Center(child: Text('my_saved_posts'.tr()));
+          return Center(child: Text('no_posts_found'.tr()));
         }
 
         return GridView.builder(

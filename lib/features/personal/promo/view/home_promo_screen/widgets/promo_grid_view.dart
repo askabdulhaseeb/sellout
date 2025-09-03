@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../domain/entities/promo_entity.dart';
 import 'promo_gridview_tile.dart';
 

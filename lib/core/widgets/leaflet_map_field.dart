@@ -8,7 +8,7 @@ import 'dart:convert';
 import '../../features/personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../features/personal/marketplace/domain/enum/radius_type.dart';
 import '../theme/app_theme.dart';
-import 'costom_textformfield.dart';
+import 'custom_textformfield.dart';
 import '../../features/personal/location/domain/entities/location_entity.dart';
 
 enum MapDisplayMode {
@@ -193,7 +193,7 @@ class _LocationFieldState extends State<LocationDropdown> {
                 mapController: _mapController,
                 options: MapOptions(
                   initialCenter: _selectedLatLng,
-                  initialZoom: 6,
+                  initialZoom: 10,
                 ),
                 children: <Widget>[
                   TileLayer(

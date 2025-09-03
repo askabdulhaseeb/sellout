@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../core/enums/core/attachment_type.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/theme/app_theme.dart';
-import '../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/profile_photo.dart';
 import '../../../../../../services/get_it.dart';

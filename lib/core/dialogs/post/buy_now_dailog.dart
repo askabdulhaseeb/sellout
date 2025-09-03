@@ -149,7 +149,7 @@ class _BuyNowDialogState extends State<BuyNowDialog> {
                     AppSnackBar.showSnackBar(
                       // ignore: use_build_context_synchronously
                       context,
-                      result.exception?.message ?? 'something_wrong'.tr(),
+                      result.exception?.detail ?? 'something_wrong'.tr(),
                     );
                   }
                 } catch (e) {

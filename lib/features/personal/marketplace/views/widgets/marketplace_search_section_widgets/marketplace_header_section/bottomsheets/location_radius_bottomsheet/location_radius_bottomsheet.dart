@@ -16,13 +16,6 @@ class LocationRadiusBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final MarketPlaceProvider provider =
         Provider.of<MarketPlaceProvider>(context);
-    // LatLng? selectedlatlng;
-    // LocationEntity? selectedLocation;
-    // void updateLocation(LatLng latlng, LocationEntity location) {
-    //   selectedlatlng = latlng;
-    //   selectedLocation = location;
-    // }
-
     return Padding(
       padding: MediaQuery.of(context).viewInsets,
       child: Container(
@@ -55,7 +48,6 @@ class LocationRadiusBottomSheet extends StatelessWidget {
                 const SizedBox(height: 8),
                 const RadiusSlider(),
               ],
-              const SizedBox(height: 24),
               // UpdateLocationButton(
               //     latlng: selectedlatlng, selectedLocation: selectedLocation),
               const SizedBox(height: 12),

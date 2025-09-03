@@ -139,14 +139,14 @@ class _AddToCartDialogState extends State<AddToCartDialog> {
                     Navigator.of(context).pop();
                   } else {
                     AppLog.error(
-                      result.exception?.message ?? 'ERROR - AddToCartDialog',
+                      result.exception?.detail ?? 'ERROR - AddToCartDialog',
                       name: 'AddToCartDialog',
                       error: result.exception,
                     );
                     AppSnackBar.showSnackBar(
                       // ignore: use_build_context_synchronously
                       context,
-                      result.exception?.message ?? 'something_wrong'.tr(),
+                      result.exception?.detail ?? 'something_wrong'.tr(),
                     );
                   }
                 } catch (e) {

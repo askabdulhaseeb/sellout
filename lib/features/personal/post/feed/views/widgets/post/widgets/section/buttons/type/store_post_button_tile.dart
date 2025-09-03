@@ -99,6 +99,8 @@ class _StorePostButtonTileState extends State<StorePostButtonTile> {
             if (widget.post.acceptOffers == true)
               Expanded(
                   child: PostMakeOfferButton(
+                detailWidgetColor: selectedColor,
+                detailWidgetSize: selectedSize,
                 post: widget.post,
                 detailWidget: widget.detailWidget,
               )),
@@ -107,17 +109,6 @@ class _StorePostButtonTileState extends State<StorePostButtonTile> {
         Row(
           spacing: 12,
           children: <Widget>[
-            // Expanded(
-            //   child: PostCounterWidget(
-            //     initialQuantity: quantity,
-            //     maxQuantity: selectedColor?.quantity ?? widget.post.quantity,
-            //     onChanged: (int value) {
-            //       setState(() {
-            //         quantity = value;
-            //       });
-            //     },
-            //   ),
-            // ),
             Expanded(
                 child: PostAddToBasketButton(
               detailWidget: widget.detailWidget,

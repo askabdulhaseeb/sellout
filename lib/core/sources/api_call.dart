@@ -111,7 +111,7 @@ class ApiCall<T> {
           error: CustomException('ERROR: ${decoded['error']}'),
         );
         return DataFailer<T>(CustomException('ERROR: ${decoded['message']}',
-            reason: decoded['error']));
+            detail: '${decoded['details']}', reason: decoded['error']));
       }
     } catch (e) {
       AppLog.error(

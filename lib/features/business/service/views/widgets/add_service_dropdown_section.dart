@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../../core/enums/business/services/service_category_type.dart';
 import '../../../../../core/enums/business/services/service_model_type.dart';
 import '../../../../../core/utilities/app_validators.dart';
-import '../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../core/widgets/custom_dropdown.dart';
 import '../providers/add_service_provider.dart';
 
