@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../core/widgets/profile_photo.dart';
 import '../../../../business/core/domain/entity/service/service_entity.dart';
-import '../../../post/domain/entities/post_entity.dart';
+import '../../../post/domain/entities/post/post_entity.dart';
 
 class WriteReviewHeaderSection extends StatelessWidget {
   const WriteReviewHeaderSection(

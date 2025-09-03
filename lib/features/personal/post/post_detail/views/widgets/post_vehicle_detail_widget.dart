@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../domain/entities/post_entity.dart';
+import '../../../domain/entities/post/post_entity.dart';
 
 class PostVehicleDetailWidget extends StatelessWidget {
   const PostVehicleDetailWidget({required this.post, super.key});
@@ -13,17 +13,19 @@ class PostVehicleDetailWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          _detailItem('fuel_type'.tr(), post.fuelType ?? 'na'.tr()),
-          _detailItem('body_type'.tr(), post.bodyType ?? 'na'.tr()),
+          _detailItem(
+              'fuel_type'.tr(), post.vehicleInfo?.fuelType ?? 'na'.tr()),
+          _detailItem(
+              'body_type'.tr(), post.vehicleInfo?.bodyType ?? 'na'.tr()),
           _detailItem(
             'engine'.tr(),
-            _boolToYesNo(post.vaccinationUpToDate),
+            _boolToYesNo(post.petInfo?.vaccinationUpToDate),
           ),
           // _detailItem('gearbox'.tr(), post.address ?? 'na'.tr()),
-          _detailItem('milage'.tr(), post.mileage.toString()),
-          _detailItem('doors'.tr(), post.doors.toString()),
-          _detailItem('seats'.tr(), post.seats.toString()),
-          _detailItem('emission'.tr(), post.emission ?? 'na'.tr()),
+          _detailItem('milage'.tr(), post.vehicleInfo?.mileage.toString()),
+          _detailItem('doors'.tr(), post.vehicleInfo?.doors.toString()),
+          _detailItem('seats'.tr(), post.vehicleInfo?.seats.toString()),
+          _detailItem('emission'.tr(), post.vehicleInfo?.emission ?? 'na'.tr()),
         ],
       ),
     );
@@ -35,7 +37,7 @@ class PostVehicleDetailWidget extends StatelessWidget {
     return 'na'.tr(); // In case it's null
   }
 
-  Widget _detailItem(String title, String value) {
+  Widget _detailItem(String title, String? value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -50,7 +52,7 @@ class PostVehicleDetailWidget extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Text(
-              value,
+              value ?? '',
               style: const TextStyle(fontSize: 14, color: Colors.grey),
             ),
           ],

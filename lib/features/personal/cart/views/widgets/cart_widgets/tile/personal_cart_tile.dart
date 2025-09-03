@@ -8,7 +8,8 @@ import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../routes/app_linking.dart';
 import '../../../../../auth/signin/domain/repositories/signin_repository.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
-import '../../../../../post/domain/entities/post_entity.dart';
+
+import '../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../post/post_detail/views/screens/post_detail_screen.dart';
 import '../../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../../domain/entities/cart/cart_item_entity.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../domain/entities/post_entity.dart';
+import '../../../domain/entities/post/post_entity.dart';
 import 'post_detail_postage_return_section.dart';
 import 'post_detail_return_policy_details.dart';
 import 'sellout_bank_guranter_widget.dart';

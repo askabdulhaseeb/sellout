@@ -1,5 +1,5 @@
 import '../../../../../core/usecase/usecase.dart';
-import '../../../post/domain/entities/post_entity.dart';
+import '../../../post/domain/entities/post/post_entity.dart';
 import '../params/post_by_filter_params.dart';
 import '../repository/marketplace_repo.dart';
 

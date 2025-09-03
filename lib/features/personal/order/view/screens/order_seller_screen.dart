@@ -9,7 +9,7 @@ import '../../../../business/core/domain/usecase/get_business_by_id_usecase.dart
 import '../../../chats/create_chat/view/provider/create_private_chat_provider.dart';
 import '../../../post/domain/usecase/get_specific_post_usecase.dart';
 import '../../domain/entities/order_entity.dart';
-import '../../../post/domain/entities/post_entity.dart';
+import '../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../../user/profiles/domain/usecase/get_user_by_uid.dart';
 import '../provider/order_provider.dart';

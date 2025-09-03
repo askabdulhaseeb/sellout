@@ -4,7 +4,7 @@ import '../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../chats/chat_dashboard/domain/entities/messages/message_entity.dart';
-import '../../../../post/domain/entities/post_entity.dart';
+import '../../../../post/domain/entities/post/post_entity.dart';
 import '../provider/booking_provider.dart';
 import '../screens/booking_screen.dart';
 import 'package:provider/provider.dart';

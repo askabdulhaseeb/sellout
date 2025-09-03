@@ -6,7 +6,7 @@ import '../../../../../../core/widgets/custom_toggle_switch.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../post/data/sources/local/local_post.dart';
-import '../../../../post/domain/entities/post_entity.dart';
+import '../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../../user/profiles/domain/usecase/get_post_by_id_usecase.dart';
 import '../provider/promo_provider.dart';

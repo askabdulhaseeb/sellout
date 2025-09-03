@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../../../../../domain/entities/post_entity.dart';
+import '../../../../../../domain/entities/post/post_entity.dart';
 import 'icon_butoons/chat_with_seller_icon_button.dart';
 import 'icon_butoons/save_post_icon_button.dart';
 import 'icon_butoons/share_post_icon_button.dart';

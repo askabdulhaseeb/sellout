@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../domain/entities/post_entity.dart';
+import '../../../domain/entities/post/post_entity.dart';
 
 class PostPetDetailWidget extends StatelessWidget {
   const PostPetDetailWidget({required this.post, super.key});
@@ -13,20 +13,21 @@ class PostPetDetailWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          _detailItem('age'.tr(), post.age ?? 'na'.tr()),
-          _detailItem('breed'.tr(), post.breed ?? 'na'.tr()),
+          _detailItem('age'.tr(), post.petInfo?.age ?? 'na'.tr()),
+          _detailItem('breed'.tr(), post.petInfo?.breed ?? 'na'.tr()),
           _detailItem(
             'vaccination_up_to_date'.tr(),
-            _boolToYesNo(post.vaccinationUpToDate),
+            _boolToYesNo(post.petInfo?.vaccinationUpToDate),
           ),
-          _detailItem('ready_to_leave'.tr(), post.readyToLeave ?? 'na'.tr()),
+          _detailItem(
+              'ready_to_leave'.tr(), post.petInfo?.readyToLeave ?? 'na'.tr()),
           _detailItem(
             'health_checked'.tr(),
-            _boolToYesNo(post.healthChecked),
+            _boolToYesNo(post.petInfo?.healthChecked),
           ),
           _detailItem(
             'worm_flee_treated'.tr(),
-            _boolToYesNo(post.wormAndFleaTreated),
+            _boolToYesNo(post.petInfo?.wormAndFleaTreated),
           ),
         ],
       ),

@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../domain/entities/post_entity.dart';
+import '../../../domain/entities/post/post_entity.dart';
 
 class PostDetailPostageReturnSection extends StatelessWidget {
   const PostDetailPostageReturnSection({required this.post, super.key});

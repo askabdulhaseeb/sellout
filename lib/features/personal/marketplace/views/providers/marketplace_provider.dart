@@ -11,7 +11,7 @@ import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../listing/listing_form/data/models/sub_category_model.dart';
 import '../../../listing/listing_form/data/sources/remote/dropdown_listing_api.dart';
 import '../../../location/domain/entities/location_entity.dart';
-import '../../../post/domain/entities/post_entity.dart';
+import '../../../post/domain/entities/post/post_entity.dart';
 import '../../../post/post_detail/views/screens/post_detail_screen.dart';
 import '../../domain/enum/radius_type.dart';
 import '../../domain/params/filter_params.dart';

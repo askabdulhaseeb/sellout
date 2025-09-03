@@ -4,7 +4,7 @@ import '../../../../../../../../../../../core/helper_functions/country_helper.da
 import '../../../../../../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import 'widgets/make_counter_offer_button.dart';
 import '../../../../../../../../../chats/chat_dashboard/domain/entities/messages/message_entity.dart';
-import '../../../../../../../../domain/entities/post_entity.dart';
+import '../../../../../../../../domain/entities/post/post_entity.dart';
 import '../../../../../../../../domain/entities/size_color/color_entity.dart';
 import '../../buttons/type/widgets/offer_creation_button.dart';
 import 'widgets/make_offer_quantity_counter.dart';

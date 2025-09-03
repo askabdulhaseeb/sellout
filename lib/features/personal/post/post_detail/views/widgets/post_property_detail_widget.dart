@@ -1,7 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../domain/entities/post_entity.dart';
+
+import '../../../domain/entities/post/post_entity.dart';
 
 class PostPropertyDetailWidget extends StatelessWidget {
   const PostPropertyDetailWidget({required this.post, super.key});
@@ -21,25 +22,25 @@ class PostPropertyDetailWidget extends StatelessWidget {
             PostPropertyDetailIconWidgets(
               icon: Icons.home_outlined,
               title: 'property_type'.tr(),
-              value: post.propertytype ?? 'na'.tr(),
+              value: post.propertyInfo?.propertyType ?? 'na'.tr(),
               showIcon: true,
             ),
             PostPropertyDetailIconWidgets(
               icon: Icons.bed_outlined,
               title: 'bedroom'.tr(),
-              value: 'x${post.bedroom ?? '-'}',
+              value: 'x${post.propertyInfo?.bedroom ?? '-'}',
               showIcon: true,
             ),
             PostPropertyDetailIconWidgets(
               icon: Icons.bathtub_outlined,
               title: 'bathroom'.tr(),
-              value: 'x${post.bathroom ?? '-'}',
+              value: 'x${post.propertyInfo?.bathroom ?? '-'}',
               showIcon: true,
             ),
             PostPropertyDetailIconWidgets(
               icon: Icons.info_outline,
               title: 'tenure'.tr(),
-              value: post.tenureType ?? 'na'.tr(),
+              value: post.propertyInfo?.tenureType ?? 'na'.tr(),
               showIcon: false, // no icon here
             ),
           ],
@@ -59,12 +60,14 @@ class PostPropertyDetailWidget extends StatelessWidget {
               spacing: 12,
               children: <Widget>[
                 Expanded(
-                  child: _featureItem(
-                      context, '${post.bedroom} ${'bedrooms'.tr()}', true),
+                  child: _featureItem(context,
+                      '${post.propertyInfo?.bedroom} ${'bedrooms'.tr()}', true),
                 ),
                 Expanded(
                   child: _featureItem(
-                      context, '${post.bathroom} ${'bathrooms'.tr()}', true),
+                      context,
+                      '${post.propertyInfo?.bathroom} ${'bathrooms'.tr()}',
+                      true),
                 ),
               ],
             ),
@@ -73,11 +76,12 @@ class PostPropertyDetailWidget extends StatelessWidget {
               spacing: 12,
               children: <Widget>[
                 Expanded(
-                  child: _featureItem(
-                      context, 'Parking area', post.parking ?? false),
+                  child: _featureItem(context, 'Parking area',
+                      post.propertyInfo?.parking ?? false),
                 ),
                 Expanded(
-                  child: _featureItem(context, 'Garden', post.garden ?? false),
+                  child: _featureItem(
+                      context, 'Garden', post.propertyInfo?.garden ?? false),
                 ),
               ],
             ),
@@ -86,8 +90,8 @@ class PostPropertyDetailWidget extends StatelessWidget {
               spacing: 12,
               children: <Widget>[
                 Expanded(
-                  child:
-                      _featureItem(context, post.tenureType ?? 'na'.tr(), true),
+                  child: _featureItem(context,
+                      post.propertyInfo?.tenureType ?? 'na'.tr(), true),
                 ),
                 Expanded(
                   child: _featureItem(context, 'Viewings Available', true),
@@ -99,7 +103,9 @@ class PostPropertyDetailWidget extends StatelessWidget {
                 'Located on ${post.meetUpLocation?.address ?? 'na'.tr()}',
                 true),
             _featureItem(
-                context, '${'energy_rating'.tr()}: ${post.energyRating}', true),
+                context,
+                '${'energy_rating'.tr()}: ${post.propertyInfo?.energyRating}',
+                true),
           ],
         ),
       ],

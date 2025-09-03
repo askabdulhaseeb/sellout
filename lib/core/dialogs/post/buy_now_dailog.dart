@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../features/personal/cart/views/screens/personal_cart_screen.dart';
-import '../../../features/personal/post/domain/entities/post_entity.dart';
+import '../../../features/personal/post/domain/entities/post/post_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/color_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/size_color_entity.dart';
 import '../../../features/personal/post/domain/params/add_to_cart_param.dart';
@@ -64,7 +64,7 @@ class _BuyNowDialogState extends State<BuyNowDialog> {
                   child: CustomDropdown<SizeColorEntity>(
                     title: 'size'.tr(),
                     hint: 'size'.tr(),
-                    items: widget.post.sizeColors
+                    items: widget.post.clothFootInfo.sizeColors
                         .map((SizeColorEntity e) =>
                             DropdownMenuItem<SizeColorEntity>(
                               value: e,
@@ -113,9 +113,10 @@ class _BuyNowDialogState extends State<BuyNowDialog> {
               ],
             ),
             // Chart
-            if (widget.post.sizeChartUrl != null)
+            if (widget.post.clothFootInfo.sizeChartUrl != null)
               SizeChartButtonTile(
-                  sizeChartURL: widget.post.sizeChartUrl?.url ?? '') //
+                  sizeChartURL:
+                      widget.post.clothFootInfo.sizeChartUrl?.url ?? '') //
             // Add to cart button
             ,
             CustomElevatedButton(

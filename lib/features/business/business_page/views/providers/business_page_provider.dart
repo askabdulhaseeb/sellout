@@ -3,7 +3,7 @@ import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../../../personal/bookings/domain/entity/booking_entity.dart';
 import '../../../../personal/marketplace/domain/params/filter_params.dart';
-import '../../../../personal/post/domain/entities/post_entity.dart';
+import '../../../../personal/post/domain/entities/post/post_entity.dart';
 import '../../../../personal/review/domain/entities/review_entity.dart';
 import '../../../../personal/review/domain/param/get_review_param.dart';
 import '../../../../personal/review/domain/usecase/get_reviews_usecase.dart';

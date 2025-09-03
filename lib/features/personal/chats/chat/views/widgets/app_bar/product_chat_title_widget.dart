@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../business/core/data/sources/local_business.dart';
 import '../../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
-import '../../../../../post/domain/entities/post_entity.dart';
+import '../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../../chat_dashboard/views/widgets/chat_profile_with_status.dart';
 import '../../providers/chat_provider.dart';

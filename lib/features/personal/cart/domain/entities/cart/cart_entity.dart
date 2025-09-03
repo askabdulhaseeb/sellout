@@ -1,9 +1,7 @@
 import 'package:hive/hive.dart';
-
 import '../../../../post/data/sources/local/local_post.dart';
 import 'cart_item_entity.dart';
 export 'cart_item_entity.dart';
-
 part 'cart_entity.g.dart';
 
 @HiveType(typeId: 37)

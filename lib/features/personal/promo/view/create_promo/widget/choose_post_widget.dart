@@ -5,7 +5,7 @@ import '../../../../../../core/theme/app_theme.dart';
 import '../../../../../../core/widgets/costom_textformfield.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/custom_network_image.dart';
-import '../../../../post/domain/entities/post_entity.dart';
+import '../../../../post/domain/entities/post/post_entity.dart';
 import '../provider/promo_provider.dart';
 import 'choose_post_bottomsheet.dart';
 

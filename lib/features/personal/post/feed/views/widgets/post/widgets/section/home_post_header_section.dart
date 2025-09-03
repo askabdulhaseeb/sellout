@@ -11,7 +11,7 @@ import '../../../../../../../../business/core/domain/entity/business_entity.dart
 import '../../../../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../../../../../user/profiles/domain/usecase/get_user_by_uid.dart';
 import '../../../../../../../user/profiles/views/screens/user_profile_screen.dart';
-import '../../../../../../domain/entities/post_entity.dart';
+import '../../../../../../domain/entities/post/post_entity.dart';
 import '../../../../../../../../../core/dialogs/post/home_post_tile_more_button_options.dart';
 
 class PostHeaderSection extends StatelessWidget {

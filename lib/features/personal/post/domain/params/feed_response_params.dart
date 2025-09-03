@@ -1,4 +1,4 @@
-import '../entities/post_entity.dart';
+import '../entities/post/post_entity.dart';
 
 class GetFeedResponse {
   GetFeedResponse({required this.nextPageToken, required this.posts});

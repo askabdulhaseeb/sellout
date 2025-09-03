@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../../core/extension/int_ext.dart';
-import '../../../../../post/domain/entities/post_entity.dart';
+
+import '../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../data/sources/local_cart.dart';
 import '../../../providers/cart_provider.dart';
 

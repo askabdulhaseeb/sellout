@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../../bookings/domain/entity/booking_entity.dart';
-import '../../../../post/domain/entities/post_entity.dart';
+import '../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../post/domain/entities/visit/visiting_entity.dart';
 import '../provider/booking_provider.dart';
 

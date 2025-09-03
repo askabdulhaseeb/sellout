@@ -6,11 +6,11 @@ import '../../../../../../core/sources/api_call.dart';
 import '../../../../../../core/sources/local/local_request_history.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../cart/domain/usecase/cart/get_cart_usecase.dart';
-import '../../../domain/entities/post_entity.dart';
+import '../../../domain/entities/post/post_entity.dart';
 import '../../../domain/params/add_to_cart_param.dart';
 import '../../../domain/params/feed_response_params.dart';
 import '../../../domain/params/get_feed_params.dart';
-import '../../models/post_model.dart';
+import '../../models/post/post_model.dart';
 import '../local/local_post.dart';
 
 abstract interface class PostRemoteApi {

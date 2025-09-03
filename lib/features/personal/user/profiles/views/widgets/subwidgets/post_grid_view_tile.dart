@@ -14,7 +14,7 @@ import '../../../../../../../services/get_it.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../../../../../listing/listing_form/views/screens/add_listing_form_screen.dart';
-import '../../../../../post/domain/entities/post_entity.dart';
+import '../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../post/domain/params/add_to_cart_param.dart';
 import '../../../../../post/domain/usecase/add_to_cart_usecase.dart';
 import '../../../../../post/post_detail/views/screens/post_detail_screen.dart';
@@ -139,7 +139,7 @@ class PostGridViewTileBasketButton extends StatelessWidget {
   Widget build(BuildContext context) {
     Future<void> addToBasket(BuildContext context, PostEntity post) async {
       try {
-        if (post.sizeColors.isNotEmpty) {
+        if (post.clothFootInfo.sizeColors.isNotEmpty) {
           await showDialog(
             context: context,
             builder: (BuildContext context) {

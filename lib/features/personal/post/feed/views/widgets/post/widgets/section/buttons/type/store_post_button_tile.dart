@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../../../../core/extension/string_ext.dart';
 import '../../../../../../../../../../../core/widgets/custom_dropdown.dart';
-import '../../../../../../../../domain/entities/post_entity.dart';
+import '../../../../../../../../domain/entities/post/post_entity.dart';
 import '../../../../../../../../domain/entities/size_color/color_entity.dart';
 import '../../../../../../../../domain/entities/size_color/size_color_entity.dart';
 import 'size_chart_button_tile.dart';
@@ -29,7 +29,8 @@ class _StorePostButtonTileState extends State<StorePostButtonTile> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        if (widget.post.sizeColors.isNotEmpty && widget.detailWidget)
+        if (widget.post.clothFootInfo.sizeColors.isNotEmpty &&
+            widget.detailWidget)
           Row(
             spacing: 12,
             children: <Widget>[
@@ -37,7 +38,7 @@ class _StorePostButtonTileState extends State<StorePostButtonTile> {
                 child: CustomDropdown<SizeColorEntity>(
                   title: '',
                   hint: 'select_your_size'.tr(),
-                  items: widget.post.sizeColors
+                  items: widget.post.clothFootInfo.sizeColors
                       .map((SizeColorEntity e) =>
                           DropdownMenuItem<SizeColorEntity>(
                             value: e,
@@ -126,10 +127,11 @@ class _StorePostButtonTileState extends State<StorePostButtonTile> {
             )),
           ],
         ),
-        if (widget.post.sizeColors.isNotEmpty &&
+        if (widget.post.clothFootInfo.sizeColors.isNotEmpty &&
             widget.detailWidget &&
-            widget.post.sizeChartUrl != null)
-          SizeChartButtonTile(sizeChartURL: widget.post.sizeChartUrl?.url ?? '')
+            widget.post.clothFootInfo.sizeChartUrl != null)
+          SizeChartButtonTile(
+              sizeChartURL: widget.post.clothFootInfo.sizeChartUrl?.url ?? '')
       ],
     );
   }

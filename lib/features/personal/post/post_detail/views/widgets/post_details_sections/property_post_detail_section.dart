@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../core/functions/app_log.dart';
-import '../../../../domain/entities/post_entity.dart';
+import '../../../../domain/entities/post/post_entity.dart';
 import '../../../../feed/views/widgets/post/widgets/section/buttons/home_post_button_section.dart';
 import '../post_detail_attachment_slider.dart';
 import '../post_detail_condition_delivery_detail.dart';

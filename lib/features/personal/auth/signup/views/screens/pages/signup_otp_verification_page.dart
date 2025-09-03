@@ -1,8 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../../core/widgets/costom_textformfield.dart';
 import '../../providers/signup_provider.dart';
 
@@ -30,9 +28,8 @@ class SignupOtpVerificationPage extends StatelessWidget {
               readOnly: pro.isLoading,
               onFieldSubmitted: (String p0) =>
                   p0.length == 6 ? pro.onNext(context) : null,
-              onChanged: kDebugMode
-                  ? (String p0) => p0.length == 6 ? pro.onNext(context) : null
-                  : null,
+              onChanged: (String p0) =>
+                  p0.length == 6 ? pro.onNext(context) : null,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
