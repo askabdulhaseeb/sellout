@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
+import '../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../dashboard/views/screens/dashboard_screen.dart';
 import '../../data/sources/local/local_auth.dart';
@@ -76,6 +78,8 @@ class SigninProvider extends ChangeNotifier {
           name: 'SigninProvider.signIn - Else',
           error: result,
         );
+        AppSnackBar.showSnackBar(
+            context, result.exception?.reason ?? 'something_wrong'.tr());
         // Show error message
       }
     } catch (e) {

@@ -31,7 +31,8 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
         debugPrint('Signin Success in Remote Source');
         final Map<String, dynamic> jsonMap = jsonDecode(responce.data ?? '');
         if (jsonMap['require_2fa'] == true) {
-          AppLog.info('require_2fa', name: 'SignInRemoteSourceImpl - if');
+          AppLog.info('require_2fa',
+              name: 'SignInRemoteSourceImpl.signin - if');
           return DataSuccess<bool>(responce.data ?? '', true);
         } else {
           await HiveDB.signout();
@@ -43,12 +44,17 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
           return responce;
         }
       } else {
-        debugPrint('Signin Failed in Remote Source');
-        return DataFailer<bool>(CustomException('Signin Failed'));
+        AppLog.error('Signin Failed in Remote Source',
+            name: 'SignInRemoteSourceImpl.signin - else',
+            error: responce.exception?.message ?? 'something_wrong'.tr());
+        return DataFailer<bool>(
+            responce.exception ?? CustomException('signin failed'));
       }
     } catch (e, stc) {
       AppLog.error('signIn error',
-          name: 'SignInRemoteSourceImpl - catch ', error: e, stackTrace: stc);
+          name: 'SignInRemoteSourceImpl.signin - catch ',
+          error: e,
+          stackTrace: stc);
       return DataFailer<bool>(CustomException('Signin Failed: $e'));
     }
   }
