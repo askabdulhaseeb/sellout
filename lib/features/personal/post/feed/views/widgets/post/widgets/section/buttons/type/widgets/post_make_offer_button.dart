@@ -223,7 +223,7 @@ class _SelectSizeColorDialogState extends State<SelectSizeColorDialog> {
                 } catch (e) {
                   AppLog.error(
                     e.toString(),
-                    name: 'BuyNowDialog',
+                    name: 'SelectSizeColorDialog',
                     error: e,
                   );
                   AppSnackBar.showSnackBar(

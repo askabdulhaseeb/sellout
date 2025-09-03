@@ -47,7 +47,6 @@ class _ProfileOrdersSectionState extends State<ProfileOrdersSection> {
                 StatusType.delivered.color,
                 StatusType.cancelled.color
               ],
-              seletedFontSize: 12,
               unseletedBorderColor:
                   Theme.of(context).colorScheme.outlineVariant,
               labelText: '',
