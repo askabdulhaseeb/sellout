@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../../../../core/widgets/leaflet_map_field.dart';
 import '../../../../../../../location/domain/entities/location_entity.dart';
 import '../../../../../providers/marketplace_provider.dart';

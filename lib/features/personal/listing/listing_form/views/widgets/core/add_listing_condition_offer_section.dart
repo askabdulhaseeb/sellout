@@ -5,7 +5,7 @@ import '../../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
-import '../../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_toggle_switch.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../data/sources/remote/get_access_code_api.dart';

@@ -4,7 +4,7 @@ import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../data/models/user_model.dart';
 import '../../../domain/entities/supporter_detail_entity.dart';
 import '../../../domain/usecase/get_user_by_uid.dart';
-import '../../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../business/core/domain/usecase/get_business_by_id_usecase.dart';
 import '../../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../../../../services/get_it.dart';

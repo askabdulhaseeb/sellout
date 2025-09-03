@@ -4,7 +4,7 @@ import '../../../../user/profiles/views/widgets/list_types/profile_my_saved_grid
 
 class SavedPostsPage extends StatelessWidget {
   const SavedPostsPage({super.key});
-  static String routeName = 'my_saved_posts';
+  static String routeName = '/my_saved_posts';
   @override
   Widget build(BuildContext context) {
     return Scaffold(

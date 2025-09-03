@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../core/theme/app_theme.dart';
-import '../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../setting_dashboard/view/providers/personal_setting_provider.dart';
 

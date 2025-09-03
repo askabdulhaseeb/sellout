@@ -194,8 +194,10 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
                     selectedSubCategory?.title ?? 'select_category'.tr(),
                     overflow: TextOverflow.ellipsis,
                     style: selectedSubCategory == null
-                        ? Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: ColorScheme.of(context).outlineVariant)
+                        ? Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(color: ColorScheme.of(context).outline)
                         : Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),

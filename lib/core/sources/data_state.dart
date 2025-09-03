@@ -17,9 +17,11 @@ class CustomException {
   CustomException(
     this.message, {
     this.code,
+    this.detail,
     String? reason,
   }) : reason = reason ?? message;
   final int? code;
+  final String? detail;
   final String? reason;
   final String message;
 }

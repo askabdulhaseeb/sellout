@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../../../core/theme/app_theme.dart';
-import '../../../../../../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../../../core/widgets/custom_memory_image.dart';
 import '../../../../../../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';

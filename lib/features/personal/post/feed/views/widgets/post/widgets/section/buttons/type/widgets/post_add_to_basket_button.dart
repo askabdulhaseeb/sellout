@@ -71,7 +71,7 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
           if (mounted) {
             AppSnackBar.showSnackBar(
               context,
-              result.exception?.message ?? 'something_wrong'.tr(),
+              result.exception?.detail ?? 'something_wrong'.tr(),
             );
           }
         }
@@ -97,7 +97,7 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
           if (mounted) {
             AppSnackBar.showSnackBar(
               context,
-              result.exception?.message ?? 'something_wrong'.tr(),
+              result.exception?.detail ?? 'something_wrong'.tr(),
             );
           }
         }

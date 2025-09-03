@@ -50,7 +50,6 @@ class _PostBuyNowButtonState extends State<PostBuyNowButton> {
 
     try {
       final AddToCartUsecase usecase = AddToCartUsecase(locator());
-
       // If product has variants but detailWidget is not showing, open selection dialog
       if (widget.post.clothFootInfo.sizeColors.isNotEmpty &&
           !widget.detailWidget) {
@@ -66,9 +65,7 @@ class _PostBuyNowButtonState extends State<PostBuyNowButton> {
           size: widget.detailWidgetSize,
           quantity: 1,
         );
-
         final DataState<bool> result = await usecase(param);
-
         if (result is DataSuccess) {
           if (mounted) {
             await Navigator.of(context).pushNamed(PersonalCartScreen.routeName);
@@ -82,7 +79,7 @@ class _PostBuyNowButtonState extends State<PostBuyNowButton> {
           if (mounted) {
             AppSnackBar.showSnackBar(
               context,
-              result.exception?.message ?? 'something_wrong'.tr(),
+              result.exception?.detail ?? 'something_wrong'.tr(),
             );
           }
         }
