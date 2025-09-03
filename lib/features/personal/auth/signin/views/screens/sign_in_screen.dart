@@ -17,7 +17,6 @@ class SignInScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final GlobalKey<FormState> signInFormKey = GlobalKey<FormState>();
-
     final SigninProvider authPro =
         Provider.of<SigninProvider>(context, listen: false);
     return Scaffold(
