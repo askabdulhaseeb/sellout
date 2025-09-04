@@ -72,6 +72,29 @@ class ServicesPageProvider extends ChangeNotifier {
   }
 
   //
+  String? _serviceNextKey;
+
+  void setServicesKey(String? value) {
+    _serviceNextKey = value;
+    notifyListeners();
+  }
+
+  ServiceByFiltersParams get serviceParams => ServiceByFiltersParams(
+        lastKey: _serviceNextKey,
+        filters: getFilterParams(),
+        query: search.text,
+        sort: _selectedSortOption,
+        clientLat: _selectedlatlng != const LatLng(0, 0)
+            ? _selectedlatlng.latitude
+            : null,
+        clientLng: _selectedlatlng != const LatLng(0, 0)
+            ? _selectedlatlng.longitude
+            : null,
+        distance:
+            _radiusType == RadiusType.local ? _selectedRadius.toInt() : null,
+      );
+
+  //
   TextEditingController minPriceController = TextEditingController();
   TextEditingController maxPriceController = TextEditingController();
 
@@ -90,10 +113,9 @@ class ServicesPageProvider extends ChangeNotifier {
 
   //
   final List<ServiceEntity> _serviceResults = <ServiceEntity>[];
-  // String? _serviceNextKey;
+  //
   ServiceSortOption? _selectedSortOption = ServiceSortOption.bestMatch;
   ServiceSortOption? get selectedSortOption => _selectedSortOption;
-
   void setSortOption(ServiceSortOption option) {
     _selectedSortOption = option;
     searchServices();
@@ -118,33 +140,54 @@ class ServicesPageProvider extends ChangeNotifier {
   }
 
   Future<void> searchServices() async {
+    setServicesKey('');
     searchedServices.clear();
     final DataState<List<ServiceEntity>> result =
-        await _getServiceByCategory.call(
-      ServiceByFiltersParams(
-        filters: getFilterParams(),
-        query: search.text,
-        sort: _selectedSortOption,
-        clientLat: _selectedlatlng != const LatLng(0, 0)
-            ? _selectedlatlng.latitude
-            : null,
-        clientLng: _selectedlatlng != const LatLng(0, 0)
-            ? _selectedlatlng.longitude
-            : null,
-        distance:
-            _radiusType == RadiusType.local ? _selectedRadius.toInt() : null,
-      ),
-    );
+        await _getServiceByCategory.call(serviceParams);
     if (result is DataSuccess) {
       searchedServices.clear();
+      setServicesKey(result.data);
       searchedServices.addAll(result.entity ?? <ServiceEntity>[]);
     }
-
     _isLoading = false;
     notifyListeners();
   }
 
-  //
+  Future<void> loadMoreServices() async {
+    if (_serviceNextKey == null || _serviceNextKey!.isEmpty) {
+      return;
+    }
+    try {
+      debugPrint(
+          'searched services length:${searchedServices.length.toString()}');
+      _setLoading(true);
+      final DataState<List<ServiceEntity>> result =
+          await _getServiceByCategory(serviceParams);
+      if (result is DataSuccess<List<ServiceEntity>>) {
+        final List<ServiceEntity> newServices =
+            result.entity ?? <ServiceEntity>[];
+        if (newServices.isEmpty) {
+          debugPrint(
+              'searched services length:${searchedServices.length.toString()}');
+          _serviceNextKey = null;
+        } else {
+          searchedServices.addAll(newServices);
+          debugPrint(
+              'searched services length:${searchedServices.length.toString()}');
+          setServicesKey(result.data);
+        }
+      } else {
+        debugPrint(
+          'Failed to load more: ${result.exception?.message ?? 'something_wrong'}',
+        );
+      }
+    } catch (e) {
+      debugPrint('Error loading more posts: $e');
+    } finally {
+      _setLoading(false);
+    }
+  }
+
   Future<List<ServiceEntity>> getSpecialOffer() async {
     try {
       if (_specialOffer.isNotEmpty) return specialOffer;
@@ -234,7 +277,6 @@ class ServicesPageProvider extends ChangeNotifier {
       ServiceAppointmentSectionType.upcoming;
   ServiceAppointmentSectionType get serviceAppointmentSectionType =>
       _serviceAppointmentSectionType;
-
   void setServiceAppointmentSectionType(ServiceAppointmentSectionType value) {
     _serviceAppointmentSectionType = value;
     notifyListeners();

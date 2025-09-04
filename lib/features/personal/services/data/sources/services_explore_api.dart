@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/api_call.dart';
 import '../../../../../core/sources/local/local_request_history.dart';
@@ -94,6 +95,12 @@ class ServicesExploreApiImpl implements ServicesExploreApi {
       if (params.category != null && params.category!.isNotEmpty) {
         endpoint += 'category=${params.category}&';
       }
+      if (params.lastKey != null && params.lastKey!.isNotEmpty) {
+        // Append raw lastKey JSON
+        endpoint += 'nextKey=${jsonEncode(<String, String?>{
+              'service_id': params.lastKey
+            })}&';
+      }
       if (params.filters.isNotEmpty) {
         final String filtersStr = jsonEncode(
           params.filters.map((FilterParam e) => e.toMap()).toList(),
@@ -105,7 +112,6 @@ class ServicesExploreApiImpl implements ServicesExploreApi {
       if (endpoint.endsWith('&')) {
         endpoint = endpoint.substring(0, endpoint.length - 1);
       }
-
       // 🔧 Fix: Expect response as String
       final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,
@@ -132,8 +138,10 @@ class ServicesExploreApiImpl implements ServicesExploreApi {
             .map((dynamic item) =>
                 ServiceModel.fromJson(item as Map<String, dynamic>))
             .toList();
-
-        return DataSuccess<List<ServiceEntity>>(raw, servicesList);
+        final pageKey = (data.containsKey('nextKey') && data['nextKey'] != null)
+            ? json.decode(data['nextKey'])['service_id']
+            : '';
+        return DataSuccess<List<ServiceEntity>>(pageKey, servicesList);
       } else {
         AppLog.error(
           result.exception?.message ?? 'Failed to get services',

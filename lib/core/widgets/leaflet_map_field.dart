@@ -53,9 +53,7 @@ class _LocationFieldState extends State<LocationDropdown> {
     super.initState();
 
     // ✅ Always fallback to a safe coordinate (London, UK)
-    _selectedLatLng = widget.selectedLatLng ??
-        LocalAuth.latlng ??
-        const LatLng(51.509865, -0.118092);
+    _selectedLatLng = widget.selectedLatLng ?? LocalAuth.latlng;
 
     if (widget.initialText?.isNotEmpty == true) {
       _controller.text = widget.initialText!;
