@@ -19,6 +19,9 @@ class ServicesPageTypeToggleSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             CustomToggleSwitch<ServicesPageType>(
+              verticalMargin: 8,
+              verticalPadding: 10,
+              containerHeight: 40,
               unseletedBorderColor:
                   Theme.of(context).colorScheme.outlineVariant,
               unseletedTextColor: Theme.of(context).colorScheme.onSurface,

@@ -15,7 +15,8 @@ class CustomToggleSwitch<T> extends StatelessWidget {
     this.containerHeight,
     this.verticalPadding = 4,
     this.horizontalPadding = 4,
-    this.margin,
+    this.horizontalMargin = 0,
+    this.verticalMargin = 2,
     this.unseletedBorderColor,
     this.unseletedTextColor,
     this.borderWidth = 1,
@@ -33,7 +34,9 @@ class CustomToggleSwitch<T> extends StatelessWidget {
   final double? containerHeight;
   final double verticalPadding;
   final double horizontalPadding;
-  final double? margin;
+  final double horizontalMargin;
+  final double verticalMargin;
+
   final Color? unseletedBorderColor;
   final Color? unseletedTextColor;
   final double borderWidth;
@@ -57,7 +60,8 @@ class CustomToggleSwitch<T> extends StatelessWidget {
             ),
           ),
         Padding(
-          padding: EdgeInsets.all(margin ?? 2),
+          padding: EdgeInsets.symmetric(
+              vertical: verticalMargin, horizontal: horizontalMargin),
           child: Row(
             spacing: labels.length == 2 ? 16 : 4,
             // runSpacing: 16,

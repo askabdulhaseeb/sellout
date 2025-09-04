@@ -31,9 +31,9 @@ class LocalAuth {
   static String? get token => currentUser?.token;
   static String? get uid => currentUser?.userID;
   static String get currency => currentUser?.currency ?? 'gbp';
-  static LatLng get latlng => LatLng(currentUser?.location?.latitude ?? 0,
-      currentUser?.location?.longitude ?? 0);
-
+  static LatLng get latlng => LatLng(
+      currentUser?.location?.latitude ?? 51.509865,
+      currentUser?.location?.longitude ?? -0.118092);
   Future<void> signout() async {
     await _box.clear();
     uidNotifier.value = null; // ✅ notify socket to disconnect

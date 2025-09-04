@@ -27,7 +27,7 @@ class ServiceSearchResults extends StatelessWidget {
                   crossAxisCount: 2,
                   crossAxisSpacing: 6.0,
                   mainAxisSpacing: 6.0,
-                  childAspectRatio: 0.8,
+                  childAspectRatio: 0.68,
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 physics: const NeverScrollableScrollPhysics(),

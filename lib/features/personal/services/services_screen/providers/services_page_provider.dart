@@ -12,6 +12,7 @@ import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../bookings/data/sources/local_booking.dart';
 import '../../../bookings/domain/entity/booking_entity.dart';
 import '../../../location/domain/entities/location_entity.dart';
+import '../../../marketplace/domain/enum/radius_type.dart';
 import '../../../marketplace/domain/params/filter_params.dart';
 import '../../domain/params/service_sort_options.dart';
 import '../../domain/params/services_by_filters_params.dart';
@@ -31,17 +32,6 @@ class ServicesPageProvider extends ChangeNotifier {
   final GetMyBookingsListUsecase _getBookingsListUsecase;
   final GetBusinessByIdUsecase _getBusinessByIdUsecase;
   final GetServicesByQueryUsecase _getServiceByCategory;
-  //
-  final Map<String, bool> _expandedDescriptions = <String, bool>{};
-  bool isDescriptionExpanded(String serviceId) {
-    return _expandedDescriptions[serviceId] ?? false;
-  }
-
-  void toggleDescription(String serviceId) {
-    _expandedDescriptions[serviceId] = !isDescriptionExpanded(serviceId);
-    notifyListeners();
-  }
-
   //
   ServiceCategoryType? _selectedCategory;
   ServiceCategoryType? get selectedCategory => _selectedCategory;
@@ -95,7 +85,6 @@ class ServicesPageProvider extends ChangeNotifier {
     final DataState<List<ServiceEntity>> result =
         await _getServiceByCategory.call(params);
     if (result is DataSuccess) {}
-
     _setLoading(false);
   }
 
@@ -133,11 +122,18 @@ class ServicesPageProvider extends ChangeNotifier {
     final DataState<List<ServiceEntity>> result =
         await _getServiceByCategory.call(
       ServiceByFiltersParams(
-          filters: getFilterParams(),
-          query: search.text,
-          sort: _selectedSortOption,
-          clientLat: _selectedLatLng.latitude,
-          clientLng: _selectedLatLng.longitude),
+        filters: getFilterParams(),
+        query: search.text,
+        sort: _selectedSortOption,
+        clientLat: _selectedlatlng != const LatLng(0, 0)
+            ? _selectedlatlng.latitude
+            : null,
+        clientLng: _selectedlatlng != const LatLng(0, 0)
+            ? _selectedlatlng.longitude
+            : null,
+        distance:
+            _radiusType == RadiusType.local ? _selectedRadius.toInt() : null,
+      ),
     );
     if (result is DataSuccess) {
       searchedServices.clear();
@@ -278,8 +274,6 @@ class ServicesPageProvider extends ChangeNotifier {
         value: maxPriceController.text.trim(),
       ));
     }
-    // Add more filters below as needed...
-
     return params;
   }
 
@@ -291,20 +285,45 @@ class ServicesPageProvider extends ChangeNotifier {
     searchServices();
   }
 
-  ///
-  ///
-  ///
-  ///
-  LatLng _selectedLatLng = LatLng(
-      LocalAuth.currentUser?.location?.latitude ?? 0,
-      LocalAuth.currentUser?.location?.longitude ?? 0);
-  String _selectedLocationName = '';
-  LatLng get selectedLatLng => _selectedLatLng;
-  String get selectedLocationName => _selectedLocationName;
+  void locationSheetApplyButton(BuildContext context) async {
+    await searchServices();
+  }
 
-  void updateLocation(LatLng location, String name) {
-    _selectedLatLng = location;
-    _selectedLocationName = name;
+  void updateLocation(
+    LatLng? latlngVal,
+    LocationEntity? locationVal,
+  ) {
+    _selectedlatlng = latlngVal ?? LocalAuth.latlng;
+    _selectedLocation = locationVal;
+    debugPrint(
+        'Updated LatLng: $_selectedlatlng, Location: $_selectedLocation in marketplaceProvider');
     notifyListeners();
   }
+
+  void updateLocationSheet(LatLng? latlngVal, LocationEntity? locationVal,
+      RadiusType radiusTypeVal, double selectedRadVal) {
+    _radiusType = radiusTypeVal;
+    _selectedRadius = selectedRadVal;
+    _selectedlatlng = latlngVal ?? LocalAuth.latlng;
+    _selectedLocation = locationVal;
+    debugPrint(
+        'Updated LatLng: $_selectedlatlng, Location: $_selectedLocation in marketplaceProvider');
+    notifyListeners();
+  }
+
+  void resetLocationBottomsheet() async {
+    updateLocationSheet(null, null, RadiusType.worldwide, 5);
+    notifyListeners();
+  }
+
+  //
+  LatLng _selectedlatlng = LocalAuth.latlng;
+  LocationEntity? _selectedLocation;
+  double _selectedRadius = 5;
+  RadiusType _radiusType = RadiusType.worldwide;
+  //
+  LatLng get selectedlatlng => _selectedlatlng;
+  LocationEntity? get selectedLocation => _selectedLocation;
+  double get selectedRadius => _selectedRadius;
+  RadiusType get radiusType => _radiusType;
 }

@@ -29,8 +29,7 @@ class MarketFilterpropertyCategoryAndLocationWIdget extends StatelessWidget {
                             marketPro.setEnergyRating(p0))),
                 Expanded(
                   child: LocationDropdown(
-                    selectedLatLng:
-                        marketPro.selectedlatlng ?? const LatLng(0, 0),
+                    selectedLatLng: marketPro.selectedlatlng,
                     displayMode: MapDisplayMode.neverShowMap,
                     initialText: marketPro.selectedLocation?.title ?? '',
                     onLocationSelected: (LocationEntity p0, LatLng p1) {

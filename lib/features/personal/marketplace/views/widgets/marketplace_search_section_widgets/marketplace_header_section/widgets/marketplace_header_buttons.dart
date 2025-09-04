@@ -1,9 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../../core/widgets/custom_svg_icon.dart';
+import '../../../../../../location/domain/entities/location_entity.dart';
 import '../../../../../../order/view/screens/your_order_screen.dart';
 import '../../../../../domain/enum/radius_type.dart';
 import '../../../../providers/marketplace_provider.dart';
@@ -26,19 +28,29 @@ class MarketPlaceHeaderButtons extends StatelessWidget {
           spacing: 4,
           children: <Widget>[
             _HeaderButton(
-                onPressed: () => showModalBottomSheet(
-                      enableDrag: false,
-                      isDismissible: false,
-                      useSafeArea: true,
-                      isScrollControlled: true,
-                      context: context,
+                onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute<LocationRadiusBottomSheet>(
                       builder: (BuildContext context) =>
-                          const LocationRadiusBottomSheet(),
-                    ),
+                          LocationRadiusBottomSheet(
+                        initialLocation: pro.selectedLocation,
+                        initialLatLng: pro.selectedlatlng,
+                        initialRadius: pro.selectedRadius,
+                        initialRadiusType: pro.radiusType,
+                        onApply: () => pro.locationSheetApplyButton(
+                          context,
+                        ),
+                        onReset: () => pro.resetLocationBottomsheet(),
+                        onUpdateLocation: (RadiusType radiusType, double radius,
+                                LatLng latlng, LocationEntity? location) =>
+                            pro.updateLocationSheet(
+                                latlng, location, radiusType, radius),
+                      ),
+                    )),
                 icon: AppStrings.selloutMarketplaceLocationIcon,
-                label: pro.radiusType == RadiusType.worldwide
+                label: pro.selectedLocation == null
                     ? 'location'.tr()
-                    : '${pro.selectedRadius.toInt()} km'),
+                    : '${pro.selectedLocation?.title}'),
             if (pro.queryController.text.isEmpty)
               _HeaderButton(
                 onPressed: () =>

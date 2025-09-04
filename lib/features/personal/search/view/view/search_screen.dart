@@ -61,7 +61,6 @@ class _SearchScreenState extends State<SearchScreen> {
           child: Column(
             children: <Widget>[
               CustomToggleSwitch<SearchEntityType>(
-                margin: 0,
                 verticalPadding: 6,
                 isShaded: false,
                 unseletedBorderColor: ColorScheme.of(context).outlineVariant,
