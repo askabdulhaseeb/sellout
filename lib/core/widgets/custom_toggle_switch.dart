@@ -18,7 +18,7 @@ class CustomToggleSwitch<T> extends StatelessWidget {
     this.margin,
     this.unseletedBorderColor,
     this.unseletedTextColor,
-    this.borderWidth,
+    this.borderWidth = 1,
     this.borderRad = 8,
     super.key,
   });
@@ -36,7 +36,7 @@ class CustomToggleSwitch<T> extends StatelessWidget {
   final double? margin;
   final Color? unseletedBorderColor;
   final Color? unseletedTextColor;
-  final double? borderWidth;
+  final double borderWidth;
   final double borderRad;
 
   @override
@@ -90,14 +90,18 @@ class CustomToggleSwitch<T> extends StatelessWidget {
                         borderRadius: borderRadius,
                         color: isSelected
                             ? selectedColor.withValues(
-                                alpha: isShaded ? 0.1 : 0)
-                            : Colors.transparent,
+                                alpha: isShaded ? 0.1 : 0.0)
+                            : ColorScheme.of(context)
+                                .outline
+                                .withValues(alpha: isShaded ? 0.1 : 0),
                         border: Border.all(
-                          width: borderWidth ?? 2,
-                          color: isSelected
-                              ? selectedColor
-                              : unseletedBorderColor ??
-                                  ColorScheme.of(context).outline,
+                          width: borderWidth,
+                          color: borderWidth == 0
+                              ? Colors.transparent
+                              : isSelected
+                                  ? selectedColor
+                                  : unseletedBorderColor ??
+                                      ColorScheme.of(context).outline,
                         ),
                       ),
                       child: FittedBox(

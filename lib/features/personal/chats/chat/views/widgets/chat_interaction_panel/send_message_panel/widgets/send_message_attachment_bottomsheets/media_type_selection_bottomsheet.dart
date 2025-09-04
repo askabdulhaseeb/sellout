@@ -31,7 +31,6 @@ void showMediaBottomSheet(BuildContext context) {
               subtitle: Text('upload_photo_from_library'.tr()),
               onTap: () {
                 Navigator.pop(context);
-
                 chatPro.setImages(context, type: AttachmentType.image);
               },
             ),
@@ -44,7 +43,6 @@ void showMediaBottomSheet(BuildContext context) {
               subtitle: Text('upload_a_video_from_library'.tr()),
               onTap: () {
                 Navigator.pop(context);
-
                 chatPro.setImages(context, type: AttachmentType.video);
                 // Handle video selection
               },

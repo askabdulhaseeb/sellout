@@ -92,16 +92,21 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
 
     try {
       if (_isRecording) {
+        // Stop recording
         final XFile xfile = await _controller!.stopVideoRecording();
-        await Future<int>.delayed(const Duration(milliseconds: 300));
         final File savedFile = await _saveFile(xfile, isVideo: true);
+
         _attachFile(savedFile, AttachmentType.video);
         _stopTimer();
-        setState(() => _isRecording = false);
+
+        _isRecording = false;
       } else {
+        // Start recording
+        await _controller!.prepareForVideoRecording(); // <- important
         await _controller!.startVideoRecording();
         _startTimer();
-        setState(() => _isRecording = true);
+
+        _isRecording = true;
       }
     } catch (e) {
       debugPrint('Video recording error: $e');
@@ -181,6 +186,10 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           IconButton(
+            icon: const Icon(Icons.close, color: Colors.white),
+            onPressed: () => Navigator.pop(context),
+          ),
+          IconButton(
             icon: const Icon(Icons.flip_camera_ios, color: Colors.white),
             onPressed: _switchCamera,
           ),
@@ -193,6 +202,19 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
             ),
             onPressed: _toggleFlash,
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomBar() {
+    return Positioned(
+      bottom: 00,
+      left: 00,
+      right: 00,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
           if (_isRecording)
             Text(
               _formatTime(_recordingSeconds),
@@ -202,42 +224,43 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottomBar() {
-    return Positioned(
-      bottom: 30,
-      left: 20,
-      right: 20,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          GestureDetector(
-            onTap: _pickFromGallery,
-            child: const CircleAvatar(
-              backgroundColor: Colors.black45,
-              child: Icon(Icons.photo_library, color: Colors.white),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: ColorScheme.of(context).onSurface.withValues(alpha: 0.2),
             ),
-          ),
-          GestureDetector(
-            onTap: _capturePhoto,
-            child: const CircleAvatar(
-              radius: 30,
-              backgroundColor: Colors.white,
-              child: Icon(Icons.camera_alt, color: Colors.black),
-            ),
-          ),
-          GestureDetector(
-            onTap: _toggleRecording,
-            child: CircleAvatar(
-              backgroundColor: _isRecording ? Colors.red : Colors.black45,
-              child: Icon(
-                _isRecording ? Icons.stop : Icons.videocam,
-                color: Colors.white,
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                if (!_isRecording)
+                  GestureDetector(
+                    onTap: _pickFromGallery,
+                    child: const CircleAvatar(
+                      backgroundColor: Colors.black45,
+                      child: Icon(Icons.photo_library, color: Colors.white),
+                    ),
+                  ),
+                if (!_isRecording)
+                  GestureDetector(
+                    onTap: _capturePhoto,
+                    child: const CircleAvatar(
+                      radius: 30,
+                      backgroundColor: Colors.white,
+                      child: Icon(Icons.camera_alt, color: Colors.black),
+                    ),
+                  ),
+                GestureDetector(
+                  onTap: _toggleRecording,
+                  child: CircleAvatar(
+                    radius: _isRecording ? 30 : 20,
+                    backgroundColor: _isRecording ? Colors.red : Colors.black45,
+                    child: Icon(
+                      _isRecording ? Icons.stop : Icons.videocam,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

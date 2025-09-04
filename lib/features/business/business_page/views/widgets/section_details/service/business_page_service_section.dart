@@ -44,7 +44,6 @@ class _BusinessPageServiceSectionState
             if (services.isEmpty) {
               return BusinessPageEmptyServiceWidget(business: widget.business);
             }
-
             return ListView.builder(
               primary: false,
               shrinkWrap: true,

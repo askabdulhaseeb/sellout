@@ -116,7 +116,7 @@ class PromoProvider extends ChangeNotifier {
       MaterialPageRoute<List<PickedAttachment>>(
         builder: (_) => PickableAttachmentScreen(
           option: PickableAttachmentOption(
-            maxAttachments: 0,
+            maxAttachments: 1,
             allowMultiple: false,
             type: type,
           ),
@@ -139,7 +139,7 @@ class PromoProvider extends ChangeNotifier {
       MaterialPageRoute<List<PickedAttachment>>(
         builder: (_) => PickableAttachmentScreen(
           option: PickableAttachmentOption(
-            maxAttachments: 0,
+            maxAttachments: 1,
             allowMultiple: false,
             type: AttachmentType.image,
           ),

@@ -28,10 +28,10 @@ class BusinessRemoteAPIImpl implements BusinessCoreAPI {
         return DataSuccess<BusinessEntity?>(local.encodedData, business);
       }
       final DataState<String> result = await ApiCall<String>().call(
-        endpoint: endpoint,
-        requestType: ApiRequestType.get,
-        isAuth: false,
-      );
+          endpoint: endpoint,
+          requestType: ApiRequestType.get,
+          isAuth: false,
+          isConnectType: false);
       if (result is DataSuccess) {
         final String raw = result.data ?? '';
         if (raw.isEmpty) {
@@ -48,7 +48,7 @@ class BusinessRemoteAPIImpl implements BusinessCoreAPI {
       } else {
         AppLog.error(
           '${result.exception?.message.toString() ?? 'BusinessRemoteAPIImpl.getBusiness - else'} - $businessID',
-          error: result.exception,
+          error: result.exception?.reason ?? '',
           name: 'BusinessRemoteAPIImpl.getBusiness - else',
         );
         return DataFailer<BusinessEntity?>(
@@ -58,7 +58,8 @@ class BusinessRemoteAPIImpl implements BusinessCoreAPI {
       AppLog.error(
         e.toString(),
         error: e,
-        name: 'BusinessRemoteAPIImpl.getBusiness - catch,$stc',
+        stackTrace: stc,
+        name: 'BusinessRemoteAPIImpl.getBusiness - catch',
       );
       return DataFailer<BusinessEntity?>(CustomException(e.toString()));
     }

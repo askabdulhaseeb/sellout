@@ -60,11 +60,11 @@ class _BusinessPageServiceFilterSectionState
                   contentPadding: const EdgeInsets.all(8),
                   controller: _queryController,
                   hint: 'search'.tr(),
-                  onChanged: (value) => _onSearchChanged(value, businessPro),
+                  onChanged: (String value) =>
+                      _onSearchChanged(value, businessPro),
                 ),
               ),
-              Flexible(
-                flex: 1,
+              FittedBox(
                 child: CustomElevatedButton(
                   bgColor: Colors.transparent,
                   border: Border.all(color: Theme.of(context).primaryColor),
