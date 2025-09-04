@@ -15,7 +15,9 @@ class PickedMediaDisplayTile extends StatelessWidget {
     const Color bgColor = Colors.black54;
     const double radius = 12;
     return FutureBuilder<Uint8List?>(
-      future: media.thumbnailData,
+      future: (media.type == AssetType.image || media.type == AssetType.video)
+          ? media.thumbnailData
+          : null,
       builder: (BuildContext context, AsyncSnapshot<Uint8List?> snapshot) {
         if (snapshot.connectionState == ConnectionState.done &&
             snapshot.data != null) {

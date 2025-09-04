@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:mime/mime.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -59,7 +60,8 @@ class PromoDetailsForm extends StatelessWidget {
             CustomTextFormField(
               controller: pro.price,
               hint: 'price'.tr(),
-              prefixText: LocalAuth.currency,
+              prefixText:
+                  CountryHelper.currencySymbolHelper(LocalAuth.currency),
               keyboardType: TextInputType.number,
               validator: (String? value) {
                 if (value == null || value.trim().isEmpty) {

@@ -7,7 +7,7 @@ import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../post/domain/entities/post/post_entity.dart';
 import '../provider/promo_provider.dart';
-import 'choose_post_bottomsheet.dart';
+import '../screens/pages/choose_linked_post_screen.dart';
 
 class ChoosePostForPromoWidget extends StatelessWidget {
   const ChoosePostForPromoWidget({super.key});
@@ -16,19 +16,15 @@ class ChoosePostForPromoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-          ),
-          builder: (BuildContext context) => const ChoosePostBottomSheet(),
-        );
+        Navigator.push(
+            context,
+            MaterialPageRoute<ChooseLinkedPromoPost>(
+                builder: (BuildContext context) =>
+                    const ChooseLinkedPromoPost()));
       },
       child: Consumer<PromoProvider>(
         builder: (BuildContext context, PromoProvider pro, _) {
           final PostEntity? selectedPost = pro.post;
-
           return selectedPost == null
               ? const PostSelectionField()
               : const SelectedPostTile();
@@ -44,7 +40,6 @@ class PostSelectionField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // final PromoProvider pro = Provider.of<PromoProvider>(context);
-
     return AbsorbPointer(
       child: CustomTextFormField(
         controller: TextEditingController(),
