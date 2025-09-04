@@ -1,37 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../../../../../../../../../core/theme/app_theme.dart';
-import '../../../../../../providers/marketplace_provider.dart';
 
 class RadiusSlider extends StatelessWidget {
-  const RadiusSlider({super.key});
+  const RadiusSlider({
+    super.key,
+    required this.selectedRadius,
+    required this.onChanged,
+  });
+
+  final double selectedRadius;
+  final ValueChanged<double> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<MarketPlaceProvider>(
-      builder: (BuildContext context, MarketPlaceProvider provider, _) {
-        return Row(
-          children: <Widget>[
-            Expanded(
-              child: Slider(
-                thumbColor: AppTheme.primaryColor,
-                activeColor: AppTheme.primaryColor,
-                value: provider.selectedRadius.toDouble(),
-                min: 1,
-                max: 10,
-                label: '${provider.selectedRadius.toStringAsFixed(1)} km',
-                onChanged: (double value) {
-                  provider.setRadius(value);
-                },
-              ),
-            ),
-            Text(
-              '${provider.selectedRadius.toStringAsFixed(1)} km',
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
-        );
-      },
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: Slider(
+            thumbColor: AppTheme.primaryColor,
+            activeColor: AppTheme.primaryColor,
+            value: selectedRadius,
+            min: 1,
+            max: 10,
+            label: '${selectedRadius.toStringAsFixed(1)} km',
+            onChanged: onChanged,
+          ),
+        ),
+        Text(
+          '${selectedRadius.toStringAsFixed(1)} km',
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ],
     );
   }
 }

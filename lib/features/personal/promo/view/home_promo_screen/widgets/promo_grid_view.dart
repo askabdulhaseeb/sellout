@@ -74,7 +74,7 @@ class _PromoHomeGridViewState extends State<PromoHomeGridView> {
                         crossAxisCount: 2,
                         crossAxisSpacing: 8,
                         mainAxisSpacing: 8,
-                        childAspectRatio: 1,
+                        childAspectRatio: 0.8,
                       ),
                       itemCount: filteredList.length,
                       itemBuilder: (BuildContext context, int index) {

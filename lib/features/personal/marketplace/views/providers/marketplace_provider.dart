@@ -179,9 +179,23 @@ class MarketPlaceProvider extends ChangeNotifier {
     await loadPosts();
   }
 
-  void updateLocation(LatLng? latlng, LocationEntity? location) {
-    _selectedlatlng = latlng;
-    _selectedLocation = location;
+  void updateLocation(
+    LatLng? latlngVal,
+    LocationEntity? locationVal,
+  ) {
+    _selectedlatlng = latlngVal ?? LocalAuth.latlng;
+    _selectedLocation = locationVal;
+    debugPrint(
+        'Updated LatLng: $_selectedlatlng, Location: $_selectedLocation in marketplaceProvider');
+    notifyListeners();
+  }
+
+  void updateLocationSheet(LatLng? latlngVal, LocationEntity? locationVal,
+      RadiusType radiusTypeVal, double selectedRadVal) {
+    _radiusType = radiusTypeVal;
+    _selectedRadius = selectedRadVal;
+    _selectedlatlng = latlngVal ?? LocalAuth.latlng;
+    _selectedLocation = locationVal;
     debugPrint(
         'Updated LatLng: $_selectedlatlng, Location: $_selectedLocation in marketplaceProvider');
     notifyListeners();
@@ -196,10 +210,8 @@ class MarketPlaceProvider extends ChangeNotifier {
   }
 
   void resetLocationBottomsheet() async {
-    _radiusType = RadiusType.worldwide;
-    _selectedRadius = 10;
-    _selectedlatlng = LocalAuth.latlng;
-    updateLocation(null, null);
+    updateLocationSheet(null, null, RadiusType.worldwide, 5);
+    notifyListeners();
   }
 
 // set functions
@@ -447,10 +459,6 @@ class MarketPlaceProvider extends ChangeNotifier {
   String? _year;
   String? _vehicleCatgory;
   String? _propertyType;
-  LatLng? _selectedlatlng = LocalAuth.latlng;
-  LocationEntity? _selectedLocation;
-  double _selectedRadius = 5;
-  RadiusType _radiusType = RadiusType.worldwide;
   DeliveryType? _selectedDeliveryType;
   ConditionType? _selectedConditionType;
   int? _rating;
@@ -462,7 +470,10 @@ class MarketPlaceProvider extends ChangeNotifier {
   SortOption? _selectedSortOption = SortOption.newlyList;
   String? _brand;
   String? _mainPageKey;
-
+  LatLng _selectedlatlng = LocalAuth.latlng;
+  LocationEntity? _selectedLocation;
+  double _selectedRadius = 5;
+  RadiusType _radiusType = RadiusType.worldwide;
 // Getters
   ListingType? get marketplaceCategory => _marketplaceCategory;
   String? get chipsCategory => _chipsCategory;
@@ -485,11 +496,6 @@ class MarketPlaceProvider extends ChangeNotifier {
   String? get year => _year;
   String? get vehicleCatgory => _vehicleCatgory;
 
-  String? get propertyType => _propertyType;
-  LatLng? get selectedlatlng => _selectedlatlng;
-  LocationEntity? get selectedLocation => _selectedLocation;
-  double get selectedRadius => _selectedRadius;
-  RadiusType get radiusType => _radiusType;
   DeliveryType? get selectedDeliveryType => _selectedDeliveryType;
   ConditionType? get selectedConditionType => _selectedConditionType;
   int? get rating => _rating;
@@ -500,7 +506,11 @@ class MarketPlaceProvider extends ChangeNotifier {
   SortOption? get selectedSortOption => _selectedSortOption;
   String? get brand => _brand;
   String? get mainPageKey => _mainPageKey;
-
+  String? get propertyType => _propertyType;
+  LatLng get selectedlatlng => _selectedlatlng;
+  LocationEntity? get selectedLocation => _selectedLocation;
+  double get selectedRadius => _selectedRadius;
+  RadiusType get radiusType => _radiusType;
 // textfield controllers
   TextEditingController minPriceController = TextEditingController();
   TextEditingController maxPriceController = TextEditingController();
@@ -520,10 +530,10 @@ class MarketPlaceProvider extends ChangeNotifier {
       sort: _selectedSortOption,
       address: _selectedSubCategory?.address,
       clientLat: _selectedlatlng != const LatLng(0, 0)
-          ? _selectedlatlng?.latitude
+          ? _selectedlatlng.latitude
           : null,
       clientLng: _selectedlatlng != const LatLng(0, 0)
-          ? _selectedlatlng?.longitude
+          ? _selectedlatlng.longitude
           : null,
       distance:
           _radiusType == RadiusType.local ? _selectedRadius.toInt() : null,
