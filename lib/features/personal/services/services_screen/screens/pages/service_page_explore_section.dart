@@ -26,71 +26,78 @@ class ServicePageExploreSection extends StatefulWidget {
 class _ServicePageExploreSectionState extends State<ServicePageExploreSection> {
   @override
   Widget build(BuildContext context) {
+    final TextTheme txt = Theme.of(context).textTheme;
     return Consumer<ServicesPageProvider>(
       builder: (BuildContext context, ServicesPageProvider pro, _) {
-        return SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              const ServicesPageExploreSearchingSection(),
-              if (pro.search.text.isNotEmpty)
-                Row(
-                  spacing: 4,
-                  children: <Widget>[
-                    _HeaderButton(
-                        onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute<LocationRadiusBottomSheet>(
-                              builder: (BuildContext context) =>
-                                  LocationRadiusBottomSheet(
-                                initialLocation: pro.selectedLocation,
-                                initialLatLng: pro.selectedlatlng,
-                                initialRadius: pro.selectedRadius,
-                                initialRadiusType: pro.radiusType,
-                                onApply: () => pro.locationSheetApplyButton(
-                                  context,
-                                ),
-                                onReset: () => pro.resetLocationBottomsheet(),
-                                onUpdateLocation: (RadiusType radiusType,
-                                        double radius,
-                                        LatLng latlng,
-                                        LocationEntity? location) =>
-                                    pro.updateLocationSheet(
-                                        latlng, location, radiusType, radius),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const ServicesPageExploreSearchingSection(),
+            if (pro.search.text.isNotEmpty)
+              Row(
+                spacing: 4,
+                children: <Widget>[
+                  _HeaderButton(
+                      onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute<LocationRadiusBottomSheet>(
+                            builder: (BuildContext context) =>
+                                LocationRadiusBottomSheet(
+                              initialLocation: pro.selectedLocation,
+                              initialLatLng: pro.selectedlatlng,
+                              initialRadius: pro.selectedRadius,
+                              initialRadiusType: pro.radiusType,
+                              onApply: () => pro.locationSheetApplyButton(
+                                context,
                               ),
-                            )),
-                        icon: AppStrings.selloutMarketplaceLocationIcon,
-                        label: pro.selectedLocation == null
-                            ? 'location'.tr()
-                            : '${pro.selectedLocation?.title}'),
-                    _HeaderButton(
-                      onPressed: () => showModalBottomSheet(
-                        context: context,
-                        builder: (BuildContext context) =>
-                            const ExploreServicesSortBottomSheet(),
-                      ),
-                      icon: AppStrings.selloutMarketplaceSortIcon,
-                      label: 'sort'.tr(),
+                              onReset: () => pro.resetLocationBottomsheet(),
+                              onUpdateLocation: (RadiusType radiusType,
+                                      double radius,
+                                      LatLng latlng,
+                                      LocationEntity? location) =>
+                                  pro.updateLocationSheet(
+                                      latlng, location, radiusType, radius),
+                            ),
+                          )),
+                      icon: AppStrings.selloutMarketplaceLocationIcon,
+                      label: pro.selectedLocation == null
+                          ? 'location'.tr()
+                          : '${pro.selectedLocation?.title}'),
+                  _HeaderButton(
+                    onPressed: () => showModalBottomSheet(
+                      context: context,
+                      builder: (BuildContext context) =>
+                          const ExploreServicesSortBottomSheet(),
                     ),
-                    _HeaderButton(
-                      onPressed: () => showModalBottomSheet(
-                        showDragHandle: false,
-                        isDismissible: false,
-                        useSafeArea: true,
-                        isScrollControlled: true,
-                        context: context,
-                        builder: (BuildContext context) =>
-                            const ServicesExploreFilterBottomSheet(),
-                      ),
-                      icon: AppStrings.selloutMarketplaceFilterIcon,
-                      label: 'filter'.tr(),
+                    icon: AppStrings.selloutMarketplaceSortIcon,
+                    label: 'sort'.tr(),
+                  ),
+                  _HeaderButton(
+                    onPressed: () => showModalBottomSheet(
+                      showDragHandle: false,
+                      isDismissible: false,
+                      useSafeArea: true,
+                      isScrollControlled: true,
+                      context: context,
+                      builder: (BuildContext context) =>
+                          const ServicesExploreFilterBottomSheet(),
                     ),
-                  ],
-                ),
-              if (pro.search.text.isEmpty)
-                const ServicesPageExploreCategoriesSection(),
-              if (pro.search.text.isNotEmpty) const ServiceSearchResults(),
-            ],
-          ),
+                    icon: AppStrings.selloutMarketplaceFilterIcon,
+                    label: 'filter'.tr(),
+                  ),
+                ],
+              ),
+            if (pro.search.text.isEmpty)
+              const ServicesPageExploreCategoriesSection(),
+            const SizedBox(
+              height: 6,
+            ),
+            Text(
+              'result'.tr(),
+              style: txt.titleMedium,
+            ),
+            if (pro.search.text.isNotEmpty) const ServiceSearchResults()
+          ],
         );
       },
     );

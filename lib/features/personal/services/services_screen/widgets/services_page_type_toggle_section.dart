@@ -15,35 +15,38 @@ class ServicesPageTypeToggleSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ServicesPageProvider>(
       builder: (BuildContext context, ServicesPageProvider pro, _) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            CustomToggleSwitch<ServicesPageType>(
-              verticalMargin: 8,
-              verticalPadding: 10,
-              containerHeight: 40,
-              unseletedBorderColor:
-                  Theme.of(context).colorScheme.outlineVariant,
-              unseletedTextColor: Theme.of(context).colorScheme.onSurface,
-              isShaded: false,
-              selectedColors: const <Color>[
-                AppTheme.primaryColor,
-                AppTheme.secondaryColor
-              ],
-              labels: ServicesPageType.values,
-              labelStrs: ServicesPageType.values
-                  .map((ServicesPageType e) => e.code.tr())
-                  .toList(),
-              labelText: '',
-              initialValue: pro.servicesPageType,
-              onToggle: (ServicesPageType value) =>
-                  pro.setServicesPageType(value),
-            ),
-            const SizedBox(height: 8),
-            pro.servicesPageType == ServicesPageType.explore
-                ? const ServicePageExploreSection()
-                : const ServicePageMyAppointmentSection(),
-          ],
+        return SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              CustomToggleSwitch<ServicesPageType>(
+                verticalMargin: 8,
+                verticalPadding: 10,
+                containerHeight: 40,
+                unseletedBorderColor:
+                    Theme.of(context).colorScheme.outlineVariant,
+                unseletedTextColor: Theme.of(context).colorScheme.onSurface,
+                isShaded: false,
+                selectedColors: const <Color>[
+                  AppTheme.primaryColor,
+                  AppTheme.secondaryColor
+                ],
+                labels: ServicesPageType.values,
+                labelStrs: ServicesPageType.values
+                    .map((ServicesPageType e) => e.code.tr())
+                    .toList(),
+                labelText: '',
+                initialValue: pro.servicesPageType,
+                onToggle: (ServicesPageType value) =>
+                    pro.setServicesPageType(value),
+              ),
+              const SizedBox(height: 8),
+              pro.servicesPageType == ServicesPageType.explore
+                  ? const ServicePageExploreSection()
+                  : const ServicePageMyAppointmentSection(),
+            ],
+          ),
         );
       },
     );

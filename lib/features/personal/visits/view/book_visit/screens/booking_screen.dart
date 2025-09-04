@@ -61,12 +61,11 @@ class BookingScreen extends StatelessWidget {
               if (service != null || booking != null)
                 BookViewProductDetail(
                     post: post, service: service, texttheme: texttheme),
-              if (visit?.dateTime != null)
-                BookVisitButton(
-                  post: post,
-                  service: service,
-                  booking: booking,
-                )
+              BookVisitButton(
+                post: post,
+                service: service,
+                booking: booking,
+              )
             ],
           ),
         ),

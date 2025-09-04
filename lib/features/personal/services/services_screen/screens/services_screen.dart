@@ -1,28 +1,59 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../../core/widgets/scaffold/personal_scaffold.dart';
+import '../providers/services_page_provider.dart';
 import '../widgets/services_page_type_toggle_section.dart';
 
-class ServicesScreen extends StatelessWidget {
+class ServicesScreen extends StatefulWidget {
   const ServicesScreen({super.key});
   static const String routeName = '/services';
+
+  @override
+  State<ServicesScreen> createState() => _ServicesScreenState();
+}
+
+class _ServicesScreenState extends State<ServicesScreen> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      // User reached near the bottom
+      final ServicesPageProvider pro = context.read<ServicesPageProvider>();
+      if (!pro.isLoading) {
+        pro.loadMoreServices();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    // final ServicesPageProvider pro = Provider.of<ServicesPageProvider>(context);
     return PersonalScaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              const Text('services',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.w600))
-                  .tr(),
-              const SizedBox(height: 8),
-              const ServicesPageTypeToggleSection(),
-            ],
-          ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        controller: _scrollController,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            const Text('services',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600))
+                .tr(),
+            const ServicesPageTypeToggleSection(),
+          ],
         ),
       ),
     );
