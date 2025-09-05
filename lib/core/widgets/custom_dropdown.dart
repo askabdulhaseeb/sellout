@@ -44,21 +44,31 @@ class CustomDropdown<T> extends FormField<T> {
                   },
                   builder: (BuildContext context,
                       TextEditingController controller, FocusNode focusNode) {
-                    String selectedText = '';
-                    final DropdownMenuItem<T> selectedItem = items.firstWhere(
-                      (DropdownMenuItem<T> element) =>
-                          element.value == state.value,
-                      orElse: () => DropdownMenuItem<T>(
-                          value: null, child: const SizedBox()),
-                    );
-                    if (selectedItem.value != null) {
-                      if (selectedItem.child is Text) {
-                        selectedText = (selectedItem.child as Text).data ?? '';
-                      } else {
-                        selectedText = selectedItem.value.toString();
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      final DropdownMenuItem<T> selectedItemObj =
+                          items.firstWhere(
+                        (DropdownMenuItem<T> element) =>
+                            element.value == state.value,
+                        orElse: () => DropdownMenuItem<T>(
+                          value: null,
+                          child: const SizedBox(),
+                        ),
+                      );
+
+                      String selectedText = '';
+                      if (selectedItemObj.value != null) {
+                        // Use searchBy if provided, else fallback
+                        selectedText = searchBy != null
+                            ? searchBy(selectedItemObj)
+                            : selectedItemObj.child is Text
+                                ? (selectedItemObj.child as Text).data ?? ''
+                                : selectedItemObj.value.toString();
                       }
-                    }
-                    controller.text = selectedText;
+
+                      if (controller.text != selectedText) {
+                        controller.text = selectedText;
+                      }
+                    });
 
                     return CustomTextFormField(
                       hint: hint ?? 'select_item'.tr(),
