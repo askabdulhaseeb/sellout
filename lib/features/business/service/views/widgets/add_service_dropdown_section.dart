@@ -29,7 +29,6 @@ class AddServiceDropdownSection extends StatelessWidget {
             ),
             CustomDropdown<ServiceCategoryType?>(
                 title: 'service_category'.tr(),
-                padding: const EdgeInsets.symmetric(horizontal: 4),
                 items: ServiceCategoryType.categories().map(
                   (ServiceCategoryType category) {
                     return DropdownMenuItem<ServiceCategoryType>(
@@ -51,7 +50,6 @@ class AddServiceDropdownSection extends StatelessWidget {
             const SizedBox(height: 8),
             CustomDropdown<ServiceType?>(
                 title: 'service_type'.tr(),
-                padding: const EdgeInsets.symmetric(horizontal: 4),
                 items:
                     (pro.selectedCategory?.serviceTypes ?? <ServiceType>[]).map(
                   (ServiceType type) {
@@ -73,7 +71,6 @@ class AddServiceDropdownSection extends StatelessWidget {
             const SizedBox(height: 8),
             CustomDropdown<ServiceModelType?>(
                 title: 'service_model'.tr(),
-                padding: const EdgeInsets.symmetric(horizontal: 4),
                 items: ServiceModelType.models().map(
                   (ServiceModelType type) {
                     return DropdownMenuItem<ServiceModelType>(

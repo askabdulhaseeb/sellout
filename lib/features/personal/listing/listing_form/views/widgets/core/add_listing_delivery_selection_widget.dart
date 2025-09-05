@@ -75,9 +75,9 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
             ),
           ),
           CustomRadioButtonListTile<DeliveryType>(
-              title: DeliveryType.collocation.code.tr(),
+              title: DeliveryType.collection.code.tr(),
               selectedValue: formPro.deliveryType,
-              value: DeliveryType.collocation,
+              value: DeliveryType.collection,
               onChanged: formPro.setDeliveryType,
               subtitle: NominationLocationFieldWrapper(
                 selectedLatLng: LatLng(
@@ -92,7 +92,7 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
 
               //  LocationInputButton(
               //   validator: (bool? value) =>
-              //       formPro.deliveryType == DeliveryType.collocation &&
+              //       formPro.deliveryType == DeliveryType.collection &&
               //               (value == null)
               //           ? 'location_is_required'.tr()
               //           : null,

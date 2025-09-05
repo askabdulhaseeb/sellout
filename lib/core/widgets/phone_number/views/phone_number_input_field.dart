@@ -103,8 +103,6 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
                 hint: '',
                 height: 48,
                 width: 125,
-                isSearchable: false,
-                padding: const EdgeInsets.symmetric(horizontal: 0),
                 items: countries
                     .where((CountryEntity e) => e.isActive)
                     .map((CountryEntity e) {

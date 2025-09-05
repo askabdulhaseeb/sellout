@@ -86,7 +86,6 @@ class _NominationLocationFieldWrapperState
     );
 
     setState(() => _selectedLatLng = latLng);
-
     // move map safely
     Future<void>.microtask(() {
       try {
@@ -120,6 +119,7 @@ class _NominationLocationFieldWrapperState
           builder: (BuildContext context, TextEditingController controller,
                   FocusNode focusNode) =>
               CustomTextFormField(
+            hint: 'select_location'.tr(),
             controller: controller,
             focusNode: focusNode,
             prefixIcon: widget.icon ?? const Icon(Icons.search),

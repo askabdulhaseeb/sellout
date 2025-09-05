@@ -213,7 +213,7 @@ class AddListingParam {
         'local_delivery': localDeliveryAmount ?? '0',
       if (deliveryType == DeliveryType.paid)
         'international_delivery': internationalDeliveryAmount ?? '0',
-      if (deliveryType == DeliveryType.collocation)
+      if (deliveryType == DeliveryType.collection)
         'collection_location': collectionLocation != null
             ? jsonEncode(
                 LocationModel.fromEntity(collectionLocation!).toJsonidurlkeys())

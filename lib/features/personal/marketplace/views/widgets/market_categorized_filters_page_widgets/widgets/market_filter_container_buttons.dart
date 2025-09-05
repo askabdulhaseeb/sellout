@@ -34,8 +34,8 @@ class MarketFilterButtons extends StatelessWidget {
                   'reset_filters'.tr(),
                   style: textTheme.labelMedium?.copyWith(
                       fontWeight: FontWeight.w400,
-                      decorationColor: colorScheme.outlineVariant,
-                      color: colorScheme.outlineVariant,
+                      decorationColor: colorScheme.outline,
+                      color: colorScheme.outline,
                       decoration: TextDecoration.underline),
                 ),
               ),

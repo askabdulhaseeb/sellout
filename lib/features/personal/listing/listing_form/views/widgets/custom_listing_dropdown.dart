@@ -10,11 +10,11 @@ class CustomListingDropDown<T extends ChangeNotifier> extends StatefulWidget {
     required this.categoryKey,
     required this.selectedValue,
     required this.onChanged,
+    required this.validator,
     this.title = '',
     this.padding,
     this.hint = '',
     this.parentValue,
-    required this.validator,
     super.key,
   });
 
@@ -151,9 +151,7 @@ class _CustomListingDropDownState<T extends ChangeNotifier>
           selectedItem: widget.selectedValue,
           onChanged: widget.onChanged,
           validator: widget.validator,
-          isSearchable: true,
           hint: widget.hint,
-          padding: widget.padding,
         );
       },
     );

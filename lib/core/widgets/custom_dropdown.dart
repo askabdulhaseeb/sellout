@@ -1,201 +1,101 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'custom_textformfield.dart';
 
-class CustomDropdown<T> extends FormField<bool> {
+class CustomDropdown<T> extends FormField<T> {
   CustomDropdown({
     required this.title,
     required this.items,
     required this.selectedItem,
     required this.onChanged,
-    required FormFieldValidator<bool> validator,
-    this.isSearchable = false,
-    this.padding,
-    this.height,
-    this.width,
+    required String? Function(bool?) validator,
     this.hint,
+    this.width,
+    this.height,
+    this.searchBy,
     super.key,
   }) : super(
-          validator: validator,
-          builder: (FormFieldState<bool> state) {
+          validator: (val) => validator(val != null),
+          initialValue: selectedItem,
+          builder: (FormFieldState<T> state) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                // ignore: always_specify_types
-                _Widget(
-                  title: title,
-                  items: items,
-                  selectedItem: selectedItem,
-                  onChanged: onChanged,
-                  hint: hint,
-                  padding: padding,
-                  height: height,
-                  isSearchable: isSearchable,
-                  width: width,
-                ),
-                if (state.hasError)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(
-                      state.errorText ?? '',
-                      style: const TextStyle(color: Colors.red),
-                    ),
+                TypeAheadField<DropdownMenuItem<T>>(
+                  decorationBuilder: (BuildContext context, Widget child) {
+                    return Material(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      elevation: 4,
+                      borderRadius: BorderRadius.circular(8),
+                      child: child,
+                    );
+                  },
+                  suggestionsCallback: (String pattern) {
+                    if (pattern.isEmpty) return items;
+                    return items.where((DropdownMenuItem<T> item) {
+                      final String text = searchBy != null
+                          ? searchBy(item)
+                          : item.child is Text
+                              ? (item.child as Text).data ?? ''
+                              : item.value.toString();
+                      return text.toLowerCase().contains(pattern.toLowerCase());
+                    }).toList();
+                  },
+                  builder: (BuildContext context,
+                      TextEditingController controller, FocusNode focusNode) {
+                    String selectedText = '';
+                    final DropdownMenuItem<T> selectedItem = items.firstWhere(
+                      (DropdownMenuItem<T> element) =>
+                          element.value == state.value,
+                      orElse: () => DropdownMenuItem<T>(
+                          value: null, child: const SizedBox()),
+                    );
+                    if (selectedItem.value != null) {
+                      if (selectedItem.child is Text) {
+                        selectedText = (selectedItem.child as Text).data ?? '';
+                      } else {
+                        selectedText = selectedItem.value.toString();
+                      }
+                    }
+                    controller.text = selectedText;
+
+                    return CustomTextFormField(
+                      hint: hint ?? 'select_item'.tr(),
+                      controller: controller,
+                      focusNode: focusNode,
+                      suffixIcon: const Icon(Icons.keyboard_arrow_down_rounded),
+                    );
+                  },
+                  itemBuilder:
+                      (BuildContext context, DropdownMenuItem<T> suggestion) =>
+                          Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 12),
+                    child: suggestion.child,
                   ),
+                  onSelected: (DropdownMenuItem<T> suggestion) {
+                    state.didChange(suggestion.value);
+                    onChanged?.call(suggestion.value);
+                  },
+                  emptyBuilder: (BuildContext context) => Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Text('no_data_found'.tr(),
+                        style: TextStyle(color: Colors.grey[600])),
+                  ),
+                  debounceDuration: const Duration(milliseconds: 300),
+                ),
               ],
             );
           },
         );
 
   final String title;
-  final void Function(T?)? onChanged;
-  final T? selectedItem;
   final List<DropdownMenuItem<T>> items;
-  final String? hint;
-  final double? height;
-  final double? width;
-  final EdgeInsetsGeometry? padding;
-  final bool isSearchable;
-
-  Widget build(BuildContext context) {
-    // ignore: always_specify_types
-    return _Widget(
-      title: title,
-      items: items,
-      selectedItem: selectedItem,
-      onChanged: onChanged,
-      padding: padding,
-      height: height,
-      isSearchable: isSearchable,
-      width: width,
-      hint: hint,
-    );
-  }
-}
-
-class _Widget<T> extends StatelessWidget {
-  _Widget({
-    required this.title,
-    required this.items,
-    required this.selectedItem,
-    required this.onChanged,
-    this.isSearchable = true,
-    this.padding,
-    this.height,
-    this.width,
-    this.hint,
-    super.key,
-  });
-  final String title;
-  final void Function(T?)? onChanged;
   final T? selectedItem;
-  final List<DropdownMenuItem<T>> items;
-  final TextEditingController _search = TextEditingController();
-  final EdgeInsetsGeometry? padding;
+  final void Function(T?)? onChanged;
   final String? hint;
-  final double? height;
   final double? width;
-  final bool isSearchable;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        if (title.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 4),
-            child: Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.w500),
-            ),
-          ),
-        Container(
-          width: width ?? double.infinity,
-          height: height ?? 48,
-          decoration: BoxDecoration(
-            backgroundBlendMode: BlendMode.color,
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              // width: 0.5,
-              color: ColorScheme.of(context).outlineVariant,
-            ),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton2<T>(
-              iconStyleData: IconStyleData(
-                icon: Icon(
-                  Icons.keyboard_arrow_down_rounded,
-                  color: items.isEmpty
-                      ? ColorScheme.of(context).outlineVariant
-                      : ColorScheme.of(context).outline,
-                ),
-              ),
-              isExpanded: true,
-              hint: Text(
-                hint ?? 'select_item',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextTheme.of(context)
-                    .bodyMedium
-                    ?.copyWith(color: ColorScheme.of(context).outline),
-              ).tr(),
-              items: items.isEmpty ? <DropdownMenuItem<T>>[] : items,
-              value: selectedItem,
-              onChanged: onChanged,
-              buttonStyleData: ButtonStyleData(
-                padding: padding ?? const EdgeInsets.symmetric(horizontal: 12),
-              ),
-              dropdownSearchData: isSearchable == false
-                  ? null
-                  : DropdownSearchData<T>(
-                      searchController: _search,
-                      searchInnerWidgetHeight: 70,
-                      searchInnerWidget: CustomTextFormField(
-                        fieldPadding: const EdgeInsets.all(4),
-                        dense: true,
-                        style: TextTheme.of(context).labelMedium,
-                        contentPadding: const EdgeInsets.all(4),
-                        controller: _search,
-                        isExpanded: true,
-                      ),
-                      searchMatchFn: (
-                        DropdownMenuItem<T> item,
-                        String searchValue,
-                      ) {
-                        return item.value
-                            .toString()
-                            .toLowerCase()
-                            .trim()
-                            .contains(searchValue.toLowerCase().trim());
-                      },
-                    ),
-              style: TextTheme.of(context).bodyMedium,
-              dropdownStyleData: DropdownStyleData(
-                  elevation: 0,
-                  maxHeight: 250,
-                  decoration: BoxDecoration(
-                      boxShadow: <BoxShadow>[
-                        BoxShadow(
-                            color: Theme.of(context).scaffoldBackgroundColor)
-                      ],
-                      borderRadius: BorderRadius.circular(8),
-                      backgroundBlendMode: BlendMode.color,
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      border: Border.all(
-                          color: ColorScheme.of(context)
-                              .outline
-                              .withValues(alpha: 0.2))),
-                  offset: const Offset(0, 0),
-                  isOverButton: false),
-              menuItemStyleData: const MenuItemStyleData(
-                height: 60,
-              ),
-            ),
-          ),
-        )
-      ],
-    );
-  }
+  final double? height;
+  final String Function(DropdownMenuItem<T>)? searchBy; // new
 }

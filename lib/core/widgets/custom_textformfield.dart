@@ -119,6 +119,7 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
           TextFormField(
             //
             focusNode: widget.focusNode,
+
             initialValue: widget.initialValue,
             controller: widget._controller,
             readOnly: widget.readOnly,
@@ -142,7 +143,7 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
                     ? 1
                     : widget.maxLines,
             maxLength: widget.isExpanded ? widget.maxLength : null,
-            style: widget.style,
+            style: widget.style ?? TextTheme.of(context).bodyMedium,
             validator: (String? value) =>
                 widget.validator == null ? null : widget.validator!(value),
             onFieldSubmitted: widget.onFieldSubmitted,

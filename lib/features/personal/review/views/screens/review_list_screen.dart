@@ -42,7 +42,6 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
                       width: 140,
                       child: CustomDropdown<int>(
                         title: '',
-                        padding: const EdgeInsets.symmetric(horizontal: 2),
                         items: <int>[1, 2, 3, 4, 5]
                             .map((int e) => DropdownMenuItem<int>(
                                 value: e, child: Text('$e ${'star'.tr()}')))
@@ -57,7 +56,6 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
                       width: 180,
                       child: CustomDropdown<ReviewSortType>(
                         title: '',
-                        padding: const EdgeInsets.all(0),
                         items: ReviewSortType.values
                             .map((ReviewSortType e) =>
                                 DropdownMenuItem<ReviewSortType>(
