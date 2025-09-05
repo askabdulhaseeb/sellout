@@ -77,7 +77,7 @@ class _MakeOfferBottomSheetState extends State<MakeOfferBottomSheet> {
                       currency: widget.post.currency ?? '',
                       controller: priceController,
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 6),
 
                     /// Divider
                     Divider(color: Theme.of(context).dividerColor),

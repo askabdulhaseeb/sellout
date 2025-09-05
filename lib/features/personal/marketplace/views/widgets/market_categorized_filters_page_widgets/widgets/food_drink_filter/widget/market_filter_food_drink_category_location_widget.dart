@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../../../core/widgets/leaflet_map_field.dart';
+import '../../../../../../../location/domain/enums/map_display_mode.dart';
+import '../../../../../../../location/view/widgets/location_field.dart/nomination_location_wrapper.dart';
 import '../../../../../../../listing/listing_form/views/widgets/category/subcateogry_selectable_widget.dart';
 import '../../../../../../../location/domain/entities/location_entity.dart';
 import '../../../../../providers/marketplace_provider.dart';
@@ -31,7 +32,7 @@ class MarketFilterFoodDrinkCategoryAndLocationWIdget extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: LocationDropdown(
+            child: NominationLocationFieldWrapper(
               selectedLatLng: marketPro.selectedlatlng,
               displayMode: MapDisplayMode.neverShowMap,
               initialText: marketPro.selectedLocation?.title ?? '',

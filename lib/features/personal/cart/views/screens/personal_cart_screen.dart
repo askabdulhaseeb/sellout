@@ -34,47 +34,50 @@ class PersonalCartScreen extends StatelessWidget {
                 body: PopScope(
                   onPopInvokedWithResult: (bool didPop, dynamic result) =>
                       pro.reset(),
-                  child: Column(
-                    children: <Widget>[
-                      const PersonalCartPageTile(),
-                      const SizedBox(height: 24),
-                      cartPro.page == 1
-                          ? Expanded(
-                              child: Column(
-                                children: <Widget>[
-                                  const CartSaveLaterToggleSection(),
-                                  cartPro.basketPage == CartItemType.cart
-                                      ? const PersonalCartItemList()
-                                      : const PersonalCartSaveLaterItemList(),
-                                  if (cartPro.basketPage == CartItemType.cart)
-                                    const PersonalCartTotalSection(),
-                                ],
-                              ),
-                            )
-                          : cartPro.page == 2
-                              ? Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        const PersonalCheckoutView(),
-                                        CustomElevatedButton(
-                                          title: 'proceed_to_payment'.tr(),
-                                          isLoading: false,
-                                          onTap: () async {
-                                            await cartPro
-                                                .processPayment(context);
-                                          },
-                                        ),
-                                        const SizedBox(height: 24),
-                                      ],
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: <Widget>[
+                        const PersonalCartPageTile(),
+                        const SizedBox(height: 24),
+                        cartPro.page == 1
+                            ? Expanded(
+                                child: Column(
+                                  children: <Widget>[
+                                    const CartSaveLaterToggleSection(),
+                                    cartPro.basketPage == CartItemType.cart
+                                        ? const PersonalCartItemList()
+                                        : const PersonalCartSaveLaterItemList(),
+                                    if (cartPro.basketPage == CartItemType.cart)
+                                      const PersonalCartTotalSection(),
+                                  ],
+                                ),
+                              )
+                            : cartPro.page == 2
+                                ? Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          const PersonalCheckoutView(),
+                                          CustomElevatedButton(
+                                            title: 'proceed_to_payment'.tr(),
+                                            isLoading: false,
+                                            onTap: () async {
+                                              await cartPro
+                                                  .processPayment(context);
+                                            },
+                                          ),
+                                          const SizedBox(height: 24),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                )
-                              : const SizedBox.shrink(),
-                    ],
+                                  )
+                                : const SizedBox.shrink(),
+                      ],
+                    ),
                   ),
                 )),
       ),

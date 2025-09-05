@@ -5,7 +5,8 @@ import 'package:provider/provider.dart';
 import '../../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_radio_button_list_tile.dart';
-import '../../../../../../../core/widgets/leaflet_map_field.dart';
+import '../../../../../location/domain/enums/map_display_mode.dart';
+import '../../../../../location/view/widgets/location_field.dart/nomination_location_wrapper.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../location/domain/entities/location_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
@@ -78,7 +79,7 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
               selectedValue: formPro.deliveryType,
               value: DeliveryType.collocation,
               onChanged: formPro.setDeliveryType,
-              subtitle: LocationDropdown(
+              subtitle: NominationLocationFieldWrapper(
                 selectedLatLng: LatLng(
                     formPro.selectedCollectionLocation?.latitude ?? 0,
                     formPro.selectedCollectionLocation?.longitude ?? 0),

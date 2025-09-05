@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'core/sockets/socket_service.dart';
@@ -23,6 +24,7 @@ void main() async {
   setupLocator();
   await EasyLocalization.ensureInitialized();
   SocketService(locator()).initAndListen();
+  // debugPaintSizeEnabled = true;
   runApp(EasyLocalization(
     supportedLocales: const <Locale>[AppLocalization.en],
     path: AppLocalization.filePath,

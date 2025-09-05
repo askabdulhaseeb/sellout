@@ -118,7 +118,7 @@ class _VisitingMessageTileAnimatedState
               children: <Widget>[
                 Material(
                   shape: const VisitileTileWithHandleBorder(),
-                  elevation: pro.showPinnedMessage ? 4 : 0,
+                  elevation: pro.showPinnedMessage ? 0 : 0,
                   color: Theme.of(context).primaryColor,
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 30),
