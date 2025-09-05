@@ -96,8 +96,8 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
+            Flexible(
+              flex: 1,
               child: CustomDropdown<CountryEntity>(
                 title: '',
                 hint: '',
@@ -108,14 +108,8 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
                     .map((CountryEntity e) {
                   return DropdownMenuItem<CountryEntity>(
                     value: e,
-                    child: Row(
-                      children: <Widget>[
-                        Text(e.shortName.toUpperCase(),
-                            style: TextTheme.of(context).bodyMedium),
-                        Text(' (${e.countryCode})',
-                            style: TextTheme.of(context).bodyMedium),
-                      ],
-                    ),
+                    child: Text(e.countryCode,
+                        style: TextTheme.of(context).bodyMedium),
                   );
                 }).toList(),
                 selectedItem: selectedCountry,
@@ -134,6 +128,7 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
             ),
             const SizedBox(width: 12),
             Expanded(
+              flex: 2,
               child: CustomTextFormField(
                 controller: controller,
                 readOnly: selectedCountry == null,
