@@ -135,7 +135,7 @@ class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: widget.selectedItems.isNotEmpty
                             ? colorScheme.primary
-                            : colorScheme.outlineVariant,
+                            : colorScheme.outline,
                       ),
                 ),
               ),

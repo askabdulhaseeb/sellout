@@ -43,7 +43,6 @@ class AvailabilityTimeDialog extends StatelessWidget {
               children: <Widget>[
                 Expanded(
                   child: CustomDropdown<String>(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
                     title: 'start_time'.tr(),
                     selectedItem: entity.openingTime.isNotEmpty
                         ? entity.openingTime
@@ -69,7 +68,6 @@ class AvailabilityTimeDialog extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: CustomDropdown<String>(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
                     title: 'end_time'.tr(),
                     selectedItem: entity.closingTime.isNotEmpty
                         ? entity.closingTime

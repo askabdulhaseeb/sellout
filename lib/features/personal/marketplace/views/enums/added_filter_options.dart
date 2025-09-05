@@ -6,10 +6,10 @@ enum AddedFilterOption {
   last30Days(Duration(days: 30), '30_days'),
   last90Days(Duration(days: 90), '90_days');
 
+  const AddedFilterOption(this.duration, this.localizationKey);
+
   final Duration duration;
   final String localizationKey;
-
-  const AddedFilterOption(this.duration, this.localizationKey);
 }
 
 extension AddedFilterExtension on AddedFilterOption {

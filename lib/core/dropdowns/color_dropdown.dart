@@ -68,7 +68,6 @@ class _ColorDropdownState extends State<ColorDropdown> {
           validator: widget.validator,
           hint: 'color'.tr(),
           selectedItem: widget.selectedColor,
-          padding: widget.padding ?? const EdgeInsets.symmetric(vertical: 4),
           items: colors.map((ColorOptionEntity color) {
             return DropdownMenuItem<String>(
               value: color.value,
@@ -76,7 +75,7 @@ class _ColorDropdownState extends State<ColorDropdown> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   CircleAvatar(
-                    radius: widget.colorRadius ?? 6, // smaller circle
+                    radius: widget.colorRadius ?? 6,
                     backgroundColor: Color(
                       int.parse('0xFF${color.value.replaceAll('#', '')}'),
                     ),

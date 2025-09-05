@@ -182,7 +182,7 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
           child: Container(
             height: 48,
             width: double.infinity,
-            padding: const EdgeInsets.only(left: 26, right: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: ColorScheme.of(context).outlineVariant),

@@ -8,18 +8,18 @@ enum DeliveryType {
   @HiveField(1)
   freeDelivery('free_delivery', 'free'),
   @HiveField(2)
-  collocation('collection', 'collection');
+  collection('collection', 'collection');
 
   const DeliveryType(this.code, this.json);
   final String code;
   final String json;
 
   static DeliveryType fromJson(String? json) {
-    if (json == null) return DeliveryType.collocation;
+    if (json == null) return DeliveryType.collection;
     for (final DeliveryType item in DeliveryType.values) {
       if (item.json == json) return item;
     }
-    return DeliveryType.collocation;
+    return DeliveryType.collection;
   }
 
   static List<DeliveryType> get list => DeliveryType.values;
