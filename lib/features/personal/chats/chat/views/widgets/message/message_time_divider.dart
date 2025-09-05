@@ -13,8 +13,7 @@ class MessageTimeDivider extends StatelessWidget {
           margin: const EdgeInsets.symmetric(vertical: 4),
           padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
           decoration: BoxDecoration(
-            color:
-                ColorScheme.of(context).primaryContainer.withValues(alpha: 0.5),
+            color: Theme.of(context).dividerColor,
             borderRadius: BorderRadius.circular(6),
           ),
           child: Text(

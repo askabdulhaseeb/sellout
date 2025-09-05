@@ -58,7 +58,7 @@ class _VisitingMessageTileState extends State<VisitingMessageTile> {
           margin: EdgeInsets.all(widget.showButtons ? 0 : 16),
           decoration: BoxDecoration(
             borderRadius: widget.showButtons
-                ? const BorderRadius.vertical(bottom: Radius.circular(12))
+                ? const BorderRadius.vertical(bottom: Radius.circular(0))
                 : BorderRadius.circular(12),
             border:
                 Border.all(color: Theme.of(context).colorScheme.outlineVariant),

@@ -5,7 +5,7 @@ class VisitileTileWithHandleBorder extends ShapeBorder {
     this.handleHeight = 30.0,
     this.handleWidth = 30.0,
     this.handleOffset = 30.0,
-    this.bottomCornerRadius = 12,
+    this.bottomCornerRadius = 0,
     this.handleCornerRadius = 8,
   });
   final double handleHeight;

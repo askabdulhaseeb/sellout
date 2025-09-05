@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import '../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../location/domain/entities/location_entity.dart';
+import '../../../../../../../location/domain/enums/map_display_mode.dart';
 import '../../../../../../domain/enum/radius_type.dart';
-import '../../../../../../../../../core/widgets/leaflet_map_field.dart';
+import '../../../../../../../location/view/widgets/location_field.dart/nomination_location_wrapper.dart';
 import 'widget/location_header.dart';
 import 'widget/radius_option.dart';
 import 'widget/radius_slider.dart';
@@ -105,7 +106,7 @@ class _LocationRadiusBottomSheetState extends State<LocationRadiusBottomSheet> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   const SizedBox(height: 8),
-                  LocationDropdown(
+                  NominationLocationFieldWrapper(
                     radiusType: _radiusType,
                     selectedLatLng: _selectedLatLng,
                     circleRadius: _selectedRadius,

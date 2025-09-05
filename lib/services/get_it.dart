@@ -60,6 +60,12 @@ import '../features/personal/auth/signup/domain/usecase/send_opt_usecase.dart';
 import '../features/personal/auth/signup/domain/usecase/verify_opt_usecase.dart';
 import '../features/personal/auth/signup/domain/usecase/verify_user_by_image_usecase.dart';
 import '../features/personal/auth/signup/views/providers/signup_provider.dart';
+import '../features/personal/location/data/repo/location_repo_impl.dart';
+import '../features/personal/location/data/source/location_api.dart';
+import '../features/personal/location/domain/repo/location_repo.dart';
+import '../features/personal/location/domain/usecase/location_name_usecase.dart';
+import '../features/personal/location/view/provider/location_field_provider.dart';
+import '../features/personal/marketplace/data/source/marketplace_remote_source.dart';
 import '../features/personal/visits/domain/usecase/book_service_usecase.dart';
 import '../features/personal/visits/domain/usecase/get_visit_by_post_usecase.dart';
 import '../features/personal/visits/domain/usecase/update_visit_usecase.dart';
@@ -101,9 +107,7 @@ import '../features/personal/chats/create_chat/view/provider/create_private_chat
 import '../features/personal/chats/create_chat/view/provider/create_chat_group_provider.dart';
 import '../features/personal/listing/listing_form/views/widgets/attachment_selection/cept_group_invite_usecase.dart';
 import '../features/personal/marketplace/data/repository/marketplace_repo_impl.dart';
-import '../features/personal/marketplace/data/source/marketplace_remote_source.dart';
 import '../features/personal/marketplace/domain/repository/marketplace_repo.dart';
-import '../features/personal/marketplace/domain/usecase/location_name_usecase.dart';
 import '../features/personal/marketplace/domain/usecase/post_by_filters_usecase.dart';
 import '../features/personal/marketplace/views/providers/marketplace_provider.dart';
 import '../features/personal/listing/listing_form/data/repository/add_listing_repo_impl.dart';
@@ -204,6 +208,7 @@ void setupLocator() {
   _settings();
   _order();
   _notification();
+  _location();
 }
 
 void _auth() {
@@ -523,11 +528,8 @@ void _marketplace() {
       () => MarketPlaceRemoteSourceImpl());
   locator.registerFactory<GetPostByFiltersUsecase>(
       () => GetPostByFiltersUsecase(locator()));
-
   locator
       .registerFactory<MarketPlaceRepo>(() => MarketPlaceRepoImpl(locator()));
-  locator.registerFactory<LocationByNameUsecase>(
-      () => LocationByNameUsecase(locator()));
   locator.registerFactory<MarketPlaceProvider>(
       () => MarketPlaceProvider(locator()));
 }
@@ -564,7 +566,7 @@ void _sockets() {
   locator.registerFactory<SocketService>(
     () => SocketService(locator()),
   );
-  locator.registerLazySingleton<SocketImplementations>(
+  locator.registerFactory<SocketImplementations>(
     () => SocketImplementations(),
   );
 }
@@ -585,7 +587,7 @@ void _addaddress() {
       () => UpdateAddressUsecase(locator()));
   //
   // Providers
-  locator.registerLazySingleton<AddAddressProvider>(
+  locator.registerFactory<AddAddressProvider>(
       () => AddAddressProvider(locator(), locator()));
 }
 
@@ -602,9 +604,8 @@ void _search() {
   //
   locator.registerFactory<SearchUsecase>(() => SearchUsecase(locator()));
   // Providers
-  locator
-      .registerLazySingleton<SearchProvider>(() => SearchProvider(locator()));
-  locator.registerLazySingleton<SearchScreen>(() => const SearchScreen());
+  locator.registerFactory<SearchProvider>(() => SearchProvider(locator()));
+  locator.registerFactory<SearchScreen>(() => const SearchScreen());
 }
 
 void _settings() {
@@ -622,7 +623,7 @@ void _settings() {
   locator.registerFactory<ConnectAccountSessionUseCase>(
       () => ConnectAccountSessionUseCase(locator()));
   // Providers
-  locator.registerLazySingleton<SettingSecurityProvider>(
+  locator.registerFactory<SettingSecurityProvider>(
       () => SettingSecurityProvider(locator(), locator()));
 }
 
@@ -631,27 +632,23 @@ void _order() {
   //
   locator.registerFactory<OrderByUserRemote>(() => OrderByUserRemoteImpl());
   // REPOSITORIES
-  //
   locator
       .registerFactory<OrderRepository>(() => OrderRepositoryImpl(locator()));
   // USECASES
-  //
   locator.registerFactory<GetOrderByUidUsecase>(
       () => GetOrderByUidUsecase(locator()));
   locator
       .registerFactory<UpdateOrderUsecase>(() => UpdateOrderUsecase(locator()));
   // Providers
-  locator.registerLazySingleton<OrderProvider>(() => OrderProvider(locator()));
+  locator.registerFactory<OrderProvider>(() => OrderProvider(locator()));
   // locator.registerLazySingleton<PersonalSettingBuyerOrderProvider>(
   //     () => PersonalSettingBuyerOrderProvider(locator()));
 }
 
 void _notification() {
   // API
-  //
   locator.registerFactory<NotificationRemote>(() => NotificationRemoteImpl());
   // REPOSITORIES
-  //
   locator.registerFactory<NotificationRepository>(
       () => NotificationRepositoryImpl(locator()));
   // USECASES
@@ -660,6 +657,18 @@ void _notification() {
       () => GetAllNotificationsUseCase(locator()));
 
   // Providers
-  locator.registerLazySingleton<NotificationProvider>(
+  locator.registerFactory<NotificationProvider>(
       () => NotificationProvider(locator()));
+}
+
+void _location() {
+  // Api
+  locator.registerFactory<LocationApi>(() => LocationApiImpl());
+  // REPOSITORIES
+  locator.registerFactory<LocationRepo>(() => LocationRepoImpl(locator()));
+  // USECASES
+  locator.registerFactory<NominationLocationUsecase>(
+      () => NominationLocationUsecase(locator()));
+  //Providers
+  locator.registerFactory<LocationProvider>(() => LocationProvider(locator()));
 }
