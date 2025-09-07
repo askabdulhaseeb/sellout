@@ -42,7 +42,7 @@ class _MarketplaceSearchFieldState extends State<MarketplaceSearchField> {
           autoFocus: false,
           onChanged: (String value) => _onSearchChanged(pro, value),
           controller: pro.queryController,
-          hint: 'search'.tr(),
+          hint: 'search_prodcuts_here'.tr(),
           prefixIcon: const Icon(CupertinoIcons.search),
           suffixIcon: (pro.isLoading && pro.queryController.text.isNotEmpty)
               ? const Padding(

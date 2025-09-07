@@ -20,9 +20,7 @@ class LocationProvider extends ChangeNotifier {
 
   Future<List<NominationLocationEntity>> fetchSuggestions(String query) async {
     if (query.trim().isEmpty) return <NominationLocationEntity>[];
-
     setLoading(true);
-
     final DataState<List<NominationLocationEntity>> result =
         await _usecase.call(query);
 

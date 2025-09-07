@@ -6,15 +6,13 @@ import 'widgets/market_filter_size_color_widget.dart';
 
 class MarketClothFootFilterSection extends StatelessWidget {
   const MarketClothFootFilterSection({
-    required this.screenWidth,
     super.key,
   });
-  final double screenWidth;
   @override
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        MarketFilterClothFootToggleWidget(screenWidth: screenWidth),
+        MarketFilterClothFootToggleWidget(),
         const MarketFilterSearchField(),
         const MarketFilterClothFootCategoryAndLocationWIdget(),
         const MarketFilterSizeColorWidget(),

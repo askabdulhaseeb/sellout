@@ -2,10 +2,9 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/widgets/custom_textformfield.dart';
+import '../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../marketplace/domain/enum/radius_type.dart';
 import '../../../domain/entities/location_entity.dart';
@@ -18,6 +17,8 @@ class NominationLocationField extends StatefulWidget {
   const NominationLocationField({
     required this.onLocationSelected,
     required this.selectedLatLng,
+    this.title = '',
+    this.hint = 'location',
     super.key,
     this.initialText,
     this.icon,
@@ -31,6 +32,8 @@ class NominationLocationField extends StatefulWidget {
   final String? initialText;
   final Widget? icon;
   final MapDisplayMode displayMode;
+  final String title;
+  final String hint;
   final bool? showMapCircle;
   final double? circleRadius;
   final LatLng? selectedLatLng;
@@ -38,15 +41,14 @@ class NominationLocationField extends StatefulWidget {
 
   @override
   State<NominationLocationField> createState() =>
-      _NominationLocationFieldWrapperState();
+      _NominationLocationFieldState();
 }
 
-class _NominationLocationFieldWrapperState
-    extends State<NominationLocationField> {
+class _NominationLocationFieldState extends State<NominationLocationField> {
   final TextEditingController _controller = TextEditingController();
   final MapController _mapController = MapController();
   late LatLng _selectedLatLng;
-  Timer? _debounce;
+
   @override
   void initState() {
     super.initState();
@@ -56,17 +58,16 @@ class _NominationLocationFieldWrapperState
     }
   }
 
-  Future<List<NominationLocationEntity>> _debouncedSearch(
-      String query, LocationProvider provider) async {
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    final Completer<List<NominationLocationEntity>> completer =
-        Completer<List<NominationLocationEntity>>();
-    _debounce = Timer(const Duration(seconds: 1), () async {
-      final List<NominationLocationEntity> results =
-          await provider.fetchSuggestions(query);
-      completer.complete(results);
-    });
-    return completer.future;
+  @override
+  void didUpdateWidget(covariant NominationLocationField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialText != oldWidget.initialText &&
+        widget.initialText?.isNotEmpty == true) {
+      setState(() {
+        _controller.text = widget.initialText!;
+        _selectedLatLng = widget.selectedLatLng ?? LocalAuth.latlng;
+      });
+    }
   }
 
   void _handleSuggestionSelected(NominationLocationEntity suggestion) {
@@ -84,9 +85,11 @@ class _NominationLocationFieldWrapperState
       latitude: lat,
       longitude: lon,
     );
+    setState(() {
+      _selectedLatLng = latLng;
+      _controller.text = suggestion.displayName;
+    });
 
-    setState(() => _selectedLatLng = latLng);
-    // move map safely
     Future<void>.microtask(() {
       try {
         _mapController.move(latLng, 15);
@@ -102,32 +105,36 @@ class _NominationLocationFieldWrapperState
 
     return Column(
       children: <Widget>[
-        TypeAheadField<NominationLocationEntity>(
-          controller: _controller,
-          suggestionsCallback: (String query) =>
-              _debouncedSearch(query, provider),
-          itemBuilder:
-              (BuildContext context, NominationLocationEntity suggestion) =>
-                  ListTile(
-            title: Text(
-              suggestion.displayName,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          onSelected: _handleSuggestionSelected,
-          builder: (BuildContext context, TextEditingController controller,
-                  FocusNode focusNode) =>
-              CustomTextFormField(
-            hint: 'select_location'.tr(),
-            controller: controller,
-            focusNode: focusNode,
-            prefixIcon: widget.icon ?? const Icon(Icons.search),
-          ),
-          emptyBuilder: (_) => Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text('no_location_found'.tr(), textAlign: TextAlign.center),
-          ),
+        CustomDropdown<NominationLocationEntity>(
+          prefixIcon: Icons.search,
+          sufixIcon: false,
+          selectedItem: null,
+          validator: (bool? val) => null,
+          title: widget.title != '' ? widget.title.tr() : '',
+          items: const <DropdownMenuItem<NominationLocationEntity>>[],
+          initialText: widget.initialText,
+          hint: widget.hint != '' ? widget.hint.tr() : '',
+          isDynamic: true,
+          searchBy: (DropdownMenuItem<NominationLocationEntity> item) =>
+              item.value?.displayName ?? '',
+          onSearchChanged: (String query) async {
+            if (query.isEmpty) {
+              return <DropdownMenuItem<NominationLocationEntity>>[];
+            }
+            final List<NominationLocationEntity> results =
+                await provider.fetchSuggestions(query);
+            return results.map((NominationLocationEntity loc) {
+              return DropdownMenuItem<NominationLocationEntity>(
+                value: loc,
+                child: Text(loc.displayName),
+              );
+            }).toList();
+          },
+          onChanged: (NominationLocationEntity? suggestion) {
+            if (suggestion != null) {
+              _handleSuggestionSelected(suggestion);
+            }
+          },
         ),
         if (_shouldShowMap()) const SizedBox(height: 16),
         if (_shouldShowMap())
@@ -146,11 +153,5 @@ class _NominationLocationFieldWrapperState
     return widget.displayMode == MapDisplayMode.alwaysShowMap ||
         (widget.displayMode == MapDisplayMode.showMapAfterSelection &&
             _controller.text.isNotEmpty);
-  }
-
-  @override
-  void dispose() {
-    _debounce?.cancel();
-    super.dispose();
   }
 }

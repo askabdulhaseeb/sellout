@@ -83,7 +83,9 @@ class _MultiColorDropdownState extends State<MultiColorDropdown> {
                   ),
                   Text(
                     color.label,
-                    style: TextTheme.of(context).labelSmall,
+                    style: TextTheme.of(context)
+                        .labelSmall
+                        ?.copyWith(color: Theme.of(context).primaryColor),
                   )
                 ],
               ),

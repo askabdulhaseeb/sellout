@@ -101,12 +101,14 @@ class _CustomListingMultiDropdownState<T extends ChangeNotifier>
     if (isLoading) {
       return const Center(child: CircularProgressIndicator(strokeWidth: 2.0));
     }
-
     // Map DropdownOptionEntity to DropdownMenuItem<String>
     final List<DropdownMenuItem<String>> dropdownItems = filteredOptions
         .map((DropdownOptionEntity opt) => DropdownMenuItem<String>(
               value: opt.value,
-              child: Text(opt.label),
+              child: Text(opt.label,
+                  style: TextTheme.of(context)
+                      .bodySmall
+                      ?.copyWith(color: Theme.of(context).primaryColor)),
             ))
         .toList();
     return Consumer<T>(

@@ -1,10 +1,12 @@
-import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../../listing/listing_form/views/widgets/custom_listing_dropdown.dart';
 import '../../../../../providers/marketplace_provider.dart';
 
-class MarketFilterNationYearWidget extends StatelessWidget {
-  const MarketFilterNationYearWidget({
+class MarketFilterVehicleCategoryAndModalWIdget extends StatelessWidget {
+  const MarketFilterVehicleCategoryAndModalWIdget({
     super.key,
   });
 
@@ -23,6 +25,12 @@ class MarketFilterNationYearWidget extends StatelessWidget {
                   categoryKey: 'vehicles',
                   selectedValue: marketPro.vehicleCatgory,
                   onChanged: marketPro.setVehicleCategory)),
+          Expanded(
+            child: CustomTextFormField(
+              controller: marketPro.vehicleModel,
+              hint: 'model'.tr(),
+            ),
+          ),
         ],
       ),
     );

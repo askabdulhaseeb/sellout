@@ -195,9 +195,7 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
               children: <Widget>[
                 Expanded(
                   child: Text(
-                    selectedSubCategory?.title ??
-                        widget.hint.tr() ??
-                        'select_category'.tr(),
+                    selectedSubCategory?.title ?? widget.hint.tr(),
                     overflow: TextOverflow.ellipsis,
                     style: selectedSubCategory == null
                         ? Theme.of(context)
