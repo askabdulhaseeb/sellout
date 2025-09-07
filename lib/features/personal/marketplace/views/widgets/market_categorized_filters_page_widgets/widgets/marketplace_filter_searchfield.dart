@@ -14,7 +14,7 @@ class MarketFilterSearchField extends StatelessWidget {
     final MarketPlaceProvider marketPro =
         Provider.of<MarketPlaceProvider>(context, listen: false);
     return CustomTextFormField(
-      autoFocus: false,
+      autoFocus: true,
       controller: marketPro.queryController,
       hint: 'search'.tr(),
     );

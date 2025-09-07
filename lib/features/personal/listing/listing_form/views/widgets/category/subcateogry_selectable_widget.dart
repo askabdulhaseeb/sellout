@@ -18,6 +18,7 @@ class SubCategorySelectableWidget<T extends ChangeNotifier>
     required this.onSelected,
     this.cid,
     this.title = true,
+    this.hint = 'category',
     this.listenProvider,
     super.key,
   });
@@ -27,6 +28,7 @@ class SubCategorySelectableWidget<T extends ChangeNotifier>
   final void Function(SubCategoryEntity?) onSelected;
   final String? cid;
   final bool title;
+  final String hint;
   final T? listenProvider;
 
   @override
@@ -193,7 +195,9 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
               children: <Widget>[
                 Expanded(
                   child: Text(
-                    selectedSubCategory?.title ?? 'select_category'.tr(),
+                    selectedSubCategory?.title ??
+                        widget.hint.tr() ??
+                        'select_category'.tr(),
                     overflow: TextOverflow.ellipsis,
                     style: selectedSubCategory == null
                         ? Theme.of(context)
@@ -203,8 +207,9 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
                         : Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),
-                Icon(Icons.keyboard_arrow_down_rounded,
-                    color: ColorScheme.of(context).outline),
+                const Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                ),
               ],
             ),
           ),
