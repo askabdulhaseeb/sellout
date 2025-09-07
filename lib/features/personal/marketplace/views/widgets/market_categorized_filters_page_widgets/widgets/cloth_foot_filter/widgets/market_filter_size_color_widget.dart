@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../providers/marketplace_provider.dart';
@@ -20,7 +21,7 @@ class MarketFilterSizeColorWidget extends StatelessWidget {
           Expanded(
             flex: 2,
             child: CustomListingMultiDropdown<MarketPlaceProvider>(
-              hint: 'size',
+              hint: 'size'.tr(),
               categoryKey: marketPro.cLothFootCategory == 'clothes'
                   ? 'clothes_sizes'
                   : 'foot_sizes',

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'custom_textformfield.dart';
@@ -9,10 +10,15 @@ class CustomDropdown<T> extends StatefulWidget {
     required this.selectedItem,
     required this.onChanged,
     required this.validator,
+    this.sufixIcon,
+    this.prefixIcon,
+    this.initialText = '',
     this.hint,
     this.width,
     this.height,
     this.searchBy,
+    this.onSearchChanged,
+    this.isDynamic = false,
     super.key,
   });
 
@@ -21,11 +27,19 @@ class CustomDropdown<T> extends StatefulWidget {
   final T? selectedItem;
   final void Function(T?)? onChanged;
   final String? Function(bool?) validator;
+  final bool? sufixIcon;
+  final IconData? prefixIcon;
+  final String? initialText;
   final String? hint;
   final double? width;
   final double? height;
   final String Function(DropdownMenuItem<T>)? searchBy;
 
+  /// async search callback (optional)
+  final Future<List<DropdownMenuItem<T>>> Function(String)? onSearchChanged;
+
+  /// if true → use async search, otherwise → use static items
+  final bool isDynamic;
   @override
   CustomDropdownState<T> createState() => CustomDropdownState<T>();
 }
@@ -38,6 +52,8 @@ class CustomDropdownState<T> extends State<CustomDropdown<T>> {
   OverlayEntry? _overlayEntry;
   bool _isDropdownOpen = false;
   String _searchText = '';
+  List<DropdownMenuItem<T>> _dynamicItems = <DropdownMenuItem<T>>[];
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -55,8 +71,18 @@ class CustomDropdownState<T> extends State<CustomDropdown<T>> {
     }
   }
 
-  // --- Helpers ---
   void _updateControllerValue() {
+    if (widget.isDynamic) {
+      // 🔹 For dynamic suggestions → just use initialText
+      if (widget.initialText != null && widget.initialText!.isNotEmpty) {
+        _controller.text = widget.initialText!;
+      } else {
+        _controller.clear();
+      }
+      return;
+    }
+
+    // 🔹 For static items
     final DropdownMenuItem<T> selectedItem = widget.items.firstWhere(
       (DropdownMenuItem<T> item) => item.value == widget.selectedItem,
       orElse: () => DropdownMenuItem<T>(
@@ -85,6 +111,10 @@ class CustomDropdownState<T> extends State<CustomDropdown<T>> {
   }
 
   List<DropdownMenuItem<T>> _getFilteredItems() {
+    if (widget.isDynamic) {
+      return _dynamicItems;
+    }
+
     if (_searchText.isEmpty) return widget.items;
 
     return widget.items.where((DropdownMenuItem<T> item) {
@@ -93,7 +123,6 @@ class CustomDropdownState<T> extends State<CustomDropdown<T>> {
     }).toList();
   }
 
-  // --- Dropdown handling ---
   void _handleFocusChange() {
     if (_focusNode.hasFocus) {
       _openDropdown();
@@ -133,14 +162,12 @@ class CustomDropdownState<T> extends State<CustomDropdown<T>> {
         final List<DropdownMenuItem<T>> filteredItems = _getFilteredItems();
         return Stack(
           children: <Widget>[
-            // Close on outside tap
             Positioned.fill(
               child: GestureDetector(
                 onTap: _closeDropdown,
                 behavior: HitTestBehavior.translucent,
               ),
             ),
-            // Dropdown list
             Positioned(
               width: size.width,
               child: CompositedTransformFollower(
@@ -185,9 +212,9 @@ class CustomDropdownState<T> extends State<CustomDropdown<T>> {
     );
   }
 
-  // --- Lifecycle ---
   @override
   void dispose() {
+    _debounce?.cancel();
     _focusNode.removeListener(_handleFocusChange);
     _focusNode.dispose();
     _controller.dispose();
@@ -195,7 +222,6 @@ class CustomDropdownState<T> extends State<CustomDropdown<T>> {
     super.dispose();
   }
 
-  // --- UI ---
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -216,22 +242,39 @@ class CustomDropdownState<T> extends State<CustomDropdown<T>> {
               if (!_isDropdownOpen) _openDropdown();
             },
             child: CustomTextFormField(
+              prefixIcon:
+                  widget.prefixIcon != null ? Icon(widget.prefixIcon) : null,
               controller: _controller,
               focusNode: _focusNode,
               hint: widget.hint ?? 'select_an_item'.tr(),
-              suffixIcon: Icon(
-                _isDropdownOpen
-                    ? Icons.keyboard_arrow_up_rounded
-                    : Icons.keyboard_arrow_down_rounded,
-              ),
+              suffixIcon: widget.sufixIcon == false
+                  ? null
+                  : Icon(
+                      _isDropdownOpen
+                          ? Icons.keyboard_arrow_up_rounded
+                          : Icons.keyboard_arrow_down_rounded,
+                    ),
               onChanged: (String value) {
                 setState(() => _searchText = value);
-
-                // Rebuild dropdown overlay if open
-                if (_isDropdownOpen) {
-                  _overlayEntry?.markNeedsBuild();
+                // 🔹 Debounce logic
+                if (widget.isDynamic && widget.onSearchChanged != null) {
+                  _debounce?.cancel();
+                  _debounce =
+                      Timer(const Duration(milliseconds: 600), () async {
+                    final List<DropdownMenuItem<T>> results =
+                        await widget.onSearchChanged!(value);
+                    setState(() {
+                      _dynamicItems = results;
+                    });
+                    if (_isDropdownOpen) {
+                      _overlayEntry?.markNeedsBuild();
+                    }
+                  });
+                } else {
+                  if (_isDropdownOpen) {
+                    _overlayEntry?.markNeedsBuild();
+                  }
                 }
-
                 if (value.isEmpty && !_isDropdownOpen) {
                   _openDropdown();
                 }

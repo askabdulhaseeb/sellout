@@ -4,11 +4,8 @@ import '../marketplace_filter_searchfield.dart';
 
 class FoodDrinkFilterSection extends StatelessWidget {
   const FoodDrinkFilterSection({
-    required this.screenWidth,
     super.key,
   });
-
-  final double screenWidth;
 
   @override
   Widget build(BuildContext context) {

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import 'scaffold/app_bar/app_bar_title_widget.dart';
@@ -53,8 +54,28 @@ class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  AppBarTitle(
-                    titleKey: widget.hint ?? '',
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      const CloseButton(),
+                      AppBarTitle(
+                        titleKey: widget.hint ?? '',
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          setModalState(() {
+                            tempSelected.clear();
+                          });
+                          widget.onChanged?.call(tempSelected);
+                        },
+                        child: Text(
+                          'reset'.tr(),
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   Divider(color: Theme.of(context).dividerColor),
                   Expanded(
@@ -68,9 +89,12 @@ class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
                           return ChoiceChip(
                             showCheckmark: false,
                             side: BorderSide(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .outlineVariant),
+                                width: isSelected ? 2 : 1,
+                                color: isSelected
+                                    ? Theme.of(context).primaryColor
+                                    : Theme.of(context)
+                                        .colorScheme
+                                        .outlineVariant),
                             label: item.child,
                             selected: isSelected,
                             shape: RoundedRectangleBorder(
@@ -131,7 +155,7 @@ class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
             children: <Widget>[
               Expanded(
                 child: Text(
-                  widget.hint ?? 'Select',
+                  widget.hint ?? 'select'.tr(),
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: widget.selectedItems.isNotEmpty
                             ? colorScheme.primary
@@ -145,7 +169,7 @@ class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
                     : Icons.keyboard_arrow_down_rounded,
                 color: widget.selectedItems.isNotEmpty
                     ? colorScheme.primary
-                    : colorScheme.outline,
+                    : null,
               ),
             ],
           ),

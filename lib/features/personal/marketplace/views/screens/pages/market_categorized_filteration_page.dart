@@ -41,7 +41,6 @@ class _MarketCategorizedFilterationPageState
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
     return Consumer<MarketPlaceProvider>(
       builder:
           (BuildContext context, MarketPlaceProvider marketPro, Widget? child) {
@@ -59,7 +58,7 @@ class _MarketCategorizedFilterationPageState
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             const GoBAckButtonWidget(),
-                            MarketFilterContainer(screenWidth: screenWidth),
+                            const MarketFilterContainer(),
                             const MarketPlaceFilterContainerPostsGrid(),
                             if (marketPro.isLoading)
                               const Padding(

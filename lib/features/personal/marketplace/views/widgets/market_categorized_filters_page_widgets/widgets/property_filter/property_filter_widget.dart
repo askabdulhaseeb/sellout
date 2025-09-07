@@ -6,19 +6,14 @@ import 'widget/market_filter_property_type_and_added_widget.dart';
 
 class PropertyFilterSection extends StatelessWidget {
   const PropertyFilterSection({
-    required this.screenWidth,
     super.key,
   });
-
-  final double screenWidth;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        MarketFilterPropertyToggleWidget(
-          screenWidth: screenWidth,
-        ),
+        MarketFilterPropertyToggleWidget(),
         const MarketFilterpropertyCategoryAndLocationWIdget(),
         const MarketFilterPropertyTypeandAddedWidget(),
         const MarketFilterPriceWIdget()

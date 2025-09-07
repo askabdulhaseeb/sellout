@@ -70,7 +70,6 @@ dependencies:
   url_launcher: ^6.3.2
   flutter_map: ^8.2.1
   latlong2: ^0.9.1
-  flutter_typeahead: ^5.2.0
   
   flutter_svg: ^2.2.0
 
