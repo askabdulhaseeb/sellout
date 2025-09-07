@@ -26,7 +26,6 @@ class ServicePageExploreSection extends StatefulWidget {
 class _ServicePageExploreSectionState extends State<ServicePageExploreSection> {
   @override
   Widget build(BuildContext context) {
-    final TextTheme txt = Theme.of(context).textTheme;
     return Consumer<ServicesPageProvider>(
       builder: (BuildContext context, ServicesPageProvider pro, _) {
         return Column(
@@ -91,10 +90,6 @@ class _ServicePageExploreSectionState extends State<ServicePageExploreSection> {
               const ServicesPageExploreCategoriesSection(),
             const SizedBox(
               height: 6,
-            ),
-            Text(
-              'result'.tr(),
-              style: txt.titleMedium,
             ),
             if (pro.search.text.isNotEmpty) const ServiceSearchResults()
           ],

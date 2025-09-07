@@ -117,6 +117,7 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
         await showModalBottomSheet<SubCategoryEntity>(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       builder: (_) => CategorySelectionBottomSheet(
         subCategories: subCategories,
       ),
