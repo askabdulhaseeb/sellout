@@ -14,7 +14,7 @@ class AddedFilterDropdown extends StatelessWidget {
       builder: (BuildContext context, MarketPlaceProvider marketPro, _) {
         return CustomDropdown<AddedFilterOption>(
           title: '',
-          hint: 'added_to_site',
+          hint: 'added_to_site'.tr(),
           items: AddedFilterOption.values.map((AddedFilterOption option) {
             return DropdownMenuItem<AddedFilterOption>(
               value: option,

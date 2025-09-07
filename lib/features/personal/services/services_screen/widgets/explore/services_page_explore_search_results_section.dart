@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../business/core/domain/entity/service/service_entity.dart';
@@ -9,25 +10,35 @@ class ServiceSearchResults extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextTheme txt = Theme.of(context).textTheme;
+
     return Consumer<ServicesPageProvider>(
       builder: (BuildContext context, ServicesPageProvider pro, Widget? child) {
-        return SizedBox(
-          child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 6.0,
-              mainAxisSpacing: 6.0,
-              childAspectRatio: 0.68,
+        return Column(
+          children: [
+            Text(
+              'result'.tr(),
+              style: txt.titleMedium,
             ),
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: pro.searchedServices.length,
-            itemBuilder: (BuildContext context, int index) {
-              final ServiceEntity service = pro.searchedServices[index];
-              return ServiceGridTile(service: service);
-            },
-          ),
+            SizedBox(
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 6.0,
+                  mainAxisSpacing: 6.0,
+                  childAspectRatio: 0.68,
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: pro.searchedServices.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final ServiceEntity service = pro.searchedServices[index];
+                  return ServiceGridTile(service: service);
+                },
+              ),
+            ),
+          ],
         );
       },
     );
