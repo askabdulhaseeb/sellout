@@ -87,63 +87,66 @@ class _YourOrdersScreenState extends State<YourOrdersScreen> {
         title: AppBarTitle(titleKey: 'your_orders'.tr()),
         centerTitle: true,
       ),
-      body: Column(
-        children: <Widget>[
-          // Search Tile
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: CustomTextFormField(
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: <Widget>[
+            // Search Tile
+            CustomTextFormField(
               hint: 'search'.tr(),
               controller: searchController,
               onChanged: filterOrders,
             ),
-          ),
+            const SizedBox(
+              height: 8,
+            ),
+            Expanded(
+              child: FutureBuilder<DataState<List<OrderEntity>>>(
+                future: futureOrders,
+                builder: (BuildContext context,
+                    AsyncSnapshot<DataState<List<OrderEntity>>> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    // Show loading placeholders
+                    return ListView.separated(
+                      itemCount: 10,
+                      separatorBuilder: (_, __) => const Divider(
+                        height: 1,
+                        endIndent: 12,
+                        indent: 12,
+                      ),
+                      itemBuilder: (BuildContext context, int index) {
+                        return const BuyerOrderTileLoader();
+                      },
+                    );
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('something_wrong'.tr()));
+                  } else if (!snapshot.hasData) {
+                    return Center(child: Text('no_data_found'.tr()));
+                  }
 
-          // Orders List
-          Expanded(
-            child: FutureBuilder<DataState<List<OrderEntity>>>(
-              future: futureOrders,
-              builder: (BuildContext context,
-                  AsyncSnapshot<DataState<List<OrderEntity>>> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  // Show loading placeholders
+                  if (filteredOrders.isEmpty) {
+                    return Center(child: Text('no_data_found'.tr()));
+                  }
+                  // Show orders
                   return ListView.separated(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: 10,
-                    separatorBuilder: (_, __) => const Divider(
+                    itemCount: filteredOrders.length,
+                    separatorBuilder: (_, __) => Container(
+                      color: Theme.of(context).dividerColor,
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 6, horizontal: 4),
                       height: 1,
-                      endIndent: 12,
-                      indent: 12,
                     ),
                     itemBuilder: (BuildContext context, int index) {
-                      return const BuyerOrderTileLoader();
+                      final OrderEntity order = filteredOrders[index];
+                      final PostEntity? post = postCache[order.postId];
+                      return BuyerOrderTileWidget(order: order, post: post);
                     },
                   );
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('something_wrong'.tr()));
-                } else if (!snapshot.hasData) {
-                  return Center(child: Text('no_data_found'.tr()));
-                }
-
-                if (filteredOrders.isEmpty) {
-                  return Center(child: Text('no_data_found'.tr()));
-                }
-
-                // Show orders
-                return ListView.separated(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: filteredOrders.length,
-                  separatorBuilder: (_, __) => const Divider(height: 1),
-                  itemBuilder: (BuildContext context, int index) {
-                    final OrderEntity order = filteredOrders[index];
-                    final PostEntity? post = postCache[order.postId];
-                    return BuyerOrderTileWidget(order: order, post: post);
-                  },
-                );
-              },
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
