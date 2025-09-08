@@ -38,7 +38,7 @@ class LocationApiImpl extends LocationApi {
               .toList();
 
           return DataSuccess<List<NominationLocationModel>>(
-            'cached_data'.tr(),
+            'cached_data',
             cachedLocations,
           );
         } catch (e) {
@@ -68,7 +68,7 @@ class LocationApiImpl extends LocationApi {
             .map((json) => NominationLocationModel.fromJson(json))
             .toList();
         return DataSuccess<List<NominationLocationModel>>(
-          'fresh_data'.tr(),
+          'fresh_data',
           locationData,
         );
       } else {

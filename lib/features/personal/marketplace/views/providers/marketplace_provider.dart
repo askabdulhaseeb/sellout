@@ -29,7 +29,7 @@ class MarketPlaceProvider extends ChangeNotifier {
     setLoading(true);
     setMainPageKey('');
     try {
-      final PostByFiltersParams params = _buildPostByFiltersParams();
+      final PostByFiltersParams params = _buildPostMarketSearchParams();
       final DataState<List<PostEntity>> result =
           await _getPostByFiltersUsecase(params);
       if (result is DataSuccess<List<PostEntity>>) {
@@ -52,9 +52,9 @@ class MarketPlaceProvider extends ChangeNotifier {
 
   Future<bool> loadChipsPosts() async {
     setMainPageKey('');
+    setChoiceChipPosts(<PostEntity>[]);
     try {
       setLoading(true);
-      setChoiceChipPosts(<PostEntity>[]);
       final PostByFiltersParams params = PostByFiltersParams(
         category: _chipsCategory ?? '',
         filters: <FilterParam>[],
@@ -175,10 +175,6 @@ class MarketPlaceProvider extends ChangeNotifier {
     await loadPosts();
   }
 
-  void locationSheetApplyButton(BuildContext context) async {
-    await loadPosts();
-  }
-
   void updateLocation(
     LatLng? latlngVal,
     LocationEntity? locationVal,
@@ -187,18 +183,17 @@ class MarketPlaceProvider extends ChangeNotifier {
     _selectedLocation = locationVal;
     debugPrint(
         'Updated LatLng: $_selectedlatlng, Location: $_selectedLocation in marketplaceProvider');
-    notifyListeners();
   }
 
   void updateLocationSheet(LatLng? latlngVal, LocationEntity? locationVal,
-      RadiusType radiusTypeVal, double selectedRadVal) {
+      RadiusType radiusTypeVal, double selectedRadVal) async {
     _radiusType = radiusTypeVal;
     _selectedRadius = selectedRadVal;
-    _selectedlatlng = latlngVal ?? LocalAuth.latlng;
-    _selectedLocation = locationVal;
+    _bottomsheetLatLng = latlngVal ?? LocalAuth.latlng;
+    _bottomsheetLocation = locationVal;
     debugPrint(
-        'Updated LatLng: $_selectedlatlng, Location: $_selectedLocation in marketplaceProvider');
-    notifyListeners();
+        'Updated LatLng: $_bottomsheetLatLng, Location: $_bottomsheetLocation in marketplaceProvider for bottomsheet');
+    await loadPosts();
   }
 
   void filterSheetResetButton() {
@@ -522,7 +517,9 @@ class MarketPlaceProvider extends ChangeNotifier {
   String? _brand;
   String? _mainPageKey;
   LatLng _selectedlatlng = LocalAuth.latlng;
+  LatLng _bottomsheetLatLng = LocalAuth.latlng;
   LocationEntity? _selectedLocation;
+  LocationEntity? _bottomsheetLocation;
   double _selectedRadius = 5;
   RadiusType _radiusType = RadiusType.worldwide;
 // Getters
@@ -559,7 +556,9 @@ class MarketPlaceProvider extends ChangeNotifier {
   String? get mainPageKey => _mainPageKey;
   String? get propertyType => _propertyType;
   LatLng get selectedlatlng => _selectedlatlng;
+  LatLng get bottomsheetLatLng => _bottomsheetLatLng;
   LocationEntity? get selectedLocation => _selectedLocation;
+  LocationEntity? get bottomsheetLocation => _bottomsheetLocation;
   double get selectedRadius => _selectedRadius;
   RadiusType get radiusType => _radiusType;
 // textfield controllers
@@ -572,6 +571,27 @@ class MarketPlaceProvider extends ChangeNotifier {
   TextEditingController usernameController = TextEditingController();
 
 //params
+  PostByFiltersParams _buildPostMarketSearchParams() {
+    return PostByFiltersParams(
+      lastKey: _mainPageKey,
+      query: queryController.text,
+      size: _selectedSize,
+      colors: _selectedColor,
+      sort: _selectedSortOption,
+      address: _selectedSubCategory?.address,
+      clientLat: _bottomsheetLatLng != const LatLng(0, 0)
+          ? _bottomsheetLatLng.latitude
+          : null,
+      clientLng: _bottomsheetLatLng != const LatLng(0, 0)
+          ? _bottomsheetLatLng.longitude
+          : null,
+      distance:
+          _radiusType == RadiusType.local ? _selectedRadius.toInt() : null,
+      category: _marketplaceCategory?.json ?? '',
+      filters: _buildFilters(),
+    );
+  }
+
   PostByFiltersParams _buildPostByFiltersParams() {
     return PostByFiltersParams(
       lastKey: _mainPageKey,
@@ -586,8 +606,6 @@ class MarketPlaceProvider extends ChangeNotifier {
       clientLng: _selectedlatlng != const LatLng(0, 0)
           ? _selectedlatlng.longitude
           : null,
-      distance:
-          _radiusType == RadiusType.local ? _selectedRadius.toInt() : null,
       category: _marketplaceCategory?.json ?? '',
       filters: _buildFilters(),
     );

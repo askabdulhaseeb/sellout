@@ -46,9 +46,6 @@ class _ServicePageExploreSectionState extends State<ServicePageExploreSection> {
                               initialLatLng: pro.selectedlatlng,
                               initialRadius: pro.selectedRadius,
                               initialRadiusType: pro.radiusType,
-                              onApply: () => pro.locationSheetApplyButton(
-                                context,
-                              ),
                               onReset: () => pro.resetLocationBottomsheet(),
                               onUpdateLocation: (RadiusType radiusType,
                                       double radius,

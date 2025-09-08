@@ -35,7 +35,7 @@ class MarketFilterFoodDrinkCategoryAndLocationWIdget extends StatelessWidget {
             child: NominationLocationField(
               selectedLatLng: marketPro.selectedlatlng,
               displayMode: MapDisplayMode.neverShowMap,
-              initialText: marketPro.selectedLocation?.title ?? '',
+              initialText: marketPro.selectedLocation?.address ?? '',
               onLocationSelected: (LocationEntity p0, LatLng p1) {
                 marketPro.updateLocation(p1, p0);
               },

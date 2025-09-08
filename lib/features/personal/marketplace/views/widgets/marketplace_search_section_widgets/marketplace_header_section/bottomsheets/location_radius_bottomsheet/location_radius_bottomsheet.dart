@@ -15,7 +15,6 @@ class LocationRadiusBottomSheet extends StatefulWidget {
     required this.initialRadiusType,
     required this.initialRadius,
     required this.initialLatLng,
-    required this.onApply,
     required this.onUpdateLocation,
     required this.onReset,
     this.initialLocation,
@@ -27,7 +26,6 @@ class LocationRadiusBottomSheet extends StatefulWidget {
   final LatLng initialLatLng;
   final LocationEntity? initialLocation;
 
-  final void Function() onApply;
   final void Function() onReset;
   final void Function(
     RadiusType radiusType,
@@ -98,7 +96,6 @@ class _LocationRadiusBottomSheetState extends State<LocationRadiusBottomSheet> {
               _selectedLatLng,
               _selectedLocation,
             );
-            widget.onApply();
             Navigator.pop(context);
           },
           onReset: () {
@@ -150,7 +147,6 @@ class _LocationRadiusBottomSheetState extends State<LocationRadiusBottomSheet> {
                           _selectedLatLng,
                           _selectedLocation,
                         );
-                        widget.onApply();
                         Navigator.pop(context);
                       },
                       title: 'update_location'.tr(),

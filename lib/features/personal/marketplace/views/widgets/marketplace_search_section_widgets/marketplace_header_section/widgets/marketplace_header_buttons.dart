@@ -33,13 +33,10 @@ class MarketPlaceHeaderButtons extends StatelessWidget {
                     MaterialPageRoute<LocationRadiusBottomSheet>(
                       builder: (BuildContext context) =>
                           LocationRadiusBottomSheet(
-                        initialLocation: pro.selectedLocation,
-                        initialLatLng: pro.selectedlatlng,
+                        initialLocation: pro.bottomsheetLocation,
+                        initialLatLng: pro.bottomsheetLatLng,
                         initialRadius: pro.selectedRadius,
                         initialRadiusType: pro.radiusType,
-                        onApply: () => pro.locationSheetApplyButton(
-                          context,
-                        ),
                         onReset: () => pro.resetLocationBottomsheet(),
                         onUpdateLocation: (RadiusType radiusType, double radius,
                                 LatLng latlng, LocationEntity? location) =>
@@ -48,9 +45,9 @@ class MarketPlaceHeaderButtons extends StatelessWidget {
                       ),
                     )),
                 icon: AppStrings.selloutMarketplaceLocationIcon,
-                label: pro.selectedLocation == null
+                label: pro.bottomsheetLocation == null
                     ? 'location'.tr()
-                    : '${pro.selectedLocation?.title}'),
+                    : '${pro.bottomsheetLocation?.title}'),
             if (pro.queryController.text.isEmpty)
               _HeaderButton(
                 onPressed: () =>
