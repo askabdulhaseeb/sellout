@@ -21,7 +21,7 @@ class MarketFilterVehicleCategoryAndModalWIdget extends StatelessWidget {
           Expanded(
               child: CustomListingDropDown<MarketPlaceProvider>(
                   validator: (bool? p0) => null,
-                  hint: 'category',
+                  hint: 'category'.tr(),
                   categoryKey: 'vehicles',
                   selectedValue: marketPro.vehicleCatgory,
                   onChanged: marketPro.setVehicleCategory)),

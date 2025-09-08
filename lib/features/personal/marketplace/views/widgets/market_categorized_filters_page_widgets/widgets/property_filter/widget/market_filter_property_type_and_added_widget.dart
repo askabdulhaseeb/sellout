@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../listing/listing_form/views/widgets/custom_listing_dropdown.dart';
@@ -20,7 +21,7 @@ class MarketFilterPropertyTypeandAddedWidget extends StatelessWidget {
           Expanded(
             child: CustomListingDropDown<MarketPlaceProvider>(
               validator: (bool? p0) => null,
-              hint: 'property_type',
+              hint: 'property_type'.tr(),
               categoryKey: 'property_type',
               selectedValue: marketPro.propertyType,
               onChanged: (String? p0) => marketPro.setPropertyType(p0),

@@ -79,7 +79,7 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
               selectedValue: formPro.deliveryType,
               value: DeliveryType.collection,
               onChanged: formPro.setDeliveryType,
-              subtitle: NominationLocationFieldWrapper(
+              subtitle: NominationLocationField(
                 selectedLatLng: LatLng(
                     formPro.selectedCollectionLocation?.latitude ?? 0,
                     formPro.selectedCollectionLocation?.longitude ?? 0),

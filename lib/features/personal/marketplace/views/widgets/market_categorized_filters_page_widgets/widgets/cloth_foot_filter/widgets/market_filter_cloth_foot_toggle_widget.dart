@@ -21,6 +21,7 @@ class MarketFilterClothFootToggleWidget extends StatelessWidget {
         children: <Widget>[
           Expanded(
             child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 4),
               decoration: BoxDecoration(
                   border:
                       Border.all(color: ColorScheme.of(context).outlineVariant),

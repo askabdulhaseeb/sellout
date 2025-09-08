@@ -35,15 +35,15 @@ class MarketFilterContainer extends StatelessWidget {
           if (marketPro.marketplaceCategory == ListingType.items)
             const ItemFilterWidget(),
           if (marketPro.marketplaceCategory == ListingType.clothAndFoot)
-            MarketClothFootFilterSection(),
+            const MarketClothFootFilterSection(),
           if (marketPro.marketplaceCategory == ListingType.pets)
             const PetsFilterWIdget(),
           if (marketPro.marketplaceCategory == ListingType.vehicle)
             const VehicleFIlterWidget(),
           if (marketPro.marketplaceCategory == ListingType.property)
-            PropertyFilterSection(),
+            const PropertyFilterSection(),
           if (marketPro.marketplaceCategory == ListingType.foodAndDrink)
-            FoodDrinkFilterSection(),
+            const FoodDrinkFilterSection(),
           const MarketFilterButtons(),
         ],
       ),

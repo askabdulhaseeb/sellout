@@ -30,17 +30,15 @@ class DropDownListingAPI {
           for (final MapEntry<String, dynamic> entry
               in (data as Map<String, dynamic>).entries) {
             final DropdownCategoryEntity cat =
-                DropdownCategoryEntity.fromMap(entry.key, entry.value);
+                DropdownCategoryEntity.fromDynamic(entry.key, entry.value);
             await LocalDropDownListings().save(entry.key, cat);
             categories.add(cat);
-
             debugPrint('💾 [DropDownListingAPI] Saved category: ${entry.key}');
             AppLog.info(
                 'DropDownListingAPI: Saved category "${entry.key}" to local storage.',
                 name: 'DropDownListingAPI');
           }
         }
-
         AppLog.info(
             'DropDownListingAPI: Successfully processed ${categories.length} categories.',
             name: 'DropDownListingAPI');

@@ -26,7 +26,6 @@ class MarketplaceChoiceGridWidget extends StatelessWidget {
             ),
           );
         }
-
         return GridView.builder(
           padding: const EdgeInsets.all(16.0),
           shrinkWrap: true,

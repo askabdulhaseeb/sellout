@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../market_filter_price_widget.dart';
 import '../marketplace_filter_searchfield.dart';
-import 'widget/market_filter_make_model_widget.dart';
+import 'widget/market_filter_make_year_widget.dart';
 import 'widget/market_filter_location_widget.dart';
 import 'widget/market_filter_vehicle_category_model.dart';
 
@@ -17,7 +17,7 @@ class VehicleFIlterWidget extends StatelessWidget {
         MarketFilterSearchField(),
         MarketFilterLocationWidget(),
         MarketFilterVehicleCategoryAndModalWIdget(),
-        MarketFilterMakeModelWidget(),
+        MarketFilterMakeYearWidget(),
         MarketFilterPriceWIdget(),
       ],
     );

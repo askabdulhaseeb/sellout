@@ -20,7 +20,7 @@ class MarketFilterLocationWidget extends StatelessWidget {
         spacing: 4,
         children: <Widget>[
           Expanded(
-            child: NominationLocationFieldWrapper(
+            child: NominationLocationField(
               selectedLatLng: marketPro.selectedlatlng,
               displayMode: MapDisplayMode.neverShowMap,
               initialText: marketPro.selectedLocation?.address ?? '',
