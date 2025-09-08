@@ -327,10 +327,6 @@ class ServicesPageProvider extends ChangeNotifier {
     searchServices();
   }
 
-  void locationSheetApplyButton(BuildContext context) async {
-    await searchServices();
-  }
-
   void updateLocation(
     LatLng? latlngVal,
     LocationEntity? locationVal,
@@ -343,14 +339,14 @@ class ServicesPageProvider extends ChangeNotifier {
   }
 
   void updateLocationSheet(LatLng? latlngVal, LocationEntity? locationVal,
-      RadiusType radiusTypeVal, double selectedRadVal) {
+      RadiusType radiusTypeVal, double selectedRadVal) async {
     _radiusType = radiusTypeVal;
     _selectedRadius = selectedRadVal;
     _selectedlatlng = latlngVal ?? LocalAuth.latlng;
     _selectedLocation = locationVal;
     debugPrint(
         'Updated LatLng: $_selectedlatlng, Location: $_selectedLocation in marketplaceProvider');
-    notifyListeners();
+    await searchServices();
   }
 
   void resetLocationBottomsheet() async {

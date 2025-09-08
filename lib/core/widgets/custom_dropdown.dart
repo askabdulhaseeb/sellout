@@ -72,7 +72,6 @@ class CustomDropdownState<T> extends State<CustomDropdown<T>> {
       }
     }
 
-    // For static items, update controller if selectedItem changed
     if (!widget.isDynamic &&
         (oldWidget.selectedItem != widget.selectedItem ||
             oldWidget.items != widget.items)) {
@@ -155,14 +154,17 @@ class CustomDropdownState<T> extends State<CustomDropdown<T>> {
     return OverlayEntry(
       builder: (BuildContext context) {
         final List<DropdownMenuItem<T>> filteredItems = _getFilteredItems();
+
         return Stack(
           children: <Widget>[
+            // Tap outside to close
             Positioned.fill(
               child: GestureDetector(
                 onTap: _closeDropdown,
                 behavior: HitTestBehavior.translucent,
               ),
             ),
+            // Dropdown itself
             Positioned(
               width: size.width,
               child: CompositedTransformFollower(
@@ -175,24 +177,41 @@ class CustomDropdownState<T> extends State<CustomDropdown<T>> {
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   color: Theme.of(context).scaffoldBackgroundColor,
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxHeight: 200),
-                    child: ListView.separated(
-                      padding: EdgeInsets.zero,
-                      shrinkWrap: true,
-                      itemCount: filteredItems.length,
-                      separatorBuilder: (_, __) => const Divider(height: 1),
-                      itemBuilder: (BuildContext context, int index) {
-                        final DropdownMenuItem<T> item = filteredItems[index];
-                        return ListTile(
-                          minVerticalPadding: 2,
-                          title: item.child,
-                          onTap: () {
-                            widget.onChanged?.call(item.value);
-                            _closeDropdown();
-                          },
-                        );
-                      },
+                  child: AnimatedSize(
+                    duration: const Duration(milliseconds: 250),
+                    curve: Curves.easeInOut,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxHeight: 200),
+                      child: filteredItems.isEmpty
+                          ? Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                '${'no_data_found'.tr()}!',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                              ),
+                            )
+                          : ListView.separated(
+                              padding: EdgeInsets.zero,
+                              shrinkWrap: true,
+                              itemCount: filteredItems.length,
+                              separatorBuilder: (_, __) =>
+                                  const Divider(height: 1),
+                              itemBuilder: (BuildContext context, int index) {
+                                final DropdownMenuItem<T> item =
+                                    filteredItems[index];
+                                return ListTile(
+                                  minVerticalPadding: 2,
+                                  title: item.child,
+                                  onTap: () {
+                                    widget.onChanged?.call(item.value);
+                                    _closeDropdown();
+                                  },
+                                );
+                              },
+                            ),
                     ),
                   ),
                 ),
@@ -244,6 +263,7 @@ class CustomDropdownState<T> extends State<CustomDropdown<T>> {
               _debounce = Timer(const Duration(milliseconds: 600), () async {
                 final List<DropdownMenuItem<T>> results =
                     await widget.onSearchChanged!(value);
+                if (!mounted) return;
                 setState(() {
                   _dynamicItems = results;
                 });

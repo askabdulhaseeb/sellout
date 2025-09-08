@@ -22,6 +22,7 @@ class PostBuyNowButton extends StatefulWidget {
     this.buyNowText,
     this.buyNowTextStyle,
     this.buyNowColor,
+    this.border,
     this.padding,
     this.margin,
     super.key,
@@ -34,6 +35,7 @@ class PostBuyNowButton extends StatefulWidget {
   final String? buyNowText;
   final TextStyle? buyNowTextStyle;
   final Color? buyNowColor;
+  final BoxBorder? border;
   final EdgeInsetsGeometry? padding;
   final EdgeInsetsGeometry? margin;
 
@@ -104,6 +106,7 @@ class _PostBuyNowButtonState extends State<PostBuyNowButton> {
   @override
   Widget build(BuildContext context) {
     return CustomElevatedButton(
+      border: widget.border,
       onTap: () => _buyNow(context),
       title: widget.buyNowText ?? 'buy_now'.tr(),
       isLoading: isLoading,

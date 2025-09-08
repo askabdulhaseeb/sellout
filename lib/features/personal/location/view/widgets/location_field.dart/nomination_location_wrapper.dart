@@ -19,7 +19,7 @@ class NominationLocationField extends StatefulWidget {
     required this.onLocationSelected,
     required this.selectedLatLng,
     this.title = '',
-    this.hint = 'location',
+    this.hint = '',
     super.key,
     this.initialText,
     this.prefixIcon,
@@ -136,10 +136,10 @@ class _NominationLocationFieldState extends State<NominationLocationField> {
           sufixIcon: widget.showSuffixIcon,
           selectedItem: null,
           validator: (bool? val) => null,
-          title: widget.title != '' ? widget.title.tr() : '',
+          title: widget.title != '' ? widget.title : '',
           items: const <DropdownMenuItem<NominationLocationEntity>>[],
           initialText: widget.initialText,
-          hint: widget.hint != '' ? widget.hint.tr() : '',
+          hint: widget.hint != '' ? widget.hint : 'location'.tr(),
           isDynamic: true,
           searchBy: (DropdownMenuItem<NominationLocationEntity> item) =>
               item.value?.displayName ?? '',
@@ -161,7 +161,8 @@ class _NominationLocationFieldState extends State<NominationLocationField> {
                   results.map((NominationLocationEntity loc) {
                 return DropdownMenuItem<NominationLocationEntity>(
                   value: loc,
-                  child: Text(loc.displayName),
+                  child: Text(loc.displayName,
+                      maxLines: 2, style: TextTheme.of(context).labelSmall),
                 );
               }).toList();
               completer.complete(items);

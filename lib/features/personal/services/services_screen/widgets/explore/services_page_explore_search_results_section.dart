@@ -15,7 +15,8 @@ class ServiceSearchResults extends StatelessWidget {
     return Consumer<ServicesPageProvider>(
       builder: (BuildContext context, ServicesPageProvider pro, Widget? child) {
         return Column(
-          children: [
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
             Text(
               'result'.tr(),
               style: txt.titleMedium,
