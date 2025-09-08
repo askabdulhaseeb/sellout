@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../providers/marketplace_provider.dart';
 import '../widgets/marketplace_choicechip_section/choicechip_section.dart';
@@ -41,6 +43,19 @@ class _MarketPlaceScreenState extends State<MarketPlaceScreen> {
           return CustomScrollView(
             controller: _scrollController,
             slivers: <Widget>[
+              SliverToBoxAdapter(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
+                      child: AppBarTitle(
+                        titleKey: 'marketplace'.tr(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               const SliverToBoxAdapter(child: MarketPlaceHeader()),
               if (!pro.isFilteringPosts)
                 const SliverToBoxAdapter(child: MarketPlaceCategoriesSection()),

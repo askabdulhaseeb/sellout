@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../providers/services_page_provider.dart';
 import '../widgets/services_page_type_toggle_section.dart';
@@ -49,9 +50,9 @@ class _ServicesScreenState extends State<ServicesScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            const Text('services',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600))
-                .tr(),
+            AppBarTitle(
+              titleKey: 'services'.tr(),
+            ),
             const ServicesPageTypeToggleSection(),
           ],
         ),

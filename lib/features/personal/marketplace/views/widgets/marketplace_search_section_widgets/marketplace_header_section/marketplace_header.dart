@@ -18,11 +18,6 @@ class MarketPlaceHeader extends StatelessWidget {
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text('marketplace'.tr(),
-                    style: TextTheme.of(context).titleMedium),
-              ),
               Row(
                 children: <Widget>[
                   const MarketplaceSearchField(),

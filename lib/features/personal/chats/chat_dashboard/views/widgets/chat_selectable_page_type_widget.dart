@@ -32,14 +32,18 @@ class ChatSelectablePageTypeWidget extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(
                       vertical: 10,
                     ),
-                    child: Column(
+                    margin: const EdgeInsets.only(
+                      bottom: 6,
+                    ),
+                    child: Row(
+                      spacing: 4,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         CustomSvgIcon(
-                          size: 20,
+                          size: 18,
                           assetPath: tab.icon,
                           color: color,
                         ),
-                        const SizedBox(height: 4),
                         Text(
                           tab.code.tr(),
                           style: TextStyle(

@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../../../../../../core/widgets/searchable_textfield.dart';
 import '../widgets/start_selling_list.dart';
@@ -20,29 +21,22 @@ class _StartListingScreenState extends State<StartListingScreen> {
   Widget build(BuildContext context) {
     return PersonalScaffold(
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            children: <Widget>[
-              const SizedBox(height: 12),
-              Text(
-                'start_selling'.tr(),
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge
-                    ?.copyWith(fontWeight: FontWeight.w500, fontSize: 18),
-              ),
-              SearchableTextfield(
-                hintText: 'search_listing'.tr(),
-                onChanged: (String value) {
-                  setState(() {
-                    searchQuery = value.toLowerCase();
-                  });
-                },
-              ),
-              StartSellingList(searchQuery: searchQuery),
-            ],
-          ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: <Widget>[
+            AppBarTitle(
+              titleKey: 'start_selling'.tr(),
+            ),
+            SearchableTextfield(
+              hintText: 'search_listing'.tr(),
+              onChanged: (String value) {
+                setState(() {
+                  searchQuery = value.toLowerCase();
+                });
+              },
+            ),
+            StartSellingList(searchQuery: searchQuery),
+          ],
         ),
       ),
     );
