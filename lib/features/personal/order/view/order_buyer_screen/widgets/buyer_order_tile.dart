@@ -32,8 +32,7 @@ class BuyerOrderTileWidget extends StatelessWidget {
         );
       },
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 6),
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(6),
         decoration: BoxDecoration(
           border: Border.all(color: ColorScheme.of(context).outlineVariant),
           borderRadius: BorderRadius.circular(12),
