@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../listing/listing_form/views/widgets/custom_listing_dropdown.dart';
@@ -19,7 +20,7 @@ class MarketFilterAgeLeaveWidget extends StatelessWidget {
           Expanded(
             child: CustomListingDropDown<MarketPlaceProvider>(
               validator: (bool? p0) => null,
-              hint: 'age',
+              hint: 'age'.tr(),
               categoryKey: 'age',
               selectedValue: marketPro.age,
               onChanged: (String? p0) => marketPro.setAge(p0),
@@ -28,7 +29,7 @@ class MarketFilterAgeLeaveWidget extends StatelessWidget {
           Expanded(
             child: CustomListingDropDown<MarketPlaceProvider>(
               validator: (bool? p0) => null,
-              hint: 'ready_to_leave',
+              hint: 'ready_to_leave'.tr(),
               categoryKey: 'ready_to_leave',
               selectedValue: marketPro.readyToLeave,
               onChanged: (String? p0) => marketPro.setReadyToLeave(p0),

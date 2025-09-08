@@ -15,7 +15,6 @@ class LocationHeader extends StatelessWidget {
         TextButton(
           onPressed: () {
             onReset();
-            Navigator.pop(context);
           },
           child: Text(
             'cancel'.tr(),
@@ -31,7 +30,6 @@ class LocationHeader extends StatelessWidget {
         TextButton(
           onPressed: () {
             onApply();
-            Navigator.pop(context);
           },
           child: Text(
             'apply'.tr(),

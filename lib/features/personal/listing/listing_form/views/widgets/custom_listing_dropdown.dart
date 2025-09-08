@@ -139,7 +139,10 @@ class _CustomListingDropDownState<T extends ChangeNotifier>
     final List<DropdownMenuItem<String>> dropdownItems = filteredOptions
         .map((DropdownOptionEntity opt) => DropdownMenuItem<String>(
               value: opt.value,
-              child: Text(opt.label),
+              child: Text(
+                opt.label,
+                style: TextTheme.of(context).bodySmall,
+              ),
             ))
         .toList();
 

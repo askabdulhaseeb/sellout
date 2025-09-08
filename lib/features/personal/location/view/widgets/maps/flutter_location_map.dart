@@ -1,10 +1,12 @@
+import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../../../../../../core/theme/app_theme.dart';
 import '../../../../marketplace/domain/enum/radius_type.dart';
 
-class FlutterLocationMap extends StatelessWidget {
+class FlutterLocationMap extends StatefulWidget {
   const FlutterLocationMap({
     required this.mapController,
     required this.selectedLatLng,
@@ -17,8 +19,56 @@ class FlutterLocationMap extends StatelessWidget {
   final MapController mapController;
   final LatLng selectedLatLng;
   final bool showMapCircle;
-  final double? circleRadius;
+  final double? circleRadius; // in km
   final RadiusType radiusType;
+
+  @override
+  State<FlutterLocationMap> createState() => _FlutterLocationMapState();
+}
+
+class _FlutterLocationMapState extends State<FlutterLocationMap> {
+  @override
+  void didUpdateWidget(covariant FlutterLocationMap oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // Only update if radius changes
+    if (widget.circleRadius != oldWidget.circleRadius &&
+        widget.showMapCircle &&
+        widget.radiusType == RadiusType.local) {
+      _fitCircleBounds(widget.circleRadius ?? 1);
+    }
+  }
+
+  void _fitCircleBounds(double radiusKm) async {
+    // Run heavy calculation off the main thread
+    final LatLngBounds bounds = await compute(
+      _calculateBounds,
+      [
+        widget.selectedLatLng.latitude,
+        widget.selectedLatLng.longitude,
+        radiusKm,
+      ],
+    );
+
+    if (mounted) {
+      widget.mapController.fitCamera(CameraFit.bounds(bounds: bounds));
+    }
+  }
+
+  static LatLngBounds _calculateBounds(List<dynamic> params) {
+    final double lat = params[0];
+    final double lon = params[1];
+    final double radiusKm = params[2];
+
+    final double radiusMeters = radiusKm * 1000;
+    final double latOffset = radiusMeters / 111320;
+    final double lonOffset = radiusMeters / (111320 * cos(lat * pi / 180));
+
+    return LatLngBounds(
+      LatLng(lat - latOffset, lon - lonOffset),
+      LatLng(lat + latOffset, lon + lonOffset),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +78,9 @@ class FlutterLocationMap extends StatelessWidget {
         height: 250,
         width: double.infinity,
         child: FlutterMap(
-          mapController: mapController,
+          mapController: widget.mapController,
           options: MapOptions(
-            initialCenter: selectedLatLng,
+            initialCenter: widget.selectedLatLng,
             initialZoom: 9,
           ),
           children: <Widget>[
@@ -43,23 +93,23 @@ class FlutterLocationMap extends StatelessWidget {
                 Marker(
                   width: 40,
                   height: 40,
-                  point: selectedLatLng,
-                  child: showMapCircle == false
+                  point: widget.selectedLatLng,
+                  child: widget.showMapCircle == false
                       ? const Icon(Icons.location_pin,
                           color: AppTheme.primaryColor, size: 40)
                       : const Icon(Icons.circle, color: Colors.blue, size: 25),
                 ),
               ],
             ),
-            if (showMapCircle == true && radiusType == RadiusType.local)
+            if (widget.showMapCircle && widget.radiusType == RadiusType.local)
               CircleLayer(
-                circles: <CircleMarker<Object>>[
+                circles: <CircleMarker>[
                   CircleMarker(
-                    point: selectedLatLng,
-                    radius:
-                        ((circleRadius ?? 0) * 1000).clamp(0, double.infinity),
+                    point: widget.selectedLatLng,
+                    radius: ((widget.circleRadius ?? 0) * 1000)
+                        .clamp(0, double.infinity),
                     useRadiusInMeter: true,
-                    color: AppTheme.darkScaffldColor.withOpacity(0.3),
+                    color: AppTheme.darkScaffldColor.withValues(alpha: 0.3),
                     borderColor: AppTheme.darkScaffldColor,
                     borderStrokeWidth: 2,
                   ),

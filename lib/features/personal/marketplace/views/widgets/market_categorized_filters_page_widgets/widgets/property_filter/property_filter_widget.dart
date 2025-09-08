@@ -11,12 +11,12 @@ class PropertyFilterSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       children: <Widget>[
         MarketFilterPropertyToggleWidget(),
-        const MarketFilterpropertyCategoryAndLocationWIdget(),
-        const MarketFilterPropertyTypeandAddedWidget(),
-        const MarketFilterPriceWIdget()
+        MarketFilterpropertyCategoryAndLocationWIdget(),
+        MarketFilterPropertyTypeandAddedWidget(),
+        MarketFilterPriceWIdget()
       ],
     );
   }

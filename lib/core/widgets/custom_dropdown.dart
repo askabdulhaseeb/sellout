@@ -34,12 +34,9 @@ class CustomDropdown<T> extends StatefulWidget {
   final double? width;
   final double? height;
   final String Function(DropdownMenuItem<T>)? searchBy;
-
-  /// async search callback (optional)
   final Future<List<DropdownMenuItem<T>>> Function(String)? onSearchChanged;
-
-  /// if true → use async search, otherwise → use static items
   final bool isDynamic;
+
   @override
   CustomDropdownState<T> createState() => CustomDropdownState<T>();
 }
@@ -65,24 +62,27 @@ class CustomDropdownState<T> extends State<CustomDropdown<T>> {
   @override
   void didUpdateWidget(CustomDropdown<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.selectedItem != widget.selectedItem ||
-        oldWidget.items != widget.items) {
-      _updateControllerValue();
-    }
-  }
 
-  void _updateControllerValue() {
-    if (widget.isDynamic) {
-      // 🔹 For dynamic suggestions → just use initialText
+    // Update controller only if initialText changed externally
+    if (oldWidget.initialText != widget.initialText) {
       if (widget.initialText != null && widget.initialText!.isNotEmpty) {
         _controller.text = widget.initialText!;
       } else {
         _controller.clear();
       }
-      return;
     }
 
-    // 🔹 For static items
+    // For static items, update controller if selectedItem changed
+    if (!widget.isDynamic &&
+        (oldWidget.selectedItem != widget.selectedItem ||
+            oldWidget.items != widget.items)) {
+      _updateControllerValue();
+    }
+  }
+
+  void _updateControllerValue() {
+    if (widget.isDynamic) return;
+
     final DropdownMenuItem<T> selectedItem = widget.items.firstWhere(
       (DropdownMenuItem<T> item) => item.value == widget.selectedItem,
       orElse: () => DropdownMenuItem<T>(
@@ -96,7 +96,6 @@ class CustomDropdownState<T> extends State<CustomDropdown<T>> {
           (selectedItem.child is Text
               ? (selectedItem.child as Text).data ?? ''
               : selectedItem.value.toString());
-
       _controller.text = text;
     } else {
       _controller.clear();
@@ -111,9 +110,7 @@ class CustomDropdownState<T> extends State<CustomDropdown<T>> {
   }
 
   List<DropdownMenuItem<T>> _getFilteredItems() {
-    if (widget.isDynamic) {
-      return _dynamicItems;
-    }
+    if (widget.isDynamic) return _dynamicItems;
 
     if (_searchText.isEmpty) return widget.items;
 
@@ -128,7 +125,6 @@ class CustomDropdownState<T> extends State<CustomDropdown<T>> {
       _openDropdown();
     } else {
       _closeDropdown();
-      _updateControllerValue();
     }
   }
 
@@ -149,7 +145,6 @@ class CustomDropdownState<T> extends State<CustomDropdown<T>> {
       _searchText = '';
     });
 
-    _updateControllerValue();
     _focusNode.unfocus();
   }
 
@@ -186,10 +181,7 @@ class CustomDropdownState<T> extends State<CustomDropdown<T>> {
                       padding: EdgeInsets.zero,
                       shrinkWrap: true,
                       itemCount: filteredItems.length,
-                      separatorBuilder: (_, __) => Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        height: 1,
-                      ),
+                      separatorBuilder: (_, __) => const Divider(height: 1),
                       itemBuilder: (BuildContext context, int index) {
                         final DropdownMenuItem<T> item = filteredItems[index];
                         return ListTile(
@@ -224,65 +216,46 @@ class CustomDropdownState<T> extends State<CustomDropdown<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        if (widget.title.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Text(
-              widget.title,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-          ),
-        CompositedTransformTarget(
-          link: _layerLink,
-          child: GestureDetector(
-            onTap: () {
-              if (!_isDropdownOpen) _openDropdown();
-            },
-            child: CustomTextFormField(
-              prefixIcon:
-                  widget.prefixIcon != null ? Icon(widget.prefixIcon) : null,
-              controller: _controller,
-              focusNode: _focusNode,
-              hint: widget.hint ?? 'select_an_item'.tr(),
-              suffixIcon: widget.sufixIcon == false
-                  ? null
-                  : Icon(
-                      _isDropdownOpen
-                          ? Icons.keyboard_arrow_up_rounded
-                          : Icons.keyboard_arrow_down_rounded,
-                    ),
-              onChanged: (String value) {
-                setState(() => _searchText = value);
-                // 🔹 Debounce logic
-                if (widget.isDynamic && widget.onSearchChanged != null) {
-                  _debounce?.cancel();
-                  _debounce =
-                      Timer(const Duration(milliseconds: 600), () async {
-                    final List<DropdownMenuItem<T>> results =
-                        await widget.onSearchChanged!(value);
-                    setState(() {
-                      _dynamicItems = results;
-                    });
-                    if (_isDropdownOpen) {
-                      _overlayEntry?.markNeedsBuild();
-                    }
-                  });
-                } else {
-                  if (_isDropdownOpen) {
-                    _overlayEntry?.markNeedsBuild();
-                  }
-                }
-                if (value.isEmpty && !_isDropdownOpen) {
-                  _openDropdown();
-                }
-              },
-            ),
-          ),
+    return CompositedTransformTarget(
+      link: _layerLink,
+      child: GestureDetector(
+        onTap: () {
+          if (!_isDropdownOpen) _openDropdown();
+        },
+        child: CustomTextFormField(
+          labelText: widget.title,
+          prefixIcon:
+              widget.prefixIcon != null ? Icon(widget.prefixIcon) : null,
+          controller: _controller,
+          focusNode: _focusNode,
+          hint: widget.hint ?? 'select_an_item'.tr(),
+          suffixIcon: widget.sufixIcon == false
+              ? null
+              : Icon(
+                  _isDropdownOpen
+                      ? Icons.keyboard_arrow_up_rounded
+                      : Icons.keyboard_arrow_down_rounded,
+                ),
+          onChanged: (String value) {
+            setState(() => _searchText = value);
+
+            if (widget.isDynamic && widget.onSearchChanged != null) {
+              _debounce?.cancel();
+              _debounce = Timer(const Duration(milliseconds: 600), () async {
+                final List<DropdownMenuItem<T>> results =
+                    await widget.onSearchChanged!(value);
+                setState(() {
+                  _dynamicItems = results;
+                });
+                if (_isDropdownOpen) _overlayEntry?.markNeedsBuild();
+              });
+            } else {
+              if (_isDropdownOpen) _overlayEntry?.markNeedsBuild();
+            }
+            if (value.isEmpty && !_isDropdownOpen) _openDropdown();
+          },
         ),
-      ],
+      ),
     );
   }
 }

@@ -32,7 +32,7 @@ class MarketFilterFoodDrinkCategoryAndLocationWIdget extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: NominationLocationFieldWrapper(
+            child: NominationLocationField(
               selectedLatLng: marketPro.selectedlatlng,
               displayMode: MapDisplayMode.neverShowMap,
               initialText: marketPro.selectedLocation?.title ?? '',

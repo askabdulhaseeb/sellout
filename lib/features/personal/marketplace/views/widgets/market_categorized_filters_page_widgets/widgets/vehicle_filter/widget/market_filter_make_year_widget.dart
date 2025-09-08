@@ -5,8 +5,8 @@ import '../../../../../../../listing/listing_form/views/widgets/custom_listing_d
 import '../../../../../providers/marketplace_provider.dart';
 import 'year_picker_dropdown.dart';
 
-class MarketFilterMakeModelWidget extends StatelessWidget {
-  const MarketFilterMakeModelWidget({
+class MarketFilterMakeYearWidget extends StatelessWidget {
+  const MarketFilterMakeYearWidget({
     super.key,
   });
 
@@ -21,7 +21,7 @@ class MarketFilterMakeModelWidget extends StatelessWidget {
           Expanded(
               child: CustomListingDropDown<MarketPlaceProvider>(
             validator: (bool? p0) => null,
-            hint: 'make',
+            hint: 'make'.tr(),
             categoryKey: 'make',
             selectedValue: marketPro.make,
             onChanged: (String? p0) => marketPro.setMake(p0),

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
@@ -23,13 +24,13 @@ class MarketFilterpetsCategoryAndLocationWIdget extends StatelessWidget {
                 Expanded(
                     child: CustomListingDropDown<MarketPlaceProvider>(
                         validator: (bool? p0) => null,
-                        hint: 'category',
+                        hint: 'category'.tr(),
                         categoryKey: 'pets',
                         selectedValue: marketPro.petCategory,
                         onChanged: (String? p0) =>
                             marketPro.setPetCategory(p0))),
                 Expanded(
-                  child: NominationLocationFieldWrapper(
+                  child: NominationLocationField(
                     selectedLatLng: marketPro.selectedlatlng,
                     displayMode: MapDisplayMode.neverShowMap,
                     initialText: marketPro.selectedLocation?.title ?? '',

@@ -86,15 +86,24 @@ class _LocationRadiusBottomSheetState extends State<LocationRadiusBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leadingWidth: 0,
         title: LocationHeader(
           onApply: () {
+            widget.onUpdateLocation(
+              _radiusType,
+              _selectedRadius,
+              _selectedLatLng,
+              _selectedLocation,
+            );
             widget.onApply();
+            Navigator.pop(context);
           },
           onReset: () {
             widget.onReset();
+            Navigator.pop(context);
           },
         ),
       ),
@@ -106,7 +115,8 @@ class _LocationRadiusBottomSheetState extends State<LocationRadiusBottomSheet> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   const SizedBox(height: 8),
-                  NominationLocationFieldWrapper(
+                  NominationLocationField(
+                    hint: 'search_location_here'.tr(),
                     radiusType: _radiusType,
                     selectedLatLng: _selectedLatLng,
                     circleRadius: _selectedRadius,
@@ -140,6 +150,8 @@ class _LocationRadiusBottomSheetState extends State<LocationRadiusBottomSheet> {
                           _selectedLatLng,
                           _selectedLocation,
                         );
+                        widget.onApply();
+                        Navigator.pop(context);
                       },
                       title: 'update_location'.tr(),
                     ),

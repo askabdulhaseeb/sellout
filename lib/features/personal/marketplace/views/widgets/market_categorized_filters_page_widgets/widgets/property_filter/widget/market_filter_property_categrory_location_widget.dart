@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
@@ -23,13 +24,13 @@ class MarketFilterpropertyCategoryAndLocationWIdget extends StatelessWidget {
                 Expanded(
                     child: CustomListingDropDown<MarketPlaceProvider>(
                         validator: (bool? p0) => null,
-                        hint: 'energy_rating',
+                        hint: 'energy_rating'.tr(),
                         categoryKey: 'energy_rating',
                         selectedValue: marketPro.energyRating,
                         onChanged: (String? p0) =>
                             marketPro.setEnergyRating(p0))),
                 Expanded(
-                  child: NominationLocationFieldWrapper(
+                  child: NominationLocationField(
                     selectedLatLng: marketPro.selectedlatlng,
                     displayMode: MapDisplayMode.neverShowMap,
                     initialText: marketPro.selectedLocation?.title ?? '',

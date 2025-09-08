@@ -136,6 +136,7 @@ class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
       child: GestureDetector(
         onTap: _toggleDropdown,
         child: Container(
+          margin: const EdgeInsets.symmetric(vertical: 4),
           width: widget.width ?? double.infinity,
           height: widget.height ?? 48,
           padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: 12),
@@ -148,7 +149,7 @@ class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
               color: widget.selectedItems.isNotEmpty
                   ? Theme.of(context).primaryColor
                   : colorScheme.outlineVariant,
-              width: 1.5,
+              width: widget.selectedItems.isNotEmpty ? 2 : 1,
             ),
           ),
           child: Row(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../market_filter_price_widget.dart';
 import '../marketplace_filter_searchfield.dart';
+import 'widget/market_filter_food_drink_category_location_widget.dart';
 
 class FoodDrinkFilterSection extends StatelessWidget {
   const FoodDrinkFilterSection({
@@ -17,7 +18,7 @@ class FoodDrinkFilterSection extends StatelessWidget {
         //   ),
         // ),
         MarketFilterSearchField(),
-        // MarketFilterFoodDrinkCategoryAndLocationWIdget(),
+        MarketFilterFoodDrinkCategoryAndLocationWIdget(),
         MarketFilterPriceWIdget()
       ],
     );
