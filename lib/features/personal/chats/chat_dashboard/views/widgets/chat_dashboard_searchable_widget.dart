@@ -4,6 +4,7 @@ import '../../../../../../core/utilities/app_string.dart';
 import '../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../../../../../core/widgets/searchable_textfield.dart';
 import '../../../create_chat/view/screens/create_group_bottomsheet.dart';
+import '../../../create_chat/view/screens/create_private_chat_bottomsheet.dart';
 import '../providers/chat_dashboard_provider.dart';
 
 class ChatDashboardSearchableWidget extends StatelessWidget {
@@ -20,7 +21,15 @@ class ChatDashboardSearchableWidget extends StatelessWidget {
             Expanded(
               child: SearchableTextfield(
                 controller: pagePro.searchController,
-                onChanged: (String value) {},
+                onChanged: (String value) {
+                  if (ChatPageType.orders == pagePro.currentPage) {
+                    pagePro.updateSearchQuery(value);
+                  } else if (ChatPageType.services == pagePro.currentPage) {
+                    //skipping for the moment
+                  } else if (ChatPageType.groups == pagePro.currentPage) {
+                    // pagePro.filterGroupChats();
+                  }
+                },
               ),
             ),
             const SizedBox(width: 8),
@@ -28,9 +37,9 @@ class ChatDashboardSearchableWidget extends StatelessWidget {
                 ? GestureDetector(
                     onTap: () => Navigator.push(
                         context,
-                        MaterialPageRoute<CreateGroupBottomSheet>(
+                        MaterialPageRoute<CreatePrivateChatBottomsheet>(
                             builder: (BuildContext context) =>
-                                const CreateGroupBottomSheet())),
+                                CreatePrivateChatBottomsheet())),
                     child: Container(
                         padding: const EdgeInsets.all(11),
                         decoration: BoxDecoration(

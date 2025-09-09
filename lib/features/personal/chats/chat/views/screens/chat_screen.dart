@@ -44,13 +44,15 @@ class _ChatScreenState extends State<ChatScreen> {
               onVerticalDragEnd: (DragEndDetails details) {
                 // Swipe up
                 if (details.primaryVelocity! < 0) {
-                  if (pro.showPinnedMessage)
+                  if (pro.showPinnedMessage) {
                     pro.setPinnedMessageVisibility(false);
+                  }
                 }
                 // Swipe down
                 else if (details.primaryVelocity! > 0) {
-                  if (!pro.showPinnedMessage)
+                  if (!pro.showPinnedMessage) {
                     pro.setPinnedMessageVisibility(true);
+                  }
                 }
               },
               child: Column(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../providers/chat_dashboard_provider.dart';
 import 'chat_lists/group_chat_list_widget.dart';
 import 'chat_lists/order_chat_list_widget.dart';
