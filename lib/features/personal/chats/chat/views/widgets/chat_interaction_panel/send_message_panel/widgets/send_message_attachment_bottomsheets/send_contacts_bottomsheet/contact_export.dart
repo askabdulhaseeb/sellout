@@ -1,15 +1,18 @@
 import 'dart:io';
-import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:path_provider/path_provider.dart';
+import '../../../../../../../../../user/profiles/data/models/user_model.dart';
 
-Future<File?> exportContactAsVcf(Contact contact) async {
-  try {
-    final String vcf = contact.toVCard();
-    final Directory dir = await getTemporaryDirectory();
-    final File file = File('${dir.path}/${contact.displayName}.vcf');
-    await file.writeAsString(vcf);
-    return file;
-  } catch (_) {
-    return null;
-  }
+Future<File> createUserVcf(UserEntity user) async {
+  final String vcfContent = '''
+BEGIN:VCARD
+VERSION:3.0
+FN:${user.displayName}
+PHOTO:${user.profilePic.first.url}
+NOTE:${user.uid}
+END:VCARD
+''';
+
+  final Directory tempDir = await getTemporaryDirectory();
+  final File vcfFile = File('${tempDir.path}/${user.uid}.vcf');
+  return vcfFile.writeAsString(vcfContent);
 }

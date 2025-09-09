@@ -27,7 +27,7 @@ class ChatDashboardSearchableWidget extends StatelessWidget {
                   } else if (ChatPageType.services == pagePro.currentPage) {
                     //skipping for the moment
                   } else if (ChatPageType.groups == pagePro.currentPage) {
-                    // pagePro.filterGroupChats();
+                    pagePro.updateSearchQuery(value);
                   }
                 },
               ),

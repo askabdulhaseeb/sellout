@@ -64,22 +64,22 @@ class _SendMessageAttachmentMenuButtonState
     final Color? iconColor = Theme.of(context).iconTheme.color;
 
     final List<Map<String, dynamic>> menuItems = <Map<String, dynamic>>[
-      {
+      <String, dynamic>{
         'option': SendMessagePopMenuOptions.camera,
         'icon': AppStrings.selloutChatMenuPhotoIcon,
         'title': 'photo_camera'.tr(),
       },
-      {
+      <String, dynamic>{
         'option': SendMessagePopMenuOptions.mediaLibrary,
         'icon': AppStrings.selloutChatMenuVideoIcon,
         'title': 'photo_video_library'.tr(),
       },
-      {
+      <String, dynamic>{
         'option': SendMessagePopMenuOptions.document,
         'icon': AppStrings.selloutChatMenuDocumentIcon,
         'title': 'document'.tr(),
       },
-      {
+      <String, dynamic>{
         'option': SendMessagePopMenuOptions.contacts,
         'icon': AppStrings.selloutChatMenuContactIcon,
         'title': 'contacts'.tr(),
@@ -91,14 +91,14 @@ class _SendMessageAttachmentMenuButtonState
       color: Theme.of(context).scaffoldBackgroundColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       offset: const Offset(0, -240),
-      onSelected: (option) {
+      onSelected: (SendMessagePopMenuOptions option) {
         _rotationController.reverse();
         _handleAttachment(context, option);
       },
       onCanceled: () => _rotationController.reverse(),
       onOpened: () =>
           _rotationController.forward(), // rotate slightly when open
-      itemBuilder: (_) => menuItems.map((item) {
+      itemBuilder: (_) => menuItems.map((Map<String, dynamic> item) {
         return _buildMenuItem(
           context,
           option: item['option'] as SendMessagePopMenuOptions,
@@ -109,13 +109,14 @@ class _SendMessageAttachmentMenuButtonState
       }).toList(),
       child: AnimatedBuilder(
         animation: _rotationAnimation,
-        builder: (context, child) {
+        builder: (BuildContext context, Widget? child) {
           return Transform.rotate(
             angle: _rotationAnimation.value,
             child: child,
           );
         },
-        child: CustomSvgIcon(assetPath: AppStrings.selloutChatPopMenuIcon),
+        child:
+            const CustomSvgIcon(assetPath: AppStrings.selloutChatPopMenuIcon),
       ),
     );
   }

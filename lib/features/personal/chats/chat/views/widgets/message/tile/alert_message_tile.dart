@@ -8,24 +8,32 @@ class AlartMessageTile extends StatelessWidget {
   final MessageEntity message;
   @override
   Widget build(BuildContext context) {
-    return SizedBox(width: double.infinity,
-      child: Row(mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[ if(LocalAuth.uid ==  message.persons.first)
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(4),
-              margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 48),
-              decoration: BoxDecoration(
-                color: AppTheme.lightPrimary,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              alignment: Alignment.center,
-              child: Text(maxLines: 4,
-                message.displayText,textAlign: TextAlign.center,
-                style: TextStyle(color: Theme.of(context).primaryColor),
+    return SizedBox(
+      width: double.infinity,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          if (LocalAuth.uid == message.persons.first)
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 48),
+                decoration: BoxDecoration(
+                  color: AppTheme.lightPrimary,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  maxLines: 4,
+                  message.displayText,
+                  textAlign: TextAlign.center,
+                  style: TextTheme.of(context).labelSmall?.copyWith(
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                ),
               ),
             ),
-          ),
         ],
       ),
     );

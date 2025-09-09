@@ -12,9 +12,8 @@ class SimpleTileLoader extends StatelessWidget {
           width: 48,
           height: 48,
           decoration: BoxDecoration(
-            color: Theme.of(context).dividerColor,
-            shape: BoxShape.circle,
-          ),
+              color: Theme.of(context).dividerColor,
+              borderRadius: BorderRadius.circular(4)),
         ),
         const SizedBox(width: 8),
 
