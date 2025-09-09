@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/widgets/custom_toggle_switch.dart';
-import '../../domain/params/search_enum.dart';
+import '../../domain/enums/search_entity_type.dart';
 import '../provider/search_provider.dart';
 import 'pages/search_post_page.dart';
 import 'pages/search_service_page.dart';

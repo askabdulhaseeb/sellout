@@ -344,7 +344,10 @@ void _message() {
         locator(),
         locator(),
       ));
-  locator.registerFactory(() => SendMessageProvider(locator()));
+  locator.registerFactory(() => SendMessageProvider(
+        locator(),
+        locator(),
+      ));
 }
 
 void _feed() {

@@ -1,6 +1,5 @@
 import '../../../marketplace/views/enums/sort_enums.dart';
-
-enum SearchEntityType { posts, services, users }
+import '../enums/search_entity_type.dart';
 
 class SearchParams {
   SearchParams({

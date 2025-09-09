@@ -66,32 +66,32 @@ class ChatDashboardProvider extends ChangeNotifier {
 
   void _applyTabAndSearch(List<ChatEntity> allChats) {
     List<ChatEntity> filtered = allChats;
-
     // --- Filter chats based on current tab if selected ---
-    if (_page != null) {
-      if (_page == ChatPageType.orders || _page == ChatPageType.services) {
-        // First page: show both private and product chats
-        filtered = filtered
-            .where(
-                (c) => c.type == ChatType.private || c.type == ChatType.product)
-            .toList();
-      } else if (_page == ChatPageType.groups) {
-        filtered = filtered.where((c) => c.type == ChatType.group).toList();
-      }
+
+    if (_page == ChatPageType.orders || _page == ChatPageType.services) {
+      // First page: show both private and product chats
+      filtered = filtered
+          .where((ChatEntity c) =>
+              c.type == ChatType.private || c.type == ChatType.product)
+          .toList();
+    } else if (_page == ChatPageType.groups) {
+      filtered =
+          filtered.where((ChatEntity c) => c.type == ChatType.group).toList();
     }
 
     // --- Search filter ---
     if (_searchQuery.isNotEmpty) {
-      filtered = filtered.where((chat) {
-        final lastMsg = chat.lastMessage?.displayText.toLowerCase() ?? '';
-        final other = chat.otherPerson();
+      filtered = filtered.where((ChatEntity chat) {
+        final String lastMsg =
+            chat.lastMessage?.displayText.toLowerCase() ?? '';
+        final String other = chat.otherPerson();
 
         if (chat.type == ChatType.private || chat.type == ChatType.product) {
-          final name = other.startsWith('BU')
+          final String name = other.startsWith('BU')
               ? businessCache[other]?.displayName?.toLowerCase() ?? ''
-              : userCache[other]?.displayName?.toLowerCase() ?? '';
+              : userCache[other]?.displayName.toLowerCase() ?? '';
 
-          final productTitle = chat.type == ChatType.product
+          final String productTitle = chat.type == ChatType.product
               ? postCache[chat.productInfo?.id]?.title.toLowerCase() ?? ''
               : '';
 
@@ -99,7 +99,7 @@ class ChatDashboardProvider extends ChangeNotifier {
               lastMsg.contains(_searchQuery) ||
               productTitle.contains(_searchQuery);
         } else if (chat.type == ChatType.group) {
-          final groupName = chat.groupInfo?.title.toLowerCase() ?? '';
+          final String groupName = chat.groupInfo?.title.toLowerCase() ?? '';
           return groupName.contains(_searchQuery) ||
               lastMsg.contains(_searchQuery);
         }
@@ -110,8 +110,9 @@ class ChatDashboardProvider extends ChangeNotifier {
 
     // --- Sort by lastMessage date ---
     _filteredChats = filtered
-      ..sort((a, b) => (b.lastMessage?.createdAt ?? DateTime(0))
-          .compareTo(a.lastMessage?.createdAt ?? DateTime(0)));
+      ..sort((ChatEntity a, ChatEntity b) =>
+          (b.lastMessage?.createdAt ?? DateTime(0))
+              .compareTo(a.lastMessage?.createdAt ?? DateTime(0)));
 
     notifyListeners();
   }

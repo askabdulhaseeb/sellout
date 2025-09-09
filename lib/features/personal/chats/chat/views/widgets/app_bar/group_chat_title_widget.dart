@@ -14,10 +14,18 @@ class GroupChatTitleWidget extends StatelessWidget {
     return Consumer<ChatProvider>(
       builder: (BuildContext context, ChatProvider pro, _) {
         final GroupInfoEntity? groupInfo = pro.chat?.groupInfo;
-        return InkWell(onTap: (){Navigator.push(context,MaterialPageRoute<GroupDetailScreen>(builder:(BuildContext context) => const GroupDetailScreen(), ));},
+        return InkWell(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute<GroupDetailScreen>(
+                  builder: (BuildContext context) => const GroupDetailScreen(),
+                ));
+          },
           child: Row(
             children: <Widget>[
-              Hero(tag: 'group_profile',
+              Hero(
+                tag: 'group_profile',
                 child: ProfilePhoto(
                   url: groupInfo?.groupThumbnailURL,
                   placeholder: groupInfo?.title ?? '',
@@ -30,22 +38,25 @@ class GroupChatTitleWidget extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       groupInfo?.title ?? '',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 14),
                     ),
                     Opacity(
                       opacity: 0.5,
                       child: const Text(
                         'tap_here_to_open_profile',
                         style: TextStyle(fontSize: 12),
-                     ).tr(),
-                   )
-                 ],
-               ),
-             )
-           ],
-                 ),
+                      ).tr(),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
         );
-     },
+      },
     );
   }
 }

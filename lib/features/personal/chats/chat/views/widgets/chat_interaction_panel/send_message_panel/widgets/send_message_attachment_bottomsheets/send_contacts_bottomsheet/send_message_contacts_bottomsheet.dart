@@ -8,6 +8,6 @@ void showContactsBottomSheet(BuildContext context) {
     context: context,
     isScrollControlled: true,
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-    builder: (BuildContext context) => ContactsBottomSheetView(),
+    builder: (BuildContext context) => const ContactsBottomSheetView(),
   );
 }

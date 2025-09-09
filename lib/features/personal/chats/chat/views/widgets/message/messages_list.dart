@@ -37,7 +37,6 @@ class MessagesList extends StatelessWidget {
         final List<MessageEntity> messages = stored == null
             ? <MessageEntity>[]
             : chatProvider.getFilteredMessages(stored);
-
         if (messages.isEmpty) {
           return Center(
               child: EmptyPageWidget(
