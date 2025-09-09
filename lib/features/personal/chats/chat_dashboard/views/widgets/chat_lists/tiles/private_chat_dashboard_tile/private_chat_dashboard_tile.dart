@@ -22,16 +22,12 @@ class PrivateChatDashboardTile extends StatelessWidget {
         await LocalUnreadMessagesService().clearCount(chat.chatId);
         Navigator.of(context).pushNamed(ChatScreen.routeName);
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        child: Column(
-          children: <Widget>[
-            isBusiness
-                ? PrivateChatBusinessTile(chat: chat)
-                : PrivateChatUserTile(chat: chat),
-            const Divider(),
-          ],
-        ),
+      child: Column(
+        children: <Widget>[
+          isBusiness
+              ? PrivateChatBusinessTile(chat: chat)
+              : PrivateChatUserTile(chat: chat),
+        ],
       ),
     );
   }

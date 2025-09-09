@@ -1,8 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/utilities/app_string.dart';
+import '../../../../../../../core/widgets/empty_page_widget.dart';
 import '../../../../chat_dashboard/data/models/chat/chat_model.dart';
 import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../domain/entities/getted_message_entity.dart';
@@ -20,7 +22,11 @@ class MessagesList extends StatelessWidget {
     final String? chatId = chatProvider.chat?.chatId;
 
     if (chatId == null) {
-      return Center(child: Text('no_messages_yet'.tr()));
+      return Center(
+          child: EmptyPageWidget(
+        icon: CupertinoIcons.chat_bubble_2,
+        childBelow: const Text('no_messages_yet').tr(),
+      ));
     }
     final Box<GettedMessageEntity> box =
         Hive.box<GettedMessageEntity>(AppStrings.localChatMessagesBox);
@@ -33,7 +39,11 @@ class MessagesList extends StatelessWidget {
             : chatProvider.getFilteredMessages(stored);
 
         if (messages.isEmpty) {
-          return Center(child: Text('no_messages_yet'.tr()));
+          return Center(
+              child: EmptyPageWidget(
+            icon: CupertinoIcons.chat_bubble_2,
+            childBelow: const Text('no_messages_yet').tr(),
+          ));
         }
         // Calculate time gaps only once
         final Map<String, Duration> timeDiffMap = <String, Duration>{};

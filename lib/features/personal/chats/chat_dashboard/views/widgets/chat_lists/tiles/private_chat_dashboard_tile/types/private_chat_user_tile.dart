@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../../../../core/extension/datetime_ext.dart';
 import '../../../../../../../../../../core/sources/api_call.dart';
+import '../../../../../../../../../../core/widgets/loaders/simple_tile_loader.dart';
 import '../../../../../../../../../../services/get_it.dart';
 import '../../../../../../../../user/profiles/data/models/user_model.dart';
 import '../../../../../../../../user/profiles/domain/usecase/get_user_by_uid.dart';
@@ -16,17 +17,14 @@ class PrivateChatUserTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final GetUserByUidUsecase getUserByUidUsecase =
         GetUserByUidUsecase(locator());
-
     return FutureBuilder<DataState<UserEntity?>>(
       future: getUserByUidUsecase.call(chat.otherPerson()),
       builder: (BuildContext context,
           AsyncSnapshot<DataState<UserEntity?>> snapshot) {
         final UserEntity? user = snapshot.data?.entity;
-
         if (user == null) {
-          return const SizedBox(); // Don’t render tile until user is loaded
+          return const SimpleTileLoader();
         }
-
         return Row(
           children: <Widget>[
             ProfilePictureWithStatus(

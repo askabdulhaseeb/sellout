@@ -24,6 +24,10 @@ class LocalChat {
       return await Hive.openBox<ChatEntity>(boxTitle);
     }
   }
+  
+  List<ChatEntity> getAllChats() {
+    return _box.values.toList();
+  }
 
   Future<void> save(ChatEntity value) async =>
       await _box.put(value.chatId, value);
@@ -41,7 +45,6 @@ class LocalChat {
 
   Future<void> updateLastMessage(String chatId, MessageEntity newMsg) async {
     final ChatEntity? existing = _box.get(chatId);
-
     if (existing == null) {
       // If chat does not exist locally, you might fetch it
       await GetMyChatsUsecase(locator()).call(<String>[chatId]);

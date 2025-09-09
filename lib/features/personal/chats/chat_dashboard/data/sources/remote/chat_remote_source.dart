@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/api_call.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -8,8 +9,7 @@ import '../local/local_chat.dart';
 
 abstract interface class ChatRemoteSource {
   Future<DataState<List<ChatEntity>>> getChats(List<String>? params);
-  Future<DataState<ChatEntity>> createChat(
-      CreateChatParams params);
+  Future<DataState<ChatEntity>> createChat(CreateChatParams params);
 }
 
 class ChatRemoteSourceImpl implements ChatRemoteSource {
@@ -27,7 +27,6 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
         isAuth: true,
         body: json.encode(<String, dynamic>{'chat_ids': chatIDs}),
       );
-
       if (result is DataSuccess<bool>) {
         final String rawData = result.data ?? '';
         if (rawData.isEmpty) {
@@ -36,6 +35,7 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
         }
         final dynamic mapp = json.decode(rawData);
         final List<dynamic> data = mapp['chats'] as List<dynamic>;
+        debugPrint('Total fetched chats are ${data.length}');
         //
         final List<ChatEntity> chats = <ChatEntity>[];
         for (final dynamic element in data) {
@@ -54,20 +54,19 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
   }
 
   @override
-  Future<DataState<ChatEntity>> createChat(
-      CreateChatParams params) async {
+  Future<DataState<ChatEntity>> createChat(CreateChatParams params) async {
     try {
       const String endpoint = '/chat/create';
-      final DataState<ChatEntity> result = await ApiCall<ChatEntity>().callFormData(
-        endpoint: endpoint,
-        requestType: ApiRequestType.post,
-        fieldsMap: params.toMap(),
-        attachments: params.attachments
-      );
+      final DataState<ChatEntity> result = await ApiCall<ChatEntity>()
+          .callFormData(
+              endpoint: endpoint,
+              requestType: ApiRequestType.post,
+              fieldsMap: params.toMap(),
+              attachments: params.attachments);
       if (result is DataSuccess) {
-      Map<String,dynamic> map= jsonDecode(result.data ?? '');
-      ChatModel chat = ChatModel.fromJson(map['data']);
-      LocalChat().save(chat);
+        Map<String, dynamic> map = jsonDecode(result.data ?? '');
+        ChatModel chat = ChatModel.fromJson(map['data']);
+        LocalChat().save(chat);
         return DataSuccess<ChatEntity>(result.data ?? '', result.entity);
       } else {
         AppLog.error(
