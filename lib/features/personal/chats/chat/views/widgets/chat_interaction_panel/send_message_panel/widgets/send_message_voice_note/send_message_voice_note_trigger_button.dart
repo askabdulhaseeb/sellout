@@ -22,67 +22,76 @@ class VoiceRecordTrigger extends StatefulWidget {
 }
 
 class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
-  // Recorder & waveform
   final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
   late final RecorderController _waveformController;
-
-  // Send message provider
   late final SendMessageProvider _msgPro;
 
-  // State
   bool _isRecording = false;
   String? _recordPath;
   Duration _duration = Duration.zero;
+  bool _recorderInitialized = false;
 
   @override
   void initState() {
     super.initState();
-
     _msgPro = Provider.of<SendMessageProvider>(context, listen: false);
     _waveformController = RecorderController();
-    _initializeRecorder();
   }
 
+  /// Ensures recorder is ready after permission is granted
   Future<void> _initializeRecorder() async {
-    PermissionStatus status = await Permission.microphone.request();
-
-    // Keep asking until granted or permanently denied
-    while (!status.isGranted && !status.isPermanentlyDenied) {
-      status = await Permission.microphone.request();
-    }
-
-    if (status.isGranted) {
-      await _recorder.openRecorder();
-      await _recorder
-          .setSubscriptionDuration(const Duration(milliseconds: 100));
-    } else if (status.isPermanentlyDenied) {
-      // Open app settings if permanently denied
-      openAppSettings();
-    }
+    if (_recorderInitialized) return;
+    await _recorder.openRecorder();
+    await _recorder.setSubscriptionDuration(const Duration(milliseconds: 100));
+    _recorderInitialized = true;
   }
 
   Future<void> _playSound(String assetPath) async {
     final AudioPlayer player = AudioPlayer();
     try {
-      await player.setAsset(assetPath); // Load asset
-      await player.play(); // Play immediately
+      await player.setAsset(assetPath);
+      await player.play();
     } catch (e) {
       debugPrint('Error playing sound $assetPath: $e');
     } finally {
-      player.dispose(); // Dispose after playing
+      player.dispose();
     }
   }
 
   Future<void> _startRecording() async {
+    // Check permission first
+    PermissionStatus status = await Permission.microphone.status;
+
+    if (!status.isGranted) {
+      status = await Permission.microphone.request();
+    }
+
+    if (status.isPermanentlyDenied) {
+      openAppSettings();
+      return;
+    }
+
+    if (!status.isGranted) {
+      // Permission denied but not permanent → stop here
+      return;
+    }
+
+    // Permission granted → initialize recorder if not already
+    await _initializeRecorder();
+
+    // Prepare file path
     final Directory dir = await getApplicationDocumentsDirectory();
     _recordPath =
         '${dir.path}/audio_${DateTime.now().millisecondsSinceEpoch}.aac';
+
+    // Start recording
     await _recorder.startRecorder(toFile: _recordPath, codec: Codec.aacADTS);
     _waveformController.record();
     _playSound(AppStrings.recordingStartSound);
     _msgPro.startRecording();
-    // Listen to real duration
-    _recorder.onProgress!.listen((RecordingDisposition event) {
+
+    // Track duration
+    _recorder.onProgress?.listen((RecordingDisposition event) {
       setState(() {
         _duration = event.duration;
       });
@@ -119,7 +128,6 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
         _msgPro.sendVoiceNote(context);
       }
     }
-
     _recordPath = null;
   }
 
@@ -261,11 +269,11 @@ class _PulsatingMicState extends State<_PulsatingMic>
     );
 
     _animation = TweenSequence<double>(
-      [
+      <TweenSequenceItem<double>>[
         TweenSequenceItem<double>(
-            tween: Tween<double>(begin: 1.0, end: 1.3), weight: 50),
+            tween: Tween<double>(begin: 1.0, end: 1.3), weight: 10),
         TweenSequenceItem<double>(
-            tween: Tween<double>(begin: 1.3, end: 1.0), weight: 50),
+            tween: Tween<double>(begin: 1.3, end: 1.0), weight: 10),
       ],
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 

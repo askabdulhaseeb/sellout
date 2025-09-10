@@ -126,7 +126,7 @@ class _ProfilePostSearchFieldState extends State<ProfilePostSearchField> {
   void _onSearchChanged(ProfileProvider pro, String value) {
     // Debounce to prevent too many API calls
     if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
+    _debounce = Timer(const Duration(milliseconds: 600), () {
       if (widget.isStore) {
         pro.loadStorePosts(); // ← Add query to API if needed
       } else {

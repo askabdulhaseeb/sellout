@@ -112,7 +112,7 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
                   crossAxisCount: 2,
                   crossAxisSpacing: 6,
                   mainAxisSpacing: 6,
-                  childAspectRatio: 0.84,
+                  childAspectRatio: 1,
                 ),
                 itemBuilder: (BuildContext context, int index) {
                   return PromoHomeGridViewTile(promo: _filteredPromos[index]);

@@ -37,7 +37,6 @@ class _MessagesListState extends State<MessagesList> {
 
   void _scrollToBottomIfNeeded() {
     if (!widget.controller.hasClients) return;
-
     final double current = widget.controller.position.pixels;
     final double bottom = widget.controller.position.maxScrollExtent;
 
