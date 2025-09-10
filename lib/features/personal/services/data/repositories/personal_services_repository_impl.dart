@@ -1,8 +1,9 @@
 import '../../../../../core/sources/data_state.dart';
 import '../../../../business/core/domain/entity/service/service_entity.dart';
+import '../../domain/entity/service_category_entity.dart';
 import '../../domain/params/services_by_filters_params.dart';
 import '../../domain/repositories/personal_services_repository.dart';
-import '../sources/services_explore_api.dart';
+import '../sources/remote/services_explore_api.dart';
 
 class PersonalServicesRepositoryImpl implements PersonalServicesRepository {
   const PersonalServicesRepositoryImpl(this.servicesApi);
@@ -17,5 +18,10 @@ class PersonalServicesRepositoryImpl implements PersonalServicesRepository {
   Future<DataState<List<ServiceEntity>>> getServicesbyFilters(
       ServiceByFiltersParams params) async {
     return await servicesApi.getServicesbyFilters(params);
+  }
+
+  @override
+  Future<DataState<List<ServiceCategoryENtity>>> serviceCategories() async {
+    return await servicesApi.serviceCategories();
   }
 }

@@ -66,6 +66,7 @@ import '../features/personal/location/domain/repo/location_repo.dart';
 import '../features/personal/location/domain/usecase/location_name_usecase.dart';
 import '../features/personal/location/view/provider/location_field_provider.dart';
 import '../features/personal/marketplace/data/source/marketplace_remote_source.dart';
+import '../features/personal/services/domain/usecase/get_service_categories_usecase.dart';
 import '../features/personal/visits/domain/usecase/book_service_usecase.dart';
 import '../features/personal/visits/domain/usecase/get_visit_by_post_usecase.dart';
 import '../features/personal/visits/domain/usecase/update_visit_usecase.dart';
@@ -154,7 +155,7 @@ import '../features/personal/search/domain/usecase/search_usecase.dart';
 import '../features/personal/search/view/provider/search_provider.dart';
 import '../features/personal/search/view/view/search_screen.dart';
 import '../features/personal/services/data/repositories/personal_services_repository_impl.dart';
-import '../features/personal/services/data/sources/services_explore_api.dart';
+import '../features/personal/services/data/sources/remote/services_explore_api.dart';
 import '../features/personal/services/domain/repositories/personal_services_repository.dart';
 import '../features/personal/services/domain/usecase/get_services_by_query_usecase.dart';
 import '../features/personal/services/domain/usecase/get_special_offer_usecase.dart';
@@ -265,8 +266,9 @@ void _servicePage() {
       () => GetSpecialOfferUsecase(locator()));
   locator.registerFactory<GetServicesByQueryUsecase>(
       () => GetServicesByQueryUsecase(locator()));
-  locator.registerLazySingleton<ServicesPageProvider>(
-      () => ServicesPageProvider(locator(), locator(), locator(), locator()));
+  locator.registerLazySingleton<ServicesPageProvider>(() =>
+      ServicesPageProvider(
+          locator(), locator(), locator(), locator(), locator()));
 }
 
 void _profile() {
@@ -445,6 +447,8 @@ void _services() {
       () => AddServiceRepositoryImpl(locator()));
   //
   // USECASES
+  locator.registerFactory<GetServiceCategoriesUsecase>(
+      () => GetServiceCategoriesUsecase(locator()));
   locator.registerFactory<GetServicesListByBusinessIdUsecase>(
       () => GetServicesListByBusinessIdUsecase(locator()));
   locator.registerFactory<GetServiceByIdUsecase>(

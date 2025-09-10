@@ -1,12 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../../core/enums/business/services/service_category_type.dart';
 import '../../../../../core/enums/business/services/service_model_type.dart';
 import '../../../../../core/utilities/app_validators.dart';
 import '../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../core/widgets/custom_dropdown.dart';
+import '../../../../personal/services/data/sources/local/local_service_categories.dart';
+import '../../../../personal/services/domain/entity/service_category_entity.dart';
+import '../../../../personal/services/domain/entity/service_type_entity.dart';
 import '../providers/add_service_provider.dart';
 
 class AddServiceDropdownSection extends StatelessWidget {
@@ -27,14 +28,14 @@ class AddServiceDropdownSection extends StatelessWidget {
               maxLength: 50,
               validator: (String? value) => AppValidator.isEmpty(value),
             ),
-            CustomDropdown<ServiceCategoryType?>(
+            CustomDropdown<ServiceCategoryENtity?>(
                 title: 'service_category'.tr(),
-                items: ServiceCategoryType.categories().map(
-                  (ServiceCategoryType category) {
-                    return DropdownMenuItem<ServiceCategoryType>(
+                items: LocalServiceCategory().getAllCategories().map(
+                  (ServiceCategoryENtity category) {
+                    return DropdownMenuItem<ServiceCategoryENtity>(
                       value: category,
                       child: Text(
-                        '${category.code.tr()} (${category.category})',
+                        '${category.label.tr()} (${category.category})',
                         style: TextTheme.of(context).bodyLarge,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -43,20 +44,21 @@ class AddServiceDropdownSection extends StatelessWidget {
                   },
                 ).toList(),
                 selectedItem: pro.selectedCategory,
-                onChanged: (ServiceCategoryType? value) =>
+                onChanged: (ServiceCategoryENtity? value) =>
                     pro.setSelectedCategory(value),
                 validator: (bool? isValid) =>
                     (pro.selectedCategory == null) ? 'select_type'.tr() : null),
             const SizedBox(height: 8),
-            CustomDropdown<ServiceType?>(
+            CustomDropdown<ServiceTypeEntity?>(
                 title: 'service_type'.tr(),
-                items:
-                    (pro.selectedCategory?.serviceTypes ?? <ServiceType>[]).map(
-                  (ServiceType type) {
-                    return DropdownMenuItem<ServiceType>(
+                items: (pro.selectedCategory?.serviceTypes ??
+                        <ServiceTypeEntity>[])
+                    .map(
+                  (ServiceTypeEntity type) {
+                    return DropdownMenuItem<ServiceTypeEntity>(
                       value: type,
                       child: Text(
-                        type.code.tr(),
+                        type.label,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextTheme.of(context).bodyLarge,
@@ -65,7 +67,8 @@ class AddServiceDropdownSection extends StatelessWidget {
                   },
                 ).toList(),
                 selectedItem: pro.selectedType,
-                onChanged: (ServiceType? value) => pro.setSelectedType(value),
+                onChanged: (ServiceTypeEntity? value) =>
+                    pro.setSelectedType(value),
                 validator: (bool? isValid) =>
                     (pro.selectedType == null) ? 'select_type'.tr() : null),
             const SizedBox(height: 8),

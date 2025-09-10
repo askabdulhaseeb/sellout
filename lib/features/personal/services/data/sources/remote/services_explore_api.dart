@@ -1,15 +1,19 @@
 import 'package:easy_localization/easy_localization.dart';
-import '../../../../../core/functions/app_log.dart';
-import '../../../../../core/sources/api_call.dart';
-import '../../../../../core/sources/local/local_request_history.dart';
-import '../../../../business/core/data/models/service/service_model.dart';
-import '../../../../business/core/data/sources/service/local_service.dart';
-import '../../../../business/core/domain/entity/service/service_entity.dart';
-import '../../../marketplace/domain/params/filter_params.dart';
-import '../../domain/params/services_by_filters_params.dart';
+import '../../../../../../core/functions/app_log.dart';
+import '../../../../../../core/sources/api_call.dart';
+import '../../../../../../core/sources/local/local_request_history.dart';
+import '../../../../../business/core/data/models/service/service_model.dart';
+import '../../../../../business/core/data/sources/service/local_service.dart';
+import '../../../../../business/core/domain/entity/service/service_entity.dart';
+import '../../../../marketplace/domain/params/filter_params.dart';
+import '../../../domain/entity/service_category_entity.dart';
+import '../../../domain/params/services_by_filters_params.dart';
+import '../../models/service_category_model.dart';
+import '../local/local_service_categories.dart';
 
 abstract interface class ServicesExploreApi {
   Future<DataState<List<ServiceEntity>>> specialOffers();
+  Future<DataState<List<ServiceCategoryENtity>>> serviceCategories();
   Future<DataState<List<ServiceEntity>>> getServicesbyFilters(
       ServiceByFiltersParams params);
 }
@@ -49,6 +53,69 @@ class ServicesExploreApiImpl implements ServicesExploreApi {
       }
     } catch (e) {
       return DataFailer<List<ServiceEntity>>(CustomException(e.toString()));
+    }
+  }
+
+  Future<DataState<List<ServiceCategoryENtity>>> serviceCategories() async {
+    final List<ServiceCategoryENtity> categories = <ServiceCategoryENtity>[];
+
+    // 1️⃣ Try fetching cached raw data from LocalRequestHistory
+    final ApiRequestEntity? cachedRaw = await LocalRequestHistory().request(
+      endpoint: 'category/services',
+      baseURL: '', // your baseURL
+      duration: const Duration(days: 1),
+    );
+
+    if (cachedRaw?.decodedData != null && cachedRaw?.decodedData != '') {
+      try {
+        final dynamic cachedData = cachedRaw?.decodedData;
+        final Map<String, dynamic> servicesMap =
+            cachedData[0]['services'] ?? <String, dynamic>{};
+        servicesMap.forEach((_, dynamic value) {
+          final ServiceCategoryENtity category =
+              ServiceCategoryModel.fromMap(value);
+          categories.add(category);
+        });
+        return DataSuccess<List<ServiceCategoryENtity>>('cached', categories);
+      } catch (e) {
+        // if parsing cached data fails, continue to fetch API
+      }
+    }
+
+    // 2️⃣ Fetch from API if no valid cached data
+    try {
+      const String endpoint = 'category/services';
+      final DataState<String> result = await ApiCall<String>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.get,
+        isAuth: false,
+      );
+      if (result is DataSuccess) {
+        final String? raw = result.data;
+        if (raw == null || raw.isEmpty) {
+          return DataFailer<List<ServiceCategoryENtity>>(
+              CustomException('No data found'));
+        }
+
+        final dynamic data = json.decode(raw);
+        final Map<String, dynamic> servicesMap =
+            data[0]['services'] ?? <String, dynamic>{};
+
+        servicesMap.forEach((_, dynamic value) {
+          final ServiceCategoryENtity category =
+              ServiceCategoryModel.fromMap(value);
+          categories.add(category);
+        });
+        await LocalServiceCategory().saveAll(categories);
+        return DataSuccess<List<ServiceCategoryENtity>>(raw, categories);
+      } else {
+        return DataFailer<List<ServiceCategoryENtity>>(
+          result.exception ?? CustomException('something_wrong'.tr()),
+        );
+      }
+    } catch (e) {
+      return DataFailer<List<ServiceCategoryENtity>>(
+          CustomException(e.toString()));
     }
   }
 

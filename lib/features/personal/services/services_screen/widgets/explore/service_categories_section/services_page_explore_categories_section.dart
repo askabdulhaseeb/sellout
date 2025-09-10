@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../core/enums/business/services/service_category_type.dart';
+import '../../../../data/sources/local/local_service_categories.dart';
+import '../../../../domain/entity/service_category_entity.dart';
 import 'widgets/service_category_tile.dart';
 import 'widgets/services_categories_grid_section.dart';
 
@@ -9,7 +10,9 @@ class ServicesPageExploreCategoriesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const List<ServiceCategoryType> categories = ServiceCategoryType.values;
+    List<ServiceCategoryENtity> categories =
+        LocalServiceCategory().getAllCategories();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -43,7 +46,7 @@ class ServicesPageExploreCategoriesSection extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             itemCount: categories.length,
             itemBuilder: (BuildContext context, int index) {
-              final ServiceCategoryType category = categories[index];
+              final ServiceCategoryENtity category = categories[index];
               return SeviceCategoryTile(category: category);
             },
           ),
