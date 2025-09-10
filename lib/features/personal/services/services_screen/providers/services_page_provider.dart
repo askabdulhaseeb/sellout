@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import '../../../../../core/enums/business/services/service_category_type.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/api_call.dart';
 import '../../../../business/business_page/domain/params/get_business_bookings_params.dart';
@@ -14,8 +13,10 @@ import '../../../bookings/domain/entity/booking_entity.dart';
 import '../../../location/domain/entities/location_entity.dart';
 import '../../../marketplace/domain/enum/radius_type.dart';
 import '../../../marketplace/domain/params/filter_params.dart';
+import '../../domain/entity/service_category_entity.dart';
 import '../../domain/params/service_sort_options.dart';
 import '../../domain/params/services_by_filters_params.dart';
+import '../../domain/usecase/get_service_categories_usecase.dart';
 import '../../domain/usecase/get_services_by_query_usecase.dart';
 import '../../domain/usecase/get_special_offer_usecase.dart';
 import '../enums/service_appointment_section_type.dart';
@@ -27,15 +28,17 @@ class ServicesPageProvider extends ChangeNotifier {
     this._getBookingsListUsecase,
     this._getBusinessByIdUsecase,
     this._getServiceByCategory,
+    this._getServiceCategories,
   );
   final GetSpecialOfferUsecase _getSpecialOfferUsecase;
   final GetMyBookingsListUsecase _getBookingsListUsecase;
   final GetBusinessByIdUsecase _getBusinessByIdUsecase;
   final GetServicesByQueryUsecase _getServiceByCategory;
+  final GetServiceCategoriesUsecase _getServiceCategories;
   //
-  ServiceCategoryType? _selectedCategory;
-  ServiceCategoryType? get selectedCategory => _selectedCategory;
-  void setSelectedCategory(ServiceCategoryType category) {
+  ServiceCategoryENtity? _selectedCategory;
+  ServiceCategoryENtity? get selectedCategory => _selectedCategory;
+  void setSelectedCategory(ServiceCategoryENtity category) {
     _selectedCategory = category;
     notifyListeners();
   }
@@ -72,6 +75,10 @@ class ServicesPageProvider extends ChangeNotifier {
   }
 
   //
+  List<ServiceCategoryENtity> _serviceCategories = [];
+  List<ServiceCategoryENtity> get serviceCategories => _serviceCategories;
+
+  //
   String? _serviceNextKey;
 
   void setServicesKey(String? value) {
@@ -99,15 +106,27 @@ class ServicesPageProvider extends ChangeNotifier {
   TextEditingController maxPriceController = TextEditingController();
 
   // Initial fetch
-  Future<void> fetchServicesByCategory(ServiceCategoryType category) async {
+  Future<void> fetchServicesByCategory(ServiceCategoryENtity category) async {
     if (_isLoading) return;
     clearCategorizedServices();
     _setLoading(true);
     final ServiceByFiltersParams params = ServiceByFiltersParams(
-        category: category.json, filters: <FilterParam>[]);
+        category: category.value, filters: <FilterParam>[]);
     final DataState<List<ServiceEntity>> result =
         await _getServiceByCategory.call(params);
     if (result is DataSuccess) {}
+    _setLoading(false);
+  }
+
+  //
+  Future<void> fetchServiceCategory() async {
+    if (_isLoading) return;
+    _setLoading(true);
+    final DataState<List<ServiceCategoryENtity>> result =
+        await _getServiceCategories.call(null);
+    if (result is DataSuccess) {
+      _serviceCategories.addAll(result.entity ?? []);
+    } else {}
     _setLoading(false);
   }
 

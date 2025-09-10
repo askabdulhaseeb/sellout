@@ -25,6 +25,16 @@ class ServicePageExploreSection extends StatefulWidget {
 
 class _ServicePageExploreSectionState extends State<ServicePageExploreSection> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final ServicesPageProvider pro =
+          Provider.of<ServicesPageProvider>(context, listen: false);
+      pro.fetchServiceCategory();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Consumer<ServicesPageProvider>(
       builder: (BuildContext context, ServicesPageProvider pro, _) {
@@ -32,57 +42,7 @@ class _ServicePageExploreSectionState extends State<ServicePageExploreSection> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             const ServicesPageExploreSearchingSection(),
-            if (pro.search.text.isNotEmpty)
-              Row(
-                spacing: 4,
-                children: <Widget>[
-                  _HeaderButton(
-                      onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute<LocationRadiusBottomSheet>(
-                            builder: (BuildContext context) =>
-                                LocationRadiusBottomSheet(
-                              initialLocation: pro.selectedLocation,
-                              initialLatLng: pro.selectedlatlng,
-                              initialRadius: pro.selectedRadius,
-                              initialRadiusType: pro.radiusType,
-                              onReset: () => pro.resetLocationBottomsheet(),
-                              onUpdateLocation: (RadiusType radiusType,
-                                      double radius,
-                                      LatLng latlng,
-                                      LocationEntity? location) =>
-                                  pro.updateLocationSheet(
-                                      latlng, location, radiusType, radius),
-                            ),
-                          )),
-                      icon: AppStrings.selloutMarketplaceLocationIcon,
-                      label: pro.selectedLocation == null
-                          ? 'location'.tr()
-                          : '${pro.selectedLocation?.title}'),
-                  _HeaderButton(
-                    onPressed: () => showModalBottomSheet(
-                      context: context,
-                      builder: (BuildContext context) =>
-                          const ExploreServicesSortBottomSheet(),
-                    ),
-                    icon: AppStrings.selloutMarketplaceSortIcon,
-                    label: 'sort'.tr(),
-                  ),
-                  _HeaderButton(
-                    onPressed: () => showModalBottomSheet(
-                      showDragHandle: false,
-                      isDismissible: false,
-                      useSafeArea: true,
-                      isScrollControlled: true,
-                      context: context,
-                      builder: (BuildContext context) =>
-                          const ServicesExploreFilterBottomSheet(),
-                    ),
-                    icon: AppStrings.selloutMarketplaceFilterIcon,
-                    label: 'filter'.tr(),
-                  ),
-                ],
-              ),
+            if (pro.search.text.isNotEmpty) const ServicesFiltersSection(),
             if (pro.search.text.isEmpty)
               const ServicesPageExploreCategoriesSection(),
             const SizedBox(
@@ -92,6 +52,66 @@ class _ServicePageExploreSectionState extends State<ServicePageExploreSection> {
           ],
         );
       },
+    );
+  }
+}
+
+class ServicesFiltersSection extends StatelessWidget {
+  const ServicesFiltersSection({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<ServicesPageProvider>(
+      builder: (BuildContext context, ServicesPageProvider pro, _) => Row(
+        spacing: 4,
+        children: <Widget>[
+          _HeaderButton(
+              onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute<LocationRadiusBottomSheet>(
+                    builder: (BuildContext context) =>
+                        LocationRadiusBottomSheet(
+                      initialLocation: pro.selectedLocation,
+                      initialLatLng: pro.selectedlatlng,
+                      initialRadius: pro.selectedRadius,
+                      initialRadiusType: pro.radiusType,
+                      onReset: () => pro.resetLocationBottomsheet(),
+                      onUpdateLocation: (RadiusType radiusType, double radius,
+                              LatLng latlng, LocationEntity? location) =>
+                          pro.updateLocationSheet(
+                              latlng, location, radiusType, radius),
+                    ),
+                  )),
+              icon: AppStrings.selloutMarketplaceLocationIcon,
+              label: pro.selectedLocation == null
+                  ? 'location'.tr()
+                  : '${pro.selectedLocation?.title}'),
+          _HeaderButton(
+            onPressed: () => showModalBottomSheet(
+              context: context,
+              builder: (BuildContext context) =>
+                  const ExploreServicesSortBottomSheet(),
+            ),
+            icon: AppStrings.selloutMarketplaceSortIcon,
+            label: 'sort'.tr(),
+          ),
+          _HeaderButton(
+            onPressed: () => showModalBottomSheet(
+              showDragHandle: false,
+              isDismissible: false,
+              useSafeArea: true,
+              isScrollControlled: true,
+              context: context,
+              builder: (BuildContext context) =>
+                  const ServicesExploreFilterBottomSheet(),
+            ),
+            icon: AppStrings.selloutMarketplaceFilterIcon,
+            label: 'filter'.tr(),
+          ),
+        ],
+      ),
     );
   }
 }

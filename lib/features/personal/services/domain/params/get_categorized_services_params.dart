@@ -1,11 +1,11 @@
-import '../../../../../core/enums/business/services/service_category_type.dart';
+import '../entity/service_category_entity.dart';
 
 class GetServiceCategoryParams {
   GetServiceCategoryParams({
     required this.type,
     this.nextKey,
   });
-  final ServiceCategoryType type;
+  final ServiceCategoryENtity type;
   final String? nextKey;
 
   Map<String, dynamic> toMap() {
