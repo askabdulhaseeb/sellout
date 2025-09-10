@@ -83,8 +83,6 @@ class _MakeOfferBottomSheetState extends State<MakeOfferBottomSheet> {
 
                         Divider(color: Theme.of(context).dividerColor),
 
-                        /// Quantity info
-
                         /// Quantity Selector
                         Column(
                           children: <Widget>[

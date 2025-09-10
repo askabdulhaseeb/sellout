@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../../../../../../core/widgets/custom_textformfield.dart';
+import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../domain/entities/promo_entity.dart';
 import 'promo_gridview_tile.dart';
 
@@ -46,20 +48,18 @@ class _PromoHomeGridViewState extends State<PromoHomeGridView> {
 
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         centerTitle: true,
-        title: Text('promos'.tr()),
+        title: AppBarTitle(titleKey: 'promos'.tr()),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Column(
           children: <Widget>[
             CustomTextFormField(
-              labelText: 'search'.tr(),
+              hint: 'search_promos'.tr(),
               controller: _controller,
               onChanged: _filterPromos,
             ),
-            const SizedBox(height: 12),
             Expanded(
               child: filteredList.isEmpty
                   ? Center(
@@ -68,19 +68,27 @@ class _PromoHomeGridViewState extends State<PromoHomeGridView> {
                         style: theme.textTheme.bodyLarge,
                       ),
                     )
-                  : GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 8,
+                  : SingleChildScrollView(
+                      child: StaggeredGrid.count(
+                        crossAxisCount: 3, // 3 columns
                         mainAxisSpacing: 8,
-                        childAspectRatio: 0.8,
+                        crossAxisSpacing: 8,
+                        children: List.generate(
+                          filteredList.length,
+                          (int index) {
+                            final PromoEntity promo = filteredList[index];
+
+                            // Make every 5th tile "big" (2x2)
+                            final bool isBig = index % 5 == 0;
+
+                            return StaggeredGridTile.count(
+                              crossAxisCellCount: isBig ? 2 : 1,
+                              mainAxisCellCount: isBig ? 2 : 1,
+                              child: PromoHomeGridViewTile(promo: promo),
+                            );
+                          },
+                        ),
                       ),
-                      itemCount: filteredList.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final PromoEntity promo = filteredList[index];
-                        return PromoHomeGridViewTile(promo: promo);
-                      },
                     ),
             ),
           ],

@@ -51,12 +51,13 @@ class _HomePromoListSectionState extends State<HomePromoListSection> {
               const Spacer(),
               if (!showMore && !isLoading)
                 GestureDetector(
-                  onTap: () => showBottomSheet(
-                    context: context,
-                    builder: (BuildContext context) => PromoHomeGridView(
-                      promos: pro,
-                    ),
-                  ),
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute<PromoHomeGridView>(
+                        builder: (BuildContext context) => PromoHomeGridView(
+                          promos: pro,
+                        ),
+                      )),
                   child: Text(
                     'view_more'.tr(),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
