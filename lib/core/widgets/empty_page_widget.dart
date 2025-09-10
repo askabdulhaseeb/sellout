@@ -42,7 +42,7 @@ class EmptyPageWidget extends StatelessWidget {
               height: 90,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: backgroundColor.withValues(alpha: 0.2),
+                color: backgroundColor.withValues(alpha: 0.1),
               ),
               child: Icon(icon, color: iconColor, size: 40),
             ),

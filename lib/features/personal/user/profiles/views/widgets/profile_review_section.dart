@@ -32,6 +32,7 @@ class ProfileReviewSection extends StatelessWidget {
         final List<ReviewEntity> reviews =
             snapshot.data?.entity ?? LocalReview().reviewsWithQuery(param);
         return SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           primary: false,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

@@ -13,7 +13,7 @@ class EmojiPickerIconButton extends StatelessWidget {
     return InkWell(
       onTap: () => showModalBottomSheet(
         isDismissible: true,
-        enableDrag: false,
+        enableDrag: true,
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
         context: context,
@@ -27,7 +27,7 @@ class EmojiPickerIconButton extends StatelessWidget {
   }
 }
 
-// 👇 This is private and only used inside this file
+// Private bottom sheet widget
 class _EmojiPickerBottomSheet extends StatelessWidget {
   const _EmojiPickerBottomSheet();
 
@@ -36,39 +36,44 @@ class _EmojiPickerBottomSheet extends StatelessWidget {
     final SendMessageProvider chatPro =
         Provider.of<SendMessageProvider>(context, listen: false);
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
-      child: Container(
-        height: 450,
-        decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: EmojiPicker(
-          onBackspacePressed: () {},
-          textEditingController: chatPro.message,
-          config: Config(
-            height: 260,
-            checkPlatformCompatibility: true,
-            emojiViewConfig: EmojiViewConfig(
-              emojiSizeMax: 20,
-              backgroundColor: Theme.of(context).cardColor,
-            ),
-            viewOrderConfig: const ViewOrderConfig(
-              top: EmojiPickerItem.categoryBar,
-              middle: EmojiPickerItem.emojiView,
-              bottom: EmojiPickerItem.searchBar,
-            ),
-            skinToneConfig: const SkinToneConfig(),
-            categoryViewConfig: CategoryViewConfig(
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            ),
-            bottomActionBarConfig: BottomActionBarConfig(
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            ),
-            searchViewConfig: SearchViewConfig(
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            ),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(25),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.15),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: EmojiPicker(
+        onBackspacePressed: () {},
+        textEditingController: chatPro.message,
+        config: Config(
+          checkPlatformCompatibility: true,
+          // emojiSizeMax: 28,
+          // backgroundColor: Theme.of(context).cardColor,
+          emojiViewConfig: EmojiViewConfig(
+            backgroundColor: Theme.of(context).cardColor,
+            emojiSizeMax: 28,
+          ),
+          viewOrderConfig: const ViewOrderConfig(
+            top: EmojiPickerItem.categoryBar,
+            middle: EmojiPickerItem.emojiView,
+            bottom: EmojiPickerItem.searchBar,
+          ),
+          categoryViewConfig: CategoryViewConfig(
+            backgroundColor: Theme.of(context).cardColor,
+          ),
+          bottomActionBarConfig: BottomActionBarConfig(
+            backgroundColor: Theme.of(context).cardColor,
+          ),
+          searchViewConfig: SearchViewConfig(
+            backgroundColor: Theme.of(context).cardColor,
           ),
         ),
       ),

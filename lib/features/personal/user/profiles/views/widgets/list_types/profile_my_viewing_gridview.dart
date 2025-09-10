@@ -1,6 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/widgets/empty_page_widget.dart';
+import '../../../../../../../core/widgets/loaders/post_grid_loader.dart';
 import '../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../domain/entities/user_entity.dart';
 import '../../enums/profile_page_tab_type.dart';
@@ -38,16 +41,17 @@ class _ProfileMyViewingGridviewState extends State<ProfileMyViewingGridview> {
         Consumer<ProfileProvider>(
           builder: (BuildContext context, ProfileProvider pro, _) {
             final List<PostEntity>? posts = pro.storePosts;
-
             if (pro.isLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const PostGridLoader();
             }
-
             if (posts == null || posts.isEmpty) {
-              return Center(child: Text('no_posts_found'.tr()));
+              return Center(
+                  child: EmptyPageWidget(
+                      icon: CupertinoIcons.photo,
+                      childBelow: Text('no_posts_found'.tr())));
             }
-
             return GridView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               itemCount: posts.length,
               shrinkWrap: true,
               primary: false,

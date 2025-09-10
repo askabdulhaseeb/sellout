@@ -6,7 +6,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:just_audio/just_audio.dart';
-
 import '../../../../../../../../../../core/helper_functions/duration_format_helper.dart';
 import '../../../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../../../core/utilities/app_string.dart';
@@ -45,10 +44,21 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
   }
 
   Future<void> _initializeRecorder() async {
-    final PermissionStatus status = await Permission.microphone.request();
-    if (!status.isGranted) return;
-    await _recorder.openRecorder();
-    await _recorder.setSubscriptionDuration(const Duration(milliseconds: 100));
+    PermissionStatus status = await Permission.microphone.request();
+
+    // Keep asking until granted or permanently denied
+    while (!status.isGranted && !status.isPermanentlyDenied) {
+      status = await Permission.microphone.request();
+    }
+
+    if (status.isGranted) {
+      await _recorder.openRecorder();
+      await _recorder
+          .setSubscriptionDuration(const Duration(milliseconds: 100));
+    } else if (status.isPermanentlyDenied) {
+      // Open app settings if permanently denied
+      openAppSettings();
+    }
   }
 
   Future<void> _playSound(String assetPath) async {

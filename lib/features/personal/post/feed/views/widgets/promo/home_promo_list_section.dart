@@ -34,7 +34,6 @@ class _HomePromoListSectionState extends State<HomePromoListSection> {
     final List<PromoEntity>? pro = promoProvider.promoList;
     final bool isLoading = promoProvider.isLoadig;
     final bool showMore = (pro?.length ?? 0) <= 3;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -44,7 +43,7 @@ class _HomePromoListSectionState extends State<HomePromoListSection> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Text(
-                'promo'.tr(),
+                'promos'.tr(),
                 style: TextTheme.of(context)
                     .bodyLarge
                     ?.copyWith(fontWeight: FontWeight.w600),
