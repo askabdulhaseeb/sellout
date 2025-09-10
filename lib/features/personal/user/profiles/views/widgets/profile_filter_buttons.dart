@@ -22,39 +22,42 @@ class ProfileFilterSection extends StatelessWidget {
     final bool isStore = (pageType!.code == ProfilePageTabType.store.code);
     return Consumer<ProfileProvider>(
       builder: (BuildContext context, ProfileProvider pro, Widget? child) =>
-          Row(
-        spacing: 4,
-        children: <Widget>[
-          Flexible(child: ProfilePostSearchField(isStore: isStore)),
-          Expanded(
-              child: CustomFilterButton(
-                  iconFirst: false,
-                  onPressed: () => showModalBottomSheet(
-                        context: context,
-                        builder: (BuildContext context) =>
-                            StoreCategoryBottomSheet(
-                          isStore: isStore,
+          Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Row(
+          spacing: 4,
+          children: <Widget>[
+            Flexible(child: ProfilePostSearchField(isStore: isStore)),
+            Expanded(
+                child: CustomFilterButton(
+                    iconFirst: false,
+                    onPressed: () => showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext context) =>
+                              StoreCategoryBottomSheet(
+                            isStore: isStore,
+                          ),
                         ),
-                      ),
-                  label: 'category'.tr(),
-                  icon: AppStrings.selloutDropDownIcon)),
-          Expanded(
-              child: CustomFilterButton(
-                  iconFirst: true,
-                  onPressed: () => showModalBottomSheet(
-                        context: context,
-                        showDragHandle: false,
-                        isDismissible: false,
-                        useSafeArea: true,
-                        isScrollControlled: true,
-                        builder: (BuildContext context) =>
-                            StoreFilterBottomSheet(
-                          isStore: isStore,
+                    label: 'category'.tr(),
+                    icon: AppStrings.selloutDropDownIcon)),
+            Expanded(
+                child: CustomFilterButton(
+                    iconFirst: true,
+                    onPressed: () => showModalBottomSheet(
+                          context: context,
+                          showDragHandle: false,
+                          isDismissible: false,
+                          useSafeArea: true,
+                          isScrollControlled: true,
+                          builder: (BuildContext context) =>
+                              StoreFilterBottomSheet(
+                            isStore: isStore,
+                          ),
                         ),
-                      ),
-                  label: 'filter'.tr(),
-                  icon: AppStrings.selloutFilterIcon)),
-        ],
+                    label: 'filter'.tr(),
+                    icon: AppStrings.selloutFilterIcon)),
+          ],
+        ),
       ),
     );
   }

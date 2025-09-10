@@ -38,18 +38,17 @@ class _ChatScreenState extends State<ChatScreen> {
             LocalUnreadMessagesService().clearCount(chat.chatId);
           },
           child: Scaffold(
-            resizeToAvoidBottomInset: true,
+            resizeToAvoidBottomInset: true, // ✅ lets body move with keyboard
             appBar: chatAppBar(context),
             body: GestureDetector(
               onVerticalDragEnd: (DragEndDetails details) {
-                // Swipe up
                 if (details.primaryVelocity! < 0) {
+                  // Swipe up
                   if (pro.showPinnedMessage) {
                     pro.setPinnedMessageVisibility(false);
                   }
-                }
-                // Swipe down
-                else if (details.primaryVelocity! > 0) {
+                } else if (details.primaryVelocity! > 0) {
+                  // Swipe down
                   if (!pro.showPinnedMessage) {
                     pro.setPinnedMessageVisibility(true);
                   }
@@ -64,10 +63,10 @@ class _ChatScreenState extends State<ChatScreen> {
                       controller: scrollController,
                     ),
                   ),
+                  const ChatInteractionPanel(),
                 ],
               ),
             ),
-            bottomNavigationBar: const ChatInteractionPanel(),
           ),
         );
       },
