@@ -96,35 +96,31 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Flexible(
-              flex: 1,
-              child: CustomDropdown<CountryEntity>(
-                title: '',
-                hint: '',
-                height: 48,
-                width: 125,
-                items: countries
-                    .where((CountryEntity e) => e.isActive)
-                    .map((CountryEntity e) {
-                  return DropdownMenuItem<CountryEntity>(
-                    value: e,
-                    child: Text(e.countryCode,
-                        style: TextTheme.of(context).bodyMedium),
-                  );
-                }).toList(),
-                selectedItem: selectedCountry,
-                onChanged: (CountryEntity? value) {
-                  if (value == null) return;
-                  setState(() {
-                    selectedCountry = value;
-                    widget.onChange(PhoneNumberEntity(
-                      countryCode: value.countryCode,
-                      number: controller.text,
-                    ));
-                  });
-                },
-                validator: (_) => null,
-              ),
+            CustomDropdown<CountryEntity>(
+              title: '',
+              hint: '',
+              width: 125,
+              items: countries
+                  .where((CountryEntity e) => e.isActive)
+                  .map((CountryEntity e) {
+                return DropdownMenuItem<CountryEntity>(
+                  value: e,
+                  child: Text(e.countryCode,
+                      style: TextTheme.of(context).bodyMedium),
+                );
+              }).toList(),
+              selectedItem: selectedCountry,
+              onChanged: (CountryEntity? value) {
+                if (value == null) return;
+                setState(() {
+                  selectedCountry = value;
+                  widget.onChange(PhoneNumberEntity(
+                    countryCode: value.countryCode,
+                    number: controller.text,
+                  ));
+                });
+              },
+              validator: (_) => null,
             ),
             const SizedBox(width: 12),
             Expanded(

@@ -24,7 +24,7 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               'delivery'.tr(),
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+              style: const TextStyle(fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 12),
             // Free Delivery
