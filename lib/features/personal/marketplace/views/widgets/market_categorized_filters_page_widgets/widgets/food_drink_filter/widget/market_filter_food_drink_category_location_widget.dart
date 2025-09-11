@@ -14,10 +14,9 @@ class MarketFilterFoodDrinkCategoryAndLocationWIdget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final MarketPlaceProvider marketPro =
-        Provider.of<MarketPlaceProvider>(context, listen: false);
     return Consumer<MarketPlaceProvider>(
-      builder: (BuildContext context, MarketPlaceProvider pro, Widget? child) =>
+      builder: (BuildContext context, MarketPlaceProvider marketPro,
+              Widget? child) =>
           Row(
         spacing: 4,
         children: <Widget>[
@@ -33,13 +32,11 @@ class MarketFilterFoodDrinkCategoryAndLocationWIdget extends StatelessWidget {
           ),
           Expanded(
             child: NominationLocationField(
-              selectedLatLng: marketPro.selectedlatlng,
-              displayMode: MapDisplayMode.neverShowMap,
-              initialText: marketPro.selectedLocation?.address ?? '',
-              onLocationSelected: (LocationEntity p0, LatLng p1) {
-                marketPro.updateLocation(p1, p0);
-              },
-            ),
+                selectedLatLng: marketPro.selectedlatlng,
+                displayMode: MapDisplayMode.neverShowMap,
+                initialText: marketPro.selectedLocation?.address ?? '',
+                onLocationSelected: (LocationEntity p0, LatLng p1) =>
+                    marketPro.updateLocation(p1, p0)),
           )
         ],
       ),

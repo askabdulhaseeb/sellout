@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
@@ -42,7 +43,6 @@ class AddListingFormProvider extends ChangeNotifier {
   );
   final AddListingUsecase _addlistingUSecase;
   final EditListingUsecase _editListingUsecase;
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   List<AvailabilityEntity> _availability = DayType.values.map((DayType day) {
     return AvailabilityModel(
@@ -216,6 +216,8 @@ class AddListingFormProvider extends ChangeNotifier {
     _selectedVehicleColor = null;
     _selectedMeetupLocation = null;
     _selectedCollectionLocation = null;
+    _meetupLatLng = null;
+    _collectionLatLng = null;
     // List data
     _sizeColorEntities = <SizeColorModel>[];
 
@@ -837,12 +839,16 @@ class AddListingFormProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setCollectionLocation(LocationEntity value) {
-    _selectedCollectionLocation = value;
+  void setCollectionLocation(LocationEntity location, LatLng latlng) {
+    _selectedCollectionLocation = location;
+    _collectionLatLng = latlng;
+    notifyListeners();
   }
 
-  void setMeetupLocation(LocationEntity value) {
+  void setMeetupLocation(LocationEntity value, LatLng latlng) {
     _selectedMeetupLocation = value;
+    _meetupLatLng = latlng;
+    notifyListeners();
   }
 
   // Cloth and Foot
@@ -1004,14 +1010,15 @@ class AddListingFormProvider extends ChangeNotifier {
     required ColorOptionEntity color,
     required int quantity,
   }) {
-    final int sizeIndex =
-        _sizeColorEntities.indexWhere((SizeColorEntity e) => e.value == size);
+    // Find the size entry
+    final int sizeIndex = _sizeColorEntities.indexWhere((e) => e.value == size);
 
     if (sizeIndex != -1) {
       final SizeColorEntity existingSize = _sizeColorEntities[sizeIndex];
 
+      // Find if the color already exists
       final int colorIndex =
-          existingSize.colors.indexWhere((ColorEntity c) => c.code == color);
+          existingSize.colors.indexWhere((c) => c.code == color.value);
 
       if (colorIndex != -1) {
         // Update quantity for existing color
@@ -1019,28 +1026,25 @@ class AddListingFormProvider extends ChangeNotifier {
             ColorEntity(code: color.value, quantity: quantity);
       } else {
         // Add new color to existing size
-        existingSize.colors
-            .add(ColorEntity(code: color.value, quantity: quantity));
-        debugPrint(existingSize.colors.first.code);
+        existingSize.colors.add(
+          ColorEntity(code: color.value, quantity: quantity),
+        );
+        debugPrint('Added new color: ${color.value}');
       }
-
-      _sizeColorEntities[sizeIndex] = SizeColorModel(
-        value: existingSize.value,
-        id: existingSize.id,
-        colors: existingSize.colors,
-      );
     } else {
       // Add new size with color
       _sizeColorEntities.add(
         SizeColorModel(
-          value: size.toString(),
-          id: size.toString(),
-          colors: <ColorEntity>[
-            ColorEntity(code: color.toString(), quantity: quantity),
+          value: size,
+          id: size,
+          colors: [
+            ColorEntity(code: color.value, quantity: quantity),
           ],
         ),
       );
+      debugPrint('Added new size: $size with color: ${color.value}');
     }
+
     notifyListeners();
   }
 
@@ -1096,6 +1100,8 @@ class AddListingFormProvider extends ChangeNotifier {
   List<SizeColorEntity> get sizeColorEntities => _sizeColorEntities;
   LocationEntity? get selectedmeetupLocation => _selectedMeetupLocation;
   LocationEntity? get selectedCollectionLocation => _selectedCollectionLocation;
+  LatLng? get meetupLatLng => _meetupLatLng;
+  LatLng? get collectionLatLng => _collectionLatLng;
 
   //
   List<PickedAttachment> get attachments => _attachments;
@@ -1223,7 +1229,9 @@ class AddListingFormProvider extends ChangeNotifier {
   PrivacyType _privacy = PrivacyType.public;
   DeliveryType _deliveryType = DeliveryType.paid;
   LocationEntity? _selectedMeetupLocation;
+  LatLng? _meetupLatLng;
   LocationEntity? _selectedCollectionLocation;
+  LatLng? _collectionLatLng;
   // Cloth and Foot
   String _selectedClothSubCategory = ListingType.clothAndFoot.cids.first;
   final List<ColorOptionEntity> _colors = <ColorOptionEntity>[];

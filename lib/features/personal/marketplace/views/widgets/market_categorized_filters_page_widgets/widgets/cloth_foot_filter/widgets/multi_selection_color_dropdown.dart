@@ -46,7 +46,7 @@ class _MultiColorDropdownState extends State<MultiColorDropdown> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const SizedBox(
             height: 40,
-            child: Center(child: CircularProgressIndicator(strokeWidth: 1.5)),
+            child: Center(child: SizedBox.shrink()),
           );
         }
         if (snapshot.hasError) {

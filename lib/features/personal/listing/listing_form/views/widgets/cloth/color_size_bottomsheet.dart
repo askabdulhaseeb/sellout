@@ -11,7 +11,6 @@ import 'size_dropdown.dart';
 
 class SizeColorBottomSheet extends StatefulWidget {
   const SizeColorBottomSheet({super.key});
-
   @override
   State<SizeColorBottomSheet> createState() => _SizeColorBottomSheetState();
 }
@@ -123,16 +122,28 @@ class SizeColorListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<AddListingFormProvider>(
       builder: (_, AddListingFormProvider provider, __) {
-        if (provider.sizeColorEntities.isEmpty) return const SizedBox();
+        debugPrint(
+            'SizeColorListView rebuild. Total entries: ${provider.sizeColorEntities.length}');
+
+        if (provider.sizeColorEntities.isEmpty) {
+          debugPrint('No size-color entries available.');
+          return const SizedBox();
+        }
 
         return ListView.builder(
           itemCount: provider.sizeColorEntities.length,
           itemBuilder: (_, int index) {
             final SizeColorEntity sizeColorEntry =
                 provider.sizeColorEntities[index];
+            debugPrint(
+                'Building size entry: ${sizeColorEntry.value}, colors: ${sizeColorEntry.colors.length}');
+
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: sizeColorEntry.colors.map((ColorEntity colorEntity) {
+                debugPrint(
+                    'Building color: ${colorEntity.code} with quantity: ${colorEntity.quantity}');
+
                 return Container(
                   margin: const EdgeInsets.symmetric(vertical: 8),
                   padding: const EdgeInsets.all(8),
@@ -142,20 +153,28 @@ class SizeColorListView extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Expanded(child: Text(sizeColorEntry.value)),
-                      CircleAvatar(
-                        radius: 8,
-                        backgroundColor: Color(int.parse(
-                            '0xFF${colorEntity.code.replaceAll('#', '')}')),
+                      Flexible(child: Text(sizeColorEntry.value)),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CircleAvatar(
+                            radius: 8,
+                            backgroundColor: Color(int.parse(
+                                '0xFF${colorEntity.code.replaceAll('#', '')}')),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(colorEntity.code),
+                        ],
                       ),
-                      const SizedBox(width: 4),
-                      Text(colorEntity.code),
                       const SizedBox(width: 8),
                       Text('${colorEntity.quantity}'),
                       IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () {
+                          debugPrint(
+                              'Deleting color: ${colorEntity.code} from size: ${sizeColorEntry.value}');
                           provider.removeColorFromSize(
                             size: sizeColorEntry.value,
                             color: colorEntity.code,
@@ -174,7 +193,7 @@ class SizeColorListView extends StatelessWidget {
   }
 }
 
-class SizeColorInputRow extends StatelessWidget {
+class SizeColorInputRow extends StatefulWidget {
   const SizeColorInputRow({
     required this.selectedSize,
     required this.selectedColor,
@@ -193,6 +212,21 @@ class SizeColorInputRow extends StatelessWidget {
   final VoidCallback onAdd;
 
   @override
+  State<SizeColorInputRow> createState() => _SizeColorInputRowState();
+}
+
+class _SizeColorInputRowState extends State<SizeColorInputRow> {
+  final FocusNode _sizeFocus = FocusNode();
+  final FocusNode _colorFocus = FocusNode();
+
+  @override
+  void dispose() {
+    _sizeFocus.dispose();
+    _colorFocus.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final AddListingFormProvider formPro =
         Provider.of<AddListingFormProvider>(context, listen: false);
@@ -200,35 +234,61 @@ class SizeColorInputRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
+        // Size Dropdown with smooth width animation
         Expanded(
           flex: 2,
-          child: SizeDropdown(
-            formPro: formPro,
-            selectedSize: selectedSize,
-            onSizeChanged: onSizeChanged,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+            width: _sizeFocus.hasFocus ? 160 : 120,
+            child: Focus(
+              focusNode: _sizeFocus,
+              child: SizeDropdown(
+                formPro: formPro,
+                selectedSize: widget.selectedSize,
+                onSizeChanged: widget.onSizeChanged,
+              ),
+            ),
           ),
         ),
         const SizedBox(width: 8),
+
+        // Color Dropdown with smooth width animation
         Expanded(
           flex: 2,
-          child: ColorDropdown(
-            validator: (bool? p0) => null,
-            selectedColor: selectedColor,
-            onColorChanged: (ColorOptionEntity? value) => onColorChanged,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+            width: _colorFocus.hasFocus ? 160 : 120,
+            child: Focus(
+              focusNode: _colorFocus,
+              child: ColorDropdown(
+                validator: (bool? valid) =>
+                    valid == true ? null : 'required'.tr(),
+                selectedColor: widget.selectedColor,
+                onColorChanged: (ColorOptionEntity? value) {
+                  widget.onColorChanged(value); // call the callback
+                },
+              ),
+            ),
           ),
         ),
         const SizedBox(width: 8),
+
+        // Quantity input
         Expanded(
           flex: 1,
           child: CustomTextFormField(
-            controller: quantityController,
+            controller: widget.quantityController,
             keyboardType: TextInputType.number,
             hint: 'quantity'.tr(),
             textAlign: TextAlign.center,
           ),
         ),
         const SizedBox(width: 8),
-        AddButton(onAdd: onAdd),
+
+        // Add button
+        AddButton(onAdd: widget.onAdd),
       ],
     );
   }

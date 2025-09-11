@@ -181,6 +181,7 @@ class MarketPlaceProvider extends ChangeNotifier {
   ) {
     _selectedlatlng = latlngVal ?? LocalAuth.latlng;
     _selectedLocation = locationVal;
+    notifyListeners();
     debugPrint(
         'Updated LatLng: $_selectedlatlng, Location: $_selectedLocation in marketplaceProvider');
   }

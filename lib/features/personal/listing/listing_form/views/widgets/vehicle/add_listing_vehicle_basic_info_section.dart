@@ -1,10 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/dropdowns/color_dropdown.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../../location/domain/entities/location_entity.dart';
+import '../../../../../location/domain/enums/map_display_mode.dart';
+import '../../../../../location/view/widgets/location_field.dart/nomination_location_wrapper.dart';
 import '../../../../../marketplace/views/widgets/market_categorized_filters_page_widgets/widgets/vehicle_filter/widget/year_picker_dropdown.dart';
 import '../../../domain/entities/color_options_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
@@ -95,6 +99,13 @@ class _AddListingVehicleBasicInfoSectionState
               onColorChanged: (ColorOptionEntity? value) =>
                   formPro.setVehicleColor(value),
             ),
+            NominationLocationField(
+                title: 'meetup_location'.tr(),
+                selectedLatLng: formPro.collectionLatLng,
+                displayMode: MapDisplayMode.showMapAfterSelection,
+                initialText: formPro.selectedmeetupLocation?.address ?? '',
+                onLocationSelected: (LocationEntity p0, LatLng p1) =>
+                    formPro.setMeetupLocation(p0, p1)),
             //price
             CustomTextFormField(
                 controller: formPro.price,

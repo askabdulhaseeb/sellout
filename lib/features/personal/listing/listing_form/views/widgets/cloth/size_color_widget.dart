@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../core/widgets/custom_dropdown.dart';
 import 'color_size_bottomsheet.dart';
 
 class AddListingSizeColorWidget extends StatelessWidget {
@@ -20,18 +19,33 @@ class AddListingSizeColorWidget extends StatelessWidget {
             builder: (BuildContext context) => const SizeColorBottomSheet());
       },
       child: AbsorbPointer(
-        child: CustomDropdown<int>(
-          height: 50,
-          hint: 'tap_to_select'.tr(),
-          title: 'select_size_color'.tr(),
-          items: const <DropdownMenuItem<int>>[
-            DropdownMenuItem<int>(value: 2, child: Text('2')),
-          ],
-          selectedItem: null,
-          onChanged: (int? p0) {},
-          validator: (bool? value) {
-            return null;
-          },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                'select_size_color'.tr(),
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
+              Container(
+                padding: const EdgeInsets.all(14),
+                width: double.infinity,
+                // margin: const EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                        color: ColorScheme.of(context).outlineVariant)),
+                height: 50,
+                child: Text(
+                  'tap_to_select'.tr(),
+                  style: TextTheme.of(context)
+                      .bodyMedium
+                      ?.copyWith(color: ColorScheme.of(context).outline),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
