@@ -28,7 +28,7 @@ class PromoEntity {
   final String createdBy;
 
   @HiveField(3)
-  final String createdAt;
+  final DateTime createdAt;
 
   @HiveField(4)
   final String promoType;

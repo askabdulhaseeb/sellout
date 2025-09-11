@@ -4,7 +4,9 @@ import '../../../../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../../core/widgets/custom_svg_icon.dart';
+import '../../../../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../../../../../core/widgets/profile_photo.dart';
+import '../../../../../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../../../../../../routes/app_routes.dart';
 import '../../../../../../../../../../services/get_it.dart';
 import '../../../../../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -31,9 +33,9 @@ class _SharePostButtonState extends State<SharePostButton> {
   String get postLink => '${AppRoutes.baseURL}/product/${widget.post.postID}';
   Future<void> _showPrivateChatBottomSheet(BuildContext context) async {
     final List<String>? receiverIds = await showModalBottomSheet<List<String>>(
-      elevation: 0,
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       builder: (BuildContext ctx) {
         return SelectReceiversBottomsheet(postLink: postLink);
       },
@@ -45,9 +47,9 @@ class _SharePostButtonState extends State<SharePostButton> {
 
   Future<void> _showGroupChatBottomSheet(BuildContext context) async {
     final List<String>? receiverIds = await showModalBottomSheet<List<String>>(
-      elevation: 0,
-      context: context,
       isScrollControlled: true,
+      context: context,
+      useSafeArea: true,
       builder: (BuildContext ctx) {
         return SelectGroupsBottomsheet(postLink: postLink);
       },
@@ -111,6 +113,7 @@ class _SharePostButtonState extends State<SharePostButton> {
 class SelectReceiversBottomsheet extends StatefulWidget {
   const SelectReceiversBottomsheet({required this.postLink, super.key});
   final String postLink;
+
   @override
   State<SelectReceiversBottomsheet> createState() =>
       _SelectReceiversBottomsheetState();
@@ -122,10 +125,27 @@ class _SelectReceiversBottomsheetState
       GetUserByUidUsecase(locator());
   final List<String> selectedIds = <String>[];
   late Future<List<UserEntity>> _futureUsers;
+
+  // 🔹 For searching
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
   @override
   void initState() {
     super.initState();
     _futureUsers = _loadSupporterUsers();
+
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text.toLowerCase();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<List<UserEntity>> _loadSupporterUsers() async {
@@ -150,7 +170,7 @@ class _SelectReceiversBottomsheetState
       color: Theme.of(context).scaffoldBackgroundColor,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('chats'.tr()),
+          title: const AppBarTitle(titleKey: 'chats'),
           centerTitle: true,
           leading: BackButton(onPressed: () => Navigator.pop(context)),
         ),
@@ -162,14 +182,32 @@ class _SelectReceiversBottomsheetState
               return const Center(child: CircularProgressIndicator());
             }
             final List<UserEntity> users = snapshot.data ?? <UserEntity>[];
+
+            // 🔹 Filter users based on search query
+            final List<UserEntity> filteredUsers =
+                users.where((UserEntity user) {
+              final String name = user.displayName.toLowerCase();
+              final String email = user.email.toLowerCase();
+              return name.contains(_searchQuery) ||
+                  email.contains(_searchQuery);
+            }).toList();
+
             return Column(
               children: <Widget>[
+                // 🔹 Search bar
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CustomTextFormField(
+                    controller: _searchController,
+                    hint: 'search'.tr(),
+                  ),
+                ),
                 Expanded(
                   child: ListView.builder(
                     physics: const BouncingScrollPhysics(),
-                    itemCount: users.length,
+                    itemCount: filteredUsers.length,
                     itemBuilder: (BuildContext context, int index) {
-                      final UserEntity user = users[index];
+                      final UserEntity user = filteredUsers[index];
                       final bool isSelected = selectedIds.contains(user.uid);
                       return CheckboxListTile(
                         value: isSelected,
@@ -253,10 +291,26 @@ class _SelectGroupsBottomsheetState extends State<SelectGroupsBottomsheet> {
   final List<String> selectedGroupIds = <String>[];
   List<ChatEntity> groups = <ChatEntity>[];
 
+  // 🔹 For searching groups
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
   @override
   void initState() {
     super.initState();
     _loadGroupChats();
+
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text.toLowerCase();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   void _loadGroupChats() {
@@ -273,6 +327,12 @@ class _SelectGroupsBottomsheetState extends State<SelectGroupsBottomsheet> {
 
   @override
   Widget build(BuildContext context) {
+    // 🔹 Filter groups based on search query
+    final List<ChatEntity> filteredGroups = groups.where((ChatEntity group) {
+      final String title = (group.groupInfo?.title ?? '').toLowerCase();
+      return title.contains(_searchQuery);
+    }).toList();
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.9,
       color: Theme.of(context).scaffoldBackgroundColor,
@@ -280,16 +340,24 @@ class _SelectGroupsBottomsheetState extends State<SelectGroupsBottomsheet> {
         appBar: AppBar(
           centerTitle: true,
           leading: BackButton(onPressed: () => Navigator.pop(context)),
-          title: Text('select_group'.tr()),
+          title: const AppBarTitle(titleKey: 'select_group'),
         ),
         body: Column(
           children: <Widget>[
+            // 🔹 Search bar
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CustomTextFormField(
+                controller: _searchController,
+                hint: 'search'.tr(),
+              ),
+            ),
             Expanded(
               child: ListView.builder(
                 physics: const BouncingScrollPhysics(),
-                itemCount: groups.length,
+                itemCount: filteredGroups.length,
                 itemBuilder: (BuildContext context, int index) {
-                  final ChatEntity group = groups[index];
+                  final ChatEntity group = filteredGroups[index];
                   final bool isSelected =
                       selectedGroupIds.contains(group.chatId);
                   return CheckboxListTile(
