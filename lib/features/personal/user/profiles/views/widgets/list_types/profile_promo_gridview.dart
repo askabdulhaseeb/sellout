@@ -41,9 +41,10 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
   void _filterPromos(String query) {
     final String lowerQuery = query.toLowerCase();
     setState(() {
-      _filteredPromos = _allPromos.where((PromoEntity promo) {
-        return promo.title.toLowerCase().contains(lowerQuery);
-      }).toList();
+      _filteredPromos = _allPromos
+          .where((PromoEntity promo) =>
+              promo.title.toLowerCase().contains(lowerQuery))
+          .toList();
     });
   }
 
@@ -57,6 +58,7 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
   Widget build(BuildContext context) {
     final ProfileProvider pro =
         Provider.of<ProfileProvider>(context, listen: false);
+
     if (widget.user?.uid == null) {
       return const Center(child: Text('user_not_found'));
     }
@@ -76,15 +78,19 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
                 _SearchBar(controller: _searchController),
               Center(
                   child: EmptyPageWidget(
-                      icon: CupertinoIcons.film,
-                      childBelow: Text('no_promo_found'.tr()))),
+                icon: CupertinoIcons.film,
+                childBelow: Text('no_promo_found'.tr()),
+              )),
             ],
           );
         }
-        // Ensure safe access
+
+        // 🔹 Sort by newest first
         _allPromos = snapshot.data!.entity ?? <PromoEntity>[];
         _allPromos.sort((PromoEntity a, PromoEntity b) =>
             b.createdAt.compareTo(a.createdAt));
+
+        // 🔹 Apply search filter on sorted list
         _filteredPromos = _searchController.text.isEmpty
             ? _allPromos
             : _allPromos
@@ -92,6 +98,7 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
                     .toLowerCase()
                     .contains(_searchController.text.toLowerCase()))
                 .toList();
+
         return Column(
           children: <Widget>[
             if (pro.user?.uid == LocalAuth.uid)
@@ -99,11 +106,14 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
             const SizedBox(height: 10),
             if (_filteredPromos.isEmpty)
               Center(
-                  child: EmptyPageWidget(
-                      icon: CupertinoIcons.film,
-                      childBelow: Text('no_promo_found'.tr())))
+                child: EmptyPageWidget(
+                  icon: CupertinoIcons.film,
+                  childBelow: Text('no_promo_found'.tr()),
+                ),
+              )
             else
               GridView.builder(
+                reverse: true,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -115,7 +125,8 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
                   childAspectRatio: 1,
                 ),
                 itemBuilder: (BuildContext context, int index) {
-                  return PromoHomeGridViewTile(promo: _filteredPromos[index]);
+                  final PromoEntity promo = _filteredPromos[index];
+                  return PromoHomeGridViewTile(promo: promo);
                 },
               ),
           ],

@@ -1,9 +1,6 @@
-import 'dart:async';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../data/sources/local/local_service_categories.dart';
 import '../../../../domain/entity/service_category_entity.dart';
 import '../../../providers/services_page_provider.dart';
 import 'widgets/service_category_tile.dart';
@@ -14,9 +11,8 @@ class ServicesPageExploreCategoriesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<ServiceCategoryENtity> categories =
-        LocalServiceCategory().getAllCategories();
-
+    // List<ServiceCategoryENtity> categories =
+    //     LocalServiceCategory().getAllCategories();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -66,7 +62,6 @@ class ServicesPageExploreCategoriesSection extends StatelessWidget {
                 ),
               );
             }
-
             // Show actual list when loaded
             return SizedBox(
               height: 110,

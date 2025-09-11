@@ -178,7 +178,6 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
         if (widget.title)
           Text('category'.tr(),
               style: const TextStyle(fontWeight: FontWeight.w500)),
-        if (widget.title) const SizedBox(height: 4),
         InkWell(
           onTap: () => _handleCategorySelection(selectedList, context),
           borderRadius: BorderRadius.circular(10),

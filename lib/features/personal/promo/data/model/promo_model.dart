@@ -17,13 +17,21 @@ class PromoModel extends PromoEntity {
   });
 
   factory PromoModel.fromMap(Map<String, dynamic> map) {
+    DateTime parsedDate = DateTime.now();
+    if (map['created_at'] != null && map['created_at'] is String) {
+      try {
+        parsedDate = DateTime.parse(map['created_at']);
+      } catch (_) {
+        parsedDate = DateTime.now();
+      }
+    }
     return PromoModel(
       title: map['title'] ?? '',
       createdBy: map['created_by'] ?? '',
       promoId: map['promo_id'] ?? '',
       promoType: map['promo_type'] ?? '',
       isActive: map['is_active'] ?? false,
-      createdAt: map['created_at'] ?? '',
+      createdAt: parsedDate,
       fileUrl: map['file_url'] ?? '',
       referenceType: map['reference_type'] ?? '',
       referenceId: map['reference_id'] ?? '',
