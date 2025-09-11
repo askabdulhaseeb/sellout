@@ -1,7 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/custom_textformfield.dart';
+import '../../../../../location/domain/entities/location_entity.dart';
+import '../../../../../location/domain/enums/map_display_mode.dart';
+import '../../../../../location/view/widgets/location_field.dart/nomination_location_wrapper.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../custom_listing_dropdown.dart';
 
@@ -56,6 +60,13 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
                 onChanged: (String? p0) => formPro.setEnergyRating(p0),
                 selectedValue: formPro.selectedEnergyRating,
                 title: 'energy_rating'.tr()),
+            NominationLocationField(
+                title: 'meetup_location'.tr(),
+                selectedLatLng: formPro.collectionLatLng,
+                displayMode: MapDisplayMode.showMapAfterSelection,
+                initialText: formPro.selectedmeetupLocation?.address ?? '',
+                onLocationSelected: (LocationEntity p0, LatLng p1) =>
+                    formPro.setMeetupLocation(p0, p1)),
           ],
         );
       },

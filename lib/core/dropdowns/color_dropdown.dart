@@ -14,13 +14,8 @@ class ColorDropdown extends StatefulWidget {
     super.key,
   });
 
-  /// previously selected entity if available
   final ColorOptionEntity? selectedColor;
-
-  /// returns the whole ColorOptionEntity
   final ValueChanged<ColorOptionEntity?> onColorChanged;
-
-  /// validator for form field
   final String? Function(bool?) validator;
   final double? colorRadius;
   final String title;

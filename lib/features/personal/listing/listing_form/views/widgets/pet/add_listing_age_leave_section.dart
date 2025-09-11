@@ -1,7 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/custom_dropdown.dart';
+import '../../../../../location/domain/entities/location_entity.dart';
+import '../../../../../location/domain/enums/map_display_mode.dart';
+import '../../../../../location/view/widgets/location_field.dart/nomination_location_wrapper.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../custom_listing_dropdown.dart';
 
@@ -56,23 +60,14 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                   categoryKey: 'breed',
                   selectedValue: formPro.breed,
                   onChanged: (String? p0) => formPro.setPetBreed(p0)),
-            // LocationField(
-            //   onLocationSelected: (LocationNameEntity location) async {
-            //     final LatLng coords =
-            //         await formPro.getLocationCoordinates(location.description);
-            //     formPro.setMeetupLocation(LocationModel(
-            //         address: location.structuredFormatting.secondaryText,
-            //         id: location.placeId,
-            //         title: location.structuredFormatting.mainText,
-            //         url:
-            //             'https://maps.google.com/?q=${coords.latitude},${coords.longitude}',
-            //         latitude: coords.latitude,
-            //         longitude: coords.longitude));
-            //   },
-            //   initialText: formPro.selectedmeetupLocation?.address,
-            // ),
+            NominationLocationField(
+                title: 'meetup_location'.tr(),
+                selectedLatLng: formPro.collectionLatLng,
+                displayMode: MapDisplayMode.showMapAfterSelection,
+                initialText: formPro.selectedmeetupLocation?.address ?? '',
+                onLocationSelected: (LocationEntity p0, LatLng p1) =>
+                    formPro.setMeetupLocation(p0, p1)),
             CustomDropdown<bool>(
-              height: 50,
               selectedItem: formPro.vaccinationUpToDate,
               items: <DropdownMenuItem<bool>>[
                 DropdownMenuItem<bool>(
@@ -90,7 +85,6 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
               title: 'vaccination_up_to_date'.tr(),
             ),
             CustomDropdown<bool>(
-              height: 50,
               selectedItem: formPro.wormAndFleaTreated,
               items: <DropdownMenuItem<bool>>[
                 DropdownMenuItem<bool>(
@@ -108,7 +102,6 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
               title: 'worm_flee_treated'.tr(),
             ),
             CustomDropdown<bool>(
-              height: 50,
               selectedItem: formPro.healthChecked,
               items: <DropdownMenuItem<bool>>[
                 DropdownMenuItem<bool>(
