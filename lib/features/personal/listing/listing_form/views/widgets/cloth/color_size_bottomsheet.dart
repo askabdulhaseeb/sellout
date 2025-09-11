@@ -232,6 +232,7 @@ class _SizeColorInputRowState extends State<SizeColorInputRow> {
         Provider.of<AddListingFormProvider>(context, listen: false);
 
     return Row(
+      spacing: 2,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         // Size Dropdown with smooth width animation
@@ -251,7 +252,6 @@ class _SizeColorInputRowState extends State<SizeColorInputRow> {
             ),
           ),
         ),
-        const SizedBox(width: 8),
 
         // Color Dropdown with smooth width animation
         Expanded(
@@ -267,14 +267,12 @@ class _SizeColorInputRowState extends State<SizeColorInputRow> {
                     valid == true ? null : 'required'.tr(),
                 selectedColor: widget.selectedColor,
                 onColorChanged: (ColorOptionEntity? value) {
-                  widget.onColorChanged(value); // call the callback
+                  widget.onColorChanged(value);
                 },
               ),
             ),
           ),
         ),
-        const SizedBox(width: 8),
-
         // Quantity input
         Expanded(
           flex: 1,
@@ -285,8 +283,6 @@ class _SizeColorInputRowState extends State<SizeColorInputRow> {
             textAlign: TextAlign.center,
           ),
         ),
-        const SizedBox(width: 8),
-
         // Add button
         AddButton(onAdd: widget.onAdd),
       ],

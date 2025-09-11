@@ -17,9 +17,10 @@ class StartSellingList extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<ListingType> list = ListingType.list;
 
+    // Filter by translated text instead of code
     final List<ListingType> filteredList = list.where((ListingType type) {
-      final String code = type.code.toLowerCase();
-      return code.contains(searchQuery.toLowerCase());
+      final String translated = type.code.tr().toLowerCase(); // translate here
+      return translated.contains(searchQuery.toLowerCase());
     }).toList();
 
     return ListView(
@@ -54,17 +55,18 @@ class StartSellingList extends StatelessWidget {
                       width: 35,
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Theme.of(context).dividerColor),
+                        borderRadius: BorderRadius.circular(8),
+                        color: Theme.of(context).dividerColor,
+                      ),
                       child: Image.asset(
                         type.icon,
                       ),
                     ),
                     const SizedBox(width: 16),
                     Text(
-                      type.code,
+                      type.code.tr(), // show translated text
                       style: const TextStyle(fontWeight: FontWeight.w600),
-                    ).tr(),
+                    ),
                   ],
                 ),
               ),
