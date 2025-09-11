@@ -5,6 +5,7 @@ import '../../../../../../../core/dropdowns/color_dropdown.dart';
 import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../post/domain/entities/size_color/color_entity.dart';
 import '../../../../../post/domain/entities/size_color/size_color_entity.dart';
+import '../../../domain/entities/color_options_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
 import 'size_dropdown.dart';
 
@@ -17,7 +18,7 @@ class SizeColorBottomSheet extends StatefulWidget {
 
 class _SizeColorBottomSheetState extends State<SizeColorBottomSheet> {
   String? selectedSize;
-  String? selectedColor;
+  ColorOptionEntity? selectedColor;
   final TextEditingController quantityController = TextEditingController();
 
   @override
@@ -56,7 +57,7 @@ class _SizeColorBottomSheetState extends State<SizeColorBottomSheet> {
               quantityController: quantityController,
               onSizeChanged: (String? val) =>
                   setState(() => selectedSize = val),
-              onColorChanged: (String? val) =>
+              onColorChanged: (ColorOptionEntity? val) =>
                   setState(() => selectedColor = val),
               onAdd: () {
                 if (selectedSize != null &&
@@ -185,10 +186,10 @@ class SizeColorInputRow extends StatelessWidget {
   });
 
   final String? selectedSize;
-  final String? selectedColor;
+  final ColorOptionEntity? selectedColor;
   final TextEditingController quantityController;
   final ValueChanged<String?> onSizeChanged;
-  final ValueChanged<String?> onColorChanged;
+  final ValueChanged<ColorOptionEntity?> onColorChanged;
   final VoidCallback onAdd;
 
   @override
@@ -213,7 +214,7 @@ class SizeColorInputRow extends StatelessWidget {
           child: ColorDropdown(
             validator: (bool? p0) => null,
             selectedColor: selectedColor,
-            onColorChanged: onColorChanged,
+            onColorChanged: (ColorOptionEntity? value) => onColorChanged,
           ),
         ),
         const SizedBox(width: 8),

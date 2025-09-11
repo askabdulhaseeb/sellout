@@ -48,11 +48,6 @@ class _AddPetFormState extends State<AddPetForm> {
             children: <Widget>[
               const AddListingBasicInfoSection(),
               const AddListingPetAgeLeaveWidget(),
-              // SubCategorySelectableWidget(
-              //   listType: formPro.listingType,
-              //   subCategory: formPro.selectedCategory,
-              //   onSelected: formPro.setSelectedCategory,
-              // ),
               const AddListingPriceAndQuantityWidget(),
               const AddListingConditionOfferSection(),
               const EditableAvailabilityWidget(),

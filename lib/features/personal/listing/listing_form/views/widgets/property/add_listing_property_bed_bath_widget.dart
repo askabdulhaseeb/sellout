@@ -43,34 +43,19 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
             ),
             CustomListingDropDown<AddListingFormProvider>(
               validator: (bool? p0) => null,
-              hint: 'select_category',
+              hint: 'select_category'.tr(),
               categoryKey: 'property_type',
               selectedValue: formPro.selectedPropertyType,
               onChanged: (String? p0) => formPro.setPropertyType(p0),
-              title: 'category',
+              title: 'category'.tr(),
             ),
             CustomListingDropDown<AddListingFormProvider>(
                 validator: (bool? p0) => null,
-                hint: 'energy_rating',
+                hint: 'energy_rating'.tr(),
                 categoryKey: 'energy_rating',
                 onChanged: (String? p0) => formPro.setEnergyRating(p0),
                 selectedValue: formPro.selectedEnergyRating,
-                title: 'energy_rating'),
-            // LocationField(
-            //   onLocationSelected: (LocationNameEntity location) async {
-            //     final LatLng coords =
-            //         await formPro.getLocationCoordinates(location.description);
-            //     formPro.setMeetupLocation(LocationModel(
-            //         address: location.structuredFormatting.secondaryText,
-            //         id: location.placeId,
-            //         title: location.structuredFormatting.mainText,
-            //         url:
-            //             'https://maps.google.com/?q=${coords.latitude},${coords.longitude}',
-            //         latitude: coords.latitude,
-            //         longitude: coords.longitude));
-            //   },
-            //   initialText: formPro.selectedmeetupLocation?.address,
-            // ),
+                title: 'energy_rating'.tr()),
           ],
         );
       },

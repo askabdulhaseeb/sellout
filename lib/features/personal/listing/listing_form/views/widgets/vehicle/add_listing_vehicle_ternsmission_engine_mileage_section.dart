@@ -23,8 +23,10 @@ class AddListingVehicleTernsmissionEngineMileageSection
               keyboardType: TextInputType.number,
             ),
             Row(
+              spacing: 4,
               children: <Widget>[
-                Expanded(
+                Flexible(
+                  flex: 2,
                   child: CustomTextFormField(
                     controller: formPro.mileage,
                     labelText: 'mileage'.tr(),
@@ -32,14 +34,14 @@ class AddListingVehicleTernsmissionEngineMileageSection
                     keyboardType: TextInputType.number,
                   ),
                 ),
-                const SizedBox(width: 8),
-                Expanded(
+                Flexible(
+                  flex: 1,
                   child: CustomListingDropDown<AddListingFormProvider>(
                     validator: (bool? p0) => null,
-                    hint: 'mileage_unit',
+                    hint: 'mileage_unit'.tr(),
                     categoryKey: 'mileage_unit',
                     selectedValue: formPro.selectedMileageUnit,
-                    title: 'mileage_unit',
+                    title: 'mileage_unit'.tr(),
                     onChanged: formPro.setMileageUnit,
                   ),
                 ),
@@ -57,21 +59,6 @@ class AddListingVehicleTernsmissionEngineMileageSection
               hint: 'Ex. 5',
               keyboardType: TextInputType.number,
             ),
-            // LocationField(
-            //   onLocationSelected: (LocationNameEntity location) async {
-            //     final LatLng coords =
-            //         await formPro.getLocationCoordinates(location.description);
-            //     formPro.setMeetupLocation(LocationModel(
-            //         address: location.structuredFormatting.secondaryText,
-            //         id: location.placeId,
-            //         title: location.structuredFormatting.mainText,
-            //         url:
-            //             'https://maps.google.com/?q=${coords.latitude},${coords.longitude}',
-            //         latitude: coords.latitude,
-            //         longitude: coords.longitude));
-            //   },
-            //   initialText: formPro.selectedmeetupLocation?.address,
-            // ),
           ],
         );
       },

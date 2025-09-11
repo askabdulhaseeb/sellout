@@ -5,6 +5,8 @@ import '../../../../../../../core/dropdowns/color_dropdown.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../../marketplace/views/widgets/market_categorized_filters_page_widgets/widgets/vehicle_filter/widget/year_picker_dropdown.dart';
+import '../../../domain/entities/color_options_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../custom_listing_dropdown.dart';
 
@@ -26,7 +28,74 @@ class _AddListingVehicleBasicInfoSectionState
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            /// Price
+            /// Year
+            CustomYearDropdown(
+              hintText: 'year'.tr(),
+              title: 'year'.tr(),
+              selectedYear: formPro.year,
+              onChanged: (String? value) => formPro.setYear(value),
+            ),
+
+            /// Body type dynamic dropdown *second part of address
+            CustomListingDropDown<AddListingFormProvider>(
+              validator: (bool? p0) => null,
+              hint: 'body_type'.tr(),
+              parentValue: formPro.selectedVehicleCategory,
+              categoryKey: 'body_type',
+              selectedValue: formPro.selectedBodyType,
+              title: 'body_type'.tr(),
+              onChanged: (String? value) => formPro.setBodyType(value ?? ''),
+            ),
+
+            /// Emission standard dynamic dropdown
+            CustomListingDropDown<AddListingFormProvider>(
+              validator: (bool? p0) => null,
+              hint: 'emission_standards'.tr(),
+              categoryKey: 'emission_standards',
+              selectedValue: formPro.emission,
+              title: 'emission_standards'.tr(),
+              onChanged: (String? value) => formPro.setemissionType(value),
+            ),
+
+            /// Make dynamic dropdown
+            CustomListingDropDown<AddListingFormProvider>(
+              validator: (bool? p0) => null,
+              hint: 'make'.tr(),
+              categoryKey: 'make',
+              selectedValue: formPro.make,
+              title: 'make'.tr(),
+              onChanged: (String? value) => formPro.seteMake(value),
+            ),
+
+            /// Fuel type dynamic dropdown
+            CustomListingDropDown<AddListingFormProvider>(
+              validator: (bool? p0) => null,
+              hint: 'fuel_type'.tr(),
+              categoryKey: 'fuel_type',
+              selectedValue: formPro.fuelTYpe,
+              title: 'fuel_type'.tr(),
+              onChanged: (String? value) => formPro.setFuelType(value),
+            ),
+
+            /// Transmission dynamic dropdown
+            CustomListingDropDown<AddListingFormProvider>(
+              validator: (bool? p0) => null,
+              hint: 'transmission'.tr(),
+              categoryKey: 'transmission',
+              selectedValue: formPro.transmissionType,
+              title: 'transmission'.tr(),
+              onChanged: (String? value) =>
+                  formPro.setTransmissionType(value ?? ''),
+            ),
+
+            ColorDropdown(
+              validator: (bool? p0) => null,
+              title: 'color'.tr(),
+              selectedColor: formPro.selectedVehicleColor,
+              onColorChanged: (ColorOptionEntity? value) =>
+                  formPro.setVehicleColor(value),
+            ),
+            //price
             CustomTextFormField(
                 controller: formPro.price,
                 labelText: 'price'.tr(),
@@ -36,49 +105,7 @@ class _AddListingVehicleBasicInfoSectionState
                 prefixText: LocalAuth.currency.toUpperCase(),
                 keyboardType: TextInputType.number,
                 validator: (String? value) => AppValidator.isEmpty(value)),
-
-            /// Year
-            CustomTextFormField(
-                controller: formPro.year,
-                labelText: 'year'.tr(),
-                hint: 'Ex. 2025',
-                showSuffixIcon: false,
-                readOnly: formPro.isLoading,
-                keyboardType: TextInputType.number,
-                validator: (String? value) => AppValidator.isEmpty(value)),
-
-            /// Body type dynamic dropdown *second part of address
-            CustomListingDropDown<AddListingFormProvider>(
-              validator: (bool? p0) => null,
-              hint: 'body_type',
-              parentValue: formPro.selectedVehicleCategory,
-              categoryKey: 'body_type',
-              selectedValue: formPro.selectedBodyType,
-              title: 'body_type',
-              onChanged: (String? value) => formPro.setBodyType(value ?? ''),
-            ),
-
-            /// Emission standard dynamic dropdown
-            CustomListingDropDown<AddListingFormProvider>(
-              validator: (bool? p0) => null,
-              hint: 'emission_standards',
-              categoryKey: 'emission_standards',
-              selectedValue: formPro.emission,
-              title: 'emission_standards',
-              onChanged: (String? value) => formPro.setemissionType(value),
-            ),
-
-            /// Make dynamic dropdown
-            CustomListingDropDown<AddListingFormProvider>(
-              validator: (bool? p0) => null,
-              hint: 'make',
-              categoryKey: 'make',
-              selectedValue: formPro.make,
-              title: 'make'.tr(),
-              onChanged: (String? value) => formPro.seteMake(value),
-            ),
-
-            /// Model field
+            //model
             CustomTextFormField(
               controller: formPro.model,
               labelText: 'model'.tr(),
@@ -88,76 +115,6 @@ class _AddListingVehicleBasicInfoSectionState
               keyboardType: TextInputType.text,
               validator: AppValidator.isEmpty,
             ),
-
-            /// Fuel type dynamic dropdown
-            CustomListingDropDown<AddListingFormProvider>(
-              validator: (bool? p0) => null,
-              hint: 'fuel_type',
-              categoryKey: 'fuel_type',
-              selectedValue: formPro.fuelTYpe,
-              title: 'fuel_type',
-              onChanged: (String? value) => formPro.setFuelType(value),
-            ),
-
-            /// Transmission dynamic dropdown
-            CustomListingDropDown<AddListingFormProvider>(
-              validator: (bool? p0) => null,
-              hint: 'transmission',
-              categoryKey: 'transmission',
-              selectedValue: formPro.transmissionType,
-              title: 'transmission',
-              onChanged: (String? value) =>
-                  formPro.setTransmissionType(value ?? ''),
-            ),
-
-            ColorDropdown(
-              validator: (bool? p0) => null,
-              title: 'color'.tr(),
-              selectedColor: formPro.selectedVehicleColor,
-              onColorChanged: (String? value) =>
-                  formPro.setVehicleColor(value ?? ''),
-            )
-
-            /// Color with color dots
-            //   FutureBuilder<List<ColorOptionEntity>>(
-            //     future: formPro.(),
-            //     builder: (BuildContext context,
-            //         AsyncSnapshot<List<ColorOptionEntity>> snapshot) {
-            //       if (snapshot.connectionState == ConnectionState.waiting) {
-            //         return const Center(child: CircularProgressIndicator());
-            //       }
-            //       final List<ColorOptionEntity> colorOptionsList =
-            //           snapshot.data ?? [];
-            //       return CustomDropdown<String>(
-            //         isSearchable: true,
-            //         padding: const EdgeInsets.symmetric(vertical: 4),
-            //         hint: 'color'.tr(),
-            //         selectedItem: formPro.selectedVehicleColor,
-            //         title: 'color'.tr(),
-            //         validator: (_) => null,
-            //         items: colorOptionsList.map((ColorOptionEntity color) {
-            //           return DropdownMenuItem<String>(
-            //             value: color.value,
-            //             child: Row(
-            //               children: <Widget>[
-            //                 CircleAvatar(
-            //                   radius: 10,
-            //                   backgroundColor: Color(
-            //                     int.parse(
-            //                         '0xFF${color.value.replaceAll('#', '')}'),
-            //                   ),
-            //                 ),
-            //                 const SizedBox(width: 8),
-            //                 Expanded(child: Text(color.label)),
-            //               ],
-            //             ),
-            //           );
-            //         }).toList(),
-            //         onChanged: (String? newValue) =>
-            //             formPro.setVehicleColor(newValue ?? ''),
-            //       );
-            //     },
-            //   ),
           ],
         );
       },

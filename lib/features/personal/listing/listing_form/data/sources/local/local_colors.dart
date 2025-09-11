@@ -31,7 +31,12 @@ class LocalColors {
 
   Future<void> clear() async => await _box.clear();
 
+  /// Return all colors as models
   List<ColorOptionModel> get colors => _box.values
       .map((ColorOptionEntity e) => ColorOptionModel.fromEntity(e))
       .toList();
+
+ColorOptionEntity? getColor(String hexValue) {
+  return _box.get(hexValue);
+}
 }

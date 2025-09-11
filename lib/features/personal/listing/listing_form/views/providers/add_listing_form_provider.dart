@@ -26,6 +26,7 @@ import '../../../../post/domain/entities/size_color/color_entity.dart';
 import '../../../../post/domain/entities/size_color/size_color_entity.dart';
 import '../../data/models/listing_model.dart';
 import '../../data/models/sub_category_model.dart';
+import '../../data/sources/local/local_colors.dart';
 import '../../data/sources/remote/dropdown_listing_api.dart';
 import '../../domain/entities/color_options_entity.dart';
 import '../../domain/entities/sub_category_entity.dart';
@@ -156,82 +157,6 @@ class AddListingFormProvider extends ChangeNotifier {
         .toList();
   }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  // PostEntity? createPostFromFormData() {
-  //   debugPrint('listing variables preview');
-  //   return PostEntity(
-  //       engineSize: double.tryParse(engineSize.text),
-  //       mileageUnit: _selectedMileageUnit,
-  //       energyRating: selectedEnergyRating,
-  //       propertytype: '',
-  //       transmission: '',
-  //       updatedAt: DateTime.now(),
-  //       listID: '',
-  //       postID: '',
-  //       businessID: LocalAuth.currentUser?.businessID,
-  //       currency: LocalAuth.currentUser?.currency?.toUpperCase(),
-  //       type: listingType ?? ListingType.items,
-  //       listOfReviews: <double>[],
-  //       collectionLatitude: 23,
-  //       collectionLongitude: 123,
-  //       createdAt: DateTime.now(),
-  //       createdBy: LocalAuth.currentUser?.userID ?? '',
-  //       currentLatitude: 32,
-  //       currentLongitude: 323,
-  //       sizeChartUrl: null,
-  //       discounts: <DiscountEntity>[],
-  //       hasDiscount: false,
-  //       isActive: false,
-  //       updatedBy: '',
-  //       title: _title.text,
-  //       description: _description.text,
-  //       price: double.tryParse(_price.text) ?? 0.0,
-  //       quantity: int.tryParse(_quantity.text) ?? 1,
-  //       minOfferAmount: double.tryParse(_minimumOffer.text) ?? 0.0,
-  //       localDelivery: int.tryParse(_localDeliveryFee.text) ?? 0,
-  //       internationalDelivery:
-  //           int.tryParse(_internationalDeliveryFee.text) ?? 0,
-  //       accessCode: _accessCode,
-  //       condition: _condition,
-  //       acceptOffers: _acceptOffer,
-  //       privacy: _privacy,
-  //       deliveryType: _deliveryType,
-  //       sizeColors: _sizeColorEntities,
-  //       address: _location.text,
-  //       categoryType: _selectedClothSubCategory,
-  //       brand: _brand.text,
-  //       make: _make,
-  //       model: _model.text,
-  //       year: int.tryParse(_year.text) ?? 0,
-  //       mileage: int.tryParse(_mileage.text) ?? 0,
-  //       emission: _emission,
-  //       doors: int.tryParse(_doors.text) ?? 0,
-  //       seats: int.tryParse(_seats.text) ?? 0,
-  //       vehiclesCategory: _selectedVehicleCategory,
-  //       bodyType: _selectedBodyType,
-  //       fuelType: _selectedEnergyRating,
-  //       interiorColor: _selectedVehicleColor,
-  //       exteriorColor: _selectedVehicleColor,
-  //       bedroom: int.tryParse(_bedroom.text) ?? 0,
-  //       bathroom: int.tryParse(_bathroom.text) ?? 0,
-  //       garden: _garden,
-  //       parking: _parking,
-  //       healthChecked: _healthChecked,
-  //       wormAndFleaTreated: _wormAndFleaTreated,
-  //       vaccinationUpToDate: _vaccinationUpToDate,
-  //       readyToLeave: _time,
-  //       age: _age,
-  //       breed: _breed,
-  //       petsCategory: _petCategory,
-  //       propertyCategory: _selectedPropertySubCategory,
-  //       tenureType: _tenureType,
-  //       availability: _availability,
-  //       collectionLocation: _selectedCollectionLocation,
-  //       meetUpLocation: _selectedMeetupLocation,
-  //       fileUrls: <AttachmentEntity>[]);
-  // }
-
   Future<void> reset() async {
     // Text fields
     _title.clear();
@@ -246,7 +171,6 @@ class AddListingFormProvider extends ChangeNotifier {
     _bedroom.clear();
     _bathroom.clear();
     _model.clear();
-    _brand.clear();
     _seats.clear();
     _doors.clear();
     _emission = null;
@@ -280,6 +204,7 @@ class AddListingFormProvider extends ChangeNotifier {
     _healthChecked = null;
 
     // Categories and selections
+    _brand = null;
     _selectedCategory = null;
     _breed = null;
     _petCategory = null;
@@ -371,7 +296,7 @@ class AddListingFormProvider extends ChangeNotifier {
     // -------------------------
     // Cloth-related fields
     // -------------------------
-    _brand.text = post?.clothFootInfo.brand ?? '';
+    _brand = post?.clothFootInfo.brand ?? '';
     _selectedClothSubCategory = post?.categoryType ?? '';
     _sizeColorEntities = post?.clothFootInfo.sizeColors ?? <SizeColorEntity>[];
 
@@ -386,10 +311,11 @@ class AddListingFormProvider extends ChangeNotifier {
     _emission = post?.vehicleInfo?.emission ?? '';
     _seats.text = post?.vehicleInfo?.seats?.toString() ?? '';
     _doors.text = post?.vehicleInfo?.doors?.toString() ?? '';
-    _year.text = post?.vehicleInfo?.year?.toString() ?? '';
+    _year = post?.vehicleInfo?.year?.toString() ?? '';
     _transmissionType = post?.vehicleInfo?.transmission ?? '';
     _selectedVehicleCategory = post?.vehicleInfo?.vehiclesCategory;
-    _selectedVehicleColor = post?.vehicleInfo?.exteriorColor;
+    _selectedVehicleColor =
+        LocalColors().getColor(post?.vehicleInfo?.exteriorColor ?? '');
     _selectedBodyType = post?.vehicleInfo?.bodyType ?? '';
     _selectedEnergyRating = post?.propertyInfo?.energyRating ?? '';
 
@@ -540,7 +466,7 @@ class AddListingFormProvider extends ChangeNotifier {
           category: _selectedCategory,
           currentLatitude: 1234,
           currentLongitude: 1234,
-          brand: brand.text,
+          brand: brand,
           sizeColor: _sizeColorEntities,
           type: selectedClothSubCategory);
       debugPrint(param.toMap().toString());
@@ -590,13 +516,13 @@ class AddListingFormProvider extends ChangeNotifier {
           category: _selectedCategory,
           type: selectedClothSubCategory,
           bodyType: _selectedBodyType,
-          color: _selectedVehicleColor,
+          color: _selectedVehicleColor?.value,
           doors: doors.text,
           emission: _emission,
           make: _make,
           model: model.text,
           seats: seats.text,
-          year: year.text,
+          year: year,
           vehicleCategory: _selectedVehicleCategory.toString(),
           currentLatitude: 1234,
           currentLongitude: 1234,
@@ -923,11 +849,18 @@ class AddListingFormProvider extends ChangeNotifier {
   void setSelectedClothSubCategory(String value) {
     _selectedClothSubCategory = value;
     _selectedCategory = null;
+    _sizeColorEntities = <SizeColorEntity>[];
+    _brand = null;
     notifyListeners();
   }
 
   void setSelectedPropertySubCategory(String value) {
     _selectedClothSubCategory = value;
+    notifyListeners();
+  }
+
+  void setBrand(String? value) {
+    _brand = value;
     notifyListeners();
   }
 
@@ -947,7 +880,7 @@ class AddListingFormProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setVehicleColor(String value) {
+  void setVehicleColor(ColorOptionEntity? value) {
     _selectedVehicleColor = value;
     notifyListeners();
   }
@@ -1054,6 +987,11 @@ class AddListingFormProvider extends ChangeNotifier {
     _make = value;
     notifyListeners();
   }
+
+  void setYear(String? value) {
+    _year = value;
+    notifyListeners();
+  }
 //?
 
   void setLoading(bool value) {
@@ -1063,7 +1001,7 @@ class AddListingFormProvider extends ChangeNotifier {
 
   void addOrUpdateSizeColorQuantity({
     required String size,
-    required String color,
+    required ColorOptionEntity color,
     required int quantity,
   }) {
     final int sizeIndex =
@@ -1078,10 +1016,11 @@ class AddListingFormProvider extends ChangeNotifier {
       if (colorIndex != -1) {
         // Update quantity for existing color
         existingSize.colors[colorIndex] =
-            ColorEntity(code: color, quantity: quantity);
+            ColorEntity(code: color.value, quantity: quantity);
       } else {
         // Add new color to existing size
-        existingSize.colors.add(ColorEntity(code: color, quantity: quantity));
+        existingSize.colors
+            .add(ColorEntity(code: color.value, quantity: quantity));
         debugPrint(existingSize.colors.first.code);
       }
 
@@ -1167,7 +1106,7 @@ class AddListingFormProvider extends ChangeNotifier {
   // Cloth and Foot
   String get selectedClothSubCategory => _selectedClothSubCategory;
   List<ColorOptionEntity> get colors => _colors;
-  String? get selectedVehicleColor => _selectedVehicleColor;
+  ColorOptionEntity? get selectedVehicleColor => _selectedVehicleColor;
   // Vehicle
   String? get transmissionType => _transmissionType;
   String? get fuelTYpe => _fuelType;
@@ -1177,7 +1116,7 @@ class AddListingFormProvider extends ChangeNotifier {
   String? get selectedBodyType => _selectedBodyType;
   String? get make => _make;
   TextEditingController get model => _model;
-  TextEditingController get year => _year;
+  String? get year => _year;
   String? get emission => _emission;
   TextEditingController get doors => _doors;
   TextEditingController get seats => _seats;
@@ -1205,7 +1144,7 @@ class AddListingFormProvider extends ChangeNotifier {
   //
   TextEditingController get title => _title;
   TextEditingController get description => _description;
-  TextEditingController get brand => _brand;
+  String? get brand => _brand;
   TextEditingController get price => _price;
   TextEditingController get quantity => _quantity;
   TextEditingController get minimumOffer => _minimumOffer;
@@ -1288,6 +1227,7 @@ class AddListingFormProvider extends ChangeNotifier {
   // Cloth and Foot
   String _selectedClothSubCategory = ListingType.clothAndFoot.cids.first;
   final List<ColorOptionEntity> _colors = <ColorOptionEntity>[];
+  String? _brand;
   // Vehicle
   String? _transmissionType;
   String? _fuelType;
@@ -1295,13 +1235,13 @@ class AddListingFormProvider extends ChangeNotifier {
   final TextEditingController _mileage = TextEditingController();
   String? _make;
   final TextEditingController _model = TextEditingController();
-  final TextEditingController _year = TextEditingController();
+  String? _year;
   String? _emission;
   final TextEditingController _doors = TextEditingController();
   final TextEditingController _seats = TextEditingController();
   final TextEditingController _location = TextEditingController();
   String? _selectedBodyType;
-  String? _selectedVehicleColor;
+  ColorOptionEntity? _selectedVehicleColor;
   String? _selectedMileageUnit;
   // Property
   final TextEditingController _bedroom = TextEditingController();
@@ -1335,7 +1275,6 @@ class AddListingFormProvider extends ChangeNotifier {
   final TextEditingController _price = TextEditingController(
     text: kDebugMode ? '100' : '',
   );
-  final TextEditingController _brand = TextEditingController();
   final TextEditingController _quantity = TextEditingController(text: '1');
   final TextEditingController _minimumOffer = TextEditingController(
     text: kDebugMode ? '50' : '',

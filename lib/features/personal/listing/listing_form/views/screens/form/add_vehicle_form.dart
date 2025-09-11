@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/editable_availablity_widget.dart';
@@ -50,9 +51,9 @@ class _AddVehicleFormState extends State<AddVehicleForm> {
               const AddListingBasicInfoSection(),
               CustomListingDropDown<AddListingFormProvider>(
                   validator: (bool? p0) => null,
-                  title: 'category',
+                  title: 'category'.tr(),
                   categoryKey: 'vehicles',
-                  hint: 'select_category',
+                  hint: 'select_category'.tr(),
                   selectedValue: formPro.selectedVehicleCategory,
                   onChanged: (String? p0) => formPro.setVehicleCategory(p0)),
               // SubCategorySelectableWidget(

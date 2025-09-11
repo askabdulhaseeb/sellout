@@ -10,6 +10,7 @@ class CustomDropdown<T> extends StatefulWidget {
     required this.selectedItem,
     required this.onChanged,
     required this.validator,
+    this.prefix,
     this.sufixIcon,
     this.prefixIcon,
     this.initialText = '',
@@ -27,6 +28,7 @@ class CustomDropdown<T> extends StatefulWidget {
   final T? selectedItem;
   final void Function(T?)? onChanged;
   final String? Function(bool?) validator;
+  final Widget? prefix;
   final bool? sufixIcon;
   final IconData? prefixIcon;
   final String? initialText;
@@ -89,16 +91,18 @@ class CustomDropdownState<T> extends State<CustomDropdown<T>> {
         child: const SizedBox(),
       ),
     );
-
-    if (selectedItem.value != null) {
-      final String text = widget.searchBy?.call(selectedItem) ??
-          (selectedItem.child is Text
-              ? (selectedItem.child as Text).data ?? ''
-              : selectedItem.value.toString());
-      _controller.text = text;
-    } else {
-      _controller.clear();
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      if (selectedItem.value != null) {
+        final String text = widget.searchBy?.call(selectedItem) ??
+            (selectedItem.child is Text
+                ? (selectedItem.child as Text).data ?? ''
+                : selectedItem.value.toString());
+        _controller.text = text;
+      } else {
+        _controller.clear();
+      }
+    });
   }
 
   String _getItemText(DropdownMenuItem<T> item) {
@@ -127,6 +131,14 @@ class CustomDropdownState<T> extends State<CustomDropdown<T>> {
     }
   }
 
+  void _refreshOverlay() {
+    if (_isDropdownOpen) {
+      _overlayEntry?.remove();
+      _overlayEntry = _createOverlayEntry();
+      Overlay.of(context).insert(_overlayEntry!);
+    }
+  }
+
   void _openDropdown() {
     if (_overlayEntry != null) return;
 
@@ -150,11 +162,31 @@ class CustomDropdownState<T> extends State<CustomDropdown<T>> {
   OverlayEntry _createOverlayEntry() {
     final RenderBox renderBox = context.findRenderObject() as RenderBox;
     final Size size = renderBox.size;
+    final Offset offset = renderBox.localToGlobal(Offset.zero);
+
+    final double screenHeight = MediaQuery.of(context).size.height;
+
+    final double spaceBelow = screenHeight - offset.dy - size.height;
+    final double spaceAbove = offset.dy;
+
+    // All items after filtering
+    final List<DropdownMenuItem<T>> filteredItems = _getFilteredItems();
+
+    // Each item height approx:
+    const double itemHeight = 48.0; // adjust if your tiles differ
+    final double calculatedHeight =
+        (filteredItems.length * itemHeight).clamp(0, 200.0); // never exceed 200
+
+    final bool showAbove =
+        spaceBelow < calculatedHeight && spaceAbove > spaceBelow;
+
+    // Instead of fixed 200, use actual calculatedHeight
+    final Offset dropdownOffset = showAbove
+        ? Offset(0, -calculatedHeight - 5.0)
+        : Offset(0, size.height + 5.0);
 
     return OverlayEntry(
       builder: (BuildContext context) {
-        final List<DropdownMenuItem<T>> filteredItems = _getFilteredItems();
-
         return Stack(
           children: <Widget>[
             // Tap outside to close
@@ -164,24 +196,25 @@ class CustomDropdownState<T> extends State<CustomDropdown<T>> {
                 behavior: HitTestBehavior.translucent,
               ),
             ),
-            // Dropdown itself
             Positioned(
               width: size.width,
               child: CompositedTransformFollower(
                 link: _layerLink,
                 showWhenUnlinked: false,
-                offset: Offset(0, size.height + 5.0),
+                offset: dropdownOffset,
                 child: Material(
                   elevation: 4.0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   color: Theme.of(context).scaffoldBackgroundColor,
+
+                  // 🔹 Animated size
                   child: AnimatedSize(
                     duration: const Duration(milliseconds: 250),
                     curve: Curves.easeInOut,
                     child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxHeight: 200),
+                      constraints: BoxConstraints(maxHeight: calculatedHeight),
                       child: filteredItems.isEmpty
                           ? Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -242,6 +275,7 @@ class CustomDropdownState<T> extends State<CustomDropdown<T>> {
           if (!_isDropdownOpen) _openDropdown();
         },
         child: CustomTextFormField(
+          prefix: widget.prefix,
           labelText: widget.title,
           prefixIcon:
               widget.prefixIcon != null ? Icon(widget.prefixIcon) : null,
@@ -267,12 +301,17 @@ class CustomDropdownState<T> extends State<CustomDropdown<T>> {
                 setState(() {
                   _dynamicItems = results;
                 });
-                if (_isDropdownOpen) _overlayEntry?.markNeedsBuild();
+                _refreshOverlay(); // always refresh after data changes
               });
             } else {
-              if (_isDropdownOpen) _overlayEntry?.markNeedsBuild();
+              _refreshOverlay(); // static case also refresh
             }
-            if (value.isEmpty && !_isDropdownOpen) _openDropdown();
+
+            if (value.isEmpty && !_isDropdownOpen) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) _openDropdown();
+              });
+            }
           },
         ),
       ),
