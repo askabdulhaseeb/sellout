@@ -1,30 +1,32 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../features/personal/listing/listing_form/data/sources/remote/colors_api.dart';
 import '../../features/personal/listing/listing_form/domain/entities/color_options_entity.dart';
-import '../../features/personal/listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../widgets/custom_dropdown.dart';
 
 class ColorDropdown extends StatefulWidget {
   const ColorDropdown({
-    required this.selectedColor,
     required this.onColorChanged,
     required this.validator,
+    this.selectedColor,
     this.colorRadius,
-    super.key,
     this.title = '',
-    this.padding,
+    super.key,
   });
 
-  final String? selectedColor;
-  final ValueChanged<String?> onColorChanged;
-  final double? colorRadius;
+  /// previously selected entity if available
+  final ColorOptionEntity? selectedColor;
+
+  /// returns the whole ColorOptionEntity
+  final ValueChanged<ColorOptionEntity?> onColorChanged;
+
+  /// validator for form field
   final String? Function(bool?) validator;
-  final EdgeInsetsGeometry? padding;
+  final double? colorRadius;
+  final String title;
+
   @override
   State<ColorDropdown> createState() => _ColorDropdownState();
-  final String title;
 }
 
 class _ColorDropdownState extends State<ColorDropdown> {
@@ -38,8 +40,6 @@ class _ColorDropdownState extends State<ColorDropdown> {
 
   @override
   Widget build(BuildContext context) {
-    final AddListingFormProvider formPro = Provider.of(context, listen: false);
-
     return FutureBuilder<List<ColorOptionEntity>>(
       future: _colorFuture,
       builder: (BuildContext context,
@@ -54,23 +54,42 @@ class _ColorDropdownState extends State<ColorDropdown> {
           return Text('error_loading_colors'.tr());
         }
 
-        List<ColorOptionEntity> colors = snapshot.data ?? <ColorOptionEntity>[];
-        colors = colors.where((ColorOptionEntity color) {
-          return color.tag.contains(formPro.selectedClothSubCategory);
-        }).toList();
+        final List<ColorOptionEntity> colors =
+            snapshot.data ?? <ColorOptionEntity>[];
 
         if (colors.isEmpty) {
           return Text('no_colors_available'.tr());
         }
 
-        return CustomDropdown<String>(
+        return CustomDropdown<ColorOptionEntity>(
+          prefix: widget.selectedColor == null
+              ? null
+              : Container(
+                  width: 20,
+                  padding: const EdgeInsets.only(right: 2.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      CircleAvatar(
+                        radius: widget.colorRadius ?? 6,
+                        backgroundColor: Color(
+                          int.parse(
+                              '0xFF${widget.selectedColor?.value.replaceAll('#', '')}'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+          searchBy: (DropdownMenuItem<ColorOptionEntity> item) {
+            return (item.value as ColorOptionEntity).label;
+          },
           title: widget.title,
-          validator: widget.validator,
           hint: 'color'.tr(),
           selectedItem: widget.selectedColor,
+          validator: widget.validator,
           items: colors.map((ColorOptionEntity color) {
-            return DropdownMenuItem<String>(
-              value: color.value,
+            return DropdownMenuItem<ColorOptionEntity>(
+              value: color,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[

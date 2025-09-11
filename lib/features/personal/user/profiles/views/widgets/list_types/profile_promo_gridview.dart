@@ -60,7 +60,7 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
         Provider.of<ProfileProvider>(context, listen: false);
 
     if (widget.user?.uid == null) {
-      return const Center(child: Text('user_not_found'));
+      return const SizedBox.shrink();
     }
 
     final GetPromoByIdUsecase getPromoByIdUsecase =

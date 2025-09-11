@@ -20,7 +20,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                 Expanded(
                   child: CustomListingDropDown<AddListingFormProvider>(
                     validator: (bool? p0) => null,
-                    hint: 'age',
+                    hint: 'age'.tr(),
                     categoryKey: 'age',
                     selectedValue: formPro.age,
                     title: 'age'.tr(),
@@ -31,7 +31,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                 Expanded(
                   child: CustomListingDropDown<AddListingFormProvider>(
                     validator: (bool? p0) => null,
-                    hint: 'ready_to_leave',
+                    hint: 'ready_to_leave'.tr(),
                     categoryKey: 'ready_to_leave',
                     selectedValue: formPro.time,
                     title: 'ready_to_leave'.tr(),
@@ -42,19 +42,20 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
             ),
             CustomListingDropDown<AddListingFormProvider>(
                 validator: (bool? p0) => null,
-                title: 'category',
-                hint: 'select_category',
+                title: 'category'.tr(),
+                hint: 'select_category'.tr(),
                 categoryKey: 'pets',
                 selectedValue: formPro.petCategory,
                 onChanged: (String? p0) => formPro.setPetCategory(p0)),
-            CustomListingDropDown<AddListingFormProvider>(
-                validator: (bool? p0) => null,
-                parentValue: formPro.petCategory,
-                title: 'breed',
-                hint: 'breed',
-                categoryKey: 'breed',
-                selectedValue: formPro.breed,
-                onChanged: (String? p0) => formPro.setPetBreed(p0)),
+            if (formPro.petCategory != null)
+              CustomListingDropDown<AddListingFormProvider>(
+                  validator: (bool? p0) => null,
+                  parentValue: formPro.petCategory,
+                  title: 'breed'.tr(),
+                  hint: 'breed'.tr(),
+                  categoryKey: 'breed',
+                  selectedValue: formPro.breed,
+                  onChanged: (String? p0) => formPro.setPetBreed(p0)),
             // LocationField(
             //   onLocationSelected: (LocationNameEntity location) async {
             //     final LatLng coords =

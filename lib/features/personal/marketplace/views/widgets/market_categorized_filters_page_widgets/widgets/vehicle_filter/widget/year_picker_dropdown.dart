@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../../../../../../../core/widgets/custom_dropdown.dart';
 
 class CustomYearDropdown extends StatefulWidget {
@@ -7,11 +6,13 @@ class CustomYearDropdown extends StatefulWidget {
     required this.selectedYear,
     required this.onChanged,
     super.key,
+    this.title = '',
     this.hintText,
     this.startYear = 1990,
   });
   final String? selectedYear;
   final ValueChanged<String?> onChanged;
+  final String title;
   final String? hintText;
   final int startYear;
 
@@ -39,7 +40,7 @@ class _CustomYearDropdownState extends State<CustomYearDropdown> {
   @override
   Widget build(BuildContext context) {
     return CustomDropdown<String>(
-        title: '',
+        title: widget.title,
         selectedItem: widget.selectedYear,
         hint: widget.hintText,
         items: _yearList
