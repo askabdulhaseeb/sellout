@@ -19,31 +19,17 @@ class VisitingMessageTile extends StatelessWidget {
   final MessageEntity message;
   final bool showButtons;
 
-  /// Returns a title and subtitle message based on the status
-  Map<String, String> _statusTexts(
-      StatusType status, String date, String time) {
+  /// Title changes according to status
+  String _statusTitle(StatusType status) {
     switch (status) {
-      case StatusType.active:
-        return <String, String>{
-          'title': tr('your_booking_details'),
-          'subtitle':
-              '${tr('you_are_booked_in_for_a_visiting_on')} $date $time\n${tr('we_looke_forward_to_seeing_you')}'
-        };
+      case StatusType.accepted:
+        return tr('you_are_booked_in_for_a_visiting');
       case StatusType.pending:
-        return <String, String>{
-          'title': tr('your_booking_pending'),
-          'subtitle': tr('we_will_notify_once_confirmed'),
-        };
+        return tr('booking_pending');
       case StatusType.cancelled:
-        return <String, String>{
-          'title': tr('your_booking_cancelled'),
-          'subtitle': tr('please_contact_support'),
-        };
+        return tr('booking_cancelled');
       default:
-        return <String, String>{
-          'title': tr('your_booking_rejected'),
-          'subtitle': tr('you_can_try_booking_again'),
-        };
+        return tr('booking_rejected');
     }
   }
 
@@ -63,10 +49,10 @@ class VisitingMessageTile extends StatelessWidget {
         final String time = message.visitingDetail?.visitingTime ?? '';
         final String meet = post?.meetUpLocation?.address ?? '';
         final StatusType status =
-            message.visitingDetail?.status ?? StatusType.inActive;
-
-        final Map<String, String> texts = _statusTexts(status, date, time);
-
+            message.visitingDetail?.status ?? StatusType.pending;
+        // dynamic title & one subtitle
+        final String statusTitle = _statusTitle(status);
+        final String subtitle = tr('your_booking_details');
         return Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
@@ -76,17 +62,18 @@ class VisitingMessageTile extends StatelessWidget {
                   : ColorScheme.of(context).outlineVariant,
             ),
           ),
-          margin: EdgeInsets.all(showButtons ? 0 : 12),
-          padding: const EdgeInsets.all(16),
+          margin: EdgeInsets.all(showButtons ? 0 : 4),
+          padding: showButtons
+              ? const EdgeInsets.symmetric(horizontal: 16)
+              : const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               if (showButtons)
                 VisitingMessageTileUpdateButtonsWidget(
                     message: message, post: post),
-              // Status text block — centered
               Text(
-                texts['title'] ?? '',
+                subtitle,
                 textAlign: TextAlign.center,
                 style: Theme.of(context)
                     .textTheme
@@ -94,14 +81,14 @@ class VisitingMessageTile extends StatelessWidget {
                     ?.copyWith(fontWeight: FontWeight.w600),
               ),
               Text(
-                texts['subtitle'] ?? '',
+                statusTitle,
                 textAlign: TextAlign.center,
                 style: Theme.of(context)
                     .textTheme
                     .bodySmall
                     ?.copyWith(color: Colors.black87),
               ),
-              // Image + Details — nicely spaced
+              const SizedBox(height: 8),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -116,6 +103,7 @@ class VisitingMessageTile extends StatelessWidget {
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text('${'date'.tr()}: $date',
@@ -134,10 +122,8 @@ class VisitingMessageTile extends StatelessWidget {
                   ),
                 ],
               ),
-
-              const SizedBox(height: 16),
-
-              // Title + Price — centered horizontally
+              const SizedBox(height: 6),
+              // Title + Price row
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -146,15 +132,18 @@ class VisitingMessageTile extends StatelessWidget {
                       title,
                       style: Theme.of(context)
                           .textTheme
-                          .titleMedium
+                          .titleSmall
                           ?.copyWith(fontWeight: FontWeight.w600),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   Text(
                     '${CountryHelper.currencySymbolHelper(currency)} $price',
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 15),
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleSmall
+                        ?.copyWith(fontWeight: FontWeight.w600),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),

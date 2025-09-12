@@ -34,13 +34,8 @@ class _AddListingFormScreenState extends State<AddListingFormScreen> {
               onPressed: () => Navigator.pop(context),
               color: AppTheme.primaryColor,
             ),
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                AppBarTitle(
-                  titleKey: 'start_listing'.tr(),
-                ),
-              ],
+            title: const AppBarTitle(
+              titleKey: 'start_listing',
             ),
             elevation: 0,
             scrolledUnderElevation: 0,

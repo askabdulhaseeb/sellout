@@ -1,7 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/functions/app_log.dart';
+import '../../../../core/widgets/empty_page_widget.dart';
 import '../../../../core/widgets/loaders/loader.dart';
 import '../../domain/entities/picked_attachment_option.dart';
 import '../providers/picked_media_provider.dart';
@@ -21,100 +24,186 @@ class PickableAttachmentScreen extends StatefulWidget {
 }
 
 class _PickableAttachmentScreenState extends State<PickableAttachmentScreen> {
-  // Prompt
-  // In Flutter, I want to display the whole gallary in a screen like whatsapp,
-  // from where user can pick media, but i also don't want to crash the
-  // application as there are alot of photos in the gallary,
-  // how can i display that images, videos, document, audio or any type of
-  // media file from local storage
-
   final int _pageSize = 60;
   final List<AssetEntity> _mediaList = <AssetEntity>[];
-  bool _isLoading = true;
+  bool _permissionDenied = false;
+  AssetPathEntity? _currentAlbum;
+  bool _initialLoading = true;
+  bool _loadingMore = false;
   int _currentPage = 0;
-  int _lastPage = 0;
+  late ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
     Provider.of<PickedMediaProvider>(context, listen: false)
         .setOption(context, widget.option);
+
+    _scrollController = ScrollController()..addListener(_onScroll);
+
     _requestPermissionAndLoad();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 300) {
+      _loadMoreMedia();
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
   }
 
   Future<void> _requestPermissionAndLoad() async {
     final PermissionState ps = await PhotoManager.requestPermissionExtend();
     if (ps.isAuth) {
-      AppLog.info(
-        'Permission granted',
-        name: 'PickableAttachmentScreen._requestPermissionAndLoad - if',
+      setState(() => _permissionDenied = false);
+
+      final List<AssetPathEntity> albums = await PhotoManager.getAssetPathList(
+        type: widget.option.type.requestType,
+        filterOption: FilterOptionGroup(
+          imageOption: const FilterOption(
+            sizeConstraint: SizeConstraint(minWidth: 100, minHeight: 100),
+          ),
+          videoOption: FilterOption(
+            sizeConstraint: const SizeConstraint(minWidth: 100, minHeight: 100),
+            durationConstraint:
+                DurationConstraint(max: widget.option.maxVideoDuration),
+          ),
+          orders: const <OrderOption>[
+            OrderOption(type: OrderOptionType.createDate, asc: false)
+          ],
+        ),
       );
-      _loadMoreMedia();
+
+      if (albums.isNotEmpty) {
+        _currentAlbum = albums.first;
+        _loadMoreMedia(initial: true);
+      } else {
+        setState(() => _initialLoading = false);
+      }
     } else {
-      // TODO: Handle permission denied
-      AppLog.error(
-        'Permission denied',
-        name: 'PickableAttachmentScreen._requestPermissionAndLoad - else',
-        error: ps,
-      );
-      // Handle permission denied
+      setState(() {
+        _permissionDenied = true;
+        _initialLoading = false;
+      });
+      AppLog.error('Permission denied');
     }
   }
 
-  Future<void> _loadMoreMedia() async {
-    if (_currentPage == _lastPage && !_isLoading) return;
-    RequestType type = widget.option.type.requestType;
-    AppLog.info(
-      'Selected type: $type',
-      name: 'PickableAttachmentScreen._loadMoreMedia',
-    );
-    final List<AssetPathEntity> albums = await PhotoManager.getAssetPathList(
-      type: type,
-      filterOption: FilterOptionGroup(
-        imageOption: const FilterOption(
-          sizeConstraint: SizeConstraint(
-            minWidth: 100,
-            minHeight: 100,
-          ),
-        ),
-        videoOption: FilterOption(
-          sizeConstraint: const SizeConstraint(
-            minWidth: 100,
-            minHeight: 100,
-          ),
-          durationConstraint:
-              DurationConstraint(max: widget.option.maxVideoDuration),
-        ),
-        orders: <OrderOption>[
-          const OrderOption(type: OrderOptionType.createDate, asc: false),
-        ],
-      ),
-    );
-    AppLog.info(
-      'Step 2 - Load more media',
-      name: 'PickableAttachmentScreen._loadMoreMedia',
-    );
-    try {
-      final List<AssetEntity> media = await albums[0]
-          .getAssetListPaged(page: _currentPage, size: _pageSize);
-      final int totalImages = await albums[0].assetCountAsync;
-      _mediaList.addAll(media);
-      _currentPage++;
-      _lastPage = (totalImages / _pageSize).ceil();
-    } catch (e) {
-      AppLog.error(
-        'PickableAttachmentScreen:_loadMoreMedia  $e',
-        name: 'PickableAttachmentScreen._loadMoreMedia - catch',
-        error: e,
-      );
+  Future<void> _loadMoreMedia({bool initial = false}) async {
+    if (_currentAlbum == null) return;
+
+    if (initial) {
+      setState(() {
+        _initialLoading = true;
+        _currentPage = 0;
+        _mediaList.clear();
+      });
+    } else {
+      if (_loadingMore) return;
+      setState(() => _loadingMore = true);
     }
+
+    try {
+      final List<AssetEntity> newMedia = await _currentAlbum!
+          .getAssetListPaged(page: _currentPage, size: _pageSize);
+
+      if (newMedia.isEmpty) {
+        setState(() {
+          _loadingMore = false;
+          _initialLoading = false;
+        });
+        return;
+      }
+
+      // Avoid duplicates
+      final Set<String> existingIds =
+          _mediaList.map((AssetEntity e) => e.id).toSet();
+      _mediaList.addAll(
+          newMedia.where((AssetEntity m) => !existingIds.contains(m.id)));
+
+      _currentPage++;
+    } catch (e, s) {
+      AppLog.error('Error loading media: $e', name: 'loadMore', error: s);
+    }
+
     setState(() {
-      _isLoading = false;
+      _loadingMore = false;
+      _initialLoading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    Widget body;
+
+    if (_permissionDenied) {
+      body = EmptyPageWidget(
+        icon: Icons.no_photography_rounded,
+        childBelow: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              style: Theme.of(context).textTheme.bodyMedium,
+              children: <InlineSpan>[
+                TextSpan(
+                  text: tr('permission_gallery_title'),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+                TextSpan(
+                  text: tr('permission_gallery_body'),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+                TextSpan(
+                  text: '\n${tr('permission_gallery_grant')}',
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    decoration: TextDecoration.underline,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () => PhotoManager.openSetting(),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    } else if (_initialLoading) {
+      // Can replace with shimmer loader if you have it
+      body = const Center(child: Loader());
+    } else if (_mediaList.isEmpty) {
+      body = EmptyPageWidget(
+          icon: Icons.no_photography_rounded,
+          childBelow: Text('no_data_found'.tr()));
+    } else {
+      body = SizedBox(
+        child: GridView.builder(
+          shrinkWrap: true,
+          controller: _scrollController,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            crossAxisSpacing: 2,
+            mainAxisSpacing: 2,
+          ),
+          itemCount: _mediaList.length,
+          itemBuilder: (BuildContext context, int index) {
+            final AssetEntity media = _mediaList[index];
+            return PickedMediaDisplayTile(media: media);
+          },
+        ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -128,33 +217,7 @@ class _PickableAttachmentScreenState extends State<PickableAttachmentScreen> {
           ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: Loader())
-          : NotificationListener<ScrollNotification>(
-              onNotification: (ScrollNotification scrollInfo) {
-                if (!_isLoading &&
-                    scrollInfo.metrics.pixels ==
-                        scrollInfo.metrics.maxScrollExtent) {
-                  _loadMoreMedia();
-                }
-                return false;
-              },
-              child: _mediaList.isEmpty
-                  ? const Center(child: Text('Not Found'))
-                  : GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 2,
-                        mainAxisSpacing: 2,
-                      ),
-                      itemCount: _mediaList.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final AssetEntity media = _mediaList[index];
-                        return PickedMediaDisplayTile(media: media);
-                      },
-                    ),
-            ),
+      body: body,
     );
   }
 }
