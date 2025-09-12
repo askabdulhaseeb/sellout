@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import '../../../chat_dashboard/data/models/chat/chat_model.dart';
 import '../../../chat_dashboard/data/sources/local/local_unseen_messages.dart';
@@ -22,9 +23,33 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
+
     Future<void>.delayed(const Duration(milliseconds: 300), () {
       Provider.of<ChatProvider>(context, listen: false).getMessages();
     });
+
+    scrollController.addListener(() {
+      final ChatProvider pro =
+          Provider.of<ChatProvider>(context, listen: false);
+
+      if (scrollController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        if (pro.showPinnedMessage) {
+          pro.setPinnedMessageVisibility(false);
+        }
+      } else if (scrollController.position.userScrollDirection ==
+          ScrollDirection.forward) {
+        if (!pro.showPinnedMessage) {
+          pro.setPinnedMessageVisibility(true);
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -35,37 +60,23 @@ class _ChatScreenState extends State<ChatScreen> {
 
         return PopScope(
           onPopInvokedWithResult: (bool didPop, Object? result) {
-            LocalUnreadMessagesService().clearCount(chat.chatId);
+            LocalUnreadMessagesService().clearCount(chat?.chatId ?? '');
           },
           child: Scaffold(
-            resizeToAvoidBottomInset: true, // ✅ lets body move with keyboard
+            resizeToAvoidBottomInset: true,
             appBar: chatAppBar(context),
-            body: GestureDetector(
-              onVerticalDragEnd: (DragEndDetails details) {
-                if (details.primaryVelocity! < 0) {
-                  // Swipe up
-                  if (pro.showPinnedMessage) {
-                    pro.setPinnedMessageVisibility(false);
-                  }
-                } else if (details.primaryVelocity! > 0) {
-                  // Swipe down
-                  if (!pro.showPinnedMessage) {
-                    pro.setPinnedMessageVisibility(true);
-                  }
-                }
-              },
-              child: Column(
-                children: <Widget>[
+            body: Column(
+              children: <Widget>[
+                if (pro.showPinnedMessage)
                   ChatPinnedMessage(chatId: chat!.chatId),
-                  Expanded(
-                    child: MessagesList(
-                      chat: chat,
-                      controller: scrollController,
-                    ),
+                Expanded(
+                  child: MessagesList(
+                    chat: chat,
+                    controller: scrollController,
                   ),
-                  const ChatInteractionPanel(),
-                ],
-              ),
+                ),
+                const ChatInteractionPanel(),
+              ],
             ),
           ),
         );
