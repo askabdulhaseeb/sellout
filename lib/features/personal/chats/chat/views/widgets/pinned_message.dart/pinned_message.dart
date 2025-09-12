@@ -7,7 +7,6 @@ import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart'
 import '../../providers/chat_provider.dart';
 import '../message/tile/offer_message_tile.dart';
 import '../message/tile/visiting_message_tile.dart';
-import 'widgets/shape_borders/visiting_tile_handle_border.dart.dart';
 
 class ChatPinnedMessage extends StatelessWidget {
   const ChatPinnedMessage({
@@ -110,43 +109,23 @@ class _VisitingMessageTileAnimatedState
         return PopScope(
           onPopInvokedWithResult: (bool didPop, dynamic result) =>
               pro.resetPinnedMessageExpandedState(),
-          child: AnimatedContainer(
-            height: pro.showPinnedMessage ? null : 0,
-            duration: const Duration(microseconds: 1000),
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: <Widget>[
-                Material(
-                  shape: const VisitileTileWithHandleBorder(),
-                  elevation: pro.showPinnedMessage ? 0 : 0,
-                  color: Theme.of(context).primaryColor,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 30),
-                    child: VisitingMessageTile(
-                      collapsable: true,
-                      message: widget.message,
-                      showButtons: true,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 5,
-                  right: 20,
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    onTap: () {
-                      debugPrint('visiting pinned tile expand/collapse');
-                      pro.setPinnedMessageExpandedState();
-                    },
-                    child: const Icon(
-                      Icons.keyboard_double_arrow_down_outlined,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          child: Column(
+            children: [
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                height: 1,
+                color: Theme.of(context).dividerColor,
+              ),
+              VisitingMessageTile(
+                message: widget.message,
+                showButtons: true,
+              ),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                height: 1,
+                color: Theme.of(context).dividerColor,
+              ),
+            ],
           ),
         );
       },

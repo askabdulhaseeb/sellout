@@ -112,7 +112,7 @@ class CancelAndChangeButtons extends StatelessWidget {
             if (!cancellationTimeOver)
               Expanded(
                 child: CustomElevatedButton(
-                  margin: const EdgeInsets.all(4),
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
                   padding: const EdgeInsets.all(4),
                   bgColor: Colors.transparent,
                   border: Border.all(color: Theme.of(context).primaryColor),
@@ -136,7 +136,7 @@ class CancelAndChangeButtons extends StatelessWidget {
             Expanded(
               child: CustomElevatedButton(
                 padding: const EdgeInsets.all(4),
-                margin: const EdgeInsets.all(4),
+                margin: const EdgeInsets.symmetric(horizontal: 4),
                 title: 'change_date'.tr(),
                 isLoading: false,
                 textStyle: TextStyle(

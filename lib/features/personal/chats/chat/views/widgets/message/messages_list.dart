@@ -40,9 +40,8 @@ class _MessagesListState extends State<MessagesList> {
     final double current = widget.controller.position.pixels;
     final double bottom = widget.controller.position.maxScrollExtent;
 
-    // ✅ only auto-scroll if user is near the bottom (within 100px)
     if (bottom - current < 100) {
-      Future.delayed(const Duration(milliseconds: 100), () {
+      Future<void>.delayed(const Duration(milliseconds: 100), () {
         if (widget.controller.hasClients) {
           widget.controller.animateTo(
             widget.controller.position.maxScrollExtent,
@@ -60,17 +59,17 @@ class _MessagesListState extends State<MessagesList> {
     final String? chatId = chatProvider.chat?.chatId;
 
     if (chatId == null) {
-      return Center(
-        child: EmptyPageWidget(
-          icon: CupertinoIcons.chat_bubble_2,
-          childBelow: const Text('no_messages_yet').tr(),
+      return Expanded(
+        child: SingleChildScrollView(
+          child: EmptyPageWidget(
+            icon: CupertinoIcons.chat_bubble_2,
+            childBelow: const Text('no_messages_yet').tr(),
+          ),
         ),
       );
     }
-
     final Box<GettedMessageEntity> box =
         Hive.box<GettedMessageEntity>(AppStrings.localChatMessagesBox);
-
     return ValueListenableBuilder<Box<GettedMessageEntity>>(
       valueListenable: box.listenable(keys: <dynamic>[chatId]),
       builder: (BuildContext context, Box<GettedMessageEntity> box, _) {
@@ -78,12 +77,13 @@ class _MessagesListState extends State<MessagesList> {
         final List<MessageEntity> messages = stored == null
             ? <MessageEntity>[]
             : chatProvider.getFilteredMessages(stored);
-
         if (messages.isEmpty) {
-          return Center(
-            child: EmptyPageWidget(
-              icon: CupertinoIcons.chat_bubble_2,
-              childBelow: const Text('no_messages_yet').tr(),
+          return Expanded(
+            child: SingleChildScrollView(
+              child: EmptyPageWidget(
+                icon: CupertinoIcons.chat_bubble_2,
+                childBelow: const Text('no_messages_yet').tr(),
+              ),
             ),
           );
         }
