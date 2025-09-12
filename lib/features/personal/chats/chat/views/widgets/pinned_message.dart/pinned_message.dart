@@ -101,32 +101,35 @@ class VisitingMessageTileAnimated extends StatefulWidget {
 }
 
 class _VisitingMessageTileAnimatedState
-    extends State<VisitingMessageTileAnimated> {
+    extends State<VisitingMessageTileAnimated> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Consumer<ChatProvider>(
       builder: (BuildContext context, ChatProvider pro, _) {
-        return PopScope(
-          onPopInvokedWithResult: (bool didPop, dynamic result) =>
-              pro.resetPinnedMessageExpandedState(),
-          child: Column(
-            children: [
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                height: 1,
-                color: Theme.of(context).dividerColor,
-              ),
-              VisitingMessageTile(
-                message: widget.message,
-                showButtons: true,
-              ),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                height: 1,
-                color: Theme.of(context).dividerColor,
-              ),
-            ],
-          ),
+        return AnimatedSize(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          alignment: Alignment.topCenter,
+          child: pro.showPinnedMessage
+              ? Column(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      height: 1,
+                      color: Theme.of(context).dividerColor,
+                    ),
+                    VisitingMessageTile(
+                      message: widget.message,
+                      showButtons: true,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      height: 1,
+                      color: Theme.of(context).dividerColor,
+                    ),
+                  ],
+                )
+              : const SizedBox.shrink(), // hidden state
         );
       },
     );

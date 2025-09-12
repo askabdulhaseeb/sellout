@@ -49,7 +49,7 @@ class MessageTile extends StatelessWidget {
                               style: TextStyle(
                                 color: Theme.of(context)
                                     .textTheme
-                                    .bodyLarge!
+                                    .bodySmall!
                                     .color,
                                 fontWeight: FontWeight.bold,
                               ),

@@ -31,16 +31,17 @@ class _ChatScreenState extends State<ChatScreen> {
     scrollController.addListener(() {
       final ChatProvider pro =
           Provider.of<ChatProvider>(context, listen: false);
-
-      if (scrollController.position.userScrollDirection ==
-          ScrollDirection.reverse) {
-        if (pro.showPinnedMessage) {
-          pro.setPinnedMessageVisibility(false);
-        }
-      } else if (scrollController.position.userScrollDirection ==
-          ScrollDirection.forward) {
-        if (!pro.showPinnedMessage) {
-          pro.setPinnedMessageVisibility(true);
+      if (pro.chat?.type == ChatType.product) {
+        if (scrollController.position.userScrollDirection ==
+            ScrollDirection.reverse) {
+          if (pro.showPinnedMessage) {
+            pro.setPinnedMessageVisibility(false);
+          }
+        } else if (scrollController.position.userScrollDirection ==
+            ScrollDirection.forward) {
+          if (!pro.showPinnedMessage) {
+            pro.setPinnedMessageVisibility(true);
+          }
         }
       }
     });
@@ -57,18 +58,16 @@ class _ChatScreenState extends State<ChatScreen> {
     return Consumer<ChatProvider>(
       builder: (BuildContext context, ChatProvider pro, _) {
         final ChatEntity? chat = pro.chat;
-
         return PopScope(
           onPopInvokedWithResult: (bool didPop, Object? result) {
-            LocalUnreadMessagesService().clearCount(chat?.chatId ?? '');
+            LocalUnreadMessagesService().clearCount(chat.chatId);
           },
           child: Scaffold(
             resizeToAvoidBottomInset: true,
             appBar: chatAppBar(context),
             body: Column(
               children: <Widget>[
-                if (pro.showPinnedMessage)
-                  ChatPinnedMessage(chatId: chat!.chatId),
+                ChatPinnedMessage(chatId: chat!.chatId),
                 Expanded(
                   child: MessagesList(
                     chat: chat,

@@ -24,32 +24,23 @@ class EmptyPageWidget extends StatelessWidget {
           width: double.infinity,
           height: 20,
         ),
-        Stack(
-          alignment: Alignment.center,
-          children: <Widget>[
-            // Big faint circle
-            Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: backgroundColor.withValues(alpha: 0.15),
-              ),
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: backgroundColor.withValues(alpha: 0.15),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: backgroundColor.withValues(alpha: 0.1),
             ),
-            // Smaller solid circle with icon
-            Container(
-              width: 90,
-              height: 90,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: backgroundColor.withValues(alpha: 0.1),
-              ),
-              child: Icon(icon, color: iconColor, size: 40),
-            ),
-          ],
+            child: Icon(icon, color: iconColor, size: 40),
+          ),
         ),
         if (childBelow != null) ...<Widget>[
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           childBelow!,
         ],
       ],

@@ -99,18 +99,17 @@ class _MessagesListState extends State<MessagesList> {
               : const Duration(days: 5);
           timeDiffMap[current.messageId] = diff;
         }
-
         // Build widgets (chat messages with labels)
         final List<Widget> widgets =
             DateLabelHelper.buildLabeledWidgets(messages, timeDiffMap);
-
         // ✅ Scroll when new messages arrive
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _scrollToBottomIfNeeded();
         });
-
         return Expanded(
           child: ListView.builder(
+            physics: const BouncingScrollPhysics(),
+            cacheExtent: 50,
             controller: widget.controller,
             itemCount: widgets.length,
             itemBuilder: (BuildContext context, int index) {

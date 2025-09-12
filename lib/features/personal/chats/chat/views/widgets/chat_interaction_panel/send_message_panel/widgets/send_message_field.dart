@@ -12,6 +12,9 @@ class SendMessageFIeld extends StatelessWidget {
     return Consumer<SendMessageProvider>(
       builder: (_, SendMessageProvider msgPro, __) {
         return CustomTextFormField(
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+          dense: true,
           keyboardType: TextInputType.multiline,
           autoFocus: true,
           controller: msgPro.message,

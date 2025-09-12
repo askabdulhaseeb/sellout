@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   static const Color primaryColor = Color(0xFFBF1017);
-  static const Color lightPrimary = Color.fromARGB(255, 249, 222, 222);
+  static Color lightPrimary = primaryColor.withValues(alpha: 0.05);
   static const Color secondaryColor = Color(0xFF00B49E);
   static const Color outlineVarient = Color(0XFFE1E1E1);
   // static const Color accentColor = Color(0xFF00B49E);
@@ -28,7 +28,7 @@ class AppTheme {
       textTheme: const TextTheme(
         titleLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
       ),
-      dividerColor: const Color(0xFFF0F0F0),
+      dividerColor: const Color(0xFFF7F7F7),
       useMaterial3: true,
       appBarTheme: const AppBarTheme(
         backgroundColor: lightScaffldColor,
