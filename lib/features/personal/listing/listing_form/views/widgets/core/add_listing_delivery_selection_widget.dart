@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../../core/theme/app_theme.dart';
+import '../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../location/domain/enums/map_display_mode.dart';
 import '../../../../../location/view/widgets/location_field.dart/nomination_location_wrapper.dart';
@@ -57,12 +58,11 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
                         prefixText:
                             LocalAuth.currentUser?.currency?.toUpperCase(),
                         contentPadding: EdgeInsets.zero,
-                        validator: (String? value) => (value?.isEmpty ?? true)
-                            ? 'local_delivery_fee_is_required'.tr()
-                            : null,
+                        validator: (String? value) =>
+                            AppValidator.isEmpty(value),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 4),
                     Expanded(
                       child: CustomTextFormField(
                         controller: formPro.internationalDeliveryFee,
@@ -71,9 +71,8 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
                         prefixText:
                             LocalAuth.currentUser?.currency?.toUpperCase(),
                         contentPadding: EdgeInsets.zero,
-                        validator: (String? value) => (value?.isEmpty ?? true)
-                            ? 'international_delivery_fee_is_required'.tr()
-                            : null,
+                        validator: (String? value) =>
+                            AppValidator.isEmpty(value),
                       ),
                     ),
                   ],
@@ -149,7 +148,7 @@ class _DeliveryTile extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                   color: isSelected ? AppTheme.primaryColor : null),
             ),
-            Text(subtitle.tr(),
+            Text(subtitle,
                 style: TextTheme.of(context).labelSmall?.copyWith(
                     fontWeight: FontWeight.w400,
                     color: ColorScheme.of(context).outline)),

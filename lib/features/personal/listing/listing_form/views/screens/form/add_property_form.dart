@@ -43,17 +43,18 @@ class _AddPropertyFormState extends State<AddPropertyForm> {
         }
         return Form(
           key: formPro.propertyKey,
-          child: ListView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            children: <Widget>[
-              const AddListingBasicInfoSection(),
-              const AddListingPropertyBedBathWidget(),
-              const AddPropertyGPAWidget(),
-              const AddListingConditionOfferSection(),
-              const EditableAvailabilityWidget(),
-              if (formPro.post == null) const AddListingPostButtonWidget(),
-              if (formPro.post != null) const AddListingUpdateButtons(),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                const AddListingBasicInfoSection(),
+                const AddListingPropertyBedBathWidget(),
+                const AddPropertyGPAWidget(),
+                const AddListingConditionOfferSection(),
+                const EditableAvailabilityWidget(),
+                if (formPro.post == null) const AddListingPostButtonWidget(),
+                if (formPro.post != null) const AddListingUpdateButtons(),
+              ],
+            ),
           ),
         );
       },

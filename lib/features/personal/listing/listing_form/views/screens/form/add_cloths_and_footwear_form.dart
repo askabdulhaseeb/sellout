@@ -48,26 +48,27 @@ class _AddClothsAndFootwearFormState extends State<AddClothsAndFootwearForm> {
         }
         return Form(
           key: formPro.clothesAndFootKey,
-          child: ListView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            children: <Widget>[
-              const AddListingBasicInfoSection(),
-              const AddListingClothSubcatSelectionSection(),
-              SubCategorySelectableWidget<AddListingFormProvider>(
-                listType: formPro.listingType,
-                subCategory: formPro.selectedCategory,
-                onSelected: formPro.setSelectedCategory,
-                cid: formPro.selectedClothSubCategory,
-              ),
-              const AddListingSizeColorWidget(),
-              const AddListingBrandField(),
-              const AddListingPriceAndQuantityWidget(readOnly: true),
-              const AddListingDiscountSection(),
-              const AddListingConditionOfferSection(),
-              const AddListingDeliverySelectionWidget(),
-              if (formPro.post == null) const AddListingPostButtonWidget(),
-              if (formPro.post != null) const AddListingUpdateButtons(),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                const AddListingBasicInfoSection(),
+                const AddListingClothSubcatSelectionSection(),
+                SubCategorySelectableWidget<AddListingFormProvider>(
+                  listType: formPro.listingType,
+                  subCategory: formPro.selectedCategory,
+                  onSelected: formPro.setSelectedCategory,
+                  cid: formPro.selectedClothSubCategory,
+                ),
+                const AddListingSizeColorWidget(),
+                const AddListingBrandField(),
+                const AddListingPriceAndQuantityWidget(readOnly: true),
+                const AddListingDiscountSection(),
+                const AddListingConditionOfferSection(),
+                const AddListingDeliverySelectionWidget(),
+                if (formPro.post == null) const AddListingPostButtonWidget(),
+                if (formPro.post != null) const AddListingUpdateButtons(),
+              ],
+            ),
           ),
         );
       },

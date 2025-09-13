@@ -44,22 +44,23 @@ class _AddFoodAndDrinkFormState extends State<AddFoodAndDrinkForm> {
         }
         return Form(
           key: formPro.foodAndDrinkKey,
-          child: ListView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            children: <Widget>[
-              const AddListingBasicInfoSection(),
-              SubCategorySelectableWidget<AddListingFormProvider>(
-                listType: formPro.listingType,
-                subCategory: formPro.selectedCategory,
-                onSelected: formPro.setSelectedCategory,
-              ),
-              const AddListingPriceAndQuantityWidget(),
-              const AddListingConditionOfferSection(),
-              const AddListingDiscountSection(),
-              const AddListingDeliverySelectionWidget(),
-              if (formPro.post == null) const AddListingPostButtonWidget(),
-              if (formPro.post != null) const AddListingUpdateButtons(),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                const AddListingBasicInfoSection(),
+                SubCategorySelectableWidget<AddListingFormProvider>(
+                  listType: formPro.listingType,
+                  subCategory: formPro.selectedCategory,
+                  onSelected: formPro.setSelectedCategory,
+                ),
+                const AddListingPriceAndQuantityWidget(),
+                const AddListingConditionOfferSection(),
+                const AddListingDiscountSection(),
+                const AddListingDeliverySelectionWidget(),
+                if (formPro.post == null) const AddListingPostButtonWidget(),
+                if (formPro.post != null) const AddListingUpdateButtons(),
+              ],
+            ),
           ),
         );
       },

@@ -45,29 +45,30 @@ class _AddVehicleFormState extends State<AddVehicleForm> {
         }
         return Form(
           key: formPro.vehicleKey,
-          child: ListView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            children: <Widget>[
-              const AddListingBasicInfoSection(),
-              CustomListingDropDown<AddListingFormProvider>(
-                  validator: (bool? p0) => null,
-                  title: 'category'.tr(),
-                  categoryKey: 'vehicles',
-                  hint: 'select_category'.tr(),
-                  selectedValue: formPro.selectedVehicleCategory,
-                  onChanged: (String? p0) => formPro.setVehicleCategory(p0)),
-              // SubCategorySelectableWidget(
-              //   listType: formPro.listingType,
-              //   subCategory: formPro.selectedCategory,
-              //   onSelected: formPro.setSelectedCategory,
-              // ),
-              const AddListingVehicleBasicInfoSection(),
-              const AddListingVehicleTernsmissionEngineMileageSection(),
-              const AddListingConditionOfferSection(),
-              const EditableAvailabilityWidget(),
-              if (formPro.post == null) const AddListingPostButtonWidget(),
-              if (formPro.post != null) const AddListingUpdateButtons(),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                const AddListingBasicInfoSection(),
+                CustomListingDropDown<AddListingFormProvider>(
+                    validator: (bool? p0) => null,
+                    title: 'category'.tr(),
+                    categoryKey: 'vehicles',
+                    hint: 'select_category'.tr(),
+                    selectedValue: formPro.selectedVehicleCategory,
+                    onChanged: (String? p0) => formPro.setVehicleCategory(p0)),
+                // SubCategorySelectableWidget(
+                //   listType: formPro.listingType,
+                //   subCategory: formPro.selectedCategory,
+                //   onSelected: formPro.setSelectedCategory,
+                // ),
+                const AddListingVehicleBasicInfoSection(),
+                const AddListingVehicleTernsmissionEngineMileageSection(),
+                const AddListingConditionOfferSection(),
+                const EditableAvailabilityWidget(),
+                if (formPro.post == null) const AddListingPostButtonWidget(),
+                if (formPro.post != null) const AddListingUpdateButtons(),
+              ],
+            ),
           ),
         );
       },

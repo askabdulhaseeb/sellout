@@ -20,8 +20,7 @@ class AddListingBasicInfoSection extends StatelessWidget {
               labelText: 'what_are_you_selling'.tr(),
               hint: 'enter_product_name'.tr(),
               showSuffixIcon: true,
-              validator: (String? value) =>
-                  AppValidator.isEmpty(formPro.title.text),
+              validator: (String? value) => AppValidator.isEmpty(value),
             ),
             const SizedBox(height: 16),
             const AddListingAttachmentSelectionWidget(),
@@ -31,10 +30,8 @@ class AddListingBasicInfoSection extends StatelessWidget {
               hint: 'enter_product_description'.tr(),
               isExpanded: true,
               maxLines: 5,
-              showSuffixIcon: false,
               labelText: 'describe_product'.tr(),
-              validator: (String? value) =>
-                  AppValidator.isEmpty(formPro.title.text),
+              validator: (String? value) => AppValidator.isEmpty(value),
             ),
           ],
         );
