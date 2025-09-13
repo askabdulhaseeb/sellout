@@ -37,7 +37,10 @@ class AppValidator {
   }
 
   static String? isEmpty(String? value) {
-    return (value?.isEmpty ?? true) ? 'Field could not be empty' : null;
+    if (value == null || value.isEmpty) {
+      return 'field_left_empty'.tr();
+    }
+    return null;
   }
 
   static String? lessThenDigits(String? value, int digits) {

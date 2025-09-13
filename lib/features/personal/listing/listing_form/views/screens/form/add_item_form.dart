@@ -44,22 +44,23 @@ class _AddItemFormState extends State<AddItemForm> {
         }
         return Form(
           key: formPro.itemKey,
-          child: ListView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            children: <Widget>[
-              const AddListingBasicInfoSection(),
-              SubCategorySelectableWidget<AddListingFormProvider>(
-                listType: formPro.listingType,
-                subCategory: formPro.selectedCategory,
-                onSelected: formPro.setSelectedCategory,
-              ),
-              const AddListingPriceAndQuantityWidget(),
-              const AddListingDiscountSection(),
-              const AddListingConditionOfferSection(),
-              const AddListingDeliverySelectionWidget(),
-              if (formPro.post == null) const AddListingPostButtonWidget(),
-              if (formPro.post != null) const AddListingUpdateButtons(),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                const AddListingBasicInfoSection(),
+                SubCategorySelectableWidget<AddListingFormProvider>(
+                  listType: formPro.listingType,
+                  subCategory: formPro.selectedCategory,
+                  onSelected: formPro.setSelectedCategory,
+                ),
+                const AddListingPriceAndQuantityWidget(),
+                const AddListingDiscountSection(),
+                const AddListingConditionOfferSection(),
+                const AddListingDeliverySelectionWidget(),
+                if (formPro.post == null) const AddListingPostButtonWidget(),
+                if (formPro.post != null) const AddListingUpdateButtons(),
+              ],
+            ),
           ),
         );
       },

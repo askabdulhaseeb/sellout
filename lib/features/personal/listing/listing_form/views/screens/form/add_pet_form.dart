@@ -43,17 +43,18 @@ class _AddPetFormState extends State<AddPetForm> {
         }
         return Form(
           key: formPro.petKey,
-          child: ListView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            children: <Widget>[
-              const AddListingBasicInfoSection(),
-              const AddListingPetAgeLeaveWidget(),
-              const AddListingPriceAndQuantityWidget(),
-              const AddListingConditionOfferSection(),
-              const EditableAvailabilityWidget(),
-              if (formPro.post == null) const AddListingPostButtonWidget(),
-              if (formPro.post != null) const AddListingUpdateButtons(),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                const AddListingBasicInfoSection(),
+                const AddListingPetAgeLeaveWidget(),
+                const AddListingPriceAndQuantityWidget(),
+                const AddListingConditionOfferSection(),
+                const EditableAvailabilityWidget(),
+                if (formPro.post == null) const AddListingPostButtonWidget(),
+                if (formPro.post != null) const AddListingUpdateButtons(),
+              ],
+            ),
           ),
         );
       },

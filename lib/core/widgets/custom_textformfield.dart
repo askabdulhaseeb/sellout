@@ -119,7 +119,6 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
           TextFormField(
             //
             focusNode: widget.focusNode,
-
             initialValue: widget.initialValue,
             controller: widget._controller,
             readOnly: widget.readOnly,
@@ -196,8 +195,7 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
                 errorBorder: OutlineInputBorder(
                   borderSide:
                       BorderSide(color: Theme.of(context).colorScheme.error),
-                  borderRadius:
-                      BorderRadius.circular(widget.borderRadius ?? 4.0),
+                  borderRadius: BorderRadius.circular(widget.borderRadius ?? 8),
                 ),
                 border: widget.border ??
                     OutlineInputBorder(

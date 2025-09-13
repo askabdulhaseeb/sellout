@@ -55,7 +55,6 @@ class AddListingFormProvider extends ChangeNotifier {
 
   // Getter for availability list.
   List<AvailabilityEntity> get availability => _availability;
-
   // Toggle open status and update default times.
   void toggleOpen(DayType day, bool isOpen) {
     final int index =
@@ -1111,6 +1110,7 @@ class AddListingFormProvider extends ChangeNotifier {
   DeliveryType get deliveryType => _deliveryType;
   // Cloth and Foot
   String get selectedClothSubCategory => _selectedClothSubCategory;
+  String? get brand => _brand;
   List<ColorOptionEntity> get colors => _colors;
   ColorOptionEntity? get selectedVehicleColor => _selectedVehicleColor;
   // Vehicle
@@ -1150,7 +1150,6 @@ class AddListingFormProvider extends ChangeNotifier {
   //
   TextEditingController get title => _title;
   TextEditingController get description => _description;
-  String? get brand => _brand;
   TextEditingController get price => _price;
   TextEditingController get quantity => _quantity;
   TextEditingController get minimumOffer => _minimumOffer;
@@ -1274,19 +1273,11 @@ class AddListingFormProvider extends ChangeNotifier {
   bool _isLoading = false;
   //
   List<PickedAttachment> _attachments = <PickedAttachment>[];
-  final TextEditingController _title = TextEditingController(
-    text: kDebugMode ? 'Test Title' : '',
-  );
-  final TextEditingController _description = TextEditingController(
-    text: kDebugMode ? 'Test Description' : '',
-  );
-  final TextEditingController _price = TextEditingController(
-    text: kDebugMode ? '100' : '',
-  );
+  final TextEditingController _title = TextEditingController();
+  final TextEditingController _description = TextEditingController();
+  final TextEditingController _price = TextEditingController();
   final TextEditingController _quantity = TextEditingController(text: '1');
-  final TextEditingController _minimumOffer = TextEditingController(
-    text: kDebugMode ? '50' : '',
-  );
+  final TextEditingController _minimumOffer = TextEditingController();
   final TextEditingController _localDeliveryFee = TextEditingController();
   final TextEditingController _internationalDeliveryFee =
       TextEditingController();
