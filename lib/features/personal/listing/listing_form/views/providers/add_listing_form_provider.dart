@@ -364,6 +364,15 @@ class AddListingFormProvider extends ChangeNotifier {
       AppSnackBar.showSnackBar(context, 'select_your_size_and_color'.tr());
       return;
     }
+    bool allClosed = availability.isNotEmpty &&
+        availability.every((AvailabilityEntity item) => !item.isOpen);
+    if (allClosed &&
+        (listingType == ListingType.vehicle ||
+            listingType == ListingType.property ||
+            listingType == ListingType.pets)) {
+      AppSnackBar.showSnackBar(context, 'add_availbility_for_viewing'.tr());
+      return;
+    }
     if (selectedCategory == null &&
         (listingType == ListingType.items ||
             listingType == ListingType.clothAndFoot ||
@@ -428,8 +437,6 @@ class AddListingFormProvider extends ChangeNotifier {
         currentLongitude: 123456,
         collectionLocation: selectedCollectionLocation,
       );
-      debugPrint(param.toMap().toString());
-      debugPrint(sizeColorEntities.toString());
       final DataState<String> result = _post == null
           ? await _addlistingUSecase(param)
           : await _editListingUsecase(param);
@@ -475,8 +482,6 @@ class AddListingFormProvider extends ChangeNotifier {
           brand: brand,
           sizeColor: _sizeColorEntities,
           type: selectedClothSubCategory);
-      debugPrint(param.toMap().toString());
-      debugPrint(sizeColorEntities.toString());
       final DataState<String> result = _post == null
           ? await _addlistingUSecase(param)
           : await _editListingUsecase(param);
@@ -496,7 +501,6 @@ class AddListingFormProvider extends ChangeNotifier {
     if (!(_vehicleKey.currentState?.validate() ?? false)) return;
     getAvailabilityData();
     try {
-      debugPrint(post?.postID);
       final AddListingParam param = AddListingParam(
           postID: post?.postID ?? '',
           oldAttachments: post?.fileUrls,
@@ -530,12 +534,10 @@ class AddListingFormProvider extends ChangeNotifier {
           seats: seats.text,
           year: year,
           vehicleCategory: _selectedVehicleCategory.toString(),
-          currentLatitude: 1234,
-          currentLongitude: 1234,
+          currentLatitude: LocalAuth.latlng.latitude.toInt(),
+          currentLongitude: LocalAuth.latlng.longitude.toInt(),
           milageUnit: _selectedMileageUnit,
           transmission: transmissionType);
-      debugPrint(param.toMap().toString());
-      debugPrint(sizeColorEntities.toString());
       final DataState<String> result = _post == null
           ? await _addlistingUSecase(param)
           : await _editListingUsecase(param);
@@ -578,8 +580,6 @@ class AddListingFormProvider extends ChangeNotifier {
           currentLongitude: 1234,
           localDeliveryAmount: _localDeliveryFee.text,
           internationalDeliveryAmount: _internationalDeliveryFee.text);
-      debugPrint(param.toMap().toString());
-      debugPrint(sizeColorEntities.toString());
       final DataState<String> result = _post == null
           ? await _addlistingUSecase(param)
           : await _editListingUsecase(param);
@@ -635,8 +635,6 @@ class AddListingFormProvider extends ChangeNotifier {
         currentLongitude: 1234,
         milageUnit: _selectedMileageUnit,
       );
-      debugPrint(param.toMap().toString());
-      debugPrint(sizeColorEntities.toString());
       final DataState<String> result = _post == null
           ? await _addlistingUSecase(param)
           : await _editListingUsecase(param);
@@ -655,7 +653,6 @@ class AddListingFormProvider extends ChangeNotifier {
   Future<void> _onPetSubmit() async {
     if (!(_petKey.currentState?.validate() ?? false)) return;
     try {
-      debugPrint(post?.meetUpLocation?.id);
       final AddListingParam param = AddListingParam(
         postID: post?.postID ?? '',
         oldAttachments: post?.fileUrls,
@@ -691,8 +688,6 @@ class AddListingFormProvider extends ChangeNotifier {
         currentLatitude: 12234,
         currentLongitude: 123456,
       );
-      debugPrint(param.toMap().toString());
-      debugPrint(sizeColorEntities.toString());
       final DataState<String> result = _post == null
           ? await _addlistingUSecase(param)
           : await _editListingUsecase(param);

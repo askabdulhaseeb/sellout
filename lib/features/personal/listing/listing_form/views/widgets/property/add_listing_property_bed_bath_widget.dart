@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../location/domain/entities/location_entity.dart';
 import '../../../../../location/domain/enums/map_display_mode.dart';
@@ -22,6 +23,7 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
               children: <Widget>[
                 Expanded(
                   child: CustomTextFormField(
+                    validator: (String? value) => AppValidator.isEmpty(value),
                     controller: formPro.bedroom,
                     labelText: 'bedroom'.tr(),
                     hint: 'Ex. 4',
@@ -31,6 +33,7 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
                 const SizedBox(width: 16),
                 Expanded(
                   child: CustomTextFormField(
+                    validator: (String? value) => AppValidator.isEmpty(value),
                     controller: formPro.bathroom,
                     labelText: 'bathroom'.tr(),
                     hint: 'Ex. 3',
@@ -40,13 +43,14 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
               ],
             ),
             CustomTextFormField(
+              validator: (String? value) => AppValidator.isEmpty(value),
               controller: formPro.price,
               labelText: 'price'.tr(),
               hint: 'Ex. 350',
               keyboardType: TextInputType.number,
             ),
             CustomListingDropDown<AddListingFormProvider>(
-              validator: (bool? p0) => null,
+              validator: (bool? value) => AppValidator.requireSelection(value),
               hint: 'select_category'.tr(),
               categoryKey: 'property_type',
               selectedValue: formPro.selectedPropertyType,
@@ -54,14 +58,15 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
               title: 'category'.tr(),
             ),
             CustomListingDropDown<AddListingFormProvider>(
-                validator: (bool? p0) => null,
+                validator: (bool? value) =>
+                    AppValidator.requireSelection(value),
                 hint: 'energy_rating'.tr(),
                 categoryKey: 'energy_rating',
                 onChanged: (String? p0) => formPro.setEnergyRating(p0),
                 selectedValue: formPro.selectedEnergyRating,
                 title: 'energy_rating'.tr()),
             NominationLocationField(
-                validator: (bool? p0) => null,
+                validator: (bool? value) => AppValidator.requireLocation(value),
                 title: 'meetup_location'.tr(),
                 selectedLatLng: formPro.collectionLatLng,
                 displayMode: MapDisplayMode.showMapAfterSelection,

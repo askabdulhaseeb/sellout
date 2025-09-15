@@ -32,17 +32,28 @@ class _AddListingVehicleBasicInfoSectionState
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            /// Category
+            CustomListingDropDown<AddListingFormProvider>(
+              title: 'category'.tr(),
+              categoryKey: 'vehicles',
+              hint: 'select_category'.tr(),
+              selectedValue: formPro.selectedVehicleCategory,
+              onChanged: (String? p0) => formPro.setVehicleCategory(p0),
+              validator: (bool? value) => AppValidator.requireSelection(value),
+            ),
+
             /// Year
             CustomYearDropdown(
               hintText: 'year'.tr(),
               title: 'year'.tr(),
               selectedYear: formPro.year,
               onChanged: (String? value) => formPro.setYear(value),
+              validator: (bool? value) => AppValidator.requireSelection(value),
             ),
 
             /// Body type dynamic dropdown *second part of address
             CustomListingDropDown<AddListingFormProvider>(
-              validator: (bool? p0) => null,
+              validator: (bool? value) => AppValidator.requireSelection(value),
               hint: 'body_type'.tr(),
               parentValue: formPro.selectedVehicleCategory,
               categoryKey: 'body_type',
@@ -53,7 +64,7 @@ class _AddListingVehicleBasicInfoSectionState
 
             /// Emission standard dynamic dropdown
             CustomListingDropDown<AddListingFormProvider>(
-              validator: (bool? p0) => null,
+              validator: (bool? value) => AppValidator.requireSelection(value),
               hint: 'emission_standards'.tr(),
               categoryKey: 'emission_standards',
               selectedValue: formPro.emission,
@@ -63,7 +74,7 @@ class _AddListingVehicleBasicInfoSectionState
 
             /// Make dynamic dropdown
             CustomListingDropDown<AddListingFormProvider>(
-              validator: (bool? p0) => null,
+              validator: (bool? value) => AppValidator.requireSelection(value),
               hint: 'make'.tr(),
               categoryKey: 'make',
               selectedValue: formPro.make,
@@ -73,7 +84,7 @@ class _AddListingVehicleBasicInfoSectionState
 
             /// Fuel type dynamic dropdown
             CustomListingDropDown<AddListingFormProvider>(
-              validator: (bool? p0) => null,
+              validator: (bool? value) => AppValidator.requireSelection(value),
               hint: 'fuel_type'.tr(),
               categoryKey: 'fuel_type',
               selectedValue: formPro.fuelTYpe,
@@ -83,7 +94,7 @@ class _AddListingVehicleBasicInfoSectionState
 
             /// Transmission dynamic dropdown
             CustomListingDropDown<AddListingFormProvider>(
-              validator: (bool? p0) => null,
+              validator: (bool? value) => AppValidator.requireSelection(value),
               hint: 'transmission'.tr(),
               categoryKey: 'transmission',
               selectedValue: formPro.transmissionType,
@@ -93,14 +104,14 @@ class _AddListingVehicleBasicInfoSectionState
             ),
 
             ColorDropdown(
-              validator: (bool? p0) => null,
+              validator: (bool? value) => AppValidator.requireSelection(value),
               title: 'color'.tr(),
               selectedColor: formPro.selectedVehicleColor,
               onColorChanged: (ColorOptionEntity? value) =>
                   formPro.setVehicleColor(value),
             ),
             NominationLocationField(
-                validator: (bool? p0) => null,
+                validator: (bool? value) => AppValidator.requireLocation(value),
                 title: 'meetup_location'.tr(),
                 selectedLatLng: formPro.collectionLatLng,
                 displayMode: MapDisplayMode.showMapAfterSelection,
@@ -119,14 +130,13 @@ class _AddListingVehicleBasicInfoSectionState
                 validator: (String? value) => AppValidator.isEmpty(value)),
             //model
             CustomTextFormField(
-              controller: formPro.model,
-              labelText: 'model'.tr(),
-              hint: 'Ex. Toyota Camry or Corolla',
-              showSuffixIcon: false,
-              readOnly: formPro.isLoading,
-              keyboardType: TextInputType.text,
-              validator: AppValidator.isEmpty,
-            ),
+                controller: formPro.model,
+                labelText: 'model'.tr(),
+                hint: 'model'.tr(),
+                showSuffixIcon: false,
+                readOnly: formPro.isLoading,
+                keyboardType: TextInputType.text,
+                validator: (String? value) => AppValidator.isEmpty(value)),
           ],
         );
       },

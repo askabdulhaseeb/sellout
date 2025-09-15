@@ -19,7 +19,7 @@ class EditableAvailabilityWidget extends StatelessWidget {
               height: 10,
             ),
             Text(
-              'add_Availbility_for_viewing'.tr(),
+              'add_availbility_for_viewing'.tr(),
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),

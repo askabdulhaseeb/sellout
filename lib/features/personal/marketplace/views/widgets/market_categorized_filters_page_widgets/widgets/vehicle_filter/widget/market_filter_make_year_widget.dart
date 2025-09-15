@@ -28,6 +28,7 @@ class MarketFilterMakeYearWidget extends StatelessWidget {
           )),
           Expanded(
             child: CustomYearDropdown(
+              validator: (bool? p0) => null,
               hintText: 'year'.tr(),
               selectedYear: marketPro.year,
               onChanged: (String? value) => marketPro.setYear(value),

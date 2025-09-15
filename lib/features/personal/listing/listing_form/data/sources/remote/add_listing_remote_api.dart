@@ -20,10 +20,12 @@ class AddListingRemoteApiImpl extends AddListingRemoteApi {
         fieldsMap: params.toMap(),
         isAuth: true,
       );
+      AppLog.info(params.toMap().toString(), name: 'post create payload');
       if (response is DataSuccess) {
         return DataSuccess<String>(response.data ?? '', null);
       } else {
         AppLog.error(response.exception?.message ?? 'something_wrong'.tr(),
+            error: response.exception?.detail ?? 'na'.tr(),
             name: 'AddListingRemoteApiImpl-addListing else');
         return DataFailer<String>(CustomException(
             'Failed to add item: ${response.exception?.message}'));

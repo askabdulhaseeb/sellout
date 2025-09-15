@@ -5,6 +5,7 @@ class CustomYearDropdown extends StatefulWidget {
   const CustomYearDropdown({
     required this.selectedYear,
     required this.onChanged,
+    required this.validator,
     super.key,
     this.title = '',
     this.hintText,
@@ -15,6 +16,7 @@ class CustomYearDropdown extends StatefulWidget {
   final String title;
   final String? hintText;
   final int startYear;
+  final String? Function(bool?) validator;
 
   @override
   State<CustomYearDropdown> createState() => _CustomYearDropdownState();
@@ -50,6 +52,6 @@ class _CustomYearDropdownState extends State<CustomYearDropdown> {
                 ))
             .toList(),
         onChanged: widget.onChanged,
-        validator: (bool? value) => null);
+        validator: widget.validator);
   }
 }
