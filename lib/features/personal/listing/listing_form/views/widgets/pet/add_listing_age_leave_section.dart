@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../location/domain/entities/location_entity.dart';
 import '../../../../../location/domain/enums/map_display_mode.dart';
@@ -23,7 +24,8 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
               children: <Widget>[
                 Expanded(
                   child: CustomListingDropDown<AddListingFormProvider>(
-                    validator: (bool? p0) => null,
+                    validator: (bool? value) =>
+                        AppValidator.requireSelection(value),
                     hint: 'age'.tr(),
                     categoryKey: 'age',
                     selectedValue: formPro.age,
@@ -34,7 +36,8 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                 const SizedBox(width: 16),
                 Expanded(
                   child: CustomListingDropDown<AddListingFormProvider>(
-                    validator: (bool? p0) => null,
+                    validator: (bool? value) =>
+                        AppValidator.requireSelection(value),
                     hint: 'ready_to_leave'.tr(),
                     categoryKey: 'ready_to_leave',
                     selectedValue: formPro.time,
@@ -45,7 +48,8 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
               ],
             ),
             CustomListingDropDown<AddListingFormProvider>(
-                validator: (bool? p0) => null,
+                validator: (bool? value) =>
+                    AppValidator.requireSelection(value),
                 title: 'category'.tr(),
                 hint: 'select_category'.tr(),
                 categoryKey: 'pets',
@@ -53,7 +57,8 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                 onChanged: (String? p0) => formPro.setPetCategory(p0)),
             if (formPro.petCategory != null)
               CustomListingDropDown<AddListingFormProvider>(
-                  validator: (bool? p0) => null,
+                  validator: (bool? value) =>
+                      AppValidator.requireSelection(value),
                   parentValue: formPro.petCategory,
                   title: 'breed'.tr(),
                   hint: 'breed'.tr(),
@@ -61,7 +66,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                   selectedValue: formPro.breed,
                   onChanged: (String? p0) => formPro.setPetBreed(p0)),
             NominationLocationField(
-                validator: (bool? p0) => null,
+                validator: (bool? value) => AppValidator.requireLocation(value),
                 title: 'meetup_location'.tr(),
                 selectedLatLng: formPro.collectionLatLng,
                 displayMode: MapDisplayMode.showMapAfterSelection,
@@ -81,8 +86,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                 ),
               ],
               onChanged: formPro.setVaccinationUpToDate,
-              validator: (_) =>
-                  formPro.vaccinationUpToDate == null ? 'required'.tr() : null,
+              validator: (bool? p0) => AppValidator.requireSelection(p0),
               title: 'vaccination_up_to_date'.tr(),
             ),
             CustomDropdown<bool>(
@@ -98,8 +102,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                 ),
               ],
               onChanged: formPro.setWormFleeTreated,
-              validator: (_) =>
-                  formPro.wormAndFleaTreated == null ? 'required'.tr() : null,
+              validator: (bool? p0) => AppValidator.requireSelection(p0),
               title: 'worm_flee_treated'.tr(),
             ),
             CustomDropdown<bool>(
@@ -115,8 +118,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                 ),
               ],
               onChanged: formPro.setHealthChecked,
-              validator: (_) =>
-                  formPro.healthChecked == null ? 'required'.tr() : null,
+              validator: (bool? p0) => AppValidator.requireSelection(p0),
               title: 'health_checked'.tr(),
             ),
           ],
