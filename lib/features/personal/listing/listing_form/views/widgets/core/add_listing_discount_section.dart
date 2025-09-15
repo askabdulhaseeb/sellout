@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_Switch_list_tile.dart';
 import '../../../../../post/domain/entities/discount_entity.dart';
@@ -36,17 +37,20 @@ class _AddListingDiscountSectionState extends State<AddListingDiscountSection> {
     // Initialize controller if not exists
     _controllers.putIfAbsent(
       index,
-      () => TextEditingController(text: discount.discount.toString()),
+      () => TextEditingController(
+        text: (discount.discount == 0.0) ? '' : discount.discount.toString(),
+      ),
     );
 
 // Inside buildDiscountField:
     return SizedBox(
       width: width / 3,
       child: CustomTextFormField(
+        validator: (String? value) => AppValidator.isEmpty(value),
         labelText: ' ${discount.quantity} ${'items'.tr()}',
         controller: _controllers[index],
         onChanged: (String value) {
-          double parsed = double.tryParse(value) ?? 0.0;
+          double parsed = double.parse(value);
           if (parsed > 100) {
             parsed = 100;
             _controllers[index]!.text = '100';

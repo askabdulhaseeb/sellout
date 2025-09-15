@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/widgets/loaders/loader.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../../widgets/category/subcateogry_selectable_widget.dart';
 import '../../widgets/cloth/add_listing_brand_field.dart';
@@ -43,7 +44,7 @@ class _AddClothsAndFootwearFormState extends State<AddClothsAndFootwearForm> {
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         if (formPro.isDropdownLoading) {
           return const Center(
-            child: CircularProgressIndicator(),
+            child: Loader(),
           );
         }
         return Form(

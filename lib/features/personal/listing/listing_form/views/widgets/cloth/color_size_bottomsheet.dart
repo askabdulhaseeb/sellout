@@ -30,55 +30,50 @@ class _SizeColorBottomSheetState extends State<SizeColorBottomSheet> {
   Widget build(BuildContext context) {
     final AddListingFormProvider provider =
         Provider.of<AddListingFormProvider>(context, listen: false);
-
-    return Padding(
-      padding: MediaQuery.of(context).viewInsets,
-      child: Container(
-        height: MediaQuery.of(context).size.height * 0.8,
-        decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          backgroundBlendMode: BlendMode.color,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-        ),
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: <Widget>[
-            BottomSheetHeader(
-              onBack: () => Navigator.pop(context),
-              onApply: () => Navigator.pop(context),
-            ),
-            const SizedBox(height: 16),
-            const Expanded(child: SizeColorListView()),
-            const Divider(height: 32),
-            SizeColorInputRow(
-              selectedSize: selectedSize,
-              selectedColor: selectedColor,
-              quantityController: quantityController,
-              onSizeChanged: (String? val) =>
-                  setState(() => selectedSize = val),
-              onColorChanged: (ColorOptionEntity? val) =>
-                  setState(() => selectedColor = val),
-              onAdd: () {
-                if (selectedSize != null &&
-                    selectedColor != null &&
-                    quantityController.text.isNotEmpty) {
-                  final int quantity =
-                      int.tryParse(quantityController.text) ?? 1;
-                  provider.addOrUpdateSizeColorQuantity(
-                    size: selectedSize!,
-                    color: selectedColor!,
-                    quantity: quantity,
-                  );
-                  setState(() {
-                    selectedSize = null;
-                    selectedColor = null;
-                    quantityController.clear();
-                  });
-                }
-              },
-            ),
-          ],
-        ),
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.8,
+      decoration: BoxDecoration(
+        border: Border.all(color: ColorScheme.of(context).outlineVariant),
+        color: Theme.of(context).scaffoldBackgroundColor,
+        backgroundBlendMode: BlendMode.color,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: <Widget>[
+          BottomSheetHeader(
+            onBack: () => Navigator.pop(context),
+            onApply: () => Navigator.pop(context),
+          ),
+          const SizedBox(height: 16),
+          const Expanded(child: SizeColorListView()),
+          const Divider(height: 32),
+          SizeColorInputRow(
+            selectedSize: selectedSize,
+            selectedColor: selectedColor,
+            quantityController: quantityController,
+            onSizeChanged: (String? val) => setState(() => selectedSize = val),
+            onColorChanged: (ColorOptionEntity? val) =>
+                setState(() => selectedColor = val),
+            onAdd: () {
+              if (selectedSize != null &&
+                  selectedColor != null &&
+                  quantityController.text.isNotEmpty) {
+                final int quantity = int.tryParse(quantityController.text) ?? 1;
+                provider.addOrUpdateSizeColorQuantity(
+                  size: selectedSize!,
+                  color: selectedColor!,
+                  quantity: quantity,
+                );
+                setState(() {
+                  selectedSize = null;
+                  selectedColor = null;
+                  quantityController.clear();
+                });
+              }
+            },
+          ),
+        ],
       ),
     );
   }
@@ -158,7 +153,7 @@ class SizeColorListView extends StatelessWidget {
                       Flexible(child: Text(sizeColorEntry.value)),
                       Row(
                         mainAxisSize: MainAxisSize.min,
-                        children: [
+                        children: <Widget>[
                           CircleAvatar(
                             radius: 8,
                             backgroundColor: Color(int.parse(
@@ -245,6 +240,7 @@ class _SizeColorInputRowState extends State<SizeColorInputRow> {
             child: Focus(
               focusNode: _sizeFocus,
               child: SizeDropdown(
+                overlayAbove: true,
                 formPro: formPro,
                 selectedSize: widget.selectedSize,
                 onSizeChanged: widget.onSizeChanged,
@@ -263,6 +259,7 @@ class _SizeColorInputRowState extends State<SizeColorInputRow> {
             child: Focus(
               focusNode: _colorFocus,
               child: ColorDropdown(
+                overlayAbove: true,
                 validator: (bool? valid) =>
                     valid == true ? null : 'required'.tr(),
                 selectedColor: widget.selectedColor,

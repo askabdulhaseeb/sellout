@@ -14,17 +14,15 @@ class AddListingBrandField extends StatelessWidget {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro,
               Widget? child) =>
-          Expanded(
-        child: CustomListingDropDown<AddListingFormProvider>(
-          title: 'brand'.tr(),
-          validator: (bool? p0) => null,
-          hint: 'brand'.tr(),
-          categoryKey: formPro.selectedClothSubCategory == 'clothes'
-              ? 'clothes_brands'
-              : 'footwear_brands',
-          selectedValue: formPro.brand,
-          onChanged: (String? p0) => formPro.setBrand(p0),
-        ),
+          CustomListingDropDown<AddListingFormProvider>(
+        title: 'brand'.tr(),
+        validator: (bool? p0) => null,
+        hint: 'brand'.tr(),
+        categoryKey: formPro.selectedClothSubCategory == 'clothes'
+            ? 'clothes_brands'
+            : 'footwear_brands',
+        selectedValue: formPro.brand,
+        onChanged: (String? p0) => formPro.setBrand(p0),
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/widgets/custom_toggle_switch.dart';
+import '../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../domain/enums/search_entity_type.dart';
 import '../provider/search_provider.dart';
 import 'pages/search_post_page.dart';
@@ -20,12 +21,10 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
-
     // Perform initial fetch for all 3 types
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final SearchProvider provider =
           Provider.of<SearchProvider>(context, listen: false);
-
       // Fetch posts
       if (provider.postResults.isEmpty) {
         await provider.searchPosts('');
@@ -47,10 +46,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'search'.tr(),
-          style: TextTheme.of(context).titleMedium,
-        ),
+        title: const AppBarTitle(titleKey: 'search'),
         centerTitle: true,
       ),
       body: Consumer<SearchProvider>(
@@ -61,7 +57,7 @@ class _SearchScreenState extends State<SearchScreen> {
           child: Column(
             children: <Widget>[
               CustomToggleSwitch<SearchEntityType>(
-                verticalPadding: 6,
+                verticalPadding: 4,
                 isShaded: false,
                 unseletedBorderColor: ColorScheme.of(context).outlineVariant,
                 unseletedTextColor: ColorScheme.of(context).onSurface,

@@ -10,6 +10,7 @@ class CustomDropdown<T> extends StatefulWidget {
     required this.selectedItem,
     required this.onChanged,
     required this.validator,
+    this.overlayAbove = false,
     this.prefix,
     this.sufixIcon,
     this.prefixIcon,
@@ -28,6 +29,7 @@ class CustomDropdown<T> extends StatefulWidget {
   final T? selectedItem;
   final void Function(T?)? onChanged;
   final String? Function(bool?) validator;
+  final bool overlayAbove;
   final Widget? prefix;
   final bool? sufixIcon;
   final IconData? prefixIcon;
@@ -168,8 +170,9 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>>
 
   OverlayEntry _createOverlayEntry() {
     final RenderBox? renderBox = context.findRenderObject() as RenderBox?;
-    if (renderBox == null)
+    if (renderBox == null) {
       return OverlayEntry(builder: (_) => const SizedBox());
+    }
 
     final Size size = renderBox.size;
     final Offset offset = renderBox.localToGlobal(Offset.zero);
@@ -182,12 +185,11 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>>
     const double itemHeight = 48.0;
     final num calculatedHeight =
         (filteredItems.length * itemHeight).clamp(0, 200.0);
-    final bool showAbove =
+    final bool showAbove = widget.overlayAbove ||
         spaceBelow < calculatedHeight && spaceAbove > spaceBelow;
     final Offset dropdownOffset = showAbove
         ? Offset(0, -calculatedHeight - 5)
         : Offset(0, size.height + 5);
-
     return OverlayEntry(
       builder: (_) => Stack(
         children: <Widget>[

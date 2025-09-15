@@ -1,4 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
@@ -43,14 +42,14 @@ class _MarketPlaceScreenState extends State<MarketPlaceScreen> {
           return CustomScrollView(
             controller: _scrollController,
             slivers: <Widget>[
-              SliverToBoxAdapter(
+              const SliverToBoxAdapter(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+                  children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
+                      padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
                       child: AppBarTitle(
-                        titleKey: 'marketplace'.tr(),
+                        titleKey: 'marketplace',
                       ),
                     ),
                   ],

@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../location/domain/entities/location_entity.dart';
 import '../../../../../location/domain/enums/map_display_mode.dart';
-import '../../../../../location/view/widgets/location_field.dart/nomination_location_wrapper.dart';
+import '../../../../../location/view/widgets/location_field.dart/nomination_location_field.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../custom_listing_dropdown.dart';
 
@@ -61,6 +61,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                   selectedValue: formPro.breed,
                   onChanged: (String? p0) => formPro.setPetBreed(p0)),
             NominationLocationField(
+                validator: (bool? p0) => null,
                 title: 'meetup_location'.tr(),
                 selectedLatLng: formPro.collectionLatLng,
                 displayMode: MapDisplayMode.showMapAfterSelection,
