@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/editable_availablity_widget.dart';
+import '../../../../../../../core/widgets/loaders/loader.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../../widgets/core/add_listing_update_button_widget.dart';
 import '../../widgets/pet/add_listing_age_leave_section.dart';
@@ -38,7 +39,7 @@ class _AddPetFormState extends State<AddPetForm> {
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         if (formPro.isDropdownLoading) {
           return const Center(
-            child: CircularProgressIndicator(),
+            child: Loader(),
           );
         }
         return Form(

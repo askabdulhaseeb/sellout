@@ -11,6 +11,7 @@ class ColorDropdown extends StatefulWidget {
     this.selectedColor,
     this.colorRadius,
     this.title = '',
+    this.overlayAbove = false,
     super.key,
   });
 
@@ -19,6 +20,7 @@ class ColorDropdown extends StatefulWidget {
   final String? Function(bool?) validator;
   final double? colorRadius;
   final String title;
+  final bool overlayAbove;
 
   @override
   State<ColorDropdown> createState() => _ColorDropdownState();
@@ -57,6 +59,7 @@ class _ColorDropdownState extends State<ColorDropdown> {
         }
 
         return CustomDropdown<ColorOptionEntity>(
+          overlayAbove: widget.overlayAbove,
           prefix: widget.selectedColor == null
               ? null
               : Container(

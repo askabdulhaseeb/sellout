@@ -15,6 +15,7 @@ class CustomListingDropDown<T extends ChangeNotifier> extends StatefulWidget {
     this.padding,
     this.hint = '',
     this.parentValue,
+    this.overlayAbove = false,
     super.key,
   });
 
@@ -25,6 +26,7 @@ class CustomListingDropDown<T extends ChangeNotifier> extends StatefulWidget {
   final String hint;
   final EdgeInsetsGeometry? padding;
   final String? parentValue;
+  final bool overlayAbove;
   final String? Function(bool?) validator;
 
   @override
@@ -149,6 +151,7 @@ class _CustomListingDropDownState<T extends ChangeNotifier>
     return Consumer<T>(
       builder: (BuildContext context, T provider, _) {
         return CustomDropdown<String>(
+          overlayAbove: widget.overlayAbove,
           title: widget.title,
           items: dropdownItems,
           selectedItem: widget.selectedValue,

@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../location/domain/entities/location_entity.dart';
 import '../../../../../location/domain/enums/map_display_mode.dart';
-import '../../../../../location/view/widgets/location_field.dart/nomination_location_wrapper.dart';
+import '../../../../../location/view/widgets/location_field.dart/nomination_location_field.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../custom_listing_dropdown.dart';
 
@@ -61,6 +61,7 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
                 selectedValue: formPro.selectedEnergyRating,
                 title: 'energy_rating'.tr()),
             NominationLocationField(
+                validator: (bool? p0) => null,
                 title: 'meetup_location'.tr(),
                 selectedLatLng: formPro.collectionLatLng,
                 displayMode: MapDisplayMode.showMapAfterSelection,

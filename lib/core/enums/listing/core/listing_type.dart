@@ -19,7 +19,7 @@ enum ListingType {
       ],
       AppStrings.clothfootmarketplace),
   @HiveField(2)
-  vehicle('vehicles', 'vehicles', 10, AppStrings.selloutAddListingVehicleIcon,
+  vehicle('vehicles', 'vehicles', 20, AppStrings.selloutAddListingVehicleIcon,
       <String>['vehicles'], AppStrings.vehiclemarketplace),
   @HiveField(3)
   foodAndDrink(
@@ -33,7 +33,7 @@ enum ListingType {
   property(
       'property_buy_sell',
       'property',
-      10,
+      30,
       AppStrings.selloutAddListingPropertyIcon,
       <String>['sale', 'rent'],
       AppStrings.propertymarketplace),

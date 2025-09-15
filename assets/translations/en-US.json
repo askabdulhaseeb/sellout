@@ -755,7 +755,7 @@
   "daily_limit_hint": "Set a daily limit for each notification type",
   "daily_limit_value": "Up to 2 notifications",
   "notifications": "Notifications",
-  "please_add_at_least_one_photo_or_video": "Please add at least one photo or video",
+  "please_add_at_least_one_photo_and_video": "Please add at least one photo and video",
   "required": "Required",
   "breed": "Breed",
   "garden": "Garden",

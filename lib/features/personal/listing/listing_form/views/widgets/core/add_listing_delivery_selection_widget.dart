@@ -7,7 +7,7 @@ import '../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../location/domain/enums/map_display_mode.dart';
-import '../../../../../location/view/widgets/location_field.dart/nomination_location_wrapper.dart';
+import '../../../../../location/view/widgets/location_field.dart/nomination_location_field.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../location/domain/entities/location_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
@@ -92,6 +92,7 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
                 padding:
                     const EdgeInsets.only(bottom: 8.0, left: 4.0, right: 4.0),
                 child: NominationLocationField(
+                    validator: (bool? p0) => AppValidator.requireLocation(p0),
                     selectedLatLng: formPro.collectionLatLng,
                     displayMode: MapDisplayMode.showMapAfterSelection,
                     initialText:

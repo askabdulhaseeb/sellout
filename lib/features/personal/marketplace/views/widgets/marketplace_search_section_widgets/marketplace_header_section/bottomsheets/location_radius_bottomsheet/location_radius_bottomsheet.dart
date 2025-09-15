@@ -5,7 +5,7 @@ import '../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../location/domain/entities/location_entity.dart';
 import '../../../../../../../location/domain/enums/map_display_mode.dart';
 import '../../../../../../domain/enum/radius_type.dart';
-import '../../../../../../../location/view/widgets/location_field.dart/nomination_location_wrapper.dart';
+import '../../../../../../../location/view/widgets/location_field.dart/nomination_location_field.dart';
 import 'widget/location_header.dart';
 import 'widget/radius_option.dart';
 import 'widget/radius_slider.dart';
@@ -113,6 +113,7 @@ class _LocationRadiusBottomSheetState extends State<LocationRadiusBottomSheet> {
                 children: <Widget>[
                   const SizedBox(height: 8),
                   NominationLocationField(
+                    validator: (bool? p0) => null,
                     hint: 'search_location_here'.tr(),
                     radiusType: _radiusType,
                     selectedLatLng: _selectedLatLng,

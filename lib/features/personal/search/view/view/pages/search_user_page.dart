@@ -38,9 +38,12 @@ class _SearchUsersSectionState extends State<SearchUsersSection> {
           alignment: Alignment.centerRight,
           children: <Widget>[
             CustomTextFormField(
+              dense: true,
               contentPadding:
-                  const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-              prefixIcon: const Icon(CupertinoIcons.search),
+                  const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+              prefix: const SizedBox(
+                  width: 40,
+                  child: Center(child: Icon(CupertinoIcons.search, size: 16))),
               controller: controller,
               hint: 'search'.tr(),
               onChanged: provider.searchUsers,

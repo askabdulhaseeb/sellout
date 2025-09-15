@@ -34,10 +34,8 @@ class ListingAttachmentTile extends StatelessWidget {
       context,
       listen: false,
     );
-
     // Get the video URL for network/video type
     final Object? videoSource = isLocal ? attachment?.file.uri : imageUrl?.url;
-
     return Padding(
       padding: const EdgeInsets.all(3),
       child: ClipRRect(
@@ -47,7 +45,7 @@ class ListingAttachmentTile extends StatelessWidget {
           child: Stack(
             children: <Widget>[
               Container(
-                color: ColorScheme.of(context).secondary.withAlpha(60),
+                color: ColorScheme.of(context).outlineVariant,
                 height: double.infinity,
                 width: double.infinity,
                 child: isVideo

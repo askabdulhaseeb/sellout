@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import '../../../../../../core/enums/listing/core/delivery_type.dart';
@@ -10,6 +9,7 @@ import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../../core/enums/routine/day_type.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
+import '../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
@@ -245,12 +245,10 @@ class AddListingFormProvider extends ChangeNotifier {
 
   Future<void> updateVariables() async {
     if (post == null) return;
-
     // -------------------------
     // Category and access
     // -------------------------
     _accessCode = post?.accessCode ?? '';
-
     // -------------------------
     // Pet-related fields
     // -------------------------
@@ -351,19 +349,26 @@ class AddListingFormProvider extends ChangeNotifier {
   }
 
   Future<void> submit(BuildContext context) async {
-    if (_attachments.isEmpty && (_post?.fileUrls.isEmpty ?? true)) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('please_add_at_least_one_photo_or_video'.tr()),
-      ));
+    final int imageCount = _attachments
+        .where((PickedAttachment e) => e.type == AttachmentType.image)
+        .length;
+    final int videoCount = _attachments
+        .where((PickedAttachment e) => e.type == AttachmentType.video)
+        .length;
+    if (imageCount == 0 || videoCount == 0) {
+      AppSnackBar.showSnackBar(
+          context, 'please_add_at_least_one_photo_and_video'.tr());
+      return;
+    }
+    if (sizeColorEntities.isEmpty && listingType == ListingType.clothAndFoot) {
+      AppSnackBar.showSnackBar(context, 'select_your_size_and_color'.tr());
       return;
     }
     if (selectedCategory == null &&
         (listingType == ListingType.items ||
             listingType == ListingType.clothAndFoot ||
             listingType == ListingType.foodAndDrink)) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('select_category'.tr()),
-      ));
+      AppSnackBar.showSnackBar(context, 'select_category'.tr());
       return;
     }
     setLoading(true);
@@ -451,7 +456,7 @@ class AddListingFormProvider extends ChangeNotifier {
           title: title.text,
           description: description.text,
           attachments: attachments,
-          collectionLocation: selectedmeetupLocation,
+          collectionLocation: _selectedCollectionLocation,
           price: price.text,
           quantity: quantity.text,
           discount: isDiscounted,
@@ -465,8 +470,8 @@ class AddListingFormProvider extends ChangeNotifier {
           internationalDeliveryAmount: _internationalDeliveryFee.text,
           listingType: ListingType.clothAndFoot,
           category: _selectedCategory,
-          currentLatitude: 1234,
-          currentLongitude: 1234,
+          currentLatitude: LocalAuth.latlng.latitude.toInt(),
+          currentLongitude: LocalAuth.latlng.longitude.toInt(),
           brand: brand,
           sizeColor: _sizeColorEntities,
           type: selectedClothSubCategory);
@@ -762,16 +767,26 @@ class AddListingFormProvider extends ChangeNotifier {
     BuildContext context, {
     required AttachmentType type,
   }) async {
+    int maxAttachments = 10;
+    if (type == AttachmentType.image) {
+      if (listingType == ListingType.property) {
+        maxAttachments = 30;
+      } else if (listingType == ListingType.vehicle) {
+        maxAttachments = 20;
+      }
+    } else if (type == AttachmentType.video) {
+      maxAttachments = 1;
+    }
     final List<PickedAttachment> selectedMedia =
         _attachments.where((PickedAttachment element) {
-      return element.selectedMedia != null;
+      return element.selectedMedia != null && element.type == type;
     }).toList();
     final List<PickedAttachment>? files =
         await Navigator.of(context).push<List<PickedAttachment>>(
       MaterialPageRoute<List<PickedAttachment>>(builder: (_) {
         return PickableAttachmentScreen(
           option: PickableAttachmentOption(
-            maxAttachments: 10,
+            maxAttachments: maxAttachments,
             allowMultiple: true,
             type: type,
             selectedMedia: selectedMedia
@@ -781,6 +796,7 @@ class AddListingFormProvider extends ChangeNotifier {
         );
       }),
     );
+
     if (files != null) {
       for (final PickedAttachment file in files) {
         final int index = _attachments.indexWhere((PickedAttachment element) =>
@@ -1010,14 +1026,15 @@ class AddListingFormProvider extends ChangeNotifier {
     required int quantity,
   }) {
     // Find the size entry
-    final int sizeIndex = _sizeColorEntities.indexWhere((e) => e.value == size);
+    final int sizeIndex =
+        _sizeColorEntities.indexWhere((SizeColorEntity e) => e.value == size);
 
     if (sizeIndex != -1) {
       final SizeColorEntity existingSize = _sizeColorEntities[sizeIndex];
 
       // Find if the color already exists
-      final int colorIndex =
-          existingSize.colors.indexWhere((c) => c.code == color.value);
+      final int colorIndex = existingSize.colors
+          .indexWhere((ColorEntity c) => c.code == color.value);
 
       if (colorIndex != -1) {
         // Update quantity for existing color
@@ -1036,7 +1053,7 @@ class AddListingFormProvider extends ChangeNotifier {
         SizeColorModel(
           value: size,
           id: size,
-          colors: [
+          colors: <ColorEntity>[
             ColorEntity(code: color.value, quantity: quantity),
           ],
         ),

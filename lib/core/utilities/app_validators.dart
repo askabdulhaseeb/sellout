@@ -96,5 +96,19 @@ class AppValidator {
     return null;
   }
 
+  static String? requireSelection(bool? value, {String? message}) {
+    if (value == null || value == false) {
+      return message ?? 'select_dropdown'.tr();
+    }
+    return null;
+  }
+
+  static String? requireLocation(bool? value, {String? message}) {
+    if (value == null || value == false) {
+      return message ?? 'location_is_required'.tr();
+    }
+    return null;
+  }
+
   static String? retaunNull(String? value) => null;
 }

@@ -18,6 +18,7 @@ class NominationLocationField extends StatefulWidget {
   const NominationLocationField({
     required this.onLocationSelected,
     required this.selectedLatLng,
+    required this.validator,
     this.title = '',
     this.hint = '',
     super.key,
@@ -43,6 +44,7 @@ class NominationLocationField extends StatefulWidget {
   final double? circleRadius;
   final LatLng? selectedLatLng;
   final RadiusType radiusType;
+  final String? Function(bool?) validator;
 
   @override
   State<NominationLocationField> createState() =>
@@ -135,7 +137,7 @@ class _NominationLocationFieldState extends State<NominationLocationField> {
           prefixIcon: widget.prefixIcon,
           sufixIcon: widget.showSuffixIcon,
           selectedItem: null,
-          validator: (bool? val) => null,
+          validator: widget.validator,
           title: widget.title != '' ? widget.title : '',
           items: const <DropdownMenuItem<NominationLocationEntity>>[],
           initialText: widget.initialText,

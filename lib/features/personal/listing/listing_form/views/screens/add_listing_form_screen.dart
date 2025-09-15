@@ -25,7 +25,9 @@ class _AddListingFormScreenState extends State<AddListingFormScreen> {
   Widget build(BuildContext context) {
     return PopScope(
       onPopInvokedWithResult: (bool didPop, dynamic result) {
-        Provider.of<AddListingFormProvider>(context, listen: false).reset();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Provider.of<AddListingFormProvider>(context, listen: false).reset();
+        });
       },
       child: Scaffold(
         appBar: AppBar(

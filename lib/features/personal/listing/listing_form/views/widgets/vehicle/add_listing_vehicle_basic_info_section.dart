@@ -8,7 +8,7 @@ import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../location/domain/entities/location_entity.dart';
 import '../../../../../location/domain/enums/map_display_mode.dart';
-import '../../../../../location/view/widgets/location_field.dart/nomination_location_wrapper.dart';
+import '../../../../../location/view/widgets/location_field.dart/nomination_location_field.dart';
 import '../../../../../marketplace/views/widgets/market_categorized_filters_page_widgets/widgets/vehicle_filter/widget/year_picker_dropdown.dart';
 import '../../../domain/entities/color_options_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
@@ -100,6 +100,7 @@ class _AddListingVehicleBasicInfoSectionState
                   formPro.setVehicleColor(value),
             ),
             NominationLocationField(
+                validator: (bool? p0) => null,
                 title: 'meetup_location'.tr(),
                 selectedLatLng: formPro.collectionLatLng,
                 displayMode: MapDisplayMode.showMapAfterSelection,
