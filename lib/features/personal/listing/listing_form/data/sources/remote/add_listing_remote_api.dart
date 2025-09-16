@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/api_call.dart';
+import '../../../../../post/data/sources/local/local_post.dart';
 import '../../../views/params/add_listing_param.dart';
 
 abstract interface class AddListingRemoteApi {
@@ -46,7 +47,9 @@ class AddListingRemoteApiImpl extends AddListingRemoteApi {
         fieldsMap: params.toMap(),
         isAuth: true,
       );
+      AppLog.info(params.toMap().toString(), name: 'post edit payload');
       if (response is DataSuccess) {
+        LocalPost().getPost(params.postID ?? '', silentUpdate: false);
         return DataSuccess<String>(response.data ?? '', null);
       } else {
         AppLog.error(response.exception?.message ?? 'something_wrong'.tr(),

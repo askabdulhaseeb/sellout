@@ -9,7 +9,6 @@ import '../../../../../core/sources/data_state.dart';
 import '../../../../../core/widgets/app_snakebar.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../listing/listing_form/data/models/sub_category_model.dart';
-import '../../../listing/listing_form/data/sources/remote/dropdown_listing_api.dart';
 import '../../../location/domain/entities/location_entity.dart';
 import '../../../post/domain/entities/post/post_entity.dart';
 import '../../../post/post_detail/views/screens/post_detail_screen.dart';
@@ -780,10 +779,10 @@ class MarketPlaceProvider extends ChangeNotifier {
   Future<void> fetchDropdownListings() async {
     try {
       setLoading(true);
-      String endpoint = '/category/${_marketplaceCategory?.json}?list-id=';
-      await DropDownListingAPI()
-          .fetchAndStore(endpoint)
-          .timeout(const Duration(seconds: 10));
+      // String endpoint = '/category/${_marketplaceCategory?.json}?list-id=';
+      // await DropDownListingAPI()
+      //     .fetchAndStore(endpoint)
+      //     .timeout(const Duration(seconds: 10));
       loadFilteredContainerPosts();
       setLoading(false);
     } catch (e) {

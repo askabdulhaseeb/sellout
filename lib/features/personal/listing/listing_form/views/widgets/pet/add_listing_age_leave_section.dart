@@ -15,7 +15,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle? textStyle = Theme.of(context).textTheme.bodyMedium;
+    // final TextStyle? textStyle = Theme.of(context).textTheme.bodyMedium;
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         return Column(
@@ -30,7 +30,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                     categoryKey: 'age',
                     selectedValue: formPro.age,
                     title: 'age'.tr(),
-                    onChanged: formPro.setAge,
+                    onChanged: (String? p0) => formPro.setAge(p0),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -42,7 +42,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                     categoryKey: 'ready_to_leave',
                     selectedValue: formPro.time,
                     title: 'ready_to_leave'.tr(),
-                    onChanged: formPro.setTime,
+                    onChanged: (String? p0) => formPro.setTime(p0),
                   ),
                 ),
               ],
@@ -68,62 +68,54 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
             NominationLocationField(
                 validator: (bool? value) => AppValidator.requireLocation(value),
                 title: 'meetup_location'.tr(),
-                selectedLatLng: formPro.collectionLatLng,
+                selectedLatLng: formPro.meetupLatLng,
                 displayMode: MapDisplayMode.showMapAfterSelection,
                 initialText: formPro.selectedmeetupLocation?.address ?? '',
                 onLocationSelected: (LocationEntity p0, LatLng p1) =>
                     formPro.setMeetupLocation(p0, p1)),
-            CustomDropdown<bool>(
-              selectedItem: formPro.vaccinationUpToDate,
-              items: <DropdownMenuItem<bool>>[
-                DropdownMenuItem<bool>(
-                  value: true,
-                  child: Text('yes'.tr(), style: textStyle),
-                ),
-                DropdownMenuItem<bool>(
-                  value: false,
-                  child: Text('no'.tr(), style: textStyle),
-                ),
-              ],
-              onChanged: formPro.setVaccinationUpToDate,
-              validator: (bool? p0) => AppValidator.requireSelection(p0),
-              title: 'vaccination_up_to_date'.tr(),
-            ),
-            CustomDropdown<bool>(
-              selectedItem: formPro.wormAndFleaTreated,
-              items: <DropdownMenuItem<bool>>[
-                DropdownMenuItem<bool>(
-                  value: true,
-                  child: Text('yes'.tr(), style: textStyle),
-                ),
-                DropdownMenuItem<bool>(
-                  value: false,
-                  child: Text('no'.tr(), style: textStyle),
-                ),
-              ],
-              onChanged: formPro.setWormFleeTreated,
-              validator: (bool? p0) => AppValidator.requireSelection(p0),
-              title: 'worm_flee_treated'.tr(),
-            ),
-            CustomDropdown<bool>(
-              selectedItem: formPro.healthChecked,
-              items: <DropdownMenuItem<bool>>[
-                DropdownMenuItem<bool>(
-                  value: true,
-                  child: Text('yes'.tr(), style: textStyle),
-                ),
-                DropdownMenuItem<bool>(
-                  value: false,
-                  child: Text('no'.tr(), style: textStyle),
-                ),
-              ],
-              onChanged: formPro.setHealthChecked,
-              validator: (bool? p0) => AppValidator.requireSelection(p0),
-              title: 'health_checked'.tr(),
-            ),
+            // buildYesNoDropdown(
+            //     title: 'vaccination_up_to_date'.tr(),
+            //     selectedValue: formPro.vaccinationUpToDate,
+            //     onChanged: (bool? p0) => formPro.setVaccinationUpToDate(p0),
+            //     textStyle: textStyle),
+            // buildYesNoDropdown(
+            //     title: 'worm_flee_treated'.tr(),
+            //     selectedValue: formPro.wormAndFleaTreated,
+            //     onChanged: (bool? p0) => formPro.setWormFleeTreated(p0),
+            //     textStyle: textStyle),
+            // buildYesNoDropdown(
+            //   title: 'health_checked'.tr(),
+            //   selectedValue: formPro.healthChecked,
+            //   onChanged: (bool? p0) => formPro.setHealthChecked(p0),
+            //   textStyle: textStyle,
+            // ),
           ],
         );
       },
+    );
+  }
+
+  Widget buildYesNoDropdown({
+    required String title,
+    required bool? selectedValue,
+    required Function(bool?) onChanged,
+    required TextStyle? textStyle,
+  }) {
+    return CustomDropdown<bool>(
+      selectedItem: selectedValue,
+      items: <DropdownMenuItem<bool>>[
+        DropdownMenuItem<bool>(
+          value: true,
+          child: Text('yes'.tr(), style: textStyle),
+        ),
+        DropdownMenuItem<bool>(
+          value: false,
+          child: Text('no'.tr(), style: textStyle),
+        ),
+      ],
+      onChanged: onChanged,
+      validator: (bool? val) => AppValidator.requireSelection(val),
+      title: title,
     );
   }
 }

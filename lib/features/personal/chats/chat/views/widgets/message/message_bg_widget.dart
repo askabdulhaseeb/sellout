@@ -29,7 +29,9 @@ class MessageBgWidget extends StatelessWidget {
         ),
         decoration: BoxDecoration(
             color: color ??
-                (isMe ? Theme.of(context).dividerColor : AppTheme.lightPrimary),
+                (isMe
+                    ? Theme.of(context).scaffoldBackgroundColor
+                    : AppTheme.lightPrimary),
             borderRadius: BorderRadius.circular(8)),
         child: child,
       ),

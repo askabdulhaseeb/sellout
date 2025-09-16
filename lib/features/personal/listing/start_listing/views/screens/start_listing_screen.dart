@@ -24,8 +24,8 @@ class _StartListingScreenState extends State<StartListingScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: <Widget>[
-            AppBarTitle(
-              titleKey: 'start_selling'.tr(),
+            const AppBarTitle(
+              titleKey: 'start_selling',
             ),
             SearchableTextfield(
               hintText: 'search_listing'.tr(),

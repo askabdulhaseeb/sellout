@@ -49,13 +49,13 @@ class LocalPost {
     }
   }
 
-  Future<PostEntity?> getPost(String id) async {
+  Future<PostEntity?> getPost(String id, {bool? silentUpdate}) async {
     final PostEntity? po = post(id);
     if (po == null) {
       final GetSpecificPostUsecase getSpecificPostUsecase =
           GetSpecificPostUsecase(locator());
       final DataState<PostEntity> result = await getSpecificPostUsecase(
-        GetSpecificPostParam(postId: id, silentUpdate: true),
+        GetSpecificPostParam(postId: id, silentUpdate: silentUpdate ?? true),
       );
       if (result is DataSuccess) {
         return result.entity;

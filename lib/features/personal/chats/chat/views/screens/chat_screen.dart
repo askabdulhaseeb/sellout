@@ -1,11 +1,15 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../core/theme/app_theme.dart';
 import '../../../chat_dashboard/data/models/chat/chat_model.dart';
 import '../../../chat_dashboard/data/sources/local/local_unseen_messages.dart';
 import '../providers/chat_provider.dart';
 import '../widgets/app_bar/chat_app_bar.dart';
 import '../widgets/chat_interaction_panel/chat_interaction_panel.dart';
+import '../widgets/painters/chat_bg_painter.dart';
 import '../widgets/pinned_message.dart/pinned_message.dart';
 import '../widgets/message/messages_list.dart';
 
@@ -55,6 +59,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    const ui.Color baseColor = AppTheme.dividerColor;
+    const ui.Color accentColor = AppTheme.outlineVarient;
     return Consumer<ChatProvider>(
       builder: (BuildContext context, ChatProvider pro, _) {
         final ChatEntity? chat = pro.chat;
@@ -63,19 +69,27 @@ class _ChatScreenState extends State<ChatScreen> {
             LocalUnreadMessagesService().clearCount(chat.chatId);
           },
           child: Scaffold(
+            backgroundColor: baseColor,
             resizeToAvoidBottomInset: true,
             appBar: chatAppBar(context),
-            body: Column(
-              children: <Widget>[
-                ChatPinnedMessage(chatId: chat!.chatId),
-                Expanded(
-                  child: MessagesList(
-                    chat: chat,
-                    controller: scrollController,
+            body: CustomPaint(
+              painter: ChatBgPainter(
+                baseColor: baseColor,
+                accentColor: accentColor,
+                tileSize: 60,
+              ),
+              child: Column(
+                children: <Widget>[
+                  ChatPinnedMessage(chatId: chat!.chatId),
+                  Expanded(
+                    child: MessagesList(
+                      chat: chat,
+                      controller: scrollController,
+                    ),
                   ),
-                ),
-                const ChatInteractionPanel(),
-              ],
+                  const ChatInteractionPanel(),
+                ],
+              ),
             ),
           ),
         );

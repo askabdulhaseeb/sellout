@@ -9,12 +9,16 @@ class SearchableTextfield extends StatefulWidget {
     this.controller,
     this.hintText,
     this.onChanged,
+    this.borderRadius,
+    this.border,
     super.key,
   });
 
   final TextEditingController? controller;
   final String? hintText;
   final Function(String)? onChanged;
+  final double? borderRadius;
+  final InputBorder? border;
 
   @override
   State<SearchableTextfield> createState() => _SearchableTextfieldState();
@@ -39,7 +43,8 @@ class _SearchableTextfieldState extends State<SearchableTextfield> {
   @override
   Widget build(BuildContext context) {
     return CustomTextFormField(
-      borderRadius: 12,
+      border: widget.border,
+      borderRadius: widget.borderRadius ?? 12,
       controller: widget.controller,
       onChanged: _onTextChanged,
       hint: widget.hintText ?? 'search'.tr(),

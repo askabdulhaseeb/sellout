@@ -1,6 +1,5 @@
 import 'dart:convert';
 import '../../domain/entities/notification_entity.dart';
-import 'notification_metadata_model.dart';
 
 class NotificationModel extends NotificationEntity {
   factory NotificationModel.fromRawJson(String str) =>
@@ -27,8 +26,7 @@ class NotificationModel extends NotificationEntity {
       deliverTo: map['deliver_to'] ?? '',
       message: map['message'] ?? '',
       isViewed: map['is_viewed'] ?? false,
-      metadata: NotificationMetadataModel.fromMap(
-          map['metadata'] ?? <dynamic, dynamic>{}),
+      metadata: map['metadata'] ?? <dynamic, dynamic>{},
       notificationFor: map['notification_for'] ?? '',
       timestamps: DateTime.tryParse(map['timestamps'] ?? '') ?? DateTime.now(),
     );

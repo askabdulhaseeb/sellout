@@ -20,6 +20,7 @@ class ChatDashboardSearchableWidget extends StatelessWidget {
           children: <Widget>[
             Expanded(
               child: SearchableTextfield(
+                borderRadius: 8,
                 controller: pagePro.searchController,
                 onChanged: (String value) {
                   if (ChatPageType.orders == pagePro.currentPage) {
@@ -45,7 +46,7 @@ class ChatDashboardSearchableWidget extends StatelessWidget {
                         decoration: BoxDecoration(
                             border: Border.all(
                                 color: ColorScheme.of(context).outlineVariant),
-                            borderRadius: BorderRadius.circular(12)),
+                            borderRadius: BorderRadius.circular(8)),
                         child: const CustomSvgIcon(
                             assetPath: AppStrings.selloutAddChatIcon)))
                 : pagePro.currentPage == ChatPageType.services
@@ -65,7 +66,7 @@ class ChatDashboardSearchableWidget extends StatelessWidget {
                                 border: Border.all(
                                     color:
                                         ColorScheme.of(context).outlineVariant),
-                                borderRadius: BorderRadius.circular(12)),
+                                borderRadius: BorderRadius.circular(8)),
                             child: const CustomSvgIcon(
                                 assetPath: AppStrings.selloutAddChatIcon)))
           ],

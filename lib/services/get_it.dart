@@ -565,7 +565,7 @@ void _addlisting() {
   locator
       .registerFactory<EditListingUsecase>(() => EditListingUsecase(locator()));
   locator.registerFactory<AddListingFormProvider>(
-    () => AddListingFormProvider(locator(), locator()),
+    () => AddListingFormProvider(locator(), locator(), locator()),
   );
 }
 
