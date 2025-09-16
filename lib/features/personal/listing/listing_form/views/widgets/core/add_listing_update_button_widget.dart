@@ -27,12 +27,9 @@ class AddListingUpdateButtons extends StatelessWidget {
         ),
         Expanded(
           child: CustomElevatedButton(
-            title: 'update'.tr(),
-            isLoading: formPro.isLoading,
-            onTap: () {
-              formPro.submit(context);
-            },
-          ),
+              title: 'update'.tr(),
+              isLoading: formPro.isLoading,
+              onTap: () => formPro.submit(context)),
         ),
       ],
     );

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:provider/provider.dart';
@@ -59,21 +60,20 @@ class ProductChatDashboardTile extends HookWidget {
                 builder: (BuildContext context,
                     AsyncSnapshot<DataState<Object?>> snapshot) {
                   // Handle both entity types
-                  String displayName = post?.title ?? '';
-                  String imageUrl = post?.imageURL ?? '';
+                  String displayName = post?.title ?? 'na'.tr();
+                  String imageUrl = post?.imageURL ?? 'na'.tr();
                   String id = otherId;
                   if (isBusiness &&
                       snapshot.data is DataState<BusinessEntity?>) {
                     final BusinessEntity? business =
                         (snapshot.data as DataState<BusinessEntity?>).entity;
-                    displayName = displayName;
                     imageUrl = business?.logo?.url ?? imageUrl;
                     id = business?.businessID ?? id;
                   } else if (!isBusiness &&
                       snapshot.data is DataState<UserEntity?>) {
                     final UserEntity? user =
                         (snapshot.data as DataState<UserEntity?>).entity;
-                    displayName = user?.displayName ?? displayName;
+                    displayName = displayName;
                     imageUrl = user?.profilePhotoURL ?? displayName;
                     id = user?.uid ?? id;
                   }

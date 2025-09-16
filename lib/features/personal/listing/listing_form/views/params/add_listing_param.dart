@@ -22,13 +22,13 @@ class AddListingParam {
     required this.description,
     required this.attachments,
     required this.price,
-    required this.condition,
     required this.acceptOffer,
     required this.minOfferAmount,
     required this.privacyType,
     required this.deliveryType,
     required this.listingType,
     required this.currency,
+    this.condition,
     this.currentLatitude,
     this.currentLongitude,
     this.type,
@@ -87,7 +87,7 @@ class AddListingParam {
   final String price;
   final String? quantity;
   final bool? discount;
-  final ConditionType condition;
+  final ConditionType? condition;
   final bool acceptOffer;
   final String minOfferAmount;
   final PrivacyType privacyType;
@@ -250,7 +250,7 @@ class AddListingParam {
   _item() {
     final Map<String, String> mapp = <String, String>{
       'quantity': quantity ?? '2',
-      'item_condition': condition.json,
+      'item_condition': condition?.json ?? '',
     };
     mapp.addAll(_titleMAP());
     mapp.addAll(_discountMAP());
@@ -263,7 +263,7 @@ class AddListingParam {
   _cloth() {
     final Map<String, String> mapp = <String, String>{
       'quantity': quantity ?? '',
-      'item_condition': condition.json,
+      'item_condition': condition?.json ?? '',
       'brand': brand ?? '',
       'size_colors': jsonEncode(sizeColor
           ?.map((SizeColorEntity e) => SizeColorModel(
@@ -300,7 +300,7 @@ class AddListingParam {
 
   _vehicles() {
     final Map<String, String> mapp = <String, String>{
-      'item_condition': condition.json,
+      'item_condition': condition?.json ?? '',
       'make': make ?? '', //
       'model': model ?? '', //
       'body_type': bodyType ?? '', //
@@ -355,7 +355,7 @@ class AddListingParam {
     mapp.addAll(_titleMAP());
     mapp.addAll(_offerMAP());
     mapp.addAll(_listLocMAP());
-    mapp.addAll(_meetupMAP());
+    // mapp.addAll(_meetupMAP());
 
     return mapp;
   }

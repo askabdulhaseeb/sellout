@@ -15,7 +15,10 @@ import '../local/local_post.dart';
 
 abstract interface class PostRemoteApi {
   Future<DataState<GetFeedResponse>> getFeed(GetFeedParams params);
-  Future<DataState<PostEntity>> getPost(String id);
+  Future<DataState<PostEntity>> getPost(
+    String id, {
+    bool silentUpdate = true,
+  });
   Future<DataState<bool>> addToCart(AddToCartParam param);
   Future<DataState<bool>> reportPost(ReportParams params);
   Future<DataState<bool>> savePost(String postID);
@@ -97,6 +100,7 @@ class PostRemoteApiImpl implements PostRemoteApi {
   }) async {
     try {
       if (silentUpdate) {
+        debugPrint('updating post silently: $id');
         ApiRequestEntity? request = await LocalRequestHistory().request(
           endpoint: '/post/$id',
           duration:
@@ -117,8 +121,9 @@ class PostRemoteApiImpl implements PostRemoteApi {
         requestType: ApiRequestType.get,
         isAuth: false,
       );
-
       if (result is DataSuccess) {
+        debugPrint('fetched fresh post from backend: $id');
+
         final String raw = result.data ?? '';
         if (raw.isEmpty) {
           return DataFailer<PostEntity>(

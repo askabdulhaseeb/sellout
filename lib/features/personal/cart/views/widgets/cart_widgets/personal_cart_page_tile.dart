@@ -52,7 +52,6 @@ class _IconButton extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
       child: SizedBox(
-        width: MediaQuery.sizeOf(context).width / 6,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[

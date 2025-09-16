@@ -6,6 +6,7 @@ import '../../../../../../core/usecase/usecase.dart';
 import '../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/profile_photo.dart';
+import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../providers/profile_provider.dart';
 
@@ -33,7 +34,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         Provider.of<ProfileProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
-        title: Text('edit_profile'.tr()),
+        title: const AppBarTitle(titleKey: 'edit_profile'),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -48,7 +49,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       builder: (BuildContext context, ProfileProvider pr,
                               Widget? child) =>
                           ProfilePhoto(
-                        isCircle: true,
+                        isCircle: false,
                         url: (pro.profilePhoto != null &&
                                 pro.profilePhoto!.isNotEmpty)
                             ? pro.profilePhoto!.first.url

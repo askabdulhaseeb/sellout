@@ -54,8 +54,7 @@ class MessageTile extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            TextSpan(
-                                text: ' . ${message.createdAt.messageTime}'),
+                            TextSpan(text: ' . ${message.createdAt.timeOnly}'),
                           ],
                         ),
                       );

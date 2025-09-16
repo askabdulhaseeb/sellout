@@ -18,6 +18,9 @@ class ChatSelectablePageTypeWidget extends StatelessWidget {
             spacing: 6,
             children: tabs.map((ChatPageType tab) {
               final bool isSelected = pagePro.currentPage == tab;
+              final Color borderColor = isSelected
+                  ? Theme.of(context).primaryColor
+                  : ColorScheme.of(context).outlineVariant;
               final Color color = isSelected
                   ? Theme.of(context).primaryColor
                   : ColorScheme.of(context).outline;
@@ -26,9 +29,8 @@ class ChatSelectablePageTypeWidget extends StatelessWidget {
                   onTap: () => pagePro.setCurrentTabIndex(tab),
                   child: Container(
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                            color: ColorScheme.of(context).outlineVariant)),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: borderColor)),
                     padding: const EdgeInsets.symmetric(
                       vertical: 10,
                     ),

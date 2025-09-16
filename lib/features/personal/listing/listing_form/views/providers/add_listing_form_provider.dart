@@ -28,11 +28,11 @@ import '../../../../post/domain/entities/size_color/size_color_entity.dart';
 import '../../data/models/listing_model.dart';
 import '../../data/models/sub_category_model.dart';
 import '../../data/sources/local/local_colors.dart';
-import '../../data/sources/remote/dropdown_listing_api.dart';
 import '../../domain/entities/color_options_entity.dart';
 import '../../domain/entities/sub_category_entity.dart';
 import '../../domain/usecase/add_listing_usecase.dart';
 import '../../domain/usecase/edit_listing_usecase.dart';
+import '../../domain/usecase/get_category_by_endpoint_usecase.dart';
 import '../params/add_listing_param.dart';
 import '../widgets/property/add_property_tenure_type.dart';
 
@@ -40,9 +40,11 @@ class AddListingFormProvider extends ChangeNotifier {
   AddListingFormProvider(
     this._addlistingUSecase,
     this._editListingUsecase,
+    this._getCategoriesByEndPoint,
   );
   final AddListingUsecase _addlistingUSecase;
   final EditListingUsecase _editListingUsecase;
+  final GetCategoryByEndpointUsecase _getCategoriesByEndPoint;
 
   List<AvailabilityEntity> _availability = DayType.values.map((DayType day) {
     return AvailabilityModel(
@@ -180,13 +182,11 @@ class AddListingFormProvider extends ChangeNotifier {
     _post = null;
     _accessCode = '';
     _isDiscounted = false;
-
     // Booleans
     _garden = true;
     _parking = true;
     _animalFriendly = true;
     _acceptOffer = true;
-
     // Enums and types
     _age = null;
     _time = null;
@@ -196,12 +196,10 @@ class AddListingFormProvider extends ChangeNotifier {
     _listingType = null;
     _transmissionType = null;
     _make = null;
-
     // Nullable booleans
     _vaccinationUpToDate = null;
     _wormAndFleaTreated = null;
     _healthChecked = null;
-
     // Categories and selections
     _brand = null;
     _selectedCategory = null;
@@ -219,7 +217,6 @@ class AddListingFormProvider extends ChangeNotifier {
     _collectionLatLng = null;
     // List data
     _sizeColorEntities = <SizeColorModel>[];
-
     // Strings
     _tenureType = 'freehold';
     _selectedPropertySubCategory = ListingType.property.cids.first;
@@ -658,7 +655,7 @@ class AddListingFormProvider extends ChangeNotifier {
         oldAttachments: post?.fileUrls,
         accessCode: _accessCode,
         age: age ?? '',
-        breed: selectedCategory?.title ?? '',
+        breed: _breed,
         healthChecked: _healthChecked,
         petsCategory: _petCategory,
         wormAndFleaTreated: _wormAndFleaTreated,
@@ -667,26 +664,21 @@ class AddListingFormProvider extends ChangeNotifier {
         quantity: _quantity.text,
         currency: _post == null ? LocalAuth.currentUser?.currency : null,
         animalFriendly: animalFriendly.toString(),
-        parking: parking.toString(),
-        propertyType: _selectedPropertyType,
-        availbility: jsonEncode(
-          _availability.map((AvailabilityEntity e) => e.toJson()).toList(),
-        ),
+        // availbility: jsonEncode(
+        //   _availability.map((AvailabilityEntity e) => e.toJson()).toList(),
+        // ),
         meetUpLocation: _selectedMeetupLocation,
         title: title.text,
         description: description.text,
         attachments: attachments,
         price: price.text,
-        condition: condition,
         acceptOffer: acceptOffer,
         minOfferAmount: minimumOffer.text,
         privacyType: _privacy,
         deliveryType: deliveryType,
-        collectionLocation: selectedmeetupLocation,
         listingType: listingType ?? ListingType.pets,
-        category: _selectedCategory,
-        currentLatitude: 12234,
-        currentLongitude: 123456,
+        currentLatitude: LocalAuth.latlng.latitude.toInt(),
+        currentLongitude: LocalAuth.latlng.latitude.toInt(),
       );
       final DataState<String> result = _post == null
           ? await _addlistingUSecase(param)
@@ -707,9 +699,7 @@ class AddListingFormProvider extends ChangeNotifier {
     _isDropdownLoading = true;
     notifyListeners();
     try {
-      await DropDownListingAPI()
-          .fetchAndStore(endpoint)
-          .timeout(const Duration(seconds: 10));
+      await _getCategoriesByEndPoint.call(endpoint);
     } catch (e) {
       debugPrint('Error fetching dropdown listings: $e');
       // Optionally handle error
@@ -727,6 +717,7 @@ class AddListingFormProvider extends ChangeNotifier {
   /// Setter
   void setListingType(ListingType? value) {
     _listingType = value;
+    debugPrint('ListingType is ${value?.json}');
     notifyListeners();
   }
 
