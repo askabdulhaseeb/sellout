@@ -16,17 +16,16 @@ class RemoteCategoriesSourceImpl implements RemoteCategoriesSource {
         isAuth: false,
         isConnectType: false,
       );
-
       if (req is DataSuccess<String>) {
         AppLog.info(
           'RemoteCategoriesSourceImpl.fetchCategoriesFromApi: Success for $endpoint',
-          name: 'RemoteCategoriesSourceImpl - fetchCategoriesFromApi - success',
+          name: 'RemoteCategoriesSourceImpl - fetchCategoriesFromApi . success',
         );
-        return req; // return DataSuccess<String>
+        return DataSuccess<String>(req.data ?? '', req.entity);
       } else if (req is DataFailer<String>) {
         AppLog.error(
           'RemoteCategoriesSourceImpl.fetchCategoriesFromApi: API returned failure for $endpoint',
-          name: 'RemoteCategoriesSourceImpl - fetchCategoriesFromApi - failure',
+          name: 'RemoteCategoriesSourceImpl - fetchCategoriesFromApi . failure',
           error: req.exception,
         );
         return req;
@@ -34,7 +33,7 @@ class RemoteCategoriesSourceImpl implements RemoteCategoriesSource {
         AppLog.error(
           'RemoteCategoriesSourceImpl.fetchCategoriesFromApi: Unknown DataState for $endpoint',
           name:
-              'RemoteCategoriesSourceImpl - fetchCategoriesFromApi - else block',
+              'RemoteCategoriesSourceImpl - fetchCategoriesFromApi . else block',
         );
         return DataFailer<String>(CustomException(
           'Unknown DataState from API',
@@ -44,7 +43,7 @@ class RemoteCategoriesSourceImpl implements RemoteCategoriesSource {
       AppLog.error(
         'RemoteCategoriesSourceImpl.fetchCategoriesFromApi: Exception occurred for $endpoint',
         name:
-            'RemoteCategoriesSourceImpl - fetchCategoriesFromApi - catch block',
+            'RemoteCategoriesSourceImpl - fetchCategoriesFromApi . catch block',
         error: e,
         stackTrace: stack,
       );

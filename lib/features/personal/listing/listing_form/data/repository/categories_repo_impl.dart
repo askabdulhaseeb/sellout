@@ -1,38 +1,64 @@
+import 'package:flutter/cupertino.dart';
+import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/sources/local/local_request_history.dart';
 import '../../domain/repository/categories_repo.dart';
+import '../models/categories_models.dart/category_model.dart';
 import '../sources/local/local_categories.dart';
 import '../sources/remote/remote_categories_source.dart';
 
 class CategoriesRepoImpl implements CategoriesRepo {
-  CategoriesRepoImpl({required this.remoteApi});
-
+  CategoriesRepoImpl(this.remoteApi);
   final RemoteCategoriesSource remoteApi;
 
   @override
   Future<DataState<String>> getCategoriesByEndPoint(String endpoint) async {
     try {
-      // Fetch local data
-      final ApiRequestEntity? localData =
-          await LocalRequestHistory().request(endpoint: endpoint);
+      debugPrint('getCategoriesByEndPoint . CategoriesRepoImpl');
 
-      if (localData != null && localData.decodedData.isNotEmpty) {
+      // 1️⃣ Try fetching from local storage
+      final ApiRequestEntity? localData = await LocalRequestHistory()
+          .request(endpoint: endpoint, duration: const Duration(days: 7));
+      final String? localJson = localData?.encodedData;
+
+      if (localJson != '' && localJson != null) {
+        debugPrint('Fetched from local storage: $localJson');
+
+        // Parse & save locally again (optional if you want to refresh fields)
+        await _processResponse(localJson);
+
         return DataSuccess<String>(
-          localData.decodedData,
+          localData?.encodedData ?? '',
           'Fetched from local storage',
         );
       }
 
-      // If no local data, fetch from remote API
+      // 2️⃣ If local is null/empty, fetch from remote API
       final DataState<String> remoteData =
           await remoteApi.fetchCategoriesFromApi(endpoint);
+
       if (remoteData is DataSuccess<String>) {
-        await LocalCategoriesSource().save(remoteData);
+        debugPrint('Fetched from API: ${remoteData.data}');
+        // Process & save remote data locally
+        await _processResponse(remoteData.data ?? '');
       }
 
       return remoteData;
-    } catch (e) {
+    } catch (e, stc) {
+      AppLog.error('Error in getCategoriesByEndPoint:',
+          name: 'CategoriesRepoImpl.getCategoriesByEndPoint - catch',
+          error: e,
+          stackTrace: stc);
       return DataFailer<String>(CustomException(e.toString()));
     }
+  }
+
+  Future<void> _processResponse(dynamic data) async {
+    debugPrint('processing response');
+    final CategoriesModel model = CategoriesModel.fromJson(data);
+    debugPrint('parsed response in  model');
+    await LocalCategoriesSource().saveNonNullFields(model);
+
+    debugPrint('✅ Categories processed & saved locally.');
   }
 }

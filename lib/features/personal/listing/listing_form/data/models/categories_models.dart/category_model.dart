@@ -1,99 +1,176 @@
+import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import '../../../domain/entities/category_entites/categories_entity.dart';
-import '../../../domain/entities/category_entites/subentities/dropdown_option_entity.dart';
-import '../../../domain/entities/category_entites/subentities/dropdown_option_data_entity.dart';
 import 'sub_models/dropdown_option.model.dart';
-import 'sub_models/dropdown_option_data_model.dart';
 import '../sub_category_model.dart';
+import 'package:flutter/foundation.dart';
+
+import 'sub_models/dropdown_option_data_model.dart';
 
 class CategoriesModel extends CategoriesEntity {
   CategoriesModel({
-    super.items,
-    super.clothesSizes,
-    super.footSizes,
-    super.clothes,
-    super.foot,
     super.clothesBrands,
     super.footwearBrands,
+    super.clothesSizes,
+    super.footSizes,
     super.age,
     super.breed,
     super.pets,
     super.readyToLeave,
+    super.emissionStandards,
+    super.fuelType,
+    super.make,
+    super.mileageUnit,
+    super.transmission,
+    super.vehicles,
+    super.energyRating,
+    super.propertyType,
+    super.items,
+    super.clothes,
+    super.foot,
   });
 
-  /// ---------- FROM JSON ----------
-  factory CategoriesModel.fromJson(Map<String, dynamic> json) {
-    return CategoriesModel(
-      clothesBrands: (json['clothes_brands'] ?? <dynamic>[])
-          ?.map((dynamic e) => DropdownOptionDataModel.fromJson(e))
-          .toList(),
-      footwearBrands: (json['footwear_brands'] ?? <dynamic>[])
-          ?.map((dynamic e) => DropdownOptionDataModel.fromJson(e))
-          .toList(),
-      clothesSizes: (json['clothes_sizes'] ?? <dynamic>[])
-          ?.map((dynamic e) => DropdownOptionModel.fromJson(e))
-          .toList(),
-      footSizes: (json['foot_sizes'] ?? <dynamic>[])
-          ?.map((dynamic e) => DropdownOptionModel.fromJson(e))
-          .toList(),
-      age: (json['age'] ?? <dynamic>[])
-          ?.map((dynamic e) => DropdownOptionModel.fromJson(e))
-          .toList(),
-      breed: (json['breed'] ?? <dynamic>[])
-          ?.map((dynamic e) => DropdownOptionModel.fromJson(e))
-          .toList(),
-      pets: (json['pets'] ?? <dynamic>[])
-          ?.map((dynamic e) => DropdownOptionModel.fromJson(e))
-          .toList(),
-      readyToLeave: (json['ready_to_leave'] ?? <dynamic>[])
-          ?.map((dynamic e) => DropdownOptionModel.fromJson(e))
-          .toList(),
-      items: json['items'] != null
-          ? SubCategoryModel.fromJson(json['items'])
-          : null,
-      clothes: json['clothes'] != null
-          ? SubCategoryModel.fromJson(json['clothes'])
-          : null,
-      foot:
-          json['foot'] != null ? SubCategoryModel.fromJson(json['foot']) : null,
-    );
-  }
+  factory CategoriesModel.fromJson(String jsonString) {
+    final decoded = jsonDecode(jsonString);
 
-  /// ---------- TO JSON ----------
-  Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'clothes_brands': clothesBrands
-          ?.map((DropdownOptionEntity e) => (e as DropdownOptionModel).toJson())
-          .toList(),
-      'footwear_brands': footwearBrands
-          ?.map((DropdownOptionEntity e) => (e as DropdownOptionModel).toJson())
-          .toList(),
-      'clothes_sizes': clothesSizes
-          ?.map((DropdownOptionDataEntity e) =>
-              (e as DropdownOptionDataModel).toMap())
-          .toList(),
-      'foot_sizes': footSizes
-          ?.map((DropdownOptionDataEntity e) =>
-              (e as DropdownOptionDataModel).toMap())
-          .toList(),
-      'age': age
-          ?.map((DropdownOptionDataEntity e) =>
-              (e as DropdownOptionDataModel).toMap())
-          .toList(),
-      'breed': breed
-          ?.map((DropdownOptionDataEntity e) =>
-              (e as DropdownOptionDataModel).toMap())
-          .toList(),
-      'pets': pets
-          ?.map((DropdownOptionDataEntity e) =>
-              (e as DropdownOptionDataModel).toMap())
-          .toList(),
-      'ready_to_leave': readyToLeave
-          ?.map((DropdownOptionDataEntity e) =>
-              (e as DropdownOptionDataModel).toMap())
-          .toList(),
-      'items': items,
-      'clothes': clothes,
-      'foot': foot,
-    };
+    // Merge all maps into one if input is a list of maps
+    final Map<String, dynamic> mergedJson = <String, dynamic>{};
+    if (decoded is List) {
+      for (var element in decoded) {
+        if (element is Map<String, dynamic>) mergedJson.addAll(element);
+      }
+    } else if (decoded is Map<String, dynamic>) {
+      mergedJson.addAll(decoded);
+    }
+
+    final List<String> populatedFields = <String>[];
+    bool hasData(dynamic v) => v != null && (v is! List || v.isNotEmpty);
+
+    // Parse dropdown option from Map
+    DropdownOptionModel parseOption(dynamic e) =>
+        DropdownOptionModel.fromJson(e as Map<String, dynamic>);
+
+    // Parse list of DropdownOptionModel
+    List<DropdownOptionModel>? parseList(dynamic value) => hasData(value)
+        ? (value as List<dynamic>).map((e) => parseOption(e)).toList()
+        : null;
+
+    // Parse map of DropdownOptionModel (like clothes_sizes)
+    List<DropdownOptionModel>? parseMap(dynamic value) {
+      if (value == null) return null;
+      if (value is Map<String, dynamic>) {
+        return value.values
+            .whereType<Map<String, dynamic>>()
+            .map((e) => DropdownOptionModel.fromJson(e))
+            .toList();
+      }
+      return null;
+    }
+
+    // Parse DropdownOptionDataModel from Map or String
+    DropdownOptionDataModel parseDataOption(dynamic e) {
+      if (e is Map<String, dynamic>) return DropdownOptionDataModel.fromJson(e);
+      if (e is String) return DropdownOptionDataModel(label: e, value: e);
+      throw Exception('Invalid dropdown data option: $e');
+    }
+
+    // Parse list of DropdownOptionDataModel
+    List<DropdownOptionDataModel>? parseDataList(dynamic value) {
+      if (value == null) return null;
+      if (value is List && value.isNotEmpty) {
+        return value.map(parseDataOption).toList();
+      }
+      return null;
+    }
+
+    // ===== Parsing Fields =====
+    final clothesBrands = parseDataList(mergedJson['clothes_brands']);
+    if (clothesBrands != null) populatedFields.add('clothesBrands');
+
+    final footwearBrands = parseDataList(mergedJson['footwear_brands']);
+    if (footwearBrands != null) populatedFields.add('footwearBrands');
+
+    final clothesSizes =
+        parseMap(mergedJson['clothes_sizes']) ?? <DropdownOptionModel>[];
+    if (clothesSizes.isNotEmpty) populatedFields.add('clothesSizes');
+
+    final footSizes =
+        parseMap(mergedJson['foot_sizes']) ?? <DropdownOptionModel>[];
+    if (footSizes.isNotEmpty) populatedFields.add('footSizes');
+
+    final age = parseMap(mergedJson['age']);
+    if (age != null) populatedFields.add('age');
+
+    final breed = parseMap(mergedJson['breed']);
+    if (breed != null) populatedFields.add('breed');
+
+    final pets = parseMap(mergedJson['pets']);
+    if (pets != null) populatedFields.add('pets');
+
+    final readyToLeave = parseMap(mergedJson['ready_to_leave']);
+    if (readyToLeave != null) populatedFields.add('readyToLeave');
+
+    final emissionStandards = parseList(mergedJson['emission_standards']);
+    if (emissionStandards != null) populatedFields.add('emissionStandards');
+
+    final fuelType = parseList(mergedJson['fuel_type']);
+    if (fuelType != null) populatedFields.add('fuelType');
+
+    final make = parseList(mergedJson['make']);
+    if (make != null) populatedFields.add('make');
+
+    final mileageUnit = parseList(mergedJson['mileage_unit']);
+    if (mileageUnit != null) populatedFields.add('mileageUnit');
+
+    final transmission = parseList(mergedJson['transmission']);
+    if (transmission != null) populatedFields.add('transmission');
+
+    final vehicles = parseList(mergedJson['vehicles']);
+    if (vehicles != null) populatedFields.add('vehicles');
+
+    final energyRating = parseMap(mergedJson['energy_rating']);
+    if (energyRating != null) populatedFields.add('energyRating');
+
+    final propertyType = parseMap(mergedJson['property_type']);
+    if (propertyType != null) populatedFields.add('propertyType');
+
+    final items = mergedJson['items'] != null
+        ? SubCategoryModel.fromJson(mergedJson['items'])
+        : null;
+    if (items != null) populatedFields.add('items');
+
+    final clothes = mergedJson['clothes'] != null
+        ? SubCategoryModel.fromJson(mergedJson['clothes'])
+        : null;
+    if (clothes != null) populatedFields.add('clothes');
+
+    final foot = mergedJson['foot'] != null
+        ? SubCategoryModel.fromJson(mergedJson['foot'])
+        : null;
+    if (foot != null) populatedFields.add('foot');
+
+    debugPrint('CategoriesModel.fromJson – Populated fields: $populatedFields');
+
+    return CategoriesModel(
+      clothesBrands: clothesBrands,
+      footwearBrands: footwearBrands,
+      clothesSizes: clothesSizes,
+      footSizes: footSizes,
+      age: age,
+      breed: breed,
+      pets: pets,
+      readyToLeave: readyToLeave,
+      emissionStandards: emissionStandards,
+      fuelType: fuelType,
+      make: make,
+      mileageUnit: mileageUnit,
+      transmission: transmission,
+      vehicles: vehicles,
+      energyRating: energyRating,
+      propertyType: propertyType,
+      items: items,
+      clothes: clothes,
+      foot: foot,
+    );
   }
 }

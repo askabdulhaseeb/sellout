@@ -14,7 +14,7 @@ class PetsFilterWIdget extends StatelessWidget {
     return const Column(
       children: <Widget>[
         MarketFilterSearchField(),
-        MarketFilterpetsCategoryAndLocationWIdget(),
+        MarketFilterPetsCategoryAndLocationWidget(),
         MarketFilterAgeLeaveWidget(),
         MarketFilterPriceWIdget(),
       ],

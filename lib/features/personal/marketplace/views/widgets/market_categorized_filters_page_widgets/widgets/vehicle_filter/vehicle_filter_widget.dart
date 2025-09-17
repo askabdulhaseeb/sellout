@@ -16,7 +16,7 @@ class VehicleFIlterWidget extends StatelessWidget {
       children: <Widget>[
         MarketFilterSearchField(),
         MarketFilterLocationWidget(),
-        MarketFilterVehicleCategoryAndModalWIdget(),
+        MarketFilterVehicleCategoryAndModalWidget(),
         MarketFilterMakeYearWidget(),
         MarketFilterPriceWIdget(),
       ],

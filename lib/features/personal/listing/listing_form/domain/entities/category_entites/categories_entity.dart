@@ -1,40 +1,41 @@
 import 'package:hive/hive.dart';
 import '../../../data/models/sub_category_model.dart';
-import 'subentities/dropdown_option_entity.dart';
 import 'subentities/dropdown_option_data_entity.dart';
+import 'subentities/dropdown_option_entity.dart';
 part 'categories_entity.g.dart';
 
 @HiveType(typeId: 74)
 class CategoriesEntity {
-  CategoriesEntity({
-    this.items,
-    this.clothesSizes,
-    this.footSizes,
-    this.clothes,
-    this.foot,
-    this.clothesBrands,
-    this.footwearBrands,
-    this.age,
-    this.breed,
-    this.pets,
-    this.readyToLeave,
-    // this.bodyType,
-    this.vehicles,
-    this.emissionStandards,
-    this.fuelType,
-    this.make,
-    this.mileageUnit,
-    this.transmission,
-  });
+  CategoriesEntity(
+      {this.items,
+      this.clothesSizes,
+      this.footSizes,
+      this.clothes,
+      this.foot,
+      this.clothesBrands,
+      this.footwearBrands,
+      this.age,
+      this.breed,
+      this.pets,
+      this.readyToLeave,
+      // this.bodyType,
+      this.vehicles,
+      this.emissionStandards,
+      this.fuelType,
+      this.make,
+      this.mileageUnit,
+      this.transmission,
+      this.energyRating,
+      this.propertyType});
 
   @HiveField(0)
   final SubCategoryEntity? items;
 
   @HiveField(1)
-  final List<DropdownOptionDataEntity>? clothesSizes;
+  final List<DropdownOptionEntity>? clothesSizes;
 
   @HiveField(2)
-  final List<DropdownOptionDataEntity>? footSizes;
+  final List<DropdownOptionEntity>? footSizes;
 
   @HiveField(3)
   final SubCategoryEntity? clothes;
@@ -43,22 +44,22 @@ class CategoriesEntity {
   final SubCategoryEntity? foot;
 
   @HiveField(5)
-  final List<DropdownOptionEntity>? clothesBrands;
+  final List<DropdownOptionDataEntity>? clothesBrands;
 
   @HiveField(6)
-  final List<DropdownOptionEntity>? footwearBrands;
+  final List<DropdownOptionDataEntity>? footwearBrands;
 
   @HiveField(7)
-  final List<DropdownOptionDataEntity>? age;
+  final List<DropdownOptionEntity>? age;
 
   @HiveField(8)
-  final List<DropdownOptionDataEntity>? breed;
+  final List<DropdownOptionEntity>? breed;
 
   @HiveField(9)
-  final List<DropdownOptionDataEntity>? pets;
+  final List<DropdownOptionEntity>? pets;
 
   @HiveField(10)
-  final List<DropdownOptionDataEntity>? readyToLeave;
+  final List<DropdownOptionEntity>? readyToLeave;
 
   // @HiveField(11)
   // final BodyTypeEntity? bodyType;
@@ -80,19 +81,23 @@ class CategoriesEntity {
 
   @HiveField(17)
   final List<DropdownOptionEntity>? transmission;
+  @HiveField(18)
+  final List<DropdownOptionEntity>? energyRating;
+  @HiveField(19)
+  final List<DropdownOptionEntity>? propertyType;
 
   CategoriesEntity copyWith({
     SubCategoryEntity? items,
-    List<DropdownOptionDataEntity>? clothesSizes,
-    List<DropdownOptionDataEntity>? footSizes,
+    List<DropdownOptionEntity>? clothesSizes,
+    List<DropdownOptionEntity>? footSizes,
     SubCategoryEntity? clothes,
     SubCategoryEntity? foot,
-    List<DropdownOptionEntity>? clothesBrands,
-    List<DropdownOptionEntity>? footwearBrands,
-    List<DropdownOptionDataEntity>? age,
-    List<DropdownOptionDataEntity>? breed,
-    List<DropdownOptionDataEntity>? pets,
-    List<DropdownOptionDataEntity>? readyToLeave,
+    List<DropdownOptionDataEntity>? clothesBrands,
+    List<DropdownOptionDataEntity>? footwearBrands,
+    List<DropdownOptionEntity>? age,
+    List<DropdownOptionEntity>? breed,
+    List<DropdownOptionEntity>? pets,
+    List<DropdownOptionEntity>? readyToLeave,
     // BodyTypeEntity? bodyType,
     List<DropdownOptionEntity>? vehicles,
     List<DropdownOptionEntity>? emissionStandards,
@@ -100,6 +105,8 @@ class CategoriesEntity {
     List<DropdownOptionEntity>? make,
     List<DropdownOptionEntity>? mileageUnit,
     List<DropdownOptionEntity>? transmission,
+    List<DropdownOptionEntity>? energyRating,
+    List<DropdownOptionEntity>? propertyType,
   }) {
     return CategoriesEntity(
       items: items ?? this.items,
@@ -120,6 +127,8 @@ class CategoriesEntity {
       make: make ?? this.make,
       mileageUnit: mileageUnit ?? this.mileageUnit,
       transmission: transmission ?? this.transmission,
+      energyRating: energyRating ?? this.energyRating,
+      propertyType: propertyType ?? this.propertyType,
     );
   }
 }

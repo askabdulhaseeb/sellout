@@ -45,7 +45,7 @@ class _CustomListingDropDownState<T extends ChangeNotifier, O>
   @override
   void initState() {
     super.initState();
-    filteredOptions = widget.options; // or apply parent filtering here
+    filteredOptions = widget.options;
   }
 
   @override

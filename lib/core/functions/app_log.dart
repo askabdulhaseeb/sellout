@@ -18,7 +18,7 @@ class AppLog {
     // ''');
     log(
       message,
-      name: '❌ ${name ?? '❌ AppLog'}',
+      name: '❌ ${name ?? 'AppLog'}',
       time: time,
       sequenceNumber: sequenceNumber,
       level: level,

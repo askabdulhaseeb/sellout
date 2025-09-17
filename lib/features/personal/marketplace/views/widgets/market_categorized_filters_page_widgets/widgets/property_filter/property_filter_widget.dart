@@ -15,7 +15,7 @@ class PropertyFilterSection extends StatelessWidget {
       children: <Widget>[
         MarketFilterPropertyToggleWidget(),
         MarketFilterpropertyCategoryAndLocationWIdget(),
-        MarketFilterPropertyTypeandAddedWidget(),
+        MarketFilterPropertyTypeAndAddedWidget(),
         MarketFilterPriceWIdget()
       ],
     );

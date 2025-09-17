@@ -60,6 +60,10 @@ import '../features/personal/auth/signup/domain/usecase/send_opt_usecase.dart';
 import '../features/personal/auth/signup/domain/usecase/verify_opt_usecase.dart';
 import '../features/personal/auth/signup/domain/usecase/verify_user_by_image_usecase.dart';
 import '../features/personal/auth/signup/views/providers/signup_provider.dart';
+import '../features/personal/listing/listing_form/data/repository/categories_repo_impl.dart';
+import '../features/personal/listing/listing_form/data/sources/remote/remote_categories_source.dart';
+import '../features/personal/listing/listing_form/domain/repository/categories_repo.dart';
+import '../features/personal/listing/listing_form/domain/usecase/get_category_by_endpoint_usecase.dart';
 import '../features/personal/location/data/repo/location_repo_impl.dart';
 import '../features/personal/location/data/source/location_api.dart';
 import '../features/personal/location/domain/repo/location_repo.dart';
@@ -210,6 +214,7 @@ void setupLocator() {
   _order();
   _notification();
   _location();
+  _categories();
 }
 
 void _auth() {
@@ -678,4 +683,19 @@ void _location() {
       () => NominationLocationUsecase(locator()));
   //Providers
   locator.registerFactory<LocationProvider>(() => LocationProvider(locator()));
+}
+
+void _categories() {
+  // API
+  locator.registerFactory<RemoteCategoriesSource>(
+    () => RemoteCategoriesSourceImpl(),
+  );
+  // REPOSITORIES
+  locator.registerFactory<CategoriesRepo>(
+    () => CategoriesRepoImpl(locator()),
+  );
+  // USECASES
+  locator.registerFactory<GetCategoryByEndpointUsecase>(
+    () => GetCategoryByEndpointUsecase(locator()),
+  );
 }

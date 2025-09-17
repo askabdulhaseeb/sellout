@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
+import '../../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../location/domain/entities/location_entity.dart';
 import '../../../../../location/domain/enums/map_display_mode.dart';
 import '../../../../../location/view/widgets/location_field.dart/nomination_location_field.dart';
+import '../../../data/sources/local/local_categories.dart';
+import '../../../domain/entities/category_entites/subentities/dropdown_option_data_entity.dart';
+import '../../../domain/entities/category_entites/subentities/dropdown_option_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../custom_listing_dropdown.dart';
 
@@ -15,9 +19,14 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final List<DropdownOptionEntity> propertyTypes =
+        LocalCategoriesSource.propertyType ?? <DropdownOptionEntity>[];
+    final List<DropdownOptionDataEntity> energyRatings =
+        LocalCategoriesSource.clothesBrands ?? <DropdownOptionDataEntity>[];
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Row(
               children: <Widget>[
@@ -49,30 +58,41 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
               hint: 'Ex. 350',
               keyboardType: TextInputType.number,
             ),
-            CustomListingDropDown<AddListingFormProvider>(
+            CustomDropdown<DropdownOptionEntity>(
+              items: propertyTypes
+                  .map((DropdownOptionEntity e) =>
+                      DropdownMenuItem<DropdownOptionEntity>(
+                        value: e,
+                        child: Text(e.label),
+                      ))
+                  .toList(),
+              selectedItem: propertyTypes.first,
               validator: (bool? value) => AppValidator.requireSelection(value),
               hint: 'select_category'.tr(),
-              categoryKey: 'property_type',
-              selectedValue: formPro.selectedPropertyType,
-              onChanged: (String? p0) => formPro.setPropertyType(p0),
+              onChanged: (DropdownOptionEntity? p0) =>
+                  formPro.setPropertyType(p0?.value.value),
               title: 'category'.tr(),
             ),
-            CustomListingDropDown<AddListingFormProvider>(
-                validator: (bool? value) =>
-                    AppValidator.requireSelection(value),
-                hint: 'energy_rating'.tr(),
-                categoryKey: 'energy_rating',
-                onChanged: (String? p0) => formPro.setEnergyRating(p0),
-                selectedValue: formPro.selectedEnergyRating,
-                title: 'energy_rating'.tr()),
+            CustomListingDropDown<AddListingFormProvider,
+                DropdownOptionDataEntity>(
+              options: energyRatings,
+              valueGetter: (DropdownOptionDataEntity opt) => opt.value,
+              labelGetter: (DropdownOptionDataEntity opt) => opt.label,
+              validator: (bool? value) => AppValidator.requireSelection(value),
+              hint: 'energy_rating'.tr(),
+              selectedValue: formPro.selectedEnergyRating,
+              onChanged: (String? p0) => formPro.setEnergyRating(p0),
+              title: 'energy_rating'.tr(),
+            ),
             NominationLocationField(
-                validator: (bool? value) => AppValidator.requireLocation(value),
-                title: 'meetup_location'.tr(),
-                selectedLatLng: formPro.collectionLatLng,
-                displayMode: MapDisplayMode.showMapAfterSelection,
-                initialText: formPro.selectedmeetupLocation?.address ?? '',
-                onLocationSelected: (LocationEntity p0, LatLng p1) =>
-                    formPro.setMeetupLocation(p0, p1)),
+              validator: (bool? value) => AppValidator.requireLocation(value),
+              title: 'meetup_location'.tr(),
+              selectedLatLng: formPro.collectionLatLng,
+              displayMode: MapDisplayMode.showMapAfterSelection,
+              initialText: formPro.selectedmeetupLocation?.address ?? '',
+              onLocationSelected: (LocationEntity p0, LatLng p1) =>
+                  formPro.setMeetupLocation(p0, p1),
+            ),
           ],
         );
       },
