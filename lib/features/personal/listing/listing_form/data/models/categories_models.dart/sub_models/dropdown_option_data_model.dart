@@ -1,6 +1,9 @@
 import '../../../../domain/entities/category_entites/subentities/dropdown_option_data_entity.dart';
 
 class DropdownOptionDataModel extends DropdownOptionDataEntity {
+  /// Optional: direct JSON helpers
+  factory DropdownOptionDataModel.fromJson(Map<String, dynamic> json) =>
+      DropdownOptionDataModel.fromMap(json);
   DropdownOptionDataModel({
     required super.label,
     required super.value,
@@ -33,10 +36,6 @@ class DropdownOptionDataModel extends DropdownOptionDataEntity {
       'no': no,
     };
   }
-
-  /// Optional: direct JSON helpers
-  factory DropdownOptionDataModel.fromJson(Map<String, dynamic> json) =>
-      DropdownOptionDataModel.fromMap(json);
 
   Map<String, dynamic> toJson() => toMap();
 

@@ -30,6 +30,9 @@ import '../../../features/personal/chats/chat_dashboard/domain/entities/messages
 import '../../../features/personal/listing/listing_form/data/sources/local/local_colors.dart';
 import '../../../features/personal/listing/listing_form/data/sources/local/local_categories.dart';
 import '../../../features/personal/listing/listing_form/data/sources/local/local_listing.dart';
+import '../../../features/personal/listing/listing_form/domain/entities/category_entites/categories_entity.dart';
+import '../../../features/personal/listing/listing_form/domain/entities/category_entites/subentities/dropdown_option_data_entity.dart';
+import '../../../features/personal/listing/listing_form/domain/entities/category_entites/subentities/dropdown_option_entity.dart';
 import '../../../features/personal/listing/listing_form/domain/entities/color_options_entity.dart';
 import '../../../features/personal/listing/listing_form/domain/entities/listing_entity.dart';
 import '../../../features/personal/listing/listing_form/domain/entities/sub_category_entity.dart';
@@ -166,7 +169,9 @@ class HiveDB {
     Hive.registerAdapter(PostPropertyEntityAdapter()); //71
     Hive.registerAdapter(ServiceCategoryENtityAdapter()); //72
     Hive.registerAdapter(ServiceTypeEntityAdapter()); //73
-
+    Hive.registerAdapter(CategoriesEntityAdapter()); //74
+    Hive.registerAdapter(DropdownOptionEntityAdapter()); //75
+    Hive.registerAdapter(DropdownOptionDataEntityAdapter()); //76
     // Hive box Open
     await refresh();
   }

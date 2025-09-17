@@ -1,4 +1,5 @@
 // dropdown_option_model.dart
+import '../../../../domain/entities/category_entites/subentities/dropdown_option_data_entity.dart';
 import '../../../../domain/entities/category_entites/subentities/dropdown_option_entity.dart';
 
 class DropdownOptionModel extends DropdownOptionEntity {
@@ -18,8 +19,11 @@ class DropdownOptionModel extends DropdownOptionEntity {
   // From JSON / Map
   factory DropdownOptionModel.fromJson(Map<String, dynamic> map) {
     return DropdownOptionModel(
-      label: map['label'] ?? '',
-      value: map['value'] ?? '',
+      label: map['label']?.toString() ?? '',
+      value: DropdownOptionDataEntity(
+        label: map['label']?.toString() ?? '',
+        value: map['value']?.toString() ?? '',
+      ),
     );
   }
 
@@ -27,13 +31,10 @@ class DropdownOptionModel extends DropdownOptionEntity {
   Map<String, dynamic> toJson() {
     return {
       'label': label,
-      'value': value,
+      'value': {
+        'label': value.label,
+        'value': value.value,
+      },
     };
   }
-
-  // // Extra UI helper
-  // String get capitalizedLabel {
-  //   if (label.isEmpty) return label;
-  //   return label[0].toUpperCase() + label.substring(1);
-  // }
 }

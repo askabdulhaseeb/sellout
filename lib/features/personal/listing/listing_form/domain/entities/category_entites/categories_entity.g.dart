@@ -18,23 +18,31 @@ class CategoriesEntityAdapter extends TypeAdapter<CategoriesEntity> {
     };
     return CategoriesEntity(
       items: fields[0] as SubCategoryEntity?,
-      clothesSizes: (fields[1] as List?)?.cast<DropdownOptionDataEntity>(),
-      footSizes: (fields[2] as List?)?.cast<DropdownOptionDataEntity>(),
+      clothesSizes: (fields[1] as List?)?.cast<DropdownOptionEntity>(),
+      footSizes: (fields[2] as List?)?.cast<DropdownOptionEntity>(),
       clothes: fields[3] as SubCategoryEntity?,
       foot: fields[4] as SubCategoryEntity?,
-      clothesBrands: (fields[5] as List?)?.cast<DropdownOptionEntity>(),
-      footwearBrands: (fields[6] as List?)?.cast<DropdownOptionEntity>(),
-      age: (fields[7] as List?)?.cast<DropdownOptionDataEntity>(),
-      breed: (fields[8] as List?)?.cast<DropdownOptionDataEntity>(),
-      pets: (fields[9] as List?)?.cast<DropdownOptionDataEntity>(),
-      readyToLeave: (fields[10] as List?)?.cast<DropdownOptionDataEntity>(),
+      clothesBrands: (fields[5] as List?)?.cast<DropdownOptionDataEntity>(),
+      footwearBrands: (fields[6] as List?)?.cast<DropdownOptionDataEntity>(),
+      age: (fields[7] as List?)?.cast<DropdownOptionEntity>(),
+      breed: (fields[8] as List?)?.cast<DropdownOptionEntity>(),
+      pets: (fields[9] as List?)?.cast<DropdownOptionEntity>(),
+      readyToLeave: (fields[10] as List?)?.cast<DropdownOptionEntity>(),
+      vehicles: (fields[12] as List?)?.cast<DropdownOptionEntity>(),
+      emissionStandards: (fields[13] as List?)?.cast<DropdownOptionEntity>(),
+      fuelType: (fields[14] as List?)?.cast<DropdownOptionEntity>(),
+      make: (fields[15] as List?)?.cast<DropdownOptionEntity>(),
+      mileageUnit: (fields[16] as List?)?.cast<DropdownOptionEntity>(),
+      transmission: (fields[17] as List?)?.cast<DropdownOptionEntity>(),
+      energyRating: (fields[18] as List?)?.cast<DropdownOptionEntity>(),
+      propertyType: (fields[19] as List?)?.cast<DropdownOptionEntity>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, CategoriesEntity obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(19)
       ..writeByte(0)
       ..write(obj.items)
       ..writeByte(1)
@@ -56,7 +64,23 @@ class CategoriesEntityAdapter extends TypeAdapter<CategoriesEntity> {
       ..writeByte(9)
       ..write(obj.pets)
       ..writeByte(10)
-      ..write(obj.readyToLeave);
+      ..write(obj.readyToLeave)
+      ..writeByte(12)
+      ..write(obj.vehicles)
+      ..writeByte(13)
+      ..write(obj.emissionStandards)
+      ..writeByte(14)
+      ..write(obj.fuelType)
+      ..writeByte(15)
+      ..write(obj.make)
+      ..writeByte(16)
+      ..write(obj.mileageUnit)
+      ..writeByte(17)
+      ..write(obj.transmission)
+      ..writeByte(18)
+      ..write(obj.energyRating)
+      ..writeByte(19)
+      ..write(obj.propertyType);
   }
 
   @override
