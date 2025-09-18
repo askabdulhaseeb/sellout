@@ -32,10 +32,6 @@ class LocalCategoriesSource {
   static CategoriesEntity? get categories =>
       _box.isEmpty ? null : _box.get(_mainKey);
 
-  T? _keepOldIfNull<T>(T? newValue, T? oldValue) {
-    return newValue ?? oldValue;
-  }
-
   Future<void> saveNonNullFields(CategoriesEntity newEntity) async {
     final CategoriesEntity? existing = _box.get(_mainKey);
     if (existing == null) {
@@ -43,33 +39,44 @@ class LocalCategoriesSource {
       await save(newEntity);
       return;
     }
-    debugPrint('categories saving start');
+    T? keepOldIfNullOrEmpty<T>(T? newValue, T? oldValue) {
+      if (newValue == null) return oldValue;
 
+      if (newValue is List && newValue.isEmpty) {
+        // Don’t overwrite if the new list is empty
+        return oldValue;
+      }
+
+      return newValue;
+    }
+
+    debugPrint('categories saving start');
     final CategoriesEntity merged = existing.copyWith(
       clothesSizes:
-          _keepOldIfNull(newEntity.clothesSizes, existing.clothesSizes),
-      footSizes: _keepOldIfNull(newEntity.footSizes, existing.footSizes),
+          keepOldIfNullOrEmpty(newEntity.clothesSizes, existing.clothesSizes),
+      footSizes: keepOldIfNullOrEmpty(newEntity.footSizes, existing.footSizes),
       clothesBrands:
-          _keepOldIfNull(newEntity.clothesBrands, existing.clothesBrands),
-      footwearBrands:
-          _keepOldIfNull(newEntity.footwearBrands, existing.footwearBrands),
-      age: _keepOldIfNull(newEntity.age, existing.age),
-      breed: _keepOldIfNull(newEntity.breed, existing.breed),
-      pets: _keepOldIfNull(newEntity.pets, existing.pets),
+          keepOldIfNullOrEmpty(newEntity.clothesBrands, existing.clothesBrands),
+      footwearBrands: keepOldIfNullOrEmpty(
+          newEntity.footwearBrands, existing.footwearBrands),
+      age: keepOldIfNullOrEmpty(newEntity.age, existing.age),
+      breed: keepOldIfNullOrEmpty(newEntity.breed, existing.breed),
+      pets: keepOldIfNullOrEmpty(newEntity.pets, existing.pets),
       readyToLeave:
-          _keepOldIfNull(newEntity.readyToLeave, existing.readyToLeave),
-      vehicles: _keepOldIfNull(newEntity.vehicles, existing.vehicles),
-      emissionStandards: _keepOldIfNull(
+          keepOldIfNullOrEmpty(newEntity.readyToLeave, existing.readyToLeave),
+      vehicles: keepOldIfNullOrEmpty(newEntity.vehicles, existing.vehicles),
+      emissionStandards: keepOldIfNullOrEmpty(
           newEntity.emissionStandards, existing.emissionStandards),
-      fuelType: _keepOldIfNull(newEntity.fuelType, existing.fuelType),
-      make: _keepOldIfNull(newEntity.make, existing.make),
-      mileageUnit: _keepOldIfNull(newEntity.mileageUnit, existing.mileageUnit),
+      fuelType: keepOldIfNullOrEmpty(newEntity.fuelType, existing.fuelType),
+      make: keepOldIfNullOrEmpty(newEntity.make, existing.make),
+      mileageUnit:
+          keepOldIfNullOrEmpty(newEntity.mileageUnit, existing.mileageUnit),
       transmission:
-          _keepOldIfNull(newEntity.transmission, existing.transmission),
+          keepOldIfNullOrEmpty(newEntity.transmission, existing.transmission),
       energyRating:
-          _keepOldIfNull(newEntity.energyRating, existing.energyRating),
+          keepOldIfNullOrEmpty(newEntity.energyRating, existing.energyRating),
       propertyType:
-          _keepOldIfNull(newEntity.propertyType, existing.propertyType),
+          keepOldIfNullOrEmpty(newEntity.propertyType, existing.propertyType),
     );
 
     await save(merged);

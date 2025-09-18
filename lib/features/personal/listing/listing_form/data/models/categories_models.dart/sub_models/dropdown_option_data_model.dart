@@ -67,19 +67,6 @@ class DropdownOptionDataModel extends DropdownOptionDataEntity {
     return value.compareTo(other.value);
   }
 
-  static DropdownOptionDataEntity? findByValue(
-    List<DropdownOptionDataEntity> list,
-    String valueToFind,
-  ) {
-    try {
-      return list.firstWhere(
-        (opt) => opt.value == valueToFind,
-      );
-    } catch (_) {
-      return null; // not found
-    }
-  }
-
   @override
   String toString() =>
       'DropdownOptionDataModel(label: $label, value: $value, no: $no)';

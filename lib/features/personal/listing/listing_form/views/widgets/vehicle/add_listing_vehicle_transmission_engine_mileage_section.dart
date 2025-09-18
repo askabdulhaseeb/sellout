@@ -2,15 +2,15 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
+import '../../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../data/sources/local/local_categories.dart';
 import '../../../domain/entities/category_entites/subentities/dropdown_option_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
-import '../custom_listing_dropdown.dart';
 
-class AddListingVehicleTernsmissionEngineMileageSection
+class AddListingVehicleTransmissionEngineMileageSection
     extends StatelessWidget {
-  const AddListingVehicleTernsmissionEngineMileageSection({super.key});
+  const AddListingVehicleTransmissionEngineMileageSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -43,29 +43,22 @@ class AddListingVehicleTernsmissionEngineMileageSection
                 ),
                 Flexible(
                   flex: 1,
-                  child: CustomListingDropDown<AddListingFormProvider,
-                      DropdownOptionEntity>(
-                    options: mileageUnit,
-                    valueGetter: (DropdownOptionEntity opt) => opt.value.value,
-                    labelGetter: (DropdownOptionEntity opt) => opt.label,
+                  child: CustomDropdown<DropdownOptionEntity>(
+                    items: mileageUnit.map((opt) {
+                      return DropdownMenuItem<DropdownOptionEntity>(
+                        value: opt,
+                        child: Text(opt.label), // display label
+                      );
+                    }).toList(),
+                    selectedItem: DropdownOptionEntity.findByValue(
+                        mileageUnit, formPro.selectedMileageUnit ?? ''),
                     validator: (bool? value) =>
                         AppValidator.requireSelection(value),
                     hint: 'mileage_unit'.tr(),
-                    parentValue: formPro.selectedVehicleCategory,
-                    // categoryKey: 'body_type',
-                    selectedValue: formPro.selectedBodyType,
                     title: 'mileage_unit'.tr(),
-                    onChanged: (String? value) =>
-                        formPro.setBodyType(value ?? ''),
+                    onChanged: (DropdownOptionEntity? value) =>
+                        formPro.setBodyType(value?.value.value),
                   ),
-                  //  CustomListingDropDown<AddListingFormProvider>(
-                  //         hint:
-                  //         categoryKey: 'mileage_unit',
-                  //         selectedValue: formPro.selectedMileageUnit,
-                  //         title:
-                  //         onChanged: formPro.setMileageUnit,
-
-                  //       ),
                 ),
               ],
             ),

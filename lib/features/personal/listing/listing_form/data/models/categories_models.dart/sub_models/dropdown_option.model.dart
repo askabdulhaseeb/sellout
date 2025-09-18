@@ -37,15 +37,4 @@ class DropdownOptionModel extends DropdownOptionEntity {
       },
     };
   }
-
-  DropdownOptionModel? findByValue(
-      List<DropdownOptionModel> list, String valueToFind) {
-    try {
-      return list.firstWhere(
-        (DropdownOptionModel option) => option.value.value == valueToFind,
-      );
-    } catch (_) {
-      return null;
-    }
-  }
 }

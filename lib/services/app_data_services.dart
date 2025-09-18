@@ -6,9 +6,9 @@ import '../features/personal/listing/listing_form/domain/usecase/get_category_by
 import 'get_it.dart';
 
 class AppDataService {
-  static final AppDataService _instance = AppDataService._internal();
   factory AppDataService() => _instance;
   AppDataService._internal();
+  static final AppDataService _instance = AppDataService._internal();
 
   final GetCategoryByEndpointUsecase _usecase =
       GetCategoryByEndpointUsecase(locator());
@@ -21,7 +21,7 @@ class AppDataService {
       '/category/${ListingType.property.json}?list-id=',
       '/category/${ListingType.vehicle.json}?list-id=',
       '/category/${ListingType.pets.json}?list-id=',
-      '/category/${ListingType.foodAndDrink.json}?list-id=',
+      // '/category/${ListingType.foodAndDrink.json}?list-id=',
     ];
 
     for (final String endpoint in endpoints) {

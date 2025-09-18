@@ -1,32 +1,26 @@
-// import '../../../../data/models/categories_models.dart/sub_models/dropdown_option.model.dart';
-// import 'dropdown_option_entity.dart';
+import 'package:hive/hive.dart';
+import 'dropdown_option_entity.dart';
+part 'body_type_entity.g.dart';
 
-// class BodyTypeEntity {
-//   final Map<String, Map<String, DropdownOptionEntity>> types;
-//   BodyTypeEntity({required this.types});
-// }
+@HiveType(typeId: 77)
+class BodyTypeEntity {
+  BodyTypeEntity({
+    required this.category,
+    required this.options,
+  });
+  @HiveField(0)
+  final String category;
 
-// class BodyTypeModel extends BodyTypeEntity {
-//   BodyTypeModel({required super.types});
+  @HiveField(1)
+  final List<DropdownOptionEntity> options;
 
-//   factory BodyTypeModel.fromJson(Map<String, dynamic> json) {
-//     final Map<String, Map<String, DropdownOptionModel>> result = <String, Map<String, DropdownOptionModel>>{};
-//     json.forEach((String category, subMap) {
-//       final Map<String, DropdownOptionModel> subResult = <String, DropdownOptionModel>{};
-//       (subMap as Map<String, dynamic>).forEach((String key, value) {
-//         subResult[key] = DropdownOptionModel.fromJson(value);
-//       });
-//       result[category] = subResult;
-//     });
-//     return BodyTypeModel(types: result);
-//   }
-
-//   Map<String, dynamic> toJson() {
-//     final Map<String, dynamic> result = <String, dynamic>{};
-//     types.forEach((String category, Map<String, DropdownOptionEntity> subMap) {
-//       result[category] =
-//           subMap.map((String key, DropdownOptionEntity value) => MapEntry(key, value.toJson()));
-//     });
-//     return result;
-//   }
-// }
+  /// Simple helper — no parsing logic here
+  DropdownOptionEntity? getOptionByValue(String value) {
+    try {
+      return options
+          .firstWhere((DropdownOptionEntity opt) => opt.value.value == value);
+    } catch (e) {
+      return null;
+    }
+  }
+}

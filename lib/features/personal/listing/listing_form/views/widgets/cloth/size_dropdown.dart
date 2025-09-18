@@ -26,12 +26,13 @@ class SizeDropdown extends StatelessWidget {
         LocalCategoriesSource.clothesSizes ?? <DropdownOptionEntity>[];
     final List<DropdownOptionEntity> footSizes =
         LocalCategoriesSource.footSizes ?? <DropdownOptionEntity>[];
-
     final List<DropdownOptionEntity> sizeOptions =
         formPro.selectedClothSubCategory == 'clothes'
             ? clothesSizes
             : footSizes;
-
+    // debugPrint(
+    //   'SizeDropdown → available items: ${sizeOptions.map((DropdownOptionEntity e) => 'label: ${e.label}, value: ${e.value.value}').toList()}',
+    // );
     return Padding(
       padding: EdgeInsets.zero,
       child:
@@ -42,9 +43,7 @@ class SizeDropdown extends StatelessWidget {
         valueGetter: (DropdownOptionEntity opt) => opt.value.value,
         labelGetter: (DropdownOptionEntity opt) => opt.label,
         selectedValue: selectedSize,
-        validator: (bool? value) => value == true
-            ? null
-            : AppValidator.requireSelection(value), // optional validation
+        validator: (bool? value) => AppValidator.requireSelection(value),
         onChanged: (String? value) {
           onSizeChanged(value);
         },

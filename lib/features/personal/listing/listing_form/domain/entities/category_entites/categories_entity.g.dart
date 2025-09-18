@@ -28,6 +28,7 @@ class CategoriesEntityAdapter extends TypeAdapter<CategoriesEntity> {
       breed: (fields[8] as List?)?.cast<DropdownOptionEntity>(),
       pets: (fields[9] as List?)?.cast<DropdownOptionEntity>(),
       readyToLeave: (fields[10] as List?)?.cast<DropdownOptionEntity>(),
+      bodyType: fields[11] as BodyTypeEntity?,
       vehicles: (fields[12] as List?)?.cast<DropdownOptionEntity>(),
       emissionStandards: (fields[13] as List?)?.cast<DropdownOptionEntity>(),
       fuelType: (fields[14] as List?)?.cast<DropdownOptionEntity>(),
@@ -42,7 +43,7 @@ class CategoriesEntityAdapter extends TypeAdapter<CategoriesEntity> {
   @override
   void write(BinaryWriter writer, CategoriesEntity obj) {
     writer
-      ..writeByte(19)
+      ..writeByte(20)
       ..writeByte(0)
       ..write(obj.items)
       ..writeByte(1)
@@ -65,6 +66,8 @@ class CategoriesEntityAdapter extends TypeAdapter<CategoriesEntity> {
       ..write(obj.pets)
       ..writeByte(10)
       ..write(obj.readyToLeave)
+      ..writeByte(11)
+      ..write(obj.bodyType)
       ..writeByte(12)
       ..write(obj.vehicles)
       ..writeByte(13)
