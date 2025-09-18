@@ -45,8 +45,7 @@ class CustomDropdown<T> extends StatefulWidget {
   State<CustomDropdown<T>> createState() => _CustomDropdownState<T>();
 }
 
-class _CustomDropdownState<T> extends State<CustomDropdown<T>>
-    with TickerProviderStateMixin {
+class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   final LayerLink _layerLink = LayerLink();
@@ -94,7 +93,6 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>>
   void _updateControllerValue() {
     if (!mounted || widget.isDynamic) return;
 
-    // Find the selected item safely
     DropdownMenuItem<T>? selectedItem;
     for (final DropdownMenuItem<T> item in widget.items) {
       if (item.value == widget.selectedItem) {
@@ -105,6 +103,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>>
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
+
       String newText = '';
       if (selectedItem != null) {
         newText = widget.searchBy?.call(selectedItem) ??
@@ -112,8 +111,9 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>>
                 ? (selectedItem.child as Text).data ?? ''
                 : selectedItem.value.toString());
       }
+
       if (_controller.text != newText) {
-        _controller.text = newText; // empty if no match
+        _controller.text = newText;
       }
     });
   }
@@ -142,14 +142,6 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>>
     }
   }
 
-  void _refreshOverlay() {
-    if (_isDropdownOpen && mounted) {
-      _overlayEntry?.remove();
-      _overlayEntry = _createOverlayEntry();
-      Overlay.of(context).insert(_overlayEntry!);
-    }
-  }
-
   void _openDropdown() {
     if (_overlayEntry != null || !mounted) return;
     setState(() => _isDropdownOpen = true);
@@ -170,89 +162,115 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>>
 
   OverlayEntry _createOverlayEntry() {
     final RenderBox? renderBox = context.findRenderObject() as RenderBox?;
-    if (renderBox == null) {
+    if (renderBox == null)
       return OverlayEntry(builder: (_) => const SizedBox());
-    }
 
     final Size size = renderBox.size;
     final Offset offset = renderBox.localToGlobal(Offset.zero);
-
     final double screenHeight = MediaQuery.of(context).size.height;
     final double spaceBelow = screenHeight - offset.dy - size.height;
     final double spaceAbove = offset.dy;
 
-    final List<DropdownMenuItem<T>> filteredItems = _getFilteredItems();
     const double itemHeight = 48.0;
-    final num calculatedHeight =
-        (filteredItems.length * itemHeight).clamp(0, 200.0);
-    final bool showAbove = widget.overlayAbove ||
-        spaceBelow < calculatedHeight && spaceAbove > spaceBelow;
-    final Offset dropdownOffset = showAbove
-        ? Offset(0, -calculatedHeight - 5)
-        : Offset(0, size.height + 5);
+
     return OverlayEntry(
-      builder: (_) => Stack(
-        children: <Widget>[
-          Positioned.fill(
-            child: GestureDetector(
-              onTap: _closeDropdown,
-              behavior: HitTestBehavior.translucent,
+      builder: (_) {
+        final items = _getFilteredItems();
+        final num calculatedHeight =
+            (items.length * itemHeight).clamp(0, 200.0);
+        final bool showAbove = widget.overlayAbove ||
+            spaceBelow < calculatedHeight && spaceAbove > spaceBelow;
+        final Offset dropdownOffset = showAbove
+            ? Offset(0, -calculatedHeight - 5)
+            : Offset(0, size.height + 5);
+
+        return Stack(
+          children: [
+            Positioned.fill(
+              child: GestureDetector(
+                onTap: _closeDropdown,
+                behavior: HitTestBehavior.translucent,
+              ),
             ),
-          ),
-          Positioned(
-            width: size.width,
-            child: CompositedTransformFollower(
-              link: _layerLink,
-              showWhenUnlinked: false,
-              offset: dropdownOffset,
-              child: Material(
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)),
-                color: Theme.of(context).scaffoldBackgroundColor,
+            Positioned(
+              width: size.width,
+              child: CompositedTransformFollower(
+                link: _layerLink,
+                showWhenUnlinked: false,
+                offset: dropdownOffset,
                 child: AnimatedSize(
                   duration: const Duration(milliseconds: 250),
                   curve: Curves.easeInOut,
-                  child: ConstrainedBox(
-                    constraints:
-                        BoxConstraints(maxHeight: calculatedHeight.toDouble()),
-                    child: filteredItems.isEmpty
-                        ? Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Text(
-                              '${'no_data_found'.tr()}!',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                          )
-                        : ListView.separated(
-                            padding: EdgeInsets.zero,
-                            shrinkWrap: true,
-                            itemCount: filteredItems.length,
-                            separatorBuilder: (_, __) =>
-                                const Divider(height: 1),
-                            itemBuilder: (_, int index) {
-                              final DropdownMenuItem<T> item =
-                                  filteredItems[index];
-                              return ListTile(
-                                minVerticalPadding: 2,
-                                title: item.child,
-                                onTap: () {
-                                  widget.onChanged?.call(item.value);
-                                  _closeDropdown();
-                                },
-                              );
-                            },
-                          ),
+                  child: Material(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                          maxHeight: calculatedHeight.toDouble()),
+                      child: StatefulBuilder(
+                        builder: (context, setStateOverlay) {
+                          return AnimatedSize(
+                            duration: const Duration(milliseconds: 250),
+                            curve: Curves.easeInOut,
+                            child: items.isEmpty
+                                ? Padding(
+                                    padding: const EdgeInsets.all(8),
+                                    child: Text(
+                                      '${'no_data_found'.tr()}!',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                              fontWeight: FontWeight.bold),
+                                    ),
+                                  )
+                                : ListView.separated(
+                                    padding: EdgeInsets.zero,
+                                    shrinkWrap: true,
+                                    itemCount: items.length,
+                                    separatorBuilder: (_, __) => Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 4, vertical: 0),
+                                      height: 1,
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: ColorScheme.of(context)
+                                                  .outlineVariant)),
+                                    ),
+                                    itemBuilder: (_, index) {
+                                      final DropdownMenuItem<T> item =
+                                          items[index];
+                                      return GestureDetector(
+                                        child: AnimatedSize(
+                                          duration:
+                                              const Duration(milliseconds: 250),
+                                          curve: Curves.easeInOut,
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8, vertical: 8),
+                                            child: item.child,
+                                          ),
+                                        ),
+                                        onTap: () {
+                                          widget.onChanged?.call(item.value);
+                                          _closeDropdown();
+                                        },
+                                      );
+                                    },
+                                  ),
+                          );
+                        },
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        );
+      },
     );
   }
 
@@ -290,41 +308,25 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>>
                 : Icon(_isDropdownOpen
                     ? Icons.keyboard_arrow_up_rounded
                     : Icons.keyboard_arrow_down_rounded),
-            onChanged: _handleSearch,
-            validator: (String? value) {
-              final String? error =
-                  widget.validator(value != null && value.isNotEmpty);
-              return error;
+            onChanged: (String value) {
+              setState(() => _searchText = value);
+              if (_isDropdownOpen) _overlayEntry?.markNeedsBuild();
+              if (widget.isDynamic && widget.onSearchChanged != null) {
+                _debounce?.cancel();
+                _debounce = Timer(const Duration(milliseconds: 600), () async {
+                  final List<DropdownMenuItem<T>> results =
+                      await widget.onSearchChanged!(value);
+                  if (!mounted) return;
+                  setState(() => _dynamicItems = results);
+                  if (_isDropdownOpen) _overlayEntry?.markNeedsBuild();
+                });
+              }
             },
+            validator: (String? value) =>
+                widget.validator(value != null && value.isNotEmpty),
           ),
         ),
       ),
     );
-  }
-
-  void _handleSearch(String value) {
-    if (!mounted) return;
-
-    setState(() => _searchText = value);
-
-    if (widget.isDynamic && widget.onSearchChanged != null) {
-      _debounce?.cancel();
-      _debounce = Timer(const Duration(milliseconds: 600), () async {
-        if (!mounted) return;
-        final List<DropdownMenuItem<T>> results =
-            await widget.onSearchChanged!(value);
-        if (!mounted) return;
-        setState(() => _dynamicItems = results);
-        _refreshOverlay();
-      });
-    } else {
-      _refreshOverlay();
-    }
-
-    if (value.isEmpty && !_isDropdownOpen) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) _openDropdown();
-      });
-    }
   }
 }
