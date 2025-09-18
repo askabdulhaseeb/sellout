@@ -25,7 +25,7 @@ class CategoriesEntityAdapter extends TypeAdapter<CategoriesEntity> {
       clothesBrands: (fields[5] as List?)?.cast<DropdownOptionDataEntity>(),
       footwearBrands: (fields[6] as List?)?.cast<DropdownOptionDataEntity>(),
       age: (fields[7] as List?)?.cast<DropdownOptionEntity>(),
-      breed: (fields[8] as List?)?.cast<DropdownOptionEntity>(),
+      breed: (fields[8] as List?)?.cast<ParentDropdownEntity>(),
       pets: (fields[9] as List?)?.cast<DropdownOptionEntity>(),
       readyToLeave: (fields[10] as List?)?.cast<DropdownOptionEntity>(),
       bodyType: (fields[11] as List?)?.cast<ParentDropdownEntity>(),
