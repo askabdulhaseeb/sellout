@@ -65,7 +65,7 @@ class StartSellingList extends StatelessWidget {
                     const SizedBox(width: 16),
                     Text(
                       type.code.tr(), // show translated text
-                      style: const TextStyle(fontWeight: FontWeight.w600),
+                      style: const TextStyle(fontWeight: FontWeight.w500),
                     ),
                   ],
                 ),

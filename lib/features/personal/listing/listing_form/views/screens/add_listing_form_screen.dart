@@ -5,7 +5,7 @@ import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/theme/app_theme.dart';
 import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../providers/add_listing_form_provider.dart';
-import 'form/add_cloths_and_footwear_form.dart';
+import 'form/add_clothes_and_footwear_form.dart';
 import 'form/add_food_and_drink_form.dart';
 import 'form/add_item_form.dart';
 import 'form/add_pet_form.dart';

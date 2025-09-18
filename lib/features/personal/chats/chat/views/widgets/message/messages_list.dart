@@ -1,9 +1,7 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/utilities/app_string.dart';
-import '../../../../../../../core/widgets/empty_page_widget.dart';
 import '../../../../chat_dashboard/data/models/chat/chat_model.dart';
 import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../domain/entities/getted_message_entity.dart';
@@ -23,7 +21,6 @@ class _MessagesListState extends State<MessagesList> {
   @override
   void initState() {
     super.initState();
-    // Jump to bottom when the screen first loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _jumpToBottom();
     });
@@ -58,16 +55,16 @@ class _MessagesListState extends State<MessagesList> {
     final ChatProvider chatProvider = context.watch<ChatProvider>();
     final String? chatId = chatProvider.chat?.chatId;
 
-    if (chatId == null) {
-      return Expanded(
-        child: SingleChildScrollView(
-          child: EmptyPageWidget(
-            icon: CupertinoIcons.chat_bubble_2,
-            childBelow: const Text('no_messages_yet').tr(),
-          ),
-        ),
-      );
-    }
+    // if (chatId == null) {
+    //   return Expanded(
+    //     child: SingleChildScrollView(
+    //       child: EmptyPageWidget(
+    //         icon: CupertinoIcons.chat_bubble_2,
+    //         childBelow: const Text('no_messages_yet').tr(),
+    //       ),
+    //     ),
+    //   );
+    // }
     final Box<GettedMessageEntity> box =
         Hive.box<GettedMessageEntity>(AppStrings.localChatMessagesBox);
     return ValueListenableBuilder<Box<GettedMessageEntity>>(
@@ -77,16 +74,16 @@ class _MessagesListState extends State<MessagesList> {
         final List<MessageEntity> messages = stored == null
             ? <MessageEntity>[]
             : chatProvider.getFilteredMessages(stored);
-        if (messages.isEmpty) {
-          return Expanded(
-            child: SingleChildScrollView(
-              child: EmptyPageWidget(
-                icon: CupertinoIcons.chat_bubble_2,
-                childBelow: const Text('no_messages_yet').tr(),
-              ),
-            ),
-          );
-        }
+        // if (messages.isEmpty) {
+        //   return Expanded(
+        //     child: SingleChildScrollView(
+        //       child: EmptyPageWidget(
+        //         icon: CupertinoIcons.chat_bubble_2,
+        //         childBelow: const Text('no_messages_yet').tr(),
+        //       ),
+        //     ),
+        //   );
+        // }
 
         // Calculate time gaps
         final Map<String, Duration> timeDiffMap = <String, Duration>{};

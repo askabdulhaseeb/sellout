@@ -1,4 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
@@ -47,13 +46,13 @@ class _ServicesScreenState extends State<ServicesScreen> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         controller: _scrollController,
-        child: Column(
+        child: const Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             AppBarTitle(
-              titleKey: 'services'.tr(),
+              titleKey: 'services',
             ),
-            const ServicesPageTypeToggleSection(),
+            ServicesPageTypeToggleSection(),
           ],
         ),
       ),

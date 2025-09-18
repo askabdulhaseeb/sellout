@@ -44,7 +44,7 @@ class _ProfileOrdersSectionState extends State<ProfileOrdersSection> {
                 borderWidth: 0.5,
                 horizontalPadding: 2,
                 verticalPadding: 6,
-                isShaded: true,
+                isShaded: false,
                 selectedColors: <Color>[
                   StatusType.processing.color,
                   StatusType.shipped.color,

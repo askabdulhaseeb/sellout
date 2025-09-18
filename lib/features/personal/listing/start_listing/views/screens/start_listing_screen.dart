@@ -28,6 +28,7 @@ class _StartListingScreenState extends State<StartListingScreen> {
               titleKey: 'start_selling',
             ),
             SearchableTextfield(
+              padding: const EdgeInsets.only(top: 8, bottom: 4),
               hintText: 'search_listing'.tr(),
               onChanged: (String value) {
                 setState(() {
