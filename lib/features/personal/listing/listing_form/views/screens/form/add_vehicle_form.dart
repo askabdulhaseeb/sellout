@@ -34,7 +34,7 @@ class _AddVehicleFormState extends State<AddVehicleForm> {
               children: <Widget>[
                 const AddListingBasicInfoSection(),
                 const AddListingVehicleBasicInfoSection(),
-                const AddListingVehicleTernsmissionEngineMileageSection(),
+                const AddListingVehicleTransmissionEngineMileageSection(),
                 const AddListingConditionOfferSection(),
                 const EditableAvailabilityWidget(),
                 if (formPro.post == null) const AddListingPostButtonWidget(),

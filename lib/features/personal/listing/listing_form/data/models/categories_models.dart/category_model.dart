@@ -4,7 +4,6 @@ import '../../../domain/entities/category_entites/categories_entity.dart';
 import 'sub_models/dropdown_option.model.dart';
 import '../sub_category_model.dart';
 import 'package:flutter/foundation.dart';
-
 import 'sub_models/dropdown_option_data_model.dart';
 
 class CategoriesModel extends CategoriesEntity {
@@ -17,6 +16,7 @@ class CategoriesModel extends CategoriesEntity {
     super.breed,
     super.pets,
     super.readyToLeave,
+    super.bodyType,
     super.emissionStandards,
     super.fuelType,
     super.make,
@@ -61,7 +61,7 @@ class CategoriesModel extends CategoriesEntity {
       if (value is Map<String, dynamic>) {
         return value.values
             .whereType<Map<String, dynamic>>()
-            .map((e) => DropdownOptionModel.fromJson(e))
+            .map((Map<String, dynamic> e) => DropdownOptionModel.fromJson(e))
             .toList();
       }
       return null;
@@ -84,67 +84,79 @@ class CategoriesModel extends CategoriesEntity {
     }
 
     // ===== Parsing Fields =====
-    final clothesBrands = parseDataList(mergedJson['clothes_brands']);
+    final List<DropdownOptionDataModel>? clothesBrands =
+        parseDataList(mergedJson['clothes_brands']);
     if (clothesBrands != null) populatedFields.add('clothesBrands');
 
-    final footwearBrands = parseDataList(mergedJson['footwear_brands']);
+    final List<DropdownOptionDataModel>? footwearBrands =
+        parseDataList(mergedJson['footwear_brands']);
     if (footwearBrands != null) populatedFields.add('footwearBrands');
 
-    final clothesSizes =
+    final List<DropdownOptionModel> clothesSizes =
         parseMap(mergedJson['clothes_sizes']) ?? <DropdownOptionModel>[];
     if (clothesSizes.isNotEmpty) populatedFields.add('clothesSizes');
 
-    final footSizes =
+    final List<DropdownOptionModel> footSizes =
         parseMap(mergedJson['foot_sizes']) ?? <DropdownOptionModel>[];
     if (footSizes.isNotEmpty) populatedFields.add('footSizes');
 
-    final age = parseMap(mergedJson['age']);
+    final List<DropdownOptionModel>? age = parseMap(mergedJson['age']);
     if (age != null) populatedFields.add('age');
 
-    final breed = parseMap(mergedJson['breed']);
+    final List<DropdownOptionModel>? breed = parseMap(mergedJson['breed']);
     if (breed != null) populatedFields.add('breed');
 
-    final pets = parseMap(mergedJson['pets']);
+    final List<DropdownOptionModel>? pets = parseMap(mergedJson['pets']);
     if (pets != null) populatedFields.add('pets');
 
-    final readyToLeave = parseMap(mergedJson['ready_to_leave']);
+    final List<DropdownOptionModel>? readyToLeave =
+        parseMap(mergedJson['ready_to_leave']);
     if (readyToLeave != null) populatedFields.add('readyToLeave');
-
-    final emissionStandards = parseList(mergedJson['emission_standards']);
+    final List<DropdownOptionModel>? bodyType =
+        parseList(mergedJson['body_type']);
+    if (bodyType != null) populatedFields.add('bodyType');
+    final List<DropdownOptionModel>? emissionStandards =
+        parseList(mergedJson['emission_standards']);
     if (emissionStandards != null) populatedFields.add('emissionStandards');
 
-    final fuelType = parseList(mergedJson['fuel_type']);
+    final List<DropdownOptionModel>? fuelType =
+        parseList(mergedJson['fuel_type']);
     if (fuelType != null) populatedFields.add('fuelType');
 
-    final make = parseList(mergedJson['make']);
+    final List<DropdownOptionModel>? make = parseList(mergedJson['make']);
     if (make != null) populatedFields.add('make');
 
-    final mileageUnit = parseList(mergedJson['mileage_unit']);
+    final List<DropdownOptionModel>? mileageUnit =
+        parseList(mergedJson['mileage_unit']);
     if (mileageUnit != null) populatedFields.add('mileageUnit');
 
-    final transmission = parseList(mergedJson['transmission']);
+    final List<DropdownOptionModel>? transmission =
+        parseList(mergedJson['transmission']);
     if (transmission != null) populatedFields.add('transmission');
 
-    final vehicles = parseList(mergedJson['vehicles']);
+    final List<DropdownOptionModel>? vehicles =
+        parseList(mergedJson['vehicles']);
     if (vehicles != null) populatedFields.add('vehicles');
 
-    final energyRating = parseMap(mergedJson['energy_rating']);
+    final List<DropdownOptionModel>? energyRating =
+        parseMap(mergedJson['energy_rating']);
     if (energyRating != null) populatedFields.add('energyRating');
 
-    final propertyType = parseMap(mergedJson['property_type']);
+    final List<DropdownOptionModel>? propertyType =
+        parseMap(mergedJson['property_type']);
     if (propertyType != null) populatedFields.add('propertyType');
 
-    final items = mergedJson['items'] != null
+    final SubCategoryModel? items = mergedJson['items'] != null
         ? SubCategoryModel.fromJson(mergedJson['items'])
         : null;
     if (items != null) populatedFields.add('items');
 
-    final clothes = mergedJson['clothes'] != null
+    final SubCategoryModel? clothes = mergedJson['clothes'] != null
         ? SubCategoryModel.fromJson(mergedJson['clothes'])
         : null;
     if (clothes != null) populatedFields.add('clothes');
 
-    final foot = mergedJson['foot'] != null
+    final SubCategoryModel? foot = mergedJson['foot'] != null
         ? SubCategoryModel.fromJson(mergedJson['foot'])
         : null;
     if (foot != null) populatedFields.add('foot');

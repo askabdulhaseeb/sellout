@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/dropdowns/color_dropdown.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
+import '../../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../location/domain/entities/location_entity.dart';
@@ -45,15 +46,20 @@ class _AddListingVehicleBasicInfoSectionState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             /// Category
-            CustomListingDropDown<AddListingFormProvider, DropdownOptionEntity>(
-              options: vehiclecatgory,
-              valueGetter: (DropdownOptionEntity opt) => opt.value.value,
-              labelGetter: (DropdownOptionEntity opt) => opt.label,
-              title: 'category'.tr(),
-              hint: 'select_category'.tr(),
-              selectedValue: formPro.selectedVehicleCategory,
-              onChanged: (String? p0) => formPro.setVehicleCategory(p0),
+            CustomDropdown<DropdownOptionEntity>(
+              items: vehiclecatgory.map((DropdownOptionEntity opt) {
+                return DropdownMenuItem<DropdownOptionEntity>(
+                  value: opt,
+                  child: Text(opt.label),
+                );
+              }).toList(),
+              selectedItem: DropdownOptionEntity.findByValue(
+                  vehiclecatgory, formPro.selectedVehicleCategory ?? ''),
               validator: (bool? value) => AppValidator.requireSelection(value),
+              hint: 'select_category'.tr(),
+              title: 'category'.tr(),
+              onChanged: (DropdownOptionEntity? value) =>
+                  formPro.setVehicleCategory(value?.value.value),
             ),
 
             /// Year

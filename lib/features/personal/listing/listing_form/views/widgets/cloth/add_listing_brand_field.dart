@@ -19,20 +19,24 @@ class AddListingBrandField extends StatelessWidget {
 
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
-        // Decide which list to use
         final List<DropdownOptionDataEntity> brandOptions =
             formPro.selectedClothSubCategory == 'clothes'
                 ? clothesBrands
                 : footwearBrands;
+
         return CustomDropdown<DropdownOptionDataEntity>(
           items: brandOptions
               .map((DropdownOptionDataEntity e) =>
                   DropdownMenuItem<DropdownOptionDataEntity>(
-                      child: Text(e.label)))
+                      child: Text(
+                    e.label,
+                    style: TextTheme.of(context).bodySmall,
+                  )))
               .toList(),
           title: 'brand'.tr(),
           hint: 'brand'.tr(),
-          selectedItem: null,
+          selectedItem: DropdownOptionDataEntity.findByValue(
+              brandOptions, formPro.brand ?? ''),
           validator: (bool? value) =>
               value == true ? null : AppValidator.requireSelection(value),
           onChanged: (DropdownOptionDataEntity? value) =>

@@ -15,4 +15,14 @@ class DropdownOptionEntity {
 
   @HiveField(1)
   final DropdownOptionDataEntity value;
+  static DropdownOptionEntity? findByValue(
+      List<DropdownOptionEntity> list, String valueToFind) {
+    try {
+      return list.firstWhere(
+        (DropdownOptionEntity option) => option.value.value == valueToFind,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
 }
