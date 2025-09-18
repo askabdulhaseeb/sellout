@@ -23,21 +23,6 @@ class AddClothsAndFootwearForm extends StatefulWidget {
 }
 
 class _AddClothsAndFootwearFormState extends State<AddClothsAndFootwearForm> {
-  bool isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    Future<void>.microtask(() => _loadDropdowns());
-  }
-
-  Future<void> _loadDropdowns() async {
-    final AddListingFormProvider formPro =
-        Provider.of<AddListingFormProvider>(context, listen: false);
-    await formPro.fetchDropdownListings(
-        '/category/${formPro.listingType?.json}?list-id=');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<AddListingFormProvider>(

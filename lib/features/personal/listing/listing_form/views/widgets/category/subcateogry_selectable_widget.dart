@@ -99,7 +99,7 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
     if (selectedList.isEmpty) {
       AppSnackBar.showSnackBar(
         context,
-        'no_categories_available'.tr(),
+        'no_categories_found'.tr(),
       );
       return;
     }
@@ -110,7 +110,7 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
     if (subCategories.isEmpty) {
       AppSnackBar.showSnackBar(
         context,
-        'no_subcategories_available'.tr(),
+        'no_subcategories_found'.tr(),
       );
       return;
     }

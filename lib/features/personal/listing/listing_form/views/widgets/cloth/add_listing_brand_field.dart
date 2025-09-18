@@ -32,7 +32,7 @@ class AddListingBrandField extends StatelessWidget {
               .toList(),
           title: 'brand'.tr(),
           hint: 'brand'.tr(),
-          selectedItem: brandOptions.first,
+          selectedItem: null,
           validator: (bool? value) =>
               value == true ? null : AppValidator.requireSelection(value),
           onChanged: (DropdownOptionDataEntity? value) =>

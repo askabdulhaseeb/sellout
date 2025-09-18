@@ -57,6 +57,7 @@
   "category": "Category",
   "select_category": "Select a category",
   "select_sub_category": "Select a sub category",
+  "no_categories_found":"No categories found",
   "condition": "Condition",
   "yes": "Yes",
   "no": "No",

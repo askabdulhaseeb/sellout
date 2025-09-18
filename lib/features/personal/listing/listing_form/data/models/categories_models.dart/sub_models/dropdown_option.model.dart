@@ -1,6 +1,6 @@
 // dropdown_option_model.dart
-import '../../../../domain/entities/category_entites/subentities/dropdown_option_data_entity.dart';
 import '../../../../domain/entities/category_entites/subentities/dropdown_option_entity.dart';
+import 'dropdown_option_data_model.dart';
 
 class DropdownOptionModel extends DropdownOptionEntity {
   DropdownOptionModel({
@@ -20,7 +20,7 @@ class DropdownOptionModel extends DropdownOptionEntity {
   factory DropdownOptionModel.fromJson(Map<String, dynamic> map) {
     return DropdownOptionModel(
       label: map['label']?.toString() ?? '',
-      value: DropdownOptionDataEntity(
+      value: DropdownOptionDataModel(
         label: map['label']?.toString() ?? '',
         value: map['value']?.toString() ?? '',
       ),
@@ -29,12 +29,23 @@ class DropdownOptionModel extends DropdownOptionEntity {
 
   // To Map
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'label': label,
-      'value': {
+      'value': <String, String>{
         'label': value.label,
         'value': value.value,
       },
     };
+  }
+
+  DropdownOptionModel? findByValue(
+      List<DropdownOptionModel> list, String valueToFind) {
+    try {
+      return list.firstWhere(
+        (DropdownOptionModel option) => option.value.value == valueToFind,
+      );
+    } catch (_) {
+      return null;
+    }
   }
 }

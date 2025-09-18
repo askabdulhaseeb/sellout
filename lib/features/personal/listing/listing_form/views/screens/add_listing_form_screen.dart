@@ -64,16 +64,7 @@ class _AddListingFormScreenState extends State<AddListingFormScreen> {
                   )
                 ],
               ),
-            )
-            //  Container(
-            //   height: 100,
-            //   decoration:
-            //       BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
-            //   child: Center(
-            //     child:
-            //   ),
-            // ),
-            ),
+            )),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Selector<AddListingFormProvider, ListingType?>(
