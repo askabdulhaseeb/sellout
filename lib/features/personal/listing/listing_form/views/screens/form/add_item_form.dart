@@ -19,21 +19,6 @@ class AddItemForm extends StatefulWidget {
 }
 
 class _AddItemFormState extends State<AddItemForm> {
-  bool isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    Future<void>.microtask(() => _loadDropdowns());
-  }
-
-  Future<void> _loadDropdowns() async {
-    final AddListingFormProvider formPro =
-        Provider.of<AddListingFormProvider>(context, listen: false);
-    await formPro.fetchDropdownListings(
-        '/category/${formPro.listingType?.json}?list-id=');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<AddListingFormProvider>(
