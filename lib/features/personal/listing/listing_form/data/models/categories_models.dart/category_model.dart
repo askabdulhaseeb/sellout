@@ -45,19 +45,6 @@ class CategoriesModel extends CategoriesEntity {
     }
 
     final List<String> populatedFields = <String>[];
-    bool hasData(dynamic v) => v != null && (v is! List || v.isNotEmpty);
-
-    // Parse dropdown option from Map
-    DropdownOptionModel parseOption(dynamic e) =>
-        DropdownOptionModel.fromJson(e as Map<String, dynamic>);
-
-    // Parse list of DropdownOptionModel
-    List<DropdownOptionModel>? parseList(dynamic value) => hasData(value)
-        ? (value as List<dynamic>)
-            .map((e) => parseOption(e))
-            .toList() // line 55
-        : null;
-
     // Parse map of DropdownOptionModel (like clothes_sizes)
     List<DropdownOptionModel>? parseMap(dynamic value) {
       if (value == null) return null;
@@ -104,14 +91,17 @@ class CategoriesModel extends CategoriesEntity {
         parseMap(mergedJson['foot_sizes']) ?? <DropdownOptionModel>[];
     if (footSizes.isNotEmpty) populatedFields.add('footSizes');
     // pets
+    final Map<String, dynamic>? breedMap = mergedJson['breed'];
+    final List<ParentDropdownModel>? breed = breedMap?.entries
+        .map((MapEntry<String, dynamic> entry) => ParentDropdownModel.fromJson(
+            entry.key, entry.value as Map<String, dynamic>))
+        .toList();
+    if (breed != null) populatedFields.add('breed');
     final List<DropdownOptionModel>? age = parseMap(mergedJson['age']);
     if (age != null) populatedFields.add('age');
     final List<DropdownOptionModel>? readyToLeave =
         parseMap(mergedJson['ready_to_leave']);
     if (readyToLeave != null) populatedFields.add('readyToLeave');
-    final List<DropdownOptionModel>? breed = parseMap(mergedJson['breed']);
-    if (breed != null) populatedFields.add('breed');
-
     final List<DropdownOptionModel>? pets = parseMap(mergedJson['pets']);
     if (pets != null) populatedFields.add('pets');
     //vehicles

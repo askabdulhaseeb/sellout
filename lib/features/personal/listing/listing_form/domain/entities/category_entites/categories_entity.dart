@@ -54,7 +54,7 @@ class CategoriesEntity {
   final List<DropdownOptionEntity>? age;
 
   @HiveField(8)
-  final List<DropdownOptionEntity>? breed;
+  final List<ParentDropdownEntity>? breed;
 
   @HiveField(9)
   final List<DropdownOptionEntity>? pets;
@@ -96,7 +96,7 @@ class CategoriesEntity {
     List<DropdownOptionDataEntity>? clothesBrands,
     List<DropdownOptionDataEntity>? footwearBrands,
     List<DropdownOptionEntity>? age,
-    List<DropdownOptionEntity>? breed,
+    List<ParentDropdownEntity>? breed,
     List<DropdownOptionEntity>? pets,
     List<DropdownOptionEntity>? readyToLeave,
     List<ParentDropdownEntity>? bodyType,

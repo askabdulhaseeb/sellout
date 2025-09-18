@@ -23,9 +23,8 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
         LocalCategoriesSource.readyToLeave ?? <DropdownOptionEntity>[];
     final List<DropdownOptionEntity> petCategories =
         LocalCategoriesSource.pets ?? <DropdownOptionEntity>[];
-    final List<DropdownOptionEntity> breedOptions =
-        LocalCategoriesSource.breed ?? <DropdownOptionEntity>[];
-
+    // final List<ParentDropdownEntity> breedOptions =
+    //     LocalCategoriesSource.breed ?? <ParentDropdownEntity>[];
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         return Column(
@@ -78,20 +77,20 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
             ),
 
             /// Breed (shows only if a category is selected)
-            if (formPro.petCategory != null)
-              CustomListingDropDown<AddListingFormProvider,
-                  DropdownOptionEntity>(
-                options:
-                    breedOptions, // could be filtered by petCategory if needed
-                valueGetter: (DropdownOptionEntity opt) => opt.value.value,
-                labelGetter: (DropdownOptionEntity opt) => opt.label,
-                validator: (bool? value) =>
-                    AppValidator.requireSelection(value),
-                hint: 'breed'.tr(),
-                selectedValue: formPro.breed,
-                onChanged: (String? p0) => formPro.setPetBreed(p0),
-                title: 'breed'.tr(),
-              ),
+            // if (formPro.petCategory != null)
+            //   CustomListingDropDown<AddListingFormProvider,
+            //       ParentDropdownEntity>(
+            //     options:
+            //         breedOptions, // could be filtered by petCategory if needed
+            //     valueGetter: (ParentDropdownEntity opt) => opt.,
+            //     labelGetter: (ParentDropdownEntity opt) => opt.label,
+            //     validator: (bool? value) =>
+            //         AppValidator.requireSelection(value),
+            //     hint: 'breed'.tr(),
+            //     selectedValue: formPro.breed,
+            //     onChanged: (String? p0) => formPro.setPetBreed(p0),
+            //     title: 'breed'.tr(),
+            //   ),
 
             /// Location field
             NominationLocationField(

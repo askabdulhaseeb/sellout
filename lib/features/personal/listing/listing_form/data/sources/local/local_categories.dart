@@ -4,6 +4,7 @@ import '../../../../../../../core/utilities/app_string.dart';
 import '../../../domain/entities/category_entites/categories_entity.dart';
 import '../../../domain/entities/category_entites/subentities/dropdown_option_data_entity.dart';
 import '../../../domain/entities/category_entites/subentities/dropdown_option_entity.dart';
+import '../../../domain/entities/category_entites/subentities/parent_dropdown_entity.dart';
 
 class LocalCategoriesSource {
   static String boxTitle = AppStrings.localDropDownListingBox;
@@ -95,7 +96,7 @@ class LocalCategoriesSource {
 
   static List<DropdownOptionEntity>? get age => categories?.age;
 
-  static List<DropdownOptionEntity>? get breed => categories?.breed;
+  static List<ParentDropdownEntity>? get breed => categories?.breed;
 
   static List<DropdownOptionEntity>? get pets => categories?.pets;
 
