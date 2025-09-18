@@ -28,7 +28,7 @@ class CategoriesEntityAdapter extends TypeAdapter<CategoriesEntity> {
       breed: (fields[8] as List?)?.cast<DropdownOptionEntity>(),
       pets: (fields[9] as List?)?.cast<DropdownOptionEntity>(),
       readyToLeave: (fields[10] as List?)?.cast<DropdownOptionEntity>(),
-      bodyType: fields[11] as BodyTypeEntity?,
+      bodyType: (fields[11] as List?)?.cast<ParentDropdownEntity>(),
       vehicles: (fields[12] as List?)?.cast<DropdownOptionEntity>(),
       emissionStandards: (fields[13] as List?)?.cast<DropdownOptionEntity>(),
       fuelType: (fields[14] as List?)?.cast<DropdownOptionEntity>(),

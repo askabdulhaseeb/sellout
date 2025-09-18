@@ -22,24 +22,16 @@ class CategoriesRepoImpl implements CategoriesRepo {
       final String? localJson = localData?.encodedData;
 
       if (localJson != '' && localJson != null) {
-        debugPrint('Fetched from local storage: $localJson');
-
-        // Parse & save locally again (optional if you want to refresh fields)
         await _processResponse(localJson);
-
         return DataSuccess<String>(
           localData?.encodedData ?? '',
           'Fetched from local storage',
         );
       }
-
-      // 2️⃣ If local is null/empty, fetch from remote API
       final DataState<String> remoteData =
           await remoteApi.fetchCategoriesFromApi(endpoint);
 
       if (remoteData is DataSuccess<String>) {
-        debugPrint('Fetched from API: ${remoteData.data}');
-        // Process & save remote data locally
         await _processResponse(remoteData.data ?? '');
       }
 
