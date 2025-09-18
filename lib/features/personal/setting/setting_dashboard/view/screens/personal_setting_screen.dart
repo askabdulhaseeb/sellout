@@ -105,13 +105,11 @@ class PersonalSettingScreen extends StatelessWidget {
               onTap: () {},
             ),
           ),
-          InDevMode(
-            child: PersonalSettingTile(
-              icon: AppStrings.selloutYouorderSettingIcon,
-              title: 'your_orders'.tr(),
-              onTap: () =>
-                  Navigator.of(context).pushNamed(YourOrdersScreen.routeName),
-            ),
+          PersonalSettingTile(
+            icon: AppStrings.selloutYouorderSettingIcon,
+            title: 'your_orders'.tr(),
+            onTap: () =>
+                Navigator.of(context).pushNamed(YourOrdersScreen.routeName),
           ),
           PersonalSettingTile(
             icon: AppStrings.selloutMoreSettingIcon,

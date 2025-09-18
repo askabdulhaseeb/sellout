@@ -11,6 +11,7 @@ class SearchableTextfield extends StatefulWidget {
     this.onChanged,
     this.borderRadius,
     this.border,
+    this.padding,
     super.key,
   });
 
@@ -19,6 +20,7 @@ class SearchableTextfield extends StatefulWidget {
   final Function(String)? onChanged;
   final double? borderRadius;
   final InputBorder? border;
+  final EdgeInsetsGeometry? padding;
 
   @override
   State<SearchableTextfield> createState() => _SearchableTextfieldState();
@@ -43,6 +45,7 @@ class _SearchableTextfieldState extends State<SearchableTextfield> {
   @override
   Widget build(BuildContext context) {
     return CustomTextFormField(
+      fieldPadding: widget.padding ?? EdgeInsets.symmetric(vertical: 8),
       border: widget.border,
       borderRadius: widget.borderRadius ?? 12,
       controller: widget.controller,

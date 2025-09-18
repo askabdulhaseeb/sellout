@@ -12,6 +12,7 @@ class ServicesPageExploreSearchingSection extends StatelessWidget {
     return Consumer<ServicesPageProvider>(
       builder: (BuildContext context, ServicesPageProvider pro, _) {
         return CustomTextFormField(
+          // fieldPadding: const EdgeInsets.all(0),
           controller: pro.search,
           prefixIcon: const Icon(Icons.search),
           hint: 'search'.tr(),

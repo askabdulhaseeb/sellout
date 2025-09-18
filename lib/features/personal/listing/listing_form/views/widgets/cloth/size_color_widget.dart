@@ -13,7 +13,6 @@ class AddListingSizeColorWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // open your size/color bottom sheet
         showBottomSheet(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           context: context,

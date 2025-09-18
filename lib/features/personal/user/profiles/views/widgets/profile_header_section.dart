@@ -18,61 +18,66 @@ class ProfileHeaderSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isMe = user?.uid == (LocalAuth.uid ?? '-');
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: Row(
         spacing: 4,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           // Profile photo
-          SizedBox(
-            width: 112,
-            height: 106,
-            child: ProfilePhoto(
-              url: user?.profilePhotoURL,
-              placeholder: user?.displayName ?? '',
+          Flexible(
+            child: SizedBox(
+              width: 110,
+              height: 110,
+              child: ProfilePhoto(
+                url: user?.profilePhotoURL,
+                placeholder: user?.displayName ?? '',
+              ),
             ),
           ),
           // Info column
           Expanded(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 8,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 // Top section with name + rating
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text(
-                      user?.displayName ?? '',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
+                    Expanded(
+                      child: Text(
+                        user?.displayName ?? '',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
-                    RatingDisplayWidget(
-                      size: 12,
-                      fontSize: 12,
-                      ratingList: user?.listOfReviews ?? <double>[],
-                      onTap: () async {
-                        final List<ReviewEntity> reviews =
-                            await Provider.of<ProfileProvider>(context,
-                                    listen: false)
-                                .getReviews(user?.uid);
-                        // ignore: use_build_context_synchronously
-                        Navigator.of(context).push(
-                          MaterialPageRoute<ReviewListScreenParam>(
-                            builder: (BuildContext context) => ReviewListScreen(
-                              param: ReviewListScreenParam(reviews: reviews),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                    if (isMe) const ProfileEditAndSettingsWidget()
                   ],
                 ),
-                // Username
+                RatingDisplayWidget(
+                  size: 12,
+                  fontSize: 12,
+                  ratingList: user?.listOfReviews ?? <double>[],
+                  onTap: () async {
+                    final List<ReviewEntity> reviews =
+                        await Provider.of<ProfileProvider>(context,
+                                listen: false)
+                            .getReviews(user?.uid);
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).push(
+                      MaterialPageRoute<ReviewListScreenParam>(
+                        builder: (BuildContext context) => ReviewListScreen(
+                          param: ReviewListScreenParam(reviews: reviews),
+                        ),
+                      ),
+                    );
+                  },
+                ),
                 Text(
                   user?.username ?? '',
                   maxLines: 5,
@@ -85,7 +90,6 @@ class ProfileHeaderSection extends StatelessWidget {
               ],
             ),
           ),
-          if (isMe) const ProfileEditAndSettingsWidget(),
         ],
       ),
     );

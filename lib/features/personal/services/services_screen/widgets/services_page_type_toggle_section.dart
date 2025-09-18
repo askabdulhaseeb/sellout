@@ -41,7 +41,6 @@ class ServicesPageTypeToggleSection extends StatelessWidget {
                 onToggle: (ServicesPageType value) =>
                     pro.setServicesPageType(value),
               ),
-              const SizedBox(height: 8),
               pro.servicesPageType == ServicesPageType.explore
                   ? const ServicePageExploreSection()
                   : const ServicePageMyAppointmentSection(),

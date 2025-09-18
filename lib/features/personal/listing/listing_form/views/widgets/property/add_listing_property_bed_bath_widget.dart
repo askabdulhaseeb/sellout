@@ -23,17 +23,19 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
         LocalCategoriesSource.propertyType ?? <DropdownOptionEntity>[];
     final List<DropdownOptionDataEntity> energyRatings =
         LocalCategoriesSource.clothesBrands ?? <DropdownOptionDataEntity>[];
+
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            // Bedroom & Bathroom
             Row(
               children: <Widget>[
                 Expanded(
                   child: CustomTextFormField(
-                    validator: (String? value) => AppValidator.isEmpty(value),
                     controller: formPro.bedroom,
+                    validator: (String? value) => AppValidator.isEmpty(value),
                     labelText: 'bedroom'.tr(),
                     hint: 'Ex. 4',
                     keyboardType: TextInputType.number,
@@ -42,8 +44,8 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
                 const SizedBox(width: 16),
                 Expanded(
                   child: CustomTextFormField(
-                    validator: (String? value) => AppValidator.isEmpty(value),
                     controller: formPro.bathroom,
+                    validator: (String? value) => AppValidator.isEmpty(value),
                     labelText: 'bathroom'.tr(),
                     hint: 'Ex. 3',
                     keyboardType: TextInputType.number,
@@ -51,47 +53,61 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
                 ),
               ],
             ),
+
+            const SizedBox(height: 16),
+            // Price
             CustomTextFormField(
-              validator: (String? value) => AppValidator.isEmpty(value),
               controller: formPro.price,
+              validator: (String? value) => AppValidator.isEmpty(value),
               labelText: 'price'.tr(),
               hint: 'Ex. 350',
               keyboardType: TextInputType.number,
             ),
+
+            const SizedBox(height: 16),
+            // Property Type Dropdown
             CustomDropdown<DropdownOptionEntity>(
               items: propertyTypes
-                  .map((DropdownOptionEntity e) =>
-                      DropdownMenuItem<DropdownOptionEntity>(
-                        value: e,
-                        child: Text(e.label),
-                      ))
+                  .map(
+                    (DropdownOptionEntity e) =>
+                        DropdownMenuItem<DropdownOptionEntity>(
+                      value: e,
+                      child: Text(e.label),
+                    ),
+                  )
                   .toList(),
               selectedItem: propertyTypes.first,
               validator: (bool? value) => AppValidator.requireSelection(value),
               hint: 'select_category'.tr(),
-              onChanged: (DropdownOptionEntity? p0) =>
-                  formPro.setPropertyType(p0?.value.value),
+              onChanged: (DropdownOptionEntity? value) {
+                if (value != null) formPro.setPropertyType(value.value.value);
+              },
               title: 'category'.tr(),
             ),
+            const SizedBox(height: 16),
+            // Energy Rating Dropdown
             CustomListingDropDown<AddListingFormProvider,
                 DropdownOptionDataEntity>(
               options: energyRatings,
               valueGetter: (DropdownOptionDataEntity opt) => opt.value,
               labelGetter: (DropdownOptionDataEntity opt) => opt.label,
+              selectedValue: formPro.selectedEnergyRating,
               validator: (bool? value) => AppValidator.requireSelection(value),
               hint: 'energy_rating'.tr(),
-              selectedValue: formPro.selectedEnergyRating,
-              onChanged: (String? p0) => formPro.setEnergyRating(p0),
+              onChanged: (String? value) => formPro.setEnergyRating(value),
               title: 'energy_rating'.tr(),
             ),
+
+            const SizedBox(height: 16),
+            // Location Field
             NominationLocationField(
               validator: (bool? value) => AppValidator.requireLocation(value),
               title: 'meetup_location'.tr(),
               selectedLatLng: formPro.collectionLatLng,
               displayMode: MapDisplayMode.showMapAfterSelection,
               initialText: formPro.selectedmeetupLocation?.address ?? '',
-              onLocationSelected: (LocationEntity p0, LatLng p1) =>
-                  formPro.setMeetupLocation(p0, p1),
+              onLocationSelected: (LocationEntity loc, LatLng latLng) =>
+                  formPro.setMeetupLocation(loc, latLng),
             ),
           ],
         );

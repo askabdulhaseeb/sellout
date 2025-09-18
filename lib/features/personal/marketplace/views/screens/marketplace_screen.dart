@@ -55,7 +55,11 @@ class _MarketPlaceScreenState extends State<MarketPlaceScreen> {
                   ],
                 ),
               ),
-              const SliverToBoxAdapter(child: MarketPlaceHeader()),
+              const SliverToBoxAdapter(
+                  child: Padding(
+                padding: EdgeInsets.only(top: 8),
+                child: MarketPlaceHeader(),
+              )),
               if (!pro.isFilteringPosts)
                 const SliverToBoxAdapter(child: MarketPlaceCategoriesSection()),
               if (pro.isFilteringPosts)

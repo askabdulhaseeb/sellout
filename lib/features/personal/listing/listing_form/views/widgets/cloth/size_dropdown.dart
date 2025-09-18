@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../../../../../../../core/utilities/app_validators.dart';
 import '../../../data/sources/local/local_categories.dart';
 import '../../../domain/entities/category_entites/subentities/dropdown_option_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
@@ -25,20 +26,28 @@ class SizeDropdown extends StatelessWidget {
         LocalCategoriesSource.clothesSizes ?? <DropdownOptionEntity>[];
     final List<DropdownOptionEntity> footSizes =
         LocalCategoriesSource.footSizes ?? <DropdownOptionEntity>[];
+
+    final List<DropdownOptionEntity> sizeOptions =
+        formPro.selectedClothSubCategory == 'clothes'
+            ? clothesSizes
+            : footSizes;
+
     return Padding(
       padding: EdgeInsets.zero,
       child:
           CustomListingDropDown<AddListingFormProvider, DropdownOptionEntity>(
-        validator: (bool? p0) => null,
         hint: 'size'.tr(),
         overlayAbove: overlayAbove,
-        options: formPro.selectedClothSubCategory == 'clothes'
-            ? clothesSizes
-            : footSizes,
+        options: sizeOptions,
         valueGetter: (DropdownOptionEntity opt) => opt.value.value,
         labelGetter: (DropdownOptionEntity opt) => opt.label,
-        selectedValue: formPro.selectedVehicleCategory,
-        onChanged: (String? p0) => formPro.setVehicleCategory(p0),
+        selectedValue: selectedSize,
+        validator: (bool? value) => value == true
+            ? null
+            : AppValidator.requireSelection(value), // optional validation
+        onChanged: (String? value) {
+          onSizeChanged(value);
+        },
       ),
     );
   }

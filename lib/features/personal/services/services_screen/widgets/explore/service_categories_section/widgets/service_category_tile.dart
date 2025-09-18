@@ -24,7 +24,7 @@ class SeviceCategoryTile extends StatelessWidget {
         }
       },
       child: Container(
-        margin: const EdgeInsets.all(4),
+        margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
         height: 100,
         width: 100,
         decoration: BoxDecoration(
