@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import '../../../domain/entities/category_entites/categories_entity.dart';
+import 'sub_models/parent_dropdown_model.dart';
 import 'sub_models/dropdown_option.model.dart';
 import '../sub_category_model.dart';
 import 'package:flutter/foundation.dart';
@@ -52,7 +53,9 @@ class CategoriesModel extends CategoriesEntity {
 
     // Parse list of DropdownOptionModel
     List<DropdownOptionModel>? parseList(dynamic value) => hasData(value)
-        ? (value as List<dynamic>).map((e) => parseOption(e)).toList()
+        ? (value as List<dynamic>)
+            .map((e) => parseOption(e))
+            .toList() // line 55
         : null;
 
     // Parse map of DropdownOptionModel (like clothes_sizes)
@@ -84,6 +87,7 @@ class CategoriesModel extends CategoriesEntity {
     }
 
     // ===== Parsing Fields =====
+    //clothes_foot
     final List<DropdownOptionDataModel>? clothesBrands =
         parseDataList(mergedJson['clothes_brands']);
     if (clothesBrands != null) populatedFields.add('clothesBrands');
@@ -99,43 +103,43 @@ class CategoriesModel extends CategoriesEntity {
     final List<DropdownOptionModel> footSizes =
         parseMap(mergedJson['foot_sizes']) ?? <DropdownOptionModel>[];
     if (footSizes.isNotEmpty) populatedFields.add('footSizes');
-
+    // pets
     final List<DropdownOptionModel>? age = parseMap(mergedJson['age']);
     if (age != null) populatedFields.add('age');
-
+    final List<DropdownOptionModel>? readyToLeave =
+        parseMap(mergedJson['ready_to_leave']);
+    if (readyToLeave != null) populatedFields.add('readyToLeave');
     final List<DropdownOptionModel>? breed = parseMap(mergedJson['breed']);
     if (breed != null) populatedFields.add('breed');
 
     final List<DropdownOptionModel>? pets = parseMap(mergedJson['pets']);
     if (pets != null) populatedFields.add('pets');
-
-    final List<DropdownOptionModel>? readyToLeave =
-        parseMap(mergedJson['ready_to_leave']);
-    if (readyToLeave != null) populatedFields.add('readyToLeave');
-    final List<DropdownOptionModel>? bodyType =
-        parseList(mergedJson['body_type']);
+    //vehicles
+    final Map<String, dynamic>? bodyTypeMap = mergedJson['body_type'];
+    final List<ParentDropdownModel>? bodyType = bodyTypeMap?.entries
+        .map((MapEntry<String, dynamic> entry) => ParentDropdownModel.fromJson(
+            entry.key, entry.value as Map<String, dynamic>))
+        .toList();
     if (bodyType != null) populatedFields.add('bodyType');
     final List<DropdownOptionModel>? emissionStandards =
-        parseList(mergedJson['emission_standards']);
+        parseMap(mergedJson['emission_standards']);
     if (emissionStandards != null) populatedFields.add('emissionStandards');
-
     final List<DropdownOptionModel>? fuelType =
-        parseList(mergedJson['fuel_type']);
+        parseMap(mergedJson['fuel_type']);
     if (fuelType != null) populatedFields.add('fuelType');
-
-    final List<DropdownOptionModel>? make = parseList(mergedJson['make']);
+    final List<DropdownOptionModel>? make = parseMap(mergedJson['make']);
     if (make != null) populatedFields.add('make');
 
     final List<DropdownOptionModel>? mileageUnit =
-        parseList(mergedJson['mileage_unit']);
+        parseMap(mergedJson['mileage_unit']);
     if (mileageUnit != null) populatedFields.add('mileageUnit');
 
     final List<DropdownOptionModel>? transmission =
-        parseList(mergedJson['transmission']);
+        parseMap(mergedJson['transmission']);
     if (transmission != null) populatedFields.add('transmission');
 
     final List<DropdownOptionModel>? vehicles =
-        parseList(mergedJson['vehicles']);
+        parseMap(mergedJson['vehicles']);
     if (vehicles != null) populatedFields.add('vehicles');
 
     final List<DropdownOptionModel>? energyRating =
@@ -161,7 +165,7 @@ class CategoriesModel extends CategoriesEntity {
         : null;
     if (foot != null) populatedFields.add('foot');
 
-    debugPrint('CategoriesModel.fromJson – Populated fields: $populatedFields');
+    debugPrint('CategoriesModel.fromJson - Populated fields: $populatedFields');
 
     return CategoriesModel(
       clothesBrands: clothesBrands,

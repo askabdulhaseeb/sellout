@@ -1,13 +1,14 @@
 import 'package:hive/hive.dart';
 import 'dropdown_option_entity.dart';
-part 'body_type_entity.g.dart';
+part 'parent_dropdown_entity.g.dart';
 
 @HiveType(typeId: 77)
-class BodyTypeEntity {
-  BodyTypeEntity({
+class ParentDropdownEntity {
+  ParentDropdownEntity({
     required this.category,
     required this.options,
   });
+
   @HiveField(0)
   final String category;
 

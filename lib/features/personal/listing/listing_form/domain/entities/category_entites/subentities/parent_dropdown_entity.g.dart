@@ -1,29 +1,29 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'body_type_entity.dart';
+part of 'parent_dropdown_entity.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class BodyTypeEntityAdapter extends TypeAdapter<BodyTypeEntity> {
+class ParentDropdownEntityAdapter extends TypeAdapter<ParentDropdownEntity> {
   @override
   final int typeId = 77;
 
   @override
-  BodyTypeEntity read(BinaryReader reader) {
+  ParentDropdownEntity read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return BodyTypeEntity(
+    return ParentDropdownEntity(
       category: fields[0] as String,
       options: (fields[1] as List).cast<DropdownOptionEntity>(),
     );
   }
 
   @override
-  void write(BinaryWriter writer, BodyTypeEntity obj) {
+  void write(BinaryWriter writer, ParentDropdownEntity obj) {
     writer
       ..writeByte(2)
       ..writeByte(0)
@@ -38,7 +38,7 @@ class BodyTypeEntityAdapter extends TypeAdapter<BodyTypeEntity> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is BodyTypeEntityAdapter &&
+      other is ParentDropdownEntityAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

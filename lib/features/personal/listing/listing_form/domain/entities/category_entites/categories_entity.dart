@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 import '../../../data/models/sub_category_model.dart';
-import 'subentities/body_type_entity.dart';
+import 'subentities/parent_dropdown_entity.dart';
 import 'subentities/dropdown_option_data_entity.dart';
 import 'subentities/dropdown_option_entity.dart';
 part 'categories_entity.g.dart';
@@ -63,7 +63,7 @@ class CategoriesEntity {
   final List<DropdownOptionEntity>? readyToLeave;
 
   @HiveField(11)
-  final BodyTypeEntity? bodyType;
+  final List<ParentDropdownEntity>? bodyType;
 
   @HiveField(12)
   final List<DropdownOptionEntity>? vehicles;
@@ -99,7 +99,7 @@ class CategoriesEntity {
     List<DropdownOptionEntity>? breed,
     List<DropdownOptionEntity>? pets,
     List<DropdownOptionEntity>? readyToLeave,
-    BodyTypeEntity? bodyType,
+    List<ParentDropdownEntity>? bodyType,
     List<DropdownOptionEntity>? vehicles,
     List<DropdownOptionEntity>? emissionStandards,
     List<DropdownOptionEntity>? fuelType,
