@@ -26,6 +26,8 @@ class AddListingConditionOfferSection extends StatelessWidget {
                 formPro.listingType != ListingType.pets)
               CustomToggleSwitch<ConditionType>(
                 isShaded: false,
+                verticalPadding: 8,
+                containerHeight: 40,
                 labels: ConditionType.list,
                 labelStrs: ConditionType.list
                     .map<String>((ConditionType e) => e.code.tr())
@@ -35,6 +37,8 @@ class AddListingConditionOfferSection extends StatelessWidget {
                 onToggle: formPro.setCondition,
               ),
             CustomToggleSwitch<bool>(
+              verticalPadding: 8,
+              containerHeight: 40,
               isShaded: false,
               labels: const <bool>[true, false],
               labelStrs: <String>['yes'.tr(), 'no'.tr()],
@@ -53,7 +57,8 @@ class AddListingConditionOfferSection extends StatelessWidget {
                 validator: (String? value) => AppValidator.isEmpty(value),
               ),
             CustomToggleSwitch<PrivacyType>(
-              horizontalPadding: 2,
+              verticalPadding: 8,
+              containerHeight: 40,
               isShaded: false,
               labels: PrivacyType.list,
               labelStrs: PrivacyType.list

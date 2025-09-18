@@ -23,7 +23,6 @@ class AddListingBrandField extends StatelessWidget {
             formPro.selectedClothSubCategory == 'clothes'
                 ? clothesBrands
                 : footwearBrands;
-
         return CustomDropdown<DropdownOptionDataEntity>(
           items: brandOptions
               .map((DropdownOptionDataEntity e) =>

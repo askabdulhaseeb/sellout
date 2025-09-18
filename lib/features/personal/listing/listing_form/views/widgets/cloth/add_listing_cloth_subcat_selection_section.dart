@@ -15,6 +15,8 @@ class AddListingClothSubcatSelectionSection extends StatelessWidget {
     return Consumer<AddListingFormProvider>(
         builder: (BuildContext context, AddListingFormProvider addPro, _) {
       return CustomToggleSwitch<String>(
+        verticalPadding: 8,
+        containerHeight: 40,
         isShaded: false,
         labels: subCategories,
         labelStrs: subCategories.map((String e) => e.tr()).toList(),
