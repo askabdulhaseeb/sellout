@@ -12,7 +12,6 @@ import '../../../data/sources/local/local_categories.dart';
 import '../../../domain/entities/category_entites/subentities/dropdown_option_data_entity.dart';
 import '../../../domain/entities/category_entites/subentities/dropdown_option_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
-import '../custom_listing_dropdown.dart';
 
 class AddListingPropertyBedBathWidget extends StatelessWidget {
   const AddListingPropertyBedBathWidget({super.key});
@@ -54,7 +53,6 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: 16),
             // Price
             CustomTextFormField(
               controller: formPro.price,
@@ -64,7 +62,6 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
               keyboardType: TextInputType.number,
             ),
 
-            const SizedBox(height: 16),
             // Property Type Dropdown
             CustomDropdown<DropdownOptionEntity>(
               items: propertyTypes
@@ -76,28 +73,36 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
                     ),
                   )
                   .toList(),
-              selectedItem: propertyTypes.first,
+              selectedItem: DropdownOptionEntity.findByValue(
+                  propertyTypes, formPro.selectedPropertyType ?? ''),
               validator: (bool? value) => AppValidator.requireSelection(value),
               hint: 'select_category'.tr(),
-              onChanged: (DropdownOptionEntity? value) {
-                if (value != null) formPro.setPropertyType(value.value.value);
-              },
+              onChanged: (DropdownOptionEntity? opt) =>
+                  formPro.setPropertyType(opt?.value.value),
               title: 'category'.tr(),
             ),
-            const SizedBox(height: 16),
             // Energy Rating Dropdown
-            CustomListingDropDown<AddListingFormProvider,
-                DropdownOptionDataEntity>(
-              options: energyRatings,
-              valueGetter: (DropdownOptionDataEntity opt) => opt.value,
-              labelGetter: (DropdownOptionDataEntity opt) => opt.label,
-              selectedValue: formPro.selectedEnergyRating,
+            CustomDropdown<DropdownOptionDataEntity>(
+              // Build dropdown items
+              items: energyRatings.map(
+                (DropdownOptionDataEntity e) {
+                  return DropdownMenuItem<DropdownOptionDataEntity>(
+                    value: e,
+                    child: Text(e.label),
+                  );
+                },
+              ).toList(),
+              selectedItem: DropdownOptionDataEntity.findByValue(
+                  energyRatings, formPro.selectedEnergyRating ?? ''),
               validator: (bool? value) => AppValidator.requireSelection(value),
               hint: 'energy_rating'.tr(),
-              onChanged: (String? value) => formPro.setEnergyRating(value),
               title: 'energy_rating'.tr(),
-            ),
 
+              // When user changes selection
+              onChanged: (DropdownOptionDataEntity? value) {
+                formPro.setEnergyRating(value?.value);
+              },
+            ),
             const SizedBox(height: 16),
             // Location Field
             NominationLocationField(
