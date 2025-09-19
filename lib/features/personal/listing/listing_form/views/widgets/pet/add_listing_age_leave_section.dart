@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
+import '../../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../location/domain/entities/location_entity.dart';
 import '../../../../../location/domain/enums/map_display_mode.dart';
 import '../../../../../location/view/widgets/location_field.dart/nomination_location_field.dart';
 import '../../../domain/entities/category_entites/subentities/dropdown_option_entity.dart';
+import '../../../domain/entities/category_entites/subentities/parent_dropdown_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../../../data/sources/local/local_categories.dart';
 import '../custom_listing_dropdown.dart';
@@ -16,17 +18,20 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ✅ Provide explicit option lists
     final List<DropdownOptionEntity> ageOptions =
         LocalCategoriesSource.age ?? <DropdownOptionEntity>[];
     final List<DropdownOptionEntity> readyToLeaveOptions =
         LocalCategoriesSource.readyToLeave ?? <DropdownOptionEntity>[];
     final List<DropdownOptionEntity> petCategories =
         LocalCategoriesSource.pets ?? <DropdownOptionEntity>[];
-    // final List<ParentDropdownEntity> breedOptions =
-    //     LocalCategoriesSource.breed ?? <ParentDropdownEntity>[];
+    final List<ParentDropdownEntity> breedOptions =
+        LocalCategoriesSource.breed ?? <ParentDropdownEntity>[];
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
+        final ParentDropdownEntity matchedBreed = breedOptions.firstWhere(
+          (ParentDropdownEntity p) => p.category == formPro.petCategory,
+        );
+        final List<DropdownOptionEntity> breedList = matchedBreed.options;
         return Column(
           children: <Widget>[
             /// Age + Ready to leave
@@ -76,21 +81,28 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
               title: 'category'.tr(),
             ),
 
-            /// Breed (shows only if a category is selected)
-            // if (formPro.petCategory != null)
-            //   CustomListingDropDown<AddListingFormProvider,
-            //       ParentDropdownEntity>(
-            //     options:
-            //         breedOptions, // could be filtered by petCategory if needed
-            //     valueGetter: (ParentDropdownEntity opt) => opt.,
-            //     labelGetter: (ParentDropdownEntity opt) => opt.label,
-            //     validator: (bool? value) =>
-            //         AppValidator.requireSelection(value),
-            //     hint: 'breed'.tr(),
-            //     selectedValue: formPro.breed,
-            //     onChanged: (String? p0) => formPro.setPetBreed(p0),
-            //     title: 'breed'.tr(),
-            //   ),
+            if (formPro.petCategory != null && formPro.petCategory!.isNotEmpty)
+              CustomDropdown<DropdownOptionEntity>(
+                items: breedList
+                    .map(
+                      (DropdownOptionEntity opt) =>
+                          DropdownMenuItem<DropdownOptionEntity>(
+                        value: opt,
+                        child: Text(opt.label),
+                      ),
+                    )
+                    .toList(),
+                selectedItem: breedList.firstWhere(
+                  (DropdownOptionEntity opt) =>
+                      opt.value.value == formPro.breed,
+                ),
+                validator: (bool? value) =>
+                    AppValidator.requireSelection(value),
+                hint: 'breed'.tr(),
+                title: 'breed'.tr(),
+                onChanged: (DropdownOptionEntity? value) =>
+                    formPro.setPetBreed(value?.value.value),
+              ),
 
             /// Location field
             NominationLocationField(

@@ -16,7 +16,8 @@ class ParentDropdownEntity {
   final List<DropdownOptionEntity> options;
 
   /// Simple helper — no parsing logic here
-  DropdownOptionEntity? getOptionByValue(String value) {
+  static DropdownOptionEntity? getOptionByValue(
+      String value, List<DropdownOptionEntity> options) {
     try {
       return options
           .firstWhere((DropdownOptionEntity opt) => opt.value.value == value);

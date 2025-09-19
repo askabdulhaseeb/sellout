@@ -33,7 +33,6 @@ class MarketFilterVehicleCategoryAndModalWidget extends StatelessWidget {
                 hint: 'category'.tr(),
                 selectedValue: marketPro.vehicleCatgory,
                 onChanged: (String? p0) => marketPro.setVehicleCategory(p0),
-                title: 'category'.tr(),
               ),
             ),
             const SizedBox(width: 4),

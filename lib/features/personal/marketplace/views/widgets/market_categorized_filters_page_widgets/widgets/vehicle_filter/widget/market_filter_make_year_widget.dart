@@ -29,7 +29,6 @@ class MarketFilterMakeYearWidget extends StatelessWidget {
                 labelGetter: (DropdownOptionEntity opt) => opt.label,
                 validator: (bool? p0) => null,
                 hint: 'make'.tr(),
-                title: 'make'.tr(),
                 selectedValue: marketPro.make,
                 onChanged: (String? p0) => marketPro.setMake(p0),
               ),

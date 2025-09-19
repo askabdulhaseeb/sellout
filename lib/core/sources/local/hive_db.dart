@@ -219,12 +219,11 @@ class HiveDB {
     await LocalBooking().clear();
     await LocalUnreadMessagesService().clear();
     await LocalPromo().clear();
-    await LocalCategoriesSource().clear();
     await LocalColors().clear();
     await LocalOrders().clear();
     await LocalNotifications().clear();
     await LocalServiceCategory().clear();
-
+    await LocalCategoriesSource().clear();
     // await LocalCountry().clear();
   }
 }

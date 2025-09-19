@@ -16,31 +16,38 @@ class AddListingBrandField extends StatelessWidget {
         LocalCategoriesSource.clothesBrands ?? <DropdownOptionDataEntity>[];
     final List<DropdownOptionDataEntity> footwearBrands =
         LocalCategoriesSource.footwearBrands ?? <DropdownOptionDataEntity>[];
-
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         final List<DropdownOptionDataEntity> brandOptions =
             formPro.selectedClothSubCategory == 'clothes'
                 ? clothesBrands
                 : footwearBrands;
-        return CustomDropdown<DropdownOptionDataEntity>(
-          items: brandOptions
-              .map((DropdownOptionDataEntity e) =>
-                  DropdownMenuItem<DropdownOptionDataEntity>(
-                      child: Text(
-                    e.label,
-                    style: TextTheme.of(context).bodySmall,
-                  )))
-              .toList(),
-          title: 'brand'.tr(),
-          hint: 'brand'.tr(),
-          selectedItem: DropdownOptionDataEntity.findByValue(
-              brandOptions, formPro.brand ?? ''),
-          validator: (bool? value) =>
-              value == true ? null : AppValidator.requireSelection(value),
-          onChanged: (DropdownOptionDataEntity? value) =>
-              formPro.setBrand(value?.value),
+
+        final DropdownOptionDataEntity? selectedBrand =
+            DropdownOptionDataEntity.findByValue(
+          brandOptions,
+          formPro.brand ?? '',
         );
+        return CustomDropdown<DropdownOptionDataEntity>(
+            items: brandOptions
+                .map((DropdownOptionDataEntity e) =>
+                    DropdownMenuItem<DropdownOptionDataEntity>(
+                      value: e,
+                      child: Text(
+                        e.label,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ))
+                .toList(),
+            title: 'brand'.tr(),
+            hint: 'brand'.tr(),
+            selectedItem: selectedBrand,
+            validator: (bool? value) {
+              if (value == null) return AppValidator.requireSelection(false);
+              return null;
+            },
+            onChanged: (DropdownOptionDataEntity? value) =>
+                formPro.setBrand(value?.value));
       },
     );
   }

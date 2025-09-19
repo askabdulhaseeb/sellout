@@ -9,10 +9,8 @@ class AppDataService {
   factory AppDataService() => _instance;
   AppDataService._internal();
   static final AppDataService _instance = AppDataService._internal();
-
   final GetCategoryByEndpointUsecase _usecase =
       GetCategoryByEndpointUsecase(locator());
-
   Future<void> fetchAllData() async {
     // All endpoints in one list
     final List<String> endpoints = <String>[

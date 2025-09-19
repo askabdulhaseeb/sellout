@@ -14,8 +14,6 @@ class CategoriesRepoImpl implements CategoriesRepo {
   @override
   Future<DataState<String>> getCategoriesByEndPoint(String endpoint) async {
     try {
-      debugPrint('getCategoriesByEndPoint . CategoriesRepoImpl');
-
       // 1️⃣ Try fetching from local storage
       final ApiRequestEntity? localData = await LocalRequestHistory()
           .request(endpoint: endpoint, duration: const Duration(days: 7));
@@ -32,7 +30,7 @@ class CategoriesRepoImpl implements CategoriesRepo {
           await remoteApi.fetchCategoriesFromApi(endpoint);
 
       if (remoteData is DataSuccess<String>) {
-        await _processResponse(remoteData.data ?? '');
+        await _processResponse(remoteData.data);
       }
 
       return remoteData;

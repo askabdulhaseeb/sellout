@@ -24,7 +24,7 @@ void main() async {
   setupLocator();
   await EasyLocalization.ensureInitialized();
   SocketService(locator()).initAndListen();
-  AppDataService().fetchAllData();
+  await AppDataService().fetchAllData();
   runApp(EasyLocalization(
     supportedLocales: const <Locale>[AppLocalization.en],
     path: AppLocalization.filePath,
