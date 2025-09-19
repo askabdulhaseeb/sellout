@@ -249,7 +249,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
                                           curve: Curves.easeInOut,
                                           child: Container(
                                             padding: const EdgeInsets.symmetric(
-                                                horizontal: 8, vertical: 8),
+                                                horizontal: 8, vertical: 10),
                                             child: item.child,
                                           ),
                                         ),

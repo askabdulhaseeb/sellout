@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import '../../../../../../../core/functions/app_log.dart';
 import '../../../domain/entities/category_entites/categories_entity.dart';
 import 'sub_models/parent_dropdown_model.dart';
 import 'sub_models/dropdown_option.model.dart';
@@ -156,13 +157,15 @@ class CategoriesModel extends CategoriesEntity {
     if (foot != null) populatedFields.add('foot');
 
     debugPrint('CategoriesModel.fromJson - Populated fields: $populatedFields');
-
+    AppLog.info('${bodyType?.length}',
+        name: 'CategoriesModel.fromJson Saved count');
     return CategoriesModel(
       clothesBrands: clothesBrands,
       footwearBrands: footwearBrands,
       clothesSizes: clothesSizes,
       footSizes: footSizes,
       age: age,
+      bodyType: bodyType,
       breed: breed,
       pets: pets,
       readyToLeave: readyToLeave,

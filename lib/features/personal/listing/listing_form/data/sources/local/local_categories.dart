@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../domain/entities/category_entites/categories_entity.dart';
@@ -36,7 +35,6 @@ class LocalCategoriesSource {
   Future<void> saveNonNullFields(CategoriesEntity newEntity) async {
     final CategoriesEntity? existing = _box.get(_mainKey);
     if (existing == null) {
-      // If nothing saved before, just save new entity
       await save(newEntity);
       return;
     }
@@ -44,15 +42,13 @@ class LocalCategoriesSource {
       if (newValue == null) return oldValue;
 
       if (newValue is List && newValue.isEmpty) {
-        // Don’t overwrite if the new list is empty
         return oldValue;
       }
-
       return newValue;
     }
 
-    debugPrint('categories saving start');
     final CategoriesEntity merged = existing.copyWith(
+      bodyType: keepOldIfNullOrEmpty(newEntity.bodyType, existing.bodyType),
       clothesSizes:
           keepOldIfNullOrEmpty(newEntity.clothesSizes, existing.clothesSizes),
       footSizes: keepOldIfNullOrEmpty(newEntity.footSizes, existing.footSizes),
@@ -79,7 +75,6 @@ class LocalCategoriesSource {
       propertyType:
           keepOldIfNullOrEmpty(newEntity.propertyType, existing.propertyType),
     );
-
     await save(merged);
   }
 
@@ -97,6 +92,8 @@ class LocalCategoriesSource {
   static List<DropdownOptionEntity>? get age => categories?.age;
 
   static List<ParentDropdownEntity>? get breed => categories?.breed;
+
+  static List<ParentDropdownEntity>? get bodyType => categories?.bodyType;
 
   static List<DropdownOptionEntity>? get pets => categories?.pets;
 
