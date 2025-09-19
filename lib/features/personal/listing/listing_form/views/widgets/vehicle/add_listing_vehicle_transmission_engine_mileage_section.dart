@@ -57,7 +57,7 @@ class AddListingVehicleTransmissionEngineMileageSection
                     hint: 'mileage_unit'.tr(),
                     title: 'mileage_unit'.tr(),
                     onChanged: (DropdownOptionEntity? value) =>
-                        formPro.setBodyType(value?.value.value),
+                        formPro.setMileageUnit(value?.value.value),
                   ),
                 ),
               ],

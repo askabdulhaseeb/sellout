@@ -11,7 +11,6 @@ import '../../../domain/entities/category_entites/subentities/dropdown_option_en
 import '../../../domain/entities/category_entites/subentities/parent_dropdown_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../../../data/sources/local/local_categories.dart';
-import '../custom_listing_dropdown.dart';
 
 class AddListingPetAgeLeaveWidget extends StatelessWidget {
   const AddListingPetAgeLeaveWidget({super.key});
@@ -26,61 +25,99 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
         LocalCategoriesSource.pets ?? <DropdownOptionEntity>[];
     final List<ParentDropdownEntity> breedOptions =
         LocalCategoriesSource.breed ?? <ParentDropdownEntity>[];
+
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
-        final ParentDropdownEntity matchedBreed = breedOptions.firstWhere(
-          (ParentDropdownEntity p) => p.category == formPro.petCategory,
-        );
-        final List<DropdownOptionEntity> breedList = matchedBreed.options;
+        // Breed list safely
+        final ParentDropdownEntity? matchedBreed = breedOptions
+            .where(
+                (ParentDropdownEntity p) => p.category == formPro.petCategory)
+            .cast<ParentDropdownEntity?>()
+            .firstOrNull;
+        final List<DropdownOptionEntity> breedList =
+            matchedBreed?.options ?? <DropdownOptionEntity>[];
+
         return Column(
           children: <Widget>[
             /// Age + Ready to leave
             Row(
               children: <Widget>[
                 Expanded(
-                  child: CustomListingDropDown<AddListingFormProvider,
-                      DropdownOptionEntity>(
-                    options: ageOptions,
-                    valueGetter: (DropdownOptionEntity opt) => opt.value.value,
-                    labelGetter: (DropdownOptionEntity opt) => opt.label,
+                  child: CustomDropdown<DropdownOptionEntity>(
+                    items: ageOptions
+                        .map(
+                          (DropdownOptionEntity opt) =>
+                              DropdownMenuItem<DropdownOptionEntity>(
+                            value: opt,
+                            child: Text(opt.label),
+                          ),
+                        )
+                        .toList(),
+                    // ✅ Use findByValue
+                    selectedItem: DropdownOptionEntity.findByValue(
+                      ageOptions,
+                      formPro.age ?? '',
+                    ),
                     validator: (bool? value) =>
                         AppValidator.requireSelection(value),
                     hint: 'age'.tr(),
-                    selectedValue: formPro.age,
                     title: 'age'.tr(),
-                    onChanged: (String? p0) => formPro.setAge(p0),
+                    onChanged: (DropdownOptionEntity? value) =>
+                        formPro.setAge(value?.value.value),
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: CustomListingDropDown<AddListingFormProvider,
-                      DropdownOptionEntity>(
-                    options: readyToLeaveOptions,
-                    valueGetter: (DropdownOptionEntity opt) => opt.value.value,
-                    labelGetter: (DropdownOptionEntity opt) => opt.label,
+                  child: CustomDropdown<DropdownOptionEntity>(
+                    items: readyToLeaveOptions
+                        .map(
+                          (DropdownOptionEntity opt) =>
+                              DropdownMenuItem<DropdownOptionEntity>(
+                            value: opt,
+                            child: Text(opt.label),
+                          ),
+                        )
+                        .toList(),
+                    // ✅ Use findByValue
+                    selectedItem: DropdownOptionEntity.findByValue(
+                      readyToLeaveOptions,
+                      formPro.time ?? '',
+                    ),
                     validator: (bool? value) =>
                         AppValidator.requireSelection(value),
                     hint: 'ready_to_leave'.tr(),
-                    selectedValue: formPro.time,
                     title: 'ready_to_leave'.tr(),
-                    onChanged: (String? p0) => formPro.setTime(p0),
+                    onChanged: (DropdownOptionEntity? value) =>
+                        formPro.setTime(value?.value.value),
                   ),
                 ),
               ],
             ),
 
             /// Pet Category
-            CustomListingDropDown<AddListingFormProvider, DropdownOptionEntity>(
-              options: petCategories,
-              valueGetter: (DropdownOptionEntity opt) => opt.value.value,
-              labelGetter: (DropdownOptionEntity opt) => opt.label,
+            CustomDropdown<DropdownOptionEntity>(
+              items: petCategories
+                  .map(
+                    (DropdownOptionEntity opt) =>
+                        DropdownMenuItem<DropdownOptionEntity>(
+                      value: opt,
+                      child: Text(opt.label),
+                    ),
+                  )
+                  .toList(),
+              // ✅ Use findByValue
+              selectedItem: DropdownOptionEntity.findByValue(
+                petCategories,
+                formPro.petCategory ?? '',
+              ),
               validator: (bool? value) => AppValidator.requireSelection(value),
               hint: 'select_category'.tr(),
-              selectedValue: formPro.petCategory,
-              onChanged: (String? p0) => formPro.setPetCategory(p0),
               title: 'category'.tr(),
+              onChanged: (DropdownOptionEntity? value) =>
+                  formPro.setPetCategory(value?.value.value),
             ),
 
+            /// Breed dropdown (only if category selected)
             if (formPro.petCategory != null && formPro.petCategory!.isNotEmpty)
               CustomDropdown<DropdownOptionEntity>(
                 items: breedList
@@ -92,9 +129,10 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                       ),
                     )
                     .toList(),
-                selectedItem: breedList.firstWhere(
-                  (DropdownOptionEntity opt) =>
-                      opt.value.value == formPro.breed,
+                // ✅ Use findByValue
+                selectedItem: DropdownOptionEntity.findByValue(
+                  breedList,
+                  formPro.breed ?? '',
                 ),
                 validator: (bool? value) =>
                     AppValidator.requireSelection(value),
