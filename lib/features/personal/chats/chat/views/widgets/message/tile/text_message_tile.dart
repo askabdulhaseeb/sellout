@@ -54,7 +54,6 @@ class TextMessageTile extends StatelessWidget {
             if (message.text.isNotEmpty || message.text == ' ')
               Text(
                 message.text,
-                style: const TextStyle(color: Colors.black),
               ),
           ],
         ),

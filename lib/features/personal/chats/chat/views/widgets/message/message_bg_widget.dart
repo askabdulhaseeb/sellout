@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../../../../core/theme/app_theme.dart';
 
 class MessageBgWidget extends StatelessWidget {
   const MessageBgWidget({
@@ -31,8 +30,8 @@ class MessageBgWidget extends StatelessWidget {
             color: color ??
                 (isMe
                     ? Theme.of(context).scaffoldBackgroundColor
-                    : AppTheme.lightPrimary),
-            borderRadius: BorderRadius.circular(8)),
+                    : Theme.of(context).colorScheme.primaryContainer),
+            borderRadius: BorderRadius.circular(6)),
         child: child,
       ),
     );

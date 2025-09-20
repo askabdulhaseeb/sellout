@@ -59,7 +59,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const ui.Color baseColor = AppTheme.dividerColor;
+    ui.Color baseColor = Theme.of(context).dividerColor;
     const ui.Color accentColor = AppTheme.outlineVarient;
     return Consumer<ChatProvider>(
       builder: (BuildContext context, ChatProvider pro, _) {
@@ -72,24 +72,32 @@ class _ChatScreenState extends State<ChatScreen> {
             backgroundColor: baseColor,
             resizeToAvoidBottomInset: true,
             appBar: chatAppBar(context),
-            body: CustomPaint(
-              painter: ChatBgPainter(
-                baseColor: baseColor,
-                accentColor: accentColor,
-                tileSize: 60,
-              ),
-              child: Column(
-                children: <Widget>[
-                  ChatPinnedMessage(chatId: chat!.chatId),
-                  Expanded(
-                    child: MessagesList(
-                      chat: chat,
-                      controller: scrollController,
+            body: Stack(
+              children: <Widget>[
+                Positioned.fill(
+                  child: CustomPaint(
+                    painter: ChatBgPainter(
+                      baseColor: baseColor,
+                      accentColor: accentColor,
+                      tileSize: 60,
                     ),
                   ),
-                  const ChatInteractionPanel(),
-                ],
-              ),
+                ),
+                Positioned.fill(
+                  child: Column(
+                    children: <Widget>[
+                      ChatPinnedMessage(chatId: chat!.chatId),
+                      Expanded(
+                        child: MessagesList(
+                          chat: chat,
+                          controller: scrollController,
+                        ),
+                      ),
+                      const ChatInteractionPanel(),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         );
