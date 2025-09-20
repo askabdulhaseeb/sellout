@@ -1,10 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
+import '../../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../data/sources/local/local_categories.dart';
 import '../../../domain/entities/category_entites/subentities/dropdown_option_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
-import '../custom_listing_dropdown.dart';
 
 class SizeDropdown extends StatelessWidget {
   const SizeDropdown({
@@ -16,12 +16,13 @@ class SizeDropdown extends StatelessWidget {
   });
 
   final AddListingFormProvider formPro;
-  final String? selectedSize;
+  final String? selectedSize; // selected value (string)
   final ValueChanged<String?> onSizeChanged;
   final bool overlayAbove;
 
   @override
   Widget build(BuildContext context) {
+    // get options based on category
     final List<DropdownOptionEntity> clothesSizes =
         LocalCategoriesSource.clothesSizes ?? <DropdownOptionEntity>[];
     final List<DropdownOptionEntity> footSizes =
@@ -30,22 +31,31 @@ class SizeDropdown extends StatelessWidget {
         formPro.selectedClothSubCategory == 'clothes'
             ? clothesSizes
             : footSizes;
-    // debugPrint(
-    //   'SizeDropdown → available items: ${sizeOptions.map((DropdownOptionEntity e) => 'label: ${e.label}, value: ${e.value.value}').toList()}',
-    // );
+
+    // use the helper to find the selected item
+    final DropdownOptionEntity? selectedEntity =
+        DropdownOptionEntity.findByValue(sizeOptions, selectedSize ?? '');
+
     return Padding(
       padding: EdgeInsets.zero,
-      child:
-          CustomListingDropDown<AddListingFormProvider, DropdownOptionEntity>(
+      child: CustomDropdown<DropdownOptionEntity>(
+        title: '',
         hint: 'size'.tr(),
         overlayAbove: overlayAbove,
-        options: sizeOptions,
-        valueGetter: (DropdownOptionEntity opt) => opt.value.value,
-        labelGetter: (DropdownOptionEntity opt) => opt.label,
-        selectedValue: selectedSize,
+        items: sizeOptions
+            .map(
+              (DropdownOptionEntity e) =>
+                  DropdownMenuItem<DropdownOptionEntity>(
+                value: e,
+                child: Text(e.label),
+              ),
+            )
+            .toList(),
+        // ✅ pre-select the entity
+        selectedItem: selectedEntity,
         validator: (bool? value) => AppValidator.requireSelection(value),
-        onChanged: (String? value) {
-          onSizeChanged(value);
+        onChanged: (DropdownOptionEntity? value) {
+          onSizeChanged(value?.value.value);
         },
       ),
     );

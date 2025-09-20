@@ -38,7 +38,7 @@ class _PostDetailAttachmentSliderState
     setState(() => selectedIndex = index);
 
     const double itemWidth = AttachmentThumbnails._thumbSize;
-    const double horizontalMargin = 16; // matches your Container margin
+    const double horizontalMargin = 16;
     final double availableWidth =
         MediaQuery.of(context).size.width - (horizontalMargin * 2);
 
@@ -145,7 +145,12 @@ class _MainAttachmentDisplayKeepAliveState
         child: ClipRRect(
           borderRadius: BorderRadius.circular(8),
           child: widget.isVideo
-              ? VideoWidget(videoSource: widget.attachment.url, play: true)
+              ? VideoWidget(
+                  videoSource: widget.attachment.url,
+                  play: true,
+                  showTime: true,
+                  square: true,
+                )
               : CustomNetworkImage(
                   imageURL: widget.attachment.url,
                   fit: BoxFit.cover,
@@ -258,6 +263,7 @@ class _ThumbnailItemKeepAliveState extends State<_ThumbnailItemKeepAlive>
             borderRadius: BorderRadius.circular(8),
             child: widget.isVideo
                 ? VideoWidget(
+                    square: true,
                     play: false,
                     showTime: true,
                     durationFontSize: 10,

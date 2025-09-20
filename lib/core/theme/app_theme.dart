@@ -5,7 +5,6 @@ class AppTheme {
   static Color lightPrimary = primaryColor.withValues(alpha: 0.05);
   static const Color secondaryColor = Color(0xFF00B49E);
   static const Color outlineVarient = Color(0XFFE1E1E1);
-  static const Color dividerColor = Color(0xFFF7F7F7);
 
   // static const Color accentColor = Color(0xFF00B49E);
 
@@ -30,7 +29,7 @@ class AppTheme {
       textTheme: const TextTheme(
         titleLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
       ),
-      dividerColor: dividerColor,
+      dividerColor: const Color(0xFFF7F7F7),
       useMaterial3: true,
       appBarTheme: const AppBarTheme(
         backgroundColor: lightScaffldColor,
