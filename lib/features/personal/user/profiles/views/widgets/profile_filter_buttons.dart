@@ -155,15 +155,6 @@ class _ProfilePostSearchFieldState extends State<ProfilePostSearchField> {
       controller: controller,
       hint: 'search'.tr(),
       style: TextTheme.of(context).bodyMedium,
-      prefix: const Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          CustomSvgIcon(
-            assetPath: AppStrings.selloutSearchIcon,
-            size: 16,
-          ),
-        ],
-      ),
       onChanged: (String value) => _onSearchChanged(pro, value),
     );
   }

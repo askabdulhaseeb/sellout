@@ -21,16 +21,17 @@ class UserEntityAdapter extends TypeAdapter<UserEntity> {
       email: fields[1] as String,
       username: fields[2] as String,
       displayName: fields[3] as String,
-      privacyType: fields[4] as PrivacyType,
-      profilePic: (fields[5] as List).cast<AttachmentEntity>(),
-      isImageVerified: fields[7] as bool,
-      verificationPic: (fields[6] as List).cast<AttachmentEntity>(),
-      currency: fields[8] as String,
-      language: fields[9] as String,
-      listOfReviews: (fields[10] as List).cast<double>(),
-      countryAlpha3: fields[11] as String,
-      countryCode: fields[12] as String,
-      phoneNumber: fields[13] as String,
+      bio: fields[4] as String,
+      privacyType: fields[5] as PrivacyType,
+      profilePic: (fields[6] as List).cast<AttachmentEntity>(),
+      isImageVerified: fields[8] as bool,
+      verificationPic: (fields[7] as List).cast<AttachmentEntity>(),
+      currency: fields[9] as String,
+      language: fields[10] as String,
+      listOfReviews: (fields[11] as List).cast<double>(),
+      countryAlpha3: fields[12] as String,
+      countryCode: fields[13] as String,
+      phoneNumber: fields[14] as String,
       address: (fields[30] as List).cast<AddressEntity>(),
       stripeDetails: fields[40] as UserStripeAccountEntity?,
       chatIDs: (fields[50] as List).cast<String>(),
@@ -52,7 +53,7 @@ class UserEntityAdapter extends TypeAdapter<UserEntity> {
   @override
   void write(BinaryWriter writer, UserEntity obj) {
     writer
-      ..writeByte(29)
+      ..writeByte(30)
       ..writeByte(0)
       ..write(obj.uid)
       ..writeByte(1)
@@ -62,24 +63,26 @@ class UserEntityAdapter extends TypeAdapter<UserEntity> {
       ..writeByte(3)
       ..write(obj.displayName)
       ..writeByte(4)
-      ..write(obj.privacyType)
+      ..write(obj.bio)
       ..writeByte(5)
-      ..write(obj.profilePic)
+      ..write(obj.privacyType)
       ..writeByte(6)
-      ..write(obj.verificationPic)
+      ..write(obj.profilePic)
       ..writeByte(7)
-      ..write(obj.isImageVerified)
+      ..write(obj.verificationPic)
       ..writeByte(8)
-      ..write(obj.currency)
+      ..write(obj.isImageVerified)
       ..writeByte(9)
-      ..write(obj.language)
+      ..write(obj.currency)
       ..writeByte(10)
-      ..write(obj.listOfReviews)
+      ..write(obj.language)
       ..writeByte(11)
-      ..write(obj.countryAlpha3)
+      ..write(obj.listOfReviews)
       ..writeByte(12)
-      ..write(obj.countryCode)
+      ..write(obj.countryAlpha3)
       ..writeByte(13)
+      ..write(obj.countryCode)
+      ..writeByte(14)
       ..write(obj.phoneNumber)
       ..writeByte(30)
       ..write(obj.address)

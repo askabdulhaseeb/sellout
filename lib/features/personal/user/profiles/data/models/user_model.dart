@@ -17,6 +17,7 @@ class UserModel extends UserEntity {
     required super.email,
     required super.username,
     required super.displayName,
+    required super.bio,
     required super.privacyType,
     required super.profilePic,
     required super.isImageVerified,
@@ -55,6 +56,7 @@ class UserModel extends UserEntity {
         email: json['email'] ?? '',
         username: json['user_name'] ?? '',
         displayName: json['display_name'] ?? '',
+        bio: json['bio'] ?? '',
         privacyType: PrivacyType.fromJson(json['profile_type']),
         profilePic: List<AttachmentModel>.from(
             (json['profile_pic'] ?? <dynamic>[])
@@ -89,12 +91,14 @@ class UserModel extends UserEntity {
             (json['saved'] ?? <dynamic>[]).map((dynamic x) => x)),
         interest: List<dynamic>.from(
             (json['interest'] ?? <dynamic>[]).map((dynamic x) => x)),
-       supporters: (json['supporters'] as List<dynamic>?)
-    ?.map((e) => SupporterDetailModel.fromMap(e).toEntity())
-    .toList() ?? <SupporterDetailEntity>[],
-supportings: (json['supporting'] as List<dynamic>?)
-    ?.map((e) => SupporterDetailModel.fromMap(e).toEntity())
-    .toList() ?? <SupporterDetailEntity>[],
+        supporters: (json['supporters'] as List<dynamic>?)
+                ?.map((e) => SupporterDetailModel.fromMap(e).toEntity())
+                .toList() ??
+            <SupporterDetailEntity>[],
+        supportings: (json['supporting'] as List<dynamic>?)
+                ?.map((e) => SupporterDetailModel.fromMap(e).toEntity())
+                .toList() ??
+            <SupporterDetailEntity>[],
         businessDetail: json['business_map'] == null
             ? <ProfileBusinessDetailModel>[]
             : List<ProfileBusinessDetailEntity>.from((json['business_map'] ??

@@ -41,9 +41,7 @@ class _SearchUsersSectionState extends State<SearchUsersSection> {
               dense: true,
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
-              prefix: const SizedBox(
-                  width: 40,
-                  child: Center(child: Icon(CupertinoIcons.search, size: 16))),
+              prefixIcon: const Icon(CupertinoIcons.search, size: 16),
               controller: controller,
               hint: 'search'.tr(),
               onChanged: provider.searchUsers,
