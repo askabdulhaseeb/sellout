@@ -17,57 +17,67 @@ class ProfileHeaderSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isMe = user?.uid == (LocalAuth.uid ?? '-');
+
+    // Screen-dependent sizes
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double photoSize = screenWidth * 0.25; // 25% of width
+    final double nameFontSize = screenWidth * 0.045;
+    final double bioFontSize = screenWidth * 0.037;
+    final double verticalGap = screenWidth * 0.03; // dynamic vertical spacing
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Row(
-        spacing: 4,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           // Profile photo
-          Flexible(
-            child: SizedBox(
-              width: 110,
-              height: 110,
-              child: ProfilePhoto(
-                url: user?.profilePhotoURL,
-                placeholder: user?.displayName ?? '',
-              ),
+          SizedBox(
+            width: photoSize,
+            height: photoSize,
+            child: ProfilePhoto(
+              url: user?.profilePhotoURL,
+              placeholder: user?.displayName ?? '',
             ),
           ),
+          const SizedBox(width: 16),
+
           // Info column
           Expanded(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 8,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                // Top section with name + rating
+                /// Name + edit button
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Expanded(
+                    Flexible(
                       child: Text(
                         user?.displayName ?? '',
-                        maxLines: 2,
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
+                        style: TextStyle(
+                          fontSize: nameFontSize,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
-                    if (isMe) const ProfileEditAndSettingsWidget()
+                    if (isMe) const ProfileEditAndSettingsWidget(),
                   ],
                 ),
+
+                SizedBox(height: verticalGap), // gap between name and rating
+
+                /// Rating widget
                 RatingDisplayWidget(
-                  size: 12,
-                  fontSize: 12,
+                  size: 16,
+                  fontSize: 13,
                   ratingList: user?.listOfReviews ?? <double>[],
                   onTap: () async {
                     final List<ReviewEntity> reviews =
-                        await Provider.of<ProfileProvider>(context,
-                                listen: false)
-                            .getReviews(user?.uid);
+                        await Provider.of<ProfileProvider>(
+                      context,
+                      listen: false,
+                    ).getReviews(user?.uid);
                     // ignore: use_build_context_synchronously
                     Navigator.of(context).push(
                       MaterialPageRoute<ReviewListScreenParam>(
@@ -78,15 +88,21 @@ class ProfileHeaderSection extends StatelessWidget {
                     );
                   },
                 ),
-                Text(
-                  user?.username ?? '',
-                  maxLines: 5,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
+
+                SizedBox(height: verticalGap), // gap between rating and bio
+
+                /// Bio
+                if ((user?.bio ?? '').isNotEmpty)
+                  Text(
+                    user?.bio ?? '',
+                    maxLines: 4,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: bioFontSize,
+                      fontWeight: FontWeight.w400,
+                      height: 1.3,
+                    ),
                   ),
-                ),
               ],
             ),
           ),

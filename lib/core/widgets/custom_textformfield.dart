@@ -148,7 +148,12 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
             onFieldSubmitted: widget.onFieldSubmitted,
             cursorColor: Theme.of(context).colorScheme.secondary,
             decoration: InputDecoration(
+                prefixIconConstraints:
+                    const BoxConstraints(minWidth: 32, minHeight: 32),
                 prefix: widget.prefix,
+                prefixText:
+                    widget.prefixText == null ? null : '${widget.prefixText!} ',
+                prefixIcon: widget.prefixIcon,
                 isDense: widget.dense ?? false,
                 contentPadding: widget.contentPadding ??
                     const EdgeInsets.symmetric(horizontal: 12),
@@ -156,9 +161,6 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
                 fillColor:
                     widget.color ?? Theme.of(context).scaffoldBackgroundColor,
                 hintText: widget.hint,
-                prefixText:
-                    widget.prefixText == null ? null : '${widget.prefixText!} ',
-                prefixIcon: widget.prefixIcon,
                 hintStyle: TextTheme.of(context)
                     .bodyMedium
                     ?.copyWith(color: ColorScheme.of(context).outline),

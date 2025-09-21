@@ -32,7 +32,7 @@ class ProfilePictureWithStatus extends HookWidget {
         Padding(
           padding: const EdgeInsets.all(2),
           child: ProfilePhoto(
-            size: 20,
+            size: 22,
             url: postImageUrl,
             placeholder: userDisplayName.isNotEmpty ? userDisplayName : '',
           ),

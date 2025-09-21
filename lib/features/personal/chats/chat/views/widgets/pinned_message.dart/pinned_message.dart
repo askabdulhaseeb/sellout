@@ -58,7 +58,6 @@ class _OfferMessageTileAnimatedState extends State<OfferMessageTileAnimated>
   Widget build(BuildContext context) {
     return Consumer<ChatProvider>(
       builder: (BuildContext context, ChatProvider pro, _) => AnimatedContainer(
-        height: pro.showPinnedMessage ? null : 0,
         width: double.infinity,
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
@@ -106,17 +105,20 @@ class _VisitingMessageTileAnimatedState
   Widget build(BuildContext context) {
     return Consumer<ChatProvider>(
       builder: (BuildContext context, ChatProvider pro, _) {
-        return AnimatedSize(
+        return AnimatedContainer(
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+          ),
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           alignment: Alignment.topCenter,
           child: pro.showPinnedMessage
               ? Column(
-                  children: [
+                  children: <Widget>[
                     Container(
                       margin: const EdgeInsets.symmetric(horizontal: 16),
                       height: 1,
-                      color: Theme.of(context).dividerColor,
+                      color: Theme.of(context).colorScheme.outlineVariant,
                     ),
                     VisitingMessageTile(
                       message: widget.message,
@@ -125,11 +127,11 @@ class _VisitingMessageTileAnimatedState
                     Container(
                       margin: const EdgeInsets.symmetric(horizontal: 16),
                       height: 1,
-                      color: Theme.of(context).dividerColor,
+                      color: Theme.of(context).colorScheme.outlineVariant,
                     ),
                   ],
                 )
-              : const SizedBox.shrink(), // hidden state
+              : const SizedBox.shrink(),
         );
       },
     );

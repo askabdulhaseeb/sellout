@@ -28,6 +28,7 @@ import '../../../../post/domain/entities/size_color/size_color_entity.dart';
 import '../../data/models/listing_model.dart';
 import '../../data/models/sub_category_model.dart';
 import '../../data/sources/local/local_colors.dart';
+import '../../data/sources/local/local_listing.dart';
 import '../../domain/entities/color_options_entity.dart';
 import '../../domain/entities/sub_category_entity.dart';
 import '../../domain/usecase/add_listing_usecase.dart';
@@ -243,8 +244,9 @@ class AddListingFormProvider extends ChangeNotifier {
   Future<void> updateVariables() async {
     if (post == null) return;
     // -------------------------
-    // Category and access
+    // Category and accessCode
     // -------------------------
+    _selectedCategory = LocalListing().getSubCategoryByAddress(post!.address);
     _accessCode = post?.accessCode ?? '';
     // -------------------------
     // Pet-related fields
@@ -255,7 +257,6 @@ class AddListingFormProvider extends ChangeNotifier {
     _wormAndFleaTreated = post?.petInfo?.wormAndFleaTreated;
     _healthChecked = post?.petInfo?.healthChecked;
     _time = post?.petInfo?.readyToLeave;
-
     // -------------------------
     // Availability
     // -------------------------
@@ -341,17 +342,27 @@ class AddListingFormProvider extends ChangeNotifier {
       );
       element.discount = matching?.discount ?? 0;
     }
-
     debugPrint('listing variables updated successfully');
   }
 
   Future<void> submit(BuildContext context) async {
     final int imageCount = _attachments
-        .where((PickedAttachment e) => e.type == AttachmentType.image)
-        .length;
+            .where((PickedAttachment a) => a.type == AttachmentType.image)
+            .length +
+        (post?.fileUrls
+                .where((AttachmentEntity a) => a.type == AttachmentType.image)
+                .length ??
+            0);
+
+// Count videos
     final int videoCount = _attachments
-        .where((PickedAttachment e) => e.type == AttachmentType.video)
-        .length;
+            .where((PickedAttachment a) => a.type == AttachmentType.video)
+            .length +
+        (post?.fileUrls
+                .where((AttachmentEntity a) => a.type == AttachmentType.video)
+                .length ??
+            0);
+
     if (imageCount == 0 || videoCount == 0) {
       AppSnackBar.showSnackBar(
           context, 'please_add_at_least_one_photo_and_video'.tr());
