@@ -81,8 +81,7 @@ class CurrentUserModel extends CurrentUserEntity {
       token: json['token'] ?? '',
       userID: userData['user_id'] ?? userData['owner_id'] ?? '',
       email: userData['email'] ?? userData['owner_email'] ?? '',
-      otpVerified:
-          userData['otp_verified'] == null ? userData['otp_verified'] : false,
+      otpVerified: userData['otp_verified'] ?? false,
       userName: userData['user_name'] ?? '',
       displayName: userData['display_name'] ?? '',
       currency: userData['currency'] ?? 'gbp',

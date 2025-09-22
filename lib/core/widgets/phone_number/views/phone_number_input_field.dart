@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../services/get_it.dart';
 import '../../../usecase/usecase.dart';
+import '../../../utilities/app_validators.dart';
 import '../../custom_textformfield.dart';
 import '../../custom_dropdown.dart';
 import '../data/sources/local_country.dart';
@@ -120,7 +121,7 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
                   ));
                 });
               },
-              validator: (_) => null,
+              validator: (bool? val) => AppValidator.requireSelection(val),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -133,9 +134,9 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
                   number: p0,
                 )),
                 keyboardType: TextInputType.number,
-                // validator: (String? value) => AppValidator.customRegExp(
-                //     selectedCountry?.numberFormat ?? '',
-                //     '${selectedCountry?.countryCode}$value'),
+                validator: (String? value) => AppValidator.customRegExp(
+                    selectedCountry?.numberFormat ?? '',
+                    '${selectedCountry?.countryCode}$value'),
               ),
             ),
           ],

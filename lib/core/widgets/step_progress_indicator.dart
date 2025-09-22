@@ -6,21 +6,39 @@ class StepProgressIndicator<T> extends StatelessWidget {
     required this.currentStep,
     required this.steps,
     required this.stepsStrs,
+    this.color = AppTheme.primaryColor,
     this.title,
     this.onChanged,
-    this.pointSize = 28,
+    this.pointSize = 32,
     this.pointBorderRadius = 100,
+    this.stepProgress = 1.0, // 0.0 – 1.0 for current line
     super.key,
   });
 
+  /// The currently active step
   final T currentStep;
+
+  /// All steps
   final List<T> steps;
+
+  /// Labels
   final List<String> stepsStrs;
+
+  /// Active color
+  final Color color;
+
+  /// Optional title
   final String? title;
+
+  /// Tap callback
   final ValueChanged<T>? onChanged;
 
+  /// Dot size and shape
   final double pointSize;
   final double pointBorderRadius;
+
+  /// How far we’ve progressed filling the current line (0.0–1.0)
+  final double stepProgress;
 
   int _stepToIndex(T step) => steps.indexOf(step) + 1;
 
@@ -28,9 +46,9 @@ class StepProgressIndicator<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final int totalSteps = steps.length;
     final int currentIndex = _stepToIndex(currentStep);
-    final Color activeColor = AppTheme.primaryColor;
-    final Color inactiveColor = Theme.of(context).dividerColor;
-    final Color iconColor = AppTheme.primaryColor;
+    final Color activeColor = color;
+    final Color inactiveColor = Theme.of(context).colorScheme.outlineVariant;
+    const Color iconColor = Colors.white;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,7 +56,7 @@ class StepProgressIndicator<T> extends StatelessWidget {
       children: <Widget>[
         if (title != null && title!.isNotEmpty)
           Padding(
-            padding: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.only(bottom: 12),
             child: Text(
               title!,
               style: TextStyle(
@@ -48,18 +66,15 @@ class StepProgressIndicator<T> extends StatelessWidget {
             ),
           ),
         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: List.generate(totalSteps * 2 - 1, (int index) {
             if (index.isEven) {
+              // DOT
               final int stepIndex = index ~/ 2;
               final int displayIndex = stepIndex + 1;
-              final stepValue = steps[stepIndex];
+              final T stepValue = steps[stepIndex];
               final bool isActive = displayIndex == currentIndex;
               final bool isCompleted = displayIndex < currentIndex;
-              final Color pointBorderColor =
-                  isActive || isCompleted ? activeColor : inactiveColor;
-              final Color pointIconColor =
-                  isActive || isCompleted ? iconColor : inactiveColor;
 
               return Expanded(
                 child: Column(
@@ -69,53 +84,97 @@ class StepProgressIndicator<T> extends StatelessWidget {
                       onTap: onChanged == null
                           ? null
                           : () => onChanged!(stepValue),
-                      child: AnimatedContainer(
+                      child: TweenAnimationBuilder<double>(
                         duration: const Duration(milliseconds: 300),
-                        width: pointSize,
-                        height: pointSize,
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius:
-                              BorderRadius.circular(pointBorderRadius),
-                          border: Border.all(color: pointBorderColor, width: 2),
-                        ),
-                        child: Center(
-                          child: Icon(
-                            Icons.check_rounded,
-                            color: isCompleted || isActive
-                                ? pointIconColor
-                                : Colors.transparent,
-                            size: pointSize * 0.65,
-                          ),
-                        ),
+                        tween: Tween<double>(
+                            begin: 0, end: isCompleted || isActive ? 1 : 0),
+                        builder: (BuildContext context, double value,
+                            Widget? child) {
+                          return Container(
+                            width: pointSize,
+                            height: pointSize,
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              borderRadius:
+                                  BorderRadius.circular(pointBorderRadius),
+                              border: Border.all(
+                                  color: Color.lerp(
+                                      inactiveColor, activeColor, value)!,
+                                  width: 2),
+                            ),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: <Widget>[
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Color.lerp(
+                                        Colors.transparent, activeColor, value),
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                AnimatedOpacity(
+                                  opacity: value > 0.6 ? 1 : 0,
+                                  duration: const Duration(milliseconds: 300),
+                                  child: const Icon(
+                                    Icons.check_outlined,
+                                    color: iconColor,
+                                    size: 18,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      stepsStrs[stepIndex],
-                      maxLines: 2,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodySmall,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    const SizedBox(height: 6),
+                    if (stepsStrs.isNotEmpty)
+                      Text(
+                        stepsStrs[stepIndex],
+                        maxLines: 2,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.copyWith(fontWeight: FontWeight.w500),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                   ],
                 ),
               );
             } else {
-              // Always draw a line between icons
-              final int stepBefore = (index ~/ 2) + 1;
-              final bool isCompleted = stepBefore < currentIndex;
+              // LINE between dots
+              final int leftStepIndex = index ~/ 2 + 1; // step before line
+              double fillValue;
+
+              if (currentIndex > leftStepIndex + 1) {
+                // Already passed next step — full line
+                fillValue = 1.0;
+              } else if (currentIndex == leftStepIndex + 1) {
+                // We’re currently filling this line
+                fillValue = stepProgress.clamp(0.0, 1.0);
+              } else {
+                fillValue = 0.0;
+              }
 
               return Expanded(
-                child: Container(
-                  height: 3,
-                  margin: EdgeInsets.symmetric(
-                      horizontal: 2, vertical: pointSize / 2.5),
-                  decoration: BoxDecoration(
-                    color: isCompleted
-                        ? AppTheme.primaryColor
-                        : Theme.of(context).dividerColor,
+                child: SizedBox(
+                  height: 4,
+                  child: ClipRRect(
                     borderRadius: BorderRadius.circular(2),
+                    child: Stack(
+                      children: [
+                        Container(
+                          color: inactiveColor.withOpacity(0.3),
+                        ),
+                        AnimatedFractionallySizedBox(
+                          duration: const Duration(milliseconds: 300),
+                          widthFactor: fillValue,
+                          alignment: Alignment.centerLeft,
+                          child: Container(color: activeColor),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );
