@@ -69,11 +69,13 @@ class AppValidator {
 
   static String? customRegExp(String formate, String? value,
       {String? message}) {
+    debugPrint('$formate - $value');
     try {
       if (formate.isEmpty) return null;
-      if (!RegExp(r'$formate').hasMatch(value ?? '')) {
+      final RegExp regex = RegExp(formate);
+      if (!regex.hasMatch(value ?? '')) {
         return message ??
-            (kDebugMode ? 'Invlide $value' : 'invalid_value'.tr());
+            (kDebugMode ? 'Invalid $value' : 'invalid_value'.tr());
       }
     } catch (e) {
       AppLog.error(
@@ -81,17 +83,6 @@ class AppValidator {
         name: 'AppValidator.customRegExp - $value',
         error: e,
       );
-    }
-    return null;
-  }
-
-  static String? validatePhoneOrEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter a phone number or email';
-    }
-    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value) &&
-        !RegExp(r'^\+?[0-9]{10,}$').hasMatch(value)) {
-      return 'Please enter a valid phone number or email';
     }
     return null;
   }

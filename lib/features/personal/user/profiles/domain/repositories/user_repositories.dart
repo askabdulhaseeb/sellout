@@ -19,4 +19,5 @@ abstract interface class UserProfileRepository {
   Future<DataState<String>> updatePRofileDetail(UpdateUserParams photo);
   Future<DataState<String>> addRemoveSupporters(
       AddRemoveSupporterParams params);
+  Future<DataState<bool?>> deleteUser(String value);
 }

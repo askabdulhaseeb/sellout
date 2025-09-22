@@ -33,7 +33,7 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       chatIDs: (fields[31] as List).cast<String>(),
       businessIDs: (fields[32] as List).cast<String>(),
       imageVerified: fields[41] as bool,
-      otpVerified: fields[42] as bool?,
+      otpVerified: fields[42] as bool,
       verificationImage: fields[43] as AttachmentEntity?,
       profileImage: (fields[40] as List).cast<AttachmentEntity>(),
       lastLoginTime: fields[97] as DateTime,

@@ -4,17 +4,17 @@ import 'package:video_player/video_player.dart';
 
 class VideoWidget extends StatefulWidget {
   const VideoWidget({
-    super.key,
     required this.videoSource,
-    this.play = true, // 👈 restored
-    this.fit = BoxFit.cover,
+    super.key,
+    this.play = true,
+    this.fit = BoxFit.fill,
     this.showTime = true,
     this.square = false,
     this.durationFontSize = 12,
   });
 
   final dynamic videoSource;
-  final bool play; // 👈 restored
+  final bool play;
   final BoxFit fit;
   final bool showTime;
   final bool square;
@@ -28,6 +28,7 @@ class _VideoWidgetState extends State<VideoWidget> {
   VideoPlayerController? _controller;
   bool _initialized = false;
   bool _hasError = false;
+  bool _ended = false; // 👈 track if ended
 
   @override
   void initState() {
@@ -37,11 +38,10 @@ class _VideoWidgetState extends State<VideoWidget> {
 
   Future<void> _initVideo() async {
     try {
-      // Pick source
-      if (widget.videoSource is Uri &&
-              (widget.videoSource as Uri).isScheme('http') ||
-          widget.videoSource is String &&
-              (widget.videoSource as String).startsWith('http')) {
+      if ((widget.videoSource is Uri &&
+              (widget.videoSource as Uri).isScheme('http')) ||
+          (widget.videoSource is String &&
+              (widget.videoSource as String).startsWith('http'))) {
         final uri = widget.videoSource is Uri
             ? widget.videoSource
             : Uri.parse(widget.videoSource);
@@ -53,20 +53,30 @@ class _VideoWidgetState extends State<VideoWidget> {
       } else if (widget.videoSource is String) {
         _controller = VideoPlayerController.file(File(widget.videoSource));
       } else {
-        throw Exception('Unsupported source');
+        throw Exception('Unsupported source type: ${widget.videoSource}');
       }
 
       await _controller!.initialize();
-      _controller!.setLooping(true);
+      _controller!.setLooping(false);
 
-      if (widget.play) _controller!.play();
+      if (widget.play) {
+        _controller!.play();
+      }
 
       _controller!.addListener(() {
-        if (mounted) setState(() {});
+        if (mounted) {
+          // detect when video ends
+          final VideoPlayerValue v = _controller!.value;
+          if (v.position >= v.duration && !v.isPlaying && !_ended) {
+            setState(() => _ended = true);
+          }
+          setState(() {});
+        }
       });
 
       if (mounted) setState(() => _initialized = true);
     } catch (e) {
+      debugPrint('VideoWidget error: $e');
       if (mounted) setState(() => _hasError = true);
     }
   }
@@ -82,6 +92,19 @@ class _VideoWidgetState extends State<VideoWidget> {
     return '${two(d.inMinutes.remainder(60))}:${two(d.inSeconds.remainder(60))}';
   }
 
+  void _togglePlayPause() {
+    if (_ended) {
+      // if ended, replay from start
+      _controller!.seekTo(Duration.zero);
+      _controller!.play();
+      setState(() => _ended = false);
+    } else if (_controller!.value.isPlaying) {
+      _controller!.pause();
+    } else {
+      _controller!.play();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_hasError) {
@@ -91,43 +114,40 @@ class _VideoWidgetState extends State<VideoWidget> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    final aspectRatio = widget.square ? 1.0 : _controller!.value.aspectRatio;
+    final double aspectRatio = widget.square
+        ? 1.0
+        : (_controller!.value.aspectRatio == 0
+            ? 16 / 9
+            : _controller!.value.aspectRatio);
 
-    final position = _controller!.value.position;
-    final duration = _controller!.value.duration;
+    final Duration position = _controller!.value.position;
+    final Duration duration = _controller!.value.duration;
 
     return Stack(
       alignment: Alignment.center,
-      children: [
+      children: <Widget>[
         AspectRatio(
           aspectRatio: aspectRatio,
-          child: FittedBox(
-            fit: widget.fit,
-            child: SizedBox(
-              width: _controller!.value.size.width,
-              height: _controller!.value.size.height,
-              child: VideoPlayer(_controller!),
-            ),
-          ),
+          child: VideoPlayer(_controller!),
         ),
-        // Play / Pause (but only if widget.play is true)
+
+        // Play / Pause overlay (tappable)
         if (widget.play)
           GestureDetector(
-            onTap: () {
-              setState(() {
-                _controller!.value.isPlaying
-                    ? _controller!.pause()
-                    : _controller!.play();
-              });
-            },
+            onTap: _togglePlayPause,
             child: CircleAvatar(
               backgroundColor: Colors.black54,
               child: Icon(
-                _controller!.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                _ended
+                    ? Icons.replay // if ended, show replay icon
+                    : _controller!.value.isPlaying
+                        ? Icons.pause
+                        : Icons.play_arrow,
                 color: Colors.white,
               ),
             ),
           ),
+
         // Timer bottom right
         if (widget.showTime)
           Positioned(
@@ -140,7 +160,9 @@ class _VideoWidgetState extends State<VideoWidget> {
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
-                '${_format(position)} / ${_format(duration)}',
+                _controller!.value.isPlaying || _ended
+                    ? '${_format(position)} / ${_format(duration)}'
+                    : _format(duration),
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: widget.durationFontSize,

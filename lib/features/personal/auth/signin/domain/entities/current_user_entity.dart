@@ -123,7 +123,7 @@ class CurrentUserEntity {
   final bool imageVerified; // Image verification status
 
   @HiveField(42)
-  final bool? otpVerified; // email verification status
+  final bool otpVerified; // email verification status
 
   @HiveField(43)
   final AttachmentEntity? verificationImage; // ID/KYC image

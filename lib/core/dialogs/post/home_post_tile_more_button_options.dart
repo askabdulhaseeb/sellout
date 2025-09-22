@@ -72,25 +72,16 @@ void homePostTileShowMoreButton(
             isSaved ? 'unsave_post'.tr() : 'save_post'.tr(),
             style: Theme.of(context).textTheme.bodySmall,
           ),
-          subtitle: Text(
-            isSaved ? 'unsave_post_subtitle'.tr() : 'save_post_subtitle'.tr(),
-            style:
-                Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 10),
-          ),
           onTap: () async {
             Navigator.pop(context);
-
             if (isSaved) {
-              // 🔹 Handle unsave
               LocalAuth.currentUser?.saved.remove(postId);
               final UserEntity? user =
                   LocalUser().userEntity(LocalAuth.uid ?? '');
               user?.saved.remove(postId);
               LocalUser().save(user!);
-
               AppSnackBar.showSnackBar(context, 'post_unsaved_success'.tr());
             } else {
-              // 🔹 Handle save
               final SavePostUsecase savePostUsecase =
                   SavePostUsecase(locator());
               final DataState<bool> result = await savePostUsecase.call(postId);
@@ -110,44 +101,12 @@ void homePostTileShowMoreButton(
           },
         ),
       ),
-      // PopupMenuItem<ListTile>(
-      //   child: InDevMode(
-      //     child: ListTile(
-      //       leading: const Icon(Icons.share),
-      //       title: Text(
-      //         'share'.tr(),
-      //         style: Theme.of(context).textTheme.bodySmall,
-      //       ),
-      //       onTap: () {
-      //         openShareOptions(context, position, '');
-      //         Navigator.pop(context);
-      //       },
-      //     ),
-      //   ),
-      // ),
-      // PopupMenuItem<ListTile>(
-      //   child: InDevMode(
-      //     child: ListTile(
-      //       leading: const Icon(Icons.close),
-      //       title: Text(
-      //         'i_dont_want_to_see_this'.tr(),
-      //         style: Theme.of(context).textTheme.bodySmall,
-      //       ),
-      //       onTap: () {},
-      //     ),
-      //   ),
-      // ),
       PopupMenuItem<ListTile>(
         child: ListTile(
           leading: const Icon(Icons.report),
           title: Text(
             'report_post'.tr(),
             style: Theme.of(context).textTheme.bodySmall,
-          ),
-          subtitle: Text(
-            'report_post_subtitle'.tr(),
-            style:
-                Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 10),
           ),
           onTap: () {
             Navigator.pop(context);

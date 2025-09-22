@@ -20,6 +20,7 @@ abstract interface class UserProfileRemoteSource {
   Future<DataState<String>> updatePRofileDetail(UpdateUserParams photo);
   Future<DataState<String>> addRemoveSupporters(
       AddRemoveSupporterParams params);
+  Future<DataState<bool?>> deleteUser(String value);
 }
 
 class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
@@ -218,6 +219,29 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
           error: CustomException(e.toString()),
           stackTrace: st);
       return DataFailer<String>(CustomException('something_wrong'));
+    }
+  }
+
+  @override
+  Future<DataState<bool?>> deleteUser(String value) async {
+    if (value.isEmpty) {
+      return DataFailer<bool?>(CustomException('User ID is null'));
+    }
+
+    final String endpoint = '/noAuth/entity/$value';
+    try {
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: endpoint,
+        isAuth: true,
+        requestType: ApiRequestType.delete,
+      );
+      if (result is DataSuccess<bool>) {
+        await LocalAuth().signout();
+        return DataSuccess<bool>('', true);
+      }
+      return DataFailer<bool?>(CustomException('user not deletd'));
+    } catch (e) {
+      return DataFailer<bool?>(CustomException('User not deleted'));
     }
   }
 }

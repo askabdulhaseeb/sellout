@@ -4,9 +4,15 @@ import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../providers/signup_provider.dart';
 
-class SignupOtpVerificationPage extends StatelessWidget {
+class SignupOtpVerificationPage extends StatefulWidget {
   const SignupOtpVerificationPage({super.key});
 
+  @override
+  State<SignupOtpVerificationPage> createState() =>
+      _SignupOtpVerificationPageState();
+}
+
+class _SignupOtpVerificationPageState extends State<SignupOtpVerificationPage> {
   @override
   Widget build(BuildContext context) {
     return Consumer<SignupProvider>(
@@ -35,13 +41,19 @@ class SignupOtpVerificationPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text('${'resend_code'.tr()}: ${pro.resentCodeSeconds}s'),
-                TextButton(
-                  onPressed:
-                      (pro.resendCodeTimer?.isActive ?? false) || pro.isLoading
-                          ? null
-                          : () async => pro.sendOtp(context),
-                  child: Text('resend_code'.tr()),
-                )
+                if (!pro.isLoading)
+                  TextButton(
+                    onPressed: (pro.resendCodeTimer?.isActive ?? false) ||
+                            pro.isLoading
+                        ? null
+                        : () async => pro.sendOtp(context),
+                    child: Text('resend_code'.tr()),
+                  ),
+                if (pro.isLoading)
+                  const SizedBox(
+                    width: 100,
+                    child: LinearProgressIndicator(),
+                  )
               ],
             ),
           ],

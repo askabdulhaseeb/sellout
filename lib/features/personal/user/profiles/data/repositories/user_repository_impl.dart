@@ -60,4 +60,9 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
       AddRemoveSupporterParams params) async {
     return await userProfileRemoteSource.addRemoveSupporters(params);
   }
+
+  @override
+  Future<DataState<bool?>> deleteUser(String value) async {
+    return await userProfileRemoteSource.deleteUser(value);
+  }
 }

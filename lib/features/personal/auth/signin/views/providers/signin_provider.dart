@@ -7,6 +7,7 @@ import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../dashboard/views/screens/dashboard_screen.dart';
+import '../../../signup/views/screens/signup_screen.dart';
 import '../../data/sources/local/local_auth.dart';
 import '../../domain/params/device_details.dart';
 import '../../domain/params/login_params.dart';
@@ -35,7 +36,7 @@ class SigninProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  set isLoading(bool value) {
+  void setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
   }
@@ -49,7 +50,7 @@ class SigninProvider extends ChangeNotifier {
   }
 
   Future<void> signIn(BuildContext context) async {
-    isLoading = true;
+    setLoading(true);
     try {
       final DataState<bool> result = await loginUsecase(
         LoginParams(
@@ -64,8 +65,15 @@ class SigninProvider extends ChangeNotifier {
           setSessonKey(jsonMap['session_key']);
           AppNavigator.pushNamed(VerifyTwoFactorScreen.routeName);
         } else if (LocalAuth.uid == null) {
+          AppSnackBar.showSnackBar(context, 'signin_failed'.tr());
+        } else if (LocalAuth.uid != null &&
+            LocalAuth.currentUser?.otpVerified == false) {
+          setLoading(false);
+          await AppNavigator.pushNamed(
+            SignupScreen.routeName,
+          );
         } else {
-          isLoading = false;
+          setLoading(false);
           await AppNavigator.pushNamedAndRemoveUntil(
             DashboardScreen.routeName,
             (_) => false,
@@ -87,11 +95,11 @@ class SigninProvider extends ChangeNotifier {
       AppLog.error(e.toString(),
           name: 'SigninProvider.signIn - Catch', error: e);
     }
-    isLoading = false;
+    setLoading(false);
   }
 
   Future<void> verifyTwoFactorAuth() async {
-    isLoading = true;
+    setLoading(true);
     try {
       final DataState<bool> result = await verifyTwoFactorUseCase(
           TwoFactorParams(code: twoFACode, sessionKey: sessionKey));
@@ -101,7 +109,7 @@ class SigninProvider extends ChangeNotifier {
         if (jsonMap['require_2fa'] == true) {
           AppNavigator.pushNamed(VerifyTwoFactorScreen.routeName);
         } else {
-          isLoading = false;
+          setLoading(false);
           await AppNavigator.pushNamedAndRemoveUntil(
             DashboardScreen.routeName,
             (_) => false,
@@ -121,12 +129,12 @@ class SigninProvider extends ChangeNotifier {
       AppLog.error(e.toString(),
           name: 'SigninProvider.verifyTwoFactorAuth - Catch', error: e);
     }
-    isLoading = false;
+    setLoading(false);
     return;
   }
 
   Future<void> resendCode() async {
-    isLoading = true;
+    setLoading(true);
 
     try {
       TwoFactorParams params = TwoFactorParams(
@@ -153,7 +161,7 @@ class SigninProvider extends ChangeNotifier {
       AppLog.error(e.toString(),
           name: 'SigninProvider.resendCode - Catch', error: e);
     }
-    isLoading = false;
+    setLoading(false);
     return;
   }
 }
