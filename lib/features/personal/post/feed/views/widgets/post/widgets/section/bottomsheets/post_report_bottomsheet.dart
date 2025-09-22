@@ -7,6 +7,7 @@ import '../../../../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../../../../../core/widgets/empty_page_widget.dart';
+import '../../../../../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../../../../../../services/get_it.dart';
 import '../../../../../../../domain/usecase/report_post_usecase.dart';
 import '../../../../../enums/report_reason.dart';
@@ -72,12 +73,14 @@ class ReportStep2 extends StatefulWidget {
     required this.noteController,
     required this.isLoading,
     required this.onSubmit,
+    required this.selectedType,
     super.key,
   });
 
   final TextEditingController noteController;
   final bool isLoading;
   final VoidCallback onSubmit;
+  final ReportType selectedType;
 
   @override
   State<ReportStep2> createState() => _ReportStep2State();
@@ -88,43 +91,77 @@ class _ReportStep2State extends State<ReportStep2> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      // take up all space
-      child: SingleChildScrollView(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+    final ThemeData theme = Theme.of(context);
+
+    return SafeArea(
+      child: Scaffold(
+        // keyboard pushes content up
+        resizeToAvoidBottomInset: true,
+
+        // === Main content ===
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 16,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Card(
+                    elevation: 0,
+                    color: theme.primaryColor.withValues(alpha: 0.1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    margin: const EdgeInsets.only(bottom: 16),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: theme.primaryColor,
+                        child: const Icon(Icons.report, color: Colors.white),
+                      ),
+                      title: Text(
+                        widget.selectedType.title.tr(),
+                        style: theme.textTheme.bodyLarge
+                            ?.copyWith(fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ),
+                  CustomTextFormField(
+                    validator: (String? value) => AppValidator.isEmpty(value),
+                    contentPadding: const EdgeInsets.all(10),
+                    autoFocus: true,
+                    isExpanded: true,
+                    labelText: 'reason'.tr(),
+                    hint: 'add_reason_for_repot_please'.tr(),
+                    controller: widget.noteController,
+                    maxLines: 5,
+                  ),
+                  const SizedBox(height: 80), // leave space for button
+                ],
+              ),
+            ),
+          ),
         ),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              const SizedBox(height: 16),
-              CustomTextFormField(
-                validator: (String? value) => AppValidator.isEmpty(value),
-                contentPadding: const EdgeInsets.all(6),
-                autoFocus: true, // keyboard opens automatically
-                isExpanded: true,
-                hint: 'add_reason_for_repot_please'.tr(),
-                labelText: 'reason'.tr(),
-                controller: widget.noteController,
-                maxLines: 4,
+        bottomNavigationBar: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: SizedBox(
+              width: double.infinity,
+              child: CustomElevatedButton(
+                onTap: () {
+                  if (_formKey.currentState?.validate() ?? false) {
+                    widget.onSubmit();
+                  }
+                },
+                title: 'submit'.tr(),
+                isLoading: widget.isLoading,
               ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: CustomElevatedButton(
-                  onTap: () {
-                    // Validate inside widget
-                    if (_formKey.currentState?.validate() ?? false) {
-                      widget.onSubmit();
-                    }
-                  },
-                  title: 'submit'.tr(),
-                  isLoading: widget.isLoading,
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -154,7 +191,6 @@ class ReportStep3 extends StatelessWidget {
           children: <Widget>[
             const EmptyPageWidget(icon: Icons.new_releases_rounded),
             const SizedBox(height: 24),
-
             Text(
               'post_reported_title'.tr(),
               style: Theme.of(context)
@@ -182,7 +218,6 @@ class ReportStep3 extends StatelessWidget {
   }
 }
 
-/// --- MAIN BOTTOM SHEET WIDGET ---
 class PostReportBottomSheet extends StatefulWidget {
   const PostReportBottomSheet({required this.postId, super.key});
   final String postId;
@@ -217,60 +252,21 @@ class _PostReportBottomSheetState extends State<PostReportBottomSheet> {
   Widget build(BuildContext context) {
     final List<int> steps = <int>[1, 2, 3];
     return Scaffold(
+      appBar: AppBar(
+        title: const AppBarTitle(titleKey: 'report'),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
+      ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             children: <Widget>[
-              // Header row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  SizedBox(
-                    width: 48,
-                    child: state.step == 2
-                        ? IconButton(
-                            icon: const Icon(Icons.arrow_back),
-                            onPressed: () =>
-                                setState(() => state = state.copyWith(step: 1)),
-                          )
-                        : null,
-                  ),
-                  Flexible(
-                    child: RichText(
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      text: TextSpan(
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.copyWith(fontWeight: FontWeight.w500),
-                        children: <InlineSpan>[
-                          TextSpan(text: 'report'.tr()),
-                          if (state.step != 1) const TextSpan(text: '('),
-                          if (state.step != 1)
-                            TextSpan(
-                              text: state.selectedType?.code.tr() ?? '',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(fontWeight: FontWeight.w500),
-                            ),
-                          if (state.step != 1) const TextSpan(text: ')'),
-                        ],
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-
-              // Step indicator
               StepProgressIndicator<int>(
                 currentStep: state.step,
                 steps: steps,
@@ -290,6 +286,7 @@ class _PostReportBottomSheetState extends State<PostReportBottomSheet> {
                       });
                     } else if (state.step == 2) {
                       return ReportStep2(
+                        selectedType: state.selectedType!,
                         noteController: noteController,
                         isLoading: state.isLoading,
                         onSubmit: submit,
@@ -303,7 +300,6 @@ class _PostReportBottomSheetState extends State<PostReportBottomSheet> {
                   },
                 ),
               ),
-
               // Loader overlay at the bottom of the stack
               if (state.isLoading)
                 Container(
