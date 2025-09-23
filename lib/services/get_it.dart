@@ -60,6 +60,11 @@ import '../features/personal/auth/signup/domain/usecase/send_opt_usecase.dart';
 import '../features/personal/auth/signup/domain/usecase/verify_opt_usecase.dart';
 import '../features/personal/auth/signup/domain/usecase/verify_user_by_image_usecase.dart';
 import '../features/personal/auth/signup/views/providers/signup_provider.dart';
+import '../features/personal/chats/quote/data/repo/quote_repo_impl.dart';
+import '../features/personal/chats/quote/data/source/remote/quote_remote_api.dart';
+import '../features/personal/chats/quote/domain/repo/quote_repo.dart';
+import '../features/personal/chats/quote/domain/usecases/request_quote_usecase.dart';
+import '../features/personal/chats/quote/domain/usecases/update_quote_usecase.dart';
 import '../features/personal/listing/listing_form/data/repository/categories_repo_impl.dart';
 import '../features/personal/listing/listing_form/data/sources/remote/remote_categories_source.dart';
 import '../features/personal/listing/listing_form/domain/repository/categories_repo.dart';
@@ -215,6 +220,7 @@ void setupLocator() {
   _notification();
   _location();
   _categories();
+  _quote();
 }
 
 void _auth() {
@@ -698,4 +704,14 @@ void _categories() {
   locator.registerFactory<GetCategoryByEndpointUsecase>(
     () => GetCategoryByEndpointUsecase(locator()),
   );
+}
+
+void _quote() {
+  locator.registerFactory<QuoteRemoteDataSource>(
+      () => QuoteRemoteDataSourceImpl());
+  locator.registerFactory<QuoteRepo>(() => QuoteRepoImpl(locator()));
+  locator.registerFactory<RequestQuoteUsecase>(
+      () => RequestQuoteUsecase(locator()));
+  locator
+      .registerFactory<UpdateQuoteUsecase>(() => UpdateQuoteUsecase(locator()));
 }
