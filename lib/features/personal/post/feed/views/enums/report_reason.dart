@@ -13,7 +13,7 @@ enum ReportType {
     'Hate Speech',
   ),
   violenceOrDangerous(
-    'violence_or_dangerous',
+    'violence_or_dangerous_organization',
     'Violence or Dangerous',
   ),
   bullyingOrHarassment(
