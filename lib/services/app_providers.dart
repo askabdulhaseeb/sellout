@@ -12,6 +12,7 @@ import '../features/personal/chats/chat/views/providers/chat_provider.dart';
 import '../features/personal/chats/chat/views/providers/send_message_provider.dart';
 import '../features/personal/chats/create_chat/view/provider/create_private_chat_provider.dart';
 import '../features/personal/chats/create_chat/view/provider/create_chat_group_provider.dart';
+import '../features/personal/chats/quote/view/provider/quote_provider.dart';
 import '../features/personal/marketplace/views/providers/marketplace_provider.dart';
 import '../features/personal/listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../features/personal/chats/chat_dashboard/views/providers/chat_dashboard_provider.dart';
@@ -139,4 +140,6 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
       value: VisitCalenderProvider(locator())),
   ChangeNotifierProvider<NotificationProvider>.value(
       value: NotificationProvider(locator())),
+  ChangeNotifierProvider<QuoteProvider>.value(
+      value: QuoteProvider(locator(), locator())),
 ]; //

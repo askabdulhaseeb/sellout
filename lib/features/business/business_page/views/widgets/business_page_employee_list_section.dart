@@ -35,9 +35,8 @@ class _BusinessPageEmployeeListSectionState
           height: 54,
           child: ListView.builder(
             primary: false,
-            shrinkWrap: true,
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.only(left: 16),
+            padding: const EdgeInsets.only(left: 16, top: 6, bottom: 6),
             itemCount: employees.length,
             itemBuilder: (BuildContext context, int index) {
               final BusinessEmployeeEntity employee = employees[index];
@@ -93,7 +92,7 @@ class _EmployeeTile extends StatelessWidget {
                 borderRadius: borderRadius,
                 border: Border.all(
                   color: isSelected
-                      ? Theme.of(context).colorScheme.primary
+                      ? Theme.of(context).primaryColor
                       : Colors.transparent,
                   width: 1,
                 ),

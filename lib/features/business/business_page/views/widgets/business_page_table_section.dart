@@ -20,10 +20,15 @@ class BusinessPageTableSection extends StatelessWidget {
         isMine ? BusinessPageTabType.mine : BusinessPageTabType.others;
 
     return SizedBox(
-      height: 50,
+      height: 40,
       child: Consumer<BusinessPageProvider>(
         builder: (BuildContext context, BusinessPageProvider pagePro, _) {
           return Container(
+            decoration: BoxDecoration(
+                border: Border(
+                    bottom: BorderSide(
+              color: Theme.of(context).colorScheme.outlineVariant,
+            ))),
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: ListView.builder(
               // padding: const EdgeInsets.only(left: 16),
@@ -60,25 +65,25 @@ class _Tab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color selectedColor = Theme.of(context).textTheme.bodyLarge!.color ??
-        Theme.of(context).primaryColor;
+    Color selectedColor = Theme.of(context).primaryColor;
     return Padding(
       padding: const EdgeInsets.only(right: 16),
       child: GestureDetector(
         onTap: onTap,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text(
               tab.code.tr(),
               style: TextStyle(
-                color:
-                    isSelected ? selectedColor : Theme.of(context).dividerColor,
+                color: isSelected
+                    ? selectedColor
+                    : Theme.of(context).colorScheme.outlineVariant,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),
             Container(
-              height: 2,
+              height: 1,
               width: 60,
               color: isSelected ? selectedColor : Colors.transparent,
             ),
