@@ -65,6 +65,7 @@ import '../features/personal/chats/quote/data/source/remote/quote_remote_api.dar
 import '../features/personal/chats/quote/domain/repo/quote_repo.dart';
 import '../features/personal/chats/quote/domain/usecases/request_quote_usecase.dart';
 import '../features/personal/chats/quote/domain/usecases/update_quote_usecase.dart';
+import '../features/personal/chats/quote/view/provider/quote_provider.dart';
 import '../features/personal/listing/listing_form/data/repository/categories_repo_impl.dart';
 import '../features/personal/listing/listing_form/data/sources/remote/remote_categories_source.dart';
 import '../features/personal/listing/listing_form/domain/repository/categories_repo.dart';
@@ -714,4 +715,6 @@ void _quote() {
       () => RequestQuoteUsecase(locator()));
   locator
       .registerFactory<UpdateQuoteUsecase>(() => UpdateQuoteUsecase(locator()));
+  locator.registerFactory<QuoteProvider>(
+      () => QuoteProvider(locator(), locator()));
 }
