@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/app_theme.dart';
+import '../../../../../../core/widgets/calender/create_booking_widgets/create_booking_calender.dart';
+import '../../../../../../core/widgets/calender/create_booking_widgets/create_booking_slots.dart';
 import '../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../../bookings/domain/entity/booking_entity.dart';
@@ -85,7 +86,7 @@ class BookingCalendarWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         const SizedBox(height: 10),
-        BookingDatePickerWidget(
+        CreateBookingCalender(
           initialDate: visit?.dateTime ?? provider.selectedDate,
           onDateChanged: provider.updateDate,
         ),
@@ -110,15 +111,12 @@ class BookingCalendarWidget extends StatelessWidget {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               }
-
               if (snapshot.hasError) {
                 return Text('error_loading_slots'.tr());
               }
-
               final List<Map<String, dynamic>> slots =
                   snapshot.data ?? <Map<String, dynamic>>[];
-
-              return BookingSlotSelectorWidget(
+              return CreateBookingSlots(
                 slots: slots,
                 selectedTime: provider.selectedTime,
                 onSlotSelected: provider.updateSelectedTime,
@@ -126,107 +124,6 @@ class BookingCalendarWidget extends StatelessWidget {
             },
           ),
       ],
-    );
-  }
-}
-
-class BookingDatePickerWidget extends StatelessWidget {
-  const BookingDatePickerWidget({
-    required this.initialDate,
-    required this.onDateChanged,
-    super.key,
-  });
-
-  final DateTime initialDate;
-  final ValueChanged<DateTime> onDateChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Theme(
-      data: Theme.of(context).copyWith(
-        colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: AppTheme.primaryColor,
-            ),
-      ),
-      child: CalendarDatePicker(
-        initialDate: initialDate,
-        firstDate: DateTime.now(),
-        lastDate: DateTime(2100),
-        selectableDayPredicate: (DateTime date) =>
-            date.isAfter(DateTime.now().subtract(const Duration(days: 1))),
-        onDateChanged: onDateChanged,
-      ),
-    );
-  }
-}
-
-class BookingSlotSelectorWidget extends StatelessWidget {
-  const BookingSlotSelectorWidget({
-    required this.slots,
-    required this.selectedTime,
-    required this.onSlotSelected,
-    super.key,
-  });
-
-  final List<Map<String, dynamic>> slots;
-  final String? selectedTime;
-  final ValueChanged<String?> onSlotSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
-
-    if (slots.isEmpty) {
-      return Text('no_available_slots'.tr());
-    }
-
-    return SizedBox(
-      height: 50,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: slots.length,
-        itemBuilder: (BuildContext context, int index) {
-          final Map<String, dynamic> slot = slots[index];
-          final String time = slot['time'] as String;
-          final bool isBooked = slot['isBooked'] as bool;
-
-          final bool isSelected = selectedTime == time;
-
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5),
-            child: ChoiceChip(
-              showCheckmark: false,
-              label: Text(
-                time,
-                style: textTheme.bodyMedium?.copyWith(
-                  color: isBooked
-                      ? Theme.of(context)
-                          .colorScheme
-                          .error
-                          .withValues(alpha: 0.6) // light red
-                      : (isSelected
-                          ? Theme.of(context).colorScheme.onPrimary
-                          : Theme.of(context).colorScheme.onSurface),
-                  decoration: isBooked ? TextDecoration.lineThrough : null,
-                ),
-              ),
-              selected: isSelected,
-              onSelected: isBooked
-                  ? null
-                  : (bool selected) {
-                      onSlotSelected(selected ? time : null);
-                    },
-              selectedColor: AppTheme.primaryColor,
-              backgroundColor: isBooked
-                  ? Theme.of(context).disabledColor.withValues(alpha: 0.2)
-                  : Theme.of(context).colorScheme.surface,
-              disabledColor:
-                  Theme.of(context).disabledColor.withValues(alpha: 0.2),
-              elevation: 0,
-            ),
-          );
-        },
-      ),
     );
   }
 }
