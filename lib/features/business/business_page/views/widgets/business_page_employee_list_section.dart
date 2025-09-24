@@ -45,7 +45,7 @@ class _BusinessPageEmployeeListSectionState
                 isSelected: employee.uid == pro.employeeId,
                 onTap: () {
                   pro.employeeId = employee.uid;
-                  pro.getServicesByQuery();
+                  pro.getServicesByQuery(reset: true);
                 },
               );
             },

@@ -9,19 +9,28 @@ import '../widgets/business_page_score_section.dart';
 import '../widgets/business_page_table_section.dart';
 import '../widgets/business_page_tap_page_section.dart';
 
-class UserBusinessProfileScreen extends StatelessWidget {
+class UserBusinessProfileScreen extends StatefulWidget {
   const UserBusinessProfileScreen({required this.businessID, super.key});
   final String businessID;
+
+  @override
+  State<UserBusinessProfileScreen> createState() =>
+      _UserBusinessProfileScreenState();
+}
+
+class _UserBusinessProfileScreenState extends State<UserBusinessProfileScreen> {
+  final ScrollController scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('business').tr(), centerTitle: false),
       body: SingleChildScrollView(
+        controller: scrollController,
         child: FutureBuilder<BusinessEntity?>(
           future: Provider.of<BusinessPageProvider>(context, listen: false)
-              .getBusinessByID(businessID),
-          initialData: LocalBusiness().business(businessID),
+              .getBusinessByID(widget.businessID),
+          initialData: LocalBusiness().business(widget.businessID),
           builder: (
             BuildContext context,
             AsyncSnapshot<BusinessEntity?> snapshot,
@@ -29,7 +38,7 @@ class UserBusinessProfileScreen extends StatelessWidget {
             debugPrint(
                 'Business Profile routine: ${snapshot.data?.routine?.first.toString()}');
             final BusinessEntity? business =
-                snapshot.data ?? LocalBusiness().business(businessID);
+                snapshot.data ?? LocalBusiness().business(widget.businessID);
             return business == null
                 ? Center(child: const Text('something_wrong').tr())
                 : Column(
@@ -38,7 +47,10 @@ class UserBusinessProfileScreen extends StatelessWidget {
                       BusinessPageHeaderSection(business: business),
                       BusinessPageScoreSection(business: business),
                       BusinessPageTableSection(business: business),
-                      BusinessPageTapPageSection(business: business),
+                      BusinessPageTapPageSection(
+                        business: business,
+                        scrollController: scrollController,
+                      ),
                     ],
                   );
           },

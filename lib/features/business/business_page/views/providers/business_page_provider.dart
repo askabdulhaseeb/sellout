@@ -36,16 +36,22 @@ class BusinessPageProvider extends ChangeNotifier {
   String? get serviceQuery => _serviceQuery;
   List<PostEntity> get posts => _posts;
   List<ServiceEntity> get services => _services;
+  String get serviceLastKey => _serviceLastKey;
   BusinessPageTabType get selectedTab => _selectedTab;
   bool get isLoading => _isLoading;
+  bool get isLoadingMore => _isLoadingMore;
+  bool get hasMore => _hasMore;
   //------------------------------------------------------------------------------------------
   BusinessEntity? _business;
   String? _employeeId;
   String? _serviceQuery;
   final List<PostEntity> _posts = <PostEntity>[];
   final List<ServiceEntity> _services = <ServiceEntity>[];
+  String _serviceLastKey = '';
   BusinessPageTabType _selectedTab = BusinessPageTabType.services;
   bool _isLoading = false;
+  bool _isLoadingMore = false;
+  bool _hasMore = true;
 
 //---------------------------------------------------------------------------------------------
   set posts(List<PostEntity> value) {
@@ -58,7 +64,6 @@ class BusinessPageProvider extends ChangeNotifier {
   }
 
   void setServices(List<ServiceEntity> value) {
-    _services.clear();
     value.sort((ServiceEntity a, ServiceEntity b) {
       return b.createdAt.compareTo(a.createdAt);
     });
@@ -81,6 +86,11 @@ class BusinessPageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  set serviceLastKey(String value) {
+    _serviceLastKey = value;
+    notifyListeners();
+  }
+
   set selectedTab(BusinessPageTabType value) {
     _selectedTab = value;
     notifyListeners();
@@ -94,20 +104,30 @@ class BusinessPageProvider extends ChangeNotifier {
   reset() {
     _selectedTab = BusinessPageTabType.services;
     _posts.clear();
+    _services.clear();
+    _serviceLastKey = '';
+    _hasMore = true;
+    _isLoading = false;
+    _isLoadingMore = false;
+    _employeeId = business?.employees?.first.uid;
     notifyListeners();
   }
 
 //------------------------------------------------------------------------------------
-  ServiceByFiltersParams get servicesParam =>
-      ServiceByFiltersParams(query: _serviceQuery ?? '', filters: <FilterParam>[
-        if (_employeeId != null && _employeeId != '')
-          FilterParam(
-              attribute: 'employee_ids', operator: 'inc', value: _employeeId!),
-        FilterParam(
-            attribute: 'business_id',
-            operator: 'eq',
-            value: _business?.businessID ?? '')
-      ]);
+  ServiceByFiltersParams get servicesParam => ServiceByFiltersParams(
+          lastKey: _serviceLastKey,
+          query: _serviceQuery ?? '',
+          filters: <FilterParam>[
+            if (_employeeId != null && _employeeId != '')
+              FilterParam(
+                  attribute: 'employee_ids',
+                  operator: 'inc',
+                  value: _employeeId!),
+            FilterParam(
+                attribute: 'business_id',
+                operator: 'eq',
+                value: _business?.businessID ?? '')
+          ]);
 //------------------------------------------------------------------------------------
   Future<List<ReviewEntity>> getReviews(String? id) async {
     final DataState<List<ReviewEntity>> reviews =
@@ -130,22 +150,40 @@ class BusinessPageProvider extends ChangeNotifier {
     return business;
   }
 
-  Future<void> getServicesByQuery() async {
-    setLoading(true);
-    final String businessID = _business?.businessID ?? '';
-    if (businessID.isEmpty && businessID != '') {}
-    final DataState<List<ServiceEntity>> result =
-        await _servicesListUsecase.call(
-      servicesParam,
-    );
-    if (result is DataSuccess) {
-      setServices(result.entity ?? <ServiceEntity>[]);
-    } else if (result is DataFailer) {
-      setServices(<ServiceEntity>[]);
-    } else {
-      setServices(<ServiceEntity>[]);
+  Future<void> getServicesByQuery({bool reset = false}) async {
+    if (reset) {
+      _serviceLastKey = '';
+      _services.clear();
+      _hasMore = true;
     }
+
+    if (!_hasMore) return;
+
+    if (_serviceLastKey.isEmpty) {
+      setLoading(true); // initial load
+    } else {
+      _isLoadingMore = true; // loading more
+      notifyListeners();
+    }
+
+    final DataState<List<ServiceEntity>> result =
+        await _servicesListUsecase.call(servicesParam);
+
+    if (result is DataSuccess) {
+      final List<ServiceEntity> fetched = result.entity ?? <ServiceEntity>[];
+      if (reset) {
+        _services.clear();
+      }
+      _services.addAll(fetched);
+      _serviceLastKey = result.data ?? '';
+      _hasMore = result.data != '';
+    } else {
+      _hasMore = false;
+    }
+
+    _isLoadingMore = false;
     setLoading(false);
+    notifyListeners();
   }
 
   Future<DataState<List<PostEntity>>> getPostByID(String id) async {

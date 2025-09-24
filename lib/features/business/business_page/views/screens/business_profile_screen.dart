@@ -17,8 +17,11 @@ class BusinessProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ScrollController scrollController = ScrollController();
+
     return PersonalScaffold(
       body: SingleChildScrollView(
+        controller: scrollController,
         child: FutureBuilder<BusinessEntity?>(
           future: Provider.of<BusinessPageProvider>(context, listen: false)
               .getBusinessByID(businessID),
@@ -37,7 +40,10 @@ class BusinessProfileScreen extends StatelessWidget {
                       BusinessPageHeaderSection(business: business),
                       BusinessPageScoreSection(business: business),
                       BusinessPageTableSection(business: business),
-                      BusinessPageTapPageSection(business: business),
+                      BusinessPageTapPageSection(
+                        business: business,
+                        scrollController: scrollController,
+                      ),
                     ],
                   );
           },

@@ -12,9 +12,10 @@ import 'section_details/service/business_page_service_section.dart';
 import 'section_details/business_page_store_section.dart';
 
 class BusinessPageTapPageSection extends StatelessWidget {
-  const BusinessPageTapPageSection({required this.business, super.key});
+  const BusinessPageTapPageSection(
+      {required this.business, required this.scrollController, super.key});
   final BusinessEntity business;
-
+  final ScrollController scrollController;
   @override
   Widget build(BuildContext context) {
     return Consumer<BusinessPageProvider>(
@@ -22,7 +23,10 @@ class BusinessPageTapPageSection extends StatelessWidget {
         return pagePro.selectedTab == BusinessPageTabType.calender
             ? BusinessPageCalenderSection(business: business)
             : pagePro.selectedTab == BusinessPageTabType.services
-                ? BusinessPageServiceSection(business: business)
+                ? BusinessPageServiceSection(
+                    business: business,
+                    scrollController: scrollController,
+                  )
                 : pagePro.selectedTab == BusinessPageTabType.store
                     ? BusinessPageStoreSection(business: business)
                     : pagePro.selectedTab == BusinessPageTabType.promos
