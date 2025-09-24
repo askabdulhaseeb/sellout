@@ -8,6 +8,7 @@ import '../../../../../business/business_page/views/widgets/section_details/empt
 import '../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../post/feed/views/widgets/post/widgets/section/buttons/type/widgets/counter_widget.dart';
 import 'book_quote_screen.dart';
 
 class RequestQuoteScreen extends StatefulWidget {
@@ -30,71 +31,6 @@ class _RequestQuoteScreenState extends State<RequestQuoteScreen> {
     });
   }
 
-  void _openServiceDialog(List<ServiceEntity> services) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.6,
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Text(
-                    'select_service'.tr(),
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                ),
-                const Divider(height: 1),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: services.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final ServiceEntity service = services[index];
-                      return ListTile(
-                        leading: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: SizedBox(
-                            width: 40,
-                            height: 40,
-                            child: CustomNetworkImage(
-                              imageURL: service.thumbnailURL,
-                              placeholder: service.name,
-                            ),
-                          ),
-                        ),
-                        title: Text(
-                          service.name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        subtitle: Text(service.priceStr),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute<BookQuoteScreen>(
-                              builder: (BuildContext context) =>
-                                  BookQuoteScreen(
-                                service: service,
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,10 +41,7 @@ class _RequestQuoteScreenState extends State<RequestQuoteScreen> {
       body: Consumer<BusinessPageProvider>(
         builder: (BuildContext context, BusinessPageProvider pagePro, _) {
           final List<ServiceEntity> services = pagePro.services;
-
-          if (pagePro.isLoading) {
-            return const Center(child: Loader());
-          }
+          if (pagePro.isLoading) return const Center(child: Loader());
           if (services.isEmpty) {
             return BusinessPageEmptyServiceWidget(business: widget.business);
           }
@@ -118,15 +51,14 @@ class _RequestQuoteScreenState extends State<RequestQuoteScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                ElevatedButton(
-                  onPressed: () => _openServiceDialog(services),
-                  child: Text(selectedService == null
-                      ? 'select_service'.tr()
-                      : '${'selected_service'.tr()}: ${selectedService!.name}'),
+                SelectServiceButton(
+                  services: services,
+                  selectedService: selectedService,
+                  onServiceSelected: (ServiceEntity service) =>
+                      setState(() => selectedService = service),
                 ),
                 if (selectedService != null) ...<Widget>[
                   const SizedBox(height: 20),
-                  // Show selected service preview:
                   Row(
                     children: <Widget>[
                       ClipRRect(
@@ -150,11 +82,123 @@ class _RequestQuoteScreenState extends State<RequestQuoteScreen> {
                       ),
                     ],
                   ),
-                ]
+                ],
               ],
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+class SelectServiceButton extends StatelessWidget {
+  const SelectServiceButton({
+    required this.services,
+    required this.selectedService,
+    required this.onServiceSelected,
+    super.key,
+  });
+
+  final List<ServiceEntity> services;
+  final ServiceEntity? selectedService;
+  final Function(ServiceEntity) onServiceSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () async {
+        await showDialog(
+          context: context,
+          builder: (_) => ServiceDialog(services: services),
+        );
+      },
+      child: Text(selectedService == null
+          ? 'select_service'.tr()
+          : '${'selected_service'.tr()}: ${selectedService!.name}'),
+    );
+  }
+}
+
+class ServiceDialog extends StatefulWidget {
+  const ServiceDialog({required this.services, super.key});
+  final List<ServiceEntity> services;
+
+  @override
+  State<ServiceDialog> createState() => _ServiceDialogState();
+}
+
+class _ServiceDialogState extends State<ServiceDialog> {
+  final Map<int, int> quantities = <int, int>{};
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.6,
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Text(
+                'select_service'.tr(),
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+            const Divider(height: 1),
+            Expanded(
+              child: ListView.builder(
+                itemCount: widget.services.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final ServiceEntity service = widget.services[index];
+                  quantities.putIfAbsent(index, () => 1);
+
+                  return ListTile(
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: CustomNetworkImage(
+                          imageURL: service.thumbnailURL,
+                          placeholder: service.name,
+                        ),
+                      ),
+                    ),
+                    title: Row(
+                      children: <Widget>[
+                        Flexible(
+                          child: Text(
+                            service.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Text(service.priceStr),
+                      ],
+                    ),
+                    subtitle: PostCounterWidget(
+                      initialQuantity: quantities[index]!,
+                      maxQuantity: 1000,
+                      onChanged: (int value) {
+                        setState(() => quantities[index] = value);
+                      },
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<BookQuoteScreen>(
+                          builder: (_) => BookQuoteScreen(service: service),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

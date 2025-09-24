@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../../../core/widgets/profile_photo.dart';
 import '../../../../../../../core/widgets/rating_display_widget.dart';
 import '../../../../../../business/business_page/views/screens/business_profile_screen.dart';
+import '../../../../../../business/business_page/views/screens/user_business_profile_screen.dart';
 import '../../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../../../business/core/domain/entity/service/service_entity.dart';
 
@@ -24,7 +25,7 @@ class ServiceCardBusinessInfo extends StatelessWidget {
       onTap: () => Navigator.push(
           context,
           MaterialPageRoute<BusinessProfileScreen>(
-              builder: (BuildContext context) => BusinessProfileScreen(
+              builder: (BuildContext context) => UserBusinessProfileScreen(
                   businessID: business?.businessID ?? ''))),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
