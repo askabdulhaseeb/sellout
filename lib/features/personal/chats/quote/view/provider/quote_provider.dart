@@ -8,21 +8,21 @@ import '../../domain/usecases/get_service_slots_usecase.dart';
 import '../../domain/usecases/request_quote_usecase.dart';
 import '../../domain/usecases/update_quote_usecase.dart';
 
-/// A single provider class for both Request Quote and Update Quote
 class QuoteProvider extends ChangeNotifier {
   QuoteProvider(this._requestQuoteUsecase, this._updateQuoteUsecase,
       this._getServiceSlotsUsecase);
   final RequestQuoteUsecase _requestQuoteUsecase;
   final UpdateQuoteUsecase _updateQuoteUsecase;
   final GetServiceSlotsUsecase _getServiceSlotsUsecase;
-
+  final List<RequestQuoteServiceParam> _selectedServices =
+      <RequestQuoteServiceParam>[];
   bool _isLoading = false;
-  bool get isLoading => _isLoading;
-
   String? _errorMessage;
-  String? get errorMessage => _errorMessage;
-
   List<SlotEntity> slots = <SlotEntity>[];
+
+  bool get isLoading => _isLoading;
+  String? get errorMessage => _errorMessage;
+  List<RequestQuoteServiceParam> get selectedServices => _selectedServices;
 
   Future<void> fetchSlots({
     required String serviceId,
@@ -61,8 +61,10 @@ class QuoteProvider extends ChangeNotifier {
   }
 
   /// Request a quote
-  Future<bool> requestQuote(RequestQuoteParams params) async {
+  Future<bool> requestQuote(String businessId) async {
     _setLoading(true);
+    RequestQuoteParams params = RequestQuoteParams(
+        servicesAndEmployees: _selectedServices, businessId: '');
     final DataState<bool> result = await _requestQuoteUsecase.call(params);
     _setLoading(false);
 
@@ -88,6 +90,22 @@ class QuoteProvider extends ChangeNotifier {
       notifyListeners();
       return false;
     }
+  }
+
+  void addService(RequestQuoteServiceParam service) {
+    _selectedServices.add(service);
+    notifyListeners();
+  }
+
+  void clearServices() {
+    _selectedServices.clear();
+    notifyListeners();
+  }
+
+  void removeService(String serviceId) {
+    _selectedServices.removeWhere(
+        (RequestQuoteServiceParam service) => service.serviceId == serviceId);
+    notifyListeners();
   }
 
   void _setLoading(bool value) {
