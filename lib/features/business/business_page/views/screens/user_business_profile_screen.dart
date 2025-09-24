@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../core/data/sources/local_business.dart';
 import '../../../core/domain/entity/business_entity.dart';
 import '../providers/business_page_provider.dart';
@@ -27,6 +26,8 @@ class UserBusinessProfileScreen extends StatelessWidget {
             BuildContext context,
             AsyncSnapshot<BusinessEntity?> snapshot,
           ) {
+            debugPrint(
+                'Business Profile routine: ${snapshot.data?.routine?.first.toString()}');
             final BusinessEntity? business =
                 snapshot.data ?? LocalBusiness().business(businessID);
             return business == null

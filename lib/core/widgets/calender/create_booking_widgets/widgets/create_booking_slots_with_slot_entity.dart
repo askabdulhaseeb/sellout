@@ -1,8 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 
-class CreateBookingSlots extends StatelessWidget {
-  const CreateBookingSlots({
+import '../../../../../features/personal/chats/quote/domain/entites/time_slot_entity.dart';
+
+class CreateBookingSlotsWithEntity extends StatelessWidget {
+  const CreateBookingSlotsWithEntity({
     required this.slots,
     required this.selectedTime,
     required this.onSlotSelected,
@@ -11,36 +13,29 @@ class CreateBookingSlots extends StatelessWidget {
     super.key,
   });
 
-  /// Each slot: {'time': '09:00 AM', 'isBooked': true}
-  final List<Map<String, dynamic>> slots;
+  final List<SlotEntity> slots;
   final String? selectedTime;
   final ValueChanged<String?> onSlotSelected;
   final double height;
-
-  /// Whether we are still loading data
   final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    // 🔹 Loading state skeleton
     if (isLoading) {
       return SizedBox(
         height: height,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           separatorBuilder: (_, __) => const SizedBox(width: 8),
-          itemCount: 6, // number of skeleton chips
-          itemBuilder: (context, index) {
+          itemCount: 6, // skeleton placeholders
+          itemBuilder: (BuildContext context, int index) {
             return Container(
               width: 80,
               height: height,
               decoration: BoxDecoration(
-                color: Theme.of(context)
-                    .colorScheme
-                    .surfaceVariant
-                    .withOpacity(0.4),
+                color: Theme.of(context).colorScheme.surface.withOpacity(0.4),
                 borderRadius: BorderRadius.circular(12),
               ),
             );
@@ -49,12 +44,10 @@ class CreateBookingSlots extends StatelessWidget {
       );
     }
 
-    // 🔹 Empty slots
     if (slots.isEmpty) {
       return Text('no_available_slots'.tr());
     }
 
-    // 🔹 Normal state
     return SizedBox(
       height: height,
       child: ListView.separated(
@@ -62,16 +55,16 @@ class CreateBookingSlots extends StatelessWidget {
         separatorBuilder: (_, __) => const SizedBox(width: 8),
         itemCount: slots.length,
         itemBuilder: (BuildContext context, int index) {
-          final Map<String, dynamic> slot = slots[index];
-          final String time = slot['time'] as String;
-          final bool isBooked = slot['isBooked'] as bool;
+          final SlotEntity slot = slots[index];
+          final String time = slot.time;
+          final bool isBooked = slot.isBooked;
           final bool isSelected = selectedTime == time;
 
           // Colors
           final Color availableColor = Theme.of(context).colorScheme.surface;
           final Color selectedColor = Theme.of(context).colorScheme.primary;
           final Color bookedColor =
-              Theme.of(context).disabledColor.withValues(alpha: 0.2);
+              Theme.of(context).disabledColor.withOpacity(0.2);
 
           return Tooltip(
             message: isBooked ? 'slot_booked'.tr() : time,
@@ -90,10 +83,7 @@ class CreateBookingSlots extends StatelessWidget {
                   time,
                   style: textTheme.bodyMedium?.copyWith(
                     color: isBooked
-                        ? Theme.of(context)
-                            .colorScheme
-                            .error
-                            .withValues(alpha: 0.6)
+                        ? Theme.of(context).colorScheme.error.withOpacity(0.6)
                         : (isSelected
                             ? Theme.of(context).colorScheme.onPrimary
                             : Theme.of(context).colorScheme.onSurface),

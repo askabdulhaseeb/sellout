@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/widgets/calender/create_booking_widgets/create_booking_calender.dart';
-import '../../../../../../core/widgets/calender/create_booking_widgets/create_booking_slots.dart';
+import '../../../../../../core/widgets/calender/create_booking_widgets/widgets/create_booking_calender.dart';
+import '../../../../../../core/widgets/calender/create_booking_widgets/widgets/create_booking_slots.dart';
 import '../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../../bookings/domain/entity/booking_entity.dart';
