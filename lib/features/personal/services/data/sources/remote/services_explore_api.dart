@@ -163,9 +163,7 @@ class ServicesExploreApiImpl implements ServicesExploreApi {
       }
       if (params.lastKey != null && params.lastKey!.isNotEmpty) {
         // Append raw lastKey JSON
-        endpoint += 'nextKey=${jsonEncode(<String, String?>{
-              'service_id': params.lastKey
-            })}&';
+        endpoint += 'next_key=${params.lastKey}&';
       }
       if (params.filters.isNotEmpty) {
         final String filtersStr = jsonEncode(
@@ -204,9 +202,10 @@ class ServicesExploreApiImpl implements ServicesExploreApi {
             .map((dynamic item) =>
                 ServiceModel.fromJson(item as Map<String, dynamic>))
             .toList();
-        final pageKey = (data.containsKey('nextKey') && data['nextKey'] != null)
-            ? json.decode(data['nextKey'])['service_id']
-            : '';
+        final pageKey =
+            (data.containsKey('next_key') && data['next_key'] != null)
+                ? data['next_key']
+                : '';
         return DataSuccess<List<ServiceEntity>>(pageKey, servicesList);
       } else {
         AppLog.error(
