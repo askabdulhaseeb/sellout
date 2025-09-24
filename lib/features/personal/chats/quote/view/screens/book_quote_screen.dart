@@ -1,6 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/enums/routine/day_type.dart';
 import '../../../../../../core/widgets/calender/create_booking_widgets/widgets/create_booking_calender.dart';
 import '../../../../../../core/widgets/calender/create_booking_widgets/widgets/create_booking_slots_with_slot_entity.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
@@ -10,6 +10,7 @@ import '../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../../business/core/domain/entity/routine_entity.dart';
 import '../../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../../visits/view/book_visit/widgets/booking_profile_image.dart';
+import '../../domain/params/request_quote_service_params.dart';
 import '../provider/quote_provider.dart';
 
 class BookQuoteScreen extends StatefulWidget {
@@ -21,9 +22,11 @@ class BookQuoteScreen extends StatefulWidget {
 }
 
 class _BookQuoteScreenState extends State<BookQuoteScreen> {
-  String? selectedTime = '';
+  String? selectedTime; // 🟩 null initially
   bool isLoadingBusiness = true;
+  String? businessError;
   BusinessEntity? business;
+  int quantity = 1;
 
   @override
   void initState() {
@@ -32,18 +35,23 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
   }
 
   Future<void> _loadBusiness() async {
-    business = await LocalBusiness().getBusiness(widget.service.businessID);
+    try {
+      business = await LocalBusiness().getBusiness(widget.service.businessID);
+    } catch (e) {
+      businessError = 'Failed to load business details';
+    }
     setState(() => isLoadingBusiness = false);
   }
 
-  RoutineEntity _routineForDate(DateTime date) {
-    if (business?.routine == null || business!.routine!.isEmpty) {
-      return RoutineEntity(isOpen: false, day: DayType.sunday);
+  RoutineEntity? _routineForDate(DateTime date) {
+    final List<RoutineEntity>? routineList = business?.routine;
+    if (routineList == null || routineList.isEmpty) return null;
+    for (final RoutineEntity r in routineList) {
+      if (r.day.weekday == date.weekday) {
+        return r;
+      }
     }
-    return business!.routine!.firstWhere(
-      (RoutineEntity r) => r.day.weekday == date.weekday,
-      orElse: () => RoutineEntity(isOpen: false, day: DayType.sunday),
-    );
+    return null;
   }
 
   @override
@@ -54,10 +62,20 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
       );
     }
 
+    if (businessError != null) {
+      return Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: const AppBarTitle(titleKey: 'request_quote'),
+        ),
+        body: Center(child: Text(businessError!)),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const AppBarTitle(titleKey: 'book_quote'),
+        title: const AppBarTitle(titleKey: 'request_quote'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -71,26 +89,37 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
                 CreateBookingCalender(
                   initialDate: DateTime.now(),
                   onDateChanged: (DateTime date) async {
-                    debugPrint('📅 Date selected: $date');
-                    final RoutineEntity routine = _routineForDate(date);
-                    final String openingTime =
-                        routine.isOpen ? (routine.opening ?? '') : '';
-                    final String closingTime =
-                        routine.isOpen ? (routine.closing ?? '') : '';
+                    final RoutineEntity? routine = _routineForDate(date);
+
+                    final String openingTime = (routine?.isOpen ?? false)
+                        ? (routine?.opening ?? '')
+                        : '';
+                    final String closingTime = (routine?.isOpen ?? false)
+                        ? (routine?.closing ?? '')
+                        : '';
 
                     if (openingTime.isEmpty || closingTime.isEmpty) {
                       slotsProvider.clearSlots();
-                    } else {
-                      await slotsProvider.fetchSlots(
-                        serviceId: widget.service.serviceID,
-                        date: date,
-                        openingTime: openingTime,
-                        closingTime: closingTime,
-                        serviceDuration: widget.service.time,
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Business closed on this day'),
+                        ),
                       );
+                    } else {
+                      try {
+                        await slotsProvider.fetchSlots(
+                          serviceId: widget.service.serviceID,
+                          date: date,
+                          openingTime: openingTime,
+                          closingTime: closingTime,
+                          serviceDuration: widget.service.time,
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Error loading slots: $e')),
+                        );
+                      }
                     }
-
-                    debugPrint('🕒 Slots fetched: ${slotsProvider.slots}');
                   },
                 ),
                 CreateBookingSlotsWithEntity(
@@ -100,20 +129,90 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
                       setState(() => selectedTime = time),
                   isLoading: slotsProvider.isLoading,
                 ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: ColorScheme.of(context).outline,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      GestureDetector(
+                        onTap: quantity > 1
+                            ? () => setState(() => quantity--)
+                            : null,
+                        child: Icon(
+                          Icons.remove,
+                          color: quantity > 1
+                              ? Theme.of(context).colorScheme.primary
+                              : Colors.grey,
+                        ),
+                      ),
+                      Text(
+                        quantity.toString(),
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      GestureDetector(
+                        onTap: () => setState(() => quantity++),
+                        child: Icon(
+                          Icons.add,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
                 CustomElevatedButton(
                   isLoading: false,
                   onTap: () {
-                    debugPrint('Selected slot: $selectedTime');
+                    // Validation
                     if (selectedTime == null || selectedTime!.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                            content: Text('Please select a time slot')),
+                          content: Text('Please select a time slot'),
+                        ),
                       );
                       return;
                     }
-                    // Here you can add logic to book/request the quote
+
+                    if (quantity < 1) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Quantity must be at least 1'),
+                        ),
+                      );
+                      return;
+                    }
+
+                    final RequestQuoteServiceParam service =
+                        RequestQuoteServiceParam(
+                      serviceId: widget.service.serviceID,
+                      quantity: quantity,
+                      bookAt: selectedTime!,
+                    );
+
+                    try {
+                      Provider.of<QuoteProvider>(context, listen: false)
+                          .addService(service);
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Service added successfully'),
+                        ),
+                      );
+                      Navigator.pop(context);
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Error adding service: $e')),
+                      );
+                    }
                   },
-                  title: 'request_quote',
+                  title: 'request_quote'.tr(),
                 ),
               ],
             );

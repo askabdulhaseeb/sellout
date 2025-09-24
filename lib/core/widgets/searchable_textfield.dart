@@ -12,6 +12,8 @@ class SearchableTextfield extends StatefulWidget {
     this.borderRadius,
     this.border,
     this.padding,
+    this.focusNode,
+    this.autoFocus,
     super.key,
   });
 
@@ -21,6 +23,8 @@ class SearchableTextfield extends StatefulWidget {
   final double? borderRadius;
   final InputBorder? border;
   final EdgeInsetsGeometry? padding;
+  final FocusNode? focusNode;
+  final bool? autoFocus;
 
   @override
   State<SearchableTextfield> createState() => _SearchableTextfieldState();
@@ -30,8 +34,11 @@ class _SearchableTextfieldState extends State<SearchableTextfield> {
   Timer? _debounce;
 
   void _onTextChanged(String value) {
+    // cancel any existing timer
     if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
+
+    // start a new timer with 600ms delay
+    _debounce = Timer(const Duration(milliseconds: 600), () {
       widget.onChanged?.call(value);
     });
   }
@@ -45,7 +52,9 @@ class _SearchableTextfieldState extends State<SearchableTextfield> {
   @override
   Widget build(BuildContext context) {
     return CustomTextFormField(
-      fieldPadding: widget.padding ?? EdgeInsets.symmetric(vertical: 8),
+      autoFocus: widget.autoFocus ?? false,
+      focusNode: widget.focusNode,
+      fieldPadding: widget.padding ?? const EdgeInsets.symmetric(vertical: 8),
       border: widget.border,
       borderRadius: widget.borderRadius ?? 12,
       controller: widget.controller,

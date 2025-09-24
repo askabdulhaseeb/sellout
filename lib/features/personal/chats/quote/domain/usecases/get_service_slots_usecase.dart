@@ -52,48 +52,50 @@ class ServiceSlotHelper {
     final DateTime open = _parseTimeOnSelectedDate(openingTime, selectedDate);
     final DateTime close = _parseTimeOnSelectedDate(closingTime, selectedDate);
 
-    final List<SlotEntity> slotList = <SlotEntity>[];
-    DateTime current = open;
-
-    // Prepare booked ranges
+    // build booked ranges
     final List<Map<String, DateTime>> bookedRanges = bookings
         .where((BookingEntity b) =>
             b.bookedAt.year == selectedDate.year &&
             b.bookedAt.month == selectedDate.month &&
             b.bookedAt.day == selectedDate.day)
         .map((BookingEntity booking) {
-      DateTime start = booking.bookedAt;
-      DateTime end;
-      try {
-        end = booking.endAt;
-      } catch (_) {
-        end = start.add(Duration(minutes: serviceDuration));
-      }
+      final DateTime start = booking.bookedAt;
+      final DateTime end = booking.endAt;
       return <String, DateTime>{'start': start, 'end': end};
     }).toList();
 
-    // Generate slots
-    while (current.add(Duration(minutes: serviceDuration)).isBefore(close) ||
+    final List<SlotEntity> slotList = <SlotEntity>[];
+    DateTime current = open;
+
+    // half-hour step always
+    const int slotStep = 30;
+
+    while (current.add(const Duration(minutes: slotStep)).isBefore(close) ||
         current
-            .add(Duration(minutes: serviceDuration))
+            .add(const Duration(minutes: slotStep))
             .isAtSameMomentAs(close)) {
-      final String displayTime = timeFormat.format(current);
       final DateTime slotStart = current;
-      final DateTime slotEnd = current.add(Duration(minutes: serviceDuration));
-      final bool isBooked = bookedRanges.any((Map<String, DateTime> range) {
-        final DateTime start = range['start']!;
-        final DateTime end = range['end']!;
-        return slotStart.isBefore(end) && start.isBefore(slotEnd);
+      // but the service might need more than 30 min:
+      final DateTime slotEnd = current
+          .add(Duration(minutes: serviceDuration)); // full service duration
+
+      // check overlap with booked ranges using full service duration
+      final bool isBooked = bookedRanges.any((range) {
+        final DateTime bookedStart = range['start']!;
+        final DateTime bookedEnd = range['end']!;
+        // overlap if service duration window touches booked window
+        return slotStart.isBefore(bookedEnd) && bookedStart.isBefore(slotEnd);
       });
 
       slotList.add(SlotEntity(
-        time: displayTime,
+        time: timeFormat.format(current),
         isBooked: isBooked,
         start: slotStart,
         end: slotEnd,
       ));
 
-      current = slotEnd;
+      // advance by 30 minutes always
+      current = current.add(const Duration(minutes: slotStep));
     }
 
     return slotList;
