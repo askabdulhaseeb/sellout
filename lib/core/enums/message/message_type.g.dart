@@ -45,6 +45,8 @@ class MessageTypeAdapter extends TypeAdapter<MessageType> {
         return MessageType.leaveGroup;
       case 15:
         return MessageType.simple;
+      case 16:
+        return MessageType.requestQuote;
       case 99:
         return MessageType.none;
       default:
@@ -102,6 +104,9 @@ class MessageTypeAdapter extends TypeAdapter<MessageType> {
         break;
       case MessageType.simple:
         writer.writeByte(15);
+        break;
+      case MessageType.requestQuote:
+        writer.writeByte(16);
         break;
       case MessageType.none:
         writer.writeByte(99);

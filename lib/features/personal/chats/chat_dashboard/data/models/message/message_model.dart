@@ -3,6 +3,7 @@ import '../../../../../../../core/extension/string_ext.dart';
 import '../../../../../../attachment/data/attchment_model.dart';
 import '../../../../../post/data/models/offer/offer_detail_model.dart';
 import '../../../../../post/data/models/visit/visiting_model.dart';
+import '../../../../quote/data/models/quote_detail_model.dart';
 import '../../../domain/entities/messages/message_entity.dart';
 
 class MessageModel extends MessageEntity {
@@ -20,6 +21,7 @@ class MessageModel extends MessageEntity {
     super.type,
     super.source,
     super.offerDetail,
+    super.quoteDetail,
   });
 
   factory MessageModel.fromJson(Map<String, dynamic> json) {
@@ -55,6 +57,9 @@ class MessageModel extends MessageEntity {
       offerDetail: json['offer_detail'] == null
           ? null
           : OfferDetailModel.fromJson(json['offer_detail']),
+      quoteDetail: json['quote_detail'] == null
+          ? null
+          : QuoteDetailModel.fromMap(json['quote_detail']),
     );
   }
 }

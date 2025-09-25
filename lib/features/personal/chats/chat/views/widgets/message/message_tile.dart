@@ -75,18 +75,22 @@ class MessageTile extends StatelessWidget {
                                   message: message,
                                   showButtons: false,
                                 )
-                              : MessageType.offer == message.type
-                                  ? OfferMessageTile(
+                              : MessageType.requestQuote == message.type
+                                  ? SimpleMessageTile(
                                       message: message,
-                                      showButtons: false,
                                     )
-                                  : MessageType.simple == message.type
-                                      ? SimpleMessageTile(
+                                  : MessageType.offer == message.type
+                                      ? OfferMessageTile(
                                           message: message,
+                                          showButtons: false,
                                         )
-                                      : Text(
-                                          '${message.displayText} - ${message.type?.code.tr()}',
-                                        )
+                                      : MessageType.simple == message.type
+                                          ? SimpleMessageTile(
+                                              message: message,
+                                            )
+                                          : Text(
+                                              '${message.displayText} - ${message.type?.code.tr()}',
+                                            )
             ],
           );
   }

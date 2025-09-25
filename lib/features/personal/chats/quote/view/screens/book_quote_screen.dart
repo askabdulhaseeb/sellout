@@ -10,7 +10,7 @@ import '../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../../business/core/domain/entity/routine_entity.dart';
 import '../../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../../visits/view/book_visit/widgets/booking_profile_image.dart';
-import '../../domain/params/request_quote_service_params.dart';
+import '../../data/models/service_employee_model.dart';
 import '../provider/quote_provider.dart';
 
 class BookQuoteScreen extends StatefulWidget {
@@ -22,7 +22,8 @@ class BookQuoteScreen extends StatefulWidget {
 }
 
 class _BookQuoteScreenState extends State<BookQuoteScreen> {
-  String? selectedTime; // 🟩 null initially
+  DateTime? selectedDate;
+  String? selectedTime;
   bool isLoadingBusiness = true;
   String? businessError;
   BusinessEntity? business;
@@ -89,6 +90,11 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
                 CreateBookingCalender(
                   initialDate: DateTime.now(),
                   onDateChanged: (DateTime date) async {
+                    setState(() {
+                      selectedDate = date;
+                      selectedTime = null; // reset selected time
+                    });
+
                     final RoutineEntity? routine = _routineForDate(date);
 
                     final String openingTime = (routine?.isOpen ?? false)
@@ -170,47 +176,33 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
                 CustomElevatedButton(
                   isLoading: false,
                   onTap: () {
-                    // Validation
-                    if (selectedTime == null || selectedTime!.isEmpty) {
+                    if (selectedDate == null || selectedTime == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('Please select a time slot'),
-                        ),
+                            content:
+                                Text('Please select a date and time slot')),
                       );
                       return;
                     }
 
-                    if (quantity < 1) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Quantity must be at least 1'),
-                        ),
-                      );
-                      return;
-                    }
+                    final DateTime slotDateTime = _combineDateTime(
+                        selectedDate!, selectedTime!); // full datetime
 
-                    final RequestQuoteServiceParam service =
-                        RequestQuoteServiceParam(
+                    final ServiceEmployeeModel service = ServiceEmployeeModel(
                       serviceId: widget.service.serviceID,
                       quantity: quantity,
-                      bookAt: selectedTime!,
+                      bookAt:
+                          '${_format12Hour(slotDateTime)} ${slotDateTime.toIso8601String().split('T')[0]}',
                     );
 
-                    try {
-                      Provider.of<QuoteProvider>(context, listen: false)
-                          .addService(service);
+                    Provider.of<QuoteProvider>(context, listen: false)
+                        .addService(service);
 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Service added successfully'),
-                        ),
-                      );
-                      Navigator.pop(context);
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Error adding service: $e')),
-                      );
-                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Service added successfully')),
+                    );
+                    Navigator.pop(context);
                   },
                   title: 'request_quote'.tr(),
                 ),
@@ -220,5 +212,14 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
         ),
       ),
     );
+  }
+
+  DateTime _combineDateTime(DateTime date, String time12h) {
+    final DateTime time = DateFormat.jm().parse(time12h);
+    return DateTime(date.year, date.month, date.day, time.hour, time.minute);
+  }
+
+  String _format12Hour(DateTime dateTime) {
+    return DateFormat.jm().format(dateTime); // e.g., 12:00 PM
   }
 }

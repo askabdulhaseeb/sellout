@@ -8,7 +8,11 @@ enum ChatType {
   @HiveField(1)
   product('product', 'product'),
   @HiveField(2)
-  group('group', 'group');
+  group('group', 'group'),
+  @HiveField(3)
+  service('service', 'service'),
+  @HiveField(4)
+  requestQuote('request_quote', 'request_quote');
 
   const ChatType(this.code, this.json);
 

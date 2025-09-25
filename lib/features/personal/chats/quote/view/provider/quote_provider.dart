@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import '../../../../../../core/usecase/usecase.dart';
+import '../../data/models/service_employee_model.dart';
 import '../../domain/entites/time_slot_entity.dart';
 import '../../domain/params/get_service_slot_params.dart';
 import '../../domain/params/request_quote_service_params.dart';
@@ -14,15 +15,14 @@ class QuoteProvider extends ChangeNotifier {
   final RequestQuoteUsecase _requestQuoteUsecase;
   final UpdateQuoteUsecase _updateQuoteUsecase;
   final GetServiceSlotsUsecase _getServiceSlotsUsecase;
-  final List<RequestQuoteServiceParam> _selectedServices =
-      <RequestQuoteServiceParam>[];
+  final List<ServiceEmployeeModel> _selectedServices = <ServiceEmployeeModel>[];
   bool _isLoading = false;
   String? _errorMessage;
   List<SlotEntity> slots = <SlotEntity>[];
 
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
-  List<RequestQuoteServiceParam> get selectedServices => _selectedServices;
+  List<ServiceEmployeeModel> get selectedServices => _selectedServices;
 
   Future<void> fetchSlots({
     required String serviceId,
@@ -64,7 +64,8 @@ class QuoteProvider extends ChangeNotifier {
   Future<bool> requestQuote(String businessId) async {
     _setLoading(true);
     RequestQuoteParams params = RequestQuoteParams(
-        servicesAndEmployees: _selectedServices, businessId: '');
+        servicesAndEmployees: _selectedServices, businessId: businessId);
+    debugPrint(params.toMap().toString());
     final DataState<bool> result = await _requestQuoteUsecase.call(params);
     _setLoading(false);
 
@@ -92,7 +93,7 @@ class QuoteProvider extends ChangeNotifier {
     }
   }
 
-  void addService(RequestQuoteServiceParam service) {
+  void addService(ServiceEmployeeModel service) {
     _selectedServices.add(service);
     notifyListeners();
   }
@@ -104,7 +105,7 @@ class QuoteProvider extends ChangeNotifier {
 
   void removeService(String serviceId) {
     _selectedServices.removeWhere(
-        (RequestQuoteServiceParam service) => service.serviceId == serviceId);
+        (ServiceEmployeeModel service) => service.serviceId == serviceId);
     notifyListeners();
   }
 
