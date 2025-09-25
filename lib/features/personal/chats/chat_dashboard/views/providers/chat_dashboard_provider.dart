@@ -66,15 +66,24 @@ class ChatDashboardProvider extends ChangeNotifier {
 
   void _applyTabAndSearch(List<ChatEntity> allChats) {
     List<ChatEntity> filtered = allChats;
-    // --- Filter chats based on current tab if selected ---
 
-    if (_page == ChatPageType.orders || _page == ChatPageType.services) {
-      // First page: show both private and product chats
+    // --- Filter chats based on current tab ---
+    if (_page == ChatPageType.orders) {
+      // Orders tab: show private and product chats
       filtered = filtered
           .where((ChatEntity c) =>
-              c.type == ChatType.private || c.type == ChatType.product)
+              c.type == ChatType.private ||
+              (c.type == ChatType.product &&
+                  c.productInfo?.type != ChatType.service))
+          .toList();
+    } else if (_page == ChatPageType.services) {
+      filtered = filtered
+          .where((ChatEntity c) =>
+              c.type == ChatType.product &&
+              c.productInfo?.type == ChatType.service)
           .toList();
     } else if (_page == ChatPageType.groups) {
+      // Groups tab: only group chats
       filtered =
           filtered.where((ChatEntity c) => c.type == ChatType.group).toList();
     }
@@ -86,24 +95,19 @@ class ChatDashboardProvider extends ChangeNotifier {
             chat.lastMessage?.displayText.toLowerCase() ?? '';
         final String other = chat.otherPerson();
 
-        if (chat.type == ChatType.private || chat.type == ChatType.product) {
+        if (chat.type == ChatType.private ||
+            (chat.type == ChatType.product &&
+                chat.productInfo?.type == ChatType.requestQuote)) {
           final String name = other.startsWith('BU')
               ? businessCache[other]?.displayName?.toLowerCase() ?? ''
               : userCache[other]?.displayName.toLowerCase() ?? '';
 
-          final String productTitle = chat.type == ChatType.product
-              ? postCache[chat.productInfo?.id]?.title.toLowerCase() ?? ''
-              : '';
-
-          return name.contains(_searchQuery) ||
-              lastMsg.contains(_searchQuery) ||
-              productTitle.contains(_searchQuery);
+          return name.contains(_searchQuery) || lastMsg.contains(_searchQuery);
         } else if (chat.type == ChatType.group) {
           final String groupName = chat.groupInfo?.title.toLowerCase() ?? '';
           return groupName.contains(_searchQuery) ||
               lastMsg.contains(_searchQuery);
         }
-
         return false;
       }).toList();
     }

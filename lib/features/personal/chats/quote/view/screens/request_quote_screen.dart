@@ -9,7 +9,7 @@ import '../../../../../business/business_page/views/widgets/section_details/empt
 import '../../../../../business/core/data/sources/service/local_service.dart';
 import '../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../../business/core/domain/entity/service/service_entity.dart';
-import '../../domain/params/request_quote_service_params.dart';
+import '../../data/models/service_employee_model.dart';
 import '../provider/quote_provider.dart';
 import '../widgets/service_dropdown.dart';
 import 'book_quote_screen.dart';
@@ -46,7 +46,7 @@ class _RequestQuoteScreenState extends State<RequestQuoteScreen> {
 
       body: Consumer<QuoteProvider>(
         builder: (BuildContext context, QuoteProvider pro, _) {
-          final List<RequestQuoteServiceParam> services = pro.selectedServices;
+          final List<ServiceEmployeeModel> services = pro.selectedServices;
           return Column(
             children: <Widget>[
               Padding(
@@ -74,7 +74,7 @@ class _RequestQuoteScreenState extends State<RequestQuoteScreen> {
                     padding: const EdgeInsets.all(16),
                     itemCount: services.length,
                     itemBuilder: (BuildContext context, int index) {
-                      final RequestQuoteServiceParam selected = services[index];
+                      final ServiceEmployeeModel selected = services[index];
 
                       // fetch service info async
                       return FutureBuilder<ServiceEntity?>(
@@ -161,7 +161,6 @@ class _RequestQuoteScreenState extends State<RequestQuoteScreen> {
                                     ],
                                   ),
                                 ),
-
                                 // 🔹 Close Button
                                 IconButton(
                                   icon: const Icon(Icons.close,

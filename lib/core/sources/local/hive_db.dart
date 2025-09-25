@@ -27,6 +27,8 @@ import '../../../features/personal/chats/chat_dashboard/domain/entities/chat/par
 import '../../../features/personal/chats/chat_dashboard/domain/entities/chat/participant/invitation_entity.dart';
 import '../../../features/personal/chats/chat_dashboard/domain/entities/chat/unread_message_entity.dart';
 import '../../../features/personal/chats/chat_dashboard/domain/entities/messages/message_entity.dart';
+import '../../../features/personal/chats/quote/domain/entites/quote_detail_entity.dart';
+import '../../../features/personal/chats/quote/domain/entites/service_employee_entity.dart';
 import '../../../features/personal/listing/listing_form/data/sources/local/local_colors.dart';
 import '../../../features/personal/listing/listing_form/data/sources/local/local_categories.dart';
 import '../../../features/personal/listing/listing_form/data/sources/local/local_listing.dart';
@@ -174,6 +176,8 @@ class HiveDB {
     Hive.registerAdapter(DropdownOptionEntityAdapter()); //75
     Hive.registerAdapter(DropdownOptionDataEntityAdapter()); //76
     Hive.registerAdapter(ParentDropdownEntityAdapter()); //77
+    Hive.registerAdapter(QuoteDetailEntityAdapter()); //78
+    Hive.registerAdapter(ServiceEmployeeEntityAdapter()); //79
 
     // Hive box Open
     await refresh();

@@ -1,7 +1,5 @@
 import 'package:hive/hive.dart';
-
 import '../../functions/app_log.dart';
-
 part 'message_type.g.dart';
 
 @HiveType(typeId: 18)
@@ -38,6 +36,8 @@ enum MessageType {
   leaveGroup('leave_group', 'leave_group'),
   @HiveField(15)
   simple('simple', 'simple'),
+  @HiveField(16)
+  requestQuote('request_quote', 'request_quote'),
   @HiveField(99)
   none('none', 'none');
 
@@ -54,6 +54,7 @@ enum MessageType {
         value != 'offer' &&
         value != 'visiting' &&
         value != 'leave_group' &&
+        value != 'request_quote' &&
         value != 'simple') {
       AppLog.error(
         'MessageType.fromvalue: $value',

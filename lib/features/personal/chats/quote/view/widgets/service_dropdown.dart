@@ -58,7 +58,6 @@ class _ServiceDropdownState extends State<ServiceDropdown>
 
     _fetchServices(reset: true);
 
-    // Scroll load more
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
               _scrollController.position.maxScrollExtent - 50 &&
@@ -68,7 +67,6 @@ class _ServiceDropdownState extends State<ServiceDropdown>
       }
     });
 
-    // Show overlay on focus
     _focusNode.addListener(() {
       if (_focusNode.hasFocus) {
         _showOverlay();
@@ -125,18 +123,24 @@ class _ServiceDropdownState extends State<ServiceDropdown>
   }
 
   void _removeOverlay() {
-    _controller.reverse().then((_) {
-      _overlayEntry?.remove();
-      _overlayEntry = null;
-    });
+    if (_overlayEntry != null) {
+      try {
+        _controller.reverse().then((_) {
+          _overlayEntry?.remove();
+          _overlayEntry = null;
+        });
+      } catch (_) {
+        _overlayEntry?.remove();
+        _overlayEntry = null;
+      }
+    }
   }
 
   double _overlayHeight() {
-    final int count = _services.length + (_isLoading ? 1 : 0);
     const double itemHeight = 56;
     const double maxHeight = 250;
-    final double height = count * itemHeight;
-    return height > maxHeight ? maxHeight : height;
+    final int count = _services.length + (_isLoading ? 1 : 0);
+    return (count * itemHeight).clamp(0, maxHeight);
   }
 
   OverlayEntry _createOverlayEntry() {
@@ -171,55 +175,27 @@ class _ServiceDropdownState extends State<ServiceDropdown>
                             ? 1
                             : _services.length + (_isLoading ? 1 : 0),
                         itemBuilder: (BuildContext context, int index) {
-                          (BuildContext context, int index) {
-                            // 1️⃣ If no results and not loading
-                            if (_services.isEmpty && !_isLoading) {
-                              return const Padding(
-                                padding: EdgeInsets.all(16),
-                                child: Center(
-                                  child: Text(
-                                    'No results found',
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                ),
-                              );
-                            }
-
-                            // 2️⃣ Loading at the bottom
-                            if (index >= _services.length) {
-                              return const Padding(
-                                padding: EdgeInsets.all(16),
-                                child:
-                                    Center(child: CircularProgressIndicator()),
-                              );
-                            }
-
-                            // 3️⃣ Normal items
-                            final ServiceEntity service = _services[index];
-                            return ListTile(
-                              leading: ClipRRect(
-                                borderRadius: BorderRadius.circular(6),
-                                child: CustomNetworkImage(
-                                  imageURL: service.thumbnailURL,
-                                  size: 40,
+                          if (_services.isEmpty && !_isLoading) {
+                            return const Padding(
+                              padding: EdgeInsets.all(16),
+                              child: Center(
+                                child: Text(
+                                  'No results found',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
                                 ),
                               ),
-                              title: Text(
-                                service.name,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(fontWeight: FontWeight.w500),
-                              ),
-                              onTap: () {
-                                widget.onSelected(service);
-                                _focusNode.unfocus();
-                                _removeOverlay();
-                              },
                             );
-                          };
+                          }
+
+                          if (index >= _services.length) {
+                            return const Padding(
+                              padding: EdgeInsets.all(16),
+                              child: Center(child: CircularProgressIndicator()),
+                            );
+                          }
+
                           final ServiceEntity service = _services[index];
                           return ListTile(
                             leading: ClipRRect(
@@ -263,7 +239,7 @@ class _ServiceDropdownState extends State<ServiceDropdown>
         controller: _searchController,
         focusNode: _focusNode,
         hintText: 'search'.tr(),
-        onChanged: (String _) {
+        onChanged: (_) {
           _fetchServices(reset: true);
         },
       ),
@@ -273,7 +249,8 @@ class _ServiceDropdownState extends State<ServiceDropdown>
   @override
   void dispose() {
     _controller.dispose();
-    _removeOverlay();
+    _overlayEntry?.remove();
+    _overlayEntry = null;
     _focusNode.dispose();
     _searchController.dispose();
     _scrollController.dispose();

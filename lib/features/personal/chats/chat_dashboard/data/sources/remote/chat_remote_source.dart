@@ -45,10 +45,21 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
         }
         return DataSuccess<List<ChatEntity>>(rawData, chats);
       } else {
+        AppLog.error(
+          'get chats - ERROR',
+          name: 'ChatRemoteSourceImpl.getChats - else',
+          error: result.exception,
+        );
         return DataFailer<List<ChatEntity>>(
             result.exception ?? CustomException('something_wrong'.tr()));
       }
-    } catch (e) {
+    } catch (e, stc) {
+      AppLog.error(
+        'get chats - ERROR',
+        name: 'ChatRemoteSourceImpl.getChats - catch',
+        error: e,
+        stackTrace: stc,
+      );
       return DataFailer<List<ChatEntity>>(CustomException('$e'));
     }
   }

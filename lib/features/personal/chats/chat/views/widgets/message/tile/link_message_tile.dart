@@ -12,7 +12,7 @@ class SimpleMessageTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isMe = message.sendBy == LocalAuth.uid;
-    final String text = message.displayText;
+    final String text = message.text;
 
     final bool isLink = text.startsWith('http') || text.startsWith('https');
 

@@ -6,6 +6,7 @@ import '../../../../chat_dashboard/data/sources/local/local_chat.dart';
 import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../providers/chat_provider.dart';
 import '../message/tile/offer_message_tile.dart';
+import '../message/tile/quote_message_tile.dart';
 import '../message/tile/visiting_message_tile.dart';
 
 class ChatPinnedMessage extends StatelessWidget {
@@ -33,7 +34,10 @@ class ChatPinnedMessage extends StatelessWidget {
                 ? VisitingMessageTileAnimated(
                     message: chat.pinnedMessage!,
                   )
-                : const SizedBox.shrink();
+                : chat.pinnedMessage!.quoteDetail != null
+                    ? QuoteMessageTile(
+                        message: chat.pinnedMessage!, showButtons: true)
+                    : const SizedBox.shrink();
       },
     );
   }
