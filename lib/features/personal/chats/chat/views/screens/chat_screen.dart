@@ -29,6 +29,7 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
 
     Future<void>.delayed(const Duration(milliseconds: 300), () {
+      // ignore: use_build_context_synchronously
       Provider.of<ChatProvider>(context, listen: false).getMessages();
     });
 
@@ -87,11 +88,9 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: Column(
                     children: <Widget>[
                       ChatPinnedMessage(chatId: chat!.chatId),
-                      Expanded(
-                        child: MessagesList(
-                          chat: chat,
-                          controller: scrollController,
-                        ),
+                      MessagesList(
+                        chat: chat,
+                        controller: scrollController,
                       ),
                       const ChatInteractionPanel(),
                     ],

@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../core/widgets/calender/create_booking_widgets/widgets/create_booking_calender.dart';
 import '../../../../../../core/widgets/calender/create_booking_widgets/widgets/create_booking_slots_with_slot_entity.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
@@ -22,7 +23,7 @@ class BookQuoteScreen extends StatefulWidget {
 }
 
 class _BookQuoteScreenState extends State<BookQuoteScreen> {
-  DateTime? selectedDate;
+  DateTime selectedDate = DateTime.now();
   String? selectedTime;
   bool isLoadingBusiness = true;
   String? businessError;
@@ -32,25 +33,53 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
   @override
   void initState() {
     super.initState();
-    _loadBusiness();
+    _loadBusinessAndFetchSlots();
   }
 
-  Future<void> _loadBusiness() async {
+  /// 🔹 Load business, then fetch slots for today
+  Future<void> _loadBusinessAndFetchSlots() async {
     try {
       business = await LocalBusiness().getBusiness(widget.service.businessID);
+      await _fetchSlotsForDate(selectedDate);
     } catch (e) {
       businessError = 'Failed to load business details';
     }
     setState(() => isLoadingBusiness = false);
   }
 
+  /// 🔹 Get routine and fetch slots for given date
+  Future<void> _fetchSlotsForDate(DateTime date) async {
+    if (business == null) return;
+    final RoutineEntity? routine = _routineForDate(date);
+    final QuoteProvider slotsProvider =
+        Provider.of<QuoteProvider>(context, listen: false);
+
+    final String openingTime =
+        (routine?.isOpen ?? false) ? (routine?.opening ?? '') : '';
+    final String closingTime =
+        (routine?.isOpen ?? false) ? (routine?.closing ?? '') : '';
+
+    if (openingTime.isEmpty || closingTime.isEmpty) {
+      slotsProvider.clearSlots();
+      return;
+    }
+
+    try {
+      await slotsProvider.fetchSlots(
+        serviceId: widget.service.serviceID,
+        date: date,
+        openingTime: openingTime,
+        closingTime: closingTime,
+        serviceDuration: widget.service.time,
+      );
+    } catch (e) {}
+  }
+
   RoutineEntity? _routineForDate(DateTime date) {
     final List<RoutineEntity>? routineList = business?.routine;
     if (routineList == null || routineList.isEmpty) return null;
     for (final RoutineEntity r in routineList) {
-      if (r.day.weekday == date.weekday) {
-        return r;
-      }
+      if (r.day.weekday == date.weekday) return r;
     }
     return null;
   }
@@ -87,55 +116,41 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
                 ProductImageWidget(
                   image: widget.service.thumbnailURL ?? '',
                 ),
+
+                /// 🔹 Date picker
                 CreateBookingCalender(
-                  initialDate: DateTime.now(),
+                  initialDate: selectedDate,
                   onDateChanged: (DateTime date) async {
                     setState(() {
                       selectedDate = date;
-                      selectedTime = null; // reset selected time
+                      selectedTime = null;
                     });
-
-                    final RoutineEntity? routine = _routineForDate(date);
-
-                    final String openingTime = (routine?.isOpen ?? false)
-                        ? (routine?.opening ?? '')
-                        : '';
-                    final String closingTime = (routine?.isOpen ?? false)
-                        ? (routine?.closing ?? '')
-                        : '';
-
-                    if (openingTime.isEmpty || closingTime.isEmpty) {
-                      slotsProvider.clearSlots();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Business closed on this day'),
-                        ),
-                      );
-                    } else {
-                      try {
-                        await slotsProvider.fetchSlots(
-                          serviceId: widget.service.serviceID,
-                          date: date,
-                          openingTime: openingTime,
-                          closingTime: closingTime,
-                          serviceDuration: widget.service.time,
-                        );
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Error loading slots: $e')),
-                        );
-                      }
-                    }
+                    await _fetchSlotsForDate(date);
                   },
                 ),
-                CreateBookingSlotsWithEntity(
-                  slots: slotsProvider.slots,
-                  selectedTime: selectedTime,
-                  onSlotSelected: (String? time) =>
-                      setState(() => selectedTime = time),
-                  isLoading: slotsProvider.isLoading,
-                ),
+
+                /// 🔹 Slots
+                if (slotsProvider.isLoading)
+                  const Padding(
+                    padding: EdgeInsets.all(24),
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                else if (slotsProvider.slots.isEmpty)
+                  const Padding(
+                    padding: EdgeInsets.all(24),
+                    child: Text('No slots available for this day'),
+                  )
+                else
+                  CreateBookingSlotsWithEntity(
+                    slots: slotsProvider.slots,
+                    selectedTime: selectedTime,
+                    onSlotSelected: (String? time) =>
+                        setState(() => selectedTime = time),
+                    isLoading: false,
+                  ),
                 const SizedBox(height: 16),
+
+                /// 🔹 Quantity
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
@@ -158,10 +173,8 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
                               : Colors.grey,
                         ),
                       ),
-                      Text(
-                        quantity.toString(),
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
+                      Text(quantity.toString(),
+                          style: Theme.of(context).textTheme.bodyMedium),
                       GestureDetector(
                         onTap: () => setState(() => quantity++),
                         child: Icon(
@@ -173,35 +186,25 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
+
+                /// 🔹 Book button
                 CustomElevatedButton(
                   isLoading: false,
                   onTap: () {
-                    if (selectedDate == null || selectedTime == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content:
-                                Text('Please select a date and time slot')),
-                      );
+                    if (selectedTime == null) {
+                      AppSnackBar.showSnackBar(context, 'select_slot'.tr());
                       return;
                     }
-
-                    final DateTime slotDateTime = _combineDateTime(
-                        selectedDate!, selectedTime!); // full datetime
-
+                    final DateTime slotDateTime =
+                        _combineDateTime(selectedDate, selectedTime!);
                     final ServiceEmployeeModel service = ServiceEmployeeModel(
                       serviceId: widget.service.serviceID,
                       quantity: quantity,
                       bookAt:
                           '${_format12Hour(slotDateTime)} ${slotDateTime.toIso8601String().split('T')[0]}',
                     );
-
                     Provider.of<QuoteProvider>(context, listen: false)
                         .addService(service);
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Service added successfully')),
-                    );
                     Navigator.pop(context);
                   },
                   title: 'request_quote'.tr(),

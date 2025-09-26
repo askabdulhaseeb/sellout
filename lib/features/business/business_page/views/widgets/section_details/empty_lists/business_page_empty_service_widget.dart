@@ -1,11 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../core/widgets/empty_page_widget.dart';
-import '../../../../../core/domain/entity/business_entity.dart';
 
 class BusinessPageEmptyServiceWidget extends StatelessWidget {
-  const BusinessPageEmptyServiceWidget({required this.business, super.key});
-  final BusinessEntity business;
+  const BusinessPageEmptyServiceWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

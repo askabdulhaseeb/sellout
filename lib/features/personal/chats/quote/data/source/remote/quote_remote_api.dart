@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/api_call.dart';
 import '../../../domain/params/request_quote_service_params.dart';
@@ -19,16 +21,22 @@ class QuoteRemoteDataSourceImpl implements QuoteRemoteDataSource {
         body: jsonEncode(params.toMap()),
       );
       if (result is DataSuccess<bool>) {
-        return DataSuccess<bool>('', true);
+        AppLog.info(result.data ?? '',
+            name: 'RequestQuoteRemoteDataSourceImpl.requestQuote - success');
+        final responseMap = jsonDecode(result.data ?? '');
+        final chatId = responseMap['chat_id'];
+        return DataSuccess<bool>(chatId, true);
       } else {
-        AppLog.error(result.exception?.message ?? '',
-            name: 'RequestQuoteRemoteDataSourceImpl.requestQuote - else',
-            error: 'Failed to request quote');
+        AppLog.error(
+          'somehting_wrong'.tr(),
+          name: 'RequestQuoteRemoteDataSourceImpl.requestQuote - failer',
+          error: result.exception?.message ?? '',
+        );
         return DataFailer<bool>(CustomException('Failed to request quote'));
       }
     } catch (e, stc) {
       AppLog.error('',
-          name: 'RequestQuoteRemoteDataSourceImpl.requestQuote - else',
+          name: 'RequestQuoteRemoteDataSourceImpl.requestQuote - catch',
           error: e,
           stackTrace: stc);
       return DataFailer<bool>(
@@ -42,12 +50,12 @@ class QuoteRemoteDataSourceImpl implements QuoteRemoteDataSource {
       final DataState<bool> result = await ApiCall<bool>().call(
         endpoint: '/quote/update',
         requestType: ApiRequestType.post,
-        body: jsonEncode(params.toMap()),
+        body: params.toJson(),
       );
       if (result is DataSuccess<bool>) {
         return DataSuccess<bool>('', true);
       } else {
-        AppLog.error(result.exception?.message ?? '',
+        AppLog.error(params.toJson(),
             name: 'RequestQuoteRemoteDataSourceImpl.requestQuote - else',
             error: 'Failed to request quote');
         return DataFailer<bool>(CustomException('Failed to request quote'));

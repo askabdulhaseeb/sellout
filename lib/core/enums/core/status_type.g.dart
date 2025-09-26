@@ -25,6 +25,8 @@ class StatusTypeAdapter extends TypeAdapter<StatusType> {
         return StatusType.rejected;
       case 23:
         return StatusType.cancelled;
+      case 24:
+        return StatusType.canceled;
       case 31:
         return StatusType.accepted;
       case 32:
@@ -64,6 +66,9 @@ class StatusTypeAdapter extends TypeAdapter<StatusType> {
         break;
       case StatusType.cancelled:
         writer.writeByte(23);
+        break;
+      case StatusType.canceled:
+        writer.writeByte(24);
         break;
       case StatusType.accepted:
         writer.writeByte(31);

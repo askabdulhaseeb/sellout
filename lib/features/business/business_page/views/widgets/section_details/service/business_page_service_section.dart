@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/loaders/loader.dart';
 import '../../../../../core/domain/entity/business_entity.dart';
+import '../../../../../core/domain/entity/service/service_entity.dart';
 import '../../../providers/business_page_provider.dart';
 import '../../business_page_employee_list_section.dart';
 import '../empty_lists/business_page_empty_service_widget.dart';
@@ -64,21 +65,20 @@ class _BusinessPageServiceSectionState
         BusinessPageServiceFilterSection(business: widget.business),
         BusinessPageEmployeeListSection(business: widget.business),
         Consumer<BusinessPageProvider>(
-          builder: (context, pagePro, _) {
-            final services = pagePro.services;
+          builder: (BuildContext context, BusinessPageProvider pagePro, _) {
+            final List<ServiceEntity> services = pagePro.services;
             if (pagePro.isLoading && services.isEmpty) {
               return const Center(child: Loader());
             }
             if (services.isEmpty) {
-              return BusinessPageEmptyServiceWidget(business: widget.business);
+              return const BusinessPageEmptyServiceWidget();
             }
-
             return ListView.builder(
-              controller: null, // no inner scroll, parent handles scrolling
+              controller: null,
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemCount: services.length + (pagePro.isLoadingMore ? 1 : 0),
-              itemBuilder: (context, index) {
+              itemBuilder: (BuildContext context, int index) {
                 if (index < services.length) {
                   return BusinessPageServiceTile(service: services[index]);
                 } else {

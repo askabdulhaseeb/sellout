@@ -1,5 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
+import 'package:provider/provider.dart';
 import '../../../../../../core/usecase/usecase.dart';
+import '../../../chat/views/providers/chat_provider.dart';
 import '../../data/models/service_employee_model.dart';
 import '../../domain/entites/time_slot_entity.dart';
 import '../../domain/params/get_service_slot_params.dart';
@@ -61,7 +64,7 @@ class QuoteProvider extends ChangeNotifier {
   }
 
   /// Request a quote
-  Future<bool> requestQuote(String businessId) async {
+  Future<bool> requestQuote(String businessId, context) async {
     _setLoading(true);
     RequestQuoteParams params = RequestQuoteParams(
         servicesAndEmployees: _selectedServices, businessId: businessId);
@@ -70,9 +73,12 @@ class QuoteProvider extends ChangeNotifier {
     _setLoading(false);
 
     if (result is DataSuccess<bool>) {
+      Provider.of<ChatProvider>(context, listen: false)
+          .createOrOpenChatById(context, result.data ?? '');
+
       return true;
     } else {
-      _errorMessage = result.exception?.message ?? 'Request failed';
+      _errorMessage = result.exception?.message ?? 'something_wrong'.tr();
       notifyListeners();
       return false;
     }
@@ -83,7 +89,6 @@ class QuoteProvider extends ChangeNotifier {
     _setLoading(true);
     final DataState<bool> result = await _updateQuoteUsecase.call(params);
     _setLoading(false);
-
     if (result is DataSuccess<bool>) {
       return true;
     } else {
