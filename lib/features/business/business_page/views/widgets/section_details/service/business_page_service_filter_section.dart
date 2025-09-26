@@ -73,8 +73,8 @@ class _BusinessPageServiceFilterSectionState
                   onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute<RequestQuoteScreen>(
-                        builder: (BuildContext context) =>
-                            RequestQuoteScreen(business: widget.business),
+                        builder: (BuildContext context) => RequestQuoteScreen(
+                            businessId: widget.business.businessID ?? ''),
                       )),
                   textStyle: Theme.of(context)
                       .textTheme
