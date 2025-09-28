@@ -43,7 +43,7 @@ class CustomElevatedButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color bgColorCore = isDisable
-        ? Theme.of(context).dividerColor
+        ? Theme.of(context).colorScheme.outlineVariant
         : bgColor ?? Theme.of(context).primaryColor;
     return isLoading
         ? const SizedBox(

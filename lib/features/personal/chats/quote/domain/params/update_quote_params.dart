@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import '../../../../../../core/enums/core/status_type.dart';
 
 class UpdateQuoteParams {

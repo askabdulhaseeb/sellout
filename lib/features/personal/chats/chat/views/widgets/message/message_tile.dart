@@ -8,6 +8,7 @@ import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart'
 import 'tile/alert_message_tile.dart';
 import 'tile/link_message_tile.dart';
 import 'tile/offer_message_tile.dart';
+import 'tile/quote_message_tile.dart';
 import 'tile/visiting_message_tile.dart';
 import 'tile/text_message_tile.dart';
 
@@ -79,18 +80,23 @@ class MessageTile extends StatelessWidget {
                                   ? SimpleMessageTile(
                                       message: message,
                                     )
-                                  : MessageType.offer == message.type
-                                      ? OfferMessageTile(
+                                  : MessageType.quote == message.type
+                                      ? QuoteMessageTile(
+                                          pinnedMessage: false,
                                           message: message,
-                                          showButtons: false,
                                         )
-                                      : MessageType.simple == message.type
-                                          ? SimpleMessageTile(
+                                      : MessageType.offer == message.type
+                                          ? OfferMessageTile(
                                               message: message,
+                                              showButtons: false,
                                             )
-                                          : Text(
-                                              '${message.displayText} - ${message.type?.code.tr()}',
-                                            )
+                                          : MessageType.simple == message.type
+                                              ? SimpleMessageTile(
+                                                  message: message,
+                                                )
+                                              : Text(
+                                                  '${message.displayText} - ${message.type?.code.tr()}',
+                                                )
             ],
           );
   }

@@ -6,18 +6,22 @@ import '../../../chat/views/providers/chat_provider.dart';
 import '../../data/models/service_employee_model.dart';
 import '../../domain/entites/time_slot_entity.dart';
 import '../../domain/params/get_service_slot_params.dart';
+import '../../domain/params/hold_quote_pay_params.dart';
 import '../../domain/params/request_quote_service_params.dart';
 import '../../domain/params/update_quote_params.dart';
 import '../../domain/usecases/get_service_slots_usecase.dart';
+import '../../domain/usecases/hold_quote_pay_usecase.dart';
 import '../../domain/usecases/request_quote_usecase.dart';
 import '../../domain/usecases/update_quote_usecase.dart';
 
 class QuoteProvider extends ChangeNotifier {
   QuoteProvider(this._requestQuoteUsecase, this._updateQuoteUsecase,
-      this._getServiceSlotsUsecase);
+      this._holdQuotePayUsecase, this._getServiceSlotsUsecase);
   final RequestQuoteUsecase _requestQuoteUsecase;
   final UpdateQuoteUsecase _updateQuoteUsecase;
   final GetServiceSlotsUsecase _getServiceSlotsUsecase;
+  final HoldQuotePayUsecase _holdQuotePayUsecase;
+
   final List<ServiceEmployeeModel> _selectedServices = <ServiceEmployeeModel>[];
   bool _isLoading = false;
   String? _errorMessage;
@@ -88,6 +92,20 @@ class QuoteProvider extends ChangeNotifier {
   Future<bool> updateQuote(UpdateQuoteParams params) async {
     _setLoading(true);
     final DataState<bool> result = await _updateQuoteUsecase.call(params);
+    _setLoading(false);
+    if (result is DataSuccess<bool>) {
+      return true;
+    } else {
+      _errorMessage = result.exception?.message ?? 'Update failed';
+      notifyListeners();
+      return false;
+    }
+  }
+
+  /// Hold Quote payment
+  Future<bool> holdQuotePay(HoldQuotePayParams params) async {
+    _setLoading(true);
+    final DataState<bool> result = await _holdQuotePayUsecase.call(params);
     _setLoading(false);
     if (result is DataSuccess<bool>) {
       return true;

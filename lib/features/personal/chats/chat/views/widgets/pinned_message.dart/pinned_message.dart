@@ -36,7 +36,7 @@ class ChatPinnedMessage extends StatelessWidget {
                   )
                 : chat.pinnedMessage!.quoteDetail != null
                     ? QuoteMessageTile(
-                        message: chat.pinnedMessage!, showButtons: true)
+                        message: chat.pinnedMessage!, pinnedMessage: true)
                     : const SizedBox.shrink();
       },
     );

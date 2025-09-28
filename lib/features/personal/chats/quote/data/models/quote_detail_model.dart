@@ -31,4 +31,18 @@ class QuoteDetailModel extends QuoteDetailEntity {
       currency: map['currency']?.toString() ?? '',
     );
   }
+
+  // /// --- To Map (optional if you want to send back to API) ---
+  // Map<String, dynamic> toMap() {
+  //   return {
+  //     'services_and_employees':
+  //         serviceEmployee.map((e) => (e as ServiceEmployeeModel).toMap()).toList(),
+  //     'seller_id': sellerId,
+  //     'buyer_id': buyerId,
+  //     'quote_id': quoteId,
+  //     'status': status.code,
+  //     'price': price,
+  //     'currency': currency,
+  //   };
+  // }
 }
