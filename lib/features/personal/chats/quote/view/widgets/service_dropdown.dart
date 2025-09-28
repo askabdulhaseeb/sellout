@@ -32,7 +32,6 @@ class _ServiceDropdownState extends State<ServiceDropdown>
   final FocusNode _focusNode = FocusNode();
   final LayerLink _layerLink = LayerLink();
   final ScrollController _scrollController = ScrollController();
-
   final List<ServiceEntity> _services = <ServiceEntity>[];
   String _lastKey = '';
   bool _hasMore = true;
@@ -177,12 +176,12 @@ class _ServiceDropdownState extends State<ServiceDropdown>
           child: Center(child: Text(_errorMessage!)),
         );
       }
-      return Padding(
-        padding: const EdgeInsets.all(16),
+      return const Padding(
+        padding: EdgeInsets.all(16),
         child: Center(
           child: Text(
             'No results found',
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
           ),
         ),
       );

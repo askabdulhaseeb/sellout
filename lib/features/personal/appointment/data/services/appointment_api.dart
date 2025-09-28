@@ -65,8 +65,7 @@ class AppointmentApiImpl implements AppointmentApi {
         isConnectType: true,
       );
       if (result is DataSuccess) {
-        AppLog.info(result.data.toString(),
-            name: 'AppointmnetApi.holdServicePayment - if');
+        AppLog.info('', name: 'AppointmnetApi.holdServicePayment - if');
         final HoldServiceResponse holdServiceModel =
             HoldServiceResponse.fromJson(result.data ?? '');
         return DataSuccess<HoldServiceResponse>(

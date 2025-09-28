@@ -108,7 +108,7 @@ class ApiCall<T> {
         AppLog.error(
           '${response.statusCode} - API: message -> ${decoded['message']} - detail -> ${decoded['details']}',
           name: 'ApiCall.call - else',
-          error: CustomException('ERROR: ${decoded['error']}'),
+          error: 'ERROR: ${decoded['error']}',
         );
         return DataFailer<T>(CustomException('ERROR: ${decoded['message']}',
             detail: '${decoded['details']}', reason: decoded['error']));

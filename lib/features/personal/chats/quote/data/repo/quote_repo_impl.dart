@@ -1,4 +1,5 @@
 import '../../../../../../core/sources/api_call.dart';
+import '../../domain/params/hold_quote_pay_params.dart';
 import '../../domain/params/request_quote_service_params.dart';
 import '../../domain/params/update_quote_params.dart';
 import '../../domain/repo/quote_repo.dart';
@@ -21,5 +22,10 @@ class QuoteRepoImpl implements QuoteRepo {
   @override
   Future<DataState<bool>> createQuote(bool params) async {
     return await remoteDataSource.createQuote(params);
+  }
+
+  @override
+  Future<DataState<bool>> holdQuotePayment(HoldQuotePayParams params) async {
+    return await remoteDataSource.holdQuotePayment(params);
   }
 }
