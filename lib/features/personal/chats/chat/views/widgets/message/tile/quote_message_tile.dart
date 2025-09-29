@@ -100,53 +100,63 @@ class QuoteMessageTile extends StatelessWidget {
                           margin: const EdgeInsets.symmetric(vertical: 2.0),
                           child: Row(
                             children: <Widget>[
+                              // LEFT SIDE — service name + quantity
                               Expanded(
                                 flex: 4,
-                                child: Text(
-                                  serviceName,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 12,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
+                                child: Row(
+                                  children: <Widget>[
+                                    Flexible(
+                                      child: Text(
+                                        serviceName,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    if (pinnedMessage)
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 4.0),
+                                        child: Text(
+                                          '×${se.quantity}',
+                                          style: const TextStyle(
+                                            fontSize: 11,
+                                            color: Colors.black54,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                  ],
                                 ),
                               ),
-                              if (pinnedMessage)
-                                Text(
-                                  '×${se.quantity}',
-                                  style: const TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.black54,
-                                  ),
-                                  textAlign: TextAlign.center,
+
+                              // RIGHT SIDE — bookAt time
+                              Text(
+                                se.bookAt,
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.black54,
                                 ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  se.bookAt,
-                                  style: const TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.black54,
-                                  ),
-                                  textAlign: TextAlign.end,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                                textAlign: TextAlign.end,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ],
                           ),
                         );
                       },
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${CountryHelper.currencySymbolHelper(message.quoteDetail?.currency)} ${quoteDetail.price.toString()}',
-                          style: TextTheme.of(context).titleSmall,
-                        ),
-                      ],
-                    ),
+                    if (quoteDetail.price != 0)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            '${CountryHelper.currencySymbolHelper(message.quoteDetail?.currency)} ${quoteDetail.price.toString()}',
+                            style: TextTheme.of(context).titleSmall,
+                          ),
+                        ],
+                      ),
                     if (message.type == MessageType.quote)
                       Row(
                         spacing: 2,
@@ -178,10 +188,6 @@ class QuoteMessageTile extends StatelessWidget {
                           if (message.quoteDetail?.status == StatusType.pending)
                             Expanded(
                               child: CustomElevatedButton(
-                                // border: Border.all(
-                                //   color: Theme.of(context).primaryColor,
-                                // ),
-                                // bgColor: Colors.transparent,
                                 textStyle: TextTheme.of(context)
                                     .bodyMedium
                                     ?.copyWith(

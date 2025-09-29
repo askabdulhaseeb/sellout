@@ -8,45 +8,42 @@ import '../../../../../core/extension/int_ext.dart';
 
 class AppointmentTileDatetimeSection extends StatelessWidget {
   const AppointmentTileDatetimeSection({required this.booking, super.key});
-
   final BookingEntity booking;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 100,
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      width: 88, // narrower
+      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
       decoration: BoxDecoration(
-        color: Theme.of(context).dividerColor,
-        borderRadius: BorderRadius.circular(8),
+        color: Theme.of(context).dividerColor.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(6),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          const SizedBox(height: 8),
-          SizedBox(
-            height: 20,
-            width: double.infinity,
-            child: FittedBox(
-              child: Text(
-                booking.bookedAt.monthFullName.toLowerCase().tr(),
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
-            ),
+          Text(
+            booking.bookedAt.monthFullName.toLowerCase().tr(),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 10,
+                ),
           ),
           Text(
             booking.bookedAt.day.putInStart(sign: '0', length: 2),
             style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(
-            height: 20,
-            child: FittedBox(
-              child: Text(
-                  '${booking.bookedAt.timeOnly} - ${booking.endAt.timeOnly}'),
-            ),
+          Text(
+            '${booking.bookedAt.timeOnly}–${booking.endAt.timeOnly}',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style:
+                Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 10),
           ),
         ],
       ),

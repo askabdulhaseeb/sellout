@@ -94,9 +94,11 @@ class AppointmentApiImpl implements AppointmentApi {
         isConnectType: true,
       );
       if (result is DataSuccess) {
-        AppLog.info('', name: 'AppointmnetApi.releaseQuotePayment - if');
+        AppLog.info('', name: 'AppointmnetApi.releaseQuotePayment - success');
         return DataSuccess<bool>(result.data ?? '', true);
       } else {
+        debugPrint(
+            json.encode(<String, String>{'transaction_id': transactionId}));
         AppLog.error(result.exception?.message ?? 'something_wrong'.tr(),
             name: 'AppointmnetApi.releaseQuotePayment - else',
             error: result.exception?.reason);

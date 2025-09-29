@@ -16,9 +16,6 @@ class AppointmentTileButtonSection extends StatelessWidget {
     debugPrint(booking.paymentDetail?.status?.json);
     return Consumer<AppointmentTileProvider>(
         builder: (BuildContext context, AppointmentTileProvider pro, _) {
-      if (booking.paymentDetail?.status == StatusType.onHold) {
-        debugPrint('booking ${booking.bookingID}');
-      }
       return pro.isLoading
           ? const Loader()
           : booking.isCompleted
@@ -28,7 +25,7 @@ class AppointmentTileButtonSection extends StatelessWidget {
                   children: <Widget>[
                     if (booking.paymentDetail?.status != StatusType.onHold)
                       Column(
-                        children: [
+                        children: <Widget>[
                           CustomElevatedButton(
                             title: 'book_again'.tr(),
                             isLoading: false,
@@ -55,8 +52,10 @@ class AppointmentTileButtonSection extends StatelessWidget {
                           title: 'release_payment'.tr(),
                           isLoading: false,
                           padding: const EdgeInsets.symmetric(vertical: 6),
-                          onTap: () async =>
-                              await pro.releasePayment(booking.trackingID)),
+                          onTap: () async {
+                            await pro.releasePayment(
+                                booking.paymentDetail?.transactionID);
+                          }),
                   ],
                 )
               : Column(

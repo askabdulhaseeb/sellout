@@ -16,22 +16,46 @@ class ServicePageUpcomingAppointmentSection extends StatelessWidget {
       valueListenable:
           Hive.box<BookingEntity>(LocalBooking.boxTitle).listenable(),
       builder: (BuildContext context, Box<BookingEntity> box, _) {
+        // 1️⃣ All user bookings
         final List<BookingEntity> allUserBookings =
             LocalBooking().userBooking(LocalAuth.uid ?? '');
-        // 🔥 Filter only pending ones
+        // 2️⃣ Filter pending + accepted
         final List<BookingEntity> pendingBookings = allUserBookings
-            .where(
-                (BookingEntity booking) => booking.status == StatusType.pending)
+            .where((BookingEntity booking) =>
+                booking.status == StatusType.pending ||
+                booking.status == StatusType.accepted ||
+                (booking.status == StatusType.completed &&
+                    booking.paymentDetail?.status == StatusType.onHold))
             .toList();
         if (pendingBookings.isEmpty) {
           return Center(child: Text('no_apointment_found'.tr()));
         }
+        // 3️⃣ Group by trackingID
+        final Map<String, List<BookingEntity>> grouped =
+            <String, List<BookingEntity>>{};
+        for (final BookingEntity booking in pendingBookings) {
+          grouped
+              .putIfAbsent(booking.trackingID ?? '', () => <BookingEntity>[])
+              .add(booking);
+        }
+
+        // 4️⃣ Convert to list for ListView.builder
+        final List<MapEntry<String, List<BookingEntity>>> groupedEntries =
+            grouped.entries.toList();
+
         return ListView.builder(
           shrinkWrap: true,
           primary: false,
-          itemCount: pendingBookings.length,
+          itemCount: groupedEntries.length,
           itemBuilder: (BuildContext context, int index) {
-            return AppointmentTile(booking: pendingBookings[index]);
+            // final String trackingID = groupedEntries[index].key;
+            final List<BookingEntity> groupedBookings =
+                groupedEntries[index].value;
+
+            // 📝 Pass grouped bookings or just the trackingID to your tile
+            return AppointmentTile(
+              booking: groupedBookings,
+            );
           },
         );
       },
