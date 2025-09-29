@@ -1,5 +1,4 @@
 import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
@@ -31,24 +30,6 @@ class _ChatScreenState extends State<ChatScreen> {
     Future<void>.delayed(const Duration(milliseconds: 300), () {
       // ignore: use_build_context_synchronously
       Provider.of<ChatProvider>(context, listen: false).getMessages();
-    });
-
-    scrollController.addListener(() {
-      final ChatProvider pro =
-          Provider.of<ChatProvider>(context, listen: false);
-      if (pro.chat?.type == ChatType.product) {
-        if (scrollController.position.userScrollDirection ==
-            ScrollDirection.reverse) {
-          if (pro.showPinnedMessage) {
-            pro.setPinnedMessageVisibility(false);
-          }
-        } else if (scrollController.position.userScrollDirection ==
-            ScrollDirection.forward) {
-          if (!pro.showPinnedMessage) {
-            pro.setPinnedMessageVisibility(true);
-          }
-        }
-      }
     });
   }
 

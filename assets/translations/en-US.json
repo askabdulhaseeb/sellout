@@ -1039,6 +1039,7 @@
   "reason":"Reason",
   "no_available_slots":"No available slots",
   "select_slot":"Please select a time slot",
+  "quote":"quote",
   "declined":"Declined",
   "add_reason_for_repot_please": "Please add reason for report",
   "safety_matters_title": "Your safety matters to us!",

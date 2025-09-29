@@ -8,4 +8,5 @@ abstract class QuoteRepo {
   Future<DataState<bool>> updateQuote(UpdateQuoteParams params);
   Future<DataState<bool>> createQuote(bool params);
   Future<DataState<bool>> holdQuotePayment(HoldQuotePayParams params);
+  Future<DataState<String>> releaseQuotePayment(String transactionId);
 }

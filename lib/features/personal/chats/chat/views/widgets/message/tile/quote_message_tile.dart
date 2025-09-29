@@ -32,7 +32,7 @@ class QuoteMessageTile extends StatelessWidget {
     final bool isMe = message.sendBy == LocalAuth.uid;
     final QuoteDetailEntity? quoteDetail = message.quoteDetail;
     return Container(
-      margin: EdgeInsets.all(pinnedMessage ? 0 : 16),
+      margin: EdgeInsets.symmetric(horizontal: pinnedMessage ? 0 : 16),
       decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(6),
@@ -47,34 +47,6 @@ class QuoteMessageTile extends StatelessWidget {
         children: <Widget>[
           if (pinnedMessage)
             Divider(height: 1, color: Theme.of(context).dividerColor),
-          if (pinnedMessage)
-            const Row(
-              children: <Widget>[
-                // if (message.quoteDetail?.status == StatusType.pending)
-                //   Expanded(
-                //     child: CustomElevatedButton(
-                //       border: Border.all(
-                //         color: Theme.of(context).primaryColor,
-                //       ),
-                //       bgColor: Colors.transparent,
-                //       textStyle: TextTheme.of(context)
-                //           .bodyMedium
-                //           ?.copyWith(color: Theme.of(context).primaryColor),
-                //       padding: const EdgeInsets.all(4),
-                //       margin: const EdgeInsets.all(4),
-                //       title: 'cancel'.tr(),
-                //       isLoading: false,
-                //       onTap: () =>
-                //           Provider.of<QuoteProvider>(context, listen: false)
-                //               .updateQuote(UpdateQuoteParams(
-                //                   quoteId: message.quoteDetail?.quoteId ?? '',
-                //                   messageId: message.messageId,
-                //                   chatId: message.chatId,
-                //                   status: StatusType.canceled)),
-                //     ),
-                //   ),
-              ],
-            ),
           if (pinnedMessage)
             Divider(height: 1, color: Theme.of(context).dividerColor),
           if (quoteDetail != null && quoteDetail.serviceEmployee.isNotEmpty)
@@ -100,21 +72,10 @@ class QuoteMessageTile extends StatelessWidget {
                 final List<ServiceEntity?> services = snapshot.data!;
                 return Column(
                   children: <Widget>[
-                    if (message.type == MessageType.requestQuote)
-                      Text(
-                        'request_quote'.tr(),
-                        style: TextTheme.of(context).titleSmall,
-                      ),
-                    if (message.type == MessageType.quote)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            '${'quote'.tr()}(${CountryHelper.currencySymbolHelper(message.quoteDetail?.currency)} ${quoteDetail.price.toString()})',
-                            style: TextTheme.of(context).titleSmall,
-                          ),
-                        ],
-                      ),
+                    Text(
+                      message.displayText,
+                      style: TextTheme.of(context).titleSmall,
+                    ),
                     ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
@@ -176,6 +137,15 @@ class QuoteMessageTile extends StatelessWidget {
                           ),
                         );
                       },
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${CountryHelper.currencySymbolHelper(message.quoteDetail?.currency)} ${quoteDetail.price.toString()}',
+                          style: TextTheme.of(context).titleSmall,
+                        ),
+                      ],
                     ),
                     if (message.type == MessageType.quote)
                       Row(
@@ -252,6 +222,24 @@ class QuoteMessageTile extends StatelessWidget {
                                 },
                               ),
                             ),
+                          //  if (message.quoteDetail?.status ==
+                          //   StatusType.)
+                          // Expanded(
+                          //   child: CustomElevatedButton(
+                          //     isDisable: true,
+                          //     bgColor: Colors.transparent,
+                          //     textStyle: TextTheme.of(context)
+                          //         .bodyMedium
+                          //         ?.copyWith(
+                          //             color: Theme.of(context)
+                          //                 .colorScheme
+                          //                 .onPrimary),
+                          //     padding: const EdgeInsets.all(4),
+                          //     title: 'declined'.tr(),
+                          //     isLoading: false,
+                          //     onTap: () {},
+                          //   ),
+                          // ),
                           if (message.quoteDetail?.status ==
                               StatusType.canceled)
                             Expanded(

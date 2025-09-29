@@ -26,7 +26,7 @@ class ChatDashboardSearchableWidget extends StatelessWidget {
                   if (ChatPageType.orders == pagePro.currentPage) {
                     pagePro.updateSearchQuery(value);
                   } else if (ChatPageType.services == pagePro.currentPage) {
-                    //skipping for the moment
+                    pagePro.updateSearchQuery(value);
                   } else if (ChatPageType.groups == pagePro.currentPage) {
                     pagePro.updateSearchQuery(value);
                   }

@@ -10,6 +10,7 @@ abstract class QuoteRemoteDataSource {
   Future<DataState<bool>> updateQuote(UpdateQuoteParams params);
   Future<DataState<bool>> createQuote(bool params); // buisness related api
   Future<DataState<String>> holdQuotePayment(HoldQuotePayParams params);
+  Future<DataState<String>> releaseQuotePayment(String transactionId);
 }
 
 class QuoteRemoteDataSourceImpl implements QuoteRemoteDataSource {
@@ -88,20 +89,50 @@ class QuoteRemoteDataSourceImpl implements QuoteRemoteDataSource {
         isConnectType: true,
       );
       if (result is DataSuccess) {
-        AppLog.info(result.data.toString(),
-            name: 'AppointmnetApi.holdQuotePayment - if');
+        AppLog.info('',
+            name: 'RequestQuoteRemoteDataSourceImpl.holdQuotePayment - if');
         final Map<String, dynamic> map = json.decode(result.data ?? '');
         final String clientSecret = map['clientSecret'];
         return DataSuccess<String>(result.data ?? '', clientSecret);
       } else {
         AppLog.error(result.exception?.message ?? 'something_wrong'.tr(),
-            name: 'AppointmnetApi.holdQuotePayment - else',
+            name: 'RequestQuoteRemoteDataSourceImpl.holdQuotePayment - else',
             error: result.exception?.reason);
         return DataFailer<String>(result.exception!);
       }
     } catch (e) {
       AppLog.error('something_wrong'.tr(),
-          name: 'AppointmnetApi.holdQuotePayment - catch');
+          name: 'RequestQuoteRemoteDataSourceImpl.holdQuotePayment - catch');
+      return DataFailer<String>(CustomException(e.toString()));
+    }
+  }
+
+  @override
+  Future<DataState<String>> releaseQuotePayment(String transactionId) async {
+    try {
+      const String endpoint = '/payment/release';
+      final DataState<String> result = await ApiCall<String>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.post,
+        body: json.encode({'transaction_id': transactionId}),
+        isAuth: true,
+        isConnectType: true,
+      );
+      if (result is DataSuccess) {
+        AppLog.info('',
+            name: 'RequestQuoteRemoteDataSourceImpl.releaseQuotePayment - if');
+        final Map<String, dynamic> map = json.decode(result.data ?? '');
+        final String clientSecret = map['clientSecret'];
+        return DataSuccess<String>(result.data ?? '', clientSecret);
+      } else {
+        AppLog.error(result.exception?.message ?? 'something_wrong'.tr(),
+            name: 'RequestQuoteRemoteDataSourceImpl.releaseQuotePayment - else',
+            error: result.exception?.reason);
+        return DataFailer<String>(result.exception!);
+      }
+    } catch (e) {
+      AppLog.error('something_wrong'.tr(),
+          name: 'RequestQuoteRemoteDataSourceImpl.releaseQuotePayment - catch');
       return DataFailer<String>(CustomException(e.toString()));
     }
   }
