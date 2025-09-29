@@ -1,11 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../business/core/data/sources/local_business.dart';
 import '../../../../business/core/data/sources/service/local_service.dart';
-import '../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../bookings/domain/entity/booking_entity.dart';
+import '../../../user/profiles/data/sources/local/local_user.dart';
 import '../providers/appointment_tile_provider.dart';
 
 class AppointmentTileBookingDetailSection extends StatelessWidget {
@@ -17,12 +16,11 @@ class AppointmentTileBookingDetailSection extends StatelessWidget {
     final AppointmentTileProvider pro =
         Provider.of<AppointmentTileProvider>(context, listen: false);
 
-    return FutureBuilder<BusinessEntity?>(
-      future: LocalBusiness().getBusiness(booking.businessID ?? ''),
-      builder: (BuildContext context, AsyncSnapshot<BusinessEntity?> snapshot) {
-        final BusinessEntity? business = snapshot.data;
-        pro.setbusiness(business);
-
+    return FutureBuilder<UserEntity?>(
+      future: LocalUser().user(booking.employeeID),
+      builder: (BuildContext context, AsyncSnapshot<UserEntity?> snapshot) {
+        final UserEntity? user = snapshot.data;
+        // pro.setbusiness(business);
         return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -48,7 +46,7 @@ class AppointmentTileBookingDetailSection extends StatelessWidget {
                     },
                   ),
                   Text(
-                    '${'with'.tr()} ${business?.displayName ?? 'unknow_business'.tr()}',
+                    '${'with'.tr()} ${user?.displayName ?? 'na'.tr()}',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
