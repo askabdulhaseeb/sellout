@@ -1,37 +1,35 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import '../../../../business/core/data/sources/local_business.dart';
+import '../../../../business/core/domain/entity/business_entity.dart';
 import '../../../bookings/domain/entity/booking_entity.dart';
-import '../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../../../core/widgets/profile_photo.dart';
-import '../providers/appointment_tile_provider.dart';
 
-class AppointmentTileUserInfoSection extends StatelessWidget {
-  const AppointmentTileUserInfoSection({required this.booking, super.key});
+class AppointmentTileBusienssInfoSection extends StatelessWidget {
+  const AppointmentTileBusienssInfoSection({required this.booking, super.key});
   final BookingEntity booking;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
-      child: FutureBuilder<UserEntity?>(
-        future: LocalUser().user(
-            booking.amICustomer ? booking.employeeID : booking.customerID),
+      child: FutureBuilder<BusinessEntity?>(
+        future: LocalBusiness().getBusiness(booking.businessID ?? ''),
         builder: (
           BuildContext context,
-          AsyncSnapshot<UserEntity?> snapshot,
+          AsyncSnapshot<BusinessEntity?> snapshot,
         ) {
-          final UserEntity? user = snapshot.data;
-          if (user != null) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              context.read<AppointmentTileProvider>().setUser(user);
-            });
-          }
+          final BusinessEntity? business = snapshot.data;
+          // if (user != null) {
+          //   WidgetsBinding.instance.addPostFrameCallback((_) {
+          //     context.read<AppointmentTileProvider>().setUser(user);
+          //   });
+          // }
           return Row(
             children: <Widget>[
               ProfilePhoto(
-                url: user?.profilePhotoURL,
-                placeholder: user?.displayName ?? '',
+                url: business?.logo?.url ?? '',
+                placeholder: business?.displayName ?? '',
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -40,7 +38,7 @@ class AppointmentTileUserInfoSection extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      user?.displayName ?? 'na'.tr(),
+                      business?.displayName ?? 'na'.tr(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
@@ -48,9 +46,9 @@ class AppointmentTileUserInfoSection extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    if (user != null && user.address.isNotEmpty)
+                    if (business != null)
                       Text(
-                        '${user.address.first.townCity}/${user.address.first.country}',
+                        '${business.address?.firstAddress}/${business.address?.city}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(

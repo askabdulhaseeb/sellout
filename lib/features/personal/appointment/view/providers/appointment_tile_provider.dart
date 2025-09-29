@@ -151,6 +151,7 @@ class AppointmentTileProvider extends ChangeNotifier {
 
   Future<void> releasePayment(String? transactionId) async {
     setLoading(true);
+    debugPrint(transactionId);
     final DataState<bool> result =
         await _releasePaymentUsecase.call(transactionId ?? '');
     setLoading(false);
