@@ -23,7 +23,7 @@ class BookQuoteScreen extends StatefulWidget {
 }
 
 class _BookQuoteScreenState extends State<BookQuoteScreen> {
-  DateTime selectedDate = DateTime.now();
+  DateTime selectedDate = DateTime.now().add(const Duration(days: 1));
   String? selectedTime;
   bool isLoadingBusiness = true;
   String? businessError;

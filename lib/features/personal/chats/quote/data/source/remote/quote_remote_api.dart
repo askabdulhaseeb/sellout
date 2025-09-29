@@ -9,7 +9,7 @@ abstract class QuoteRemoteDataSource {
   Future<DataState<bool>> requestQuote(RequestQuoteParams params);
   Future<DataState<bool>> updateQuote(UpdateQuoteParams params);
   Future<DataState<bool>> createQuote(bool params); // buisness related api
-  Future<DataState<bool>> holdQuotePayment(HoldQuotePayParams params);
+  Future<DataState<String>> holdQuotePayment(HoldQuotePayParams params);
 }
 
 class QuoteRemoteDataSourceImpl implements QuoteRemoteDataSource {
@@ -77,10 +77,10 @@ class QuoteRemoteDataSourceImpl implements QuoteRemoteDataSource {
   }
 
   @override
-  Future<DataState<bool>> holdQuotePayment(HoldQuotePayParams params) async {
+  Future<DataState<String>> holdQuotePayment(HoldQuotePayParams params) async {
     try {
       const String endpoint = '/payment/quote';
-      final DataState<bool> result = await ApiCall<bool>().call(
+      final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,
         requestType: ApiRequestType.post,
         body: json.encode(params.toMap()),
@@ -90,17 +90,19 @@ class QuoteRemoteDataSourceImpl implements QuoteRemoteDataSource {
       if (result is DataSuccess) {
         AppLog.info(result.data.toString(),
             name: 'AppointmnetApi.holdQuotePayment - if');
-        return DataSuccess<bool>(result.data ?? '', false);
+        final Map<String, dynamic> map = json.decode(result.data ?? '');
+        final String clientSecret = map['clientSecret'];
+        return DataSuccess<String>(result.data ?? '', clientSecret);
       } else {
         AppLog.error(result.exception?.message ?? 'something_wrong'.tr(),
             name: 'AppointmnetApi.holdQuotePayment - else',
             error: result.exception?.reason);
-        return DataFailer<bool>(result.exception!);
+        return DataFailer<String>(result.exception!);
       }
     } catch (e) {
       AppLog.error('something_wrong'.tr(),
           name: 'AppointmnetApi.holdQuotePayment - catch');
-      return DataFailer<bool>(CustomException(e.toString()));
+      return DataFailer<String>(CustomException(e.toString()));
     }
   }
 }

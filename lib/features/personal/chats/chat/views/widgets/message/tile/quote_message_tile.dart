@@ -48,31 +48,31 @@ class QuoteMessageTile extends StatelessWidget {
           if (pinnedMessage)
             Divider(height: 1, color: Theme.of(context).dividerColor),
           if (pinnedMessage)
-            Row(
+            const Row(
               children: <Widget>[
-                if (message.quoteDetail?.status == StatusType.pending)
-                  Expanded(
-                    child: CustomElevatedButton(
-                      border: Border.all(
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      bgColor: Colors.transparent,
-                      textStyle: TextTheme.of(context)
-                          .bodyMedium
-                          ?.copyWith(color: Theme.of(context).primaryColor),
-                      padding: const EdgeInsets.all(4),
-                      margin: const EdgeInsets.all(4),
-                      title: 'cancel'.tr(),
-                      isLoading: false,
-                      onTap: () =>
-                          Provider.of<QuoteProvider>(context, listen: false)
-                              .updateQuote(UpdateQuoteParams(
-                                  quoteId: message.quoteDetail?.quoteId ?? '',
-                                  messageId: message.messageId,
-                                  chatId: message.chatId,
-                                  status: StatusType.canceled)),
-                    ),
-                  ),
+                // if (message.quoteDetail?.status == StatusType.pending)
+                //   Expanded(
+                //     child: CustomElevatedButton(
+                //       border: Border.all(
+                //         color: Theme.of(context).primaryColor,
+                //       ),
+                //       bgColor: Colors.transparent,
+                //       textStyle: TextTheme.of(context)
+                //           .bodyMedium
+                //           ?.copyWith(color: Theme.of(context).primaryColor),
+                //       padding: const EdgeInsets.all(4),
+                //       margin: const EdgeInsets.all(4),
+                //       title: 'cancel'.tr(),
+                //       isLoading: false,
+                //       onTap: () =>
+                //           Provider.of<QuoteProvider>(context, listen: false)
+                //               .updateQuote(UpdateQuoteParams(
+                //                   quoteId: message.quoteDetail?.quoteId ?? '',
+                //                   messageId: message.messageId,
+                //                   chatId: message.chatId,
+                //                   status: StatusType.canceled)),
+                //     ),
+                //   ),
               ],
             ),
           if (pinnedMessage)
@@ -150,14 +150,15 @@ class QuoteMessageTile extends StatelessWidget {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              Text(
-                                '×${se.quantity}',
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.black54,
+                              if (pinnedMessage)
+                                Text(
+                                  '×${se.quantity}',
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.black54,
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
-                                textAlign: TextAlign.center,
-                              ),
                               const SizedBox(width: 8),
                               Expanded(
                                 flex: 2,
@@ -178,6 +179,7 @@ class QuoteMessageTile extends StatelessWidget {
                     ),
                     if (message.type == MessageType.quote)
                       Row(
+                        spacing: 2,
                         children: <Widget>[
                           if (message.quoteDetail?.status == StatusType.pending)
                             Expanded(
@@ -228,15 +230,34 @@ class QuoteMessageTile extends StatelessWidget {
                                 },
                               ),
                             ),
+                          if (message.quoteDetail?.status == StatusType.paid)
+                            Expanded(
+                              child: CustomElevatedButton(
+                                isDisable: true,
+                                textStyle: TextTheme.of(context)
+                                    .bodyMedium
+                                    ?.copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary),
+                                padding: const EdgeInsets.all(4),
+                                title: 'paid'.tr(),
+                                isLoading: false,
+                                onTap: () {
+                                  Provider.of<QuoteProvider>(context,
+                                          listen: false)
+                                      .holdQuotePay(HoldQuotePayParams(
+                                          currency: quoteDetail.currency,
+                                          quoteId: quoteDetail.quoteId));
+                                },
+                              ),
+                            ),
                           if (message.quoteDetail?.status ==
                               StatusType.canceled)
                             Expanded(
                               child: CustomElevatedButton(
                                 isDisable: true,
-                                // border: Border.all(
-                                //   color: Theme.of(context).primaryColor,
-                                // ),
-                                // bgColor: Colors.transparent,
+                                bgColor: Colors.transparent,
                                 textStyle: TextTheme.of(context)
                                     .bodyMedium
                                     ?.copyWith(

@@ -107,11 +107,10 @@ class QuoteProvider extends ChangeNotifier {
     _setLoading(true);
     final DataState<bool> result = await _holdQuotePayUsecase.call(params);
     _setLoading(false);
-    if (result is DataSuccess<bool>) {
+    if (result is DataSuccess<String>) {
       return true;
     } else {
       _errorMessage = result.exception?.message ?? 'Update failed';
-      notifyListeners();
       return false;
     }
   }
