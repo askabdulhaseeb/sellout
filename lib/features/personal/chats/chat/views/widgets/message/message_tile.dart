@@ -2,6 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../core/enums/message/message_type.dart';
 import '../../../../../../../core/extension/datetime_ext.dart';
+import '../../../../../../business/core/data/sources/local_business.dart';
+import '../../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
@@ -19,7 +21,9 @@ class MessageTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isBusiness = message.sendBy.startsWith('BU');
     final bool isMe = message.sendBy == LocalAuth.uid;
+
     return MessageType.invitationParticipant == message.type ||
             MessageType.acceptInvitation == message.type ||
             MessageType.removeParticipant == message.type ||
@@ -30,36 +34,15 @@ class MessageTile extends StatelessWidget {
                 isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
+              // 🔹 Name + timestamp above the message
               if (timeDiff != null && timeDiff!.inMinutes > 1)
                 Padding(
                   padding: const EdgeInsets.only(left: 20, right: 20, top: 12),
-                  child: FutureBuilder<UserEntity?>(
-                    future: LocalUser().user(message.sendBy),
-                    initialData: LocalUser().userEntity(message.sendBy),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<UserEntity?> snapshot) {
-                      return RichText(
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        text: TextSpan(
-                          style:
-                              TextStyle(color: Theme.of(context).disabledColor),
-                          children: <TextSpan>[
-                            TextSpan(
-                              text: snapshot.data?.displayName ?? 'na'.tr(),
-                              style: TextStyle(
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .color,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            TextSpan(text: ' . ${message.createdAt.timeOnly}'),
-                          ],
-                        ),
-                      );
-                    },
+                  child: MessageSenderName(
+                    senderId: message.sendBy,
+                    isBusiness: isBusiness,
+                    timestamp:
+                        message.createdAt.timeOnly, // or your formatted time
                   ),
                 ),
               MessageType.none == message.type
@@ -99,5 +82,69 @@ class MessageTile extends StatelessWidget {
                                                 )
             ],
           );
+  }
+}
+
+class MessageSenderName extends StatelessWidget {
+  const MessageSenderName({
+    required this.senderId,
+    required this.timestamp,
+    super.key,
+    this.isBusiness = false,
+  });
+
+  final String senderId;
+  final bool isBusiness;
+  final String timestamp;
+
+  @override
+  Widget build(BuildContext context) {
+    if (isBusiness) {
+      // Business path – typed FutureBuilder<BusinessEntity>
+      return FutureBuilder<BusinessEntity?>(
+        future: LocalBusiness().getBusiness(senderId),
+        builder:
+            (BuildContext context, AsyncSnapshot<BusinessEntity?> snapshot) {
+          String displayName = 'na'.tr();
+          if (snapshot.hasData && snapshot.data != null) {
+            displayName = snapshot.data!.displayName ?? 'na'.tr();
+          }
+          return _buildRichText(context, displayName);
+        },
+      );
+    } else {
+      // User path – typed FutureBuilder<UserEntity>
+      return FutureBuilder<UserEntity?>(
+        future: LocalUser().user(senderId),
+        initialData: LocalUser().userEntity(senderId), // cache
+        builder: (BuildContext context, AsyncSnapshot<UserEntity?> snapshot) {
+          String displayName = 'na'.tr();
+          if (snapshot.hasData && snapshot.data != null) {
+            displayName = snapshot.data!.displayName;
+          }
+          return _buildRichText(context, displayName);
+        },
+      );
+    }
+  }
+
+  Widget _buildRichText(BuildContext context, String displayName) {
+    return RichText(
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      text: TextSpan(
+        style: TextStyle(color: Theme.of(context).disabledColor),
+        children: <TextSpan>[
+          TextSpan(
+            text: displayName,
+            style: TextStyle(
+              color: Theme.of(context).textTheme.bodySmall!.color,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          TextSpan(text: ' • $timestamp'),
+        ],
+      ),
+    );
   }
 }

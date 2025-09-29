@@ -143,5 +143,6 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
   ChangeNotifierProvider<NotificationProvider>.value(
       value: NotificationProvider(locator())),
   ChangeNotifierProvider<QuoteProvider>.value(
-      value: QuoteProvider(locator(), locator(), locator(), locator())),
+      value:
+          QuoteProvider(locator(), locator(), locator(), locator(), locator())),
 ]; //

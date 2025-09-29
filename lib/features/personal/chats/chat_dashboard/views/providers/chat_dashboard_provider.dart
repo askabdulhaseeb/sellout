@@ -87,7 +87,6 @@ class ChatDashboardProvider extends ChangeNotifier {
       filtered =
           filtered.where((ChatEntity c) => c.type == ChatType.group).toList();
     }
-
     // --- Search filter ---
     if (_searchQuery.isNotEmpty) {
       filtered = filtered.where((ChatEntity chat) {
