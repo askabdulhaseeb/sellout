@@ -6,7 +6,7 @@ import '../../../bookings/domain/entity/booking_entity.dart';
 import '../../../../business/core/domain/entity/business_entity.dart';
 import '../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../../../core/widgets/in_dev_mode.dart';
-import '../widgets/appointment_tile_button_section.dart';
+import '../widgets/appointment_tile_buttons/appointment_tile_update_button_section.dart';
 import '../widgets/business_detail_widgets/appointment_detail_description.dart';
 import '../widgets/business_detail_widgets/appointment_detail_map.dart';
 
@@ -84,7 +84,7 @@ class AppointmentDetailScreen extends StatelessWidget {
       bottomSheet: BottomAppBar(
         color: Theme.of(context).scaffoldBackgroundColor,
         height: 140,
-        child: AppointmentTileButtonSection(
+        child: AppointmentTileUpdateButtonSection(
           booking: booking,
         ),
       ),

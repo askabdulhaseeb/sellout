@@ -13,11 +13,11 @@ class AppointmentTileDatetimeSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 88, // narrower
-      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
+      width: 76,
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
       decoration: BoxDecoration(
-        color: Theme.of(context).dividerColor.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(6),
+        color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -28,22 +28,23 @@ class AppointmentTileDatetimeSection extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
                   fontWeight: FontWeight.w500,
-                  fontSize: 10,
+                  fontSize: 9,
                 ),
           ),
+          const SizedBox(height: 2),
           Text(
             booking.bookedAt.day.putInStart(sign: '0', length: 2),
             style: const TextStyle(
-              fontSize: 16,
+              fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
           ),
+          const SizedBox(height: 2),
           Text(
             '${booking.bookedAt.timeOnly}–${booking.endAt.timeOnly}',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style:
-                Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 10),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 9),
           ),
         ],
       ),
