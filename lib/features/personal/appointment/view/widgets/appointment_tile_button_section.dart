@@ -13,8 +13,12 @@ class AppointmentTileButtonSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(booking.paymentDetail?.status?.json);
     return Consumer<AppointmentTileProvider>(
         builder: (BuildContext context, AppointmentTileProvider pro, _) {
+      if (booking.paymentDetail?.status == StatusType.onHold) {
+        debugPrint('booking ${booking.bookingID}');
+      }
       return pro.isLoading
           ? const Loader()
           : booking.isCompleted
@@ -22,25 +26,37 @@ class AppointmentTileButtonSection extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    CustomElevatedButton(
-                      title: 'book_again'.tr(),
-                      isLoading: false,
-                      margin: const EdgeInsets.only(top: 8),
-                      padding: const EdgeInsets.symmetric(vertical: 6),
-                      bgColor: Theme.of(context).colorScheme.secondary,
-                      onTap: () async =>
-                          await pro.onBookAgain(context, booking),
-                    ),
-                    CustomElevatedButton(
-                      title: 'leave_a_review'.tr(),
-                      isLoading: false,
-                      bgColor: Colors.transparent,
-                      border:
-                          Border.all(color: Theme.of(context).disabledColor),
-                      padding: const EdgeInsets.symmetric(vertical: 6),
-                      onTap: () async =>
-                          await pro.onLeaveReview(context, booking),
-                    ),
+                    if (booking.paymentDetail?.status != StatusType.onHold)
+                      Column(
+                        children: [
+                          CustomElevatedButton(
+                            title: 'book_again'.tr(),
+                            isLoading: false,
+                            margin: const EdgeInsets.only(top: 8),
+                            padding: const EdgeInsets.symmetric(vertical: 6),
+                            bgColor: Theme.of(context).colorScheme.secondary,
+                            onTap: () async =>
+                                await pro.onBookAgain(context, booking),
+                          ),
+                          CustomElevatedButton(
+                            title: 'leave_a_review'.tr(),
+                            isLoading: false,
+                            bgColor: Colors.transparent,
+                            border: Border.all(
+                                color: Theme.of(context).disabledColor),
+                            padding: const EdgeInsets.symmetric(vertical: 6),
+                            onTap: () async =>
+                                await pro.onLeaveReview(context, booking),
+                          ),
+                        ],
+                      ),
+                    if (booking.paymentDetail?.status == StatusType.onHold)
+                      CustomElevatedButton(
+                          title: 'release_payment'.tr(),
+                          isLoading: false,
+                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          onTap: () async =>
+                              await pro.releasePayment(booking.trackingID)),
                   ],
                 )
               : Column(
@@ -85,6 +101,14 @@ class AppointmentTileButtonSection extends StatelessWidget {
                     if (booking.paymentDetail?.status == StatusType.pending)
                       CustomElevatedButton(
                         title: 'pay_now'.tr(),
+                        isLoading: false,
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        onTap: () async => await pro.onPayNow(context, booking),
+                      ),
+                    if (booking.paymentDetail?.status == StatusType.onHold)
+                      CustomElevatedButton(
+                        isDisable: true,
+                        title: 'paid'.tr(),
                         isLoading: false,
                         padding: const EdgeInsets.symmetric(vertical: 6),
                         onTap: () async => await pro.onPayNow(context, booking),

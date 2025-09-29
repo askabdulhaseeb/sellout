@@ -6,6 +6,6 @@ import '../params/update_appointment_params.dart';
 abstract interface class AppointmentRepository {
   Future<DataState<bool>> updateAppointment(UpdateAppointmentParams param);
   Future<DataState<HoldServiceResponse>> holdServicePayment(
-    HoldServiceParams params,
-  );
+      HoldServiceParams params);
+  Future<DataState<bool>> releasePayment(String transactionId);
 }

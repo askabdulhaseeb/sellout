@@ -11,22 +11,16 @@ import '../../domain/params/request_quote_service_params.dart';
 import '../../domain/params/update_quote_params.dart';
 import '../../domain/usecases/get_service_slots_usecase.dart';
 import '../../domain/usecases/hold_quote_pay_usecase.dart';
-import '../../domain/usecases/release_payment_usecase.dart';
 import '../../domain/usecases/request_quote_usecase.dart';
 import '../../domain/usecases/update_quote_usecase.dart';
 
 class QuoteProvider extends ChangeNotifier {
-  QuoteProvider(
-      this._requestQuoteUsecase,
-      this._updateQuoteUsecase,
-      this._holdQuotePayUsecase,
-      this._getServiceSlotsUsecase,
-      this._releaseQuotePayUsecase);
+  QuoteProvider(this._requestQuoteUsecase, this._updateQuoteUsecase,
+      this._holdQuotePayUsecase, this._getServiceSlotsUsecase);
   final RequestQuoteUsecase _requestQuoteUsecase;
   final UpdateQuoteUsecase _updateQuoteUsecase;
   final GetServiceSlotsUsecase _getServiceSlotsUsecase;
   final HoldQuotePayUsecase _holdQuotePayUsecase;
-  final ReleaseQuotePayUsecase _releaseQuotePayUsecase;
 
   final List<ServiceEmployeeModel> _selectedServices = <ServiceEmployeeModel>[];
   bool _isLoading = false;
@@ -117,19 +111,6 @@ class QuoteProvider extends ChangeNotifier {
       return true;
     } else {
       _errorMessage = result.exception?.message ?? 'hold pay failed';
-      return false;
-    }
-  }
-
-  Future<bool> releaseQuotePayUsecase(String transactionId) async {
-    _setLoading(true);
-    final DataState<String> result =
-        await _releaseQuotePayUsecase.call(transactionId);
-    _setLoading(false);
-    if (result is DataSuccess<String>) {
-      return true;
-    } else {
-      _errorMessage = result.exception?.message ?? 'realease pay failed';
       return false;
     }
   }

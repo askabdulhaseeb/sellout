@@ -65,7 +65,7 @@ import '../features/personal/chats/quote/data/source/remote/quote_remote_api.dar
 import '../features/personal/chats/quote/domain/repo/quote_repo.dart';
 import '../features/personal/chats/quote/domain/usecases/get_service_slots_usecase.dart';
 import '../features/personal/chats/quote/domain/usecases/hold_quote_pay_usecase.dart';
-import '../features/personal/chats/quote/domain/usecases/release_payment_usecase.dart';
+import '../features/personal/appointment/domain/usecase/release_payment_usecase.dart';
 import '../features/personal/chats/quote/domain/usecases/request_quote_usecase.dart';
 import '../features/personal/chats/quote/domain/usecases/update_quote_usecase.dart';
 import '../features/personal/chats/quote/view/provider/quote_provider.dart';
@@ -507,9 +507,11 @@ void _appointment() {
       () => UpdateAppointmentUsecase(locator()));
   locator.registerFactory<HoldServicePaymentUsecase>(
       () => HoldServicePaymentUsecase(locator()));
+  locator.registerFactory<ReleasePaymentUsecase>(
+      () => ReleasePaymentUsecase(locator()));
   // Providers
-  locator.registerFactory<AppointmentTileProvider>(
-      () => AppointmentTileProvider(locator(), locator(), locator()));
+  locator.registerFactory<AppointmentTileProvider>(() =>
+      AppointmentTileProvider(locator(), locator(), locator(), locator()));
 }
 
 void _review() {
@@ -718,13 +720,11 @@ void _quote() {
       () => RequestQuoteUsecase(locator()));
   locator.registerFactory<HoldQuotePayUsecase>(
       () => HoldQuotePayUsecase(locator()));
-  locator.registerFactory<ReleaseQuotePayUsecase>(
-      () => ReleaseQuotePayUsecase(locator()));
   locator
       .registerFactory<UpdateQuoteUsecase>(() => UpdateQuoteUsecase(locator()));
   locator.registerFactory<GetServiceSlotsUsecase>(
       () => GetServiceSlotsUsecase(locator()));
 
-  locator.registerFactory<QuoteProvider>(() =>
-      QuoteProvider(locator(), locator(), locator(), locator(), locator()));
+  locator.registerFactory<QuoteProvider>(
+      () => QuoteProvider(locator(), locator(), locator(), locator()));
 }
