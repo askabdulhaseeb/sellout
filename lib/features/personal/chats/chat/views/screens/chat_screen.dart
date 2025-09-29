@@ -1,6 +1,5 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/theme/app_theme.dart';
 import '../../../chat_dashboard/data/models/chat/chat_model.dart';

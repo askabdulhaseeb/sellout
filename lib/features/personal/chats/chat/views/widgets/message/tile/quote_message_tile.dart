@@ -222,24 +222,6 @@ class QuoteMessageTile extends StatelessWidget {
                                 },
                               ),
                             ),
-                          //  if (message.quoteDetail?.status ==
-                          //   StatusType.)
-                          // Expanded(
-                          //   child: CustomElevatedButton(
-                          //     isDisable: true,
-                          //     bgColor: Colors.transparent,
-                          //     textStyle: TextTheme.of(context)
-                          //         .bodyMedium
-                          //         ?.copyWith(
-                          //             color: Theme.of(context)
-                          //                 .colorScheme
-                          //                 .onPrimary),
-                          //     padding: const EdgeInsets.all(4),
-                          //     title: 'declined'.tr(),
-                          //     isLoading: false,
-                          //     onTap: () {},
-                          //   ),
-                          // ),
                           if (message.quoteDetail?.status ==
                               StatusType.canceled)
                             Expanded(

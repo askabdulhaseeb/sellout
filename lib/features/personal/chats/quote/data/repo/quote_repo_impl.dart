@@ -63,8 +63,4 @@ class QuoteRepoImpl implements QuoteRepo {
       return DataFailer<bool>(CustomException(e.toString()));
     }
   }
-
-  Future<DataState<String>> releaseQuotePayment(String transactionId) async {
-    return remoteDataSource.releaseQuotePayment(transactionId);
-  }
 }

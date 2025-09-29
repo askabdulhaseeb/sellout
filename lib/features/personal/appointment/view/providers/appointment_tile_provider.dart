@@ -6,6 +6,7 @@ import '../../../../business/business_page/domain/params/get_business_bookings_p
 import '../../../../business/business_page/domain/usecase/get_my_bookings_usecase.dart';
 import '../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../business/core/domain/entity/service/service_entity.dart';
+import '../../domain/usecase/release_payment_usecase.dart';
 import '../../../visits/view/book_visit/screens/booking_screen.dart';
 import '../../../bookings/domain/entity/booking_entity.dart';
 import '../../../review/views/screens/write_review_screen.dart';
@@ -21,11 +22,16 @@ import '../../domain/usecase/update_appointment_usecase.dart';
 import '../widgets/appointment_tile_success_payment_bottomsheet.dart';
 
 class AppointmentTileProvider extends ChangeNotifier {
-  AppointmentTileProvider(this._updateAppointmentUsecase,
-      this._holdServicePaymentUsecase, this._getBookingUsecase);
+  AppointmentTileProvider(
+      this._updateAppointmentUsecase,
+      this._holdServicePaymentUsecase,
+      this._getBookingUsecase,
+      this._releasePaymentUsecase);
   final UpdateAppointmentUsecase _updateAppointmentUsecase;
   final HoldServicePaymentUsecase _holdServicePaymentUsecase;
   final GetMyBookingsListUsecase _getBookingUsecase;
+  final ReleasePaymentUsecase _releasePaymentUsecase;
+
 //
   BusinessEntity? _business;
   BusinessEntity? get business => _business;
@@ -141,6 +147,17 @@ class AppointmentTileProvider extends ChangeNotifier {
       );
     }
     setLoading(false);
+  }
+
+  Future<void> releasePayment(String? transactionId) async {
+    setLoading(true);
+    final DataState<bool> result =
+        await _releasePaymentUsecase.call(transactionId ?? '');
+    setLoading(false);
+    if (result is DataSuccess<String>) {
+    } else {
+      // _errorMessage = result.exception?.message ?? 'realease pay failed';
+    }
   }
 
   Future<void> showPaymentSheet(
