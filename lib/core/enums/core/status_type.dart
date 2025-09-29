@@ -41,7 +41,9 @@ enum StatusType {
   @HiveField(36)
   onHold('on-hold', 'on-hold', Colors.green, _greenBG),
   @HiveField(37)
-  processing('processing', 'processing', AppTheme.primaryColor, _greenBG);
+  processing('processing', 'processing', AppTheme.primaryColor, _greenBG),
+  @HiveField(38)
+  paid('paid', 'paid', AppTheme.primaryColor, _greenBG);
 
   const StatusType(this.code, this.json, this.color, this.bgColor);
   final String code;
@@ -80,6 +82,8 @@ enum StatusType {
         return StatusType.onHold;
       case 'processing':
         return StatusType.processing;
+      case 'paid':
+        return StatusType.paid;
       default:
         return StatusType.pending;
     }
