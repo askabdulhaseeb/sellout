@@ -24,7 +24,7 @@ class MessageModel extends MessageEntity {
     super.quoteDetail,
   });
 
-  factory MessageModel.fromJson(Map<String, dynamic> json) {
+  factory MessageModel.fromMap(Map<String, dynamic> json) {
     final dynamic fileUrl = json['file_url'];
     List<AttachmentModel> fileUrlList = <AttachmentModel>[];
     if (fileUrl != null) {

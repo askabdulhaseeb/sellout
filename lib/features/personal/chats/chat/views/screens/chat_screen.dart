@@ -1,7 +1,5 @@
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/theme/app_theme.dart';
 import '../../../chat_dashboard/data/models/chat/chat_model.dart';
 import '../../../chat_dashboard/data/sources/local/local_unseen_messages.dart';
 import '../providers/chat_provider.dart';
@@ -40,8 +38,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ui.Color baseColor = Theme.of(context).dividerColor;
-    const ui.Color accentColor = AppTheme.outlineVarient;
     return Consumer<ChatProvider>(
       builder: (BuildContext context, ChatProvider pro, _) {
         final ChatEntity? chat = pro.chat;
@@ -50,20 +46,12 @@ class _ChatScreenState extends State<ChatScreen> {
             LocalUnreadMessagesService().clearCount(chat.chatId);
           },
           child: Scaffold(
-            backgroundColor: baseColor,
+            backgroundColor: Theme.of(context).canvasColor,
             resizeToAvoidBottomInset: true,
             appBar: chatAppBar(context),
             body: Stack(
               children: <Widget>[
-                Positioned.fill(
-                  child: CustomPaint(
-                    painter: ChatBgPainter(
-                      baseColor: baseColor,
-                      accentColor: accentColor,
-                      tileSize: 60,
-                    ),
-                  ),
-                ),
+                const Positioned.fill(child: ChatBackground()),
                 Positioned.fill(
                   child: Column(
                     children: <Widget>[

@@ -94,7 +94,7 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
       if (result is DataSuccess) {
         final Map<String, dynamic> responseData = jsonDecode(result.data ?? '');
         final Map<String, dynamic> data = responseData['items'];
-        final MessageModel newMsg = MessageModel.fromJson(data);
+        final MessageModel newMsg = MessageModel.fromMap(data);
         final String chatId = data['chat_id'];
         await LocalChatMessage().saveMessage(newMsg);
         AppLog.info(
