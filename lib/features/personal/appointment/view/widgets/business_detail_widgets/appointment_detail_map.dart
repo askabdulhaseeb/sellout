@@ -1,8 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import '../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../../../core/widgets/profile_photo.dart';
+import '../../../../location/view/widgets/maps/flutter_location_map.dart';
+import '../../../../marketplace/domain/enum/radius_type.dart';
 
 class AppointmentMapSection extends StatelessWidget {
   const AppointmentMapSection({
@@ -14,26 +17,22 @@ class AppointmentMapSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LatLng latLng = LatLng(
+      business.location?.latitude ?? 40.7128,
+      business.location?.longitude ?? -74.0060,
+    );
+
     return SizedBox(
       height: 250,
       child: Stack(
         children: <Widget>[
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: LatLng(business.location?.latitude ?? 40.7128,
-                    business.location?.longitude ?? -74.0060),
-                zoom: 14,
-              ),
-              markers: <Marker>{
-                Marker(
-                  markerId: MarkerId(business.displayName ?? ''),
-                  position: LatLng(business.location?.latitude ?? 40.7128,
-                      business.location?.longitude ?? -74.0060),
-                  infoWindow: InfoWindow(title: business.displayName),
-                ),
-              },
+            child: FlutterLocationMap(
+              mapController: MapController(),
+              selectedLatLng: latLng,
+              radiusType: RadiusType.worldwide,
+              showMapCircle: false,
             ),
           ),
           Positioned(

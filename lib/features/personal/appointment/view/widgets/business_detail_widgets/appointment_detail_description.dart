@@ -25,16 +25,6 @@ class AppointmentDescriptionSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          business.displayName ?? '',
-          style: Theme.of(context)
-              .textTheme
-              .titleLarge
-              ?.copyWith(fontWeight: FontWeight.w500, fontSize: 18),
-        ),
-        const SizedBox(
-          height: 6,
-        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -42,12 +32,22 @@ class AppointmentDescriptionSection extends StatelessWidget {
               service?.name ?? '',
               style: Theme.of(context).textTheme.titleSmall,
             ),
-            Text(
-              service?.price.toString() ?? '',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(fontWeight: FontWeight.w600),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              margin: const EdgeInsets.only(left: 6, top: 2),
+              decoration: BoxDecoration(
+                color: booking.status.bgColor.withValues(alpha: 0.15),
+                border: Border.all(color: booking.status.bgColor, width: 0.5),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                booking.status.code.tr(),
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                  color: booking.status.color,
+                ),
+              ),
             ),
           ],
         ),
