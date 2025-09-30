@@ -30,7 +30,7 @@ class AppointmentTile extends StatelessWidget {
               context,
               MaterialPageRoute<AppointmentDetailScreen>(
                 builder: (BuildContext context) => AppointmentDetailScreen(
-                  booking: refreshed.first,
+                  bookings: refreshed,
                 ),
               ),
             );
