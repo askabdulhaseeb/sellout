@@ -20,11 +20,10 @@ class AppointmentTileBookingDetailSection extends StatelessWidget {
       future: LocalUser().user(booking.employeeID),
       builder: (BuildContext context, AsyncSnapshot<UserEntity?> snapshot) {
         final UserEntity? user = snapshot.data;
-        // pro.setbusiness(business);
+        debugPrint(booking.bookingID);
         return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            /// Left side – service & business
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,8 +56,6 @@ class AppointmentTileBookingDetailSection extends StatelessWidget {
                 ],
               ),
             ),
-
-            /// Right side – status pill
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               margin: const EdgeInsets.only(left: 6, top: 2),

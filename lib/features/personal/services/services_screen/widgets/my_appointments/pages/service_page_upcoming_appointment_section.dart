@@ -24,6 +24,7 @@ class ServicePageUpcomingAppointmentSection extends StatelessWidget {
             .where((BookingEntity booking) =>
                 booking.status == StatusType.pending ||
                 booking.status == StatusType.accepted ||
+                booking.status == StatusType.inprogress ||
                 (booking.status == StatusType.completed &&
                     booking.paymentDetail?.status == StatusType.onHold))
             .toList();

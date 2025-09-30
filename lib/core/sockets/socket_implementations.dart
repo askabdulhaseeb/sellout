@@ -20,7 +20,7 @@ import '../sources/api_call.dart';
 class SocketImplementations {
   // NEW MESSAGES
   Future<void> handleNewMessage(Map<String, dynamic> data) async {
-    final MessageModel newMsg = MessageModel.fromJson(data);
+    final MessageModel newMsg = MessageModel.fromMap(data);
     final String chatId = data['chat_id'];
 
     //  Fetch existing chat messages
@@ -119,7 +119,7 @@ class SocketImplementations {
     try {
       final List<MessageEntity> updatedMessages =
           List<MessageEntity>.from(existing.messages);
-      updatedMessages[index] = MessageModel.fromJson(messageData);
+      updatedMessages[index] = MessageModel.fromMap(messageData);
       final GettedMessageEntity updatedEntity = GettedMessageEntity(
           chatID: existing.chatID,
           messages: updatedMessages,

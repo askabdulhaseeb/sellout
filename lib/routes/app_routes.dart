@@ -101,6 +101,7 @@ class AppRoutes {
     VerifyTwoFactorScreen.routeName: (_) => const VerifyTwoFactorScreen(),
     // DAHSBOARD
     DashboardScreen.routeName: (_) => const DashboardScreen(),
+    //add listings
     AddListingFormScreen.routeName: (_) => const AddListingFormScreen(),
     // POST
     PostDetailScreen.routeName: (_) => const PostDetailScreen(),
@@ -114,16 +115,8 @@ class AppRoutes {
     BookingScreen.routeName: (_) => const BookingScreen(),
     // CART
     PersonalCartScreen.routeName: (_) => const PersonalCartScreen(),
-
     //Review
     WriteReviewScreen.routeName: (_) => const WriteReviewScreen(),
-    // Explore
-    // ExplorePopularScreen.routeName: (_) => const ExplorePopularScreen(),
-    // ExploreCLothFOotScreen.routeName: (_) => const ExploreCLothFOotScreen(),
-    // ExplorePetsScreen.routeName: (_) => const ExplorePetsScreen(),
-    // ExplorePropertyScreen.routeName: (_) => const ExplorePropertyScreen(),
-    // ExploreFoodDrinkScreen.routeName: (_) => const ExploreFoodDrinkScreen(),
-    // ExploreVehiclesScreen.routeName: (_) => const ExploreVehiclesScreen(),
     // Profile
     EditProfileScreen.routeName: (_) => const EditProfileScreen(),
     //services
