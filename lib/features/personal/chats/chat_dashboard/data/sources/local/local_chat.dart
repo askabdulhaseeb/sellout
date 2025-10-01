@@ -24,7 +24,7 @@ class LocalChat {
       return await Hive.openBox<ChatEntity>(boxTitle);
     }
   }
-  
+
   List<ChatEntity> getAllChats() {
     return _box.values.toList();
   }
@@ -43,6 +43,7 @@ class LocalChat {
     }
   }
 
+//
   Future<void> updateLastMessage(String chatId, MessageEntity newMsg) async {
     final ChatEntity? existing = _box.get(chatId);
     if (existing == null) {

@@ -49,12 +49,8 @@ class ChatDashboardSearchableWidget extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8)),
                         child: const CustomSvgIcon(
                             assetPath: AppStrings.selloutAddChatIcon)))
-                : pagePro.currentPage == ChatPageType.services
-                    ? IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.card_membership_sharp),
-                      )
-                    : GestureDetector(
+                : pagePro.currentPage == ChatPageType.groups
+                    ? GestureDetector(
                         onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute<CreateGroupBottomSheet>(
@@ -69,6 +65,7 @@ class ChatDashboardSearchableWidget extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(8)),
                             child: const CustomSvgIcon(
                                 assetPath: AppStrings.selloutAddChatIcon)))
+                    : const SizedBox.shrink()
           ],
         ),
       );

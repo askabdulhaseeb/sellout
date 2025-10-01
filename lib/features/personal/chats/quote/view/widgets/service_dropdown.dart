@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/sources/api_call.dart';
+import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../core/widgets/searchable_textfield.dart';
 import '../../../../../../services/get_it.dart';
@@ -217,6 +219,11 @@ class _ServiceDropdownState extends State<ServiceDropdown>
         _focusNode.unfocus();
         _removeOverlay();
       },
+      trailing: CustomElevatedButton(
+        title: 'Add',
+        isLoading: false,
+        onTap: () {},
+      ),
     );
   }
 
@@ -269,6 +276,7 @@ class _ServiceDropdownState extends State<ServiceDropdown>
     return CompositedTransformTarget(
       link: _layerLink,
       child: SearchableTextfield(
+        hintText: 'select services here'.tr(),
         controller: _searchController,
         focusNode: _focusNode,
         onChanged: (_) {
