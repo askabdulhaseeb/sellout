@@ -1,6 +1,13 @@
 import '../../domain/entites/service_employee_entity.dart';
 
 class ServiceEmployeeModel extends ServiceEmployeeEntity {
+  factory ServiceEmployeeModel.fromEntity(ServiceEmployeeEntity entity) {
+    return ServiceEmployeeModel(
+      serviceId: entity.serviceId,
+      quantity: entity.quantity,
+      bookAt: entity.bookAt,
+    );
+  }
   ServiceEmployeeModel({
     required super.serviceId,
     required super.quantity,
@@ -21,5 +28,13 @@ class ServiceEmployeeModel extends ServiceEmployeeEntity {
       'quantity': quantity,
       'book_at': bookAt,
     };
+  }
+
+  ServiceEmployeeEntity toEntity() {
+    return ServiceEmployeeEntity(
+      serviceId: serviceId,
+      quantity: quantity,
+      bookAt: bookAt,
+    );
   }
 }

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/usecase/usecase.dart';
 import '../../../chat/views/providers/chat_provider.dart';
-import '../../data/models/service_employee_model.dart';
+import '../../domain/entites/service_employee_entity.dart';
 import '../../domain/entites/time_slot_entity.dart';
 import '../../domain/params/get_service_slot_params.dart';
 import '../../domain/params/hold_quote_pay_params.dart';
@@ -22,8 +22,9 @@ class QuoteProvider extends ChangeNotifier {
   final UpdateQuoteUsecase _updateQuoteUsecase;
   final GetServiceSlotsUsecase _getServiceSlotsUsecase;
   final HoldQuotePayUsecase _holdQuotePayUsecase;
-
-  final List<ServiceEmployeeModel> _selectedServices = <ServiceEmployeeModel>[];
+  final TextEditingController note = TextEditingController();
+  final List<ServiceEmployeeEntity> _selectedServices =
+      <ServiceEmployeeEntity>[];
   bool _isLoading = false;
   String? _errorMessage;
   List<SlotEntity> slots = <SlotEntity>[];
@@ -32,7 +33,7 @@ class QuoteProvider extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
-  List<ServiceEmployeeModel> get selectedServices => _selectedServices;
+  List<ServiceEmployeeEntity> get selectedServices => _selectedServices;
   AppointmentTimeSelection get appointmentTimeType => _appointmentTimeType;
 
   Future<void> fetchSlots({
@@ -79,11 +80,9 @@ class QuoteProvider extends ChangeNotifier {
     debugPrint(params.toMap().toString());
     final DataState<bool> result = await _requestQuoteUsecase.call(params);
     _setLoading(false);
-
     if (result is DataSuccess<bool>) {
       Provider.of<ChatProvider>(context, listen: false)
           .createOrOpenChatById(context, result.data ?? '');
-
       return true;
     } else {
       _errorMessage = result.exception?.message ?? 'something_wrong'.tr();
@@ -119,7 +118,7 @@ class QuoteProvider extends ChangeNotifier {
     }
   }
 
-  void addService(ServiceEmployeeModel service) {
+  void addService(ServiceEmployeeEntity service) {
     _selectedServices.add(service);
     notifyListeners();
   }
@@ -131,12 +130,24 @@ class QuoteProvider extends ChangeNotifier {
 
   void removeService(String serviceId) {
     _selectedServices.removeWhere(
-        (ServiceEmployeeModel service) => service.serviceId == serviceId);
+        (ServiceEmployeeEntity service) => service.serviceId == serviceId);
     notifyListeners();
   }
 
   void _setLoading(bool value) {
     _isLoading = value;
+    notifyListeners();
+  }
+
+  void updateService(ServiceEmployeeEntity updated) {
+    final int index = selectedServices.indexWhere(
+      (ServiceEmployeeEntity s) => s.serviceId == updated.serviceId,
+    );
+    if (index != -1) {
+      selectedServices[index] = updated;
+    } else {
+      selectedServices.add(updated);
+    }
     notifyListeners();
   }
 
