@@ -11,7 +11,6 @@ import '../../../../../services/domain/params/services_by_filters_params.dart';
 import '../../../../../services/domain/usecase/get_services_by_query_usecase.dart';
 import '../../../data/models/service_employee_model.dart';
 import '../../provider/quote_provider.dart';
-import '../request_quote_screen.dart';
 
 class StepServices extends StatefulWidget {
   const StepServices({required this.businessId, super.key});
@@ -96,9 +95,6 @@ class _StepServicesState extends State<StepServices> {
 
   @override
   Widget build(BuildContext context) {
-    final List<ServiceEmployeeModel> selected =
-        context.watch<QuoteProvider>().selectedServices;
-
     if (_isLoading && _services.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -132,18 +128,6 @@ class _StepServicesState extends State<StepServices> {
             },
           ),
         ),
-
-        /// Selected services list
-        if (selected.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: selected
-                  .map(
-                      (ServiceEmployeeModel s) => RequestQuoteTile(selected: s))
-                  .toList(),
-            ),
-          ),
       ],
     );
   }
@@ -156,14 +140,18 @@ class _StepServicesState extends State<StepServices> {
 }
 
 class _ServiceStepGridTile extends StatelessWidget {
-  const _ServiceStepGridTile({
-    required this.service,
-  });
-
+  const _ServiceStepGridTile({required this.service});
   final ServiceEntity service;
 
   @override
   Widget build(BuildContext context) {
+    final QuoteProvider quoteProvider = context.watch<QuoteProvider>();
+
+    // check how many of this service already added
+    final int qty = quoteProvider.selectedServices
+        .where((ServiceEmployeeModel s) => s.serviceId == service.serviceID)
+        .map((ServiceEmployeeModel s) => s.quantity)
+        .fold(0, (int a, int b) => a + b);
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey.shade300),
@@ -171,15 +159,7 @@ class _ServiceStepGridTile extends StatelessWidget {
       ),
       child: Stack(
         children: <Widget>[
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
-
-          /// Top info (name, price, time)
+          /// Info section
           Positioned(
             top: 8,
             left: 8,
@@ -193,7 +173,7 @@ class _ServiceStepGridTile extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: ColorScheme.of(context).onSurface,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                 ),
                 const SizedBox(height: 4),
@@ -202,7 +182,7 @@ class _ServiceStepGridTile extends StatelessWidget {
                     Text(
                       service.priceStr,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: ColorScheme.of(context).outlineVariant,
+                            color: Theme.of(context).colorScheme.outlineVariant,
                             fontWeight: FontWeight.w500,
                           ),
                     ),
@@ -210,7 +190,7 @@ class _ServiceStepGridTile extends StatelessWidget {
                     Text(
                       '${service.time} min',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: ColorScheme.of(context).outlineVariant,
+                            color: Theme.of(context).colorScheme.outlineVariant,
                             fontWeight: FontWeight.w500,
                           ),
                     ),
@@ -220,14 +200,44 @@ class _ServiceStepGridTile extends StatelessWidget {
             ),
           ),
 
-          /// Add button at bottom
+          /// Buttons
           Positioned(
-            bottom: 2,
+            bottom: 4,
             left: 4,
             right: 4,
             child: Row(
-              spacing: 2,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
+                if (qty > 0)
+                  Expanded(
+                    child: CustomElevatedButton(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 4, vertical: 4),
+                      bgColor: Colors.transparent,
+                      border: Border.all(
+                          color: Theme.of(context).colorScheme.error),
+                      textStyle:
+                          Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: Theme.of(context).colorScheme.error,
+                                fontWeight: FontWeight.w600,
+                              ),
+                      title: 'remove'.tr(),
+                      isLoading: false,
+                      onTap: () =>
+                          quoteProvider.removeService(service.serviceID),
+                    ),
+                  ),
+                if (qty > 0)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    child: Text(
+                      '$qty',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                    ),
+                  ),
                 Expanded(
                   child: CustomElevatedButton(
                     padding:
@@ -240,23 +250,13 @@ class _ServiceStepGridTile extends StatelessWidget {
                         ),
                     title: 'add'.tr(),
                     isLoading: false,
-                    onTap: () {},
-                  ),
-                ),
-                Expanded(
-                  child: CustomElevatedButton(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                    bgColor: Colors.transparent,
-                    border: Border.all(
-                        color: Theme.of(context).colorScheme.outline),
-                    textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.outline,
-                          fontWeight: FontWeight.w600,
-                        ),
-                    title: 'remove'.tr(),
-                    isLoading: false,
-                    onTap: () {},
+                    onTap: () => quoteProvider.addService(
+                      ServiceEmployeeModel(
+                        serviceId: service.serviceID,
+                        quantity: 1, // ✅ always start with 1
+                        bookAt: '', // fill later with real slot
+                      ),
+                    ),
                   ),
                 ),
               ],

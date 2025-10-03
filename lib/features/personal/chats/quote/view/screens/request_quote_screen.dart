@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../core/widgets/loaders/loader_container.dart';
 import '../../../../../business/core/data/sources/local_business.dart';
@@ -53,30 +54,31 @@ class _RequestQuoteScreenState extends State<RequestQuoteScreen> {
             ],
           ),
           bottomNavigationBar: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: <Widget>[
                 if (_currentStep > 0)
                   Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => setState(() => _currentStep--),
-                      child: Text('back'.tr()),
+                    child: CustomElevatedButton(
+                      isLoading: false,
+                      onTap: () => setState(() => _currentStep--),
+                      title: 'back'.tr(),
                     ),
                   ),
                 if (_currentStep > 0) const SizedBox(width: 12),
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_currentStep < 2) {
-                        setState(() => _currentStep++);
-                      } else {
-                        Provider.of<QuoteProvider>(context, listen: false)
-                            .requestQuote(business?.businessID ?? '', context);
-                      }
-                    },
-                    child:
-                        Text(_currentStep == 2 ? 'submit'.tr() : 'next'.tr()),
-                  ),
+                  child: CustomElevatedButton(
+                      isLoading: false,
+                      onTap: () {
+                        if (_currentStep < 2) {
+                          setState(() => _currentStep++);
+                        } else {
+                          Provider.of<QuoteProvider>(context, listen: false)
+                              .requestQuote(
+                                  business?.businessID ?? '', context);
+                        }
+                      },
+                      title: _currentStep == 2 ? 'submit'.tr() : 'next'.tr()),
                 ),
               ],
             ),

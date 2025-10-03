@@ -1,5 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/usecase/usecase.dart';
 import '../../../chat/views/providers/chat_provider.dart';
@@ -13,6 +13,7 @@ import '../../domain/usecases/get_service_slots_usecase.dart';
 import '../../domain/usecases/hold_quote_pay_usecase.dart';
 import '../../domain/usecases/request_quote_usecase.dart';
 import '../../domain/usecases/update_quote_usecase.dart';
+import '../screens/pages/step_booking.dart';
 
 class QuoteProvider extends ChangeNotifier {
   QuoteProvider(this._requestQuoteUsecase, this._updateQuoteUsecase,
@@ -26,10 +27,13 @@ class QuoteProvider extends ChangeNotifier {
   bool _isLoading = false;
   String? _errorMessage;
   List<SlotEntity> slots = <SlotEntity>[];
+  AppointmentTimeSelection _appointmentTimeType =
+      AppointmentTimeSelection.differentTimePerService;
 
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   List<ServiceEmployeeModel> get selectedServices => _selectedServices;
+  AppointmentTimeSelection get appointmentTimeType => _appointmentTimeType;
 
   Future<void> fetchSlots({
     required String serviceId,
@@ -68,7 +72,7 @@ class QuoteProvider extends ChangeNotifier {
   }
 
   /// Request a quote
-  Future<bool> requestQuote(String businessId, context) async {
+  Future<bool> requestQuote(String businessId, BuildContext context) async {
     _setLoading(true);
     RequestQuoteParams params = RequestQuoteParams(
         servicesAndEmployees: _selectedServices, businessId: businessId);
@@ -133,6 +137,11 @@ class QuoteProvider extends ChangeNotifier {
 
   void _setLoading(bool value) {
     _isLoading = value;
+    notifyListeners();
+  }
+
+  void setAppointmentTimeType(AppointmentTimeSelection value) {
+    _appointmentTimeType = value;
     notifyListeners();
   }
 }
