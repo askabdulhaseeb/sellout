@@ -7,16 +7,17 @@ import '../../../../../../core/widgets/calender/create_booking_widgets/widgets/c
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../business/core/data/sources/local_business.dart';
+import '../../../../../business/core/data/sources/service/local_service.dart';
 import '../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../../business/core/domain/entity/routine_entity.dart';
 import '../../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../../visits/view/book_visit/widgets/booking_profile_image.dart';
-import '../../data/models/service_employee_model.dart';
+import '../../domain/entites/service_employee_entity.dart';
 import '../provider/quote_provider.dart';
 
 class BookQuoteScreen extends StatefulWidget {
-  const BookQuoteScreen({required this.service, super.key});
-  final ServiceEntity service;
+  const BookQuoteScreen({required this.serviceEmployee, super.key});
+  final ServiceEmployeeEntity serviceEmployee;
 
   @override
   State<BookQuoteScreen> createState() => _BookQuoteScreenState();
@@ -28,18 +29,23 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
   bool isLoadingBusiness = true;
   String? businessError;
   BusinessEntity? business;
+  ServiceEntity? serviceEntity;
   int quantity = 1;
 
   @override
   void initState() {
     super.initState();
-    _loadBusinessAndFetchSlots();
+    _loadBusinessAndService();
   }
 
-  /// 🔹 Load business, then fetch slots for today
-  Future<void> _loadBusinessAndFetchSlots() async {
+  /// 🔹 Load business & service, then fetch slots
+  Future<void> _loadBusinessAndService() async {
     try {
-      business = await LocalBusiness().getBusiness(widget.service.businessID);
+      serviceEntity =
+          await LocalService().getService(widget.serviceEmployee.serviceId);
+      if (serviceEntity != null) {
+        business = await LocalBusiness().getBusiness(serviceEntity!.businessID);
+      }
       await _fetchSlotsForDate(selectedDate);
     } catch (e) {
       businessError = 'Failed to load business details';
@@ -47,9 +53,10 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
     setState(() => isLoadingBusiness = false);
   }
 
-  /// 🔹 Get routine and fetch slots for given date
+  /// 🔹 Fetch slots for given date
   Future<void> _fetchSlotsForDate(DateTime date) async {
-    if (business == null) return;
+    if (business == null || serviceEntity == null) return;
+
     final RoutineEntity? routine = _routineForDate(date);
     final QuoteProvider slotsProvider =
         Provider.of<QuoteProvider>(context, listen: false);
@@ -66,11 +73,11 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
 
     try {
       await slotsProvider.fetchSlots(
-        serviceId: widget.service.serviceID,
+        serviceId: serviceEntity!.serviceID,
         date: date,
         openingTime: openingTime,
         closingTime: closingTime,
-        serviceDuration: widget.service.time,
+        serviceDuration: serviceEntity!.time,
       );
     } catch (e) {}
   }
@@ -114,7 +121,7 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
             return Column(
               children: <Widget>[
                 ProductImageWidget(
-                  image: widget.service.thumbnailURL ?? '',
+                  image: serviceEntity?.thumbnailURL ?? '',
                 ),
 
                 /// 🔹 Date picker
@@ -148,46 +155,6 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
                         setState(() => selectedTime = time),
                     isLoading: false,
                   ),
-                const SizedBox(height: 16),
-
-                /// 🔹 Quantity
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: ColorScheme.of(context).outline,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      GestureDetector(
-                        onTap: quantity > 1
-                            ? () => setState(() => quantity--)
-                            : null,
-                        child: Icon(
-                          Icons.remove,
-                          color: quantity > 1
-                              ? Theme.of(context).colorScheme.primary
-                              : Colors.grey,
-                        ),
-                      ),
-                      Text(quantity.toString(),
-                          style: Theme.of(context).textTheme.bodyMedium),
-                      GestureDetector(
-                        onTap: () => setState(() => quantity++),
-                        child: Icon(
-                          Icons.add,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                /// 🔹 Book button
                 CustomElevatedButton(
                   isLoading: false,
                   onTap: () {
@@ -195,16 +162,18 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
                       AppSnackBar.showSnackBar(context, 'select_slot'.tr());
                       return;
                     }
+
                     final DateTime slotDateTime =
                         _combineDateTime(selectedDate, selectedTime!);
-                    final ServiceEmployeeModel service = ServiceEmployeeModel(
-                      serviceId: widget.service.serviceID,
+
+                    final ServiceEmployeeEntity updatedService =
+                        widget.serviceEmployee.copyWith(
                       quantity: quantity,
                       bookAt:
                           '${_format12Hour(slotDateTime)} ${slotDateTime.toIso8601String().split('T')[0]}',
                     );
                     Provider.of<QuoteProvider>(context, listen: false)
-                        .addService(service);
+                        .updateService(updatedService);
                     Navigator.pop(context);
                   },
                   title: 'request_quote'.tr(),

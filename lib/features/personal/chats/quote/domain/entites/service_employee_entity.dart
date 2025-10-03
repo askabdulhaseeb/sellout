@@ -8,10 +8,26 @@ class ServiceEmployeeEntity {
     required this.quantity,
     required this.bookAt,
   });
+
   @HiveField(1)
-  final String serviceId;
+  String serviceId;
+
   @HiveField(2)
-  final int quantity;
+  int quantity;
+
   @HiveField(3)
-  final String bookAt;
+  String bookAt;
+
+  /// 🔹 copyWith method
+  ServiceEmployeeEntity copyWith({
+    String? serviceId,
+    int? quantity,
+    String? bookAt,
+  }) {
+    return ServiceEmployeeEntity(
+      serviceId: serviceId ?? this.serviceId,
+      quantity: quantity ?? this.quantity,
+      bookAt: bookAt ?? this.bookAt,
+    );
+  }
 }

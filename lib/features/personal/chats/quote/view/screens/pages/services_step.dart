@@ -10,6 +10,7 @@ import '../../../../../marketplace/domain/params/filter_params.dart';
 import '../../../../../services/domain/params/services_by_filters_params.dart';
 import '../../../../../services/domain/usecase/get_services_by_query_usecase.dart';
 import '../../../data/models/service_employee_model.dart';
+import '../../../domain/entites/service_employee_entity.dart';
 import '../../provider/quote_provider.dart';
 
 class StepServices extends StatefulWidget {
@@ -146,121 +147,117 @@ class _ServiceStepGridTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final QuoteProvider quoteProvider = context.watch<QuoteProvider>();
-
-    // check how many of this service already added
     final int qty = quoteProvider.selectedServices
-        .where((ServiceEmployeeModel s) => s.serviceId == service.serviceID)
-        .map((ServiceEmployeeModel s) => s.quantity)
+        .where((ServiceEmployeeEntity s) => s.serviceId == service.serviceID)
+        .map((ServiceEmployeeEntity s) => s.quantity)
         .fold(0, (int a, int b) => a + b);
+
     return Container(
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         border: Border.all(color: Colors.grey.shade300),
         borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          )
+        ],
       ),
-      child: Stack(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          /// Info section
-          Positioned(
-            top: 8,
-            left: 8,
-            right: 8,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  service.name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
+          /// Service name
+          Text(
+            service.name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
-                const SizedBox(height: 4),
-                Row(
-                  children: <Widget>[
-                    Text(
-                      service.priceStr,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.outlineVariant,
-                            fontWeight: FontWeight.w500,
-                          ),
+          ),
+          const SizedBox(height: 4),
+
+          /// Price + time
+          Row(
+            children: <Widget>[
+              Text(
+                service.priceStr,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                      fontWeight: FontWeight.w500,
                     ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '${service.time} min',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.outlineVariant,
-                            fontWeight: FontWeight.w500,
-                          ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '${service.time} min',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                      fontWeight: FontWeight.w500,
                     ),
-                  ],
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
 
-          /// Buttons
-          Positioned(
-            bottom: 4,
-            left: 4,
-            right: 4,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                if (qty > 0)
-                  Expanded(
-                    child: CustomElevatedButton(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 4, vertical: 4),
-                      bgColor: Colors.transparent,
-                      border: Border.all(
-                          color: Theme.of(context).colorScheme.error),
-                      textStyle:
-                          Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context).colorScheme.error,
-                                fontWeight: FontWeight.w600,
-                              ),
-                      title: 'remove'.tr(),
-                      isLoading: false,
-                      onTap: () =>
-                          quoteProvider.removeService(service.serviceID),
-                    ),
-                  ),
-                if (qty > 0)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 6),
-                    child: Text(
-                      '$qty',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                    ),
-                  ),
+          const Spacer(),
+
+          /// Buttons Row
+          Row(
+            children: <Widget>[
+              if (qty > 0) ...[
                 Expanded(
                   child: CustomElevatedButton(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                     bgColor: Colors.transparent,
-                    border: Border.all(color: Theme.of(context).primaryColor),
+                    border: Border.all(
+                        color: Theme.of(context).colorScheme.error, width: 1.2),
                     textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).primaryColor,
+                          color: Theme.of(context).colorScheme.error,
                           fontWeight: FontWeight.w600,
                         ),
-                    title: 'add'.tr(),
+                    title: 'remove'.tr(),
                     isLoading: false,
-                    onTap: () => quoteProvider.addService(
-                      ServiceEmployeeModel(
-                        serviceId: service.serviceID,
-                        quantity: 1, // ✅ always start with 1
-                        bookAt: '', // fill later with real slot
-                      ),
-                    ),
+                    onTap: () => quoteProvider.removeService(service.serviceID),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  child: Text(
+                    '$qty',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).primaryColor,
+                        ),
                   ),
                 ),
               ],
-            ),
+              Expanded(
+                child: CustomElevatedButton(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                  bgColor:
+                      Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                  border: Border.all(color: Theme.of(context).primaryColor),
+                  textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                  title: 'add'.tr(),
+                  isLoading: false,
+                  onTap: () => quoteProvider.addService(
+                    ServiceEmployeeModel(
+                      serviceId: service.serviceID,
+                      quantity: 1,
+                      bookAt: '',
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
