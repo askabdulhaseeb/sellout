@@ -17,8 +17,8 @@ class StepBooking extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<QuoteProvider>(
       builder: (BuildContext context, QuoteProvider pro, _) {
-        final Map<String, ServiceEmployeeModel> serviceMap =
-            <String, ServiceEmployeeModel>{};
+        // 🔹 Aggregate services to avoid duplicates
+        final Map<String, ServiceEmployeeModel> serviceMap = {};
         for (final ServiceEmployeeEntity s in pro.selectedServices) {
           if (serviceMap.containsKey(s.serviceId)) {
             serviceMap[s.serviceId]!.quantity += s.quantity;
@@ -30,14 +30,18 @@ class StepBooking extends StatelessWidget {
             );
           }
         }
+
         final List<ServiceEmployeeModel> aggregatedServices =
             serviceMap.values.toList();
+
+        final bool isGlobal =
+            pro.appointmentTimeType == AppointmentTimeSelection.oneTimeForAll;
+
         return SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              /// Title
               Text(
                 'when_would_you_like_appointment'.tr(),
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -45,27 +49,113 @@ class StepBooking extends StatelessWidget {
                     ),
               ),
               const SizedBox(height: 12),
-
-              /// Appointment toggle card
               const AppointmentCard(),
               const SizedBox(height: 16),
+              if (isGlobal)
+                _GlobalAppointmentCard(services: aggregatedServices)
+              else
+                GridView.count(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  crossAxisCount: 2,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 1.15,
+                  children: aggregatedServices
+                      .map(
+                        (ServiceEmployeeModel service) =>
+                            _ServiceBookingStepCard(
+                          serviceEmployeeEntity: service,
+                        ),
+                      )
+                      .toList(),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
 
-              /// Grid of aggregated selected services
-              GridView.count(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                crossAxisCount: 2,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                childAspectRatio: 1.15,
-                children: aggregatedServices
-                    .map(
-                      (ServiceEmployeeModel service) => _ServiceBookingStepCard(
-                        serviceEmployeeEntity: service,
+/// 🔹 Single card for "One time for all"
+class _GlobalAppointmentCard extends StatelessWidget {
+  const _GlobalAppointmentCard({required this.services});
+  final List<ServiceEmployeeModel> services;
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<QuoteProvider>(
+      builder: (BuildContext context, QuoteProvider pro, _) {
+        final String displayTime = pro.globalBookAt ?? '';
+
+        return Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border:
+                Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                'all_services'.tr(),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: 8),
+
+              // 🔹 Show list of services
+              ...services.map((ServiceEmployeeModel s) {
+                return FutureBuilder<ServiceEntity?>(
+                  future: LocalService().getService(s.serviceId),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<ServiceEntity?> snapshot) {
+                    final String name = snapshot.data?.name ?? s.serviceId;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Text(
+                        '• $name (x${s.quantity})',
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
-                    )
-                    .toList(),
+                    );
+                  },
+                );
+              }),
+
+              const SizedBox(height: 16),
+              if (displayTime.isNotEmpty)
+                Text(
+                  'Selected Time: $displayTime',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+              const SizedBox(height: 8),
+
+              CustomElevatedButton(
+                title: displayTime.isEmpty
+                    ? 'select_time'.tr()
+                    : 'change_time'.tr(),
+                isLoading: false,
+                onTap: () async {
+                  final String? selectedTime = await Navigator.push(
+                    context,
+                    MaterialPageRoute<String>(
+                      builder: (BuildContext context) => BookQuoteScreen(
+                        serviceEmployee: services.first,
+                      ),
+                    ),
+                  );
+
+                  if (selectedTime != null && selectedTime.isNotEmpty) {
+                    pro.setGlobalBookAt(selectedTime);
+                  }
+                },
               ),
             ],
           ),
@@ -91,16 +181,25 @@ class _ServiceBookingStepCard extends StatelessWidget {
             child: const CircularProgressIndicator(),
           );
         }
+
         final ServiceEntity? service = snapshot.data;
+
         return Consumer<QuoteProvider>(
           builder: (BuildContext context, QuoteProvider pro, Widget? child) {
+            /// 🔹 Determine which time to show (global or individual)
+            final bool useGlobal = pro.appointmentTimeType ==
+                AppointmentTimeSelection.oneTimeForAll;
+            final String displayTime = useGlobal
+                ? (pro.globalBookAt ?? '')
+                : serviceEmployeeEntity.bookAt;
+
             return Container(
               padding: const EdgeInsets.all(12),
               decoration: _boxDecoration(context),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  /// Service name + qty
+                  /// 🔹 Service name + quantity
                   Text(
                     '${service?.name ?? serviceEmployeeEntity.serviceId} (x${serviceEmployeeEntity.quantity})',
                     maxLines: 1,
@@ -110,12 +209,14 @@ class _ServiceBookingStepCard extends StatelessWidget {
                         ),
                   ),
                   const Spacer(),
-                  if (serviceEmployeeEntity.bookAt.isNotEmpty)
+
+                  /// 🔹 Time display or selection button
+                  if (displayTime.isNotEmpty)
                     Row(
                       children: <Widget>[
                         Expanded(
                           child: Text(
-                            serviceEmployeeEntity.bookAt,
+                            displayTime,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context)
@@ -146,17 +247,26 @@ class _ServiceBookingStepCard extends StatelessWidget {
                               ),
                       title: 'select_time'.tr(),
                       isLoading: false,
-                      onTap: () {
-                        if (service != null) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute<BookQuoteScreen>(
-                              builder: (BuildContext context) =>
-                                  BookQuoteScreen(
-                                serviceEmployee: serviceEmployeeEntity,
-                              ),
+                      onTap: () async {
+                        if (service == null) return;
+
+                        final String? selectedTime = await Navigator.push(
+                          context,
+                          MaterialPageRoute<String>(
+                            builder: (BuildContext context) => BookQuoteScreen(
+                              serviceEmployee: serviceEmployeeEntity,
                             ),
-                          );
+                          ),
+                        );
+
+                        /// 🔹 Save selection properly (global or per service)
+                        if (selectedTime != null && selectedTime.isNotEmpty) {
+                          if (useGlobal) {
+                            pro.setGlobalBookAt(selectedTime);
+                          } else {
+                            pro.setServiceTime(
+                                serviceEmployeeEntity.serviceId, selectedTime);
+                          }
                         }
                       },
                     ),
@@ -175,7 +285,6 @@ class _ServiceBookingStepCard extends StatelessWidget {
         color: Theme.of(context).colorScheme.outlineVariant,
       ),
       borderRadius: BorderRadius.circular(12),
-      color: Theme.of(context).colorScheme.surface,
     );
   }
 }
@@ -193,7 +302,6 @@ class AppointmentCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             border:
                 Border.all(color: Theme.of(context).colorScheme.outlineVariant),
-            color: Theme.of(context).colorScheme.surface,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -220,6 +328,7 @@ class AppointmentCard extends StatelessWidget {
   }
 }
 
+/// 🔹 Appointment mode selection enum
 enum AppointmentTimeSelection {
   differentTimePerService('different_time_per_service'),
   oneTimeForAll('one_time_for_all');

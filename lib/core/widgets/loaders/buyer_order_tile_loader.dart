@@ -16,7 +16,6 @@ class BuyerOrderTileLoader extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            // Image placeholder
             ClipRRect(
               borderRadius: radius,
               child: Container(
@@ -26,7 +25,6 @@ class BuyerOrderTileLoader extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            // Text placeholders
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

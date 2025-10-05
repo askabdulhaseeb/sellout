@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../provider/quote_provider.dart';
 
-class NotesStep extends StatelessWidget {
-  const NotesStep({super.key});
+class StepNote extends StatelessWidget {
+  const StepNote({super.key});
   @override
   Widget build(BuildContext context) {
     final QuoteProvider pro = Provider.of<QuoteProvider>(context);

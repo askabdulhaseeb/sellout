@@ -11,7 +11,7 @@ class ServiceEmployeeModel extends ServiceEmployeeEntity {
   ServiceEmployeeModel({
     required super.serviceId,
     required super.quantity,
-    required super.bookAt,
+    super.bookAt = '',
   });
 
   factory ServiceEmployeeModel.fromMap(Map<String, dynamic> map) {

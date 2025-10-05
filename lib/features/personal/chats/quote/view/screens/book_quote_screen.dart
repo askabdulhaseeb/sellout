@@ -16,8 +16,17 @@ import '../../domain/entites/service_employee_entity.dart';
 import '../provider/quote_provider.dart';
 
 class BookQuoteScreen extends StatefulWidget {
-  const BookQuoteScreen({required this.serviceEmployee, super.key});
-  final ServiceEmployeeEntity serviceEmployee;
+  const BookQuoteScreen({
+    super.key,
+    this.serviceEmployee,
+    this.isGlobalTime = false,
+  });
+
+  /// when selecting time for individual service
+  final ServiceEmployeeEntity? serviceEmployee;
+
+  /// when selecting one time for all services
+  final bool isGlobalTime;
 
   @override
   State<BookQuoteScreen> createState() => _BookQuoteScreenState();
@@ -38,14 +47,30 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
     _loadBusinessAndService();
   }
 
-  /// 🔹 Load business & service, then fetch slots
   Future<void> _loadBusinessAndService() async {
     try {
-      serviceEntity =
-          await LocalService().getService(widget.serviceEmployee.serviceId);
-      if (serviceEntity != null) {
-        business = await LocalBusiness().getBusiness(serviceEntity!.businessID);
+      /// For per-service mode
+      if (!widget.isGlobalTime && widget.serviceEmployee != null) {
+        serviceEntity =
+            await LocalService().getService(widget.serviceEmployee!.serviceId);
+        if (serviceEntity != null) {
+          business =
+              await LocalBusiness().getBusiness(serviceEntity!.businessID);
+        }
+      } else {
+        /// Global mode – pick first available service from provider
+        final QuoteProvider pro =
+            Provider.of<QuoteProvider>(context, listen: false);
+        if (pro.selectedServices.isNotEmpty) {
+          final ServiceEmployeeEntity first = pro.selectedServices.first;
+          serviceEntity = await LocalService().getService(first.serviceId);
+          if (serviceEntity != null) {
+            business =
+                await LocalBusiness().getBusiness(serviceEntity!.businessID);
+          }
+        }
       }
+
       await _fetchSlotsForDate(selectedDate);
     } catch (e) {
       businessError = 'Failed to load business details';
@@ -53,7 +78,6 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
     setState(() => isLoadingBusiness = false);
   }
 
-  /// 🔹 Fetch slots for given date
   Future<void> _fetchSlotsForDate(DateTime date) async {
     if (business == null || serviceEntity == null) return;
 
@@ -112,7 +136,11 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const AppBarTitle(titleKey: 'request_quote'),
+        title: AppBarTitle(
+          titleKey: widget.isGlobalTime
+              ? 'select_global_time'.tr()
+              : 'request_quote'.tr(),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -120,11 +148,12 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
           builder: (BuildContext context, QuoteProvider slotsProvider, _) {
             return Column(
               children: <Widget>[
-                ProductImageWidget(
-                  image: serviceEntity?.thumbnailURL ?? '',
-                ),
+                if (!widget.isGlobalTime)
+                  ProductImageWidget(
+                    image: serviceEntity?.thumbnailURL ?? '',
+                  ),
 
-                /// 🔹 Date picker
+                /// Date picker
                 CreateBookingCalender(
                   initialDate: selectedDate,
                   onDateChanged: (DateTime date) async {
@@ -136,7 +165,7 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
                   },
                 ),
 
-                /// 🔹 Slots
+                /// Slots
                 if (slotsProvider.isLoading)
                   const Padding(
                     padding: EdgeInsets.all(24),
@@ -155,6 +184,10 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
                         setState(() => selectedTime = time),
                     isLoading: false,
                   ),
+
+                const SizedBox(height: 16),
+
+                /// Button
                 CustomElevatedButton(
                   isLoading: false,
                   onTap: () {
@@ -165,18 +198,24 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
 
                     final DateTime slotDateTime =
                         _combineDateTime(selectedDate, selectedTime!);
+                    final String formatted =
+                        '${_format12Hour(slotDateTime)} ${slotDateTime.toIso8601String().split('T')[0]}';
 
-                    final ServiceEmployeeEntity updatedService =
-                        widget.serviceEmployee.copyWith(
-                      quantity: quantity,
-                      bookAt:
-                          '${_format12Hour(slotDateTime)} ${slotDateTime.toIso8601String().split('T')[0]}',
-                    );
-                    Provider.of<QuoteProvider>(context, listen: false)
-                        .updateService(updatedService);
-                    Navigator.pop(context);
+                    if (widget.isGlobalTime) {
+                      /// 🔹 For global time selection
+                      Navigator.pop(context, formatted);
+                    } else {
+                      /// 🔹 For individual service
+                      final ServiceEmployeeEntity updatedService =
+                          widget.serviceEmployee!.copyWith(bookAt: formatted);
+                      Provider.of<QuoteProvider>(context, listen: false)
+                          .updateService(updatedService);
+                      Navigator.pop(context, formatted);
+                    }
                   },
-                  title: 'request_quote'.tr(),
+                  title: widget.isGlobalTime
+                      ? 'confirm_time_for_all'.tr()
+                      : 'request_quote'.tr(),
                 ),
               ],
             );
@@ -192,6 +231,6 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
   }
 
   String _format12Hour(DateTime dateTime) {
-    return DateFormat.jm().format(dateTime); // e.g., 12:00 PM
+    return DateFormat.jm().format(dateTime);
   }
 }

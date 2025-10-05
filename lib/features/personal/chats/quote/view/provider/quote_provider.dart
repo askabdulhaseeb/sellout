@@ -16,12 +16,20 @@ import '../../domain/usecases/update_quote_usecase.dart';
 import '../screens/pages/step_booking.dart';
 
 class QuoteProvider extends ChangeNotifier {
-  QuoteProvider(this._requestQuoteUsecase, this._updateQuoteUsecase,
-      this._holdQuotePayUsecase, this._getServiceSlotsUsecase);
+  QuoteProvider(
+    this._requestQuoteUsecase,
+    this._updateQuoteUsecase,
+    this._holdQuotePayUsecase,
+    this._getServiceSlotsUsecase,
+  );
+
+  // Dependencies
   final RequestQuoteUsecase _requestQuoteUsecase;
   final UpdateQuoteUsecase _updateQuoteUsecase;
-  final GetServiceSlotsUsecase _getServiceSlotsUsecase;
   final HoldQuotePayUsecase _holdQuotePayUsecase;
+  final GetServiceSlotsUsecase _getServiceSlotsUsecase;
+  String? _globalBookAt;
+  // Controllers & state
   final TextEditingController note = TextEditingController();
   final List<ServiceEmployeeEntity> _selectedServices =
       <ServiceEmployeeEntity>[];
@@ -31,11 +39,15 @@ class QuoteProvider extends ChangeNotifier {
   AppointmentTimeSelection _appointmentTimeType =
       AppointmentTimeSelection.differentTimePerService;
 
+  // Getters
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
-  List<ServiceEmployeeEntity> get selectedServices => _selectedServices;
+  List<ServiceEmployeeEntity> get selectedServices =>
+      List.unmodifiable(_selectedServices);
   AppointmentTimeSelection get appointmentTimeType => _appointmentTimeType;
+  String? get globalBookAt => _globalBookAt;
 
+  // ---------------------- 🔹 FETCH SLOTS ----------------------
   Future<void> fetchSlots({
     required String serviceId,
     required DateTime date,
@@ -43,8 +55,7 @@ class QuoteProvider extends ChangeNotifier {
     required String closingTime,
     required int serviceDuration,
   }) async {
-    _isLoading = true;
-    notifyListeners();
+    _setLoading(true);
 
     final DataState<List<SlotEntity>> result =
         await _getServiceSlotsUsecase.call(
@@ -59,12 +70,13 @@ class QuoteProvider extends ChangeNotifier {
 
     if (result is DataSuccess<List<SlotEntity>>) {
       slots = result.entity ?? <SlotEntity>[];
+      _errorMessage = null;
     } else {
       slots = <SlotEntity>[];
+      _errorMessage = result.exception?.message ?? 'something_wrong'.tr();
     }
 
-    _isLoading = false;
-    notifyListeners();
+    _setLoading(false);
   }
 
   void clearSlots() {
@@ -72,15 +84,20 @@ class QuoteProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Request a quote
+  // ---------------------- 🔹 QUOTE ACTIONS ----------------------
   Future<bool> requestQuote(String businessId, BuildContext context) async {
     _setLoading(true);
-    RequestQuoteParams params = RequestQuoteParams(
-        servicesAndEmployees: _selectedServices, businessId: businessId);
-    debugPrint(params.toMap().toString());
+
+    final RequestQuoteParams params = RequestQuoteParams(
+      servicesAndEmployees: _selectedServices,
+      businessId: businessId,
+    );
+
     final DataState<bool> result = await _requestQuoteUsecase.call(params);
     _setLoading(false);
+
     if (result is DataSuccess<bool>) {
+      // Open chat after successful quote request
       Provider.of<ChatProvider>(context, listen: false)
           .createOrOpenChatById(context, result.data ?? '');
       return true;
@@ -91,12 +108,13 @@ class QuoteProvider extends ChangeNotifier {
     }
   }
 
-  /// Update a quote
   Future<bool> updateQuote(UpdateQuoteParams params) async {
     _setLoading(true);
     final DataState<bool> result = await _updateQuoteUsecase.call(params);
     _setLoading(false);
+
     if (result is DataSuccess<bool>) {
+      _errorMessage = null;
       return true;
     } else {
       _errorMessage = result.exception?.message ?? 'Update failed';
@@ -105,21 +123,54 @@ class QuoteProvider extends ChangeNotifier {
     }
   }
 
-  /// Hold Quote payment
   Future<bool> holdQuotePay(HoldQuotePayParams params) async {
     _setLoading(true);
     final DataState<bool> result = await _holdQuotePayUsecase.call(params);
     _setLoading(false);
+
     if (result is DataSuccess<String>) {
+      _errorMessage = null;
       return true;
     } else {
       _errorMessage = result.exception?.message ?? 'hold pay failed';
+      notifyListeners();
       return false;
     }
   }
 
+  // ---------------------- 🔹 SERVICES HANDLING ----------------------
+
   void addService(ServiceEmployeeEntity service) {
-    _selectedServices.add(service);
+    final int index = _selectedServices.indexWhere(
+      (ServiceEmployeeEntity s) => s.serviceId == service.serviceId,
+    );
+
+    if (index != -1) {
+      _selectedServices[index] = _selectedServices[index].copyWith(
+        quantity: _selectedServices[index].quantity + 1,
+      );
+    } else {
+      _selectedServices.add(service.copyWith(quantity: 1));
+    }
+    notifyListeners();
+  }
+
+  void removeService(String serviceId) {
+    final int index = _selectedServices.indexWhere(
+      (ServiceEmployeeEntity s) => s.serviceId == serviceId,
+    );
+
+    if (index == -1) return;
+
+    final ServiceEmployeeEntity existing = _selectedServices[index];
+    if (existing.quantity > 1) {
+      _selectedServices[index] = existing.copyWith(
+        quantity: existing.quantity - 1,
+      );
+    } else {
+      _selectedServices.removeAt(index);
+    }
+
     notifyListeners();
   }
 
@@ -128,31 +179,69 @@ class QuoteProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeService(String serviceId) {
-    _selectedServices.removeWhere(
-        (ServiceEmployeeEntity service) => service.serviceId == serviceId);
+  void updateService(ServiceEmployeeEntity updated) {
+    final int index = _selectedServices.indexWhere(
+      (ServiceEmployeeEntity s) => s.serviceId == updated.serviceId,
+    );
+    if (index != -1) {
+      _selectedServices[index] = updated;
+    } else {
+      _selectedServices.add(updated);
+    }
     notifyListeners();
   }
+
+  // ---------------------- 🔹 STATE HELPERS ----------------------
 
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
   }
 
-  void updateService(ServiceEmployeeEntity updated) {
-    final int index = selectedServices.indexWhere(
-      (ServiceEmployeeEntity s) => s.serviceId == updated.serviceId,
-    );
-    if (index != -1) {
-      selectedServices[index] = updated;
-    } else {
-      selectedServices.add(updated);
+  void setAppointmentTimeType(AppointmentTimeSelection value) {
+    _appointmentTimeType = value;
+    notifyListeners();
+  }
+
+  // ---------------------- 🔹 RESET EVERYTHING ----------------------
+  void reset() {
+    note.clear();
+    _selectedServices.clear();
+    slots.clear();
+    _errorMessage = null;
+    _isLoading = false;
+    _appointmentTimeType = AppointmentTimeSelection.differentTimePerService;
+    notifyListeners();
+  }
+
+  void setGlobalBookAt(String time) {
+    _globalBookAt = time;
+
+    // also update all service entities with this global time
+    for (final ServiceEmployeeEntity s in selectedServices) {
+      s.bookAt = time;
     }
     notifyListeners();
   }
 
-  void setAppointmentTimeType(AppointmentTimeSelection value) {
-    _appointmentTimeType = value;
+  void setServiceTime(String serviceId, String bookAt) {
+    final int index = _selectedServices.indexWhere(
+      (ServiceEmployeeEntity s) => s.serviceId == serviceId,
+    );
+
+    if (index != -1) {
+      _selectedServices[index] =
+          _selectedServices[index].copyWith(bookAt: bookAt);
+
+      if (_appointmentTimeType == AppointmentTimeSelection.oneTimeForAll) {
+        _globalBookAt = bookAt;
+        for (int i = 0; i < _selectedServices.length; i++) {
+          _selectedServices[i] =
+              _selectedServices[i].copyWith(bookAt: _globalBookAt!);
+        }
+      }
+    }
+
     notifyListeners();
   }
 }
