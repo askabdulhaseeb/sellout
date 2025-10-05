@@ -151,20 +151,11 @@ class _ServiceStepGridTile extends StatelessWidget {
         .where((ServiceEmployeeEntity s) => s.serviceId == service.serviceID)
         .map((ServiceEmployeeEntity s) => s.quantity)
         .fold(0, (int a, int b) => a + b);
-
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
         border: Border.all(color: Colors.grey.shade300),
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
-          )
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -187,13 +178,13 @@ class _ServiceStepGridTile extends StatelessWidget {
               Text(
                 service.priceStr,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.outlineVariant,
+                      color: Theme.of(context).colorScheme.outline,
                       fontWeight: FontWeight.w500,
                     ),
               ),
               const SizedBox(width: 8),
               Text(
-                '${service.time} min',
+                '${service.time} ${'min'.tr()}',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Theme.of(context).colorScheme.outlineVariant,
                       fontWeight: FontWeight.w500,
@@ -201,47 +192,18 @@ class _ServiceStepGridTile extends StatelessWidget {
               ),
             ],
           ),
-
           const Spacer(),
-
-          /// Buttons Row
           Row(
             children: <Widget>[
-              if (qty > 0) ...[
-                Expanded(
-                  child: CustomElevatedButton(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                    bgColor: Colors.transparent,
-                    border: Border.all(
-                        color: Theme.of(context).colorScheme.error, width: 1.2),
-                    textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.error,
-                          fontWeight: FontWeight.w600,
-                        ),
-                    title: 'remove'.tr(),
-                    isLoading: false,
-                    onTap: () => quoteProvider.removeService(service.serviceID),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 6),
-                  child: Text(
-                    '$qty',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                  ),
-                ),
-              ],
               Expanded(
                 child: CustomElevatedButton(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                   bgColor:
-                      Theme.of(context).primaryColor.withValues(alpha: 0.1),
-                  border: Border.all(color: Theme.of(context).primaryColor),
+                      Theme.of(context).primaryColor.withValues(alpha: 0.0),
+                  border: Border.all(
+                    color: Theme.of(context).primaryColor,
+                  ),
                   textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(context).primaryColor,
                         fontWeight: FontWeight.w600,
@@ -252,11 +214,39 @@ class _ServiceStepGridTile extends StatelessWidget {
                     ServiceEmployeeModel(
                       serviceId: service.serviceID,
                       quantity: 1,
-                      bookAt: '',
                     ),
                   ),
                 ),
               ),
+              if (qty > 0) ...<Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  child: Text(
+                    '$qty',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                  ),
+                ),
+                Expanded(
+                  child: CustomElevatedButton(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                    bgColor: Colors.transparent,
+                    border: Border.all(
+                        color: Theme.of(context).colorScheme.outline,
+                        width: 1.2),
+                    textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.outline,
+                          fontWeight: FontWeight.w600,
+                        ),
+                    title: 'remove'.tr(),
+                    isLoading: false,
+                    onTap: () => quoteProvider.removeService(service.serviceID),
+                  ),
+                ),
+              ],
             ],
           ),
         ],
