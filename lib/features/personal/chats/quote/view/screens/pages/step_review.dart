@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../business/core/data/sources/service/local_service.dart';
 import '../../../domain/entites/service_employee_entity.dart';
 import '../../provider/quote_provider.dart';
@@ -13,15 +14,13 @@ class StepReview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final QuoteProvider pro = Provider.of<QuoteProvider>(context);
-
-    /// ✅ Load all services in parallel
     return FutureBuilder<List<ServiceEntity?>>(
       future: Future.wait(
         pro.selectedServices.map((ServiceEmployeeEntity s) async {
           try {
             return await LocalService().getService(s.serviceId);
           } catch (e) {
-            debugPrint('Error loading service ${s.serviceId}: $e');
+            debugPrint('error_loading_service ${s.serviceId}: $e');
             return null;
           }
         }),
@@ -34,15 +33,13 @@ class StepReview extends StatelessWidget {
         if (snapshot.hasError) {
           return Center(
             child: Text(
-              'Error loading services: ${snapshot.error}',
+              '${snapshot.error}',
               style: const TextStyle(color: Colors.red),
             ),
           );
         }
-
         final List<ServiceEntity?> services =
             snapshot.data ?? <ServiceEntity?>[];
-
         if (services.isEmpty) {
           return Center(
             child: Text(
@@ -71,7 +68,6 @@ class StepReview extends StatelessWidget {
                     final ServiceEmployeeEntity s = entry.value;
                     final ServiceEntity? service =
                         (i < services.length) ? services[i] : null;
-
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 8),
                       child: Row(
@@ -84,7 +80,7 @@ class StepReview extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '£${(s.quantity * (service?.price ?? 120))}',
+                            '${CountryHelper.currencySymbolHelper(service?.currency)}${(s.quantity * (service?.price ?? 0))}',
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -96,7 +92,6 @@ class StepReview extends StatelessWidget {
                   }).toList(),
                 ),
               ),
-
               const SizedBox(height: 12),
 
               /// 🔹 SCHEDULE SECTION
@@ -145,8 +140,8 @@ class StepReview extends StatelessWidget {
                           Text(
                             pro.globalBookAt != null &&
                                     pro.globalBookAt!.isNotEmpty
-                                ? 'Time: ${pro.globalBookAt}'
-                                : 'Time: na'.tr(),
+                                ? '${'time'.tr()}: ${pro.globalBookAt}'
+                                : '${'time'.tr()}: na'.tr(),
                             style: const TextStyle(fontSize: 15),
                           ),
                         ],
@@ -179,7 +174,7 @@ class StepReview extends StatelessWidget {
                   children: <Widget>[
                     const SizedBox(),
                     Text(
-                      '£${pro.selectedServices.fold<num>(0, (num sum, ServiceEmployeeEntity s) {
+                      '${CountryHelper.currencySymbolHelper(services.first?.currency)}${pro.selectedServices.fold<num>(0, (num sum, ServiceEmployeeEntity s) {
                         final ServiceEntity? service = services.firstWhere(
                           (ServiceEntity? se) => se?.serviceID == s.serviceId,
                           orElse: () => null,
