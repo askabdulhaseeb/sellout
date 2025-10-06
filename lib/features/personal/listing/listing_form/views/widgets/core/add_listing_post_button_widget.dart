@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import '../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../core/widgets/in_dev_mode.dart';
 import '../../providers/add_listing_form_provider.dart';
@@ -35,15 +35,12 @@ class AddListingPostButtonWidget extends StatelessWidget {
                 isLoading: formPro.isLoading,
                 onTap: () async {
                   if (formPro.attachments.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content:
-                          Text('please_add_at_least_one_photo_or_video'.tr()),
-                    ));
+                    AppSnackBar.showSnackBar(
+                        context, 'please_add_at_least_one_photo_or_video'.tr());
                     return;
                   }
                   // Navigator.push(
                   //     context,
-                  //     // ignore: always_specify_types
                   //     MaterialPageRoute(
                   //       builder: (BuildContext context) =>
                   //           const AddListingPreviewScreen(),

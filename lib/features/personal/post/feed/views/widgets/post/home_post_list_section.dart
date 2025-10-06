@@ -13,10 +13,10 @@ class HomePostListSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<PostEntity> posts = context.watch<FeedProvider>().posts;
-    final bool isLoading = context.watch<FeedProvider>().feedLoading;
+    final FeedProvider feedProvider = context.watch<FeedProvider>();
+    final List<PostEntity> posts = feedProvider.posts;
 
-    if (isLoading && posts.isEmpty) {
+    if (feedProvider.feedLoading && posts.isEmpty) {
       return SliverList(
         delegate: SliverChildBuilderDelegate(
           (_, __) => const HomePostLoader(),
@@ -24,7 +24,8 @@ class HomePostListSection extends StatelessWidget {
         ),
       );
     }
-    if (!isLoading && posts.isEmpty) {
+
+    if (!feedProvider.feedLoading && posts.isEmpty) {
       return SliverFillRemaining(
         hasScrollBody: false,
         child: Center(
@@ -38,15 +39,13 @@ class HomePostListSection extends StatelessWidget {
                       color: Colors.grey,
                       fontWeight: FontWeight.w500,
                     ),
-                children: <TextSpan>[
+                children: <InlineSpan>[
                   TextSpan(
                     text: 'retry'.tr(),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context).primaryColor,
                           fontWeight: FontWeight.bold,
                           decoration: TextDecoration.underline,
-                          decorationThickness: 2,
-                          decorationColor: Theme.of(context).primaryColor,
                         ),
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
@@ -64,9 +63,30 @@ class HomePostListSection extends StatelessWidget {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
+          if (index == posts.length) {
+            // — Bottom section loader or “no more posts”
+            if (feedProvider.feedLoadingMore) {
+              return const Padding(
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+            if (feedProvider.noMorePosts) {
+              return const Padding(
+                padding: EdgeInsets.symmetric(vertical: 30),
+                child: Center(
+                  child: Text(
+                    'No more posts',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ),
+              );
+            }
+            return const SizedBox();
+          }
           return HomePostTile(post: posts[index]);
         },
-        childCount: posts.length,
+        childCount: posts.length + 1,
       ),
     );
   }

@@ -100,7 +100,6 @@ class QuoteMessageTile extends StatelessWidget {
                           margin: const EdgeInsets.symmetric(vertical: 2.0),
                           child: Row(
                             children: <Widget>[
-                              // LEFT SIDE — service name + quantity
                               Expanded(
                                 flex: 4,
                                 child: Row(
@@ -131,7 +130,6 @@ class QuoteMessageTile extends StatelessWidget {
                                   ],
                                 ),
                               ),
-
                               // RIGHT SIDE — bookAt time
                               Text(
                                 se.bookAt,
