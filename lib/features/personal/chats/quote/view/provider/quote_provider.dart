@@ -89,6 +89,7 @@ class QuoteProvider extends ChangeNotifier {
     _setLoading(true);
 
     final RequestQuoteParams params = RequestQuoteParams(
+      note: note.text,
       servicesAndEmployees: _selectedServices,
       businessId: businessId,
     );

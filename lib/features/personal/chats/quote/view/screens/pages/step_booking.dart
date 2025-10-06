@@ -17,8 +17,8 @@ class StepBooking extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<QuoteProvider>(
       builder: (BuildContext context, QuoteProvider pro, _) {
-        // 🔹 Aggregate services to avoid duplicates
-        final Map<String, ServiceEmployeeModel> serviceMap = {};
+        final Map<String, ServiceEmployeeModel> serviceMap =
+            <String, ServiceEmployeeModel>{};
         for (final ServiceEmployeeEntity s in pro.selectedServices) {
           if (serviceMap.containsKey(s.serviceId)) {
             serviceMap[s.serviceId]!.quantity += s.quantity;
@@ -79,7 +79,6 @@ class StepBooking extends StatelessWidget {
   }
 }
 
-/// 🔹 Single card for "One time for all"
 class _GlobalAppointmentCard extends StatelessWidget {
   const _GlobalAppointmentCard({required this.services});
   final List<ServiceEmployeeModel> services;
@@ -101,13 +100,12 @@ class _GlobalAppointmentCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                'all_services'.tr(),
+                'services'.tr(),
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
               ),
               const SizedBox(height: 8),
-
               // 🔹 Show list of services
               ...services.map((ServiceEmployeeModel s) {
                 return FutureBuilder<ServiceEntity?>(
@@ -129,7 +127,7 @@ class _GlobalAppointmentCard extends StatelessWidget {
               const SizedBox(height: 16),
               if (displayTime.isNotEmpty)
                 Text(
-                  'Selected Time: $displayTime',
+                  displayTime,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.w600,
@@ -207,6 +205,26 @@ class _ServiceBookingStepCard extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        service?.priceStr ?? 'na'.tr(),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context).colorScheme.outline,
+                              fontWeight: FontWeight.w500,
+                            ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '${service?.time ?? 'na'.tr()} ${'min'.tr()}',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color:
+                                  Theme.of(context).colorScheme.outlineVariant,
+                              fontWeight: FontWeight.w500,
+                            ),
+                      ),
+                    ],
                   ),
                   const Spacer(),
 
@@ -296,32 +314,20 @@ class AppointmentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<QuoteProvider>(
       builder: (BuildContext context, QuoteProvider pro, _) {
-        return Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            border:
-                Border.all(color: Theme.of(context).colorScheme.outlineVariant),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              CustomToggleSwitch<AppointmentTimeSelection>(
-                labels: const <AppointmentTimeSelection>[
-                  AppointmentTimeSelection.differentTimePerService,
-                  AppointmentTimeSelection.oneTimeForAll,
-                ],
-                labelStrs: AppointmentTimeSelection.values
-                    .map((AppointmentTimeSelection e) => e.title.tr())
-                    .toList(),
-                labelText: '',
-                onToggle: (AppointmentTimeSelection? val) {
-                  if (val != null) pro.setAppointmentTimeType(val);
-                },
-                initialValue: pro.appointmentTimeType,
-              ),
-            ],
-          ),
+        return CustomToggleSwitch<AppointmentTimeSelection>(
+          isShaded: false,
+          labels: const <AppointmentTimeSelection>[
+            AppointmentTimeSelection.differentTimePerService,
+            AppointmentTimeSelection.oneTimeForAll,
+          ],
+          labelStrs: AppointmentTimeSelection.values
+              .map((AppointmentTimeSelection e) => e.title.tr())
+              .toList(),
+          labelText: '',
+          onToggle: (AppointmentTimeSelection? val) {
+            if (val != null) pro.setAppointmentTimeType(val);
+          },
+          initialValue: pro.appointmentTimeType,
         );
       },
     );
