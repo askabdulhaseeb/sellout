@@ -66,7 +66,7 @@ class FancyOutlineTilePainter extends CustomPainter {
       ..close();
 
     final Paint shadowPaint = Paint()
-      ..color = Colors.black.withOpacity(0.03)
+      ..color = Colors.black.withValues(alpha: 0.03)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3.0;
     canvas.save();
@@ -75,7 +75,7 @@ class FancyOutlineTilePainter extends CustomPainter {
     canvas.restore();
 
     final Paint outlinePaint = Paint()
-      ..color = color.withOpacity(opacity)
+      ..color = color.withValues(alpha: opacity)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
     canvas.drawPath(path, outlinePaint);
@@ -112,8 +112,8 @@ class FilledRoundedTilePainter extends CustomPainter {
         rect.topLeft,
         rect.bottomRight,
         <Color>[
-          color.withOpacity(opacity),
-          color.withOpacity(opacity * 0.5),
+          color.withValues(alpha: opacity),
+          color.withValues(alpha: opacity * 0.5),
         ],
       );
     canvas.drawRRect(rrect, paint);
@@ -138,11 +138,11 @@ class DiagonalStripeTilePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final double s = tileSize * 0.6;
     final Rect rect = Rect.fromCenter(center: Offset.zero, width: s, height: s);
-    final Paint bg = Paint()..color = color.withOpacity(opacity * 0.2);
+    final Paint bg = Paint()..color = color.withValues(alpha: opacity * 0.2);
     canvas.drawRect(rect, bg);
 
     final Paint linePaint = Paint()
-      ..color = color.withOpacity(opacity)
+      ..color = color.withValues(alpha: opacity)
       ..strokeWidth = 2.0;
     for (double i = -s; i < s; i += 8) {
       canvas.drawLine(Offset(i, -s), Offset(i + s, s), linePaint);
@@ -168,9 +168,9 @@ class CircleDotTilePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final double r = tileSize * 0.2;
     final Paint glow = Paint()
-      ..color = color.withOpacity(opacity * 0.4)
+      ..color = color.withValues(alpha: opacity * 0.4)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
-    final Paint dot = Paint()..color = color.withOpacity(opacity);
+    final Paint dot = Paint()..color = color.withValues(alpha: opacity);
 
     canvas.drawCircle(Offset.zero, r * 1.5, glow);
     canvas.drawCircle(Offset.zero, r, dot);
@@ -246,9 +246,7 @@ class ChatBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     final ColorScheme colors = Theme.of(context).colorScheme;
-
     final List<TileData> tiles = generateBentoTilesFixedColumns(size, 25);
-
     return CustomPaint(
       size: size,
       painter: ChatBgPainter(
