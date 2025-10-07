@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
-
 import '../functions/app_log.dart';
 
 class AppValidator {
