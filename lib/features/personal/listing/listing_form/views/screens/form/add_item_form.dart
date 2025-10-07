@@ -5,7 +5,7 @@ import '../../providers/add_listing_form_provider.dart';
 import '../../widgets/category/subcateogry_selectable_widget.dart';
 import '../../widgets/core/add_listing_basic_info_section.dart';
 import '../../widgets/core/add_listing_condition_offer_section.dart';
-import '../../widgets/core/add_listing_delivery_selection_widget.dart';
+import '../../widgets/core/delivery_Section.dart/add_listing_delivery_selection_widget.dart';
 import '../../widgets/core/add_listing_discount_section.dart';
 import '../../widgets/core/add_listing_post_button_widget.dart';
 import '../../widgets/add_listing_price_and_quantity_widget.dart';

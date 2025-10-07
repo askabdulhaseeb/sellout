@@ -64,26 +64,19 @@ class HomePostListSection extends StatelessWidget {
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
           if (index == posts.length) {
-            // — Bottom section loader or “no more posts”
+            // Bottom loader or “no more posts”
             if (feedProvider.feedLoadingMore) {
               return const Padding(
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Center(child: CircularProgressIndicator()),
               );
+            } else if (feedProvider.noMorePosts) {
+              return const SizedBox.shrink();
+            } else {
+              return const SizedBox.shrink(); // safeguard fallback
             }
-            if (feedProvider.noMorePosts) {
-              return const Padding(
-                padding: EdgeInsets.symmetric(vertical: 30),
-                child: Center(
-                  child: Text(
-                    'No more posts',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ),
-              );
-            }
-            return const SizedBox();
           }
+
           return HomePostTile(post: posts[index]);
         },
         childCount: posts.length + 1,

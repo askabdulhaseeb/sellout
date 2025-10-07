@@ -15,6 +15,7 @@ import '../../../../post/domain/entities/discount_entity.dart';
 import '../../../../post/domain/entities/size_color/color_entity.dart';
 import '../../../../post/domain/entities/size_color/size_color_entity.dart';
 import '../../domain/entities/sub_category_entity.dart';
+import 'package_detail_params.dart';
 
 class AddListingParam {
   AddListingParam({
@@ -28,12 +29,11 @@ class AddListingParam {
     required this.deliveryType,
     required this.listingType,
     required this.currency,
+    this.packageDetail,
     this.condition,
     this.currentLatitude,
     this.currentLongitude,
     this.type,
-    this.localDeliveryAmount,
-    this.internationalDeliveryAmount,
     this.category,
     this.quantity,
     this.discount,
@@ -92,11 +92,10 @@ class AddListingParam {
   final String minOfferAmount;
   final PrivacyType privacyType;
   final DeliveryType deliveryType;
-  final String? localDeliveryAmount;
-  final String? internationalDeliveryAmount;
   final ListingType listingType;
   final SubCategoryEntity? category;
   final String? currency;
+  final PackageDetail? packageDetail;
   final int? currentLatitude;
   final int? currentLongitude;
   final String? brand;
@@ -210,9 +209,9 @@ class AddListingParam {
     return <String, String>{
       'delivery_type': deliveryType.json,
       if (deliveryType == DeliveryType.paid)
-        'local_delivery': localDeliveryAmount ?? '0',
-      if (deliveryType == DeliveryType.paid)
-        'international_delivery': internationalDeliveryAmount ?? '0',
+        'package_detail': jsonEncode(packageDetail!.toJson()),
+      if (deliveryType == DeliveryType.freeDelivery)
+        'package_detail': jsonEncode(packageDetail!.toJson()),
       if (deliveryType == DeliveryType.collection)
         'collection_location': collectionLocation != null
             ? jsonEncode(

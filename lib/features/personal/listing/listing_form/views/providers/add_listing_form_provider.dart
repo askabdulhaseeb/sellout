@@ -35,6 +35,7 @@ import '../../domain/usecase/add_listing_usecase.dart';
 import '../../domain/usecase/edit_listing_usecase.dart';
 import '../../domain/usecase/get_category_by_endpoint_usecase.dart';
 import '../params/add_listing_param.dart';
+import '../widgets/core/delivery_Section.dart/add_listing_delivery_selection_widget.dart';
 import '../widgets/property/add_property_tenure_type.dart';
 
 class AddListingFormProvider extends ChangeNotifier {
@@ -166,8 +167,6 @@ class AddListingFormProvider extends ChangeNotifier {
     _price.clear();
     _quantity.text = '1';
     _minimumOffer.clear();
-    _localDeliveryFee.clear();
-    _internationalDeliveryFee.clear();
     _engineSize.clear();
     _mileage.clear();
     _bedroom.clear();
@@ -320,9 +319,6 @@ class AddListingFormProvider extends ChangeNotifier {
     // Delivery & fees
     // -------------------------
     _deliveryType = post?.deliveryType ?? DeliveryType.paid;
-    _localDeliveryFee.text = post?.localDelivery?.toString() ?? '';
-    _internationalDeliveryFee.text =
-        post?.internationalDelivery?.toString() ?? '';
 
     // -------------------------
     // Listing, privacy, and condition
@@ -362,7 +358,6 @@ class AddListingFormProvider extends ChangeNotifier {
                 .where((AttachmentEntity a) => a.type == AttachmentType.video)
                 .length ??
             0);
-
     if (imageCount == 0 || videoCount == 0) {
       AppSnackBar.showSnackBar(
           context, 'please_add_at_least_one_photo_and_video'.tr());
@@ -437,8 +432,6 @@ class AddListingFormProvider extends ChangeNotifier {
         minOfferAmount: minimumOffer.text,
         privacyType: _privacy,
         deliveryType: deliveryType,
-        localDeliveryAmount: _localDeliveryFee.text,
-        internationalDeliveryAmount: _internationalDeliveryFee.text,
         listingType: listingType ?? ListingType.items,
         category: _selectedCategory,
         currentLatitude: 12234,
@@ -481,8 +474,6 @@ class AddListingFormProvider extends ChangeNotifier {
           minOfferAmount: minimumOffer.text,
           privacyType: _privacy,
           deliveryType: deliveryType,
-          localDeliveryAmount: _localDeliveryFee.text,
-          internationalDeliveryAmount: _internationalDeliveryFee.text,
           listingType: ListingType.clothAndFoot,
           category: _selectedCategory,
           currentLatitude: LocalAuth.latlng.latitude.toInt(),
@@ -566,28 +557,27 @@ class AddListingFormProvider extends ChangeNotifier {
     if (!(_foodAndDrinkKey.currentState?.validate() ?? false)) return;
     try {
       final AddListingParam param = AddListingParam(
-          postID: post?.postID ?? '',
-          oldAttachments: post?.fileUrls,
-          deliveryType: deliveryType,
-          quantity: quantity.text,
-          currency: _post == null ? LocalAuth.currentUser?.currency : null,
-          title: title.text,
-          description: description.text,
-          collectionLocation: selectedmeetupLocation,
-          attachments: attachments,
-          price: price.text,
-          discount: isDiscounted,
-          discounts: _discounts,
-          condition: condition,
-          acceptOffer: acceptOffer,
-          minOfferAmount: minimumOffer.text,
-          privacyType: _privacy,
-          listingType: listingType ?? ListingType.foodAndDrink,
-          category: _selectedCategory,
-          currentLatitude: 1234,
-          currentLongitude: 1234,
-          localDeliveryAmount: _localDeliveryFee.text,
-          internationalDeliveryAmount: _internationalDeliveryFee.text);
+        postID: post?.postID ?? '',
+        oldAttachments: post?.fileUrls,
+        deliveryType: deliveryType,
+        quantity: quantity.text,
+        currency: _post == null ? LocalAuth.currentUser?.currency : null,
+        title: title.text,
+        description: description.text,
+        collectionLocation: selectedmeetupLocation,
+        attachments: attachments,
+        price: price.text,
+        discount: isDiscounted,
+        discounts: _discounts,
+        condition: condition,
+        acceptOffer: acceptOffer,
+        minOfferAmount: minimumOffer.text,
+        privacyType: _privacy,
+        listingType: listingType ?? ListingType.foodAndDrink,
+        category: _selectedCategory,
+        currentLatitude: 1234,
+        currentLongitude: 1234,
+      );
       final DataState<String> result = _post == null
           ? await _addlistingUSecase(param)
           : await _editListingUsecase(param);
@@ -846,8 +836,25 @@ class AddListingFormProvider extends ChangeNotifier {
   }
 
   void setDeliveryType(DeliveryType? value) {
-    if (value == null) return;
+    if (value == null || _deliveryType == value) return;
     _deliveryType = value;
+    notifyListeners();
+  }
+
+  void setDeliveryPayer(DeliveryPayer? value) {
+    if (value == null || _deliveryPayer == value) return;
+
+    _deliveryPayer = value;
+
+    switch (value) {
+      case DeliveryPayer.sellerPays:
+        _deliveryType = DeliveryType.freeDelivery;
+        break;
+      case DeliveryPayer.buyerPays:
+        _deliveryType = DeliveryType.paid;
+        break;
+    }
+
     notifyListeners();
   }
 
@@ -1122,6 +1129,8 @@ class AddListingFormProvider extends ChangeNotifier {
   bool get acceptOffer => _acceptOffer;
   PrivacyType get privacy => _privacy;
   DeliveryType get deliveryType => _deliveryType;
+  DeliveryPayer get deliveryPayer => _deliveryPayer;
+
   // Cloth and Foot
   String get selectedClothSubCategory => _selectedClothSubCategory;
   String? get brand => _brand;
@@ -1167,12 +1176,10 @@ class AddListingFormProvider extends ChangeNotifier {
   TextEditingController get price => _price;
   TextEditingController get quantity => _quantity;
   TextEditingController get minimumOffer => _minimumOffer;
-  TextEditingController get localDeliveryFee => _localDeliveryFee;
-  TextEditingController get internationalDeliveryFee =>
-      _internationalDeliveryFee;
-
+  TextEditingController get packageHeight => _packageHeight;
+  TextEditingController get packageWidth => _packageWidth;
+  TextEditingController get packageLength => _packageLength;
   String get accessCode => _accessCode;
-
   GlobalKey<FormState> get itemKey => _itemKey;
   GlobalKey<FormState> get clothesAndFootKey => _clothesAndFootKey;
   GlobalKey<FormState> get vehicleKey => _vehicleKey;
@@ -1241,6 +1248,8 @@ class AddListingFormProvider extends ChangeNotifier {
   bool _acceptOffer = true;
   PrivacyType _privacy = PrivacyType.public;
   DeliveryType _deliveryType = DeliveryType.paid;
+  DeliveryPayer _deliveryPayer = DeliveryPayer.sellerPays;
+
   LocationEntity? _selectedMeetupLocation;
   LatLng? _meetupLatLng;
   LocationEntity? _selectedCollectionLocation;
@@ -1292,9 +1301,9 @@ class AddListingFormProvider extends ChangeNotifier {
   final TextEditingController _price = TextEditingController();
   final TextEditingController _quantity = TextEditingController(text: '1');
   final TextEditingController _minimumOffer = TextEditingController();
-  final TextEditingController _localDeliveryFee = TextEditingController();
-  final TextEditingController _internationalDeliveryFee =
-      TextEditingController();
+  final TextEditingController _packageHeight = TextEditingController();
+  final TextEditingController _packageWidth = TextEditingController();
+  final TextEditingController _packageLength = TextEditingController();
   String _accessCode = '';
   // Form State
   final GlobalKey<FormState> _itemKey = GlobalKey<FormState>();
