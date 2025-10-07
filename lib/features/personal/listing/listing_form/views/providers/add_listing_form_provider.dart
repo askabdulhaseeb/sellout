@@ -35,6 +35,7 @@ import '../../domain/usecase/add_listing_usecase.dart';
 import '../../domain/usecase/edit_listing_usecase.dart';
 import '../../domain/usecase/get_category_by_endpoint_usecase.dart';
 import '../params/add_listing_param.dart';
+import '../params/package_detail_params.dart';
 import '../widgets/core/delivery_Section.dart/add_listing_delivery_selection_widget.dart';
 import '../widgets/property/add_property_tenure_type.dart';
 
@@ -408,8 +409,14 @@ class AddListingFormProvider extends ChangeNotifier {
         break;
     }
     setLoading(false);
+    debugPrint('submition function completed here');
   }
 
+  PackageDetail get pkgdetail => PackageDetail(
+      length: _packageLength.text,
+      width: _packageWidth.text,
+      height: _packageHeight.text,
+      weight: '');
   Future<void> _onItemSubmit() async {
     if (!(_itemKey.currentState?.validate() ?? false)) return;
     try {
@@ -427,6 +434,7 @@ class AddListingFormProvider extends ChangeNotifier {
         quantity: quantity.text,
         discount: isDiscounted,
         discounts: discounts,
+        packageDetail: pkgdetail,
         condition: condition,
         acceptOffer: acceptOffer,
         minOfferAmount: minimumOffer.text,

@@ -235,13 +235,10 @@ class ApiCall<T> {
         );
         return DataFailer<T>(CustomException('ERROR: ${decoded['message']}'));
       }
-    } catch (e) {
+    } catch (e, stc) {
       debugPrint('🔴 ERROR: $fieldsMap');
-      AppLog.error(
-        'ApiCall.callFormData - Catch ERROR: ${e.toString()}',
-        name: 'ApiCall.callFormData - Catch',
-        error: CustomException(e.toString()),
-      );
+      AppLog.error('ApiCall.callFormData - Catch ERROR: ${e.toString()}',
+          name: 'ApiCall.callFormData - Catch', error: e, stackTrace: stc);
       return DataFailer<T>(CustomException(e.toString()));
     }
   }

@@ -208,7 +208,8 @@ class AddListingParam {
   Map<String, String> _deliveryMAP() {
     return <String, String>{
       'delivery_type': deliveryType.json,
-      if (deliveryType == DeliveryType.paid)
+      if (deliveryType == DeliveryType.paid ||
+          deliveryType == DeliveryType.freeDelivery)
         'package_detail': jsonEncode(packageDetail!.toJson()),
       if (deliveryType == DeliveryType.freeDelivery)
         'package_detail': jsonEncode(packageDetail!.toJson()),
