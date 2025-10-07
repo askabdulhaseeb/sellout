@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 
+/// A generic custom toggle switch widget that supports:
+/// - Multiple selectable labels
+/// - Read-only mode
+/// - Custom colors and border options
+/// - Label heading text
+/// - Dynamic selection state
 class CustomToggleSwitch<T> extends StatelessWidget {
   const CustomToggleSwitch({
     required this.labels,
@@ -8,6 +14,7 @@ class CustomToggleSwitch<T> extends StatelessWidget {
     required this.labelText,
     required this.onToggle,
     this.initialValue,
+    this.solidbgColor = false,
     this.readOnly = false,
     this.selectedColors,
     this.isShaded = true,
@@ -23,12 +30,17 @@ class CustomToggleSwitch<T> extends StatelessWidget {
     this.widgetMargin = 4,
     super.key,
   });
+
+  /// Core configuration
   final List<T> labels;
-  final bool readOnly;
-  final T? initialValue;
-  final String labelText;
   final List<String> labelStrs;
+  final String labelText;
   final void Function(T)? onToggle;
+  final T? initialValue;
+
+  /// Appearance and styling
+  final bool solidbgColor;
+  final bool readOnly;
   final List<Color>? selectedColors;
   final bool isShaded;
   final double? containerHeight;
@@ -38,6 +50,7 @@ class CustomToggleSwitch<T> extends StatelessWidget {
   final double verticalMargin;
   final double widgetMargin;
 
+  /// Border and color behavior
   final Color? unseletedBorderColor;
   final Color? unseletedTextColor;
   final double borderWidth;
@@ -45,91 +58,161 @@ class CustomToggleSwitch<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final BorderRadius borderRadius = BorderRadius.circular(borderRad);
+    final BorderRadius radius = BorderRadius.circular(borderRad);
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: widgetMargin),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          if (labelText.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 2),
-              child: Text(
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-                labelText,
-                style: const TextStyle(fontWeight: FontWeight.w500),
+          if (labelText.isNotEmpty) _buildLabelText(),
+          _buildToggleRow(context, radius),
+        ],
+      ),
+    );
+  }
+
+  // 🔹 Label Heading
+  Widget _buildLabelText() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 2),
+      child: Text(
+        labelText,
+        overflow: TextOverflow.ellipsis,
+        maxLines: 1,
+        style: const TextStyle(fontWeight: FontWeight.w500),
+      ),
+    );
+  }
+
+  // 🔹 Row Builder
+  Widget _buildToggleRow(BuildContext context, BorderRadius radius) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        vertical: verticalMargin,
+        horizontal: horizontalMargin,
+      ),
+      child: Row(
+        spacing: labels.length == 2 ? 16 : 4,
+        children: List.generate(labels.length, (int index) {
+          final T labelValue = labels[index];
+          final bool isSelected = labelValue == initialValue;
+          final Color selectedColor = _getSelectedColor(index);
+
+          return Expanded(
+            child: _ToggleButton<T>(
+              text: labelStrs[index],
+              isSelected: isSelected,
+              color: selectedColor,
+              readOnly: readOnly,
+              solidbgColor: solidbgColor,
+              isShaded: isShaded,
+              containerHeight: containerHeight,
+              verticalPadding: verticalPadding,
+              horizontalPadding: horizontalPadding,
+              borderRadius: radius,
+              borderWidth: borderWidth,
+              unselectedBorderColor: unseletedBorderColor,
+              unselectedTextColor: unseletedTextColor,
+              onTap: () => onToggle?.call(labelValue),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
+  // 🔹 Helper to safely fetch color
+  Color _getSelectedColor(int index) {
+    if (selectedColors != null && selectedColors!.length > index) {
+      return selectedColors![index];
+    }
+    return AppTheme.primaryColor;
+  }
+}
+
+/// A single toggle button tile used inside [CustomToggleSwitch].
+class _ToggleButton<T> extends StatelessWidget {
+  const _ToggleButton({
+    required this.text,
+    required this.isSelected,
+    required this.color,
+    required this.readOnly,
+    required this.solidbgColor,
+    required this.isShaded,
+    required this.containerHeight,
+    required this.verticalPadding,
+    required this.horizontalPadding,
+    required this.borderRadius,
+    required this.borderWidth,
+    required this.unselectedBorderColor,
+    required this.unselectedTextColor,
+    required this.onTap,
+  });
+
+  final String text;
+  final bool isSelected;
+  final Color color;
+  final bool readOnly;
+  final bool solidbgColor;
+  final bool isShaded;
+  final double? containerHeight;
+  final double verticalPadding;
+  final double horizontalPadding;
+  final BorderRadius borderRadius;
+  final double borderWidth;
+  final Color? unselectedBorderColor;
+  final Color? unselectedTextColor;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final ColorScheme scheme = ColorScheme.of(context);
+
+    // 🔹 Background color logic
+    final Color bgColor = isSelected
+        ? (solidbgColor
+            ? color // full solid
+            : color.withValues(alpha: isShaded ? 0.1 : 0))
+        : scheme.outline.withValues(alpha: isShaded ? 0.1 : 0);
+
+    // 🔹 Text color logic
+    final Color textColor = isSelected
+        ? (solidbgColor
+            ? Colors.white // ensure visibility
+            : color)
+        : unselectedTextColor ?? scheme.outline;
+
+    return InkWell(
+      borderRadius: borderRadius,
+      onTap: readOnly ? null : onTap,
+      child: Container(
+        height: containerHeight ?? 30,
+        padding: EdgeInsets.symmetric(
+          vertical: verticalPadding,
+          horizontal: horizontalPadding,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: borderRadius,
+          color: bgColor,
+          border: Border.all(
+            width: borderWidth,
+            color: isSelected ? color : unselectedBorderColor ?? scheme.outline,
+          ),
+        ),
+        child: Center(
+          child: FittedBox(
+            child: Text(
+              text,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: textColor,
               ),
             ),
-          Padding(
-            padding: EdgeInsets.symmetric(
-                vertical: verticalMargin, horizontal: horizontalMargin),
-            child: Row(
-              spacing: labels.length == 2 ? 16 : 4,
-              children: labelStrs.map(
-                (String e) {
-                  final int index = labels.contains(initialValue)
-                      ? labels.indexWhere((T e2) => e2 == initialValue)
-                      : -1;
-                  final int currentIndex = labelStrs.indexOf(e);
-                  final bool isSelected = index == currentIndex;
-                  final Color selectedColor = (selectedColors != null &&
-                          selectedColors!.length > currentIndex)
-                      ? selectedColors![currentIndex]
-                      : AppTheme.primaryColor;
-                  return Expanded(
-                    child: InkWell(
-                      borderRadius: borderRadius,
-                      onTap: readOnly
-                          ? null
-                          : () => onToggle?.call(labels[currentIndex]),
-                      child: Container(
-                        height: containerHeight ?? 30,
-                        padding: EdgeInsets.symmetric(
-                          vertical: verticalPadding,
-                          horizontal: horizontalPadding,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: borderRadius,
-                          color: isSelected
-                              ? selectedColor.withValues(
-                                  alpha: isShaded ? 0.1 : 0.0)
-                              : ColorScheme.of(context)
-                                  .outline
-                                  .withValues(alpha: isShaded ? 0.1 : 0),
-                          border: Border.all(
-                            width: borderWidth,
-                            color: borderWidth == 0
-                                ? Colors.transparent
-                                : isSelected
-                                    ? selectedColor
-                                    : unseletedBorderColor ??
-                                        ColorScheme.of(context).outline,
-                          ),
-                        ),
-                        child: FittedBox(
-                          child: Text(
-                            e,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              // fontSize: seletedFontSize,
-                              fontWeight: FontWeight.w500,
-                              color: isSelected
-                                  ? selectedColor
-                                  : unseletedTextColor ??
-                                      ColorScheme.of(context).outline,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ).toList(),
-            ),
           ),
-        ],
+        ),
       ),
     );
   }
