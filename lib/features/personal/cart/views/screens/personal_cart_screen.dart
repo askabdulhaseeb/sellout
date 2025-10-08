@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/enums/cart/cart_item_type.dart';
-import '../../../../../core/theme/app_theme.dart';
 import '../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
@@ -128,9 +127,9 @@ class BasketItemListPage extends StatelessWidget {
           child: Text(
             'deselect_all_items'.tr(),
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: AppTheme.primaryColor,
+                color: Theme.of(context).primaryColor,
                 decoration: TextDecoration.underline,
-                decorationColor: AppTheme.primaryColor),
+                decorationColor: Theme.of(context).primaryColor),
           ),
         ),
         Container(

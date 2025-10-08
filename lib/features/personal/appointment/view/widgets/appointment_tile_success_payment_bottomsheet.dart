@@ -1,7 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
-import '../../../../../core/theme/app_theme.dart';
 import '../../../../../core/widgets/custom_elevated_button.dart';
 
 void showSuccessBottomSheet(BuildContext context) {
@@ -29,17 +27,20 @@ void showSuccessBottomSheet(BuildContext context) {
                 Container(
                   height: 100,
                   decoration: BoxDecoration(
-                      color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                      color:
+                          Theme.of(context).primaryColor.withValues(alpha: 0.1),
                       shape: BoxShape.circle),
                   child: Center(
                     child: Container(
                       height: 70,
                       decoration: BoxDecoration(
-                          color: AppTheme.primaryColor.withValues(alpha: 0.2),
+                          color: Theme.of(context)
+                              .primaryColor
+                              .withValues(alpha: 0.2),
                           shape: BoxShape.circle),
-                      child: const Center(
+                      child: Center(
                           child: Icon(Icons.check_circle_outline_rounded,
-                              color: AppTheme.primaryColor, size: 64)),
+                              color: Theme.of(context).primaryColor, size: 64)),
                     ),
                   ),
                 ),

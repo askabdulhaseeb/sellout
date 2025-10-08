@@ -1,39 +1,30 @@
 import 'package:flutter/material.dart';
+import 'app_colors.dart';
+import 'componenets/bottomsheet_theme.dart';
+import 'componenets/dailog_theme.dart';
 
 class AppTheme {
-  static const Color primaryColor = Color(0xFFBF1017);
-  static Color lightPrimary = primaryColor.withValues(alpha: 0.05);
-  static const Color secondaryColor = Color(0xFF00B49E);
-  static const Color outlineVarient = Color(0XFFE1E1E1);
-
-  // static const Color accentColor = Color(0xFF00B49E);
-
-  static const Color lightScaffldColor = Colors.white;
-  static const Color darkScaffldColor = Colors.black;
-
   static ThemeData get light {
     return ThemeData(
-      primaryColor: primaryColor,
-      scaffoldBackgroundColor: lightScaffldColor,
-      dialogTheme: const DialogThemeData(
-        backgroundColor: lightScaffldColor,
-      ),
+      primaryColor: AppColors.primaryColor,
+      scaffoldBackgroundColor: AppColors.lightScaffoldColor,
+      bottomSheetTheme: AppBottomSheetTheme.light,
+      dialogTheme: AppDialogTheme.light,
       shadowColor: Colors.black45,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: primaryColor,
-        secondary: secondaryColor,
-        outlineVariant: outlineVarient,
+        seedColor: AppColors.primaryColor,
+        secondary: AppColors.secondaryColor,
+        outlineVariant: AppColors.outlineVariant,
         brightness: Brightness.light,
       ),
-      // brightness: Brightness.light,
       textTheme: const TextTheme(
         titleLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
       ),
       dividerColor: const Color(0xFFF7F7F7),
       useMaterial3: true,
       appBarTheme: const AppBarTheme(
-        backgroundColor: lightScaffldColor,
-        surfaceTintColor: lightScaffldColor,
+        backgroundColor: AppColors.lightScaffoldColor,
+        surfaceTintColor: AppColors.lightScaffoldColor,
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.black),
       ),
@@ -42,17 +33,17 @@ class AppTheme {
 
   static ThemeData get dark {
     return ThemeData(
-      primaryColor: primaryColor,
-      scaffoldBackgroundColor: darkScaffldColor,
-      dialogTheme: const DialogThemeData(
-        backgroundColor: darkScaffldColor,
-      ),
+      primaryColor: AppColors.primaryColor,
+      scaffoldBackgroundColor: AppColors.darkScaffoldColor,
+      bottomSheetTheme: AppBottomSheetTheme.dark,
+      dialogTheme: AppDialogTheme.dark,
       shadowColor: Colors.white30,
       colorScheme: ColorScheme.fromSeed(
-          seedColor: primaryColor,
-          secondary: secondaryColor,
-          brightness: Brightness.dark,
-          outlineVariant: outlineVarient),
+        seedColor: AppColors.primaryColor,
+        secondary: AppColors.secondaryColor,
+        brightness: Brightness.dark,
+        outlineVariant: AppColors.outlineVariant,
+      ),
       brightness: Brightness.dark,
       textTheme: const TextTheme(
         titleLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -60,8 +51,8 @@ class AppTheme {
       dividerColor: Colors.white38,
       useMaterial3: true,
       appBarTheme: const AppBarTheme(
-        backgroundColor: darkScaffldColor,
-        surfaceTintColor: darkScaffldColor,
+        backgroundColor: AppColors.darkScaffoldColor,
+        surfaceTintColor: AppColors.darkScaffoldColor,
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.white),
       ),

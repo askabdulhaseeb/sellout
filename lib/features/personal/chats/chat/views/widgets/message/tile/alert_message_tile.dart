@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 
@@ -19,7 +18,7 @@ class AlartMessageTile extends StatelessWidget {
                 padding: const EdgeInsets.all(4),
                 margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 48),
                 decoration: BoxDecoration(
-                  color: AppTheme.lightPrimary,
+                  color: Theme.of(context).colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 alignment: Alignment.center,

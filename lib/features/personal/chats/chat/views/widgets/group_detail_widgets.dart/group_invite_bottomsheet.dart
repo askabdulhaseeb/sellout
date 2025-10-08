@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../core/widgets/profile_photo.dart';
 import '../../../../../../../services/get_it.dart';
@@ -95,8 +94,11 @@ void showInviteBottomSheet(BuildContext context, ChatProvider pro) {
                   child: isAlreadyParticipant
                       ? CustomElevatedButton(
                           isLoading: false,
-                          bgColor: AppTheme.secondaryColor.withAlpha(30),
-                          textColor: AppTheme.secondaryColor,
+                          bgColor: Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withAlpha(30),
+                          textColor: Theme.of(context).colorScheme.secondary,
                           textStyle: Theme.of(context).textTheme.bodySmall,
                           title: 'participant'.tr(),
                           onTap: () {},
@@ -112,8 +114,9 @@ void showInviteBottomSheet(BuildContext context, ChatProvider pro) {
                             )
                           : CustomElevatedButton(
                               isLoading: false,
-                              bgColor: AppTheme.primaryColor.withAlpha(30),
-                              textColor: AppTheme.primaryColor,
+                              bgColor:
+                                  Theme.of(context).primaryColor.withAlpha(30),
+                              textColor: Theme.of(context).primaryColor,
                               textStyle: Theme.of(context).textTheme.bodySmall,
                               title: 'invite'.tr(),
                               onTap: () {

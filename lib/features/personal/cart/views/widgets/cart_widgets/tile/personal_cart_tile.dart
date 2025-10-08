@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/extension/string_ext.dart';
-import '../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../routes/app_linking.dart';
@@ -111,8 +110,9 @@ class PersonalCartTile extends StatelessWidget {
                                 horizontal: 4, vertical: 2),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(4),
-                              color:
-                                  AppTheme.primaryColor.withValues(alpha: 0.1),
+                              color: Theme.of(context)
+                                  .primaryColor
+                                  .withValues(alpha: 0.1),
                             ),
                             child: Text(
                               post?.condition.code.tr() ?? '',
@@ -185,8 +185,8 @@ class SaveLaterWidget extends StatefulWidget {
 class _SaveLaterWidgetState extends State<SaveLaterWidget> {
   @override
   Widget build(BuildContext context) {
-    Color primaryColor = AppTheme.primaryColor;
-    Color secondaryColor = AppTheme.secondaryColor;
+    Color primaryColor = Theme.of(context).primaryColor;
+    Color secondaryColor = Theme.of(context).colorScheme.secondary;
     return Row(
       spacing: 4,
       children: <Widget>[

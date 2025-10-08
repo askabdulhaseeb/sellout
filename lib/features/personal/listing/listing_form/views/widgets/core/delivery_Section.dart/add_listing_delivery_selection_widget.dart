@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../core/enums/listing/core/delivery_type.dart';
-import '../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../../core/widgets/custom_toggle_switch.dart';
 import '../../../../../../../../core/widgets/shadow_container.dart';
@@ -32,7 +31,7 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
                     title: 'postage'.tr(),
                     subtitle: 'ship_tracked_courier'.tr(),
                     isSelected: formPro.deliveryType != DeliveryType.collection,
-                    color: AppTheme.primaryColor,
+                    color: Theme.of(context).primaryColor,
                     onTap: () => formPro.setDeliveryType(DeliveryType.paid),
                   ),
                 ),
@@ -43,7 +42,7 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
                     title: 'collection'.tr(),
                     subtitle: 'meet_and_handover_item'.tr(),
                     isSelected: formPro.deliveryType == DeliveryType.collection,
-                    color: AppTheme.primaryColor,
+                    color: Theme.of(context).primaryColor,
                     onTap: () =>
                         formPro.setDeliveryType(DeliveryType.collection),
                   ),

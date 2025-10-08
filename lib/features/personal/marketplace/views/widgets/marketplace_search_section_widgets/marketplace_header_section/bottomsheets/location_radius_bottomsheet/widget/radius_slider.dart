@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../../../../../../../core/theme/app_theme.dart';
 
 class RadiusSlider extends StatelessWidget {
   const RadiusSlider({
@@ -17,8 +16,8 @@ class RadiusSlider extends StatelessWidget {
       children: <Widget>[
         Expanded(
           child: Slider(
-            thumbColor: AppTheme.primaryColor,
-            activeColor: AppTheme.primaryColor,
+            thumbColor: Theme.of(context).primaryColor,
+            activeColor: Theme.of(context).primaryColor,
             value: selectedRadius,
             min: 1,
             max: 10,

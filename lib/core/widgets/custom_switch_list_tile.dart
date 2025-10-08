@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
 
 class CustomSwitchListTile extends StatelessWidget {
   const CustomSwitchListTile({
@@ -24,7 +23,7 @@ class CustomSwitchListTile extends StatelessWidget {
       contentPadding: EdgeInsets.zero,
       visualDensity: VisualDensity.compact,
       dense: true,
-      activeTrackColor: AppTheme.secondaryColor,
+      activeTrackColor: Theme.of(context).colorScheme.secondary,
       thumbColor: WidgetStateProperty.all(colorScheme.onSecondary),
       trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
       thumbIcon: WidgetStateProperty.all(

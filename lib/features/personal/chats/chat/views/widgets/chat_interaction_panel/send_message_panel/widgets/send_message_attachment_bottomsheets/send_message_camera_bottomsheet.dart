@@ -5,7 +5,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../../core/enums/core/attachment_type.dart';
-import '../../../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../attachment/domain/entities/picked_attachment.dart';
@@ -27,9 +26,9 @@ void showCameraPickerBottomSheet(BuildContext context) async {
         child: Wrap(
           children: <Widget>[
             ListTile(
-              leading: const Icon(
+              leading: Icon(
                 Icons.camera_alt,
-                color: AppTheme.primaryColor,
+                color: Theme.of(context).primaryColor,
               ),
               title: Text('take_photo'.tr()),
               onTap: () async {
@@ -42,9 +41,9 @@ void showCameraPickerBottomSheet(BuildContext context) async {
               },
             ),
             ListTile(
-              leading: const Icon(
+              leading: Icon(
                 Icons.video_call,
-                color: AppTheme.primaryColor,
+                color: Theme.of(context).primaryColor,
               ),
               title: Text('record_video'.tr()),
               onTap: () async {

@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../../../../core/widgets/custom_svg_icon.dart';
@@ -70,9 +69,9 @@ class _SavePostIconButtonState extends State<SavePostIconButton> {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : isSaved
-                  ? const Icon(
+                  ? Icon(
                       Icons.bookmark_added,
-                      color: AppTheme.primaryColor,
+                      color: Theme.of(context).primaryColor,
                     )
                   : const CustomSvgIcon(
                       assetPath: AppStrings.selloutSaveIcon,

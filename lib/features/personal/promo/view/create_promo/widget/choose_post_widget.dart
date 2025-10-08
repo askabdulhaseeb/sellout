@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/theme/app_theme.dart';
 import '../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/custom_network_image.dart';
@@ -102,11 +101,12 @@ class SelectedPostTile extends StatelessWidget {
               SizedBox(
                 width: 80,
                 child: CustomElevatedButton(
-                  bgColor: AppTheme.primaryColor.withValues(alpha: 0.1),
+                  bgColor:
+                      Theme.of(context).primaryColor.withValues(alpha: 0.1),
                   isLoading: false,
                   onTap: () => pro.clearPost(),
                   textStyle: TextTheme.of(context).labelMedium?.copyWith(
-                        color: AppTheme.primaryColor,
+                        color: Theme.of(context).primaryColor,
                       ),
                   title: 'deselect'.tr(),
                 ),

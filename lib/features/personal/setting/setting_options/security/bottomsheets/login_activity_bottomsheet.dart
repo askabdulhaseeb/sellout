@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/app_theme.dart';
 import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../auth/signin/domain/entities/login_info_entity.dart';
@@ -57,14 +56,15 @@ class LoginActivityTile extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryColor.withValues(alpha: 0.2),
+                    color:
+                        Theme.of(context).primaryColor.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     item.deviceName,
                     style: TextTheme.of(context)
                         .bodySmall
-                        ?.copyWith(color: AppTheme.primaryColor),
+                        ?.copyWith(color: Theme.of(context).primaryColor),
                   ),
                 ),
               ],
@@ -77,14 +77,16 @@ class LoginActivityTile extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: AppTheme.secondaryColor.withValues(alpha: 0.2),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .secondary
+                        .withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     DateFormat('yyyy-MM-dd – kk:mm').format(item.lastLoginTime),
-                    style: TextTheme.of(context)
-                        .bodySmall
-                        ?.copyWith(color: AppTheme.secondaryColor),
+                    style: TextTheme.of(context).bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.secondary),
                   ),
                 ),
               ],

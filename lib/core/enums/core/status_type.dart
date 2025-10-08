@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-
-import '../../theme/app_theme.dart';
 part 'status_type.g.dart';
 
 const Color _blueBG = Color.fromARGB(255, 215, 235, 248);
@@ -33,7 +31,7 @@ enum StatusType {
   @HiveField(32)
   completed('completed', 'completed', Colors.green, _greenBG),
   @HiveField(33)
-  delivered('delivered', 'delivered', AppTheme.secondaryColor, _greenBG),
+  delivered('delivered', 'delivered', Colors.teal, _greenBG),
   @HiveField(34)
   shipped('shipped', 'shipped', Colors.blue, _greenBG),
   @HiveField(35)
@@ -41,9 +39,9 @@ enum StatusType {
   @HiveField(36)
   onHold('on-hold', 'on-hold', Colors.green, _greenBG),
   @HiveField(37)
-  processing('processing', 'processing', AppTheme.primaryColor, _greenBG),
+  processing('processing', 'processing', Colors.red, _greenBG),
   @HiveField(38)
-  paid('paid', 'paid', AppTheme.primaryColor, _greenBG);
+  paid('paid', 'paid', Colors.red, _greenBG);
 
   const StatusType(this.code, this.json, this.color, this.bgColor);
   final String code;

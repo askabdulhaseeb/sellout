@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../providers/profile_provider.dart';
 
@@ -52,8 +51,8 @@ class StoreCategoryBottomSheet extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontSize: 12,
                       decoration: TextDecoration.underline,
-                      decorationColor: AppTheme.primaryColor,
-                      color: AppTheme.primaryColor),
+                      decorationColor: Theme.of(context).primaryColor,
+                      color: Theme.of(context).primaryColor),
                 ),
               ),
             ],
@@ -88,7 +87,7 @@ class StoreCategoryBottomSheet extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: isSelected
-              ? AppTheme.primaryColor
+              ? Theme.of(context).primaryColor
               : Theme.of(context).colorScheme.outline,
           width: 2,
         ),
@@ -97,7 +96,7 @@ class StoreCategoryBottomSheet extends StatelessWidget {
             : Colors.transparent,
       ),
       child: isSelected
-          ? const Icon(Icons.check, color: AppTheme.primaryColor, size: 18)
+          ? Icon(Icons.check, color: Theme.of(context).primaryColor, size: 18)
           : null,
     );
   }

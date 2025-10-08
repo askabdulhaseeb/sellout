@@ -7,7 +7,6 @@ import '../../../features/personal/post/feed/views/widgets/post/widgets/section/
 import '../../../features/personal/user/profiles/data/sources/local/local_user.dart';
 import '../../../services/get_it.dart';
 import '../../sources/data_state.dart';
-import '../../theme/app_theme.dart';
 import '../../utilities/app_string.dart';
 import '../../widgets/app_snakebar.dart';
 import '../../widgets/custom_svg_icon.dart';
@@ -66,7 +65,7 @@ void homePostTileShowMoreButton(
         child: ListTile(
           leading: Icon(
             isSaved ? Icons.bookmark_added : Icons.bookmark_border,
-            color: isSaved ? AppTheme.primaryColor : null,
+            color: isSaved ? Theme.of(context).primaryColor : null,
           ),
           title: Text(
             isSaved ? 'unsave_post'.tr() : 'save_post'.tr(),

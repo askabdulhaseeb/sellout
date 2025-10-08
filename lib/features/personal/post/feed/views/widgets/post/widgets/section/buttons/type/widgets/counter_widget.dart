@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 
 class PostCounterWidget extends StatefulWidget {
@@ -59,7 +58,7 @@ class _PostCounterWidgetState extends State<PostCounterWidget> {
       prefixSuffixPadding: const EdgeInsets.symmetric(horizontal: 4),
       rowAlignment: MainAxisAlignment.spaceBetween,
       bgColor: Theme.of(context).scaffoldBackgroundColor,
-      border: Border.all(color: AppTheme.primaryColor, width: 2),
+      border: Border.all(color: Theme.of(context).primaryColor, width: 2),
       isLoading: false,
       onTap: () {},
       prefix: InkWell(

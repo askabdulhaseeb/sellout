@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/app_theme.dart';
 import '../../../../personal/user/profiles/views/widgets/score_widget_bottomsheets/employyement_details_bottomsheet.dart';
 import '../../../../personal/user/profiles/views/widgets/subwidgets/support_button.dart';
 import '../../../../personal/user/profiles/views/widgets/score_widget_bottomsheets/supporter_bottom_sheet.dart';
@@ -75,8 +74,8 @@ class BusinessPageScoreSection extends StatelessWidget {
               Expanded(
                   child: SupportButton(
                 supporterId: business.businessID ?? '',
-                supportColor: AppTheme.primaryColor,
-                supportingColor: AppTheme.secondaryColor,
+                supportColor: Theme.of(context).primaryColor,
+                supportingColor: Theme.of(context).colorScheme.secondary,
                 supportTextColor: ColorScheme.of(context).onPrimary,
                 supportingTextColor: ColorScheme.of(context).onPrimary,
               ))

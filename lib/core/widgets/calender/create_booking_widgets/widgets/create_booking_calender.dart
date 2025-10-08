@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../theme/app_theme.dart';
 
 class CreateBookingCalender extends StatelessWidget {
   const CreateBookingCalender({
@@ -16,7 +15,7 @@ class CreateBookingCalender extends StatelessWidget {
     return Theme(
       data: Theme.of(context).copyWith(
         colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: AppTheme.primaryColor,
+              primary: Theme.of(context).primaryColor,
             ),
       ),
       child: CalendarDatePicker(

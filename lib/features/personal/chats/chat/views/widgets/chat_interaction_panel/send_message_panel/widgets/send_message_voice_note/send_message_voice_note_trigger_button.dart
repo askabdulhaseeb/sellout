@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:just_audio/just_audio.dart';
 import '../../../../../../../../../../core/helper_functions/duration_format_helper.dart';
-import '../../../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../../../../../attachment/domain/entities/attachment_entity.dart';
@@ -157,7 +156,7 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
         children: <Widget>[
           if (_isRecording)
             CustomIconButton(
-              bgColor: AppTheme.primaryColor.withValues(alpha: 0.1),
+              bgColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
               onPressed: _deleteRecording,
               icon: Icons.delete,
               iconColor: Theme.of(context).colorScheme.error,
@@ -167,10 +166,10 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
               child: AudioWaveforms(
                 size: const Size(double.infinity, 40),
                 recorderController: _waveformController,
-                waveStyle: const WaveStyle(
+                waveStyle: WaveStyle(
                   waveThickness: 2,
                   scaleFactor: 50,
-                  waveColor: AppTheme.primaryColor,
+                  waveColor: Theme.of(context).primaryColor,
                   extendWaveform: true,
                   showMiddleLine: false,
                 ),
@@ -217,7 +216,7 @@ class _RecordingMicWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: AppTheme.secondaryColor.withValues(alpha: 0.3),
+        color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.3),
       ),
       child: Row(
         children: <Widget>[
@@ -231,7 +230,7 @@ class _RecordingMicWidget extends StatelessWidget {
           const SizedBox(width: 8),
           _PulsatingMic(
             isRecording: isRecording,
-            color: AppTheme.secondaryColor,
+            color: Theme.of(context).colorScheme.secondary,
             onPressed: onSendRecording,
           ),
         ],

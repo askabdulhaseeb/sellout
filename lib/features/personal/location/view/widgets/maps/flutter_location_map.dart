@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import '../../../../../../core/theme/app_theme.dart';
 import '../../../../marketplace/domain/enum/radius_type.dart';
 
 class FlutterLocationMap extends StatefulWidget {
@@ -95,8 +94,8 @@ class _FlutterLocationMapState extends State<FlutterLocationMap> {
                   height: 40,
                   point: widget.selectedLatLng,
                   child: widget.showMapCircle == false
-                      ? const Icon(Icons.location_pin,
-                          color: AppTheme.primaryColor, size: 40)
+                      ? Icon(Icons.location_pin,
+                          color: Theme.of(context).primaryColor, size: 40)
                       : const Icon(Icons.circle, color: Colors.blue, size: 25),
                 ),
               ],
@@ -109,8 +108,11 @@ class _FlutterLocationMapState extends State<FlutterLocationMap> {
                     radius: ((widget.circleRadius ?? 0) * 1000)
                         .clamp(0, double.infinity),
                     useRadiusInMeter: true,
-                    color: AppTheme.darkScaffldColor.withValues(alpha: 0.3),
-                    borderColor: AppTheme.darkScaffldColor,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.3),
+                    borderColor: Theme.of(context).colorScheme.onSurface,
                     borderStrokeWidth: 2,
                   ),
                 ],

@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
-import '../../../../../../core/theme/app_theme.dart';
 import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../providers/add_listing_form_provider.dart';
 import 'form/add_clothes_and_footwear_form.dart';
@@ -34,7 +33,7 @@ class _AddListingFormScreenState extends State<AddListingFormScreen> {
             centerTitle: true,
             leading: BackButton(
               onPressed: () => Navigator.pop(context),
-              color: AppTheme.primaryColor,
+              color: Theme.of(context).primaryColor,
             ),
             title: const AppBarTitle(
               titleKey: 'start_listing',
@@ -54,7 +53,7 @@ class _AddListingFormScreenState extends State<AddListingFormScreen> {
                         'select_type'.tr(),
                     style: TextTheme.of(context).bodyMedium?.copyWith(
                           fontWeight: FontWeight.w500,
-                          color: AppTheme.primaryColor,
+                          color: Theme.of(context).primaryColor,
                         ),
                   ),
                   Divider(

@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/theme/app_theme.dart';
 import '../../domain/enums/cart_type.dart';
 import '../providers/cart_provider.dart';
 
@@ -121,7 +120,7 @@ class CartTabSelectionWidget extends StatelessWidget {
                                       height: 1,
                                       color:
                                           hiddenTabs.contains(cartPro.cartType)
-                                              ? AppTheme.primaryColor
+                                              ? Theme.of(context).primaryColor
                                               : Colors.transparent,
                                     ),
                                     Container(
@@ -183,7 +182,9 @@ class _IconButton extends StatelessWidget {
           Container(
             height: 1,
             decoration: BoxDecoration(
-              color: isSelected ? AppTheme.primaryColor : Colors.transparent,
+              color: isSelected
+                  ? Theme.of(context).primaryColor
+                  : Colors.transparent,
             ),
           ),
           Container(

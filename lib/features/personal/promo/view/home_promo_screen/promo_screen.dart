@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/sources/data_state.dart';
-import '../../../../../core/theme/app_theme.dart';
 import '../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../core/widgets/video_widget.dart';
 import '../../../../../services/get_it.dart';
@@ -225,7 +224,7 @@ class PromoFooter extends StatelessWidget {
               Expanded(
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primaryColor,
+                    backgroundColor: Theme.of(context).primaryColor,
                     foregroundColor: theme.primaryColor,
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(vertical: 14),
