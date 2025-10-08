@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
+import 'componenets/app_switch_theme.dart';
 import 'componenets/bottomsheet_theme.dart';
 import 'componenets/dailog_theme.dart';
 
 class AppTheme {
   static ThemeData get light {
     return ThemeData(
+      switchTheme: AppSwitchTheme.light,
       primaryColor: AppColors.primaryColor,
       scaffoldBackgroundColor: AppColors.lightScaffoldColor,
       bottomSheetTheme: AppBottomSheetTheme.light,
@@ -33,6 +35,7 @@ class AppTheme {
 
   static ThemeData get dark {
     return ThemeData(
+      switchTheme: AppSwitchTheme.dark,
       primaryColor: AppColors.primaryColor,
       scaffoldBackgroundColor: AppColors.darkScaffoldColor,
       bottomSheetTheme: AppBottomSheetTheme.dark,
