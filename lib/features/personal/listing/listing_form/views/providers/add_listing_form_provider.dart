@@ -235,9 +235,7 @@ class AddListingFormProvider extends ChangeNotifier {
     _propertyKey.currentState?.reset();
     _foodAndDrinkKey.currentState?.reset();
     _clothesAndFootKey.currentState?.reset();
-
     debugPrint('listing variables reset');
-
     notifyListeners();
   }
 
@@ -416,7 +414,7 @@ class AddListingFormProvider extends ChangeNotifier {
       length: _packageLength.text,
       width: _packageWidth.text,
       height: _packageHeight.text,
-      weight: '');
+      weight: _packageWeight.text);
   Future<void> _onItemSubmit() async {
     if (!(_itemKey.currentState?.validate() ?? false)) return;
     try {
@@ -1187,6 +1185,8 @@ class AddListingFormProvider extends ChangeNotifier {
   TextEditingController get packageHeight => _packageHeight;
   TextEditingController get packageWidth => _packageWidth;
   TextEditingController get packageLength => _packageLength;
+  TextEditingController get packageWeight => _packageWeight;
+
   String get accessCode => _accessCode;
   GlobalKey<FormState> get itemKey => _itemKey;
   GlobalKey<FormState> get clothesAndFootKey => _clothesAndFootKey;
@@ -1312,6 +1312,8 @@ class AddListingFormProvider extends ChangeNotifier {
   final TextEditingController _packageHeight = TextEditingController();
   final TextEditingController _packageWidth = TextEditingController();
   final TextEditingController _packageLength = TextEditingController();
+  final TextEditingController _packageWeight = TextEditingController();
+
   String _accessCode = '';
   // Form State
   final GlobalKey<FormState> _itemKey = GlobalKey<FormState>();

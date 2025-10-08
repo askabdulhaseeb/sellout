@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import '../../../../../../core/theme/app_theme.dart';
 
 class AboutUsScreen extends StatelessWidget {
   const AboutUsScreen({super.key});
@@ -19,12 +18,12 @@ class AboutUsScreen extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 8),
         padding: const EdgeInsets.all(3),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: <Color>[
-              AppTheme.secondaryColor,
-              AppTheme.primaryColor,
+              Theme.of(context).colorScheme.secondary,
+              Theme.of(context).primaryColor,
             ],
           ),
           borderRadius: BorderRadius.circular(14),
@@ -89,12 +88,12 @@ class AboutUsScreen extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 6),
         padding: const EdgeInsets.all(3),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: <Color>[
-              AppTheme.secondaryColor,
-              AppTheme.primaryColor,
+              Theme.of(context).colorScheme.secondary,
+              Theme.of(context).primaryColor,
             ],
           ),
           borderRadius: BorderRadius.circular(14),
@@ -214,12 +213,12 @@ class GetInTouchButton extends StatelessWidget {
         height: 50,
         width: double.infinity,
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: <Color>[
-              AppTheme.secondaryColor,
-              AppTheme.primaryColor,
+              Theme.of(context).colorScheme.secondary,
+              Theme.of(context).primaryColor,
             ],
           ),
           borderRadius: BorderRadius.circular(12),
@@ -234,7 +233,7 @@ class GetInTouchButton extends StatelessWidget {
             child: Text(
               'get_in_touch'.tr(),
               style: textTheme.labelLarge?.copyWith(
-                color: AppTheme.secondaryColor,
+                color: Theme.of(context).colorScheme.secondary,
                 fontWeight: FontWeight.bold,
               ),
             ),

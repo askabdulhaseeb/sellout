@@ -27,5 +27,6 @@ class PackageDetail {
         'length': length,
         'width': width,
         'height': height,
+        'weight': weight
       };
 }

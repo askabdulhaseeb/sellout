@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../core/sources/api_call.dart';
-import '../../../../../../core/theme/app_theme.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../user/profiles/domain/params/update_order_params.dart';
@@ -11,7 +10,8 @@ import '../../../domain/usecase/update_order_usecase.dart';
 
 class CancelOrderButton extends StatefulWidget {
   const CancelOrderButton({
-    required this.order, super.key,
+    required this.order,
+    super.key,
   });
 
   final OrderEntity order;
@@ -88,7 +88,7 @@ class _CancelOrderButtonState extends State<CancelOrderButton> {
       title: 'cancel_this_order'.tr(),
       onTap: _cancelOrder,
       bgColor: Colors.transparent,
-      textStyle: const TextStyle(color: AppTheme.primaryColor),
+      textStyle: TextStyle(color: Theme.of(context).primaryColor),
     );
   }
 }

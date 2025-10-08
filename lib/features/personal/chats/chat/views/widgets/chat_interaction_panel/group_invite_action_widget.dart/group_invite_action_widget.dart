@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../providers/chat_provider.dart';
 
@@ -39,7 +38,7 @@ class GroupInviteActionWidget extends StatelessWidget {
                   isLoading: false,
                   title: 'accept'.tr(),
                   onTap: () => pro.acceptGroupInvite(context),
-                  bgColor: AppTheme.primaryColor,
+                  bgColor: Theme.of(context).primaryColor,
                   textStyle: const TextStyle(
                       color: Colors.white, fontWeight: FontWeight.bold),
                   borderRadius: BorderRadius.circular(15),
@@ -54,9 +53,10 @@ class GroupInviteActionWidget extends StatelessWidget {
                   title: 'decline'.tr(),
                   onTap: () {},
                   bgColor: Colors.transparent,
-                  border: Border.all(color: AppTheme.primaryColor, width: 1.5),
-                  textStyle: const TextStyle(
-                      color: AppTheme.primaryColor,
+                  border: Border.all(
+                      color: Theme.of(context).primaryColor, width: 1.5),
+                  textStyle: TextStyle(
+                      color: Theme.of(context).primaryColor,
                       fontWeight: FontWeight.bold),
                   borderRadius: BorderRadius.circular(15),
                 ),

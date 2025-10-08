@@ -7,7 +7,7 @@ import '../../../features/personal/bookings/domain/entity/booking_entity.dart';
 import '../../../features/personal/user/profiles/data/sources/local/local_user.dart';
 import '../../enums/core/status_type.dart';
 import '../../extension/datetime_ext.dart';
-import '../../theme/colors.dart';
+import '../../theme/app_colors.dart';
 import '../custom_network_image.dart';
 
 class CalenderBookingTile extends StatefulWidget {
@@ -49,7 +49,7 @@ class _CalenderBookingTileState extends State<CalenderBookingTile> {
                           return SingleChildScrollView(
                             child: Container(
                               padding: const EdgeInsets.all(8),
-                              color: myLightPrimaryColor,
+                              color: AppColors.myLightPrimaryColor,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[

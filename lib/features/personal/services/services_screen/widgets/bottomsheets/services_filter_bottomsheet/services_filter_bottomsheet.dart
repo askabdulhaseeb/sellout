@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../providers/services_page_provider.dart';
 import 'widgets/services_filter_sheet_price_range.dart';
@@ -49,7 +48,7 @@ class ServicesExploreFilterBottomSheet extends StatelessWidget {
                       'reset'.tr(),
                       style: TextTheme.of(context)
                           .labelSmall
-                          ?.copyWith(color: AppTheme.primaryColor),
+                          ?.copyWith(color: Theme.of(context).primaryColor),
                     ),
                   ),
                 ],

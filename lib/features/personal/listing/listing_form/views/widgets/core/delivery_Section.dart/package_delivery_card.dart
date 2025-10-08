@@ -13,9 +13,9 @@ class PackageDetailsCard extends StatelessWidget {
     final AddListingFormProvider formPro =
         Provider.of<AddListingFormProvider>(context, listen: false);
     final Map<String, List<int>> parcelPresets = <String, List<int>>{
-      'parcel.large': <int>[35, 25, 2],
-      'parcel.small': <int>[45, 35, 16],
-      'parcel.medium': <int>[61, 46, 46],
+      'parcel.large': <int>[35, 25, 2, 1],
+      'parcel.small': <int>[45, 35, 16, 2],
+      'parcel.medium': <int>[61, 46, 46, 5],
     };
     final ColorScheme scheme = Theme.of(context).colorScheme;
     return Container(
@@ -55,6 +55,10 @@ class PackageDetailsCard extends StatelessWidget {
                 label: 'parcel.height'.tr(),
                 controller: formPro.packageHeight,
               ),
+              PackageInputField(
+                label: 'parcel.weight'.tr(),
+                controller: formPro.packageWeight,
+              ),
             ],
           ),
 
@@ -84,6 +88,7 @@ class PackageDetailsCard extends StatelessWidget {
                       formPro.packageLength.text = entry.value[0].toString();
                       formPro.packageWidth.text = entry.value[1].toString();
                       formPro.packageHeight.text = entry.value[2].toString();
+                      formPro.packageWeight.text = entry.value[3].toString();
                     },
                   ),
                 ),

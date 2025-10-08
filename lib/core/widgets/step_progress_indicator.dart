@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
 
 class StepProgressIndicator<T> extends StatelessWidget {
   const StepProgressIndicator({
     required this.currentStep,
     required this.steps,
     required this.stepsStrs,
-    this.color = AppTheme.primaryColor,
+    this.color,
     this.title,
     this.onChanged,
     this.pointSize = 32,
@@ -25,7 +24,7 @@ class StepProgressIndicator<T> extends StatelessWidget {
   final List<String> stepsStrs;
 
   /// Active color
-  final Color color;
+  final Color? color;
 
   /// Optional title
   final String? title;
@@ -46,7 +45,7 @@ class StepProgressIndicator<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final int totalSteps = steps.length;
     final int currentIndex = _stepToIndex(currentStep);
-    final Color activeColor = color;
+    final Color activeColor = color ?? Theme.of(context).primaryColor;
     final Color inactiveColor = Theme.of(context).colorScheme.outlineVariant;
     const Color iconColor = Colors.white;
 

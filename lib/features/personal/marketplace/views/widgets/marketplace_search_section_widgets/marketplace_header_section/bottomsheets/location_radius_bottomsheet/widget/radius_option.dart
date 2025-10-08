@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import '../../../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../domain/enum/radius_type.dart';
 
 class RadiusOptions extends StatelessWidget {
@@ -30,7 +29,8 @@ class RadiusOptions extends StatelessWidget {
               ],
             ),
             Radio<RadiusType>(
-              fillColor: WidgetStateProperty.all(AppTheme.primaryColor),
+              fillColor:
+                  WidgetStateProperty.all(Theme.of(context).primaryColor),
               value: RadiusType.worldwide,
               groupValue: radiusType,
               onChanged: (RadiusType? newValue) {
@@ -53,7 +53,8 @@ class RadiusOptions extends StatelessWidget {
               ],
             ),
             Radio<RadiusType>(
-              fillColor: WidgetStateProperty.all(AppTheme.primaryColor),
+              fillColor:
+                  WidgetStateProperty.all(Theme.of(context).primaryColor),
               value: RadiusType.local,
               groupValue: radiusType,
               onChanged: (RadiusType? newValue) {

@@ -513,6 +513,8 @@
   "parcel.max_size": "Enter maximum parcel size (in cm)",
   "parcel.length": "Length",
   "parcel.width": "Width",
+    "parcel.weight": "Weight",
+
   "parcel.height": "Height",
   "parcel.large": "Large Parcel",
   "parcel.small": "Small Parcel",

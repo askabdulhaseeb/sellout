@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
 import 'scaffold/app_bar/app_bar_title_widget.dart';
 
 class MultiSelectionDropdown<T> extends StatefulWidget {
@@ -110,8 +109,9 @@ class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
                               });
                               widget.onChanged?.call(tempSelected);
                             },
-                            selectedColor:
-                                AppTheme.primaryColor.withValues(alpha: 0.2),
+                            selectedColor: Theme.of(context)
+                                .primaryColor
+                                .withValues(alpha: 0.2),
                             backgroundColor:
                                 Theme.of(context).colorScheme.surface,
                           );

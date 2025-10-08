@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../../../../../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../../../../../core/enums/listing/core/item_condition_type.dart';
-import '../../../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../marketplace/views/enums/sort_enums.dart';
 import '../../providers/profile_provider.dart';
@@ -361,7 +360,7 @@ class StoreFilterSheetHeaderSection extends StatelessWidget {
               'reset'.tr(),
               style: TextTheme.of(context)
                   .labelSmall
-                  ?.copyWith(color: AppTheme.primaryColor),
+                  ?.copyWith(color: Theme.of(context).primaryColor),
             ),
           ),
         ],

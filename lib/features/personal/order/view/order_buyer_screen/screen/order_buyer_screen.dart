@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../core/helper_functions/country_helper.dart';
-import '../../../../../../core/theme/app_theme.dart';
 import '../../../../../../core/utilities/app_string.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/custom_network_image.dart';
@@ -136,7 +135,7 @@ class OrderBuyerScreenBottomButtons extends StatelessWidget {
                 onTap: () {},
                 title: 'tell_us_what_you_think'.tr(),
                 bgColor: Colors.transparent,
-                textStyle: const TextStyle(color: AppTheme.primaryColor),
+                textStyle: TextStyle(color: Theme.of(context).primaryColor),
               ),
               if (order.orderStatus == StatusType.shipped ||
                   order.orderStatus == StatusType.pending)
@@ -309,7 +308,7 @@ class BuyerOrderProductDetailWidget extends StatelessWidget {
               buyNowColor: Colors.transparent,
               buyNowTextStyle: TextTheme.of(context)
                   .bodyMedium
-                  ?.copyWith(color: AppTheme.primaryColor)),
+                  ?.copyWith(color: Theme.of(context).primaryColor)),
         ],
       ),
     );

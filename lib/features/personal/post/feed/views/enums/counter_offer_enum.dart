@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import '../../../../../../core/theme/app_theme.dart';
 
 part 'counter_offer_enum.g.dart';
 
 @HiveType(typeId: 67)
 enum CounterOfferEnum {
   @HiveField(0)
-  seller('offer_given_by_seller', AppTheme.primaryColor, 'seller'),
+  seller('offer_given_by_seller', Colors.red, 'seller'),
 
   @HiveField(1)
-  buyer('offer_given_by_buyer', AppTheme.secondaryColor, 'buyer');
+  buyer('offer_given_by_buyer', Colors.teal, 'buyer');
 
   const CounterOfferEnum(this.code, this.color, this.json);
 

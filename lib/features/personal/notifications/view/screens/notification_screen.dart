@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/sources/api_call.dart';
-import '../../../../../core/theme/app_theme.dart';
 import '../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../core/widgets/custom_toggle_switch.dart';
@@ -67,7 +66,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     provider.fetchNotificationsByType();
                   },
                   selectedColors: List<Color>.filled(
-                      NotificationType.values.length, AppTheme.primaryColor),
+                      NotificationType.values.length,
+                      Theme.of(context).primaryColor),
                 ),
                 if (notifications.isEmpty)
                   Expanded(

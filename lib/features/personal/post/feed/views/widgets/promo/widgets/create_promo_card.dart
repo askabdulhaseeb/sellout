@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../routes/app_linking.dart';
 import '../../../../../../promo/view/create_promo/screens/create_promo_screen.dart';
 
@@ -33,8 +32,8 @@ class AddPromoCard extends StatelessWidget {
                   top: 0,
                   bottom: 25,
                   child: Container(
-                    decoration: const BoxDecoration(
-                      color: AppTheme.primaryColor,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
                       borderRadius:
                           BorderRadius.vertical(top: Radius.circular(8)),
                     ),
@@ -57,7 +56,7 @@ class AddPromoCard extends StatelessWidget {
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: AppTheme.primaryColor,
+                      color: Theme.of(context).primaryColor,
                       border:
                           Border.all(color: ColorScheme.of(context).onPrimary),
                     ),

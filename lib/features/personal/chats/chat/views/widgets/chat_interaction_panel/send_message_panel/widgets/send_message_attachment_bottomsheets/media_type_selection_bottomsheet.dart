@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../providers/send_message_provider.dart';
@@ -23,9 +22,9 @@ void showMediaBottomSheet(BuildContext context) {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             ListTile(
-              leading: const Icon(
+              leading: Icon(
                 Icons.photo_library_outlined,
-                color: AppTheme.primaryColor,
+                color: Theme.of(context).primaryColor,
               ),
               title: Text('photo_library'.tr()),
               subtitle: Text('upload_photo_from_library'.tr()),
@@ -35,9 +34,9 @@ void showMediaBottomSheet(BuildContext context) {
               },
             ),
             ListTile(
-              leading: const Icon(
+              leading: Icon(
                 Icons.video_collection_outlined,
-                color: AppTheme.primaryColor,
+                color: Theme.of(context).primaryColor,
               ),
               title: Text('video_library'.tr()),
               subtitle: Text('upload_a_video_from_library'.tr()),

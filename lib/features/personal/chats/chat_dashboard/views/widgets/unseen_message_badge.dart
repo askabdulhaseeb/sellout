@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../../../../../../core/utilities/app_string.dart';
-import '../../../../../../core/theme/app_theme.dart';
 import '../../domain/entities/chat/unread_message_entity.dart';
 
 class UnreadMessageBadgeWidget extends StatelessWidget {
@@ -21,9 +20,9 @@ class UnreadMessageBadgeWidget extends StatelessWidget {
 
         return Container(
           padding: const EdgeInsets.all(6),
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: AppTheme.primaryColor,
+            color: Theme.of(context).primaryColor,
           ),
           constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
           alignment: Alignment.center,
@@ -56,9 +55,9 @@ class TotalUnreadMessagesBadgeWidget extends StatelessWidget {
 
         return Container(
           padding: const EdgeInsets.all(6),
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: AppTheme.primaryColor,
+            color: Theme.of(context).primaryColor,
           ),
           constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
           alignment: Alignment.center,

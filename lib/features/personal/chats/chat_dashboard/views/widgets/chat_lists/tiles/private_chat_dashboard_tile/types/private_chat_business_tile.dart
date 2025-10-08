@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../../../../core/extension/datetime_ext.dart';
 import '../../../../../../../../../../core/sources/api_call.dart';
-import '../../../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../../../core/widgets/loaders/simple_tile_loader.dart';
 import '../../../../../../../../../../services/get_it.dart';
 import '../../../../../../../../../business/core/domain/entity/business_entity.dart';
@@ -52,9 +51,9 @@ class PrivateChatBusinessTile extends StatelessWidget {
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
-                      const CircleAvatar(
+                      CircleAvatar(
                         radius: 8,
-                        backgroundColor: AppTheme.primaryColor,
+                        backgroundColor: Theme.of(context).primaryColor,
                         child: Text(
                           'B',
                           style: TextStyle(fontSize: 10, color: Colors.white),

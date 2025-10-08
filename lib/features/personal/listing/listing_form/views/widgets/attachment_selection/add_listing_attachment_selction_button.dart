@@ -1,9 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../../core/enums/core/attachment_type.dart';
-import '../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../providers/add_listing_form_provider.dart';
@@ -70,14 +68,14 @@ class AddListingAttachmentSelectionButton extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     CustomSvgIcon(
-                        assetPath: icon, color: AppTheme.primaryColor),
+                        assetPath: icon, color: Theme.of(context).primaryColor),
                     const SizedBox(height: 8),
                     Text(
                       text,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: AppTheme.primaryColor,
+                        color: Theme.of(context).primaryColor,
                       ),
                     ),
                   ],

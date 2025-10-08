@@ -69,12 +69,12 @@
 //               onPressed: () {},
 //               icon: const Icon(
 //                 Icons.add_circle_outline,
-//                 color: AppTheme.primaryColor,
+//                 color: Theme.of(context).primaryColor,
 //               ),
 //               label: const Text('add_new_card'),
 //               style: TextButton.styleFrom(
 //                 elevation: 0,
-//                 backgroundColor: AppTheme.primaryColor.withAlpha(0x33),
+//                 backgroundColor: Theme.of(context).primaryColor.withAlpha(0x33),
 //                 shape: RoundedRectangleBorder(
 //                   borderRadius: BorderRadius.circular(12),
 //                 ),

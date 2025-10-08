@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
 
 /// A generic custom toggle switch widget that supports:
 /// - Multiple selectable labels
@@ -97,7 +96,7 @@ class CustomToggleSwitch<T> extends StatelessWidget {
         children: List.generate(labels.length, (int index) {
           final T labelValue = labels[index];
           final bool isSelected = labelValue == initialValue;
-          final Color selectedColor = _getSelectedColor(index);
+          final Color selectedColor = _getSelectedColor(index, context);
 
           return Expanded(
             child: _ToggleButton<T>(
@@ -123,11 +122,11 @@ class CustomToggleSwitch<T> extends StatelessWidget {
   }
 
   // 🔹 Helper to safely fetch color
-  Color _getSelectedColor(int index) {
+  Color _getSelectedColor(int index, BuildContext context) {
     if (selectedColors != null && selectedColors!.length > index) {
       return selectedColors![index];
     }
-    return AppTheme.primaryColor;
+    return Theme.of(context).primaryColor;
   }
 }
 

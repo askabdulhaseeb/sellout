@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import '../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
@@ -70,10 +69,11 @@ class ProfileVisitGridviewTile extends StatelessWidget {
                   iconSize: 16,
                   margin: const EdgeInsets.all(4),
                   padding: const EdgeInsets.all(6),
-                  iconColor: AppTheme.primaryColor,
+                  iconColor: Theme.of(context).primaryColor,
                   icon: AppStrings.selloutCalenderIcon,
                   onPressed: () {},
-                  bgColor: AppTheme.primaryColor.withValues(alpha: 0.1),
+                  bgColor:
+                      Theme.of(context).primaryColor.withValues(alpha: 0.1),
                 ),
               ],
             ),

@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/theme/app_theme.dart';
 import '../../../../../../core/utilities/app_string.dart';
 import '../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../../../location/domain/entities/location_entity.dart';
@@ -153,7 +152,7 @@ class _HeaderButton extends StatelessWidget {
                 CustomSvgIcon(
                   assetPath: icon!,
                   size: 14,
-                  color: AppTheme.primaryColor,
+                  color: Theme.of(context).primaryColor,
                 ),
               Flexible(
                 child: Text(

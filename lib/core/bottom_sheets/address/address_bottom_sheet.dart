@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../features/personal/address/add_address/views/screens/add_address_screen.dart';
 import '../../../features/personal/auth/signin/data/models/address_model.dart';
 import '../../../features/personal/auth/signin/data/sources/local/local_auth.dart';
-import '../../theme/app_theme.dart';
 import '../../widgets/custom_elevated_button.dart';
 import '../../widgets/in_dev_mode.dart';
 import '../widgets/selectable_address_tile.dart';
@@ -49,7 +48,7 @@ class AddressBottomSheet extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ).tr(),
             CustomElevatedButton(
-              textColor: AppTheme.primaryColor,
+              textColor: Theme.of(context).primaryColor,
               border: Border.all(color: ColorScheme.of(context).outlineVariant),
               bgColor: Colors.transparent,
               title: 'add_a_new_address'.tr(),
@@ -71,7 +70,7 @@ class AddressBottomSheet extends StatelessWidget {
             ),
             InDevMode(
               child: CustomElevatedButton(
-                textColor: AppTheme.primaryColor,
+                textColor: Theme.of(context).primaryColor,
                 border:
                     Border.all(color: ColorScheme.of(context).outlineVariant),
                 bgColor: Colors.transparent,

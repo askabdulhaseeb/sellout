@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../core/theme/app_theme.dart';
 import '../../../../../core/widgets/custom_toggle_switch.dart';
 import '../enums/services_page_type.dart';
 import '../providers/services_page_provider.dart';
@@ -28,9 +27,9 @@ class ServicesPageTypeToggleSection extends StatelessWidget {
                     Theme.of(context).colorScheme.outlineVariant,
                 unseletedTextColor: Theme.of(context).colorScheme.onSurface,
                 isShaded: false,
-                selectedColors: const <Color>[
-                  AppTheme.primaryColor,
-                  AppTheme.secondaryColor
+                selectedColors: <Color>[
+                  Theme.of(context).primaryColor,
+                  Theme.of(context).colorScheme.secondary
                 ],
                 labels: ServicesPageType.values,
                 labelStrs: ServicesPageType.values

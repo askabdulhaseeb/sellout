@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../enums/sort_enums.dart';
 import '../../../../../providers/marketplace_provider.dart';
 
@@ -55,7 +54,7 @@ class SortBottomSheet extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: isSelected
-              ? AppTheme.primaryColor
+              ? Theme.of(context).primaryColor
               : ColorScheme.of(context).outline,
           width: 2,
         ),
@@ -63,7 +62,7 @@ class SortBottomSheet extends StatelessWidget {
             isSelected ? ColorScheme.of(context).surface : Colors.transparent,
       ),
       child: isSelected
-          ? const Icon(Icons.check, color: AppTheme.primaryColor, size: 18)
+          ? Icon(Icons.check, color: Theme.of(context).primaryColor, size: 18)
           : null,
     );
   }

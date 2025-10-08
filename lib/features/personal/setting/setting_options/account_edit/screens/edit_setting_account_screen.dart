@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/theme/app_theme.dart';
 import '../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
@@ -72,7 +71,7 @@ class _EditAccountSettingScreenState extends State<EditAccountSettingScreen> {
             ),
             const SizedBox(height: 24),
             CustomElevatedButton(
-              bgColor: AppTheme.secondaryColor,
+              bgColor: Theme.of(context).colorScheme.secondary,
               isLoading: pro.isLoading,
               onTap: () {
                 pro.updateProfileDetail(

@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/bottom_sheets/widgets/address_tile.dart';
-import '../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../core/widgets/in_dev_mode.dart';
@@ -54,8 +53,8 @@ class _PaymentSuccessSheetState extends State<PaymentSuccessSheet> {
               style: TextStyle(color: Colors.grey.shade600),
             ),
             const SizedBox(height: 16),
-            const Icon(Icons.check_circle_outline_rounded,
-                color: AppTheme.primaryColor, size: 60),
+            Icon(Icons.check_circle_outline_rounded,
+                color: Theme.of(context).primaryColor, size: 60),
             const SizedBox(height: 16),
             if (showOrderInfo) CartPaymentSuccessDetailsSection(pro: pro),
             if (!showOrderInfo)
@@ -84,13 +83,13 @@ class _PaymentSuccessSheetState extends State<PaymentSuccessSheet> {
                       ? Icons.keyboard_arrow_down_rounded
                       : Icons.keyboard_arrow_up_rounded,
                   color: showOrderInfo
-                      ? AppTheme.primaryColor
+                      ? Theme.of(context).primaryColor
                       : ColorScheme.of(context).outlineVariant),
               label: Text(
                 showOrderInfo ? 'hide_order_info'.tr() : 'see_order_info'.tr(),
                 style: TextTheme.of(context).bodySmall?.copyWith(
                     color: showOrderInfo
-                        ? AppTheme.primaryColor
+                        ? Theme.of(context).primaryColor
                         : ColorScheme.of(context).outlineVariant),
               ),
             ),
