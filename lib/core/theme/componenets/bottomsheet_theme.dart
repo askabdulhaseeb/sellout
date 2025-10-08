@@ -3,7 +3,7 @@ import '../app_colors.dart';
 
 class AppBottomSheetTheme {
   static BottomSheetThemeData get light => const BottomSheetThemeData(
-        backgroundColor: AppColors.darkScaffoldColor,
+        backgroundColor: AppColors.lightScaffoldColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
