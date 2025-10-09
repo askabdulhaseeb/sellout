@@ -77,12 +77,13 @@ class AddListingDeliveryCollectionLocationWidget extends StatelessWidget {
             vertical: AppSpacing.vXs,
           ),
           child: NominationLocationField(
-            validator: (bool? p0) => AppValidator.requireLocation(p0),
+            validator: (bool? value) => AppValidator.requireLocation(value),
             selectedLatLng: formPro.collectionLatLng,
             displayMode: MapDisplayMode.showMapAfterSelection,
             initialText: formPro.selectedCollectionLocation?.address ?? '',
-            onLocationSelected: (LocationEntity loc, LatLng latLng) =>
-                formPro.setCollectionLocation(loc, latLng),
+            onLocationSelected: (LocationEntity location, LatLng latLng) {
+              formPro.setCollectionLocation(location, latLng);
+            },
           ),
         );
       },

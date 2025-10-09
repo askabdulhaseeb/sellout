@@ -55,10 +55,10 @@ class WelcomeScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomSheet: BottomAppBar(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        height: 170,
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             CustomElevatedButton(
               title: 'login'.tr(),
