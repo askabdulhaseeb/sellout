@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/enums/core/attachment_type.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../core/widgets/custom_svg_icon.dart';
@@ -12,6 +13,7 @@ class AddListingAttachmentSelectionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      spacing: AppSpacing.hXs,
       children: <Widget>[
         button(
             context: context,
@@ -24,7 +26,6 @@ class AddListingAttachmentSelectionButton extends StatelessWidget {
                   context,
                   type: AttachmentType.image,
                 )),
-        const SizedBox(width: 16),
         button(
             context: context,
             icon: AppStrings.selloutStartListingVideoIcon,

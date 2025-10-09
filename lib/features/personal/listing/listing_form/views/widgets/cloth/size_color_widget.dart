@@ -21,7 +21,7 @@ class AddListingSizeColorWidget extends StatelessWidget {
       },
       child: AbsorbPointer(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4),
+          padding: const EdgeInsets.symmetric(vertical: 0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[

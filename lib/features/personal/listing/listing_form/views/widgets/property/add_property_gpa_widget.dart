@@ -18,6 +18,8 @@ class AddPropertyGPAWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             CustomToggleSwitch<bool>(
+              verticalPadding: 8,
+              containerHeight: 48,
               isShaded: false,
               labels: const <bool>[true, false],
               labelStrs: <String>['yes'.tr(), 'no'.tr()],
@@ -26,6 +28,8 @@ class AddPropertyGPAWidget extends StatelessWidget {
               onToggle: formPro.setGarden,
             ),
             CustomToggleSwitch<bool>(
+              verticalPadding: 8,
+              containerHeight: 48,
               isShaded: false,
               labels: const <bool>[true, false],
               labelStrs: <String>['yes'.tr(), 'no'.tr()],
@@ -34,6 +38,8 @@ class AddPropertyGPAWidget extends StatelessWidget {
               onToggle: formPro.setParking,
             ),
             CustomToggleSwitch<bool>(
+              verticalPadding: 8,
+              containerHeight: 48,
               isShaded: false,
               labels: const <bool>[true, false],
               labelStrs: <String>['yes'.tr(), 'no'.tr()],

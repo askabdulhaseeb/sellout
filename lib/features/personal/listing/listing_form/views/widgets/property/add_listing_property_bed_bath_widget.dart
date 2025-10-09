@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../../../core/widgets/custom_textformfield.dart';
@@ -26,10 +27,11 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         return Column(
+          spacing: AppSpacing.vXs,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            // Bedroom & Bathroom
             Row(
+              spacing: AppSpacing.hXs,
               children: <Widget>[
                 Expanded(
                   child: CustomTextFormField(
@@ -40,7 +42,6 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
                     keyboardType: TextInputType.number,
                   ),
                 ),
-                const SizedBox(width: 16),
                 Expanded(
                   child: CustomTextFormField(
                     controller: formPro.bathroom,
@@ -103,7 +104,6 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
                 formPro.setEnergyRating(value?.value);
               },
             ),
-            const SizedBox(height: 16),
             // Location Field
             NominationLocationField(
               validator: (bool? value) => AppValidator.requireLocation(value),

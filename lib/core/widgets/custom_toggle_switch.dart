@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../constants/app_spacings.dart';
+
 /// A generic custom toggle switch widget that supports:
 /// - Multiple selectable labels
 /// - Read-only mode
@@ -92,7 +94,7 @@ class CustomToggleSwitch<T> extends StatelessWidget {
         horizontal: horizontalMargin,
       ),
       child: Row(
-        spacing: labels.length == 2 ? 16 : 4,
+        spacing: AppSpacing.hXs,
         children: List.generate(labels.length, (int index) {
           final T labelValue = labels[index];
           final bool isSelected = labelValue == initialValue;

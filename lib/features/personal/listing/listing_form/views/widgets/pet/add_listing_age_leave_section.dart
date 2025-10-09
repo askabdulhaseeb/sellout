@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../location/domain/entities/location_entity.dart';
@@ -38,9 +39,11 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
             matchedBreed?.options ?? <DropdownOptionEntity>[];
 
         return Column(
+          spacing: AppSpacing.vXs,
           children: <Widget>[
             /// Age + Ready to leave
             Row(
+              spacing: AppSpacing.hXs,
               children: <Widget>[
                 Expanded(
                   child: CustomDropdown<DropdownOptionEntity>(
@@ -53,7 +56,6 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                           ),
                         )
                         .toList(),
-                    // ✅ Use findByValue
                     selectedItem: DropdownOptionEntity.findByValue(
                       ageOptions,
                       formPro.age ?? '',
@@ -66,7 +68,6 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                         formPro.setAge(value?.value.value),
                   ),
                 ),
-                const SizedBox(width: 16),
                 Expanded(
                   child: CustomDropdown<DropdownOptionEntity>(
                     items: readyToLeaveOptions
@@ -78,7 +79,6 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                           ),
                         )
                         .toList(),
-                    // ✅ Use findByValue
                     selectedItem: DropdownOptionEntity.findByValue(
                       readyToLeaveOptions,
                       formPro.time ?? '',
@@ -105,7 +105,6 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                     ),
                   )
                   .toList(),
-              // ✅ Use findByValue
               selectedItem: DropdownOptionEntity.findByValue(
                 petCategories,
                 formPro.petCategory ?? '',
@@ -129,7 +128,6 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                       ),
                     )
                     .toList(),
-                // ✅ Use findByValue
                 selectedItem: DropdownOptionEntity.findByValue(
                   breedList,
                   formPro.breed ?? '',

@@ -38,6 +38,8 @@ class AddListingTenureTypeSelection extends StatelessWidget {
             tenureTypes.map((TenureType e) => e.localized).toList();
 
         return CustomToggleSwitch<String>(
+          verticalPadding: 8,
+          containerHeight: 48,
           isShaded: false,
           labels: stringValues,
           labelStrs: localizedValues,
