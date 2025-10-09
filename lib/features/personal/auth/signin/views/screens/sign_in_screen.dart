@@ -72,10 +72,10 @@ class SignInScreen extends StatelessWidget {
           );
         }),
       ),
-      bottomSheet: BottomAppBar(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        height: 150,
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             CustomElevatedButton(
                 padding: const EdgeInsets.all(0),

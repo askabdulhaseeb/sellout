@@ -92,7 +92,7 @@ class _AddListingVehicleBasicInfoSectionState
               hint: 'emission_standards'.tr(),
               title: 'emission_standards'.tr(),
               onChanged: (DropdownOptionEntity? value) =>
-                  formPro.setemissionType(value?.value.value),
+                  formPro.setEmissionType(value?.value.value),
             ),
 
             // 🔹 Make
@@ -110,7 +110,7 @@ class _AddListingVehicleBasicInfoSectionState
               hint: 'make'.tr(),
               title: 'make'.tr(),
               onChanged: (DropdownOptionEntity? value) =>
-                  formPro.seteMake(value?.value.value),
+                  formPro.setMake(value?.value.value),
             ),
 
             // 🔹 Fuel type
@@ -123,7 +123,7 @@ class _AddListingVehicleBasicInfoSectionState
                       ))
                   .toList(),
               selectedItem: DropdownOptionEntity.findByValue(
-                  fuelType, formPro.fuelTYpe ?? ''),
+                  fuelType, formPro.fuelType ?? ''),
               validator: (bool? value) => AppValidator.requireSelection(value),
               hint: 'fuel_type'.tr(),
               title: 'fuel_type'.tr(),

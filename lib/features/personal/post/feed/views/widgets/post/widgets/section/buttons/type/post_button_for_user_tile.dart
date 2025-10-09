@@ -46,7 +46,7 @@ class PostButtonsForUser extends StatelessWidget {
                   pro.reset();
                   pro.setListingType(post?.type);
                   pro.setPost(post);
-                  pro.updateVariables();
+                  // pro.updateVariables();
                   AppNavigator.pushNamed(AddListingFormScreen.routeName);
                 },
                 title: 'edit_listing'.tr()),

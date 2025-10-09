@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../core/constants/app_spacings.dart';
+import '../../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../providers/add_listing_form_provider.dart';
@@ -253,6 +254,7 @@ class PackageInputField extends StatelessWidget {
       controller: controller,
       keyboardType: TextInputType.number,
       labelText: label,
+      validator: (String? value) => AppValidator.isEmpty(value),
     );
   }
 }
