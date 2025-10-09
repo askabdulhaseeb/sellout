@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../constants/app_spacings.dart';
+
 class CustomTextFormField extends StatefulWidget {
   const CustomTextFormField({
     required TextEditingController? controller,
@@ -195,25 +197,28 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
                 errorBorder: OutlineInputBorder(
                   borderSide:
                       BorderSide(color: Theme.of(context).colorScheme.error),
-                  borderRadius: BorderRadius.circular(widget.borderRadius ?? 8),
+                  borderRadius: BorderRadius.circular(
+                      widget.borderRadius ?? AppSpacing.radiusSm),
                 ),
                 border: widget.border ??
                     OutlineInputBorder(
                       borderSide: const BorderSide(color: Colors.transparent),
-                      borderRadius:
-                          BorderRadius.circular(widget.borderRadius ?? 8),
+                      borderRadius: BorderRadius.circular(
+                          widget.borderRadius ?? AppSpacing.radiusSm),
                     ),
                 enabledBorder: OutlineInputBorder(
                   borderSide:
                       BorderSide(color: ColorScheme.of(context).outlineVariant),
-                  borderRadius: BorderRadius.circular(widget.borderRadius ?? 8),
+                  borderRadius: BorderRadius.circular(
+                      widget.borderRadius ?? AppSpacing.radiusSm),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
                     width: 2,
                     color: Theme.of(context).primaryColor,
                   ),
-                  borderRadius: BorderRadius.circular(widget.borderRadius ?? 8),
+                  borderRadius: BorderRadius.circular(
+                      widget.borderRadius ?? AppSpacing.radiusSm),
                 )),
           ),
         ],

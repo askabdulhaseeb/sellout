@@ -56,9 +56,9 @@ class _AddListingFormScreenState extends State<AddListingFormScreen> {
                           color: Theme.of(context).primaryColor,
                         ),
                   ),
-                  Divider(
-                    indent: 10,
-                    endIndent: 10,
+                  Container(
+                    height: 1,
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
                     color: Theme.of(context).dividerColor,
                   )
                 ],

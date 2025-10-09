@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/widgets/editable_availablity_widget.dart';
 import '../../../../../../../core/widgets/loaders/loader.dart';
 import '../../providers/add_listing_form_provider.dart';
@@ -31,6 +32,7 @@ class _AddVehicleFormState extends State<AddVehicleForm> {
           key: formPro.vehicleKey,
           child: SingleChildScrollView(
             child: Column(
+              spacing: AppSpacing.vXs,
               children: <Widget>[
                 const AddListingBasicInfoSection(),
                 const AddListingVehicleBasicInfoSection(),

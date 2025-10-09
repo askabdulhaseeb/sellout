@@ -17,7 +17,7 @@ class AddListingPriceAndQuantityWidget extends StatelessWidget {
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         final bool isLoading = readOnly || formPro.isLoading;
         return Row(
-          spacing: AppSpacing.hSm,
+          spacing: AppSpacing.hXs,
           children: <Widget>[
             Expanded(
               child: CustomTextFormField(

@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../core/enums/listing/core/privacy_type.dart';
@@ -19,6 +20,7 @@ class AddListingConditionOfferSection extends StatelessWidget {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         return Column(
+          spacing: AppSpacing.vXs,
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -27,7 +29,7 @@ class AddListingConditionOfferSection extends StatelessWidget {
               CustomToggleSwitch<ConditionType>(
                 isShaded: false,
                 verticalPadding: 8,
-                containerHeight: 40,
+                containerHeight: 48,
                 labels: ConditionType.list,
                 labelStrs: ConditionType.list
                     .map<String>((ConditionType e) => e.code.tr())
@@ -38,7 +40,7 @@ class AddListingConditionOfferSection extends StatelessWidget {
               ),
             CustomToggleSwitch<bool>(
               verticalPadding: 8,
-              containerHeight: 40,
+              containerHeight: 48,
               isShaded: false,
               labels: const <bool>[true, false],
               labelStrs: <String>['yes'.tr(), 'no'.tr()],
@@ -58,7 +60,7 @@ class AddListingConditionOfferSection extends StatelessWidget {
               ),
             CustomToggleSwitch<PrivacyType>(
               verticalPadding: 8,
-              containerHeight: 40,
+              containerHeight: 48,
               isShaded: false,
               labels: PrivacyType.list,
               labelStrs: PrivacyType.list

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/widgets/loaders/loader.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../../widgets/category/subcateogry_selectable_widget.dart';
@@ -36,6 +37,7 @@ class _AddClothsAndFootwearFormState extends State<AddClothsAndFootwearForm> {
           key: formPro.clothesAndFootKey,
           child: SingleChildScrollView(
             child: Column(
+              spacing: AppSpacing.vSm,
               children: <Widget>[
                 const AddListingBasicInfoSection(),
                 const AddListingClothSubcatSelectionSection(),

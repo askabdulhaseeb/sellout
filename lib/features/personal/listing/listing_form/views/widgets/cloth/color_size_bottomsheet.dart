@@ -32,13 +32,7 @@ class _SizeColorBottomSheetState extends State<SizeColorBottomSheet> {
         Provider.of<AddListingFormProvider>(context, listen: false);
     return Container(
       height: MediaQuery.of(context).size.height * 0.8,
-      decoration: BoxDecoration(
-        border: Border.all(color: ColorScheme.of(context).outlineVariant),
-        color: Theme.of(context).scaffoldBackgroundColor,
-        backgroundBlendMode: BlendMode.color,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-      ),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: Column(
         children: <Widget>[
           BottomSheetHeader(

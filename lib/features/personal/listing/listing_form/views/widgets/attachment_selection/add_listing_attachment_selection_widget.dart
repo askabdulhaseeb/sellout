@@ -19,11 +19,9 @@ class AddListingAttachmentSelectionWidget extends StatelessWidget {
           ...formPro.attachments,
           if (formPro.post?.fileUrls != null) ...formPro.post!.fileUrls,
         ];
-
         final bool hasAttachments = allAttachments.isNotEmpty;
-
         return Column(
-          spacing: AppSpacing.vSm,
+          spacing: AppSpacing.vXs,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             const AddListingAttachmentSelectionButton(),
@@ -55,7 +53,7 @@ class _EmptyAttachmentPlaceholder extends StatelessWidget {
         decoration: BoxDecoration(
           border:
               Border.all(color: Theme.of(context).colorScheme.outlineVariant),
-          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
         ),
         child: Column(
           spacing: AppSpacing.vMd,
