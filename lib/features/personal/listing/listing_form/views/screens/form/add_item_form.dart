@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/widgets/loaders/loader.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../../widgets/category/subcateogry_selectable_widget.dart';
@@ -32,6 +33,7 @@ class _AddItemFormState extends State<AddItemForm> {
           key: formPro.itemKey,
           child: SingleChildScrollView(
             child: Column(
+              spacing: AppSpacing.vXs,
               children: <Widget>[
                 const AddListingBasicInfoSection(),
                 SubCategorySelectableWidget<AddListingFormProvider>(

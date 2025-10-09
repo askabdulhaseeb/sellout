@@ -6,12 +6,12 @@ class AppSwitchTheme {
     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
     trackColor: WidgetStateProperty.resolveWith(
       (Set<WidgetState> states) => states.contains(WidgetState.selected)
-          ? AppColors.primaryColor.withValues(alpha: 0.5)
+          ? AppColors.secondaryColor.withValues(alpha: 0.5)
           : Colors.grey.shade400,
     ),
     thumbColor: WidgetStateProperty.resolveWith(
       (Set<WidgetState> states) => states.contains(WidgetState.selected)
-          ? AppColors.primaryColor
+          ? AppColors.lightScaffoldColor
           : Colors.grey.shade600,
     ),
   );
@@ -20,12 +20,12 @@ class AppSwitchTheme {
     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
     trackColor: WidgetStateProperty.resolveWith(
       (Set<WidgetState> states) => states.contains(WidgetState.selected)
-          ? AppColors.primaryColor.withValues(alpha: 0.5)
+          ? AppColors.secondaryColor.withValues(alpha: 0.5)
           : Colors.grey.shade700,
     ),
     thumbColor: WidgetStateProperty.resolveWith(
       (Set<WidgetState> states) => states.contains(WidgetState.selected)
-          ? AppColors.primaryColor
+          ? AppColors.darkScaffoldColor
           : Colors.grey.shade400,
     ),
   );

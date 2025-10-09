@@ -196,7 +196,9 @@ class _ToggleButton<T> extends StatelessWidget {
           color: bgColor,
           border: Border.all(
             width: borderWidth,
-            color: isSelected ? color : unselectedBorderColor ?? scheme.outline,
+            color: isSelected
+                ? color
+                : unselectedBorderColor ?? scheme.outlineVariant,
           ),
         ),
         child: Center(

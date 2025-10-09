@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../../core/widgets/custom_toggle_switch.dart';
@@ -20,10 +21,11 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         return Column(
-          spacing: 6,
+          spacing: AppSpacing.vXs,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Row(
+              spacing: AppSpacing.xs,
               children: <Widget>[
                 Expanded(
                   child: DeliveryOptionTile(
@@ -35,7 +37,6 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
                     onTap: () => formPro.setDeliveryType(DeliveryType.paid),
                   ),
                 ),
-                const SizedBox(width: 6),
                 Expanded(
                   child: DeliveryOptionTile(
                     icon: Icons.storefront_outlined,
@@ -51,10 +52,11 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
             ),
             // --- Package Details (only when postage selected) ---
             AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                child: formPro.deliveryType == DeliveryType.collection
-                    ? const AddListingDeliveryCollectionLocationWidget()
-                    : const AddListingDeliveryChargesAndCourierWidget()),
+              duration: const Duration(milliseconds: 300),
+              child: formPro.deliveryType == DeliveryType.collection
+                  ? const AddListingDeliveryCollectionLocationWidget()
+                  : const AddListingDeliveryChargesAndCourierWidget(),
+            ),
           ],
         );
       },
@@ -63,67 +65,69 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
 }
 
 class AddListingDeliveryCollectionLocationWidget extends StatelessWidget {
-  const AddListingDeliveryCollectionLocationWidget({
-    super.key,
-  });
+  const AddListingDeliveryCollectionLocationWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Consumer<AddListingFormProvider>(
-      builder: (BuildContext context, AddListingFormProvider formPro,
-              Widget? child) =>
-          Padding(
-        padding: const EdgeInsets.only(bottom: 8.0, left: 4.0, right: 4.0),
-        child: NominationLocationField(
+      builder: (BuildContext context, AddListingFormProvider formPro, _) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.hSm,
+            vertical: AppSpacing.vXs,
+          ),
+          child: NominationLocationField(
             validator: (bool? p0) => AppValidator.requireLocation(p0),
             selectedLatLng: formPro.collectionLatLng,
             displayMode: MapDisplayMode.showMapAfterSelection,
             initialText: formPro.selectedCollectionLocation?.address ?? '',
-            onLocationSelected: (LocationEntity p0, LatLng p1) =>
-                formPro.setCollectionLocation(p0, p1)),
-      ),
+            onLocationSelected: (LocationEntity loc, LatLng latLng) =>
+                formPro.setCollectionLocation(loc, latLng),
+          ),
+        );
+      },
     );
   }
 }
 
 class AddListingDeliveryChargesAndCourierWidget extends StatelessWidget {
-  const AddListingDeliveryChargesAndCourierWidget({
-    super.key,
-  });
+  const AddListingDeliveryChargesAndCourierWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Consumer<AddListingFormProvider>(
-      builder: (BuildContext context, AddListingFormProvider formPro,
-              Widget? child) =>
-          Column(
-        children: <Widget>[
-          ShadowContainer(
-            margin: const EdgeInsets.symmetric(vertical: 6),
-            padding: const EdgeInsets.all(4),
-            child: CustomToggleSwitch<DeliveryPayer>(
-              widgetMargin: 0,
-              solidbgColor: true,
-              initialValue: formPro.deliveryPayer,
-              isShaded: false,
-              unseletedBorderColor: Colors.transparent,
-              unseletedTextColor: ColorScheme.of(context).outline,
-              labels: const <DeliveryPayer>[
-                DeliveryPayer.buyerPays,
-                DeliveryPayer.sellerPays,
-              ],
-              labelStrs: DeliveryPayer.values
-                  .map((DeliveryPayer e) => e.code.tr())
-                  .toList(),
-              labelText: '',
-              onToggle: (DeliveryPayer selected) {
-                formPro.setDeliveryPayer(selected);
-              },
+      builder: (BuildContext context, AddListingFormProvider formPro, _) {
+        final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
+        return Column(
+          children: <Widget>[
+            ShadowContainer(
+              margin: const EdgeInsets.symmetric(vertical: AppSpacing.vXs),
+              padding: const EdgeInsets.all(AppSpacing.xs),
+              child: CustomToggleSwitch<DeliveryPayer>(
+                widgetMargin: 0,
+                solidbgColor: true,
+                initialValue: formPro.deliveryPayer,
+                isShaded: false,
+                unseletedBorderColor: Colors.transparent,
+                unseletedTextColor: colorScheme.outline,
+                labels: const <DeliveryPayer>[
+                  DeliveryPayer.buyerPays,
+                  DeliveryPayer.sellerPays,
+                ],
+                labelStrs: DeliveryPayer.values
+                    .map((DeliveryPayer e) => e.code.tr())
+                    .toList(),
+                labelText: '',
+                onToggle: (DeliveryPayer selected) {
+                  formPro.setDeliveryPayer(selected);
+                },
+              ),
             ),
-          ),
-          const PackageDetailsCard(),
-        ],
-      ),
+            const PackageDetailsCard(),
+          ],
+        );
+      },
     );
   }
 }
@@ -154,14 +158,14 @@ class DeliveryOptionTile extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
       splashColor: activeColor.withValues(alpha: 0.1),
       highlightColor: activeColor.withValues(alpha: 0.05),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
           border: Border.all(
             color: isSelected ? activeColor : scheme.outlineVariant,
             width: 1.4,
@@ -171,6 +175,7 @@ class DeliveryOptionTile extends StatelessWidget {
               : Colors.transparent,
         ),
         child: Row(
+          spacing: AppSpacing.hSm,
           children: <Widget>[
             Container(
               height: 38,
@@ -187,9 +192,9 @@ class DeliveryOptionTile extends StatelessWidget {
                 size: 20,
               ),
             ),
-            const SizedBox(width: 10),
             Expanded(
               child: Column(
+                spacing: AppSpacing.vXs,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
@@ -199,7 +204,6 @@ class DeliveryOptionTile extends StatelessWidget {
                           color: isSelected ? activeColor : null,
                         ),
                   ),
-                  const SizedBox(height: 2),
                   Text(
                     subtitle,
                     style: Theme.of(context)
@@ -226,7 +230,6 @@ enum DeliveryPayer {
   final String code;
   final String jsonKey;
 
-  /// Convert from JSON
   static DeliveryPayer fromJson(String value) {
     return DeliveryPayer.values.firstWhere(
       (DeliveryPayer e) => e.jsonKey == value,
@@ -234,9 +237,7 @@ enum DeliveryPayer {
     );
   }
 
-  /// Convert to JSON
   String toJson() => jsonKey;
 
-  /// For localization
   String get localized => code.tr();
 }

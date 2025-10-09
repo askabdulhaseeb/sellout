@@ -126,7 +126,6 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
     );
 
     if (selected == null) {
-      // User closed bottom sheet without selecting
       return;
     }
 
