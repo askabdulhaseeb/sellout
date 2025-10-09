@@ -18,20 +18,8 @@ class CustomSwitchListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-
     return SwitchListTile.adaptive(
-      contentPadding: EdgeInsets.zero,
-      visualDensity: VisualDensity.compact,
-      dense: true,
-      activeTrackColor: Theme.of(context).colorScheme.secondary,
-      thumbColor: WidgetStateProperty.all(colorScheme.onSecondary),
-      trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
-      thumbIcon: WidgetStateProperty.all(
-        Icon(
-          Icons.circle,
-          color: colorScheme.onSecondary,
-        ),
-      ),
+      contentPadding: const EdgeInsets.all(0),
       title: Text(
         title,
         style: const TextStyle(fontWeight: FontWeight.w500),

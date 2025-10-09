@@ -42,11 +42,10 @@ class AppTheme {
       dialogTheme: AppDialogTheme.dark,
       shadowColor: Colors.white30,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primaryColor,
-        secondary: AppColors.secondaryColor,
-        brightness: Brightness.dark,
-        outlineVariant: AppColors.outlineVariant,
-      ),
+          seedColor: AppColors.primaryColor,
+          secondary: AppColors.secondaryColor,
+          brightness: Brightness.dark,
+          outlineVariant: AppColors.outlineVariant),
       brightness: Brightness.dark,
       textTheme: const TextTheme(
         titleLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),

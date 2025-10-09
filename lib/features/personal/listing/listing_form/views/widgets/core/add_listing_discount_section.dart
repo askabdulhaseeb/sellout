@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_Switch_list_tile.dart';
@@ -28,29 +29,27 @@ class _AddListingDiscountSectionState extends State<AddListingDiscountSection> {
     super.dispose();
   }
 
-  Widget buildDiscountField({
+  Widget _buildDiscountField({
     required double width,
     required int index,
     required DiscountEntity discount,
-    required AddListingFormProvider addPro,
+    required AddListingFormProvider provider,
   }) {
-    // Initialize controller if not exists
     _controllers.putIfAbsent(
       index,
       () => TextEditingController(
-        text: (discount.discount == 0.0) ? '' : discount.discount.toString(),
+        text: discount.discount == 0.0 ? '' : discount.discount.toString(),
       ),
     );
 
-// Inside buildDiscountField:
     return SizedBox(
       width: width / 3,
       child: CustomTextFormField(
-        validator: (String? value) => AppValidator.isEmpty(value),
+        validator: AppValidator.isEmpty,
         labelText: ' ${discount.quantity} ${'items'.tr()}',
         controller: _controllers[index],
         onChanged: (String value) {
-          double parsed = double.parse(value);
+          int parsed = int.tryParse(value) ?? 0;
           if (parsed > 100) {
             parsed = 100;
             _controllers[index]!.text = '100';
@@ -58,7 +57,7 @@ class _AddListingDiscountSectionState extends State<AddListingDiscountSection> {
               TextPosition(offset: _controllers[index]!.text.length),
             );
           }
-          addPro.setDiscounts(
+          provider.setDiscounts(
             discount.copyWith(discount: parsed),
           );
         },
@@ -79,29 +78,37 @@ class _AddListingDiscountSectionState extends State<AddListingDiscountSection> {
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.sizeOf(context).width - 32 - 28;
+
     return Consumer<AddListingFormProvider>(
-      builder: (BuildContext context, AddListingFormProvider addPro, _) {
+      builder: (BuildContext context, AddListingFormProvider provider, _) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             CustomSwitchListTile(
               title: 'select_discount'.tr(),
-              value: addPro.isDiscounted,
-              onChanged: (bool value) => addPro.setIsDiscount(value),
+              value: provider.isDiscounted,
+              onChanged: provider.setIsDiscount,
             ),
-            if (addPro.isDiscounted)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: List<Widget>.generate(
-                  addPro.discounts.length,
-                  (int index) => buildDiscountField(
-                    width: width,
-                    index: index,
-                    discount: addPro.discounts[index],
-                    addPro: addPro,
-                  ),
-                ),
-              ),
+            AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                child: provider.isDiscounted
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: AppSpacing.vSm),
+                        child: Wrap(
+                          spacing: AppSpacing.hSm,
+                          runSpacing: AppSpacing.vSm,
+                          children: List<Widget>.generate(
+                            provider.discounts.length,
+                            (int index) => _buildDiscountField(
+                              width: width,
+                              index: index,
+                              discount: provider.discounts[index],
+                              provider: provider,
+                            ),
+                          ),
+                        ),
+                      )
+                    : const SizedBox.shrink()),
           ],
         );
       },
