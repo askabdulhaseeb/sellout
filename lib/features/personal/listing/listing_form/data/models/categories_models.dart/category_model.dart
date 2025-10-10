@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
-import '../../../../../../../core/functions/app_log.dart';
 import '../../../domain/entities/category_entites/categories_entity.dart';
 import 'sub_models/parent_dropdown_model.dart';
 import 'sub_models/dropdown_option.model.dart';
@@ -9,36 +8,13 @@ import 'package:flutter/foundation.dart';
 import 'sub_models/dropdown_option_data_model.dart';
 
 class CategoriesModel extends CategoriesEntity {
-  CategoriesModel({
-    super.clothesBrands,
-    super.footwearBrands,
-    super.clothesSizes,
-    super.footSizes,
-    super.age,
-    super.breed,
-    super.pets,
-    super.readyToLeave,
-    super.bodyType,
-    super.emissionStandards,
-    super.fuelType,
-    super.make,
-    super.mileageUnit,
-    super.transmission,
-    super.vehicles,
-    super.energyRating,
-    super.propertyType,
-    super.items,
-    super.clothes,
-    super.foot,
-  });
-
   factory CategoriesModel.fromJson(String jsonString) {
     final decoded = jsonDecode(jsonString);
 
-    // Merge all maps into one if input is a list of maps
+    // Merge all maps if wrapped inside a list
     final Map<String, dynamic> mergedJson = <String, dynamic>{};
     if (decoded is List) {
-      for (var element in decoded) {
+      for (final element in decoded) {
         if (element is Map<String, dynamic>) mergedJson.addAll(element);
       }
     } else if (decoded is Map<String, dynamic>) {
@@ -46,26 +22,25 @@ class CategoriesModel extends CategoriesEntity {
     }
 
     final List<String> populatedFields = <String>[];
-    // Parse map of DropdownOptionModel (like clothes_sizes)
+
+    // --- Helper parsers ---
     List<DropdownOptionModel>? parseMap(dynamic value) {
       if (value == null) return null;
       if (value is Map<String, dynamic>) {
         return value.values
             .whereType<Map<String, dynamic>>()
-            .map((Map<String, dynamic> e) => DropdownOptionModel.fromJson(e))
+            .map(DropdownOptionModel.fromJson)
             .toList();
       }
       return null;
     }
 
-    // Parse DropdownOptionDataModel from Map or String
     DropdownOptionDataModel parseDataOption(dynamic e) {
       if (e is Map<String, dynamic>) return DropdownOptionDataModel.fromJson(e);
       if (e is String) return DropdownOptionDataModel(label: e, value: e);
       throw Exception('Invalid dropdown data option: $e');
     }
 
-    // Parse list of DropdownOptionDataModel
     List<DropdownOptionDataModel>? parseDataList(dynamic value) {
       if (value == null) return null;
       if (value is List && value.isNotEmpty) {
@@ -74,8 +49,7 @@ class CategoriesModel extends CategoriesEntity {
       return null;
     }
 
-    // ===== Parsing Fields =====
-    //clothes_foot
+    // --- Clothes ---
     final List<DropdownOptionDataModel>? clothesBrands =
         parseDataList(mergedJson['clothes_brands']);
     if (clothesBrands != null) populatedFields.add('clothesBrands');
@@ -91,33 +65,41 @@ class CategoriesModel extends CategoriesEntity {
     final List<DropdownOptionModel> footSizes =
         parseMap(mergedJson['foot_sizes']) ?? <DropdownOptionModel>[];
     if (footSizes.isNotEmpty) populatedFields.add('footSizes');
-    // pets
+
+    // --- Pets ---
     final Map<String, dynamic>? breedMap = mergedJson['breed'];
     final List<ParentDropdownModel>? breed = breedMap?.entries
         .map((MapEntry<String, dynamic> entry) => ParentDropdownModel.fromJson(
             entry.key, entry.value as Map<String, dynamic>))
         .toList();
     if (breed != null) populatedFields.add('breed');
+
     final List<DropdownOptionModel>? age = parseMap(mergedJson['age']);
     if (age != null) populatedFields.add('age');
+
     final List<DropdownOptionModel>? readyToLeave =
         parseMap(mergedJson['ready_to_leave']);
     if (readyToLeave != null) populatedFields.add('readyToLeave');
+
     final List<DropdownOptionModel>? pets = parseMap(mergedJson['pets']);
     if (pets != null) populatedFields.add('pets');
-    //vehicles
+
+    // --- Vehicles ---
     final Map<String, dynamic>? bodyTypeMap = mergedJson['body_type'];
     final List<ParentDropdownModel>? bodyType = bodyTypeMap?.entries
         .map((MapEntry<String, dynamic> entry) => ParentDropdownModel.fromJson(
             entry.key, entry.value as Map<String, dynamic>))
         .toList();
     if (bodyType != null) populatedFields.add('bodyType');
+
     final List<DropdownOptionModel>? emissionStandards =
         parseMap(mergedJson['emission_standards']);
     if (emissionStandards != null) populatedFields.add('emissionStandards');
+
     final List<DropdownOptionModel>? fuelType =
         parseMap(mergedJson['fuel_type']);
     if (fuelType != null) populatedFields.add('fuelType');
+
     final List<DropdownOptionModel>? make = parseMap(mergedJson['make']);
     if (make != null) populatedFields.add('make');
 
@@ -141,11 +123,55 @@ class CategoriesModel extends CategoriesEntity {
         parseMap(mergedJson['property_type']);
     if (propertyType != null) populatedFields.add('propertyType');
 
+    // --- Items ---
     final SubCategoryModel? items = mergedJson['items'] != null
         ? SubCategoryModel.fromJson(mergedJson['items'])
         : null;
     if (items != null) populatedFields.add('items');
 
+    // --- Food & Drink (Fixed Section) ---
+    SubCategoryModel? food;
+    SubCategoryModel? drink;
+
+    if (mergedJson['food-drink'] != null) {
+      final Map<String, dynamic> foodDrinkData =
+          Map<String, dynamic>.from(mergedJson['food-drink']);
+
+      if (foodDrinkData['sub_category'] is List) {
+        final List<dynamic> subCats =
+            List<dynamic>.from(foodDrinkData['sub_category']);
+
+        for (final item in subCats) {
+          if (item is Map<String, dynamic>) {
+            // Ensure cid exists for top-level Food / Drink
+            item['cid'] ??= item['title']
+                ?.toString()
+                .toLowerCase()
+                .replaceAll('&', 'and')
+                .replaceAll(' ', '-');
+          }
+        }
+
+        final Map<String, dynamic>? foodMap =
+            subCats.cast<Map<String, dynamic>?>().firstWhere(
+                  (e) => e?['title'] == 'Food',
+                  orElse: () => null,
+                );
+        final Map<String, dynamic>? drinkMap =
+            subCats.cast<Map<String, dynamic>?>().firstWhere(
+                  (e) => e?['title'] == 'Drink',
+                  orElse: () => null,
+                );
+
+        if (foodMap != null) food = SubCategoryModel.fromJson(foodMap);
+        if (drinkMap != null) drink = SubCategoryModel.fromJson(drinkMap);
+      }
+    }
+
+    if (food != null) populatedFields.add('food');
+    if (drink != null) populatedFields.add('drink');
+
+    // --- Clothes & Foot ---
     final SubCategoryModel? clothes = mergedJson['clothes'] != null
         ? SubCategoryModel.fromJson(mergedJson['clothes'])
         : null;
@@ -156,9 +182,9 @@ class CategoriesModel extends CategoriesEntity {
         : null;
     if (foot != null) populatedFields.add('foot');
 
-    debugPrint('CategoriesModel.fromJson - Populated fields: $populatedFields');
-    AppLog.info('${bodyType?.length}',
-        name: 'CategoriesModel.fromJson Saved count');
+    debugPrint(
+        '✅ CategoriesModel.fromJson - Populated fields: $populatedFields');
+
     return CategoriesModel(
       clothesBrands: clothesBrands,
       footwearBrands: footwearBrands,
@@ -180,6 +206,33 @@ class CategoriesModel extends CategoriesEntity {
       items: items,
       clothes: clothes,
       foot: foot,
+      food: food,
+      drink: drink,
     );
   }
+
+  CategoriesModel({
+    super.clothesBrands,
+    super.footwearBrands,
+    super.clothesSizes,
+    super.footSizes,
+    super.age,
+    super.breed,
+    super.pets,
+    super.readyToLeave,
+    super.bodyType,
+    super.emissionStandards,
+    super.fuelType,
+    super.make,
+    super.mileageUnit,
+    super.transmission,
+    super.vehicles,
+    super.energyRating,
+    super.propertyType,
+    super.items,
+    super.clothes,
+    super.foot,
+    super.food,
+    super.drink,
+  });
 }

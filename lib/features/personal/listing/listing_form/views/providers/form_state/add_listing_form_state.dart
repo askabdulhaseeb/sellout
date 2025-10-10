@@ -44,6 +44,8 @@ class AddListingFormState {
   bool isLoading = false;
   bool isDropdownLoading = false;
   String accessCode = '';
+  // food drink
+  String selectedFoodDrinkSubCategory = ListingType.foodAndDrink.cids.first;
 
   // Property state
   bool garden = true;
@@ -52,7 +54,7 @@ class AddListingFormState {
   String tenureType = 'freehold';
   String? selectedPropertyType;
   String? selectedEnergyRating;
-  String selectedPropertySubCategory = 'property_default';
+  String selectedPropertySubCategory = ListingType.property.cids.first;
 
   // Vehicle state
   String? transmissionType;
@@ -76,7 +78,7 @@ class AddListingFormState {
 
   // Cloth state
   String? brand;
-  String selectedClothSubCategory = 'cloth_default';
+  String selectedClothSubCategory = ListingType.clothAndFoot.cids.first;
 
   // Collections
   final List<DiscountEntity> discounts = <DiscountEntity>[
@@ -122,13 +124,15 @@ class AddListingFormState {
     isLoading = false;
     accessCode = '';
 
+    selectedClothSubCategory = ListingType.clothAndFoot.cids.first;
+
     garden = true;
     parking = true;
     animalFriendly = true;
     tenureType = 'freehold';
     selectedPropertyType = null;
     selectedEnergyRating = null;
-    selectedPropertySubCategory = 'property_default';
+    selectedPropertySubCategory = ListingType.property.cids.first;
 
     transmissionType = null;
     fuelType = null;
@@ -149,7 +153,7 @@ class AddListingFormState {
     healthChecked = null;
 
     brand = null;
-    selectedClothSubCategory = 'cloth_default';
+    selectedClothSubCategory = ListingType.clothAndFoot.cids.first;
     sizeColorEntities = <SizeColorEntity>[];
 
     selectedMeetupLocation = null;

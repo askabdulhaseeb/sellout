@@ -4,9 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../core/widgets/custom_dropdown.dart';
-import '../../../../../../../core/widgets/loaders/loader.dart';
-import '../../../data/sources/remote/listing_api.dart';
-import '../../../domain/entities/listing_entity.dart';
+import '../../../data/sources/local/local_categories.dart';
 import '../../../domain/entities/sub_category_entity.dart';
 import 'category_selection_bottom_sheet.dart';
 
@@ -40,78 +38,70 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
     extends State<SubCategorySelectableWidget<T>> {
   SubCategoryEntity? selectedSubCategory;
   SubCategoryEntity? selectedSubSubCategory;
-  List<ListingEntity> allListings = <ListingEntity>[];
-  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
     selectedSubCategory = widget.subCategory;
-    selectedSubSubCategory = null;
-    _fetchCategories();
+    debugPrint('🟣 [INIT] SubCategorySelectableWidget initialized');
+    debugPrint('🟢 Initial selectedSubCategory: ${selectedSubCategory?.title}');
   }
 
   @override
   void didUpdateWidget(covariant SubCategorySelectableWidget<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.subCategory != widget.subCategory) {
+      debugPrint('🟠 [UPDATE] SubCategory changed');
       setState(() {
         selectedSubCategory = widget.subCategory;
         selectedSubSubCategory = null;
       });
+      debugPrint(
+          '🟢 Updated selectedSubCategory: ${selectedSubCategory?.title}');
     }
   }
 
-  Future<void> _fetchCategories() async {
-    setState(() => isLoading = true);
+  List<SubCategoryEntity> _getFilteredSubCategories() {
+    debugPrint(
+        '🔵 [FILTER] Getting filtered subcategories for listType: ${widget.listType?.json}, cid: ${widget.cid}');
 
-    try {
-      final List<ListingEntity> listings = await ListingAPI().listing();
+    switch (widget.listType) {
+      case ListingType.clothAndFoot:
+        if (widget.cid == ListingType.clothAndFoot.cids.first) {
+          debugPrint('👕 Using clothes subcategories');
+          return LocalCategoriesSource.clothes?.subCategory ?? [];
+        } else if (widget.cid == ListingType.clothAndFoot.cids.last) {
+          debugPrint('👟 Using footwear subcategories');
+          return LocalCategoriesSource.foot?.subCategory ?? [];
+        }
+        debugPrint('⚪ No valid CID found for clothAndFoot');
+        return [];
 
-      if (!mounted) return;
+      case ListingType.foodAndDrink:
+        if (widget.cid == ListingType.foodAndDrink.cids.first) {
+          debugPrint('🍔 Using food subcategories');
+          return LocalCategoriesSource.food?.subCategory ?? [];
+        } else if (widget.cid == ListingType.foodAndDrink.cids.last) {
+          debugPrint('🥤 Using drink subcategories');
+          return LocalCategoriesSource.drink?.subCategory ?? [];
+        }
+        debugPrint('⚪ No valid CID found for foodAndDrink');
+        return [];
 
-      if (listings.isEmpty) {
-        AppSnackBar.showSnackBar(
-          context,
-          'no_categories_found'.tr(),
-        );
-      }
-
-      setState(() {
-        allListings = listings;
-        isLoading = false;
-      });
-    } catch (e, stack) {
-      debugPrint('Error fetching listings: $e\n$stack');
-
-      if (!mounted) return;
-      setState(() => isLoading = false);
-
-      AppSnackBar.showSnackBar(
-        context,
-        'failed_to_load_categories'.tr(),
-      );
+      default:
+        debugPrint('📦 Using default');
+        return [];
     }
   }
 
   Future<void> _handleCategorySelection(
-      List<ListingEntity> selectedList, BuildContext context) async {
-    if (selectedList.isEmpty) {
-      AppSnackBar.showSnackBar(
-        context,
-        'no_categories_found'.tr(),
-      );
-      return;
-    }
-
-    final List<SubCategoryEntity> subCategories =
-        selectedList.first.subCategory;
+      List<SubCategoryEntity> subCategories, BuildContext context) async {
+    debugPrint('🟣 [ACTION] User tapped to select a category');
+    debugPrint('📋 Available subcategories: ${subCategories.length}');
 
     if (subCategories.isEmpty) {
-      AppSnackBar.showSnackBar(
-        context,
-        'no_subcategories_found'.tr(),
-      );
+      AppSnackBar.showSnackBar(context, 'no_categories_found'.tr());
+      debugPrint('❌ No categories found for selection');
       return;
     }
 
@@ -120,65 +110,58 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      builder: (_) => CategorySelectionBottomSheet(
-        subCategories: subCategories,
-      ),
+      builder: (_) {
+        debugPrint('🧩 Showing CategorySelectionBottomSheet...');
+        return CategorySelectionBottomSheet(subCategories: subCategories);
+      },
     );
 
     if (selected == null) {
+      debugPrint('⚪ User closed bottom sheet without selecting');
       return;
     }
 
+    debugPrint('✅ User selected category: ${selected.title}');
     setState(() {
       selectedSubCategory = selected;
       selectedSubSubCategory = null;
     });
 
     if (selected.subCategory.isEmpty) {
+      debugPrint('🔚 No sub-subcategories found, invoking onSelected callback');
       widget.onSelected(selected);
+    } else {
+      debugPrint('🔁 Subcategory contains nested categories');
     }
-  }
-
-  List<ListingEntity> _filteredListings() {
-    if (widget.listType == ListingType.clothAndFoot) {
-      return allListings
-          .where((ListingEntity e) => e.cid == widget.cid)
-          .toList();
-    } else if (widget.listType != null) {
-      return allListings
-          .where((ListingEntity e) => e.listId == widget.listType?.json)
-          .toList();
-    }
-    return allListings;
   }
 
   @override
   Widget build(BuildContext context) {
     final Widget Function(BuildContext context) builder = _buildMainUI;
 
-    // If a provider is passed, wrap with Consumer
     if (widget.listenProvider != null) {
-      return Consumer<T>(
-        builder: (_, __, ___) => builder(context),
-      );
+      debugPrint('🟢 Listening to provider changes for rebuild');
+      return Consumer<T>(builder: (_, __, ___) => builder(context));
     } else {
       return builder(context);
     }
   }
 
   Widget _buildMainUI(BuildContext context) {
-    if (isLoading) return const Loader();
-
-    final List<ListingEntity> selectedList = _filteredListings();
+    final List<SubCategoryEntity> subCategories = _getFilteredSubCategories();
+    debugPrint(
+        '🧩 [UI] Building main UI, ${subCategories.length} subcategories loaded');
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         if (widget.title)
-          Text('category'.tr(),
-              style: const TextStyle(fontWeight: FontWeight.w500)),
+          Text(
+            'category'.tr(),
+            style: const TextStyle(fontWeight: FontWeight.w500),
+          ),
         InkWell(
-          onTap: () => _handleCategorySelection(selectedList, context),
+          onTap: () => _handleCategorySelection(subCategories, context),
           borderRadius: BorderRadius.circular(10),
           child: Container(
             height: 48,
@@ -203,15 +186,12 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
                         : Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),
-                const Icon(
-                  Icons.keyboard_arrow_down_rounded,
-                ),
+                const Icon(Icons.keyboard_arrow_down_rounded),
               ],
             ),
           ),
         ),
-        if (selectedSubCategory != null &&
-            selectedSubCategory!.subCategory.isNotEmpty)
+        if (selectedSubCategory?.subCategory.isNotEmpty ?? false)
           CustomDropdown<SubCategoryEntity>(
             validator: (bool? sub) {
               if (selectedSubCategory!.subCategory.isNotEmpty && sub == null) {
@@ -222,16 +202,14 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
             title: 'sub_category'.tr(),
             selectedItem: selectedSubSubCategory,
             items: selectedSubCategory!.subCategory
-                .map((SubCategoryEntity e) =>
-                    DropdownMenuItem<SubCategoryEntity>(
+                .map((SubCategoryEntity e) => DropdownMenuItem(
                       value: e,
                       child: Text(e.title),
                     ))
                 .toList(),
             onChanged: (SubCategoryEntity? sub) {
-              setState(() {
-                selectedSubSubCategory = sub;
-              });
+              debugPrint('🟢 User selected sub-subcategory: ${sub?.title}');
+              setState(() => selectedSubSubCategory = sub);
               widget.onSelected(sub);
             },
           ),

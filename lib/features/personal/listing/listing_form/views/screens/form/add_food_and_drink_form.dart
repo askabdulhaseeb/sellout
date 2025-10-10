@@ -11,6 +11,7 @@ import '../../widgets/core/delivery_Section.dart/add_listing_delivery_selection_
 import '../../widgets/core/add_listing_discount_section.dart';
 import '../../widgets/core/add_listing_post_button_widget.dart';
 import '../../widgets/core/add_listing_update_button_widget.dart';
+import '../../widgets/food_drink/food_drink_sub_selection_widget.dart';
 
 class AddFoodAndDrinkForm extends StatefulWidget {
   const AddFoodAndDrinkForm({super.key});
@@ -36,7 +37,9 @@ class _AddFoodAndDrinkFormState extends State<AddFoodAndDrinkForm> {
               spacing: AppSpacing.vXs,
               children: <Widget>[
                 const AddListingBasicInfoSection(),
+                const AddListingFoodDrinkSubcatSelectionSection(),
                 SubCategorySelectableWidget<AddListingFormProvider>(
+                  cid: formPro.selectedFoodDrinkSubCategory,
                   listType: formPro.listingType,
                   subCategory: formPro.selectedCategory,
                   onSelected: formPro.setSelectedCategory,

@@ -19,7 +19,7 @@ class AppDataService {
       '/category/${ListingType.property.json}?list-id=',
       '/category/${ListingType.vehicle.json}?list-id=',
       '/category/${ListingType.pets.json}?list-id=',
-      // '/category/${ListingType.foodAndDrink.json}?list-id=',
+      '/category/${ListingType.foodAndDrink.json}?list-id=',
     ];
 
     for (final String endpoint in endpoints) {
