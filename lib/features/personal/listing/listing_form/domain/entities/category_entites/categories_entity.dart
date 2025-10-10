@@ -7,28 +7,32 @@ part 'categories_entity.g.dart';
 
 @HiveType(typeId: 74)
 class CategoriesEntity {
-  CategoriesEntity(
-      {this.items,
-      this.clothesSizes,
-      this.footSizes,
-      this.clothes,
-      this.foot,
-      this.clothesBrands,
-      this.footwearBrands,
-      this.age,
-      this.breed,
-      this.pets,
-      this.readyToLeave,
-      this.bodyType,
-      this.vehicles,
-      this.emissionStandards,
-      this.fuelType,
-      this.make,
-      this.mileageUnit,
-      this.transmission,
-      this.energyRating,
-      this.propertyType});
+  CategoriesEntity({
+    this.items,
+    this.clothesSizes,
+    this.footSizes,
+    this.clothes,
+    this.foot,
+    this.food,
+    this.drink,
+    this.clothesBrands,
+    this.footwearBrands,
+    this.age,
+    this.breed,
+    this.pets,
+    this.readyToLeave,
+    this.bodyType,
+    this.vehicles,
+    this.emissionStandards,
+    this.fuelType,
+    this.make,
+    this.mileageUnit,
+    this.transmission,
+    this.energyRating,
+    this.propertyType,
+  });
 
+  // ✅ Category groups
   @HiveField(0)
   final SubCategoryEntity? items;
 
@@ -45,54 +49,65 @@ class CategoriesEntity {
   final SubCategoryEntity? foot;
 
   @HiveField(5)
-  final List<DropdownOptionDataEntity>? clothesBrands;
+  final SubCategoryEntity? food;
 
   @HiveField(6)
-  final List<DropdownOptionDataEntity>? footwearBrands;
+  final SubCategoryEntity? drink;
 
   @HiveField(7)
-  final List<DropdownOptionEntity>? age;
+  final List<DropdownOptionDataEntity>? clothesBrands;
 
   @HiveField(8)
-  final List<ParentDropdownEntity>? breed;
+  final List<DropdownOptionDataEntity>? footwearBrands;
 
   @HiveField(9)
-  final List<DropdownOptionEntity>? pets;
+  final List<DropdownOptionEntity>? age;
 
   @HiveField(10)
-  final List<DropdownOptionEntity>? readyToLeave;
+  final List<ParentDropdownEntity>? breed;
 
   @HiveField(11)
-  final List<ParentDropdownEntity>? bodyType;
+  final List<DropdownOptionEntity>? pets;
 
   @HiveField(12)
-  final List<DropdownOptionEntity>? vehicles;
+  final List<DropdownOptionEntity>? readyToLeave;
 
   @HiveField(13)
-  final List<DropdownOptionEntity>? emissionStandards;
+  final List<ParentDropdownEntity>? bodyType;
 
   @HiveField(14)
-  final List<DropdownOptionEntity>? fuelType;
+  final List<DropdownOptionEntity>? vehicles;
 
   @HiveField(15)
-  final List<DropdownOptionEntity>? make;
+  final List<DropdownOptionEntity>? emissionStandards;
 
   @HiveField(16)
-  final List<DropdownOptionEntity>? mileageUnit;
+  final List<DropdownOptionEntity>? fuelType;
 
   @HiveField(17)
-  final List<DropdownOptionEntity>? transmission;
+  final List<DropdownOptionEntity>? make;
+
   @HiveField(18)
-  final List<DropdownOptionEntity>? energyRating;
+  final List<DropdownOptionEntity>? mileageUnit;
+
   @HiveField(19)
+  final List<DropdownOptionEntity>? transmission;
+
+  @HiveField(20)
+  final List<DropdownOptionEntity>? energyRating;
+
+  @HiveField(21)
   final List<DropdownOptionEntity>? propertyType;
 
+  // ✅ CopyWith method
   CategoriesEntity copyWith({
     SubCategoryEntity? items,
     List<DropdownOptionEntity>? clothesSizes,
     List<DropdownOptionEntity>? footSizes,
     SubCategoryEntity? clothes,
     SubCategoryEntity? foot,
+    SubCategoryEntity? food,
+    SubCategoryEntity? drink,
     List<DropdownOptionDataEntity>? clothesBrands,
     List<DropdownOptionDataEntity>? footwearBrands,
     List<DropdownOptionEntity>? age,
@@ -115,6 +130,8 @@ class CategoriesEntity {
       footSizes: footSizes ?? this.footSizes,
       clothes: clothes ?? this.clothes,
       foot: foot ?? this.foot,
+      food: food ?? this.food,
+      drink: drink ?? this.drink,
       clothesBrands: clothesBrands ?? this.clothesBrands,
       footwearBrands: footwearBrands ?? this.footwearBrands,
       age: age ?? this.age,

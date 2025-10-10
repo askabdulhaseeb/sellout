@@ -11,10 +11,8 @@ import '../../../../../../routes/app_linking.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../post/domain/entities/meetup/availability_entity.dart';
-import '../../domain/entities/color_options_entity.dart';
 import '../../domain/entities/listing_entity.dart';
 import '../../domain/entities/sub_category_entity.dart';
-import '../../../../post/domain/entities/size_color/size_color_entity.dart';
 import '../../../../post/domain/entities/discount_entity.dart';
 import '../../../../location/domain/entities/location_entity.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -27,6 +25,7 @@ import '../widgets/core/delivery_Section.dart/add_listing_delivery_selection_wid
 import 'form_state/add_listing_form_state.dart';
 import 'managers/availability_manager.dart';
 import 'mixins/cloth_listing_mixin.dart';
+import 'mixins/food_listing_mixin.dart';
 import 'mixins/pet_listing_mixin.dart';
 import 'mixins/property_listing_mixin.dart';
 import 'mixins/vehicle_listing_mixin.dart';
@@ -36,6 +35,7 @@ class AddListingFormProvider extends ChangeNotifier
         PetListingMixin,
         VehicleListingMixin,
         PropertyListingMixin,
+        FoodListingMixin,
         ClothListingMixin {
   AddListingFormProvider(
     this._addListingUsecase,
@@ -81,13 +81,9 @@ class AddListingFormProvider extends ChangeNotifier
   ListingType? get listingType => _state.listingType ?? ListingType.items;
   bool get isDropdownLoading => _state.isDropdownLoading;
   SubCategoryEntity? get selectedCategory => _state.selectedCategory;
-  @override
-  String? get selectedVehicleCategory => _state.selectedVehicleCategory;
   PostEntity? get post => _post;
   bool get isDiscounted => _state.isDiscounted;
   List<DiscountEntity> get discounts => _state.discounts;
-  @override
-  List<SizeColorEntity> get sizeColorEntities => _state.sizeColorEntities;
   LocationEntity? get selectedmeetupLocation => _state.selectedMeetupLocation;
   LocationEntity? get selectedCollectionLocation =>
       _state.selectedCollectionLocation;
@@ -99,62 +95,14 @@ class AddListingFormProvider extends ChangeNotifier
   PrivacyType get privacy => _state.privacy;
   DeliveryType get deliveryType => _state.deliveryType;
   DeliveryPayer get deliveryPayer => _state.deliveryPayer;
-  @override
-  String get selectedClothSubCategory => _state.selectedClothSubCategory;
-  @override
-  String? get brand => _state.brand;
-  @override
-  ColorOptionEntity? get selectedVehicleColor => _state.selectedVehicleColor;
-  @override
-  String? get transmissionType => _state.transmissionType;
-  @override
-  String? get fuelType => _state.fuelType;
-  @override
-  String? get selectedMileageUnit => _state.selectedMileageUnit;
   TextEditingController get engineSize => _state.engineSize;
   TextEditingController get mileage => _state.mileage;
-  @override
-  String? get selectedBodyType => _state.selectedBodyType;
-  @override
-  String? get make => _state.make;
   TextEditingController get model => _state.model;
-  @override
-  String? get year => _state.year;
-  @override
-  String? get emission => _state.emission;
   TextEditingController get doors => _state.doors;
   TextEditingController get seats => _state.seats;
   TextEditingController get location => _state.location;
   TextEditingController get bedroom => _state.bedroom;
   TextEditingController get bathroom => _state.bathroom;
-  @override
-  String get tenureType => _state.tenureType;
-  @override
-  String get selectedPropertySubCategory => _state.selectedPropertySubCategory;
-  @override
-  String? get selectedPropertyType => _state.selectedPropertyType;
-  @override
-  bool get garden => _state.garden;
-  @override
-  bool get parking => _state.parking;
-  @override
-  bool get animalFriendly => _state.animalFriendly;
-  @override
-  String? get selectedEnergyRating => _state.selectedEnergyRating;
-  @override
-  String? get age => _state.age;
-  @override
-  String? get petCategory => _state.petCategory;
-  @override
-  bool? get healthChecked => _state.healthChecked;
-  @override
-  String? get breed => _state.breed;
-  @override
-  bool? get wormAndFleaTreated => _state.wormAndFleaTreated;
-  @override
-  bool? get vaccinationUpToDate => _state.vaccinationUpToDate;
-  @override
-  String? get time => _state.time;
   bool get isLoading => _state.isLoading;
   TextEditingController get title => _state.title;
   TextEditingController get description => _state.description;

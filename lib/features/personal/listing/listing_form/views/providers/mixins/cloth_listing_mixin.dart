@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../post/data/models/size_color/size_color_model.dart';
 import '../../../../../post/domain/entities/size_color/color_entity.dart';
 import '../../../../../post/domain/entities/size_color/size_color_entity.dart';
@@ -7,7 +8,7 @@ import '../../../domain/entities/color_options_entity.dart';
 
 mixin ClothListingMixin on ChangeNotifier {
   String? _brand;
-  String _selectedClothSubCategory = 'cloth_default';
+  String _selectedClothSubCategory = ListingType.clothAndFoot.cids.first;
   List<SizeColorEntity> _sizeColorEntities = <SizeColorEntity>[];
 
   // Getters

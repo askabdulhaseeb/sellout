@@ -16,54 +16,51 @@ class CategorySelectionBottomSheet extends StatefulWidget {
 
 class _CategorySelectionBottomSheetState
     extends State<CategorySelectionBottomSheet> {
-  List<SubCategoryEntity> selectedSubCategoryStack = <SubCategoryEntity>[];
+  final List<SubCategoryEntity> selectedSubCategoryStack =
+      <SubCategoryEntity>[];
+
   @override
   Widget build(BuildContext context) {
     final AddListingFormProvider formPro =
         Provider.of<AddListingFormProvider>(context, listen: false);
+
     return Column(
       children: <Widget>[
-        selectedSubCategoryStack.isEmpty
-            ? Row(
-                children: <Widget>[
-                  IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Icons.arrow_back_ios),
+        // ===== HEADER =====
+        Row(
+          children: <Widget>[
+            IconButton(
+              onPressed: () {
+                if (selectedSubCategoryStack.isEmpty) {
+                  Navigator.pop(context);
+                } else {
+                  setState(() => selectedSubCategoryStack.removeLast());
+                }
+              },
+              icon: const Icon(Icons.arrow_back_ios),
+            ),
+            Expanded(
+              child: Opacity(
+                opacity: 0.7,
+                child: Text(
+                  selectedSubCategoryStack.isEmpty
+                      ? 'select_category'.tr()
+                      : selectedSubCategoryStack.last.title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
-                  Opacity(
-                    opacity: 0.5,
-                    child: const Text(
-                      'select_category',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ).tr(),
-                  ),
-                ],
-              )
-            : Row(
-                children: <Widget>[
-                  IconButton(
-                    onPressed: () {
-                      setState(() {
-                        selectedSubCategoryStack.removeLast();
-                      });
-                    },
-                    icon: const Icon(Icons.arrow_back_ios),
-                  ),
-                  Text(selectedSubCategoryStack.last.address ?? ''),
-                ],
+                ),
               ),
-        //
-        const Divider(),
-        //
+            ),
+          ],
+        ),
+
+        const Divider(height: 1),
+
+        // ===== CATEGORY LIST =====
         Flexible(
           child: ListView.builder(
-            shrinkWrap: true,
-            primary: false,
             itemCount: selectedSubCategoryStack.isEmpty
                 ? widget.subCategories.length
                 : selectedSubCategoryStack.last.subCategory.length,
@@ -72,32 +69,25 @@ class _CategorySelectionBottomSheetState
                   selectedSubCategoryStack.isEmpty
                       ? widget.subCategories[index]
                       : selectedSubCategoryStack.last.subCategory[index];
-              return ListTile(
-                onTap: () {
-                  if (subCategory.subCategory.isEmpty) {
-                    Navigator.of(context).pop(subCategory);
-                    return;
-                  }
-                  if (formPro.listingType == ListingType.pets &&
-                      subCategory.subCategory.isNotEmpty) {
-                    // Assuming you have a provider named `BreedProvider`, update the breeds list based on the selected category.
-                    // This will be handled in the provider.
-                    // You could pass this category info to update the breed dropdown in another screen or widget.
 
-                    Navigator.of(context).pop(subCategory);
-                    setState(() {
-                      selectedSubCategoryStack.add(subCategory);
-                    });
-                  } else {
-                    setState(() {
-                      selectedSubCategoryStack.add(subCategory);
-                    });
-                  }
-                },
+              return ListTile(
                 title: Text(subCategory.title),
                 trailing: subCategory.subCategory.isEmpty
-                    ? const SizedBox()
+                    ? null
                     : const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  if (subCategory.subCategory.isEmpty) {
+                    Navigator.pop(context, subCategory);
+                    return;
+                  }
+
+                  if (formPro.listingType == ListingType.pets) {
+                    Navigator.pop(context, subCategory);
+                    return;
+                  }
+
+                  setState(() => selectedSubCategoryStack.add(subCategory));
+                },
               );
             },
           ),

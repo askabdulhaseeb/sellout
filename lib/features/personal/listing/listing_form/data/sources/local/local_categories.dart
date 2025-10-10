@@ -4,6 +4,7 @@ import '../../../domain/entities/category_entites/categories_entity.dart';
 import '../../../domain/entities/category_entites/subentities/dropdown_option_data_entity.dart';
 import '../../../domain/entities/category_entites/subentities/dropdown_option_entity.dart';
 import '../../../domain/entities/category_entites/subentities/parent_dropdown_entity.dart';
+import '../../../domain/entities/sub_category_entity.dart';
 
 class LocalCategoriesSource {
   static String boxTitle = AppStrings.localDropDownListingBox;
@@ -38,12 +39,10 @@ class LocalCategoriesSource {
       await save(newEntity);
       return;
     }
+
     T? keepOldIfNullOrEmpty<T>(T? newValue, T? oldValue) {
       if (newValue == null) return oldValue;
-
-      if (newValue is List && newValue.isEmpty) {
-        return oldValue;
-      }
+      if (newValue is List && newValue.isEmpty) return oldValue;
       return newValue;
     }
 
@@ -74,9 +73,17 @@ class LocalCategoriesSource {
           keepOldIfNullOrEmpty(newEntity.energyRating, existing.energyRating),
       propertyType:
           keepOldIfNullOrEmpty(newEntity.propertyType, existing.propertyType),
+      items: keepOldIfNullOrEmpty(newEntity.items, existing.items),
+      clothes: keepOldIfNullOrEmpty(newEntity.clothes, existing.clothes),
+      foot: keepOldIfNullOrEmpty(newEntity.foot, existing.foot),
+      food: keepOldIfNullOrEmpty(newEntity.food, existing.food),
+      drink: keepOldIfNullOrEmpty(newEntity.drink, existing.drink),
     );
+
     await save(merged);
   }
+
+  // ===== Getters for easy access =====
 
   static List<DropdownOptionEntity>? get clothesSizes =>
       categories?.clothesSizes;
@@ -113,11 +120,23 @@ class LocalCategoriesSource {
 
   static List<DropdownOptionEntity>? get transmission =>
       categories?.transmission;
+
   static List<DropdownOptionEntity>? get energyRating =>
       categories?.energyRating;
 
   static List<DropdownOptionEntity>? get propertyType =>
       categories?.propertyType;
+
+  // ===== Newly added ones =====
+  static SubCategoryEntity? get items => categories?.items;
+
+  static SubCategoryEntity? get clothes => categories?.clothes;
+
+  static SubCategoryEntity? get foot => categories?.foot;
+
+  static SubCategoryEntity? get food => categories?.food;
+
+  static SubCategoryEntity? get drink => categories?.drink;
 
   CategoriesEntity? getCategory() => _box.get(_mainKey);
 
