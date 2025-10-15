@@ -143,7 +143,7 @@ class _AddToCartDialogState extends State<AddToCartDialog> {
                       name: 'AddToCartDialog',
                       error: result.exception,
                     );
-                    AppSnackBar.showSnackBar(
+                    AppSnackBar.error(
                       // ignore: use_build_context_synchronously
                       context,
                       result.exception?.detail ?? 'something_wrong'.tr(),
@@ -155,7 +155,7 @@ class _AddToCartDialogState extends State<AddToCartDialog> {
                     name: 'AddToCartDialog',
                     error: e,
                   );
-                  AppSnackBar.showSnackBar(
+                  AppSnackBar.error(
                     // ignore: use_build_context_synchronously
                     context,
                     e.toString(),

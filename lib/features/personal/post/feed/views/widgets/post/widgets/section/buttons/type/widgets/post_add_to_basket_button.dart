@@ -56,10 +56,9 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
         );
         if (result is DataSuccess) {
           if (mounted) {
-            AppSnackBar.showSnackBar(
+            AppSnackBar.info(
               context,
               'successfull_add_to_basket'.tr(),
-              backgroundColor: Colors.green,
             );
           }
         } else {
@@ -82,10 +81,9 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
         );
         if (result is DataSuccess) {
           if (mounted) {
-            AppSnackBar.showSnackBar(
+            AppSnackBar.success(
               context,
               'successfull_add_to_basket'.tr(),
-              backgroundColor: Colors.green,
             );
           }
         } else {
@@ -95,7 +93,7 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
             error: result.exception,
           );
           if (mounted) {
-            AppSnackBar.showSnackBar(
+            AppSnackBar.error(
               context,
               result.exception?.detail ?? 'something_wrong'.tr(),
             );

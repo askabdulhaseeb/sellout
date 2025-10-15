@@ -145,10 +145,9 @@ class PostGridViewTileBasketButton extends StatelessWidget {
             AddToCartParam(post: post, quantity: 1),
           );
           if (result is DataSuccess) {
-            AppSnackBar.showSnackBar(
+            AppSnackBar.success(
               context,
               'successfull_add_to_basket'.tr(),
-              backgroundColor: Colors.green,
             );
           } else {
             AppLog.error(

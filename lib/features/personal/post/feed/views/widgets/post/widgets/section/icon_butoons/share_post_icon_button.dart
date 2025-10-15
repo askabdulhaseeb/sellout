@@ -252,16 +252,14 @@ class _SelectReceiversBottomsheetState
                       );
                       if (result is DataSuccess) {
                         Navigator.pop(context);
-                        AppSnackBar.showSnackBar(
+                        AppSnackBar.success(
                           context,
                           'post_shared_successfully'.tr(),
-                          backgroundColor: ColorScheme.of(context).tertiary,
                         );
                       } else {
-                        AppSnackBar.showSnackBar(
+                        AppSnackBar.error(
                           context,
                           'something_went_wrong'.tr(),
-                          backgroundColor: Theme.of(context).colorScheme.error,
                         );
                       }
                     },
@@ -404,16 +402,14 @@ class _SelectGroupsBottomsheetState extends State<SelectGroupsBottomsheet> {
 
                   if (result is DataSuccess) {
                     Navigator.pop(context);
-                    AppSnackBar.showSnackBar(
+                    AppSnackBar.success(
                       context,
                       'post_shared_successfully'.tr(),
-                      backgroundColor: ColorScheme.of(context).tertiary,
                     );
                   } else {
-                    AppSnackBar.showSnackBar(
+                    AppSnackBar.error(
                       context,
                       'something_went_wrong'.tr(),
-                      backgroundColor: Theme.of(context).colorScheme.error,
                     );
                   }
                 },

@@ -1,592 +1,239 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../constants/app_spacings.dart';
+
+/// A professional, animated snackbar with a solid background
+/// and smooth progress indicator using the app's ColorScheme and spacing.
 class AppSnackBar {
-  // Animation styles
-  static const AnimationStyle _defaultAnimationStyle = AnimationStyle.fade;
-  static const Duration _defaultDuration = Duration(seconds: 4);
-  static const Duration _validationDuration = Duration(seconds: 5);
-
-  // VALIDATION STYLES - Enhanced with icons and better colors
-  static SnackBarStyle get validationSuccessStyle => SnackBarStyle(
-        backgroundColor: Colors.green.shade600,
-        icon: Icons.verified,
-        iconColor: Colors.white,
-        textColor: Colors.white,
-        gradient: LinearGradient(
-          colors: [Colors.green.shade600, Colors.green.shade800],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      );
-
-  static SnackBarStyle get validationErrorStyle => SnackBarStyle(
-        backgroundColor: Colors.red.shade600,
-        icon: Icons.error_outline,
-        iconColor: Colors.white,
-        textColor: Colors.white,
-        gradient: LinearGradient(
-          colors: [Colors.red.shade600, Colors.red.shade800],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      );
-
-  static SnackBarStyle get validationWarningStyle => SnackBarStyle(
-        backgroundColor: Colors.orange.shade600,
-        icon: Icons.warning_amber,
-        iconColor: Colors.white,
-        textColor: Colors.white,
-        gradient: LinearGradient(
-          colors: [Colors.orange.shade600, Colors.orange.shade800],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      );
-
-  static SnackBarStyle get validationInfoStyle => SnackBarStyle(
-        backgroundColor: Colors.blue.shade600,
-        icon: Icons.info_outline,
-        iconColor: Colors.white,
-        textColor: Colors.white,
-        gradient: LinearGradient(
-          colors: [Colors.blue.shade600, Colors.blue.shade800],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      );
-
-  static SnackBarStyle get validationRequiredStyle => SnackBarStyle(
-        backgroundColor: Colors.deepOrange.shade600,
-        icon: Icons.priority_high,
-        iconColor: Colors.white,
-        textColor: Colors.white,
-        gradient: LinearGradient(
-          colors: [Colors.deepOrange.shade600, Colors.deepOrange.shade800],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      );
-
-  static SnackBarStyle get validationLimitStyle => SnackBarStyle(
-        backgroundColor: Colors.purple.shade600,
-        icon: Icons.limit,
-        iconColor: Colors.white,
-        textColor: Colors.white,
-        gradient: LinearGradient(
-          colors: [Colors.purple.shade600, Colors.purple.shade800],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      );
-
-  // FIELD-SPECIFIC VALIDATION STYLES
-  static SnackBarStyle get emailValidationStyle => SnackBarStyle(
-        backgroundColor: Colors.teal.shade600,
-        icon: Icons.email,
-        iconColor: Colors.white,
-        textColor: Colors.white,
-      );
-
-  static SnackBarStyle get passwordValidationStyle => SnackBarStyle(
-        backgroundColor: Colors.indigo.shade600,
-        icon: Icons.password,
-        iconColor: Colors.white,
-        textColor: Colors.white,
-      );
-
-  static SnackBarStyle get phoneValidationStyle => SnackBarStyle(
-        backgroundColor: Colors.cyan.shade600,
-        icon: Icons.phone,
-        iconColor: Colors.white,
-        textColor: Colors.white,
-      );
-
-  static SnackBarStyle get attachmentValidationStyle => SnackBarStyle(
-        backgroundColor: Colors.amber.shade700,
-        icon: Icons.attach_file,
-        iconColor: Colors.white,
-        textColor: Colors.white,
-      );
-
-  // VALIDATION METHODS
-  static void showValidationSuccess(
-    BuildContext context,
-    String message, {
-    Duration duration = _validationDuration,
-    bool showIcon = true,
-    bool showProgress = false,
-  }) {
-    showSnackBar(
-      context,
-      message,
-      style: validationSuccessStyle,
-      duration: duration,
-      showIcon: showIcon,
-      showProgressBar: showProgress,
-      borderRadius: BorderRadius.circular(16),
-    );
-  }
-
-  static void showValidationError(
-    BuildContext context,
-    String message, {
-    Duration duration = _validationDuration,
-    bool showIcon = true,
-    String? fieldName,
-    ValidationSeverity severity = ValidationSeverity.error,
-  }) {
-    final styledMessage = fieldName != null ? '$fieldName: $message' : message;
-
-    showSnackBar(
-      context,
-      styledMessage,
-      style: _getSeverityStyle(severity),
-      duration: duration,
-      showIcon: showIcon,
-      borderRadius: BorderRadius.circular(16),
-      elevation: 8,
-    );
-  }
-
-  static void showValidationWarning(
-    BuildContext context,
-    String message, {
-    Duration duration = _validationDuration,
-    bool showIcon = true,
-    String? suggestion,
-  }) {
-    final fullMessage = suggestion != null ? '$message\n$suggestion' : message;
-
-    showSnackBar(
-      context,
-      fullMessage,
-      style: validationWarningStyle,
-      duration: duration,
-      showIcon: showIcon,
-      borderRadius: BorderRadius.circular(16),
-    );
-  }
-
-  static void showValidationRequired(
-    BuildContext context,
-    String fieldName, {
-    Duration duration = _validationDuration,
-  }) {
-    showSnackBar(
-      context,
-      '$fieldName is required',
-      style: validationRequiredStyle,
-      duration: duration,
-      showIcon: true,
-      borderRadius: BorderRadius.circular(16),
-    );
-  }
-
-  static void showValidationLimit(
-    BuildContext context,
-    String message, {
-    Duration duration = _validationDuration,
-    required int current,
-    required int max,
-  }) {
-    showSnackBar(
-      context,
-      '$message ($current/$max)',
-      style: validationLimitStyle,
-      duration: duration,
-      showIcon: true,
-      borderRadius: BorderRadius.circular(16),
-    );
-  }
-
-  // FIELD-SPECIFIC VALIDATION METHODS
-  static void showEmailValidation(
-    BuildContext context,
-    String message, {
-    Duration duration = _validationDuration,
-  }) {
-    showSnackBar(
-      context,
-      message,
-      style: emailValidationStyle,
-      duration: duration,
-      showIcon: true,
-      borderRadius: BorderRadius.circular(16),
-    );
-  }
-
-  static void showPasswordValidation(
-    BuildContext context,
-    String message, {
-    Duration duration = _validationDuration,
-  }) {
-    showSnackBar(
-      context,
-      message,
-      style: passwordValidationStyle,
-      duration: duration,
-      showIcon: true,
-      borderRadius: BorderRadius.circular(16),
-    );
-  }
-
-  static void showPhoneValidation(
-    BuildContext context,
-    String message, {
-    Duration duration = _validationDuration,
-  }) {
-    showSnackBar(
-      context,
-      message,
-      style: phoneValidationStyle,
-      duration: duration,
-      showIcon: true,
-      borderRadius: BorderRadius.circular(16),
-    );
-  }
-
-  static void showAttachmentValidation(
-    BuildContext context,
-    String message, {
-    Duration duration = _validationDuration,
-    bool hasAction = false,
-    VoidCallback? onAction,
-  }) {
-    if (hasAction && onAction != null) {
-      showActionSnackBar(
-        context,
-        message,
-        actionLabel: 'FIX',
-        onAction: onAction,
-        style: attachmentValidationStyle,
-        duration: duration,
-      );
-    } else {
-      showSnackBar(
-        context,
-        message,
-        style: attachmentValidationStyle,
-        duration: duration,
-        showIcon: true,
-        borderRadius: BorderRadius.circular(16),
-      );
-    }
-  }
-
-  // FORM VALIDATION COMPLETE
-  static void showFormValidationComplete(
-    BuildContext context, {
-    Duration duration = _validationDuration,
-    int successCount = 0,
-  }) {
-    final message = successCount > 0
-        ? 'Form validated successfully! ($successCount checks passed)'
-        : 'Form validation completed';
-
-    showSnackBar(
-      context,
-      message,
-      style: validationSuccessStyle,
-      duration: duration,
-      showIcon: true,
-      borderRadius: BorderRadius.circular(16),
-      showProgressBar: true,
-    );
-  }
-
-  // MULTIPLE VALIDATION ERRORS
-  static void showMultipleValidationErrors(
-    BuildContext context,
-    List<String> errors, {
-    Duration duration = const Duration(seconds: 6),
-  }) {
-    final errorCount = errors.length;
-    final mainMessage = errorCount == 1
-        ? 'There is 1 validation error'
-        : 'There are $errorCount validation errors';
-
-    showSnackBar(
-      context,
-      '$mainMessage\n• ${errors.join('\n• ')}',
-      style: validationErrorStyle,
-      duration: duration,
-      showIcon: true,
-      borderRadius: BorderRadius.circular(16),
-    );
-  }
-
-  // VALIDATION WITH COUNTER
-  static void showValidationWithCounter(
-    BuildContext context,
-    String message,
-    int current,
-    int max, {
-    Duration duration = _validationDuration,
-    ValidationType type = ValidationType.length,
-  }) {
-    final percentage = (current / max * 100).toInt();
-    Color color;
-
-    if (percentage < 50) {
-      color = Colors.red.shade600;
-    } else if (percentage < 80) {
-      color = Colors.orange.shade600;
-    } else {
-      color = Colors.green.shade600;
-    }
-
-    showSnackBar(
-      context,
-      '$message ($current/$max)',
-      style: SnackBarStyle(
-        backgroundColor: color,
-        icon: _getValidationIcon(type),
-        iconColor: Colors.white,
-        textColor: Colors.white,
-      ),
-      duration: duration,
-      showIcon: true,
-      borderRadius: BorderRadius.circular(16),
-    );
-  }
-
-  // PRIVATE HELPER METHODS
-  static SnackBarStyle _getSeverityStyle(ValidationSeverity severity) {
-    switch (severity) {
-      case ValidationSeverity.info:
-        return validationInfoStyle;
-      case ValidationSeverity.warning:
-        return validationWarningStyle;
-      case ValidationSeverity.error:
-        return validationErrorStyle;
-      case ValidationSeverity.critical:
-        return validationRequiredStyle;
-    }
-  }
-
-  static IconData _getValidationIcon(ValidationType type) {
-    switch (type) {
-      case ValidationType.length:
-        return Icons.text_fields;
-      case ValidationType.email:
-        return Icons.email;
-      case ValidationType.password:
-        return Icons.password;
-      case ValidationType.phone:
-        return Icons.phone;
-      case ValidationType.required:
-        return Icons.flag;
-      case ValidationType.format:
-        return Icons.format_color_text;
-      case ValidationType.attachment:
-        return Icons.attach_file;
-    }
-  }
-
-  // ... (Keep all the existing methods from previous implementation)
-
-  // Main method with enhanced options (same as before but updated)
   static void showSnackBar(
     BuildContext context,
     String message, {
-    SnackBarStyle style = const SnackBarStyle(),
-    AnimationStyle animationStyle = _defaultAnimationStyle,
-    Duration duration = _defaultDuration,
-    VoidCallback? onTap,
-    bool showCloseButton = true,
-    bool showIcon = true,
-    BorderRadiusGeometry borderRadius =
-        const BorderRadius.all(Radius.circular(12)),
-    EdgeInsetsGeometry margin = const EdgeInsets.all(8),
-    double elevation = 6.0,
-    bool showProgressBar = false,
+    IconData icon = Icons.info_outline_rounded,
+    Color? color,
+    Duration duration = const Duration(seconds: 4),
+    bool dismissible = true,
   }) {
-    final snackBar = _buildSnackBar(
-      message: message,
-      style: style,
-      duration: duration,
-      onTap: onTap,
-      showCloseButton: showCloseButton,
-      showIcon: showIcon,
-      borderRadius: borderRadius,
-      margin: margin,
-      elevation: elevation,
-      showProgressBar: showProgressBar,
-    );
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme scheme = theme.colorScheme;
+    final Color background = color ?? scheme.primary;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final Color textColor =
+        background.computeLuminance() > 0.5 ? Colors.black87 : Colors.white;
 
-    _showWithAnimation(context, snackBar, animationStyle);
-  }
-
-  // ... (Keep all other existing methods)
-
-  static SnackBar _buildSnackBar({
-    required String message,
-    required SnackBarStyle style,
-    required Duration duration,
-    VoidCallback? onTap,
-    bool showCloseButton = true,
-    bool showIcon = true,
-    BorderRadiusGeometry borderRadius =
-        const BorderRadius.all(Radius.circular(12)),
-    EdgeInsetsGeometry margin = const EdgeInsets.all(8),
-    double elevation = 6.0,
-    bool showProgressBar = false,
-  }) {
-    final hasMultipleLines = message.contains('\n');
-
-    return SnackBar(
-      content: Row(
-        children: [
-          if (showIcon && style.icon != null)
-            Padding(
-              padding: const EdgeInsets.only(right: 12),
-              child: Icon(
-                style.icon,
-                color: style.iconColor,
-                size: 24,
-              ),
-            ),
-          Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (hasMultipleLines)
-                  ...message
-                      .split('\n')
-                      .map((line) => Text(
-                            line,
-                            style: GoogleFonts.poppins(
-                              color: style.textColor,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14,
-                            ),
-                          ))
-                      .toList()
-                else
-                  Text(
-                    message,
-                    style: GoogleFonts.poppins(
-                      color: style.textColor,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                    ),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-              ],
-            ),
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          margin: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.md,
           ),
-          if (showCloseButton)
-            IconButton(
-              icon: Icon(Icons.close,
-                  color: style.textColor.withOpacity(0.7), size: 20),
-              onPressed: () {
-                ScaffoldMessenger.of(Scaffold.maybeOf(
-                        GlobalKey<ScaffoldState>().currentContext!)!)
-                    .hideCurrentSnackBar();
-              },
-            ),
-        ],
-      ),
-      backgroundColor: style.backgroundColor,
-      elevation: elevation,
-      shape: RoundedRectangleBorder(borderRadius: borderRadius),
-      margin: margin,
-      duration: duration,
-      behavior: SnackBarBehavior.floating,
-      onVisible: () {
-        if (showProgressBar) {
-          // Progress indicator logic
-        }
-      },
-    );
+          duration: duration,
+          padding: EdgeInsets.zero,
+          content: TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0, end: 1),
+            duration: const Duration(milliseconds: 1000),
+            curve: Curves.easeOutCubic,
+            builder: (BuildContext context, double value, _) {
+              final double dropY =
+                  -100 * (1 - Curves.elasticOut.transform(value));
+              final double expandProgress = Curves.easeOutQuart
+                  .transform(((value - 0.25).clamp(0.0, 0.35)) / 0.35);
+              final double contentProgress = Curves.easeOutCubic
+                  .transform(((value - 0.6).clamp(0.0, 0.4)) / 0.4);
+
+              final double width =
+                  lerpDouble(100, screenWidth - AppSpacing.xl, expandProgress)!;
+              final BorderRadius borderRadius = BorderRadius.circular(
+                lerpDouble(40, 14, expandProgress)!,
+              );
+
+              return Transform.translate(
+                offset: Offset(0, dropY),
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    height: 72,
+                    width: width,
+                    decoration: BoxDecoration(
+                      color: background,
+                      borderRadius: borderRadius,
+                      boxShadow: <BoxShadow>[
+                        BoxShadow(
+                          color: background.withOpacity(0.25),
+                          blurRadius: 18,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+                    ),
+                    child: Stack(
+                      children: <Widget>[
+                        // Progress Indicator (Bottom Bar)
+                        if (duration.inSeconds > 2)
+                          Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: TweenAnimationBuilder<double>(
+                              tween: Tween(begin: 1, end: 0),
+                              duration:
+                                  duration - const Duration(milliseconds: 300),
+                              builder: (BuildContext context,
+                                  double progressValue, _) {
+                                return LinearProgressIndicator(
+                                  value: progressValue,
+                                  backgroundColor: Colors.transparent,
+                                  valueColor: AlwaysStoppedAnimation(
+                                    textColor.withOpacity(0.2),
+                                  ),
+                                  minHeight: 3,
+                                );
+                              },
+                            ),
+                          ),
+
+                        // Snackbar Content
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.md,
+                            vertical: AppSpacing.sm,
+                          ),
+                          child: Row(
+                            children: <Widget>[
+                              // Icon
+                              TweenAnimationBuilder<double>(
+                                tween: Tween(begin: 0, end: 1),
+                                duration: const Duration(milliseconds: 600),
+                                curve: Curves.elasticOut,
+                                builder:
+                                    (BuildContext context, double scale, _) {
+                                  return Transform.scale(
+                                    scale: 0.8 + 0.2 * scale,
+                                    child: Container(
+                                      padding:
+                                          const EdgeInsets.all(AppSpacing.xs),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.white.withOpacity(0.15),
+                                      ),
+                                      child: Icon(
+                                        icon,
+                                        color: textColor,
+                                        size: 22,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+
+                              const SizedBox(width: AppSpacing.md),
+
+                              // Message + Time
+                              Expanded(
+                                child: AnimatedOpacity(
+                                  opacity: contentProgress,
+                                  duration: const Duration(milliseconds: 400),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text(
+                                        message,
+                                        style: theme.textTheme.bodyMedium
+                                            ?.copyWith(
+                                          color: textColor,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 15,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+
+                              // Close Button
+                              if (dismissible)
+                                GestureDetector(
+                                  onTap: () => ScaffoldMessenger.of(context)
+                                      .hideCurrentSnackBar(),
+                                  child: Container(
+                                    padding:
+                                        const EdgeInsets.all(AppSpacing.xs),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.white.withOpacity(0.15),
+                                    ),
+                                    child: Icon(
+                                      Icons.close_rounded,
+                                      color: textColor.withOpacity(0.9),
+                                      size: 16,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      );
   }
-}
 
-// VALIDATION ENUMS AND CLASSES
-enum ValidationSeverity {
-  info,
-  warning,
-  error,
-  critical,
-}
+  // --- Predefined Types ---
+  static void success(BuildContext context, String message,
+          {bool dismissible = true}) =>
+      showSnackBar(
+        context,
+        message,
+        icon: Icons.check_circle_rounded,
+        color: Theme.of(context).colorScheme.tertiary,
+        dismissible: dismissible,
+      );
 
-enum ValidationType {
-  length,
-  email,
-  password,
-  phone,
-  required,
-  format,
-  attachment,
-}
+  static void error(BuildContext context, String message,
+          {bool dismissible = true}) =>
+      showSnackBar(
+        context,
+        message,
+        icon: Icons.error_outline_rounded,
+        color: Theme.of(context).colorScheme.error,
+        dismissible: dismissible,
+      );
 
-class ValidationRule {
-  final String fieldName;
-  final bool isValid;
-  final String message;
-  final ValidationSeverity severity;
+  static void warning(BuildContext context, String message,
+          {bool dismissible = true}) =>
+      showSnackBar(
+        context,
+        message,
+        icon: Icons.warning_amber_rounded,
+        color: Theme.of(context).colorScheme.secondary,
+        dismissible: dismissible,
+      );
 
-  ValidationRule({
-    required this.fieldName,
-    required this.isValid,
-    required this.message,
-    this.severity = ValidationSeverity.error,
-  });
-}
+  static void info(BuildContext context, String message,
+          {bool dismissible = true}) =>
+      showSnackBar(
+        context,
+        message,
+        icon: Icons.info_outline_rounded,
+        color: Theme.of(context).colorScheme.primary,
+        dismissible: dismissible,
+      );
 
-// Extension for validation context
-extension ValidationSnackBarExtension on BuildContext {
-  // Validation methods
-  void showValidationError(String message, {String? fieldName}) {
-    AppSnackBar.showValidationError(this, message, fieldName: fieldName);
+  static String _timeStamp() {
+    final DateTime now = DateTime.now();
+    return '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
   }
-
-  void showValidationSuccess(String message) {
-    AppSnackBar.showValidationSuccess(this, message);
-  }
-
-  void showValidationWarning(String message, {String? suggestion}) {
-    AppSnackBar.showValidationWarning(this, message, suggestion: suggestion);
-  }
-
-  void showValidationRequired(String fieldName) {
-    AppSnackBar.showValidationRequired(this, fieldName);
-  }
-
-  void showAttachmentValidationError(String message, {VoidCallback? onFix}) {
-    AppSnackBar.showAttachmentValidation(this, message,
-        hasAction: onFix != null, onAction: onFix);
-  }
-
-  void showMultipleErrors(List<String> errors) {
-    AppSnackBar.showMultipleValidationErrors(this, errors);
-  }
-}
-
-// Keep the existing supporting classes...
-class SnackBarStyle {
-  final Color backgroundColor;
-  final IconData? icon;
-  final Color iconColor;
-  final Color textColor;
-  final Color? actionTextColor;
-  final Gradient? gradient;
-
-  const SnackBarStyle({
-    this.backgroundColor = Colors.black87,
-    this.icon,
-    this.iconColor = Colors.white,
-    this.textColor = Colors.white,
-    this.actionTextColor,
-    this.gradient,
-  });
-}
-
-enum AnimationStyle {
-  slide,
-  fade,
-  scale,
 }
