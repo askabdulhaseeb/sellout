@@ -60,10 +60,9 @@ class RequestQuoteBottomBar extends StatelessWidget {
                     // Validate service selection
                     if (currentStep == RequestQuoteStep.services &&
                         !containServices) {
-                      AppSnackBar.showSnackBar(
+                      AppSnackBar.error(
                         context,
                         'please_select_at_least_one_service'.tr(),
-                        backgroundColor: Colors.red,
                       );
                       return;
                     }
@@ -71,10 +70,9 @@ class RequestQuoteBottomBar extends StatelessWidget {
                     // Validate time selection
                     if (currentStep == RequestQuoteStep.booking &&
                         !allHaveTimes) {
-                      AppSnackBar.showSnackBar(
+                      AppSnackBar.error(
                         context,
                         'please_select_time_for_all_services'.tr(),
-                        backgroundColor: Colors.red,
                       );
                       return;
                     }

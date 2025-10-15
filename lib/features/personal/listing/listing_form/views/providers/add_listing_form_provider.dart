@@ -312,19 +312,19 @@ class AddListingFormProvider extends ChangeNotifier
   Future<bool> _validateForm(BuildContext context) async {
     if (!hasAtLeastOnePhoto) {
       AppLog.error('At least one photo is required');
-      AppSnackBar.showSnackBar(
+      AppSnackBar.error(
           context, 'please_add_at_least_one_photo_and_video'.tr());
       return false;
     }
 
     if (!hasAtLeastOneVideo) {
       AppLog.error('At least one video is required');
-      AppSnackBar.showSnackBar(
+      AppSnackBar.error(
           context, 'please_add_at_least_one_photo_and_video'.tr());
       return false;
     }
     if (selectedCategory == null) {
-      AppSnackBar.showSnackBar(context, 'choose_category'.tr());
+      AppSnackBar.error(context, 'choose_category'.tr());
       return false;
     }
 
