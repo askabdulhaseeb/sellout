@@ -29,6 +29,7 @@ class _AddItemFormState extends State<AddItemForm> {
             child: Loader(),
           );
         }
+        debugPrint(formPro.selectedCategory?.title);
         return Form(
           key: formPro.itemKey,
           child: SingleChildScrollView(

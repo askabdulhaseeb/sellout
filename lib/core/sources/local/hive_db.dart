@@ -51,6 +51,7 @@ import '../../../features/personal/post/domain/entities/feed/feed_entity.dart';
 import '../../../features/personal/post/domain/entities/meetup/availability_entity.dart';
 import '../../../features/personal/post/domain/entities/offer/offer_amount_info_entity.dart';
 import '../../../features/personal/post/domain/entities/offer/offer_detail_entity.dart';
+import '../../../features/personal/post/domain/entities/post/package_detail_entity.dart';
 import '../../../features/personal/post/domain/entities/post/post_cloth_foot_entity.dart';
 import '../../../features/personal/post/domain/entities/post/post_entity.dart';
 import '../../../features/personal/post/domain/entities/post/post_pet_entity.dart';
@@ -178,6 +179,7 @@ class HiveDB {
     Hive.registerAdapter(ParentDropdownEntityAdapter()); //77
     Hive.registerAdapter(QuoteDetailEntityAdapter()); //78
     Hive.registerAdapter(ServiceEmployeeEntityAdapter()); //79
+    Hive.registerAdapter(PackageDetailEntityAdapter()); //80
 
     // Hive box Open
     await refresh();
@@ -226,7 +228,7 @@ class HiveDB {
     await LocalColors().clear();
     await LocalOrders().clear();
     await LocalNotifications().clear();
-    await LocalServiceCategory().clear();
+    // await LocalServiceCategory().clear();
     await LocalCategoriesSource().clear();
     // await LocalCountry().clear();
   }

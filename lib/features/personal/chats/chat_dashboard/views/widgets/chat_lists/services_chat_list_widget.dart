@@ -17,12 +17,14 @@ class ServicesChatListWidget extends StatelessWidget {
     final List<ChatEntity> filteredChats = provider.filteredChats;
 
     if (filteredChats.isEmpty) {
-      return Center(
-        child: EmptyPageWidget(
-          icon: CupertinoIcons.chat_bubble_2,
-          childBelow: Text(
-            'no_chats_found'.tr(),
-            textAlign: TextAlign.center,
+      return Expanded(
+        child: Center(
+          child: EmptyPageWidget(
+            icon: CupertinoIcons.chat_bubble_2,
+            childBelow: Text(
+              'no_chats_found'.tr(),
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
       );

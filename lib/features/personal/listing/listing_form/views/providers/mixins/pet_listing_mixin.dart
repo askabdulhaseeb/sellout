@@ -1,58 +1,54 @@
 import 'package:flutter/material.dart';
+import '../form_state/add_listing_form_state.dart';
 
 mixin PetListingMixin on ChangeNotifier {
-  String? _age;
-  String? _time;
-  String? _petCategory;
-  String? _breed;
-  bool? _vaccinationUpToDate;
-  bool? _wormAndFleaTreated;
-  bool? _healthChecked;
+  AddListingFormState get state;
 
-  // Getters
-  String? get age => _age;
-  String? get time => _time;
-  String? get petCategory => _petCategory;
-  String? get breed => _breed;
-  bool? get vaccinationUpToDate => _vaccinationUpToDate;
-  bool? get wormAndFleaTreated => _wormAndFleaTreated;
-  bool? get healthChecked => _healthChecked;
+  // Getters - delegate to state
+  String? get age => state.age;
+  String? get time => state.time;
+  String? get petCategory => state.petCategory;
+  String? get breed => state.breed;
+  bool? get vaccinationUpToDate => state.vaccinationUpToDate;
+  bool? get wormAndFleaTreated => state.wormAndFleaTreated;
+  bool? get healthChecked => state.healthChecked;
 
-  // Setters
+  // Setters - update state and notify
   void setTime(String? value) {
     if (value == null) return;
-    _time = value;
+    state.time = value;
     notifyListeners();
   }
 
   void setPetCategory(String? category) {
-    _petCategory = category;
+    state.petCategory = category;
     notifyListeners();
   }
 
   void setPetBreed(String? value) {
-    _breed = value;
+    state.breed = value;
     notifyListeners();
   }
 
   void setVaccinationUpToDate(bool? value) {
-    _vaccinationUpToDate = value;
+    state.vaccinationUpToDate = value;
     notifyListeners();
   }
 
-  void setWormFleeTreated(bool? value) {
-    _wormAndFleaTreated = value;
+  void setWormFleaTreated(bool? value) {
+    // Fixed typo: Flee -> Flea
+    state.wormAndFleaTreated = value;
     notifyListeners();
   }
 
   void setHealthChecked(bool? value) {
-    _healthChecked = value;
+    state.healthChecked = value;
     notifyListeners();
   }
 
   void setAge(String? value) {
     if (value == null) return;
-    _age = value;
+    state.age = value;
     notifyListeners();
   }
 }

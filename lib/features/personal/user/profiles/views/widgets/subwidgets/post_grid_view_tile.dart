@@ -13,7 +13,6 @@ import '../../../../../../../core/widgets/rating_display_widget.dart';
 import '../../../../../../../services/get_it.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../listing/listing_form/views/providers/add_listing_form_provider.dart';
-import '../../../../../listing/listing_form/views/screens/add_listing_form_screen.dart';
 import '../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../post/domain/params/add_to_cart_param.dart';
 import '../../../../../post/domain/usecase/add_to_cart_usecase.dart';
@@ -100,15 +99,9 @@ class PostGridViewTile extends StatelessWidget {
                       bgColor: Theme.of(context).primaryColor.withAlpha(40),
                       icon: AppStrings.selloutPostGridTileEditIcon,
                       onPressed: () {
-                        final AddListingFormProvider pro =
-                            Provider.of<AddListingFormProvider>(context,
-                                listen: false);
-                        pro.reset();
-                        pro.setListingType(post.type);
-                        pro.setPost(post);
-                        // pro.updateVariables();
-                        Navigator.pushNamed(
-                            context, AddListingFormScreen.routeName);
+                        Provider.of<AddListingFormProvider>(context,
+                                listen: false)
+                            .startediting(post);
                       },
                     ),
                     CustomIconButton(

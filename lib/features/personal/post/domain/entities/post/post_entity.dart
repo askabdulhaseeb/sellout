@@ -8,6 +8,7 @@ import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../location/domain/entities/location_entity.dart';
 import '../discount_entity.dart';
 import '../meetup/availability_entity.dart';
+import 'package_detail_entity.dart';
 import 'post_cloth_foot_entity.dart';
 import 'post_pet_entity.dart';
 import 'post_property_entity.dart';
@@ -59,6 +60,8 @@ class PostEntity {
     required this.petInfo,
     //vehicle
     required this.vehicleInfo,
+    //package detail - ADD THIS FIELD
+    required this.packageDetail,
     //
     required this.isActive,
     required this.createdBy,
@@ -141,21 +144,24 @@ class PostEntity {
   @HiveField(31)
   final PostPropertyEntity? propertyInfo;
   //
-  @HiveField(32)
-  final List<AvailabilityEntity>? availability;
+  @HiveField(32) // NEW FIELD - Package Detail
+  final PackageDetailEntity packageDetail;
+  //
   @HiveField(33)
-  final bool isActive;
+  final List<AvailabilityEntity>? availability;
   @HiveField(34)
-  final String createdBy;
+  final bool isActive;
   @HiveField(35)
-  final DateTime createdAt;
+  final String createdBy;
   @HiveField(36)
+  final DateTime createdAt;
+  @HiveField(37)
   final String? accessCode;
-  @HiveField(37, defaultValue: '')
+  @HiveField(38, defaultValue: '')
   final String updatedBy;
-  @HiveField(38, defaultValue: null)
+  @HiveField(39, defaultValue: null)
   final DateTime? updatedAt;
-  @HiveField(39)
+  @HiveField(40)
   final DateTime inHiveAt;
 
   String get imageURL => fileUrls.isEmpty ? '' : fileUrls.first.url;
@@ -169,4 +175,9 @@ class PostEntity {
     }
     return price;
   }
+
+  // Package detail helper methods
+  String get packageDimensions =>
+      '${packageDetail.length}L x ${packageDetail.width}W x ${packageDetail.height}H';
+  double get packageVolume => packageDetail.volume;
 }

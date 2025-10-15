@@ -13,6 +13,10 @@ class AvailabilityManager with ChangeNotifier {
   }).toList();
 
   List<AvailabilityEntity> get availability => _availability;
+  void setAvailabilty(List<AvailabilityEntity> val) {
+    _availability = val;
+    notifyListeners();
+  }
 
   void toggleOpen(DayType day, bool isOpen) {
     final int index =
