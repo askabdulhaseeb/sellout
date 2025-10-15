@@ -6,8 +6,10 @@ import '../../../../../../core/extension/string_ext.dart';
 import '../../../../../attachment/data/attchment_model.dart';
 import '../../../../location/data/models/location_model.dart';
 import '../../../domain/entities/discount_entity.dart';
+import '../../../domain/entities/post/package_detail_entity.dart';
 import '../../../domain/entities/post/post_entity.dart';
 import '../meetup/availability_model.dart';
+import 'package_detail_model.dart';
 import 'post_cloth_foot_model.dart';
 import 'post_pet_model.dart';
 import 'post_property_model.dart';
@@ -46,6 +48,7 @@ class PostModel extends PostEntity {
     required super.petInfo,
     required super.vehicleInfo,
     required super.propertyInfo,
+    required super.packageDetail, // ADD THIS PARAMETER
     required super.meetUpLocation,
     required super.availability,
     required super.isActive,
@@ -80,6 +83,11 @@ class PostModel extends PostEntity {
       if (d3 > 0) discounts.add(DiscountEntity(quantity: 3, discount: d3));
       if (d5 > 0) discounts.add(DiscountEntity(quantity: 5, discount: d5));
     }
+
+    // Parse package detail
+    final PackageDetailEntity packageDetail = json['package_detail'] != null
+        ? PackageDetailModel.fromJson(json['package_detail'])
+        : PackageDetailModel.empty;
 
     return PostModel(
       listID: json['list_id']?.toString() ?? '',
@@ -134,6 +142,7 @@ class PostModel extends PostEntity {
       petInfo: PostPetModel.fromJson(json),
       vehicleInfo: PostVehicleModel.fromJson(json),
       propertyInfo: PostPropertyModel.fromJson(json),
+      packageDetail: packageDetail, // ADD THIS LINE
       meetUpLocation: json['meet_up_location'] == null
           ? null
           : LocationModel.fromJson(json['meet_up_location']),

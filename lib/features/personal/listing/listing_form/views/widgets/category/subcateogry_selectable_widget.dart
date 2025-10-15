@@ -66,31 +66,38 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
         '🔵 [FILTER] Getting filtered subcategories for listType: ${widget.listType?.json}, cid: ${widget.cid}');
 
     switch (widget.listType) {
+      case ListingType.items:
+        return LocalCategoriesSource.items?.subCategory ??
+            <SubCategoryEntity>[];
       case ListingType.clothAndFoot:
         if (widget.cid == ListingType.clothAndFoot.cids.first) {
           debugPrint('👕 Using clothes subcategories');
-          return LocalCategoriesSource.clothes?.subCategory ?? [];
+          return LocalCategoriesSource.clothes?.subCategory ??
+              <SubCategoryEntity>[];
         } else if (widget.cid == ListingType.clothAndFoot.cids.last) {
           debugPrint('👟 Using footwear subcategories');
-          return LocalCategoriesSource.foot?.subCategory ?? [];
+          return LocalCategoriesSource.foot?.subCategory ??
+              <SubCategoryEntity>[];
         }
         debugPrint('⚪ No valid CID found for clothAndFoot');
-        return [];
+        return <SubCategoryEntity>[];
 
       case ListingType.foodAndDrink:
         if (widget.cid == ListingType.foodAndDrink.cids.first) {
           debugPrint('🍔 Using food subcategories');
-          return LocalCategoriesSource.food?.subCategory ?? [];
+          return LocalCategoriesSource.food?.subCategory ??
+              <SubCategoryEntity>[];
         } else if (widget.cid == ListingType.foodAndDrink.cids.last) {
           debugPrint('🥤 Using drink subcategories');
-          return LocalCategoriesSource.drink?.subCategory ?? [];
+          return LocalCategoriesSource.drink?.subCategory ??
+              <SubCategoryEntity>[];
         }
         debugPrint('⚪ No valid CID found for foodAndDrink');
-        return [];
+        return <SubCategoryEntity>[];
 
       default:
         debugPrint('📦 Using default');
-        return [];
+        return <SubCategoryEntity>[];
     }
   }
 

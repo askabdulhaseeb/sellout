@@ -9,7 +9,7 @@ import '../../../domain/entities/color_options_entity.dart';
 mixin ClothListingMixin on ChangeNotifier {
   String? _brand;
   String _selectedClothSubCategory = ListingType.clothAndFoot.cids.first;
-  List<SizeColorEntity> _sizeColorEntities = <SizeColorEntity>[];
+  final List<SizeColorEntity> _sizeColorEntities = <SizeColorEntity>[];
 
   // Getters
   String? get brand => _brand;

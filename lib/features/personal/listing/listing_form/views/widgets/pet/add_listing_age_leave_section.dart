@@ -146,7 +146,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
               title: 'meetup_location'.tr(),
               selectedLatLng: formPro.meetupLatLng,
               displayMode: MapDisplayMode.showMapAfterSelection,
-              initialText: formPro.selectedmeetupLocation?.address ?? '',
+              initialText: formPro.selectedMeetupLocation?.address ?? '',
               onLocationSelected: (LocationEntity p0, LatLng p1) =>
                   formPro.setMeetupLocation(p0, p1),
             ),

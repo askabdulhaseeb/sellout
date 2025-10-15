@@ -110,7 +110,7 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
               title: 'meetup_location'.tr(),
               selectedLatLng: formPro.collectionLatLng,
               displayMode: MapDisplayMode.showMapAfterSelection,
-              initialText: formPro.selectedmeetupLocation?.address ?? '',
+              initialText: formPro.selectedMeetupLocation?.address ?? '',
               onLocationSelected: (LocationEntity loc, LatLng latLng) =>
                   formPro.setMeetupLocation(loc, latLng),
             ),

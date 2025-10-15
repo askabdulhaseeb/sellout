@@ -1,72 +1,64 @@
 import 'package:flutter/material.dart';
-
 import '../../../domain/entities/color_options_entity.dart';
+import '../form_state/add_listing_form_state.dart';
 
 mixin VehicleListingMixin on ChangeNotifier {
-  String? _transmissionType;
-  String? _fuelType;
-  String? _make;
-  String? _year;
-  String? _emission;
-  String? _selectedBodyType;
-  String? _selectedVehicleCategory;
-  String? _selectedMileageUnit;
-  ColorOptionEntity? _selectedVehicleColor;
+  AddListingFormState get state;
 
   // Getters
-  String? get transmissionType => _transmissionType;
-  String? get fuelType => _fuelType;
-  String? get make => _make;
-  String? get year => _year;
-  String? get emission => _emission;
-  String? get selectedBodyType => _selectedBodyType;
-  String? get selectedVehicleCategory => _selectedVehicleCategory;
-  String? get selectedMileageUnit => _selectedMileageUnit;
-  ColorOptionEntity? get selectedVehicleColor => _selectedVehicleColor;
+  String? get transmissionType => state.transmissionType;
+  String? get fuelType => state.fuelType;
+  String? get make => state.make;
+  String? get year => state.year;
+  String? get emission => state.emission;
+  String? get selectedBodyType => state.bodyType;
+  String? get selectedVehicleCategory => state.vehicleCategory;
+  String? get selectedMileageUnit => state.mileageUnit;
+  ColorOptionEntity? get selectedVehicleColor => state.vehicleColor;
 
   // Setters
   void setTransmissionType(String? value) {
-    _transmissionType = value;
+    state.transmissionType = value;
     notifyListeners();
   }
 
   void setFuelType(String? value) {
-    _fuelType = value;
+    state.fuelType = value;
     notifyListeners();
   }
 
   void setMake(String? value) {
-    _make = value;
+    state.make = value;
     notifyListeners();
   }
 
   void setYear(String? value) {
-    _year = value;
+    state.year = value;
     notifyListeners();
   }
 
   void setEmissionType(String? value) {
-    _emission = value;
+    state.emission = value;
     notifyListeners();
   }
 
   void setBodyType(String? type) {
-    _selectedBodyType = type;
+    state.bodyType = type;
     notifyListeners();
   }
 
   void setVehicleCategory(String? type) {
-    _selectedVehicleCategory = type;
+    state.vehicleCategory = type;
     notifyListeners();
   }
 
   void setMileageUnit(String? unit) {
-    _selectedMileageUnit = unit;
+    state.mileageUnit = unit;
     notifyListeners();
   }
 
   void setVehicleColor(ColorOptionEntity? value) {
-    _selectedVehicleColor = value;
+    state.vehicleColor = value;
     notifyListeners();
   }
 }

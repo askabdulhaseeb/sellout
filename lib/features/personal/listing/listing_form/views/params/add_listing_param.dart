@@ -28,7 +28,7 @@ class AddListingParam {
     required this.privacyType,
     required this.deliveryType,
     required this.listingType,
-    required this.currency,
+    // required this.currency,
     this.packageDetail,
     this.condition,
     this.currentLatitude,
@@ -59,7 +59,7 @@ class AddListingParam {
     this.mileage,
     this.engineSize,
     this.vehicleCategory,
-    this.milageUnit,
+    this.mileageUnit,
     this.transmission,
     // property
     this.propertyCategory,
@@ -79,6 +79,7 @@ class AddListingParam {
     this.vaccinationUpToDate,
     this.wormAndFleaTreated,
     this.petsCategory,
+    this.fuelType,
   });
   //
   final String title;
@@ -94,10 +95,10 @@ class AddListingParam {
   final DeliveryType deliveryType;
   final ListingType listingType;
   final SubCategoryEntity? category;
-  final String? currency;
+  // final String? currency;
   final PackageDetail? packageDetail;
-  final int? currentLatitude;
-  final int? currentLongitude;
+  final num? currentLatitude;
+  final num? currentLongitude;
   final String? brand;
   final String? type;
   final List<SizeColorEntity>? sizeColor;
@@ -106,6 +107,7 @@ class AddListingParam {
   final String? postID;
   final List<AttachmentEntity>? oldAttachments;
   final String? availbility;
+  final String? fuelType;
 
 //vehicle
   final String? make;
@@ -121,7 +123,7 @@ class AddListingParam {
   final String? mileage;
   final String? engineSize;
   final String? vehicleCategory;
-  final String? milageUnit;
+  final String? mileageUnit;
   final String? transmission;
   //property
   final String? propertyCategory;
@@ -231,7 +233,7 @@ class AddListingParam {
               : listingType == ListingType.property
                   ? '${listingType.json}/$propertyType'
                   : category?.address ?? '',
-      if (currency != null) 'currency': currency ?? '',
+      // if (currency != null) 'currency': currency ?? '',
       'current_latitude': currentLatitude.toString(),
       'current_longitude': currentLongitude.toString(),
     };
@@ -313,7 +315,7 @@ class AddListingParam {
       'seats': seats ?? '', //
       'transmission': transmission ?? '', //
       'author_name': LocalAuth.currentUser?.userName ?? '', //
-      'mileage_unit': milageUnit ?? '', //
+      'mileage_unit': mileageUnit ?? '', //
       'vehicles_category': vehicleCategory ?? '', //
     };
     mapp.addAll(_titleMAP());
