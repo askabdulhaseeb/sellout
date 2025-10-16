@@ -18,6 +18,7 @@ class PickedMediaProvider extends ChangeNotifier {
   final int _pageSize = 60;
   AssetPathEntity? _currentAlbum;
   bool _hasMoreMedia = true;
+  bool _isDisposed = false;
 
   // --- OPTIONS ---
   PickableAttachmentOption _option = PickableAttachmentOption();
@@ -199,13 +200,11 @@ class PickedMediaProvider extends ChangeNotifier {
   /// 1. User taps item in strip → we get its index in pickedMedia
   /// 2. Find that same asset in full grid via ID matching (reliable)
   /// 3. Use the GlobalKey assigned to that grid tile
-  /// 4. Scroll using Scrollable.ensureVisible() - MOST RELIABLE METHOD
+  /// 4. Smart scroll: checks if visible, if not jumps to position first then uses ensureVisible
   ///
-  /// **Why GlobalKey is ALWAYS used:**
-  /// - Works perfectly with infinite scroll/pagination
-  /// - Doesn't rely on index positions (which change when data loads)
-  /// - Automatically handles all edge cases
-  /// - Finds widget context and calculates exact scroll position
+  /// **Why this works:**
+  /// - If widget visible: Direct scroll to exact position
+  /// - If widget NOT visible: Jump to rough position first, wait for build, then precise scroll
   ///
   /// **Parameters:**
   /// - pickedIndex: Index in the _pickedMedia list (the strip)
@@ -234,31 +233,80 @@ class PickedMediaProvider extends ChangeNotifier {
     AppLog.info(
         'GlobalKey lookup - gridIndex: $gridIndex, key exists: ${key != null}, has context: ${key?.currentContext != null}');
 
-    // STEP 5: Verify key exists and has context
-    if (key == null || key.currentContext == null) {
-      AppLog.error(
-          '❌ GlobalKey not available for gridIndex: $gridIndex. Available keys: ${tileKeys.keys.length}');
-      AppLog.info('📍 Available gridIndices: ${tileKeys.keys.toList()}');
-      return;
+    // STEP 5: Check if widget is currently visible
+    if (key != null && key.currentContext != null) {
+      // ✅ HAPPY PATH: Widget is visible, scroll directly
+      AppLog.info('✅ Widget visible, direct scroll to gridIndex: $gridIndex');
+      _scrollDirectly(key);
+    } else {
+      // ⚠️ WIDGET NOT VISIBLE: Jump to position first, then scroll
+      AppLog.info(
+          '⚠️ Widget not visible (gridIndex: $gridIndex), jumping to position first...');
+      _scrollToPositionFirst(gridIndex, controller, tileKeys);
     }
+  }
 
-    // STEP 6: ONLY METHOD - Use Scrollable.ensureVisible
-    // This is the ONLY reliable method for infinite scroll scenarios
-    // It automatically:
-    // - Calculates exact scroll position using widget's RenderObject
-    // - Handles all edge cases (already visible, at boundaries, etc.)
-    // - Works with nested slivers perfectly
-    // - Doesn't depend on index positions or calculations
-    AppLog.info('✅ Calling Scrollable.ensureVisible for gridIndex: $gridIndex');
-    Scrollable.ensureVisible(
-      key.currentContext!,
-      duration: const Duration(milliseconds: 400),
-      curve: Curves.easeInOut,
-      alignment: 0.5, // Center the item in view (0.0 = top, 1.0 = bottom)
-    );
+  /// Direct scroll when widget is already visible
+  void _scrollDirectly(GlobalKey key) {
+    try {
+      Scrollable.ensureVisible(
+        key.currentContext!,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+        alignment: 0.5,
+      );
+      AppLog.info('✅ Direct scroll completed');
+    } catch (e, s) {
+      AppLog.error('❌ Direct scroll failed: $e',
+          name: 'scrollToSelected', error: s);
+    }
+  }
 
-    AppLog.info(
-        '✅ Scrolled to gridIndex: $gridIndex (pickedIndex: $pickedIndex, assetId: ${tappedAsset.id})');
+  /// Scroll to rough position first, then scroll precisely when widget is built
+  Future<void> _scrollToPositionFirst(
+    int gridIndex,
+    ScrollController controller,
+    Map<int, GlobalKey> tileKeys,
+  ) async {
+    try {
+      AppLog.info('⏳ Strategy: Incrementally scroll to make widget visible...');
+
+      // Try progressively scrolling down until widget appears
+      // Start from current position and scroll down in steps
+      const double scrollStep = 500.0; // Scroll 500px at a time
+      const int maxAttempts = 10;
+
+      for (int attempt = 0; attempt < maxAttempts; attempt++) {
+        // Check if widget is now visible
+        final GlobalKey? currentKey = tileKeys[gridIndex];
+        if (currentKey?.currentContext != null) {
+          AppLog.info(
+              '✅ Widget visible on attempt $attempt! Using ensureVisible for final positioning');
+          _scrollDirectly(currentKey!);
+          return;
+        }
+
+        // Scroll down more
+        final double currentOffset = controller.offset;
+        final double newOffset = (currentOffset + scrollStep)
+            .clamp(0.0, controller.position.maxScrollExtent);
+
+        AppLog.info(
+            '📍 Attempt ${attempt + 1}/$maxAttempts: Scrolling from ${currentOffset.toStringAsFixed(1)} to ${newOffset.toStringAsFixed(1)}');
+
+        controller.jumpTo(newOffset);
+
+        // Wait for widgets to render
+        await Future.delayed(const Duration(milliseconds: 100));
+      }
+
+      // If we get here, widget is still not visible
+      AppLog.error(
+          '❌ Widget still not visible after $maxAttempts attempts. gridIndex: $gridIndex');
+    } catch (e, s) {
+      AppLog.error('❌ Position-first scroll failed: $e',
+          name: 'scrollToPositionFirst', error: s);
+    }
   }
 
   // --- SUBMISSION ---
@@ -311,11 +359,12 @@ class PickedMediaProvider extends ChangeNotifier {
   // --- CLEANUP ---
   @override
   void dispose() {
+    _isDisposed = true;
     _mediaList.clear();
     _pickedMedia.clear();
     super.dispose();
   }
 
   // --- MOUNTED CHECK ---
-  bool get mounted => true;
+  bool get mounted => !_isDisposed;
 }

@@ -6,7 +6,7 @@ import '../../../../core/constants/app_spacings.dart';
 import '../../../../core/widgets/custom_shimmer_effect.dart';
 import '../providers/picked_media_provider.dart';
 
-class PickedMediaDisplayTile extends StatelessWidget {
+class PickedMediaDisplayTile extends StatefulWidget {
   const PickedMediaDisplayTile({
     required this.media,
     required this.thumbnail,
@@ -16,32 +16,49 @@ class PickedMediaDisplayTile extends StatelessWidget {
   final Uint8List? thumbnail;
 
   @override
+  State<PickedMediaDisplayTile> createState() => _PickedMediaDisplayTileState();
+}
+
+class _PickedMediaDisplayTileState extends State<PickedMediaDisplayTile>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive {
+    // Keep this tile alive if it's selected
+    // This prevents the tile from being disposed when scrolled out of view
+    final PickedMediaProvider provider =
+        Provider.of<PickedMediaProvider>(context, listen: false);
+    return provider.isSelected(widget.media);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
+
     final PickedMediaProvider mediaPro =
         Provider.of<PickedMediaProvider>(context, listen: false);
     const Color overlayColor = Colors.black54;
     const double radius = AppSpacing.radiusXs;
 
     return InkWell(
-      onTap: () => mediaPro.onTap(media),
+      onTap: () => mediaPro.onTap(widget.media),
       borderRadius: BorderRadius.circular(radius),
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(radius),
         child: ShimmerLoading(
-          isLoading: thumbnail == null,
+          isLoading: widget.thumbnail == null,
           child: Stack(
             fit: StackFit.expand,
             children: <Widget>[
               AnimatedOpacity(
-                opacity: thumbnail == null ? 0 : 1,
+                opacity: widget.thumbnail == null ? 0 : 1,
                 duration: const Duration(milliseconds: 600),
                 curve: Curves.easeInOut,
-                child: thumbnail == null
+                child: widget.thumbnail == null
                     ? Container(color: Colors.grey[300])
                     : Image.memory(
-                        thumbnail!,
+                        widget.thumbnail!,
                         fit: BoxFit.cover,
                         filterQuality: FilterQuality.high,
                       ),
@@ -50,7 +67,7 @@ class PickedMediaDisplayTile extends StatelessWidget {
               Consumer<PickedMediaProvider>(
                 builder:
                     (BuildContext context, PickedMediaProvider provider, _) {
-                  final int? index = provider.indexOf(media);
+                  final int? index = provider.indexOf(widget.media);
                   if (index == null) return const SizedBox.shrink();
                   return Positioned(
                     top: 6,
@@ -80,9 +97,9 @@ class PickedMediaDisplayTile extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    if (media.type == AssetType.video)
+                    if (widget.media.type == AssetType.video)
                       _buildIcon(overlayColor, Icons.videocam),
-                    if (media.isFavorite)
+                    if (widget.media.isFavorite)
                       _buildIcon(overlayColor, Icons.favorite,
                           color: Colors.red),
                   ],

@@ -20,6 +20,9 @@ import '../../../../location/domain/entities/location_entity.dart';
 import '../../../../post/domain/entities/discount_entity.dart';
 import '../../../../post/domain/entities/meetup/availability_entity.dart';
 import '../../../../post/domain/entities/post/post_entity.dart';
+import '../../../../post/domain/entities/post/post_cloth_foot_entity.dart';
+import '../../../../post/domain/entities/post/package_detail_entity.dart';
+import '../../../../post/domain/entities/size_color/size_color_entity.dart';
 import '../../data/models/sub_category_model.dart';
 import '../../data/sources/local/local_categories.dart';
 import '../../domain/entities/listing_entity.dart';
@@ -309,7 +312,10 @@ class AddListingFormProvider extends ChangeNotifier
     return newVideos + oldVideos;
   }
 
-  Future<bool> _validateForm(BuildContext context) async {
+  /// Validates basic form requirements (attachments, category, title)
+  /// Shows snackbar for the first validation error found
+  /// Does NOT validate form-specific fields (use validateFormState for that)
+  bool validateBasicForm(BuildContext context) {
     if (!hasAtLeastOnePhoto) {
       AppLog.error('At least one photo is required');
       AppSnackBar.error(
@@ -323,31 +329,37 @@ class AddListingFormProvider extends ChangeNotifier
           context, 'please_add_at_least_one_photo_and_video'.tr());
       return false;
     }
+
     if (selectedCategory == null) {
       AppSnackBar.error(context, 'choose_category'.tr());
       return false;
     }
 
-    // Type-specific validation
+    return true;
+  }
+
+  /// Validates form-specific fields based on listing type
+  bool validateFormState() {
     switch (listingType) {
       case ListingType.vehicle:
-        if (!(vehicleKey.currentState?.validate() ?? false)) return false;
-        break;
+        return vehicleKey.currentState?.validate() ?? false;
       case ListingType.clothAndFoot:
-        if (!(clothesAndFootKey.currentState?.validate() ?? false)) {
-          return false;
-        }
-        break;
+        return clothesAndFootKey.currentState?.validate() ?? false;
       case ListingType.property:
-        if (!(propertyKey.currentState?.validate() ?? false)) return false;
-        break;
+        return propertyKey.currentState?.validate() ?? false;
       case ListingType.pets:
-        if (!(petKey.currentState?.validate() ?? false)) return false;
-        break;
+        return petKey.currentState?.validate() ?? false;
       default:
-        if (!(itemKey.currentState?.validate() ?? false)) return false;
-        break;
+        return itemKey.currentState?.validate() ?? false;
     }
+  }
+
+  Future<bool> _validateForm(BuildContext context) async {
+    // Validate basic requirements first
+    if (!validateBasicForm(context)) return false;
+
+    // Then validate form-specific fields
+    if (!validateFormState()) return false;
 
     return true;
   }
@@ -690,6 +702,131 @@ class AddListingFormProvider extends ChangeNotifier
 
     AppLog.info('Editing post initialized — ID: ${post.postID}');
     notifyListeners();
+  }
+
+  /// Creates a temporary PostEntity from current form data for preview purposes
+  /// For new listings: Creates dummy PostEntity with form data
+  /// For editing: Returns existing PostEntity
+  PostEntity? createPostFromFormData() {
+    try {
+      // Same validation as submit function
+      if (!hasAtLeastOnePhoto) {
+        AppLog.info(
+            'Preview validation failed: At least one photo is required');
+        return null;
+      }
+
+      if (!hasAtLeastOneVideo) {
+        AppLog.info(
+            'Preview validation failed: At least one video is required');
+        return null;
+      }
+
+      if (selectedCategory == null) {
+        AppLog.info('Preview validation failed: Category not selected');
+        return null;
+      }
+
+      if (title.text.isEmpty) {
+        AppLog.info('Preview validation failed: Title is empty');
+        return null;
+      }
+
+      // If editing an existing post, use that and show updated attachments
+      if (_post != null) {
+        return _post;
+      }
+
+      // For new post preview, create a dummy PostEntity with form data
+      final PostEntity dummyPost = PostEntity(
+        listID: 'preview_list_${DateTime.now().millisecondsSinceEpoch}',
+        postID: 'preview_${DateTime.now().millisecondsSinceEpoch}',
+        businessID: null,
+        title: title.text,
+        description: description.text,
+        price: double.tryParse(price.text) ?? 0.0,
+        quantity: int.tryParse(quantity.text) ?? 1,
+        currency: LocalAuth.currency,
+        type: listingType ?? ListingType.items,
+        address: selectedMeetupLocation?.address ?? 'Your Location',
+        acceptOffers: acceptOffer,
+        minOfferAmount: double.tryParse(minimumOffer.text) ?? 0.0,
+        privacy: privacy,
+        condition: condition,
+        listOfReviews: <double>[],
+        categoryType: selectedCategory?.title ?? 'General',
+        //
+        currentLongitude: LocalAuth.latlng.longitude,
+        currentLatitude: LocalAuth.latlng.latitude,
+        collectionLatitude: selectedCollectionLocation?.latitude,
+        collectionLongitude: selectedCollectionLocation?.longitude,
+        collectionLocation: selectedCollectionLocation,
+        meetUpLocation: selectedMeetupLocation,
+        //delivery
+        deliveryType: deliveryType,
+        localDelivery: 1,
+        internationalDelivery: null,
+        //
+        availability: availability.isNotEmpty ? availability : null,
+        //
+        fileUrls: <AttachmentEntity>[],
+        //
+        hasDiscount: isDiscounted,
+        discounts: discounts,
+        //
+        clothFootInfo: PostClothFootEntity(
+          sizeColors: <SizeColorEntity>[],
+          sizeChartUrl: null,
+          brand: brand,
+        ),
+        propertyInfo: null,
+        petInfo: null,
+        vehicleInfo: null,
+        packageDetail: PackageDetailEntity(
+          length: 0.0,
+          width: 0.0,
+          height: 0.0,
+          weight: 0.0,
+        ),
+        //
+        isActive: true,
+        createdBy: LocalAuth.uid ?? 'current_user',
+        updatedBy: LocalAuth.uid ?? 'current_user',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+        accessCode: accessCode,
+      );
+
+      AppLog.info('Preview: Created dummy post for new listing preview');
+      return dummyPost;
+    } catch (e, st) {
+      AppLog.error('Error creating preview post: $e\n$st');
+      return null;
+    }
+  }
+
+  /// Gets preview attachments combining new and old ones
+  List<AttachmentEntity> getPreviewAttachments() {
+    return <AttachmentEntity>[
+      // Existing attachments from post
+      if (_post?.fileUrls != null) ..._post!.fileUrls,
+      // New attachments (as placeholder since they're not uploaded yet)
+      // These won't have URLs until uploaded
+    ];
+  }
+
+  /// Gets basic preview data as a map for UI display
+  Map<String, dynamic> getPreviewData() {
+    return <String, dynamic>{
+      'title': title.text,
+      'description': description.text,
+      'price': price.text,
+      'quantity': quantity.text,
+      'category': selectedCategory,
+      'condition': condition,
+      'attachment_count': _attachments.length,
+      'has_new_attachments': _attachments.isNotEmpty,
+    };
   }
 
   @override
