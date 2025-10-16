@@ -2,31 +2,75 @@ import 'package:flutter/material.dart';
 import '../app_colors.dart';
 
 class AppSwitchTheme {
-  static SwitchThemeData light = SwitchThemeData(
-    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-    trackColor: WidgetStateProperty.resolveWith(
-      (Set<WidgetState> states) => states.contains(WidgetState.selected)
-          ? AppColors.secondaryColor.withValues(alpha: 0.5)
-          : Colors.grey.shade400,
-    ),
-    thumbColor: WidgetStateProperty.resolveWith(
-      (Set<WidgetState> states) => states.contains(WidgetState.selected)
-          ? AppColors.lightScaffoldColor
-          : Colors.grey.shade600,
-    ),
-  );
+  static SwitchThemeData get light => SwitchThemeData(
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        splashRadius: 16,
+        mouseCursor: WidgetStateProperty.all(SystemMouseCursors.click),
+        overlayColor: WidgetStateProperty.all(
+          AppColors.primaryColor.withAlpha(26), // ~10% opacity
+        ),
+        padding: const EdgeInsets.all(0),
+        trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+        trackOutlineWidth: const WidgetStatePropertyAll<double>(0),
+        trackColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+          if (states.contains(WidgetState.selected)) {
+            return AppColors.secondaryColor.withAlpha(115); // active ~45%
+          }
+          return AppColors.outlineVariant; // inactive track color
+        }),
+        thumbColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+          if (states.contains(WidgetState.selected)) {
+            return AppColors.lightScaffoldColor; // active thumb
+          }
+          return AppColors.lightSurface; // inactive thumb
+        }),
+        thumbIcon: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+          if (states.contains(WidgetState.selected)) {
+            return const Icon(Icons.circle, size: 14, color: Colors.white);
+          }
+          return const Icon(
+            Icons.circle_outlined,
+            size: 12,
+            color: Colors.white70,
+          );
+        }),
+      );
 
-  static SwitchThemeData dark = SwitchThemeData(
-    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-    trackColor: WidgetStateProperty.resolveWith(
-      (Set<WidgetState> states) => states.contains(WidgetState.selected)
-          ? AppColors.secondaryColor.withValues(alpha: 0.5)
-          : Colors.grey.shade700,
-    ),
-    thumbColor: WidgetStateProperty.resolveWith(
-      (Set<WidgetState> states) => states.contains(WidgetState.selected)
-          ? AppColors.darkScaffoldColor
-          : Colors.grey.shade400,
-    ),
-  );
+  static SwitchThemeData get dark => SwitchThemeData(
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        splashRadius: 16,
+        mouseCursor: WidgetStateProperty.all(SystemMouseCursors.click),
+        overlayColor: WidgetStateProperty.all(
+          AppColors.secondaryColor.withAlpha(38), // ~15% opacity
+        ),
+        padding: const EdgeInsets.all(0),
+        trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+        trackOutlineWidth: const WidgetStatePropertyAll<double>(0),
+        trackColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+          if (states.contains(WidgetState.selected)) {
+            return AppColors.secondaryColor.withAlpha(115); // active ~45%
+          }
+          return AppColors.darkSurface; // inactive track
+        }),
+        thumbColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+          if (states.contains(WidgetState.selected)) {
+            return AppColors.secondaryColor; // active thumb
+          }
+          return AppColors.outline; // inactive thumb
+        }),
+        thumbIcon: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+          if (states.contains(WidgetState.selected)) {
+            return const Icon(
+              Icons.circle,
+              size: 14,
+              color: AppColors.darkScaffoldColor,
+            );
+          }
+          return const Icon(
+            Icons.circle_outlined,
+            size: 12,
+            color: AppColors.darkScaffoldColor,
+          );
+        }),
+      );
 }

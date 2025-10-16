@@ -25,7 +25,7 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Row(
-              spacing: AppSpacing.xs,
+              spacing: AppSpacing.hXs,
               children: <Widget>[
                 Expanded(
                   child: DeliveryOptionTile(

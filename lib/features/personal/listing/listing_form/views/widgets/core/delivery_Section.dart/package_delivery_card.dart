@@ -143,7 +143,7 @@ class PackageDetailsCard extends StatelessWidget {
               Flexible(
                 flex: 1,
                 child: PackageInputField(
-                  label: tr('length_cm'),
+                  label: tr('length'),
                   controller: formPro.packageLength,
                 ),
               ),
@@ -151,7 +151,7 @@ class PackageDetailsCard extends StatelessWidget {
               Flexible(
                 flex: 1,
                 child: PackageInputField(
-                  label: tr('width_cm'),
+                  label: tr('width'),
                   controller: formPro.packageWidth,
                 ),
               ),
@@ -159,21 +159,21 @@ class PackageDetailsCard extends StatelessWidget {
               Flexible(
                 flex: 1,
                 child: PackageInputField(
-                  label: tr('height_cm'),
+                  label: tr('height'),
                   controller: formPro.packageHeight,
                 ),
               ),
             ],
           ),
-
           const SizedBox(height: AppSpacing.vSm),
 
           /// Weight field
-          PackageInputField(
-            label: tr('weight_kg'),
+          CustomTextFormField(
             controller: formPro.packageWeight,
+            keyboardType: TextInputType.number,
+            labelText: tr('weight_kg'),
+            validator: (String? value) => AppValidator.isEmpty(value),
           ),
-
           const SizedBox(height: AppSpacing.vMd),
 
           /// Expandable categories
@@ -251,6 +251,12 @@ class PackageInputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomTextFormField(
+      suffixIcon: const Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('cm'),
+        ],
+      ),
       controller: controller,
       keyboardType: TextInputType.number,
       labelText: label,
