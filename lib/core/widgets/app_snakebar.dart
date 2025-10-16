@@ -208,7 +208,7 @@ class AppSnackBar {
         context,
         message,
         icon: Icons.error_outline_rounded,
-        color: Theme.of(context).colorScheme.error,
+        color: Colors.redAccent,
         dismissible: dismissible,
       );
 
@@ -231,9 +231,4 @@ class AppSnackBar {
         color: Theme.of(context).colorScheme.primary,
         dismissible: dismissible,
       );
-
-  static String _timeStamp() {
-    final DateTime now = DateTime.now();
-    return '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
-  }
 }

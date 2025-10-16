@@ -1,4 +1,4 @@
-//! A centralized class for managing consistent spacing, padding,
+//! A centralized class for managing consistent spacing, padding,borderRadius
 //! and radius values throughout the app.
 
 //? Usage :
