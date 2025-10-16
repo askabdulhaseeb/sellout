@@ -17,30 +17,56 @@ class PickedMediaStrip extends StatelessWidget {
       builder: (BuildContext context, PickedMediaProvider provider, _) {
         return AnimatedOpacity(
           opacity: provider.pickedMedia.isEmpty ? 0 : 1,
-          duration: const Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 400),
           child: AnimatedContainer(
             width: double.infinity,
-            duration: const Duration(milliseconds: 300),
-            height: provider.pickedMedia.isEmpty ? 0 : 48,
+            duration: const Duration(milliseconds: 400),
+            height: provider.pickedMedia.isEmpty ? 0 : 56,
+            curve: Curves.easeInOut,
             child: provider.pickedMedia.isEmpty
                 ? const SizedBox.shrink()
                 : Container(
                     decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .surface
-                          .withOpacity(0.95),
-                      borderRadius: BorderRadius.circular(16),
+                      gradient: LinearGradient(
+                        colors: [
+                          Theme.of(context)
+                              .colorScheme
+                              .surface
+                              .withOpacity(0.98),
+                          Theme.of(context)
+                              .colorScheme
+                              .surface
+                              .withOpacity(0.95),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .outline
+                            .withOpacity(0.1),
+                        width: 1,
+                      ),
                       boxShadow: <BoxShadow>[
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
-                          blurRadius: 8,
-                          offset: const Offset(0, -2),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.12),
+                          blurRadius: 24,
+                          offset: const Offset(0, 8),
+                        ),
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.06),
+                          blurRadius: 12,
+                          offset: const Offset(0, 2),
                         ),
                       ],
                     ),
                     padding:
-                        const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                     child: ListView.builder(
                       key: const PageStorageKey<String>('picked_media_strip'),
                       scrollDirection: Axis.horizontal,
@@ -49,34 +75,13 @@ class PickedMediaStrip extends StatelessWidget {
                         final AssetEntity media = provider.pickedMedia[index];
                         final Uint8List? thumb =
                             provider.getThumbnail(media.id);
-                        return GestureDetector(
+                        return _StripItemTile(
                           key: ValueKey<AssetEntity>(media),
+                          thumbnail: thumb,
+                          index: index,
                           onTap: () {
-                            print(
-                                '🔷 Strip item tapped - index: $index, assetId: ${media.id}');
                             onItemTap(index);
                           },
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: thumb == null
-                                  ? Container(
-                                      width: 40,
-                                      height: 40,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .surfaceVariant
-                                          .withOpacity(0.3),
-                                    )
-                                  : Image.memory(
-                                      thumb,
-                                      width: 40,
-                                      height: 40,
-                                      fit: BoxFit.cover,
-                                    ),
-                            ),
-                          ),
                         );
                       },
                     ),
@@ -84,6 +89,135 @@ class PickedMediaStrip extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _StripItemTile extends StatefulWidget {
+  const _StripItemTile({
+    required this.thumbnail,
+    required this.index,
+    required this.onTap,
+    super.key,
+  });
+
+  final Uint8List? thumbnail;
+  final int index;
+  final VoidCallback onTap;
+
+  @override
+  State<_StripItemTile> createState() => _StripItemTileState();
+}
+
+class _StripItemTileState extends State<_StripItemTile>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.92).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onTapDown(TapDownDetails details) => _controller.forward();
+  void _onTapUp(TapUpDetails details) => _controller.reverse();
+  void _onTapCancel() => _controller.reverse();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: GestureDetector(
+        onTapDown: _onTapDown,
+        onTapUp: _onTapUp,
+        onTapCancel: _onTapCancel,
+        onTap: widget.onTap,
+        child: ScaleTransition(
+          scale: _scaleAnimation,
+          child: Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.15),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(14),
+              child: widget.thumbnail == null
+                  ? Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Theme.of(context)
+                                .colorScheme
+                                .surfaceVariant
+                                .withOpacity(0.4),
+                            Theme.of(context)
+                                .colorScheme
+                                .surfaceVariant
+                                .withOpacity(0.2),
+                          ],
+                        ),
+                      ),
+                      child: Center(
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  : Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Image.memory(
+                          widget.thumbnail!,
+                          fit: BoxFit.cover,
+                          filterQuality: FilterQuality.high,
+                        ),
+                        // Fancy overlay
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.transparent,
+                                Colors.black.withOpacity(0.1),
+                              ],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
