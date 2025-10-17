@@ -77,17 +77,32 @@ class AddListingFormProvider extends ChangeNotifier
   // Availability delegation
   List<AvailabilityEntity> get availability =>
       _availabilityManager.availability;
+
   List<String> generateTimeSlots() => _availabilityManager.generateTimeSlots();
-  void toggleOpen(DayType day, bool isOpen) =>
-      _availabilityManager.toggleOpen(day, isOpen);
-  void setOpeningTime(DayType day, String time) =>
-      _availabilityManager.setOpeningTime(day, time);
-  void setClosingTime(DayType day, String time) =>
-      _availabilityManager.setClosingTime(day, time);
-  void updateOpeningTime(DayType day, String time) =>
-      _availabilityManager.updateOpeningTime(day, time);
+
+  void toggleOpen(DayType day, bool isOpen) {
+    _availabilityManager.toggleOpen(day, isOpen);
+    notifyListeners();
+  }
+
+  void setOpeningTime(DayType day, String time) {
+    _availabilityManager.setOpeningTime(day, time);
+    notifyListeners();
+  }
+
+  void setClosingTime(DayType day, String time) {
+    _availabilityManager.setClosingTime(day, time);
+    notifyListeners();
+  }
+
+  void updateOpeningTime(DayType day, String time) {
+    _availabilityManager.updateOpeningTime(day, time);
+    notifyListeners();
+  }
+
   bool isClosingTimeValid(String openingTime, String closingTime) =>
       _availabilityManager.isClosingTimeValid(openingTime, closingTime);
+
   TimeOfDay parseTimeString(String timeString) =>
       _availabilityManager.parseTimeString(timeString);
 

@@ -11,7 +11,7 @@ class EditableAvailabilityWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<AddListingFormProvider>(
-      builder: (BuildContext context, AddListingFormProvider provider, _) {
+      builder: (BuildContext context, AddListingFormProvider manager, _) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -25,7 +25,7 @@ class EditableAvailabilityWidget extends StatelessWidget {
                   ),
             ),
             const SizedBox(height: 16),
-            ...provider.availability.map((AvailabilityEntity entity) {
+            ...manager.availability.map((AvailabilityEntity entity) {
               final bool isOpen = entity.isOpen;
               final bool hasValidTimes = entity.openingTime.isNotEmpty &&
                   entity.closingTime.isNotEmpty;
@@ -40,20 +40,9 @@ class EditableAvailabilityWidget extends StatelessWidget {
                     Row(
                       children: <Widget>[
                         Switch(
-                          thumbIcon: WidgetStateProperty.all(Icon(
-                            Icons.circle,
-                            color: ColorScheme.of(context).surface,
-                          )),
-                          inactiveTrackColor: Theme.of(context).disabledColor,
-                          activeTrackColor: ColorScheme.of(context).secondary,
-                          thumbColor: WidgetStateProperty.all(
-                              ColorScheme.of(context).surface),
-                          trackOutlineColor: WidgetStateProperty.all(
-                              ColorScheme.of(context).surface),
-                          padding: const EdgeInsets.symmetric(vertical: 0),
                           value: isOpen,
                           onChanged: (bool val) {
-                            provider.toggleOpen(entity.day, val);
+                            manager.toggleOpen(entity.day, val);
                           },
                           materialTapTargetSize:
                               MaterialTapTargetSize.shrinkWrap,
