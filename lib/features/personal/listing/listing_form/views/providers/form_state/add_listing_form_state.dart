@@ -9,12 +9,12 @@ import '../../../../../post/domain/entities/discount_entity.dart';
 import '../../../../../post/domain/entities/size_color/size_color_entity.dart';
 import '../../../domain/entities/sub_category_entity.dart';
 import '../../../domain/entities/color_options_entity.dart';
-import '../../widgets/core/delivery_Section.dart/add_listing_delivery_selection_widget.dart';
+import '../../widgets/core/delivery_section/enums/delivery_payer.dart';
 
 class AddListingFormState {
   AddListingFormState() {
     _initializeDefaults();
-    //Non-nullable instance field 'clothSubCategory' must be initialized.
+//Non-nullable instance field 'clothSubCategory' must be initialized.
 // Try adding an initializer expression, or add a field initializer in this constructor, or mark it 'late'.dartnot_initialized_non_nullable_instance_field
 // Non-nullable instance field 'foodDrinkSubCategory' must be initialized.
 // Try adding an initializer expression, or add a field initializer in this constructor, or mark it 'late'.dartnot_initialized_non_nullable_instance_field
