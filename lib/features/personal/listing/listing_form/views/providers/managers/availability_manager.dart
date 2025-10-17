@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../core/enums/routine/day_type.dart';
+import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../post/domain/entities/meetup/availability_entity.dart';
 
 class AvailabilityManager with ChangeNotifier {
@@ -19,16 +20,36 @@ class AvailabilityManager with ChangeNotifier {
   }
 
   void toggleOpen(DayType day, bool isOpen) {
-    final int index =
-        _availability.indexWhere((AvailabilityEntity e) => e.day == day);
-    if (index != -1) {
-      final AvailabilityEntity current = _availability[index];
-      _availability[index] = current.copyWith(
-        isOpen: isOpen,
-        openingTime: isOpen ? '10:00 am' : '',
-        closingTime: isOpen ? '10:00 pm' : '',
-      );
-      notifyListeners();
+    try {
+      final int index =
+          _availability.indexWhere((AvailabilityEntity e) => e.day == day);
+
+      if (index != -1) {
+        final AvailabilityEntity current = _availability[index];
+
+        _availability[index] = current.copyWith(
+          isOpen: isOpen,
+          openingTime: isOpen ? '10:00 am' : '',
+          closingTime: isOpen ? '10:00 pm' : '',
+        );
+
+        // 🟢 Log before notifying listeners
+        AppLog.info(
+          name: 'Availability Updated',
+          'Day: ${day.name}, Open: $isOpen, '
+          'OpeningTime: ${_availability[index].openingTime}, '
+          'ClosingTime: ${_availability[index].closingTime}',
+        );
+
+        notifyListeners();
+      } else {
+        // ⚠️ Log if day not found
+        AppLog.error('Day not found in availability list: ${day.name}');
+      }
+    } catch (e, stack) {
+      // 🔴 Log unexpected errors
+      AppLog.error('toggleOpen() failed for ${day.name}',
+          error: e, stackTrace: stack);
     }
   }
 
