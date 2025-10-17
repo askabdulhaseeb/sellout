@@ -28,7 +28,6 @@ class CustomToggleSwitch<T> extends StatelessWidget {
     this.unseletedTextColor,
     this.borderWidth = 1,
     this.borderRad = 8,
-    this.widgetMargin = 4,
     super.key,
   });
 
@@ -49,7 +48,6 @@ class CustomToggleSwitch<T> extends StatelessWidget {
   final double horizontalPadding;
   final double horizontalMargin;
   final double verticalMargin;
-  final double widgetMargin;
 
   /// Border and color behavior
   final Color? unseletedBorderColor;
@@ -61,15 +59,12 @@ class CustomToggleSwitch<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final BorderRadius radius = BorderRadius.circular(borderRad);
 
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: widgetMargin),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          if (labelText.isNotEmpty) _buildLabelText(),
-          _buildToggleRow(context, radius),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        if (labelText.isNotEmpty) _buildLabelText(),
+        _buildToggleRow(context, radius),
+      ],
     );
   }
 

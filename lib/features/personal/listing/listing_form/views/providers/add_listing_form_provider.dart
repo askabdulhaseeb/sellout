@@ -31,7 +31,7 @@ import '../../domain/usecase/add_listing_usecase.dart';
 import '../../domain/usecase/edit_listing_usecase.dart';
 import '../params/add_listing_param.dart';
 import '../screens/add_listing_form_screen.dart';
-import '../widgets/core/delivery_Section.dart/add_listing_delivery_selection_widget.dart';
+import '../widgets/core/delivery_section/enums/delivery_payer.dart';
 import 'form_state/add_listing_form_state.dart';
 import 'managers/availability_manager.dart';
 import 'mixins/cloth_listing_mixin.dart';
