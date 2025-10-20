@@ -1,3 +1,4 @@
+import 'dart:convert';
 import '../../../domain/entities/post/package_detail_entity.dart';
 
 class PackageDetailModel extends PackageDetailEntity {
@@ -7,6 +8,16 @@ class PackageDetailModel extends PackageDetailEntity {
     required super.weight,
     required super.height,
   });
+
+  /// Build a model from the domain entity
+  factory PackageDetailModel.fromEntity(PackageDetailEntity entity) {
+    return PackageDetailModel(
+      length: entity.length,
+      width: entity.width,
+      weight: entity.weight,
+      height: entity.height,
+    );
+  }
 
   factory PackageDetailModel.fromJson(Map<String, dynamic> json) {
     return PackageDetailModel(
@@ -25,14 +36,24 @@ class PackageDetailModel extends PackageDetailEntity {
     return 0.0;
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'length': length,
-      'width': width,
-      'weight': weight,
-      'height': height,
-    };
-  }
+  /// Map representation (Object → Map)
+  Map<String, dynamic> toMap() => <String, dynamic>{
+        'length': length,
+        'width': width,
+        'weight': weight,
+        'height': height,
+      };
+
+  /// JSON string representation (Object → JSON)
+  String toJson() => jsonEncode(toMap());
+
+  /// Convert back to the domain entity
+  PackageDetailEntity toEntity() => PackageDetailEntity(
+        length: length,
+        width: width,
+        weight: weight,
+        height: height,
+      );
 
   // Empty package detail
   static PackageDetailModel get empty => PackageDetailModel(

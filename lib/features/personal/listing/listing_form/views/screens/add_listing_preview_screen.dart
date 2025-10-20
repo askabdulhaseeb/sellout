@@ -1,25 +1,51 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../core/constants/app_spacings.dart';
+import '../../../../../../core/enums/listing/core/listing_type.dart';
+import '../../../../../../core/widgets/attachment_slider.dart';
 import '../../../../../../core/widgets/custom_toggle_switch.dart';
+import '../../../../../attachment/domain/entities/picked_attachment.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../post/domain/entities/post/post_entity.dart';
-import '../../../../post/feed/views/widgets/post/widgets/home_post_tile.dart';
+import '../../../../post/feed/views/widgets/post/widgets/section/buttons/type/store_post_button_tile.dart';
+import '../../../../post/feed/views/widgets/post/widgets/section/buttons/type/viewing_post_button_tile.dart';
+import '../../../../post/feed/views/widgets/post/widgets/section/home_post_header_section.dart';
+import '../../../../post/feed/views/widgets/post/widgets/section/home_post_icon_botton_section.dart';
+import '../../../../post/feed/views/widgets/post/widgets/section/home_post_title_section.dart';
 import '../../../../post/post_detail/views/widgets/post_details_sections/item_post_detail_section.dart';
+import '../../../../post/post_detail/views/widgets/post_details_sections/cloth_foot_post_detail_section.dart';
+import '../../../../post/post_detail/views/widgets/post_details_sections/food_drink_post_Detail_section.dart';
+import '../../../../post/post_detail/views/widgets/post_details_sections/pets_post_detail_section.dart';
+import '../../../../post/post_detail/views/widgets/post_details_sections/property_post_detail_section.dart';
+import '../../../../post/post_detail/views/widgets/post_details_sections/vehicle_post_detail_section.dart';
+import '../../../../post/post_detail/views/widgets/post_detail_attachment_slider.dart';
+import '../../../../post/post_detail/views/widgets/attachments/attachment_source.dart';
 import '../providers/add_listing_form_provider.dart';
 
 class AddListingPreviewScreen extends StatefulWidget {
-  const AddListingPreviewScreen({super.key});
+  const AddListingPreviewScreen({
+    required this.post,
+    required this.pickedAttachments,
+    super.key,
+  });
+
+  final PostEntity post;
+  final List<PickedAttachment> pickedAttachments;
 
   @override
   State<AddListingPreviewScreen> createState() =>
       _AddListingPreviewScreenState();
 }
 
+enum _PreviewMode { feed, detail }
+
 class _AddListingPreviewScreenState extends State<AddListingPreviewScreen> {
-  int _previewMode = 0;
+  _PreviewMode _previewMode = _PreviewMode.feed;
 
   @override
   Widget build(BuildContext context) {
+    final PostEntity previewPost = widget.post;
     return PopScope(
       child: Scaffold(
         appBar: AppBar(
@@ -29,49 +55,34 @@ class _AddListingPreviewScreenState extends State<AddListingPreviewScreen> {
         ),
         body: Consumer<AddListingFormProvider>(
           builder: (BuildContext context, AddListingFormProvider provider, _) {
-            final PostEntity? previewPost = provider.post;
-            if (previewPost == null) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const Icon(Icons.error_outline, size: 48),
-                    const SizedBox(height: 16),
-                    Text(
-                      'preview_error'.tr(),
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  ],
-                ),
-              );
-            }
             return SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  const SizedBox(height: 16),
                   CustomToggleSwitch<int>(
-                    initialValue: _previewMode,
+                    initialValue: _previewMode == _PreviewMode.feed ? 0 : 1,
                     labels: const <int>[0, 1],
                     labelStrs: <String>[
                       'feed_preview'.tr(),
-                      'detail_preview'.tr()
+                      'detail_preview'.tr(),
                     ],
                     labelText: '',
                     onToggle: (int index) {
                       setState(() {
-                        _previewMode = index;
+                        _previewMode = index == 0
+                            ? _PreviewMode.feed
+                            : _PreviewMode.detail;
                       });
                     },
                   ),
-                  const SizedBox(height: 16),
-                  _previewMode == 0
-                      ? AbsorbPointer(child: HomePostTile(post: previewPost))
-                      : AbsorbPointer(
-                          child: ItemPostDetailSection(
-                            post: previewPost,
-                          ),
+                  _previewMode == _PreviewMode.feed
+                      ? _FeedPreviewSection(
+                          post: previewPost,
+                          pickedAttachments: widget.pickedAttachments,
+                        )
+                      : _DetailPreviewSection(
+                          post: previewPost,
+                          pickedAttachments: widget.pickedAttachments,
                         ),
-                  const SizedBox(height: 32),
                 ],
               ),
             );
@@ -81,3 +92,96 @@ class _AddListingPreviewScreenState extends State<AddListingPreviewScreen> {
     );
   }
 }
+
+class _FeedPreviewSection extends StatelessWidget {
+  const _FeedPreviewSection({
+    required this.post,
+    required this.pickedAttachments,
+  });
+
+  final PostEntity post;
+  final List<PickedAttachment> pickedAttachments;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        PostHeaderSection(post: post),
+        AttachmentsSlider.mixed(
+          remote: post.fileUrls,
+          picked: pickedAttachments,
+        ),
+        HomePostIconBottonSection(post: post),
+        HomePostTitleSection(post: post),
+        AbsorbPointer(
+          absorbing: LocalAuth.currentUser?.userID == null,
+          child: (post.type == ListingType.pets ||
+                  post.type == ListingType.vehicle ||
+                  post.type == ListingType.property)
+              ? ViewingPostButtonTile(
+                  post: post,
+                  detailWidget: false,
+                )
+              : StorePostButtonTile(
+                  post: post,
+                  detailWidget: false,
+                ),
+        ),
+        const SizedBox(height: AppSpacing.vMd),
+        Container(
+          height: 4,
+          width: double.infinity,
+          color: Theme.of(context).dividerColor,
+        ),
+      ],
+    );
+  }
+}
+
+class _DetailPreviewSection extends StatelessWidget {
+  const _DetailPreviewSection({
+    required this.post,
+    required this.pickedAttachments,
+  });
+
+  final PostEntity post;
+  final List<PickedAttachment> pickedAttachments;
+
+  List<AttachmentSource> _sources() {
+    return <AttachmentSource>[
+      if (post.fileUrls.isNotEmpty)
+        ...post.fileUrls.map(AttachmentSource.fromAttachmentEntity),
+      if (pickedAttachments.isNotEmpty)
+        ...pickedAttachments.map(AttachmentSource.fromPickedAttachment),
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final List<AttachmentSource> sources = _sources();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        if (sources.isNotEmpty) ...<Widget>[
+          PostDetailAttachmentSlider.sources(sources: sources),
+          const SizedBox(height: 12),
+        ],
+        post.listID == ListingType.items.json
+            ? ItemPostDetailSection(post: post)
+            : post.listID == ListingType.clothAndFoot.json
+                ? ClothFootPostDetailSection(post: post)
+                : post.listID == ListingType.foodAndDrink.json
+                    ? FoodDrinkPostDetailSection(post: post)
+                    : post.listID == ListingType.property.json
+                        ? PropertyPostDetailSection(post: post)
+                        : post.listID == ListingType.pets.json
+                            ? PetsPostDetailSection(post: post)
+                            : post.listID == ListingType.vehicle.json
+                                ? VehiclePostDetailSection(post: post)
+                                : const SizedBox.shrink(),
+      ],
+    );
+  }
+}
+
+// End of file

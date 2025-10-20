@@ -152,10 +152,24 @@ class PickedMediaProvider extends ChangeNotifier {
   final Map<String, Uint8List?> _thumbnailCache = {};
 
   Future<void> cacheThumbnails(List<AssetEntity> assets) async {
-    for (final asset in assets) {
-      if (!_thumbnailCache.containsKey(asset.id)) {
-        _thumbnailCache[asset.id] =
-            await asset.thumbnailDataWithSize(const ThumbnailSize(100, 100));
+    for (final AssetEntity asset in assets) {
+      if (_thumbnailCache.containsKey(asset.id)) continue;
+      try {
+        final Uint8List? bytes = await asset.thumbnailDataWithSize(
+          const ThumbnailSize(100, 100),
+          quality: 85,
+          format: ThumbnailFormat.jpeg,
+        );
+        // Guard against null or empty bytes to avoid engine decode crashes
+        if (bytes != null && bytes.isNotEmpty) {
+          _thumbnailCache[asset.id] = bytes;
+        } else {
+          _thumbnailCache[asset.id] = null;
+        }
+      } catch (e, s) {
+        AppLog.error('Thumbnail fetch failed for ${asset.id}: $e',
+            name: 'cacheThumbnails', error: s);
+        _thumbnailCache[asset.id] = null;
       }
     }
     notifyListeners();

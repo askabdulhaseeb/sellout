@@ -10,13 +10,14 @@ import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../location/data/models/location_model.dart';
 import '../../../../location/domain/entities/location_entity.dart';
+import '../../../../post/data/models/post/package_detail_model.dart';
 import '../../../../post/data/models/size_color/color_model.dart';
 import '../../../../post/data/models/size_color/size_color_model.dart';
 import '../../../../post/domain/entities/discount_entity.dart';
+import '../../../../post/domain/entities/post/package_detail_entity.dart';
 import '../../../../post/domain/entities/size_color/color_entity.dart';
 import '../../../../post/domain/entities/size_color/size_color_entity.dart';
 import '../../domain/entities/sub_category_entity.dart';
-import 'package_detail_params.dart';
 
 class AddListingParam {
   AddListingParam({
@@ -97,7 +98,7 @@ class AddListingParam {
   final ListingType listingType;
   final SubCategoryEntity? category;
   // final String? currency;
-  final PackageDetail? packageDetail;
+  final PackageDetailEntity? packageDetail;
   final num? currentLatitude;
   final num? currentLongitude;
   final String? brand;
@@ -213,9 +214,11 @@ class AddListingParam {
       'delivery_type': deliveryType.json,
       if (deliveryType == DeliveryType.paid ||
           deliveryType == DeliveryType.freeDelivery)
-        'package_detail': jsonEncode(packageDetail!.toJson()),
+        'package_detail':
+            PackageDetailModel.fromEntity(packageDetail!).toJson(),
       if (deliveryType == DeliveryType.freeDelivery)
-        'package_detail': jsonEncode(packageDetail!.toJson()),
+        'package_detail':
+            PackageDetailModel.fromEntity(packageDetail!).toJson(),
       if (deliveryType == DeliveryType.collection)
         'collection_location': collectionLocation != null
             ? jsonEncode(

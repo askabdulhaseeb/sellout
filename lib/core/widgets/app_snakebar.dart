@@ -1,11 +1,21 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
+import '../../routes/app_linking.dart';
 import '../constants/app_spacings.dart';
 
 /// A professional, animated snackbar with a solid background
 /// and smooth progress indicator using the app's ColorScheme and spacing.
+
 class AppSnackBar {
+  // Global messenger key so we can show snackbars without a local BuildContext
+  static final GlobalKey<ScaffoldMessengerState> messengerKey =
+      GlobalKey<ScaffoldMessengerState>();
+
+  // Resolve a context that’s always available (root navigator context)
+  static BuildContext? _rootContext() =>
+      AppNavigator().navigatorKey.currentContext;
+
   static void showSnackBar(
     BuildContext context,
     String message, {
@@ -14,14 +24,22 @@ class AppSnackBar {
     Duration duration = const Duration(seconds: 4),
     bool dismissible = true,
   }) {
-    final ThemeData theme = Theme.of(context);
+    // Prefer the provided context, but fall back to the root navigator context
+    final BuildContext ctx =
+        context.mounted ? context : (_rootContext() ?? context);
+
+    final ThemeData theme = Theme.of(ctx);
     final ColorScheme scheme = theme.colorScheme;
     final Color background = color ?? scheme.primary;
-    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenWidth = MediaQuery.of(ctx).size.width;
     final Color textColor =
         background.computeLuminance() > 0.5 ? Colors.black87 : Colors.white;
 
-    ScaffoldMessenger.of(context)
+    final ScaffoldMessengerState messenger = ScaffoldMessenger.maybeOf(ctx) ??
+        messengerKey.currentState ??
+        ScaffoldMessenger.of(ctx);
+
+    messenger
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
@@ -161,8 +179,7 @@ class AppSnackBar {
                               // Close Button
                               if (dismissible)
                                 GestureDetector(
-                                  onTap: () => ScaffoldMessenger.of(context)
-                                      .hideCurrentSnackBar(),
+                                  onTap: () => messenger.hideCurrentSnackBar(),
                                   child: Container(
                                     padding:
                                         const EdgeInsets.all(AppSpacing.xs),
@@ -189,6 +206,75 @@ class AppSnackBar {
           ),
         ),
       );
+  }
+
+  // --- Contextless API ---
+  // These helpers use the global ScaffoldMessenger/Root Navigator context,
+  // so you don't need to pass a BuildContext.
+
+  static void show(
+    String message, {
+    IconData icon = Icons.info_outline_rounded,
+    Color? color,
+    Duration duration = const Duration(seconds: 4),
+    bool dismissible = true,
+  }) {
+    final BuildContext? ctx = messengerKey.currentContext ?? _rootContext();
+    if (ctx == null) return; // App not ready yet
+    showSnackBar(
+      ctx,
+      message,
+      icon: icon,
+      color: color,
+      duration: duration,
+      dismissible: dismissible,
+    );
+  }
+
+  static void successGlobal(String message, {bool dismissible = true}) {
+    final BuildContext? ctx = messengerKey.currentContext ?? _rootContext();
+    final Color? color =
+        ctx != null ? Theme.of(ctx).colorScheme.tertiary : Colors.green;
+    show(
+      message,
+      icon: Icons.check_circle_rounded,
+      color: color,
+      dismissible: dismissible,
+    );
+  }
+
+  static void errorGlobal(String message, {bool dismissible = true}) {
+    final Color color = Colors.redAccent;
+    show(
+      message,
+      icon: Icons.error_outline_rounded,
+      color: color,
+      dismissible: dismissible,
+    );
+  }
+
+  static void warningGlobal(String message, {bool dismissible = true}) {
+    final BuildContext? ctx = messengerKey.currentContext ?? _rootContext();
+    final Color? color =
+        ctx != null ? Theme.of(ctx).colorScheme.secondary : Colors.amber;
+    show(
+      message,
+      icon: Icons.warning_amber_rounded,
+      color: color,
+      dismissible: dismissible,
+    );
+  }
+
+  static void infoGlobal(String message, {bool dismissible = true}) {
+    final BuildContext? ctx = messengerKey.currentContext ?? _rootContext();
+    final Color? color =
+        ctx != null ? Theme.of(ctx).colorScheme.primary : Colors.blueAccent;
+    show(
+      message,
+      icon: Icons.info_outline_rounded,
+      color: color,
+      dismissible: dismissible,
+    );
   }
 
   // --- Predefined Types ---

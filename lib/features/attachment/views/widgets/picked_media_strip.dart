@@ -194,11 +194,18 @@ class _StripItemTileState extends State<_StripItemTile>
                   : Stack(
                       fit: StackFit.expand,
                       children: [
-                        Image.memory(
-                          widget.thumbnail!,
-                          fit: BoxFit.cover,
-                          filterQuality: FilterQuality.high,
-                        ),
+                        // Guard against empty bytes to avoid native decoder crash
+                        if (widget.thumbnail != null &&
+                            widget.thumbnail!.isNotEmpty)
+                          Image.memory(
+                            widget.thumbnail!,
+                            fit: BoxFit.cover,
+                            filterQuality: FilterQuality.high,
+                            errorBuilder: (_, __, ___) =>
+                                const ColoredBox(color: Colors.black12),
+                          )
+                        else
+                          const ColoredBox(color: Colors.black12),
                         // Fancy overlay
                         Container(
                           decoration: BoxDecoration(

@@ -25,17 +25,6 @@ class AddListingPostButtonWidget extends StatelessWidget {
               ),
             ),
           ),
-          // --- PREVIEW BUTTON ---
-          CustomElevatedButton(
-              border: Border.all(color: Theme.of(context).colorScheme.outline),
-              textColor: Theme.of(context).colorScheme.outline,
-              bgColor: Colors.transparent,
-              title: 'preview_listing'.tr(),
-              isLoading: formPro.isLoading,
-              onTap: () async {
-                // Validate using the same method as submit (avoids redundancy)
-                formPro.getPreview(context);
-              }),
           InDevMode(
             child: CustomElevatedButton(
                 border:
@@ -46,6 +35,16 @@ class AddListingPostButtonWidget extends StatelessWidget {
                 isLoading: false,
                 onTap: () {}),
           ),
+          // --- PREVIEW BUTTON ---
+          CustomElevatedButton(
+            border: Border.all(color: Theme.of(context).colorScheme.outline),
+            textColor: Theme.of(context).colorScheme.outline,
+            bgColor: Colors.transparent,
+            title: 'preview_listing'.tr(),
+            isLoading: formPro.isLoading,
+            onTap: () async => await formPro.getPreview(context),
+          ),
+
           CustomElevatedButton(
             title: 'post'.tr(),
             isLoading: formPro.isLoading,
