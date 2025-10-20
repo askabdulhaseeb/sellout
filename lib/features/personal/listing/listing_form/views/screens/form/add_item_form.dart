@@ -34,7 +34,7 @@ class _AddItemFormState extends State<AddItemForm> {
           key: formPro.itemKey,
           child: SingleChildScrollView(
             child: Column(
-              spacing: AppSpacing.vXs,
+              spacing: AppSpacing.vMd,
               children: <Widget>[
                 const AddListingBasicInfoSection(),
                 SubCategorySelectableWidget<AddListingFormProvider>(

@@ -16,7 +16,7 @@ class AddListingDeliverySelectionWidget extends StatelessWidget {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         return Column(
-          spacing: AppSpacing.vXs,
+          spacing: AppSpacing.vSm,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             DeliveryOptionsRow(

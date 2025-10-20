@@ -161,9 +161,10 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
                 fillColor:
                     widget.color ?? Theme.of(context).scaffoldBackgroundColor,
                 hintText: widget.hint,
-                hintStyle: TextTheme.of(context)
-                    .bodyMedium
-                    ?.copyWith(color: ColorScheme.of(context).outline),
+                hintStyle: TextTheme.of(context).bodyMedium?.copyWith(
+                    color: ColorScheme.of(context)
+                        .onSurface
+                        .withValues(alpha: 0.6)),
                 suffixIcon: widget.suffixIcon ??
                     (((widget._controller?.text.isEmpty ?? true) ||
                             !widget.showSuffixIcon ||
@@ -208,7 +209,7 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
                     ),
                 enabledBorder: OutlineInputBorder(
                   borderSide:
-                      BorderSide(color: ColorScheme.of(context).outlineVariant),
+                      BorderSide(color: ColorScheme.of(context).outline),
                   borderRadius: BorderRadius.circular(
                       widget.borderRadius ?? AppSpacing.radiusSm),
                 ),

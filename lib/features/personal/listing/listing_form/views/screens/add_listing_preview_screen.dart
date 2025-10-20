@@ -29,7 +29,7 @@ class _AddListingPreviewScreenState extends State<AddListingPreviewScreen> {
         ),
         body: Consumer<AddListingFormProvider>(
           builder: (BuildContext context, AddListingFormProvider provider, _) {
-            final PostEntity? previewPost = provider.createPostFromFormData();
+            final PostEntity? previewPost = provider.post;
             if (previewPost == null) {
               return Center(
                 child: Column(

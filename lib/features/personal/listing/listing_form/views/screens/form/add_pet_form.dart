@@ -32,7 +32,7 @@ class _AddPetFormState extends State<AddPetForm> {
           key: formPro.petKey,
           child: SingleChildScrollView(
             child: Column(
-              spacing: AppSpacing.vXs,
+              spacing: AppSpacing.vSm,
               children: <Widget>[
                 const AddListingBasicInfoSection(),
                 const AddListingPetAgeLeaveWidget(),

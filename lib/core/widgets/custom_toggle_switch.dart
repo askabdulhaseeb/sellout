@@ -89,7 +89,7 @@ class CustomToggleSwitch<T> extends StatelessWidget {
         horizontal: horizontalMargin,
       ),
       child: Row(
-        spacing: AppSpacing.hXs,
+        spacing: AppSpacing.hSm,
         children: List.generate(labels.length, (int index) {
           final T labelValue = labels[index];
           final bool isSelected = labelValue == initialValue;
@@ -164,21 +164,18 @@ class _ToggleButton<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme scheme = ColorScheme.of(context);
-
     // 🔹 Background color logic
     final Color bgColor = isSelected
         ? (solidbgColor
             ? color // full solid
             : color.withValues(alpha: isShaded ? 0.1 : 0))
         : scheme.outline.withValues(alpha: isShaded ? 0.1 : 0);
-
     // 🔹 Text color logic
     final Color textColor = isSelected
         ? (solidbgColor
             ? Colors.white // ensure visibility
             : color)
-        : unselectedTextColor ?? scheme.outline;
-
+        : unselectedTextColor ?? scheme.onSurface.withValues(alpha: 0.5);
     return InkWell(
       borderRadius: borderRadius,
       onTap: readOnly ? null : onTap,
@@ -193,9 +190,7 @@ class _ToggleButton<T> extends StatelessWidget {
           color: bgColor,
           border: Border.all(
             width: borderWidth,
-            color: isSelected
-                ? color
-                : unselectedBorderColor ?? scheme.outlineVariant,
+            color: isSelected ? color : unselectedBorderColor ?? scheme.outline,
           ),
         ),
         child: Center(
@@ -205,7 +200,7 @@ class _ToggleButton<T> extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w400,
                 color: textColor,
               ),
             ),

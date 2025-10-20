@@ -19,7 +19,7 @@ class DeliveryCollectionLocationWidget extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.hSm,
-            vertical: AppSpacing.vXs,
+            vertical: AppSpacing.vSm,
           ),
           child: NominationLocationField(
             hint: 'collection_location'.tr(),

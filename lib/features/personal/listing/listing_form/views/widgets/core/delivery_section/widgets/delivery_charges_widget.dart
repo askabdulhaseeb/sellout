@@ -5,8 +5,7 @@ import '../enums/delivery_payer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../../../../core/widgets/custom_toggle_switch.dart';
-import '../../../../../../../../../../core/widgets/shadow_container.dart';
-import 'package_details_card.dart';
+import 'package_detail_card/package_details_card.dart';
 
 class DeliveryChargesWidget extends StatelessWidget {
   const DeliveryChargesWidget({super.key});
@@ -16,6 +15,8 @@ class DeliveryChargesWidget extends StatelessWidget {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: AppSpacing.vMd,
           children: <Widget>[
             DeliveryPayerToggle(
               selectedPayer: formPro.deliveryPayer,
@@ -41,26 +42,23 @@ class DeliveryPayerToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-
-    return ShadowContainer(
-      margin: const EdgeInsets.symmetric(vertical: AppSpacing.vXs),
-      padding: const EdgeInsets.all(AppSpacing.xs),
-      child: CustomToggleSwitch<DeliveryPayer>(
-        solidbgColor: true,
-        initialValue: selectedPayer,
-        isShaded: false,
-        unseletedBorderColor: Colors.transparent,
-        unseletedTextColor: colorScheme.outline,
-        labels: const <DeliveryPayer>[
-          DeliveryPayer.buyerPays,
-          DeliveryPayer.sellerPays,
-        ],
-        labelStrs:
-            DeliveryPayer.values.map((DeliveryPayer e) => e.code.tr()).toList(),
-        labelText: '',
-        onToggle: onPayerChanged,
-      ),
+    return Column(
+      children: [
+        CustomToggleSwitch<DeliveryPayer>(
+          containerHeight: 48,
+          initialValue: selectedPayer,
+          isShaded: false,
+          labels: const <DeliveryPayer>[
+            DeliveryPayer.buyerPays,
+            DeliveryPayer.sellerPays,
+          ],
+          labelStrs: DeliveryPayer.values
+              .map((DeliveryPayer e) => e.code.tr())
+              .toList(),
+          labelText: 'who_pays'.tr(),
+          onToggle: onPayerChanged,
+        ),
+      ],
     );
   }
 }

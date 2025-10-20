@@ -45,7 +45,7 @@ class StartSellingList extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: Theme.of(context).colorScheme.outlineVariant,
+                    color: Theme.of(context).colorScheme.outline,
                   ),
                 ),
                 child: Row(
@@ -56,7 +56,7 @@ class StartSellingList extends StatelessWidget {
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
-                        color: Theme.of(context).dividerColor,
+                        color: Theme.of(context).colorScheme.outlineVariant,
                       ),
                       child: Image.asset(
                         type.icon,
@@ -65,7 +65,7 @@ class StartSellingList extends StatelessWidget {
                     const SizedBox(width: 16),
                     Text(
                       type.code.tr(), // show translated text
-                      style: const TextStyle(fontWeight: FontWeight.w500),
+                      style: const TextStyle(fontWeight: FontWeight.w400),
                     ),
                   ],
                 ),

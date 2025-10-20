@@ -241,7 +241,12 @@ class AddListingFormProvider extends ChangeNotifier
   }
 
   Future<void> submit(BuildContext context) async {
-    if (!await _validateForm(context)) return;
+    // Validate the form
+    final (bool isValid, String? error) = await validateForm(context);
+    if (!isValid) {
+      AppSnackBar.error(context, error ?? 'validation_error'.tr());
+      return;
+    }
 
     setLoading(true);
     try {
@@ -269,7 +274,7 @@ class AddListingFormProvider extends ChangeNotifier
       }
     } catch (e, st) {
       AppLog.error('Error during submission: $e\n$st');
-      // TODO: show user friendly error (snackbar/dialog) if desired
+      AppSnackBar.error(context, 'submission_error'.tr());
     } finally {
       setLoading(false);
     }
@@ -327,56 +332,72 @@ class AddListingFormProvider extends ChangeNotifier
     return newVideos + oldVideos;
   }
 
-  /// Validates basic form requirements (attachments, category, title)
-  /// Shows snackbar for the first validation error found
-  /// Does NOT validate form-specific fields (use validateFormState for that)
-  bool validateBasicForm(BuildContext context) {
-    if (!hasAtLeastOnePhoto) {
-      AppLog.error('At least one photo is required');
-      AppSnackBar.error(
-          context, 'please_add_at_least_one_photo_and_video'.tr());
-      return false;
+  /// Single validation function that checks all aspects of the form
+  /// Returns a tuple (bool, String?) where bool indicates validity and String contains any error message
+  Future<(bool, String?)> validateForm(BuildContext context) async {
+    // 1. Basic validation
+    if (title.text.trim().isEmpty) {
+      return (false, 'title_required'.tr());
     }
 
-    if (!hasAtLeastOneVideo) {
-      AppLog.error('At least one video is required');
-      AppSnackBar.error(
-          context, 'please_add_at_least_one_photo_and_video'.tr());
-      return false;
+    if (description.text.trim().isEmpty) {
+      return (false, 'description_required'.tr());
     }
 
     if (selectedCategory == null) {
-      AppSnackBar.error(context, 'choose_category'.tr());
-      return false;
+      return (false, 'choose_category'.tr());
     }
 
-    return true;
-  }
+    // 2. Attachments validation
+    if (!hasAtLeastOnePhoto) {
+      return (false, 'please_add_at_least_one_photo'.tr());
+    }
 
-  /// Validates form-specific fields based on listing type
-  bool validateFormState() {
+    if (!hasAtLeastOneVideo) {
+      return (false, 'please_add_at_least_one_video'.tr());
+    }
+
+    // 3. Price and quantity validation
+    if (double.tryParse(price.text) == null || double.parse(price.text) <= 0) {
+      return (false, 'invalid_price'.tr());
+    }
+
+    if (int.tryParse(quantity.text) == null || int.parse(quantity.text) <= 0) {
+      return (false, 'invalid_quantity'.tr());
+    }
+
+    // 4. Type-specific validation
+    bool isValid = false;
+    String? typeError;
+
     switch (listingType) {
       case ListingType.vehicle:
-        return vehicleKey.currentState?.validate() ?? false;
+        isValid = vehicleKey.currentState?.validate() ?? false;
+        typeError = !isValid ? 'invalid_vehicle_details'.tr() : null;
+        break;
       case ListingType.clothAndFoot:
-        return clothesAndFootKey.currentState?.validate() ?? false;
+        isValid = clothesAndFootKey.currentState?.validate() ?? false;
+        typeError = !isValid ? 'invalid_clothing_details'.tr() : null;
+        break;
       case ListingType.property:
-        return propertyKey.currentState?.validate() ?? false;
+        isValid = propertyKey.currentState?.validate() ?? false;
+        typeError = !isValid ? 'invalid_property_details'.tr() : null;
+        break;
       case ListingType.pets:
-        return petKey.currentState?.validate() ?? false;
+        isValid = petKey.currentState?.validate() ?? false;
+        typeError = !isValid ? 'invalid_pet_details'.tr() : null;
+        break;
       default:
-        return itemKey.currentState?.validate() ?? false;
+        isValid = itemKey.currentState?.validate() ?? false;
+        typeError = !isValid ? 'invalid_item_details'.tr() : null;
     }
-  }
 
-  Future<bool> _validateForm(BuildContext context) async {
-    // Validate basic requirements first
-    if (!validateBasicForm(context)) return false;
+    if (!isValid) {
+      return (false, typeError);
+    }
 
-    // Then validate form-specific fields
-    if (!validateFormState()) return false;
-
-    return true;
+    // All validations passed
+    return (true, null);
   }
 
   // Submission methods
@@ -597,6 +618,7 @@ class AddListingFormProvider extends ChangeNotifier
       MaterialPageRoute<List<PickedAttachment>>(builder: (_) {
         return PickableAttachmentScreen(
           option: PickableAttachmentOption(
+            maxVideoDuration: const Duration(minutes: 5),
             maxAttachments: maxAttachments,
             allowMultiple: true,
             type: type,
@@ -719,41 +741,32 @@ class AddListingFormProvider extends ChangeNotifier
     notifyListeners();
   }
 
-  /// Creates a temporary PostEntity from current form data for preview purposes
-  /// For new listings: Creates dummy PostEntity with form data
-  /// For editing: Returns existing PostEntity
-  PostEntity? createPostFromFormData() {
+  /// Unified preview function that validates and returns all preview data
+  /// Returns a tuple (bool, Map<String, dynamic>?) where bool indicates if preview is available
+  /// and Map contains the preview data if valid
+  Future<(bool, Map<String, dynamic>?)> getPreview(BuildContext context) async {
+    // First validate the form
+    final (bool isValid, String? _) = await validateForm(context);
+    if (!isValid) {
+      return (false, null);
+    }
+
+    // If editing an existing post, return its data with any updates
+    if (_post != null) {
+      return (
+        true,
+        {
+          'post': _post,
+          'attachments': getPreviewAttachments(),
+          'is_editing': true,
+          ...getBasicPreviewData()
+        }
+      );
+    }
+
+    // For new posts, create a preview entity
     try {
-      // Same validation as submit function
-      if (!hasAtLeastOnePhoto) {
-        AppLog.info(
-            'Preview validation failed: At least one photo is required');
-        return null;
-      }
-
-      if (!hasAtLeastOneVideo) {
-        AppLog.info(
-            'Preview validation failed: At least one video is required');
-        return null;
-      }
-
-      if (selectedCategory == null) {
-        AppLog.info('Preview validation failed: Category not selected');
-        return null;
-      }
-
-      if (title.text.isEmpty) {
-        AppLog.info('Preview validation failed: Title is empty');
-        return null;
-      }
-
-      // If editing an existing post, use that and show updated attachments
-      if (_post != null) {
-        return _post;
-      }
-
-      // For new post preview, create a dummy PostEntity with form data
-      final PostEntity dummyPost = PostEntity(
+      final PostEntity previewPost = PostEntity(
         listID: 'preview_list_${DateTime.now().millisecondsSinceEpoch}',
         postID: 'preview_${DateTime.now().millisecondsSinceEpoch}',
         businessID: null,
@@ -770,40 +783,43 @@ class AddListingFormProvider extends ChangeNotifier
         condition: condition,
         listOfReviews: <double>[],
         categoryType: selectedCategory?.title ?? 'General',
-        //
         currentLongitude: LocalAuth.latlng.longitude,
         currentLatitude: LocalAuth.latlng.latitude,
         collectionLatitude: selectedCollectionLocation?.latitude,
         collectionLongitude: selectedCollectionLocation?.longitude,
         collectionLocation: selectedCollectionLocation,
         meetUpLocation: selectedMeetupLocation,
-        //delivery
         deliveryType: deliveryType,
         localDelivery: 1,
         internationalDelivery: null,
-        //
         availability: availability.isNotEmpty ? availability : null,
-        //
-        fileUrls: <AttachmentEntity>[],
-        //
+        fileUrls: getPreviewAttachments(),
         hasDiscount: isDiscounted,
         discounts: discounts,
-        //
-        clothFootInfo: PostClothFootEntity(
-          sizeColors: <SizeColorEntity>[],
-          sizeChartUrl: null,
-          brand: brand,
-        ),
-        propertyInfo: null,
-        petInfo: null,
-        vehicleInfo: null,
-        packageDetail: PackageDetailEntity(
-          length: 0.0,
-          width: 0.0,
-          height: 0.0,
-          weight: 0.0,
-        ),
-        //
+        clothFootInfo: listingType == ListingType.clothAndFoot
+            ? PostClothFootEntity(
+                sizeColors: <SizeColorEntity>[],
+                sizeChartUrl: null,
+                brand: brand,
+              )
+            : PostClothFootEntity(
+                sizeColors: <SizeColorEntity>[],
+                sizeChartUrl: null,
+                brand: null,
+              ), // Not null but empty for non-cloth listings
+        propertyInfo: null, // Set based on listing type if needed
+        petInfo: null, // Set based on listing type if needed
+        vehicleInfo: null, // Set based on listing type if needed
+        packageDetail: deliveryType == DeliveryType.paid ||
+                deliveryType == DeliveryType.freeDelivery
+            ? PackageDetailEntity(
+                length: double.tryParse(packageLength.text) ?? 0.0,
+                width: double.tryParse(packageWidth.text) ?? 0.0,
+                height: double.tryParse(packageHeight.text) ?? 0.0,
+                weight: double.tryParse(packageWeight.text) ?? 0.0,
+              )
+            : PackageDetailEntity(
+                length: 0.0, width: 0.0, height: 0.0, weight: 0.0),
         isActive: true,
         createdBy: LocalAuth.uid ?? 'current_user',
         updatedBy: LocalAuth.uid ?? 'current_user',
@@ -812,26 +828,41 @@ class AddListingFormProvider extends ChangeNotifier
         accessCode: accessCode,
       );
 
-      AppLog.info('Preview: Created dummy post for new listing preview');
-      return dummyPost;
+      return (
+        true,
+        {
+          'post': previewPost,
+          'attachments': getPreviewAttachments(),
+          'is_editing': false,
+          ...getBasicPreviewData()
+        }
+      );
     } catch (e, st) {
-      AppLog.error('Error creating preview post: $e\n$st');
-      return null;
+      AppLog.error('Error creating preview data: $e\n$st');
+      return (false, null);
     }
   }
 
   /// Gets preview attachments combining new and old ones
   List<AttachmentEntity> getPreviewAttachments() {
-    return <AttachmentEntity>[
-      // Existing attachments from post
+    final List<AttachmentEntity> allAttachments = <AttachmentEntity>[
       if (_post?.fileUrls != null) ..._post!.fileUrls,
-      // New attachments (as placeholder since they're not uploaded yet)
-      // These won't have URLs until uploaded
+      ..._attachments.map((PickedAttachment attachment) {
+        // Create temporary AttachmentEntity for preview
+        return AttachmentEntity(
+          createdAt: DateTime.now(),
+          type: attachment.type,
+          url: '', // Will be empty until uploaded
+          originalName: attachment.file.path.split('/').last,
+          fileId: 'preview_${DateTime.now().millisecondsSinceEpoch}',
+        );
+      })
     ];
+    return allAttachments;
   }
 
   /// Gets basic preview data as a map for UI display
-  Map<String, dynamic> getPreviewData() {
+  Map<String, dynamic> getBasicPreviewData() {
     return <String, dynamic>{
       'title': title.text,
       'description': description.text,
@@ -839,7 +870,12 @@ class AddListingFormProvider extends ChangeNotifier
       'quantity': quantity.text,
       'category': selectedCategory,
       'condition': condition,
-      'attachment_count': _attachments.length,
+      'privacy': privacy,
+      'delivery_type': deliveryType,
+      'accepts_offers': acceptOffer,
+      'min_offer_amount': minimumOffer.text,
+      'listing_type': listingType,
+      'attachment_count': _attachments.length + (_post?.fileUrls.length ?? 0),
       'has_new_attachments': _attachments.isNotEmpty,
     };
   }

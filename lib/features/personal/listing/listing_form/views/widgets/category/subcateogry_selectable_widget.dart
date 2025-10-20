@@ -16,7 +16,7 @@ class SubCategorySelectableWidget<T extends ChangeNotifier>
     required this.onSelected,
     this.cid,
     this.title = true,
-    this.hint = 'category',
+    this.hint = 'select_category',
     this.listenProvider,
     super.key,
   });
@@ -162,11 +162,11 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        if (widget.title)
-          Text(
-            'category'.tr(),
-            style: const TextStyle(fontWeight: FontWeight.w500),
-          ),
+        // if (widget.title)
+        //   Text(
+        //     'category'.tr(),
+        //     style: const TextStyle(fontWeight: FontWeight.w500),
+        //   ),
         InkWell(
           onTap: () => _handleCategorySelection(subCategories, context),
           borderRadius: BorderRadius.circular(10),
@@ -177,7 +177,7 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
             margin: const EdgeInsets.symmetric(vertical: 4),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: ColorScheme.of(context).outlineVariant),
+              border: Border.all(color: ColorScheme.of(context).outline),
             ),
             child: Row(
               children: <Widget>[
@@ -186,10 +186,10 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
                     selectedSubCategory?.title ?? widget.hint.tr(),
                     overflow: TextOverflow.ellipsis,
                     style: selectedSubCategory == null
-                        ? Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.copyWith(color: ColorScheme.of(context).outline)
+                        ? Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: ColorScheme.of(context)
+                                .onSurface
+                                .withValues(alpha: 0.6))
                         : Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),

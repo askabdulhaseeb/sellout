@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../core/widgets/in_dev_mode.dart';
 import '../../providers/add_listing_form_provider.dart';
-import '../../screens/add_listing_preview_screen.dart';
 
 class AddListingPostButtonWidget extends StatelessWidget {
   const AddListingPostButtonWidget({super.key});
@@ -35,17 +34,7 @@ class AddListingPostButtonWidget extends StatelessWidget {
               isLoading: formPro.isLoading,
               onTap: () async {
                 // Validate using the same method as submit (avoids redundancy)
-                if (!formPro.validateBasicForm(context)) {
-                  return;
-                }
-
-                if (!context.mounted) return;
-                Navigator.push(
-                    context,
-                    MaterialPageRoute<AddListingPreviewScreen>(
-                      builder: (BuildContext context) =>
-                          const AddListingPreviewScreen(),
-                    ));
+                formPro.getPreview(context);
               }),
           InDevMode(
             child: CustomElevatedButton(

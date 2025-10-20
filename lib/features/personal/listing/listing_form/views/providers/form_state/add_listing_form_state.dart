@@ -4,6 +4,7 @@ import '../../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../core/enums/listing/core/privacy_type.dart';
+import '../../../../../../../core/enums/listing/property/tenure_type.dart';
 import '../../../../../location/domain/entities/location_entity.dart';
 import '../../../../../post/domain/entities/discount_entity.dart';
 import '../../../../../post/domain/entities/size_color/size_color_entity.dart';
@@ -48,7 +49,7 @@ class AddListingFormState {
   ConditionType condition = ConditionType.newC;
   PrivacyType privacy = PrivacyType.public;
   DeliveryType deliveryType = DeliveryType.paid;
-  DeliveryPayer deliveryPayer = DeliveryPayer.sellerPays;
+  DeliveryPayer deliveryPayer = DeliveryPayer.buyerPays;
 
   bool isDiscounted = false;
   bool acceptOffer = true;
@@ -80,7 +81,7 @@ class AddListingFormState {
   bool hasGarden = true;
   bool hasParking = true;
   bool isAnimalFriendly = true;
-  String tenureType = 'freehold';
+  TenureType tenureType = TenureType.freehold;
   String? propertyType;
   String? energyRating;
   String? propertySubCategory;
@@ -187,7 +188,7 @@ class AddListingFormState {
     hasGarden = true;
     hasParking = true;
     isAnimalFriendly = true;
-    tenureType = 'freehold';
+    tenureType = TenureType.freehold;
     propertyType = null;
     energyRating = null;
     propertySubCategory = _getDefaultCategory(ListingType.property);

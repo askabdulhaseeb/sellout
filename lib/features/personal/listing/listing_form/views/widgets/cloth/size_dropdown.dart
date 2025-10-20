@@ -28,9 +28,7 @@ class SizeDropdown extends StatelessWidget {
     final List<DropdownOptionEntity> footSizes =
         LocalCategoriesSource.footSizes ?? <DropdownOptionEntity>[];
     final List<DropdownOptionEntity> sizeOptions =
-        formPro.selectedClothSubCategory == 'clothes'
-            ? clothesSizes
-            : footSizes;
+        formPro.selectedClothSubType == 'clothes' ? clothesSizes : footSizes;
 
     // use the helper to find the selected item
     final DropdownOptionEntity? selectedEntity =

@@ -32,7 +32,7 @@ class _AddPropertyFormState extends State<AddPropertyForm> {
           key: formPro.propertyKey,
           child: SingleChildScrollView(
             child: Column(
-              spacing: AppSpacing.vXs,
+              spacing: AppSpacing.vSm,
               children: <Widget>[
                 const AddListingBasicInfoSection(),
                 const AddListingPropertyBedBathWidget(),

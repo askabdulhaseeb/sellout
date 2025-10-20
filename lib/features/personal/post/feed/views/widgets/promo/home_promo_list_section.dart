@@ -41,13 +41,6 @@ class _HomePromoListSectionState extends State<HomePromoListSection> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Text(
-                'promos'.tr(),
-                style: TextTheme.of(context)
-                    .bodyLarge
-                    ?.copyWith(fontWeight: FontWeight.w600),
-              ),
-              const Spacer(),
               if (!showMore && !isLoading)
                 GestureDetector(
                   onTap: () => Navigator.push(

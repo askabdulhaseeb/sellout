@@ -21,7 +21,7 @@ class AddListingAttachmentSelectionWidget extends StatelessWidget {
         ];
         final bool hasAttachments = allAttachments.isNotEmpty;
         return Column(
-          spacing: AppSpacing.vXs,
+          spacing: AppSpacing.vMd,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             const AddListingAttachmentSelectionButton(),
@@ -51,25 +51,24 @@ class _EmptyAttachmentPlaceholder extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(AppSpacing.lg),
         decoration: BoxDecoration(
-          border:
-              Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+          border: Border.all(color: Theme.of(context).colorScheme.outline),
           borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
         ),
         child: Column(
-          spacing: AppSpacing.vMd,
+          spacing: AppSpacing.vSm,
           children: <Widget>[
             Text(
               'no_item_selected'.tr(),
               style: Theme.of(context)
                   .textTheme
-                  .titleMedium
-                  ?.copyWith(fontWeight: FontWeight.bold),
+                  .bodyMedium
+                  ?.copyWith(fontWeight: FontWeight.w500),
             ),
             Opacity(
               opacity: 0.6,
               child: Text(
                 '${'photos'.tr()}: ${formPro.attachments.length}/${formPro.listingType?.noOfPhotos}, '
-                '${'videos'.tr()}: 0/1 '
+                '${'videos'.tr()}: 0/1 \n'
                 '${'choose_main_photo_video_to_best_showcase'.tr()}',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodySmall,

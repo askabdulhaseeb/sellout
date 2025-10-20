@@ -37,7 +37,7 @@ class _AddClothsAndFootwearFormState extends State<AddClothsAndFootwearForm> {
           key: formPro.clothesAndFootKey,
           child: SingleChildScrollView(
             child: Column(
-              spacing: AppSpacing.vXs,
+              spacing: AppSpacing.vSm,
               children: <Widget>[
                 const AddListingBasicInfoSection(),
                 const AddListingClothSubcatSelectionSection(),
@@ -45,7 +45,7 @@ class _AddClothsAndFootwearFormState extends State<AddClothsAndFootwearForm> {
                   listType: formPro.listingType,
                   subCategory: formPro.selectedCategory,
                   onSelected: formPro.setSelectedCategory,
-                  cid: formPro.selectedClothSubCategory,
+                  cid: formPro.selectedClothSubType,
                 ),
                 const AddListingSizeColorWidget(),
                 const AddListingBrandField(),

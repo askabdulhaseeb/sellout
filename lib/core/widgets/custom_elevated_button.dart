@@ -18,7 +18,7 @@ class CustomElevatedButton extends StatelessWidget {
     this.textStyle,
     this.textColor,
     this.prefixSuffixPadding,
-    this.fontWeight = FontWeight.w500,
+    this.fontWeight = FontWeight.w400,
     super.key,
   });
 
@@ -68,7 +68,9 @@ class CustomElevatedButton extends StatelessWidget {
                 borderRadius: borderRadius ?? BorderRadius.circular(8),
                 onTap: isDisable ? null : onTap,
                 child: Padding(
-                  padding: padding ?? const EdgeInsets.symmetric(vertical: 10),
+                  padding: padding ??
+                      const EdgeInsets.symmetric(
+                          vertical: 6), //zubair's recommended design
                   child: Row(
                     mainAxisAlignment: rowAlignment ?? MainAxisAlignment.center,
                     children: <Widget>[

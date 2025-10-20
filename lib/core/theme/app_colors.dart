@@ -21,8 +21,8 @@ class AppColors {
   static const Color subtitleDark = Color(0xFF9C9C9C);
 
   // ===== Outline / Borders =====
-  static const Color outline = Color(0xFF777777);
-  static const Color outlineVariant = Color(0xFFE1E1E1);
+  static const Color outline = Color(0xFFE1E1E1);
+  static const Color outlineVariant = Color(0xFFF7F7F7);
   static const Color dividerColor = Color(0xFFE1E1E1);
 
   // ===== States =====

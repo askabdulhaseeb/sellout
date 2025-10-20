@@ -21,7 +21,7 @@ class AddListingClothSubcatSelectionSection extends StatelessWidget {
         labels: subCategories,
         labelStrs: subCategories.map((String e) => e.tr()).toList(),
         labelText: 'please_select'.tr(),
-        initialValue: addPro.selectedClothSubCategory,
+        initialValue: addPro.selectedClothSubType,
         onToggle: addPro.setSelectedClothSubCategory,
       );
     });
