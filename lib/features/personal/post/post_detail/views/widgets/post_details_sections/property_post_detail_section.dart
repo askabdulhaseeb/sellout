@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../domain/entities/post/post_entity.dart';
 import '../../../../feed/views/widgets/post/widgets/section/buttons/home_post_button_section.dart';
-import '../post_detail_attachment_slider.dart';
 import '../post_detail_condition_delivery_detail.dart';
 import '../post_detail_description_section.dart';
 import '../post_detail_location_preview.dart';
@@ -26,8 +25,7 @@ class PropertyPostDetailSection extends StatelessWidget {
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          PostDetailAttachmentSlider(attachments: post.fileUrls),
+        children: <Widget>[
           PostDetailTitleAmountSection(post: post),
           ConditionDeliveryWidget(post: post),
 

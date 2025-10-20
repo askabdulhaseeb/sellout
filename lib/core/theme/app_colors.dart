@@ -25,6 +25,11 @@ class AppColors {
   static const Color outlineVariant = Color(0xFFF7F7F7);
   static const Color dividerColor = Color(0xFFE1E1E1);
 
+  // Dark mode outlines (use translucent white to sit on dark surfaces)
+  // Outline: ~24% white, OutlineVariant: ~10% white
+  static const Color darkOutline = Color(0x3DFFFFFF);
+  static const Color darkOutlineVariant = Color(0x1AFFFFFF);
+
   // ===== States =====
   static const Color success = Color(0xFF4CAF50);
   static const Color warning = Color(0xFFFFC107);
@@ -38,5 +43,5 @@ class AppColors {
 
   // ===== Light Variants =====
   static const Color myLightPrimaryColor = Color(0xFFFCF3F3);
-  static Color lightPrimary = primaryColor.withOpacity(0.05);
+  static Color lightPrimary = primaryColor.withValues(alpha: 0.05);
 }

@@ -16,15 +16,15 @@ class AddListingUpdateButtons extends StatelessWidget {
     return Row(
       spacing: 6,
       children: <Widget>[
-        Expanded(
-          child: CustomElevatedButton(
-              bgColor: ColorScheme.of(context).surface,
-              border: Border.all(color: ColorScheme.of(context).onSurface),
-              title: 'delete'.tr(),
-              textColor: ColorScheme.of(context).onSurface,
-              isLoading: formPro.isLoading,
-              onTap: () {}),
-        ),
+        // Expanded(
+        //   child: CustomElevatedButton(
+        //       bgColor: ColorScheme.of(context).surface,
+        //       border: Border.all(color: ColorScheme.of(context).onSurface),
+        //       title: 'delete'.tr(),
+        //       textColor: ColorScheme.of(context).onSurface,
+        //       isLoading: formPro.isLoading,
+        //       onTap: () {}),
+        // ),
         Expanded(
           child: CustomElevatedButton(
               title: 'update'.tr(),

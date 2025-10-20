@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -28,7 +29,8 @@ class _VideoWidgetState extends State<VideoWidget> {
   VideoPlayerController? _controller;
   bool _initialized = false;
   bool _hasError = false;
-  bool _ended = false; // 👈 track if ended
+  bool _ended = false;
+  File? _tempMemoryFile;
 
   @override
   void initState() {
@@ -38,22 +40,60 @@ class _VideoWidgetState extends State<VideoWidget> {
 
   Future<void> _initVideo() async {
     try {
-      if ((widget.videoSource is Uri &&
-              (widget.videoSource as Uri).isScheme('http')) ||
-          (widget.videoSource is String &&
-              (widget.videoSource as String).startsWith('http'))) {
-        final uri = widget.videoSource is Uri
-            ? widget.videoSource
-            : Uri.parse(widget.videoSource);
-        _controller = VideoPlayerController.networkUrl(uri);
-      } else if (widget.videoSource is Uri &&
-          (widget.videoSource as Uri).isScheme('file')) {
-        final Uri uri = widget.videoSource as Uri;
-        _controller = VideoPlayerController.file(File(uri.toFilePath()));
-      } else if (widget.videoSource is String) {
-        _controller = VideoPlayerController.file(File(widget.videoSource));
+      final dynamic src = widget.videoSource;
+
+      // 1) Uri input
+      if (src is Uri) {
+        final String scheme = src.scheme.toLowerCase();
+        if (scheme == 'http' || scheme == 'https') {
+          _controller = VideoPlayerController.networkUrl(src);
+        } else if (scheme == 'file') {
+          _controller = VideoPlayerController.file(File(src.toFilePath()));
+        } else if (scheme == 'content') {
+          // Best-effort: try contentUri when available; fallback by reading to temp file
+          try {
+            // Some platforms support contentUri directly
+            // ignore: deprecated_member_use
+            _controller = VideoPlayerController.contentUri(src);
+          } catch (_) {
+            // Fallback: not supported -> fail fast
+            throw Exception('Unsupported content URI: $src');
+          }
+        } else {
+          throw Exception('Unsupported URI scheme: $scheme');
+        }
+
+        // 2) Network via String
+      } else if (src is String &&
+          (src.startsWith('http://') || src.startsWith('https://'))) {
+        _controller = VideoPlayerController.networkUrl(Uri.parse(src));
+
+        // 3) Local file path via String
+      } else if (src is String && File(src).existsSync()) {
+        _controller = VideoPlayerController.file(File(src));
+
+        // 4) Asset path via String (e.g. assets/videos/foo.mp4)
+      } else if (src is String) {
+        _controller = VideoPlayerController.asset(src);
+
+        // 5) Direct File
+      } else if (src is File) {
+        _controller = VideoPlayerController.file(src);
+
+        // 6) Memory bytes (Uint8List) -> write to temp file then play
+      } else if (src is Uint8List) {
+        if (src.isEmpty) {
+          throw Exception('Empty video bytes');
+        }
+        final String tmpPath =
+            '${Directory.systemTemp.path}${Platform.pathSeparator}vid_${DateTime.now().millisecondsSinceEpoch}.mp4';
+        final File f = File(tmpPath);
+        await f.writeAsBytes(src, flush: true);
+        _tempMemoryFile = f;
+        _controller = VideoPlayerController.file(f);
       } else {
-        throw Exception('Unsupported source type: ${widget.videoSource}');
+        throw Exception(
+            'Unsupported source type: ${widget.videoSource.runtimeType}');
       }
 
       await _controller!.initialize();
@@ -84,6 +124,13 @@ class _VideoWidgetState extends State<VideoWidget> {
   @override
   void dispose() {
     _controller?.dispose();
+    // Clean temp file if created for memory source
+    if (_tempMemoryFile != null) {
+      // best-effort cleanup
+      try {
+        _tempMemoryFile!.deleteSync();
+      } catch (_) {}
+    }
     super.dispose();
   }
 
@@ -107,70 +154,104 @@ class _VideoWidgetState extends State<VideoWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (_hasError) {
-      return const Center(child: Icon(Icons.error, color: Colors.red));
-    }
-    if (!_initialized) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    final double aspectRatio = widget.square
+    // Safe aspect ratio computation without touching controller before init
+    final double safeAspectRatio = widget.square
         ? 1.0
-        : (_controller!.value.aspectRatio == 0
-            ? 16 / 9
-            : _controller!.value.aspectRatio);
+        : (_initialized &&
+                _controller != null &&
+                _controller!.value.aspectRatio > 0
+            ? _controller!.value.aspectRatio
+            : 16 / 9);
 
-    final Duration position = _controller!.value.position;
-    final Duration duration = _controller!.value.duration;
+    // Build a consistent layout wrapper so UI doesn't jump
+    return AspectRatio(
+      aspectRatio: safeAspectRatio,
+      child: Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          // 1) Error placeholder
+          if (_hasError)
+            _buildPlaceholder(
+              icon: Icons.videocam_off,
+              message: 'Video unavailable',
+            )
+          // 2) Loading placeholder
+          else if (!_initialized)
+            _buildPlaceholder(loading: true)
+          // 3) Actual video
+          else
+            VideoPlayer(_controller!),
 
-    return Stack(
-      alignment: Alignment.center,
-      children: <Widget>[
-        AspectRatio(
-          aspectRatio: aspectRatio,
-          child: VideoPlayer(_controller!),
-        ),
-
-        // Play / Pause overlay (tappable)
-        if (widget.play)
-          GestureDetector(
-            onTap: _togglePlayPause,
-            child: CircleAvatar(
-              backgroundColor: Colors.black54,
-              child: Icon(
-                _ended
-                    ? Icons.replay // if ended, show replay icon
-                    : _controller!.value.isPlaying
-                        ? Icons.pause
-                        : Icons.play_arrow,
-                color: Colors.white,
-              ),
-            ),
-          ),
-
-        // Timer bottom right
-        if (widget.showTime)
-          Positioned(
-            bottom: 4,
-            right: 4,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: Colors.black54,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                _controller!.value.isPlaying || _ended
-                    ? '${_format(position)} / ${_format(duration)}'
-                    : _format(duration),
-                style: TextStyle(
+          // Play / Pause overlay (only when initialized and not error)
+          if (!_hasError && _initialized && widget.play)
+            GestureDetector(
+              onTap: _togglePlayPause,
+              child: CircleAvatar(
+                backgroundColor: Colors.black54,
+                child: Icon(
+                  _ended
+                      ? Icons.replay
+                      : (_controller!.value.isPlaying
+                          ? Icons.pause
+                          : Icons.play_arrow),
                   color: Colors.white,
-                  fontSize: widget.durationFontSize,
                 ),
               ),
             ),
-          ),
-      ],
+
+          // Timer bottom right (only when initialized and not error)
+          if (!_hasError && _initialized && widget.showTime)
+            Positioned(
+              bottom: 4,
+              right: 4,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Builder(builder: (BuildContext context) {
+                  final Duration position = _controller!.value.position;
+                  final Duration duration = _controller!.value.duration;
+                  return Text(
+                    _controller!.value.isPlaying || _ended
+                        ? '${_format(position)} / ${_format(duration)}'
+                        : _format(duration),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: widget.durationFontSize,
+                    ),
+                  );
+                }),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPlaceholder({
+    bool loading = false,
+    IconData icon = Icons.videocam,
+    String message = 'Loading...',
+  }) {
+    return Container(
+      color: Colors.black12,
+      alignment: Alignment.center,
+      child: loading
+          ? const SizedBox(
+              width: 32, height: 32, child: CircularProgressIndicator())
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Icon(icon, size: 32, color: Colors.black45),
+                const SizedBox(height: 8),
+                Text(
+                  message,
+                  style: const TextStyle(color: Colors.black54),
+                ),
+              ],
+            ),
     );
   }
 }

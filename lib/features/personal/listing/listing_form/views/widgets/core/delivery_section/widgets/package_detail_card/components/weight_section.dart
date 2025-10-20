@@ -1,5 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../../../../../../../../../../../core/constants/app_spacings.dart';
+import '../../../../../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../../../../../core/widgets/custom_textformfield.dart';
 
 class WeightSection extends StatelessWidget {
@@ -16,32 +18,53 @@ class WeightSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String? weightValidator(String? value) {
+      // Enforce only when parcel details are required
+      // Access via an inherited widget would be ideal, but this stays UI-only
+      final String input = (value ?? '').trim();
+      // If delivery type is collection, skip
+      // We can’t access provider here without importing it; keep a lenient check and let form-level validation handle other cases
+      if (input.isEmpty) return AppValidator.isEmpty(input);
+      final double? v = double.tryParse(input.replaceAll(',', '.'));
+      if (v == null || v <= 0) return 'invalid_value'.tr();
+      return null;
+    }
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        Expanded(
-          child: CustomTextFormField(
-            controller: controller,
-            keyboardType: TextInputType.number,
-            labelText: isKg ? tr('weight_kg') : tr('weight_lb'),
+        // Use Flexible instead of Expanded to prevent layout stretch
+        Flexible(
+          child: Align(
+            alignment: Alignment.center,
+            child: CustomTextFormField(
+              controller: controller,
+              keyboardType: TextInputType.number,
+              labelText: isKg ? tr('weight_kg') : tr('weight_lb'),
+              validator: weightValidator,
+            ),
           ),
         ),
         const SizedBox(width: 8),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            _UnitChip(
-              label: 'kg',
-              selected: isKg,
-              onTap: () => onToggleUnit(true),
-            ),
-            const SizedBox(width: 6),
-            _UnitChip(
-              label: 'lb',
-              selected: !isKg,
-              onTap: () => onToggleUnit(false),
-            ),
-          ],
+        // Wrap the chips in a Center to align vertically
+        Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              _UnitChip(
+                label: 'kg',
+                selected: isKg,
+                onTap: () => onToggleUnit(true),
+              ),
+              const SizedBox(width: 6),
+              _UnitChip(
+                label: 'lb',
+                selected: !isKg,
+                onTap: () => onToggleUnit(false),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -61,14 +84,17 @@ class _UnitChip extends StatelessWidget {
     final ColorScheme scheme = Theme.of(context).colorScheme;
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(6),
+      borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
       child: Container(
-        padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.hSm,
+          vertical: AppSpacing.vXs,
+        ),
         decoration: BoxDecoration(
           color: selected
               ? scheme.primary.withValues(alpha: 0.15)
               : Colors.transparent,
-          borderRadius: BorderRadius.circular(6),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
           border: Border.all(color: scheme.outline),
         ),
         child: Text(

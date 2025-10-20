@@ -6,6 +6,7 @@ import '../../../../../../core/sources/data_state.dart';
 import '../../../data/sources/local/local_post.dart';
 import '../../../domain/entities/post/post_entity.dart';
 import '../providers/post_detail_provider.dart';
+import '../widgets/post_detail_attachment_slider.dart';
 import '../widgets/post_details_sections/cloth_foot_post_detail_section.dart';
 import '../widgets/post_details_sections/food_drink_post_Detail_section.dart';
 import '../widgets/post_details_sections/item_post_detail_section.dart';
@@ -51,31 +52,39 @@ class PostDetailScreen extends StatelessWidget {
         ) {
           final PostEntity? post =
               snapshot.data?.entity ?? LocalPost().post(postID);
-          return post == null
-              ? const SizedBox()
-              : post.listID == ListingType.items.json
-                  ? ItemPostDetailSection(
-                      post: post,
-                    )
-                  : post.listID == ListingType.clothAndFoot.json
-                      ? ClothFootPostDetailSection(
-                          post: post,
-                        )
-                      : post.listID == ListingType.foodAndDrink.json
-                          ? FoodDrinkPostDetailSection(post: post)
-                          : post.listID == ListingType.property.json
-                              ? PropertyPostDetailSection(
-                                  post: post,
-                                )
-                              : post.listID == ListingType.pets.json
-                                  ? PetsPostDetailSection(
-                                      post: post,
-                                    )
-                                  : post.listID == ListingType.vehicle.json
-                                      ? VehiclePostDetailSection(
-                                          post: post,
-                                        )
-                                      : const SizedBox.shrink();
+          if (post == null) {
+            return const SizedBox();
+          }
+
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                // Attachments slider (if any)
+                if ((post.fileUrls).isNotEmpty) ...<Widget>[
+                  PostDetailAttachmentSlider.remote(
+                    attachments: post.fileUrls,
+                  ),
+                  const SizedBox(height: 12),
+                ],
+
+                // Details section based on listing type
+                post.listID == ListingType.items.json
+                    ? ItemPostDetailSection(post: post)
+                    : post.listID == ListingType.clothAndFoot.json
+                        ? ClothFootPostDetailSection(post: post)
+                        : post.listID == ListingType.foodAndDrink.json
+                            ? FoodDrinkPostDetailSection(post: post)
+                            : post.listID == ListingType.property.json
+                                ? PropertyPostDetailSection(post: post)
+                                : post.listID == ListingType.pets.json
+                                    ? PetsPostDetailSection(post: post)
+                                    : post.listID == ListingType.vehicle.json
+                                        ? VehiclePostDetailSection(post: post)
+                                        : const SizedBox.shrink(),
+              ],
+            ),
+          );
         },
       ),
     );

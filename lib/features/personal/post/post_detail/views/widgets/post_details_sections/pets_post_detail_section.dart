@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../../../../../../core/functions/app_log.dart';
 import '../../../../domain/entities/post/post_entity.dart';
 import '../../../../feed/views/widgets/post/widgets/section/buttons/home_post_button_section.dart';
-import '../post_detail_attachment_slider.dart';
 import '../post_detail_condition_delivery_detail.dart';
 import '../post_detail_description_section.dart';
 import '../post_detail_seller_section.dart';
@@ -23,7 +22,6 @@ class PetsPostDetailSection extends StatelessWidget {
     AppLog.info('PostID: ${post.postID} ');
     return SingleChildScrollView(
       child: Column(children: <Widget>[
-        PostDetailAttachmentSlider(attachments: post.fileUrls),
         PostDetailTitleAmountSection(post: post),
         ConditionDeliveryWidget(post: post),
         PostButtonSection(

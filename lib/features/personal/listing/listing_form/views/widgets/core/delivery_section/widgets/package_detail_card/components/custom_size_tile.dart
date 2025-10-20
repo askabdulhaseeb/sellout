@@ -1,8 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../../../../../core/widgets/custom_textformfield.dart';
+import '../../../../../../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../providers/add_listing_form_provider.dart';
 
 class CustomSizeTile extends StatelessWidget {
@@ -64,6 +66,24 @@ class _PackageInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Access provider to know if parcel details are required
+    final AddListingFormProvider formPro =
+        Provider.of<AddListingFormProvider>(context, listen: false);
+
+    String? validator(String? value) {
+      // Only enforce when delivery requires parcel details
+      if (formPro.deliveryType != DeliveryType.paid &&
+          formPro.deliveryType != DeliveryType.freeDelivery) {
+        return null;
+      }
+      final String input = (value ?? '').trim();
+      if (input.isEmpty) return AppValidator.isEmpty(input);
+      // Support locales that use comma as decimal separator
+      final double? v = double.tryParse(input.replaceAll(',', '.'));
+      if (v == null || v <= 0) return 'invalid_value'.tr();
+      return null;
+    }
+
     return CustomTextFormField(
       suffixIcon: const Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -72,7 +92,7 @@ class _PackageInputField extends StatelessWidget {
       controller: controller,
       keyboardType: TextInputType.number,
       labelText: tr(labelKey),
-      validator: (String? value) => AppValidator.isEmpty(value),
+      validator: validator,
     );
   }
 }

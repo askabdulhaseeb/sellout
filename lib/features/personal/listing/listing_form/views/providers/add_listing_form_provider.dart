@@ -12,8 +12,6 @@ import '../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
-import '../../../../../attachment/domain/entities/picked_attachment_option.dart';
-import '../../../../../attachment/views/screens/pickable_attachment_screen.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../dashboard/views/screens/dashboard_screen.dart';
 import '../../../../location/domain/entities/location_entity.dart';
@@ -31,14 +29,17 @@ import '../../domain/usecase/add_listing_usecase.dart';
 import '../../domain/usecase/edit_listing_usecase.dart';
 import '../params/add_listing_param.dart';
 import '../screens/add_listing_form_screen.dart';
+import '../screens/add_listing_preview_screen.dart';
 import '../widgets/core/delivery_section/enums/delivery_payer.dart';
 import 'form_state/add_listing_form_state.dart';
 import 'managers/availability_manager.dart';
+import 'managers/attachment_manager.dart';
 import 'mixins/cloth_listing_mixin.dart';
 import 'mixins/food_listing_mixin.dart';
 import 'mixins/pet_listing_mixin.dart';
 import 'mixins/property_listing_mixin.dart';
 import 'mixins/vehicle_listing_mixin.dart';
+import '../../../../../../core/enums/listing/property/tenure_type.dart';
 
 class AddListingFormProvider extends ChangeNotifier
     with
@@ -58,7 +59,7 @@ class AddListingFormProvider extends ChangeNotifier
   final AddListingFormState _state = AddListingFormState();
   final AvailabilityManager _availabilityManager = AvailabilityManager();
 
-  List<PickedAttachment> _attachments = <PickedAttachment>[];
+  final AttachmentManager _attachmentManager = AttachmentManager();
   PostEntity? _post;
   final List<ListingEntity> _listings = <ListingEntity>[];
 
@@ -69,6 +70,21 @@ class AddListingFormProvider extends ChangeNotifier
   final GlobalKey<FormState> foodAndDrinkKey = GlobalKey<FormState>();
   final GlobalKey<FormState> propertyKey = GlobalKey<FormState>();
   final GlobalKey<FormState> petKey = GlobalKey<FormState>();
+  //
+  PackageDetailEntity? _buildPackageDetailOrNull() {
+    if (deliveryType == DeliveryType.paid ||
+        deliveryType == DeliveryType.freeDelivery) {
+      double parseNum(String s) =>
+          double.tryParse(s.trim().replaceAll(',', '.')) ?? 0.0;
+      return PackageDetailEntity(
+        length: parseNum(packageLength.text),
+        width: parseNum(packageWidth.text),
+        height: parseNum(packageHeight.text),
+        weight: parseNum(packageWeight.text),
+      );
+    }
+    return null;
+  }
 
   // Mixin state accessor
   @override
@@ -113,13 +129,12 @@ class AddListingFormProvider extends ChangeNotifier
   PostEntity? get post => _post;
   bool get isDiscounted => _state.isDiscounted;
   List<DiscountEntity> get discounts => _state.discounts;
-  LocationEntity? get selectedMeetupLocation => _state
-      .selectedMeetupLocation; // Fixed typo: selectedmeetupLocation -> selectedMeetupLocation
+  LocationEntity? get selectedMeetupLocation => _state.selectedMeetupLocation;
   LocationEntity? get selectedCollectionLocation =>
       _state.selectedCollectionLocation;
   LatLng? get meetupLatLng => _state.meetupLatLng;
   LatLng? get collectionLatLng => _state.collectionLatLng;
-  List<PickedAttachment> get attachments => _attachments;
+  List<PickedAttachment> get attachments => _attachmentManager.items;
   ConditionType get condition => _state.condition;
   bool get acceptOffer => _state.acceptOffer;
   PrivacyType get privacy => _state.privacy;
@@ -128,8 +143,7 @@ class AddListingFormProvider extends ChangeNotifier
   bool get isLoading => _state.isLoading;
   String get accessCode => _state.accessCode;
   List<ListingEntity> get listings => _listings;
-
-  // TextEditingController getters
+  // TextEditingController Getter
   TextEditingController get title => _state.title;
   TextEditingController get description => _state.description;
   TextEditingController get price => _state.price;
@@ -150,6 +164,7 @@ class AddListingFormProvider extends ChangeNotifier
 
   // State delegation - Setters
   void startediting(PostEntity value) {
+    debugPrint('Editing post: $post');
     initializeForEdit(value);
     AppNavigator.pushNamed(AddListingFormScreen.routeName);
     notifyListeners();
@@ -233,18 +248,40 @@ class AddListingFormProvider extends ChangeNotifier
 
   // Core methods
   Future<void> reset() async {
+    // Stop any loading spinners
+    _state.isLoading = false;
+
+    // Clear core form state (controllers, selections, flags)
     _state.reset();
+
+    // Clear managers
     _availabilityManager.reset();
-    _attachments = <PickedAttachment>[];
+    _attachmentManager.clear();
+
+    // Clear provider-level fields
     _post = null;
+    _listings.clear();
+
+    // Reset property-specific mixin state to defaults
+    // Using setters to keep UI in sync
+    setGarden(true);
+    setParking(true);
+    setAnimalFriendly(true);
+    setSelectedTenureType(TenureType.freehold);
+    setPropertyType(null);
+    setEnergyRating(null);
+    setSelectedPropertySubType(ListingType.property.cids.first);
+
+    // Final notify
     notifyListeners();
   }
 
   Future<void> submit(BuildContext context) async {
-    // Validate the form
     final (bool isValid, String? error) = await validateForm(context);
     if (!isValid) {
-      AppSnackBar.error(context, error ?? 'validation_error'.tr());
+      if (error != null) {
+        AppSnackBar.errorGlobal(error);
+      }
       return;
     }
 
@@ -274,81 +311,42 @@ class AddListingFormProvider extends ChangeNotifier
       }
     } catch (e, st) {
       AppLog.error('Error during submission: $e\n$st');
-      AppSnackBar.error(context, 'submission_error'.tr());
+      AppSnackBar.errorGlobal('submission_error'.tr());
     } finally {
       setLoading(false);
     }
   }
 
+  // ---- Helpers: attachments ----
+  int _totalOf(AttachmentType type) =>
+      _attachmentManager.totalOf(_post?.fileUrls, type);
+
   // Attachment validation helpers
   bool get hasAtLeastOnePhoto {
-    final int newPhotos = _attachments
-        .where((PickedAttachment attachment) =>
-            attachment.type == AttachmentType.image)
-        .length;
-    final int oldPhotos = _post?.fileUrls
-            .where((AttachmentEntity attachment) => attachment.type == 'image')
-            .length ??
-        0;
-    return (newPhotos + oldPhotos) >= 1;
+    return _totalOf(AttachmentType.image) >= 1;
   }
 
   bool get hasAtLeastOneVideo {
-    final int newVideos = _attachments
-        .where((PickedAttachment attachment) =>
-            attachment.type == AttachmentType.video)
-        .length;
-    final int oldVideos = _post?.fileUrls
-            .where((AttachmentEntity attachment) =>
-                attachment.type == AttachmentType.image)
-            .length ??
-        0;
-    return (newVideos + oldVideos) >= 1;
+    return _totalOf(AttachmentType.video) >= 1;
   }
 
   int get totalPhotos {
-    final int newPhotos = _attachments
-        .where((PickedAttachment attachment) =>
-            attachment.type == AttachmentType.image)
-        .length;
-    final int oldPhotos = _post?.fileUrls
-            .where((AttachmentEntity attachment) =>
-                attachment.type == AttachmentType.image)
-            .length ??
-        0;
-    return newPhotos + oldPhotos;
+    return _totalOf(AttachmentType.image);
   }
 
   int get totalVideos {
-    final int newVideos = _attachments
-        .where((PickedAttachment attachment) =>
-            attachment.type == AttachmentType.video)
-        .length;
-    final int oldVideos = _post?.fileUrls
-            .where((AttachmentEntity attachment) =>
-                attachment.type == AttachmentType.video)
-            .length ??
-        0;
-    return newVideos + oldVideos;
+    return _totalOf(AttachmentType.video);
   }
 
   /// Single validation function that checks all aspects of the form
   /// Returns a tuple (bool, String?) where bool indicates validity and String contains any error message
   Future<(bool, String?)> validateForm(BuildContext context) async {
-    // 1. Basic validation
-    if (title.text.trim().isEmpty) {
-      return (false, 'title_required'.tr());
-    }
-
-    if (description.text.trim().isEmpty) {
-      return (false, 'description_required'.tr());
-    }
-
+    // 1. Category check (snackbar-worthy)
     if (selectedCategory == null) {
       return (false, 'choose_category'.tr());
     }
 
-    // 2. Attachments validation
+    // 2. Attachment checks (snackbar-worthy)
     if (!hasAtLeastOnePhoto) {
       return (false, 'please_add_at_least_one_photo'.tr());
     }
@@ -357,46 +355,46 @@ class AddListingFormProvider extends ChangeNotifier
       return (false, 'please_add_at_least_one_video'.tr());
     }
 
-    // 3. Price and quantity validation
-    if (double.tryParse(price.text) == null || double.parse(price.text) <= 0) {
-      return (false, 'invalid_price'.tr());
+    // 3. Parcel size check (snackbar-worthy) when delivery requires it
+    if (deliveryType == DeliveryType.paid ||
+        deliveryType == DeliveryType.freeDelivery) {
+      bool hasValidParcelDetails() {
+        // Normalize for locales that use comma as decimal separator
+        String norm(String s) => s.trim().replaceAll(',', '.');
+        double? toNum(String s) => double.tryParse(norm(s));
+
+        final double? l = toNum(_state.packageLength.text);
+        final double? w = toNum(_state.packageWidth.text);
+        final double? h = toNum(_state.packageHeight.text);
+        // final double? wt = toNum(_state.packageWeight.text);
+
+        return l != null && l > 0 && w != null && w > 0 && h != null && h > 0;
+        // wt != null &&
+        // wt > 0;
+      }
+
+      if (!hasValidParcelDetails()) {
+        return (false, 'please_fill_parcel_size'.tr());
+      }
     }
 
-    if (int.tryParse(quantity.text) == null || int.parse(quantity.text) <= 0) {
-      return (false, 'invalid_quantity'.tr());
-    }
-
-    // 4. Type-specific validation
-    bool isValid = false;
-    String? typeError;
-
-    switch (listingType) {
-      case ListingType.vehicle:
-        isValid = vehicleKey.currentState?.validate() ?? false;
-        typeError = !isValid ? 'invalid_vehicle_details'.tr() : null;
-        break;
-      case ListingType.clothAndFoot:
-        isValid = clothesAndFootKey.currentState?.validate() ?? false;
-        typeError = !isValid ? 'invalid_clothing_details'.tr() : null;
-        break;
-      case ListingType.property:
-        isValid = propertyKey.currentState?.validate() ?? false;
-        typeError = !isValid ? 'invalid_property_details'.tr() : null;
-        break;
-      case ListingType.pets:
-        isValid = petKey.currentState?.validate() ?? false;
-        typeError = !isValid ? 'invalid_pet_details'.tr() : null;
-        break;
-      default:
-        isValid = itemKey.currentState?.validate() ?? false;
-        typeError = !isValid ? 'invalid_item_details'.tr() : null;
-    }
+    // 4. Form-level validation for the active section. Do not return an error message
+    // so we don't show a snackbar for these; field validators will surface issues inline.
+    bool isValid = switch (listingType) {
+      ListingType.vehicle => vehicleKey.currentState?.validate() ?? false,
+      ListingType.clothAndFoot =>
+        clothesAndFootKey.currentState?.validate() ?? false,
+      ListingType.foodAndDrink =>
+        foodAndDrinkKey.currentState?.validate() ?? false,
+      ListingType.property => propertyKey.currentState?.validate() ?? false,
+      ListingType.pets => petKey.currentState?.validate() ?? false,
+      _ => itemKey.currentState?.validate() ?? false,
+    };
 
     if (!isValid) {
-      return (false, typeError);
+      return (false, null);
     }
 
-    // All validations passed
     return (true, null);
   }
 
@@ -405,32 +403,33 @@ class AddListingFormProvider extends ChangeNotifier
     final DataState<String> result = _post == null
         ? await _addListingUsecase(param)
         : await _editListingUsecase(param);
-
     _handleSubmissionResult(result);
   }
 
   Future<void> _onItemSubmit() async {
     final AddListingParam param = AddListingParam(
-        accessCode: accessCode,
-        postID: post?.postID,
-        title: title.text,
-        description: description.text,
-        attachments: _attachments,
-        oldAttachments: _post?.fileUrls,
-        price: price.text,
-        acceptOffer: acceptOffer,
-        minOfferAmount: minimumOffer.text,
-        privacyType: privacy,
-        deliveryType: deliveryType,
-        listingType: listingType!,
-        // currency: LocalAuth.currency,
-        category: selectedCategory,
-        condition: condition,
-        quantity: quantity.text,
-        discount: isDiscounted,
-        currentLatitude: LocalAuth.latlng.latitude,
-        currentLongitude: LocalAuth.latlng.longitude,
-        collectionLocation: _state.selectedCollectionLocation);
+      accessCode: accessCode,
+      postID: post?.postID,
+      title: title.text,
+      description: description.text,
+      attachments: _attachmentManager.items,
+      oldAttachments: _post?.fileUrls,
+      price: price.text,
+      acceptOffer: acceptOffer,
+      minOfferAmount: minimumOffer.text,
+      privacyType: privacy,
+      deliveryType: deliveryType,
+      listingType: listingType!,
+      // currency: LocalAuth.currency,
+      category: selectedCategory,
+      condition: condition,
+      quantity: quantity.text,
+      discount: isDiscounted,
+      currentLatitude: LocalAuth.latlng.latitude,
+      currentLongitude: LocalAuth.latlng.longitude,
+      packageDetail: _buildPackageDetailOrNull(),
+      collectionLocation: _state.selectedCollectionLocation,
+    );
 
     await _submitCommon(param);
   }
@@ -441,7 +440,7 @@ class AddListingFormProvider extends ChangeNotifier
       postID: post?.postID,
       title: title.text,
       description: description.text,
-      attachments: _attachments,
+      attachments: _attachmentManager.items,
       oldAttachments: _post?.fileUrls,
       price: price.text,
       acceptOffer: acceptOffer,
@@ -470,7 +469,7 @@ class AddListingFormProvider extends ChangeNotifier
       postID: post?.postID,
       title: title.text,
       description: description.text,
-      attachments: _attachments,
+      attachments: _attachmentManager.items,
       oldAttachments: _post?.fileUrls,
       price: price.text,
       acceptOffer: acceptOffer,
@@ -483,6 +482,7 @@ class AddListingFormProvider extends ChangeNotifier
       condition: condition,
       quantity: quantity.text,
       brand: brand,
+      packageDetail: _buildPackageDetailOrNull(),
       // sizeColorEntities: sizeColorEntities,
     );
 
@@ -495,9 +495,8 @@ class AddListingFormProvider extends ChangeNotifier
       postID: post?.postID,
       title: title.text,
       description: description.text,
-      attachments: _attachments,
+      attachments: _attachmentManager.items,
       oldAttachments: _post?.fileUrls,
-
       price: price.text,
       acceptOffer: acceptOffer,
       minOfferAmount: minimumOffer.text,
@@ -508,9 +507,9 @@ class AddListingFormProvider extends ChangeNotifier
       category: selectedCategory,
       condition: condition,
       quantity: quantity.text,
+      packageDetail: _buildPackageDetailOrNull(),
       availbility: _availabilityManager.availability.toString(),
     );
-
     await _submitCommon(param);
   }
 
@@ -520,7 +519,7 @@ class AddListingFormProvider extends ChangeNotifier
       postID: post?.postID,
       title: title.text,
       description: description.text,
-      attachments: _attachments,
+      attachments: _attachmentManager.items,
       price: price.text,
       acceptOffer: acceptOffer,
       minOfferAmount: minimumOffer.text,
@@ -531,6 +530,7 @@ class AddListingFormProvider extends ChangeNotifier
       category: selectedCategory,
       condition: condition,
       quantity: quantity.text,
+      packageDetail: _buildPackageDetailOrNull(),
       // Property-specific fields
       bedrooms: bedroom.text,
       bathrooms: bathroom.text,
@@ -551,7 +551,7 @@ class AddListingFormProvider extends ChangeNotifier
       postID: post?.postID,
       title: title.text,
       description: description.text,
-      attachments: _attachments,
+      attachments: _attachmentManager.items,
       price: price.text,
       acceptOffer: acceptOffer,
       minOfferAmount: minimumOffer.text,
@@ -562,6 +562,7 @@ class AddListingFormProvider extends ChangeNotifier
       category: selectedCategory,
       condition: condition,
       quantity: quantity.text,
+      packageDetail: _buildPackageDetailOrNull(),
       // Vehicle-specific fields
       engineSize: engineSize.text,
       mileage: mileage.text,
@@ -584,12 +585,16 @@ class AddListingFormProvider extends ChangeNotifier
 
   void _handleSubmissionResult(DataState<String> result) {
     if (result is DataSuccess) {
+      AppSnackBar.successGlobal('success'.tr());
       AppNavigator.pushNamedAndRemoveUntil(
           DashboardScreen.routeName, (_) => false);
       reset();
     } else if (result is DataFailer) {
-      AppLog.error(result.exception?.message ?? 'something_wrong'.tr());
+      final String msg = result.exception?.message ?? 'something_wrong'.tr();
+      AppSnackBar.errorGlobal(msg);
+      AppLog.error(msg);
     } else {
+      AppSnackBar.errorGlobal('something_wrong'.tr());
       AppLog.error('Unknown submission result state');
     }
   }
@@ -599,56 +604,22 @@ class AddListingFormProvider extends ChangeNotifier
     BuildContext context, {
     required AttachmentType type,
   }) async {
-    int maxAttachments = 10;
-    if (type == AttachmentType.image) {
-      if (listingType == ListingType.property) {
-        maxAttachments = 30;
-      } else if (listingType == ListingType.vehicle) {
-        maxAttachments = 20;
-      }
-    } else if (type == AttachmentType.video) {
-      maxAttachments = 1;
-    }
-    final List<PickedAttachment> selectedMedia =
-        _attachments.where((PickedAttachment element) {
-      return element.selectedMedia != null && element.type == type;
-    }).toList();
-    final List<PickedAttachment>? files =
-        await Navigator.of(context).push<List<PickedAttachment>>(
-      MaterialPageRoute<List<PickedAttachment>>(builder: (_) {
-        return PickableAttachmentScreen(
-          option: PickableAttachmentOption(
-            maxVideoDuration: const Duration(minutes: 5),
-            maxAttachments: maxAttachments,
-            allowMultiple: true,
-            type: type,
-            selectedMedia: selectedMedia
-                .map((PickedAttachment e) => e.selectedMedia!)
-                .toList(),
-          ),
-        );
-      }),
+    // Delegated to AttachmentManager
+    await _attachmentManager.pick(
+      context,
+      type: type,
+      listingType: listingType ?? ListingType.items,
     );
-
-    if (files != null) {
-      for (final PickedAttachment file in files) {
-        final int index = _attachments.indexWhere((PickedAttachment element) =>
-            element.selectedMedia == file.selectedMedia);
-        if (index == -1) {
-          _attachments.add(file);
-        }
-      }
-      notifyListeners();
-    }
+    notifyListeners();
   }
 
   void addAttachment(PickedAttachment attachment) {
-    _attachments.add(attachment);
+    _attachmentManager.add(attachment);
     notifyListeners();
   }
 
   void removePickedAttachment(PickedAttachment attachment) {
-    _attachments.remove(attachment);
+    _attachmentManager.remove(attachment);
     notifyListeners();
   }
 
@@ -705,7 +676,6 @@ class AddListingFormProvider extends ChangeNotifier
     _state.location.text = post.meetUpLocation?.address?.toString() ?? '';
     _state.bedroom.text = post.propertyInfo?.bedroom?.toString() ?? '';
     _state.bathroom.text = post.propertyInfo?.bathroom?.toString() ?? '';
-
     // Locations
     if (post.meetUpLocation != null) {
       _state.selectedMeetupLocation = post.meetUpLocation;
@@ -741,33 +711,34 @@ class AddListingFormProvider extends ChangeNotifier
     notifyListeners();
   }
 
-  /// Unified preview function that validates and returns all preview data
-  /// Returns a tuple (bool, Map<String, dynamic>?) where bool indicates if preview is available
-  /// and Map contains the preview data if valid
-  Future<(bool, Map<String, dynamic>?)> getPreview(BuildContext context) async {
-    // First validate the form
-    final (bool isValid, String? _) = await validateForm(context);
+  /// Navigate to preview screen after validating form. For edit, uses existing post.
+  Future<void> getPreview(BuildContext context) async {
+    final (bool isValid, String? error) = await validateForm(context);
     if (!isValid) {
-      return (false, null);
+      if (error != null) {
+        AppSnackBar.errorGlobal(error);
+      }
+      return;
     }
 
-    // If editing an existing post, return its data with any updates
+    // If editing an existing post, navigate directly with that post
     if (_post != null) {
-      return (
-        true,
-        {
-          'post': _post,
-          'attachments': getPreviewAttachments(),
-          'is_editing': true,
-          ...getBasicPreviewData()
-        }
+      await Navigator.push(
+        context,
+        MaterialPageRoute<AddListingPreviewScreen>(
+          builder: (BuildContext context) => AddListingPreviewScreen(
+            pickedAttachments: attachments,
+            post: _post!,
+          ),
+        ),
       );
+      return;
     }
 
     // For new posts, create a preview entity
     try {
       final PostEntity previewPost = PostEntity(
-        listID: 'preview_list_${DateTime.now().millisecondsSinceEpoch}',
+        listID: listingType?.json ?? '',
         postID: 'preview_${DateTime.now().millisecondsSinceEpoch}',
         businessID: null,
         title: title.text,
@@ -793,7 +764,7 @@ class AddListingFormProvider extends ChangeNotifier
         localDelivery: 1,
         internationalDelivery: null,
         availability: availability.isNotEmpty ? availability : null,
-        fileUrls: getPreviewAttachments(),
+        fileUrls: <AttachmentEntity>[],
         hasDiscount: isDiscounted,
         discounts: discounts,
         clothFootInfo: listingType == ListingType.clothAndFoot
@@ -806,10 +777,10 @@ class AddListingFormProvider extends ChangeNotifier
                 sizeColors: <SizeColorEntity>[],
                 sizeChartUrl: null,
                 brand: null,
-              ), // Not null but empty for non-cloth listings
-        propertyInfo: null, // Set based on listing type if needed
-        petInfo: null, // Set based on listing type if needed
-        vehicleInfo: null, // Set based on listing type if needed
+              ),
+        propertyInfo: null,
+        petInfo: null,
+        vehicleInfo: null,
         packageDetail: deliveryType == DeliveryType.paid ||
                 deliveryType == DeliveryType.freeDelivery
             ? PackageDetailEntity(
@@ -821,68 +792,25 @@ class AddListingFormProvider extends ChangeNotifier
             : PackageDetailEntity(
                 length: 0.0, width: 0.0, height: 0.0, weight: 0.0),
         isActive: true,
-        createdBy: LocalAuth.uid ?? 'current_user',
-        updatedBy: LocalAuth.uid ?? 'current_user',
+        createdBy: LocalAuth.uid ?? 'null',
+        updatedBy: LocalAuth.uid ?? 'null',
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
         accessCode: accessCode,
       );
 
-      return (
-        true,
-        {
-          'post': previewPost,
-          'attachments': getPreviewAttachments(),
-          'is_editing': false,
-          ...getBasicPreviewData()
-        }
+      await Navigator.push(
+        context,
+        MaterialPageRoute<AddListingPreviewScreen>(
+          builder: (BuildContext context) => AddListingPreviewScreen(
+            pickedAttachments: attachments,
+            post: previewPost,
+          ),
+        ),
       );
     } catch (e, st) {
-      AppLog.error('Error creating preview data: $e\n$st');
-      return (false, null);
+      AppLog.error('Error generating preview: $e\n$st');
+      AppSnackBar.errorGlobal('preview_error'.tr());
     }
-  }
-
-  /// Gets preview attachments combining new and old ones
-  List<AttachmentEntity> getPreviewAttachments() {
-    final List<AttachmentEntity> allAttachments = <AttachmentEntity>[
-      if (_post?.fileUrls != null) ..._post!.fileUrls,
-      ..._attachments.map((PickedAttachment attachment) {
-        // Create temporary AttachmentEntity for preview
-        return AttachmentEntity(
-          createdAt: DateTime.now(),
-          type: attachment.type,
-          url: '', // Will be empty until uploaded
-          originalName: attachment.file.path.split('/').last,
-          fileId: 'preview_${DateTime.now().millisecondsSinceEpoch}',
-        );
-      })
-    ];
-    return allAttachments;
-  }
-
-  /// Gets basic preview data as a map for UI display
-  Map<String, dynamic> getBasicPreviewData() {
-    return <String, dynamic>{
-      'title': title.text,
-      'description': description.text,
-      'price': price.text,
-      'quantity': quantity.text,
-      'category': selectedCategory,
-      'condition': condition,
-      'privacy': privacy,
-      'delivery_type': deliveryType,
-      'accepts_offers': acceptOffer,
-      'min_offer_amount': minimumOffer.text,
-      'listing_type': listingType,
-      'attachment_count': _attachments.length + (_post?.fileUrls.length ?? 0),
-      'has_new_attachments': _attachments.isNotEmpty,
-    };
-  }
-
-  @override
-  void dispose() {
-    _state.dispose();
-    super.dispose();
   }
 }

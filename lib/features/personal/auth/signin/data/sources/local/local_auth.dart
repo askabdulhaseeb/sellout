@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:latlong2/latlong.dart';
+import '../../../../../../../services/app_data_services.dart';
 import '../../../domain/entities/current_user_entity.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 export '../../../domain/entities/current_user_entity.dart';
@@ -22,7 +23,8 @@ class LocalAuth {
 
   Future<void> signin(CurrentUserEntity currentUser) async {
     await _box.put(boxTitle, currentUser);
-    uidNotifier.value = currentUser.userID; // ✅ notify socket
+    uidNotifier.value = currentUser.userID;
+    await AppDataService().fetchAllData();
   }
 
   static CurrentUserEntity? get currentUser =>

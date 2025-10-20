@@ -50,13 +50,13 @@ class AppSwitchTheme {
           if (states.contains(WidgetState.selected)) {
             return AppColors.secondaryColor.withAlpha(115); // active ~45%
           }
-          return AppColors.darkSurface; // inactive track
+          return AppColors.darkOutlineVariant; // inactive track background hint
         }),
         thumbColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
           if (states.contains(WidgetState.selected)) {
             return AppColors.secondaryColor; // active thumb
           }
-          return AppColors.outline; // inactive thumb
+          return AppColors.darkOutline; // inactive thumb contrast on dark
         }),
         thumbIcon: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
           if (states.contains(WidgetState.selected)) {
