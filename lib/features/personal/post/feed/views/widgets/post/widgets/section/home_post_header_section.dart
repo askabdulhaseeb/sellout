@@ -108,8 +108,8 @@ class _Header<T> extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
                               ),
                             ),
                           ),

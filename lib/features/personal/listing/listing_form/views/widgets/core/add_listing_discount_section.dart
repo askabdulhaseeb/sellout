@@ -61,7 +61,7 @@ class _AddListingDiscountSectionState extends State<AddListingDiscountSection> {
             discount.copyWith(discount: parsed),
           );
         },
-        hint: 'Ex.${discount.quantity * 5}',
+        hint: '0',
         keyboardType: TextInputType.number,
         textAlign: TextAlign.end,
         suffixIcon: const Opacity(

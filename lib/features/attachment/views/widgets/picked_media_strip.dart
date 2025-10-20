@@ -41,7 +41,7 @@ class PickedMediaStrip extends StatelessWidget {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
-                      borderRadius: BorderRadius.circular(18),
+                      borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: Theme.of(context)
                             .colorScheme
@@ -161,7 +161,7 @@ class _StripItemTileState extends State<_StripItemTile>
               ],
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(8),
               child: widget.thumbnail == null
                   ? Container(
                       decoration: BoxDecoration(

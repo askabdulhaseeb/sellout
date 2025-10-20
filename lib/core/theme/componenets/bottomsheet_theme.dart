@@ -14,15 +14,15 @@ class AppBottomSheetTheme {
         dragHandleColor: AppColors.outline, // subtle grey handle
       );
 
-  static BottomSheetThemeData get dark => BottomSheetThemeData(
+  static BottomSheetThemeData get dark => const BottomSheetThemeData(
         backgroundColor: AppColors.darkScaffoldColor,
         surfaceTintColor: AppColors.darkScaffoldColor,
-        modalBarrierColor: AppColors.barrierColor.withOpacity(0.6),
-        shape: const RoundedRectangleBorder(
+        modalBarrierColor: AppColors.barrierColor,
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           side: BorderSide(color: AppColors.outlineVariant, width: 1.2),
         ),
-        elevation: 8,
+        elevation: 6,
         dragHandleColor: AppColors.outlineVariant,
       );
 }

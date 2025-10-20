@@ -13,7 +13,7 @@ class AddListingAttachmentSelectionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      spacing: AppSpacing.hXs,
+      spacing: AppSpacing.hSm,
       children: <Widget>[
         button(
             context: context,
@@ -53,7 +53,7 @@ class AddListingAttachmentSelectionButton extends StatelessWidget {
         opacity: 0.8,
         child: Container(
           decoration: BoxDecoration(
-            border: Border.all(color: ColorScheme.of(context).outlineVariant),
+            border: Border.all(color: ColorScheme.of(context).outline),
             color: Colors.transparent,
             borderRadius: radius,
           ),

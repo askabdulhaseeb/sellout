@@ -27,11 +27,11 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         return Column(
-          spacing: AppSpacing.vXs,
+          spacing: AppSpacing.vSm,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Row(
-              spacing: AppSpacing.hXs,
+              spacing: AppSpacing.hSm,
               children: <Widget>[
                 Expanded(
                   child: CustomTextFormField(

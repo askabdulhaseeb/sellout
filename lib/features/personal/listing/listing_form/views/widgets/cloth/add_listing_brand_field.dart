@@ -19,7 +19,7 @@ class AddListingBrandField extends StatelessWidget {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         final List<DropdownOptionDataEntity> brandOptions =
-            formPro.selectedClothSubCategory == 'clothes'
+            formPro.selectedClothSubType == 'clothes'
                 ? clothesBrands
                 : footwearBrands;
 

@@ -15,12 +15,15 @@ class AddListingBasicInfoSection extends StatelessWidget {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         return Column(
-          spacing: AppSpacing.vXs,
+          spacing: AppSpacing.vMd,
           children: <Widget>[
+            const SizedBox(
+              height: 0,
+            ),
             CustomTextFormField(
               controller: formPro.title,
-              labelText: 'what_are_you_selling'.tr(),
-              hint: 'enter_product_name'.tr(),
+              // labelText: 'enter_product_name'.tr(),
+              hint: 'what_are_you_selling'.tr(),
               showSuffixIcon: true,
               validator: (String? value) => AppValidator.isEmpty(value),
             ),
@@ -31,7 +34,7 @@ class AddListingBasicInfoSection extends StatelessWidget {
               hint: 'enter_product_description'.tr(),
               isExpanded: true,
               maxLines: 5,
-              labelText: 'describe_product'.tr(),
+              // labelText: 'describe_product'.tr(),
               validator: (String? value) => AppValidator.isEmpty(value),
             ),
           ],

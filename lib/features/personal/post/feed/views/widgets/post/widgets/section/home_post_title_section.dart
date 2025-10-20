@@ -22,7 +22,7 @@ class HomePostTitleSection extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontSize: 18,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
               ),
@@ -30,7 +30,7 @@ class HomePostTitleSection extends StatelessWidget {
                 '${CountryHelper.currencySymbolHelper(post.currency)}${post.price.toString()}',
                 style: const TextStyle(
                   fontSize: 18,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ],

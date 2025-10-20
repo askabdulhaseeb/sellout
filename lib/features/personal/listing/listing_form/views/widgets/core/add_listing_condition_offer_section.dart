@@ -5,6 +5,7 @@ import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../core/enums/listing/core/privacy_type.dart';
+import '../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_toggle_switch.dart';
@@ -20,7 +21,7 @@ class AddListingConditionOfferSection extends StatelessWidget {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         return Column(
-          spacing: AppSpacing.vXs,
+          spacing: AppSpacing.vMd,
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -53,8 +54,15 @@ class AddListingConditionOfferSection extends StatelessWidget {
                 controller: formPro.minimumOffer,
                 labelText: 'minimum_offerd_amount'.tr(),
                 showSuffixIcon: false,
-                prefixText: LocalAuth.currency.toUpperCase(),
-                hint: '8.0',
+                prefixIcon: SizedBox(
+                  width: 40,
+                  child: Center(
+                    child: Text(
+                      CountryHelper.currencySymbolHelper(
+                          LocalAuth.currency.toUpperCase()),
+                    ),
+                  ),
+                ),
                 keyboardType: TextInputType.number,
                 validator: (String? value) => AppValidator.isEmpty(value),
               ),

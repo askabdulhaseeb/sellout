@@ -32,7 +32,7 @@ class _AddVehicleFormState extends State<AddVehicleForm> {
           key: formPro.vehicleKey,
           child: SingleChildScrollView(
             child: Column(
-              spacing: AppSpacing.vXs,
+              spacing: AppSpacing.vSm,
               children: <Widget>[
                 const AddListingBasicInfoSection(),
                 const AddListingVehicleBasicInfoSection(),

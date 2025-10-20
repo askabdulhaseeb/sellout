@@ -16,7 +16,7 @@ class AppSwitchTheme {
           if (states.contains(WidgetState.selected)) {
             return AppColors.secondaryColor.withAlpha(115); // active ~45%
           }
-          return AppColors.outlineVariant; // inactive track color
+          return AppColors.outline; // inactive track color
         }),
         thumbColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
           if (states.contains(WidgetState.selected)) {

@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../../../core/enums/listing/core/listing_type.dart';
+import '../../../../../../../core/enums/listing/property/tenure_type.dart';
+
 mixin PropertyListingMixin on ChangeNotifier {
   bool _garden = true;
   bool _parking = true;
   bool _animalFriendly = true;
-  String _tenureType = 'freehold';
+  TenureType _tenureType = TenureType.freehold;
   String? _selectedPropertyType;
   String? _selectedEnergyRating;
-  String _selectedPropertySubCategory = 'property_default';
+  String _selectedPropertySubCategory = ListingType.property.cids.first;
 
   // Getters
   bool get garden => _garden;
   bool get parking => _parking;
   bool get animalFriendly => _animalFriendly;
-  String get tenureType => _tenureType;
+  TenureType get tenureType => _tenureType;
   String? get selectedPropertyType => _selectedPropertyType;
   String? get selectedEnergyRating => _selectedEnergyRating;
   String get selectedPropertySubCategory => _selectedPropertySubCategory;
@@ -47,12 +50,12 @@ mixin PropertyListingMixin on ChangeNotifier {
     notifyListeners();
   }
 
-  void setSelectedTenureType(String value) {
+  void setSelectedTenureType(TenureType value) {
     _tenureType = value;
     notifyListeners();
   }
 
-  void setSelectedPropertySubCategory(String value) {
+  void setSelectedPropertySubType(String value) {
     _selectedPropertySubCategory = value;
     notifyListeners();
   }

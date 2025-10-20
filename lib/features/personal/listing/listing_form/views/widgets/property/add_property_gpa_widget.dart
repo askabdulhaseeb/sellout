@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/widgets/custom_toggle_switch.dart';
 import '../../providers/add_listing_form_provider.dart';
 import 'add_property_tenure_type.dart';
@@ -14,6 +15,7 @@ class AddPropertyGPAWidget extends StatelessWidget {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         return Column(
+          spacing: AppSpacing.vSm,
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[

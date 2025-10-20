@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../../core/widgets/attachment_slider.dart';
 import '../../../../../domain/entities/post/post_entity.dart';
 import '../../../../../post_detail/views/screens/post_detail_screen.dart';
@@ -31,6 +32,9 @@ class HomePostTile extends StatelessWidget {
           PostButtonSection(
             detailWidget: false,
             post: post,
+          ),
+          const SizedBox(
+            height: AppSpacing.vMd,
           ),
           Container(
             height: 4,

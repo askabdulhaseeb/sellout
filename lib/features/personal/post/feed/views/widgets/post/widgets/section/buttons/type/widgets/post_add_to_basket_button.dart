@@ -127,8 +127,7 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
       border: Border.all(color: color, width: 2),
       textColor: color,
       textStyle: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.w400,
         color: color,
       ),
     );

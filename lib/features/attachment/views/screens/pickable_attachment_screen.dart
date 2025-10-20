@@ -1,8 +1,13 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../domain/entities/picked_attachment_option.dart';
 import '../providers/picked_media_provider.dart';
-import '../widgets/media_app_bar.dart';
+import '../widgets/app_bar_components/back_button.dart';
+import '../widgets/app_bar_components/progress_bar.dart';
+import '../widgets/app_bar_components/selection_counter.dart'
+    show SelectionCounter;
+import '../widgets/app_bar_components/submit_button.dart';
 import '../widgets/media_grid.dart';
 import '../widgets/picked_media_strip.dart';
 import '../widgets/scroll_to_top_button.dart';
@@ -73,9 +78,54 @@ class _PickableAttachmentScreenState extends State<PickableAttachmentScreen> {
         if (provider.permissionDenied) return const PermissionDeniedState();
         if (provider.initialLoading) return const InitialLoadingState();
         if (provider.mediaList.isEmpty) return const EmptyGalleryState();
-
+        final int selectedCount = provider.pickedMedia.length;
+        final int maxCount = provider.option.maxAttachments;
+        final double progress = (selectedCount / maxCount).clamp(0.0, 1.0);
+        final bool hasSelection = selectedCount > 0;
         return Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          appBar: AppBar(
+            scrolledUnderElevation: 0,
+            automaticallyImplyLeading: false,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            elevation: 0.3,
+            surfaceTintColor: Theme.of(context).colorScheme.surfaceTint,
+            title: Column(
+              children: [
+                Row(
+                  children: <Widget>[
+                    // --- BACK BUTTON ---
+                    AppBarBackButton(
+                      onPressed: () => Navigator.pop(context),
+                      isActive: hasSelection,
+                    ),
+
+                    // --- SELECTION INFO (Counter + Progress) ---
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          SelectionCounter(
+                            selectedCount: selectedCount,
+                            maxCount: maxCount,
+                            label: 'select'.tr(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SubmitButton(
+                      isActive: hasSelection,
+                      onPressed: hasSelection
+                          ? () => provider.onSubmit(context)
+                          : null,
+                    ),
+                  ],
+                ),
+                SelectionProgressBar(progress: progress),
+              ],
+            ),
+          ),
           body: SafeArea(
             child: Stack(
               children: <Widget>[
@@ -83,7 +133,6 @@ class _PickableAttachmentScreenState extends State<PickableAttachmentScreen> {
                   controller: _scrollController,
                   physics: const BouncingScrollPhysics(),
                   slivers: <Widget>[
-                    const MediaAppBar(),
                     MediaGrid(
                       provider: provider,
                       gridKey: _gridKey,

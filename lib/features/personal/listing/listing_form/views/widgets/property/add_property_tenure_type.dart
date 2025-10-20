@@ -1,27 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import '../../../../../../../core/enums/listing/property/tenure_type.dart';
 import '../../../../../../../core/widgets/custom_toggle_switch.dart';
 import '../../providers/add_listing_form_provider.dart';
-
-enum TenureType {
-  freehold,
-  leasehold,
-}
-
-extension TenureTypeExtension on TenureType {
-  String get value {
-    switch (this) {
-      case TenureType.freehold:
-        return 'freehold';
-      case TenureType.leasehold:
-        return 'leasehold';
-    }
-  }
-
-  String get localized => value.tr();
-}
 
 class AddListingTenureTypeSelection extends StatelessWidget {
   const AddListingTenureTypeSelection({super.key});
@@ -32,16 +14,13 @@ class AddListingTenureTypeSelection extends StatelessWidget {
 
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider addPro, _) {
-        final List<String> stringValues =
-            tenureTypes.map((TenureType e) => e.value).toList();
         final List<String> localizedValues =
             tenureTypes.map((TenureType e) => e.localized).toList();
-
-        return CustomToggleSwitch<String>(
+        return CustomToggleSwitch<TenureType>(
           verticalPadding: 8,
           containerHeight: 48,
           isShaded: false,
-          labels: stringValues,
+          labels: tenureTypes,
           labelStrs: localizedValues,
           labelText: 'tenure_type'.tr(),
           initialValue: addPro.tenureType,

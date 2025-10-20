@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../../../../core/widgets/custom_multi_selection_dropdown.dart';
 import '../../../../../../../listing/listing_form/data/sources/remote/colors_api.dart';
 import '../../../../../../../listing/listing_form/domain/entities/color_options_entity.dart';
-import '../../../../../../../listing/listing_form/views/providers/add_listing_form_provider.dart';
+import '../../../../../providers/marketplace_provider.dart';
 
 class MultiColorDropdown extends StatefulWidget {
   const MultiColorDropdown({
@@ -37,7 +37,7 @@ class _MultiColorDropdownState extends State<MultiColorDropdown> {
 
   @override
   Widget build(BuildContext context) {
-    final AddListingFormProvider formPro = Provider.of(context, listen: false);
+    final MarketPlaceProvider formPro = Provider.of(context, listen: false);
 
     return FutureBuilder<List<ColorOptionEntity>>(
       future: _colorFuture,
@@ -55,7 +55,7 @@ class _MultiColorDropdownState extends State<MultiColorDropdown> {
 
         List<ColorOptionEntity> colors = snapshot.data ?? <ColorOptionEntity>[];
         colors = colors.where((ColorOptionEntity color) {
-          return color.tag.contains(formPro.selectedClothSubCategory);
+          return color.tag.contains(formPro.cLothFootCategory);
         }).toList();
 
         if (colors.isEmpty) {

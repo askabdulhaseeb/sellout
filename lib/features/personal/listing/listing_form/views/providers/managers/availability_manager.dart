@@ -3,7 +3,7 @@ import '../../../../../../../core/enums/routine/day_type.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../post/domain/entities/meetup/availability_entity.dart';
 
-class AvailabilityManager with ChangeNotifier {
+class AvailabilityManager extends ChangeNotifier {
   List<AvailabilityEntity> _availability = DayType.values.map((DayType day) {
     return AvailabilityEntity(
       day: day,
@@ -40,8 +40,6 @@ class AvailabilityManager with ChangeNotifier {
           'OpeningTime: ${_availability[index].openingTime}, '
           'ClosingTime: ${_availability[index].closingTime}',
         );
-
-        notifyListeners();
       } else {
         // ⚠️ Log if day not found
         AppLog.error('Day not found in availability list: ${day.name}');
@@ -59,6 +57,13 @@ class AvailabilityManager with ChangeNotifier {
     if (index != -1) {
       final AvailabilityEntity current = _availability[index];
       _availability[index] = current.copyWith(openingTime: time);
+
+      // Log the change
+      AppLog.info(
+        name: 'Opening Time Updated',
+        'Day: ${day.name}, New Time: $time',
+      );
+
       notifyListeners();
     }
   }
@@ -69,6 +74,13 @@ class AvailabilityManager with ChangeNotifier {
     if (index != -1) {
       final AvailabilityEntity current = _availability[index];
       _availability[index] = current.copyWith(closingTime: time);
+
+      // Log the change
+      AppLog.info(
+        name: 'Closing Time Updated',
+        'Day: ${day.name}, New Time: $time',
+      );
+
       notifyListeners();
     }
   }
@@ -130,14 +142,33 @@ class AvailabilityManager with ChangeNotifier {
   }
 
   void reset() {
-    _availability = DayType.values.map((DayType day) {
-      return AvailabilityEntity(
-        day: day,
-        isOpen: false,
-        openingTime: '',
-        closingTime: '',
+    try {
+      // Reset availability list to default state
+      _availability = DayType.values.map((DayType day) {
+        return AvailabilityEntity(
+          day: day,
+          isOpen: false,
+          openingTime: '',
+          closingTime: '',
+        );
+      }).toList();
+
+      // Log the reset operation
+      AppLog.info(
+        name: 'Availability Reset',
+        'Reset completed: ${_availability.length} days initialized to default state',
       );
-    }).toList();
-    notifyListeners();
+
+      // Notify listeners of the change
+      notifyListeners();
+    } catch (e, stack) {
+      // Log any errors during reset
+      AppLog.error(
+        'Failed to reset availability',
+        error: e,
+        stackTrace: stack,
+      );
+      rethrow; // Rethrow to allow error handling by caller
+    }
   }
 }

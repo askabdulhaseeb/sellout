@@ -17,28 +17,37 @@ class DeliveryOptionsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color primaryColor = Theme.of(context).primaryColor;
 
-    return Row(
-      spacing: AppSpacing.hXs,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Expanded(
-          child: _DeliveryOptionTile(
-            icon: Icons.local_shipping_outlined,
-            title: 'postage'.tr(),
-            subtitle: 'ship_tracked_courier'.tr(),
-            isSelected: selectedType != DeliveryType.collection,
-            color: primaryColor,
-            onTap: () => onDeliveryTypeSelected(DeliveryType.paid),
-          ),
+        Text(
+          'postage_options'.tr(),
+          style: const TextStyle(fontWeight: FontWeight.w500),
         ),
-        Expanded(
-          child: _DeliveryOptionTile(
-            icon: Icons.storefront_outlined,
-            title: 'collection'.tr(),
-            subtitle: 'meet_and_handover_item'.tr(),
-            isSelected: selectedType == DeliveryType.collection,
-            color: primaryColor,
-            onTap: () => onDeliveryTypeSelected(DeliveryType.collection),
-          ),
+        Row(
+          spacing: AppSpacing.hSm,
+          children: <Widget>[
+            Expanded(
+              child: _DeliveryOptionTile(
+                icon: Icons.local_shipping_outlined,
+                title: 'delivery'.tr(),
+                subtitle: 'ship_tracked_courier'.tr(),
+                isSelected: selectedType != DeliveryType.collection,
+                color: primaryColor,
+                onTap: () => onDeliveryTypeSelected(DeliveryType.paid),
+              ),
+            ),
+            Expanded(
+              child: _DeliveryOptionTile(
+                icon: Icons.storefront_outlined,
+                title: 'collection'.tr(),
+                subtitle: 'meet_and_handover_item'.tr(),
+                isSelected: selectedType == DeliveryType.collection,
+                color: primaryColor,
+                onTap: () => onDeliveryTypeSelected(DeliveryType.collection),
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -69,63 +78,53 @@ class _DeliveryOptionTile extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+      borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
       splashColor: activeColor.withValues(alpha: 0.1),
       highlightColor: activeColor.withValues(alpha: 0.05),
       child: AnimatedContainer(
+        height: 48,
         duration: const Duration(milliseconds: 250),
-        padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
           border: Border.all(
-            color: isSelected ? activeColor : scheme.outlineVariant,
+            color: isSelected ? activeColor : scheme.outline,
             width: 1.4,
           ),
-          color: isSelected
-              ? activeColor.withValues(alpha: 0.06)
-              : Colors.transparent,
+          // color: isSelected
+          //     ? activeColor.withValues(alpha: 0.06)
+          //     : Colors.transparent,
         ),
-        child: Row(
-          spacing: AppSpacing.hSm,
-          children: <Widget>[
-            Container(
-              height: 38,
-              width: 38,
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? activeColor.withValues(alpha: 0.15)
-                    : scheme.surfaceContainerLow,
-                shape: BoxShape.circle,
+        child: Center(
+          child: Row(
+            spacing: AppSpacing.hXs,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                // height: 30,
+                // width: 30,
+                // decoration: BoxDecoration(
+                //   color: isSelected
+                //       ? activeColor.withValues(alpha: 0.15)
+                //       : scheme.surfaceContainerLow,
+                //   shape: BoxShape.circle,
+                // ),
+                child: Icon(
+                  icon,
+                  color: isSelected ? activeColor : scheme.outline,
+                  size: 20,
+                ),
               ),
-              child: Icon(
-                icon,
-                color: isSelected ? activeColor : scheme.onSurfaceVariant,
-                size: 20,
+              Text(
+                title,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w400,
+                      color: isSelected
+                          ? activeColor
+                          : scheme.onSurface.withValues(alpha: 0.6),
+                    ),
               ),
-            ),
-            Expanded(
-              child: Column(
-                spacing: AppSpacing.vXs,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: isSelected ? activeColor : null,
-                        ),
-                  ),
-                  Text(
-                    subtitle,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(color: scheme.outline),
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

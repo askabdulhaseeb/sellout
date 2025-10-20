@@ -43,7 +43,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
           children: <Widget>[
             /// Age + Ready to leave
             Row(
-              spacing: AppSpacing.hXs,
+              spacing: AppSpacing.hSm,
               children: <Widget>[
                 Expanded(
                   child: CustomDropdown<DropdownOptionEntity>(

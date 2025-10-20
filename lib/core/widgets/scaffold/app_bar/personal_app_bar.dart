@@ -22,7 +22,7 @@ personalAppbar(BuildContext context) {
     centerTitle: false,
     surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-    shadowColor: Theme.of(context).dividerColor,
+    shadowColor: Theme.of(context).colorScheme.outlineVariant,
     title: Row(
       children: <Widget>[
         if (LocalAuth.currentUser != null)
@@ -203,7 +203,7 @@ class _IconButton extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: Theme.of(context).dividerColor,
+            color: Theme.of(context).colorScheme.outlineVariant,
             borderRadius: BorderRadius.circular(10),
           ),
           child: CustomSvgIcon(

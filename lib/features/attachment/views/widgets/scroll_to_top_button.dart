@@ -84,16 +84,17 @@ class _ScrollButtonState extends State<_ScrollButton>
       onTap: _onTap,
       child: AnimatedBuilder(
         animation: _tapController,
-        builder: (context, child) {
+        builder: (BuildContext context, Widget? child) {
           return Transform.scale(
             scale: 1.0 - (_tapController.value * 0.1),
             child: Container(
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                shape: BoxShape.circle,
+                borderRadius: BorderRadius.circular(6),
+                shape: BoxShape.rectangle,
                 color: Theme.of(context).colorScheme.primary,
-                boxShadow: [
+                boxShadow: <BoxShadow>[
                   BoxShadow(
                     color: Theme.of(context)
                         .colorScheme

@@ -46,7 +46,7 @@ class _AddListingVehicleBasicInfoSectionState
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         return Column(
-          spacing: AppSpacing.vXs,
+          spacing: AppSpacing.vSm,
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[

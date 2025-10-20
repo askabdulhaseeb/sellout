@@ -3,10 +3,15 @@ import 'app_colors.dart';
 import 'componenets/app_switch_theme.dart';
 import 'componenets/bottomsheet_theme.dart';
 import 'componenets/dailog_theme.dart';
+import 'componenets/app_appbar_theme.dart';
+import 'componenets/app_expansion_tile_theme.dart';
+import 'componenets/app_checkbox_theme.dart';
 
 class AppTheme {
   static ThemeData get light {
     return ThemeData(
+      expansionTileTheme: AppExpansionTileTheme.light,
+      checkboxTheme: AppCheckboxTheme.light,
       useMaterial3: true,
       brightness: Brightness.light,
       primaryColor: AppColors.primaryColor,
@@ -25,8 +30,8 @@ class AppTheme {
         onSecondary: Colors.white,
         surface: AppColors.lightSurface,
         onSurface: AppColors.lightTextColor,
-        background: AppColors.lightScaffoldColor,
-        onBackground: AppColors.lightTextColor,
+        // background: AppColors.lightScaffoldColor,
+        // onBackground: AppColors.lightTextColor,
         error: AppColors.error,
         onError: Colors.white,
         outline: AppColors.outline,
@@ -36,17 +41,7 @@ class AppTheme {
         inversePrimary: AppColors.secondaryColor,
         inverseSurface: AppColors.darkSurface,
       ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.lightScaffoldColor,
-        surfaceTintColor: AppColors.lightScaffoldColor,
-        elevation: 0,
-        iconTheme: IconThemeData(color: AppColors.lightTextColor),
-        titleTextStyle: TextStyle(
-          color: AppColors.lightTextColor,
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+      appBarTheme: AppAppBarTheme.light,
       textTheme: const TextTheme(
         titleLarge: TextStyle(
           fontSize: 24,
@@ -62,6 +57,8 @@ class AppTheme {
 
   static ThemeData get dark {
     return ThemeData(
+      expansionTileTheme: AppExpansionTileTheme.dark,
+      checkboxTheme: AppCheckboxTheme.dark,
       useMaterial3: true,
       brightness: Brightness.dark,
       primaryColor: AppColors.primaryColor,
@@ -80,8 +77,8 @@ class AppTheme {
         onSecondary: Colors.black,
         surface: AppColors.darkSurface,
         onSurface: AppColors.darkTextColor,
-        background: AppColors.darkScaffoldColor,
-        onBackground: AppColors.darkTextColor,
+        // background: AppColors.darkScaffoldColor,
+        // onBackground: AppColors.darkTextColor,
         error: AppColors.error,
         onError: Colors.white,
         outline: AppColors.outline,
@@ -91,17 +88,7 @@ class AppTheme {
         inversePrimary: AppColors.secondaryColor,
         inverseSurface: AppColors.lightSurface,
       ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.darkScaffoldColor,
-        surfaceTintColor: AppColors.darkScaffoldColor,
-        elevation: 0,
-        iconTheme: IconThemeData(color: AppColors.darkTextColor),
-        titleTextStyle: TextStyle(
-          color: AppColors.darkTextColor,
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+      appBarTheme: AppAppBarTheme.dark,
       textTheme: const TextTheme(
         titleLarge: TextStyle(
           fontSize: 24,

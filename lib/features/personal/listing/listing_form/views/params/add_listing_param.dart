@@ -3,6 +3,7 @@ import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
+import '../../../../../../core/enums/listing/property/tenure_type.dart';
 import '../../../../../attachment/data/attchment_model.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
@@ -132,7 +133,7 @@ class AddListingParam {
   final String? energyrating;
   final String? garden;
   final String? parking;
-  final String? tenureType;
+  final TenureType? tenureType;
   final String? propertyType;
   final String? animalFriendly;
   //pets
@@ -333,7 +334,7 @@ class AddListingParam {
       'energy_rating': energyrating ?? '',
       'garden': garden ?? '',
       'parking': parking ?? '',
-      'tenure_type': tenureType ?? '',
+      'tenure_type': tenureType?.toJson() ?? '',
       'property_type': propertyType ?? '',
     };
     mapp.addAll(_titleMAP());
