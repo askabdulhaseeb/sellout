@@ -19,6 +19,7 @@ class PostVehicleEntity {
     required this.interiorColor,
     required this.exteriorColor,
     required this.vehiclesCategory,
+    required this.address,
   });
   @HiveField(0)
   final int? year;
@@ -50,4 +51,6 @@ class PostVehicleEntity {
   final String? exteriorColor;
   @HiveField(14)
   final String? vehiclesCategory;
+    @HiveField(15)
+  final String address;
 }

@@ -4,14 +4,15 @@ part 'post_property_entity.g.dart';
 @HiveType(typeId: 71)
 class PostPropertyEntity {
   PostPropertyEntity({
-    this.bedroom,
-    this.bathroom,
-    this.energyRating,
-    this.propertyType,
-    this.propertyCategory,
-    this.garden,
-    this.parking,
-    this.tenureType,
+    required this.bedroom,
+       required  this.bathroom,
+      required   this.energyRating,
+      required   this.propertyType,
+      required   this.propertyCategory,
+      required   this.garden,
+      required   this.parking,
+      required   this.tenureType,
+      required   this.address,
   });
 
   @HiveField(0)
@@ -37,4 +38,6 @@ class PostPropertyEntity {
 
   @HiveField(7)
   final String? tenureType;
+  @HiveField(8)
+  final String address;
 }

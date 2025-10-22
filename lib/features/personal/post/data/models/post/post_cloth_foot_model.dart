@@ -4,10 +4,10 @@ import '../size_color/size_color_model.dart';
 
 class PostClothFootModel extends PostClothFootEntity {
   PostClothFootModel({
-    
     required super.sizeColors,
     required super.sizeChartUrl,
     required super.brand,
+    required super.address,
   });
 
   factory PostClothFootModel.fromJson(Map<String, dynamic> json) {
@@ -20,6 +20,7 @@ class PostClothFootModel extends PostClothFootEntity {
           : AttachmentModel.fromJson(
               json['size_chart'] as Map<String, dynamic>),
       brand: json['brand']?.toString() ?? '',
+      address: json['address']?.toString() ?? '',
     );
   }
 }

@@ -149,19 +149,57 @@ class LocalCategoriesSource {
       }
 
       SubCategoryEntity? root;
+      List<String> partsToTraverse = <String>[];
+
       switch (listingType) {
         case ListingType.items:
           root = categories?.items;
+          partsToTraverse = parts.sublist(1);
           debugPrint('📦 Items root: ${root != null ? "FOUND" : "NOT FOUND"}');
           break;
         case ListingType.clothAndFoot:
-          root = categories?.clothes;
-          debugPrint(
-              '👕 Clothes root: ${root != null ? "FOUND" : "NOT FOUND"}');
+          if (parts.length > 1) {
+            final String segment = parts[1];
+            if (segment == ListingType.clothAndFoot.cids.first) {
+              root = categories?.clothes;
+              debugPrint(
+                  '👕 Clothes root: ${root != null ? "FOUND" : "NOT FOUND"}');
+            } else if (segment == ListingType.clothAndFoot.cids.last) {
+              root = categories?.foot;
+              debugPrint(
+                  '👟 Foot root: ${root != null ? "FOUND" : "NOT FOUND"}');
+            } else {
+              debugPrint('⚠️ Unknown cloth/foot segment "$segment"');
+              root = categories?.clothes ?? categories?.foot;
+            }
+            partsToTraverse = parts.sublist(2);
+          } else {
+            root = categories?.clothes;
+            debugPrint(
+                '👕 Default clothes root: ${root != null ? "FOUND" : "NOT FOUND"}');
+          }
           break;
         case ListingType.foodAndDrink:
-          root = categories?.food;
-          debugPrint('🍕 Food root: ${root != null ? "FOUND" : "NOT FOUND"}');
+          if (parts.length > 1) {
+            final String segment = parts[1];
+            if (segment == ListingType.foodAndDrink.cids.first) {
+              root = categories?.food;
+              debugPrint(
+                  '🍕 Food root: ${root != null ? "FOUND" : "NOT FOUND"}');
+            } else if (segment == ListingType.foodAndDrink.cids.last) {
+              root = categories?.drink;
+              debugPrint(
+                  '🥤 Drink root: ${root != null ? "FOUND" : "NOT FOUND"}');
+            } else {
+              debugPrint('⚠️ Unknown food/drink segment "$segment"');
+              root = categories?.food ?? categories?.drink;
+            }
+            partsToTraverse = parts.sublist(2);
+          } else {
+            root = categories?.food;
+            debugPrint(
+                '🍕 Default food root: ${root != null ? "FOUND" : "NOT FOUND"}');
+          }
           break;
         case ListingType.property:
         case ListingType.vehicle:
@@ -177,7 +215,6 @@ class LocalCategoriesSource {
 
       debugPrint('✅ Starting traversal from root: "${root.title}"');
 
-      final List<String> partsToTraverse = parts.sublist(1);
       debugPrint('🚀 Parts to traverse: $partsToTraverse');
 
       SubCategoryEntity? current = root;

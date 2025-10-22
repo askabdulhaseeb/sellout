@@ -9,6 +9,7 @@ class PostPetModel extends PostPetEntity {
     required super.readyToLeave,
     required super.wormAndFleaTreated,
     required super.vaccinationUpToDate,
+    required super.address,
   });
 
   factory PostPetModel.fromJson(Map<String, dynamic> json) {
@@ -20,6 +21,7 @@ class PostPetModel extends PostPetEntity {
       readyToLeave: json['ready_to_leave']?.toString(),
       wormAndFleaTreated: json['worm_and_flea_treated'] ?? false,
       vaccinationUpToDate: json['vaccination_up_to_date'] ?? false,
+      address: json['address']?.toString() ?? '',
     );
   }
 
@@ -32,5 +34,6 @@ class PostPetModel extends PostPetEntity {
         'vaccination_up_to_date': (vaccinationUpToDate ?? false).toString(),
         'worm_and_flea_treated': (wormAndFleaTreated ?? false).toString(),
         'pets_category': petsCategory?.toString() ?? '',
+        'address': address,
       };
 }

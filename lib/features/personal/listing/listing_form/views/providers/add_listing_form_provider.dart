@@ -27,7 +27,6 @@ import '../../../../post/domain/entities/size_color/size_color_entity.dart';
 import '../../../../post/domain/entities/size_color/color_entity.dart';
 import '../../../../post/data/models/size_color/size_color_model.dart';
 import '../../data/models/sub_category_model.dart';
-import '../../data/sources/local/local_categories.dart';
 import '../../domain/entities/color_options_entity.dart';
 import '../../domain/entities/listing_entity.dart';
 import '../../domain/entities/sub_category_entity.dart';
@@ -315,9 +314,9 @@ class AddListingFormProvider extends ChangeNotifier
       _attachmentManager.totalOf(_post?.fileUrls, type);
 
   bool get hasAtLeastOnePhoto => _totalOf(AttachmentType.image) >= 1;
+  bool get hasAtLeastOneVideo => _totalOf(AttachmentType.video) >= 1;
 
   int get totalPhotos => _totalOf(AttachmentType.image);
-  int get totalVideos => _totalOf(AttachmentType.video);
 
   /// Single validation function that checks all aspects of the form
   /// Returns a tuple (bool, String?) where bool indicates validity and String contains any error message
@@ -426,19 +425,19 @@ class AddListingFormProvider extends ChangeNotifier
       condition: condition,
       quantity: quantity.text,
       petsParams: PostPetEntity(
-        age: age,
-        breed: breed,
-        healthChecked: healthChecked,
-        petsCategory: petCategory,
-        readyToLeave: time,
-        vaccinationUpToDate: vaccinationUpToDate,
-        wormAndFleaTreated: wormAndFleaTreated,
+        address: '',
+        age: _state.age,
+        breed: _state.breed,
+        healthChecked: _state.healthChecked,
+        petsCategory: _state.petCategory,
+        readyToLeave: _state.readyToLeave,
+        vaccinationUpToDate: _state.vaccinationUpToDate,
+        wormAndFleaTreated: _state.wormAndFleaTreated,
       ),
       currentLatitude: LocalAuth.latlng.latitude,
       currentLongitude: LocalAuth.latlng.longitude,
       meetUpLocation: selectedMeetupLocation,
     );
-
     await _submitCommon(param);
   }
 
@@ -463,9 +462,10 @@ class AddListingFormProvider extends ChangeNotifier
       discount: isDiscounted,
       discounts: isDiscounted ? discounts : null,
       clothfootParams: PostClothFootEntity(
-        sizeColors: sizeColorEntities,
+        address: '',
+        sizeColors: _state.sizeColorEntities,
         sizeChartUrl: null,
-        brand: brand ?? '',
+        brand: _state.brand ?? '',
       ),
       currentLatitude: LocalAuth.latlng.latitude,
       currentLongitude: LocalAuth.latlng.longitude,
@@ -473,7 +473,7 @@ class AddListingFormProvider extends ChangeNotifier
           deliveryType != DeliveryType.collection ? pkgDetails : null,
       collectionLocation: selectedCollectionLocation,
       meetUpLocation: selectedMeetupLocation,
-      type: selectedClothSubType,
+      type: _state.clothSubCategory,
     );
 
     await _submitCommon(param);
@@ -530,14 +530,15 @@ class AddListingFormProvider extends ChangeNotifier
       condition: condition,
       quantity: quantity.text,
       propertyParams: PostPropertyEntity(
+        address: '',
         bedroom: _state.parsedBedroom ?? 0,
         bathroom: _state.parsedBathroom ?? 0,
-        energyRating: selectedEnergyRating ?? '',
-        propertyType: selectedPropertyType ?? '',
-        propertyCategory: selectedPropertySubCategory ?? '',
-        garden: garden,
-        parking: parking,
-        tenureType: tenureType.value,
+        energyRating: _state.energyRating ?? '',
+        propertyType: _state.propertyType ?? '',
+        propertyCategory: _state.propertySubCategory,
+        garden: _state.hasGarden,
+        parking: _state.hasParking,
+        tenureType: _state.tenureType.value,
       ),
       currentLatitude: LocalAuth.latlng.latitude,
       currentLongitude: LocalAuth.latlng.longitude,
@@ -567,21 +568,22 @@ class AddListingFormProvider extends ChangeNotifier
       condition: condition,
       quantity: quantity.text,
       vehicleParams: PostVehicleEntity(
-        year: int.tryParse(year ?? '') ?? 0,
+        address: '',
+        year: int.tryParse(_state.year ?? '') ?? 0,
         doors: int.tryParse(doors.text) ?? 0,
         seats: int.tryParse(seats.text) ?? 0,
         mileage: int.tryParse(mileage.text) ?? 0,
-        make: make ?? '',
+        make: _state.make ?? '',
         model: model.text,
-        bodyType: selectedBodyType ?? '',
-        emission: emission ?? '',
-        fuelType: fuelType ?? '',
+        bodyType: _state.bodyType ?? '',
+        emission: _state.emission ?? '',
+        fuelType: _state.fuelType ?? '',
         engineSize: double.tryParse(engineSize.text) ?? 0.0,
-        mileageUnit: selectedMileageUnit ?? '',
-        transmission: transmissionType ?? '',
-        interiorColor: interiorColor ?? '',
-        exteriorColor: selectedVehicleColor?.value ?? exteriorColor ?? '',
-        vehiclesCategory: selectedVehicleCategory ?? '',
+        mileageUnit: _state.mileageUnit ?? '',
+        transmission: _state.transmissionType ?? '',
+        interiorColor: _state.interiorColor ?? '',
+        exteriorColor: _state.exteriorColor ?? '',
+        vehiclesCategory: _state.vehicleCategory ?? '',
       ),
       currentLatitude: LocalAuth.latlng.latitude,
       currentLongitude: LocalAuth.latlng.longitude,
@@ -668,7 +670,6 @@ class AddListingFormProvider extends ChangeNotifier
         ? DeliveryPayer.buyerPays
         : DeliveryPayer.sellerPays;
     setDeliveryPayer(payer);
-
     try {
       _state.listingType = ListingType.fromJson(post.listID);
     } catch (_) {
@@ -679,8 +680,8 @@ class AddListingFormProvider extends ChangeNotifier
     _state.acceptOffer = post.acceptOffers;
     _state.isDiscounted = post.hasDiscount;
     _state.privacy = post.privacy;
-    _state.selectedCategory =
-        LocalCategoriesSource().findSubCategoryByAddress(post.address);
+    // _state.selectedCategory =
+    //     LocalCategoriesSource().findSubCategoryByAddress(post.);
 
     _state.engineSize.text = post.vehicleInfo?.engineSize?.toString() ?? '';
     _state.mileage.text = post.vehicleInfo?.mileage?.toString() ?? '';
@@ -788,7 +789,7 @@ class AddListingFormProvider extends ChangeNotifier
     setPetBreed(petInfo.breed);
     setHealthChecked(petInfo.healthChecked ?? false);
     setPetCategory(petInfo.petsCategory);
-    setTime(petInfo.readyToLeave);
+    setReadyToLeave(petInfo.readyToLeave);
     setVaccinationUpToDate(petInfo.vaccinationUpToDate ?? false);
     setWormFleaTreated(petInfo.wormAndFleaTreated ?? false);
   }
@@ -848,11 +849,13 @@ class AddListingFormProvider extends ChangeNotifier
       final PostClothFootEntity previewClothInfo =
           listingType == ListingType.clothAndFoot
               ? PostClothFootEntity(
-                  sizeColors: _cloneSizeColors(sizeColorEntities),
+                  address: '',
+                  sizeColors: _cloneSizeColors(_state.sizeColorEntities),
                   sizeChartUrl: null,
-                  brand: brand ?? '',
+                  brand: _state.brand ?? '',
                 )
               : PostClothFootEntity(
+                  address: '',
                   sizeColors: <SizeColorEntity>[],
                   sizeChartUrl: null,
                   brand: null,
@@ -861,49 +864,52 @@ class AddListingFormProvider extends ChangeNotifier
       final PostPropertyEntity? previewPropertyInfo =
           listingType == ListingType.property
               ? PostPropertyEntity(
+                  address: '',
                   bedroom: _state.parsedBedroom ?? 0,
                   bathroom: _state.parsedBathroom ?? 0,
-                  energyRating: selectedEnergyRating ?? '',
-                  propertyType: selectedPropertyType ?? '',
-                  propertyCategory: selectedPropertySubCategory ?? '',
-                  garden: garden,
-                  parking: parking,
-                  tenureType: tenureType.value,
+                  energyRating: _state.energyRating ?? '',
+                  propertyType: _state.propertyType ?? '',
+                  propertyCategory: _state.propertySubCategory,
+                  garden: _state.hasGarden,
+                  parking: _state.hasParking,
+                  tenureType: _state.tenureType.value,
                 )
               : null;
 
       final PostPetEntity? previewPetInfo = listingType == ListingType.pets
           ? PostPetEntity(
-              age: age,
-              breed: breed,
-              healthChecked: healthChecked,
-              petsCategory: petCategory,
-              readyToLeave: time,
-              vaccinationUpToDate: vaccinationUpToDate,
-              wormAndFleaTreated: wormAndFleaTreated,
+              address: '',
+              age: _state.age,
+              breed: _state.breed,
+              healthChecked: _state.healthChecked,
+              petsCategory: _state.petCategory,
+              readyToLeave: _state.readyToLeave,
+              vaccinationUpToDate: _state.vaccinationUpToDate,
+              wormAndFleaTreated: _state.wormAndFleaTreated,
             )
           : null;
 
-      final PostVehicleEntity? previewVehicleInfo = listingType ==
-              ListingType.vehicle
-          ? PostVehicleEntity(
-              year: int.tryParse(year ?? '') ?? 0,
-              doors: int.tryParse(doors.text) ?? 0,
-              seats: int.tryParse(seats.text) ?? 0,
-              mileage: int.tryParse(mileage.text) ?? 0,
-              make: make ?? '',
-              model: model.text,
-              bodyType: selectedBodyType ?? '',
-              emission: emission ?? '',
-              fuelType: fuelType ?? '',
-              engineSize: double.tryParse(engineSize.text) ?? 0.0,
-              mileageUnit: selectedMileageUnit ?? '',
-              transmission: transmissionType ?? '',
-              interiorColor: interiorColor ?? '',
-              exteriorColor: selectedVehicleColor?.value ?? exteriorColor ?? '',
-              vehiclesCategory: selectedVehicleCategory ?? '',
-            )
-          : null;
+      final PostVehicleEntity? previewVehicleInfo =
+          listingType == ListingType.vehicle
+              ? PostVehicleEntity(
+                  address: '',
+                  year: int.tryParse(_state.year ?? '') ?? 0,
+                  doors: int.tryParse(doors.text) ?? 0,
+                  seats: int.tryParse(seats.text) ?? 0,
+                  mileage: int.tryParse(mileage.text) ?? 0,
+                  make: _state.make ?? '',
+                  model: model.text,
+                  bodyType: _state.bodyType ?? '',
+                  emission: _state.emission ?? '',
+                  fuelType: _state.fuelType ?? '',
+                  engineSize: double.tryParse(engineSize.text) ?? 0.0,
+                  mileageUnit: _state.mileageUnit ?? '',
+                  transmission: _state.transmissionType ?? '',
+                  interiorColor: _state.interiorColor ?? '',
+                  exteriorColor: _state.exteriorColor,
+                  vehiclesCategory: _state.vehicleCategory ?? '',
+                )
+              : null;
 
       final PostEntity previewPost = PostEntity(
         listID: listingType.json,
@@ -915,13 +921,12 @@ class AddListingFormProvider extends ChangeNotifier
         quantity: int.tryParse(quantity.text) ?? 1,
         currency: LocalAuth.currency,
         type: listingType,
-        address: selectedMeetupLocation?.address ?? 'Your Location',
         acceptOffers: acceptOffer,
         minOfferAmount: double.tryParse(minimumOffer.text) ?? 0.0,
         privacy: privacy,
         condition: condition,
         listOfReviews: <double>[],
-        categoryType: selectedCategory?.title ?? 'General',
+        categoryType: selectedCategory?.title ?? '',
         currentLongitude: LocalAuth.latlng.longitude,
         currentLatitude: LocalAuth.latlng.latitude,
         collectionLatitude: selectedCollectionLocation?.latitude,

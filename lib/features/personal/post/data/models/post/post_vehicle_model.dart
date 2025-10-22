@@ -17,6 +17,7 @@ class PostVehicleModel extends PostVehicleEntity {
     required super.interiorColor,
     required super.exteriorColor,
     required super.vehiclesCategory,
+    required super.address,
   });
 
   factory PostVehicleModel.fromJson(Map<String, dynamic> json) {
@@ -37,6 +38,7 @@ class PostVehicleModel extends PostVehicleEntity {
       interiorColor: json['interior_color']?.toString(),
       exteriorColor: json['exterior_color']?.toString(),
       vehiclesCategory: json['vehicles_category']?.toString(),
+      address: json['address']?.toString() ?? '',
     );
   }
 
@@ -57,5 +59,6 @@ class PostVehicleModel extends PostVehicleEntity {
         'doors': doors?.toString() ?? '',
         'seats': seats?.toString() ?? '',
         'mileage': mileage?.toString() ?? '',
+        'address': address,
       };
 }

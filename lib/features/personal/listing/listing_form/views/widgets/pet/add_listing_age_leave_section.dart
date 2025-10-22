@@ -81,14 +81,14 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                         .toList(),
                     selectedItem: DropdownOptionEntity.findByValue(
                       readyToLeaveOptions,
-                      formPro.time ?? '',
+                      formPro.readyToLeave ?? '',
                     ),
                     validator: (bool? value) =>
                         AppValidator.requireSelection(value),
                     hint: 'ready_to_leave'.tr(),
                     title: 'ready_to_leave'.tr(),
                     onChanged: (DropdownOptionEntity? value) =>
-                        formPro.setTime(value?.value.value),
+                        formPro.setReadyToLeave(value?.value.value),
                   ),
                 ),
               ],

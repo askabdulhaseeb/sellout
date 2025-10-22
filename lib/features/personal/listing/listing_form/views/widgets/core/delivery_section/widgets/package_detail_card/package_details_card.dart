@@ -223,7 +223,7 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         Text(
           tr('package_details'),
           style: const TextStyle(fontWeight: FontWeight.w500),
@@ -233,15 +233,11 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
             borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
             border: Border.all(color: scheme.outline),
           ),
-          padding: const EdgeInsets.all(AppSpacing.lg),
+          padding: const EdgeInsets.all(AppSpacing.sm),
           child: Column(
             spacing: AppSpacing.vSm,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Text(
-                tr('package_details'),
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
               Builder(builder: (BuildContext context) {
                 final String? dims = selectedDimsText();
                 final String? preset = matchedPresetLabel();

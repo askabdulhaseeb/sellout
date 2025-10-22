@@ -1,16 +1,16 @@
 import '../../../domain/entities/post/post_property_entity.dart';
 
 class PostPropertyModel extends PostPropertyEntity {
-  PostPropertyModel({
-    required super.bedroom,
-    required super.bathroom,
-    required super.energyRating,
-    required super.propertyType,
-    required super.propertyCategory,
-    required super.garden,
-    required super.parking,
-    required super.tenureType,
-  });
+  PostPropertyModel(
+      {required super.bedroom,
+      required super.bathroom,
+      required super.energyRating,
+      required super.propertyType,
+      required super.propertyCategory,
+      required super.garden,
+      required super.parking,
+      required super.tenureType,
+      required super.address});
 
   factory PostPropertyModel.fromJson(Map<String, dynamic> json) {
     return PostPropertyModel(
@@ -22,6 +22,7 @@ class PostPropertyModel extends PostPropertyEntity {
       garden: json['garden'] ?? false,
       parking: json['parking'] ?? true,
       tenureType: json['tenure_type']?.toString(),
+      address: json['address']?.toString() ?? '',
     );
   }
 
@@ -35,5 +36,6 @@ class PostPropertyModel extends PostPropertyEntity {
         'garden': garden.toString(),
         'parking': parking.toString(),
         'tenure_type': tenureType ?? '',
+        'address': address,
       };
 }

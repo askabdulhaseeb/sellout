@@ -39,7 +39,6 @@ class PostModel extends PostEntity {
     required super.collectionLongitude,
     required super.localDelivery,
     required super.internationalDelivery,
-    required super.address,
     required super.collectionLocation,
     required super.fileUrls,
     required super.hasDiscount,
@@ -100,7 +99,6 @@ class PostModel extends PostEntity {
       currency: json['currency']?.toString() ?? 'gbp',
       type: ListingType.fromJson(json['list_id']),
       categoryType: json['type']?.toString() ?? '',
-      address: json['address']?.toString() ?? '',
       acceptOffers:
           bool.tryParse(json['accept_offers']?.toString() ?? 'false') ?? false,
       minOfferAmount:

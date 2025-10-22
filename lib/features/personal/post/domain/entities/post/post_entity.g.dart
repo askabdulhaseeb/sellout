@@ -26,7 +26,6 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       quantity: fields[6] as int,
       currency: fields[7] as String?,
       type: fields[8] as ListingType,
-      address: fields[9] as String,
       acceptOffers: fields[10] as bool,
       minOfferAmount: fields[11] as double,
       privacy: fields[12] as PrivacyType,
@@ -46,7 +45,7 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       fileUrls: (fields[17] as List).cast<AttachmentEntity>(),
       hasDiscount: fields[19] as bool,
       discounts: (fields[18] as List).cast<DiscountEntity>(),
-      clothFootInfo: fields[28] as PostClothFootEntity,
+      clothFootInfo: fields[28] as PostClothFootEntity?,
       propertyInfo: fields[31] as PostPropertyEntity?,
       petInfo: fields[30] as PostPetEntity?,
       vehicleInfo: fields[29] as PostVehicleEntity?,
@@ -64,7 +63,7 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
   @override
   void write(BinaryWriter writer, PostEntity obj) {
     writer
-      ..writeByte(41)
+      ..writeByte(40)
       ..writeByte(0)
       ..write(obj.listID)
       ..writeByte(1)
@@ -83,8 +82,6 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       ..write(obj.currency)
       ..writeByte(8)
       ..write(obj.type)
-      ..writeByte(9)
-      ..write(obj.address)
       ..writeByte(10)
       ..write(obj.acceptOffers)
       ..writeByte(11)
