@@ -16,6 +16,7 @@ import '../../../../post/data/models/size_color/size_color_model.dart';
 import '../../../../post/domain/entities/discount_entity.dart';
 import '../../../../post/domain/entities/post/package_detail_entity.dart';
 import '../../../../post/domain/entities/post/post_cloth_foot_entity.dart';
+import '../../../../post/domain/entities/post/post_food_drink_entity.dart';
 import '../../../../post/domain/entities/post/post_pet_entity.dart';
 import '../../../../post/domain/entities/post/post_property_entity.dart';
 import '../../../../post/domain/entities/post/post_vehicle_entity.dart';
@@ -49,11 +50,13 @@ class AddListingParam {
     this.vehicleParams,
     this.propertyParams,
     this.petsParams,
+    this.foodDrinkParams,
     this.meetUpLocation,
     this.collectionLocation,
     this.currentLatitude,
     this.currentLongitude,
     this.availbility,
+    this.address,
   });
 
   // Core fields
@@ -81,18 +84,51 @@ class AddListingParam {
   final String? accessCode;
   final String? postID;
   final List<AttachmentEntity>? oldAttachments;
-  final String? availbility;
+  final List<Map<String, dynamic>>? availbility;
 
   // Specialized params (nullable because not every listing uses them)
   final PostClothFootEntity? clothfootParams;
   final PostVehicleEntity? vehicleParams;
   final PostPropertyEntity? propertyParams;
   final PostPetEntity? petsParams;
+  final PostFoodDrinkEntity? foodDrinkParams;
 
   final LocationEntity? meetUpLocation;
   final LocationEntity? collectionLocation;
+  final String? address;
 
   String get acceptOfferJSON => acceptOffer ? 'true' : 'false';
+
+  String get _resolvedAddress {
+    if (address != null && address!.isNotEmpty) {
+      return address!;
+    }
+
+    if (listingType == ListingType.vehicle && vehicleParams != null) {
+      final String vc = vehicleParams?.vehiclesCategory ?? '';
+      final String bt = vehicleParams?.bodyType ?? '';
+      return '${listingType.json}/$vc/$bt';
+    }
+
+    if (listingType == ListingType.pets && petsParams != null) {
+      final String pc = petsParams?.petsCategory ?? '';
+      final String br = petsParams?.breed ?? '';
+      return '${listingType.json}/$pc/$br';
+    }
+
+    if (listingType == ListingType.property && propertyParams != null) {
+      final String pt = propertyParams?.propertyType ?? '';
+      return '${listingType.json}/$pt';
+    }
+
+    if (listingType == ListingType.foodAndDrink &&
+        (foodDrinkParams != null || (type?.isNotEmpty ?? false))) {
+      final String fd = foodDrinkParams?.type ?? type ?? '';
+      return '${listingType.json}/$fd';
+    }
+
+    return category?.address ?? '';
+  }
 
   Map<String, String> toMap() {
     switch (listingType) {
@@ -189,6 +225,7 @@ class AddListingParam {
       'list_id': listingType.json,
       'current_latitude': currentLatitude?.toString() ?? '',
       'current_longitude': currentLongitude?.toString() ?? '',
+      'address': _resolvedAddress,
     };
   }
 
@@ -198,7 +235,7 @@ class AddListingParam {
           ? jsonEncode(
               LocationModel.fromEntity(meetUpLocation!).toJsonidurlkeys())
           : '',
-      'availability': availbility ?? '',
+      'availability': jsonEncode(availbility),
     };
   }
 
@@ -264,7 +301,8 @@ class AddListingParam {
 
   Map<String, String> _food() {
     final Map<String, String> data = <String, String>{
-      'quantity': quantity ?? ''
+      'type': foodDrinkParams?.type ?? type ?? '',
+      'quantity': quantity ?? '',
     };
     data.addAll(_baseMap(
       includeDiscount: true,
@@ -338,9 +376,10 @@ class AddListingParam {
     };
 
     data.addAll(_baseMap(
-      includeOffer: true,
-      includeListLoc: true,
-    ));
+        includeDiscount: false,
+        includeOffer: true,
+        includeListLoc: true,
+        includeMeetup: true));
     return data;
   }
 }

@@ -20,6 +20,7 @@ import '../../../../post/domain/entities/meetup/availability_entity.dart';
 import '../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../post/domain/entities/post/post_cloth_foot_entity.dart';
 import '../../../../post/domain/entities/post/package_detail_entity.dart';
+import '../../../../post/domain/entities/post/post_food_drink_entity.dart';
 import '../../../../post/domain/entities/post/post_pet_entity.dart';
 import '../../../../post/domain/entities/post/post_property_entity.dart';
 import '../../../../post/domain/entities/post/post_vehicle_entity.dart';
@@ -321,31 +322,33 @@ class AddListingFormProvider extends ChangeNotifier
   /// Single validation function that checks all aspects of the form
   /// Returns a tuple (bool, String?) where bool indicates validity and String contains any error message
   Future<(bool, String?)> validateForm(BuildContext context) async {
-    if (selectedCategory == null) {
-      return (false, 'choose_category'.tr());
+    if (listingType == ListingType.items ||
+        listingType == ListingType.clothAndFoot ||
+        listingType == ListingType.foodAndDrink) {
+      if (selectedCategory == null) {
+        return (false, 'choose_category'.tr());
+      }
+      if (deliveryType == DeliveryType.paid ||
+          deliveryType == DeliveryType.freeDelivery) {
+        bool hasValidParcelDetails() {
+          String norm(String s) => s.trim().replaceAll(',', '.');
+          double? toNum(String s) => double.tryParse(norm(s));
+
+          final double? l = toNum(_state.packageLength.text);
+          final double? w = toNum(_state.packageWidth.text);
+          final double? h = toNum(_state.packageHeight.text);
+
+          return l != null && l > 0 && w != null && w > 0 && h != null && h > 0;
+        }
+
+        if (!hasValidParcelDetails()) {
+          return (false, 'please_fill_parcel_size'.tr());
+        }
+      }
     }
 
     if (!hasAtLeastOnePhoto) {
       return (false, 'please_add_at_least_one_photo'.tr());
-    }
-
-    // Parcel size check (when delivery requires it)
-    if (deliveryType == DeliveryType.paid ||
-        deliveryType == DeliveryType.freeDelivery) {
-      bool hasValidParcelDetails() {
-        String norm(String s) => s.trim().replaceAll(',', '.');
-        double? toNum(String s) => double.tryParse(norm(s));
-
-        final double? l = toNum(_state.packageLength.text);
-        final double? w = toNum(_state.packageWidth.text);
-        final double? h = toNum(_state.packageHeight.text);
-
-        return l != null && l > 0 && w != null && w > 0 && h != null && h > 0;
-      }
-
-      if (!hasValidParcelDetails()) {
-        return (false, 'please_fill_parcel_size'.tr());
-      }
     }
 
     final bool isValid = switch (listingType) {
@@ -400,48 +403,21 @@ class AddListingFormProvider extends ChangeNotifier
           deliveryType != DeliveryType.collection ? pkgDetails : null,
       collectionLocation: selectedCollectionLocation,
       meetUpLocation: selectedMeetupLocation,
-      availbility: availability.isNotEmpty ? availability.toString() : null,
     );
 
-    await _submitCommon(param);
-  }
-
-  Future<void> _onPetSubmit() async {
-    final AddListingParam param = AddListingParam(
-      currency: LocalAuth.currency,
-      accessCode: accessCode,
-      postID: post?.postID,
-      title: title.text,
-      description: description.text,
-      attachments: _attachmentManager.items,
-      oldAttachments: _post?.fileUrls,
-      price: price.text,
-      acceptOffer: acceptOffer,
-      minOfferAmount: minimumOffer.text,
-      privacyType: privacy,
-      deliveryType: deliveryType,
-      listingType: listingType,
-      category: selectedCategory,
-      condition: condition,
-      quantity: quantity.text,
-      petsParams: PostPetEntity(
-        address: '',
-        age: _state.age,
-        breed: _state.breed,
-        healthChecked: _state.healthChecked,
-        petsCategory: _state.petCategory,
-        readyToLeave: _state.readyToLeave,
-        vaccinationUpToDate: _state.vaccinationUpToDate,
-        wormAndFleaTreated: _state.wormAndFleaTreated,
-      ),
-      currentLatitude: LocalAuth.latlng.latitude,
-      currentLongitude: LocalAuth.latlng.longitude,
-      meetUpLocation: selectedMeetupLocation,
-    );
     await _submitCommon(param);
   }
 
   Future<void> _onClothesAndFootSubmit() async {
+    final String address = _resolveAddress(category: selectedCategory);
+
+    final PostClothFootEntity clothParams = PostClothFootEntity(
+      type: _state.clothSubCategory,
+      address: address,
+      sizeColors: _state.sizeColorEntities,
+      sizeChartUrl: null,
+      brand: _state.brand ?? '',
+    );
     final AddListingParam param = AddListingParam(
       currency: LocalAuth.currency,
       accessCode: accessCode,
@@ -461,12 +437,7 @@ class AddListingFormProvider extends ChangeNotifier
       quantity: quantity.text,
       discount: isDiscounted,
       discounts: isDiscounted ? discounts : null,
-      clothfootParams: PostClothFootEntity(
-        address: '',
-        sizeColors: _state.sizeColorEntities,
-        sizeChartUrl: null,
-        brand: _state.brand ?? '',
-      ),
+      clothfootParams: clothParams,
       currentLatitude: LocalAuth.latlng.latitude,
       currentLongitude: LocalAuth.latlng.longitude,
       packageDetail:
@@ -480,7 +451,16 @@ class AddListingFormProvider extends ChangeNotifier
   }
 
   Future<void> _onFoodAndDrinkSubmit() async {
+    final String address = _resolveAddress(
+      category: selectedCategory,
+      foodDrinkType: _state.foodDrinkSubCategory,
+    );
+    final PostFoodDrinkEntity foodDrinkParams = PostFoodDrinkEntity(
+      type: _state.foodDrinkSubCategory,
+      address: address,
+    );
     final AddListingParam param = AddListingParam(
+      type: selectedFoodDrinkSubCategory,
       currency: LocalAuth.currency,
       accessCode: accessCode,
       postID: post?.postID,
@@ -501,13 +481,113 @@ class AddListingFormProvider extends ChangeNotifier
       discounts: isDiscounted ? discounts : null,
       currentLatitude: LocalAuth.latlng.latitude,
       currentLongitude: LocalAuth.latlng.longitude,
+      foodDrinkParams: foodDrinkParams,
       packageDetail:
           deliveryType != DeliveryType.collection ? pkgDetails : null,
       collectionLocation: selectedCollectionLocation,
       meetUpLocation: selectedMeetupLocation,
-      availbility: availability.isNotEmpty ? availability.toString() : null,
+      address: address,
     );
 
+    await _submitCommon(param);
+  }
+
+  Future<void> _onVehicleSubmit() async {
+    final String address = _resolveAddress(
+      category: selectedCategory,
+      vehiclesCategory: _state.vehicleCategory,
+      bodyType: _state.bodyType,
+    );
+
+    final PostVehicleEntity vehicleParams = PostVehicleEntity(
+      address: address,
+      year: int.tryParse(_state.year ?? '') ?? 0,
+      doors: int.tryParse(doors.text) ?? 0,
+      seats: int.tryParse(seats.text) ?? 0,
+      mileage: int.tryParse(mileage.text) ?? 0,
+      make: _state.make ?? '',
+      model: model.text,
+      bodyType: _state.bodyType ?? '',
+      emission: _state.emission ?? '',
+      fuelType: _state.fuelType ?? '',
+      engineSize: double.tryParse(engineSize.text) ?? 0.0,
+      mileageUnit: _state.mileageUnit ?? '',
+      transmission: _state.transmissionType ?? '',
+      interiorColor: _state.interiorColor ?? '',
+      exteriorColor: _state.exteriorColor ?? '',
+      vehiclesCategory: _state.vehicleCategory ?? '',
+    );
+
+    final AddListingParam param = AddListingParam(
+      currency: LocalAuth.currency,
+      accessCode: accessCode,
+      postID: post?.postID,
+      title: title.text,
+      description: description.text,
+      attachments: _attachmentManager.items,
+      oldAttachments: _post?.fileUrls,
+      price: price.text,
+      acceptOffer: acceptOffer,
+      minOfferAmount: minimumOffer.text,
+      privacyType: privacy,
+      deliveryType: deliveryType,
+      listingType: listingType,
+      category: selectedCategory,
+      condition: condition,
+      quantity: quantity.text,
+      vehicleParams: vehicleParams,
+      currentLatitude: LocalAuth.latlng.latitude,
+      currentLongitude: LocalAuth.latlng.longitude,
+      meetUpLocation: selectedMeetupLocation,
+      availbility: _availabilityManager.getAvailabilityData(),
+      address: address,
+    );
+
+    await _submitCommon(param);
+  }
+
+  Future<void> _onPetSubmit() async {
+    final String address = _resolveAddress(
+      category: selectedCategory,
+      petsCategory: _state.petCategory,
+      breed: _state.breed,
+    );
+
+    final PostPetEntity petParams = PostPetEntity(
+      address: address,
+      age: _state.age,
+      breed: _state.breed,
+      healthChecked: _state.healthChecked,
+      petsCategory: _state.petCategory,
+      readyToLeave: _state.readyToLeave,
+      vaccinationUpToDate: _state.vaccinationUpToDate,
+      wormAndFleaTreated: _state.wormAndFleaTreated,
+    );
+
+    final AddListingParam param = AddListingParam(
+      currency: LocalAuth.currency,
+      accessCode: accessCode,
+      postID: post?.postID,
+      title: title.text,
+      description: description.text,
+      attachments: _attachmentManager.items,
+      oldAttachments: _post?.fileUrls,
+      price: price.text,
+      acceptOffer: acceptOffer,
+      minOfferAmount: minimumOffer.text,
+      privacyType: privacy,
+      deliveryType: deliveryType,
+      listingType: listingType,
+      category: selectedCategory,
+      condition: condition,
+      quantity: quantity.text,
+      petsParams: petParams,
+      currentLatitude: LocalAuth.latlng.latitude,
+      currentLongitude: LocalAuth.latlng.longitude,
+      meetUpLocation: selectedMeetupLocation,
+      availbility: _availabilityManager.getAvailabilityData(),
+      address: address,
+    );
     await _submitCommon(param);
   }
 
@@ -543,55 +623,38 @@ class AddListingFormProvider extends ChangeNotifier
       currentLatitude: LocalAuth.latlng.latitude,
       currentLongitude: LocalAuth.latlng.longitude,
       meetUpLocation: selectedMeetupLocation,
-      availbility: availability.isNotEmpty ? availability.toString() : null,
+      availbility: _availabilityManager.getAvailabilityData(),
     );
 
     await _submitCommon(param);
   }
 
-  Future<void> _onVehicleSubmit() async {
-    final AddListingParam param = AddListingParam(
-      currency: LocalAuth.currency,
-      accessCode: accessCode,
-      postID: post?.postID,
-      title: title.text,
-      description: description.text,
-      attachments: _attachmentManager.items,
-      oldAttachments: _post?.fileUrls,
-      price: price.text,
-      acceptOffer: acceptOffer,
-      minOfferAmount: minimumOffer.text,
-      privacyType: privacy,
-      deliveryType: deliveryType,
-      listingType: listingType,
-      category: selectedCategory,
-      condition: condition,
-      quantity: quantity.text,
-      vehicleParams: PostVehicleEntity(
-        address: '',
-        year: int.tryParse(_state.year ?? '') ?? 0,
-        doors: int.tryParse(doors.text) ?? 0,
-        seats: int.tryParse(seats.text) ?? 0,
-        mileage: int.tryParse(mileage.text) ?? 0,
-        make: _state.make ?? '',
-        model: model.text,
-        bodyType: _state.bodyType ?? '',
-        emission: _state.emission ?? '',
-        fuelType: _state.fuelType ?? '',
-        engineSize: double.tryParse(engineSize.text) ?? 0.0,
-        mileageUnit: _state.mileageUnit ?? '',
-        transmission: _state.transmissionType ?? '',
-        interiorColor: _state.interiorColor ?? '',
-        exteriorColor: _state.exteriorColor ?? '',
-        vehiclesCategory: _state.vehicleCategory ?? '',
-      ),
-      currentLatitude: LocalAuth.latlng.latitude,
-      currentLongitude: LocalAuth.latlng.longitude,
-      meetUpLocation: selectedMeetupLocation,
-      availbility: availability.isNotEmpty ? availability.toString() : null,
-    );
+  String _resolveAddress({
+    SubCategoryEntity? category,
+    String? vehiclesCategory,
+    String? bodyType,
+    String? petsCategory,
+    String? breed,
+    String? propertyType,
+    String? foodDrinkType,
+  }) {
+    if (listingType == ListingType.vehicle) {
+      return '${listingType.json}/${vehiclesCategory ?? ''}/${bodyType ?? ''}';
+    }
 
-    await _submitCommon(param);
+    if (listingType == ListingType.pets) {
+      return '${listingType.json}/${petsCategory ?? ''}/${breed ?? ''}';
+    }
+
+    if (listingType == ListingType.property) {
+      return '${listingType.json}/${propertyType ?? ''}';
+    }
+
+    if (listingType == ListingType.foodAndDrink) {
+      return '${listingType.json}/${foodDrinkType ?? ''}';
+    }
+
+    return category?.address ?? '';
   }
 
   void _handleSubmissionResult(DataState<String> result) {
@@ -849,12 +912,14 @@ class AddListingFormProvider extends ChangeNotifier
       final PostClothFootEntity previewClothInfo =
           listingType == ListingType.clothAndFoot
               ? PostClothFootEntity(
+                  type: _state.clothSubCategory,
                   address: '',
                   sizeColors: _cloneSizeColors(_state.sizeColorEntities),
                   sizeChartUrl: null,
                   brand: _state.brand ?? '',
                 )
               : PostClothFootEntity(
+                  type: _state.foodDrinkSubCategory,
                   address: '',
                   sizeColors: <SizeColorEntity>[],
                   sizeChartUrl: null,
@@ -888,6 +953,13 @@ class AddListingFormProvider extends ChangeNotifier
               wormAndFleaTreated: _state.wormAndFleaTreated,
             )
           : null;
+      final PostFoodDrinkEntity? previewFoodDrinkInfo =
+          listingType == ListingType.foodAndDrink
+              ? PostFoodDrinkEntity(
+                  address: '',
+                  type: _state.foodDrinkSubCategory,
+                )
+              : null;
 
       final PostVehicleEntity? previewVehicleInfo =
           listingType == ListingType.vehicle
@@ -944,6 +1016,7 @@ class AddListingFormProvider extends ChangeNotifier
         propertyInfo: previewPropertyInfo,
         petInfo: previewPetInfo,
         vehicleInfo: previewVehicleInfo,
+        foodDrinkInfo: previewFoodDrinkInfo,
         packageDetail: previewPackageDetail,
         isActive: true,
         createdBy: LocalAuth.uid ?? 'null',

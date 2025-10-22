@@ -77,14 +77,14 @@ class AddListingFormState {
   String? energyRating;
   // Initialize as non-nullable empty strings so analyzer doesn't complain; real defaults
   // are applied in _initializeDefaults() called from the constructor below.
-  String propertySubCategory = '';
+  String propertySubCategory = ListingType.property.cids.first;
 
   // Food state
-  String foodDrinkSubCategory = '';
+  String foodDrinkSubCategory = ListingType.foodAndDrink.cids.first;
 
   // Cloth state
   String? brand;
-  String clothSubCategory = '';
+  String clothSubCategory = ListingType.clothAndFoot.cids.first;
   List<SizeColorEntity> sizeColorEntities = <SizeColorEntity>[];
 
   // Collections

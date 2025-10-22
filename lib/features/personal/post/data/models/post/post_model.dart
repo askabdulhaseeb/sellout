@@ -11,6 +11,7 @@ import '../../../domain/entities/post/post_entity.dart';
 import '../meetup/availability_model.dart';
 import 'package_detail_model.dart';
 import 'post_cloth_foot_model.dart';
+import 'post_food_drink_model.dart';
 import 'post_pet_model.dart';
 import 'post_property_model.dart';
 import 'post_vehicle_model.dart';
@@ -47,6 +48,7 @@ class PostModel extends PostEntity {
     required super.petInfo,
     required super.vehicleInfo,
     required super.propertyInfo,
+    required super.foodDrinkInfo,
     required super.packageDetail, // ADD THIS PARAMETER
     required super.meetUpLocation,
     required super.availability,
@@ -56,6 +58,7 @@ class PostModel extends PostEntity {
     required super.createdAt,
     required super.updatedAt,
     required super.accessCode,
+
   }) : super(inHiveAt: DateTime.now());
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
@@ -140,6 +143,7 @@ class PostModel extends PostEntity {
       petInfo: PostPetModel.fromJson(json),
       vehicleInfo: PostVehicleModel.fromJson(json),
       propertyInfo: PostPropertyModel.fromJson(json),
+      foodDrinkInfo: PostFoodDrinkModel.fromJson(json),
       packageDetail: packageDetail, // ADD THIS LINE
       meetUpLocation: json['meet_up_location'] == null
           ? null

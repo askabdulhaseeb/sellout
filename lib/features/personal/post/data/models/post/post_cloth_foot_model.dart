@@ -7,6 +7,7 @@ class PostClothFootModel extends PostClothFootEntity {
     required super.sizeColors,
     required super.sizeChartUrl,
     required super.brand,
+    required super.type,
     required super.address,
   });
 
@@ -20,6 +21,7 @@ class PostClothFootModel extends PostClothFootEntity {
           : AttachmentModel.fromJson(
               json['size_chart'] as Map<String, dynamic>),
       brand: json['brand']?.toString() ?? '',
+      type: json['type']?.toString() ?? '',
       address: json['address']?.toString() ?? '',
     );
   }

@@ -19,6 +19,7 @@ class PostClothFootEntityAdapter extends TypeAdapter<PostClothFootEntity> {
     return PostClothFootEntity(
       sizeColors: (fields[71] as List).cast<SizeColorEntity>(),
       sizeChartUrl: fields[60] as AttachmentEntity?,
+      type: fields[61] as String?,
       brand: fields[72] as String?,
       address: fields[73] as String,
     );
@@ -27,11 +28,13 @@ class PostClothFootEntityAdapter extends TypeAdapter<PostClothFootEntity> {
   @override
   void write(BinaryWriter writer, PostClothFootEntity obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(71)
       ..write(obj.sizeColors)
       ..writeByte(60)
       ..write(obj.sizeChartUrl)
+      ..writeByte(61)
+      ..write(obj.type)
       ..writeByte(72)
       ..write(obj.brand)
       ..writeByte(73)

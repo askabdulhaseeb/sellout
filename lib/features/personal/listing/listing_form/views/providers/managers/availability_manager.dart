@@ -135,10 +135,17 @@ class AvailabilityManager extends ChangeNotifier {
   }
 
   List<Map<String, dynamic>> getAvailabilityData() {
-    return _availability
+    final List<Map<String, dynamic>> jsonArray = _availability
         .where((AvailabilityEntity entity) => entity.isOpen)
-        .map((AvailabilityEntity entity) => entity.toJson())
+        .map((AvailabilityEntity entity) => <String, dynamic>{
+              'day': entity.day.name,
+              'is_open': entity.isOpen,
+              'opening_time': entity.openingTime,
+              'closing_time': entity.closingTime,
+            })
         .toList();
+
+    return jsonArray;
   }
 
   void reset() {
