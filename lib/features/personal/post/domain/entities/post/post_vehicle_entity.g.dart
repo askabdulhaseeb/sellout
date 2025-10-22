@@ -32,13 +32,14 @@ class PostVehicleEntityAdapter extends TypeAdapter<PostVehicleEntity> {
       interiorColor: fields[12] as String?,
       exteriorColor: fields[13] as String?,
       vehiclesCategory: fields[14] as String?,
+      address: fields[15] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, PostVehicleEntity obj) {
     writer
-      ..writeByte(15)
+      ..writeByte(16)
       ..writeByte(0)
       ..write(obj.year)
       ..writeByte(1)
@@ -68,7 +69,9 @@ class PostVehicleEntityAdapter extends TypeAdapter<PostVehicleEntity> {
       ..writeByte(13)
       ..write(obj.exteriorColor)
       ..writeByte(14)
-      ..write(obj.vehiclesCategory);
+      ..write(obj.vehiclesCategory)
+      ..writeByte(15)
+      ..write(obj.address);
   }
 
   @override

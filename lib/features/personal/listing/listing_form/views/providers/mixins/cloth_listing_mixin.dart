@@ -12,13 +12,13 @@ mixin ClothListingMixin on ChangeNotifier {
 
   // Getters that use the state
   String? get brand => state.brand;
+ 
   String get selectedClothSubType {
     if (state.clothSubCategory.isEmpty) {
       return ListingType.clothAndFoot.cids.first;
     }
     return state.clothSubCategory;
   }
-
   List<SizeColorEntity> get sizeColorEntities => state.sizeColorEntities;
 
   // Setters that update the state

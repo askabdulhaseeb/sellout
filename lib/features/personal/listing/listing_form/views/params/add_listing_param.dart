@@ -185,24 +185,8 @@ class AddListingParam {
   }
 
   Map<String, String> _listLocMAP() {
-    String address = category?.address ?? '';
-
-    if (listingType == ListingType.vehicle && vehicleParams != null) {
-      final String vc = vehicleParams?.vehiclesCategory ?? '';
-      final String bt = vehicleParams?.bodyType ?? '';
-      address = '${listingType.json}/$vc/$bt';
-    } else if (listingType == ListingType.pets && petsParams != null) {
-      final String pc = petsParams?.petsCategory ?? '';
-      final String br = petsParams?.breed ?? '';
-      address = '${listingType.json}/$pc/$br';
-    } else if (listingType == ListingType.property && propertyParams != null) {
-      final String pt = propertyParams?.propertyType ?? '';
-      address = '${listingType.json}/$pt';
-    }
-
     return <String, String>{
       'list_id': listingType.json,
-      'address': address,
       'current_latitude': currentLatitude?.toString() ?? '',
       'current_longitude': currentLongitude?.toString() ?? '',
     };

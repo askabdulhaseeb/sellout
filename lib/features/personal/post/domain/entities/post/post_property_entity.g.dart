@@ -25,13 +25,14 @@ class PostPropertyEntityAdapter extends TypeAdapter<PostPropertyEntity> {
       garden: fields[5] as bool?,
       parking: fields[6] as bool?,
       tenureType: fields[7] as String?,
+      address: fields[8] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, PostPropertyEntity obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.bedroom)
       ..writeByte(1)
@@ -47,7 +48,9 @@ class PostPropertyEntityAdapter extends TypeAdapter<PostPropertyEntity> {
       ..writeByte(6)
       ..write(obj.parking)
       ..writeByte(7)
-      ..write(obj.tenureType);
+      ..write(obj.tenureType)
+      ..writeByte(8)
+      ..write(obj.address);
   }
 
   @override

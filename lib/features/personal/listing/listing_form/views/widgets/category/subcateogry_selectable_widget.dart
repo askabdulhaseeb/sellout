@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../core/widgets/app_snakebar.dart';
-import '../../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../data/sources/local/local_categories.dart';
 import '../../../domain/entities/sub_category_entity.dart';
 import 'category_selection_bottom_sheet.dart';
@@ -37,7 +36,6 @@ class SubCategorySelectableWidget<T extends ChangeNotifier>
 class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
     extends State<SubCategorySelectableWidget<T>> {
   SubCategoryEntity? selectedSubCategory;
-  SubCategoryEntity? selectedSubSubCategory;
 
   @override
   void initState() {
@@ -54,7 +52,6 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
       debugPrint('🟠 [UPDATE] SubCategory changed');
       setState(() {
         selectedSubCategory = widget.subCategory;
-        selectedSubSubCategory = null;
       });
       debugPrint(
           '🟢 Updated selectedSubCategory: ${selectedSubCategory?.title}');
@@ -64,7 +61,6 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
   List<SubCategoryEntity> _getFilteredSubCategories() {
     debugPrint(
         '🔵 [FILTER] Getting filtered subcategories for listType: ${widget.listType?.json}, cid: ${widget.cid}');
-
     switch (widget.listType) {
       case ListingType.items:
         return LocalCategoriesSource.items?.subCategory ??
@@ -131,15 +127,9 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
     debugPrint('✅ User selected category: ${selected.title}');
     setState(() {
       selectedSubCategory = selected;
-      selectedSubSubCategory = null;
     });
 
-    if (selected.subCategory.isEmpty) {
-      debugPrint('🔚 No sub-subcategories found, invoking onSelected callback');
-      widget.onSelected(selected);
-    } else {
-      debugPrint('🔁 Subcategory contains nested categories');
-    }
+    widget.onSelected(selected);
   }
 
   @override
@@ -198,28 +188,6 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
             ),
           ),
         ),
-        if (selectedSubCategory?.subCategory.isNotEmpty ?? false)
-          CustomDropdown<SubCategoryEntity>(
-            validator: (bool? sub) {
-              if (selectedSubCategory!.subCategory.isNotEmpty && sub == null) {
-                return 'please_select_sub_category'.tr();
-              }
-              return null;
-            },
-            title: 'sub_category'.tr(),
-            selectedItem: selectedSubSubCategory,
-            items: selectedSubCategory!.subCategory
-                .map((SubCategoryEntity e) => DropdownMenuItem(
-                      value: e,
-                      child: Text(e.title),
-                    ))
-                .toList(),
-            onChanged: (SubCategoryEntity? sub) {
-              debugPrint('🟢 User selected sub-subcategory: ${sub?.title}');
-              setState(() => selectedSubSubCategory = sub);
-              widget.onSelected(sub);
-            },
-          ),
       ],
     );
   }

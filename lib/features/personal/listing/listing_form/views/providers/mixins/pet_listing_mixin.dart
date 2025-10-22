@@ -6,7 +6,7 @@ mixin PetListingMixin on ChangeNotifier {
 
   // Getters - delegate to state
   String? get age => state.age;
-  String? get time => state.time;
+  String? get readyToLeave => state.readyToLeave;
   String? get petCategory => state.petCategory;
   String? get breed => state.breed;
   bool? get vaccinationUpToDate => state.vaccinationUpToDate;
@@ -14,9 +14,9 @@ mixin PetListingMixin on ChangeNotifier {
   bool? get healthChecked => state.healthChecked;
 
   // Setters - update state and notify
-  void setTime(String? value) {
+  void setReadyToLeave(String? value) {
     if (value == null) return;
-    state.time = value;
+    state.readyToLeave = value;
     notifyListeners();
   }
 

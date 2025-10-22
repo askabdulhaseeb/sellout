@@ -4,13 +4,14 @@ part 'post_pet_entity.g.dart';
 @HiveType(typeId: 70)
 class PostPetEntity {
   PostPetEntity({
-    this.age,
-    this.breed,
-    this.healthChecked,
-    this.petsCategory,
-    this.readyToLeave,
-    this.wormAndFleaTreated,
-    this.vaccinationUpToDate,
+      required   this.age,
+      required   this.breed,
+      required   this.healthChecked,
+      required   this.petsCategory,
+      required   this.readyToLeave,
+      required   this.wormAndFleaTreated,
+      required   this.vaccinationUpToDate,
+      required   this.address
   });
 
   @HiveField(0)
@@ -33,4 +34,7 @@ class PostPetEntity {
 
   @HiveField(6)
   final bool? vaccinationUpToDate;
+
+  @HiveField(7)
+  final String address;
 }

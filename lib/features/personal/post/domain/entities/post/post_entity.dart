@@ -27,7 +27,6 @@ class PostEntity {
     required this.quantity,
     required this.currency,
     required this.type,
-    required this.address,
     required this.acceptOffers,
     required this.minOfferAmount,
     required this.privacy,
@@ -90,8 +89,6 @@ class PostEntity {
   final String? currency;
   @HiveField(8)
   final ListingType type;
-  @HiveField(9)
-  final String address;
   @HiveField(10)
   final bool acceptOffers;
   @HiveField(11)

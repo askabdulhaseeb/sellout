@@ -24,13 +24,14 @@ class PostPetEntityAdapter extends TypeAdapter<PostPetEntity> {
       readyToLeave: fields[4] as String?,
       wormAndFleaTreated: fields[5] as bool?,
       vaccinationUpToDate: fields[6] as bool?,
+      address: fields[7] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, PostPetEntity obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.age)
       ..writeByte(1)
@@ -44,7 +45,9 @@ class PostPetEntityAdapter extends TypeAdapter<PostPetEntity> {
       ..writeByte(5)
       ..write(obj.wormAndFleaTreated)
       ..writeByte(6)
-      ..write(obj.vaccinationUpToDate);
+      ..write(obj.vaccinationUpToDate)
+      ..writeByte(7)
+      ..write(obj.address);
   }
 
   @override

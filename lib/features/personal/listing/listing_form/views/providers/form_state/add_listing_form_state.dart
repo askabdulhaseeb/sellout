@@ -24,7 +24,7 @@ class AddListingFormState {
   final TextEditingController model = TextEditingController();
   final TextEditingController seats = TextEditingController();
   final TextEditingController doors = TextEditingController();
-    final TextEditingController bedroom = TextEditingController();
+  final TextEditingController bedroom = TextEditingController();
   final TextEditingController bathroom = TextEditingController();
   final TextEditingController location = TextEditingController();
   final TextEditingController packageHeight = TextEditingController();
@@ -48,7 +48,7 @@ class AddListingFormState {
 
   // Pet state
   String? age;
-  String? time;
+  String? readyToLeave;
   String? petCategory;
   String? breed;
   bool? vaccinationUpToDate;
@@ -162,7 +162,7 @@ class AddListingFormState {
 
   void _resetPetState() {
     age = null;
-    time = null;
+    readyToLeave = null;
     petCategory = null;
     breed = null;
     vaccinationUpToDate = null;

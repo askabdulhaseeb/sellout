@@ -1,61 +1,56 @@
 import 'package:flutter/material.dart';
-import '../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../core/enums/listing/property/tenure_type.dart';
+import '../form_state/add_listing_form_state.dart';
 
 mixin PropertyListingMixin on ChangeNotifier {
-  bool _garden = true;
-  bool _parking = true;
-  bool _animalFriendly = true;
-  TenureType _tenureType = TenureType.freehold;
-  String? _selectedPropertyType;
-  String? _selectedEnergyRating;
-  String? _selectedPropertySubCategory = ListingType.property.cids.first;
+  // The implementing class must provide an instance of AddListingFormState
+  AddListingFormState get state;
 
-  // Getters
-  bool get garden => _garden;
-  bool get parking => _parking;
-  bool get animalFriendly => _animalFriendly;
-  TenureType get tenureType => _tenureType;
-  String? get selectedPropertyType => _selectedPropertyType;
-  String? get selectedEnergyRating => _selectedEnergyRating;
-  String? get selectedPropertySubCategory => _selectedPropertySubCategory;
+  // --- Getters (directly from state) ---
+  bool get garden => state.hasGarden;
+  bool get parking => state.hasParking;
+  bool get animalFriendly => state.isAnimalFriendly;
+  TenureType get tenureType => state.tenureType;
+  String? get selectedPropertyType => state.propertyType;
+  String? get selectedEnergyRating => state.energyRating;
+  String get selectedPropertySubCategory => state.propertySubCategory;
 
-  // Setters
+  // --- Setters (update state and notify listeners) ---
   void setGarden(bool? value) {
     if (value == null) return;
-    _garden = value;
+    state.hasGarden = value;
     notifyListeners();
   }
 
   void setParking(bool? value) {
     if (value == null) return;
-    _parking = value;
+    state.hasParking = value;
     notifyListeners();
   }
 
   void setAnimalFriendly(bool? value) {
     if (value == null) return;
-    _animalFriendly = value;
+    state.isAnimalFriendly = value;
     notifyListeners();
   }
 
   void setPropertyType(String? value) {
-    _selectedPropertyType = value;
+    state.propertyType = value;
     notifyListeners();
   }
 
   void setEnergyRating(String? value) {
-    _selectedEnergyRating = value;
+    state.energyRating = value;
     notifyListeners();
   }
 
   void setSelectedTenureType(TenureType value) {
-    _tenureType = value;
+    state.tenureType = value;
     notifyListeners();
   }
 
   void setSelectedPropertySubType(String? value) {
-    _selectedPropertySubCategory = value;
+    state.propertySubCategory = value ?? '';
     notifyListeners();
   }
 }
