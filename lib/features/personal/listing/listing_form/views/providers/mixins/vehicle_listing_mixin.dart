@@ -15,6 +15,8 @@ mixin VehicleListingMixin on ChangeNotifier {
   String? get selectedVehicleCategory => state.vehicleCategory;
   String? get selectedMileageUnit => state.mileageUnit;
   ColorOptionEntity? get selectedVehicleColor => state.vehicleColor;
+  String? get interiorColor => state.interiorColor;
+  String? get exteriorColor => state.exteriorColor;
 
   // Setters
   void setTransmissionType(String? value) {
@@ -59,6 +61,16 @@ mixin VehicleListingMixin on ChangeNotifier {
 
   void setVehicleColor(ColorOptionEntity? value) {
     state.vehicleColor = value;
+    notifyListeners();
+  }
+
+  void setInteriorColor(String? value) {
+    state.interiorColor = value;
+    notifyListeners();
+  }
+
+  void setExteriorColor(String? value) {
+    state.exteriorColor = value;
     notifyListeners();
   }
 }

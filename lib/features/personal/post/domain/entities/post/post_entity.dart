@@ -133,7 +133,7 @@ class PostEntity {
   final int? internationalDelivery;
   //
   @HiveField(28)
-  final PostClothFootEntity clothFootInfo;
+  final PostClothFootEntity? clothFootInfo;
   //
   @HiveField(29)
   final PostVehicleEntity? vehicleInfo;

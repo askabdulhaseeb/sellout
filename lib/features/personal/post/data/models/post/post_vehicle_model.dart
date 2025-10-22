@@ -39,4 +39,23 @@ class PostVehicleModel extends PostVehicleEntity {
       vehiclesCategory: json['vehicles_category']?.toString(),
     );
   }
+
+  // Map representation for request params (values as strings)
+  Map<String, String> toParamMap() => <String, String>{
+        'make': make ?? '',
+        'model': model ?? '',
+        'body_type': bodyType ?? '',
+        'emission': emission ?? '',
+        'fuel_type': fuelType ?? '',
+        'engine_size': engineSize.toString(),
+        'mileage_unit': mileageUnit ?? '',
+        'transmission': transmission ?? '',
+        'interior_color': interiorColor ?? '',
+        'exterior_color': exteriorColor ?? '',
+        'vehicles_category': vehiclesCategory ?? '',
+        'year': year?.toString() ?? '',
+        'doors': doors?.toString() ?? '',
+        'seats': seats?.toString() ?? '',
+        'mileage': mileage?.toString() ?? '',
+      };
 }

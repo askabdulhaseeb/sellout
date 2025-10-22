@@ -63,7 +63,7 @@ class _AddToCartDialogState extends State<AddToCartDialog> {
                   child: CustomDropdown<SizeColorEntity>(
                     title: 'size'.tr(),
                     hint: 'size'.tr(),
-                    items: widget.post.clothFootInfo.sizeColors
+                    items: widget.post.clothFootInfo!.sizeColors
                         .map((SizeColorEntity e) =>
                             DropdownMenuItem<SizeColorEntity>(
                               value: e,
@@ -112,10 +112,10 @@ class _AddToCartDialogState extends State<AddToCartDialog> {
               ],
             ),
             // Chart
-            if (widget.post.clothFootInfo.sizeChartUrl != null)
+            if (widget.post.clothFootInfo?.sizeChartUrl != null)
               SizeChartButtonTile(
                   sizeChartURL:
-                      widget.post.clothFootInfo.sizeChartUrl?.url ?? ''), //
+                      widget.post.clothFootInfo?.sizeChartUrl?.url ?? ''), //
             // Add to cart button
 
             CustomElevatedButton(

@@ -908,6 +908,8 @@
   "send_refund": "Send Refund",
   "enable_2fa": "Enable Two Factor Authentication",
   "post_shared_successfully": "Post shared Successfully",
+  "listing_posted_successfully": "Your listing has been posted successfully",
+  "listing_updated_successfully": "Your listing has been updated successfully",
   "share_as_message": "Share as Message",
   "share_in_group": "Share in Group",
   "select_group": "Select Group",

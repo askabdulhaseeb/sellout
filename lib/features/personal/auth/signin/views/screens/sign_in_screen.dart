@@ -17,8 +17,6 @@ class SignInScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final GlobalKey<FormState> signInFormKey = GlobalKey<FormState>();
-    final SigninProvider authPro =
-        Provider.of<SigninProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -74,29 +72,33 @@ class SignInScreen extends StatelessWidget {
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            CustomElevatedButton(
-                padding: const EdgeInsets.all(0),
-                title: 'dont_have_account'.tr(),
-                textStyle: TextTheme.of(context).bodyMedium,
-                isLoading: false,
-                bgColor: Colors.transparent,
-                border: null,
-                onTap: () async {
-                  if (!signInFormKey.currentState!.validate()) {
-                    return;
-                  }
-                  await Navigator.pushReplacementNamed(
-                      context, SignupScreen.routeName);
-                }),
-            CustomElevatedButton(
-              title: 'login'.tr(),
-              isLoading: authPro.isLoading,
-              onTap: () async => await authPro.signIn(context),
-            ),
-          ],
+        child: Consumer<SigninProvider>(
+          builder:
+              (BuildContext context, SigninProvider authPro, Widget? child) =>
+                  Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              CustomElevatedButton(
+                  padding: const EdgeInsets.all(0),
+                  title: 'dont_have_account'.tr(),
+                  textStyle: TextTheme.of(context).bodyMedium,
+                  isLoading: false,
+                  bgColor: Colors.transparent,
+                  border: null,
+                  onTap: () async {
+                    if (!signInFormKey.currentState!.validate()) {
+                      return;
+                    }
+                    await Navigator.pushReplacementNamed(
+                        context, SignupScreen.routeName);
+                  }),
+              CustomElevatedButton(
+                title: 'login'.tr(),
+                isLoading: authPro.isLoading,
+                onTap: () async => await authPro.signIn(context),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -24,8 +24,8 @@ class HomePostTile extends StatelessWidget {
       child: Column(
         children: <Widget>[
           PostHeaderSection(post: post),
-          AttachmentsSlider(
-            attachments: post.fileUrls,
+          AttachmentsSlider.mixed(
+            remote: post.fileUrls,
           ),
           HomePostIconBottonSection(post: post),
           HomePostTitleSection(post: post),

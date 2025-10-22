@@ -20,7 +20,8 @@ class DeliveryChargesWidget extends StatelessWidget {
           children: <Widget>[
             DeliveryPayerToggle(
               selectedPayer: formPro.deliveryPayer,
-              onPayerChanged: formPro.setDeliveryPayer,
+              onPayerChanged: (DeliveryPayer value) =>
+                  formPro.setDeliveryPayer(value),
             ),
             const PackageDetailsCard(),
           ],
@@ -43,7 +44,7 @@ class DeliveryPayerToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [
+      children: <Widget>[
         CustomToggleSwitch<DeliveryPayer>(
           containerHeight: 48,
           initialValue: selectedPayer,

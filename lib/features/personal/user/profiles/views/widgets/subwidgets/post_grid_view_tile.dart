@@ -132,7 +132,7 @@ class PostGridViewTileBasketButton extends StatelessWidget {
   Widget build(BuildContext context) {
     Future<void> addToBasket(BuildContext context, PostEntity post) async {
       try {
-        if (post.clothFootInfo.sizeColors.isNotEmpty) {
+        if (post.clothFootInfo?.sizeColors.isNotEmpty == true) {
           await showDialog(
             context: context,
             builder: (BuildContext context) {

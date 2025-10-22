@@ -53,7 +53,7 @@ class _PostBuyNowButtonState extends State<PostBuyNowButton> {
     try {
       final AddToCartUsecase usecase = AddToCartUsecase(locator());
       // If product has variants but detailWidget is not showing, open selection dialog
-      if (widget.post.clothFootInfo.sizeColors.isNotEmpty &&
+      if (widget.post.clothFootInfo?.sizeColors != null &&
           !widget.detailWidget) {
         await showDialog(
           context: context,

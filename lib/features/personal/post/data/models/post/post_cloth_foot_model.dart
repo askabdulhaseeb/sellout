@@ -4,6 +4,7 @@ import '../size_color/size_color_model.dart';
 
 class PostClothFootModel extends PostClothFootEntity {
   PostClothFootModel({
+    
     required super.sizeColors,
     required super.sizeChartUrl,
     required super.brand,

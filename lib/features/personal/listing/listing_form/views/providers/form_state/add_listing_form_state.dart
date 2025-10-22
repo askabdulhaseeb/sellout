@@ -13,17 +13,6 @@ import '../../../domain/entities/color_options_entity.dart';
 import '../../widgets/core/delivery_section/enums/delivery_payer.dart';
 
 class AddListingFormState {
-  AddListingFormState() {
-    _initializeDefaults();
-//Non-nullable instance field 'clothSubCategory' must be initialized.
-// Try adding an initializer expression, or add a field initializer in this constructor, or mark it 'late'.dartnot_initialized_non_nullable_instance_field
-// Non-nullable instance field 'foodDrinkSubCategory' must be initialized.
-// Try adding an initializer expression, or add a field initializer in this constructor, or mark it 'late'.dartnot_initialized_non_nullable_instance_field
-// Non-nullable instance field 'propertySubCategory' must be initialized.
-// Try adding an initializer expression, or add a field initializer in this constructor, or mark it 'late'.dartnot_initialized_non_nullable_instance_field
-// Constructor declarations should be before non-constructor declarations.
-// Try moving the constructor declaration before all other members.da
-  }
   // Text controllers
   final TextEditingController title = TextEditingController();
   final TextEditingController description = TextEditingController();
@@ -32,11 +21,11 @@ class AddListingFormState {
   final TextEditingController minimumOffer = TextEditingController();
   final TextEditingController engineSize = TextEditingController();
   final TextEditingController mileage = TextEditingController();
-  final TextEditingController bedroom = TextEditingController();
-  final TextEditingController bathroom = TextEditingController();
   final TextEditingController model = TextEditingController();
   final TextEditingController seats = TextEditingController();
   final TextEditingController doors = TextEditingController();
+    final TextEditingController bedroom = TextEditingController();
+  final TextEditingController bathroom = TextEditingController();
   final TextEditingController location = TextEditingController();
   final TextEditingController packageHeight = TextEditingController();
   final TextEditingController packageWidth = TextEditingController();
@@ -76,6 +65,8 @@ class AddListingFormState {
   String? vehicleCategory;
   String? mileageUnit;
   ColorOptionEntity? vehicleColor;
+  String? interiorColor;
+  String? exteriorColor;
 
   // Property state
   bool hasGarden = true;
@@ -84,14 +75,16 @@ class AddListingFormState {
   TenureType tenureType = TenureType.freehold;
   String? propertyType;
   String? energyRating;
-  String? propertySubCategory;
+  // Initialize as non-nullable empty strings so analyzer doesn't complain; real defaults
+  // are applied in _initializeDefaults() called from the constructor below.
+  String propertySubCategory = '';
 
   // Food state
-  String? foodDrinkSubCategory;
+  String foodDrinkSubCategory = '';
 
   // Cloth state
   String? brand;
-  String? clothSubCategory;
+  String clothSubCategory = '';
   List<SizeColorEntity> sizeColorEntities = <SizeColorEntity>[];
 
   // Collections
@@ -106,6 +99,11 @@ class AddListingFormState {
   LocationEntity? selectedCollectionLocation;
   LatLng? meetupLatLng;
   LatLng? collectionLatLng;
+
+  // Constructor
+  AddListingFormState() {
+    _initializeDefaults();
+  }
 
   void _initializeDefaults() {
     propertySubCategory = _getDefaultCategory(ListingType.property);

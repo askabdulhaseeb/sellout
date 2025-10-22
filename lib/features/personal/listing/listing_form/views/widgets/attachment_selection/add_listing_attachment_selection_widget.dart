@@ -67,7 +67,7 @@ class _EmptyAttachmentPlaceholder extends StatelessWidget {
             Opacity(
               opacity: 0.6,
               child: Text(
-                '${'photos'.tr()}: ${formPro.attachments.length}/${formPro.listingType?.noOfPhotos}, '
+                '${'photos'.tr()}: ${formPro.attachments.length}/${formPro.listingType.noOfPhotos}, '
                 '${'videos'.tr()}: 0/1 \n'
                 '${'choose_main_photo_video_to_best_showcase'.tr()}',
                 textAlign: TextAlign.center,
@@ -91,23 +91,20 @@ class _AttachmentList extends StatelessWidget {
   Widget build(BuildContext context) {
     return AspectRatio(
       aspectRatio: 2 / 1,
-      child: Padding(
-        padding: const EdgeInsets.only(top: AppSpacing.vSm),
-        child: ListView.separated(
-          scrollDirection: Axis.horizontal,
-          itemCount: allAttachments.length,
-          separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.hSm),
-          itemBuilder: (BuildContext context, int index) {
-            final dynamic item = allAttachments[index];
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: allAttachments.length,
+        separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.hSm),
+        itemBuilder: (BuildContext context, int index) {
+          final dynamic item = allAttachments[index];
 
-            if (item is PickedAttachment) {
-              return ListingAttachmentTile(attachment: item);
-            } else if (item is AttachmentEntity) {
-              return ListingAttachmentTile(imageUrl: item);
-            }
-            return const SizedBox.shrink();
-          },
-        ),
+          if (item is PickedAttachment) {
+            return ListingAttachmentTile(attachment: item);
+          } else if (item is AttachmentEntity) {
+            return ListingAttachmentTile(imageUrl: item);
+          }
+          return const SizedBox.shrink();
+        },
       ),
     );
   }

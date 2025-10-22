@@ -48,9 +48,8 @@ class _AddListingFormScreenState extends State<AddListingFormScreen> {
                   Text(
                     Provider.of<AddListingFormProvider>(context, listen: false)
                             .listingType
-                            ?.code
-                            .tr() ??
-                        'select_type'.tr(),
+                            .code
+                            .tr() ,
                     style: TextTheme.of(context).bodyMedium?.copyWith(
                           fontWeight: FontWeight.w500,
                           color: Theme.of(context).primaryColor,
