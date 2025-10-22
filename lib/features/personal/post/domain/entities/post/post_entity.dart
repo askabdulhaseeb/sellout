@@ -10,6 +10,7 @@ import '../discount_entity.dart';
 import '../meetup/availability_entity.dart';
 import 'package_detail_entity.dart';
 import 'post_cloth_foot_entity.dart';
+import 'post_food_drink_entity.dart';
 import 'post_pet_entity.dart';
 import 'post_property_entity.dart';
 import 'post_vehicle_entity.dart';
@@ -59,6 +60,8 @@ class PostEntity {
     required this.petInfo,
     //vehicle
     required this.vehicleInfo,
+    //Food Drink
+    required this.foodDrinkInfo,
     //package detail - ADD THIS FIELD
     required this.packageDetail,
     //
@@ -141,24 +144,27 @@ class PostEntity {
   @HiveField(31)
   final PostPropertyEntity? propertyInfo;
   //
-  @HiveField(32) // NEW FIELD - Package Detail
+  @HiveField(32)
+  final PostFoodDrinkEntity? foodDrinkInfo;
+
+  @HiveField(33) // NEW FIELD - Package Detail
   final PackageDetailEntity packageDetail;
   //
-  @HiveField(33)
-  final List<AvailabilityEntity>? availability;
   @HiveField(34)
-  final bool isActive;
+  final List<AvailabilityEntity>? availability;
   @HiveField(35)
-  final String createdBy;
+  final bool isActive;
   @HiveField(36)
-  final DateTime createdAt;
+  final String createdBy;
   @HiveField(37)
+  final DateTime createdAt;
+  @HiveField(38)
   final String? accessCode;
-  @HiveField(38, defaultValue: '')
+  @HiveField(39, defaultValue: '')
   final String updatedBy;
-  @HiveField(39, defaultValue: null)
+  @HiveField(40, defaultValue: null)
   final DateTime? updatedAt;
-  @HiveField(40)
+  @HiveField(41)
   final DateTime inHiveAt;
 
   String get imageURL => fileUrls.isEmpty ? '' : fileUrls.first.url;
