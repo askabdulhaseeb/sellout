@@ -21,7 +21,7 @@ class AppSnackBar {
     String message, {
     IconData icon = Icons.info_outline_rounded,
     Color? color,
-    Duration duration = const Duration(seconds: 4),
+    Duration duration = const Duration(milliseconds: 2500),
     bool dismissible = true,
   }) {
     // Prefer the provided context, but fall back to the root navigator context
@@ -30,10 +30,33 @@ class AppSnackBar {
 
     final ThemeData theme = Theme.of(ctx);
     final ColorScheme scheme = theme.colorScheme;
-    final Color background = color ?? scheme.primary;
+    // Prefer a subtle surface container by default; specific helpers pass container colors
+    final Color background = color ?? scheme.surfaceContainerHigh;
     final double screenWidth = MediaQuery.of(ctx).size.width;
-    final Color textColor =
-        background.computeLuminance() > 0.5 ? Colors.black87 : Colors.white;
+    // Pick readable text color based on known theme pairings or luminance
+    Color textColor;
+    if (color == scheme.primaryContainer) {
+      textColor = scheme.onPrimaryContainer;
+    } else if (color == scheme.secondaryContainer) {
+      textColor = scheme.onSecondaryContainer;
+    } else if (color == scheme.tertiaryContainer) {
+      textColor = scheme.onTertiaryContainer;
+    } else if (color == scheme.errorContainer) {
+      textColor = scheme.onErrorContainer;
+    } else if (color == scheme.primary) {
+      textColor = scheme.onPrimary;
+    } else if (color == scheme.secondary) {
+      textColor = scheme.onSecondary;
+    } else if (color == scheme.tertiary) {
+      textColor = scheme.onTertiary;
+    } else if (color == scheme.surface ||
+        color == scheme.surfaceContainerHigh ||
+        color == null) {
+      textColor = scheme.onSurface;
+    } else {
+      textColor =
+          background.computeLuminance() > 0.5 ? Colors.black87 : Colors.white;
+    }
 
     final ScaffoldMessengerState messenger = ScaffoldMessenger.maybeOf(ctx) ??
         messengerKey.currentState ??
@@ -97,7 +120,7 @@ class AppSnackBar {
                             left: 0,
                             right: 0,
                             child: TweenAnimationBuilder<double>(
-                              tween: Tween(begin: 1, end: 0),
+                              tween: Tween<double>(begin: 1, end: 0),
                               duration:
                                   duration - const Duration(milliseconds: 300),
                               builder: (BuildContext context,
@@ -105,15 +128,14 @@ class AppSnackBar {
                                 return LinearProgressIndicator(
                                   value: progressValue,
                                   backgroundColor: Colors.transparent,
-                                  valueColor: AlwaysStoppedAnimation(
-                                    textColor.withOpacity(0.2),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    textColor.withValues(alpha: 0.12),
                                   ),
                                   minHeight: 3,
                                 );
                               },
                             ),
                           ),
-
                         // Snackbar Content
                         Padding(
                           padding: const EdgeInsets.symmetric(
@@ -165,7 +187,7 @@ class AppSnackBar {
                                         style: theme.textTheme.bodyMedium
                                             ?.copyWith(
                                           color: textColor,
-                                          fontWeight: FontWeight.w600,
+                                          fontWeight: FontWeight.w400,
                                           fontSize: 15,
                                         ),
                                         maxLines: 2,
@@ -216,7 +238,7 @@ class AppSnackBar {
     String message, {
     IconData icon = Icons.info_outline_rounded,
     Color? color,
-    Duration duration = const Duration(seconds: 4),
+    Duration duration = const Duration(milliseconds: 2500),
     bool dismissible = true,
   }) {
     final BuildContext? ctx = messengerKey.currentContext ?? _rootContext();
@@ -233,46 +255,56 @@ class AppSnackBar {
 
   static void successGlobal(String message, {bool dismissible = true}) {
     final BuildContext? ctx = messengerKey.currentContext ?? _rootContext();
-    final Color? color =
-        ctx != null ? Theme.of(ctx).colorScheme.tertiary : Colors.green;
+    final Color? color = ctx != null
+        ? Theme.of(ctx).colorScheme.secondaryContainer
+        : Colors.green;
     show(
       message,
       icon: Icons.check_circle_rounded,
       color: color,
+      duration: const Duration(milliseconds: 2200),
       dismissible: dismissible,
     );
   }
 
   static void errorGlobal(String message, {bool dismissible = true}) {
-    final Color color = Colors.redAccent;
+    final BuildContext? ctx = messengerKey.currentContext ?? _rootContext();
+    final Color color = ctx != null
+        ? Theme.of(ctx).colorScheme.errorContainer
+        : Colors.redAccent;
     show(
       message,
       icon: Icons.error_outline_rounded,
       color: color,
+      duration: const Duration(milliseconds: 2600),
       dismissible: dismissible,
     );
   }
 
   static void warningGlobal(String message, {bool dismissible = true}) {
     final BuildContext? ctx = messengerKey.currentContext ?? _rootContext();
-    final Color? color =
-        ctx != null ? Theme.of(ctx).colorScheme.secondary : Colors.amber;
+    final Color? color = ctx != null
+        ? Theme.of(ctx).colorScheme.tertiaryContainer
+        : Colors.amber;
     show(
       message,
       icon: Icons.warning_amber_rounded,
       color: color,
+      duration: const Duration(milliseconds: 2600),
       dismissible: dismissible,
     );
   }
 
   static void infoGlobal(String message, {bool dismissible = true}) {
     final BuildContext? ctx = messengerKey.currentContext ?? _rootContext();
-    final Color? color =
-        ctx != null ? Theme.of(ctx).colorScheme.primary : Colors.blueAccent;
+    final Color? color = ctx != null
+        ? Theme.of(ctx).colorScheme.primaryContainer
+        : Colors.blueAccent;
     show(
       message,
       icon: Icons.info_outline_rounded,
       color: color,
+      duration: const Duration(milliseconds: 2500),
       dismissible: dismissible,
     );
   }
@@ -284,7 +316,7 @@ class AppSnackBar {
         context,
         message,
         icon: Icons.check_circle_rounded,
-        color: Theme.of(context).colorScheme.tertiary,
+        color: Theme.of(context).colorScheme.secondaryContainer,
         dismissible: dismissible,
       );
 
@@ -294,7 +326,7 @@ class AppSnackBar {
         context,
         message,
         icon: Icons.error_outline_rounded,
-        color: Colors.redAccent,
+        color: Theme.of(context).colorScheme.errorContainer,
         dismissible: dismissible,
       );
 
@@ -304,7 +336,7 @@ class AppSnackBar {
         context,
         message,
         icon: Icons.warning_amber_rounded,
-        color: Theme.of(context).colorScheme.secondary,
+        color: Theme.of(context).colorScheme.tertiaryContainer,
         dismissible: dismissible,
       );
 
@@ -314,7 +346,7 @@ class AppSnackBar {
         context,
         message,
         icon: Icons.info_outline_rounded,
-        color: Theme.of(context).colorScheme.primary,
+        color: Theme.of(context).colorScheme.primaryContainer,
         dismissible: dismissible,
       );
 }

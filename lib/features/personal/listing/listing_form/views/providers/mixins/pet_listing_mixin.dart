@@ -36,7 +36,6 @@ mixin PetListingMixin on ChangeNotifier {
   }
 
   void setWormFleaTreated(bool? value) {
-    // Fixed typo: Flee -> Flea
     state.wormAndFleaTreated = value;
     notifyListeners();
   }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
-import '../../../../../../../core/widgets/loaders/loader.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../../widgets/category/subcateogry_selectable_widget.dart';
 import '../../widgets/core/add_listing_basic_info_section.dart';
@@ -24,11 +23,7 @@ class _AddItemFormState extends State<AddItemForm> {
   Widget build(BuildContext context) {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
-        if (formPro.isDropdownLoading) {
-          return const Center(
-            child: Loader(),
-          );
-        }
+
         debugPrint(formPro.selectedCategory?.title);
         return Form(
           key: formPro.itemKey,

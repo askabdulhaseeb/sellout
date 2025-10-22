@@ -24,4 +24,16 @@ class PostPropertyModel extends PostPropertyEntity {
       tenureType: json['tenure_type']?.toString(),
     );
   }
+
+  // Map representation for request params (values as strings)
+  Map<String, String> toParamMap() => <String, String>{
+        'bedrooms': bedroom?.toString() ?? '',
+        'bathrooms': bathroom?.toString() ?? '',
+        'energy_rating': energyRating ?? '',
+        'property_type': propertyType ?? '',
+        'property_category': propertyCategory ?? '',
+        'garden': garden.toString(),
+        'parking': parking.toString(),
+        'tenure_type': tenureType ?? '',
+      };
 }

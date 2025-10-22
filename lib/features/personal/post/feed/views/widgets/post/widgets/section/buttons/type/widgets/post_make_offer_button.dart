@@ -60,7 +60,7 @@ class _PostMakeOfferButtonState extends State<PostMakeOfferButton> {
     return CustomElevatedButton(
       bgColor: Theme.of(context).primaryColor,
       onTap: () {
-        if (widget.post.clothFootInfo.sizeColors.isNotEmpty &&
+        if (widget.post.clothFootInfo?.sizeColors != null &&
             ListingType.fromJson(widget.post.listID) ==
                 ListingType.clothAndFoot &&
             widget.detailWidget == false) {
@@ -136,7 +136,7 @@ class _SelectSizeColorDialogState extends State<SelectSizeColorDialog> {
                   child: CustomDropdown<SizeColorEntity>(
                     title: 'size'.tr(),
                     hint: 'size'.tr(),
-                    items: widget.post.clothFootInfo.sizeColors
+                    items: widget.post.clothFootInfo!.sizeColors
                         .map((SizeColorEntity e) =>
                             DropdownMenuItem<SizeColorEntity>(
                               value: e,
@@ -184,10 +184,10 @@ class _SelectSizeColorDialogState extends State<SelectSizeColorDialog> {
                 ),
               ],
             ),
-            if (widget.post.clothFootInfo.sizeChartUrl != null)
+            if (widget.post.clothFootInfo?.sizeChartUrl != null)
               SizeChartButtonTile(
                   sizeChartURL:
-                      widget.post.clothFootInfo.sizeChartUrl?.url ?? '') //
+                      widget.post.clothFootInfo?.sizeChartUrl?.url ?? '') //
             ,
             CustomElevatedButton(
               title: 'make_offer'.tr(),

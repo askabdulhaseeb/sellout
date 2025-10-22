@@ -235,21 +235,19 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
           ),
           padding: const EdgeInsets.all(AppSpacing.lg),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: AppSpacing.vSm,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              // Info notice placed after the selected banner
-              const InfoNotice(),
-              const SizedBox(height: AppSpacing.vSm),
-
-              /// Selected package size banner (top)
+              Text(
+                tr('package_details'),
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
               Builder(builder: (BuildContext context) {
                 final String? dims = selectedDimsText();
                 final String? preset = matchedPresetLabel();
                 return SelectedBanner(dimsText: dims, presetLabel: preset);
               }),
-              const SizedBox(height: AppSpacing.vMd),
-
-              /// Expandable categories
+              const InfoNotice(),
               Column(
                 children: <Widget>[
                   ...packCategories.map((Map<String, String> category) {

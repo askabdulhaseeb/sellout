@@ -22,4 +22,15 @@ class PostPetModel extends PostPetEntity {
       vaccinationUpToDate: json['vaccination_up_to_date'] ?? false,
     );
   }
+
+  // Map representation for request params (values as strings)
+  Map<String, String> toParamMap() => <String, String>{
+        'age': age?.toString() ?? '',
+        'ready_to_leave': readyToLeave?.toString() ?? '',
+        'breed': breed?.toString() ?? '',
+        'health_checked': (healthChecked ?? false).toString(),
+        'vaccination_up_to_date': (vaccinationUpToDate ?? false).toString(),
+        'worm_and_flea_treated': (wormAndFleaTreated ?? false).toString(),
+        'pets_category': petsCategory?.toString() ?? '',
+      };
 }

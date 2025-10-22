@@ -29,7 +29,7 @@ class _StorePostButtonTileState extends State<StorePostButtonTile> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        if (widget.post.clothFootInfo.sizeColors.isNotEmpty &&
+        if (widget.post.clothFootInfo?.sizeColors != null &&
             widget.detailWidget)
           Row(
             spacing: 12,
@@ -38,7 +38,7 @@ class _StorePostButtonTileState extends State<StorePostButtonTile> {
                 child: CustomDropdown<SizeColorEntity>(
                   title: '',
                   hint: 'select_your_size'.tr(),
-                  items: widget.post.clothFootInfo.sizeColors
+                  items: widget.post.clothFootInfo!.sizeColors
                       .map((SizeColorEntity e) =>
                           DropdownMenuItem<SizeColorEntity>(
                             value: e,
@@ -118,11 +118,11 @@ class _StorePostButtonTileState extends State<StorePostButtonTile> {
             )),
           ],
         ),
-        if (widget.post.clothFootInfo.sizeColors.isNotEmpty &&
+        if (widget.post.clothFootInfo?.sizeColors != null&&
             widget.detailWidget &&
-            widget.post.clothFootInfo.sizeChartUrl != null)
+            widget.post.clothFootInfo?.sizeColors != null)
           SizeChartButtonTile(
-              sizeChartURL: widget.post.clothFootInfo.sizeChartUrl?.url ?? '')
+              sizeChartURL: widget.post.clothFootInfo?.sizeChartUrl?.url ?? '')
       ],
     );
   }

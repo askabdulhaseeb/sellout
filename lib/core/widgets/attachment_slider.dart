@@ -67,7 +67,24 @@ class _AttachmentsSliderState extends State<AttachmentsSlider> {
         );
       }),
       ...widget.pickedAttachments.map((picked.PickedAttachment p) {
-        final bool isVideo = p.type == AttachmentType.video;
+        bool isVideo;
+        // Prefer the AssetEntity type when available
+        if (p.selectedMedia != null) {
+          isVideo = p.selectedMedia!.type == AssetType.video;
+        } else {
+          // Fallback 1: file extension check
+          final String path = p.file.path.toLowerCase();
+          final bool extVideo = path.endsWith('.mp4') ||
+              path.endsWith('.mov') ||
+              path.endsWith('.m4v') ||
+              path.endsWith('.mkv') ||
+              path.endsWith('.webm') ||
+              path.endsWith('.avi') ||
+              path.endsWith('.3gp');
+          // Fallback 2: declared attachment type
+          isVideo = extVideo || p.type == AttachmentType.video;
+        }
+
         return _RenderableAttachment(
           isVideo: isVideo,
           file: p.file,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
-import '../../../../../../../core/widgets/loaders/loader.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../../widgets/add_listing_price_and_quantity_widget.dart';
 import '../../widgets/category/subcateogry_selectable_widget.dart';
@@ -25,11 +24,7 @@ class _AddFoodAndDrinkFormState extends State<AddFoodAndDrinkForm> {
   Widget build(BuildContext context) {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
-        if (formPro.isDropdownLoading) {
-          return const Center(
-            child: Loader(),
-          );
-        }
+
         return Form(
           key: formPro.foodAndDrinkKey,
           child: SingleChildScrollView(

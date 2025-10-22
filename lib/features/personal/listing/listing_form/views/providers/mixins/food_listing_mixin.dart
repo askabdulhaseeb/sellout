@@ -6,10 +6,12 @@ import '../form_state/add_listing_form_state.dart';
 mixin FoodListingMixin on ChangeNotifier {
   // The state will be provided by the class implementing this mixin
   AddListingFormState get state;
-
-  // Getters that use the state
-  String get selectedFoodDrinkSubCategory =>
-      state.foodDrinkSubCategory ?? ListingType.foodAndDrink.cids.first;
+  String get selectedFoodDrinkSubCategory {
+    if (state.foodDrinkSubCategory.isEmpty) {
+      return ListingType.foodAndDrink.cids.first;
+    }
+    return state.foodDrinkSubCategory;
+  }
 
   // Setters that update the state
   void setSelectedFoodDrinkSubCategory(String value) {

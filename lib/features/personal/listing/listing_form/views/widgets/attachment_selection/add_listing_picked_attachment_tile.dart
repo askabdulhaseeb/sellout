@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:photo_manager/photo_manager.dart';
+import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../core/widgets/video_widget.dart';
 import '../../../../../../attachment/domain/entities/attachment_entity.dart';
@@ -103,6 +104,7 @@ class ListingAttachmentTile extends StatelessWidget {
   }
 
   Widget _buildRemoteImage(BuildContext context, String? url) {
+    AppLog.info('Render network image | url=$url', name: 'AttachmentSlider');
     return CustomNetworkImage(
       imageURL: url,
       fit: BoxFit.cover,
@@ -111,11 +113,23 @@ class ListingAttachmentTile extends StatelessWidget {
 
   Widget _buildLocalImage(BuildContext context, PickedAttachment att) {
     final String path = att.file.path;
+    final File f = File(path);
+    final bool exists = f.existsSync();
+    final int size = exists ? (f.lengthSync()) : -1;
+    AppLog.info(
+      'Render local image | path=$path exists=$exists size=$size',
+      name: 'ListingAttachmentTile',
+    );
     final String lower = path.toLowerCase();
     final bool looksHeic = lower.endsWith('.heic') || lower.endsWith('.heif');
 
     // If HEIC/HEIF and we have the original AssetEntity, render a JPEG thumbnail
     if (looksHeic && att.selectedMedia != null) {
+      final AssetEntity media = att.selectedMedia!;
+      AppLog.info(
+        'Render thumbnail | assetId=${media.id} mime=${media.mimeType} favorite=${media.isFavorite}',
+        name: 'PickedMediaDisplayTile',
+      );
       return FutureBuilder<Uint8List?>(
         future: att.selectedMedia!.thumbnailDataWithSize(
           const ThumbnailSize(1000, 1000),
