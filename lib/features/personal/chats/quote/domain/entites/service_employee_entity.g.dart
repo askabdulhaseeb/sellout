@@ -8,7 +8,7 @@ part of 'service_employee_entity.dart';
 
 class ServiceEmployeeEntityAdapter extends TypeAdapter<ServiceEmployeeEntity> {
   @override
-  final int typeId = 78;
+  final int typeId = 83;
 
   @override
   ServiceEmployeeEntity read(BinaryReader reader) {

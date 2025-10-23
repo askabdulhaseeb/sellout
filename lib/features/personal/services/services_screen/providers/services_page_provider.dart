@@ -36,9 +36,9 @@ class ServicesPageProvider extends ChangeNotifier {
   final GetServicesByQueryUsecase _getServiceByCategory;
   final GetServiceCategoriesUsecase _getServiceCategories;
   //
-  ServiceCategoryENtity? _selectedCategory;
-  ServiceCategoryENtity? get selectedCategory => _selectedCategory;
-  void setSelectedCategory(ServiceCategoryENtity category) {
+  ServiceCategoryEntity? _selectedCategory;
+  ServiceCategoryEntity? get selectedCategory => _selectedCategory;
+  void setSelectedCategory(ServiceCategoryEntity category) {
     _selectedCategory = category;
     notifyListeners();
   }
@@ -75,8 +75,8 @@ class ServicesPageProvider extends ChangeNotifier {
   }
 
   //
-  List<ServiceCategoryENtity> _serviceCategories = [];
-  List<ServiceCategoryENtity> get serviceCategories => _serviceCategories;
+  List<ServiceCategoryEntity> _serviceCategories = [];
+  List<ServiceCategoryEntity> get serviceCategories => _serviceCategories;
 
   //
   String? _serviceNextKey;
@@ -106,7 +106,7 @@ class ServicesPageProvider extends ChangeNotifier {
   TextEditingController maxPriceController = TextEditingController();
 
   // Initial fetch
-  Future<void> fetchServicesByCategory(ServiceCategoryENtity category) async {
+  Future<void> fetchServicesByCategory(ServiceCategoryEntity category) async {
     if (_isLoading) return;
     clearCategorizedServices();
     _setLoading(true);
@@ -122,7 +122,7 @@ class ServicesPageProvider extends ChangeNotifier {
   Future<void> fetchServiceCategory() async {
     if (_isLoading) return;
     _setLoading(true);
-    final DataState<List<ServiceCategoryENtity>> result =
+    final DataState<List<ServiceCategoryEntity>> result =
         await _getServiceCategories.call(null);
     if (result is DataSuccess) {
       _serviceCategories.addAll(result.entity ?? []);

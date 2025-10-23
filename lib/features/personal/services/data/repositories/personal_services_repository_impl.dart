@@ -21,7 +21,7 @@ class PersonalServicesRepositoryImpl implements PersonalServicesRepository {
   }
 
   @override
-  Future<DataState<List<ServiceCategoryENtity>>> serviceCategories() async {
+  Future<DataState<List<ServiceCategoryEntity>>> serviceCategories() async {
     return await servicesApi.serviceCategories();
   }
 }

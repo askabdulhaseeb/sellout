@@ -6,7 +6,7 @@ import 'categorized_services_screen.dart';
 
 class SeviceCategoryTile extends StatelessWidget {
   const SeviceCategoryTile({required this.category, super.key});
-  final ServiceCategoryENtity category;
+  final ServiceCategoryEntity category;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

@@ -17,7 +17,7 @@ class _AllServiceCategoriesGridScreenState
     extends State<AllServiceCategoriesGridScreen> {
   @override
   Widget build(BuildContext context) {
-    List<ServiceCategoryENtity> categories =
+    List<ServiceCategoryEntity> categories =
         LocalServiceCategory().getAllCategories();
     return Scaffold(
       appBar: AppBar(
@@ -36,7 +36,7 @@ class _AllServiceCategoriesGridScreenState
             childAspectRatio: 0.85,
           ),
           itemBuilder: (BuildContext context, int index) {
-            final ServiceCategoryENtity category = categories[index];
+            final ServiceCategoryEntity category = categories[index];
             return SeviceCategoryTile(category: category);
           },
         ),

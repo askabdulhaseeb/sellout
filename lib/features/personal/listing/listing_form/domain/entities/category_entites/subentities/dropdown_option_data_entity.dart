@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 part 'dropdown_option_data_entity.g.dart';
 
-@HiveType(typeId: 76)
+@HiveType(typeId: 80)
 class DropdownOptionDataEntity {
   DropdownOptionDataEntity({
     required this.label,

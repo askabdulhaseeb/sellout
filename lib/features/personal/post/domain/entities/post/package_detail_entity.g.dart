@@ -8,7 +8,7 @@ part of 'package_detail_entity.dart';
 
 class PackageDetailEntityAdapter extends TypeAdapter<PackageDetailEntity> {
   @override
-  final int typeId = 80;
+  final int typeId = 75;
 
   @override
   PackageDetailEntity read(BinaryReader reader) {

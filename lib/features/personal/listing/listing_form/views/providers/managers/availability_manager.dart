@@ -12,10 +12,20 @@ class AvailabilityManager extends ChangeNotifier {
       closingTime: '',
     );
   }).toList();
-
   List<AvailabilityEntity> get availability => _availability;
   void setAvailabilty(List<AvailabilityEntity> val) {
-    _availability = val;
+    // Ensure all days are present, merge incoming values with defaults
+    _availability = DayType.values.map((DayType day) {
+      return val.firstWhere(
+        (AvailabilityEntity e) => e.day == day,
+        orElse: () => AvailabilityEntity(
+          day: day,
+          isOpen: false,
+          openingTime: '',
+          closingTime: '',
+        ),
+      );
+    }).toList();
     notifyListeners();
   }
 

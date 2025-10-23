@@ -1,7 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 part 'service_employee_entity.g.dart';
 
-@HiveType(typeId: 78)
+@HiveType(typeId: 83)
 class ServiceEmployeeEntity {
   ServiceEmployeeEntity({
     required this.serviceId,

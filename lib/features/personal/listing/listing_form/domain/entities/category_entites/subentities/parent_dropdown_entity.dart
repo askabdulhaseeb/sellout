@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 import 'dropdown_option_entity.dart';
 part 'parent_dropdown_entity.g.dart';
 
-@HiveType(typeId: 77)
+@HiveType(typeId: 81)
 class ParentDropdownEntity {
   ParentDropdownEntity({
     required this.category,

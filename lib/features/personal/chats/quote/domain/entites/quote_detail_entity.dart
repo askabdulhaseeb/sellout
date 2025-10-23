@@ -4,7 +4,7 @@ import '../../domain/entites/service_employee_entity.dart';
 
 part 'quote_detail_entity.g.dart';
 
-@HiveType(typeId: 79)
+@HiveType(typeId: 82)
 class QuoteDetailEntity {
   QuoteDetailEntity({
     required this.serviceEmployee,

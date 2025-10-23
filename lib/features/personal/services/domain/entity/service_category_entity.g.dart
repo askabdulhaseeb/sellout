@@ -6,17 +6,17 @@ part of 'service_category_entity.dart';
 // TypeAdapterGenerator
 // **************************************************************************
 
-class ServiceCategoryENtityAdapter extends TypeAdapter<ServiceCategoryENtity> {
+class ServiceCategoryEntityAdapter extends TypeAdapter<ServiceCategoryEntity> {
   @override
-  final int typeId = 72;
+  final int typeId = 76;
 
   @override
-  ServiceCategoryENtity read(BinaryReader reader) {
+  ServiceCategoryEntity read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return ServiceCategoryENtity(
+    return ServiceCategoryEntity(
       label: fields[0] as String,
       value: fields[1] as String,
       category: fields[2] as String,
@@ -26,7 +26,7 @@ class ServiceCategoryENtityAdapter extends TypeAdapter<ServiceCategoryENtity> {
   }
 
   @override
-  void write(BinaryWriter writer, ServiceCategoryENtity obj) {
+  void write(BinaryWriter writer, ServiceCategoryEntity obj) {
     writer
       ..writeByte(5)
       ..writeByte(0)
@@ -47,7 +47,7 @@ class ServiceCategoryENtityAdapter extends TypeAdapter<ServiceCategoryENtity> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ServiceCategoryENtityAdapter &&
+      other is ServiceCategoryEntityAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

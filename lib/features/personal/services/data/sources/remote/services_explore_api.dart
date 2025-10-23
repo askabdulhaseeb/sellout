@@ -13,7 +13,7 @@ import '../local/local_service_categories.dart';
 
 abstract interface class ServicesExploreApi {
   Future<DataState<List<ServiceEntity>>> specialOffers();
-  Future<DataState<List<ServiceCategoryENtity>>> serviceCategories();
+  Future<DataState<List<ServiceCategoryEntity>>> serviceCategories();
   Future<DataState<List<ServiceEntity>>> getServicesbyFilters(
       ServiceByFiltersParams params);
 }
@@ -56,8 +56,8 @@ class ServicesExploreApiImpl implements ServicesExploreApi {
     }
   }
 
-  Future<DataState<List<ServiceCategoryENtity>>> serviceCategories() async {
-    final List<ServiceCategoryENtity> categories = <ServiceCategoryENtity>[];
+  Future<DataState<List<ServiceCategoryEntity>>> serviceCategories() async {
+    final List<ServiceCategoryEntity> categories = <ServiceCategoryEntity>[];
 
     // 1️⃣ Try fetching cached raw data from LocalRequestHistory
     final ApiRequestEntity? cachedRaw = await LocalRequestHistory().request(
@@ -72,11 +72,11 @@ class ServicesExploreApiImpl implements ServicesExploreApi {
         final Map<String, dynamic> servicesMap =
             cachedData[0]['services'] ?? <String, dynamic>{};
         servicesMap.forEach((_, dynamic value) {
-          final ServiceCategoryENtity category =
+          final ServiceCategoryEntity category =
               ServiceCategoryModel.fromMap(value);
           categories.add(category);
         });
-        return DataSuccess<List<ServiceCategoryENtity>>('cached', categories);
+        return DataSuccess<List<ServiceCategoryEntity>>('cached', categories);
       } catch (e) {
         // if parsing cached data fails, continue to fetch API
       }
@@ -93,7 +93,7 @@ class ServicesExploreApiImpl implements ServicesExploreApi {
       if (result is DataSuccess) {
         final String? raw = result.data;
         if (raw == null || raw.isEmpty) {
-          return DataFailer<List<ServiceCategoryENtity>>(
+          return DataFailer<List<ServiceCategoryEntity>>(
               CustomException('No data found'));
         }
 
@@ -102,19 +102,19 @@ class ServicesExploreApiImpl implements ServicesExploreApi {
             data[0]['services'] ?? <String, dynamic>{};
 
         servicesMap.forEach((_, dynamic value) {
-          final ServiceCategoryENtity category =
+          final ServiceCategoryEntity category =
               ServiceCategoryModel.fromMap(value);
           categories.add(category);
         });
         await LocalServiceCategory().saveAll(categories);
-        return DataSuccess<List<ServiceCategoryENtity>>(raw, categories);
+        return DataSuccess<List<ServiceCategoryEntity>>(raw, categories);
       } else {
-        return DataFailer<List<ServiceCategoryENtity>>(
+        return DataFailer<List<ServiceCategoryEntity>>(
           result.exception ?? CustomException('something_wrong'.tr()),
         );
       }
     } catch (e) {
-      return DataFailer<List<ServiceCategoryENtity>>(
+      return DataFailer<List<ServiceCategoryEntity>>(
           CustomException(e.toString()));
     }
   }

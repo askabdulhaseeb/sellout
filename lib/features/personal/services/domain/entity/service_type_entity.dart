@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 part 'service_type_entity.g.dart';
 
-@HiveType(typeId: 73)
+@HiveType(typeId: 77)
 class ServiceTypeEntity {
   ServiceTypeEntity({
     required this.value,
