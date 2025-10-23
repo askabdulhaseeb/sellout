@@ -2,10 +2,10 @@ import 'package:hive/hive.dart';
 import 'service_type_entity.dart';
 part 'service_category_entity.g.dart';
 
-@HiveType(typeId: 72)
-class ServiceCategoryENtity {
-  factory ServiceCategoryENtity.fromMap(Map<String, dynamic> map) {
-    return ServiceCategoryENtity(
+@HiveType(typeId: 76)
+class ServiceCategoryEntity {
+  factory ServiceCategoryEntity.fromMap(Map<String, dynamic> map) {
+    return ServiceCategoryEntity(
       label: map['label'] ?? '',
       value: map['value'] ?? '',
       category: map['category'] ?? '',
@@ -16,7 +16,7 @@ class ServiceCategoryENtity {
     );
   }
 
-  ServiceCategoryENtity({
+  ServiceCategoryEntity({
     required this.label,
     required this.value,
     required this.category,

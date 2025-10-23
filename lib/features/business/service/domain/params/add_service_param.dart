@@ -24,7 +24,7 @@ class AddServiceParam {
       this.serviceID = ''});
 
   final String name;
-  final ServiceCategoryENtity? category;
+  final ServiceCategoryEntity? category;
   final ServiceTypeEntity? type;
   final ServiceModelType? model;
   final int? hours;

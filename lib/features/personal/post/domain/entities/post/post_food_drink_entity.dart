@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 part 'post_food_drink_entity.g.dart';
 
-@HiveType(typeId: 70)
+@HiveType(typeId: 72)
 class PostFoodDrinkEntity {
   PostFoodDrinkEntity({required this.type, required this.address});
 

@@ -54,6 +54,7 @@ import '../../../features/personal/post/domain/entities/offer/offer_detail_entit
 import '../../../features/personal/post/domain/entities/post/package_detail_entity.dart';
 import '../../../features/personal/post/domain/entities/post/post_cloth_foot_entity.dart';
 import '../../../features/personal/post/domain/entities/post/post_entity.dart';
+import '../../../features/personal/post/domain/entities/post/post_food_drink_entity.dart';
 import '../../../features/personal/post/domain/entities/post/post_pet_entity.dart';
 import '../../../features/personal/post/domain/entities/post/post_property_entity.dart';
 import '../../../features/personal/post/domain/entities/post/post_vehicle_entity.dart';
@@ -171,15 +172,16 @@ class HiveDB {
     Hive.registerAdapter(PostVehicleEntityAdapter()); //69
     Hive.registerAdapter(PostPetEntityAdapter()); //70
     Hive.registerAdapter(PostPropertyEntityAdapter()); //71
-    Hive.registerAdapter(ServiceCategoryENtityAdapter()); //72
-    Hive.registerAdapter(ServiceTypeEntityAdapter()); //73
-    Hive.registerAdapter(CategoriesEntityAdapter()); //74
-    Hive.registerAdapter(DropdownOptionEntityAdapter()); //75
-    Hive.registerAdapter(DropdownOptionDataEntityAdapter()); //76
-    Hive.registerAdapter(ParentDropdownEntityAdapter()); //77
-    Hive.registerAdapter(QuoteDetailEntityAdapter()); //78
-    Hive.registerAdapter(ServiceEmployeeEntityAdapter()); //79
-    Hive.registerAdapter(PackageDetailEntityAdapter()); //80
+    Hive.registerAdapter(PostFoodDrinkEntityAdapter()); //72
+    Hive.registerAdapter(PackageDetailEntityAdapter()); //75
+    Hive.registerAdapter(ServiceCategoryEntityAdapter()); //76
+    Hive.registerAdapter(ServiceTypeEntityAdapter()); //77
+    Hive.registerAdapter(CategoriesEntityAdapter()); //78
+    Hive.registerAdapter(DropdownOptionEntityAdapter()); //79
+    Hive.registerAdapter(DropdownOptionDataEntityAdapter()); //80
+    Hive.registerAdapter(ParentDropdownEntityAdapter()); //81
+    Hive.registerAdapter(QuoteDetailEntityAdapter()); //82
+    Hive.registerAdapter(ServiceEmployeeEntityAdapter()); //83
 
     // Hive box Open
     await refresh();

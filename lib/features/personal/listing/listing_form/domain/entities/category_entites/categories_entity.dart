@@ -5,7 +5,7 @@ import 'subentities/dropdown_option_data_entity.dart';
 import 'subentities/dropdown_option_entity.dart';
 part 'categories_entity.g.dart';
 
-@HiveType(typeId: 74)
+@HiveType(typeId: 78)
 class CategoriesEntity {
   CategoriesEntity({
     this.items,

@@ -7,34 +7,34 @@ import '../../../domain/entity/service_category_entity.dart';
 class LocalServiceCategory {
   static final String boxTitle = AppStrings.localServiceCategoriesBox;
 
-  static Box<ServiceCategoryENtity> get _box =>
-      Hive.box<ServiceCategoryENtity>(boxTitle);
+  static Box<ServiceCategoryEntity> get _box =>
+      Hive.box<ServiceCategoryEntity>(boxTitle);
 
-  static Future<Box<ServiceCategoryENtity>> get openBox async =>
-      await Hive.openBox<ServiceCategoryENtity>(boxTitle);
+  static Future<Box<ServiceCategoryEntity>> get openBox async =>
+      await Hive.openBox<ServiceCategoryEntity>(boxTitle);
 
   /// Refresh the box if not open
-  Future<Box<ServiceCategoryENtity>> refresh() async {
+  Future<Box<ServiceCategoryEntity>> refresh() async {
     if (Hive.isBoxOpen(boxTitle)) {
       return _box;
     } else {
-      return await Hive.openBox<ServiceCategoryENtity>(boxTitle);
+      return await Hive.openBox<ServiceCategoryEntity>(boxTitle);
     }
   }
 
   /// Save a single service category
-  Future<void> save(ServiceCategoryENtity value) async {
+  Future<void> save(ServiceCategoryEntity value) async {
     await _box.put(value.value, value); // Using 'value' as the unique key
   }
 
-  List<ServiceCategoryENtity> getAllCategories() {
+  List<ServiceCategoryEntity> getAllCategories() {
     return all;
   }
 
   /// Save multiple service categories at once
-  Future<void> saveAll(List<ServiceCategoryENtity> categories) async {
-    final Map<String, ServiceCategoryENtity> map = {
-      for (ServiceCategoryENtity category in categories)
+  Future<void> saveAll(List<ServiceCategoryEntity> categories) async {
+    final Map<String, ServiceCategoryEntity> map = {
+      for (ServiceCategoryEntity category in categories)
         category.value: category,
     };
     await _box.putAll(map);
@@ -44,20 +44,20 @@ class LocalServiceCategory {
   Future<void> clear() async => await _box.clear();
 
   /// Get a specific service category by id
-  ServiceCategoryENtity? getCategory(String id) => _box.get(id);
+  ServiceCategoryEntity? getCategory(String id) => _box.get(id);
 
   /// Get all service categories
-  List<ServiceCategoryENtity> get all => _box.values.toList();
+  List<ServiceCategoryEntity> get all => _box.values.toList();
 
   /// Get DataState for a specific category
-  DataState<ServiceCategoryENtity> dataState(String id) {
-    final ServiceCategoryENtity? category = getCategory(id);
+  DataState<ServiceCategoryEntity> dataState(String id) {
+    final ServiceCategoryEntity? category = getCategory(id);
     if (category == null) {
-      return DataFailer<ServiceCategoryENtity>(
+      return DataFailer<ServiceCategoryEntity>(
         CustomException('Loading...'.tr()),
       );
     } else {
-      return DataSuccess<ServiceCategoryENtity>('', category);
+      return DataSuccess<ServiceCategoryEntity>('', category);
     }
   }
 }

@@ -5,7 +5,7 @@ class GetServiceCategoryParams {
     required this.type,
     this.nextKey,
   });
-  final ServiceCategoryENtity type;
+  final ServiceCategoryEntity type;
   final String? nextKey;
 
   Map<String, dynamic> toMap() {

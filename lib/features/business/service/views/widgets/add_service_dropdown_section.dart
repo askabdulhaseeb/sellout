@@ -28,23 +28,27 @@ class AddServiceDropdownSection extends StatelessWidget {
               maxLength: 50,
               validator: (String? value) => AppValidator.isEmpty(value),
             ),
-            CustomDropdown<ServiceCategoryENtity?>(
+            CustomDropdown<ServiceCategoryEntity?>(
                 title: 'service_category'.tr(),
-                items: LocalServiceCategory().getAllCategories().map(
-                  (ServiceCategoryENtity category) {
-                    return DropdownMenuItem<ServiceCategoryENtity>(
-                      value: category,
-                      child: Text(
-                        '${category.label.tr()} (${category.category})',
-                        style: TextTheme.of(context).bodyLarge,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    );
-                  },
-                ).toList(),
+                items: LocalServiceCategory()
+                    .getAllCategories()
+                    .map(
+                      (ServiceCategoryEntity category) {
+                        return DropdownMenuItem<ServiceCategoryEntity?>(
+                          value: category,
+                          child: Text(
+                            '${category.label.tr()} (${category.category})',
+                            style: TextTheme.of(context).bodyLarge,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        );
+                      },
+                    )
+                    .toList()
+                    .cast<DropdownMenuItem<ServiceCategoryEntity?>>(),
                 selectedItem: pro.selectedCategory,
-                onChanged: (ServiceCategoryENtity? value) =>
+                onChanged: (ServiceCategoryEntity? value) =>
                     pro.setSelectedCategory(value),
                 validator: (bool? isValid) =>
                     (pro.selectedCategory == null) ? 'select_type'.tr() : null),

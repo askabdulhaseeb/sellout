@@ -22,7 +22,6 @@ class _AddPetFormState extends State<AddPetForm> {
   Widget build(BuildContext context) {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
-
         return Form(
           key: formPro.petKey,
           child: SingleChildScrollView(

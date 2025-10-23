@@ -2,7 +2,7 @@ import '../../domain/entity/service_category_entity.dart';
 import 'service_type_model.dart';
 
 /// Model that extends ServiceCategoryEntity
-class ServiceCategoryModel extends ServiceCategoryENtity {
+class ServiceCategoryModel extends ServiceCategoryEntity {
   ServiceCategoryModel({
     required super.label,
     required super.value,

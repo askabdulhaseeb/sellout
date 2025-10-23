@@ -8,7 +8,7 @@ part of 'quote_detail_entity.dart';
 
 class QuoteDetailEntityAdapter extends TypeAdapter<QuoteDetailEntity> {
   @override
-  final int typeId = 79;
+  final int typeId = 82;
 
   @override
   QuoteDetailEntity read(BinaryReader reader) {

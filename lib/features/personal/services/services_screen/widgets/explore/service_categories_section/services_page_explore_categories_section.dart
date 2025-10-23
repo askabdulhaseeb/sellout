@@ -11,7 +11,7 @@ class ServicesPageExploreCategoriesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // List<ServiceCategoryENtity> categories =
+    // List<ServiceCategoryEntity> categories =
     //     LocalServiceCategory().getAllCategories();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,7 +42,7 @@ class ServicesPageExploreCategoriesSection extends StatelessWidget {
         Consumer<ServicesPageProvider>(
           builder:
               (BuildContext context, ServicesPageProvider pro, Widget? child) {
-            final List<ServiceCategoryENtity> categories =
+            final List<ServiceCategoryEntity> categories =
                 pro.serviceCategories; // your list of categories
             if (pro.isLoading) {
               // Show a placeholder list while loading
@@ -70,7 +70,7 @@ class ServicesPageExploreCategoriesSection extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 itemCount: categories.length,
                 itemBuilder: (BuildContext context, int index) {
-                  final ServiceCategoryENtity category = categories[index];
+                  final ServiceCategoryEntity category = categories[index];
                   return SeviceCategoryTile(category: category);
                 },
               ),

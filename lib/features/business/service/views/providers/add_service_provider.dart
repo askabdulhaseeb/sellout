@@ -196,7 +196,7 @@ class AddServiceProvider extends ChangeNotifier {
   final TextEditingController _included = TextEditingController();
   final TextEditingController _notIncluded = TextEditingController();
   final List<PickedAttachment> _attachments = <PickedAttachment>[];
-  ServiceCategoryENtity? _selectedCategory;
+  ServiceCategoryEntity? _selectedCategory;
   ServiceTypeEntity? _selectedType;
   ServiceModelType? _selectedModelType;
   List<String> _selectedEmployeeUIDs = <String>[];
@@ -219,7 +219,7 @@ class AddServiceProvider extends ChangeNotifier {
   TextEditingController get included => _included;
   TextEditingController get notIncluded => _notIncluded;
   List<PickedAttachment> get attachments => _attachments;
-  ServiceCategoryENtity? get selectedCategory => _selectedCategory;
+  ServiceCategoryEntity? get selectedCategory => _selectedCategory;
   ServiceTypeEntity? get selectedType => _selectedType;
   ServiceModelType? get selectedModelType => _selectedModelType;
   List<String> get selectedEmployeeUIDs => _selectedEmployeeUIDs;
@@ -239,7 +239,7 @@ class AddServiceProvider extends ChangeNotifier {
     });
   }
 
-  void setSelectedCategory(ServiceCategoryENtity? value) {
+  void setSelectedCategory(ServiceCategoryEntity? value) {
     _selectedCategory = value;
     _selectedType = null;
     notifyListeners();
@@ -287,7 +287,7 @@ class AddServiceProvider extends ChangeNotifier {
   }
 
   // ServiceTypeEntity getServiceTypeFromString(String value) {
-  //   return ServiceCategoryENtity.values
+  //   return ServiceCategoryEntity.values
   //       .expand((ServiceCategoryType category) => category.serviceTypes)
   //       .firstWhere(
   //           (ServiceType type) => type.code == value || type.json == value,

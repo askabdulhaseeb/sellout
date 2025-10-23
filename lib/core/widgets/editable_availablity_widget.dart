@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../features/personal/listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../../features/personal/post/domain/entities/meetup/availability_entity.dart';
 import 'scaffold/bottom_bar/availability_time_dailog.dart';
+import '../../core/enums/routine/day_type.dart';
 
 class EditableAvailabilityWidget extends StatelessWidget {
   const EditableAvailabilityWidget({super.key});
@@ -25,7 +26,18 @@ class EditableAvailabilityWidget extends StatelessWidget {
                   ),
             ),
             const SizedBox(height: 16),
-            ...manager.availability.map((AvailabilityEntity entity) {
+            ...DayType.values.map((DayType day) {
+              final AvailabilityEntity entity = manager.availability.firstWhere(
+                (AvailabilityEntity e) => e.day == day,
+                orElse: () {
+                  return AvailabilityEntity(
+                    day: day,
+                    isOpen: false,
+                    openingTime: '',
+                    closingTime: '',
+                  );
+                },
+              );
               final bool isOpen = entity.isOpen;
               final bool hasValidTimes = entity.openingTime.isNotEmpty &&
                   entity.closingTime.isNotEmpty;
@@ -42,7 +54,7 @@ class EditableAvailabilityWidget extends StatelessWidget {
                         Switch(
                           value: isOpen,
                           onChanged: (bool val) {
-                            manager.toggleOpen(entity.day, val);
+                            manager.toggleOpen(day, val);
                           },
                           materialTapTargetSize:
                               MaterialTapTargetSize.shrinkWrap,
@@ -51,8 +63,7 @@ class EditableAvailabilityWidget extends StatelessWidget {
                           width: 10,
                         ),
                         Text(
-                          entity.day.name[0].toUpperCase() +
-                              entity.day.name.substring(1),
+                          day.name[0].toUpperCase() + day.name.substring(1),
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         const Spacer(),

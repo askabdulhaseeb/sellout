@@ -129,48 +129,16 @@ class CategoriesModel extends CategoriesEntity {
         : null;
     if (items != null) populatedFields.add('items');
 
-    // --- Food & Drink (Fixed Section) ---
-    SubCategoryModel? food;
-    SubCategoryModel? drink;
-
-    if (mergedJson['food-drink'] != null) {
-      final Map<String, dynamic> foodDrinkData =
-          Map<String, dynamic>.from(mergedJson['food-drink']);
-
-      if (foodDrinkData['sub_category'] is List) {
-        final List<dynamic> subCats =
-            List<dynamic>.from(foodDrinkData['sub_category']);
-
-        for (final item in subCats) {
-          if (item is Map<String, dynamic>) {
-            // Ensure cid exists for top-level Food / Drink
-            item['cid'] ??= item['title']
-                ?.toString()
-                .toLowerCase()
-                .replaceAll('&', 'and')
-                .replaceAll(' ', '-');
-          }
-        }
-
-        final Map<String, dynamic>? foodMap =
-            subCats.cast<Map<String, dynamic>?>().firstWhere(
-                  (e) => e?['title'] == 'Food',
-                  orElse: () => null,
-                );
-        final Map<String, dynamic>? drinkMap =
-            subCats.cast<Map<String, dynamic>?>().firstWhere(
-                  (e) => e?['title'] == 'Drink',
-                  orElse: () => null,
-                );
-
-        if (foodMap != null) food = SubCategoryModel.fromJson(foodMap);
-        if (drinkMap != null) drink = SubCategoryModel.fromJson(drinkMap);
-      }
-    }
-
+    // --- Food ---
+    final SubCategoryModel? food = mergedJson['food'] != null
+        ? SubCategoryModel.fromJson(mergedJson['food'])
+        : null;
     if (food != null) populatedFields.add('food');
+    // --- Drink ---
+    final SubCategoryModel? drink = mergedJson['drink'] != null
+        ? SubCategoryModel.fromJson(mergedJson['drink'])
+        : null;
     if (drink != null) populatedFields.add('drink');
-
     // --- Clothes & Foot ---
     final SubCategoryModel? clothes = mergedJson['clothes'] != null
         ? SubCategoryModel.fromJson(mergedJson['clothes'])

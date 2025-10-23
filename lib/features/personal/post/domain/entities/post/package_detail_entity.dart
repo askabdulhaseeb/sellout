@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 part 'package_detail_entity.g.dart';
 
-@HiveType(typeId: 80)
+@HiveType(typeId: 75)
 class PackageDetailEntity {
   PackageDetailEntity({
     required this.length,

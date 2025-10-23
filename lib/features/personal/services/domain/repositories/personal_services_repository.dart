@@ -5,7 +5,7 @@ import '../params/services_by_filters_params.dart';
 
 abstract interface class PersonalServicesRepository {
   Future<DataState<List<ServiceEntity>>> specialOffers();
-  Future<DataState<List<ServiceCategoryENtity>>> serviceCategories();
+  Future<DataState<List<ServiceCategoryEntity>>> serviceCategories();
   Future<DataState<List<ServiceEntity>>> getServicesbyFilters(
       ServiceByFiltersParams params);
 }

@@ -8,7 +8,7 @@ part of 'post_food_drink_entity.dart';
 
 class PostFoodDrinkEntityAdapter extends TypeAdapter<PostFoodDrinkEntity> {
   @override
-  final int typeId = 70;
+  final int typeId = 72;
 
   @override
   PostFoodDrinkEntity read(BinaryReader reader) {
