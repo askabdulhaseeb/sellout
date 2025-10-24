@@ -28,6 +28,8 @@ import '../../../../post/domain/entities/size_color/size_color_entity.dart';
 import '../../../../post/domain/entities/size_color/color_entity.dart';
 import '../../../../post/data/models/size_color/size_color_model.dart';
 import '../../data/models/sub_category_model.dart';
+import '../../data/sources/local/local_categories.dart';
+import '../../domain/entities/category_entites/subentities/dropdown_option_entity.dart';
 import '../../domain/entities/color_options_entity.dart';
 import '../../domain/entities/listing_entity.dart';
 import '../../domain/entities/sub_category_entity.dart';
@@ -59,6 +61,11 @@ class AddListingFormProvider extends ChangeNotifier
     this._editListingUsecase,
   );
 
+  void initializeFoodDrinkFromPost(PostFoodDrinkEntity foodDrinkInfo) {
+    setSelectedFoodDrinkSubCategory(foodDrinkInfo.type);
+    // If you want to set other fields, add them here
+  }
+
   final AddListingUsecase _addListingUsecase;
   final EditListingUsecase _editListingUsecase;
 
@@ -89,6 +96,136 @@ class AddListingFormProvider extends ChangeNotifier
   @override
   AddListingFormState get state => _state;
 
+  // Cloth mixin setters
+
+  void setBrand(String? value) {
+    setBrandLo(value);
+  }
+
+  void setSelectedClothSubCategory(String value) {
+    setSelectedClothSubCategoryLo(value);
+  }
+
+  void addOrUpdateSizeColorQuantity(
+      {required String size,
+      required ColorOptionEntity color,
+      required int quantity}) {
+    addOrUpdateSizeColorQuantityLo(
+        size: size, color: color, quantity: quantity);
+  }
+
+  void removeColorFromSize({required String size, required String color}) {
+    removeColorFromSizeLo(size: size, color: color);
+  }
+
+  // Food mixin setters
+
+  void setSelectedFoodDrinkSubCategory(String value) {
+    setSelectedFoodDrinkSubCategoryLo(value);
+  }
+
+  // Pet mixin setters
+
+  void setReadyToLeave(String? value) {
+    setReadyToLeaveLo(value);
+  }
+
+  void setPetCategory(String? category) {
+    setPetCategoryLo(category);
+  }
+
+  void setPetBreed(String? value) {
+    setPetBreedLo(value);
+  }
+
+  void setVaccinationUpToDate(bool? value) {
+    setVaccinationUpToDateLo(value);
+  }
+
+  void setWormFleaTreated(bool? value) {
+    setWormFleaTreatedLo(value);
+  }
+
+  void setHealthChecked(bool? value) {
+    setHealthCheckedLo(value);
+  }
+
+  void setAge(String? value) {
+    setAgeLo(value);
+  }
+
+  void setGarden(bool? value) {
+    setGardenLo(value);
+  }
+
+  void setParking(bool? value) {
+    setParkingLo(value);
+  }
+
+  void setAnimalFriendly(bool? value) {
+    setAnimalFriendlyLo(value);
+  }
+
+  void setPropertyType(String? value) {
+    setPropertyTypeLo(value);
+  }
+
+  void setEnergyRating(String? value) {
+    setEnergyRatingLo(value);
+  }
+
+  void setSelectedTenureType(TenureType value) {
+    setSelectedTenureTypeLo(value);
+  }
+
+  void setSelectedPropertySubType(String? value) {
+    setSelectedPropertySubTypeLo(value);
+  }
+
+  void setTransmissionType(String? value) {
+    setTransmissionTypeLo(value);
+  }
+
+  void setFuelType(String? value) {
+    setFuelTypeLo(value);
+  }
+
+  void setMake(String? value) {
+    setMakeLo(value);
+  }
+
+  void setYear(String? value) {
+    setYearLo(value);
+  }
+
+  void setEmissionType(String? value) {
+    setEmissionTypeLo(value);
+  }
+
+  void setBodyType(String? type) {
+    setBodyTypeLo(type);
+  }
+
+  void setVehicleCategory(String? type) {
+    setVehicleCategoryLo(type);
+  }
+
+  void setMileageUnit(String? unit) {
+    setMileageUnitLo(unit);
+  }
+
+  void setVehicleColor(ColorOptionEntity? value) {
+    setVehicleColorLo(value);
+  }
+
+  void setInteriorColor(String? value) {
+    setInteriorColorLo(value);
+  }
+
+  void setExteriorColor(String? value) {
+    setExteriorColorLo(value);
+  }
+
   // Availability delegation
   List<AvailabilityEntity> get availability =>
       _availabilityManager.availability;
@@ -97,22 +234,18 @@ class AddListingFormProvider extends ChangeNotifier
 
   void toggleOpen(DayType day, bool isOpen) {
     _availabilityManager.toggleOpen(day, isOpen);
-    notifyListeners();
   }
 
   void setOpeningTime(DayType day, String time) {
     _availabilityManager.setOpeningTime(day, time);
-    notifyListeners();
   }
 
   void setClosingTime(DayType day, String time) {
     _availabilityManager.setClosingTime(day, time);
-    notifyListeners();
   }
 
   void updateOpeningTime(DayType day, String time) {
     _availabilityManager.updateOpeningTime(day, time);
-    notifyListeners();
   }
 
   bool isClosingTimeValid(String openingTime, String closingTime) =>
@@ -145,6 +278,7 @@ class AddListingFormProvider extends ChangeNotifier
   // TextEditingController Getter
   TextEditingController get title => _state.title;
   TextEditingController get description => _state.description;
+
   TextEditingController get price => _state.price;
   TextEditingController get quantity => _state.quantity;
   TextEditingController get minimumOffer => _state.minimumOffer;
@@ -158,30 +292,27 @@ class AddListingFormProvider extends ChangeNotifier
   TextEditingController get packageWidth => _state.packageWidth;
   TextEditingController get packageLength => _state.packageLength;
   TextEditingController get packageWeight => _state.packageWeight;
-
+  TextEditingController get bedroom => _state.bedroom;
+  TextEditingController get bathroom => _state.bathroom;
   // State delegation - Setters
   void startediting(PostEntity value) {
     _post = value;
-    AppLog.info('Editing post initialized — ID: ${value.postID}');
     initializeForEdit(value);
+    AppLog.info('Editing post initialized — ID: ${value.postID}');
     AppNavigator.pushNamed(AddListingFormScreen.routeName);
-    notifyListeners();
   }
 
   void setListingType(ListingType? value) {
     _state.listingType = value;
-    notifyListeners();
   }
 
   void setSelectedCategory(SubCategoryEntity? value) {
     if (value == null) return;
     _state.selectedCategory = value;
-    notifyListeners();
   }
 
   void setIsDiscount(bool value) {
     _state.isDiscounted = value;
-    notifyListeners();
   }
 
   void setDiscounts(DiscountEntity value) {
@@ -189,7 +320,6 @@ class AddListingFormProvider extends ChangeNotifier
       final DiscountEntity discount = discounts.firstWhere(
           (DiscountEntity element) => element.quantity == value.quantity);
       discount.discount = value.discount;
-      notifyListeners();
     } catch (e) {
       AppLog.error('Not Discount Found with Quantity: ${value.quantity}');
     }
@@ -197,23 +327,19 @@ class AddListingFormProvider extends ChangeNotifier
 
   void setCondition(ConditionType value) {
     _state.condition = value;
-    notifyListeners();
   }
 
   void setAcceptOffer(bool value) {
     _state.acceptOffer = value;
-    notifyListeners();
   }
 
   void setPrivacy(PrivacyType value) {
     _state.privacy = value;
-    notifyListeners();
   }
 
   void setDeliveryType(DeliveryType? value) {
     if (value == null || _state.deliveryType == value) return;
     _state.deliveryType = value;
-    notifyListeners();
   }
 
   void setDeliveryPayer(DeliveryPayer? value) {
@@ -224,30 +350,25 @@ class AddListingFormProvider extends ChangeNotifier
     } else if (value == DeliveryPayer.buyerPays) {
       _state.deliveryType = DeliveryType.paid;
     }
-    notifyListeners();
   }
 
   void setCollectionLocation(LocationEntity location, LatLng latlng) {
     _state.selectedCollectionLocation = location;
     _state.collectionLatLng = latlng;
-    notifyListeners();
   }
 
   void setMeetupLocation(LocationEntity value, LatLng latlng) {
     _state.selectedMeetupLocation = value;
     _state.meetupLatLng = latlng;
-    notifyListeners();
   }
 
   void setAccessCode(String? value) {
     if (value == null) return;
     _state.accessCode = value;
-    notifyListeners();
   }
 
   void setLoading(bool value) {
     _state.isLoading = value;
-    notifyListeners();
   }
 
   // Core methods
@@ -258,7 +379,6 @@ class AddListingFormProvider extends ChangeNotifier
     _attachmentManager.clear();
     _post = null;
     _listings.clear();
-
     // Reset property-specific mixin state to defaults via available setters
     setGarden(true);
     setParking(true);
@@ -267,8 +387,6 @@ class AddListingFormProvider extends ChangeNotifier
     setPropertyType(null);
     setEnergyRating(null);
     setSelectedPropertySubType(ListingType.property.cids.first);
-
-    notifyListeners();
   }
 
   Future<void> submit(BuildContext context) async {
@@ -279,7 +397,6 @@ class AddListingFormProvider extends ChangeNotifier
       }
       return;
     }
-
     setLoading(true);
     try {
       switch (listingType) {
@@ -686,49 +803,41 @@ class AddListingFormProvider extends ChangeNotifier
       type: type,
       listingType: listingType,
     );
-    notifyListeners();
   }
 
   void addAttachment(PickedAttachment attachment) {
     _attachmentManager.add(attachment);
-    notifyListeners();
   }
 
   void removePickedAttachment(PickedAttachment attachment) {
     _attachmentManager.remove(attachment);
-    notifyListeners();
   }
 
   void removeAttachmentEntity(AttachmentEntity attachment) {
     _post?.fileUrls.remove(attachment);
-    notifyListeners();
   }
 
   // Utility methods
   void incrementQuantity() {
     final int value = int.tryParse(_state.quantity.text) ?? 1;
     _state.quantity.text = (value + 1).toString();
-    notifyListeners();
   }
 
   void decrementQuantity() {
     final int value = int.tryParse(_state.quantity.text) ?? 1;
     if (value > 1) {
       _state.quantity.text = (value - 1).toString();
-      notifyListeners();
     }
   }
 
   void initializeForEdit(PostEntity post) {
     reset();
     _post = post;
-
     title.text = post.title;
     description.text = post.description;
     price.text = post.price.toString();
     quantity.text = post.quantity.toString();
     minimumOffer.text = post.minOfferAmount.toString();
-
     final DeliveryPayer payer = post.deliveryType == DeliveryType.paid
         ? DeliveryPayer.buyerPays
         : DeliveryPayer.sellerPays;
@@ -743,9 +852,7 @@ class AddListingFormProvider extends ChangeNotifier
     _state.acceptOffer = post.acceptOffers;
     _state.isDiscounted = post.hasDiscount;
     _state.privacy = post.privacy;
-    // _state.selectedCategory =
-    //     LocalCategoriesSource().findSubCategoryByAddress(post.);
-
+    _state.accessCode = post.accessCode ?? '';
     _state.engineSize.text = post.vehicleInfo?.engineSize?.toString() ?? '';
     _state.mileage.text = post.vehicleInfo?.mileage?.toString() ?? '';
     _state.model.text = post.vehicleInfo?.model?.toString() ?? '';
@@ -754,7 +861,6 @@ class AddListingFormProvider extends ChangeNotifier
     _state.location.text = post.meetUpLocation?.address?.toString() ?? '';
     _state.bedroom.text = post.propertyInfo?.bedroom?.toString() ?? '';
     _state.bathroom.text = post.propertyInfo?.bathroom?.toString() ?? '';
-
     if (post.meetUpLocation != null) {
       _state.selectedMeetupLocation = post.meetUpLocation;
       _state.meetupLatLng = LatLng(
@@ -798,9 +904,11 @@ class AddListingFormProvider extends ChangeNotifier
     if (post.clothFootInfo != null) {
       initializeClothFromPost(post.clothFootInfo!);
     }
+    if (post.foodDrinkInfo != null) {
+      initializeFoodDrinkFromPost(post.foodDrinkInfo!);
+    }
 
     AppLog.info('Editing post initialized — ID: ${post.postID}');
-    notifyListeners();
   }
 
   // Helper methods to initialize mixin data from post
@@ -815,7 +923,6 @@ class AddListingFormProvider extends ChangeNotifier
     state.emission = vehicleInfo.emission;
     state.interiorColor = vehicleInfo.interiorColor;
     state.exteriorColor = vehicleInfo.exteriorColor;
-
     if ((vehicleInfo.exteriorColor ?? '').isNotEmpty) {
       state.vehicleColor = ColorOptionEntity(
         label: vehicleInfo.exteriorColor!,
@@ -826,8 +933,6 @@ class AddListingFormProvider extends ChangeNotifier
     } else {
       state.vehicleColor = null;
     }
-
-    notifyListeners();
   }
 
   void initializePropertyFromPost(PostPropertyEntity propertyInfo) {
@@ -836,7 +941,6 @@ class AddListingFormProvider extends ChangeNotifier
     setPropertyType(propertyInfo.propertyType);
     setEnergyRating(propertyInfo.energyRating);
     setSelectedPropertySubType(propertyInfo.propertyCategory);
-
     final String? tenure = propertyInfo.tenureType;
     if (tenure != null && tenure.isNotEmpty) {
       try {
@@ -858,11 +962,13 @@ class AddListingFormProvider extends ChangeNotifier
   }
 
   void initializeClothFromPost(PostClothFootEntity clothInfo) {
-    state.brand = clothInfo.brand;
-    state.sizeColorEntities
+    setBrand(clothInfo.brand);
+    setSelectedClothSubCategory(clothInfo.type);
+    _state.sizeColorEntities
       ..clear()
       ..addAll(_cloneSizeColors(clothInfo.sizeColors));
-    notifyListeners();
+    setSelectedCategory(
+        LocalCategoriesSource().findSubCategoryByAddress(clothInfo.address));
   }
 
   List<SizeColorEntity> _cloneSizeColors(List<SizeColorEntity> source) {
@@ -960,7 +1066,6 @@ class AddListingFormProvider extends ChangeNotifier
                   type: _state.foodDrinkSubCategory,
                 )
               : null;
-
       final PostVehicleEntity? previewVehicleInfo =
           listingType == ListingType.vehicle
               ? PostVehicleEntity(
@@ -982,7 +1087,6 @@ class AddListingFormProvider extends ChangeNotifier
                   vehiclesCategory: _state.vehicleCategory ?? '',
                 )
               : null;
-
       final PostEntity previewPost = PostEntity(
         listID: listingType.json,
         postID: 'preview_${DateTime.now().millisecondsSinceEpoch}',
@@ -1036,8 +1140,39 @@ class AddListingFormProvider extends ChangeNotifier
         ),
       );
     } catch (e, st) {
-      AppLog.error('Error generating preview: $e\n$st');
+      AppLog.error('Error_generating_preview: $e\n$st');
       AppSnackBar.errorGlobal('preview_error'.tr());
+    }
+  }
+
+  DropdownOptionEntity? findByValue(
+      List<DropdownOptionEntity> list, String valueToFind) {
+    AppLog.info(
+        'findByValue called with valueToFind: $valueToFind, list length: ${list.length}');
+    try {
+      for (final DropdownOptionEntity option in list) {
+        AppLog.info(
+            'Checking option: value=${option.value.value}, label=${option.value.label}');
+      }
+      final DropdownOptionEntity result = list.firstWhere(
+        (DropdownOptionEntity option) {
+          final bool match = option.value.value == valueToFind;
+          if (match) {
+            AppLog.info(
+                'Match found: value=${option.value.value}, label=${option.value.label}');
+          }
+          return match;
+        },
+      );
+      AppLog.info(
+          'findByValue returning: value=${result.value.value}, label=${result.value.label}');
+      // Do NOT call notifyListeners() here! This method is a synchronous lookup and may be called during build.
+      // If you need to update the UI, call notifyListeners() from the caller after updating state.
+      return result;
+    } catch (e, st) {
+      AppLog.error('findByValue error: $e', stackTrace: st);
+      // Do NOT call notifyListeners() here! See above.
+      return null;
     }
   }
 }

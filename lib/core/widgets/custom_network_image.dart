@@ -14,6 +14,7 @@ class CustomNetworkImage extends StatelessWidget {
     super.key,
   });
 
+  static final Map<String, bool> _mimeTypeCache = <String, bool>{};
   final String? imageURL;
   final String placeholder;
   final BoxFit? fit;
@@ -32,10 +33,38 @@ class CustomNetworkImage extends StatelessWidget {
       return _buildPlaceholder(context, placeholderText);
     }
 
+    // Check cache first
+    if (_mimeTypeCache.containsKey(imageURL)) {
+      final bool isSupported = _mimeTypeCache[imageURL]!;
+      if (!isSupported) {
+        return _buildPlaceholder(context, placeholderText);
+      }
+      return CachedNetworkImage(
+        imageUrl: imageURL!,
+        fit: fit,
+        height: size,
+        width: size,
+        imageBuilder:
+            (BuildContext context, ImageProvider<Object> imageProvider) =>
+                Image(
+          image: imageProvider,
+          fit: fit,
+          errorBuilder: (_, __, ___) =>
+              _buildPlaceholder(context, placeholderText),
+        ),
+        placeholder: (_, __) => Container(
+          height: size,
+          width: size,
+          color: Theme.of(context).dividerColor.withValues(alpha: 0.2),
+        ),
+        errorWidget: (_, __, ___) =>
+            _buildPlaceholder(context, placeholderText),
+      );
+    }
+    // If not cached, check and cache result
     return FutureBuilder<bool>(
       future: _isImageSupported(imageURL!),
       builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-        // 🌀 Show loading placeholder while checking MIME type
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Container(
             height: size,
@@ -43,13 +72,11 @@ class CustomNetworkImage extends StatelessWidget {
             color: Theme.of(context).dividerColor.withValues(alpha: 0.2),
           );
         }
-
-        // ❌ If unsupported or failed
-        if (snapshot.hasError || snapshot.data == false) {
+        final bool isSupported = snapshot.data ?? false;
+        _mimeTypeCache[imageURL!] = isSupported;
+        if (!isSupported) {
           return _buildPlaceholder(context, placeholderText);
         }
-
-        // ✅ Safe to load
         return CachedNetworkImage(
           imageUrl: imageURL!,
           fit: fit,

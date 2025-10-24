@@ -1,13 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../core/widgets/custom_dropdown.dart';
-import '../../../../../location/domain/entities/location_entity.dart';
-import '../../../../../location/domain/enums/map_display_mode.dart';
-import '../../../../../location/view/widgets/location_field.dart/nomination_location_field.dart';
 import '../../../domain/entities/category_entites/subentities/dropdown_option_entity.dart';
 import '../../../domain/entities/category_entites/subentities/parent_dropdown_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
@@ -26,10 +22,8 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
         LocalCategoriesSource.pets ?? <DropdownOptionEntity>[];
     final List<ParentDropdownEntity> breedOptions =
         LocalCategoriesSource.breed ?? <ParentDropdownEntity>[];
-
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
-        // Breed list safely
         final ParentDropdownEntity? matchedBreed = breedOptions
             .where(
                 (ParentDropdownEntity p) => p.category == formPro.petCategory)
@@ -37,7 +31,6 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
             .firstOrNull;
         final List<DropdownOptionEntity> breedList =
             matchedBreed?.options ?? <DropdownOptionEntity>[];
-
         return Column(
           spacing: AppSpacing.vXs,
           children: <Widget>[
@@ -56,7 +49,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                           ),
                         )
                         .toList(),
-                    selectedItem: DropdownOptionEntity.findByValue(
+                    selectedItem: formPro.findByValue(
                       ageOptions,
                       formPro.age ?? '',
                     ),
@@ -79,7 +72,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                           ),
                         )
                         .toList(),
-                    selectedItem: DropdownOptionEntity.findByValue(
+                    selectedItem: formPro.findByValue(
                       readyToLeaveOptions,
                       formPro.readyToLeave ?? '',
                     ),
@@ -93,7 +86,6 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                 ),
               ],
             ),
-
             /// Pet Category
             CustomDropdown<DropdownOptionEntity>(
               items: petCategories
@@ -105,7 +97,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                     ),
                   )
                   .toList(),
-              selectedItem: DropdownOptionEntity.findByValue(
+              selectedItem: formPro.findByValue(
                 petCategories,
                 formPro.petCategory ?? '',
               ),
@@ -115,7 +107,6 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
               onChanged: (DropdownOptionEntity? value) =>
                   formPro.setPetCategory(value?.value.value),
             ),
-
             /// Breed dropdown (only if category selected)
             if (formPro.petCategory != null && formPro.petCategory!.isNotEmpty)
               CustomDropdown<DropdownOptionEntity>(
@@ -128,7 +119,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                       ),
                     )
                     .toList(),
-                selectedItem: DropdownOptionEntity.findByValue(
+                selectedItem: formPro.findByValue(
                   breedList,
                   formPro.breed ?? '',
                 ),
@@ -139,17 +130,6 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                 onChanged: (DropdownOptionEntity? value) =>
                     formPro.setPetBreed(value?.value.value),
               ),
-
-            /// Location field
-            NominationLocationField(
-              validator: (bool? value) => AppValidator.requireLocation(value),
-              title: 'meetup_location'.tr(),
-              selectedLatLng: formPro.meetupLatLng,
-              displayMode: MapDisplayMode.showMapAfterSelection,
-              initialText: formPro.selectedMeetupLocation?.address ?? '',
-              onLocationSelected: (LocationEntity p0, LatLng p1) =>
-                  formPro.setMeetupLocation(p0, p1),
-            ),
           ],
         );
       },

@@ -58,8 +58,11 @@ class _AddListingVehicleBasicInfoSectionState
                   child: Text(opt.label),
                 );
               }).toList(),
-              selectedItem: DropdownOptionEntity.findByValue(
-                  vehiclecatgory, formPro.selectedVehicleCategory ?? ''),
+              selectedItem: formPro.findByValue(
+                  //The static method 'findByValue' can't be accessed through an instance.
+//Try using the class 'AddListingFormProvider' to access the method
+                  vehiclecatgory,
+                  formPro.selectedVehicleCategory ?? ''),
               validator: (bool? value) => AppValidator.requireSelection(value),
               hint: 'select_category'.tr(),
               title: 'category'.tr(),
@@ -86,7 +89,7 @@ class _AddListingVehicleBasicInfoSectionState
                         child: Text(e.label),
                       ))
                   .toList(),
-              selectedItem: DropdownOptionEntity.findByValue(
+              selectedItem: formPro.findByValue(
                   emissionStandards, formPro.emission ?? ''),
               validator: (bool? value) => AppValidator.requireSelection(value),
               hint: 'emission_standards'.tr(),
@@ -104,8 +107,7 @@ class _AddListingVehicleBasicInfoSectionState
                         child: Text(e.label),
                       ))
                   .toList(),
-              selectedItem:
-                  DropdownOptionEntity.findByValue(make, formPro.make ?? ''),
+              selectedItem: formPro.findByValue(make, formPro.make ?? ''),
               validator: (bool? value) => AppValidator.requireSelection(value),
               hint: 'make'.tr(),
               title: 'make'.tr(),
@@ -122,8 +124,8 @@ class _AddListingVehicleBasicInfoSectionState
                         child: Text(e.label),
                       ))
                   .toList(),
-              selectedItem: DropdownOptionEntity.findByValue(
-                  fuelType, formPro.fuelType ?? ''),
+              selectedItem:
+                  formPro.findByValue(fuelType, formPro.fuelType ?? ''),
               validator: (bool? value) => AppValidator.requireSelection(value),
               hint: 'fuel_type'.tr(),
               title: 'fuel_type'.tr(),
@@ -140,7 +142,7 @@ class _AddListingVehicleBasicInfoSectionState
                         child: Text(e.label),
                       ))
                   .toList(),
-              selectedItem: DropdownOptionEntity.findByValue(
+              selectedItem: formPro.findByValue(
                   transmission, formPro.transmissionType ?? ''),
               validator: (bool? value) => AppValidator.requireSelection(value),
               hint: 'transmission'.tr(),

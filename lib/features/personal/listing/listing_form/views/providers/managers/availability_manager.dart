@@ -14,17 +14,18 @@ class AvailabilityManager extends ChangeNotifier {
   }).toList();
   List<AvailabilityEntity> get availability => _availability;
   void setAvailabilty(List<AvailabilityEntity> val) {
-    // Ensure all days are present, merge incoming values with defaults
+    // Build a map for fast lookup
+    final Map<DayType, AvailabilityEntity> inputMap = {
+      for (final entity in val) entity.day: entity
+    };
     _availability = DayType.values.map((DayType day) {
-      return val.firstWhere(
-        (AvailabilityEntity e) => e.day == day,
-        orElse: () => AvailabilityEntity(
-          day: day,
-          isOpen: false,
-          openingTime: '',
-          closingTime: '',
-        ),
-      );
+      return inputMap[day] ??
+          AvailabilityEntity(
+            day: day,
+            isOpen: false,
+            openingTime: '',
+            closingTime: '',
+          );
     }).toList();
     notifyListeners();
   }

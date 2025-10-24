@@ -1,8 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import '../../features/personal/listing/listing_form/views/providers/add_listing_form_provider.dart';
+import '../../features/personal/location/domain/entities/location_entity.dart';
+import '../../features/personal/location/domain/enums/map_display_mode.dart';
+import '../../features/personal/location/view/widgets/location_field.dart/nomination_location_field.dart';
 import '../../features/personal/post/domain/entities/meetup/availability_entity.dart';
+import '../utilities/app_validators.dart';
 import 'scaffold/bottom_bar/availability_time_dailog.dart';
 import '../../core/enums/routine/day_type.dart';
 
@@ -12,12 +17,21 @@ class EditableAvailabilityWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<AddListingFormProvider>(
-      builder: (BuildContext context, AddListingFormProvider manager, _) {
+      builder: (BuildContext context, AddListingFormProvider formPro, _) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             const SizedBox(
               height: 10,
+            ),
+            NominationLocationField(
+              validator: (bool? value) => AppValidator.requireLocation(value),
+              title: 'meetup_location'.tr(),
+              selectedLatLng: formPro.meetupLatLng,
+              displayMode: MapDisplayMode.showMapAfterSelection,
+              initialText: formPro.selectedMeetupLocation?.address ?? '',
+              onLocationSelected: (LocationEntity p0, LatLng p1) =>
+                  formPro.setMeetupLocation(p0, p1),
             ),
             Text(
               'add_availbility_for_viewing'.tr(),
@@ -27,7 +41,7 @@ class EditableAvailabilityWidget extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             ...DayType.values.map((DayType day) {
-              final AvailabilityEntity entity = manager.availability.firstWhere(
+              final AvailabilityEntity entity = formPro.availability.firstWhere(
                 (AvailabilityEntity e) => e.day == day,
                 orElse: () {
                   return AvailabilityEntity(
@@ -54,7 +68,7 @@ class EditableAvailabilityWidget extends StatelessWidget {
                         Switch(
                           value: isOpen,
                           onChanged: (bool val) {
-                            manager.toggleOpen(day, val);
+                            formPro.toggleOpen(day, val);
                           },
                           materialTapTargetSize:
                               MaterialTapTargetSize.shrinkWrap,
