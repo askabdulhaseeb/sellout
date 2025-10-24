@@ -15,8 +15,8 @@ class PostClothFootEntity {
   final List<SizeColorEntity> sizeColors;
   @HiveField(60)
   final AttachmentEntity? sizeChartUrl;
-    @HiveField(61)
-  final String? type;
+  @HiveField(61)
+  final String type;
   @HiveField(72)
   final String? brand;
   @HiveField(73)

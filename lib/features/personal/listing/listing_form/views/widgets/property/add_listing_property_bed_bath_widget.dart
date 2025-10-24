@@ -33,24 +33,24 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
             Row(
               spacing: AppSpacing.hSm,
               children: <Widget>[
-                // Expanded(
-                //   child: CustomTextFormField(
-                //     controller: formPro.bedroom,
-                //     validator: (String? value) => AppValidator.isEmpty(value),
-                //     labelText: 'bedroom'.tr(),
-                //     hint: 'Ex. 4',
-                //     keyboardType: TextInputType.number,
-                //   ),
-                // ),
-                // Expanded(
-                //   child: CustomTextFormField(
-                //     controller: formPro.bathroom,
-                //     validator: (String? value) => AppValidator.isEmpty(value),
-                //     labelText: 'bathroom'.tr(),
-                //     hint: 'Ex. 3',
-                //     keyboardType: TextInputType.number,
-                //   ),
-                // ),
+                Expanded(
+                  child: CustomTextFormField(
+                    controller: formPro.bedroom,
+                    validator: (String? value) => AppValidator.isEmpty(value),
+                    labelText: 'bedroom'.tr(),
+                    hint: 'Ex. 4',
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+                Expanded(
+                  child: CustomTextFormField(
+                    controller: formPro.bathroom,
+                    validator: (String? value) => AppValidator.isEmpty(value),
+                    labelText: 'bathroom'.tr(),
+                    hint: 'Ex. 3',
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
               ],
             ),
 
@@ -74,7 +74,7 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
                     ),
                   )
                   .toList(),
-              selectedItem: DropdownOptionEntity.findByValue(
+              selectedItem: formPro.findByValue(
                   propertyTypes, formPro.selectedPropertyType ?? ''),
               validator: (bool? value) => AppValidator.requireSelection(value),
               hint: 'select_category'.tr(),

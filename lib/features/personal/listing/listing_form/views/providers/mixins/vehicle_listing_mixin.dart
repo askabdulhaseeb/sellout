@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import '../../../domain/entities/color_options_entity.dart';
 import '../form_state/add_listing_form_state.dart';
 
-mixin VehicleListingMixin on ChangeNotifier {
+// Pure Dart mixin, no ChangeNotifier
+mixin VehicleListingMixin {
   AddListingFormState get state;
 
   // Getters
@@ -19,58 +19,48 @@ mixin VehicleListingMixin on ChangeNotifier {
   String? get exteriorColor => state.exteriorColor;
 
   // Setters
-  void setTransmissionType(String? value) {
+  void setTransmissionTypeLo(String? value) {
     state.transmissionType = value;
-    notifyListeners();
   }
 
-  void setFuelType(String? value) {
+  void setFuelTypeLo(String? value) {
     state.fuelType = value;
-    notifyListeners();
   }
 
-  void setMake(String? value) {
+  void setMakeLo(String? value) {
     state.make = value;
-    notifyListeners();
   }
 
-  void setYear(String? value) {
+  void setYearLo(String? value) {
     state.year = value;
-    notifyListeners();
   }
 
-  void setEmissionType(String? value) {
+  void setEmissionTypeLo(String? value) {
     state.emission = value;
-    notifyListeners();
   }
 
-  void setBodyType(String? type) {
+  void setBodyTypeLo(String? type) {
     state.bodyType = type;
-    notifyListeners();
   }
 
-  void setVehicleCategory(String? type) {
+  void setVehicleCategoryLo(String? type) {
     state.vehicleCategory = type;
-    notifyListeners();
   }
 
-  void setMileageUnit(String? unit) {
+  void setMileageUnitLo(String? unit) {
     state.mileageUnit = unit;
-    notifyListeners();
   }
 
-  void setVehicleColor(ColorOptionEntity? value) {
+  void setVehicleColorLo(ColorOptionEntity? value) {
     state.vehicleColor = value;
-    notifyListeners();
   }
 
-  void setInteriorColor(String? value) {
+  void setInteriorColorLo(String? value) {
     state.interiorColor = value;
-    notifyListeners();
   }
 
-  void setExteriorColor(String? value) {
+  void setExteriorColorLo(String? value) {
     state.exteriorColor = value;
-    notifyListeners();
   }
+
 }

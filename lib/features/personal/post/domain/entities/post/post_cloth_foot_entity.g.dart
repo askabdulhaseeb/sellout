@@ -19,7 +19,7 @@ class PostClothFootEntityAdapter extends TypeAdapter<PostClothFootEntity> {
     return PostClothFootEntity(
       sizeColors: (fields[71] as List).cast<SizeColorEntity>(),
       sizeChartUrl: fields[60] as AttachmentEntity?,
-      type: fields[61] as String?,
+      type: fields[61] as String,
       brand: fields[72] as String?,
       address: fields[73] as String,
     );

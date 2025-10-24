@@ -6,7 +6,7 @@ class PostFoodDrinkEntity {
   PostFoodDrinkEntity({required this.type, required this.address});
 
   @HiveField(0)
-  final String? type;
+  final String type;
 
   @HiveField(1)
   final String? address;

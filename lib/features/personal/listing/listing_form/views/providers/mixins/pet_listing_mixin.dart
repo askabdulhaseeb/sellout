@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import '../form_state/add_listing_form_state.dart';
 
-mixin PetListingMixin on ChangeNotifier {
+// Pure Dart mixin, no ChangeNotifier
+mixin PetListingMixin {
   AddListingFormState get state;
 
   // Getters - delegate to state
@@ -14,40 +14,33 @@ mixin PetListingMixin on ChangeNotifier {
   bool? get healthChecked => state.healthChecked;
 
   // Setters - update state and notify
-  void setReadyToLeave(String? value) {
+  void setReadyToLeaveLo(String? value) {
     if (value == null) return;
     state.readyToLeave = value;
-    notifyListeners();
   }
 
-  void setPetCategory(String? category) {
+  void setPetCategoryLo(String? category) {
     state.petCategory = category;
-    notifyListeners();
   }
 
-  void setPetBreed(String? value) {
+  void setPetBreedLo  (String? value) {
     state.breed = value;
-    notifyListeners();
   }
 
-  void setVaccinationUpToDate(bool? value) {
+  void setVaccinationUpToDateLo(bool? value) {
     state.vaccinationUpToDate = value;
-    notifyListeners();
   }
 
-  void setWormFleaTreated(bool? value) {
+  void setWormFleaTreatedLo(bool? value) {
     state.wormAndFleaTreated = value;
-    notifyListeners();
   }
 
-  void setHealthChecked(bool? value) {
+  void setHealthCheckedLo(bool? value) {
     state.healthChecked = value;
-    notifyListeners();
   }
 
-  void setAge(String? value) {
+  void setAgeLo(String? value) {
     if (value == null) return;
     state.age = value;
-    notifyListeners();
   }
 }

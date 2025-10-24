@@ -17,7 +17,7 @@ class PostFoodDrinkEntityAdapter extends TypeAdapter<PostFoodDrinkEntity> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return PostFoodDrinkEntity(
-      type: fields[0] as String?,
+      type: fields[0] as String,
       address: fields[1] as String?,
     );
   }

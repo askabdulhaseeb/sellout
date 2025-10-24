@@ -1,3 +1,4 @@
+import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../attachment/data/attchment_model.dart';
 import '../../../domain/entities/post/post_cloth_foot_entity.dart';
 import '../size_color/size_color_model.dart';
@@ -21,7 +22,7 @@ class PostClothFootModel extends PostClothFootEntity {
           : AttachmentModel.fromJson(
               json['size_chart'] as Map<String, dynamic>),
       brand: json['brand']?.toString() ?? '',
-      type: json['type']?.toString() ?? '',
+      type: json['type']?.toString() ?? ListingType.clothAndFoot.cids.first,
       address: json['address']?.toString() ?? '',
     );
   }

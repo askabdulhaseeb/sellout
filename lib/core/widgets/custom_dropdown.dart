@@ -61,6 +61,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
   void initState() {
     super.initState();
     _setInitialText();
+    _updateControllerValue();
     _focusNode.addListener(_handleFocusChange);
   }
 
@@ -70,9 +71,8 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
     if (!_focusNode.hasFocus && !_hasSetInitialText) {
       _setInitialText();
     }
-    if (!widget.isDynamic &&
-        oldWidget.selectedItem != widget.selectedItem &&
-        !_focusNode.hasFocus) {
+    // Always update controller value if selectedItem changes
+    if (oldWidget.selectedItem != widget.selectedItem) {
       _updateControllerValue();
     }
   }

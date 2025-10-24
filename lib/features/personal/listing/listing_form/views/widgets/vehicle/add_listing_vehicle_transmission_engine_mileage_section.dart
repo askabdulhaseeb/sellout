@@ -52,7 +52,7 @@ class AddListingVehicleTransmissionEngineMileageSection
                         child: Text(opt.label), // display label
                       );
                     }).toList(),
-                    selectedItem: DropdownOptionEntity.findByValue(
+                    selectedItem: formPro.findByValue(
                         mileageUnit, formPro.selectedMileageUnit ?? ''),
                     validator: (bool? value) =>
                         AppValidator.requireSelection(value),

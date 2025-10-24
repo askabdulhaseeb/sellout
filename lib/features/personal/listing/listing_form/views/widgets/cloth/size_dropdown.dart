@@ -32,7 +32,7 @@ class SizeDropdown extends StatelessWidget {
 
     // use the helper to find the selected item
     final DropdownOptionEntity? selectedEntity =
-        DropdownOptionEntity.findByValue(sizeOptions, selectedSize ?? '');
+        formPro.findByValue(sizeOptions, selectedSize ?? '');
 
     return Padding(
       padding: EdgeInsets.zero,

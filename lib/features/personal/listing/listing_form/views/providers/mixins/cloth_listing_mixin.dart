@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import '../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../post/data/models/size_color/size_color_model.dart';
 import '../../../../../post/domain/entities/size_color/color_entity.dart';
@@ -6,13 +5,13 @@ import '../../../../../post/domain/entities/size_color/size_color_entity.dart';
 import '../../../domain/entities/color_options_entity.dart';
 import '../form_state/add_listing_form_state.dart';
 
-mixin ClothListingMixin on ChangeNotifier {
+// Pure Dart mixin, no ChangeNotifier
+mixin ClothListingMixin {
   // The state will be provided by the class implementing this mixin
   AddListingFormState get state;
-
   // Getters that use the state
   String? get brand => state.brand;
- 
+
   String get selectedClothSubType {
     if (state.clothSubCategory.isEmpty) {
       return ListingType.clothAndFoot.cids.first;
@@ -22,18 +21,16 @@ mixin ClothListingMixin on ChangeNotifier {
   List<SizeColorEntity> get sizeColorEntities => state.sizeColorEntities;
 
   // Setters that update the state
-  void setBrand(String? value) {
+  void setBrandLo(String? value) {
     state.brand = value;
-    notifyListeners();
   }
 
-  void setSelectedClothSubCategory(String value) {
+  void setSelectedClothSubCategoryLo(String value) {
     state.clothSubCategory = value;
-    state.selectedCategory = null;
-    notifyListeners();
+    state.selectedCategory = null;  
   }
 
-  void addOrUpdateSizeColorQuantity({
+  void addOrUpdateSizeColorQuantityLo({
     required String size,
     required ColorOptionEntity color,
     required int quantity,
@@ -64,10 +61,9 @@ mixin ClothListingMixin on ChangeNotifier {
         ),
       );
     }
-    notifyListeners();
   }
 
-  void removeColorFromSize({required String size, required String color}) {
+  void removeColorFromSizeLo({required String size, required String color}) {
     final int sizeIndex = state.sizeColorEntities
         .indexWhere((SizeColorEntity e) => e.value == size);
     if (sizeIndex != -1) {
@@ -76,7 +72,6 @@ mixin ClothListingMixin on ChangeNotifier {
       if (state.sizeColorEntities[sizeIndex].colors.isEmpty) {
         state.sizeColorEntities.removeAt(sizeIndex);
       }
-      notifyListeners();
     }
   }
 }
