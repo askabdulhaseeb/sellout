@@ -10,18 +10,16 @@ class PackageDetailEntity {
     required this.height,
   });
   @HiveField(0)
-  final double length;
+  final String length;
 
   @HiveField(1)
-  final double width;
+  final String width;
 
   @HiveField(2)
-  final double weight;
+  final String weight;
 
   @HiveField(3)
-  final double height;
-
-  double get volume => length * width * height;
+  final String height;
 
   @override
   String toString() {
@@ -30,10 +28,10 @@ class PackageDetailEntity {
 
   // Copy with method for easy updates
   PackageDetailEntity copyWith({
-    double? length,
-    double? width,
-    double? weight,
-    double? height,
+    String? length,
+    String? width,
+    String? weight,
+    String? height,
   }) {
     return PackageDetailEntity(
       length: length ?? this.length,

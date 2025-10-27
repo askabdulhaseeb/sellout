@@ -1,14 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../../../core/widgets/custom_textformfield.dart';
-import '../../../../../location/domain/entities/location_entity.dart';
-import '../../../../../location/domain/enums/map_display_mode.dart';
-import '../../../../../location/view/widgets/location_field.dart/nomination_location_field.dart';
 import '../../../data/sources/local/local_categories.dart';
 import '../../../domain/entities/category_entites/subentities/dropdown_option_data_entity.dart';
 import '../../../domain/entities/category_entites/subentities/dropdown_option_entity.dart';

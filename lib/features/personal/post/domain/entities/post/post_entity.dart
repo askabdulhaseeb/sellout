@@ -188,5 +188,4 @@ class PostEntity {
   // Package detail helper methods
   String get packageDimensions =>
       '${packageDetail.length}L x ${packageDetail.width}W x ${packageDetail.height}H';
-  double get packageVolume => packageDetail.volume;
 }
