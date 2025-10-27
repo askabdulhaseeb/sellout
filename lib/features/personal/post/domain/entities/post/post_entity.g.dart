@@ -41,7 +41,7 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       deliveryType: fields[14] as DeliveryType,
       localDelivery: fields[26] as int?,
       internationalDelivery: fields[27] as int?,
-      availability: (fields[34] as List?)?.cast<AvailabilityEntity>(),
+      availability: (fields[35] as List?)?.cast<AvailabilityEntity>(),
       fileUrls: (fields[17] as List).cast<AttachmentEntity>(),
       hasDiscount: fields[19] as bool,
       discounts: (fields[18] as List).cast<DiscountEntity>(),
@@ -50,21 +50,22 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       petInfo: fields[30] as PostPetEntity?,
       vehicleInfo: fields[29] as PostVehicleEntity?,
       foodDrinkInfo: fields[32] as PostFoodDrinkEntity?,
-      packageDetail: fields[33] as PackageDetailEntity,
-      isActive: fields[35] as bool,
-      createdBy: fields[36] as String,
-      updatedBy: fields[39] == null ? '' : fields[39] as String,
-      createdAt: fields[37] as DateTime,
-      updatedAt: fields[40] as DateTime?,
-      accessCode: fields[38] as String?,
-      inHiveAt: fields[41] as DateTime?,
+      itemInfo: fields[33] as PostItemEntity?,
+      packageDetail: fields[34] as PackageDetailEntity,
+      isActive: fields[36] as bool,
+      createdBy: fields[37] as String,
+      updatedBy: fields[40] == null ? '' : fields[40] as String,
+      createdAt: fields[38] as DateTime,
+      updatedAt: fields[41] as DateTime?,
+      accessCode: fields[39] as String?,
+      inHiveAt: fields[42] as DateTime?,
     );
   }
 
   @override
   void write(BinaryWriter writer, PostEntity obj) {
     writer
-      ..writeByte(41)
+      ..writeByte(42)
       ..writeByte(0)
       ..write(obj.listID)
       ..writeByte(1)
@@ -130,22 +131,24 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       ..writeByte(32)
       ..write(obj.foodDrinkInfo)
       ..writeByte(33)
-      ..write(obj.packageDetail)
+      ..write(obj.itemInfo)
       ..writeByte(34)
-      ..write(obj.availability)
+      ..write(obj.packageDetail)
       ..writeByte(35)
-      ..write(obj.isActive)
+      ..write(obj.availability)
       ..writeByte(36)
-      ..write(obj.createdBy)
+      ..write(obj.isActive)
       ..writeByte(37)
-      ..write(obj.createdAt)
+      ..write(obj.createdBy)
       ..writeByte(38)
-      ..write(obj.accessCode)
+      ..write(obj.createdAt)
       ..writeByte(39)
-      ..write(obj.updatedBy)
+      ..write(obj.accessCode)
       ..writeByte(40)
-      ..write(obj.updatedAt)
+      ..write(obj.updatedBy)
       ..writeByte(41)
+      ..write(obj.updatedAt)
+      ..writeByte(42)
       ..write(obj.inHiveAt);
   }
 

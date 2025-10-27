@@ -162,8 +162,9 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
 
   OverlayEntry _createOverlayEntry() {
     final RenderBox? renderBox = context.findRenderObject() as RenderBox?;
-    if (renderBox == null)
+    if (renderBox == null) {
       return OverlayEntry(builder: (_) => const SizedBox());
+    }
 
     final Size size = renderBox.size;
     final Offset offset = renderBox.localToGlobal(Offset.zero);

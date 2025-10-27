@@ -21,6 +21,7 @@ import '../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../post/domain/entities/post/post_cloth_foot_entity.dart';
 import '../../../../post/domain/entities/post/package_detail_entity.dart';
 import '../../../../post/domain/entities/post/post_food_drink_entity.dart';
+import '../../../../post/domain/entities/post/post_item_entity.dart';
 import '../../../../post/domain/entities/post/post_pet_entity.dart';
 import '../../../../post/domain/entities/post/post_property_entity.dart';
 import '../../../../post/domain/entities/post/post_vehicle_entity.dart';
@@ -61,11 +62,6 @@ class AddListingFormProvider extends ChangeNotifier
     this._editListingUsecase,
   );
 
-  void initializeFoodDrinkFromPost(PostFoodDrinkEntity foodDrinkInfo) {
-    setSelectedFoodDrinkSubCategory(foodDrinkInfo.type);
-    // If you want to set other fields, add them here
-  }
-
   final AddListingUsecase _addListingUsecase;
   final EditListingUsecase _editListingUsecase;
 
@@ -104,6 +100,7 @@ class AddListingFormProvider extends ChangeNotifier
 
   void setSelectedClothSubCategory(String value) {
     setSelectedClothSubCategoryLo(value);
+    notifyListeners();
   }
 
   void addOrUpdateSizeColorQuantity(
@@ -122,6 +119,7 @@ class AddListingFormProvider extends ChangeNotifier
 
   void setSelectedFoodDrinkSubCategory(String value) {
     setSelectedFoodDrinkSubCategoryLo(value);
+    notifyListeners();
   }
 
   // Pet mixin setters
@@ -313,6 +311,7 @@ class AddListingFormProvider extends ChangeNotifier
 
   void setIsDiscount(bool value) {
     _state.isDiscounted = value;
+    notifyListeners();
   }
 
   void setDiscounts(DiscountEntity value) {
@@ -892,22 +891,21 @@ class AddListingFormProvider extends ChangeNotifier
     if (post.vehicleInfo != null) {
       initializeVehicleFromPost(post.vehicleInfo!);
     }
-
     if (post.propertyInfo != null) {
       initializePropertyFromPost(post.propertyInfo!);
     }
-
     if (post.petInfo != null) {
       initializePetFromPost(post.petInfo!);
     }
-
     if (post.clothFootInfo != null) {
       initializeClothFromPost(post.clothFootInfo!);
     }
     if (post.foodDrinkInfo != null) {
       initializeFoodDrinkFromPost(post.foodDrinkInfo!);
     }
-
+    if (post.itemInfo != null) {
+      initializeItemFromPost(post.itemInfo!);
+    }
     AppLog.info('Editing post initialized — ID: ${post.postID}');
   }
 
@@ -962,6 +960,8 @@ class AddListingFormProvider extends ChangeNotifier
   }
 
   void initializeClothFromPost(PostClothFootEntity clothInfo) {
+    _state.selectedCategory = LocalCategoriesSource()
+        .findSubCategoryByAddress(post?.clothFootInfo?.address ?? '');
     setBrand(clothInfo.brand);
     setSelectedClothSubCategory(clothInfo.type);
     _state.sizeColorEntities
@@ -969,6 +969,17 @@ class AddListingFormProvider extends ChangeNotifier
       ..addAll(_cloneSizeColors(clothInfo.sizeColors));
     setSelectedCategory(
         LocalCategoriesSource().findSubCategoryByAddress(clothInfo.address));
+  }
+
+  void initializeFoodDrinkFromPost(PostFoodDrinkEntity foodDrinkInfo) {
+    setSelectedFoodDrinkSubCategory(foodDrinkInfo.type);
+    _state.selectedCategory = LocalCategoriesSource()
+        .findSubCategoryByAddress(post?.foodDrinkInfo?.address ?? '');
+  }
+
+  void initializeItemFromPost(PostItemEntity itemInfo) {
+    _state.selectedCategory = LocalCategoriesSource()
+        .findSubCategoryByAddress(post?.itemInfo?.address ?? '');
   }
 
   List<SizeColorEntity> _cloneSizeColors(List<SizeColorEntity> source) {
@@ -1066,6 +1077,11 @@ class AddListingFormProvider extends ChangeNotifier
                   type: _state.foodDrinkSubCategory,
                 )
               : null;
+      final PostItemEntity? previewItemInfo = listingType == ListingType.items
+          ? PostItemEntity(
+              address: '',
+            )
+          : null;
       final PostVehicleEntity? previewVehicleInfo =
           listingType == ListingType.vehicle
               ? PostVehicleEntity(
@@ -1121,6 +1137,7 @@ class AddListingFormProvider extends ChangeNotifier
         petInfo: previewPetInfo,
         vehicleInfo: previewVehicleInfo,
         foodDrinkInfo: previewFoodDrinkInfo,
+        itemInfo: previewItemInfo,
         packageDetail: previewPackageDetail,
         isActive: true,
         createdBy: LocalAuth.uid ?? 'null',
