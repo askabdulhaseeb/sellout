@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class LoadMoreIndicator extends StatelessWidget {
@@ -5,21 +6,21 @@ class LoadMoreIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SliverToBoxAdapter(
+    return SliverToBoxAdapter(
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 24),
+        padding: const EdgeInsets.symmetric(vertical: 24),
         child: Center(
           child: Column(
             children: <Widget>[
-              SizedBox(
+              const SizedBox(
                 width: 24,
                 height: 24,
                 child: CircularProgressIndicator(strokeWidth: 2),
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               Text(
-                'Loading more photos...',
-                style: TextStyle(fontSize: 12, color: Colors.grey),
+                'load_more_photos'.tr(),
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
               ),
             ],
           ),

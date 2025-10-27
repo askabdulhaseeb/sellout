@@ -8,7 +8,6 @@ import '../../domain/entities/picked_attachment_option.dart';
 import '../../../../core/functions/app_log.dart';
 
 class PickedMediaProvider extends ChangeNotifier {
-  // --- STATE ---
   final List<AssetEntity> _mediaList = <AssetEntity>[];
   final List<AssetEntity> _pickedMedia = <AssetEntity>[];
   bool _permissionDenied = false;
@@ -20,10 +19,8 @@ class PickedMediaProvider extends ChangeNotifier {
   bool _hasMoreMedia = true;
   bool _isDisposed = false;
 
-  // --- OPTIONS ---
   PickableAttachmentOption _option = PickableAttachmentOption();
 
-  // --- GETTERS ---
   List<AssetEntity> get mediaList => _mediaList;
   List<AssetEntity> get pickedMedia => _pickedMedia;
   bool get permissionDenied => _permissionDenied;
@@ -35,7 +32,6 @@ class PickedMediaProvider extends ChangeNotifier {
   int get selectedCount => _pickedMedia.length;
   bool get canSelectMore => _pickedMedia.length < _option.maxAttachments;
 
-  // --- INITIALIZATION ---
   Future<void> init(
       BuildContext context, PickableAttachmentOption option) async {
     _option = option;
@@ -97,7 +93,6 @@ class PickedMediaProvider extends ChangeNotifier {
     }
   }
 
-  // --- LOAD MORE MEDIA ---
   Future<void> loadMoreMedia({bool initial = false}) async {
     if (_currentAlbum == null) return;
     if (!initial && (!_hasMoreMedia || _loadingMore)) return;
@@ -130,7 +125,7 @@ class PickedMediaProvider extends ChangeNotifier {
 
         if (uniqueNewMedia.isNotEmpty) {
           _mediaList.addAll(uniqueNewMedia);
-          await cacheThumbnails(uniqueNewMedia); // Pre-cache thumbnails
+          await cacheThumbnails(uniqueNewMedia);
           _currentPage++;
         }
 
@@ -148,7 +143,6 @@ class PickedMediaProvider extends ChangeNotifier {
     }
   }
 
-  // --- THUMBNAIL CACHING ---
   final Map<String, Uint8List?> _thumbnailCache = {};
 
   Future<void> cacheThumbnails(List<AssetEntity> assets) async {
@@ -160,7 +154,7 @@ class PickedMediaProvider extends ChangeNotifier {
           quality: 85,
           format: ThumbnailFormat.jpeg,
         );
-        // Guard against null or empty bytes to avoid engine decode crashes
+
         if (bytes != null && bytes.isNotEmpty) {
           _thumbnailCache[asset.id] = bytes;
         } else {
@@ -177,14 +171,13 @@ class PickedMediaProvider extends ChangeNotifier {
 
   Uint8List? getThumbnail(String id) => _thumbnailCache[id];
 
-  // --- SELECTION HANDLING ---
   void onTap(AssetEntity media) {
     if (_pickedMedia.contains(media)) {
       _pickedMedia.remove(media);
     } else {
       if (canSelectMore) {
         _pickedMedia.add(media);
-        cacheThumbnails([media]); // Pre-cache when picked
+        cacheThumbnails([media]);
       }
     }
     notifyListeners();
@@ -207,60 +200,34 @@ class PickedMediaProvider extends ChangeNotifier {
     return index == -1 ? null : index;
   }
 
-  // --- SCROLLING LOGIC ---
-  /// Scrolls to the grid item that corresponds to a tapped item in the strip.
-  ///
-  /// **How it works:**
-  /// 1. User taps item in strip → we get its index in pickedMedia
-  /// 2. Find that same asset in full grid via ID matching (reliable)
-  /// 3. Use the GlobalKey assigned to that grid tile
-  /// 4. Smart scroll: checks if visible, if not jumps to position first then uses ensureVisible
-  ///
-  /// **Why this works:**
-  /// - If widget visible: Direct scroll to exact position
-  /// - If widget NOT visible: Jump to rough position first, wait for build, then precise scroll
-  ///
-  /// **Parameters:**
-  /// - pickedIndex: Index in the _pickedMedia list (the strip)
-  /// - controller: ScrollController of the CustomScrollView (grid)
-  /// - tileKeys: Map of GlobalKeys for each grid tile, keyed by gridIndex
   void scrollToSelected(BuildContext context, int pickedIndex,
       ScrollController controller, Map<int, GlobalKey> tileKeys) {
-    // STEP 1: Get the asset that was tapped in the strip
     final AssetEntity tappedAsset = _pickedMedia[pickedIndex];
     AppLog.info(
         'Strip tap detected - pickedIndex: $pickedIndex, assetId: ${tappedAsset.id}');
 
-    // STEP 2: Find where this asset appears in the full grid
-    // Using ID matching - unique and reliable across pagination
     final int gridIndex = _mediaList.indexWhere((e) => e.id == tappedAsset.id);
     AppLog.info('Asset found at gridIndex: $gridIndex');
 
-    // STEP 3: Safety check
     if (gridIndex == -1) {
       AppLog.error('❌ Asset not found in grid: ${tappedAsset.id}');
       return;
     }
 
-    // STEP 4: Get the GlobalKey for this grid tile
     final GlobalKey? key = tileKeys[gridIndex];
     AppLog.info(
         'GlobalKey lookup - gridIndex: $gridIndex, key exists: ${key != null}, has context: ${key?.currentContext != null}');
 
-    // STEP 5: Check if widget is currently visible
     if (key != null && key.currentContext != null) {
-      // ✅ HAPPY PATH: Widget is visible, scroll directly
       AppLog.info('✅ Widget visible, direct scroll to gridIndex: $gridIndex');
       _scrollDirectly(key);
     } else {
-      // ⚠️ WIDGET NOT VISIBLE: Jump to position first, then scroll
       AppLog.info(
           '⚠️ Widget not visible (gridIndex: $gridIndex), jumping to position first...');
       _scrollToPositionFirst(gridIndex, controller, tileKeys);
     }
   }
 
-  /// Direct scroll when widget is already visible
   void _scrollDirectly(GlobalKey key) {
     try {
       Scrollable.ensureVisible(
@@ -276,7 +243,6 @@ class PickedMediaProvider extends ChangeNotifier {
     }
   }
 
-  /// Scroll to rough position first, then scroll precisely when widget is built
   Future<void> _scrollToPositionFirst(
     int gridIndex,
     ScrollController controller,
@@ -285,13 +251,10 @@ class PickedMediaProvider extends ChangeNotifier {
     try {
       AppLog.info('⏳ Strategy: Incrementally scroll to make widget visible...');
 
-      // Try progressively scrolling down until widget appears
-      // Start from current position and scroll down in steps
-      const double scrollStep = 500.0; // Scroll 500px at a time
+      const double scrollStep = 500.0;
       const int maxAttempts = 10;
 
       for (int attempt = 0; attempt < maxAttempts; attempt++) {
-        // Check if widget is now visible
         final GlobalKey? currentKey = tileKeys[gridIndex];
         if (currentKey?.currentContext != null) {
           AppLog.info(
@@ -300,7 +263,6 @@ class PickedMediaProvider extends ChangeNotifier {
           return;
         }
 
-        // Scroll down more
         final double currentOffset = controller.offset;
         final double newOffset = (currentOffset + scrollStep)
             .clamp(0.0, controller.position.maxScrollExtent);
@@ -310,11 +272,9 @@ class PickedMediaProvider extends ChangeNotifier {
 
         controller.jumpTo(newOffset);
 
-        // Wait for widgets to render
         await Future.delayed(const Duration(milliseconds: 100));
       }
 
-      // If we get here, widget is still not visible
       AppLog.error(
           '❌ Widget still not visible after $maxAttempts attempts. gridIndex: $gridIndex');
     } catch (e, s) {
@@ -323,7 +283,6 @@ class PickedMediaProvider extends ChangeNotifier {
     }
   }
 
-  // --- SUBMISSION ---
   Future<void> onSubmit(BuildContext context) async {
     if (_pickedMedia.isEmpty) {
       AppLog.info('No media selected');
@@ -370,7 +329,6 @@ class PickedMediaProvider extends ChangeNotifier {
     );
   }
 
-  // --- CLEANUP ---
   @override
   void dispose() {
     _isDisposed = true;
@@ -383,11 +341,9 @@ class PickedMediaProvider extends ChangeNotifier {
     _loadingMore = false;
     _currentPage = 0;
     _option = PickableAttachmentOption();
-    // Remove all listeners and callbacks if any
-    // If you have any additional caches or static data, clear them here
+
     super.dispose();
   }
 
-  // --- MOUNTED CHECK ---
   bool get mounted => !_isDisposed;
 }
