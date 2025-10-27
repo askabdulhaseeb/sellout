@@ -24,7 +24,6 @@ class _AddFoodAndDrinkFormState extends State<AddFoodAndDrinkForm> {
   Widget build(BuildContext context) {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
-
         return Form(
           key: formPro.foodAndDrinkKey,
           child: SingleChildScrollView(

@@ -55,6 +55,7 @@ import '../../../features/personal/post/domain/entities/post/package_detail_enti
 import '../../../features/personal/post/domain/entities/post/post_cloth_foot_entity.dart';
 import '../../../features/personal/post/domain/entities/post/post_entity.dart';
 import '../../../features/personal/post/domain/entities/post/post_food_drink_entity.dart';
+import '../../../features/personal/post/domain/entities/post/post_item_entity.dart';
 import '../../../features/personal/post/domain/entities/post/post_pet_entity.dart';
 import '../../../features/personal/post/domain/entities/post/post_property_entity.dart';
 import '../../../features/personal/post/domain/entities/post/post_vehicle_entity.dart';
@@ -173,6 +174,7 @@ class HiveDB {
     Hive.registerAdapter(PostPetEntityAdapter()); //70
     Hive.registerAdapter(PostPropertyEntityAdapter()); //71
     Hive.registerAdapter(PostFoodDrinkEntityAdapter()); //72
+    Hive.registerAdapter(PostItemEntityAdapter()); //73
     Hive.registerAdapter(PackageDetailEntityAdapter()); //75
     Hive.registerAdapter(ServiceCategoryEntityAdapter()); //76
     Hive.registerAdapter(ServiceTypeEntityAdapter()); //77
