@@ -44,7 +44,7 @@ class PostModel extends PostEntity {
     required super.collectionLocation,
     required super.fileUrls,
     required super.hasDiscount,
-    required super.discounts,
+    required super.discount,
     required super.clothFootInfo,
     required super.petInfo,
     required super.vehicleInfo,
@@ -63,28 +63,20 @@ class PostModel extends PostEntity {
   }) : super(inHiveAt: DateTime.now());
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
-    // Handle discount parsing
     final dynamic discountRaw = json['discount'];
-    final Map<String, dynamic> discountData =
-        (discountRaw is Map<String, dynamic>)
-            ? discountRaw
-            : <String, dynamic>{};
-    final bool hasDiscount = discountRaw is bool
-        ? discountRaw
-        : discountData.isNotEmpty &&
-            discountData.values.any((value) => (value as int? ?? 0) > 0);
+    DiscountEntity? discount;
+    bool hasDiscount = false;
 
-    final List<DiscountEntity> discounts = <DiscountEntity>[];
-    if (hasDiscount) {
-      final double d2 =
-          double.tryParse(json['discount_2_item']?.toString() ?? '0.0') ?? 0.0;
-      final double d3 =
-          double.tryParse(json['discount_3_item']?.toString() ?? '0.0') ?? 0.0;
-      final double d5 =
-          double.tryParse(json['discount_5_item']?.toString() ?? '0.0') ?? 0.0;
-      if (d2 > 0) discounts.add(DiscountEntity(quantity: 2, discount: d2));
-      if (d3 > 0) discounts.add(DiscountEntity(quantity: 3, discount: d3));
-      if (d5 > 0) discounts.add(DiscountEntity(quantity: 5, discount: d5));
+    if (discountRaw != null && discountRaw is Map<String, dynamic>) {
+      hasDiscount = true;
+      final num d2 =
+          num.tryParse(discountRaw['discount_2_item']?.toString() ?? '0') ?? 0;
+      final num d3 =
+          num.tryParse(discountRaw['discount_3_item']?.toString() ?? '0') ?? 0;
+      final num d5 =
+          num.tryParse(discountRaw['discount_5_item']?.toString() ?? '0') ?? 0;
+
+      discount = DiscountEntity(twoItems: d2, threeItems: d3, fiveItems: d5);
     }
 
     // Parse package detail
@@ -139,14 +131,14 @@ class PostModel extends PostEntity {
           .map<AttachmentModel>((dynamic e) => AttachmentModel.fromJson(e))
           .toList(),
       hasDiscount: hasDiscount,
-      discounts: discounts,
+      discount: discount,
       clothFootInfo: PostClothFootModel.fromJson(json),
       petInfo: PostPetModel.fromJson(json),
       vehicleInfo: PostVehicleModel.fromJson(json),
       propertyInfo: PostPropertyModel.fromJson(json),
       foodDrinkInfo: PostFoodDrinkModel.fromJson(json),
       itemInfo: PostItemModel.fromJson(json),
-      packageDetail: packageDetail, // ADD THIS LINE
+      packageDetail: packageDetail,
       meetUpLocation: json['meet_up_location'] == null
           ? null
           : LocationModel.fromJson(json['meet_up_location']),

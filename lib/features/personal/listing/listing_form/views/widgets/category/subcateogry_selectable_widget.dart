@@ -127,17 +127,17 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
       return;
     }
 
-    debugPrint('✅ User selected category: ${selected.title}');
-    setState(() {
-      selectedSubCategory = selected;
-      selectedSubSubCategory = null;
-    });
-
+    // Only set and return leaf node
     if (selected.subCategory.isEmpty) {
-      debugPrint('🔚 No sub-subcategories found, invoking onSelected callback');
+      debugPrint('✅ User selected leaf category: ${selected.title}');
+      setState(() {
+        selectedSubCategory = selected;
+        selectedSubSubCategory = null;
+      });
       widget.onSelected(selected);
     } else {
-      debugPrint('🔁 Subcategory contains nested categories');
+      debugPrint('🔁 User selected parent category, ignoring');
+      // Do not set or call onSelected for parent
     }
   }
 

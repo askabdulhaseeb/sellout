@@ -67,7 +67,7 @@ class _CategorySelectionBottomSheetState
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: colorScheme.outline.withOpacity(0.4),
+                        color: colorScheme.outline.withValues(alpha: 0.4),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -247,14 +247,34 @@ class _CategorySelectionBottomSheetState
     SubCategoryEntity category,
     AddListingFormProvider formProvider,
   ) {
-    if (category.subCategory.isEmpty ||
-        formProvider.listingType == ListingType.pets) {
+    final bool isLeaf = category.subCategory.isEmpty;
+    final bool isFoodDrink =
+        formProvider.listingType == ListingType.foodAndDrink;
+    // For food/drink, only allow selection of leaf nodes
+    if (isFoodDrink) {
+      if (isLeaf) {
+        debugPrint('🟢 Returning address: ${category.address}');
+        Navigator.pop(context, category);
+      } else {
+        setState(() => _selectedStack.add(category));
+        _resetSearch();
+      }
+      return;
+    }
+    // For pets, allow selection of any node
+    if (formProvider.listingType == ListingType.pets) {
+      debugPrint('🟢 Returning address: ${category.address}');
       Navigator.pop(context, category);
       return;
     }
-
-    setState(() => _selectedStack.add(category));
-    _resetSearch();
+    // For other types, allow selection of leaf or parent
+    if (isLeaf) {
+      debugPrint('🟢 Returning address: ${category.address}');
+      Navigator.pop(context, category);
+    } else {
+      setState(() => _selectedStack.add(category));
+      _resetSearch();
+    }
   }
 
   void _resetSearch() {

@@ -27,6 +27,8 @@ class AddListingFormState {
   final TextEditingController bedroom = TextEditingController();
   final TextEditingController bathroom = TextEditingController();
   final TextEditingController location = TextEditingController();
+  DiscountEntity? discounts;
+
   final TextEditingController packageHeight = TextEditingController();
   final TextEditingController packageWidth = TextEditingController();
   final TextEditingController packageLength = TextEditingController();
@@ -88,11 +90,6 @@ class AddListingFormState {
   List<SizeColorEntity> sizeColorEntities = <SizeColorEntity>[];
 
   // Collections
-  final List<DiscountEntity> discounts = <DiscountEntity>[
-    DiscountEntity(quantity: 2, discount: 0),
-    DiscountEntity(quantity: 3, discount: 0),
-    DiscountEntity(quantity: 5, discount: 0),
-  ];
 
   // Location state
   LocationEntity? selectedMeetupLocation;
@@ -210,9 +207,7 @@ class AddListingFormState {
   }
 
   void _resetDiscounts() {
-    for (final DiscountEntity element in discounts) {
-      element.discount = 0;
-    }
+    discounts = DiscountEntity(twoItems: 0, threeItems: 0, fiveItems: 0);
   }
 
   // Validation methods

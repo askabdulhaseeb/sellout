@@ -59,7 +59,7 @@ class PickedMediaStrip extends StatelessWidget {
                           offset: const Offset(0, 8),
                         ),
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.06),
+                          color: Colors.black.withValues(alpha: 0.06),
                           blurRadius: 12,
                           offset: const Offset(0, 2),
                         ),
@@ -68,7 +68,6 @@ class PickedMediaStrip extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                     child: ListView.builder(
-                      key: const PageStorageKey<String>('picked_media_strip'),
                       scrollDirection: Axis.horizontal,
                       itemCount: provider.pickedMedia.length,
                       itemBuilder: (BuildContext context, int index) {
@@ -154,7 +153,7 @@ class _StripItemTileState extends State<_StripItemTile>
               borderRadius: BorderRadius.circular(14),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.15),
+                  color: Colors.black.withValues(alpha: 0.15),
                   blurRadius: 8,
                   offset: const Offset(0, 3),
                 ),
@@ -170,11 +169,11 @@ class _StripItemTileState extends State<_StripItemTile>
                             Theme.of(context)
                                 .colorScheme
                                 .surfaceVariant
-                                .withOpacity(0.4),
+                                .withValues(alpha: 0.4),
                             Theme.of(context)
                                 .colorScheme
                                 .surfaceVariant
-                                .withOpacity(0.2),
+                                .withValues(alpha: 0.2),
                           ],
                         ),
                       ),
@@ -212,7 +211,7 @@ class _StripItemTileState extends State<_StripItemTile>
                             gradient: LinearGradient(
                               colors: [
                                 Colors.transparent,
-                                Colors.black.withOpacity(0.1),
+                                Colors.black.withValues(alpha: 0.1),
                               ],
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,

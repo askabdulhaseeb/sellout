@@ -31,14 +31,15 @@ class _AddListingDiscountSectionState extends State<AddListingDiscountSection> {
 
   Widget _buildDiscountField({
     required double width,
+    required String label,
+    required num value,
+    required Function(num) onChanged,
     required int index,
-    required DiscountEntity discount,
-    required AddListingFormProvider provider,
   }) {
     _controllers.putIfAbsent(
       index,
       () => TextEditingController(
-        text: discount.discount == 0.0 ? '' : discount.discount.toString(),
+        text: value == 0 ? '' : value.toString(),
       ),
     );
 
@@ -46,10 +47,10 @@ class _AddListingDiscountSectionState extends State<AddListingDiscountSection> {
       width: width / 3,
       child: CustomTextFormField(
         validator: AppValidator.isEmpty,
-        labelText: ' ${discount.quantity} ${'items'.tr()}',
+        labelText: label,
         controller: _controllers[index],
-        onChanged: (String value) {
-          int parsed = int.tryParse(value) ?? 0;
+        onChanged: (String val) {
+          num parsed = num.tryParse(val) ?? 0;
           if (parsed > 100) {
             parsed = 100;
             _controllers[index]!.text = '100';
@@ -57,9 +58,7 @@ class _AddListingDiscountSectionState extends State<AddListingDiscountSection> {
               TextPosition(offset: _controllers[index]!.text.length),
             );
           }
-          provider.setDiscounts(
-            discount.copyWith(discount: parsed),
-          );
+          onChanged(parsed);
         },
         hint: '0',
         keyboardType: TextInputType.number,
@@ -81,34 +80,63 @@ class _AddListingDiscountSectionState extends State<AddListingDiscountSection> {
 
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider provider, _) {
+        final DiscountEntity discount = provider.discounts ??
+            DiscountEntity(twoItems: 0, threeItems: 0, fiveItems: 0);
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             CustomSwitchListTile(
               title: 'select_discount'.tr(),
               value: provider.isDiscounted,
-              onChanged: provider.setIsDiscount,
+              onChanged: (bool value) => provider.setIsDiscount(value),
             ),
             AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                child: provider.isDiscounted
-                    ? Padding(
-                        padding: const EdgeInsets.only(top: AppSpacing.vSm),
-                        child: Wrap(
-                          spacing: AppSpacing.hSm,
-                          runSpacing: AppSpacing.vSm,
-                          children: List<Widget>.generate(
-                            provider.discounts.length,
-                            (int index) => _buildDiscountField(
-                              width: width,
-                              index: index,
-                              discount: provider.discounts[index],
-                              provider: provider,
-                            ),
+              duration: const Duration(milliseconds: 300),
+              child: provider.isDiscounted
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: AppSpacing.vSm),
+                      child: Wrap(
+                        spacing: AppSpacing.hSm,
+                        runSpacing: AppSpacing.vSm,
+                        children: <Widget>[
+                          _buildDiscountField(
+                            width: width,
+                            label: '2 ${'items'.tr()}',
+                            value: discount.twoItems,
+                            index: 0,
+                            onChanged: (num val) {
+                              provider.setDiscounts(
+                                discount.copyWith(twoItems: val),
+                              );
+                            },
                           ),
-                        ),
-                      )
-                    : const SizedBox.shrink()),
+                          _buildDiscountField(
+                            width: width,
+                            label: '3 ${'items'.tr()}',
+                            value: discount.threeItems,
+                            index: 1,
+                            onChanged: (num val) {
+                              provider.setDiscounts(
+                                discount.copyWith(threeItems: val),
+                              );
+                            },
+                          ),
+                          _buildDiscountField(
+                            width: width,
+                            label: '5 ${'items'.tr()}',
+                            value: discount.fiveItems,
+                            index: 2,
+                            onChanged: (num val) {
+                              provider.setDiscounts(
+                                discount.copyWith(fiveItems: val),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
           ],
         );
       },

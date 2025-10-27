@@ -30,8 +30,8 @@ class ScrollToTopButton extends StatelessWidget {
                     );
                   },
                 )
-              : SizedBox(
-                  key: const ValueKey('button_hidden'),
+              : const SizedBox(
+                  key: ValueKey('button_hidden'),
                   width: 48,
                 ),
         );
@@ -88,8 +88,8 @@ class _ScrollButtonState extends State<_ScrollButton>
           return Transform.scale(
             scale: 1.0 - (_tapController.value * 0.1),
             child: Container(
-              width: 48,
-              height: 48,
+              width: 35,
+              height: 35,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(6),
                 shape: BoxShape.rectangle,
@@ -99,7 +99,7 @@ class _ScrollButtonState extends State<_ScrollButton>
                     color: Theme.of(context)
                         .colorScheme
                         .primary
-                        .withOpacity(0.3 + (_tapController.value * 0.2)),
+                        .withValues(alpha: 0.3 + (_tapController.value * 0.2)),
                     blurRadius: 12 + (_tapController.value * 8),
                     offset: const Offset(0, 4),
                   ),
@@ -107,7 +107,7 @@ class _ScrollButtonState extends State<_ScrollButton>
               ),
               child: Center(
                 child: Icon(
-                  Icons.arrow_upward_rounded,
+                  Icons.keyboard_double_arrow_up_rounded,
                   color: Theme.of(context).colorScheme.onPrimary,
                   size: 20,
                 ),

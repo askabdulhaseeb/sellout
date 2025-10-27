@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:latlong2/latlong.dart';
+
 import 'package:provider/provider.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/dropdowns/color_dropdown.dart';
@@ -9,9 +8,7 @@ import '../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../../../../location/domain/entities/location_entity.dart';
-import '../../../../../location/domain/enums/map_display_mode.dart';
-import '../../../../../location/view/widgets/location_field.dart/nomination_location_field.dart';
+
 import '../../../../../marketplace/views/widgets/market_categorized_filters_page_widgets/widgets/vehicle_filter/widget/year_picker_dropdown.dart';
 import '../../../data/sources/local/local_categories.dart';
 import '../../../domain/entities/category_entites/subentities/dropdown_option_entity.dart';
@@ -158,17 +155,6 @@ class _AddListingVehicleBasicInfoSectionState
               selectedColor: formPro.selectedVehicleColor,
               onColorChanged: (ColorOptionEntity? value) =>
                   formPro.setVehicleColor(value),
-            ),
-
-            /// Location field
-            NominationLocationField(
-              validator: (bool? value) => AppValidator.requireLocation(value),
-              title: 'meetup_location'.tr(),
-              selectedLatLng: formPro.collectionLatLng,
-              displayMode: MapDisplayMode.showMapAfterSelection,
-              initialText: formPro.selectedMeetupLocation?.address ?? '',
-              onLocationSelected: (LocationEntity p0, LatLng p1) =>
-                  formPro.setMeetupLocation(p0, p1),
             ),
 
             /// Price
