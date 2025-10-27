@@ -376,6 +376,15 @@ class PickedMediaProvider extends ChangeNotifier {
     _isDisposed = true;
     _mediaList.clear();
     _pickedMedia.clear();
+    _thumbnailCache.clear();
+    _currentAlbum = null;
+    _hasMoreMedia = false;
+    _initialLoading = false;
+    _loadingMore = false;
+    _currentPage = 0;
+    _option = PickableAttachmentOption();
+    // Remove all listeners and callbacks if any
+    // If you have any additional caches or static data, clear them here
     super.dispose();
   }
 

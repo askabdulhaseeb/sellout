@@ -13,7 +13,7 @@ class EmptyGalleryState extends StatelessWidget {
         childBelow: Column(
           children: <Widget>[
             Text(
-              'no_photos_found'.tr(),
+              'no_media_found'.tr(),
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: Theme.of(context)
                         .colorScheme

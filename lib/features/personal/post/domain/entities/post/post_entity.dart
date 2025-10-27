@@ -52,7 +52,7 @@ class PostEntity {
     required this.fileUrls,
     //
     required this.hasDiscount,
-    required this.discounts,
+    required this.discount,
     //cloth foot
     required this.clothFootInfo,
     //property
@@ -113,7 +113,7 @@ class PostEntity {
   final List<AttachmentEntity> fileUrls;
   //
   @HiveField(18)
-  final List<DiscountEntity> discounts;
+  final DiscountEntity? discount;
   @HiveField(19)
   final bool hasDiscount;
   //
@@ -176,14 +176,14 @@ class PostEntity {
   String get imageURL => fileUrls.isEmpty ? '' : fileUrls.first.url;
   String get priceStr =>
       '${CountryHelper.currencySymbolHelper(currency)}$price'.toUpperCase();
-  double get discountedPrice {
-    if (hasDiscount) {
-      if (discounts.isEmpty) return price;
-      final DiscountEntity dis = discounts.last;
-      return price - (price * dis.discount / 100);
-    }
-    return price;
-  }
+  // double get discountedPrice {
+  //   if (hasDiscount) {
+  //     if (discount == null) return price;
+  //     final DiscountEntity dis = discount!;
+  //     return price - (price * dis.discount / 100);
+  //   }
+  //   return price;
+  // }
 
   // Package detail helper methods
   String get packageDimensions =>

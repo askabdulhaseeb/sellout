@@ -41,12 +41,12 @@ class AddListingParam {
     this.type,
     this.category,
     this.quantity,
-    this.discount,
+    this.isDiscounted,
     this.accessCode,
     this.postID,
     this.oldAttachments,
     this.clothfootParams,
-    this.discounts,
+    this.discount,
     this.vehicleParams,
     this.propertyParams,
     this.petsParams,
@@ -65,7 +65,7 @@ class AddListingParam {
   final List<PickedAttachment> attachments;
   final String price;
   final String? quantity;
-  final bool? discount;
+  final bool? isDiscounted;
   final ConditionType? condition;
   final bool acceptOffer;
   final String minOfferAmount;
@@ -80,7 +80,7 @@ class AddListingParam {
   final num? currentLatitude;
   final num? currentLongitude;
   final String? type;
-  final List<DiscountEntity>? discounts;
+  final DiscountEntity? discount;
   final String? accessCode;
   final String? postID;
   final List<AttachmentEntity>? oldAttachments;
@@ -147,16 +147,6 @@ class AddListingParam {
     }
   }
 
-  // --- Helpers ---
-  DiscountEntity? _discountFor(int qty) {
-    if (discounts == null) return null;
-    try {
-      return discounts!.firstWhere((e) => e.quantity == qty);
-    } catch (_) {
-      return null;
-    }
-  }
-
   Map<String, String> _titleMAP() {
     return <String, String>{
       'title': title,
@@ -175,16 +165,15 @@ class AddListingParam {
 
   Map<String, String> _discountMAP() {
     final Map<String, String> data = <String, String>{
-      'discount': (discount ?? false).toString()
+      'discount': (isDiscounted ?? false).toString()
     };
 
-    if (discount == true) {
-      final DiscountEntity? d2 = _discountFor(2);
-      final DiscountEntity? d3 = _discountFor(3);
-      final DiscountEntity? d5 = _discountFor(5);
-      if (d2 != null) data['disc_2_items'] = d2.discount.toString();
-      if (d3 != null) data['disc_3_items'] = d3.discount.toString();
-      if (d5 != null) data['disc_5_items'] = d5.discount.toString();
+    if (isDiscounted == true && discount != null) {
+      // Expecting a single DiscountEntity in the list
+      final DiscountEntity d = discount!;
+      data['disc_2_items'] = d.twoItems.toString();
+      data['disc_3_items'] = d.threeItems.toString();
+      data['disc_5_items'] = d.fiveItems.toString();
     }
 
     return data;

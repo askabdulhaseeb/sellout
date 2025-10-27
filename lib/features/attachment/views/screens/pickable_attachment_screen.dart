@@ -27,12 +27,8 @@ class PickableAttachmentScreen extends StatefulWidget {
 }
 
 class _PickableAttachmentScreenState extends State<PickableAttachmentScreen> {
-  // --- SCROLL MANAGEMENT ---
   late final ScrollController _scrollController;
 
-  // --- TILE KEYING ---
-  // Maps gridIndex → GlobalKey for each tile in the grid
-  // Used by provider to scroll to tiles when tapping strip items
   final GlobalKey _gridKey = GlobalKey();
   final Map<int, GlobalKey> _tileKeys =
       <int, GlobalKey<State<StatefulWidget>>>{};
@@ -50,8 +46,6 @@ class _PickableAttachmentScreenState extends State<PickableAttachmentScreen> {
     _scrollController.addListener(_onScroll);
   }
 
-  // INFINITE SCROLL LOGIC:
-  // Loads more media when user scrolls near the bottom (400px buffer)
   void _onScroll() {
     final PickedMediaProvider provider =
         Provider.of<PickedMediaProvider>(context, listen: false);
@@ -75,9 +69,6 @@ class _PickableAttachmentScreenState extends State<PickableAttachmentScreen> {
   Widget build(BuildContext context) {
     return Consumer<PickedMediaProvider>(
       builder: (BuildContext context, PickedMediaProvider provider, _) {
-        if (provider.permissionDenied) return const PermissionDeniedState();
-        if (provider.initialLoading) return const InitialLoadingState();
-        if (provider.mediaList.isEmpty) return const EmptyGalleryState();
         final int selectedCount = provider.pickedMedia.length;
         final int maxCount = provider.option.maxAttachments;
         final double progress = (selectedCount / maxCount).clamp(0.0, 1.0);
@@ -94,13 +85,10 @@ class _PickableAttachmentScreenState extends State<PickableAttachmentScreen> {
               children: [
                 Row(
                   children: <Widget>[
-                    // --- BACK BUTTON ---
                     AppBarBackButton(
                       onPressed: () => Navigator.pop(context),
                       isActive: hasSelection,
                     ),
-
-                    // --- SELECTION INFO (Counter + Progress) ---
                     Expanded(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -126,57 +114,62 @@ class _PickableAttachmentScreenState extends State<PickableAttachmentScreen> {
               ],
             ),
           ),
-          body: SafeArea(
-            child: Stack(
-              children: <Widget>[
-                CustomScrollView(
-                  controller: _scrollController,
-                  physics: const BouncingScrollPhysics(),
-                  slivers: <Widget>[
-                    MediaGrid(
-                      provider: provider,
-                      gridKey: _gridKey,
-                      tileKeys: _tileKeys,
-                    ),
-                    if (provider.isLoadingMore) const LoadMoreIndicator(),
-                    if (!provider.hasMoreMedia) const EndOfListIndicator(),
-                  ],
-                ),
-                // --- BOTTOM CONTROLS BAR (Strip + Scroll-to-Top Button) ---
-                // Both sit in one horizontal line at the bottom with nice animation
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: SafeArea(
-                    minimum: const EdgeInsets.only(
-                      bottom: 8,
-                      left: 8,
-                      right: 8,
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        // --- MEDIA STRIP (Expandable) ---
-                        Expanded(
-                          child: PickedMediaStrip(
-                            onItemTap: (int index) => provider.scrollToSelected(
-                              context,
-                              index,
-                              _scrollController,
-                              _tileKeys,
-                            ),
+          body: provider.permissionDenied
+              ? const PermissionDeniedState()
+              : provider.initialLoading
+                  ? const InitialLoadingState()
+                  : provider.mediaList.isEmpty
+                      ? const EmptyGalleryState()
+                      : SafeArea(
+                          child: Stack(
+                            children: <Widget>[
+                              CustomScrollView(
+                                controller: _scrollController,
+                                physics: const BouncingScrollPhysics(),
+                                slivers: <Widget>[
+                                  MediaGrid(
+                                    provider: provider,
+                                    gridKey: _gridKey,
+                                    tileKeys: _tileKeys,
+                                  ),
+                                  if (provider.isLoadingMore)
+                                    const LoadMoreIndicator(),
+                                  if (!provider.hasMoreMedia)
+                                    const EndOfListIndicator(),
+                                ],
+                              ),
+                              Positioned(
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                child: SafeArea(
+                                  minimum: const EdgeInsets.only(
+                                    bottom: 8,
+                                    left: 8,
+                                    right: 8,
+                                  ),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: PickedMediaStrip(
+                                          onItemTap: (int index) =>
+                                              provider.scrollToSelected(
+                                            context,
+                                            index,
+                                            _scrollController,
+                                            _tileKeys,
+                                          ),
+                                        ),
+                                      ),
+                                      ScrollToTopButton(
+                                          scrollController: _scrollController),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        // --- SCROLL-TO-TOP BUTTON ---
-                        // Animates in/out as user scrolls
-                        ScrollToTopButton(scrollController: _scrollController),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
         );
       },
     );

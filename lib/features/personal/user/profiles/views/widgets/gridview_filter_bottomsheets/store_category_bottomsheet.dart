@@ -15,7 +15,7 @@ class StoreCategoryBottomSheet extends StatelessWidget {
         ? profileProvider.storeCategory
         : profileProvider.viewingCategory;
     final List<ListingType> categoryOptions =
-        isStore ? ListingType.viewingList : ListingType.storeList;
+        isStore ? ListingType.storeList : ListingType.viewingList;
     return Container(
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),

@@ -44,7 +44,7 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       availability: (fields[35] as List?)?.cast<AvailabilityEntity>(),
       fileUrls: (fields[17] as List).cast<AttachmentEntity>(),
       hasDiscount: fields[19] as bool,
-      discounts: (fields[18] as List).cast<DiscountEntity>(),
+      discount: fields[18] as DiscountEntity?,
       clothFootInfo: fields[28] as PostClothFootEntity?,
       propertyInfo: fields[31] as PostPropertyEntity?,
       petInfo: fields[30] as PostPetEntity?,
@@ -101,7 +101,7 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       ..writeByte(17)
       ..write(obj.fileUrls)
       ..writeByte(18)
-      ..write(obj.discounts)
+      ..write(obj.discount)
       ..writeByte(19)
       ..write(obj.hasDiscount)
       ..writeByte(20)

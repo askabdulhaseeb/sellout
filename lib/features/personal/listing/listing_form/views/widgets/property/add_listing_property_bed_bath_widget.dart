@@ -104,16 +104,6 @@ class AddListingPropertyBedBathWidget extends StatelessWidget {
                 formPro.setEnergyRating(value?.value);
               },
             ),
-            // Location Field
-            NominationLocationField(
-              validator: (bool? value) => AppValidator.requireLocation(value),
-              title: 'meetup_location'.tr(),
-              selectedLatLng: formPro.collectionLatLng,
-              displayMode: MapDisplayMode.showMapAfterSelection,
-              initialText: formPro.selectedMeetupLocation?.address ?? '',
-              onLocationSelected: (LocationEntity loc, LatLng latLng) =>
-                  formPro.setMeetupLocation(loc, latLng),
-            ),
           ],
         );
       },
