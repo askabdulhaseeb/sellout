@@ -20,7 +20,7 @@ class AddListingFoodDrinkSubcatSelectionSection extends StatelessWidget {
         isShaded: false,
         labels: subCategories,
         labelStrs: subCategories.map((String e) => e.tr()).toList(),
-        labelText: 'please_select'.tr(),
+        labelText: '',
         initialValue: addPro.selectedFoodDrinkSubCategory,
         onToggle: (String p0) => addPro.setSelectedFoodDrinkSubCategory(p0),
       );

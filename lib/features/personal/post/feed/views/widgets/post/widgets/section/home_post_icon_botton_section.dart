@@ -6,9 +6,10 @@ import 'icon_butoons/save_post_icon_button.dart';
 import 'icon_butoons/share_post_icon_button.dart';
 
 class HomePostIconBottonSection extends StatelessWidget {
-  const HomePostIconBottonSection({required this.post, super.key});
+  const HomePostIconBottonSection(
+      {required this.post, this.isPreview = false, super.key});
   final PostEntity post;
-
+  final bool isPreview;
   @override
   Widget build(BuildContext context) {
     final bool isMine = post.createdBy == LocalAuth.uid;
@@ -16,12 +17,13 @@ class HomePostIconBottonSection extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: <Widget>[
-          if (!isMine) ChatwithSellerIconButton(userId: post.createdBy),
+          if (!isMine && !isPreview)
+            ChatwithSellerIconButton(userId: post.createdBy),
           SharePostButton(
             post: post,
           ),
           const Spacer(),
-          if (!isMine)
+          if (!isMine && !isPreview)
             SavePostIconButton(
               postId: post.postID,
             )

@@ -96,6 +96,7 @@ class AddListingFormProvider extends ChangeNotifier
 
   void setBrand(String? value) {
     setBrandLo(value);
+    notifyListeners();
   }
 
   void setSelectedClothSubCategory(String value) {
@@ -109,6 +110,7 @@ class AddListingFormProvider extends ChangeNotifier
       required int quantity}) {
     addOrUpdateSizeColorQuantityLo(
         size: size, color: color, quantity: quantity);
+    notifyListeners();
   }
 
   void removeColorFromSize({required String size, required String color}) {

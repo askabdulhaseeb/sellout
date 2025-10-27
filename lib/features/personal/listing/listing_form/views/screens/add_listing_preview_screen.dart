@@ -5,14 +5,17 @@ import '../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/widgets/attachment_slider.dart';
 import '../../../../../../core/widgets/custom_toggle_switch.dart';
+import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../post/domain/entities/post/post_entity.dart';
+import '../../../../post/feed/views/widgets/post/widgets/section/buttons/home_post_button_section.dart';
 import '../../../../post/feed/views/widgets/post/widgets/section/buttons/type/store_post_button_tile.dart';
 import '../../../../post/feed/views/widgets/post/widgets/section/buttons/type/viewing_post_button_tile.dart';
 import '../../../../post/feed/views/widgets/post/widgets/section/home_post_header_section.dart';
 import '../../../../post/feed/views/widgets/post/widgets/section/home_post_icon_botton_section.dart';
 import '../../../../post/feed/views/widgets/post/widgets/section/home_post_title_section.dart';
+import '../../../../post/post_detail/views/widgets/post_detail_title_amount_section.dart';
 import '../../../../post/post_detail/views/widgets/post_details_sections/item_post_detail_section.dart';
 import '../../../../post/post_detail/views/widgets/post_details_sections/cloth_foot_post_detail_section.dart';
 import '../../../../post/post_detail/views/widgets/post_details_sections/food_drink_post_Detail_section.dart';
@@ -49,13 +52,14 @@ class _AddListingPreviewScreenState extends State<AddListingPreviewScreen> {
     return PopScope(
       child: Scaffold(
         appBar: AppBar(
-          title: Text('listing_preview'.tr()),
+          title: AppBarTitle(titleKey: 'preview_listing'.tr()),
           centerTitle: true,
           elevation: 2,
         ),
         body: Consumer<AddListingFormProvider>(
           builder: (BuildContext context, AddListingFormProvider provider, _) {
             return SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
               child: Column(
                 children: <Widget>[
                   CustomToggleSwitch<int>(
@@ -111,7 +115,10 @@ class _FeedPreviewSection extends StatelessWidget {
           remote: post.fileUrls,
           picked: pickedAttachments,
         ),
-        HomePostIconBottonSection(post: post),
+        HomePostIconBottonSection(
+          post: post,
+          isPreview: true
+        ),
         HomePostTitleSection(post: post),
         AbsorbPointer(
           absorbing: LocalAuth.currentUser?.userID == null,
@@ -165,6 +172,11 @@ class _DetailPreviewSection extends StatelessWidget {
         if (sources.isNotEmpty) ...<Widget>[
           PostDetailAttachmentSlider.sources(sources: sources),
           const SizedBox(height: 12),
+             PostDetailTitleAmountSection(post: post),
+        PostButtonSection(
+          detailWidget: true,
+          post: post,
+        ),
         ],
         post.listID == ListingType.items.json
             ? ItemPostDetailSection(post: post)
