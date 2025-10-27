@@ -8,9 +8,9 @@ class AppBottomSheetTheme {
         modalBarrierColor: AppColors.barrierColor, // adds soft overlay
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-          side: BorderSide(color: AppColors.outlineVariant, width: 1.2),
+          // side: BorderSide(color: AppColors.outlineVariant, width: 1.2),
         ),
-        elevation: 6,
+        elevation: 4,
         dragHandleColor: AppColors.outline, // subtle grey handle
       );
 
@@ -20,9 +20,9 @@ class AppBottomSheetTheme {
         modalBarrierColor: AppColors.barrierColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-          side: BorderSide(color: AppColors.outlineVariant, width: 1.2),
+          // side: BorderSide(color: AppColors.outlineVariant, width: 1.2),
         ),
-        elevation: 6,
+        elevation: 4,
         dragHandleColor: AppColors.outlineVariant,
       );
 }
