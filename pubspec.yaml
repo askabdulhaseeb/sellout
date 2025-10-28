@@ -52,7 +52,7 @@ dependencies:
   geocoding: ^3.0.0
   flutter_hooks: ^0.21.2
   socket_io_client: ^3.1.2
-
+  webview_flutter: ^4.13.0
   flutter_stripe: 11.0.0
 
   device_info_plus: ^10.0.1

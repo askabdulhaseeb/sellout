@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../../core/functions/app_log.dart';
 import '../../../../domain/entities/post/post_entity.dart';
-import '../post_detail_condition_delivery_detail.dart';
 import '../post_detail_description_section.dart';
 import '../post_detail_seller_section.dart';
 import '../post_vehicle_detail_widget.dart';
@@ -21,7 +20,7 @@ class VehiclePostDetailSection extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(children: <Widget>[
         // PostDetailTitleAmountSection(post: post),
-        ConditionDeliveryWidget(post: post),
+        // ConditionDeliveryWidget(post: post),
         // PostButtonSection(
         //   detailWidget: true,
         //   post: post,

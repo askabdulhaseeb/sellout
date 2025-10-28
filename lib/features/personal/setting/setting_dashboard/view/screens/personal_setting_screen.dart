@@ -5,7 +5,6 @@ import '../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../../settings/views/screens/connect_bank_screen.dart';
 import '../../../../order/view/screens/your_order_screen.dart';
-import '../../../setting_options/balance_screen/screens/balance_screen.dart';
 import '../../../setting_options/privacy_setting/screen/privacy_screen.dart';
 import 'personal_more_information_setting_screen.dart';
 import '../../../setting_options/setting_notification/screens/personal_setting_notification_screen.dart';
@@ -81,15 +80,6 @@ class PersonalSettingScreen extends StatelessWidget {
               icon: AppStrings.selloutMembershipSettingIcon,
               title: 'membership_subscription'.tr(),
               onTap: () {},
-            ),
-          ),
-          InDevMode(
-            child: PersonalSettingTile(
-              icon: AppStrings.selloutBalanaceSettingIcon,
-              title: 'balance'.tr(),
-              onTap: () {
-                AppNavigator.pushNamed(BalanceScreen.routeName);
-              },
             ),
           ),
           InDevMode(

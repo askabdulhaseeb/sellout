@@ -5,8 +5,11 @@ import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../data/sources/local/local_post.dart';
 import '../../../domain/entities/post/post_entity.dart';
+import '../../../feed/views/widgets/post/widgets/section/buttons/home_post_button_section.dart';
 import '../providers/post_detail_provider.dart';
 import '../widgets/post_detail_attachment_slider.dart';
+import '../widgets/post_detail_condition_delivery_detail.dart';
+import '../widgets/post_detail_title_amount_section.dart';
 import '../widgets/post_details_sections/cloth_foot_post_detail_section.dart';
 import '../widgets/post_details_sections/food_drink_post_Detail_section.dart';
 import '../widgets/post_details_sections/item_post_detail_section.dart';
@@ -66,6 +69,12 @@ class PostDetailScreen extends StatelessWidget {
                     attachments: post.fileUrls,
                   ),
                   const SizedBox(height: 12),
+                  PostDetailTitleAmountSection(post: post),
+                  ConditionDeliveryWidget(post: post),
+                  PostButtonSection(
+                    detailWidget: true,
+                    post: post,
+                  ),
                 ],
 
                 // Details section based on listing type

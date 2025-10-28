@@ -5,12 +5,10 @@ class ConnectAccountSessionParams {
   ConnectAccountSessionParams({
     required this.email,
     required this.country,
-    required this.entityId,
     this.businessId,
   });
   final String email;
   final String country;
-  final String entityId;
   final String? businessId;
 
   Map<String, dynamic> toMap() {
@@ -19,7 +17,7 @@ class ConnectAccountSessionParams {
       'country': CountryHelper.getCountryAlpha2(
               LocalAuth.currentUser?.countryAlpha3 ?? '') ??
           '',
-      'entity_id': LocalAuth.uid ?? '',
+      'source': 'mobile-app',
     };
 
     // Only add business_id if it's provided

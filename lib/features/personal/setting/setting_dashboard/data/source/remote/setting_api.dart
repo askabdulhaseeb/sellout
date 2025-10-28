@@ -50,7 +50,7 @@ class SettingRemoteApiImpl implements SettingRemoteApi {
 
   @override
   Future<DataState<String>> connectAccountSession(
-    ConnectAccountSessionParams params,
+    ConnectAccountSessionParams params
   ) async {
     const String endpoint = '/stripeAccount/session/create';
 
@@ -59,13 +59,13 @@ class SettingRemoteApiImpl implements SettingRemoteApi {
         endpoint: endpoint,
         requestType: ApiRequestType.post,
         isAuth: true,
-        body: json.encode(params.toMap()),
+        body: json.encode(params.toMap())
       );
 
       if (result is DataSuccess) {
         // Decode the raw response JSON
         final Map<String, dynamic> jsonData = json.decode(result.data!);
-        final String sessionSecret = jsonData['session_secret'];
+        final String sessionSecret = jsonData['url'];
         return DataSuccess<String>(
           result.data ?? '',
           sessionSecret,

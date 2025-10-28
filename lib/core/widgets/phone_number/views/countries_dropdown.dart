@@ -11,11 +11,16 @@ class CountryDropdownField extends StatefulWidget {
   const CountryDropdownField({
     required this.onChanged,
     this.initialValue,
+    this.validator,
     super.key,
   });
 
   final String? initialValue;
   final void Function(String) onChanged;
+
+  /// Validator should return error string if not valid, null if valid
+  /// The bool argument is true if a country is selected
+  final String? Function(bool?)? validator;
 
   @override
   State<CountryDropdownField> createState() => _CountryDropdownFieldState();
@@ -71,7 +76,13 @@ class _CountryDropdownFieldState extends State<CountryDropdownField> {
           widget.onChanged(value); // This will notify the parent
         });
       },
-      validator: (_) => null,
+      validator: widget.validator ??
+          (bool? hasValue) {
+            if (hasValue == null || !hasValue) {
+              return 'Please select a country';
+            }
+            return null;
+          },
     );
   }
 }
