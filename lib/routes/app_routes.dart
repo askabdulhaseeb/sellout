@@ -49,6 +49,7 @@ import '../features/personal/setting/setting_options/time_away/screens/automatic
 import '../features/personal/setting/setting_options/time_away/screens/time_away_screen.dart';
 import '../features/personal/user/profiles/views/params/about_us.dart';
 import '../features/personal/user/profiles/views/screens/edit_profile_screen.dart';
+import '../features/settings/views/screens/connect_bank_screen.dart';
 import 'app_linking.dart';
 
 class AppRoutes {
@@ -156,6 +157,8 @@ class AppRoutes {
     OrderBuyerScreen.routeName: (_) => const OrderBuyerScreen(),
     SavedPostsPage.routeName: (_) => const SavedPostsPage(),
     BuyAgainScreen.routeName: (_) => const BuyAgainScreen(),
+    ConnectBankScreen.routeName: (_) => const ConnectBankScreen(),
+    //
     VisitCalenderScreen.routeName: (_) => const VisitCalenderScreen(),
   };
 }
