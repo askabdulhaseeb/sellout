@@ -1121,8 +1121,8 @@
   "feature_transaction_history": "• Full transaction history in one dashboard",
   "feature_easy_setup": "• Effortless setup & management",
   "link_my_bank": "Link My Bank",
-  "bank_details_encrypted": "All your bank details are encrypted and never stored on our servers."
-,
+  "bank_details_encrypted": "All your bank details are encrypted and never stored on our servers.",
+  "stripe_connect_onboarding":"Stripe Connect Onboarding",
   "marketplace": "MarketPlace",
   "positive_feedback": "Positive Feedback",
   "reason":"Reason",

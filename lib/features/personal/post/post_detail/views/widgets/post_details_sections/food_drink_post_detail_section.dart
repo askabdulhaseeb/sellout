@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../domain/entities/post/post_entity.dart';
-import '../post_detail_condition_delivery_detail.dart';
 import '../post_detail_description_section.dart';
 import '../post_detail_postage_return_delivery.dart';
 import '../post_detail_safety_tips_widget.dart';
@@ -19,12 +18,6 @@ class FoodDrinkPostDetailSection extends StatelessWidget {
     AppLog.info('PostID: ${post.postID} ');
     return SingleChildScrollView(
       child: Column(children: <Widget>[
-        // PostDetailTitleAmountSection(post: post),
-        ConditionDeliveryWidget(post: post),
-        // PostButtonSection(
-        //   detailWidget: true,
-        //   post: post,
-        // ),
         PostDetailDescriptionSection(post: post),
         const PostDetailSafetyTipsWidget(),
         ReturnPosrtageAndExtraDetailsSection(post: post),
