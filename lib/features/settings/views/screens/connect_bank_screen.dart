@@ -4,6 +4,7 @@ import '../../../../core/utilities/app_string.dart';
 import '../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../core/widgets/custom_svg_icon.dart';
 import '../../../../core/constants/app_spacings.dart';
+import '../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../bottomsheets/connect_bank_bottomsheet.dart';
 
 class ConnectBankScreen extends StatelessWidget {
@@ -19,8 +20,9 @@ class ConnectBankScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text('connect_bank_account'.tr(),
-            style: theme.textTheme.titleLarge),
+        title: const AppBarTitle(
+          titleKey: 'connect_bank_account',
+        ),
         elevation: 0,
       ),
       body: Center(
@@ -37,7 +39,6 @@ class ConnectBankScreen extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  // Circular Icon
                   Container(
                     padding: const EdgeInsets.all(AppSpacing.md),
                     width: 80,

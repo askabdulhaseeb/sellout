@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
-import '../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
+import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 
 class InAppWebViewPage extends StatefulWidget {
   const InAppWebViewPage({required this.url, super.key});
@@ -11,72 +10,60 @@ class InAppWebViewPage extends StatefulWidget {
 }
 
 class _InAppWebViewPageState extends State<InAppWebViewPage> {
-  late final WebViewController controller;
-  int _progress = 0;
-  bool _isLoading = true;
+  Future<void> _launchUrlInSheetView() async {
+    final ThemeData theme = Theme.of(context);
+    final MediaQueryData mediaQuery = MediaQuery.of(context);
+    try {
+      await launchUrl(
+        Uri.parse(widget.url),
+        customTabsOptions: CustomTabsOptions.partial(
+          configuration: PartialCustomTabsConfiguration.adaptiveSheet(
+            initialHeight: mediaQuery.size.height * 0.7,
+            initialWidth: mediaQuery.size.width * 0.4,
+            activitySideSheetMaximizationEnabled: true,
+            activitySideSheetDecorationType:
+                CustomTabsActivitySideSheetDecorationType.shadow,
+            activitySideSheetRoundedCornersPosition:
+                CustomTabsActivitySideSheetRoundedCornersPosition.top,
+            cornerRadius: 16,
+          ),
+          colorSchemes: CustomTabsColorSchemes.defaults(
+            toolbarColor: theme.colorScheme.surface,
+          ),
+        ),
+        safariVCOptions: SafariViewControllerOptions.pageSheet(
+          configuration: const SheetPresentationControllerConfiguration(
+            detents: <SheetPresentationControllerDetent>{
+              SheetPresentationControllerDetent.large,
+              SheetPresentationControllerDetent.medium,
+            },
+            prefersScrollingExpandsWhenScrolledToEdge: true,
+            prefersGrabberVisible: true,
+            prefersEdgeAttachedInCompactHeight: true,
+          ),
+          preferredBarTintColor: theme.colorScheme.surface,
+          preferredControlTintColor: theme.colorScheme.onSurface,
+          dismissButtonStyle: SafariViewControllerDismissButtonStyle.close,
+        ),
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error opening page: $e')),
+        );
+      }
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onProgress: (int progress) {
-            setState(() {
-              _progress = progress;
-              _isLoading = progress < 100;
-            });
-          },
-          onPageStarted: (String url) {
-            setState(() {
-              _isLoading = true;
-            });
-          },
-          onPageFinished: (String url) {
-            setState(() {
-              _isLoading = false;
-            });
-          },
-          onHttpError: (HttpResponseError error) {
-            setState(() {
-              _isLoading = false;
-            });
-          },
-          onWebResourceError: (WebResourceError error) {
-            setState(() {
-              _isLoading = false;
-            });
-          },
-          onNavigationRequest: (NavigationRequest request) {
-            // Example: block YouTube navigation
-            if (request.url.startsWith('https://www.youtube.com/')) {
-              return NavigationDecision.prevent;
-            }
-            return NavigationDecision.navigate;
-          },
-        ),
-      )
-      ..loadRequest(Uri.parse(widget.url));
+    Future.delayed(const Duration(milliseconds: 300), _launchUrlInSheetView);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const AppBarTitle(titleKey: 'stripe_connect_onboarding'),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4),
-          child: _isLoading
-              ? LinearProgressIndicator(value: _progress / 100)
-              : const SizedBox(height: 4),
-        ),
-      ),
-      body: Stack(
-        children: <Widget>[
-          WebViewWidget(controller: controller),
-        ],
-      ),
-    );
+    // The screen is just a placeholder, as the custom tab opens automatically
+    return const SizedBox.shrink();
   }
 }
