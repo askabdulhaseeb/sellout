@@ -14,111 +14,150 @@ class ConnectBankScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    const Color primary = Colors.red;
-    final Color onPrimary = theme.colorScheme.onPrimary;
+    final Color primary = Theme.of(context).colorScheme.primary;
+    final Color onPrimary = Theme.of(context).colorScheme.onPrimary;
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const AppBarTitle(
-          titleKey: 'connect_bank_account',
-        ),
+        title: const AppBarTitle(titleKey: 'connect_bank_account'),
         elevation: 0,
       ),
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg,
-            vertical: AppSpacing.lg,
-          ),
-          child: CustomPaint(
-            painter: _CardPainter(primary: primary, onPrimary: onPrimary),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(AppSpacing.lg),
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(28),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                  color: Colors.black.withValues(alpha:0.15),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(28),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Container(
-                    padding: const EdgeInsets.all(AppSpacing.md),
-                    width: 80,
-                    height: 80,
-                    child: CustomSvgIcon(
-                      assetPath: AppStrings.selloutProfileBankIcon,
-                      color: onPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                  Text(
-                    'payouts_made_easy'.tr(),
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: onPrimary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(
-                    'connect_bank_description'.tr(),
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: onPrimary.withValues(alpha: 0.85),
-                      fontSize: 13,
-                      height: 1.3,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                  FeatureItem(
-                    text: 'feature_instant_payouts'.tr(),
-                    color: onPrimary.withValues(alpha: 0.85),
-                  ),
-                  FeatureItem(
-                    text: 'feature_transaction_history'.tr(),
-                    color: onPrimary.withValues(alpha: 0.85),
-                  ),
-                  FeatureItem(
-                    text: 'feature_easy_setup'.tr(),
-                    color: onPrimary.withValues(alpha: 0.85),
-                  ),
-                  const SizedBox(height: AppSpacing.xl),
-                  SizedBox(
-                    width: double.infinity,
-                    child: CustomElevatedButton(
-                      isLoading: false,
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(AppSpacing.radiusLg),
+                  CustomPaint(
+                    size: const Size(double.infinity, 220),
+                    painter:
+                        _BubblePainter(primary: primary, onPrimary: onPrimary),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.lg,
+                        vertical: AppSpacing.xl,
+                      ),
+                      child: Column(
+                        children: <Widget>[
+                          // 🏦 Bank Icon
+                          Container(
+                            padding: const EdgeInsets.all(AppSpacing.md),
+                            width: 80,
+                            height: 80,
+                            child: CustomSvgIcon(
+                              assetPath: AppStrings.selloutProfileBankIcon,
+                              color: onPrimary,
                             ),
                           ),
-                          showDragHandle: false,
-                          isScrollControlled: true,
-                          builder: (BuildContext context) =>
-                              const LinkBankBottomSheet(),
-                        );
-                      },
-                      title: 'link_my_bank'.tr(),
-                      bgColor: onPrimary,
-                      textColor: primary,
-                      borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                          const SizedBox(height: AppSpacing.md),
+                          // 📝 Title
+                          Text(
+                            'payouts_made_easy'.tr(),
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: onPrimary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+
+                          // 💬 Description
+                          Text(
+                            'connect_bank_description'.tr(),
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: onPrimary.withOpacity(0.9),
+                              fontSize: 13,
+                              height: 1.4,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(
-                    'bank_details_encrypted'.tr(),
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      fontSize: 12,
-                      color: onPrimary.withValues(alpha: 0.6),
+
+                  // ⚪ WHITE SECTION
+                  Container(
+                    width: double.infinity,
+                    color: Theme.of(context).colorScheme.surface,
+                    padding: const EdgeInsets.all(AppSpacing.lg),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        FeatureItem(
+                          text: 'feature_instant_payouts'.tr(),
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                        FeatureItem(
+                          text: 'feature_transaction_history'.tr(),
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                        FeatureItem(
+                          text: 'feature_easy_setup'.tr(),
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                        const SizedBox(height: AppSpacing.lg),
+
+                        // 🔗 Button
+                        SizedBox(
+                          width: double.infinity,
+                          child: CustomElevatedButton(
+                            isLoading: false,
+                            onTap: () {
+                              showModalBottomSheet(
+                                context: context,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(AppSpacing.radiusLg),
+                                  ),
+                                ),
+                                isScrollControlled: true,
+                                builder: (_) => const LinkBankBottomSheet(),
+                              );
+                            },
+                            title: 'link_my_bank'.tr(),
+                            bgColor: primary,
+                            textColor: onPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        Center(
+                          child: Column(
+                            children: <Widget>[
+                              Text(
+                                'bank_details_encrypted'.tr(),
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  fontSize: 12,
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: AppSpacing.sm),
+                              Icon(
+                                Icons.verified_user,
+                                color: Theme.of(context).colorScheme.onSurface,
+                                size: 22,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Icon(
-                    Icons.verified_user,
-                    color: onPrimary.withValues(alpha: 0.5),
-                    size: 24,
                   ),
                 ],
               ),
@@ -130,6 +169,33 @@ class ConnectBankScreen extends StatelessWidget {
   }
 }
 
+// 🫧 Painter for solid background + soft bubbles
+class _BubblePainter extends CustomPainter {
+  final Color primary;
+  final Color onPrimary;
+  _BubblePainter({required this.primary, required this.onPrimary});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()..isAntiAlias = true;
+
+    // Solid background
+    paint.color = primary;
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
+
+    // Subtle translucent bubbles
+    paint.color = onPrimary.withValues(alpha: 0.12);
+    canvas.drawCircle(Offset(size.width * 0.75, size.height * 0.25), 35, paint);
+
+    paint.color = onPrimary.withValues(alpha: 0.08);
+    canvas.drawCircle(Offset(size.width * 0.85, size.height * 0.5), 25, paint);
+    canvas.drawCircle(Offset(size.width * 0.1, size.height * 0.25), 30, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
 class FeatureItem extends StatelessWidget {
   const FeatureItem({required this.text, required this.color, super.key});
   final String text;
@@ -138,48 +204,23 @@ class FeatureItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
-        child: Text(
-          text,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: color,
-            fontSize: 12,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+      child: Row(
+        children: <Widget>[
+          const Icon(Icons.circle, size: 6, color: Colors.black54),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: color,
+                fontSize: 13,
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
-}
-
-class _CardPainter extends CustomPainter {
-  _CardPainter({required this.primary, required this.onPrimary});
-  final Color primary;
-  final Color onPrimary;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Paint paint = Paint()..isAntiAlias = true;
-
-    // Draw base card shape
-    paint.color = primary;
-    final RRect cardRect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(0, 0, size.width, size.height),
-      const Radius.circular(28),
-    );
-    canvas.drawRRect(cardRect, paint);
-
-    // Soft translucent bubbles
-    paint.color = onPrimary.withValues(alpha: 0.12);
-    canvas.drawCircle(Offset(size.width * 0.2, size.height * 0.2), 50, paint);
-    canvas.drawCircle(Offset(size.width * 0.75, size.height * 0.35), 35, paint);
-    paint.color = onPrimary.withValues(alpha: 0.08);
-    canvas.drawCircle(Offset(size.width * 0.5, size.height * 0.6), 40, paint);
-    canvas.drawCircle(Offset(size.width * 0.3, size.height * 0.5), 25, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

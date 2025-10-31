@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- 🌐 Internet and Web Access -->
+    <!-- 🌐 Internet and network -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -18,13 +18,13 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-    <!-- 👥 Contacts (if your app really needs them) -->
+    <!-- 👥 Contacts (if really needed) -->
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
-    <!--  -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- 🔍 App query permissions -->
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
-    
+
     <application
         android:label="sellout"
         android:name="${applicationName}"
@@ -32,16 +32,18 @@
         android:theme="@style/NormalTheme">
 
         <activity
-            android:name="io.flutter.embedding.android.FlutterFragmentActivity"
+            android:name=".MainActivity"
             android:exported="true"
-            android:launchMode="singleTask"
+            android:launchMode="singleTop"
             android:taskAffinity=""
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
 
-            <!-- ✅ Deep Linking (Stripe redirect, etc.) -->
+            <!-- ✅ Deep Linking for Stripe or other -->
             <meta-data android:name="flutter_deeplinking_enabled" android:value="true" />
+            
+            <!-- 🌐 Website Deep Links -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -49,14 +51,22 @@
                 <data android:scheme="https" android:host="selloutweb.com" />
             </intent-filter>
 
-            <!-- 🏁 Main entry point -->
+            <!-- 🔗 Custom Scheme for Stripe Redirects -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="selloutapp" />
+            </intent-filter>
+
+            <!-- 🏁 Main Launcher -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- 🗺️ Google Maps Key (if used) -->
+        <!-- 🗺️ Google Maps Key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDMx5CKiZB-XCvYt3y1j-UoqQHyxw4MgrE" />
@@ -64,35 +74,36 @@
         <meta-data android:name="flutterEmbedding" android:value="2" />
     </application>
 
-    <!-- ✅ Allow app to query for supported intent handlers -->
+    <!-- ✅ Queries for intents -->
     <queries>
-        <!-- Required for text processing -->
+        <!-- Text processing -->
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT" />
             <data android:mimeType="text/plain" />
         </intent>
 
-        <!-- 🌐 HTTPS (browser, Stripe onboarding, etc.) -->
+        <!-- Browsers (https links, Stripe onboarding) -->
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="https" />
         </intent>
 
-        <!-- 💬 SMS support -->
+        <!-- SMS -->
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="sms" />
         </intent>
 
-        <!-- ☎️ Phone dialing -->
+        <!-- Phone -->
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="tel" />
         </intent>
 
-        <!-- 🧩 Required for flutter_custom_tabs -->
+        <!-- Flutter Custom Tabs -->
         <intent>
             <action android:name="android.support.customtabs.action.CustomTabsService" />
         </intent>
     </queries>
+
 </manifest>
