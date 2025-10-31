@@ -10,6 +10,7 @@ abstract class SettingRemoteApi {
       {required ChangePasswordParams params});
   Future<DataState<String>> connectAccountSession(
       ConnectAccountSessionParams params);
+  Future<DataState<bool>> getWallet(String walletId);
 }
 
 class SettingRemoteApiImpl implements SettingRemoteApi {
@@ -50,17 +51,15 @@ class SettingRemoteApiImpl implements SettingRemoteApi {
 
   @override
   Future<DataState<String>> connectAccountSession(
-    ConnectAccountSessionParams params
-  ) async {
+      ConnectAccountSessionParams params) async {
     const String endpoint = '/stripeAccount/session/create';
 
     try {
       final DataState<String> result = await ApiCall<String>().call(
-        endpoint: endpoint,
-        requestType: ApiRequestType.post,
-        isAuth: true,
-        body: json.encode(params.toMap())
-      );
+          endpoint: endpoint,
+          requestType: ApiRequestType.post,
+          isAuth: true,
+          body: json.encode(params.toMap()));
 
       if (result is DataSuccess) {
         // Decode the raw response JSON
@@ -82,6 +81,39 @@ class SettingRemoteApiImpl implements SettingRemoteApi {
           error: e,
           stackTrace: stc);
       return DataFailer<String>(CustomException(e.toString()));
+    }
+  }
+
+  @override
+  Future<DataState<bool>> getWallet(String walletId) async {
+    String endpoint = '/wallet/get/$walletId';
+
+    try {
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.get,
+        isAuth: true,
+      );
+      if (result is DataSuccess) {
+        AppLog.info('Password changed',
+            name: 'SettingRemoteApi.changePassword - success');
+        return DataSuccess<bool>(result.data ?? '', true);
+      } else {
+        AppLog.error(
+          result.exception?.reason ?? 'Unknown error',
+          name: 'SettingRemoteApi.changePassword - else',
+          error: result.exception?.reason,
+        );
+        return result;
+      }
+    } catch (e, stk) {
+      AppLog.error(
+        e.toString(),
+        name: 'changePassword - catch',
+        error: e,
+        stackTrace: stk,
+      );
+      return DataFailer<bool>(CustomException(e.toString()));
     }
   }
 }

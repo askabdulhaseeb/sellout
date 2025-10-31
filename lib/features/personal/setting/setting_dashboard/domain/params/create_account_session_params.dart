@@ -1,5 +1,6 @@
 import '../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import 'package:flutter/foundation.dart';
 
 class ConnectAccountSessionParams {
   ConnectAccountSessionParams({
@@ -14,9 +15,7 @@ class ConnectAccountSessionParams {
   Map<String, dynamic> toMap() {
     final Map<String, String> data = <String, String>{
       'email': LocalAuth.currentUser?.email ?? '',
-      'country': CountryHelper.getCountryAlpha2(
-              LocalAuth.currentUser?.countryAlpha3 ?? '') ??
-          '',
+      'country': CountryHelper.getCountryAlpha2(country) ?? '',
       'source': 'mobile-app',
     };
 
@@ -25,6 +24,7 @@ class ConnectAccountSessionParams {
       data['business_id'] = businessId!;
     }
 
+    debugPrint('ConnectAccountSessionParams payload: $data');
     return data;
   }
 

@@ -6,4 +6,5 @@ abstract class SettingRepository {
   Future<DataState<bool>> changePassword(ChangePasswordParams params);
   Future<DataState<String>> connectAccountSession(
       ConnectAccountSessionParams params);
+  Future<DataState<bool>> getWallet(String params);
 }
