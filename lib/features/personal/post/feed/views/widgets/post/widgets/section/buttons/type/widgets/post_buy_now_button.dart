@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../../../../../core/dialogs/post/post_tile_cloth_foot_dialog.dart';
+import '../../../../../../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../../../../../core/widgets/app_snakebar.dart';
@@ -53,7 +54,8 @@ class _PostBuyNowButtonState extends State<PostBuyNowButton> {
     try {
       final AddToCartUsecase usecase = AddToCartUsecase(locator());
       // If product has variants but detailWidget is not showing, open selection dialog
-      if (widget.post.clothFootInfo != null && !widget.detailWidget) {
+      if (widget.post.type == ListingType.clothAndFoot &&
+          !widget.detailWidget) {
         await showDialog(
           context: context,
           builder: (_) => PostTileClothFootDialog(

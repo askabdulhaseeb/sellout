@@ -39,7 +39,8 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
     setState(() => isLoading = true);
 
     try {
-      if (widget.post.clothFootInfo != null && !widget.detailWidget) {
+      if (widget.post.type == ListingType.clothAndFoot &&
+          !widget.detailWidget) {
         await showDialog(
           context: context,
           builder: (_) => PostTileClothFootDialog(

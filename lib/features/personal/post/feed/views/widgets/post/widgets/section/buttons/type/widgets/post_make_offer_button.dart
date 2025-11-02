@@ -58,7 +58,7 @@ class _PostMakeOfferButtonState extends State<PostMakeOfferButton> {
     return CustomElevatedButton(
       bgColor: Theme.of(context).primaryColor,
       onTap: () {
-        if (widget.post.clothFootInfo?.sizeColors != null &&
+        if (widget.post.type == ListingType.clothAndFoot &&
             ListingType.fromJson(widget.post.listID) ==
                 ListingType.clothAndFoot &&
             widget.detailWidget == false) {

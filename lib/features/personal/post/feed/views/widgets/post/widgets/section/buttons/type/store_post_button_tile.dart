@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../../../../../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../../../../../core/extension/string_ext.dart';
 import '../../../../../../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../../../../domain/entities/post/post_entity.dart';
@@ -28,7 +29,7 @@ class _StorePostButtonTileState extends State<StorePostButtonTile> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        if (widget.post.clothFootInfo != null && widget.detailWidget)
+        if (widget.post.type == ListingType.clothAndFoot && widget.detailWidget)
           Row(
             spacing: 12,
             children: <Widget>[
@@ -116,8 +117,7 @@ class _StorePostButtonTileState extends State<StorePostButtonTile> {
             )),
           ],
         ),
-        if (widget.post.clothFootInfo?.sizeColors != null &&
-            widget.detailWidget)
+        if (widget.post.type == ListingType.clothAndFoot && widget.detailWidget)
           SizeChartButtonTile(
               sizeChartURL: widget.post.clothFootInfo?.sizeChartUrl?.url ?? '')
       ],
