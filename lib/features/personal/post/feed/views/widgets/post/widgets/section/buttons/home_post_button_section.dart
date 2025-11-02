@@ -25,7 +25,7 @@ class PostButtonSection extends StatelessWidget {
             ? PostButtonsForUser(post: post)
             : GestureDetector(
                 onTap: () {
-                  if (LocalAuth.currentUser?.userID == null) {
+                  if (LocalAuth.uid == null) {
                     AppSnackBar.showSnackBar(
                         context, 'please_login_first'.tr());
                   }
@@ -33,7 +33,7 @@ class PostButtonSection extends StatelessWidget {
                 child: LocalAuth.uid == post.createdBy
                     ? PostButtonsForUser(post: post)
                     : AbsorbPointer(
-                        absorbing: LocalAuth.currentUser?.userID == null,
+                        absorbing: LocalAuth.uid == null,
                         child: (post.type == ListingType.pets ||
                                 post.type == ListingType.vehicle ||
                                 post.type == ListingType.property)

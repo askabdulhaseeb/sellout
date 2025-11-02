@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../core/functions/app_log.dart';
 import '../../../../core/sources/data_state.dart';
 import '../../../../core/constants/app_spacings.dart';
 import '../../../../core/utilities/app_string.dart';

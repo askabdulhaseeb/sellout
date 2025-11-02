@@ -35,39 +35,39 @@ class PostEntity {
     required this.condition,
     required this.listOfReviews,
     required this.categoryType,
-    //
+    // Location
     required this.currentLongitude,
     required this.currentLatitude,
     required this.collectionLatitude,
     required this.collectionLongitude,
     required this.collectionLocation,
     required this.meetUpLocation,
-    //delivery
+    // Delivery
     required this.deliveryType,
     required this.localDelivery,
     required this.internationalDelivery,
-    //
+    // Availability
     required this.availability,
-    //
+    // Attachments
     required this.fileUrls,
-    //
+    // Discount
     required this.hasDiscount,
     required this.discount,
-    //cloth foot
+    // Cloth Foot
     required this.clothFootInfo,
-    //property
+    // Property
     required this.propertyInfo,
-    //pets
+    // Pets
     required this.petInfo,
-    //vehicle
+    // Vehicle
     required this.vehicleInfo,
-    //Food Drink
+    // Food Drink
     required this.foodDrinkInfo,
-    //Item
+    // Item
     required this.itemInfo,
-    //package detail - ADD THIS FIELD
+    // Package Detail
     required this.packageDetail,
-    //
+    // Other fields
     required this.isActive,
     required this.createdBy,
     required this.updatedBy,
