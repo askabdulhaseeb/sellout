@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../../../../../../core/dialogs/post/buy_now_dailog.dart';
+import '../../../../../../../../../../../../core/dialogs/post/post_tile_cloth_foot_dialog.dart';
 import '../../../../../../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../../../../../core/widgets/app_snakebar.dart';
@@ -53,11 +53,11 @@ class _PostBuyNowButtonState extends State<PostBuyNowButton> {
     try {
       final AddToCartUsecase usecase = AddToCartUsecase(locator());
       // If product has variants but detailWidget is not showing, open selection dialog
-      if (widget.post.clothFootInfo?.sizeColors != null &&
-          !widget.detailWidget) {
+      if (widget.post.clothFootInfo != null && !widget.detailWidget) {
         await showDialog(
           context: context,
-          builder: (_) => BuyNowDialog(post: widget.post),
+          builder: (_) => PostTileClothFootDialog(
+              post: widget.post, actionType: PostTileClothFootType.buy),
         );
       } else {
         // Prepare add to cart param

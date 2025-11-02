@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../../../../../../core/dialogs/cart/add_to_cart_dialog.dart';
+import '../../../../../../../../../../../../core/dialogs/post/post_tile_cloth_foot_dialog.dart';
 import '../../../../../../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../../../../../../core/sources/data_state.dart';
@@ -39,11 +39,13 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
     setState(() => isLoading = true);
 
     try {
-      if (widget.post.clothFootInfo?.sizeColors != null &&
-          !widget.detailWidget) {
+      if (widget.post.clothFootInfo != null && !widget.detailWidget) {
         await showDialog(
           context: context,
-          builder: (_) => AddToCartDialog(post: widget.post),
+          builder: (_) => PostTileClothFootDialog(
+            post: widget.post,
+            actionType: PostTileClothFootType.add,
+          ),
         );
       } else if (widget.post.listID == ListingType.clothAndFoot.json) {
         final AddToCartUsecase usecase = AddToCartUsecase(locator());
