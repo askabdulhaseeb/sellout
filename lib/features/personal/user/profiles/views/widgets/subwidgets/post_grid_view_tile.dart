@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/dialogs/cart/add_to_cart_dialog.dart';
+import '../../../../../../../core/dialogs/post/post_tile_cloth_foot_dialog.dart';
 import '../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/data_state.dart';
@@ -136,7 +136,8 @@ class PostGridViewTileBasketButton extends StatelessWidget {
           await showDialog(
             context: context,
             builder: (BuildContext context) {
-              return AddToCartDialog(post: post);
+              return PostTileClothFootDialog(
+                  post: post, actionType: PostTileClothFootType.add);
             },
           );
         } else {
