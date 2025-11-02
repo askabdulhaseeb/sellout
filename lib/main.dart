@@ -57,3 +57,8 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+// models and entities are tightly coupled -
+// model with entity (suggestion:data mapper)-
+// data/ source / local is used in view layer 
+

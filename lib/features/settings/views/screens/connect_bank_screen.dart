@@ -171,9 +171,9 @@ class ConnectBankScreen extends StatelessWidget {
 
 // 🫧 Painter for solid background + soft bubbles
 class _BubblePainter extends CustomPainter {
+  _BubblePainter({required this.primary, required this.onPrimary});
   final Color primary;
   final Color onPrimary;
-  _BubblePainter({required this.primary, required this.onPrimary});
 
   @override
   void paint(Canvas canvas, Size size) {

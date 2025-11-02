@@ -29,8 +29,7 @@ class _StorePostButtonTileState extends State<StorePostButtonTile> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        if (widget.post.clothFootInfo?.sizeColors != null &&
-            widget.detailWidget)
+        if (widget.post.clothFootInfo?.sizeColors != [] && widget.detailWidget)
           Row(
             spacing: 12,
             children: <Widget>[
@@ -118,7 +117,7 @@ class _StorePostButtonTileState extends State<StorePostButtonTile> {
             )),
           ],
         ),
-        if (widget.post.clothFootInfo?.sizeColors != null&&
+        if (widget.post.clothFootInfo?.sizeColors != null &&
             widget.detailWidget &&
             widget.post.clothFootInfo?.sizeColors != null)
           SizeChartButtonTile(
