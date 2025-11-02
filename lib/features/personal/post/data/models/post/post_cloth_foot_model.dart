@@ -14,7 +14,7 @@ class PostClothFootModel extends PostClothFootEntity {
 
   factory PostClothFootModel.fromJson(Map<String, dynamic> json) {
     return PostClothFootModel(
-      sizeColors: (json['size_colors'] as List<dynamic>? ?? [])
+      sizeColors: (json['size_colors'] as List<dynamic>? ?? <dynamic>[])
           .map((e) => SizeColorModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       sizeChartUrl: json['size_chart'] == null
