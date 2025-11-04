@@ -91,6 +91,7 @@ void homePostTileShowMoreButton(
                 user?.saved.add(postId);
                 LocalUser().save(user!);
               } else {
+                if (!context.mounted) return;
                 AppSnackBar.showSnackBar(
                   context,
                   'something_wrong'.tr(),
@@ -164,6 +165,7 @@ Future<void> openShareOptions(
   );
 
   if (result == 'message') {
+    if (!context.mounted) return;
     final List<String>? receiverIds = await showModalBottomSheet<List<String>>(
       context: context,
       isScrollControlled: true,
@@ -176,6 +178,7 @@ Future<void> openShareOptions(
       debugPrint('🔗 Link to share: $postLink');
     }
   } else if (result == 'group') {
+    if (!context.mounted) return;
     final List<String>? receiverIds = await showModalBottomSheet<List<String>>(
       context: context,
       isScrollControlled: true,
