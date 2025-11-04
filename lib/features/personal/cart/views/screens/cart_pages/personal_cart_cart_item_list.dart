@@ -24,7 +24,7 @@ class PersonalCartItemList extends StatelessWidget {
           child: ListView.separated(
             separatorBuilder: (BuildContext context, int index) =>
                 Divider(color: Theme.of(context).dividerColor),
-            padding: const EdgeInsets.all(0),
+            padding: const EdgeInsets.symmetric(vertical: 8),
             shrinkWrap: true,
             primary: false,
             itemCount: items.length,

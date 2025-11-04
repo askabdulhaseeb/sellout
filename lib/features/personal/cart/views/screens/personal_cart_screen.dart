@@ -8,13 +8,24 @@ import '../providers/cart_provider.dart';
 import '../widgets/cart_widgets/cart_save_later_toggle_section.dart';
 import '../widgets/cart_widgets/personal_cart_page_tile.dart';
 import '../widgets/cart_widgets/personal_cart_total_section.dart';
-import 'cart_screens/personal_cart_cart_item_list.dart';
-import 'cart_screens/personal_cart_save_later_item_list.dart';
+import 'cart_pages/personal_cart_cart_item_list.dart';
+import 'cart_pages/personal_cart_save_later_item_list.dart';
 import 'checkout/personal_checkout_screen.dart';
 
-class PersonalCartScreen extends StatelessWidget {
+class PersonalCartScreen extends StatefulWidget {
   const PersonalCartScreen({super.key});
   static const String routeName = '/cart';
+
+  @override
+  State<PersonalCartScreen> createState() => _PersonalCartScreenState();
+}
+
+class _PersonalCartScreenState extends State<PersonalCartScreen> {
+  @override
+  void initState() {
+    Provider.of<CartProvider>(context, listen: false).getCart();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

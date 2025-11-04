@@ -169,7 +169,6 @@ class _PersonalCartTileState extends State<PersonalCartTile> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      /// Title + Condition + Price
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[

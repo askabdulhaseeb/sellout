@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
-import 'cart_screens/personal_cart_cart_item_list.dart';
+import 'cart_pages/personal_cart_cart_item_list.dart';
 
 class BasketItemListPage extends StatelessWidget {
   const BasketItemListPage({
