@@ -15,7 +15,7 @@ class PersonalCartPageTile extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           _IconButton(
-              title: 'shopping-basket'.tr(),
+              title: 'shopping_basket'.tr(),
               isActive: cartPro.page == 1,
               onTap: () {}),
           Container(

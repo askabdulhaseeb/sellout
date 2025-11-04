@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
 import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../domain/entities/checkout/check_out_item_entity.dart';
 
