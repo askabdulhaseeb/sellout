@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../data/models/cart/cart_item_model.dart';
-import '../../../data/sources/local_cart.dart';
+import '../../../data/sources/local/local_cart.dart';
 import '../../widgets/cart_widgets/tile/personal_cart_tile.dart';
 
 class PersonalCartSaveLaterItemList extends StatelessWidget {

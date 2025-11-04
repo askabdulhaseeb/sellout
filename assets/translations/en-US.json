@@ -30,6 +30,7 @@
   "paid_delivery": "Paid Delivery",
   "free_delivery": "Free Delivery",
   "collection": "Collection",
+  "fast_delivery":"Fast Delivery",
   "collection_location":"Collection Location",
   "paid_delivery_subtitle": "Buyer pays for delivery",
   "free_delivery_subtitle": "Seller pays for delivery",

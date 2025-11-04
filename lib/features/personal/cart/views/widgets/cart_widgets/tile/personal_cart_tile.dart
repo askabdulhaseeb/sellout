@@ -11,6 +11,7 @@ import '../../../../../../../routes/app_linking.dart';
 import '../../../../../auth/signin/domain/repositories/signin_repository.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../post/domain/entities/post/post_entity.dart';
+import '../../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../post/post_detail/views/screens/post_detail_screen.dart';
 import '../../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../../domain/entities/cart/cart_item_entity.dart';
@@ -28,6 +29,14 @@ class PersonalCartTile extends StatefulWidget {
 
 class _PersonalCartTileState extends State<PersonalCartTile> {
   bool isActive = true;
+  DeliveryType? _deliveryType;
+  late Future<(PostEntity?, UserEntity?)> _loadFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFuture = _loadData();
+  }
 
   Future<(PostEntity?, UserEntity?)> _loadData() async {
     final PostEntity? post = await LocalPost().getPost(widget.item.postID);
@@ -46,14 +55,18 @@ class _PersonalCartTileState extends State<PersonalCartTile> {
   Widget build(BuildContext context) {
     final ColorScheme scheme = Theme.of(context).colorScheme;
     final TextTheme textTheme = Theme.of(context).textTheme;
-
     return FutureBuilder<(PostEntity?, UserEntity?)>(
-      future: _loadData(),
+      future: _loadFuture,
       builder: (BuildContext context,
           AsyncSnapshot<(PostEntity?, UserEntity?)> snapshot) {
         final (PostEntity?, UserEntity?)? data = snapshot.data;
         final PostEntity? post = data?.$1;
         final UserEntity? seller = data?.$2;
+
+        // Prefer the local, potentially-updated delivery type. Fall back to
+        // the post's delivery type or a safe default.
+        final DeliveryType displayDeliveryType =
+            _deliveryType ?? post?.deliveryType ?? DeliveryType.collection;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,25 +91,20 @@ class _PersonalCartTileState extends State<PersonalCartTile> {
                   ]),
                 ),
                 Container(
-                  margin: const EdgeInsets.only(left: 6),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                  margin: const EdgeInsets.only(left: AppSpacing.sm),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.xs, vertical: AppSpacing.xs),
                   decoration: BoxDecoration(
-                    color: post?.deliveryType.bgColor.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(10),
+                    color: displayDeliveryType.bgColor.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
                     border: Border.all(
-                      color: post?.deliveryType.color.withValues(alpha: 0.3) ??
-                          Theme.of(context)
-                              .colorScheme
-                              .outline
-                              .withValues(alpha: 0.1),
+                      color: displayDeliveryType.color.withValues(alpha: 0.3),
                       width: 1,
                     ),
                     boxShadow: <BoxShadow>[
                       BoxShadow(
                         color:
-                            post?.deliveryType.color.withValues(alpha: 0.08) ??
-                                Colors.black12,
+                            displayDeliveryType.color.withValues(alpha: 0.08),
                         blurRadius: 4,
                         offset: const Offset(0, 1),
                       ),
@@ -108,13 +116,13 @@ class _PersonalCartTileState extends State<PersonalCartTile> {
                       Icon(
                         Icons.circle,
                         size: 8,
-                        color: post?.deliveryType.color.withValues(alpha: 0.6),
+                        color: displayDeliveryType.color.withValues(alpha: 0.6),
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: AppSpacing.hXs),
                       Text(
-                        post?.deliveryType.code.tr() ?? 'na'.tr(),
+                        displayDeliveryType.code.tr(),
                         style: textTheme.labelSmall?.copyWith(
-                          color: post?.deliveryType.color,
+                          color: displayDeliveryType.color,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.3,
                         ),
@@ -124,7 +132,7 @@ class _PersonalCartTileState extends State<PersonalCartTile> {
                 )
               ],
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: AppSpacing.vXs),
             Text(
               '${calculateReviewPercentage(seller?.listOfReviews ?? <double>[])}% ${'positive_feedback'.tr()}',
               style: textTheme.labelSmall?.copyWith(
@@ -132,7 +140,7 @@ class _PersonalCartTileState extends State<PersonalCartTile> {
               ),
             ),
 
-            const SizedBox(height: 10),
+            const SizedBox(height: AppSpacing.vSm),
 
             /// Product row
             Row(
@@ -147,14 +155,14 @@ class _PersonalCartTileState extends State<PersonalCartTile> {
                     );
                   },
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
                     child: CustomNetworkImage(
                       imageURL: post?.imageURL,
                       size: 60,
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: AppSpacing.hSm),
 
                 /// Product Info
                 Expanded(
@@ -165,7 +173,7 @@ class _PersonalCartTileState extends State<PersonalCartTile> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Expanded(
+                          Flexible(
                             child: Text(
                               post?.title ?? '',
                               maxLines: 2,
@@ -175,15 +183,16 @@ class _PersonalCartTileState extends State<PersonalCartTile> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 6),
+                          const SizedBox(width: AppSpacing.hSm),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 5,
-                              vertical: 2,
+                              horizontal: AppSpacing.xs,
+                              vertical: AppSpacing.xs,
                             ),
                             decoration: BoxDecoration(
                               color: scheme.primary.withValues(alpha: 0.08),
-                              borderRadius: BorderRadius.circular(4),
+                              borderRadius:
+                                  BorderRadius.circular(AppSpacing.radiusXs),
                             ),
                             child: Text(
                               post?.condition.code.tr() ?? '',
@@ -193,7 +202,7 @@ class _PersonalCartTileState extends State<PersonalCartTile> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 6),
+                          const SizedBox(width: AppSpacing.hSm),
                           Text(
                             '${CountryHelper.currencySymbolHelper(post?.currency)}${(widget.item.quantity * (post?.price ?? 0)).toStringAsFixed(0)}'
                                 .toUpperCase(),
@@ -204,7 +213,7 @@ class _PersonalCartTileState extends State<PersonalCartTile> {
                         ],
                       ),
 
-                      const SizedBox(height: 4),
+                      const SizedBox(height: AppSpacing.vXs),
 
                       /// Size and Color Row
                       Row(
@@ -216,9 +225,10 @@ class _PersonalCartTileState extends State<PersonalCartTile> {
                             ),
                           if (widget.item.color != null)
                             Container(
-                              margin: const EdgeInsets.only(left: 8),
-                              width: 16,
-                              height: 16,
+                              margin:
+                                  const EdgeInsets.only(left: AppSpacing.sm),
+                              width: AppSpacing.hMd,
+                              height: AppSpacing.vMd,
                               decoration: BoxDecoration(
                                 color: widget.item.color.toColor(),
                                 shape: BoxShape.circle,
@@ -227,7 +237,7 @@ class _PersonalCartTileState extends State<PersonalCartTile> {
                         ],
                       ),
 
-                      const SizedBox(height: 4),
+                      const SizedBox(height: AppSpacing.vXs),
                       PersonalCartTileQtySection(item: widget.item, post: post),
                     ],
                   ),
@@ -235,7 +245,7 @@ class _PersonalCartTileState extends State<PersonalCartTile> {
               ],
             ),
 
-            const SizedBox(height: 10),
+            const SizedBox(height: AppSpacing.vSm),
 
             /// Switch Row
             Row(
@@ -250,7 +260,13 @@ class _PersonalCartTileState extends State<PersonalCartTile> {
                 CustomSwitch(
                   value: isActive,
                   onChanged: (bool val) {
-                    setState(() => isActive = val);
+                    // Only update local UI state; do not persist to LocalPost.
+                    setState(() {
+                      isActive = val;
+                      _deliveryType = val
+                          ? DeliveryType.fastDelivery
+                          : (post?.deliveryType ?? DeliveryType.collection);
+                    });
                     debugPrint('Item switch toggled: $val');
                   },
                 ),
@@ -285,8 +301,8 @@ class _SaveLaterWidgetState extends State<SaveLaterWidget> {
       children: <Widget>[
         PersonalCartTileDeleteButton(item: widget.item),
         Container(
-          margin: const EdgeInsets.symmetric(horizontal: 6),
-          height: 15,
+          margin: const EdgeInsets.symmetric(horizontal: AppSpacing.hSm),
+          height: AppSpacing.vMd,
           width: 1,
           color: scheme.outline.withValues(alpha: 0.1),
         ),
@@ -316,8 +332,8 @@ class _SaveLaterWidgetState extends State<SaveLaterWidget> {
           ),
         ),
         Container(
-          margin: const EdgeInsets.symmetric(horizontal: 6),
-          height: 15,
+          margin: const EdgeInsets.symmetric(horizontal: AppSpacing.hSm),
+          height: AppSpacing.vMd,
           width: 1,
           color: scheme.outline.withValues(alpha: 0.1),
         ),

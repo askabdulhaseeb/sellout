@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../post/domain/entities/post/post_entity.dart';
-import '../../../../data/sources/local_cart.dart';
+import '../../../../data/sources/local/local_cart.dart';
 
 class PersonalCartTileTrailingSection extends StatefulWidget {
   const PersonalCartTileTrailingSection({

@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../data/models/cart/cart_item_model.dart';
-import '../../../data/sources/local_cart.dart';
+import '../../../data/sources/local/local_cart.dart';
 import '../../providers/cart_provider.dart';
 
 class PersonalCartTotalSection extends StatelessWidget {

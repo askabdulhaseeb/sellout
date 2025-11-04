@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../data/models/cart/cart_item_model.dart';
-import '../../../data/sources/local_cart.dart';
+import '../../../data/sources/local/local_cart.dart';
 import '../../widgets/cart_widgets/tile/personal_cart_tile.dart';
 
 class PersonalCartItemList extends StatelessWidget {
@@ -24,7 +24,7 @@ class PersonalCartItemList extends StatelessWidget {
           child: ListView.separated(
             separatorBuilder: (BuildContext context, int index) =>
                 Divider(color: Theme.of(context).dividerColor),
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(0),
             shrinkWrap: true,
             primary: false,
             itemCount: items.length,

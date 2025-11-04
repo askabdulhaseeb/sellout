@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import '../../data/sources/local_cart.dart';
+import '../../data/sources/local/local_cart.dart';
 
 class CartItemUpdateQtyParam {
   const CartItemUpdateQtyParam({

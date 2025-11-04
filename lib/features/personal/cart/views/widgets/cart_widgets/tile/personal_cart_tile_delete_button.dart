@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../core/widgets/loaders/loader.dart';
-import '../../../../data/sources/local_cart.dart';
+import '../../../../data/sources/local/local_cart.dart';
 import '../../../providers/cart_provider.dart';
 
 class PersonalCartTileDeleteButton extends StatefulWidget {
