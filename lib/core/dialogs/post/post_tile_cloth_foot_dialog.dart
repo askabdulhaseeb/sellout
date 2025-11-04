@@ -21,9 +21,7 @@ enum PostTileClothFootType { add, buy, offer }
 
 class PostTileClothFootDialog extends StatefulWidget {
   const PostTileClothFootDialog({
-    super.key,
-    required this.post,
-    required this.actionType,
+    required this.post, required this.actionType, super.key,
   });
   final PostEntity post;
 

@@ -4,7 +4,7 @@ import '../../../../../../core/sources/api_call.dart';
 import '../../../domain/param/cart_item_update_qty_param.dart';
 import '../../models/cart/cart_item_model.dart';
 import '../../models/cart/cart_model.dart';
-import '../local_cart.dart';
+import '../local/local_cart.dart';
 
 abstract interface class CartRemoteAPI {
   Future<DataState<CartEntity>> getCart();

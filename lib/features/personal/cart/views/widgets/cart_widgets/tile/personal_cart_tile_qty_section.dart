@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../../core/extension/int_ext.dart';
 
 import '../../../../../post/domain/entities/post/post_entity.dart';
-import '../../../../data/sources/local_cart.dart';
+import '../../../../data/sources/local/local_cart.dart';
 import '../../../providers/cart_provider.dart';
 
 class PersonalCartTileQtySection extends StatefulWidget {

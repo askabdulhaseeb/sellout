@@ -11,7 +11,7 @@ import '../../../auth/signin/data/models/address_model.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../data/models/cart/cart_model.dart';
 import '../../data/models/checkout/order_billing_model.dart';
-import '../../data/sources/local_cart.dart';
+import '../../data/sources/local/local_cart.dart';
 import '../../domain/entities/cart/cart_entity.dart';
 import '../../domain/entities/checkout/check_out_entity.dart';
 import '../../domain/enums/basket_type.dart';
@@ -65,6 +65,10 @@ class CartProvider extends ChangeNotifier {
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
   List<CartItemEntity> _cartItems = <CartItemEntity>[];
+//
+  final List<String> _fastDeliveryProducts = <String>[];
+  List<String> get fastDeliveryProducts => _fastDeliveryProducts;
+
 
 //
   int _page = 1;
