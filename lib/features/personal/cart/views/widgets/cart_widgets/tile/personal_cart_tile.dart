@@ -7,12 +7,12 @@ import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../routes/app_linking.dart';
 import '../../../../../auth/signin/domain/repositories/signin_repository.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
-
 import '../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../post/post_detail/views/screens/post_detail_screen.dart';
 import '../../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../../domain/entities/cart/cart_item_entity.dart';
 import '../../../providers/cart_provider.dart';
+import 'personal_cart_tile_delete_button.dart';
 import 'personal_cart_tile_qty_section.dart';
 import 'personal_cart_tile_trailing_section.dart';
 
@@ -185,11 +185,16 @@ class SaveLaterWidget extends StatefulWidget {
 class _SaveLaterWidgetState extends State<SaveLaterWidget> {
   @override
   Widget build(BuildContext context) {
-    Color primaryColor = Theme.of(context).primaryColor;
     Color secondaryColor = Theme.of(context).colorScheme.secondary;
     return Row(
       spacing: 4,
       children: <Widget>[
+        PersonalCartTileDeleteButton(item: widget.item),
+        Container(
+          height: 15,
+          width: 1,
+          color: ColorScheme.of(context).outline.withValues(alpha: 0.1),
+        ),
         InkWell(
           onTap: () async {
             try {
@@ -210,7 +215,7 @@ class _SaveLaterWidgetState extends State<SaveLaterWidget> {
           },
           child: Text(
             widget.item.type.tileActionCode.tr(),
-            style: TextStyle(color: primaryColor, fontSize: 12),
+            style: TextStyle(color: secondaryColor, fontSize: 12),
           ).tr(),
         ),
         Container(
@@ -226,57 +231,3 @@ class _SaveLaterWidgetState extends State<SaveLaterWidget> {
     );
   }
 }
-
-// class SelectItemFromCartWidget extends StatelessWidget {
-//   const SelectItemFromCartWidget({
-//     required this.item,
-//     required this.post,
-//     required this.value,
-//     required this.onChanged,
-//     super.key,
-//   });
-//   final CartItemEntity item;
-//   final PostEntity post;
-//   final bool value;
-//   final ValueChanged<bool?> onChanged;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     CartProvider pro = Provider.of<CartProvider>(context, listen: false);
-//     return Row(
-//       children: <Widget>[
-//         Checkbox(
-//           value: value,
-//           onChanged: onChanged,
-//         ),
-//         Expanded(
-//           child: Column(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: <Widget>[
-//               Text.rich(
-//                   TextSpan(text: 'seller:'.tr(), children: <InlineSpan>[
-//                     const TextSpan(text: ' '),
-//                     TextSpan(
-//                         text: post.createdBy,
-//                         style: TextTheme.of(context).labelLarge)
-//                   ]),
-//                   style: TextTheme.of(context).labelLarge?.copyWith(
-//                       color: ColorScheme.of(context)
-//                           .outline
-//                           .withValues(alpha: 0.6))),
-             
-//                 const SizedBox(height: 4),
-//                 Text(post.listOfReviews '% positive feedback'.tr(),
-//                     style: TextTheme.of(context).labelSmall?.copyWith(
-//                         fontWeight: FontWeight.w500,
-//                         color: ColorScheme.of(context)
-//                             .outline
-//                             .withValues(alpha: 0.6))),
-              
-//             ],
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
