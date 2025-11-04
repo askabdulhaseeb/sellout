@@ -1,7 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/rendering.dart';
 import '../../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../domain/param/cart_item_update_qty_param.dart';
+import '../../../domain/param/get_postage_detail_params.dart';
 import '../../models/cart/cart_item_model.dart';
 import '../../models/cart/cart_model.dart';
 import '../local/local_cart.dart';
@@ -14,6 +18,7 @@ abstract interface class CartRemoteAPI {
   Future<DataState<bool>> updateQty(CartItemUpdateQtyParam param);
   Future<DataState<bool>> updateStatus(
       CartItemModel params, CartItemType action);
+  Future<DataState<String>> getPostageDetails(GetPostageDetailParam param);
 }
 
 class CartRemoteAPIImpl implements CartRemoteAPI {
@@ -181,6 +186,41 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
         error: e,
       );
       return DataFailer<bool>(CustomException(e.toString()));
+    }
+  }
+
+  @override
+  Future<DataState<String>> getPostageDetails(
+      GetPostageDetailParam param) async {
+    try {
+      debugPrint(LocalAuth.token);
+      const String endpoint = '/cart/get/postage';
+      final DataState<String> result = await ApiCall<String>().call(
+        endpoint: endpoint,
+        isAuth: true,
+        requestType: ApiRequestType.post,
+        body: param.toJson(),
+      );
+      if (result is DataSuccess<String>) {
+        AppLog.info('Payment successful',
+            name: 'CheckoutRemoteAPIImpl.getPostageDetails - if');
+        return DataSuccess<String>(result.data ?? '', result.entity);
+      } else {
+        AppLog.error(
+          param.toJson(),
+          name: 'CheckoutRemoteAPIImpl.getPostageDetails - Else',
+          error: result.exception?.reason ?? 'something_wrong'.tr(),
+        );
+        return DataFailer<String>(
+            CustomException('Failed to add payment Address'));
+      }
+    } catch (e) {
+      AppLog.error(
+        e.toString(),
+        name: 'CheckoutRemoteAPIImpl.getPostageDetails - Catch',
+        error: e,
+      );
+      return DataFailer<String>(CustomException(e.toString()));
     }
   }
 }

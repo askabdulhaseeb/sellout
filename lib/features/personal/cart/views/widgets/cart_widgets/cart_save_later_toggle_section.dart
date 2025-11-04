@@ -17,6 +17,7 @@ class CartSaveLaterToggleSection extends StatelessWidget {
       _,
     ) {
       return CustomToggleSwitch<CartItemType>(
+        horizontalPadding: 0,
         labels: CartItemType.list,
         onToggle: (CartItemType value) => cartPro.basketPage = value,
         initialValue: cartPro.basketPage,

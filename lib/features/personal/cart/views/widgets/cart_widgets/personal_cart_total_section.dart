@@ -23,34 +23,29 @@ class PersonalCartTotalSection extends StatelessWidget {
           (CartEntity element) => element.cartID == LocalAuth.uid,
           orElse: () => CartModel(),
         );
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            children: <Widget>[
-              const Divider(),
-              ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                visualDensity:
-                    const VisualDensity(horizontal: -4, vertical: -4),
-                title: Text(
-                  '${'total'.tr()} (${cart.cartItems.length} ${'items'.tr()})',
-                ),
-                trailing: Text(
-                  cart.cartTotal.toStringAsFixed(2),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
+        return Column(
+          children: <Widget>[
+            const Divider(),
+            ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+              visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+              title: Text(
+                '${'total'.tr()} (${cart.cartItems.length} ${'items'.tr()})',
+              ),
+              trailing: Text(
+                cart.cartTotal.toStringAsFixed(2),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
                 ),
               ),
-              CustomElevatedButton(
-                title: 'proceed_to_checkout'.tr(),
-                isLoading: false,
-                onTap: () => cartPro.page = 2,
-              ),
-              const SizedBox(height: 24),
-            ],
-          ),
+            ),
+            CustomElevatedButton(
+              title: 'proceed_to_checkout'.tr(),
+              isLoading: false,
+              onTap: () => cartPro.page = 2,
+            ),
+          ],
         );
       },
     );
