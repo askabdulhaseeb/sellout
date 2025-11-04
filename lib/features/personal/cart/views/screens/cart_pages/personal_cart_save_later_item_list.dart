@@ -21,7 +21,10 @@ class PersonalCartSaveLaterItemList extends StatelessWidget {
         );
         final List<CartItemEntity> items = cart.saveLaterItems;
 
-        return ListView.builder(
+        return ListView.separated(
+          separatorBuilder: (BuildContext context, int index) =>
+              Divider(color: Theme.of(context).dividerColor),
+          padding: const EdgeInsets.symmetric(vertical: 8),
           shrinkWrap: true,
           primary: false,
           itemCount: items.length,
