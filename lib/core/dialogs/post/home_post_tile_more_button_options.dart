@@ -23,44 +23,6 @@ void homePostTileShowMoreButton(
     context: context,
     position: RelativeRect.fromLTRB(position.dx, position.dy, 0, 0),
     items: <PopupMenuItem<ListTile>>[
-      // PopupMenuItem<ListTile>(
-      //   child: InDevMode(
-      //     child: ListTile(
-      //       leading: const Icon(Icons.add),
-      //       title: Text(
-      //         'show_more'.tr(),
-      //         style: Theme.of(context).textTheme.bodySmall,
-      //       ),
-      //       subtitle: Text(
-      //         'show_more_subtitle'.tr(),
-      //         style:
-      //             Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 10),
-      //       ),
-      //       onTap: () {
-      //         Navigator.pop(context);
-      //       },
-      //     ),
-      //   ),
-      // ),
-      // PopupMenuItem<ListTile>(
-      //   child: InDevMode(
-      //     child: ListTile(
-      //       leading: const Icon(Icons.remove),
-      //       title: Text(
-      //         'show_less'.tr(),
-      //         style: Theme.of(context).textTheme.bodySmall,
-      //       ),
-      //       subtitle: Text(
-      //         'show_less_subtitle'.tr(),
-      //         style:
-      //             Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 10),
-      //       ),
-      //       onTap: () {
-      //         Navigator.pop(context);
-      //       },
-      //     ),
-      //   ),
-      // ),
       PopupMenuItem<ListTile>(
         child: ListTile(
           leading: Icon(

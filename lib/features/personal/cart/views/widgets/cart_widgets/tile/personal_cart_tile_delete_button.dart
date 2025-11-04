@@ -49,12 +49,9 @@ class _PersonalCartTileDeleteButtonState
         padding: const EdgeInsets.all(6),
         child: Text(
           'delete'.tr(),
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.error,
-                fontWeight: FontWeight.w400,
-              ),
+          style:
+              TextStyle(color: ColorScheme.of(context).primary, fontSize: 12),
         ),
-        
       ),
     );
   }

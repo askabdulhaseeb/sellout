@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../data/sources/local_cart.dart';
 
@@ -25,13 +24,9 @@ class _PersonalCartTileTrailingSectionState
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
-        Text(
-            '${CountryHelper.currencySymbolHelper(widget.post?.currency)}${(widget.item.quantity * (widget.post?.price ?? 0)).toStringAsFixed(0)}'
-                .toUpperCase(),
-            style: TextTheme.of(context)
-                .bodyMedium
-                ?.copyWith(fontWeight: FontWeight.w600)),
-
+       
+        SizedBox(
+            width: 50, child: Switch(value: true, onChanged: (bool value) {}))
       ],
     );
   }

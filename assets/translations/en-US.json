@@ -1130,6 +1130,9 @@
   "select_slot":"Please select a time slot",
   "release_payment":"Release Payment",
   "declined":"Declined",
+  "need_fast_delivery":"Need fast delivery?",
+  "seller": "Seller",
+
   "add_reason_for_repot_please": "Please add reason for report",
   "safety_matters_title": "Your safety matters to us!",
   "safety_point_1": "Only meet in public / crowded places.",

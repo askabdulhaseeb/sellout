@@ -1,9 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/extension/string_ext.dart';
+import '../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../../core/widgets/custom_switch_list_tile.dart';
 import '../../../../../../../routes/app_linking.dart';
 import '../../../../../auth/signin/domain/repositories/signin_repository.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
@@ -14,14 +17,20 @@ import '../../../../domain/entities/cart/cart_item_entity.dart';
 import '../../../providers/cart_provider.dart';
 import 'personal_cart_tile_delete_button.dart';
 import 'personal_cart_tile_qty_section.dart';
-import 'personal_cart_tile_trailing_section.dart';
 
-class PersonalCartTile extends StatelessWidget {
+class PersonalCartTile extends StatefulWidget {
   const PersonalCartTile({required this.item, super.key});
   final CartItemEntity item;
 
+  @override
+  State<PersonalCartTile> createState() => _PersonalCartTileState();
+}
+
+class _PersonalCartTileState extends State<PersonalCartTile> {
+  bool isActive = true;
+
   Future<(PostEntity?, UserEntity?)> _loadData() async {
-    final PostEntity? post = await LocalPost().getPost(item.postID);
+    final PostEntity? post = await LocalPost().getPost(widget.item.postID);
     final UserEntity? seller = await LocalUser().user(post?.createdBy ?? '');
     return (post, seller);
   }
@@ -35,6 +44,9 @@ class PersonalCartTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
     return FutureBuilder<(PostEntity?, UserEntity?)>(
       future: _loadData(),
       builder: (BuildContext context,
@@ -46,33 +58,92 @@ class PersonalCartTile extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            // Seller info
-            Text.rich(TextSpan(children: <InlineSpan>[
-              TextSpan(
-                  text: '${'seller'.tr()}: ',
-                  style: TextTheme.of(context).bodyMedium?.copyWith(
-                        color: ColorScheme.of(context).outline,
-                      )),
-              TextSpan(
-                  text: seller?.displayName ?? '',
-                  style: TextTheme.of(context)
-                      .bodyMedium
-                      ?.copyWith(fontWeight: FontWeight.w500)),
-            ])),
-            Text(
-                '${calculateReviewPercentage(seller?.listOfReviews ?? <double>[])}% ${'positive_feedback'.tr()}',
-                style: TextTheme.of(context).bodySmall?.copyWith(
-                      color: ColorScheme.of(context).outline,
-                    )),
-            const SizedBox(height: 10),
+            /// Seller info
             Row(
               children: <Widget>[
-                // Image
+                Text.rich(
+                  TextSpan(children: <InlineSpan>[
+                    TextSpan(
+                      text: '${'seller'.tr()}: ',
+                      style: textTheme.bodySmall?.copyWith(
+                        color: scheme.outline,
+                      ),
+                    ),
+                    TextSpan(
+                      text: seller?.displayName ?? '',
+                      style: textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ]),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(left: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: post?.deliveryType.bgColor.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: post?.deliveryType.color.withValues(alpha: 0.3) ??
+                          Theme.of(context)
+                              .colorScheme
+                              .outline
+                              .withValues(alpha: 0.1),
+                      width: 1,
+                    ),
+                    boxShadow: <BoxShadow>[
+                      BoxShadow(
+                        color:
+                            post?.deliveryType.color.withValues(alpha: 0.08) ??
+                                Colors.black12,
+                        blurRadius: 4,
+                        offset: const Offset(0, 1),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Icon(
+                        Icons.circle,
+                        size: 8,
+                        color: post?.deliveryType.color.withValues(alpha: 0.6),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        post?.deliveryType.code.tr() ?? 'na'.tr(),
+                        style: textTheme.labelSmall?.copyWith(
+                          color: post?.deliveryType.color,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(height: 2),
+            Text(
+              '${calculateReviewPercentage(seller?.listOfReviews ?? <double>[])}% ${'positive_feedback'.tr()}',
+              style: textTheme.labelSmall?.copyWith(
+                color: scheme.outline.withValues(alpha: 0.8),
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            /// Product row
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                /// Product Image
                 GestureDetector(
                   onTap: () {
                     AppNavigator.pushNamed(
                       PostDetailScreen.routeName,
-                      arguments: <String, String>{'pid': item.postID},
+                      arguments: <String, String>{'pid': widget.item.postID},
                     );
                   },
                   child: ClipRRect(
@@ -83,89 +154,111 @@ class PersonalCartTile extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: 10),
 
-                // Post details
+                /// Product Info
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
+                      /// Title + Condition + Price
                       Row(
-                        spacing: 4,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Flexible(
+                          Expanded(
                             child: Text(
                               post?.title ?? '',
-                              maxLines: 1,
+                              maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(fontWeight: FontWeight.w500),
+                              style: textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
+                          const SizedBox(width: 6),
                           Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 4, vertical: 2),
+                              horizontal: 5,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
+                              color: scheme.primary.withValues(alpha: 0.08),
                               borderRadius: BorderRadius.circular(4),
-                              color: Theme.of(context)
-                                  .primaryColor
-                                  .withValues(alpha: 0.1),
                             ),
                             child: Text(
                               post?.condition.code.tr() ?? '',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelSmall
-                                  ?.copyWith(
-                                      fontWeight: FontWeight.w400, fontSize: 8),
+                              style: textTheme.labelSmall?.copyWith(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            '${CountryHelper.currencySymbolHelper(post?.currency)}${(widget.item.quantity * (post?.price ?? 0)).toStringAsFixed(0)}'
+                                .toUpperCase(),
+                            style: textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
                       ),
+
                       const SizedBox(height: 4),
 
-                      // Size and color row
+                      /// Size and Color Row
                       Row(
                         children: <Widget>[
-                          if (item.size != null)
-                            RichText(
-                              maxLines: 1,
-                              text: TextSpan(
-                                style: Theme.of(context).textTheme.bodySmall,
-                                children: <TextSpan>[
-                                  TextSpan(text: '${'size'.tr()}: '),
-                                  TextSpan(text: item.size),
-                                ],
-                              ),
+                          if (widget.item.size != null)
+                            Text(
+                              '${'size'.tr()}: ${widget.item.size}',
+                              style: textTheme.bodySmall,
                             ),
-                          if (item.color != null)
+                          if (widget.item.color != null)
                             Container(
                               margin: const EdgeInsets.only(left: 8),
                               width: 16,
                               height: 16,
                               decoration: BoxDecoration(
-                                color: item.color.toColor(),
+                                color: widget.item.color.toColor(),
                                 shape: BoxShape.circle,
                               ),
                             ),
                         ],
                       ),
+
                       const SizedBox(height: 4),
-                      PersonalCartTileQtySection(item: item, post: post),
+                      PersonalCartTileQtySection(item: widget.item, post: post),
                     ],
                   ),
                 ),
-                const SizedBox(width: 12),
-                PersonalCartTileTrailingSection(item: item, post: post),
               ],
             ),
-            const SizedBox(height: 12),
-            SaveLaterWidget(item: item),
+
+            const SizedBox(height: 10),
+
+            /// Switch Row
+            Row(
+              spacing: AppSpacing.hSm,
+              children: <Widget>[
+                Text(
+                  'need_fast_delivery'.tr(),
+                  style: textTheme.bodySmall?.copyWith(
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                CustomSwitch(
+                  value: isActive,
+                  onChanged: (bool val) {
+                    setState(() => isActive = val);
+                    debugPrint('Item switch toggled: $val');
+                  },
+                ),
+              ],
+            ),
+
+            /// Save Later / Share
+            SaveLaterWidget(item: widget.item),
           ],
         );
       },
@@ -175,7 +268,6 @@ class PersonalCartTile extends StatelessWidget {
 
 class SaveLaterWidget extends StatefulWidget {
   const SaveLaterWidget({required this.item, super.key});
-
   final CartItemEntity item;
 
   @override
@@ -185,23 +277,26 @@ class SaveLaterWidget extends StatefulWidget {
 class _SaveLaterWidgetState extends State<SaveLaterWidget> {
   @override
   Widget build(BuildContext context) {
-    Color secondaryColor = Theme.of(context).colorScheme.secondary;
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
     return Row(
-      spacing: 4,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
         PersonalCartTileDeleteButton(item: widget.item),
         Container(
+          margin: const EdgeInsets.symmetric(horizontal: 6),
           height: 15,
           width: 1,
-          color: ColorScheme.of(context).outline.withValues(alpha: 0.1),
+          color: scheme.outline.withValues(alpha: 0.1),
         ),
         InkWell(
           onTap: () async {
             try {
-              setState(() {});
               final DataState<bool> result =
                   await Provider.of<CartProvider>(context, listen: false)
                       .updateStatus(widget.item);
+
               if (result is DataFailer) {
                 AppSnackBar.showSnackBar(
                   context,
@@ -211,22 +306,28 @@ class _SaveLaterWidgetState extends State<SaveLaterWidget> {
             } catch (e) {
               AppSnackBar.showSnackBar(context, e.toString());
             }
-            // setState(() {});
           },
           child: Text(
             widget.item.type.tileActionCode.tr(),
-            style: TextStyle(color: secondaryColor, fontSize: 12),
-          ).tr(),
+            style: textTheme.bodySmall?.copyWith(
+              color: scheme.secondary,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ),
         Container(
+          margin: const EdgeInsets.symmetric(horizontal: 6),
           height: 15,
           width: 1,
-          color: ColorScheme.of(context).outline.withValues(alpha: 0.1),
+          color: scheme.outline.withValues(alpha: 0.1),
         ),
         Text(
-          'share',
-          style: TextStyle(color: secondaryColor, fontSize: 12),
-        ).tr(),
+          'share'.tr(),
+          style: textTheme.bodySmall?.copyWith(
+            color: scheme.secondary,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ],
     );
   }
