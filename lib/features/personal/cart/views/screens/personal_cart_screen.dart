@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
+import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../providers/cart_provider.dart';
 import '../widgets/cart_widgets/cart_save_later_toggle_section.dart';
 import '../widgets/cart_widgets/personal_cart_page_tile.dart';
@@ -29,6 +30,7 @@ class _PersonalCartScreenState extends State<PersonalCartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(' token ${LocalAuth.token}');
     final CartProvider pro = Provider.of<CartProvider>(context, listen: false);
     return PopScope(
       onPopInvokedWithResult: (bool didPop, dynamic result) => pro.reset(),

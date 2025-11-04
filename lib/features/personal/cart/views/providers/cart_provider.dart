@@ -68,8 +68,6 @@ class CartProvider extends ChangeNotifier {
 //
   final List<String> _fastDeliveryProducts = <String>[];
   List<String> get fastDeliveryProducts => _fastDeliveryProducts;
-
-
 //
   int _page = 1;
   int get page => _page;

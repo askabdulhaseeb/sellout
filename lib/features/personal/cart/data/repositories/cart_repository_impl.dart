@@ -43,4 +43,5 @@ class CartRepositoryImpl implements CartRepository {
   Future<DataState<bool>> updateQty(CartItemUpdateQtyParam param) async {
     return await _remoteAPI.updateQty(param);
   }
+
 }
