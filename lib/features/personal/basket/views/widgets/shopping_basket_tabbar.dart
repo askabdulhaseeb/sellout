@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../domain/enums/cart_type.dart';
+import '../../domain/enums/shopping_basket_type.dart';
 import '../providers/cart_provider.dart';
 
 class PersonalShoppingTabbar extends StatelessWidget {

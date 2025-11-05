@@ -20,7 +20,7 @@ class PersonalCartItemList extends StatelessWidget {
         );
         final List<CartItemEntity> items = cart.cartItems;
 
-        return Expanded(
+        return SizedBox(
           child: ListView.separated(
             separatorBuilder: (BuildContext context, int index) =>
                 Divider(color: Theme.of(context).dividerColor),

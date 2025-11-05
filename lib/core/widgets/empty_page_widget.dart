@@ -43,40 +43,42 @@ class _EmptyPageWidgetState extends State<EmptyPageWidget>
     final Color baseColor =
         widget.backgroundColor ?? Theme.of(context).primaryColor;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        const SizedBox(height: 20, width: double.infinity),
-        ScaleTransition(
-          scale: CurvedAnimation(
-            parent: _controller,
-            curve: Curves.easeOutBack,
-          ),
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: baseColor.withValues(alpha: 0.15),
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          const SizedBox(height: 20, width: double.infinity),
+          ScaleTransition(
+            scale: CurvedAnimation(
+              parent: _controller,
+              curve: Curves.easeOutBack,
             ),
             child: Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: baseColor.withValues(alpha: 0.1),
+                color: baseColor.withValues(alpha: 0.15),
               ),
-              child: Icon(
-                widget.icon,
-                color: widget.iconColor ?? baseColor,
-                size: 40,
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: baseColor.withValues(alpha: 0.1),
+                ),
+                child: Icon(
+                  widget.icon,
+                  color: widget.iconColor ?? baseColor,
+                  size: 40,
+                ),
               ),
             ),
           ),
-        ),
-        if (widget.childBelow != null) ...<Widget>[
-          const SizedBox(height: 12),
-          widget.childBelow!,
+          if (widget.childBelow != null) ...<Widget>[
+            const SizedBox(height: 12),
+            widget.childBelow!,
+          ],
         ],
-      ],
+      ),
     );
   }
 }
