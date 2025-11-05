@@ -11,85 +11,105 @@ class PersonalShoppingTabbar extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<ShoppingBasketPageType> allTabs = ShoppingBasketPageType.list();
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          final double availableWidth = constraints.maxWidth;
-          const double moreButtonWidth = 80;
-          const double minTabWidth = 80;
-          int maxVisibleTabs = allTabs.length;
-          double totalTabWidth = allTabs.length * minTabWidth;
-          if (totalTabWidth > availableWidth) {
-            maxVisibleTabs = ((availableWidth - moreButtonWidth) ~/ minTabWidth)
-                .clamp(0, allTabs.length);
-          }
-          // Mark: final visible and hidden tabs
-          final List<ShoppingBasketPageType> visibleTabs =
-              allTabs.take(maxVisibleTabs).toList();
-          final List<ShoppingBasketPageType> hiddenTabs =
-              allTabs.skip(visibleTabs.length).toList();
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final double availableWidth = constraints.maxWidth;
+        // Always show up to 3 tabs (or fewer if there aren't 3).
+        const int desiredVisibleTabs = 3;
+        final int maxVisibleTabs = allTabs.length >= desiredVisibleTabs
+            ? desiredVisibleTabs
+            : allTabs.length;
 
-          return Consumer<CartProvider>(
-            builder: (BuildContext context, CartProvider cartPro, _) {
-              final int totalTabs =
-                  visibleTabs.length + (hiddenTabs.isNotEmpty ? 1 : 0);
-              final double tabWidth = availableWidth / totalTabs;
-              return SizedBox(
-                height: 36,
-                child: Column(
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        ...visibleTabs.map(
-                          (ShoppingBasketPageType type) => SizedBox(
-                            width: tabWidth,
-                            child: _IconButton(
-                              title: type.code.tr(),
-                              isSelected: cartPro.shoppingBasketType == type,
-                              onPressed: () => cartPro.setBasketPageType(type),
-                            ),
+        // final visible and hidden tabs
+        final List<ShoppingBasketPageType> visibleTabs =
+            allTabs.take(maxVisibleTabs).toList();
+        final List<ShoppingBasketPageType> hiddenTabs =
+            allTabs.skip(visibleTabs.length).toList();
+
+        return Consumer<CartProvider>(
+          builder: (BuildContext context, CartProvider cartPro, _) {
+            final int totalTabs =
+                visibleTabs.length + (hiddenTabs.isNotEmpty ? 1 : 0);
+            final double tabWidth = availableWidth / totalTabs;
+            return Container(
+              height: 48,
+              width: double.infinity,
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      ...visibleTabs.map(
+                        (ShoppingBasketPageType type) => SizedBox(
+                          width: tabWidth,
+                          child: _IconButton(
+                            title: type.code.tr(),
+                            isSelected: cartPro.shoppingBasketType == type,
+                            onPressed: () => cartPro.setBasketPageType(type),
                           ),
                         ),
-                        if (hiddenTabs.isNotEmpty)
-                          SizedBox(
-                            width: tabWidth,
-                            child: PopupMenuButton<ShoppingBasketPageType>(
-                              tooltip: 'More',
-                              offset: const Offset(0, 36),
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              onSelected: (ShoppingBasketPageType type) {
-                                cartPro.setBasketPageType(type);
-                              },
-                              itemBuilder: (BuildContext context) {
-                                return hiddenTabs
-                                    .map(
-                                      (ShoppingBasketPageType type) =>
-                                          PopupMenuItem<ShoppingBasketPageType>(
-                                        value: type,
-                                        child: Text(type.code.tr()),
-                                      ),
-                                    )
-                                    .toList();
-                              },
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(8),
-                                onTap: null,
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 4.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          Text(
-                                            'more'.tr(),
-                                            style: TextStyle(
-                                              fontSize: 14,
+                      ),
+                      if (hiddenTabs.isNotEmpty)
+                        Column(
+                          children: [
+                            SizedBox(
+                              width: tabWidth,
+                              child: PopupMenuButton<ShoppingBasketPageType>(
+                                tooltip: 'More',
+                                offset: const Offset(0, 36),
+                                color:
+                                    Theme.of(context).scaffoldBackgroundColor,
+                                onSelected: (ShoppingBasketPageType type) {
+                                  cartPro.setBasketPageType(type);
+                                },
+                                itemBuilder: (BuildContext context) {
+                                  return hiddenTabs
+                                      .map(
+                                        (ShoppingBasketPageType type) =>
+                                            PopupMenuItem<
+                                                ShoppingBasketPageType>(
+                                          value: type,
+                                          child: Text(type.code.tr()),
+                                        ),
+                                      )
+                                      .toList();
+                                },
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(8),
+                                  onTap: null,
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 4.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            Text(
+                                              'more'.tr(),
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: hiddenTabs.contains(
+                                                        cartPro
+                                                            .shoppingBasketType)
+                                                    ? Theme.of(context)
+                                                        .primaryColor
+                                                    : Theme.of(context)
+                                                        .colorScheme
+                                                        .outline,
+                                                fontWeight: hiddenTabs.contains(
+                                                        cartPro
+                                                            .shoppingBasketType)
+                                                    ? FontWeight.bold
+                                                    : FontWeight.normal,
+                                              ),
+                                            ),
+                                            Icon(
+                                              Icons
+                                                  .keyboard_arrow_down_outlined,
+                                              size: 18,
                                               color: hiddenTabs.contains(cartPro
                                                       .shoppingBasketType)
                                                   ? Theme.of(context)
@@ -97,53 +117,39 @@ class PersonalShoppingTabbar extends StatelessWidget {
                                                   : Theme.of(context)
                                                       .colorScheme
                                                       .outline,
-                                              fontWeight: hiddenTabs.contains(
-                                                      cartPro
-                                                          .shoppingBasketType)
-                                                  ? FontWeight.bold
-                                                  : FontWeight.normal,
                                             ),
-                                          ),
-                                          Icon(
-                                            Icons.keyboard_arrow_down_outlined,
-                                            size: 18,
-                                            color: hiddenTabs.contains(
-                                                    cartPro.shoppingBasketType)
-                                                ? Theme.of(context).primaryColor
-                                                : Theme.of(context)
-                                                    .colorScheme
-                                                    .outline,
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    Container(
-                                      height: 1,
-                                      color: hiddenTabs.contains(
-                                              cartPro.shoppingBasketType)
-                                          ? Theme.of(context).primaryColor
-                                          : Colors.transparent,
-                                    ),
-                                    Container(
-                                      height: 1,
-                                      decoration: BoxDecoration(
-                                          color: ColorScheme.of(context)
-                                              .outlineVariant),
-                                    )
-                                  ],
+                                      Container(
+                                        height: 1,
+                                        color: hiddenTabs.contains(
+                                                cartPro.shoppingBasketType)
+                                            ? Theme.of(context).primaryColor
+                                            : Colors.transparent,
+                                      ),
+                                      Container(
+                                        height: 1,
+                                        decoration: BoxDecoration(
+                                            color: ColorScheme.of(context)
+                                                .outlineVariant),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
-        },
-      ),
+                            const Divider()
+                          ],
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
