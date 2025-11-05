@@ -20,7 +20,7 @@ class CheckoutRemoteAPIImpl implements CheckoutRemoteAPI {
       final DataState<bool> result = await ApiCall<bool>().call(
         endpoint: endpoint,
         requestType: ApiRequestType.post,
-        body: address.checkoutAddressToJson(),
+        body: address.toCheckoutJson(),
       );
       if (result is DataSuccess) {
         return DataSuccess<CheckOutEntity>(
@@ -29,7 +29,7 @@ class CheckoutRemoteAPIImpl implements CheckoutRemoteAPI {
         );
       } else {
         AppLog.error(
-          address.checkoutAddressToJson(),
+          address.toCheckoutJson(),
           name: 'CheckoutRemoteAPIImpl.getCheckout - Else',
           error: result.exception?.reason ?? 'something_wrong'.tr(),
         );
@@ -55,7 +55,7 @@ class CheckoutRemoteAPIImpl implements CheckoutRemoteAPI {
         endpoint: endpoint,
         isAuth: true,
         requestType: ApiRequestType.post,
-        body: param.checkoutAddressToJson(),
+        body: json.encode(param.toJson()),
       );
       if (result is DataSuccess<String>) {
         final Map<String, dynamic> responseMap = jsonDecode(result.data ?? '');
@@ -65,7 +65,7 @@ class CheckoutRemoteAPIImpl implements CheckoutRemoteAPI {
         return DataSuccess<String>(result.data ?? '', clientSecret);
       } else {
         AppLog.error(
-          param.checkoutAddressToJson(),
+          param.toCheckoutJson(),
           name: 'CheckoutRemoteAPIImpl.payIntent - Else',
           error: result.exception?.reason ?? 'something_wrong'.tr(),
         );
@@ -81,5 +81,4 @@ class CheckoutRemoteAPIImpl implements CheckoutRemoteAPI {
       return DataFailer<String>(CustomException(e.toString()));
     }
   }
-
- }
+}

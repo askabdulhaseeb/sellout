@@ -261,6 +261,7 @@ class _PersonalCartTileState extends State<PersonalCartTile> {
                   onChanged: (bool val) {
                     // Only update local UI state; do not persist to LocalPost.
                     setState(() {
+                      debugPrint('fast delivery for ${widget.item.postID}');
                       isActive = val;
                       _deliveryType = val
                           ? DeliveryType.fastDelivery

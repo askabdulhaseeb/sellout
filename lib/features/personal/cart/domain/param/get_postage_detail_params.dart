@@ -11,7 +11,7 @@ class GetPostageDetailParam {
   final List<String> fastDelivery;
 
   Map<String, dynamic> toMap() => {
-        'buyer_address': buyerAddress.checkoutAddressToJson(),
+        'buyer_address': buyerAddress.toCheckoutJson(),
         'fast_delivery': fastDelivery,
       };
 

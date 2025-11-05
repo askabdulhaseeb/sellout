@@ -24,72 +24,95 @@ class PersonalCartScreen extends StatefulWidget {
 class _PersonalCartScreenState extends State<PersonalCartScreen> {
   @override
   void initState() {
-    Provider.of<CartProvider>(context, listen: false).getCart();
     super.initState();
+    // Defer provider calls until after first frame to avoid using context
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CartProvider>().getCart();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     debugPrint(' token ${LocalAuth.token}');
-    final CartProvider pro = Provider.of<CartProvider>(context, listen: false);
+    // watch for reactive updates to cart provider
+    final CartProvider cartPro = context.watch<CartProvider>();
+
     return PopScope(
-      onPopInvokedWithResult: (bool didPop, dynamic result) => pro.reset(),
-      child: Consumer<CartProvider>(
-        builder: (BuildContext context, CartProvider cartPro, Widget? child) =>
-            Scaffold(
-                appBar: AppBar(
-                  centerTitle: true,
-                  title: const AppBarTitle(titleKey: 'cart'),
-                ),
-                body: PopScope(
-                  onPopInvokedWithResult: (bool didPop, dynamic result) =>
-                      pro.reset(),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      children: <Widget>[
-                        const PersonalCartPageTile(),
-                        const SizedBox(height: 24),
-                        cartPro.page == 1
-                            ? Expanded(
-                                child: Column(
-                                  children: <Widget>[
-                                    const CartSaveLaterToggleSection(),
-                                    cartPro.basketPage == CartItemType.cart
-                                        ? const PersonalCartItemList()
-                                        : const PersonalCartSaveLaterItemList(),
-                                    if (cartPro.basketPage == CartItemType.cart)
-                                      const PersonalCartTotalSection(),
-                                  ],
-                                ),
-                              )
-                            : cartPro.page == 2
-                                ? Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          const PersonalCheckoutView(),
-                                          CustomElevatedButton(
-                                            title: 'proceed_to_payment'.tr(),
-                                            isLoading: false,
-                                            onTap: () async {
-                                              await cartPro
-                                                  .processPayment(context);
-                                            },
-                                          ),
-                                          const SizedBox(height: 24),
-                                        ],
-                                      ),
-                                    ),
-                                  )
-                                : const SizedBox.shrink(),
-                      ],
-                    ),
-                  ),
-                )),
+      onPopInvokedWithResult: (bool didPop, dynamic result) =>
+          context.read<CartProvider>().reset(),
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: const AppBarTitle(titleKey: 'cart'),
+        ),
+        body: PopScope(
+          onPopInvokedWithResult: (bool didPop, dynamic result) =>
+              context.read<CartProvider>().reset(),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: <Widget>[
+                const PersonalCartPageTile(),
+                const SizedBox(height: 24),
+                if (cartPro.page == 1)
+                  const CartPage()
+                else if (cartPro.page == 2)
+                  const CheckoutPage()
+                else
+                  const SizedBox.shrink(),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CartPage extends StatelessWidget {
+  const CartPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final CartProvider cartPro = context.watch<CartProvider>();
+    return Expanded(
+      child: Column(
+        children: <Widget>[
+          const CartSaveLaterToggleSection(),
+          cartPro.basketPage == CartItemType.cart
+              ? const PersonalCartItemList()
+              : const PersonalCartSaveLaterItemList(),
+          if (cartPro.basketPage == CartItemType.cart)
+            const PersonalCartTotalSection(),
+        ],
+      ),
+    );
+  }
+}
+
+class CheckoutPage extends StatelessWidget {
+  const CheckoutPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final CartProvider cartPro = context.read<CartProvider>();
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            const PersonalCheckoutView(),
+            CustomElevatedButton(
+              title: 'proceed_to_payment'.tr(),
+              isLoading: false,
+              onTap: () async {
+                await cartPro.processPayment(context);
+              },
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
       ),
     );
   }

@@ -13,7 +13,10 @@ class AddressModel extends AddressEntity {
     required super.townCity,
     required super.country,
     super.isDefault = false,
+    required this.state,
   });
+
+  final String state;
 
   factory AddressModel.fromEntity(AddressEntity entity) => AddressModel(
         addressID: entity.addressID,
@@ -25,6 +28,7 @@ class AddressModel extends AddressEntity {
         townCity: entity.townCity,
         country: entity.country,
         isDefault: entity.isDefault,
+        state: '', // Default empty state
       );
 
   factory AddressModel.fromJson(Map<String, dynamic> json) => AddressModel(
@@ -34,40 +38,30 @@ class AddressModel extends AddressEntity {
         address: json['address_1'] ?? '',
         category: json['address_category'] ?? '',
         postalCode: json['postal_code'] ?? '',
-        townCity: json['town_city'] ?? '',
+        townCity: json['city'] ?? '', // Map 'city' to townCity
         country: json['country'] ?? 'UK',
         isDefault: json['is_default'] ?? false,
+        state: json['state'] ?? '',
       );
-  String toOfferJson() => json.encode(<String, dynamic>{
-        'recipient_name': super.recipientName,
-        'address_1': super.address,
-        'town_city': super.townCity,
-        'phone_number': super.phoneNumber,
-        'postal_code': super.postalCode,
-        'address_category': super.category,
-        'country': super.country,
-        'is_default': super.isDefault,
-      });
-  String checkoutAddressToJson() => json.encode(<String, Map<String, Object>>{
-        'buyer_address': <String, Object>{
-          'recipient_name': recipientName,
-          'address_1': address,
-          'town_city': townCity,
-          'phone_number': phoneNumber,
-          'postal_code': postalCode,
-          'address_category': category,
-          'country': country,
-          'is_default': super.isDefault,
-        },
-      });
-  Map<String, dynamic> shippingAddressToJson() => <String, dynamic>{
-        'recipient_name': super.recipientName,
-        'address_1': super.address,
-        'town_city': super.townCity,
-        'phone_number': super.phoneNumber,
-        'postal_code': super.postalCode,
-        'address_category': super.category,
-        'country': super.country,
-        'is_default': super.isDefault,
+
+  Map<String, dynamic> _addressToJson() => <String, dynamic>{
+        'recipient_name': recipientName,
+        'address_1': address,
+        'city': townCity, // Using townCity for city field
+        'state': state,
+        'phone_number': phoneNumber,
+        'postal_code': postalCode,
+        'address_category': category,
+        'country': country,
+        'is_default': isDefault,
       };
+
+  Map<String, dynamic> toJson() => _addressToJson();
+  Map<String, dynamic> toShippingJson() => _addressToJson();
+  
+  String toOfferJson() => json.encode(_addressToJson());
+  
+  String toCheckoutJson() => json.encode({
+        'buyer_address': _addressToJson(),
+      });
 }
