@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../features/personal/cart/views/screens/personal_cart_screen.dart';
+import '../../../features/personal/basket/views/screens/personal_shopping_basket_screen.dart';
 import '../../../features/personal/post/domain/entities/post/post_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/color_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/size_color_entity.dart';
@@ -85,7 +85,7 @@ class _PostTileClothFootDialogState extends State<PostTileClothFootDialog> {
           if (!mounted) return;
 
           if (widget.actionType == PostTileClothFootType.buy) {
-            await Navigator.of(context).pushNamed(PersonalCartScreen.routeName);
+            await Navigator.of(context).pushNamed(PersonalShoppingBasketScreen.routeName);
           } else {
             Navigator.of(context).pop();
             AppSnackBar.success(context, 'successfull_add_to_basket'.tr());

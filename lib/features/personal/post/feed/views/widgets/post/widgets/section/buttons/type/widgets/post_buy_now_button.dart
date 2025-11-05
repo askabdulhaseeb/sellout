@@ -7,7 +7,7 @@ import '../../../../../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../../../../services/get_it.dart';
-import '../../../../../../../../../../cart/views/screens/personal_cart_screen.dart';
+import '../../../../../../../../../../basket/views/screens/personal_shopping_basket_screen.dart';
 import '../../../../../../../../../domain/entities/post/post_entity.dart';
 import '../../../../../../../../../domain/entities/size_color/color_entity.dart';
 import '../../../../../../../../../domain/entities/size_color/size_color_entity.dart';
@@ -72,7 +72,8 @@ class _PostBuyNowButtonState extends State<PostBuyNowButton> {
         final DataState<bool> result = await usecase(param);
         if (result is DataSuccess) {
           if (mounted) {
-            await Navigator.of(context).pushNamed(PersonalCartScreen.routeName);
+            await Navigator.of(context)
+                .pushNamed(PersonalShoppingBasketScreen.routeName);
           }
         } else {
           AppLog.error(

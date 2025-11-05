@@ -14,7 +14,7 @@ import '../../data/models/checkout/order_billing_model.dart';
 import '../../data/sources/local/local_cart.dart';
 import '../../domain/entities/cart/cart_entity.dart';
 import '../../domain/entities/checkout/check_out_entity.dart';
-import '../../domain/enums/basket_type.dart';
+import '../../domain/enums/shopping_basket_page_type.dart';
 import '../../domain/enums/cart_type.dart';
 import '../../domain/param/cart_item_update_qty_param.dart';
 import '../../domain/usecase/cart/cart_item_status_update_usecase.dart';
@@ -42,25 +42,20 @@ class CartProvider extends ChangeNotifier {
   final PayIntentUsecase _payIntentUsecase;
 //---------------------------------------------------------------------------------------------------------------------------------------------
 // varibales
-  CartType _cartType = CartType.basket;
-  BasketType _basketType = BasketType.shoppingBasket;
-
+  ShoppingBasketPageType _shoppingBasketType = ShoppingBasketPageType.basket;
+  CartType _cartType = CartType.shoppingBasket;
 // getters
   CartType get cartType => _cartType;
-  BasketType get basketType => _basketType;
+  ShoppingBasketPageType get shoppingBasketType => _shoppingBasketType;
 // setters
-  set cartType(CartType type) {
-    if (_cartType != type) {
-      _cartType = type;
-      notifyListeners();
-    }
+  void setCartType(CartType type) {
+    _cartType = type;
+    notifyListeners();
   }
 
-  set basketType(BasketType type) {
-    if (_basketType != type) {
-      _basketType = type;
-      notifyListeners();
-    }
+  void setBasketPageType(ShoppingBasketPageType type) {
+    _shoppingBasketType = type;
+    notifyListeners();
   }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
