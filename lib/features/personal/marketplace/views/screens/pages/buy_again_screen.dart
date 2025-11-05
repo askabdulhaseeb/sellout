@@ -16,56 +16,9 @@ import '../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../post/feed/views/widgets/post/widgets/section/buttons/type/widgets/post_buy_now_button.dart';
 import '../../../../post/post_detail/views/screens/post_detail_screen.dart';
 
-class BuyAgainScreen extends StatefulWidget {
+class BuyAgainScreen extends StatelessWidget {
   const BuyAgainScreen({super.key});
   static String routeName = 'buy-again-screen';
-
-  @override
-  State<BuyAgainScreen> createState() => _BuyAgainScreenState();
-}
-
-class _BuyAgainScreenState extends State<BuyAgainScreen> {
-  late Future<DataState<List<OrderEntity>>> futureOrders;
-  List<OrderEntity> deliveredOrders = <OrderEntity>[];
-  Map<String, PostEntity?> postCache = <String, PostEntity?>{}; // cache posts
-  bool postsLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    final String uid = LocalAuth.uid ?? '';
-    futureOrders = GetOrderByUidUsecase(locator()).call(
-      GetOrderParams(
-        user: GetOrderUserType.buyerId,
-        value: uid,
-        status: StatusType.delivered,
-      ),
-    );
-
-    // Fetch orders and then posts
-    futureOrders.then((DataState<List<OrderEntity>> dataState) async {
-      if (dataState is DataSuccess<List<OrderEntity>>) {
-        deliveredOrders = dataState.entity ?? <OrderEntity>[];
-
-        // Initialize cache with null for loading
-        for (final order in deliveredOrders) {
-          postCache[order.postId] = null;
-        }
-        setState(() {});
-
-        // Fetch posts asynchronously
-        for (final order in deliveredOrders) {
-          final PostEntity? post = await LocalPost().getPost(order.postId);
-          if (post != null) {
-            postCache[order.postId] = post;
-            setState(() {}); // refresh UI
-          }
-        }
-      }
-      postsLoading = false;
-      setState(() {});
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,57 +27,144 @@ class _BuyAgainScreenState extends State<BuyAgainScreen> {
         title: AppBarTitle(titleKey: 'buy_again'.tr()),
         centerTitle: true,
       ),
-      body: FutureBuilder<DataState<List<OrderEntity>>>(
-        future: futureOrders,
-        builder: (BuildContext context,
-            AsyncSnapshot<DataState<List<OrderEntity>>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return ListView.separated(
-              padding: const EdgeInsets.all(16),
-              itemCount: 10,
-              separatorBuilder: (_, __) => const Divider(height: 1),
-              itemBuilder: (BuildContext context, int index) {
-                return const BuyerOrderTileLoader();
-              },
-            );
-          } else if (snapshot.hasError) {
-            return Center(child: Text('something_wrong'.tr()));
-          } else if (!snapshot.hasData) {
-            return Center(child: Text('no_data_found'.tr()));
+      body: const BuyAgainSection(),
+    );
+  }
+}
+
+class BuyAgainSection extends StatefulWidget {
+  const BuyAgainSection({
+    super.key,
+    this.shrinkWrap = true,
+    this.physics,
+  });
+  final bool shrinkWrap;
+  final ScrollPhysics? physics;
+
+  @override
+  State<BuyAgainSection> createState() => _BuyAgainSectionState();
+}
+
+class _BuyAgainSectionState extends State<BuyAgainSection> {
+  late Future<DataState<List<OrderEntity>>> futureOrders;
+  List<OrderEntity> deliveredOrders = <OrderEntity>[];
+  Map<String, PostEntity?> postCache = <String, PostEntity?>{};
+  bool postsLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadOrdersAndPosts();
+  }
+
+  void _loadOrdersAndPosts() {
+    final String uid = LocalAuth.uid ?? '';
+
+    futureOrders = GetOrderByUidUsecase(locator()).call(
+      GetOrderParams(
+        user: GetOrderUserType.buyerId,
+        value: uid,
+        status: StatusType.delivered,
+      ),
+    );
+
+    futureOrders.then((DataState<List<OrderEntity>> dataState) async {
+      try {
+        if (dataState is DataSuccess<List<OrderEntity>>) {
+          deliveredOrders = dataState.entity ?? <OrderEntity>[];
+
+          // Initialize cache with nulls
+          for (final OrderEntity order in deliveredOrders) {
+            postCache[order.postId] = null;
           }
 
-          if (deliveredOrders.isEmpty) {
-            return Center(child: Text('no_data_found'.tr()));
+          // If the widget was removed from the tree, stop processing.
+          if (!mounted) return;
+          setState(() {});
+
+          // Load posts one by one. Break early if unmounted to avoid calling
+          // setState after dispose and to stop unnecessary work.
+          for (final OrderEntity order in deliveredOrders) {
+            if (!mounted) break;
+            final PostEntity? post = await LocalPost().getPost(order.postId);
+            if (!mounted) break;
+            if (post != null) {
+              postCache[order.postId] = post;
+              if (mounted) setState(() {});
+            }
           }
+        }
+      } catch (e) {
+        // Swallow/log error as needed. We avoid rethrowing to keep the
+        // FutureBuilder happy; the builder will still receive the completed
+        // future and render an appropriate UI.
+      } finally {
+        if (!mounted) {
+          return;
+        }
+        postsLoading = false;
+        if (mounted) setState(() {});
+      }
+    });
+  }
 
-          // Build a list of posts for the grid
-          final List<PostEntity> posts = deliveredOrders
-              .map((order) => postCache[order.postId])
-              .whereType<PostEntity>()
-              .toList();
+  @override
+  Widget build(BuildContext context) {
+    final ScrollPhysics? effectivePhysics = widget.physics ??
+        (widget.shrinkWrap ? const NeverScrollableScrollPhysics() : null);
 
-          if (posts.isEmpty && postsLoading) {
-            // Still loading posts
-            return const Center(child: CircularProgressIndicator());
-          } else if (posts.isEmpty) {
-            return Center(child: Text('no_data_found'.tr()));
-          }
-
-          return GridView.builder(
+    return FutureBuilder<DataState<List<OrderEntity>>>(
+      future: futureOrders,
+      builder: (BuildContext context,
+          AsyncSnapshot<DataState<List<OrderEntity>>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return ListView.separated(
             padding: const EdgeInsets.all(16),
-            itemCount: posts.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 6.0,
-              mainAxisSpacing: 6.0,
-              childAspectRatio: 0.66,
-            ),
+            shrinkWrap: widget.shrinkWrap,
+            physics: effectivePhysics,
+            itemCount: 10,
+            separatorBuilder: (_, __) => const Divider(height: 1),
             itemBuilder: (BuildContext context, int index) {
-              return _PostGridViewTile(post: posts[index]);
+              return const BuyerOrderTileLoader();
             },
           );
-        },
-      ),
+        } else if (snapshot.hasError) {
+          return Center(child: Text('something_wrong'.tr()));
+        } else if (!snapshot.hasData) {
+          return Center(child: Text('no_data_found'.tr()));
+        }
+
+        if (deliveredOrders.isEmpty) {
+          return Center(child: Text('no_data_found'.tr()));
+        }
+
+        final List<PostEntity> posts = deliveredOrders
+            .map((OrderEntity order) => postCache[order.postId])
+            .whereType<PostEntity>()
+            .toList();
+
+        if (posts.isEmpty && postsLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (posts.isEmpty) {
+          return Center(child: Text('no_data_found'.tr()));
+        }
+
+        return GridView.builder(
+          padding: const EdgeInsets.all(16),
+          shrinkWrap: widget.shrinkWrap,
+          physics: effectivePhysics,
+          itemCount: posts.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 6.0,
+            mainAxisSpacing: 6.0,
+            childAspectRatio: 0.66,
+          ),
+          itemBuilder: (BuildContext context, int index) {
+            return _PostGridViewTile(post: posts[index]);
+          },
+        );
+      },
     );
   }
 }
@@ -145,7 +185,7 @@ class _PostGridViewTile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          // Image section
+          // Image
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: AspectRatio(
@@ -156,11 +196,11 @@ class _PostGridViewTile extends StatelessWidget {
               ),
             ),
           ),
-          // Title and price section
+          const SizedBox(height: 4),
+          // Title + Rating + Price + Buy button
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              // Title
               Text(
                 post.title,
                 overflow: TextOverflow.ellipsis,
@@ -170,14 +210,13 @@ class _PostGridViewTile extends StatelessWidget {
                   fontSize: 14,
                 ),
               ),
-
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                      children: <Widget>[
                         RatingDisplayWidget(
                           fontSize: 10,
                           size: 12,

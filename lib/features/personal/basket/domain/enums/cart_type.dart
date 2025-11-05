@@ -1,18 +1,22 @@
-enum ShoppingBasketPageType {
-  basket,
-  saved,
-  buyAgain;
+enum CartType {
+  shoppingBasket,
+  checkoutOrder,
+  reviewOrder,
+  payment;
 
   String get code {
     switch (this) {
-      case ShoppingBasketPageType.basket:
-        return 'basket';
-      case ShoppingBasketPageType.saved:
-        return 'saved';
-      case ShoppingBasketPageType.buyAgain:
-        return 'buy_again';
+      case CartType.shoppingBasket:
+        return 'shopping_basket';
+      case CartType.checkoutOrder:
+        return 'checkout_order';
+      case CartType.reviewOrder:
+        return 'review_order';
+      case CartType.payment:
+        return 'payment';
     }
   }
 
-  static List<ShoppingBasketPageType> list() => [basket, saved, buyAgain];
+  static List<CartType> list() =>
+      <CartType>[shoppingBasket, checkoutOrder, reviewOrder, payment];
 }
