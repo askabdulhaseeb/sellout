@@ -16,24 +16,23 @@ class CheckoutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final CartProvider cartPro = context.read<CartProvider>();
-    // Avoid Expanded here — return the padded column directly so this widget
-    // can be used inside parents that don't provide a bounded height.
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          const PersonalCheckoutView(),
-          CustomElevatedButton(
-            title: 'proceed_to_payment'.tr(),
-            isLoading: false,
-            onTap: () async {
-              await cartPro.processPayment(context);
-            },
-          ),
-          const SizedBox(height: 24),
-        ],
-      ),
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        // const PersonalCheckoutView(),
+        Column(
+          children: <Widget>[
+            CustomElevatedButton(
+              title: 'proceed_to_payment'.tr(),
+              isLoading: false,
+              onTap: () async {
+                await cartPro.processPayment(context);
+              },
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -51,6 +50,7 @@ class PersonalCheckoutView extends StatelessWidget {
       child: Consumer<CartProvider>(
           builder: (BuildContext context, CartProvider cartPro, _) {
         return Column(
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             if (cartPro.address != null)
               FutureBuilder<DataState<CheckOutEntity>>(

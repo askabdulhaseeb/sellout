@@ -33,29 +33,26 @@ class _PersonalShoppingPageState extends State<PersonalShoppingPage> {
           context.read<CartProvider>().reset(),
       child: cartPro.cartItems.isEmpty
           ? const EmptyPageWidget(icon: Icons.shopping_cart_outlined)
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  const PersonalCartStepIndicator(),
-                  const SizedBox(height: 24),
-                  if (cartPro.page == 1)
-                    const CartPage()
-                  else if (cartPro.page == 2)
-                    const CheckoutPage()
-                  else if (cartPro.page == 3)
-                    const Center(
-                      child: Text('Order Review'),
-                    )
-                  else if (cartPro.page == 4)
-                    const Center(
-                      child: Text('Payment'),
-                    )
-                  else
-                    const SizedBox.shrink(),
-                ],
-              ),
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const PersonalCartStepIndicator(),
+                const SizedBox(height: 24),
+                if (cartPro.page == 1)
+                  const CartPage()
+                else if (cartPro.page == 2)
+                  const CheckoutPage()
+                else if (cartPro.page == 3)
+                  const Center(
+                    child: Text('Order Review'),
+                  )
+                else if (cartPro.page == 4)
+                  const Center(
+                    child: Text('Payment'),
+                  )
+                else
+                  const SizedBox.shrink(),
+              ],
             ),
     );
   }

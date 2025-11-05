@@ -24,9 +24,11 @@ class PersonalCartTotalSection extends StatelessWidget {
           orElse: () => CartModel(),
         );
         return Column(
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             const Divider(),
             ListTile(
+              dense: true,
               contentPadding: const EdgeInsets.symmetric(horizontal: 8),
               visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
               title: Text(
