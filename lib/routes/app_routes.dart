@@ -9,7 +9,7 @@ import '../features/personal/auth/find_account/view/screens/send_code_screen.dar
 import '../features/personal/auth/signin/views/screens/verify_two_factor_screen.dart';
 import '../features/personal/auth/welcome_screen/view/screens/welcome_screen.dart';
 import '../features/personal/visits/view/visit_calender.dart/screens/visit_calender_screen.dart';
-import '../features/personal/cart/views/screens/personal_cart_screen.dart';
+import '../features/personal/basket/views/screens/personal_shopping_basket_screen.dart';
 import '../features/personal/chats/chat/views/screens/chat_screen.dart';
 import '../features/personal/listing/listing_form/views/screens/add_listing_form_screen.dart';
 import '../features/personal/auth/signin/views/screens/sign_in_screen.dart';
@@ -113,8 +113,9 @@ class AppRoutes {
     ChatScreen.routeName: (_) => const ChatScreen(),
     //BOOKING
     BookingScreen.routeName: (_) => const BookingScreen(),
-    // CART
-    PersonalCartScreen.routeName: (_) => const PersonalCartScreen(),
+    // Shoppig Basket
+    PersonalShoppingBasketScreen.routeName: (_) =>
+        const PersonalShoppingBasketScreen(),
     //Review
     WriteReviewScreen.routeName: (_) => const WriteReviewScreen(),
     // Profile

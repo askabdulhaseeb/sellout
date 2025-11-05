@@ -7,7 +7,7 @@ import '../features/business/service/views/providers/add_service_provider.dart';
 import '../features/personal/address/add_address/views/provider/add_address_provider.dart';
 import '../features/personal/auth/find_account/view/providers/find_account_provider.dart';
 import '../features/personal/auth/signup/views/providers/signup_provider.dart';
-import '../features/personal/cart/views/providers/cart_provider.dart';
+import '../features/personal/basket/views/providers/cart_provider.dart';
 import '../features/personal/chats/chat/views/providers/chat_provider.dart';
 import '../features/personal/chats/chat/views/providers/send_message_provider.dart';
 import '../features/personal/chats/create_chat/view/provider/create_private_chat_provider.dart';

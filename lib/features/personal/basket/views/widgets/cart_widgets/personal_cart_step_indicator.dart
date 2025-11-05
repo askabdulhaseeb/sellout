@@ -4,15 +4,13 @@ import 'package:provider/provider.dart';
 import '../../../../../../core/constants/app_spacings.dart';
 import '../../providers/cart_provider.dart';
 
-class PersonalCartPageTile extends StatelessWidget {
-  const PersonalCartPageTile({super.key});
+class PersonalCartStepIndicator extends StatelessWidget {
+  const PersonalCartStepIndicator({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Consumer<CartProvider>(
         builder: (BuildContext context, CartProvider cartPro, _) {
-      // Place each button in an Expanded so every tile has the same width.
-      // Use top alignment on the Row so the icons stay aligned when text wraps.
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,

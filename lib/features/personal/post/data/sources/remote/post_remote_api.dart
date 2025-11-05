@@ -5,7 +5,7 @@ import '../../../../../../core/params/report_params.dart';
 import '../../../../../../core/sources/api_call.dart';
 import '../../../../../../core/sources/local/local_request_history.dart';
 import '../../../../../../services/get_it.dart';
-import '../../../../cart/domain/usecase/cart/get_cart_usecase.dart';
+import '../../../../basket/domain/usecase/cart/get_cart_usecase.dart';
 import '../../../domain/entities/post/post_entity.dart';
 import '../../../domain/params/add_to_cart_param.dart';
 import '../../../domain/params/feed_response_params.dart';

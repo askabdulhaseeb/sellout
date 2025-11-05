@@ -4,12 +4,12 @@ import 'package:provider/provider.dart';
 import '../../domain/enums/cart_type.dart';
 import '../providers/cart_provider.dart';
 
-class CartTabSelectionWidget extends StatelessWidget {
-  const CartTabSelectionWidget({super.key});
+class PersonalShoppingTabbar extends StatelessWidget {
+  const PersonalShoppingTabbar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final List<CartType> allTabs = CartType.list();
+    final List<ShoppingBasketPageType> allTabs = ShoppingBasketPageType.list();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -24,10 +24,10 @@ class CartTabSelectionWidget extends StatelessWidget {
             maxVisibleTabs = ((availableWidth - moreButtonWidth) ~/ minTabWidth)
                 .clamp(0, allTabs.length);
           }
-
-          final List<CartType> visibleTabs =
+          // Mark: final visible and hidden tabs
+          final List<ShoppingBasketPageType> visibleTabs =
               allTabs.take(maxVisibleTabs).toList();
-          final List<CartType> hiddenTabs =
+          final List<ShoppingBasketPageType> hiddenTabs =
               allTabs.skip(visibleTabs.length).toList();
 
           return Consumer<CartProvider>(
@@ -42,30 +42,30 @@ class CartTabSelectionWidget extends StatelessWidget {
                     Row(
                       children: <Widget>[
                         ...visibleTabs.map(
-                          (CartType type) => SizedBox(
+                          (ShoppingBasketPageType type) => SizedBox(
                             width: tabWidth,
                             child: _IconButton(
                               title: type.code.tr(),
-                              isSelected: cartPro.cartType == type,
-                              onPressed: () => cartPro.cartType = type,
+                              isSelected: cartPro.shoppingBasketType == type,
+                              onPressed: () => cartPro.setBasketPageType(type),
                             ),
                           ),
                         ),
                         if (hiddenTabs.isNotEmpty)
                           SizedBox(
                             width: tabWidth,
-                            child: PopupMenuButton<CartType>(
+                            child: PopupMenuButton<ShoppingBasketPageType>(
                               tooltip: 'More',
                               offset: const Offset(0, 36),
                               color: Theme.of(context).scaffoldBackgroundColor,
-                              onSelected: (CartType type) {
-                                cartPro.cartType = type;
+                              onSelected: (ShoppingBasketPageType type) {
+                                cartPro.setBasketPageType(type);
                               },
                               itemBuilder: (BuildContext context) {
                                 return hiddenTabs
                                     .map(
-                                      (CartType type) =>
-                                          PopupMenuItem<CartType>(
+                                      (ShoppingBasketPageType type) =>
+                                          PopupMenuItem<ShoppingBasketPageType>(
                                         value: type,
                                         child: Text(type.code.tr()),
                                       ),
@@ -90,15 +90,16 @@ class CartTabSelectionWidget extends StatelessWidget {
                                             'more'.tr(),
                                             style: TextStyle(
                                               fontSize: 14,
-                                              color: hiddenTabs.contains(
-                                                      cartPro.cartType)
+                                              color: hiddenTabs.contains(cartPro
+                                                      .shoppingBasketType)
                                                   ? Theme.of(context)
                                                       .primaryColor
                                                   : Theme.of(context)
                                                       .colorScheme
                                                       .outline,
                                               fontWeight: hiddenTabs.contains(
-                                                      cartPro.cartType)
+                                                      cartPro
+                                                          .shoppingBasketType)
                                                   ? FontWeight.bold
                                                   : FontWeight.normal,
                                             ),
@@ -106,8 +107,8 @@ class CartTabSelectionWidget extends StatelessWidget {
                                           Icon(
                                             Icons.keyboard_arrow_down_outlined,
                                             size: 18,
-                                            color: hiddenTabs
-                                                    .contains(cartPro.cartType)
+                                            color: hiddenTabs.contains(
+                                                    cartPro.shoppingBasketType)
                                                 ? Theme.of(context).primaryColor
                                                 : Theme.of(context)
                                                     .colorScheme
@@ -118,10 +119,10 @@ class CartTabSelectionWidget extends StatelessWidget {
                                     ),
                                     Container(
                                       height: 1,
-                                      color:
-                                          hiddenTabs.contains(cartPro.cartType)
-                                              ? Theme.of(context).primaryColor
-                                              : Colors.transparent,
+                                      color: hiddenTabs.contains(
+                                              cartPro.shoppingBasketType)
+                                          ? Theme.of(context).primaryColor
+                                          : Colors.transparent,
                                     ),
                                     Container(
                                       height: 1,

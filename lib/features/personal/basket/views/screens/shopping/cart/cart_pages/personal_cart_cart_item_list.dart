@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import '../../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../../data/models/cart/cart_item_model.dart';
-import '../../../data/sources/local/local_cart.dart';
-import '../../widgets/cart_widgets/tile/personal_cart_tile.dart';
+import '../../../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../../data/models/cart/cart_item_model.dart';
+import '../../../../../data/sources/local/local_cart.dart';
+import '../../../../widgets/cart_widgets/tile/personal_cart_tile.dart';
 
 class PersonalCartItemList extends StatelessWidget {
   const PersonalCartItemList({super.key});
