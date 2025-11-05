@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import '../../../../../../core/constants/app_spacings.dart';
 import '../../providers/cart_provider.dart';
 
 class PersonalCartPageTile extends StatelessWidget {
@@ -11,22 +11,40 @@ class PersonalCartPageTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CartProvider>(
         builder: (BuildContext context, CartProvider cartPro, _) {
+      // Place each button in an Expanded so every tile has the same width.
+      // Use top alignment on the Row so the icons stay aligned when text wraps.
       return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          _IconButton(
+          Expanded(
+            child: _IconButton(
               title: 'shopping_basket'.tr(),
               isActive: cartPro.page == 1,
-              onTap: () {}),
-          Container(
-            height: 3,
-            width: 40,
-            color: Theme.of(context).dividerColor,
+              onTap: () {},
+            ),
           ),
-          _IconButton(
+          Expanded(
+            child: _IconButton(
               title: 'checkout'.tr(),
               isActive: cartPro.page == 2,
-              onTap: () {}),
+              onTap: () {},
+            ),
+          ),
+          Expanded(
+            child: _IconButton(
+              title: 'review_order'.tr(),
+              isActive: cartPro.page == 3,
+              onTap: () {},
+            ),
+          ),
+          Expanded(
+            child: _IconButton(
+              title: 'payment'.tr(),
+              isActive: cartPro.page == 4,
+              onTap: () {},
+            ),
+          ),
         ],
       );
     });
@@ -48,20 +66,37 @@ class _IconButton extends StatelessWidget {
     final Color color = isActive
         ? Theme.of(context).primaryColor
         : Theme.of(context).disabledColor;
+
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: SizedBox(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Icon(Icons.check_circle_outline_sharp, color: color),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: color),
-            ),
-          ],
+      borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+        child: SizedBox(
+          width: double.infinity,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Icon(
+                Icons.check_circle_outline_sharp,
+                color: color,
+                size: AppSpacing.md,
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+                child: Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: true,
+                  style: TextStyle(color: color, fontSize: 12),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

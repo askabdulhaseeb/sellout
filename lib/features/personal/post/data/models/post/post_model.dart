@@ -51,7 +51,7 @@ class PostModel extends PostEntity {
     required super.propertyInfo,
     required super.foodDrinkInfo,
     required super.itemInfo,
-    required super.packageDetail, // ADD THIS PARAMETER
+    required super.packageDetail,
     required super.meetUpLocation,
     required super.availability,
     required super.isActive,
