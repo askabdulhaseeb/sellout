@@ -8,6 +8,7 @@ import '../../../../core/widgets/app_snakebar.dart';
 import '../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../core/widgets/custom_svg_icon.dart';
 import '../../../../core/widgets/custom_textformfield.dart';
+import '../../../../core/widgets/phone_number/domain/entities/country_entity.dart';
 import '../../../../core/widgets/phone_number/views/countries_dropdown.dart';
 import '../../../../services/get_it.dart';
 import '../../../personal/setting/setting_dashboard/domain/params/create_account_session_params.dart';
@@ -24,7 +25,7 @@ class LinkBankBottomSheet extends StatefulWidget {
 class _LinkBankBottomSheetState extends State<LinkBankBottomSheet> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
-  String? _selectedCountry;
+  CountryEntity? _selectedCountry;
   bool _isLoading = false;
 
   @override
@@ -43,7 +44,7 @@ class _LinkBankBottomSheetState extends State<LinkBankBottomSheet> {
 
     final ConnectAccountSessionParams params = ConnectAccountSessionParams(
       email: _emailController.text.trim(),
-      country: _selectedCountry ?? '',
+      country: _selectedCountry?.shortName ?? '',
     );
 
     final DataState<String> result = await getSessionUseCase.call(params);
@@ -138,12 +139,12 @@ class _LinkBankBottomSheetState extends State<LinkBankBottomSheet> {
                   ),
                   const SizedBox(height: AppSpacing.vMd),
                   CountryDropdownField(
-                    onChanged: (String country) {
+                    onChanged: (CountryEntity country) {
                       setState(() => _selectedCountry = country);
                     },
                     validator: (_) {
                       if (_selectedCountry == null ||
-                          _selectedCountry!.isEmpty) {
+                          _selectedCountry!.countryCode.isEmpty) {
                         return 'please_select_country'.tr();
                       }
                       return null;

@@ -15,8 +15,8 @@ class CountryDropdownField extends StatefulWidget {
     super.key,
   });
 
-  final String? initialValue;
-  final void Function(String) onChanged;
+  final CountryEntity? initialValue;
+  final void Function(CountryEntity) onChanged;
 
   /// Validator should return error string if not valid, null if valid
   /// The bool argument is true if a country is selected
@@ -28,7 +28,7 @@ class CountryDropdownField extends StatefulWidget {
 
 class _CountryDropdownFieldState extends State<CountryDropdownField> {
   List<CountryEntity> countries = <CountryEntity>[];
-  String? selectedCountry;
+  CountryEntity? selectedCountry;
   GetCountiesUsecase? getCountiesUsecase;
 
   @override
@@ -49,9 +49,13 @@ class _CountryDropdownFieldState extends State<CountryDropdownField> {
 
     // Set initial value if available
     if (widget.initialValue != null &&
-        countries
-            .any((CountryEntity e) => e.displayName == widget.initialValue)) {
-      selectedCountry = widget.initialValue;
+        countries.any((CountryEntity e) =>
+            e.displayName == widget.initialValue?.displayName)) {
+      // find matching entity
+      selectedCountry = countries.firstWhere(
+          (CountryEntity e) =>
+              e.displayName == widget.initialValue?.displayName,
+          orElse: () => widget.initialValue!);
     }
 
     setState(() {});
@@ -59,21 +63,21 @@ class _CountryDropdownFieldState extends State<CountryDropdownField> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomDropdown<String>(
+    return CustomDropdown<CountryEntity>(
       title: 'country'.tr(),
       items: countries
           .where((CountryEntity e) => e.isActive)
-          .map((CountryEntity country) => DropdownMenuItem<String>(
-                value: country.displayName,
+          .map((CountryEntity country) => DropdownMenuItem<CountryEntity>(
+                value: country,
                 child: Text(country.displayName),
               ))
           .toList(),
       selectedItem: selectedCountry,
-      onChanged: (String? value) {
+      onChanged: (CountryEntity? value) {
         if (value == null) return;
         setState(() {
           selectedCountry = value;
-          widget.onChanged(value); // This will notify the parent
+          widget.onChanged(value); // notify parent with entity
         });
       },
       validator: widget.validator ??

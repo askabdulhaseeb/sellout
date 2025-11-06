@@ -30,7 +30,7 @@ class SigninProvider extends ChangeNotifier {
   );
   //'hammadafzaal06@gmail.com'
   final TextEditingController password = TextEditingController(
-    text: kDebugMode ? 'Shurahbeel_69' : '',
+    text: kDebugMode ? 'Shurahbeel_986' : '',
   );
 //'Hammad@786'
   bool _isLoading = false;

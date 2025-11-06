@@ -141,7 +141,7 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
                 : (widget._controller?.text.isEmpty ?? true)
                     ? 1
                     : widget.maxLines,
-            maxLength: widget.isExpanded ? widget.maxLength : null,
+            maxLength: widget.maxLength,
             style: widget.style ?? TextTheme.of(context).bodyMedium,
             validator: (String? value) =>
                 widget.validator == null ? null : widget.validator!(value),
@@ -172,21 +172,18 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
                             widget.readOnly)
                         ? (widget.maxLength == null
                             ? null
-                            : widget.isExpanded
-                                ? null
-                                : Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Text(
-                                        '${(widget._controller?.text ?? '').length}/${widget.maxLength}',
-                                        style: TextStyle(
-                                          color:
-                                              Theme.of(context).disabledColor,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ],
-                                  ))
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    '${(widget._controller?.text ?? '').length}/${widget.maxLength}',
+                                    style: TextStyle(
+                                      color: Theme.of(context).disabledColor,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ))
                         : IconButton(
                             splashRadius: 16,
                             onPressed: () => setState(() {
@@ -194,6 +191,7 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
                             }),
                             icon: const Icon(CupertinoIcons.clear, size: 18),
                           )),
+                counter: const SizedBox.shrink(),
                 focusColor: Theme.of(context).primaryColor,
                 errorBorder: OutlineInputBorder(
                   borderSide:

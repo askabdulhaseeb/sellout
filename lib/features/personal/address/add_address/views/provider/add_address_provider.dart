@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../core/widgets/phone_number/domain/entities/country_entity.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/phone_number_entity.dart';
 import '../../../../auth/signin/data/models/address_model.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -18,12 +19,15 @@ class AddAddressProvider extends ChangeNotifier {
   // ===========================
 
   PhoneNumberEntity? _phoneNumber;
+  final TextEditingController _recipientNameController =
+      TextEditingController();
   final TextEditingController _postalCodeController = TextEditingController();
   final TextEditingController _address1Controller = TextEditingController();
   final TextEditingController _address2Controller = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _stateController = TextEditingController();
   String _selectedCountry = '';
+  CountryEntity? _selectedCountryEntity;
   bool _isDefault = false;
   String _addressId = '';
   String _action = '';
@@ -33,6 +37,7 @@ class AddAddressProvider extends ChangeNotifier {
   // ===========================
 
   PhoneNumberEntity? get phoneNumber => _phoneNumber;
+  TextEditingController get recipientNameController => _recipientNameController;
   TextEditingController get postalCodeController => _postalCodeController;
   TextEditingController get address1Controller => _address1Controller;
   TextEditingController get address2Controller => _address2Controller;
@@ -40,6 +45,7 @@ class AddAddressProvider extends ChangeNotifier {
   TextEditingController get stateController => _stateController;
 
   String get selectedCountry => _selectedCountry;
+  CountryEntity? get selectedCountryEntity => _selectedCountryEntity;
   String get addressId => _addressId;
   bool get isDefault => _isDefault;
   String get action => _action;
@@ -47,7 +53,7 @@ class AddAddressProvider extends ChangeNotifier {
 
   AddressParams get addressParams => AddressParams(
         addressId: addressId,
-        recipientName: LocalAuth.currentUser?.displayName ?? '',
+        recipientName: _recipientNameController.text,
         address1: _address1Controller.text,
         address2: address2Controller.text,
         city: _stateController.text,
@@ -92,6 +98,12 @@ class AddAddressProvider extends ChangeNotifier {
   set selectedCountry(String value) {
     _selectedCountry = value;
     notifyListeners(); // Make sure to notify listeners to update the UI
+  }
+
+  set selectedCountryEntity(CountryEntity? value) {
+    _selectedCountryEntity = value;
+    _selectedCountry = value?.countryCode ?? '';
+    notifyListeners();
   }
 
   // ===========================
