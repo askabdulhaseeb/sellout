@@ -222,7 +222,7 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
 
         final PostageDetailResponseModel model =
             PostageDetailResponseModel.fromJson(json);
-
+        AppLog.info(model.toJson().toString());
         AppLog.info('Fetched postage details',
             name: 'CartRemoteAPIImpl.getPostageDetails - Success');
         return DataSuccess<PostageDetailResponseModel>(raw, model);

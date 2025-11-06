@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/constants/app_spacings.dart';
+import '../../../domain/enums/cart_type.dart';
 import '../../providers/cart_provider.dart';
 
 class PersonalCartStepIndicator extends StatelessWidget {
@@ -18,29 +19,49 @@ class PersonalCartStepIndicator extends StatelessWidget {
           Expanded(
             child: _IconButton(
               title: 'shopping_basket'.tr(),
-              isActive: cartPro.page == 1,
-              onTap: () {},
+              isActive: cartPro.cartType == CartType.shoppingBasket,
+              onTap: () {
+                // allow going back to shopping basket only if we're past it
+                if (cartPro.cartType.index > CartType.shoppingBasket.index) {
+                  cartPro.setCartType(CartType.shoppingBasket);
+                }
+              },
             ),
           ),
           Expanded(
             child: _IconButton(
               title: 'checkout'.tr(),
-              isActive: cartPro.page == 2,
-              onTap: () {},
+              isActive: cartPro.cartType == CartType.checkoutOrder,
+              onTap: () {
+                // allow going back to checkout only if we're past it
+                if (cartPro.cartType.index > CartType.checkoutOrder.index) {
+                  cartPro.setCartType(CartType.checkoutOrder);
+                }
+              },
             ),
           ),
           Expanded(
             child: _IconButton(
               title: 'review_order'.tr(),
-              isActive: cartPro.page == 3,
-              onTap: () {},
+              isActive: cartPro.cartType == CartType.reviewOrder,
+              onTap: () {
+                // allow going back to review only if we're past it
+                if (cartPro.cartType.index > CartType.reviewOrder.index) {
+                  cartPro.setCartType(CartType.reviewOrder);
+                }
+              },
             ),
           ),
           Expanded(
             child: _IconButton(
               title: 'payment'.tr(),
-              isActive: cartPro.page == 4,
-              onTap: () {},
+              isActive: cartPro.cartType == CartType.payment,
+              onTap: () {
+                // allow going back to payment only if we're past it (no-op in normal flow)
+                if (cartPro.cartType.index > CartType.payment.index) {
+                  cartPro.setCartType(CartType.payment);
+                }
+              },
             ),
           ),
         ],
