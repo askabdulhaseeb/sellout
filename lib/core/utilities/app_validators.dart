@@ -68,20 +68,27 @@ class AppValidator {
 
   static String? customRegExp(String formate, String? value,
       {String? message}) {
-    debugPrint('$formate - $value');
+    debugPrint('[AppValidator] pattern: $formate  rawValue: $value');
     try {
       if (formate.isEmpty) return null;
+      // Normalize the input: strip common separators and whitespace so a
+      // pattern expecting digits will match even if value contains spaces/dashes.
+      final String raw = value ?? '';
+      final String normalized = raw.replaceAll(RegExp(r'[\s\-\(\)\.]'), '');
+      debugPrint('[AppValidator] normalizedValue: $normalized');
+
       final RegExp regex = RegExp(formate);
-      if (!regex.hasMatch(value ?? '')) {
+      if (!regex.hasMatch(normalized)) {
         return message ??
-            (kDebugMode ? 'Invalid $value' : 'invalid_value'.tr());
+            (kDebugMode ? 'Invalid $normalized' : 'invalid_value'.tr());
       }
     } catch (e) {
       AppLog.error(
         e.toString(),
-        name: 'AppValidator.customRegExp - $value',
+        name: 'AppValidator.customRegExp',
         error: e,
       );
+      debugPrint('[AppValidator] regex error: $e\n$formate\nvalue:$value');
     }
     return null;
   }

@@ -184,6 +184,8 @@ class HiveDB {
     Hive.registerAdapter(ParentDropdownEntityAdapter()); //81
     Hive.registerAdapter(QuoteDetailEntityAdapter()); //82
     Hive.registerAdapter(ServiceEmployeeEntityAdapter()); //83
+    Hive.registerAdapter(NumberFormatEntityAdapter()); //84
+    Hive.registerAdapter(StateEntityAdapter()); //85
 
     // Hive box Open
     await refresh();

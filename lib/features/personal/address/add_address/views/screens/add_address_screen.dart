@@ -9,6 +9,7 @@ import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/custom_radio_toggle_tile.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/phone_number_entity.dart';
 import '../../../../../../core/widgets/phone_number/views/countries_dropdown.dart';
+import '../../../../../../core/widgets/phone_number/domain/entities/country_entity.dart';
 import '../../../../../../core/widgets/phone_number/views/phone_number_input_field.dart';
 import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../auth/signin/domain/entities/address_entity.dart';
@@ -47,26 +48,55 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                 children: <Widget>[
                   CustomTextFormField(
                     labelText: 'recipient_name'.tr(),
-                    controller: provider.address1Controller,
+                    controller: provider.recipientNameController,
                     validator: (String? value) => AppValidator.isEmpty(value),
                   ),
                   CountryDropdownField(
                     validator: (bool? value) =>
                         AppValidator.requireSelection(value),
-                    initialValue: provider.selectedCountry,
-                    onChanged: (String value) {
-                      provider.selectedCountry = value;
+                    initialValue: provider.selectedCountryEntity,
+                    onChanged: (CountryEntity value) {
+                      provider.selectedCountryEntity = value;
                     },
                   ),
                   CustomTextFormField(
                     labelText: 'city'.tr(),
-                    controller: provider.address1Controller,
+                    controller: provider.cityController,
                     validator: (String? value) => AppValidator.isEmpty(value),
                   ),
-                  CustomTextFormField(
-                    labelText: 'state'.tr(),
-                    controller: provider.postalCodeController,
-                    validator: (String? value) => AppValidator.isEmpty(value),
+                  // State selector: show a dropdown of states for the selected country
+                  Consumer<AddAddressProvider>(
+                    builder: (BuildContext context, AddAddressProvider pros,
+                        Widget? child) {
+                      final List<StateEntity> states =
+                          pros.selectedCountryEntity?.states ?? <StateEntity>[];
+
+                      final List<DropdownMenuItem<StateEntity>> items = states
+                          .map((StateEntity s) => DropdownMenuItem<StateEntity>(
+                              value: s, child: Text(s.stateName)))
+                          .toList();
+
+                      StateEntity? selected;
+                      for (final StateEntity s in states) {
+                        if (s.stateName == pros.stateController.text) {
+                          selected = s;
+                          break;
+                        }
+                      }
+
+                      return CustomDropdown<StateEntity>(
+                        title: 'state'.tr(),
+                        items: items,
+                        selectedItem: selected,
+                        onChanged: (StateEntity? value) {
+                          if (value != null) {
+                            pros.stateController.text = value.stateName;
+                          }
+                        },
+                        validator: (bool? value) =>
+                            AppValidator.requireSelection(value),
+                      );
+                    },
                   ),
                   CustomTextFormField(
                     labelText: 'address_1'.tr(),
@@ -120,7 +150,6 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                     onChange: (PhoneNumberEntity? value) {
                       provider.phoneNumber = value;
                     },
-                
                   ),
 
                   Consumer<AddAddressProvider>(

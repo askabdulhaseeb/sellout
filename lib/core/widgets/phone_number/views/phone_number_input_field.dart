@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import '../../../../services/get_it.dart';
@@ -29,6 +30,116 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
   List<CountryEntity> countries = <CountryEntity>[];
   CountryEntity? selectedCountry;
   GetCountiesUsecase? getCountiesUsecase;
+
+  int? _maxLocalDigits() {
+    final CountryEntity? c = selectedCountry;
+    if (c == null) return null;
+    final dynamic nfRaw = c.numberFormat;
+    final Map<String, String> parsed = _parseNumberFormat(nfRaw);
+    final String display = parsed['format'] ??
+        (nfRaw is String ? nfRaw : (nfRaw?.toString() ?? ''));
+    if (display.isEmpty) return null;
+    // count X or x
+    final int xCount =
+        display.split('').where((s) => s == 'X' || s == 'x').length;
+    if (xCount > 0) return xCount;
+
+    // fallback: try to find \d{n} or {n}
+    try {
+      final RegExp r1 = RegExp(r'\\d\{(\d+)\}');
+      final Match? m1 = r1.firstMatch(parsed['regex'] ?? display);
+      if (m1 != null) return int.tryParse(m1.group(1) ?? '');
+      final RegExp r2 = RegExp(r'\{(\d+)\}');
+      final Match? m2 = r2.firstMatch(parsed['regex'] ?? display);
+      if (m2 != null) return int.tryParse(m2.group(1) ?? '');
+    } catch (_) {}
+    return null;
+  }
+
+  Map<String, String> _parseNumberFormat(dynamic nf) {
+    final Map<String, String> result = <String, String>{};
+    if (nf == null) return result;
+    try {
+      // If it's already a NumberFormatEntity
+      if (nf is NumberFormatEntity) {
+        if ((nf.format).isNotEmpty) result['format'] = nf.format;
+        if ((nf.regex).isNotEmpty) result['regex'] = nf.regex;
+        return result;
+      }
+
+      // If it's a Map-like object
+      if (nf is Map) {
+        if (nf['format'] is String) result['format'] = nf['format'];
+        if (nf['regex'] is String) result['regex'] = nf['regex'];
+        return result;
+      }
+
+      // Otherwise treat as string
+      final String s = nf.toString();
+      if (s.isEmpty) return result;
+      try {
+        final RegExp reFormat = RegExp(r'format:\s*([^,}]+)');
+        final Match? mFormat = reFormat.firstMatch(s);
+        if (mFormat != null) result['format'] = mFormat.group(1)!.trim();
+        final RegExp reRegex = RegExp(r'regex:\s*([^,}]+)');
+        final Match? mRegex = reRegex.firstMatch(s);
+        if (mRegex != null) result['regex'] = mRegex.group(1)!.trim();
+      } catch (_) {}
+
+      if (result.isEmpty) {
+        try {
+          final String candidate = s.replaceAll("'", '"');
+          final dynamic dec = jsonDecode(candidate);
+          if (dec is Map) {
+            if (dec['format'] is String) result['format'] = dec['format'];
+            if (dec['regex'] is String) result['regex'] = dec['regex'];
+          } else {
+            // fallback: use whole string as display
+            result['format'] = s;
+          }
+        } catch (_) {
+          result['format'] = s;
+        }
+      }
+    } catch (_) {}
+    return result;
+  }
+
+  String _buildRegexFromDisplay(String display) {
+    if (display.isEmpty) return '';
+    final StringBuffer sb = StringBuffer();
+    int i = 0;
+    while (i < display.length) {
+      final String ch = display[i];
+      if (ch == 'X' || ch == 'x') {
+        int run = 1;
+        i++;
+        while (i < display.length && (display[i] == 'X' || display[i] == 'x')) {
+          run++;
+          i++;
+        }
+        sb.write('\\d{' + run.toString() + '}');
+        continue;
+      }
+      if (RegExp(r'\d').hasMatch(ch)) {
+        sb.write(ch);
+        i++;
+        continue;
+      }
+      if (ch == '+') {
+        sb.write('\\+');
+        i++;
+        continue;
+      }
+      if (ch == ' ' || ch == '-' || ch == '(' || ch == ')' || ch == '.') {
+        i++;
+        continue;
+      }
+      sb.write(RegExp.escape(ch));
+      i++;
+    }
+    return '^' + sb.toString() + r'$';
+  }
 
   @override
   void initState() {
@@ -134,9 +245,24 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
                   number: p0,
                 )),
                 keyboardType: TextInputType.number,
-                validator: (String? value) => AppValidator.customRegExp(
-                    selectedCountry?.numberFormat ?? '',
-                    '${selectedCountry?.countryCode}$value'),
+                maxLength: _maxLocalDigits(),
+                validator: (String? value) {
+                  final dynamic rawNf = selectedCountry?.numberFormat;
+                  final Map<String, String> p = _parseNumberFormat(rawNf);
+                  final String displayFormat = p['format'] ??
+                      (rawNf is String ? rawNf : (rawNf?.toString() ?? ''));
+                  String pattern = p['regex'] ?? '';
+                  if (pattern.isEmpty) {
+                    pattern = _buildRegexFromDisplay(displayFormat);
+                  }
+                  debugPrint(
+                      '[PhoneNumberInputField] validating using pattern="$pattern" for full="${selectedCountry?.countryCode}$value" (display="$displayFormat")');
+                  // Provide a human-friendly message showing the expected format
+                  final String message = 'Use format: $displayFormat';
+                  return AppValidator.customRegExp(
+                      pattern, '${selectedCountry?.countryCode}$value',
+                      message: message);
+                },
               ),
             ),
           ],
