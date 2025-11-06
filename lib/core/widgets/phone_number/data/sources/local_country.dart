@@ -37,4 +37,47 @@ class LocalCountry {
       return DataSuccess<CountryEntity>('', po);
     }
   }
+
+  /// Find a [StateEntity] by name across all countries in the local box.
+  ///
+  /// Returns the first matching [StateEntity] where either `stateName`
+  /// or `stateCode` matches [stateName] (case-insensitive). If no match
+  /// is found, returns null.
+  StateEntity? getStateByName(String stateName) {
+    if (stateName.isEmpty) return null;
+    final String needle = stateName.toLowerCase();
+    for (final CountryEntity c in _box.values) {
+      for (final StateEntity s in c.states) {
+        if (s.stateName.toLowerCase() == needle ||
+            s.stateCode.toLowerCase() == needle) {
+          return s;
+        }
+      }
+    }
+    return null;
+  }
+
+  /// Find a [StateEntity] for a specific country identified by [countryCode].
+  /// Matches country by its `countryCode`, `shortName`, or `displayName`.
+  StateEntity? getStateInCountry(String countryCode, String stateName) {
+    if (countryCode.isEmpty || stateName.isEmpty) return null;
+    final String needleState = stateName.toLowerCase();
+    CountryEntity? found;
+    for (final CountryEntity c in _box.values) {
+      if (c.countryCode == countryCode ||
+          c.shortName == countryCode ||
+          c.displayName == countryCode) {
+        found = c;
+        break;
+      }
+    }
+    if (found == null) return null;
+    for (final StateEntity s in found.states) {
+      if (s.stateName.toLowerCase() == needleState ||
+          s.stateCode.toLowerCase() == needleState) {
+        return s;
+      }
+    }
+    return null;
+  }
 }

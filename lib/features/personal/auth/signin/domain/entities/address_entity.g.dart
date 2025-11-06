@@ -23,8 +23,9 @@ class AddressEntityAdapter extends TypeAdapter<AddressEntity> {
       address: fields[3] as String,
       category: fields[4] as String,
       postalCode: fields[5] as String,
-      townCity: fields[6] as String,
-      country: fields[7] as String,
+      city: fields[6] as String,
+      state: fields[9] as StateEntity,
+      country: fields[7] as CountryEntity,
       isDefault: fields[8] as bool,
     );
   }
@@ -32,7 +33,7 @@ class AddressEntityAdapter extends TypeAdapter<AddressEntity> {
   @override
   void write(BinaryWriter writer, AddressEntity obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.addressID)
       ..writeByte(1)
@@ -46,7 +47,9 @@ class AddressEntityAdapter extends TypeAdapter<AddressEntity> {
       ..writeByte(5)
       ..write(obj.postalCode)
       ..writeByte(6)
-      ..write(obj.townCity)
+      ..write(obj.city)
+      ..writeByte(9)
+      ..write(obj.state)
       ..writeByte(7)
       ..write(obj.country)
       ..writeByte(8)
