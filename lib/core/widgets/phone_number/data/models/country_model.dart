@@ -12,14 +12,45 @@ class CountryModel extends CountryEntity {
   });
 
   factory CountryModel.fromMap(Map<String, dynamic> map) {
-    final List<dynamic> country = List<String>.from((map['country_code']));
+    // country_code may be a List or a single String
+    final dynamic rawCountryCode = map['country_code'];
+    List<String> country = <String>[];
+    if (rawCountryCode is String) {
+      country = <String>[rawCountryCode];
+    } else if (rawCountryCode is Iterable) {
+      country = rawCountryCode
+          .map((e) => e?.toString() ?? '')
+          .where((s) => s.isNotEmpty)
+          .toList();
+    }
+
+    // currency may be a String like "GBP" or a List
+    final dynamic rawCurrency = map['currency'];
+    List<String> currencyList = <String>[];
+    if (rawCurrency is String) {
+      currencyList = <String>[rawCurrency];
+    } else if (rawCurrency is Iterable) {
+      currencyList = rawCurrency
+          .map((e) => e?.toString() ?? '')
+          .where((s) => s.isNotEmpty)
+          .toList();
+    }
+
+    // number_format might be an object; normalize to a string representation
+    final dynamic nf = map['number_format'];
+    final String numberFormat = nf is String
+        ? nf.trim()
+        : nf != null
+            ? nf.toString()
+            : '';
+
     return CountryModel(
       flag: map['flag']?.toString().trim() ?? '',
       shortName: map['short_name']?.toString().trim() ?? '',
       displayName: map['display_name']?.toString().trim() ?? '',
       countryCode: country.isEmpty ? '' : country.first.toString().trim(),
-      numberFormat: map['number_format']?.toString().trim() ?? '',
-      currency: List<String>.from(map['currency']),
+      numberFormat: numberFormat,
+      currency: currencyList,
       isActive: map['is_active'] ?? false,
     );
   }

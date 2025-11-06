@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../core/utilities/app_validators.dart';
+import '../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
@@ -8,6 +10,7 @@ import '../../../../../../core/widgets/custom_radio_toggle_tile.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/phone_number_entity.dart';
 import '../../../../../../core/widgets/phone_number/views/countries_dropdown.dart';
 import '../../../../../../core/widgets/phone_number/views/phone_number_input_field.dart';
+import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../auth/signin/domain/entities/address_entity.dart';
 import '../provider/add_address_provider.dart';
 
@@ -30,50 +33,66 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
       onPopInvokedWithResult: (bool didPop, dynamic result) =>
           provider.disposeControllers(),
       child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: AppBarTitle(titleKey: 'address'.tr()),
+        ),
         body: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Form(
               key: formKey,
               child: Column(
-                spacing: 4,
+                spacing: AppSpacing.xs,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   CustomTextFormField(
-                    labelText: 'postcode'.tr(),
-                    controller: provider.postalCodeController,
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'This field is required.';
-                      }
-                      return null;
-                    },
-                  ),
-                  CustomTextFormField(
-                    labelText: 'address'.tr(),
+                    labelText: 'recipient_name'.tr(),
                     controller: provider.address1Controller,
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'This field is required.';
-                      }
-                      return null;
+                    validator: (String? value) => AppValidator.isEmpty(value),
+                  ),
+                  CountryDropdownField(
+                    validator: (bool? value) =>
+                        AppValidator.requireSelection(value),
+                    initialValue: provider.selectedCountry,
+                    onChanged: (String value) {
+                      provider.selectedCountry = value;
                     },
                   ),
                   CustomTextFormField(
-                    labelText: '${'town'.tr()}/${'city'.tr()}',
-                    controller: provider.townCityController,
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'field_left_empty'.tr();
-                      }
-                      const String regex =
-                          r'^[a-zA-Z]+/[a-zA-Z]+$'; // Strict city/town format without spaces
-                      final RegExp regExp = RegExp(regex);
-                      if (!regExp.hasMatch(value)) {
-                        return 'please_follow_format_town'; // Adjust this message as needed
-                      }
-                      return null;
-                    },
+                    labelText: 'city'.tr(),
+                    controller: provider.address1Controller,
+                    validator: (String? value) => AppValidator.isEmpty(value),
                   ),
+                  CustomTextFormField(
+                    labelText: 'state'.tr(),
+                    controller: provider.postalCodeController,
+                    validator: (String? value) => AppValidator.isEmpty(value),
+                  ),
+                  CustomTextFormField(
+                    labelText: 'address_1'.tr(),
+                    controller: provider.address1Controller,
+                    validator: (String? value) => AppValidator.isEmpty(value),
+                  ),
+                  CustomTextFormField(
+                      labelText: 'address_2'.tr(),
+                      controller: provider.address2Controller,
+                      validator: null),
+                  // CustomTextFormField(
+                  //   labelText: '${'town'.tr()}/${'city'.tr()}',
+                  //   controller: provider.townCityController,
+                  //   validator: (String? value) {
+                  //     if (value == null || value.isEmpty) {
+                  //       return 'field_left_empty'.tr();
+                  //     }
+                  //     const String regex =
+                  //         r'^[a-zA-Z]+/[a-zA-Z]+$'; // Strict city/town format without spaces
+                  //     final RegExp regExp = RegExp(regex);
+                  //     if (!regExp.hasMatch(value)) {
+                  //       return 'please_follow_format_town'; // Adjust this message as needed
+                  //     }
+                  //     return null;
+                  //   },
+                  // ),
                   Consumer<AddAddressProvider>(
                     builder: (BuildContext context, AddAddressProvider pros,
                             Widget? child) =>
@@ -91,7 +110,8 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                           pros.setaddressCategory(value);
                         }
                       },
-                      validator: (_) => null,
+                      validator: (bool? value) =>
+                          AppValidator.requireSelection(value),
                     ),
                   ),
                   PhoneNumberInputField(
@@ -100,13 +120,9 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                     onChange: (PhoneNumberEntity? value) {
                       provider.phoneNumber = value;
                     },
+                
                   ),
-                  CountryDropdownField(
-                    initialValue: provider.selectedCountry,
-                    onChanged: (String value) {
-                      provider.selectedCountry = value;
-                    },
-                  ),
+
                   Consumer<AddAddressProvider>(
                     builder:
                         (BuildContext context, AddAddressProvider provider, _) {
@@ -123,27 +139,26 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                 ],
               ),
             )),
-        bottomSheet: BottomAppBar(
-            height: 100,
-            elevation: 0,
-            color: Theme.of(context).scaffoldBackgroundColor,
-            child: CustomElevatedButton(
-              isLoading: false,
-              onTap: () {
-                if (formKey.currentState?.validate() ?? false) {
-                  if (widget.initAddress?.addressID == null ||
-                      widget.initAddress?.addressID == '') {
-                    provider.saveAddress(context);
-                  } else {
-                    provider.action = 'update';
-                    provider.updateAddress(context);
-                  }
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: CustomElevatedButton(
+            isLoading: false,
+            onTap: () {
+              if (formKey.currentState?.validate() ?? false) {
+                if (widget.initAddress?.addressID == null ||
+                    widget.initAddress?.addressID == '') {
+                  provider.saveAddress(context);
+                } else {
+                  provider.action = 'update';
+                  provider.updateAddress(context);
                 }
-              },
-              title: widget.initAddress?.addressID == null
-                  ? 'save_address'.tr()
-                  : 'update_address'.tr(),
-            )),
+              }
+            },
+            title: widget.initAddress?.addressID == null
+                ? 'save_address'.tr()
+                : 'update_address'.tr(),
+          ),
+        ),
       ),
     );
   }

@@ -2,18 +2,22 @@ class AddressParams {
   AddressParams({
     required this.recipientName,
     required this.address1,
-    required this.townCity,
+    required this.city,
+    required this.state,
     required this.phoneNumber,
     required this.postalCode,
     required this.addressCategory,
     required this.country,
     required this.isDefault,
     required this.addressId,
+     this.address2,
     this.action = '',
   });
   final String recipientName;
   final String address1;
-  final String townCity;
+  final String? address2;
+  final String city;
+  final String state;
   final String phoneNumber;
   final String postalCode;
   final String addressCategory;
@@ -27,7 +31,9 @@ class AddressParams {
       if (addressId != '') 'address_id': addressId,
       'recipient_name': recipientName,
       'address_1': address1,
-      'town_city': townCity,
+     if(address2 != '') 'address_2': address2,
+      'city': city,
+      'state': state,
       'phone_number': phoneNumber,
       'postal_code': postalCode,
       'address_category': addressCategory,

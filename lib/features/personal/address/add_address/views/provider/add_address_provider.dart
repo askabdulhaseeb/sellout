@@ -20,7 +20,9 @@ class AddAddressProvider extends ChangeNotifier {
   PhoneNumberEntity? _phoneNumber;
   final TextEditingController _postalCodeController = TextEditingController();
   final TextEditingController _address1Controller = TextEditingController();
-  final TextEditingController _townCityController = TextEditingController();
+  final TextEditingController _address2Controller = TextEditingController();
+  final TextEditingController _cityController = TextEditingController();
+  final TextEditingController _stateController = TextEditingController();
   String _selectedCountry = '';
   bool _isDefault = false;
   String _addressId = '';
@@ -33,7 +35,10 @@ class AddAddressProvider extends ChangeNotifier {
   PhoneNumberEntity? get phoneNumber => _phoneNumber;
   TextEditingController get postalCodeController => _postalCodeController;
   TextEditingController get address1Controller => _address1Controller;
-  TextEditingController get townCityController => _townCityController;
+  TextEditingController get address2Controller => _address2Controller;
+  TextEditingController get cityController => _cityController;
+  TextEditingController get stateController => _stateController;
+
   String get selectedCountry => _selectedCountry;
   String get addressId => _addressId;
   bool get isDefault => _isDefault;
@@ -44,7 +49,9 @@ class AddAddressProvider extends ChangeNotifier {
         addressId: addressId,
         recipientName: LocalAuth.currentUser?.displayName ?? '',
         address1: _address1Controller.text,
-        townCity: _townCityController.text,
+        address2: address2Controller.text,
+        city: _stateController.text,
+        state: stateController.text,
         phoneNumber: LocalAuth.currentUser?.phoneNumber ?? '',
         postalCode: _postalCodeController.text,
         addressCategory: _addressCategory ?? '',
@@ -76,7 +83,7 @@ class AddAddressProvider extends ChangeNotifier {
     // phoneNumber =   await PhoneNumberEntity.fromJson(address.phoneNumber, address.country);
     _postalCodeController.text = address.postalCode;
     _address1Controller.text = address.address;
-    _townCityController.text = address.townCity;
+    _cityController.text = address.townCity;
     _selectedCountry = address.country;
     _isDefault = address.isDefault;
     _addressId = address.addressID;
@@ -163,7 +170,7 @@ class AddAddressProvider extends ChangeNotifier {
     _addressId = '';
     _postalCodeController.clear();
     _address1Controller.clear();
-    _townCityController.clear();
+    _cityController.clear();
     _selectedCountry = '';
     _addressCategory = null;
     _isDefault = false;
