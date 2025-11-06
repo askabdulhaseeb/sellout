@@ -19,7 +19,8 @@ class ReviewOrderPage extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final List<CartItemEntity> items = cartPro.cartItems.where((CartItemEntity e) => e.inCart).toList();
+        final List<CartItemEntity> items =
+            cartPro.cartItems.where((CartItemEntity e) => e.inCart).toList();
 
         return Column(
           children: <Widget>[
@@ -28,10 +29,8 @@ class ReviewOrderPage extends StatelessWidget {
                   ? const Center(
                       child: EmptyPageWidget(icon: Icons.local_shipping))
                   : ListView.separated(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
                       itemCount: items.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 8),
+                      separatorBuilder: (_, __) => const Divider(),
                       itemBuilder: (BuildContext context, int index) {
                         final CartItemEntity item = items[index];
                         return ReviewItemCard(detail: item);
