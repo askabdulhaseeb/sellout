@@ -233,6 +233,7 @@
   "always_ask_for_receipt": "Always ask for a receipt or proof of purchase.",
   "always_tranfer_money_within_sellout": "Always transfer money within SellOut, to ensure your safety.",
   "empty": "Empty",
+  "postal_code":"Postal code",
   "customer_reviews": "Customer Reviews",
   "global_reviews": "global reviews",
   "star": "Star",

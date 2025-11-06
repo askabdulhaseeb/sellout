@@ -4,6 +4,7 @@ import '../../../../../../core/widgets/empty_page_widget.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../providers/cart_provider.dart';
 import '../../widgets/cart_widgets/personal_cart_step_indicator.dart';
+import '../../widgets/cart_widgets/personal_cart_total_section.dart';
 import 'cart/cart_page.dart';
 import 'checkout/checkout_page.dart';
 
@@ -34,24 +35,24 @@ class _PersonalShoppingPageState extends State<PersonalShoppingPage> {
       child: cartPro.cartItems.isEmpty
           ? const EmptyPageWidget(icon: Icons.shopping_cart_outlined)
           : Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 const PersonalCartStepIndicator(),
                 const SizedBox(height: 24),
-                if (cartPro.page == 1)
-                  const CartPage()
-                else if (cartPro.page == 2)
-                  const CheckoutPage()
-                else if (cartPro.page == 3)
-                  const Center(
-                    child: Text('Order Review'),
-                  )
-                else if (cartPro.page == 4)
-                  const Center(
-                    child: Text('Payment'),
-                  )
-                else
-                  const SizedBox.shrink(),
+                Expanded(
+                  child: Builder(builder: (BuildContext context) {
+                    if (cartPro.page == 1) return const CartPage();
+                    if (cartPro.page == 2) return const CheckoutPage();
+                    if (cartPro.page == 3) {
+                      return const Center(child: Text('Order Review'));
+                    }
+                    if (cartPro.page == 4) {
+                      return const Center(child: Text('Payment'));
+                    }
+                    return const SizedBox.shrink();
+                  }),
+                ),
+                const PersonalCartTotalSection(),
               ],
             ),
     );

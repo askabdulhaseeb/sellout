@@ -77,7 +77,10 @@ class SelectableAddressTile extends StatelessWidget {
                       Text('${address.city} . ${address.postalCode}'),
                       Text(address.address),
                       const SizedBox(height: 8),
-                      InkWell(
+                      CustomElevatedButton(
+                        bgColor: ColorScheme.of(context).secondary,
+                        title: 'edit'.tr(),
+                        isLoading: false,
                         onTap: () async {
                           AddAddressProvider pro =
                               Provider.of<AddAddressProvider>(context,
@@ -92,27 +95,7 @@ class SelectableAddressTile extends StatelessWidget {
                             ),
                           );
                         },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 2, horizontal: 8),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context)
-                                .primaryColor
-                                .withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            'edit'.tr(),
-                            style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ),
                       ),
-                      CustomElevatedButton(
-                          title: 'edit', isLoading: false, onTap: onTap),
                     ],
                   ),
                 ),
