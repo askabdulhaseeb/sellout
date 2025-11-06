@@ -59,12 +59,6 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                       provider.selectedCountryEntity = value;
                     },
                   ),
-                  CustomTextFormField(
-                    labelText: 'city'.tr(),
-                    controller: provider.cityController,
-                    validator: (String? value) => AppValidator.isEmpty(value),
-                  ),
-                  // State selector: show a dropdown of states for the selected country
                   Consumer<AddAddressProvider>(
                     builder: (BuildContext context, AddAddressProvider pros,
                         Widget? child) {
@@ -78,7 +72,7 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
 
                       StateEntity? selected;
                       for (final StateEntity s in states) {
-                        if (s.stateName == pros.stateController.text) {
+                        if (s.stateName == pros.state?.stateName) {
                           selected = s;
                           break;
                         }
@@ -90,7 +84,7 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                         selectedItem: selected,
                         onChanged: (StateEntity? value) {
                           if (value != null) {
-                            pros.stateController.text = value.stateName;
+                            pros.setState(value);
                           }
                         },
                         validator: (bool? value) =>
@@ -98,6 +92,48 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                       );
                     },
                   ),
+
+                  // City selector: dropdown populated from selected state's cities
+                  Consumer<AddAddressProvider>(
+                    builder: (BuildContext context, AddAddressProvider pros,
+                        Widget? child) {
+                      final List<StateEntity> states =
+                          pros.selectedCountryEntity?.states ?? <StateEntity>[];
+
+                      StateEntity? selectedState;
+                      for (final StateEntity s in states) {
+                        if (s.stateName == pros.state?.stateName) {
+                          selectedState = s;
+                          break;
+                        }
+                      }
+
+                      final List<String> cities =
+                          selectedState?.cities ?? <String>[];
+
+                      final List<DropdownMenuItem<String>> items = cities
+                          .map((String city) => DropdownMenuItem<String>(
+                              value: city, child: Text(city)))
+                          .toList();
+
+                      String? selectedCity;
+                      if (pros.city != '') {
+                        selectedCity = pros.city;
+                      }
+
+                      return CustomDropdown<String>(
+                        title: 'city'.tr(),
+                        items: items,
+                        selectedItem: selectedCity,
+                        onChanged: (String? value) {
+                          if (value != null) pros.setCity(value);
+                        },
+                        validator: (bool? value) =>
+                            AppValidator.requireSelection(value),
+                      );
+                    },
+                  ),
+                  // State selector: show a dropdown of states for the selected country
                   CustomTextFormField(
                     labelText: 'address_1'.tr(),
                     controller: provider.address1Controller,
@@ -107,9 +143,14 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                       labelText: 'address_2'.tr(),
                       controller: provider.address2Controller,
                       validator: null),
+                  CustomTextFormField(
+                    labelText: 'postal_code'.tr(),
+                    controller: provider.postalCodeController,
+                    validator: (String? value) => AppValidator.isEmpty(value),
+                  ),
                   // CustomTextFormField(
                   //   labelText: '${'town'.tr()}/${'city'.tr()}',
-                  //   controller: provider.townCityController,
+                  //   controller: provider.townCity,
                   //   validator: (String? value) {
                   //     if (value == null || value.isEmpty) {
                   //       return 'field_left_empty'.tr();

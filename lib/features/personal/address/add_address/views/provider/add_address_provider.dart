@@ -24,8 +24,8 @@ class AddAddressProvider extends ChangeNotifier {
   final TextEditingController _postalCodeController = TextEditingController();
   final TextEditingController _address1Controller = TextEditingController();
   final TextEditingController _address2Controller = TextEditingController();
-  final TextEditingController _cityController = TextEditingController();
-  final TextEditingController _stateController = TextEditingController();
+  String? _city;
+  StateEntity? _state;
   String _selectedCountry = '';
   CountryEntity? _selectedCountryEntity;
   bool _isDefault = false;
@@ -41,8 +41,9 @@ class AddAddressProvider extends ChangeNotifier {
   TextEditingController get postalCodeController => _postalCodeController;
   TextEditingController get address1Controller => _address1Controller;
   TextEditingController get address2Controller => _address2Controller;
-  TextEditingController get cityController => _cityController;
-  TextEditingController get stateController => _stateController;
+
+  String? get city => _city;
+  StateEntity? get state => _state;
 
   String get selectedCountry => _selectedCountry;
   CountryEntity? get selectedCountryEntity => _selectedCountryEntity;
@@ -56,8 +57,8 @@ class AddAddressProvider extends ChangeNotifier {
         recipientName: _recipientNameController.text,
         address1: _address1Controller.text,
         address2: address2Controller.text,
-        city: _stateController.text,
-        state: stateController.text,
+        city: _city ?? '',
+        state: _state?.stateName ?? '',
         phoneNumber: LocalAuth.currentUser?.phoneNumber ?? '',
         postalCode: _postalCodeController.text,
         addressCategory: _addressCategory ?? '',
@@ -80,6 +81,16 @@ class AddAddressProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setCity(String value) {
+    _city = value;
+    notifyListeners();
+  }
+
+  void setState(StateEntity value) {
+    _state = value;
+    notifyListeners();
+  }
+
   void setaddressCategory(String? value) {
     _addressCategory = value;
     notifyListeners();
@@ -89,7 +100,7 @@ class AddAddressProvider extends ChangeNotifier {
     // phoneNumber =   await PhoneNumberEntity.fromJson(address.phoneNumber, address.country);
     _postalCodeController.text = address.postalCode;
     _address1Controller.text = address.address;
-    _cityController.text = address.townCity;
+    _city = address.townCity;
     _selectedCountry = address.country;
     _isDefault = address.isDefault;
     _addressId = address.addressID;
@@ -113,10 +124,6 @@ class AddAddressProvider extends ChangeNotifier {
     _isDefault = !_isDefault;
     notifyListeners();
   }
-
-  // ===========================
-  // API Functions
-  // ===========================
 
   Future<DataState<bool>> saveAddress(BuildContext context) async {
     try {
@@ -182,9 +189,15 @@ class AddAddressProvider extends ChangeNotifier {
     _addressId = '';
     _postalCodeController.clear();
     _address1Controller.clear();
-    _cityController.clear();
+    _address2Controller.clear();
+    _selectedCountry = '';
+    _selectedCountryEntity = null;
+    _recipientNameController.clear();
+    _city = null;
+    _state = null;
     _selectedCountry = '';
     _addressCategory = null;
     _isDefault = false;
+    notifyListeners();
   }
 }
