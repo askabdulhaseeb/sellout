@@ -83,151 +83,137 @@ class _ReviewItemContent extends StatelessWidget {
     final PostageItemDetailEntity? postageDetail =
         cartPro.postageResponseEntity?.detail[detail.postID];
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        // Seller row (mimics PersonalCartTile)
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: Text.rich(
+                TextSpan(children: <InlineSpan>[
+                  TextSpan(
+                    text: '${'seller'.tr()}: ',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  TextSpan(
+                    text: seller?.displayName ?? '',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.w600),
+                  ),
+                ]),
+              ),
+            ),
+            if (selectedFast ||
+                (postageDetail?.fastDelivery.requested ?? false))
+              Container(
+                margin: const EdgeInsets.only(left: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color:
+                      Theme.of(context).colorScheme.primary.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text('fast_delivery'.tr(),
+                    style: Theme.of(context).textTheme.labelSmall),
+              ),
+          ],
+        ),
+
+        const SizedBox(height: 8),
+
+        // Product row
+        Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            // Seller row (mimics PersonalCartTile)
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Text.rich(
-                    TextSpan(children: <InlineSpan>[
-                      TextSpan(
-                        text: '${'seller'.tr()}: ',
-                        style: Theme.of(context).textTheme.bodySmall,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: CustomNetworkImage(imageURL: image, size: 72),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(title,
+                      style: const TextStyle(fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 6),
+                  Row(children: <Widget>[
+                    if (post?.condition?.code != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .surface
+                              .withOpacity(0.06),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(post?.condition?.code ?? '',
+                            style: Theme.of(context).textTheme.labelSmall),
                       ),
-                      TextSpan(
-                        text: seller?.displayName ?? '',
+                    const SizedBox(width: 8),
+                    Text('${(totalPrice).toStringAsFixed(0)}',
                         style: Theme.of(context)
                             .textTheme
                             .bodyMedium
-                            ?.copyWith(fontWeight: FontWeight.w600),
-                      ),
-                    ]),
-                  ),
-                ),
-                if (selectedFast ||
-                    (postageDetail?.fastDelivery.requested ?? false))
-                  Container(
-                    margin: const EdgeInsets.only(left: 8),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .primary
-                          .withOpacity(0.08),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text('fast_delivery'.tr(),
-                        style: Theme.of(context).textTheme.labelSmall),
-                  ),
-              ],
-            ),
-
-            const SizedBox(height: 8),
-
-            // Product row
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: CustomNetworkImage(imageURL: image, size: 72),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(title,
-                          style: const TextStyle(fontWeight: FontWeight.w600)),
-                      const SizedBox(height: 6),
-                      Row(children: <Widget>[
-                        if (post?.condition?.code != null)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .surface
-                                  .withOpacity(0.06),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(post?.condition?.code?.tr() ?? '',
-                                style: Theme.of(context).textTheme.labelSmall),
-                          ),
-                        const SizedBox(width: 8),
-                        Text('${(totalPrice).toStringAsFixed(0)}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.copyWith(fontWeight: FontWeight.w600)),
-                      ]),
-                      const SizedBox(height: 8),
-                      // Size & color
-                      Row(children: <Widget>[
-                        if (detail.size != null)
-                          Text('${'size'.tr()}: ${detail.size}',
-                              style: Theme.of(context).textTheme.bodySmall),
-                        if (detail.color != null)
-                          Container(
-                              margin: const EdgeInsets.only(left: 8),
-                              width: 18,
-                              height: 18,
-                              decoration: BoxDecoration(
-                                  color: detail.color!.isNotEmpty
-                                      ? Color(0xFF000000)
-                                      : Colors.transparent,
-                                  shape: BoxShape.circle)),
-                      ]),
-                      const SizedBox(height: 8),
-                      // Quantity
-                      Text('${'quantity'.tr()}: ${detail.quantity}',
+                            ?.copyWith(fontWeight: FontWeight.w600)),
+                  ]),
+                  const SizedBox(height: 8),
+                  // Size & color
+                  Row(children: <Widget>[
+                    if (detail.size != null)
+                      Text('${'size'.tr()}: ${detail.size}',
                           style: Theme.of(context).textTheme.bodySmall),
-                    ],
-                  ),
-                ),
-              ],
+                    if (detail.color != null)
+                      Container(
+                          margin: const EdgeInsets.only(left: 8),
+                          width: 18,
+                          height: 18,
+                          decoration: BoxDecoration(
+                              color: detail.color!.isNotEmpty
+                                  ? Color(0xFF000000)
+                                  : Colors.transparent,
+                              shape: BoxShape.circle)),
+                  ]),
+                  const SizedBox(height: 8),
+                  // Quantity
+                  Text('${'quantity'.tr()}: ${detail.quantity}',
+                      style: Theme.of(context).textTheme.bodySmall),
+                ],
+              ),
             ),
-
-            const SizedBox(height: 8),
-
-            // Postage chips (item count / parcels)
-            if (postageDetail != null)
-              Wrap(spacing: 8, children: <Widget>[
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .surface
-                          .withOpacity(0.06),
-                      borderRadius: BorderRadius.circular(6)),
-                  child: Text('${'items'.tr()}: ${postageDetail.itemCount}',
-                      style: Theme.of(context).textTheme.labelSmall),
-                ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .surface
-                          .withOpacity(0.06),
-                      borderRadius: BorderRadius.circular(6)),
-                  child: Text('${'parcels'.tr()}: ${postageDetail.parcelCount}',
-                      style: Theme.of(context).textTheme.labelSmall),
-                ),
-              ]),
           ],
         ),
-      ),
+
+        const SizedBox(height: 8),
+
+        // Postage chips (item count / parcels)
+        if (postageDetail != null)
+          Wrap(spacing: 8, children: <Widget>[
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                  color:
+                      Theme.of(context).colorScheme.surface.withOpacity(0.06),
+                  borderRadius: BorderRadius.circular(6)),
+              child: Text('${'items'.tr()}: ${postageDetail.itemCount}',
+                  style: Theme.of(context).textTheme.labelSmall),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                  color:
+                      Theme.of(context).colorScheme.surface.withOpacity(0.06),
+                  borderRadius: BorderRadius.circular(6)),
+              child: Text('${'parcels'.tr()}: ${postageDetail.parcelCount}',
+                  style: Theme.of(context).textTheme.labelSmall),
+            ),
+          ]),
+      ],
     );
   }
 }
