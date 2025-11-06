@@ -1,47 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/empty_page_widget.dart';
-import '../../../../../post/data/sources/local/local_post.dart';
-import '../../../../../user/profiles/data/sources/local/local_user.dart';
+import '../../../../domain/entities/cart/cart_item_entity.dart';
 import '../../../providers/cart_provider.dart';
 import 'review_widgets/review_item_card.dart';
 
 class ReviewOrderPage extends StatelessWidget {
   const ReviewOrderPage({super.key});
 
-  Future<List<Map<String, dynamic>>> _fetchPostsForPostage(
-      dynamic postage) async {
-    final List<Map<String, dynamic>> result = <Map<String, dynamic>>[];
-    final entries = postage.detail.entries.toList();
-    for (final e in entries) {
-      final item = e.value;
-      final String postId = item.postId ?? e.key;
-      final post = await LocalPost().getPost(postId);
-      final seller = await LocalUser().user(post?.createdBy ?? '');
-      result.add(
-          <String, dynamic>{'post': post, 'seller': seller, 'detail': item});
-    }
-    return result;
-  }
-
   @override
   Widget build(BuildContext context) {
     final CartProvider cartPro = context.watch<CartProvider>();
-    final postage = cartPro.postageResponseEntity;
 
-    if (postage == null) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future: _fetchPostsForPostage(postage),
-      builder: (BuildContext context,
-          AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
-        if (!snapshot.hasData) {
+    return FutureBuilder<bool>(
+      future: cartPro.getCart(),
+      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final items = snapshot.data!;
+        final List<CartItemEntity> items = cartPro.cartItems.where((CartItemEntity e) => e.inCart).toList();
 
         return Column(
           children: <Widget>[
@@ -55,11 +33,8 @@ class ReviewOrderPage extends StatelessWidget {
                       itemCount: items.length,
                       separatorBuilder: (_, __) => const SizedBox(height: 8),
                       itemBuilder: (BuildContext context, int index) {
-                        final Map<String, dynamic> row = items[index];
-                        return ReviewItemCard(
-                            post: row['post'],
-                            seller: row['seller'],
-                            detail: row['detail']);
+                        final CartItemEntity item = items[index];
+                        return ReviewItemCard(detail: item);
                       },
                     ),
             ),
