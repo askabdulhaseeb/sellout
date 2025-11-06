@@ -31,121 +31,99 @@ class PersonalShoppingTabbar extends StatelessWidget {
             final int totalTabs =
                 visibleTabs.length + (hiddenTabs.isNotEmpty ? 1 : 0);
             final double tabWidth = availableWidth / totalTabs;
-            return Container(
-              height: 48,
-              width: double.infinity,
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      ...visibleTabs.map(
-                        (ShoppingBasketPageType type) => SizedBox(
-                          width: tabWidth,
-                          child: _IconButton(
-                            title: type.code.tr(),
-                            isSelected: cartPro.shoppingBasketType == type,
-                            onPressed: () => cartPro.setBasketPageType(type),
-                          ),
+            return Column(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    ...visibleTabs.map(
+                      (ShoppingBasketPageType type) => SizedBox(
+                        width: tabWidth,
+                        child: _IconButton(
+                          title: type.code.tr(),
+                          isSelected: cartPro.shoppingBasketType == type,
+                          onPressed: () => cartPro.setBasketPageType(type),
                         ),
                       ),
-                      if (hiddenTabs.isNotEmpty)
-                        Column(
-                          children: [
-                            SizedBox(
-                              width: tabWidth,
-                              child: PopupMenuButton<ShoppingBasketPageType>(
-                                tooltip: 'More',
-                                offset: const Offset(0, 36),
-                                color:
-                                    Theme.of(context).scaffoldBackgroundColor,
-                                onSelected: (ShoppingBasketPageType type) {
-                                  cartPro.setBasketPageType(type);
-                                },
-                                itemBuilder: (BuildContext context) {
-                                  return hiddenTabs
-                                      .map(
-                                        (ShoppingBasketPageType type) =>
-                                            PopupMenuItem<
-                                                ShoppingBasketPageType>(
-                                          value: type,
-                                          child: Text(type.code.tr()),
-                                        ),
-                                      )
-                                      .toList();
-                                },
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(8),
-                                  onTap: null,
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
+                    ),
+                    if (hiddenTabs.isNotEmpty)
+                      SizedBox(
+                        width: tabWidth,
+                        child: PopupMenuButton<ShoppingBasketPageType>(
+                          tooltip: 'More',
+                          offset: const Offset(0, 36),
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          onSelected: (ShoppingBasketPageType type) {
+                            cartPro.setBasketPageType(type);
+                          },
+                          itemBuilder: (BuildContext context) {
+                            return hiddenTabs
+                                .map(
+                                  (ShoppingBasketPageType type) =>
+                                      PopupMenuItem<ShoppingBasketPageType>(
+                                    value: type,
+                                    child: Text(type.code.tr()),
+                                  ),
+                                )
+                                .toList();
+                          },
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(8),
+                            onTap: null,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 2.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 4.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            Text(
-                                              'more'.tr(),
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                color: hiddenTabs.contains(
-                                                        cartPro
-                                                            .shoppingBasketType)
-                                                    ? Theme.of(context)
-                                                        .primaryColor
-                                                    : Theme.of(context)
-                                                        .colorScheme
-                                                        .outline,
-                                                fontWeight: hiddenTabs.contains(
-                                                        cartPro
-                                                            .shoppingBasketType)
-                                                    ? FontWeight.bold
-                                                    : FontWeight.normal,
-                                              ),
-                                            ),
-                                            Icon(
-                                              Icons
-                                                  .keyboard_arrow_down_outlined,
-                                              size: 18,
-                                              color: hiddenTabs.contains(cartPro
-                                                      .shoppingBasketType)
-                                                  ? Theme.of(context)
-                                                      .primaryColor
-                                                  : Theme.of(context)
-                                                      .colorScheme
-                                                      .outline,
-                                            ),
-                                          ],
+                                      Text(
+                                        'more'.tr(),
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: hiddenTabs.contains(
+                                                  cartPro.shoppingBasketType)
+                                              ? Theme.of(context).primaryColor
+                                              : Theme.of(context)
+                                                  .colorScheme
+                                                  .outline,
+                                          fontWeight: hiddenTabs.contains(
+                                                  cartPro.shoppingBasketType)
+                                              ? FontWeight.bold
+                                              : FontWeight.normal,
                                         ),
                                       ),
-                                      Container(
-                                        height: 1,
+                                      Icon(
+                                        Icons.keyboard_arrow_down_outlined,
+                                        size: 18,
                                         color: hiddenTabs.contains(
                                                 cartPro.shoppingBasketType)
                                             ? Theme.of(context).primaryColor
-                                            : Colors.transparent,
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .outline,
                                       ),
-                                      Container(
-                                        height: 1,
-                                        decoration: BoxDecoration(
-                                            color: ColorScheme.of(context)
-                                                .outlineVariant),
-                                      )
                                     ],
                                   ),
                                 ),
-                              ),
+                                // single thin indicator line
+                                Container(
+                                  height: 1,
+                                  color: hiddenTabs
+                                          .contains(cartPro.shoppingBasketType)
+                                      ? Theme.of(context).primaryColor
+                                      : Colors.transparent,
+                                ),
+                              ],
                             ),
-                            const Divider()
-                          ],
+                          ),
                         ),
-                    ],
-                  ),
-                ],
-              ),
+                      ),
+                  ],
+                ),
+              ],
             );
           },
         );
@@ -171,10 +149,11 @@ class _IconButton extends StatelessWidget {
       onTap: onPressed,
       borderRadius: BorderRadius.circular(8),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4.0),
+            padding: const EdgeInsets.symmetric(vertical: 2.0),
             child: Text(
               title,
               style: TextStyle(
@@ -186,6 +165,7 @@ class _IconButton extends StatelessWidget {
               ),
             ),
           ),
+          // indicator line
           Container(
             height: 1,
             decoration: BoxDecoration(
@@ -194,11 +174,6 @@ class _IconButton extends StatelessWidget {
                   : Colors.transparent,
             ),
           ),
-          Container(
-            height: 1,
-            decoration:
-                BoxDecoration(color: ColorScheme.of(context).outlineVariant),
-          )
         ],
       ),
     );

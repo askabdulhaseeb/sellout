@@ -196,6 +196,7 @@
   "size_chart": "Size Chart",
   "size_chart_subtitle": "Size chart is only a guide",
   "proceed_to_checkout": "Proceed to Checkout",
+  
   "select_item": "Select Item",
   "quantity": "Quantity",
   "saved_posts": "Saved posts",
@@ -203,6 +204,7 @@
   "color": "Color",
   "total": "Total",
   "subtotal": "Subtotal",
+  "postage_fee": "Postage Fee",
   "business": "Business",
   "details": "Details",
   "calender": "Calender",
@@ -815,6 +817,7 @@
   "post_not_found": "Post not found",
   "image_verified_successfully": "Your image has been verified successfully",
   "please_upload_image": "PLease uplaod an image to proceed",
+  "confirm_and_pay":"Confirm & Pay",
   "upload_selfie_verification": "Upload Selfie Verification",
   "upload_selfie_description": "Upload a photo by clicking the button below",
   "device_name": "Device Name",

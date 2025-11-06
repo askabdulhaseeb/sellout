@@ -12,13 +12,16 @@ import '../../data/models/cart/cart_model.dart';
 import '../../data/models/checkout/order_billing_model.dart';
 import '../../data/sources/local/local_cart.dart';
 import '../../domain/entities/cart/cart_entity.dart';
+import '../../domain/entities/cart/postage_detail_response_entity.dart';
 import '../../domain/entities/checkout/check_out_entity.dart';
 import '../../domain/enums/cart_type.dart';
 import '../../domain/enums/shopping_basket_type.dart';
 import '../../domain/param/cart_item_update_qty_param.dart';
+import '../../domain/param/get_postage_detail_params.dart';
 import '../../domain/usecase/cart/cart_item_status_update_usecase.dart';
 import '../../domain/usecase/cart/cart_update_qty_usecase.dart';
 import '../../domain/usecase/cart/get_cart_usecase.dart';
+import '../../domain/usecase/cart/get_postage_detail_usecase.dart';
 import '../../domain/usecase/cart/remove_from_cart_usecase.dart';
 import '../../domain/usecase/checkout/get_checkout_usecase.dart';
 import '../../domain/usecase/checkout/pay_intent_usecase.dart';
@@ -32,21 +35,48 @@ class CartProvider extends ChangeNotifier {
     this._cartUpdateQtyUsecase,
     this._getCheckoutUsecase,
     this._payIntentUsecase,
+    this._getPostageDetailUsecase,
   );
+  // MARK: 🧱  Dependencies
   final GetCartUsecase _getCartUsecase;
   final CartItemStatusUpdateUsecase _cartItemStatusUpdateUsecase;
   final RemoveFromCartUsecase _removeFromCartUsecase;
   final CartUpdateQtyUsecase _cartUpdateQtyUsecase;
   final GetCheckoutUsecase _getCheckoutUsecase;
   final PayIntentUsecase _payIntentUsecase;
-//---------------------------------------------------------------------------------------------------------------------------------------------
-// varibales
+  final GetPostageDetailUsecase _getPostageDetailUsecase;
+
+  // MARK: ⚙️ State Variables
   ShoppingBasketPageType _shoppingBasketType = ShoppingBasketPageType.basket;
   CartType _cartType = CartType.shoppingBasket;
-// getters
+  CartItemType _basketPage = CartItemType.cart;
+
+  List<CartItemEntity> _cartItems = <CartItemEntity>[];
+  final List<String> _fastDeliveryProducts = <String>[];
+  OrderBillingModel? _orderBilling;
+  PostageDetailResponseEntity? _postageResponseEntity;
+
+  AddressEntity? _address = (LocalAuth.currentUser?.address != null &&
+          LocalAuth.currentUser!.address
+              .where((AddressEntity e) => e.isDefault)
+              .isNotEmpty)
+      ? LocalAuth.currentUser!.address
+          .where((AddressEntity e) => e.isDefault)
+          .first
+      : null;
+
+  // MARK: 🧭 Getters
   CartType get cartType => _cartType;
   ShoppingBasketPageType get shoppingBasketType => _shoppingBasketType;
-// setters
+  List<CartItemEntity> get cartItems => _cartItems;
+  List<String> get fastDeliveryProducts => _fastDeliveryProducts;
+  OrderBillingModel? get orderBilling => _orderBilling;
+  PostageDetailResponseEntity? get postageResponseEntity =>
+      _postageResponseEntity;
+  CartItemType get basketPage => _basketPage;
+  AddressEntity? get address => _address;
+
+  // MARK: ✏️ Setters
   void setCartType(CartType type) {
     _cartType = type;
     notifyListeners();
@@ -57,174 +87,140 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-//-------------------------------------------------------------------------------------------------------------------------------------------
-  List<CartItemEntity> _cartItems = <CartItemEntity>[];
-//
-  final List<String> _fastDeliveryProducts = <String>[];
-  List<String> get fastDeliveryProducts => _fastDeliveryProducts;
-//
-  int _page = 1;
-  int get page => _page;
-//
-  OrderBillingModel? _orderBilling;
-  OrderBillingModel? get orderBilling => _orderBilling;
-//
-  CheckOutEntity? _checkoutEntity;
-  CheckOutEntity? get checkoutEntity => _checkoutEntity;
-//
-  CartItemType _basketPage = CartItemType.cart;
-  CartItemType get basketPage => _basketPage;
-//
-  // bool _isLoading = false;
-  // bool get isLoading => _isLoading;
-  // void setloading(bool value) {
-  //   _isLoading = value;
-  //   notifyListeners();
-  // }
-
-//
-  AddressEntity? _address = (LocalAuth.currentUser?.address != null &&
-          LocalAuth.currentUser!.address
-              .where((AddressEntity element) => element.isDefault)
-              .isNotEmpty)
-      ? LocalAuth.currentUser!.address
-          .where((AddressEntity element) => element.isDefault)
-          .first
-      : null;
-  AddressEntity? get address => _address;
+  set basketPage(CartItemType value) {
+    _basketPage = value;
+    notifyListeners();
+  }
 
   set address(AddressEntity? value) {
     _address = value;
     notifyListeners();
   }
 
-  set basketPage(CartItemType value) {
-    _basketPage = value;
+  void addFastDeliveryProduct(String id) {
+    if (id.isEmpty) return;
+    if (!_fastDeliveryProducts.contains(id)) {
+      _fastDeliveryProducts.add(id);
+      notifyListeners();
+    }
+  }
+
+  void removeFastDeliveryProduct(String id) {
+    if (id.isEmpty) return;
+    if (_fastDeliveryProducts.remove(id)) {
+      notifyListeners();
+    }
+  }
+
+  void toggleFastDeliveryProduct(String id) {
+    if (id.isEmpty) return;
+    if (_fastDeliveryProducts.contains(id)) {
+      _fastDeliveryProducts.remove(id);
+    } else {
+      _fastDeliveryProducts.add(id);
+    }
     notifyListeners();
   }
 
-  List<CartItemEntity> get cartItems => _cartItems;
-
-  set page(int value) {
-    _page = value;
-    notifyListeners();
+  void clearFastDeliveryProducts() {
+    if (_fastDeliveryProducts.isNotEmpty) {
+      _fastDeliveryProducts.clear();
+      notifyListeners();
+    }
   }
+
+  // MARK: 📦 CART OPERATIONS
 
   Future<bool> getCart() async {
-    if (_cartItems.isNotEmpty) {
-      return true;
-    }
-    final DataState<CartEntity> satte = await _getCartUsecase('');
-    if (satte is DataSuccess) {
-      _cartItems = satte.entity?.items ?? <CartItemEntity>[];
+    if (_cartItems.isNotEmpty) return true;
+
+    final DataState<CartEntity> state = await _getCartUsecase('');
+    if (state is DataSuccess) {
+      _cartItems = state.entity?.items ?? <CartItemEntity>[];
     }
     notifyListeners();
     return true;
   }
 
-  Future<DataState<CheckOutEntity>> checkout() async {
+  Future<DataState<bool>> updateStatus(CartItemEntity item) async {
     try {
-      if ((LocalAuth.currentUser?.address ?? <AddressEntity>[]).isEmpty) {
-        return DataFailer<CheckOutEntity>(CustomException('message'));
-      }
-      _address ??= LocalAuth.currentUser?.address
-          .where((AddressEntity element) => element.isDefault)
-          .first;
-      if (_address == null) {
-        return DataFailer<CheckOutEntity>(CustomException('message'));
-      }
-      final DataState<CheckOutEntity> state =
-          await _getCheckoutUsecase(_address!);
-      return state;
+      return await _cartItemStatusUpdateUsecase(CartItemModel.fromEntity(item));
     } catch (e) {
-      AppLog.error(
-        e.toString(),
-        name: 'CartProvider.checkout - Catch',
-        error: e,
-      );
-      return DataFailer<CheckOutEntity>(CustomException(e.toString()));
-    } finally {}
-  }
-
-  Future<DataState<bool>> updateStatus(CartItemEntity value) async {
-    try {
-      return await _cartItemStatusUpdateUsecase(
-          CartItemModel.fromEntity(value));
-    } catch (e) {
-      AppLog.error(
-        e.toString(),
-        name: 'CartProvider.updateStatus - Catch',
-        error: e,
-      );
+      AppLog.error(e.toString(),
+          name: 'CartProvider.updateStatus - Catch', error: e);
       return DataFailer<bool>(CustomException(e.toString()));
-    } finally {}
+    }
   }
 
   Future<DataState<bool>> removeItem(String id) async {
     try {
       return await _removeFromCartUsecase(id);
     } catch (e) {
-      AppLog.error(
-        e.toString(),
-        name: 'CartProvider.removeItem - Catch',
-        error: e,
-      );
-      return DataFailer<bool>(CustomException(e.toString()));
-    } finally {}
-  }
-
-  Future<DataState<bool>> updateQty(CartItemEntity cartItem, int qty) async {
-    try {
-      return await _cartUpdateQtyUsecase(
-        CartItemUpdateQtyParam(
-          cartItem: cartItem,
-          qty: qty,
-        ),
-      );
-    } catch (e) {
-      AppLog.error(
-        e.toString(),
-        name: 'CartProvider.updateQty - Catch',
-        error: e,
-      );
+      AppLog.error(e.toString(),
+          name: 'CartProvider.removeItem - Catch', error: e);
       return DataFailer<bool>(CustomException(e.toString()));
     }
   }
 
-  Future<void> processPayment(BuildContext context) async {
+  Future<DataState<bool>> updateQty(CartItemEntity item, int qty) async {
     try {
-      final DataState<String> billingDetails = await getBillingDetails();
-      final String? clientSecret = billingDetails.entity;
-      if (clientSecret == null || clientSecret.isEmpty) {
-        AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
-        debugPrint('client secret empty in provider');
-        return;
+      return await _cartUpdateQtyUsecase(
+        CartItemUpdateQtyParam(cartItem: item, qty: qty),
+      );
+    } catch (e) {
+      AppLog.error(e.toString(),
+          name: 'CartProvider.updateQty - Catch', error: e);
+      return DataFailer<bool>(CustomException(e.toString()));
+    }
+  }
+
+  Future<DataState<PostageDetailResponseEntity>> checkout() async {
+    try {
+      if (_address == null) {
+        return DataFailer<PostageDetailResponseEntity>(
+            CustomException('No address found'));
       }
 
-      final PaymentIntent intent =
-          await presentStripePaymentSheet(clientSecret, context);
+      final GetPostageDetailParam params = GetPostageDetailParam(
+        buyerAddress: _address!,
+        fastDelivery: fastDeliveryProducts,
+      );
 
-      // Optional: Check status of payment intent
-      if (intent.status == PaymentIntentsStatus.Succeeded) {
-        if (context.mounted) {
-          showModalBottomSheet(
-            useSafeArea: true,
-            isScrollControlled: true,
-            context: context,
-            enableDrag: false,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            ),
-            builder: (_) => const PaymentSuccessSheet(),
-          );
-        }
+      final DataState<PostageDetailResponseEntity> result =
+          await _getPostageDetailUsecase(params);
+      if (result is DataSuccess) {
+        _postageResponseEntity = result.entity;
+        setCartType(CartType.reviewOrder);
+        return result;
       } else {
-        AppSnackBar.showSnackBar(context, 'payment_not_completed'.tr());
+        return DataFailer<PostageDetailResponseEntity>(result.exception!);
       }
     } catch (e, st) {
-      AppLog.error('Payment processing error',
-          name: 'CartProvider.processPayment', error: e, stackTrace: st);
-      AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
+      AppLog.error('Failed to fetch postage details',
+          name: 'CartProvider.checkout', error: e, stackTrace: st);
+      return DataFailer<PostageDetailResponseEntity>(
+          CustomException(e.toString()));
+    }
+  }
+
+  // MARK:  PAYMENT
+  Future<DataState<CheckOutEntity>> payment() async {
+    try {
+      if ((LocalAuth.currentUser?.address ?? <AddressEntity>[]).isEmpty) {
+        return DataFailer<CheckOutEntity>(CustomException('No address found'));
+      }
+      _address ??= LocalAuth.currentUser?.address
+          .where((AddressEntity e) => e.isDefault)
+          .first;
+      if (_address == null) {
+        return DataFailer<CheckOutEntity>(
+            CustomException('No default address'));
+      }
+      return await _getCheckoutUsecase(_address!);
+    } catch (e) {
+      AppLog.error(e.toString(),
+          name: 'CartProvider.checkout - Catch', error: e);
+      return DataFailer<CheckOutEntity>(CustomException(e.toString()));
     }
   }
 
@@ -235,15 +231,48 @@ class CartProvider extends ChangeNotifier {
         final Map<String, dynamic> jsonMap = jsonDecode(state.data ?? '{}');
         _orderBilling = OrderBillingModel.fromMap(jsonMap);
         return state;
+      }
+      return DataFailer<String>(
+          CustomException('Failed to get billing details'));
+    } catch (e, st) {
+      AppLog.error('Billing details error',
+          name: 'CartProvider.getBillingDetails', error: e, stackTrace: st);
+      return DataFailer<String>(CustomException(e.toString()));
+    }
+  }
+
+  Future<void> processPayment(BuildContext context) async {
+    try {
+      final DataState<String> billingDetails = await getBillingDetails();
+      final String? clientSecret = billingDetails.entity;
+      if (clientSecret == null || clientSecret.isEmpty) {
+        AppSnackBar.show('something_wrong'.tr());
+        return;
+      }
+
+      final PaymentIntent intent =
+          await presentStripePaymentSheet(clientSecret, context);
+
+      if (intent.status == PaymentIntentsStatus.Succeeded) {
+        if (context.mounted) {
+          showModalBottomSheet(
+            context: context,
+            useSafeArea: true,
+            isScrollControlled: true,
+            enableDrag: false,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            builder: (_) => const PaymentSuccessSheet(),
+          );
+        }
       } else {
-        return DataFailer<String>(
-            CustomException('failed to get billingdetails'));
+        AppSnackBar.show('payment_not_completed'.tr());
       }
     } catch (e, st) {
-      AppLog.error('Getting billing detail error',
-          name: 'CartProvider.getBillingDetails', error: e, stackTrace: st);
-      debugPrint('Error in getBillingDetails: $e\n$st');
-      return DataFailer<String>(CustomException(e.toString()));
+      AppLog.error('Payment error',
+          name: 'CartProvider.processPayment', error: e, stackTrace: st);
+      AppSnackBar.show('something_wrong'.tr());
     }
   }
 
@@ -256,38 +285,29 @@ class CartProvider extends ChangeNotifier {
           merchantDisplayName: LocalAuth.currentUser?.userName ?? 'My Store',
         ),
       );
-
       await Stripe.instance.presentPaymentSheet();
-
       return await Stripe.instance.retrievePaymentIntent(clientSecret);
-    } on StripeException catch (e, st) {
+    } catch (e, st) {
       AppLog.error('Stripe error',
           name: 'CartProvider.presentStripePaymentSheet',
           error: e,
           stackTrace: st);
-      AppSnackBar.showSnackBar(context, 'payment_failed'.tr());
-      rethrow; // let processPayment decide what to do
-    } catch (e, st) {
-      AppLog.error('Unknown payment error',
-          name: 'CartProvider.presentStripePaymentSheet',
-          error: e,
-          stackTrace: st);
-      AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
+      AppSnackBar.show('payment_failed'.tr());
       rethrow;
     }
   }
 
+  // MARK: ♻️ RESET
   void reset() {
-    _page = 1;
     _orderBilling = null;
-    _checkoutEntity = null;
+    _postageResponseEntity = null;
     _basketPage = CartItemType.cart;
     _address = (LocalAuth.currentUser?.address != null &&
             LocalAuth.currentUser!.address
-                .where((AddressEntity element) => element.isDefault)
+                .where((AddressEntity e) => e.isDefault)
                 .isNotEmpty)
         ? LocalAuth.currentUser!.address
-            .where((AddressEntity element) => element.isDefault)
+            .where((AddressEntity e) => e.isDefault)
             .first
         : null;
     notifyListeners();

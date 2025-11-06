@@ -28,7 +28,7 @@ class PersonalCartTile extends StatefulWidget {
 }
 
 class _PersonalCartTileState extends State<PersonalCartTile> {
-  bool isActive = true;
+  late bool isActive;
   DeliveryType? _deliveryType;
   late Future<(PostEntity?, UserEntity?)> _loadFuture;
 
@@ -36,6 +36,15 @@ class _PersonalCartTileState extends State<PersonalCartTile> {
   void initState() {
     super.initState();
     _loadFuture = _loadData();
+    // Initialize switch state from provider's fast-delivery list.
+    // listen: false is safe here since we only want the initial value; the
+    // widget updates the provider when toggled.
+    final CartProvider provider =
+        Provider.of<CartProvider>(context, listen: false);
+    isActive = provider.fastDeliveryProducts.contains(widget.item.postID);
+    if (isActive) {
+      _deliveryType = DeliveryType.fastDelivery;
+    }
   }
 
   Future<(PostEntity?, UserEntity?)> _loadData() async {
@@ -259,7 +268,10 @@ class _PersonalCartTileState extends State<PersonalCartTile> {
                 CustomSwitch(
                   value: isActive,
                   onChanged: (bool val) {
-                    // Only update local UI state; do not persist to LocalPost.
+                    // Update local UI state and persist change to provider's
+                    // fast-delivery id list.
+                    final CartProvider provider =
+                        Provider.of<CartProvider>(context, listen: false);
                     setState(() {
                       debugPrint('fast delivery for ${widget.item.postID}');
                       isActive = val;
@@ -267,6 +279,12 @@ class _PersonalCartTileState extends State<PersonalCartTile> {
                           ? DeliveryType.fastDelivery
                           : (post?.deliveryType ?? DeliveryType.collection);
                     });
+
+                    if (val) {
+                      provider.addFastDeliveryProduct(widget.item.postID);
+                    } else {
+                      provider.removeFastDeliveryProduct(widget.item.postID);
+                    }
                     debugPrint('Item switch toggled: $val');
                   },
                 ),

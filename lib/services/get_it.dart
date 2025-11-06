@@ -92,6 +92,7 @@ import '../features/personal/basket/domain/repositories/checkout_repository.dart
 import '../features/personal/basket/domain/usecase/cart/cart_item_status_update_usecase.dart';
 import '../features/personal/basket/domain/usecase/cart/cart_update_qty_usecase.dart';
 import '../features/personal/basket/domain/usecase/cart/get_cart_usecase.dart';
+import '../features/personal/basket/domain/usecase/cart/get_postage_detail_usecase.dart';
 import '../features/personal/basket/domain/usecase/cart/remove_from_cart_usecase.dart';
 import '../features/personal/basket/domain/usecase/checkout/get_checkout_usecase.dart';
 import '../features/personal/basket/domain/usecase/checkout/pay_intent_usecase.dart';
@@ -408,6 +409,8 @@ void _cart() {
   locator.registerFactory<CartRemoteAPI>(() => CartRemoteAPIImpl());
   locator.registerFactory<CartRepository>(() => CartRepositoryImpl(locator()));
   locator.registerFactory<GetCartUsecase>(() => GetCartUsecase(locator()));
+  locator.registerFactory<GetPostageDetailUsecase>(
+      () => GetPostageDetailUsecase(locator()));
   locator.registerFactory<CartItemStatusUpdateUsecase>(
       () => CartItemStatusUpdateUsecase(locator()));
   locator.registerFactory<RemoveFromCartUsecase>(
@@ -422,7 +425,7 @@ void _cart() {
       .registerFactory<GetCheckoutUsecase>(() => GetCheckoutUsecase(locator()));
   locator.registerFactory<PayIntentUsecase>(() => PayIntentUsecase(locator()));
   // provider
-  locator.registerLazySingleton<CartProvider>(() => CartProvider(
+  locator.registerLazySingleton<CartProvider>(() => CartProvider(locator(),
       locator(), locator(), locator(), locator(), locator(), locator()));
 }
 
