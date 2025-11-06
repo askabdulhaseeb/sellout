@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../features/personal/address/add_address/views/provider/add_address_provider.dart';
 import '../../../features/personal/address/add_address/views/screens/add_address_screen.dart';
 import '../../../features/personal/auth/signin/domain/entities/address_entity.dart';
+import '../../widgets/custom_elevated_button.dart';
 
 class SelectableAddressTile extends StatelessWidget {
   const SelectableAddressTile({
@@ -70,46 +71,48 @@ class SelectableAddressTile extends StatelessWidget {
                               ),
                             ),
                           const Text('  •  '),
-                          InkWell(
-                            onTap: () async {
-                              AddAddressProvider pro =
-                                  Provider.of<AddAddressProvider>(context,
-                                      listen: false);
-                              pro.updateVariable(address);
-                              Navigator.of(context).push<AddressEntity?>(
-                                MaterialPageRoute<AddressEntity?>(
-                                  builder: (BuildContext context) {
-                                    return AddEditAddressScreen(
-                                        initAddress: address);
-                                  },
-                                ),
-                              );
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 2, horizontal: 8),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context)
-                                    .primaryColor
-                                    .withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text(
-                                'edit'.tr(),
-                                style: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 13,
-                                ),
-                              ),
-                            ),
-                          ),
                         ],
                       ),
                       Text('${address.recipientName} . ${address.phoneNumber}'),
-                      Text('${address.townCity} . ${address.postalCode}'),
+                      Text('${address.city} . ${address.postalCode}'),
                       Text(address.address),
                       const SizedBox(height: 8),
+                      InkWell(
+                        onTap: () async {
+                          AddAddressProvider pro =
+                              Provider.of<AddAddressProvider>(context,
+                                  listen: false);
+                          pro.updateVariable(address);
+                          Navigator.of(context).push<AddressEntity?>(
+                            MaterialPageRoute<AddressEntity?>(
+                              builder: (BuildContext context) {
+                                return AddEditAddressScreen(
+                                    initAddress: address);
+                              },
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 2, horizontal: 8),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context)
+                                .primaryColor
+                                .withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            'edit'.tr(),
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ),
+                      CustomElevatedButton(
+                          title: 'edit', isLoading: false, onTap: onTap),
                     ],
                   ),
                 ),

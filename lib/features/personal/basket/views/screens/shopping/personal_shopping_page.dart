@@ -5,7 +5,7 @@ import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../providers/cart_provider.dart';
 import '../../widgets/cart_widgets/personal_cart_step_indicator.dart';
 import 'cart/cart_page.dart';
-import 'checkout/personal_checkout_screen.dart';
+import 'checkout/checkout_page.dart';
 
 class PersonalShoppingPage extends StatefulWidget {
   const PersonalShoppingPage({super.key});

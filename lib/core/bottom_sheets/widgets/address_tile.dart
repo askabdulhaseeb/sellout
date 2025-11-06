@@ -31,7 +31,7 @@ class AddressTile extends StatelessWidget {
                   ),
                   Text('${address.recipientName} . ${address.phoneNumber}'),
                   Text(address.address),
-                  Text('${address.townCity} . ${address.postalCode}'),
+                  Text('${address.city} . ${address.postalCode}'),
                   const SizedBox(height: 8),
                 ],
               ),

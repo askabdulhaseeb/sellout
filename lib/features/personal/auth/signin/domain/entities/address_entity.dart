@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import '../../../../../../core/widgets/phone_number/domain/entities/country_entity.dart';
 part 'address_entity.g.dart';
 
 @HiveType(typeId: 6)
@@ -10,7 +11,8 @@ class AddressEntity {
     required this.address,
     required this.category,
     required this.postalCode,
-    required this.townCity,
+    required this.city,
+    required this.state,
     required this.country,
     required this.isDefault,
   });
@@ -28,9 +30,11 @@ class AddressEntity {
   @HiveField(5)
   final String postalCode;
   @HiveField(6)
-  final String townCity;
+  final String city;
+  @HiveField(9)
+  final StateEntity state;
   @HiveField(7)
-  final String country;
+  final CountryEntity country;
   @HiveField(8)
   final bool isDefault;
 }

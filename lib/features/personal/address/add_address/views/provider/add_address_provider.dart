@@ -26,7 +26,6 @@ class AddAddressProvider extends ChangeNotifier {
   final TextEditingController _address2Controller = TextEditingController();
   String? _city;
   StateEntity? _state;
-  String _selectedCountry = '';
   CountryEntity? _selectedCountryEntity;
   bool _isDefault = false;
   String _addressId = '';
@@ -45,7 +44,6 @@ class AddAddressProvider extends ChangeNotifier {
   String? get city => _city;
   StateEntity? get state => _state;
 
-  String get selectedCountry => _selectedCountry;
   CountryEntity? get selectedCountryEntity => _selectedCountryEntity;
   String get addressId => _addressId;
   bool get isDefault => _isDefault;
@@ -62,7 +60,7 @@ class AddAddressProvider extends ChangeNotifier {
         phoneNumber: LocalAuth.currentUser?.phoneNumber ?? '',
         postalCode: _postalCodeController.text,
         addressCategory: _addressCategory ?? '',
-        country: _selectedCountry,
+        country: _selectedCountryEntity?.countryName ?? '',
         isDefault: _isDefault,
         action: _action,
       );
@@ -100,20 +98,14 @@ class AddAddressProvider extends ChangeNotifier {
     // phoneNumber =   await PhoneNumberEntity.fromJson(address.phoneNumber, address.country);
     _postalCodeController.text = address.postalCode;
     _address1Controller.text = address.address;
-    _city = address.townCity;
-    _selectedCountry = address.country;
+    _city = address.city;
+    _selectedCountryEntity = address.country;
     _isDefault = address.isDefault;
     _addressId = address.addressID;
   }
 
-  set selectedCountry(String value) {
-    _selectedCountry = value;
-    notifyListeners(); // Make sure to notify listeners to update the UI
-  }
-
   set selectedCountryEntity(CountryEntity? value) {
     _selectedCountryEntity = value;
-    _selectedCountry = value?.countryCode ?? '';
     notifyListeners();
   }
 
@@ -190,12 +182,10 @@ class AddAddressProvider extends ChangeNotifier {
     _postalCodeController.clear();
     _address1Controller.clear();
     _address2Controller.clear();
-    _selectedCountry = '';
     _selectedCountryEntity = null;
     _recipientNameController.clear();
     _city = null;
     _state = null;
-    _selectedCountry = '';
     _addressCategory = null;
     _isDefault = false;
     notifyListeners();
