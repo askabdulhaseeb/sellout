@@ -43,7 +43,6 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
             child: Form(
               key: formKey,
               child: Column(
-                spacing: AppSpacing.xs,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   CustomTextFormField(
@@ -51,6 +50,7 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                     controller: provider.recipientNameController,
                     validator: (String? value) => AppValidator.isEmpty(value),
                   ),
+                  const SizedBox(height: AppSpacing.vSm),
                   CountryDropdownField(
                     validator: (bool? value) =>
                         AppValidator.requireSelection(value),
@@ -59,6 +59,7 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                       provider.selectedCountryEntity = value;
                     },
                   ),
+                  const SizedBox(height: AppSpacing.vSm),
                   Consumer<AddAddressProvider>(
                     builder: (BuildContext context, AddAddressProvider pros,
                         Widget? child) {
@@ -70,10 +71,8 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                               value: s, child: Text(s.stateName)))
                           .toList();
 
-                      StateEntity? selected;
                       for (final StateEntity s in states) {
                         if (s.stateName == pros.state?.stateName) {
-                          selected = s;
                           break;
                         }
                       }
@@ -81,7 +80,7 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                       return CustomDropdown<StateEntity>(
                         title: 'state'.tr(),
                         items: items,
-                        selectedItem: selected,
+                        selectedItem: pros.state,
                         onChanged: (StateEntity? value) {
                           if (value != null) {
                             pros.setState(value);
@@ -92,6 +91,7 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                       );
                     },
                   ),
+                  const SizedBox(height: AppSpacing.vSm),
 
                   // City selector: dropdown populated from selected state's cities
                   Consumer<AddAddressProvider>(
@@ -116,15 +116,13 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                               value: city, child: Text(city)))
                           .toList();
 
-                      String? selectedCity;
-                      if (pros.city != '') {
-                        selectedCity = pros.city;
-                      }
+                      // selectedCity is intentionally not stored locally; use provider
+                      // value directly (pros.city) for the dropdown's selectedItem.
 
                       return CustomDropdown<String>(
                         title: 'city'.tr(),
                         items: items,
-                        selectedItem: selectedCity,
+                        selectedItem: pros.city,
                         onChanged: (String? value) {
                           if (value != null) pros.setCity(value);
                         },
@@ -133,21 +131,25 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                       );
                     },
                   ),
+                  const SizedBox(height: AppSpacing.vSm),
                   // State selector: show a dropdown of states for the selected country
                   CustomTextFormField(
                     labelText: 'address_1'.tr(),
                     controller: provider.address1Controller,
                     validator: (String? value) => AppValidator.isEmpty(value),
                   ),
+                  const SizedBox(height: AppSpacing.vSm),
                   CustomTextFormField(
                       labelText: 'address_2'.tr(),
                       controller: provider.address2Controller,
                       validator: null),
+                  const SizedBox(height: AppSpacing.vSm),
                   CustomTextFormField(
                     labelText: 'postal_code'.tr(),
                     controller: provider.postalCodeController,
                     validator: (String? value) => AppValidator.isEmpty(value),
                   ),
+                  const SizedBox(height: AppSpacing.vSm),
                   // CustomTextFormField(
                   //   labelText: '${'town'.tr()}/${'city'.tr()}',
                   //   controller: provider.townCity,
@@ -185,6 +187,7 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                           AppValidator.requireSelection(value),
                     ),
                   ),
+                  const SizedBox(height: AppSpacing.vSm),
                   PhoneNumberInputField(
                     initialValue: provider.phoneNumber,
                     labelText: 'phone_number'.tr(),
@@ -192,6 +195,8 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                       provider.phoneNumber = value;
                     },
                   ),
+
+                  const SizedBox(height: AppSpacing.vSm),
 
                   Consumer<AddAddressProvider>(
                     builder:
