@@ -21,7 +21,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final CartProvider cartPro = context.read<CartProvider>();
       if (cartPro.address != null && cartPro.postageResponseEntity == null) {
-        cartPro.checkout();
+        cartPro.getRates();
       }
     });
   }
@@ -42,7 +42,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             );
             if (newAddress != null) {
               cartPro.address = newAddress;
-              await cartPro.checkout();
+              await cartPro.getRates();
             }
           },
           borderRadius: BorderRadius.circular(8),
@@ -99,7 +99,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           onTap: () async {
             // Ensure postage details are available before opening sheet
             if (cartPro.postageResponseEntity == null) {
-              await cartPro.checkout();
+              await cartPro.getRates();
             }
             if (cartPro.postageResponseEntity == null) return;
             final Map<String, RateEntity>? newSelection =

@@ -12,8 +12,8 @@ class RatesSection extends StatelessWidget {
     required this.selected,
     required this.onSelect,
     required this.cartPro,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final String postId;
   final PostageItemDetailEntity detail;

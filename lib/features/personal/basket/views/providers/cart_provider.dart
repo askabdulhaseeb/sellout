@@ -178,7 +178,7 @@ class CartProvider extends ChangeNotifier {
   }
 
   // MARK: 📦 CHECKOUT OPERATIONS
-  Future<DataState<PostageDetailResponseEntity>> checkout() async {
+  Future<DataState<PostageDetailResponseEntity>> getRates() async {
     try {
       if (_address == null) {
         return DataFailer<PostageDetailResponseEntity>(
@@ -194,6 +194,8 @@ class CartProvider extends ChangeNotifier {
           await _getPostageDetailUsecase(params);
       if (result is DataSuccess) {
         _postageResponseEntity = result.entity;
+        setCartType(CartType.checkoutOrder);
+
         return result;
       } else {
         return DataFailer<PostageDetailResponseEntity>(result.exception!);
