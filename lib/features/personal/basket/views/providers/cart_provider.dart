@@ -177,6 +177,7 @@ class CartProvider extends ChangeNotifier {
     }
   }
 
+  // MARK: 📦 CHECKOUT OPERATIONS
   Future<DataState<PostageDetailResponseEntity>> checkout() async {
     try {
       if (_address == null) {
@@ -193,7 +194,6 @@ class CartProvider extends ChangeNotifier {
           await _getPostageDetailUsecase(params);
       if (result is DataSuccess) {
         _postageResponseEntity = result.entity;
-        setCartType(CartType.reviewOrder);
         return result;
       } else {
         return DataFailer<PostageDetailResponseEntity>(result.exception!);
@@ -206,12 +206,52 @@ class CartProvider extends ChangeNotifier {
     }
   }
 
-
   void selectPostageRate(String postId, RateEntity rate) {
     if (postId.isEmpty) return;
     _selectedPostageRates[postId] = rate;
     notifyListeners();
   }
+
+  /// Build a checkout payload map. This includes buyer address, cart items
+  /// (only items currently in cart), and selected postage rates per post.
+  Map<String, dynamic> buildCheckoutMap() {
+    if (_address == null) return <String, dynamic>{};
+
+    final Map<String, dynamic> buyerAddress =
+        AddressModel.fromEntity(_address!).toJson();
+
+    final List<Map<String, dynamic>> items = _cartItems
+        .where((CartItemEntity it) => it.inCart)
+        .map((CartItemEntity it) => <String, dynamic>{
+              'cart_item_id': it.cartItemID,
+              'post_id': it.postID,
+              'quantity': it.quantity,
+            })
+        .toList();
+
+    final Map<String, dynamic> postage = <String, dynamic>{};
+    _selectedPostageRates.forEach((String postId, RateEntity rate) {
+      postage[postId] = <String, dynamic>{
+        'provider': rate.provider,
+        'service_level': <String, String>{
+          'name': rate.serviceLevel.name,
+          'token': rate.serviceLevel.token,
+        },
+        'amount':
+            rate.amountBuffered.isNotEmpty ? rate.amountBuffered : rate.amount,
+        'provider_image75': rate.providerImage75,
+      };
+    });
+
+    return <String, dynamic>{
+      'buyer_address': buyerAddress,
+      'items': items,
+      'postage': postage,
+    };
+  }
+
+  /// JSON-encoded checkout payload.
+  String buildCheckoutJson() => json.encode(buildCheckoutMap());
 
   // MARK:  PAYMENT
   Future<DataState<CheckOutEntity>> payment() async {
