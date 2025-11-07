@@ -11,7 +11,7 @@ class GetPostageDetailParam {
   final List<String> fastDelivery;
 
   Map<String, dynamic> toMap() => {
-        'buyer_address': AddressModel.fromEntity(buyerAddress).toCheckoutJson(),
+        'buyer_address': AddressModel.fromEntity(buyerAddress).toShippingJson(),
         'fast_delivery': fastDelivery,
       };
 
