@@ -57,7 +57,7 @@ class PostageItemDetailEntity {
 
   final String postId;
   final String id;
-  final Map<String, dynamic> packageDetail; // keep as map for flexibility
+  final Map<String, dynamic> packageDetail;
   final AddressEntity fromAddress;
   final AddressEntity toAddress;
   final String? sellerId;
