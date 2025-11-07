@@ -58,11 +58,9 @@ class PersonalCartTotalSection extends StatelessWidget {
                 isLoading: false,
                 onTap: () async {
                   if (cartPro.cartType == CartType.shoppingBasket) {
-                    //TODO: add cart page functionality
-                    cartPro.setCartType(CartType.checkoutOrder);
+                    await cartPro.getRates();
                   } else if (cartPro.cartType == CartType.checkoutOrder) {
                     //TODO: add checkout page functionality
-                    await cartPro.checkout();
                   } else if (cartPro.cartType == CartType.reviewOrder) {
                     //TODO: add review page functionality
                     cartPro.setCartType(CartType.payment);
