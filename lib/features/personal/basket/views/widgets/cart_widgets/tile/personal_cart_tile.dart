@@ -279,7 +279,6 @@ class _PersonalCartTileState extends State<PersonalCartTile> {
                           ? DeliveryType.fastDelivery
                           : (post?.deliveryType ?? DeliveryType.collection);
                     });
-
                     if (val) {
                       provider.addFastDeliveryProduct(widget.item.postID);
                     } else {
