@@ -55,6 +55,8 @@ class CartProvider extends ChangeNotifier {
   final List<String> _fastDeliveryProducts = <String>[];
   OrderBillingModel? _orderBilling;
   PostageDetailResponseEntity? _postageResponseEntity;
+  // selected postage rate per postID
+  final Map<String, RateEntity> _selectedPostageRates = <String, RateEntity>{};
 
   AddressEntity? _address = (LocalAuth.currentUser?.address != null &&
           LocalAuth.currentUser!.address
@@ -73,6 +75,7 @@ class CartProvider extends ChangeNotifier {
   OrderBillingModel? get orderBilling => _orderBilling;
   PostageDetailResponseEntity? get postageResponseEntity =>
       _postageResponseEntity;
+  Map<String, RateEntity> get selectedPostageRates => _selectedPostageRates;
   CartItemType get basketPage => _basketPage;
   AddressEntity? get address => _address;
 
@@ -201,6 +204,13 @@ class CartProvider extends ChangeNotifier {
       return DataFailer<PostageDetailResponseEntity>(
           CustomException(e.toString()));
     }
+  }
+
+
+  void selectPostageRate(String postId, RateEntity rate) {
+    if (postId.isEmpty) return;
+    _selectedPostageRates[postId] = rate;
+    notifyListeners();
   }
 
   // MARK:  PAYMENT
