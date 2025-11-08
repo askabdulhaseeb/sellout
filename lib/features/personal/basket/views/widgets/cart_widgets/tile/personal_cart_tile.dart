@@ -308,6 +308,52 @@ class SaveLaterWidget extends StatefulWidget {
 }
 
 class _SaveLaterWidgetState extends State<SaveLaterWidget> {
+  bool _isLoading = false;
+
+  Future<void> _handleSaveLater() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final DataState<bool> result =
+          await Provider.of<CartProvider>(context, listen: false)
+              .updateStatus(widget.item);
+
+      if (mounted) {
+        if (result is DataSuccess) {
+          AppSnackBar.showSnackBar(
+            context,
+            'Item status updated successfully'.tr(),
+            color: Theme.of(context).colorScheme.primary,
+          );
+        } else if (result is DataFailer) {
+          AppSnackBar.showSnackBar(
+            context,
+            result.exception?.message ?? 'Failed to update item status'.tr(),
+            color: Theme.of(context).colorScheme.error,
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        AppSnackBar.showSnackBar(
+          context,
+          'Error: ${e.toString()}',
+          color: Theme.of(context).colorScheme.error,
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final ColorScheme scheme = Theme.of(context).colorScheme;
@@ -324,28 +370,29 @@ class _SaveLaterWidgetState extends State<SaveLaterWidget> {
           color: scheme.outline.withValues(alpha: 0.1),
         ),
         InkWell(
-          onTap: () async {
-            try {
-              final DataState<bool> result =
-                  await Provider.of<CartProvider>(context, listen: false)
-                      .updateStatus(widget.item);
-
-              if (result is DataFailer) {
-                AppSnackBar.showSnackBar(
-                  context,
-                  result.exception?.message ?? 'something_wrong',
-                );
-              }
-            } catch (e) {
-              AppSnackBar.showSnackBar(context, e.toString());
-            }
-          },
-          child: Text(
-            widget.item.type.tileActionCode.tr(),
-            style: textTheme.bodySmall?.copyWith(
-              color: scheme.secondary,
-              fontWeight: FontWeight.w500,
-            ),
+          onTap: _isLoading ? null : _handleSaveLater,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (_isLoading) ...[
+                SizedBox(
+                  width: 12,
+                  height: 12,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 1.5,
+                    valueColor: AlwaysStoppedAnimation<Color>(scheme.secondary),
+                  ),
+                ),
+                const SizedBox(width: 4),
+              ],
+              Text(
+                widget.item.type.tileActionCode.tr(),
+                style: textTheme.bodySmall?.copyWith(
+                  color: _isLoading ? scheme.outline : scheme.secondary,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
         ),
         Container(

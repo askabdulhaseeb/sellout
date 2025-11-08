@@ -46,29 +46,77 @@ class LocalCart {
   }
 
   Future<void> updateQTY(CartItemEntity item, int qty) async {
-    final String me = LocalAuth.uid ?? '';
-    final CartEntity currentt = entity(me);
-    final CartItemEntity current = currentt.items.firstWhere(
-        (CartItemEntity element) => element.cartItemID == item.cartItemID);
-    current.quantity = qty;
-    await save(currentt);
+    try {
+      if (qty <= 0) {
+        throw Exception('Quantity must be greater than 0');
+      }
+
+      final String me = LocalAuth.uid ?? '';
+      if (me.isEmpty) {
+        throw Exception('User not authenticated');
+      }
+
+      final CartEntity currentCart = entity(me);
+      final int itemIndex = currentCart.items.indexWhere(
+          (CartItemEntity element) => element.cartItemID == item.cartItemID);
+
+      if (itemIndex == -1) {
+        throw Exception('Cart item not found');
+      }
+
+      currentCart.items[itemIndex].quantity = qty;
+      await save(currentCart);
+    } catch (e) {
+      rethrow; // Re-throw to allow caller to handle
+    }
   }
 
   Future<void> updateStatus(CartItemEntity item, CartItemType type) async {
-    final String me = LocalAuth.uid ?? '';
-    final CartEntity currentt = entity(me);
-    final CartItemEntity current = currentt.items.firstWhere(
-        (CartItemEntity element) => element.cartItemID == item.cartItemID);
-    current.status = type.json;
-    await save(currentt);
+    try {
+      final String me = LocalAuth.uid ?? '';
+      if (me.isEmpty) {
+        throw Exception('User not authenticated');
+      }
+
+      final CartEntity currentCart = entity(me);
+      final int itemIndex = currentCart.items.indexWhere(
+          (CartItemEntity element) => element.cartItemID == item.cartItemID);
+
+      if (itemIndex == -1) {
+        throw Exception('Cart item not found');
+      }
+
+      currentCart.items[itemIndex].status = type.json;
+      await save(currentCart);
+    } catch (e) {
+      rethrow; // Re-throw to allow caller to handle
+    }
   }
 
   Future<void> removeFromCart(String itemID) async {
-    final String me = LocalAuth.uid ?? '';
-    final CartEntity currentt = entity(me);
-    currentt.items
-        .removeWhere((CartItemEntity element) => element.cartItemID == itemID);
-    await save(currentt);
+    try {
+      if (itemID.isEmpty) {
+        throw Exception('Invalid item ID');
+      }
+
+      final String me = LocalAuth.uid ?? '';
+      if (me.isEmpty) {
+        throw Exception('User not authenticated');
+      }
+
+      final CartEntity currentCart = entity(me);
+      final int initialLength = currentCart.items.length;
+      currentCart.items.removeWhere(
+          (CartItemEntity element) => element.cartItemID == itemID);
+
+      if (currentCart.items.length == initialLength) {
+        throw Exception('Cart item not found');
+      }
+
+      await save(currentCart);
+    } catch (e) {
+      rethrow; // Re-throw to allow caller to handle
+    }
   }
 
   ValueListenable<Box<CartEntity>> listenable() => _box.listenable();
