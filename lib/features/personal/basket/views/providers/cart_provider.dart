@@ -13,6 +13,7 @@ import '../../data/models/checkout/order_billing_model.dart';
 import '../../data/sources/local/local_cart.dart';
 import '../../domain/entities/cart/cart_entity.dart';
 import '../../domain/entities/cart/postage_detail_response_entity.dart';
+import '../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../domain/entities/checkout/check_out_entity.dart';
 import '../../domain/enums/cart_type.dart';
 import '../../domain/enums/shopping_basket_type.dart';
@@ -78,6 +79,44 @@ class CartProvider extends ChangeNotifier {
   Map<String, RateEntity> get selectedPostageRates => _selectedPostageRates;
   CartItemType get basketPage => _basketPage;
   AddressEntity? get address => _address;
+
+  /// Returns true if any cart item requires removal because delivery is unavailable.
+  /// Criteria: originalDeliveryType is paid or fast delivery AND no rates found.
+  bool get hasItemsRequiringRemoval {
+    if (_postageResponseEntity == null) return false;
+    for (final PostageItemDetailEntity detail
+        in _postageResponseEntity!.detail.values) {
+      final DeliveryType deliveryType =
+          DeliveryType.fromJson(detail.originalDeliveryType);
+      final bool isDeliveryNeeded = deliveryType == DeliveryType.paid ||
+          deliveryType == DeliveryType.fastDelivery;
+      if (!isDeliveryNeeded) continue;
+      final bool hasRates = detail.shippingDetails
+          .expand((PostageDetailShippingDetailEntity sd) => sd.ratesBuffered)
+          .isNotEmpty;
+      if (!hasRates) return true;
+    }
+    return false;
+  }
+
+  /// List of post IDs that require removal to proceed.
+  List<String> get itemsRequiringRemovalPostIds {
+    if (_postageResponseEntity == null) return <String>[];
+    final List<String> ids = <String>[];
+    _postageResponseEntity!.detail
+        .forEach((String postId, PostageItemDetailEntity detail) {
+      final DeliveryType deliveryType =
+          DeliveryType.fromJson(detail.originalDeliveryType);
+      final bool isDeliveryNeeded = deliveryType == DeliveryType.paid ||
+          deliveryType == DeliveryType.fastDelivery;
+      if (!isDeliveryNeeded) return;
+      final bool hasRates = detail.shippingDetails
+          .expand((PostageDetailShippingDetailEntity sd) => sd.ratesBuffered)
+          .isNotEmpty;
+      if (!hasRates) ids.add(postId);
+    });
+    return ids;
+  }
 
   // MARK: ✏️ Setters
   void setCartType(CartType type) {

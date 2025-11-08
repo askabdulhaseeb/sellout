@@ -27,7 +27,43 @@ class PersonalCartTile extends StatefulWidget {
   State<PersonalCartTile> createState() => _PersonalCartTileState();
 }
 
-class _PersonalCartTileState extends State<PersonalCartTile> {
+/// Simple in-memory cache to avoid reloading post/seller data repeatedly per tile
+class _CartTileDataCache {
+  static final Map<String, Future<(PostEntity?, UserEntity?)>> _inFlight =
+      <String, Future<(PostEntity?, UserEntity?)>>{};
+  static final Map<String, (PostEntity?, UserEntity?)> _cache =
+      <String, (PostEntity?, UserEntity?)>{};
+
+  static Future<(PostEntity?, UserEntity?)> get(String postId) {
+    // Return cached value if present
+    final (PostEntity?, UserEntity?)? cached = _cache[postId];
+    if (cached != null) return Future<(PostEntity?, UserEntity?)>.value(cached);
+
+    // If a request is already in-flight for this postId, return it
+    final Future<(PostEntity?, UserEntity?)>? flight = _inFlight[postId];
+    if (flight != null) return flight;
+
+    // Start a new load and memoize the Future to de-duplicate concurrent calls
+    final Future<(PostEntity?, UserEntity?)> fut = _load(postId);
+    _inFlight[postId] = fut;
+    fut.then(((PostEntity?, UserEntity?) value) {
+      _cache[postId] = value;
+      _inFlight.remove(postId);
+    }, onError: (_) {
+      _inFlight.remove(postId);
+    });
+    return fut;
+  }
+
+  static Future<(PostEntity?, UserEntity?)> _load(String postId) async {
+    final PostEntity? post = await LocalPost().getPost(postId);
+    final UserEntity? seller = await LocalUser().user(post?.createdBy ?? '');
+    return (post, seller);
+  }
+}
+
+class _PersonalCartTileState extends State<PersonalCartTile>
+    with AutomaticKeepAliveClientMixin<PersonalCartTile> {
   late bool isActive;
   DeliveryType? _deliveryType;
   late Future<(PostEntity?, UserEntity?)> _loadFuture;
@@ -35,6 +71,7 @@ class _PersonalCartTileState extends State<PersonalCartTile> {
   @override
   void initState() {
     super.initState();
+    // Cache-backed future: avoids repeated loads across rebuilds/tiles
     _loadFuture = _loadData();
     // Initialize switch state from provider's fast-delivery list.
     // listen: false is safe here since we only want the initial value; the
@@ -48,9 +85,7 @@ class _PersonalCartTileState extends State<PersonalCartTile> {
   }
 
   Future<(PostEntity?, UserEntity?)> _loadData() async {
-    final PostEntity? post = await LocalPost().getPost(widget.item.postID);
-    final UserEntity? seller = await LocalUser().user(post?.createdBy ?? '');
-    return (post, seller);
+    return _CartTileDataCache.get(widget.item.postID);
   }
 
   int calculateReviewPercentage(List<double> reviews, {double maxRating = 5}) {
@@ -62,12 +97,57 @@ class _PersonalCartTileState extends State<PersonalCartTile> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // for AutomaticKeepAliveClientMixin
     final ColorScheme scheme = Theme.of(context).colorScheme;
     final TextTheme textTheme = Theme.of(context).textTheme;
     return FutureBuilder<(PostEntity?, UserEntity?)>(
       future: _loadFuture,
       builder: (BuildContext context,
           AsyncSnapshot<(PostEntity?, UserEntity?)> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Lightweight skeleton to reduce layout shift while loading
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.vSm),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: scheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.hSm),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        height: 14,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: scheme.surfaceContainerHighest,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        height: 12,
+                        width: 120,
+                        decoration: BoxDecoration(
+                          color: scheme.surfaceContainerHighest,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
         final (PostEntity?, UserEntity?)? data = snapshot.data;
         final PostEntity? post = data?.$1;
         final UserEntity? seller = data?.$2;
@@ -297,6 +377,9 @@ class _PersonalCartTileState extends State<PersonalCartTile> {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class SaveLaterWidget extends StatefulWidget {
@@ -373,8 +456,8 @@ class _SaveLaterWidgetState extends State<SaveLaterWidget> {
           onTap: _isLoading ? null : _handleSaveLater,
           child: Row(
             mainAxisSize: MainAxisSize.min,
-            children: [
-              if (_isLoading) ...[
+            children: <Widget>[
+              if (_isLoading) ...<Widget>[
                 SizedBox(
                   width: 12,
                   height: 12,
