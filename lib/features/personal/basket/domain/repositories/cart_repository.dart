@@ -5,6 +5,7 @@ import '../../data/models/cart/postage_Detail_response_model.dart';
 import '../entities/cart/cart_entity.dart';
 import '../param/cart_item_update_qty_param.dart';
 import '../param/get_postage_detail_params.dart';
+import '../param/submit_shipping_param.dart';
 
 abstract interface class CartRepository {
   Future<void> addProductToCart();
@@ -16,4 +17,5 @@ abstract interface class CartRepository {
       CartItemModel params, CartItemType action);
   Future<DataState<PostageDetailResponseModel>> getPostageDetails(
       GetPostageDetailParam param);
+  Future<DataState<bool>> addShipping(SubmitShippingParam param);
 }

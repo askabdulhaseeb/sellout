@@ -7,6 +7,7 @@ import '../../../../../../core/sources/api_call.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../domain/param/cart_item_update_qty_param.dart';
 import '../../../domain/param/get_postage_detail_params.dart';
+import '../../../domain/param/submit_shipping_param.dart';
 import '../../models/cart/cart_item_model.dart';
 import '../../models/cart/cart_model.dart';
 import '../../models/cart/postage_Detail_response_model.dart';
@@ -22,6 +23,7 @@ abstract interface class CartRemoteAPI {
       CartItemModel params, CartItemType action);
   Future<DataState<PostageDetailResponseModel>> getPostageDetails(
       GetPostageDetailParam param);
+  Future<DataState<bool>> addShipping(SubmitShippingParam param);
 }
 
 class CartRemoteAPIImpl implements CartRemoteAPI {
@@ -243,6 +245,39 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
       );
       return DataFailer<PostageDetailResponseModel>(
           CustomException(e.toString()));
+    }
+  }
+
+  @override
+  Future<DataState<bool>> addShipping(SubmitShippingParam param) async {
+    try {
+      const String endpoint = '/cart/add/shipping';
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: endpoint,
+        isAuth: true,
+        requestType: ApiRequestType.post,
+        body: jsonEncode(param.toJson()),
+      );
+      if (result is DataSuccess<bool>) {
+        AppLog.info('Shipping added successfully',
+            name: 'CartRemoteAPIImpl.addShipping - Success');
+        return DataSuccess<bool>(result.data ?? '', true);
+      } else {
+        AppLog.error(
+          jsonEncode(param.toJson()),
+          name: 'CartRemoteAPIImpl.addShipping - Else',
+          error: result.exception?.reason ?? 'something_wrong'.tr(),
+        );
+        return DataFailer<bool>(
+            result.exception ?? CustomException('Failed to add shipping'));
+      }
+    } catch (e) {
+      AppLog.error(
+        e.toString(),
+        name: 'CartRemoteAPIImpl.addShipping - Catch',
+        error: e,
+      );
+      return DataFailer<bool>(CustomException(e.toString()));
     }
   }
 }

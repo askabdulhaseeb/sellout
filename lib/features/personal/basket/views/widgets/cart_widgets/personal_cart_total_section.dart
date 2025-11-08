@@ -2,6 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../core/sources/data_state.dart';
+import '../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../data/models/cart/cart_item_model.dart';
@@ -67,7 +69,23 @@ class PersonalCartTotalSection extends StatelessWidget {
                       // Do nothing; button disabled visually.
                       return;
                     }
-                    //TODO: add checkout page functionality
+
+                    // Submit shipping selection to API
+                    final DataState<bool> result =
+                        await cartPro.submitShipping();
+
+                    if (result is DataSuccess<bool>) {
+                      // Move to review order after successful API call
+                      cartPro.setCartType(CartType.reviewOrder);
+                    } else {
+                      // Show error message
+                      if (context.mounted) {
+                        AppSnackBar.show(
+                          result.exception?.reason ??
+                              'failed_to_submit_shipping'.tr(),
+                        );
+                      }
+                    }
                   } else if (cartPro.cartType == CartType.reviewOrder) {
                     //TODO: add review page functionality
                     cartPro.setCartType(CartType.payment);
