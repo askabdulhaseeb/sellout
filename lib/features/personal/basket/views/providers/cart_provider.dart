@@ -137,17 +137,45 @@ class CartProvider extends ChangeNotifier {
   Future<bool> getCart() async {
     if (_cartItems.isNotEmpty) return true;
 
-    final DataState<CartEntity> state = await _getCartUsecase('');
-    if (state is DataSuccess) {
-      _cartItems = state.entity?.items ?? <CartItemEntity>[];
+    try {
+      final DataState<CartEntity> state = await _getCartUsecase('');
+      if (state is DataSuccess) {
+        _cartItems = state.entity?.items ?? <CartItemEntity>[];
+        notifyListeners();
+        return true;
+      } else {
+        AppLog.error('Failed to get cart: ${state.exception?.message}',
+            name: 'CartProvider.getCart');
+        return false;
+      }
+    } catch (e, st) {
+      AppLog.error('Error getting cart',
+          name: 'CartProvider.getCart', error: e, stackTrace: st);
+      return false;
     }
-    notifyListeners();
-    return true;
   }
 
   Future<DataState<bool>> updateStatus(CartItemEntity item) async {
     try {
-      return await _cartItemStatusUpdateUsecase(CartItemModel.fromEntity(item));
+      // Validate item before updating
+      if (item.cartItemID.isEmpty) {
+        return DataFailer<bool>(CustomException('Invalid cart item ID'));
+      }
+
+      final DataState<bool> result =
+          await _cartItemStatusUpdateUsecase(CartItemModel.fromEntity(item));
+
+      if (result is DataSuccess) {
+        // Update local state if successful
+        final int index = _cartItems
+            .indexWhere((CartItemEntity e) => e.cartItemID == item.cartItemID);
+        if (index >= 0) {
+          _cartItems[index] = item;
+          notifyListeners();
+        }
+      }
+
+      return result;
     } catch (e) {
       AppLog.error(e.toString(),
           name: 'CartProvider.updateStatus - Catch', error: e);
@@ -157,7 +185,20 @@ class CartProvider extends ChangeNotifier {
 
   Future<DataState<bool>> removeItem(String id) async {
     try {
-      return await _removeFromCartUsecase(id);
+      // Validate ID
+      if (id.isEmpty) {
+        return DataFailer<bool>(CustomException('Invalid item ID'));
+      }
+
+      final DataState<bool> result = await _removeFromCartUsecase(id);
+
+      if (result is DataSuccess) {
+        // Update local state if successful
+        _cartItems.removeWhere((CartItemEntity e) => e.cartItemID == id);
+        notifyListeners();
+      }
+
+      return result;
     } catch (e) {
       AppLog.error(e.toString(),
           name: 'CartProvider.removeItem - Catch', error: e);
@@ -167,9 +208,31 @@ class CartProvider extends ChangeNotifier {
 
   Future<DataState<bool>> updateQty(CartItemEntity item, int qty) async {
     try {
-      return await _cartUpdateQtyUsecase(
+      // Validate parameters
+      if (item.cartItemID.isEmpty) {
+        return DataFailer<bool>(CustomException('Invalid cart item'));
+      }
+
+      if (qty <= 0) {
+        return DataFailer<bool>(
+            CustomException('Quantity must be greater than 0'));
+      }
+
+      final DataState<bool> result = await _cartUpdateQtyUsecase(
         CartItemUpdateQtyParam(cartItem: item, qty: qty),
       );
+
+      if (result is DataSuccess) {
+        // Update local state if successful
+        final int index = _cartItems
+            .indexWhere((CartItemEntity e) => e.cartItemID == item.cartItemID);
+        if (index >= 0) {
+          _cartItems[index].quantity = qty;
+          notifyListeners();
+        }
+      }
+
+      return result;
     } catch (e) {
       AppLog.error(e.toString(),
           name: 'CartProvider.updateQty - Catch', error: e);
@@ -194,8 +257,6 @@ class CartProvider extends ChangeNotifier {
           await _getPostageDetailUsecase(params);
       if (result is DataSuccess) {
         _postageResponseEntity = result.entity;
-        setCartType(CartType.checkoutOrder);
-
         return result;
       } else {
         return DataFailer<PostageDetailResponseEntity>(result.exception!);
