@@ -56,11 +56,17 @@ class PersonalCartTotalSection extends StatelessWidget {
                                 ? 'confirm_and_pay'.tr().tr()
                                 : '',
                 isLoading: false,
+                isDisable: cartPro.cartType == CartType.checkoutOrder &&
+                    cartPro.hasItemsRequiringRemoval,
                 onTap: () async {
                   if (cartPro.cartType == CartType.shoppingBasket) {
                     await cartPro.getRates();
                     cartPro.setCartType(CartType.checkoutOrder);
                   } else if (cartPro.cartType == CartType.checkoutOrder) {
+                    if (cartPro.hasItemsRequiringRemoval) {
+                      // Do nothing; button disabled visually.
+                      return;
+                    }
                     //TODO: add checkout page functionality
                   } else if (cartPro.cartType == CartType.reviewOrder) {
                     //TODO: add review page functionality
