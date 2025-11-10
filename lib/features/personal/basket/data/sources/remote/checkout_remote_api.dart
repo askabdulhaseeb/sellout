@@ -9,7 +9,7 @@ import '../../models/checkout/check_out_model.dart';
 
 abstract interface class CheckoutRemoteAPI {
   Future<DataState<CheckOutEntity>> getCheckout(AddressModel address);
-  Future<DataState<String>> cartPayIntent(AddressModel param);
+  Future<DataState<String>> cartPayIntent();
 }
 
 class CheckoutRemoteAPIImpl implements CheckoutRemoteAPI {
@@ -47,7 +47,7 @@ class CheckoutRemoteAPIImpl implements CheckoutRemoteAPI {
   }
 
   @override
-  Future<DataState<String>> cartPayIntent(AddressModel param) async {
+  Future<DataState<String>> cartPayIntent() async {
     try {
       debugPrint(LocalAuth.token);
       const String endpoint = '/payment/cart';
@@ -55,7 +55,6 @@ class CheckoutRemoteAPIImpl implements CheckoutRemoteAPI {
         endpoint: endpoint,
         isAuth: true,
         requestType: ApiRequestType.post,
-        body: json.encode(param.toJson()),
       );
       if (result is DataSuccess<String>) {
         final Map<String, dynamic> responseMap = jsonDecode(result.data ?? '');
@@ -65,7 +64,7 @@ class CheckoutRemoteAPIImpl implements CheckoutRemoteAPI {
         return DataSuccess<String>(result.data ?? '', clientSecret);
       } else {
         AppLog.error(
-          param.toCheckoutJson(),
+          '',
           name: 'CheckoutRemoteAPIImpl.payIntent - Else',
           error: result.exception?.reason ?? 'something_wrong'.tr(),
         );

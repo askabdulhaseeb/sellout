@@ -13,7 +13,7 @@ class CheckoutRepositoryImpl implements CheckoutRepository {
   }
 
   @override
-  Future<DataState<String>> cartPayIntent(AddressModel param) async {
-    return await _remote.cartPayIntent(param);
+  Future<DataState<String>> cartPayIntent() async {
+    return await _remote.cartPayIntent();
   }
 }

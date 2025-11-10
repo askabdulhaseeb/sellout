@@ -16,25 +16,21 @@ class PersonalCartItemList extends HookWidget {
     final String uid = useMemoized(() => LocalAuth.uid ?? '', <Object?>[]);
     final CartProvider cartProvider = useProvider<CartProvider>();
 
-    // Fetch cart once when widget mounts
     useEffect(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        cartProvider.getCart();
+        cartProvider.getCart(forceRefresh: true);
       });
       return null;
     }, <Object?>[]);
 
-    // Listen to cart changes from Hive
     final Box<CartEntity> cartBox =
         useValueListenable(LocalCart().listenable());
 
-    // Get cart entity directly from box (no memoization to ensure fresh data)
     final CartEntity cart = cartBox.values.firstWhere(
       (CartEntity element) => element.cartID == uid,
       orElse: () => CartModel(),
     );
 
-    // Get only items that are in cart (filtered by inCart property)
     final List<CartItemEntity> cartItems = cart.cartItems;
 
     if (cartItems.isEmpty) {
@@ -55,7 +51,7 @@ class PersonalCartItemList extends HookWidget {
 
     return RefreshIndicator(
       onRefresh: () async {
-        await cartProvider.getCart();
+        await cartProvider.getCart(forceRefresh: true);
       },
       child: ListView.separated(
         separatorBuilder: (BuildContext context, int index) =>

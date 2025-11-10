@@ -128,9 +128,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       postage: cartPro.postageResponseEntity!);
                 },
               );
-
-              // PostageBottomSheet updates provider when Apply is pressed.
-              // If a selection map is returned, refresh local UI.
               if (newSelection != null) {
                 setState(() {});
               }
@@ -174,6 +171,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
                             _PostageItemsList(
                               postageResponse: cartPro.postageResponseEntity!,
                               selectedRates: cartPro.selectedPostageRates,
+                              fastDeliveryPostIds:
+                                  cartPro.fastDeliveryProducts.toSet(),
                             ),
                           ]
                         ],
@@ -199,16 +198,19 @@ class _PostageItemsList extends StatelessWidget {
   const _PostageItemsList({
     required this.postageResponse,
     required this.selectedRates,
+    required this.fastDeliveryPostIds,
   });
 
   final PostageDetailResponseEntity postageResponse;
   final Map<String, RateEntity> selectedRates;
+  final Set<String> fastDeliveryPostIds;
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Map<String, PostEntity?>>(
       future: _loadPosts(),
-      builder: (BuildContext context, AsyncSnapshot<Map<String, PostEntity?>> snapshot) {
+      builder: (BuildContext context,
+          AsyncSnapshot<Map<String, PostEntity?>> snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const SizedBox(
             height: 40,
@@ -222,14 +224,16 @@ class _PostageItemsList extends StatelessWidget {
           );
         }
 
-        final Map<String, PostEntity?> posts = snapshot.data ?? <String, PostEntity?>{};
+        final Map<String, PostEntity?> posts =
+            snapshot.data ?? <String, PostEntity?>{};
         final List<Widget> items = <Widget>[];
         double total = 0.0;
 
-        // Show ONLY items that actually need postage (have payable rates).
-        // Exclude items whose originalDeliveryType is 'free' or 'collection',
-        // and any items that have no available rates (e.g. free/collection or failed calc).
-        for (final MapEntry<String, PostageItemDetailEntity> entry in postageResponse.detail.entries) {
+        // Render postage details. Collection-only items are skipped, while
+        // free-delivery items are shown with a "Free" label unless fast
+        // delivery is toggled (where rates become relevant).
+        for (final MapEntry<String, PostageItemDetailEntity> entry
+            in postageResponse.detail.entries) {
           final String postId = entry.key;
           final PostEntity? post = posts[postId];
           final String title = post?.title ?? 'unknown_product'.tr();
@@ -238,6 +242,12 @@ class _PostageItemsList extends StatelessWidget {
           final PostageItemDetailEntity detail = entry.value;
           final String deliveryType =
               detail.originalDeliveryType.toLowerCase().trim();
+          final bool fastDeliverySelected =
+              fastDeliveryPostIds.contains(postId);
+          final bool isFree = deliveryType == 'free';
+          final bool isCollection = deliveryType == 'collection';
+          final bool isPaidDelivery = deliveryType.contains('paid');
+          final bool isFastDelivery = deliveryType.contains('fast');
 
           // Aggregate buffered rates for this item.
           final List<RateEntity> availableRates = detail.shippingDetails
@@ -245,12 +255,19 @@ class _PostageItemsList extends StatelessWidget {
                   (PostageDetailShippingDetailEntity sd) => sd.ratesBuffered)
               .toList();
 
-          final bool isExcludedType =
-              deliveryType == 'free' || deliveryType == 'collection';
           final bool hasPayableRates = availableRates.isNotEmpty;
+          final bool showRatesForFreeFast = isFree && fastDeliverySelected;
+
+          if (isCollection) {
+            continue;
+          }
 
           // Skip rendering if item does not require postage selection.
-          if (isExcludedType || !hasPayableRates) {
+          final bool requiresRates = isPaidDelivery ||
+              isFastDelivery ||
+              showRatesForFreeFast ||
+              (isFree && hasPayableRates);
+          if (!isFree && !requiresRates && !hasPayableRates) {
             continue;
           }
 
@@ -262,7 +279,8 @@ class _PostageItemsList extends StatelessWidget {
             String candidate = rate.amountBuffered.isNotEmpty
                 ? rate.amountBuffered
                 : rate.amount;
-            final String cleaned = candidate.replaceAll(RegExp(r"[^0-9.-]"), '');
+            final String cleaned =
+                candidate.replaceAll(RegExp(r'[^0-9.-]'), '');
             final double parsed = double.tryParse(cleaned) ?? 0.0;
             total += parsed;
 
@@ -295,7 +313,30 @@ class _PostageItemsList extends StatelessWidget {
               ),
             );
           } else {
-            // No rate selected - show item with "Select shipping" message
+            final Widget trailing;
+            if (isFree && !showRatesForFreeFast) {
+              trailing = Text(
+                'free'.tr(),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+              );
+            } else if ((requiresRates && hasPayableRates) ||
+                (!isFree && hasPayableRates)) {
+              trailing = Text(
+                'tap_to_select'.tr(),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontSize: 11,
+                      fontStyle: FontStyle.italic,
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
+              );
+            } else {
+              continue;
+            }
+
             items.add(
               Padding(
                 padding: const EdgeInsets.only(bottom: 4),
@@ -313,14 +354,7 @@ class _PostageItemsList extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      'tap_to_select'.tr(),
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            fontSize: 11,
-                            fontStyle: FontStyle.italic,
-                            color: Theme.of(context).colorScheme.outline,
-                          ),
-                    ),
+                    trailing,
                   ],
                 ),
               ),
@@ -337,7 +371,7 @@ class _PostageItemsList extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             ...items,
-            if (selectedRates.isNotEmpty) ...<Widget>[
+            if (total > 0) ...<Widget>[
               const Divider(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

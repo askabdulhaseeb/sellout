@@ -4,7 +4,6 @@ import '../../../features/personal/basket/domain/entities/cart/postage_detail_re
 import '../../../features/personal/basket/views/providers/cart_provider.dart';
 import 'widgets/postage_header.dart';
 import 'widgets/postage_list.dart';
-import 'widgets/postage_footer.dart';
 
 class PostageBottomSheet extends StatefulWidget {
   const PostageBottomSheet({required this.postage, super.key});
@@ -28,26 +27,8 @@ class _PostageBottomSheetState extends State<PostageBottomSheet> {
     setState(() {
       _selected[postId] = rate;
     });
-  }
-
-  void _applySelection(
-      PostageDetailResponseEntity postage, CartProvider cartPro) {
-    // Ensure each postId has a selected rate when available; otherwise leave unselected
-    postage.detail.forEach((String postId, PostageItemDetailEntity detail) {
-      if (!_selected.containsKey(postId)) {
-        final List<RateEntity> rates = detail.shippingDetails
-            .expand((PostageDetailShippingDetailEntity sd) => sd.ratesBuffered)
-            .toList();
-        if (rates.isNotEmpty) {
-          _selected[postId] = rates.first;
-        }
-      }
-    });
-
-    _selected.forEach((String postId, RateEntity rate) {
-      cartPro.selectPostageRate(postId, rate);
-    });
-    Navigator.of(context).pop(_selected);
+    // Persist selection immediately since footer actions were removed
+    context.read<CartProvider>().selectPostageRate(postId, rate);
   }
 
   @override
@@ -65,18 +46,21 @@ class _PostageBottomSheetState extends State<PostageBottomSheet> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            const PostageHeader(),
+            Row(
+              children: <Widget>[
+                const Expanded(child: PostageHeader()),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.of(context).pop(_selected),
+                ),
+              ],
+            ),
             const SizedBox(height: 8),
             PostageList(
               entries: entries,
               selected: _selected,
               onSelect: _setSelected,
               cartPro: cartPro,
-            ),
-            PostageFooter(
-              postage: postage,
-              cartPro: cartPro,
-              onApply: () => _applySelection(postage, cartPro),
             ),
           ],
         ),

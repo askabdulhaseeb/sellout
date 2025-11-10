@@ -8,6 +8,7 @@ import '../../widgets/cart_widgets/personal_cart_step_indicator.dart';
 import '../../widgets/cart_widgets/personal_cart_total_section.dart';
 import 'cart/cart_page.dart';
 import 'checkout/checkout_page.dart';
+import 'payment/payment_page.dart';
 import 'review/review_page.dart';
 
 class PersonalShoppingPage extends StatefulWidget {
@@ -50,7 +51,7 @@ class _PersonalShoppingPageState extends State<PersonalShoppingPage> {
                     } else if (cartPro.cartType == CartType.reviewOrder) {
                       return const ReviewOrderPage();
                     } else if (cartPro.cartType == CartType.payment) {
-                      return const Center(child: Text('Payment'));
+                      return const PaymentStaticPage();
                     }
                     return const SizedBox.shrink();
                   }),

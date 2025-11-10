@@ -59,6 +59,7 @@ class CartProvider extends ChangeNotifier {
   CartItemType _basketPage = CartItemType.cart;
 
   List<CartItemEntity> _cartItems = <CartItemEntity>[];
+  bool _isFetchingCart = false;
   final List<String> _fastDeliveryProducts = <String>[];
   OrderBillingModel? _orderBilling;
   PostageDetailResponseEntity? _postageResponseEntity;
@@ -178,8 +179,14 @@ class CartProvider extends ChangeNotifier {
 
   // MARK: 📦 CART OPERATIONS
 
-  Future<bool> getCart() async {
-    if (_cartItems.isNotEmpty) return true;
+  Future<bool> getCart({bool forceRefresh = false}) async {
+    if (_isFetchingCart) return _cartItems.isNotEmpty;
+
+    if (!forceRefresh && _cartItems.isNotEmpty) {
+      return true;
+    }
+
+    _isFetchingCart = true;
 
     try {
       final DataState<CartEntity> state = await _getCartUsecase('');
@@ -196,6 +203,8 @@ class CartProvider extends ChangeNotifier {
       AppLog.error('Error getting cart',
           name: 'CartProvider.getCart', error: e, stackTrace: st);
       return false;
+    } finally {
+      _isFetchingCart = false;
     }
   }
 
@@ -344,7 +353,8 @@ class CartProvider extends ChangeNotifier {
   }
 
   /// Build a checkout payload map. This includes buyer address, cart items
-  /// (only items currently in cart), and selected postage rates per post.
+  /// (only items currently in cart), selected postage rates per post, and
+  /// the shipping payload derived from selected rates.
   Map<String, dynamic> buildCheckoutMap() {
     if (_address == null) return <String, dynamic>{};
 
@@ -374,10 +384,15 @@ class CartProvider extends ChangeNotifier {
       };
     });
 
+    final List<Map<String, dynamic>> shipping = buildShippingList()
+        .map((ShippingItemParam item) => item.toJson())
+        .toList();
+
     return <String, dynamic>{
       'buyer_address': buyerAddress,
       'items': items,
       'postage': postage,
+      if (shipping.isNotEmpty) 'shipping': shipping,
     };
   }
 
@@ -484,10 +499,10 @@ class CartProvider extends ChangeNotifier {
 
   Future<DataState<String>> getBillingDetails() async {
     try {
-      final DataState<String> state = await _payIntentUsecase.call(address!);
+      final DataState<String> state = await _payIntentUsecase.call('');
       if (state is DataSuccess<String>) {
-        final Map<String, dynamic> jsonMap = jsonDecode(state.data ?? '{}');
-        _orderBilling = OrderBillingModel.fromMap(jsonMap);
+        // final Map<String, dynamic> jsonMap = jsonDecode(state.data ?? '{}');
+        // _orderBilling = OrderBillingModel.fromMap(jsonMap);
         return state;
       }
       return DataFailer<String>(

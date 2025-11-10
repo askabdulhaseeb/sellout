@@ -337,7 +337,25 @@ class _PostHeaderContentState extends StatelessWidget {
     // Determine delivery availability
     final bool hasDeliveryRates = rates.isNotEmpty;
     final bool isFreeDelivery = deliveryType == DeliveryType.freeDelivery;
+    final bool isFastDelivery = deliveryType == DeliveryType.fastDelivery;
     final bool isCollection = deliveryType == DeliveryType.collection;
+    final bool fastDeliveryRequested = detail.fastDelivery.requested;
+    final bool fastDeliveryAvailable = detail.fastDelivery.available;
+    final bool showFastDeliveryTag =
+        isFastDelivery || fastDeliveryRequested || fastDeliveryAvailable;
+    final bool hasPositiveStatus =
+        isFreeDelivery || showFastDeliveryTag || hasDeliveryRates;
+
+    final String badgeLabel;
+    if (showFastDeliveryTag) {
+      badgeLabel = 'fast_delivery'.tr();
+    } else if (isFreeDelivery) {
+      badgeLabel = 'free_delivery'.tr();
+    } else if (hasDeliveryRates) {
+      badgeLabel = 'delivery_available'.tr();
+    } else {
+      badgeLabel = 'delivery_unavailable'.tr();
+    }
 
     return Row(
       children: <Widget>[
@@ -381,7 +399,7 @@ class _PostHeaderContentState extends StatelessWidget {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: (isFreeDelivery || hasDeliveryRates)
+                        color: hasPositiveStatus
                             ? Theme.of(context)
                                 .colorScheme
                                 .primaryContainer
@@ -393,7 +411,7 @@ class _PostHeaderContentState extends StatelessWidget {
                         borderRadius:
                             BorderRadius.circular(AppSpacing.radiusXs),
                         border: Border.all(
-                          color: (isFreeDelivery || hasDeliveryRates)
+                          color: hasPositiveStatus
                               ? Theme.of(context)
                                   .colorScheme
                                   .primary
@@ -411,22 +429,18 @@ class _PostHeaderContentState extends StatelessWidget {
                           Icon(
                             Icons.local_shipping_outlined,
                             size: 10,
-                            color: (isFreeDelivery || hasDeliveryRates)
+                            color: hasPositiveStatus
                                 ? Theme.of(context).colorScheme.primary
                                 : Theme.of(context).colorScheme.error,
                           ),
                           const SizedBox(width: 2),
                           Text(
-                            isFreeDelivery
-                                ? 'free_delivery'.tr()
-                                : hasDeliveryRates
-                                    ? 'delivery_available'.tr()
-                                    : 'delivery_unavailable'.tr(),
+                            badgeLabel,
                             style: Theme.of(context)
                                 .textTheme
                                 .labelSmall
                                 ?.copyWith(
-                                  color: (isFreeDelivery || hasDeliveryRates)
+                                  color: hasPositiveStatus
                                       ? Theme.of(context).colorScheme.primary
                                       : Theme.of(context).colorScheme.error,
                                   fontWeight: FontWeight.w500,
@@ -500,19 +514,17 @@ class _PostageShippingOptionsContent extends StatelessWidget {
 
     final String rawType = detail.originalDeliveryType;
     final DeliveryType displayType = DeliveryType.fromJson(rawType);
+    final bool fastDeliverySelected =
+        cartPro.fastDeliveryProducts.contains(postId);
 
-    // Check if this is a delivery type that requires rates but has none
     final bool isDeliveryNeeded = displayType == DeliveryType.paid ||
-        displayType == DeliveryType.fastDelivery;
+        displayType == DeliveryType.fastDelivery ||
+        fastDeliverySelected;
     final bool hasNoRates = rates.isEmpty;
     final bool shouldShowRemoveMessage = isDeliveryNeeded && hasNoRates;
 
-    // Only show rates section for paid delivery and fast delivery when rates are available
-    if (rates.isEmpty ||
-        displayType == DeliveryType.freeDelivery ||
-        displayType == DeliveryType.collection ||
-        (displayType != DeliveryType.paid &&
-            displayType != DeliveryType.fastDelivery)) {
+    // Only show rates when available; collection items remain hidden entirely
+    if (rates.isEmpty || displayType == DeliveryType.collection) {
       // Show remove message for delivery types that need rates but don't have them
       if (shouldShowRemoveMessage) {
         return _PostageRemoveMessage();
@@ -520,7 +532,7 @@ class _PostageShippingOptionsContent extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    // Show rates for paid delivery and fast delivery
+    // Show rates for paid / fast delivery or any free items that still expose rates
     final RateEntity defaultRate = rates.first;
     final String defaultKey =
         '${defaultRate.provider}::${defaultRate.serviceLevel.token}::${defaultRate.amountBuffered.isNotEmpty ? defaultRate.amountBuffered : defaultRate.amount}';

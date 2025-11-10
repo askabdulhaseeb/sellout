@@ -25,7 +25,7 @@ class _PersonalShoppingBasketScreenState
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CartProvider>().getCart();
+      context.read<CartProvider>().getCart(forceRefresh: true);
     });
   }
 
