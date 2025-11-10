@@ -362,7 +362,7 @@ class _PostageItemsList extends StatelessWidget {
         }
 
         if (items.isEmpty) {
-          return Text('no_items_found'.tr(),
+          return Text('no_item_available'.tr(),
               style: Theme.of(context).textTheme.bodySmall);
         }
 

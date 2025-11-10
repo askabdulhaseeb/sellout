@@ -36,6 +36,21 @@ class LocalAuth {
   static LatLng get latlng => LatLng(
       currentUser?.location?.latitude ?? 51.509865,
       currentUser?.location?.longitude ?? -0.118092);
+
+  static Future<void> updateToken(String? token) async {
+    final CurrentUserEntity? existing = currentUser;
+    if (existing == null) {
+      return;
+    }
+
+    if (token == null || token.isEmpty || token == existing.token) {
+      return;
+    }
+
+    final CurrentUserEntity updated = existing.copyWith(token: token);
+    await _box.put(boxTitle, updated);
+  }
+
   Future<void> signout() async {
     await _box.clear();
     uidNotifier.value = null; // ✅ notify socket to disconnect
