@@ -207,6 +207,8 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
         body: param.toJson(),
       );
       if (result is DataSuccess<String>) {
+        AppLog.info(param.toJson().toString(),
+            name: 'CartRemoteAPIImpl.getPostageDetails - If',);
         final String raw = result.data ?? '';
         if (raw.isEmpty) {
           AppLog.error(
@@ -216,7 +218,6 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
           return DataFailer<PostageDetailResponseModel>(
               CustomException('Empty postage details response'));
         }
-
         final Map<String, dynamic> json =
             (jsonDecode(raw) is Map<String, dynamic>)
                 ? jsonDecode(raw) as Map<String, dynamic>
@@ -266,6 +267,7 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
         AppLog.error(
           jsonEncode(param.toJson()),
           name: 'CartRemoteAPIImpl.addShipping - Else',
+          level: result.exception?.code ?? 0,
           error: result.exception?.reason ?? 'something_wrong'.tr(),
         );
         return DataFailer<bool>(

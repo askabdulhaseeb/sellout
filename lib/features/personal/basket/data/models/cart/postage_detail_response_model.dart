@@ -224,51 +224,182 @@ class PostageDetailShippingDetailModel
 class RateModel extends RateEntity {
   RateModel({
     required super.amount,
+    required super.amountLocal,
+    required super.currency,
+    required super.currencyLocal,
+    required super.attributes,
+    required super.carrierAccount,
+    required super.durationTerms,
+    required super.messages,
+    required super.objectCreated,
+    required super.objectId,
+    required super.objectOwner,
     required super.provider,
     required super.providerImage75,
     required super.providerImage200,
-    required super.amountBuffered,
     required super.serviceLevel,
+    required super.shipment,
+    required super.test,
+    required super.zone,
+    required super.originalAmount,
+    required super.bufferedAmount,
+    required super.bufferApplied,
+    required super.bufferDetails,
+    required super.amountBuffered,
+    required super.amountLocalBuffered,
   });
 
   factory RateModel.fromJson(Map<String, dynamic> json) {
     return RateModel(
-      amount: json['amount'] ?? '',
-      provider: json['provider'] ?? '',
-      providerImage75: json['providerImage75'] ?? '',
-      providerImage200: json['providerImage200'] ?? '',
-      amountBuffered: json['amountBuffered'] ?? '',
+      amount: json['amount']?.toString() ?? '',
+      amountLocal: json['amountLocal']?.toString() ?? '',
+      currency: json['currency']?.toString() ?? '',
+      currencyLocal: json['currencyLocal']?.toString() ?? '',
+      attributes: _parseStringList(json['attributes']),
+      carrierAccount: json['carrierAccount']?.toString() ?? '',
+      durationTerms: json['durationTerms']?.toString() ?? '',
+      messages: _parseStringList(json['messages']),
+      objectCreated: json['objectCreated']?.toString() ?? '',
+      objectId: json['objectId']?.toString() ?? '',
+      objectOwner: json['objectOwner']?.toString() ?? '',
+      provider: json['provider']?.toString() ?? '',
+      providerImage75: json['providerImage75']?.toString() ?? '',
+      providerImage200: json['providerImage200']?.toString() ?? '',
       serviceLevel: ServiceLevelModel.fromJson(
           json['servicelevel'] is Map<String, dynamic>
               ? json['servicelevel']
               : <String, dynamic>{}),
+      shipment: json['shipment']?.toString() ?? '',
+      test: json['test'] is bool
+          ? json['test'] as bool
+          : (json['test'] != null &&
+              json['test'].toString().toLowerCase() == 'true'),
+      zone: json['zone']?.toString() ?? '',
+      originalAmount: json['originalAmount']?.toString() ?? '',
+      bufferedAmount: json['bufferedAmount']?.toString() ?? '',
+      bufferApplied: json['bufferApplied']?.toString() ?? '',
+      bufferDetails: json['bufferDetails'] is Map<String, dynamic>
+          ? BufferDetailsModel.fromJson(
+              json['bufferDetails'] as Map<String, dynamic>,
+            )
+          : BufferDetailsModel.empty(),
+      amountBuffered: json['amountBuffered']?.toString() ?? '',
+      amountLocalBuffered: json['amountLocalBuffered']?.toString() ?? '',
     );
   }
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'amount': amount,
+        'amountLocal': amountLocal,
+        'currency': currency,
+        'currencyLocal': currencyLocal,
+        'attributes': attributes,
+        'carrierAccount': carrierAccount,
+        'durationTerms': durationTerms,
+        'messages': messages,
+        'objectCreated': objectCreated,
+        'objectId': objectId,
+        'objectOwner': objectOwner,
         'provider': provider,
         'providerImage75': providerImage75,
         'providerImage200': providerImage200,
+        'servicelevel': serviceLevel is ServiceLevelModel
+            ? (serviceLevel as ServiceLevelModel).toJson()
+            : ServiceLevelModel.fromEntity(serviceLevel).toJson(),
+        'shipment': shipment,
+        'test': test,
+        'zone': zone,
+        'originalAmount': originalAmount,
+        'bufferedAmount': bufferedAmount,
+        'bufferApplied': bufferApplied,
+        'bufferDetails': bufferDetails is BufferDetailsModel
+            ? (bufferDetails as BufferDetailsModel).toJson()
+            : BufferDetailsModel.fromEntity(bufferDetails).toJson(),
         'amountBuffered': amountBuffered,
-        'servicelevel': (serviceLevel as ServiceLevelModel).toJson(),
+        'amountLocalBuffered': amountLocalBuffered,
+      };
+}
+
+class BufferDetailsModel extends BufferDetailsEntity {
+  BufferDetailsModel({
+    required super.bufferPercent,
+    required super.bufferFlat,
+    required super.minBuffer,
+    super.maxBuffer,
+    required super.roundTo,
+  });
+
+  factory BufferDetailsModel.fromJson(Map<String, dynamic> json) {
+    return BufferDetailsModel(
+      bufferPercent: _parseDouble(json['bufferPercent']),
+      bufferFlat: _parseDouble(json['bufferFlat']),
+      minBuffer: _parseDouble(json['minBuffer']),
+      maxBuffer: _parseNullableDouble(json['maxBuffer']),
+      roundTo: _parseDouble(json['roundTo']),
+    );
+  }
+
+  factory BufferDetailsModel.fromEntity(BufferDetailsEntity entity) {
+    return BufferDetailsModel(
+      bufferPercent: entity.bufferPercent,
+      bufferFlat: entity.bufferFlat,
+      minBuffer: entity.minBuffer,
+      maxBuffer: entity.maxBuffer,
+      roundTo: entity.roundTo,
+    );
+  }
+
+  factory BufferDetailsModel.empty() {
+    return BufferDetailsModel(
+      bufferPercent: 0,
+      bufferFlat: 0,
+      minBuffer: 0,
+      maxBuffer: null,
+      roundTo: 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'bufferPercent': bufferPercent,
+        'bufferFlat': bufferFlat,
+        'minBuffer': minBuffer,
+        'maxBuffer': maxBuffer,
+        'roundTo': roundTo,
       };
 }
 
 class ServiceLevelModel extends ServiceLevelEntity {
-  ServiceLevelModel({required super.name, required super.token});
+  ServiceLevelModel({
+    required super.name,
+    required super.terms,
+    required super.token,
+    required super.extendedToken,
+  });
 
   factory ServiceLevelModel.fromJson(Map<String, dynamic> json) {
     return ServiceLevelModel(
       name: json['name'] ?? '',
+      terms: json['terms'] ?? '',
       token: json['token'] ?? '',
+      extendedToken: json['extendedToken'] ?? '',
     );
   }
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'name': name,
+        'terms': terms,
         'token': token,
+        'extendedToken': extendedToken,
       };
+
+  factory ServiceLevelModel.fromEntity(ServiceLevelEntity entity) {
+    return ServiceLevelModel(
+      name: entity.name,
+      terms: entity.terms,
+      token: entity.token,
+      extendedToken: entity.extendedToken,
+    );
+  }
 }
 
 class ParcelModel extends ParcelEntity {
@@ -322,4 +453,36 @@ class FastDeliveryModel extends FastDeliveryEntity {
         'available': available,
         'message': message,
       };
+}
+
+List<String> _parseStringList(dynamic value) {
+  if (value is List) {
+    return value
+        .map((dynamic item) => item == null ? '' : item.toString())
+        .toList();
+  }
+  return <String>[];
+}
+
+double _parseDouble(dynamic value) {
+  if (value is num) {
+    return value.toDouble();
+  }
+  if (value is String) {
+    return double.tryParse(value) ?? 0;
+  }
+  return 0;
+}
+
+double? _parseNullableDouble(dynamic value) {
+  if (value == null) {
+    return null;
+  }
+  if (value is num) {
+    return value.toDouble();
+  }
+  if (value is String) {
+    return double.tryParse(value);
+  }
+  return null;
 }
