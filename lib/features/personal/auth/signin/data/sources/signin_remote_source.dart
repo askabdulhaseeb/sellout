@@ -4,12 +4,14 @@ import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
 import '../../../../../../core/sources/local/hive_db.dart';
 import '../../domain/params/login_params.dart';
+import '../../domain/params/refresh_token_params.dart';
 import '../../domain/params/two_factor_params.dart';
 import '../models/current_user_model.dart';
 import 'local/local_auth.dart';
 
 abstract interface class SigninRemoteSource {
   Future<DataState<bool>> signin(LoginParams params);
+  Future<DataState<String>> refreshToken(RefreshTokenParams params);
   Future<DataState<bool>> verifyTwoFactorAuth(TwoFactorParams params);
   Future<DataState<bool>> resendTwoFactorCode(TwoFactorParams params);
 }
@@ -56,6 +58,48 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
           error: e,
           stackTrace: stc);
       return DataFailer<bool>(CustomException('Signin Failed: $e'));
+    }
+  }
+
+  @override
+  Future<DataState<String>> refreshToken(RefreshTokenParams params) async {
+    try {
+      final DataState<String> response = await ApiCall<String>().call(
+        endpoint: '/userAuth/refresh',
+        requestType: ApiRequestType.post,
+        body: json.encode(params.toJson()),
+        isConnectType: true,
+        isAuth: false,
+      );
+
+      if (response is DataSuccess<String>) {
+        final Map<String, dynamic> jsonMap =
+            (response.data != null && response.data!.isNotEmpty)
+                ? jsonDecode(response.data!) as Map<String, dynamic>
+                : <String, dynamic>{};
+        if (LocalAuth.currentUser != null) {
+          LocalAuth.currentUser!.copyWith(token: jsonMap['token']?.toString());
+        }
+        return response;
+      }
+
+      AppLog.error(
+        response.exception?.message ?? 'something_wrong'.tr(),
+        name: 'SignInRemoteSourceImpl.refreshToken - else',
+        error: response.exception?.reason,
+      );
+      return DataFailer<String>(
+        response.exception ?? CustomException('refresh_token_failed'),
+      );
+    } catch (e, stc) {
+      AppLog.error(
+        e.toString(),
+        name: 'SignInRemoteSourceImpl.refreshToken - catch',
+        stackTrace: stc,
+      );
+      return DataFailer<String>(
+        CustomException('refresh_token_failed: $e'),
+      );
     }
   }
 

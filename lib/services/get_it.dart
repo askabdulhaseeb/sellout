@@ -49,6 +49,7 @@ import '../features/personal/auth/signin/data/repositories/signin_repository_imp
 import '../features/personal/auth/signin/data/sources/signin_remote_source.dart';
 import '../features/personal/auth/signin/domain/repositories/signin_repository.dart';
 import '../features/personal/auth/signin/domain/usecase/login_usecase.dart';
+import '../features/personal/auth/signin/domain/usecase/refresh_token_usecase.dart';
 import '../features/personal/auth/signin/domain/usecase/resend_twofactor_code.dart';
 import '../features/personal/auth/signin/domain/usecase/verify_two_factor_usecsae.dart';
 import '../features/personal/auth/signin/views/providers/signin_provider.dart';
@@ -234,6 +235,8 @@ void _auth() {
   locator
       .registerFactory<SigninRepository>(() => SigninRepositoryImpl(locator()));
   locator.registerFactory<LoginUsecase>(() => LoginUsecase(locator()));
+  locator.registerFactory<RefreshTokenUsecase>(
+      () => RefreshTokenUsecase(locator()));
   locator.registerLazySingleton<SigninProvider>(() => SigninProvider(
         locator(),
         locator(),
