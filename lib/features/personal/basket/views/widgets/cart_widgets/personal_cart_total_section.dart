@@ -6,6 +6,7 @@ import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../data/models/cart/add_shipping_response_model.dart';
 import '../../../data/models/cart/cart_item_model.dart';
 import '../../../data/sources/local/local_cart.dart';
 import '../../../domain/enums/cart_type.dart';
@@ -71,11 +72,15 @@ class PersonalCartTotalSection extends StatelessWidget {
                     }
 
                     // Submit shipping selection to API
-                    final DataState<bool> result =
+                    final DataState<AddShippingResponseModel> result =
                         await cartPro.submitShipping();
 
-                    if (result is DataSuccess<bool>) {
+                    if (result is DataSuccess<AddShippingResponseModel>) {
                       // Move to review order after successful API call
+                      final String? message = result.entity?.message;
+                      if (message != null && message.isNotEmpty) {
+                        AppSnackBar.show(message);
+                      }
                       cartPro.setCartType(CartType.reviewOrder);
                     } else {
                       // Show error message

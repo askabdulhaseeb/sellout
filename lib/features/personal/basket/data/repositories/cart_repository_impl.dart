@@ -5,6 +5,7 @@ import '../../domain/param/cart_item_update_qty_param.dart';
 import '../../domain/param/get_postage_detail_params.dart';
 import '../../domain/param/submit_shipping_param.dart';
 import '../../domain/repositories/cart_repository.dart';
+import '../models/cart/add_shipping_response_model.dart';
 import '../models/cart/cart_model.dart';
 import '../models/cart/postage_Detail_response_model.dart';
 import '../sources/remote/cart_remote_api.dart';
@@ -54,7 +55,8 @@ class CartRepositoryImpl implements CartRepository {
   }
 
   @override
-  Future<DataState<bool>> addShipping(SubmitShippingParam param) async {
+  Future<DataState<AddShippingResponseModel>> addShipping(
+      SubmitShippingParam param) async {
     return await _remoteAPI.addShipping(param);
   }
 }
