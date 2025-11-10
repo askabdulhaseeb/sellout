@@ -26,9 +26,6 @@ class PostageHeader extends StatelessWidget {
             children: <Widget>[
               Text('postage_options'.tr(),
                   style: Theme.of(context).textTheme.titleMedium),
-              TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text('close'.tr())),
             ],
           ),
         ),

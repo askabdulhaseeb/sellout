@@ -19,9 +19,8 @@ class PostageList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Flexible(
+    return Expanded(
       child: ListView.separated(
-        shrinkWrap: true,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         itemCount: entries.length,
         separatorBuilder: (_, __) => const SizedBox(height: 8),
