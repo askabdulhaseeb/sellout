@@ -51,7 +51,7 @@ class _PersonalShoppingPageState extends State<PersonalShoppingPage> {
                     } else if (cartPro.cartType == CartType.reviewOrder) {
                       return const ReviewOrderPage();
                     } else if (cartPro.cartType == CartType.payment) {
-                      return const PaymentStaticPage();
+                      return const CartPaymentPage();
                     }
                     return const SizedBox.shrink();
                   }),

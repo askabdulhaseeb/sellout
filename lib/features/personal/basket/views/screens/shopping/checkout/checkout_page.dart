@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/bottom_sheets/address/address_bottom_sheet.dart';
 import '../../../../../../../core/bottom_sheets/postage/postage_bottom_sheet.dart';
+import '../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
@@ -205,6 +206,10 @@ class _PostageItemsList extends StatelessWidget {
   final Map<String, RateEntity> selectedRates;
   final Set<String> fastDeliveryPostIds;
 
+  static final RegExp _currencySymbolRegex = RegExp(r'[£€$₨₹¥₺₽]');
+  static final RegExp _digitRegex = RegExp(r'[0-9]');
+  static final RegExp _letterRegex = RegExp(r'[A-Za-z]');
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Map<String, PostEntity?>>(
@@ -228,16 +233,14 @@ class _PostageItemsList extends StatelessWidget {
             snapshot.data ?? <String, PostEntity?>{};
         final List<Widget> items = <Widget>[];
         double total = 0.0;
+        String? totalSymbol;
+        String? totalCurrencyCode;
 
-        // Render postage details. Collection-only items are skipped, while
-        // free-delivery items are shown with a "Free" label unless fast
-        // delivery is toggled (where rates become relevant).
         for (final MapEntry<String, PostageItemDetailEntity> entry
             in postageResponse.detail.entries) {
           final String postId = entry.key;
           final PostEntity? post = posts[postId];
           final String title = post?.title ?? 'unknown_product'.tr();
-          final String currencySymbol = post?.currency ?? '';
 
           final PostageItemDetailEntity detail = entry.value;
           final String deliveryType =
@@ -275,14 +278,10 @@ class _PostageItemsList extends StatelessWidget {
           final RateEntity? rate = selectedRates[postId];
 
           if (rate != null) {
-            // Parse rate amount
-            String candidate = rate.amountBuffered.isNotEmpty
-                ? rate.amountBuffered
-                : rate.amount;
-            final String cleaned =
-                candidate.replaceAll(RegExp(r'[^0-9.-]'), '');
-            final double parsed = double.tryParse(cleaned) ?? 0.0;
-            total += parsed;
+            final _AmountInfo amountInfo = _resolveAmount(rate, post);
+            total += amountInfo.numeric;
+            totalSymbol ??= amountInfo.symbol;
+            totalCurrencyCode ??= amountInfo.currencyCode;
 
             items.add(
               Padding(
@@ -302,7 +301,7 @@ class _PostageItemsList extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      '$currencySymbol ${parsed.toStringAsFixed(2)}',
+                      amountInfo.display,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -383,10 +382,7 @@ class _PostageItemsList extends StatelessWidget {
                         ),
                   ),
                   Text(
-                    // Use first rendered item's currency if available
-                    posts.values.first?.currency != null
-                        ? '${posts.values.first!.currency} ${total.toStringAsFixed(2)}'
-                        : total.toStringAsFixed(2),
+                    _formatTotal(total, totalSymbol, totalCurrencyCode),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -408,6 +404,91 @@ class _PostageItemsList extends StatelessWidget {
     }
     return result;
   }
+
+  static _AmountInfo _resolveAmount(RateEntity rate, PostEntity? post) {
+    final String raw =
+        (rate.amountBuffered.isNotEmpty ? rate.amountBuffered : rate.amount)
+            .trim();
+    final double numeric = _parseNumericAmount(raw);
+
+    String? currencyCode =
+        rate.currency.isNotEmpty ? rate.currency : post?.currency;
+    currencyCode = (currencyCode != null && currencyCode.isNotEmpty)
+        ? currencyCode.toUpperCase()
+        : null;
+
+    final String resolvedSymbol =
+        CountryHelper.currencySymbolHelper(currencyCode);
+    String display = raw;
+    final bool hasDigits = _digitRegex.hasMatch(raw);
+    final bool hasSymbol = _currencySymbolRegex.hasMatch(raw);
+    final bool hasLetters = _letterRegex.hasMatch(raw);
+
+    if (display.isEmpty && numeric > 0) {
+      display = numeric.toStringAsFixed(2);
+    }
+
+    if (!hasSymbol && hasDigits && !hasLetters) {
+      if (resolvedSymbol.isNotEmpty) {
+        display = '$resolvedSymbol${numeric.toStringAsFixed(2)}';
+      } else if (currencyCode != null) {
+        display = '$currencyCode ${numeric.toStringAsFixed(2)}';
+      } else if (display.isEmpty) {
+        display = numeric.toStringAsFixed(2);
+      }
+    } else if (display.isEmpty) {
+      display = numeric.toStringAsFixed(2);
+    }
+
+    String? symbol = _currencySymbolRegex.firstMatch(display)?.group(0);
+    if ((symbol == null || symbol.isEmpty) && resolvedSymbol.isNotEmpty) {
+      symbol = resolvedSymbol;
+    }
+
+    return _AmountInfo(
+      display: display.isNotEmpty ? display : numeric.toStringAsFixed(2),
+      numeric: numeric,
+      symbol: symbol,
+      currencyCode: currencyCode,
+    );
+  }
+
+  static double _parseNumericAmount(String raw) {
+    if (raw.isEmpty) return 0.0;
+    final String cleaned = raw.replaceAll(RegExp(r'[^0-9.+-]'), '');
+    return double.tryParse(cleaned) ?? 0.0;
+  }
+
+  static String _formatTotal(
+      double total, String? symbol, String? currencyCode) {
+    final String value = total.toStringAsFixed(2);
+    if (symbol != null && symbol.isNotEmpty) {
+      return '$symbol$value';
+    }
+    if (currencyCode != null && currencyCode.isNotEmpty) {
+      final String resolvedSymbol =
+          CountryHelper.currencySymbolHelper(currencyCode);
+      if (resolvedSymbol.isNotEmpty) {
+        return '$resolvedSymbol$value';
+      }
+      return '$currencyCode $value';
+    }
+    return value;
+  }
+}
+
+class _AmountInfo {
+  const _AmountInfo({
+    required this.display,
+    required this.numeric,
+    this.symbol,
+    this.currencyCode,
+  });
+
+  final String display;
+  final double numeric;
+  final String? symbol;
+  final String? currencyCode;
 }
 
 class _CheckoutRemovalWarningInline extends StatefulWidget {

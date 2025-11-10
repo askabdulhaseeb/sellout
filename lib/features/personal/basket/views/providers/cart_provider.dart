@@ -574,9 +574,13 @@ class CartProvider extends ChangeNotifier {
   void reset() {
     _orderBilling = null;
     _postageResponseEntity = null;
-    _selectedRateObjectIds.clear();
     _addShippingResponse = null;
+    _selectedPostageRates.clear();
+    _selectedRateObjectIds.clear();
+    _fastDeliveryProducts.clear();
     _basketPage = CartItemType.cart;
+    _cartType = CartType.shoppingBasket;
+    _shoppingBasketType = ShoppingBasketPageType.basket;
     _address = (LocalAuth.currentUser?.address != null &&
             LocalAuth.currentUser!.address
                 .where((AddressEntity e) => e.isDefault)
