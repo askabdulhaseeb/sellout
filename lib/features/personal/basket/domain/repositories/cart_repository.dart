@@ -1,5 +1,6 @@
 import '../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../core/sources/api_call.dart';
+import '../../data/models/cart/add_shipping_response_model.dart';
 import '../../data/models/cart/cart_model.dart';
 import '../../data/models/cart/postage_Detail_response_model.dart';
 import '../entities/cart/cart_entity.dart';
@@ -17,5 +18,6 @@ abstract interface class CartRepository {
       CartItemModel params, CartItemType action);
   Future<DataState<PostageDetailResponseModel>> getPostageDetails(
       GetPostageDetailParam param);
-  Future<DataState<bool>> addShipping(SubmitShippingParam param);
+  Future<DataState<AddShippingResponseModel>> addShipping(
+      SubmitShippingParam param);
 }

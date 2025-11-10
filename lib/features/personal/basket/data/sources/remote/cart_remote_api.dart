@@ -10,6 +10,7 @@ import '../../../domain/param/get_postage_detail_params.dart';
 import '../../../domain/param/submit_shipping_param.dart';
 import '../../models/cart/cart_item_model.dart';
 import '../../models/cart/cart_model.dart';
+import '../../models/cart/add_shipping_response_model.dart';
 import '../../models/cart/postage_Detail_response_model.dart';
 import '../local/local_cart.dart';
 
@@ -23,7 +24,8 @@ abstract interface class CartRemoteAPI {
       CartItemModel params, CartItemType action);
   Future<DataState<PostageDetailResponseModel>> getPostageDetails(
       GetPostageDetailParam param);
-  Future<DataState<bool>> addShipping(SubmitShippingParam param);
+  Future<DataState<AddShippingResponseModel>> addShipping(
+      SubmitShippingParam param);
 }
 
 class CartRemoteAPIImpl implements CartRemoteAPI {
@@ -207,8 +209,10 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
         body: param.toJson(),
       );
       if (result is DataSuccess<String>) {
-        AppLog.info(param.toJson().toString(),
-            name: 'CartRemoteAPIImpl.getPostageDetails - If',);
+        AppLog.info(
+          param.toJson().toString(),
+          name: 'CartRemoteAPIImpl.getPostageDetails - If',
+        );
         final String raw = result.data ?? '';
         if (raw.isEmpty) {
           AppLog.error(
@@ -250,19 +254,56 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
   }
 
   @override
-  Future<DataState<bool>> addShipping(SubmitShippingParam param) async {
+  Future<DataState<AddShippingResponseModel>> addShipping(
+      SubmitShippingParam param) async {
     try {
       const String endpoint = '/cart/add/shipping';
-      final DataState<bool> result = await ApiCall<bool>().call(
+      final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,
         isAuth: true,
         requestType: ApiRequestType.post,
         body: jsonEncode(param.toJson()),
       );
-      if (result is DataSuccess<bool>) {
-        AppLog.info('Shipping added successfully',
-            name: 'CartRemoteAPIImpl.addShipping - Success');
-        return DataSuccess<bool>(result.data ?? '', true);
+      if (result is DataSuccess<String>) {
+        final String raw = result.data ?? '';
+        if (raw.isEmpty) {
+          AppLog.error(
+            'Empty addShipping response',
+            name: 'CartRemoteAPIImpl.addShipping - Empty',
+          );
+          return DataFailer<AddShippingResponseModel>(
+            CustomException('Empty response from add shipping'),
+          );
+        }
+
+        try {
+          final dynamic decoded = jsonDecode(raw);
+          if (decoded is Map<String, dynamic>) {
+            final AddShippingResponseModel responseModel =
+                AddShippingResponseModel.fromJson(decoded);
+            final String logMessage = responseModel.message.isNotEmpty
+                ? responseModel.message
+                : 'Selected shipping added';
+            AppLog.info(
+              logMessage,
+              name: 'CartRemoteAPIImpl.addShipping - Success',
+            );
+            return DataSuccess<AddShippingResponseModel>(raw, responseModel);
+          }
+          AppLog.error(
+            'Unexpected addShipping response structure',
+            name: 'CartRemoteAPIImpl.addShipping - InvalidStructure',
+          );
+        } catch (e) {
+          AppLog.error(
+            'Failed to parse addShipping response: $e',
+            name: 'CartRemoteAPIImpl.addShipping - ParseError',
+            error: e,
+          );
+        }
+        return DataFailer<AddShippingResponseModel>(
+          CustomException('Invalid add shipping response structure'),
+        );
       } else {
         AppLog.error(
           jsonEncode(param.toJson()),
@@ -270,7 +311,7 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
           level: result.exception?.code ?? 0,
           error: result.exception?.reason ?? 'something_wrong'.tr(),
         );
-        return DataFailer<bool>(
+        return DataFailer<AddShippingResponseModel>(
             result.exception ?? CustomException('Failed to add shipping'));
       }
     } catch (e) {
@@ -279,7 +320,8 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
         name: 'CartRemoteAPIImpl.addShipping - Catch',
         error: e,
       );
-      return DataFailer<bool>(CustomException(e.toString()));
+      return DataFailer<AddShippingResponseModel>(
+          CustomException(e.toString()));
     }
   }
 }
