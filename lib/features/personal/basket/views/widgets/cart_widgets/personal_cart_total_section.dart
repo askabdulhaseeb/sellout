@@ -63,7 +63,7 @@ class PersonalCartTotalSection extends StatelessWidget {
                     cartPro.hasItemsRequiringRemoval,
                 onTap: () async {
                   if (cartPro.cartType == CartType.shoppingBasket) {
-                    await cartPro.getRates();
+                    if (cartPro.cartItems.isNotEmpty) await cartPro.getRates();
                     cartPro.setCartType(CartType.checkoutOrder);
                   } else if (cartPro.cartType == CartType.checkoutOrder) {
                     if (cartPro.hasItemsRequiringRemoval) {

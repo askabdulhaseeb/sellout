@@ -77,8 +77,8 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
             (response.data != null && response.data!.isNotEmpty)
                 ? jsonDecode(response.data!) as Map<String, dynamic>
                 : <String, dynamic>{};
-        if (LocalAuth.currentUser != null) {
-          LocalAuth.currentUser!.copyWith(token: jsonMap['token']?.toString());
+        if (jsonMap.isNotEmpty) {
+          await LocalAuth.updateToken(jsonMap['token']?.toString());
         }
         return response;
       }
