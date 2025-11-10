@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../core/widgets/empty_page_widget.dart';
 import '../../../../../../core/widgets/loaders/buyer_order_tile_loader.dart';
 import '../../../../../../core/widgets/rating_display_widget.dart';
 import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
@@ -135,7 +136,8 @@ class _BuyAgainSectionState extends State<BuyAgainSection> {
         }
 
         if (deliveredOrders.isEmpty) {
-          return Center(child: Text('no_data_found'.tr()));
+          return const Center(
+              child: EmptyPageWidget(icon: Icons.shopping_cart_outlined));
         }
 
         final List<PostEntity> posts = deliveredOrders
