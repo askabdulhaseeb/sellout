@@ -50,7 +50,7 @@ class _PostageBottomSheetState extends State<PostageBottomSheet> {
           if (isFreeDelivery) {
             final RateEntity freeRate = RateEntity(
               amount: '0.00',
-              provider: 'Free Delivery',
+              provider: '',
               providerImage75: '',
               providerImage200: '',
               amountBuffered: '0.00',

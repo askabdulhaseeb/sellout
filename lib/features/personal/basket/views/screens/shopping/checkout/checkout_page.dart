@@ -208,7 +208,7 @@ class _PostageItemsList extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder<Map<String, PostEntity?>>(
       future: _loadPosts(),
-      builder: (context, snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<Map<String, PostEntity?>> snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const SizedBox(
             height: 40,
@@ -222,27 +222,48 @@ class _PostageItemsList extends StatelessWidget {
           );
         }
 
-        final posts = snapshot.data ?? {};
-        final items = <Widget>[];
+        final Map<String, PostEntity?> posts = snapshot.data ?? <String, PostEntity?>{};
+        final List<Widget> items = <Widget>[];
         double total = 0.0;
 
-        // Show ALL items in postage response, not just selected ones
-        for (final entry in postageResponse.detail.entries) {
-          final postId = entry.key;
-          final post = posts[postId];
-          final title = post?.title ?? 'unknown_product'.tr();
-          final currencySymbol = post?.currency ?? '';
+        // Show ONLY items that actually need postage (have payable rates).
+        // Exclude items whose originalDeliveryType is 'free' or 'collection',
+        // and any items that have no available rates (e.g. free/collection or failed calc).
+        for (final MapEntry<String, PostageItemDetailEntity> entry in postageResponse.detail.entries) {
+          final String postId = entry.key;
+          final PostEntity? post = posts[postId];
+          final String title = post?.title ?? 'unknown_product'.tr();
+          final String currencySymbol = post?.currency ?? '';
+
+          final PostageItemDetailEntity detail = entry.value;
+          final String deliveryType =
+              detail.originalDeliveryType.toLowerCase().trim();
+
+          // Aggregate buffered rates for this item.
+          final List<RateEntity> availableRates = detail.shippingDetails
+              .expand(
+                  (PostageDetailShippingDetailEntity sd) => sd.ratesBuffered)
+              .toList();
+
+          final bool isExcludedType =
+              deliveryType == 'free' || deliveryType == 'collection';
+          final bool hasPayableRates = availableRates.isNotEmpty;
+
+          // Skip rendering if item does not require postage selection.
+          if (isExcludedType || !hasPayableRates) {
+            continue;
+          }
 
           // Check if rate is selected
-          final rate = selectedRates[postId];
+          final RateEntity? rate = selectedRates[postId];
 
           if (rate != null) {
             // Parse rate amount
             String candidate = rate.amountBuffered.isNotEmpty
                 ? rate.amountBuffered
                 : rate.amount;
-            final cleaned = candidate.replaceAll(RegExp(r"[^0-9.-]"), '');
-            final parsed = double.tryParse(cleaned) ?? 0.0;
+            final String cleaned = candidate.replaceAll(RegExp(r"[^0-9.-]"), '');
+            final double parsed = double.tryParse(cleaned) ?? 0.0;
             total += parsed;
 
             items.add(
@@ -328,6 +349,7 @@ class _PostageItemsList extends StatelessWidget {
                         ),
                   ),
                   Text(
+                    // Use first rendered item's currency if available
                     posts.values.first?.currency != null
                         ? '${posts.values.first!.currency} ${total.toStringAsFixed(2)}'
                         : total.toStringAsFixed(2),
@@ -346,8 +368,8 @@ class _PostageItemsList extends StatelessWidget {
 
   Future<Map<String, PostEntity?>> _loadPosts() async {
     await LocalPost.openBox;
-    final Map<String, PostEntity?> result = {};
-    for (final postId in postageResponse.detail.keys) {
+    final Map<String, PostEntity?> result = <String, PostEntity?>{};
+    for (final String postId in postageResponse.detail.keys) {
       result[postId] = await LocalPost().getPost(postId, silentUpdate: true);
     }
     return result;

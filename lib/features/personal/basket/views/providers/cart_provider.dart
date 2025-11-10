@@ -135,10 +135,6 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  set basketPage(CartItemType value) {
-    _basketPage = value;
-    notifyListeners();
-  }
 
   set address(AddressEntity? value) {
     _address = value;
@@ -178,7 +174,7 @@ class CartProvider extends ChangeNotifier {
   }
 
   // MARK: 📦 CART OPERATIONS
-
+  
   Future<bool> getCart() async {
     if (_cartItems.isNotEmpty) return true;
 
