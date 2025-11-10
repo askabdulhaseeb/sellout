@@ -20,6 +20,7 @@ class CurrentUserModel extends CurrentUserEntity {
   CurrentUserModel({
     required super.message,
     required super.token,
+    required super.refreshToken,
     required super.userID,
     required super.email,
     required super.userName,
@@ -79,6 +80,7 @@ class CurrentUserModel extends CurrentUserEntity {
     return CurrentUserModel(
       message: json['message'] ?? '',
       token: json['token'] ?? '',
+      refreshToken: json['refresh_token'] ?? '',
       userID: userData['user_id'] ?? userData['owner_id'] ?? '',
       email: userData['email'] ?? userData['owner_email'] ?? '',
       otpVerified: userData['otp_verified'] ?? false,
