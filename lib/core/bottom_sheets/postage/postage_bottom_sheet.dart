@@ -6,7 +6,6 @@ import 'widgets/postage_header.dart';
 import 'widgets/postage_list.dart';
 import 'widgets/postage_footer.dart';
 
-// MARK: Postage Bottom Sheet
 class PostageBottomSheet extends StatefulWidget {
   const PostageBottomSheet({required this.postage, super.key});
   final PostageDetailResponseEntity postage;
@@ -33,7 +32,7 @@ class _PostageBottomSheetState extends State<PostageBottomSheet> {
 
   void _applySelection(
       PostageDetailResponseEntity postage, CartProvider cartPro) {
-    // Ensure each postId has a selected rate; if not, pick the first available or synthesize free
+    // Ensure each postId has a selected rate when available; otherwise leave unselected
     postage.detail.forEach((String postId, PostageItemDetailEntity detail) {
       if (!_selected.containsKey(postId)) {
         final List<RateEntity> rates = detail.shippingDetails
@@ -41,23 +40,6 @@ class _PostageBottomSheetState extends State<PostageBottomSheet> {
             .toList();
         if (rates.isNotEmpty) {
           _selected[postId] = rates.first;
-        } else {
-          final bool isFreeDelivery =
-              detail.originalDeliveryType.toLowerCase() == 'free' ||
-                  detail.originalDeliveryType.toLowerCase() == 'collection' ||
-                  (detail.message != null &&
-                      detail.message!.toLowerCase().contains('free'));
-          if (isFreeDelivery) {
-            final RateEntity freeRate = RateEntity(
-              amount: '0.00',
-              provider: '',
-              providerImage75: '',
-              providerImage200: '',
-              amountBuffered: '0.00',
-              serviceLevel: ServiceLevelEntity(name: 'Free', token: 'free'),
-            );
-            _selected[postId] = freeRate;
-          }
         }
       }
     });
@@ -70,9 +52,9 @@ class _PostageBottomSheetState extends State<PostageBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final CartProvider _cartPro = context.read<CartProvider>();
+    final CartProvider cartPro = context.read<CartProvider>();
     final PostageDetailResponseEntity postage =
-        _cartPro.postageResponseEntity ?? widget.postage;
+        cartPro.postageResponseEntity ?? widget.postage;
     final List<MapEntry<String, PostageItemDetailEntity>> entries =
         postage.detail.entries.toList();
 
@@ -89,12 +71,12 @@ class _PostageBottomSheetState extends State<PostageBottomSheet> {
               entries: entries,
               selected: _selected,
               onSelect: _setSelected,
-              cartPro: _cartPro,
+              cartPro: cartPro,
             ),
             PostageFooter(
               postage: postage,
-              cartPro: _cartPro,
-              onApply: () => _applySelection(postage, _cartPro),
+              cartPro: cartPro,
+              onApply: () => _applySelection(postage, cartPro),
             ),
           ],
         ),

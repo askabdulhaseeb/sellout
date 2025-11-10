@@ -103,26 +103,85 @@ class PostageDetailShippingDetailEntity {
 class RateEntity {
   RateEntity({
     required this.amount,
+    required this.amountLocal,
+    required this.currency,
+    required this.currencyLocal,
+    required this.attributes,
+    required this.carrierAccount,
+    required this.durationTerms,
+    required this.messages,
+    required this.objectCreated,
+    required this.objectId,
+    required this.objectOwner,
     required this.provider,
     required this.providerImage75,
     required this.providerImage200,
-    required this.amountBuffered,
     required this.serviceLevel,
+    required this.shipment,
+    required this.test,
+    required this.zone,
+    required this.originalAmount,
+    required this.bufferedAmount,
+    required this.bufferApplied,
+    required this.bufferDetails,
+    required this.amountBuffered,
+    required this.amountLocalBuffered,
   });
 
   final String amount;
+  final String amountLocal;
+  final String currency;
+  final String currencyLocal;
+  final List<String> attributes;
+  final String carrierAccount;
+  final String durationTerms;
+  final List<String> messages;
+  final String objectCreated;
+  final String objectId;
+  final String objectOwner;
   final String provider;
   final String providerImage75;
   final String providerImage200;
-  final String amountBuffered;
   final ServiceLevelEntity serviceLevel;
+  final String shipment;
+  final bool test;
+  final String zone;
+  final String originalAmount;
+  final String bufferedAmount;
+  final String bufferApplied;
+  final BufferDetailsEntity bufferDetails;
+  final String amountBuffered;
+  final String amountLocalBuffered;
 }
 
 class ServiceLevelEntity {
-  ServiceLevelEntity({required this.name, required this.token});
+  ServiceLevelEntity({
+    required this.name,
+    required this.terms,
+    required this.token,
+    required this.extendedToken,
+  });
 
   final String name;
+  final String terms;
   final String token;
+  final String extendedToken;
+}
+
+class BufferDetailsEntity {
+  BufferDetailsEntity({
+    required this.bufferPercent,
+    required this.bufferFlat,
+    required this.minBuffer,
+    this.maxBuffer,
+    required this.roundTo,
+  });
+
+  final double bufferPercent;
+  final double bufferFlat;
+  final double minBuffer;
+  final double? maxBuffer;
+  final double roundTo;
 }
 
 class ParcelEntity {
