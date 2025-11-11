@@ -11,6 +11,7 @@ import 'widgets/post_add_to_basket_button.dart';
 import 'widgets/post_buy_now_button.dart';
 import 'widgets/post_make_offer_button.dart';
 
+
 class StorePostButtonTile extends StatefulWidget {
   const StorePostButtonTile(
       {required this.post, required this.detailWidget, super.key});
@@ -85,42 +86,170 @@ class _StorePostButtonTileState extends State<StorePostButtonTile> {
               ),
             ],
           ),
-        Row(
-          spacing: 12,
-          children: <Widget>[
-            Expanded(
-                child: PostBuyNowButton(
-              detailWidgetColor: selectedColor,
-              detailWidgetSize: selectedSize,
-              post: widget.post,
-              detailWidget: widget.detailWidget,
-            )),
-            if (widget.post.acceptOffers == true)
-              Expanded(
-                  child: PostMakeOfferButton(
-                detailWidgetColor: selectedColor,
-                detailWidgetSize: selectedSize,
-                post: widget.post,
-                detailWidget: widget.detailWidget,
-              )),
-          ],
+        // Collection Section
+        CollectionSection(
+          post: widget.post,
+          detailWidget: widget.detailWidget,
+          selectedColor: selectedColor,
+          selectedSize: selectedSize,
         ),
-        Row(
-          spacing: 12,
-          children: <Widget>[
-            Expanded(
-                child: PostAddToBasketButton(
-              detailWidget: widget.detailWidget,
-              detailWidgetColor: selectedColor,
-              detailWidgetSize: selectedSize,
-              post: widget.post,
-            )),
-          ],
+        const SizedBox(height: 12),
+        
+        // Delivery Section
+        DeliverySection(
+          post: widget.post,
+          detailWidget: widget.detailWidget,
+          selectedColor: selectedColor,
+          selectedSize: selectedSize,
         ),
         if (widget.post.type == ListingType.clothAndFoot && widget.detailWidget)
           SizeChartButtonTile(
               sizeChartURL: widget.post.clothFootInfo?.sizeChartUrl?.url ?? '')
       ],
+    );
+  }
+}
+
+
+class DeliverySection extends StatelessWidget {
+  const DeliverySection({
+    required this.post,
+    required this.detailWidget,
+    this.selectedColor,
+    this.selectedSize,
+    super.key,
+  });
+
+  final PostEntity post;
+  final bool detailWidget;
+  final ColorEntity? selectedColor;
+  final SizeColorEntity? selectedSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'delivery'.tr(),
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            spacing: 12,
+            children: <Widget>[
+              Expanded(
+                child: PostBuyNowButton(
+                  detailWidgetColor: selectedColor,
+                  detailWidgetSize: selectedSize,
+                  post: post,
+                  detailWidget: detailWidget,
+                ),
+              ),
+              if (post.acceptOffers == true)
+                Expanded(
+                  child: PostMakeOfferButton(
+                    detailWidgetColor: selectedColor,
+                    detailWidgetSize: selectedSize,
+                    post: post,
+                    detailWidget: detailWidget,
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            spacing: 12,
+            children: <Widget>[
+              Expanded(
+                child: PostAddToBasketButton(
+                  detailWidget: detailWidget,
+                  detailWidgetColor: selectedColor,
+                  detailWidgetSize: selectedSize,
+                  post: post,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CollectionSection extends StatelessWidget {
+  const CollectionSection({
+    required this.post,
+    required this.detailWidget,
+    this.selectedColor,
+    this.selectedSize,
+    super.key,
+  });
+
+  final PostEntity post;
+  final bool detailWidget;
+  final ColorEntity? selectedColor;
+  final SizeColorEntity? selectedSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'collection'.tr(),
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            spacing: 12,
+            children: <Widget>[
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Contact seller functionality
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: Text('contact_seller'.tr()),
+                ),
+              ),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Collect in-store functionality
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: Text('collect_in_store'.tr()),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
