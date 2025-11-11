@@ -17,9 +17,6 @@ class CountryDropdownField extends StatefulWidget {
 
   final CountryEntity? initialValue;
   final void Function(CountryEntity) onChanged;
-
-  /// Validator should return error string if not valid, null if valid
-  /// The bool argument is true if a country is selected
   final String? Function(bool?)? validator;
 
   @override
@@ -34,12 +31,23 @@ class _CountryDropdownFieldState extends State<CountryDropdownField> {
   @override
   void initState() {
     super.initState();
+    selectedCountry = widget.initialValue;
     _init();
+  }
+
+  @override
+  void didUpdateWidget(CountryDropdownField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialValue != oldWidget.initialValue) {
+      _updateSelectedCountry();
+      setState(() {});
+    }
   }
 
   Future<void> _init() async {
     getCountiesUsecase = GetCountiesUsecase(locator());
     await LocalCountry().refresh();
+
     final DataState<List<CountryEntity>> result =
         await getCountiesUsecase!.call(const Duration(days: 1));
 
@@ -47,18 +55,26 @@ class _CountryDropdownFieldState extends State<CountryDropdownField> {
       countries = result.entity ?? LocalCountry().activeCounties;
     }
 
-    // Set initial value if available
-    if (widget.initialValue != null &&
-        countries.any((CountryEntity e) =>
-            e.displayName == widget.initialValue?.displayName)) {
-      // find matching entity
-      selectedCountry = countries.firstWhere(
-          (CountryEntity e) =>
-              e.displayName == widget.initialValue?.displayName,
-          orElse: () => widget.initialValue!);
+    _updateSelectedCountry();
+    setState(() {});
+  }
+
+  void _updateSelectedCountry() {
+    if (widget.initialValue == null) {
+      selectedCountry = null;
+      return;
     }
 
-    setState(() {});
+    if (countries.isNotEmpty &&
+        countries
+            .any((e) => e.displayName == widget.initialValue?.displayName)) {
+      selectedCountry = countries.firstWhere(
+        (e) => e.displayName == widget.initialValue?.displayName,
+        orElse: () => widget.initialValue!,
+      );
+    } else {
+      selectedCountry = widget.initialValue;
+    }
   }
 
   @override
@@ -66,10 +82,14 @@ class _CountryDropdownFieldState extends State<CountryDropdownField> {
     return CustomDropdown<CountryEntity>(
       title: 'country'.tr(),
       items: countries
-          .where((CountryEntity e) => e.isActive)
-          .map((CountryEntity country) => DropdownMenuItem<CountryEntity>(
+          .where((e) => e.isActive)
+          .map((country) => DropdownMenuItem<CountryEntity>(
                 value: country,
-                child: Text(country.displayName),
+                child: Text(
+                  country.displayName,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w500),
+                ),
               ))
           .toList(),
       selectedItem: selectedCountry,
@@ -77,7 +97,7 @@ class _CountryDropdownFieldState extends State<CountryDropdownField> {
         if (value == null) return;
         setState(() {
           selectedCountry = value;
-          widget.onChanged(value); // notify parent with entity
+          widget.onChanged(value);
         });
       },
       validator: widget.validator ??

@@ -7,9 +7,22 @@ import '../../widgets/custom_elevated_button.dart';
 import '../../widgets/in_dev_mode.dart';
 import '../widgets/selectable_address_tile.dart';
 
-class AddressBottomSheet extends StatelessWidget {
+class AddressBottomSheet extends StatefulWidget {
   const AddressBottomSheet({this.initAddress, super.key});
   final AddressEntity? initAddress;
+
+  @override
+  State<AddressBottomSheet> createState() => _AddressBottomSheetState();
+}
+
+class _AddressBottomSheetState extends State<AddressBottomSheet> {
+  AddressEntity? selectedAddress;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedAddress = widget.initAddress;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +39,21 @@ class AddressBottomSheet extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
+            // Close button header
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                const Text(
+                  'select_address',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ).tr(),
+                IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.close),
+                ),
+              ],
+            ),
+            const Divider(),
             ListView.builder(
               primary: false,
               shrinkWrap: true,
@@ -33,11 +61,21 @@ class AddressBottomSheet extends StatelessWidget {
               itemCount: addresses.length,
               itemBuilder: (BuildContext context, int index) {
                 final AddressEntity address = addresses[index];
+                final bool isSelected = address == selectedAddress;
                 return SelectableAddressTile(
                   address: address,
-                  isSelected: address == initAddress,
+                  isSelected: isSelected,
+                  showButtons: isSelected,
                   onTap: () {
-                    Navigator.of(context).pop(address);
+                    if (isSelected) {
+                      // If already selected, confirm the selection
+                      Navigator.of(context).pop(address);
+                    } else {
+                      // If not selected, select it
+                      setState(() {
+                        selectedAddress = address;
+                      });
+                    }
                   },
                 );
               },
