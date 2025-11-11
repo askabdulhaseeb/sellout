@@ -794,6 +794,7 @@
   "unknown_product": "Unknown Product",
   "delivery_available": "Delivery Available",
   "delivery_unavailable": "Delivery Unavailable",
+  "collect_in_store": "Collect In-Store",
   "remove_item_cart_continue_checkout": "Delivery is not available for this item. Remove this item from your cart to continue with checkout",
   "invite_supporters": "Invite Supporters",
   "invite": "Invite",

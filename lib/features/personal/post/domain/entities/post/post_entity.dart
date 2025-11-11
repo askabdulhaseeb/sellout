@@ -122,9 +122,9 @@ class PostEntity {
   @HiveField(21)
   final double currentLatitude;
   @HiveField(22)
-  final double? collectionLatitude;
+  final double collectionLatitude;
   @HiveField(23)
-  final double? collectionLongitude;
+  final double collectionLongitude;
   @HiveField(24)
   final LocationEntity? collectionLocation;
   @HiveField(25)
