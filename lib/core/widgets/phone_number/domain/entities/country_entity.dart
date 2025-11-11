@@ -51,6 +51,17 @@ class CountryEntity {
   final bool isActive;
   @HiveField(14)
   final List<StateEntity> states;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is CountryEntity &&
+        other.countryCode == countryCode &&
+        other.displayName == displayName;
+  }
+
+  @override
+  int get hashCode => countryCode.hashCode ^ displayName.hashCode;
 }
 
 @HiveType(typeId: 84)
@@ -61,6 +72,17 @@ class NumberFormatEntity {
   final String format;
   @HiveField(1)
   final String regex;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is NumberFormatEntity &&
+        other.format == format &&
+        other.regex == regex;
+  }
+
+  @override
+  int get hashCode => format.hashCode ^ regex.hashCode;
 }
 
 @HiveType(typeId: 85)
@@ -74,4 +96,15 @@ class StateEntity {
   final String stateCode;
   @HiveField(2)
   final List<String> cities;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is StateEntity &&
+        other.stateName == stateName &&
+        other.stateCode == stateCode;
+  }
+
+  @override
+  int get hashCode => stateName.hashCode ^ stateCode.hashCode;
 }

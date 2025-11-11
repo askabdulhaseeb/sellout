@@ -49,7 +49,7 @@ class _PersonalShoppingPageState extends State<PersonalShoppingPage> {
                     } else if (cartPro.cartType == CartType.checkoutOrder) {
                       return const CheckoutPage();
                     } else if (cartPro.cartType == CartType.reviewOrder) {
-                      return const ReviewOrderPage();
+                      return const ReviewCartPage();
                     } else if (cartPro.cartType == CartType.payment) {
                       return const CartPaymentPage();
                     }

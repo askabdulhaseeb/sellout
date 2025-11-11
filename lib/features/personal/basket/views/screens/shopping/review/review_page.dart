@@ -6,8 +6,8 @@ import '../../../../domain/entities/cart/cart_item_entity.dart';
 import '../../../providers/cart_provider.dart';
 import 'review_widgets/review_item_card.dart';
 
-class ReviewOrderPage extends StatelessWidget {
-  const ReviewOrderPage({super.key});
+class ReviewCartPage extends StatelessWidget {
+  const ReviewCartPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +17,10 @@ class ReviewOrderPage extends StatelessWidget {
         cartPro.addShippingResponse;
 
     if (shippingResponse != null) {
-      final List<AddShippingCartItemEntity> shippingItems =
-          shippingResponse.cart.cartItems;
+      final List<AddShippingCartItemEntity> shippingItems = shippingResponse
+          .cart.cartItems
+          .where((AddShippingCartItemEntity item) => item.status == 'cart')
+          .toList();
       final Map<String, CartItemEntity> cartItemMap = <String, CartItemEntity>{
         for (final CartItemEntity item in cartPro.cartItems)
           item.cartItemID: item,

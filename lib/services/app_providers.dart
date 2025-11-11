@@ -4,7 +4,6 @@ import '../features/personal/appointment/view/providers/appointment_tile_provide
 import '../features/attachment/views/providers/picked_media_provider.dart';
 import '../features/business/business_page/views/providers/business_page_provider.dart';
 import '../features/business/service/views/providers/add_service_provider.dart';
-import '../features/personal/address/add_address/views/provider/add_address_provider.dart';
 import '../features/personal/auth/find_account/view/providers/find_account_provider.dart';
 import '../features/personal/auth/signup/views/providers/signup_provider.dart';
 import '../features/personal/basket/views/providers/cart_provider.dart';
@@ -101,8 +100,8 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
           locator(), locator(), locator(), locator(), locator())),
 
   ChangeNotifierProvider<CartProvider>.value(
-      value: CartProvider(
-          locator(), locator(), locator(), locator(), locator(),locator(),locator(), locator())),
+      value: CartProvider(locator(), locator(), locator(), locator(), locator(),
+          locator(), locator(), locator())),
   ChangeNotifierProvider<ReviewProvider>.value(
       value: ReviewProvider(locator())),
   //
@@ -124,9 +123,6 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
   ChangeNotifierProvider<BookingProvider>.value(
       value: BookingProvider(locator(), locator(), locator(), locator(),
           locator(), locator(), locator())),
-//
-  ChangeNotifierProvider<AddAddressProvider>.value(
-      value: AddAddressProvider(locator(), locator())),
 //
   ChangeNotifierProvider<SearchProvider>.value(
       value: SearchProvider(locator())),

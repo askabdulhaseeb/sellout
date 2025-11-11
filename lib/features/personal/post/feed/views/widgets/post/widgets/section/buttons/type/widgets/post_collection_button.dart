@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -36,81 +38,78 @@ class _PostCollectionButtonsState extends State<PostCollectionButtons> {
 
   Future<List<LatLng>> _getRoutePoints(LatLng start, LatLng end) async {
     try {
-      // Using OpenRouteService API with proper error handling
-      const String url =
-          'https://api.openrouteservice.org/v2/directions/driving-car';
+      // Using OSRM (Open Source Routing Machine) - free and reliable
+      final String url =
+          'https://router.project-osrm.org/route/v1/driving/${start.longitude},${start.latitude};${end.longitude},${end.latitude}?overview=full&geometries=geojson';
 
-      final response = await http
-          .post(
-            Uri.parse(url),
-            headers: {
-              'Authorization':
-                  '5b3ce3597851110001cf6248a12b901b34af4af999c4e61b07e5c076',
-              'Content-Type': 'application/json',
-            },
-            body: json.encode({
-              'coordinates': [
-                [start.longitude, start.latitude],
-                [end.longitude, end.latitude],
-              ],
-              'format': 'geojson',
-            }),
-          )
-          .timeout(const Duration(seconds: 10));
+      print('Fetching real road route from: $url');
+      final response =
+          await http.get(Uri.parse(url)).timeout(const Duration(seconds: 15));
 
-      print('Route API Status: ${response.statusCode}');
-      print('Route API Response: ${response.body}');
+      print('OSRM API Status: ${response.statusCode}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        print('OSRM Response: ${data.toString().substring(0, 200)}...');
 
-        if (data['features'] != null &&
-            data['features'].isNotEmpty &&
-            data['features'][0]['geometry'] != null &&
-            data['features'][0]['geometry']['coordinates'] != null) {
+        if (data['routes'] != null &&
+            data['routes'].isNotEmpty &&
+            data['routes'][0]['geometry'] != null &&
+            data['routes'][0]['geometry']['coordinates'] != null) {
           final List<dynamic> coordinates =
-              data['features'][0]['geometry']['coordinates'];
-          print('Route points count: ${coordinates.length}');
+              data['routes'][0]['geometry']['coordinates'];
+          print('Real road route points: ${coordinates.length}');
 
           final List<LatLng> routePoints = coordinates
               .map<LatLng>(
                   (coord) => LatLng(coord[1].toDouble(), coord[0].toDouble()))
               .toList();
 
-          if (routePoints.length > 2) {
-            return routePoints;
-          }
+          print(
+              '✅ SUCCESS: Using real road route with ${routePoints.length} points');
+          return routePoints;
         }
       } else {
-        print('API Error: ${response.statusCode} - ${response.body}');
+        print('❌ OSRM API Error: ${response.statusCode} - ${response.body}');
       }
     } catch (e) {
-      print('Route fetching error: $e');
+      print('❌ Route fetching error: $e');
     }
 
-    // Fallback: Create a simple curved path instead of straight line
+    print('⚠️ Fallback: Using curved line since real road routing failed');
     return _createFallbackRoute(start, end);
   }
 
   List<LatLng> _createFallbackRoute(LatLng start, LatLng end) {
     final List<LatLng> points = [start];
 
-    // Create intermediate points for a curved effect
-    const int steps = 10;
+    // Create intermediate points for a more visible curved effect
+    const int steps = 15;
+
+    final double distance = Geolocator.distanceBetween(
+        start.latitude, start.longitude, end.latitude, end.longitude);
+    final double curveOffset = (distance / 111000) * 0.1;
+
     for (int i = 1; i < steps; i++) {
       final double ratio = i / steps;
       final double lat =
           start.latitude + (end.latitude - start.latitude) * ratio;
       final double lng =
           start.longitude + (end.longitude - start.longitude) * ratio;
+      final double curveAmount = math.sin(ratio * math.pi) * curveOffset;
+      final double bearing = Geolocator.bearingBetween(
+          start.latitude, start.longitude, end.latitude, end.longitude);
+      final double perpBearing = (bearing + 90) * (math.pi / 180);
 
-      // Add slight curve by offsetting alternate points
-      final double offset = (i % 2 == 0) ? 0.001 : -0.001;
-      points.add(LatLng(lat + offset, lng + offset));
+      final double curvedLat = lat + (curveAmount * math.cos(perpBearing));
+      final double curvedLng = lng + (curveAmount * math.sin(perpBearing));
+
+      points.add(LatLng(curvedLat, curvedLng));
     }
 
     points.add(end);
-    print('Using fallback route with ${points.length} points');
+    print(
+        'Using fallback route with ${points.length} points and ${curveOffset} offset');
     return points;
   }
 
@@ -475,7 +474,6 @@ class _CollectionMapBottomSheetState extends State<_CollectionMapBottomSheet> {
               ),
             ),
           ),
-
           // Bottom info section
           Container(
             margin: const EdgeInsets.all(20),

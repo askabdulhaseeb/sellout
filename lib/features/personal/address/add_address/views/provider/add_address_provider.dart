@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/country_entity.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/phone_number_entity.dart';
 import '../../../../auth/signin/data/models/address_model.dart';
-import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../auth/signin/domain/entities/address_entity.dart';
 import '../../domain/usecase/add_address_usecase.dart';
 import '../../domain/usecase/update_address_usecase.dart';
 import '../params/add_address_param.dart';
@@ -53,10 +52,10 @@ class AddAddressProvider extends ChangeNotifier {
         addressId: addressId,
         recipientName: _recipientNameController.text,
         address1: _address1Controller.text,
-        address2: address2Controller.text,
+        address2: _address2Controller.text,
         city: _city ?? '',
         state: _state?.stateName ?? '',
-        phoneNumber: LocalAuth.currentUser?.phoneNumber ?? '',
+        phoneNumber: _phoneNumber?.fullNumber ?? '',
         postalCode: _postalCodeController.text,
         addressCategory: _addressCategory ?? '',
         country: _selectedCountryEntity?.countryName ?? '',
@@ -80,8 +79,10 @@ class AddAddressProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setState(StateEntity value) {
+  void setStateEntity(StateEntity value) {
     _state = value;
+    // Reset city when state changes
+    _city = null;
     notifyListeners();
   }
 
@@ -94,7 +95,7 @@ class AddAddressProvider extends ChangeNotifier {
     _selectedCountryEntity = address.country;
     _postalCodeController.text = address.postalCode;
     _address1Controller.text = address.address;
-    setState(address.state);
+    _state = address.state;
     _city = address.city;
     phoneNumber = await PhoneNumberEntity.fromJson(address.phoneNumber);
     _recipientNameController.text = address.recipientName;
@@ -104,8 +105,9 @@ class AddAddressProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  set selectedCountryEntity(CountryEntity? value) {
+ void setCountryEntity(CountryEntity? value) {
     _selectedCountryEntity = value;
+    // Reset dependent fields when country changes
     _state = null;
     _city = null;
     notifyListeners();
@@ -153,16 +155,16 @@ class AddAddressProvider extends ChangeNotifier {
         return result;
       } else if (result is DataFailer<bool>) {
         final String error = result.exception?.reason ?? 'Unknown error';
-        AppSnackBar.showSnackBar(context, error);
+        AppSnackBar.show(error);
         return DataFailer<bool>(CustomException(error));
       } else {
         const String error = 'Unexpected error';
-        AppSnackBar.showSnackBar(context, error);
+        AppSnackBar.show(error);
         return DataFailer<bool>(CustomException(error));
       }
     } catch (e, stc) {
       final String error = 'Exception: $stc';
-      AppSnackBar.showSnackBar(context, error);
+      AppSnackBar.show(error);
       return DataFailer<bool>(CustomException(error));
     }
   }
