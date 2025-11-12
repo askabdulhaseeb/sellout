@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
-import '../../../../../../core/widgets/phone_number/data/sources/local_country.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/country_entity.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/phone_number_entity.dart';
 import '../../../../auth/signin/data/models/address_model.dart';
@@ -93,29 +92,14 @@ class AddAddressProvider extends ChangeNotifier {
   }
 
   Future<void> updateVariable(AddressEntity address) async {
-    await LocalCountry().refresh();
-
-    CountryEntity? hydratedCountry;
-    if (address.country.countryCode.isNotEmpty) {
-      hydratedCountry = LocalCountry().country(address.country.countryCode);
-    }
-
-    _selectedCountryEntity = hydratedCountry ?? address.country;
-
-    final List<StateEntity> availableStates =
-        _selectedCountryEntity?.states ?? <StateEntity>[];
-
-    StateEntity? resolvedState;
-    if (availableStates.isNotEmpty) {
-      resolvedState = _matchState(availableStates, address.state);
-    }
-    _state = resolvedState ?? address.state;
-
-    _city = _matchCity(_state, address.city);
-
+    // Set country
+    _selectedCountryEntity = address.country;
+    // Set state and city
+    _state = address.state;
+    _city = address.city;
+    // Set other fields
     _postalCodeController.text = address.postalCode;
     _address1Controller.text = address.address;
-
     _phoneNumber = await PhoneNumberEntity.fromJson(address.phoneNumber);
     _recipientNameController.text = address.recipientName;
     _isDefault = address.isDefault;
@@ -124,48 +108,9 @@ class AddAddressProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  StateEntity? _matchState(List<StateEntity> states, StateEntity? target) {
-    if (target == null) return null;
-    StateEntity? result;
-    final String targetCode = target.stateCode.trim().toLowerCase();
-    if (targetCode.isNotEmpty) {
-      try {
-        result = states.firstWhere(
-          (StateEntity state) =>
-              state.stateCode.trim().toLowerCase() == targetCode,
-        );
-        return result;
-      } catch (_) {
-        // ignore and try by name
-      }
-    }
-
-    try {
-      result = states.firstWhere(
-        (StateEntity state) =>
-            state.stateName.trim().toLowerCase() ==
-            target.stateName.trim().toLowerCase(),
-      );
-    } catch (_) {
-      result = null;
-    }
-    return result;
-  }
-
-  String _matchCity(StateEntity? state, String city) {
-    if (state == null || state.cities.isEmpty) return city;
-    try {
-      final String targetCity = city.trim().toLowerCase();
-      return state.cities.firstWhere(
-        (String candidate) => candidate.trim().toLowerCase() == targetCity,
-      );
-    } catch (_) {
-      return city;
-    }
-  }
-
   void setCountryEntity(CountryEntity? value) {
     _selectedCountryEntity = value;
+    debugPrint(_selectedCountryEntity?.states.first.stateName);
     // Reset dependent fields when country changes
     _state = null;
     _city = null;

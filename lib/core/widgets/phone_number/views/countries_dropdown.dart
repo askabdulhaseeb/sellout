@@ -63,11 +63,11 @@ class _CountryDropdownFieldState extends State<CountryDropdownField> {
         await getCountiesUsecase!.call(const Duration(days: 1));
 
     if (result is DataSuccess) {
-      countries = result.entity ?? LocalCountry().activeCounties;
+      countries = result.entity ?? LocalCountry().activeCountries;
       print(
           '🔄 CountryDropdown _init - loaded ${countries.length} countries from API');
     } else {
-      countries = LocalCountry().activeCounties;
+      countries = LocalCountry().activeCountries;
       print(
           '🔄 CountryDropdown _init - loaded ${countries.length} countries from local cache');
     }

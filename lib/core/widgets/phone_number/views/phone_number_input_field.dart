@@ -185,7 +185,7 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
     DataState<List<CountryEntity>> cou =
         await getCountiesUsecase!.call(const Duration(days: 1));
     if (cou is DataSuccess) {
-      countries = cou.entity ?? LocalCountry().activeCounties;
+      countries = cou.entity ?? LocalCountry().activeCountries;
     }
     if (!mounted) return; // ✅ check before calling setState
     setState(() {});
