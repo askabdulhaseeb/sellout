@@ -7,7 +7,7 @@ import '../../../../setting/setting_dashboard/domain/entities/notification_entit
 import '../../../../setting/setting_dashboard/domain/entities/privacy_settings_entity.dart';
 import '../../../../setting/setting_dashboard/domain/entities/time_away_entity.dart';
 import '../../../../user/profiles/domain/entities/supporter_detail_entity.dart';
-import '../../data/models/address_model.dart';
+import 'address_entity.dart';
 import 'login_detail_entity.dart';
 import 'login_info_entity.dart';
 part 'current_user_entity.g.dart';

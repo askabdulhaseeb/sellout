@@ -19,21 +19,38 @@ class LocalCountry {
     }
   }
 
-  CountryEntity country(String code) {
-    final String id = code.trim().toLowerCase();
-    if (id.isEmpty) throw Exception('Country code cannot be empty');
+  CountryEntity country(String countryName) {
+    final String needle = countryName.trim().toLowerCase();
+    if (needle.isEmpty) {
+      throw CustomException('Country name cannot be empty');
+    }
 
-    final CountryEntity found = _box.get(id) ??
-        _box.values.firstWhere(
-          (CountryEntity c) => <String>[
-            c.countryCode,
-            c.shortName,
-            c.displayName,
-            c.countryName
-          ].map((String e) => e.trim().toLowerCase()).contains(id),
-          orElse: () => throw Exception('Country not found'),
-        );
-    return found;
+    final CountryEntity? direct =
+        _box.get(needle) ?? _box.get(countryName.trim());
+    if (direct != null) {
+      return direct;
+    }
+
+    for (final CountryEntity entity in _box.values) {
+      final Iterable<String> identifiers = <String>[
+        entity.countryName,
+        entity.displayName,
+        entity.shortName,
+        entity.countryCode,
+        ...entity.countryCodes,
+      ];
+      final bool matches = identifiers.any(
+        (String value) => value.trim().toLowerCase() == needle,
+      );
+      if (matches) {
+        return entity;
+      }
+    }
+
+    throw CustomException(
+      'Country not found',
+      detail: countryName,
+    );
   }
 
   StateEntity getStateByName(String name) {

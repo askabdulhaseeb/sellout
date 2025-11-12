@@ -9,6 +9,7 @@ import '../../../../setting/setting_dashboard/data/models/privacy_setting_model.
 import '../../../../setting/setting_dashboard/data/models/time_away_model.dart';
 import '../../../../user/profiles/data/models/supporter_detail_model.dart';
 import '../../../../user/profiles/domain/entities/supporter_detail_entity.dart';
+import '../../domain/entities/address_entity.dart';
 import '../../domain/entities/current_user_entity.dart';
 import '../../domain/entities/login_info_entity.dart';
 import 'address_model.dart';

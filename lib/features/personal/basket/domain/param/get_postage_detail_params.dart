@@ -1,5 +1,6 @@
 import 'dart:convert';
 import '../../../auth/signin/data/models/address_model.dart';
+import '../../../auth/signin/domain/entities/address_entity.dart';
 
 class GetPostageDetailParam {
   const GetPostageDetailParam({

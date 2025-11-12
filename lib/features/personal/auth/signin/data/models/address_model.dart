@@ -1,7 +1,6 @@
 import 'dart:convert';
 import '../../domain/entities/address_entity.dart';
 import '../../../../../../core/widgets/phone_number/data/sources/local_country.dart';
-export '../../domain/entities/address_entity.dart';
 
 class AddressModel extends AddressEntity {
   AddressModel({
@@ -31,9 +30,6 @@ class AddressModel extends AddressEntity {
       );
 
   factory AddressModel.fromJson(Map<String, dynamic> json) {
-
- 
-
     return AddressModel(
       addressID: json['address_id']?.toString() ?? '',
       phoneNumber: json['phone_number']?.toString() ?? '',
@@ -43,8 +39,7 @@ class AddressModel extends AddressEntity {
       postalCode: json['postal_code']?.toString() ?? '',
       city: json['city']?.toString() ?? '',
       state: LocalCountry().getStateByName(json['state'] ?? ''),
-      country:
-         LocalCountry().country(json['country']),
+      country: LocalCountry().country(json['country']),
       isDefault: json['is_default'] ?? false,
     );
   }
