@@ -1,4 +1,4 @@
-import '../../../../auth/signin/data/models/address_model.dart';
+import '../../../../auth/signin/domain/entities/address_entity.dart';
 import 'check_out_item_entity.dart';
 
 class CheckOutEntity {

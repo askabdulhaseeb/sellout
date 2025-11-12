@@ -8,6 +8,7 @@ import '../../../../../core/sources/data_state.dart';
 import '../../../../../core/widgets/app_snakebar.dart';
 import '../../../auth/signin/data/models/address_model.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../auth/signin/domain/entities/address_entity.dart';
 import '../../data/models/cart/add_shipping_response_model.dart';
 import '../../data/models/cart/cart_model.dart';
 import '../../data/models/checkout/order_billing_model.dart';

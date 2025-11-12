@@ -1,5 +1,6 @@
 import '../../../../../../core/usecase/usecase.dart';
 import '../../../../auth/signin/data/models/address_model.dart';
+import '../../../../auth/signin/domain/entities/address_entity.dart';
 import '../../entities/checkout/check_out_entity.dart';
 import '../../repositories/checkout_repository.dart';
 

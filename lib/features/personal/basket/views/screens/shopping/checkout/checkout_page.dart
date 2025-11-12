@@ -4,10 +4,10 @@ import 'package:provider/provider.dart';
 import '../../../../../../../core/bottom_sheets/address/address_bottom_sheet.dart';
 import '../../../../../../../core/bottom_sheets/postage/postage_bottom_sheet.dart';
 import '../../../../../../../core/helper_functions/country_helper.dart';
+import '../../../../../auth/signin/domain/entities/address_entity.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
-import '../../../../../auth/signin/data/models/address_model.dart';
 import '../../../../domain/entities/cart/postage_detail_response_entity.dart';
 import '../../../providers/cart_provider.dart';
 

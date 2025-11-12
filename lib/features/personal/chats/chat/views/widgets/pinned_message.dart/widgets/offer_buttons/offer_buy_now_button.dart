@@ -8,6 +8,7 @@ import '../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../services/get_it.dart';
 import '../../../../../../../auth/signin/data/models/address_model.dart';
 import '../../../../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../../../../auth/signin/domain/entities/address_entity.dart';
 import '../../../../../../../basket/views/providers/cart_provider.dart';
 import '../../../../../../../post/domain/params/offer_payment_params.dart';
 import '../../../../../../../post/domain/usecase/offer_payment_usecase.dart';

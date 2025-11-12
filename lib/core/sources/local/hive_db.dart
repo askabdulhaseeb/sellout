@@ -10,6 +10,7 @@ import '../../../features/business/core/domain/entity/business_entity.dart';
 import '../../../features/business/core/domain/entity/business_travel_detail_entity.dart';
 import '../../../features/business/core/domain/entity/routine_entity.dart';
 import '../../../features/business/core/domain/entity/service/service_entity.dart';
+import '../../../features/personal/auth/signin/domain/entities/address_entity.dart';
 import '../../../features/personal/auth/signin/domain/entities/login_detail_entity.dart';
 import '../../../features/personal/auth/signin/domain/entities/login_info_entity.dart';
 import '../../../features/personal/bookings/data/sources/local_booking.dart';
@@ -39,7 +40,6 @@ import '../../../features/personal/listing/listing_form/domain/entities/category
 import '../../../features/personal/listing/listing_form/domain/entities/color_options_entity.dart';
 import '../../../features/personal/listing/listing_form/domain/entities/listing_entity.dart';
 import '../../../features/personal/listing/listing_form/domain/entities/sub_category_entity.dart';
-import '../../../features/personal/auth/signin/data/models/address_model.dart';
 import '../../../features/personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../../features/personal/location/domain/entities/location_entity.dart';
 import '../../../features/personal/notifications/data/source/local/local_notification.dart';
