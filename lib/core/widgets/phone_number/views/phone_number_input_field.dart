@@ -1,26 +1,26 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-
 import '../../../../services/get_it.dart';
-import '../../../usecase/usecase.dart';
 import '../../../utilities/app_validators.dart';
+import '../../../usecase/usecase.dart';
+import '../../custom_network_image.dart';
 import '../../custom_textformfield.dart';
 import '../../custom_dropdown.dart';
 import '../data/sources/local_country.dart';
 import '../domain/entities/country_entity.dart';
 import '../domain/entities/phone_number_entity.dart';
 import '../domain/usecase/get_counties_usecase.dart';
+import '../../../sources/data_state.dart';
 
 class PhoneNumberInputField extends StatefulWidget {
   const PhoneNumberInputField({
-    required this.onChange,
+    required this.onChange, super.key,
     this.initialValue,
     this.labelText = '',
-    super.key,
   });
   final String labelText;
   final PhoneNumberEntity? initialValue;
   final void Function(PhoneNumberEntity) onChange;
+
   @override
   State<PhoneNumberInputField> createState() => _PhoneNumberInputFieldState();
 }
@@ -29,173 +29,62 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
   final TextEditingController controller = TextEditingController();
   List<CountryEntity> countries = <CountryEntity>[];
   CountryEntity? selectedCountry;
-  GetCountiesUsecase? getCountiesUsecase;
-
-  int? _maxLocalDigits() {
-    final CountryEntity? c = selectedCountry;
-    if (c == null) return null;
-    final dynamic nfRaw = c.numberFormat;
-    final Map<String, String> parsed = _parseNumberFormat(nfRaw);
-    final String display = parsed['format'] ??
-        (nfRaw is String ? nfRaw : (nfRaw?.toString() ?? ''));
-    if (display.isEmpty) return null;
-    // count X or x
-    final int xCount =
-        display.split('').where((String s) => s == 'X' || s == 'x').length;
-    if (xCount > 0) return xCount;
-
-    // fallback: try to find \d{n} or {n}
-    try {
-      final RegExp r1 = RegExp(r'\\d\{(\d+)\}');
-      final Match? m1 = r1.firstMatch(parsed['regex'] ?? display);
-      if (m1 != null) return int.tryParse(m1.group(1) ?? '');
-      final RegExp r2 = RegExp(r'\{(\d+)\}');
-      final Match? m2 = r2.firstMatch(parsed['regex'] ?? display);
-      if (m2 != null) return int.tryParse(m2.group(1) ?? '');
-    } catch (_) {}
-    return null;
-  }
-
-  Map<String, String> _parseNumberFormat(dynamic nf) {
-    final Map<String, String> result = <String, String>{};
-    if (nf == null) return result;
-    try {
-      // If it's already a NumberFormatEntity
-      if (nf is NumberFormatEntity) {
-        if ((nf.format).isNotEmpty) result['format'] = nf.format;
-        if ((nf.regex).isNotEmpty) result['regex'] = nf.regex;
-        return result;
-      }
-
-      // If it's a Map-like object
-      if (nf is Map) {
-        if (nf['format'] is String) result['format'] = nf['format'];
-        if (nf['regex'] is String) result['regex'] = nf['regex'];
-        return result;
-      }
-
-      // Otherwise treat as string
-      final String s = nf.toString();
-      if (s.isEmpty) return result;
-      try {
-        final RegExp reFormat = RegExp(r'format:\s*([^,}]+)');
-        final Match? mFormat = reFormat.firstMatch(s);
-        if (mFormat != null) result['format'] = mFormat.group(1)!.trim();
-        final RegExp reRegex = RegExp(r'regex:\s*([^,}]+)');
-        final Match? mRegex = reRegex.firstMatch(s);
-        if (mRegex != null) result['regex'] = mRegex.group(1)!.trim();
-      } catch (_) {}
-
-      if (result.isEmpty) {
-        try {
-          final String candidate = s.replaceAll("'", '"');
-          final dynamic dec = jsonDecode(candidate);
-          if (dec is Map) {
-            if (dec['format'] is String) result['format'] = dec['format'];
-            if (dec['regex'] is String) result['regex'] = dec['regex'];
-          } else {
-            // fallback: use whole string as display
-            result['format'] = s;
-          }
-        } catch (_) {
-          result['format'] = s;
-        }
-      }
-    } catch (_) {}
-    return result;
-  }
-
-  String _buildRegexFromDisplay(String display) {
-    if (display.isEmpty) return '';
-    final StringBuffer sb = StringBuffer();
-    int i = 0;
-    while (i < display.length) {
-      final String ch = display[i];
-      if (ch == 'X' || ch == 'x') {
-        int run = 1;
-        i++;
-        while (i < display.length && (display[i] == 'X' || display[i] == 'x')) {
-          run++;
-          i++;
-        }
-        sb.write('\\d{$run}');
-        continue;
-      }
-      if (RegExp(r'\d').hasMatch(ch)) {
-        sb.write(ch);
-        i++;
-        continue;
-      }
-      if (ch == '+') {
-        sb.write('\\+');
-        i++;
-        continue;
-      }
-      if (ch == ' ' || ch == '-' || ch == '(' || ch == ')' || ch == '.') {
-        i++;
-        continue;
-      }
-      sb.write(RegExp.escape(ch));
-      i++;
-    }
-    return '^' + sb.toString() + r'$';
-  }
+  late GetCountiesUsecase getCountiesUsecase;
 
   @override
   void initState() {
     super.initState();
-    _init();
+    getCountiesUsecase = GetCountiesUsecase(locator());
+    _loadCountries();
   }
 
-  void _postInit() {
+  Future<void> _loadCountries() async {
+    await LocalCountry().refresh();
+    final DataState<List<CountryEntity>> result =
+        await getCountiesUsecase.call(const Duration(days: 1));
+    if (result is DataSuccess && result.entity != null) {
+      countries = result.entity!;
+    } else {
+      countries = LocalCountry().activeCountries;
+    }
+    countries = countries.where((CountryEntity e) => e.isActive).toList();
     if (widget.initialValue != null) {
-      controller.text = widget.initialValue?.number ?? '';
-      final String code = widget.initialValue?.countryCode ?? '';
-      CountryEntity? c = LocalCountry().country(code);
-      if (countries.contains(c)) {
-        setState(() {
-          selectedCountry = c;
-        });
-      } else {
-        final int index = countries.indexWhere((CountryEntity e) {
-          if (e.countryCode == code) {
-            selectedCountry = e;
-            return true;
-          }
-          return false;
-        });
-        if (index != -1) {
-          setState(() {
-            selectedCountry = countries[index];
-          });
+      controller.text = widget.initialValue!.number;
+      final String target =
+          widget.initialValue!.countryCode.trim().toLowerCase();
+      CountryEntity? match;
+      for (final CountryEntity entity in countries) {
+        final Iterable<String> identifiers = <String>[
+          entity.countryCode,
+          entity.shortName,
+          entity.displayName,
+          entity.countryName,
+          ...entity.countryCodes,
+        ].map((String e) => e.trim().toLowerCase());
+        if (identifiers.contains(target)) {
+          match = entity;
+          break;
         }
       }
+      match ??= countries.isNotEmpty ? countries.first : null;
+      selectedCountry = match;
     }
+
+    if (mounted) setState(() {});
   }
 
-  Future<void> _init() async {
-    getCountiesUsecase = GetCountiesUsecase(locator());
-    await LocalCountry().refresh();
-    await countiries();
-    if (!mounted) return; // ✅ check before calling setState
-    _postInit();
-  }
-
-  Future<void> countiries() async {
-    DataState<List<CountryEntity>> cou =
-        await getCountiesUsecase!.call(const Duration(days: 1));
-    if (cou is DataSuccess) {
-      countries = cou.entity ?? LocalCountry().activeCountries;
-    }
-    if (!mounted) return; // ✅ check before calling setState
-    setState(() {});
+  int? _maxDigits(CountryEntity? c) {
+    if (c == null) return null;
+    final NumberFormatEntity formatEntity = c.numberFormat;
+    final String format = formatEntity.format;
+    final int matches = RegExp(r'[Xx]').allMatches(format).length;
+    return matches > 0 ? matches : null;
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         if (widget.labelText.isNotEmpty)
           Padding(
@@ -206,62 +95,54 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
             ),
           ),
         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             CustomDropdown<CountryEntity>(
               title: '',
               hint: '',
               width: 125,
-              items: countries
-                  .where((CountryEntity e) => e.isActive)
-                  .map((CountryEntity e) {
+              items: countries.map((CountryEntity country) {
                 return DropdownMenuItem<CountryEntity>(
-                  value: e,
-                  child: Text(e.countryCode,
-                      style: TextTheme.of(context).bodyMedium),
+                  value: country,
+                  child: Row(
+                    children: <Widget>[
+                      _CountryFlag(flag: country.flag),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          '${country.countryCode} ${country.displayName}',
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
                 );
               }).toList(),
               selectedItem: selectedCountry,
               onChanged: (CountryEntity? value) {
-                if (value == null) return;
-                setState(() {
-                  selectedCountry = value;
-                  widget.onChange(PhoneNumberEntity(
-                    countryCode: value.countryCode,
-                    number: controller.text,
-                  ));
-                });
+                setState(() => selectedCountry = value);
+                widget.onChange(PhoneNumberEntity(
+                  countryCode: value?.countryCode ?? '',
+                  number: controller.text,
+                ));
               },
               validator: (bool? val) => AppValidator.requireSelection(val),
             ),
             const SizedBox(width: 12),
             Expanded(
-              flex: 2,
               child: CustomTextFormField(
                 controller: controller,
                 readOnly: selectedCountry == null,
-                onChanged: (String p0) => widget.onChange(PhoneNumberEntity(
-                  countryCode: selectedCountry?.countryCode ?? '',
-                  number: p0,
-                )),
+                maxLength: _maxDigits(selectedCountry),
                 keyboardType: TextInputType.number,
-                maxLength: _maxLocalDigits(),
+                onChanged: (String value) => widget.onChange(PhoneNumberEntity(
+                  countryCode: selectedCountry?.countryCode ?? '',
+                  number: value,
+                )),
                 validator: (String? value) {
-                  final dynamic rawNf = selectedCountry?.numberFormat;
-                  final Map<String, String> p = _parseNumberFormat(rawNf);
-                  final String displayFormat = p['format'] ??
-                      (rawNf is String ? rawNf : (rawNf?.toString() ?? ''));
-                  String pattern = p['regex'] ?? '';
-                  if (pattern.isEmpty) {
-                    pattern = _buildRegexFromDisplay(displayFormat);
+                  if ((value ?? '').isEmpty) {
+                    return 'Enter a phone number';
                   }
-                  debugPrint(
-                      '[PhoneNumberInputField] validating using pattern="$pattern" for full="${selectedCountry?.countryCode}$value" (display="$displayFormat")');
-                  // Provide a human-friendly message showing the expected format
-                  final String message = 'Use format: $displayFormat';
-                  return AppValidator.customRegExp(
-                      pattern, '${selectedCountry?.countryCode}$value',
-                      message: message);
+                  return null;
                 },
               ),
             ),
@@ -269,5 +150,61 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
         ),
       ],
     );
+  }
+}
+
+class _CountryFlag extends StatelessWidget {
+  const _CountryFlag({required this.flag});
+  final String flag;
+
+  @override
+  Widget build(BuildContext context) {
+    final String trimmed = flag.trim();
+    if (trimmed.isEmpty) {
+      return _placeholder();
+    }
+    if (trimmed.startsWith('https')) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(4),
+        child: const CustomNetworkImage(
+          size: 18,
+          imageURL:
+              'https://upload.wikimedia.org/wikipedia/commons/3/32/Flag_of_Pakistan.svg',
+          fit: BoxFit.cover,
+        ),
+      );
+    }
+    if (trimmed.contains('/')) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(4),
+        child: Image.asset(
+          trimmed,
+          width: 24,
+          height: 16,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => _fallbackText(trimmed),
+        ),
+      );
+    }
+    return _fallbackText(trimmed);
+  }
+
+  Widget _placeholder() => Container(
+        width: 24,
+        height: 16,
+        decoration: BoxDecoration(
+          color: Colors.grey.shade300,
+          borderRadius: BorderRadius.circular(4),
+        ),
+      );
+
+  Widget _fallbackText(String value) {
+    if (value.length <= 6 && !value.contains('/')) {
+      return Text(
+        value,
+        style: const TextStyle(fontSize: 16),
+      );
+    }
+    return _placeholder();
   }
 }
