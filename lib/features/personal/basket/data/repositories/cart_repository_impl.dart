@@ -38,7 +38,7 @@ class CartRepositoryImpl implements CartRepository {
   @override
   Future<DataState<bool>> updateStatus(
     CartItemModel params,
-    CartItemType action,
+    CartItemStatusType action,
   ) async {
     return await _remoteAPI.updateStatus(params, action);
   }

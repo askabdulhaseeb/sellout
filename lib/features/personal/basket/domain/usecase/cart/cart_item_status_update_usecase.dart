@@ -11,7 +11,7 @@ class CartItemStatusUpdateUsecase implements UseCase<bool, CartItemModel> {
   Future<DataState<bool>> call(CartItemModel params) async {
     return await _repository.updateStatus(
       params,
-      params.inCart ? CartItemType.saveLater : CartItemType.cart,
+      params.inCart ? CartItemStatusType.saveLater : CartItemStatusType.cart,
     );
   }
 }

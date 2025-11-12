@@ -18,13 +18,7 @@ import '../../domain/usecase/add_address_usecase.dart';
 import '../../domain/usecase/update_address_usecase.dart';
 import '../provider/add_address_provider.dart';
 
-class AddEditAddressScreen extends StatefulWidget {
-  const AddEditAddressScreen({this.initAddress, super.key});
-  final AddressEntity? initAddress;
 
-  @override
-  State<AddEditAddressScreen> createState() => _AddEditAddressScreenState();
-}
 
 class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
   @override
@@ -101,20 +95,36 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
                         final List<StateEntity> states =
                             pros.selectedCountryEntity?.states ??
                                 <StateEntity>[];
+
+                        StateEntity? selectedStateItem;
+                        if (pros.state != null) {
+                          if (states.contains(pros.state)) {
+                            selectedStateItem = pros.state;
+                          } else if (states.isNotEmpty) {
+                            try {
+                              selectedStateItem = states.firstWhere(
+                                (StateEntity s) =>
+                                    s.stateName.trim().toLowerCase() ==
+                                    pros.state!.stateName.trim().toLowerCase(),
+                              );
+                            } catch (_) {
+                              selectedStateItem = null;
+                            }
+                          }
+                        }
+
                         final List<DropdownMenuItem<StateEntity>> items = states
                             .map((StateEntity s) =>
                                 DropdownMenuItem<StateEntity>(
-                                    value: s, child: Text(s.stateName)))
+                                  value: s,
+                                  child: Text(s.stateName),
+                                ))
                             .toList();
-                        for (final StateEntity s in states) {
-                          if (s.stateName == pros.state?.stateName) {
-                            break;
-                          }
-                        }
+
                         return CustomDropdown<StateEntity>(
                           title: 'state'.tr(),
                           items: items,
-                          selectedItem: pros.state,
+                          selectedItem: selectedStateItem,
                           onChanged: (StateEntity? value) {
                             if (value != null) {
                               pros.setStateEntity(value);
@@ -134,24 +144,52 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
                                 <StateEntity>[];
 
                         StateEntity? selectedState;
-                        for (final StateEntity s in states) {
-                          if (s.stateName == pros.state?.stateName) {
-                            selectedState = s;
-                            break;
+                        if (pros.state != null) {
+                          if (states.contains(pros.state)) {
+                            selectedState = pros.state;
+                          } else if (states.isNotEmpty) {
+                            try {
+                              selectedState = states.firstWhere(
+                                (StateEntity s) =>
+                                    s.stateName.trim().toLowerCase() ==
+                                    pros.state!.stateName.trim().toLowerCase(),
+                              );
+                            } catch (_) {
+                              selectedState = null;
+                            }
                           }
                         }
 
                         final List<String> cities =
                             selectedState?.cities ?? <String>[];
 
+                        String? selectedCityItem;
+                        if (pros.city != null && cities.isNotEmpty) {
+                          final String targetCity =
+                              pros.city!.trim().toLowerCase();
+                          try {
+                            selectedCityItem = cities.firstWhere(
+                              (String city) =>
+                                  city.trim().toLowerCase() == targetCity,
+                            );
+                          } catch (_) {
+                            selectedCityItem = null;
+                          }
+                        } else {
+                          selectedCityItem = pros.city;
+                        }
+
                         final List<DropdownMenuItem<String>> items = cities
                             .map((String city) => DropdownMenuItem<String>(
-                                value: city, child: Text(city)))
+                                  value: city,
+                                  child: Text(city),
+                                ))
                             .toList();
+
                         return CustomDropdown<String>(
                           title: 'city'.tr(),
                           items: items,
-                          selectedItem: pros.city,
+                          selectedItem: selectedCityItem,
                           onChanged: (String? value) {
                             if (value != null) pros.setCity(value);
                           },

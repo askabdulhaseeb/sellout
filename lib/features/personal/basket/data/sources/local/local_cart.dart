@@ -71,7 +71,7 @@ class LocalCart {
     }
   }
 
-  Future<void> updateStatus(CartItemEntity item, CartItemType type) async {
+  Future<void> updateStatus(CartItemEntity item, CartItemStatusType type) async {
     try {
       final String me = LocalAuth.uid ?? '';
       if (me.isEmpty) {

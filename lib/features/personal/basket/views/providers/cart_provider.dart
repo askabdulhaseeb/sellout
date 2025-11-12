@@ -56,9 +56,10 @@ class CartProvider extends ChangeNotifier {
   // MARK: ⚙️ State Variables
   ShoppingBasketPageType _shoppingBasketType = ShoppingBasketPageType.basket;
   CartType _cartType = CartType.shoppingBasket;
-  CartItemType _basketPage = CartItemType.cart;
+  CartItemStatusType _basketItemStatus = CartItemStatusType.cart;
 
   List<CartItemEntity> _cartItems = <CartItemEntity>[];
+  String _postageCurrencySymbol = '';
   bool _isFetchingCart = false;
   final List<String> _fastDeliveryProducts = <String>[];
   OrderBillingModel? _orderBilling;
@@ -88,8 +89,9 @@ class CartProvider extends ChangeNotifier {
       _postageResponseEntity;
   AddShippingResponseEntity? get addShippingResponse => _addShippingResponse;
   Map<String, RateEntity> get selectedPostageRates => _selectedPostageRates;
-  CartItemType get basketPage => _basketPage;
+  CartItemStatusType get basketItemStatus => _basketItemStatus;
   AddressEntity? get address => _address;
+  String get postageCurrencySymbol => _postageCurrencySymbol;
 
   /// Returns true if any cart item requires removal because delivery is unavailable.
   /// Criteria: originalDeliveryType is paid or fast delivery AND no rates found.
@@ -110,7 +112,6 @@ class CartProvider extends ChangeNotifier {
     return false;
   }
 
-  /// List of post IDs that require removal to proceed.
   List<String> get itemsRequiringRemovalPostIds {
     if (_postageResponseEntity == null) return <String>[];
     final List<String> ids = <String>[];
@@ -137,6 +138,10 @@ class CartProvider extends ChangeNotifier {
 
   void setBasketPageType(ShoppingBasketPageType type) {
     _shoppingBasketType = type;
+    notifyListeners();
+  }
+  void setPostageCurrencySymbol(String val) {
+    _postageCurrencySymbol = val;
     notifyListeners();
   }
 
@@ -294,6 +299,7 @@ class CartProvider extends ChangeNotifier {
   }
 
   // MARK: 📦 GET Postage Rates
+
   Future<DataState<PostageDetailResponseEntity>> getRates() async {
     try {
       if (_address == null) {
@@ -399,20 +405,6 @@ class CartProvider extends ChangeNotifier {
   /// JSON-encoded checkout payload.
   String buildCheckoutJson() => json.encode(buildCheckoutMap());
 
-  /// Build shipping parameter list for API submission.
-  /// Returns a List of ShippingItemParam with cart_item_id and object_id (rate object ID).
-  ///
-  /// Format:
-  /// ```json
-  /// {
-  ///   "shipping": [
-  ///     {
-  ///       "cart_item_id": "uuid",
-  ///       "object_id": "shipment_id_from_selected_rate"
-  ///     }
-  ///   ]
-  /// }
-  /// ```
   List<ShippingItemParam> buildShippingList() {
     final List<ShippingItemParam> shippingList = <ShippingItemParam>[];
 
@@ -578,7 +570,7 @@ class CartProvider extends ChangeNotifier {
     _selectedPostageRates.clear();
     _selectedRateObjectIds.clear();
     _fastDeliveryProducts.clear();
-    _basketPage = CartItemType.cart;
+    _basketItemStatus = CartItemStatusType.cart;
     _cartType = CartType.shoppingBasket;
     _shoppingBasketType = ShoppingBasketPageType.basket;
     _address = (LocalAuth.currentUser?.address != null &&

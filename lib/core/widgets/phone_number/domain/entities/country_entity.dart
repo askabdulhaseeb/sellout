@@ -62,6 +62,10 @@ class CountryEntity {
 
   @override
   int get hashCode => countryCode.hashCode ^ displayName.hashCode;
+
+  @override
+  String toString() =>
+      'CountryEntity(displayName: $displayName, countryCode: $countryCode)';
 }
 
 @HiveType(typeId: 84)

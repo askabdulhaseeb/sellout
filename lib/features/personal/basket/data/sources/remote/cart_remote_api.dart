@@ -21,7 +21,7 @@ abstract interface class CartRemoteAPI {
   Future<void> clearCart();
   Future<DataState<bool>> updateQty(CartItemUpdateQtyParam param);
   Future<DataState<bool>> updateStatus(
-      CartItemModel params, CartItemType action);
+      CartItemModel params, CartItemStatusType action);
   Future<DataState<PostageDetailResponseModel>> getPostageDetails(
       GetPostageDetailParam param);
   Future<DataState<AddShippingResponseModel>> addShipping(
@@ -132,7 +132,7 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
   @override
   Future<DataState<bool>> updateStatus(
     CartItemModel params,
-    CartItemType action,
+    CartItemStatusType action,
   ) async {
     try {
       final String endpoint =
