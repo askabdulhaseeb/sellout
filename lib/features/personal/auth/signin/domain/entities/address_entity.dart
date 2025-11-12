@@ -32,7 +32,7 @@ class AddressEntity {
   @HiveField(6)
   final String city;
   @HiveField(9)
-  final StateEntity state;
+  final StateEntity? state;
   @HiveField(7)
   final CountryEntity country;
   @HiveField(8)

@@ -88,7 +88,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         if (cartPro.address != null) ...<Widget>[
                           const SizedBox(height: 4),
                           Text(
-                            '${cartPro.address!.city}, ${cartPro.address!.state.stateName}\n'
+                            '${cartPro.address!.city}, ${cartPro.address!.state?.stateName}\n'
                             '${cartPro.address!.country.displayName} ${cartPro.address!.postalCode}',
                             style: const TextStyle(
                               fontSize: 13,

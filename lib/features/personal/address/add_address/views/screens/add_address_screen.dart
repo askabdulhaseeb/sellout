@@ -30,7 +30,7 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<AddAddressProvider>(
-      create: (BuildContext context) => AddAddressProvider(
+      create: (_) => AddAddressProvider(
         locator<AddAddressUsecase>(),
         locator<UpdateAddressUsecase>(),
       ),
@@ -48,6 +48,8 @@ class AddEditAddressView extends StatefulWidget {
 }
 
 class _AddEditAddressViewState extends State<AddEditAddressView> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     super.initState();
@@ -61,167 +63,156 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
 
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+    final AddAddressProvider provider = context.read<AddAddressProvider>();
 
-    return Consumer<AddAddressProvider>(
-      builder: (BuildContext context, AddAddressProvider pro, Widget? child) =>
-          PopScope(
-        onPopInvokedWithResult: (bool didPop, dynamic result) =>
-            pro.disposeControllers(),
-        child: Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            title: AppBarTitle(titleKey: 'address'.tr()),
-          ),
-          body: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Form(
-                key: formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    CustomTextFormField(
-                      labelText: 'recipient_name'.tr(),
-                      controller: pro.recipientNameController,
-                      validator: (String? value) => AppValidator.isEmpty(value),
-                    ),
-                    const SizedBox(height: AppSpacing.vSm),
-                    CountryDropdownField(
-                      initialValue: pro.selectedCountryEntity,
-                      onChanged: (CountryEntity value) {
-                        pro.setCountryEntity(value);
-                      },
-                      validator: (bool? value) =>
-                          AppValidator.requireSelection(value),
-                    ),
-                    const SizedBox(height: AppSpacing.vSm),
-
-                    CustomDropdown<StateEntity>(
-                      title: 'state'.tr(),
-                      items:
-                          (pro.selectedCountryEntity?.states ?? <StateEntity>[])
-                              .map((StateEntity state) =>
-                                  DropdownMenuItem<StateEntity>(
-                                    value: state,
-                                    child: Text(state
-                                        .stateName), 
-                                  ))
-                              .toList(),
-                      selectedItem: pro.state,
-                      onChanged: (StateEntity? value) {
-                        if (value != null) {
-                          pro.setStateEntity(value);
-                        }
-                      },
-                      validator: (bool? value) =>
-                          AppValidator.requireSelection(value),
-                    ),
-
-                    const SizedBox(height: AppSpacing.vSm),
-                    CustomDropdown<String>(
-                      title: 'city'.tr(),
-                      items: (pro.state?.cities ?? <String>[])
-                          .map((String city) => DropdownMenuItem<String>(
-                                value: city,
-                                child: Text(city),
-                              ))
-                          .toList(),
-                      selectedItem: pro.city,
-                      onChanged: (String? value) {
-                        if (value != null) pro.setCity(value);
-                      },
-                      validator: (bool? value) =>
-                          AppValidator.requireSelection(value),
-                    ),
-
-                    const SizedBox(height: AppSpacing.vSm),
-                    CustomTextFormField(
-                      labelText: 'address_1'.tr(),
-                      controller: pro.address1Controller,
-                      validator: (String? value) => AppValidator.isEmpty(value),
-                    ),
-                    const SizedBox(height: AppSpacing.vSm),
-                    CustomTextFormField(
-                        labelText: 'address_2'.tr(),
-                        controller: pro.address2Controller,
-                        validator: null),
-                    const SizedBox(height: AppSpacing.vSm),
-                    CustomTextFormField(
-                      labelText: 'postal_code'.tr(),
-                      controller: pro.postalCodeController,
-                      validator: (String? value) => AppValidator.isEmpty(value),
-                    ),
-                    const SizedBox(height: AppSpacing.vSm),
-                    // CustomTextFormField(
-                    //   labelText: '${'town'.tr()}/${'city'.tr()}',
-                    //   controller: provider.townCity,
-                    //   validator: (String? value) {
-                    //     if (value == null || value.isEmpty) {
-                    //       return 'field_left_empty'.tr();
-                    //     }
-                    //     const String regex =
-                    //         r'^[a-zA-Z]+/[a-zA-Z]+$'; // Strict city/town format without spaces
-                    //     final RegExp regExp = RegExp(regex);
-                    //     if (!regExp.hasMatch(value)) {
-                    //       return 'please_follow_format_town'; // Adjust this message as needed
-                    //     }
-                    //     return null;
-                    //   },
-                    // ),
-                    Consumer<AddAddressProvider>(
-                      builder: (BuildContext context, AddAddressProvider pros,
-                              Widget? child) =>
-                          CustomDropdown<String>(
-                        title: 'address_category'.tr(),
-                        items: <String>['home', 'work'].map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        selectedItem: pros.addressCategory,
-                        onChanged: (String? value) {
-                          if (value != null) {
-                            pros.setaddressCategory(value);
-                          }
-                        },
-                        validator: (bool? value) =>
-                            AppValidator.requireSelection(value),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.vSm),
-                    PhoneNumberInputField(
-                      initialValue: pro.phoneNumber,
-                      labelText: 'phone_number'.tr(),
-                      onChange: (PhoneNumberEntity? value) {
-                        pro.phoneNumber = value;
-                      },
-                    ),
-
-                    const SizedBox(height: AppSpacing.vSm),
-
-                    Consumer<AddAddressProvider>(
-                      builder: (BuildContext context,
-                          AddAddressProvider provider, _) {
-                        return CustomRadioToggleTile(
-                          title: 'Make this default address',
-                          selectedValue: provider.isDefault,
-                          onChanged: () {
-                            provider
-                                .toggleDefault(); // Update the value when clicked
-                          },
-                        );
-                      },
-                    )
-                  ],
+    return PopScope(
+      onPopInvokedWithResult: (bool didPop, dynamic result) =>
+          provider.disposeControllers(),
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: AppBarTitle(titleKey: 'address'.tr()),
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                CustomTextFormField(
+                  labelText: 'recipient_name'.tr(),
+                  controller: provider.recipientNameController,
+                  validator: AppValidator.isEmpty,
                 ),
-              )),
-          bottomNavigationBar: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: CustomElevatedButton(
+                const SizedBox(height: AppSpacing.vSm),
+
+                // 🟢 Consumer only for Country Dropdown
+                Consumer<AddAddressProvider>(
+                  builder: (_, AddAddressProvider pro, __) =>
+                      CountryDropdownField(
+                    initialValue: pro.selectedCountryEntity,
+                    onChanged: (CountryEntity value) {
+                      pro.setCountryEntity(value);
+                    },
+                    validator: AppValidator.requireSelection,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.vSm),
+
+                // 🟢 Consumer for State Dropdown
+                Consumer<AddAddressProvider>(
+                  builder: (_, AddAddressProvider pro, __) =>
+                      CustomDropdown<StateEntity>(
+                    title: 'state'.tr(),
+                    items:
+                        (pro.selectedCountryEntity?.states ?? <StateEntity>[])
+                            .map((StateEntity state) =>
+                                DropdownMenuItem<StateEntity>(
+                                  value: state,
+                                  child: Text(state.stateName),
+                                ))
+                            .toList(),
+                    selectedItem: pro.state,
+                    onChanged: (StateEntity? value) {
+                      if (value != null) pro.setStateEntity(value);
+                    },
+                    validator: AppValidator.requireSelection,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.vSm),
+                // 🟢 Consumer for City Dropdown
+                Consumer<AddAddressProvider>(
+                  builder: (_, AddAddressProvider pro, __) =>
+                      CustomDropdown<String>(
+                    title: 'city'.tr(),
+                    items: (pro.state?.cities ?? <String>[])
+                        .map((String city) => DropdownMenuItem<String>(
+                              value: city,
+                              child: Text(city),
+                            ))
+                        .toList(),
+                    selectedItem: pro.city,
+                    onChanged: (String? value) {
+                      if (value != null) pro.setCity(value);
+                    },
+                    validator: AppValidator.requireSelection,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.vSm),
+
+                CustomTextFormField(
+                  labelText: 'address_1'.tr(),
+                  controller: provider.address1Controller,
+                  validator: AppValidator.isEmpty,
+                ),
+                const SizedBox(height: AppSpacing.vSm),
+
+                CustomTextFormField(
+                  labelText: 'address_2'.tr(),
+                  controller: provider.address2Controller,
+                ),
+                const SizedBox(height: AppSpacing.vSm),
+
+                CustomTextFormField(
+                  labelText: 'postal_code'.tr(),
+                  controller: provider.postalCodeController,
+                  validator: AppValidator.isEmpty,
+                ),
+                const SizedBox(height: AppSpacing.vSm),
+
+                // 🟢 Consumer for Address Category Dropdown
+                Consumer<AddAddressProvider>(
+                  builder: (_, AddAddressProvider pro, __) =>
+                      CustomDropdown<String>(
+                    title: 'address_category'.tr(),
+                    items: <String>['home', 'work']
+                        .map((String value) => DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value.tr()),
+                            ))
+                        .toList(),
+                    selectedItem: pro.addressCategory,
+                    onChanged: (String? value) {
+                      if (value != null) pro.setaddressCategory(value);
+                    },
+                    validator: AppValidator.requireSelection,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.vSm),
+
+                // 🟢 Consumer for Phone Number
+                Consumer<AddAddressProvider>(
+                  builder: (_, AddAddressProvider pro, __) =>
+                      PhoneNumberInputField(
+                    initialValue: pro.phoneNumber,
+                    labelText: 'phone_number'.tr(),
+                    onChange: (PhoneNumberEntity? value) {
+                      pro.setPhoneNumber(value);
+                    },
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.vSm),
+
+                Consumer<AddAddressProvider>(
+                  builder: (_, AddAddressProvider pro, __) =>
+                      CustomRadioToggleTile(
+                    title: 'Make this default address',
+                    selectedValue: pro.isDefault,
+                    onChanged: pro.toggleDefault,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Consumer<AddAddressProvider>(
+            builder: (_, AddAddressProvider pro, __) => CustomElevatedButton(
               isLoading: false,
               onTap: () {
-                if (formKey.currentState?.validate() ?? false) {
+                if (_formKey.currentState?.validate() ?? false) {
                   if (widget.initAddress?.addressID == null ||
                       widget.initAddress?.addressID == '') {
                     pro.saveAddress(context);

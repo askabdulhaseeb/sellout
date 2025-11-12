@@ -123,7 +123,7 @@ class SelectableAddressTile extends StatelessWidget {
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          '${address.address}, ${address.city} ${address.postalCode}',
+                          '${address.address}, ${address.city},${address.country.displayName}, ${address.postalCode}',
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 14,

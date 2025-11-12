@@ -3,7 +3,6 @@ import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/country_entity.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/phone_number_entity.dart';
-import '../../../../auth/signin/data/models/address_model.dart';
 import '../../../../auth/signin/domain/entities/address_entity.dart';
 import '../../domain/usecase/add_address_usecase.dart';
 import '../../domain/usecase/update_address_usecase.dart';
@@ -64,7 +63,7 @@ class AddAddressProvider extends ChangeNotifier {
       );
   // MARK: Setters/set functions
 
-  set phoneNumber(PhoneNumberEntity? value) {
+  void setPhoneNumber(PhoneNumberEntity? value) {
     _phoneNumber = value;
     notifyListeners();
   }
@@ -81,7 +80,6 @@ class AddAddressProvider extends ChangeNotifier {
 
   void setStateEntity(StateEntity value) {
     _state = value;
-    // Reset city when state changes
     _city = null;
     notifyListeners();
   }
@@ -97,10 +95,10 @@ class AddAddressProvider extends ChangeNotifier {
     // Set state and city
     _state = address.state;
     _city = address.city;
+    _phoneNumber = await PhoneNumberEntity.fromJson(address.phoneNumber);
     // Set other fields
     _postalCodeController.text = address.postalCode;
     _address1Controller.text = address.address;
-    _phoneNumber = await PhoneNumberEntity.fromJson(address.phoneNumber);
     _recipientNameController.text = address.recipientName;
     _isDefault = address.isDefault;
     _addressId = address.addressID;
@@ -127,7 +125,6 @@ class AddAddressProvider extends ChangeNotifier {
     try {
       final DataState<bool> result =
           await _addAddressUsecase.call(addressParams);
-      debugPrint('add address data ${addressParams.toMap()}');
       if (result is DataSuccess<bool>) {
         debugPrint(result.data);
         Navigator.pop(context);
@@ -175,7 +172,7 @@ class AddAddressProvider extends ChangeNotifier {
 
   // MARK: Cleanup
   void disposeControllers() {
-    phoneNumber = null;
+    _phoneNumber = null;
     _action = '';
     _addressId = '';
     _postalCodeController.clear();

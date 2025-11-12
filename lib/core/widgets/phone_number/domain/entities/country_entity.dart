@@ -21,6 +21,24 @@ class CountryEntity {
     required this.states,
   });
 
+  factory CountryEntity.empty() => CountryEntity(
+        flag: 'na',
+        shortName: 'na',
+        displayName: 'na',
+        countryName: 'na',
+        countryCode: 'na',
+        countryCodes: const <String>[],
+        language: 'na',
+        iosCode: 'na',
+        isoCode: 'na',
+        alpha2: 'na',
+        alpha3: 'na',
+        numberFormat: NumberFormatEntity(format: '', regex: ''),
+        currency: const <String>[],
+        isActive: false,
+        states: const <StateEntity>[],
+      );
+
   @HiveField(0)
   final String flag;
   @HiveField(1)
@@ -93,6 +111,12 @@ class NumberFormatEntity {
 class StateEntity {
   StateEntity(
       {required this.stateName, required this.stateCode, required this.cities});
+
+  factory StateEntity.empty() => StateEntity(
+        stateName: 'na',
+        stateCode: 'na',
+        cities: const <String>[],
+      );
 
   @HiveField(0)
   final String stateName;
