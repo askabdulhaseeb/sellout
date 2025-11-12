@@ -31,5 +31,5 @@ class CartItemEntity {
   String status;
 
   bool get inCart => status == 'cart';
-  CartItemType get type => inCart ? CartItemType.cart : CartItemType.saveLater;
+  CartItemStatusType get type => inCart ? CartItemStatusType.cart : CartItemStatusType.saveLater;
 }

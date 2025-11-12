@@ -15,7 +15,7 @@ abstract interface class CartRepository {
   Future<DataState<CartEntity>> getCart();
   Future<DataState<bool>> updateQty(CartItemUpdateQtyParam param);
   Future<DataState<bool>> updateStatus(
-      CartItemModel params, CartItemType action);
+      CartItemModel params, CartItemStatusType action);
   Future<DataState<PostageDetailResponseModel>> getPostageDetails(
       GetPostageDetailParam param);
   Future<DataState<AddShippingResponseModel>> addShipping(
