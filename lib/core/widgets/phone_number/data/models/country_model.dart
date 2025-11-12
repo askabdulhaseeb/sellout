@@ -29,7 +29,7 @@ class CountryModel extends CountryEntity {
     } else if (rawCountryCode is Iterable) {
       country = rawCountryCode
           .map((e) => e?.toString() ?? '')
-          .where((s) => s.isNotEmpty)
+          .where((String s) => s.isNotEmpty)
           .toList();
     }
 
@@ -41,7 +41,7 @@ class CountryModel extends CountryEntity {
     } else if (rawCurrency is Iterable) {
       currencyList = rawCurrency
           .map((e) => e?.toString() ?? '')
-          .where((s) => s.isNotEmpty)
+          .where((String s) => s.isNotEmpty)
           .toList();
     }
 
@@ -123,7 +123,7 @@ class CountryModel extends CountryEntity {
       'iso_code': isoCode,
       'alpha_2': alpha2,
       'alpha_3': alpha3,
-      'number_format': {
+      'number_format': <String, String>{
         'format': numberFormat.format,
         'regex': numberFormat.regex,
       },

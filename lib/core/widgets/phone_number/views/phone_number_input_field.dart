@@ -41,7 +41,7 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
     if (display.isEmpty) return null;
     // count X or x
     final int xCount =
-        display.split('').where((s) => s == 'X' || s == 'x').length;
+        display.split('').where((String s) => s == 'X' || s == 'x').length;
     if (xCount > 0) return xCount;
 
     // fallback: try to find \d{n} or {n}
@@ -118,7 +118,7 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
           run++;
           i++;
         }
-        sb.write('\\d{' + run.toString() + '}');
+        sb.write('\\d{$run}');
         continue;
       }
       if (RegExp(r'\d').hasMatch(ch)) {
@@ -152,7 +152,7 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
       controller.text = widget.initialValue?.number ?? '';
       final String code = widget.initialValue?.countryCode ?? '';
       CountryEntity? c = LocalCountry().country(code);
-      if (c != null && countries.contains(c)) {
+      if (countries.contains(c)) {
         setState(() {
           selectedCountry = c;
         });

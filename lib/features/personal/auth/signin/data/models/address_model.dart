@@ -1,6 +1,7 @@
 import 'dart:convert';
 import '../../domain/entities/address_entity.dart';
 import '../../../../../../core/widgets/phone_number/data/sources/local_country.dart';
+import '../../../../../../core/widgets/phone_number/domain/entities/country_entity.dart';
 
 class AddressModel extends AddressEntity {
   AddressModel({
@@ -30,6 +31,12 @@ class AddressModel extends AddressEntity {
       );
 
   factory AddressModel.fromJson(Map<String, dynamic> json) {
+    final LocalCountry localCountry = LocalCountry();
+    final dynamic isDefaultRaw = json['is_default'];
+    final bool isDefault = isDefaultRaw is bool
+        ? isDefaultRaw
+        : <String>['true', '1', 'yes']
+            .contains(isDefaultRaw?.toString().toLowerCase());
     return AddressModel(
       addressID: json['address_id']?.toString() ?? '',
       phoneNumber: json['phone_number']?.toString() ?? '',
@@ -38,9 +45,12 @@ class AddressModel extends AddressEntity {
       category: json['address_category']?.toString() ?? '',
       postalCode: json['postal_code']?.toString() ?? '',
       city: json['city']?.toString() ?? '',
-      state: LocalCountry().getStateByName(json['state'] ?? ''),
-      country: LocalCountry().country(json['country']),
-      isDefault: json['is_default'] ?? false,
+      state: localCountry.getStateByName(json['country']?.toString() ?? '',
+              json['state']?.toString() ?? '') ??
+          StateEntity.empty(),
+      country: localCountry.country(json['country']?.toString() ?? '') ??
+          CountryEntity.empty(),
+      isDefault: isDefault,
     );
   }
 
@@ -48,7 +58,7 @@ class AddressModel extends AddressEntity {
         'recipient_name': recipientName,
         'address_1': address,
         'city': city,
-        'state': state.stateName,
+        'state': state?.stateName ?? '',
         'phone_number': phoneNumber,
         'postal_code': postalCode,
         'address_category': category,
