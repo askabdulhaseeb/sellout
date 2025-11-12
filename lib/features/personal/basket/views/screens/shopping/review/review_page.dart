@@ -4,7 +4,7 @@ import '../../../../../../../core/widgets/empty_page_widget.dart';
 import '../../../../domain/entities/cart/add_shipping_response_entity.dart';
 import '../../../../domain/entities/cart/cart_item_entity.dart';
 import '../../../providers/cart_provider.dart';
-import 'review_widgets/review_item_card.dart';
+import 'review_widgets/review_item_card.dart'; 
 
 class ReviewCartPage extends StatelessWidget {
   const ReviewCartPage({super.key});
@@ -12,10 +12,8 @@ class ReviewCartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final CartProvider cartPro = context.watch<CartProvider>();
-
     final AddShippingResponseEntity? shippingResponse =
         cartPro.addShippingResponse;
-
     if (shippingResponse != null) {
       final List<AddShippingCartItemEntity> shippingItems = shippingResponse
           .cart.cartItems

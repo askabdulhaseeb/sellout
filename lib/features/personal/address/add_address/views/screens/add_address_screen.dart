@@ -18,13 +18,19 @@ import '../../domain/usecase/add_address_usecase.dart';
 import '../../domain/usecase/update_address_usecase.dart';
 import '../provider/add_address_provider.dart';
 
+class AddEditAddressScreen extends StatefulWidget {
+  const AddEditAddressScreen({this.initAddress, super.key});
+  final AddressEntity? initAddress;
 
+  @override
+  State<AddEditAddressScreen> createState() => _AddEditAddressScreenState();
+}
 
 class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<AddAddressProvider>(
-      create: (context) => AddAddressProvider(
+      create: (BuildContext context) => AddAddressProvider(
         locator<AddAddressUsecase>(),
         locator<UpdateAddressUsecase>(),
       ),
@@ -89,115 +95,45 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
                           AppValidator.requireSelection(value),
                     ),
                     const SizedBox(height: AppSpacing.vSm),
-                    Consumer<AddAddressProvider>(
-                      builder: (BuildContext context, AddAddressProvider pros,
-                          Widget? child) {
-                        final List<StateEntity> states =
-                            pros.selectedCountryEntity?.states ??
-                                <StateEntity>[];
 
-                        StateEntity? selectedStateItem;
-                        if (pros.state != null) {
-                          if (states.contains(pros.state)) {
-                            selectedStateItem = pros.state;
-                          } else if (states.isNotEmpty) {
-                            try {
-                              selectedStateItem = states.firstWhere(
-                                (StateEntity s) =>
-                                    s.stateName.trim().toLowerCase() ==
-                                    pros.state!.stateName.trim().toLowerCase(),
-                              );
-                            } catch (_) {
-                              selectedStateItem = null;
-                            }
-                          }
+                    CustomDropdown<StateEntity>(
+                      title: 'state'.tr(),
+                      items:
+                          (pro.selectedCountryEntity?.states ?? <StateEntity>[])
+                              .map((StateEntity state) =>
+                                  DropdownMenuItem<StateEntity>(
+                                    value: state,
+                                    child: Text(state
+                                        .stateName), 
+                                  ))
+                              .toList(),
+                      selectedItem: pro.state,
+                      onChanged: (StateEntity? value) {
+                        if (value != null) {
+                          pro.setStateEntity(value);
                         }
-
-                        final List<DropdownMenuItem<StateEntity>> items = states
-                            .map((StateEntity s) =>
-                                DropdownMenuItem<StateEntity>(
-                                  value: s,
-                                  child: Text(s.stateName),
-                                ))
-                            .toList();
-
-                        return CustomDropdown<StateEntity>(
-                          title: 'state'.tr(),
-                          items: items,
-                          selectedItem: selectedStateItem,
-                          onChanged: (StateEntity? value) {
-                            if (value != null) {
-                              pros.setStateEntity(value);
-                            }
-                          },
-                          validator: (bool? value) =>
-                              AppValidator.requireSelection(value),
-                        );
                       },
+                      validator: (bool? value) =>
+                          AppValidator.requireSelection(value),
                     ),
+
                     const SizedBox(height: AppSpacing.vSm),
-                    Consumer<AddAddressProvider>(
-                      builder: (BuildContext context, AddAddressProvider pros,
-                          Widget? child) {
-                        final List<StateEntity> states =
-                            pros.selectedCountryEntity?.states ??
-                                <StateEntity>[];
-
-                        StateEntity? selectedState;
-                        if (pros.state != null) {
-                          if (states.contains(pros.state)) {
-                            selectedState = pros.state;
-                          } else if (states.isNotEmpty) {
-                            try {
-                              selectedState = states.firstWhere(
-                                (StateEntity s) =>
-                                    s.stateName.trim().toLowerCase() ==
-                                    pros.state!.stateName.trim().toLowerCase(),
-                              );
-                            } catch (_) {
-                              selectedState = null;
-                            }
-                          }
-                        }
-
-                        final List<String> cities =
-                            selectedState?.cities ?? <String>[];
-
-                        String? selectedCityItem;
-                        if (pros.city != null && cities.isNotEmpty) {
-                          final String targetCity =
-                              pros.city!.trim().toLowerCase();
-                          try {
-                            selectedCityItem = cities.firstWhere(
-                              (String city) =>
-                                  city.trim().toLowerCase() == targetCity,
-                            );
-                          } catch (_) {
-                            selectedCityItem = null;
-                          }
-                        } else {
-                          selectedCityItem = pros.city;
-                        }
-
-                        final List<DropdownMenuItem<String>> items = cities
-                            .map((String city) => DropdownMenuItem<String>(
-                                  value: city,
-                                  child: Text(city),
-                                ))
-                            .toList();
-
-                        return CustomDropdown<String>(
-                          title: 'city'.tr(),
-                          items: items,
-                          selectedItem: selectedCityItem,
-                          onChanged: (String? value) {
-                            if (value != null) pros.setCity(value);
-                          },
-                          validator: (bool? value) =>
-                              AppValidator.requireSelection(value),
-                        );
+                    CustomDropdown<String>(
+                      title: 'city'.tr(),
+                      items: (pro.state?.cities ?? <String>[])
+                          .map((String city) => DropdownMenuItem<String>(
+                                value: city,
+                                child: Text(city),
+                              ))
+                          .toList(),
+                      selectedItem: pro.city,
+                      onChanged: (String? value) {
+                        if (value != null) pro.setCity(value);
                       },
+                      validator: (bool? value) =>
+                          AppValidator.requireSelection(value),
                     ),
+
                     const SizedBox(height: AppSpacing.vSm),
                     CustomTextFormField(
                       labelText: 'address_1'.tr(),

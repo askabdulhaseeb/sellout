@@ -103,7 +103,7 @@ class CountryApiImpl implements CountryApi {
   }
 
   Future<List<CountryEntity>> _localCounties(Duration duration) async {
-    final List<CountryEntity> countries = LocalCountry().activeCounties;
+    final List<CountryEntity> countries = LocalCountry().activeCountries;
     if (countries.isNotEmpty) return countries;
 
     final ApiRequestEntity? local = await LocalRequestHistory()
