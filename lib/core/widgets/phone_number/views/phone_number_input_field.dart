@@ -45,12 +45,10 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
   @override
   void didUpdateWidget(covariant PhoneNumberInputField oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final bool countryChanged = widget.initialCountry?.countryCode !=
-        oldWidget.initialCountry?.countryCode;
-    final bool phoneChanged =
-        widget.initialValue?.countryCode != oldWidget.initialValue?.countryCode;
 
-    if (countryChanged || phoneChanged) {
+    // Only reload if initialCountry or initialValue changed
+    if (widget.initialCountry != oldWidget.initialCountry ||
+        widget.initialValue != oldWidget.initialValue) {
       _loadCountries();
     }
   }
@@ -59,48 +57,57 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
     await LocalCountry().refresh();
     final DataState<List<CountryEntity>> result =
         await getCountiesUsecase.call(const Duration(days: 1));
-    countries = result is DataSuccess && result.entity != null
-        ? result.entity!
-        : LocalCountry().activeCountries;
 
-    countries = countries.where((CountryEntity e) => e.isActive).toList();
+    countries = (result is DataSuccess && result.entity != null
+            ? result.entity!
+            : LocalCountry().activeCountries)
+        .where((c) => c.isActive)
+        .toList();
 
-    // Initialize selected country
+    // Find selected country
+    selectedCountry = null;
+
+    // 1️⃣ Try initialCountry
     if (widget.initialCountry != null) {
-      selectedCountry = countries.firstWhere(
-        (CountryEntity c) =>
-            c.countryCode == widget.initialCountry!.countryCode,
-        orElse: () =>
-            countries.isNotEmpty ? countries.first : CountryEntity.empty(),
-      );
-    } else if (widget.initialValue != null) {
-      controller.text = widget.initialValue!.number;
-      selectedCountry = countries.firstWhere(
-        (CountryEntity c) => c.countryCode == widget.initialValue!.countryCode,
-        orElse: () =>
-            countries.isNotEmpty ? countries.first : CountryEntity.empty(),
-      );
-    } else if (countries.isNotEmpty) {
-      CountryEntity? pk;
-      for (final CountryEntity c in countries) {
-        final String name = c.displayName.trim().toLowerCase();
-        final String cname = c.countryName.trim().toLowerCase();
-        final String a2 = c.alpha2.trim().toLowerCase();
-        final String iso = c.isoCode.trim().toLowerCase();
-        final String dial = c.countryCode.trim().toLowerCase();
-        final bool inCodes = c.countryCodes
-            .any((s) => s.trim().toLowerCase() == 'pk' || s.trim() == '+92');
-        if (name == 'pakistan' ||
-            cname == 'pakistan' ||
-            a2 == 'pk' ||
-            iso == 'pk' ||
-            dial == '+92' ||
-            inCodes) {
-          pk = c;
+      for (final c in countries) {
+        if (c.alpha2.toLowerCase() ==
+            widget.initialCountry!.alpha2.toLowerCase()) {
+          selectedCountry = c;
           break;
         }
       }
-      selectedCountry = pk ?? countries.first;
+    }
+
+    // 2️⃣ Try initialValue if still null
+    if (selectedCountry == null && widget.initialValue != null) {
+      for (final c in countries) {
+        if (c.countryCode == widget.initialValue!.countryCode) {
+          selectedCountry = c;
+          break;
+        }
+      }
+    }
+
+    // 3️⃣ Default to Pakistan if still null
+    if (selectedCountry == null) {
+      for (final c in countries) {
+        final dial = c.countryCode.toLowerCase();
+        final a2 = c.alpha2.toLowerCase();
+        if (dial == '+92' || a2 == 'pk') {
+          selectedCountry = c;
+          break;
+        }
+      }
+    }
+
+    // 4️⃣ Fallback to first active country
+    if (selectedCountry == null && countries.isNotEmpty) {
+      selectedCountry = countries.first;
+    }
+
+    // Update controller
+    if (widget.initialValue != null) {
+      controller.text = widget.initialValue!.number;
     }
 
     if (mounted) setState(() {});
