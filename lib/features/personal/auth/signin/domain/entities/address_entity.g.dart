@@ -20,20 +20,21 @@ class AddressEntityAdapter extends TypeAdapter<AddressEntity> {
       addressID: fields[0] as String,
       phoneNumber: fields[1] as String,
       recipientName: fields[2] as String,
-      address: fields[3] as String,
-      category: fields[4] as String,
-      postalCode: fields[5] as String,
-      city: fields[6] as String,
-      state: fields[9] as StateEntity,
-      country: fields[7] as CountryEntity,
-      isDefault: fields[8] as bool,
+      address1: fields[3] as String,
+      address2: fields[4] as String,
+      category: fields[5] as String,
+      postalCode: fields[6] as String,
+      city: fields[7] as String,
+      state: fields[8] as StateEntity?,
+      country: fields[9] as CountryEntity,
+      isDefault: fields[10] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, AddressEntity obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.addressID)
       ..writeByte(1)
@@ -41,18 +42,20 @@ class AddressEntityAdapter extends TypeAdapter<AddressEntity> {
       ..writeByte(2)
       ..write(obj.recipientName)
       ..writeByte(3)
-      ..write(obj.address)
+      ..write(obj.address1)
       ..writeByte(4)
-      ..write(obj.category)
+      ..write(obj.address2)
       ..writeByte(5)
-      ..write(obj.postalCode)
+      ..write(obj.category)
       ..writeByte(6)
-      ..write(obj.city)
-      ..writeByte(9)
-      ..write(obj.state)
+      ..write(obj.postalCode)
       ..writeByte(7)
-      ..write(obj.country)
+      ..write(obj.city)
       ..writeByte(8)
+      ..write(obj.state)
+      ..writeByte(9)
+      ..write(obj.country)
+      ..writeByte(10)
       ..write(obj.isDefault);
   }
 

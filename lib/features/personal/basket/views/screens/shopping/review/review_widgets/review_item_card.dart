@@ -415,7 +415,7 @@ String _buildDestination({
   }
 
   final List<String> addressParts = _compactParts(<String?>[
-    address?.address,
+    address?.address1,
     address?.city,
     address?.state?.stateName,
     address?.country.displayName,

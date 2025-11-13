@@ -146,7 +146,7 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  set address(AddressEntity? value) {
+  set setAddress(AddressEntity? value) {
     _address = value;
     notifyListeners();
   }

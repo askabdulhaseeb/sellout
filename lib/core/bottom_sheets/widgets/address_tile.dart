@@ -30,7 +30,7 @@ class AddressTile extends StatelessWidget {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Text('${address.recipientName} . ${address.phoneNumber}'),
-                  Text('${address.address} . ${address.country.countryName}'),
+                  Text('${address.address1} . ${address.country.countryName}'),
                   Text('${address.city} . ${address.postalCode}'),
                 ],
               ),
