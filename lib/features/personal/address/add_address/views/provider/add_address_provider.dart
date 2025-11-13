@@ -10,12 +10,22 @@ import '../params/add_address_param.dart';
 
 class AddAddressProvider extends ChangeNotifier {
   AddAddressProvider(this._addAddressUsecase, this._updateAddressUsecase);
+  
+  // MARK: Address 
 
-  // MARK: Dependencies
+  AddressEntity? _selectedAddress;
+  AddressEntity? get selectedAddress => _selectedAddress;
+  set selectedAddress(AddressEntity? value) {
+    _selectedAddress = value;
+    notifyListeners();
+  }
+
+  // MARK: Dependencies 
   final AddAddressUsecase _addAddressUsecase;
   final UpdateAddressUsecase _updateAddressUsecase;
 
-  // MARK: Internal state / variables
+  // MARK: Internal state / variables 
+
   PhoneNumberEntity? _phoneNumber;
 
   final TextEditingController _recipientNameController =
@@ -34,6 +44,7 @@ class AddAddressProvider extends ChangeNotifier {
   String? _addressCategory;
 
   // MARK: Public getters
+
   PhoneNumberEntity? get phoneNumber => _phoneNumber;
   TextEditingController get recipientNameController => _recipientNameController;
   TextEditingController get postalCodeController => _postalCodeController;
@@ -61,15 +72,11 @@ class AddAddressProvider extends ChangeNotifier {
         isDefault: _isDefault,
         action: _action,
       );
+
   // MARK: Setters/set functions
 
   void setPhoneNumber(PhoneNumberEntity? value) {
     _phoneNumber = value;
-    notifyListeners();
-  }
-
-  set action(String value) {
-    _action = value;
     notifyListeners();
   }
 
@@ -89,6 +96,11 @@ class AddAddressProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  set action(String value) {
+    _action = value;
+    notifyListeners();
+  }
+
   Future<void> updateVariable(AddressEntity address) async {
     _phoneNumber = await PhoneNumberEntity.fromJson(address.phoneNumber);
     // Set country
@@ -98,11 +110,13 @@ class AddAddressProvider extends ChangeNotifier {
     _city = address.city;
     // Set other fields
     _postalCodeController.text = address.postalCode;
-    _address1Controller.text = address.address;
+    _address1Controller.text = address.address1;
+    _address2Controller.text = address.address2;
     _recipientNameController.text = address.recipientName;
     _isDefault = address.isDefault;
     _addressId = address.addressID;
     _addressCategory = address.category;
+    _selectedAddress = address;
     notifyListeners();
   }
 

@@ -151,7 +151,7 @@ class OrderDispatchedToWidget extends StatelessWidget {
               color: ColorScheme.of(context).outline.withValues(alpha: 0.3)),
         ),
         OrderRecieverNameAddressWidget(
-          address: order.shippingAddress.address,
+          address: order.shippingAddress.address1,
           name: order.shippingAddress.recipientName,
         ),
       ],

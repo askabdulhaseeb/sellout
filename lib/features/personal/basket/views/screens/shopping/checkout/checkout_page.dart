@@ -24,6 +24,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final CartProvider cartPro = context.read<CartProvider>();
+      cartPro.setAddress(localauth);
       if (cartPro.address != null && cartPro.postageResponseEntity == null) {
         cartPro.getRates();
       }
@@ -79,7 +80,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          cartPro.address?.address ?? 'no_address'.tr(),
+                          cartPro.address?.address1 ?? 'no_address'.tr(),
                           style: const TextStyle(
                             fontSize: 13,
                             height: 1.4,

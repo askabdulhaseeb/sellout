@@ -8,7 +8,8 @@ class AddressEntity {
     required this.addressID,
     required this.phoneNumber,
     required this.recipientName,
-    required this.address,
+    required this.address1,
+    required this.address2,
     required this.category,
     required this.postalCode,
     required this.city,
@@ -24,17 +25,19 @@ class AddressEntity {
   @HiveField(2)
   final String recipientName;
   @HiveField(3)
-  final String address;
+  final String address1;
   @HiveField(4)
-  final String category;
+  final String address2;
   @HiveField(5)
-  final String postalCode;
+  final String category;
   @HiveField(6)
-  final String city;
-  @HiveField(9)
-  final StateEntity? state;
+  final String postalCode;
   @HiveField(7)
-  final CountryEntity country;
+  final String city;
   @HiveField(8)
+  final StateEntity? state;
+  @HiveField(9)
+  final CountryEntity country;
+  @HiveField(10)
   final bool isDefault;
 }

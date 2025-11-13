@@ -165,7 +165,7 @@ class OrderBuyerAddressWIdget extends StatelessWidget {
         Text('delivery_address'.tr(),
             style: const TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
-        Text(orderData.shippingAddress.address),
+        Text(orderData.shippingAddress.address1),
         Text(orderData.shippingAddress.city),
         Text(orderData.shippingAddress.state?.stateName ?? ''),
         Text(orderData.shippingAddress.country.countryName),
