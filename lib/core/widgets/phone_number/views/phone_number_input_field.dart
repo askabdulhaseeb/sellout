@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../services/get_it.dart';
 import '../../../utilities/app_validators.dart';
 import '../../../usecase/usecase.dart';
-import '../../custom_network_image.dart';
 import '../../custom_textformfield.dart';
 import '../../custom_dropdown.dart';
 import '../data/sources/local_country.dart';
@@ -13,12 +13,16 @@ import '../../../sources/data_state.dart';
 
 class PhoneNumberInputField extends StatefulWidget {
   const PhoneNumberInputField({
-    required this.onChange, super.key,
+    required this.onChange,
     this.initialValue,
+    this.initialCountry,
     this.labelText = '',
+    super.key,
   });
+
   final String labelText;
   final PhoneNumberEntity? initialValue;
+  final CountryEntity? initialCountry;
   final void Function(PhoneNumberEntity) onChange;
 
   @override
@@ -38,36 +42,65 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
     _loadCountries();
   }
 
+  @override
+  void didUpdateWidget(covariant PhoneNumberInputField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final bool countryChanged = widget.initialCountry?.countryCode !=
+        oldWidget.initialCountry?.countryCode;
+    final bool phoneChanged =
+        widget.initialValue?.countryCode != oldWidget.initialValue?.countryCode;
+
+    if (countryChanged || phoneChanged) {
+      _loadCountries();
+    }
+  }
+
   Future<void> _loadCountries() async {
     await LocalCountry().refresh();
     final DataState<List<CountryEntity>> result =
         await getCountiesUsecase.call(const Duration(days: 1));
-    if (result is DataSuccess && result.entity != null) {
-      countries = result.entity!;
-    } else {
-      countries = LocalCountry().activeCountries;
-    }
+    countries = result is DataSuccess && result.entity != null
+        ? result.entity!
+        : LocalCountry().activeCountries;
+
     countries = countries.where((CountryEntity e) => e.isActive).toList();
-    if (widget.initialValue != null) {
+
+    // Initialize selected country
+    if (widget.initialCountry != null) {
+      selectedCountry = countries.firstWhere(
+        (CountryEntity c) =>
+            c.countryCode == widget.initialCountry!.countryCode,
+        orElse: () =>
+            countries.isNotEmpty ? countries.first : CountryEntity.empty(),
+      );
+    } else if (widget.initialValue != null) {
       controller.text = widget.initialValue!.number;
-      final String target =
-          widget.initialValue!.countryCode.trim().toLowerCase();
-      CountryEntity? match;
-      for (final CountryEntity entity in countries) {
-        final Iterable<String> identifiers = <String>[
-          entity.countryCode,
-          entity.shortName,
-          entity.displayName,
-          entity.countryName,
-          ...entity.countryCodes,
-        ].map((String e) => e.trim().toLowerCase());
-        if (identifiers.contains(target)) {
-          match = entity;
+      selectedCountry = countries.firstWhere(
+        (CountryEntity c) => c.countryCode == widget.initialValue!.countryCode,
+        orElse: () =>
+            countries.isNotEmpty ? countries.first : CountryEntity.empty(),
+      );
+    } else if (countries.isNotEmpty) {
+      CountryEntity? pk;
+      for (final CountryEntity c in countries) {
+        final String name = c.displayName.trim().toLowerCase();
+        final String cname = c.countryName.trim().toLowerCase();
+        final String a2 = c.alpha2.trim().toLowerCase();
+        final String iso = c.isoCode.trim().toLowerCase();
+        final String dial = c.countryCode.trim().toLowerCase();
+        final bool inCodes = c.countryCodes
+            .any((s) => s.trim().toLowerCase() == 'pk' || s.trim() == '+92');
+        if (name == 'pakistan' ||
+            cname == 'pakistan' ||
+            a2 == 'pk' ||
+            iso == 'pk' ||
+            dial == '+92' ||
+            inCodes) {
+          pk = c;
           break;
         }
       }
-      match ??= countries.isNotEmpty ? countries.first : null;
-      selectedCountry = match;
+      selectedCountry = pk ?? countries.first;
     }
 
     if (mounted) setState(() {});
@@ -75,8 +108,7 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
 
   int? _maxDigits(CountryEntity? c) {
     if (c == null) return null;
-    final NumberFormatEntity formatEntity = c.numberFormat;
-    final String format = formatEntity.format;
+    final String format = c.numberFormat.format;
     final int matches = RegExp(r'[Xx]').allMatches(format).length;
     return matches > 0 ? matches : null;
   }
@@ -89,17 +121,39 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
         if (widget.labelText.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(bottom: 2),
-            child: Text(
-              widget.labelText,
-              style: const TextStyle(fontWeight: FontWeight.w500),
-            ),
+            child: Text(widget.labelText,
+                style: const TextStyle(fontWeight: FontWeight.w500)),
           ),
         Row(
           children: <Widget>[
             CustomDropdown<CountryEntity>(
+              sufixIcon: true,
               title: '',
               hint: '',
               width: 125,
+              searchBy: (DropdownMenuItem<CountryEntity> item) {
+                final CountryEntity? country = item.value;
+                return country == null
+                    ? ''
+                    : '${country.countryCode} ${country.displayName}';
+              },
+              selectedItemBuilder: (CountryEntity? country) {
+                if (country == null) return const SizedBox.shrink();
+                return Row(
+                  children: <Widget>[
+                    _CountryFlag(flag: country.flag),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        '${country.countryCode} ${country.displayName}',
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                );
+              },
+              selectedItemPadding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
               items: countries.map((CountryEntity country) {
                 return DropdownMenuItem<CountryEntity>(
                   value: country,
@@ -139,9 +193,7 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
                   number: value,
                 )),
                 validator: (String? value) {
-                  if ((value ?? '').isEmpty) {
-                    return 'Enter a phone number';
-                  }
+                  if ((value ?? '').isEmpty) return 'Enter a phone number';
                   return null;
                 },
               ),
@@ -159,52 +211,21 @@ class _CountryFlag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String trimmed = flag.trim();
-    if (trimmed.isEmpty) {
-      return _placeholder();
-    }
-    if (trimmed.startsWith('https')) {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(4),
-        child: const CustomNetworkImage(
-          size: 18,
-          imageURL:
-              'https://upload.wikimedia.org/wikipedia/commons/3/32/Flag_of_Pakistan.svg',
-          fit: BoxFit.cover,
-        ),
-      );
-    }
-    if (trimmed.contains('/')) {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(4),
-        child: Image.asset(
-          trimmed,
-          width: 24,
-          height: 16,
-          fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => _fallbackText(trimmed),
-        ),
-      );
-    }
-    return _fallbackText(trimmed);
-  }
-
-  Widget _placeholder() => Container(
-        width: 24,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(4),
+      child: SizedBox(
         height: 16,
-        decoration: BoxDecoration(
-          color: Colors.grey.shade300,
-          borderRadius: BorderRadius.circular(4),
+        width: 20,
+        child: SvgPicture.network(
+          flag,
+          fit: BoxFit.cover,
+          placeholderBuilder: (BuildContext context) => const SizedBox(
+            width: 20,
+            height: 16,
+            child: Center(child: CircularProgressIndicator(strokeWidth: 1)),
+          ),
         ),
-      );
-
-  Widget _fallbackText(String value) {
-    if (value.length <= 6 && !value.contains('/')) {
-      return Text(
-        value,
-        style: const TextStyle(fontSize: 16),
-      );
-    }
-    return _placeholder();
+      ),
+    );
   }
 }

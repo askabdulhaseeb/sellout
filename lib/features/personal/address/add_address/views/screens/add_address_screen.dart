@@ -78,6 +78,7 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
           child: Form(
             key: _formKey,
             child: Column(
+              spacing: AppSpacing.vSm,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 CustomTextFormField(
@@ -85,9 +86,6 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
                   controller: provider.recipientNameController,
                   validator: AppValidator.isEmpty,
                 ),
-                const SizedBox(height: AppSpacing.vSm),
-
-                // 🟢 Consumer only for Country Dropdown
                 Consumer<AddAddressProvider>(
                   builder: (_, AddAddressProvider pro, __) =>
                       CountryDropdownField(
@@ -98,9 +96,6 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
                     validator: AppValidator.requireSelection,
                   ),
                 ),
-                const SizedBox(height: AppSpacing.vSm),
-
-                // 🟢 Consumer for State Dropdown
                 Consumer<AddAddressProvider>(
                   builder: (_, AddAddressProvider pro, __) =>
                       CustomDropdown<StateEntity>(
@@ -120,8 +115,6 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
                     validator: AppValidator.requireSelection,
                   ),
                 ),
-                const SizedBox(height: AppSpacing.vSm),
-                // 🟢 Consumer for City Dropdown
                 Consumer<AddAddressProvider>(
                   builder: (_, AddAddressProvider pro, __) =>
                       CustomDropdown<String>(
@@ -139,27 +132,21 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
                     validator: AppValidator.requireSelection,
                   ),
                 ),
-                const SizedBox(height: AppSpacing.vSm),
-
                 CustomTextFormField(
                   labelText: 'address_1'.tr(),
                   controller: provider.address1Controller,
                   validator: AppValidator.isEmpty,
                 ),
-                const SizedBox(height: AppSpacing.vSm),
-
                 CustomTextFormField(
                   labelText: 'address_2'.tr(),
                   controller: provider.address2Controller,
                 ),
-                const SizedBox(height: AppSpacing.vSm),
 
                 CustomTextFormField(
                   labelText: 'postal_code'.tr(),
                   controller: provider.postalCodeController,
                   validator: AppValidator.isEmpty,
                 ),
-                const SizedBox(height: AppSpacing.vSm),
 
                 // 🟢 Consumer for Address Category Dropdown
                 Consumer<AddAddressProvider>(
@@ -179,12 +166,12 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
                     validator: AppValidator.requireSelection,
                   ),
                 ),
-                const SizedBox(height: AppSpacing.vSm),
 
                 // 🟢 Consumer for Phone Number
                 Consumer<AddAddressProvider>(
                   builder: (_, AddAddressProvider pro, __) =>
                       PhoneNumberInputField(
+                    initialCountry: pro.selectedCountryEntity,
                     initialValue: pro.phoneNumber,
                     labelText: 'phone_number'.tr(),
                     onChange: (PhoneNumberEntity? value) {
@@ -192,7 +179,6 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
                     },
                   ),
                 ),
-                const SizedBox(height: AppSpacing.vSm),
 
                 Consumer<AddAddressProvider>(
                   builder: (_, AddAddressProvider pro, __) =>

@@ -21,6 +21,8 @@ class CustomDropdown<T> extends StatefulWidget {
     this.searchBy,
     this.onSearchChanged,
     this.isDynamic = false,
+    this.selectedItemBuilder,
+    this.selectedItemPadding,
     super.key,
   });
 
@@ -40,6 +42,8 @@ class CustomDropdown<T> extends StatefulWidget {
   final String Function(DropdownMenuItem<T>)? searchBy;
   final Future<List<DropdownMenuItem<T>>> Function(String)? onSearchChanged;
   final bool isDynamic;
+  final Widget? Function(T?)? selectedItemBuilder;
+  final EdgeInsetsGeometry? selectedItemPadding;
 
   @override
   State<CustomDropdown<T>> createState() => _CustomDropdownState<T>();
@@ -56,6 +60,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
   List<DropdownMenuItem<T>> _dynamicItems = <DropdownMenuItem<T>>[];
   Timer? _debounce;
   bool _hasSetInitialText = false;
+  String _selectedDisplayText = '';
 
   @override
   void initState() {
@@ -79,6 +84,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
 
   void _setInitialText() {
     if (!mounted) return;
+    if (widget.selectedItemBuilder != null) return;
     if (widget.initialText != null && widget.initialText!.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
@@ -112,10 +118,38 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
                 : selectedItem.value.toString());
       }
 
-      if (_controller.text != newText) {
-        _controller.text = newText;
-      }
+      _selectedDisplayText = newText;
+      _syncControllerText();
     });
+  }
+
+  void _syncControllerText() {
+    if (!mounted) return;
+    final bool hasCustomDisplay = widget.selectedItemBuilder != null;
+
+    if (hasCustomDisplay) {
+      if (_focusNode.hasFocus) {
+        final String next = _selectedDisplayText;
+        if (_controller.text != next) {
+          _controller.text = next;
+        }
+        if (_controller.text.isNotEmpty) {
+          _controller.selection = TextSelection(
+            baseOffset: 0,
+            extentOffset: _controller.text.length,
+          );
+        }
+      } else {
+        if (_controller.text.isNotEmpty) {
+          _controller.text = '';
+        }
+      }
+    } else {
+      final String next = _selectedDisplayText;
+      if (_controller.text != next) {
+        _controller.text = next;
+      }
+    }
   }
 
   List<DropdownMenuItem<T>> _getFilteredItems() {
@@ -140,6 +174,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
     } else {
       _openDropdown();
     }
+    _syncControllerText();
   }
 
   void _openDropdown() {
@@ -287,6 +322,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
 
   @override
   Widget build(BuildContext context) {
+    final bool useCustomSelectedDisplay = widget.selectedItemBuilder != null;
     return CompositedTransformTarget(
       link: _layerLink,
       child: SizedBox(
@@ -304,7 +340,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
             controller: _controller,
             focusNode: _focusNode,
             hint: widget.hint ?? 'select_an_item'.tr(),
-            suffixIcon: widget.sufixIcon == false
+            suffixIcon: useCustomSelectedDisplay || widget.sufixIcon == false
                 ? null
                 : Icon(_isDropdownOpen
                     ? Icons.keyboard_arrow_up_rounded
@@ -324,7 +360,33 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
               }
             },
             validator: (String? value) =>
-                widget.validator(value != null && value.isNotEmpty),
+                widget.validator(widget.selectedItem != null),
+            overlayChild: useCustomSelectedDisplay
+                ? Row(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Expanded(
+                        child: widget.selectedItem == null
+                            ? const SizedBox.shrink()
+                            : (widget.selectedItemBuilder!(
+                                    widget.selectedItem) ??
+                                const SizedBox.shrink()),
+                      ),
+                      const SizedBox(width: 6),
+                      Icon(
+                        _isDropdownOpen
+                            ? Icons.keyboard_arrow_up_rounded
+                            : Icons.keyboard_arrow_down_rounded,
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                      ),
+                    ],
+                  )
+                : null,
+            overlayPadding: useCustomSelectedDisplay
+                ? widget.selectedItemPadding ??
+                    const EdgeInsets.only(left: 12, right: 12)
+                : widget.selectedItemPadding,
           ),
         ),
       ),

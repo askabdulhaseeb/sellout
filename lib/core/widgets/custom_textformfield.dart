@@ -36,6 +36,9 @@ class CustomTextFormField extends StatefulWidget {
     this.dense,
     this.prefix,
     this.borderRadius,
+    this.overlayChild,
+    this.overlayPadding,
+    this.showOverlayWhenFocused = false,
     //
     this.focusNode,
     super.key,
@@ -72,6 +75,9 @@ class CustomTextFormField extends StatefulWidget {
   final bool? dense;
   final Widget? prefix;
   final double? borderRadius;
+  final Widget? overlayChild;
+  final EdgeInsetsGeometry? overlayPadding;
+  final bool showOverlayWhenFocused;
 
   @override
   CustomTextFormFieldState createState() => CustomTextFormFieldState();
@@ -80,6 +86,7 @@ class CustomTextFormField extends StatefulWidget {
 class CustomTextFormFieldState extends State<CustomTextFormField> {
   void _onListen() => setState(() {});
   final List<TextInputFormatter> inputFormatters = <TextInputFormatter>[];
+
   @override
   void initState() {
     widget._controller?.addListener(_onListen);
@@ -116,109 +123,143 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
               style: const TextStyle(fontWeight: FontWeight.w500),
             ),
           if (widget.labelText.isNotEmpty) const SizedBox(height: 2),
-          TextFormField(
-            //
-            focusNode: widget.focusNode,
-            initialValue: widget.initialValue,
-            controller: widget._controller,
-            readOnly: widget.readOnly,
-            inputFormatters: inputFormatters.toSet().toList(),
-            keyboardType: widget.keyboardType == TextInputType.number
-                ? const TextInputType.numberWithOptions(decimal: true)
-                : widget.maxLines! > 1
-                    ? TextInputType.multiline
-                    : widget.keyboardType ?? TextInputType.text,
-            textInputAction: widget.maxLines! > 1
-                ? TextInputAction.unspecified
-                : widget.textInputAction ?? TextInputAction.next,
-            autofillHints: widget.autofillHints,
-            autofocus: widget.autoFocus,
-            textAlign: widget.textAlign,
-            onChanged: widget.onChanged,
-            minLines: widget.isExpanded ? widget.maxLines : widget.minLines,
-            maxLines: widget.isExpanded
-                ? widget.maxLines
-                : (widget._controller?.text.isEmpty ?? true)
-                    ? 1
-                    : widget.maxLines,
-            maxLength: widget.maxLength,
-            style: widget.style ?? TextTheme.of(context).bodyMedium,
-            validator: (String? value) =>
-                widget.validator == null ? null : widget.validator!(value),
-            onFieldSubmitted: widget.onFieldSubmitted,
-            cursorColor: Theme.of(context).colorScheme.secondary,
-            decoration: InputDecoration(
-                prefixIconConstraints:
-                    const BoxConstraints(minWidth: 32, minHeight: 32),
-                prefix: widget.prefix,
-                prefixText:
-                    widget.prefixText == null ? null : '${widget.prefixText!} ',
-                prefixIcon: widget.prefixIcon,
-                isDense: widget.dense ?? false,
-                contentPadding: widget.contentPadding ??
-                    const EdgeInsets.symmetric(horizontal: 12),
-                filled: true,
-                fillColor:
-                    widget.color ?? Theme.of(context).scaffoldBackgroundColor,
-                hintText: widget.hint,
-                hintStyle: TextTheme.of(context).bodyMedium?.copyWith(
-                    color: ColorScheme.of(context)
-                        .onSurface
-                        .withValues(alpha: 0.6)),
-                suffixIcon: widget.suffixIcon ??
-                    (((widget._controller?.text.isEmpty ?? true) ||
-                            !widget.showSuffixIcon ||
-                            widget.showSuffixIcon == false ||
-                            widget.readOnly)
-                        ? (widget.maxLength == null
-                            ? null
-                            : Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Text(
-                                    '${(widget._controller?.text ?? '').length}/${widget.maxLength}',
-                                    style: TextStyle(
-                                      color: Theme.of(context).disabledColor,
-                                      fontSize: 16,
+          Builder(
+            builder: (BuildContext context) {
+              Widget textField = TextFormField(
+                focusNode: widget.focusNode,
+                initialValue: widget.initialValue,
+                controller: widget._controller,
+                readOnly: widget.readOnly,
+                inputFormatters: inputFormatters.toSet().toList(),
+                keyboardType: widget.keyboardType == TextInputType.number
+                    ? const TextInputType.numberWithOptions(decimal: true)
+                    : widget.maxLines! > 1
+                        ? TextInputType.multiline
+                        : widget.keyboardType ?? TextInputType.text,
+                textInputAction: widget.maxLines! > 1
+                    ? TextInputAction.unspecified
+                    : widget.textInputAction ?? TextInputAction.next,
+                autofillHints: widget.autofillHints,
+                autofocus: widget.autoFocus,
+                textAlign: widget.textAlign,
+                onChanged: widget.onChanged,
+                minLines: widget.isExpanded ? widget.maxLines : widget.minLines,
+                maxLines: widget.isExpanded
+                    ? widget.maxLines
+                    : (widget._controller?.text.isEmpty ?? true)
+                        ? 1
+                        : widget.maxLines,
+                maxLength: widget.maxLength,
+                style: widget.style ?? TextTheme.of(context).bodyMedium,
+                validator: (String? value) =>
+                    widget.validator == null ? null : widget.validator!(value),
+                onFieldSubmitted: widget.onFieldSubmitted,
+                cursorColor: Theme.of(context).colorScheme.secondary,
+                decoration: InputDecoration(
+                  prefixIconConstraints:
+                      const BoxConstraints(minWidth: 32, minHeight: 32),
+                  prefix: widget.prefix,
+                  prefixText: widget.prefixText == null
+                      ? null
+                      : '${widget.prefixText!} ',
+                  prefixIcon: widget.prefixIcon,
+                  isDense: widget.dense ?? false,
+                  contentPadding: widget.contentPadding ??
+                      const EdgeInsets.symmetric(horizontal: 12),
+                  filled: true,
+                  fillColor:
+                      widget.color ?? Theme.of(context).scaffoldBackgroundColor,
+                  hintText: widget.hint,
+                  hintStyle: TextTheme.of(context).bodyMedium?.copyWith(
+                        color: ColorScheme.of(context)
+                            .onSurface
+                            .withValues(alpha: 0.6),
+                      ),
+                  suffixIcon: widget.suffixIcon ??
+                      (((widget._controller?.text.isEmpty ?? true) ||
+                              !widget.showSuffixIcon ||
+                              widget.showSuffixIcon == false ||
+                              widget.readOnly)
+                          ? (widget.maxLength == null
+                              ? null
+                              : Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(
+                                      '${(widget._controller?.text ?? '').length}/${widget.maxLength}',
+                                      style: TextStyle(
+                                        color: Theme.of(context).disabledColor,
+                                        fontSize: 16,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ))
-                        : IconButton(
-                            splashRadius: 16,
-                            onPressed: () => setState(() {
-                              widget._controller?.clear();
-                            }),
-                            icon: const Icon(CupertinoIcons.clear, size: 18),
-                          )),
-                counter: const SizedBox.shrink(),
-                focusColor: Theme.of(context).primaryColor,
-                errorBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: Theme.of(context).colorScheme.error),
-                  borderRadius: BorderRadius.circular(
-                      widget.borderRadius ?? AppSpacing.radiusSm),
-                ),
-                border: widget.border ??
-                    OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.transparent),
-                      borderRadius: BorderRadius.circular(
-                          widget.borderRadius ?? AppSpacing.radiusSm),
-                    ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: ColorScheme.of(context).outline),
-                  borderRadius: BorderRadius.circular(
-                      widget.borderRadius ?? AppSpacing.radiusSm),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 2,
-                    color: Theme.of(context).primaryColor,
+                                  ],
+                                ))
+                          : IconButton(
+                              splashRadius: 16,
+                              onPressed: () => setState(() {
+                                widget._controller?.clear();
+                              }),
+                              icon: const Icon(CupertinoIcons.clear, size: 18),
+                            )),
+                  counter: const SizedBox.shrink(),
+                  focusColor: Theme.of(context).primaryColor,
+                  errorBorder: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: Theme.of(context).colorScheme.error),
+                    borderRadius: BorderRadius.circular(
+                        widget.borderRadius ?? AppSpacing.radiusSm),
                   ),
-                  borderRadius: BorderRadius.circular(
-                      widget.borderRadius ?? AppSpacing.radiusSm),
-                )),
+                  border: widget.border ??
+                      OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(
+                            widget.borderRadius ?? AppSpacing.radiusSm),
+                      ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: ColorScheme.of(context).outline),
+                    borderRadius: BorderRadius.circular(
+                        widget.borderRadius ?? AppSpacing.radiusSm),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      width: 2,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    borderRadius: BorderRadius.circular(
+                        widget.borderRadius ?? AppSpacing.radiusSm),
+                  ),
+                ),
+              );
+
+              if (widget.overlayChild != null) {
+                final bool showOverlay = widget.showOverlayWhenFocused ||
+                    !(widget.focusNode?.hasFocus ?? false);
+                textField = Stack(
+                  alignment: Alignment.centerLeft,
+                  children: <Widget>[
+                    textField,
+                    if (showOverlay)
+                      IgnorePointer(
+                        child: Padding(
+                          padding: widget.overlayPadding ??
+                              (widget.contentPadding ??
+                                  const EdgeInsets.symmetric(horizontal: 12)),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: widget.overlayChild,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              }
+
+              return textField;
+            },
           ),
         ],
       ),

@@ -37,7 +37,7 @@ class OfferCreationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final enteredAmount = int.tryParse(priceController.text.trim()) ?? 0;
+    final int enteredAmount = int.tryParse(priceController.text.trim()) ?? 0;
     return CustomElevatedButton(
       isLoading: false,
       title: 'make_offer'.tr(),
