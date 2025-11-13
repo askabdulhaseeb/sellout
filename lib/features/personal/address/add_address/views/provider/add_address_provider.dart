@@ -90,12 +90,12 @@ class AddAddressProvider extends ChangeNotifier {
   }
 
   Future<void> updateVariable(AddressEntity address) async {
+    _phoneNumber = await PhoneNumberEntity.fromJson(address.phoneNumber);
     // Set country
     _selectedCountryEntity = address.country;
     // Set state and city
     _state = address.state;
     _city = address.city;
-    _phoneNumber = await PhoneNumberEntity.fromJson(address.phoneNumber);
     // Set other fields
     _postalCodeController.text = address.postalCode;
     _address1Controller.text = address.address;
