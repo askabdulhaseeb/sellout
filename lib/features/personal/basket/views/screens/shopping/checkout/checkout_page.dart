@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../../core/bottom_sheets/address/address_bottom_sheet.dart';
 import '../../../../../../../core/bottom_sheets/postage/postage_bottom_sheet.dart';
 import '../../../../../../../core/helper_functions/country_helper.dart';
+import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../auth/signin/domain/entities/address_entity.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../post/domain/entities/post/post_entity.dart';
@@ -24,7 +25,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final CartProvider cartPro = context.read<CartProvider>();
-      cartPro.setAddress(localauth);
+      if (LocalAuth.currentUser?.address != null) {
+        cartPro.setAddress(LocalAuth.currentUser!.address.first);
+      }
       if (cartPro.address != null && cartPro.postageResponseEntity == null) {
         cartPro.getRates();
       }
@@ -37,77 +40,83 @@ class _CheckoutPageState extends State<CheckoutPage> {
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          InkWell(
-            onTap: () async {
-              final AddressEntity? newAddress =
-                  await showModalBottomSheet<AddressEntity>(
-                context: context,
-                builder: (BuildContext context) {
-                  return AddressBottomSheet(initAddress: cartPro.address);
+          Consumer<CartProvider>(
+            builder: (BuildContext context, CartProvider cartPro, _) {
+              return InkWell(
+                onTap: () async {
+                  final AddressEntity? newAddress =
+                      await showModalBottomSheet<AddressEntity>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AddressBottomSheet(initAddress: cartPro.address);
+                    },
+                  );
+                  if (newAddress != null) {
+                    cartPro.setAddress(newAddress);
+                    await cartPro.getRates();
+                  }
                 },
-              );
-              if (newAddress != null) {
-                cartPro.address = newAddress;
-                await cartPro.getRates();
-              }
-            },
-            borderRadius: BorderRadius.circular(8),
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: ColorScheme.of(context).outlineVariant,
-                ),
-              ),
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          '${'post_to'.tr()}:',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                            color:
-                                Theme.of(context).textTheme.bodyMedium!.color,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          cartPro.address?.address1 ?? 'no_address'.tr(),
-                          style: const TextStyle(
-                            fontSize: 13,
-                            height: 1.4,
-                          ),
-                        ),
-                        if (cartPro.address != null) ...<Widget>[
-                          const SizedBox(height: 4),
-                          Text(
-                            '${cartPro.address!.city}, ${cartPro.address!.state?.stateName}\n'
-                            '${cartPro.address!.country.displayName} ${cartPro.address!.postalCode}',
-                            style: const TextStyle(
-                              fontSize: 13,
-                              height: 1.4,
-                            ),
-                          ),
-                        ]
-                      ],
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: ColorScheme.of(context).outlineVariant,
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  Icon(
-                    Icons.chevron_right,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              '${'post_to'.tr()}:',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .color,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              cartPro.address?.address1 ?? 'no_address'.tr(),
+                              style: const TextStyle(
+                                fontSize: 13,
+                                height: 1.4,
+                              ),
+                            ),
+                            if (cartPro.address != null) ...<Widget>[
+                              const SizedBox(height: 4),
+                              Text(
+                                '${cartPro.address!.city}, ${cartPro.address!.state?.stateName}\n'
+                                '${cartPro.address!.country.displayName} ${cartPro.address!.postalCode}',
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  height: 1.4,
+                                ),
+                              ),
+                            ]
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Icon(
+                        Icons.chevron_right,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           ),
           const SizedBox(height: 12),
           InkWell(
