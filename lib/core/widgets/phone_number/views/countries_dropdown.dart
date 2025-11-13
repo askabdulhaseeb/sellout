@@ -1,11 +1,13 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../services/get_it.dart';
 import '../../../usecase/usecase.dart';
+import '../../../utilities/app_validators.dart';
 import '../data/sources/local_country.dart';
 import '../domain/entities/country_entity.dart';
 import '../domain/usecase/get_counties_usecase.dart';
 import '../../custom_dropdown.dart';
+import '../../../sources/data_state.dart';
 
 class CountryDropdownField extends StatefulWidget {
   const CountryDropdownField({
@@ -24,156 +26,152 @@ class CountryDropdownField extends StatefulWidget {
 }
 
 class _CountryDropdownFieldState extends State<CountryDropdownField> {
-  List<CountryEntity> countries = <CountryEntity>[];
+  List<CountryEntity> countries = [];
   CountryEntity? selectedCountry;
-  GetCountiesUsecase? getCountiesUsecase;
 
   @override
   void initState() {
     super.initState();
     selectedCountry = widget.initialValue;
-    print(
-        '🔄 CountryDropdown initState - initialValue: ${widget.initialValue?.displayName}');
-    print(
-        '🔄 CountryDropdown initState - selectedCountry: ${selectedCountry?.displayName}');
-    _init();
+    _loadCountries();
   }
 
-  @override
-  void didUpdateWidget(CountryDropdownField oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    print(
-        '🔄 CountryDropdown didUpdateWidget - oldValue: ${oldWidget.initialValue?.displayName}');
-    print(
-        '🔄 CountryDropdown didUpdateWidget - newValue: ${widget.initialValue?.displayName}');
-    if (widget.initialValue != oldWidget.initialValue) {
-      print(
-          '🔄 CountryDropdown didUpdateWidget - values different, updating selected country');
-      _updateSelectedCountry();
-      setState(() {});
-    }
-  }
-
-  Future<void> _init() async {
-    print('🔄 CountryDropdown _init - starting initialization');
-    getCountiesUsecase = GetCountiesUsecase(locator());
+  Future<void> _loadCountries() async {
+    final GetCountiesUsecase getCountries = GetCountiesUsecase(locator());
     await LocalCountry().refresh();
 
     final DataState<List<CountryEntity>> result =
-        await getCountiesUsecase!.call(const Duration(days: 1));
+        await getCountries.call(const Duration(hours: 1));
 
-    if (result is DataSuccess) {
-      countries = result.entity ?? LocalCountry().activeCountries;
-      print(
-          '🔄 CountryDropdown _init - loaded ${countries.length} countries from API');
+    if (result is DataSuccess &&
+        result.entity != null &&
+        result.entity!.isNotEmpty) {
+      countries = result.entity!;
     } else {
       countries = LocalCountry().activeCountries;
-      print(
-          '🔄 CountryDropdown _init - loaded ${countries.length} countries from local cache');
     }
 
-    print(
-        '🔄 CountryDropdown _init - countries loaded, updating selected country');
-    _updateSelectedCountry();
-    setState(() {});
+    // If no initial country, default to Pakistan (if exists), else first active
+    selectedCountry ??= _findPakistan(countries) ??
+        countries.firstWhere(
+          (e) => e.isActive,
+          orElse: () => countries.first,
+        );
+
+    if (mounted) setState(() {});
   }
 
-  void _updateSelectedCountry() {
-    print('🔄 CountryDropdown _updateSelectedCountry - starting update');
-    print(
-        '🔄 CountryDropdown _updateSelectedCountry - initialValue: ${widget.initialValue?.displayName}');
-    print(
-        '🔄 CountryDropdown _updateSelectedCountry - countries.length: ${countries.length}');
-
-    if (widget.initialValue == null) {
-      selectedCountry = null;
-      print(
-          '🔄 CountryDropdown _updateSelectedCountry - initialValue is null, setting selectedCountry to null');
-      return;
-    }
-
-    // Debug: Print all country display names
-    print('🔄 Available countries:');
-    for (int i = 0; i < countries.length; i++) {
-      final CountryEntity country = countries[i];
-      print(
-          '🔄 Country $i: "${country.displayName}" (isActive: ${country.isActive})');
-    }
-
-    print('🔄 Looking for: "${widget.initialValue?.displayName}"');
-
-    final initialDisplayName = widget.initialValue?.displayName;
-    if (countries.isNotEmpty && initialDisplayName != null) {
-      selectedCountry = countries.firstWhere(
-        (CountryEntity e) =>
-            e.displayName.trim().toLowerCase() ==
-            initialDisplayName.trim().toLowerCase(),
-        orElse: () => widget.initialValue!,
-      );
-      print(
-          '🔄 CountryDropdown _updateSelectedCountry - found matching country: ${selectedCountry?.displayName}');
-    } else {
-      selectedCountry = widget.initialValue;
-      print(
-          '🔄 CountryDropdown _updateSelectedCountry - no matching country found, using initialValue: ${selectedCountry?.displayName}');
-
-      // Debug: Let's see why no match was found
-      print('🔄 Detailed comparison:');
-      for (final CountryEntity country in countries) {
-        final bool match =
-            country.displayName == widget.initialValue?.displayName;
-        final String? initialDisplayName = widget.initialValue?.displayName;
-        final bool trimmedMatch = initialDisplayName != null
-            ? country.displayName.trim().toLowerCase() ==
-                initialDisplayName.trim().toLowerCase()
-            : false;
-        print(
-            '🔄 "${country.displayName}" == "${widget.initialValue?.displayName}" = $match (trimmed/lowercase = $trimmedMatch)');
+  CountryEntity? _findPakistan(List<CountryEntity> list) {
+    for (final CountryEntity c in list) {
+      final lower =
+          (c.displayName + c.countryName + c.alpha2 + c.isoCode + c.countryCode)
+              .toLowerCase()
+              .replaceAll(' ', '');
+      if (lower.contains('pakistan') ||
+          lower.contains('pk') ||
+          lower.contains('+92') ||
+          c.countryCodes
+              .any((code) => code.toLowerCase() == 'pk' || code == '+92')) {
+        return c;
       }
     }
-
-    print(
-        '🔄 CountryDropdown _updateSelectedCountry - final selectedCountry: ${selectedCountry?.displayName}');
+    return null;
   }
 
   @override
   Widget build(BuildContext context) {
-    print(
-        '🔄 CountryDropdown build - selectedCountry: ${selectedCountry?.displayName}');
-    print('🔄 CountryDropdown build - countries.length: ${countries.length}');
-    print(
-        '🔄 CountryDropdown build - active countries: ${countries.where((CountryEntity e) => e.isActive).length}');
+    final List<CountryEntity> activeCountries =
+        countries.where((e) => e.isActive).toList();
+    final List<CountryEntity> sourceList =
+        activeCountries.isEmpty ? countries : activeCountries;
 
     return CustomDropdown<CountryEntity>(
-      title: 'country'.tr(),
-      items: countries
-          .where((CountryEntity e) => e.isActive)
-          .map((CountryEntity country) => DropdownMenuItem<CountryEntity>(
-                value: country,
+      title: 'Country',
+      hint: '',
+      searchBy: (DropdownMenuItem<CountryEntity> item) {
+        final CountryEntity? country = item.value;
+        return country?.displayName ?? '';
+      },
+      selectedItemBuilder: (CountryEntity? country) {
+        if (country == null) return const SizedBox.shrink();
+        return Row(
+          children: [
+            _CountryFlag(flag: country.flag),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                country.displayName,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        );
+      },
+      selectedItemPadding:
+          const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+      items: sourceList.map((country) {
+        return DropdownMenuItem<CountryEntity>(
+          value: country,
+          child: Row(
+            children: [
+              _CountryFlag(flag: country.flag),
+              const SizedBox(width: 8),
+              Expanded(
                 child: Text(
                   country.displayName,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w500),
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ))
-          .toList(),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
       selectedItem: selectedCountry,
       onChanged: (CountryEntity? value) {
         if (value == null) return;
-        debugPrint(
-            '🔄 CountryDropdown onChanged - new value: ${value.displayName}');
-        setState(() {
-          selectedCountry = value;
-          widget.onChanged(value);
-        });
+        setState(() => selectedCountry = value);
+        widget.onChanged(value);
       },
-      validator: widget.validator ??
-          (bool? hasValue) {
-            if (hasValue == null || !hasValue) {
-              return 'Please select a country';
-            }
-            return null;
-          },
+      validator: (bool? val) => widget.validator != null
+          ? widget.validator!(val)
+          : AppValidator.requireSelection(val),
+    );
+  }
+}
+
+class _CountryFlag extends StatelessWidget {
+  const _CountryFlag({required this.flag});
+
+  final String flag;
+
+  @override
+  Widget build(BuildContext context) {
+    if (flag.isEmpty) {
+      return Container(
+        height: 16,
+        width: 20,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.3),
+          borderRadius: BorderRadius.circular(4),
+        ),
+      );
+    }
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(4),
+      child: SizedBox(
+        height: 16,
+        width: 20,
+        child: SvgPicture.network(
+          flag,
+          fit: BoxFit.cover,
+          placeholderBuilder: (context) => const SizedBox(
+            width: 20,
+            height: 16,
+            child: Center(child: CircularProgressIndicator(strokeWidth: 1)),
+          ),
+        ),
+      ),
     );
   }
 }

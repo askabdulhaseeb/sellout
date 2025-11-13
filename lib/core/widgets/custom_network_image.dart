@@ -2,26 +2,42 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class CustomNetworkImage extends StatelessWidget {
-  final String? imageURL;
-  final String placeholder;
-  final BoxFit fit;
-  final double? size;
-  final Color? color;
-
   const CustomNetworkImage({
-    super.key,
     required this.imageURL,
     this.placeholder = '/',
     this.fit = BoxFit.cover,
+    this.timeLimit = const Duration(days: 2),
     this.size,
     this.color,
+    super.key,
   });
+
+  final String? imageURL;
+  final String placeholder;
+  final BoxFit? fit;
+  final Duration? timeLimit;
+  final double? size;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
-    // If URL is empty or null, show placeholder
+    final String placeholderText = placeholder.isEmpty
+        ? ''
+        : placeholder.length > 1
+            ? placeholder.substring(0, 2)
+            : placeholder;
+
     if (imageURL == null || imageURL!.isEmpty) {
-      return _buildPlaceholder(context);
+      return Container(
+        height: size,
+        width: size,
+        color: color ?? Theme.of(context).dividerColor,
+        alignment: Alignment.center,
+        child: Text(
+          placeholderText.toUpperCase(),
+          style: const TextStyle(fontWeight: FontWeight.w500),
+        ),
+      );
     }
 
     return CachedNetworkImage(
@@ -29,37 +45,19 @@ class CustomNetworkImage extends StatelessWidget {
       fit: fit,
       height: size,
       width: size,
-      placeholder: (_, __) => _buildLoading(context),
-      errorWidget: (_, __, ___) => _buildPlaceholder(context),
-    );
-  }
-
-  Widget _buildLoading(BuildContext context) {
-    return Container(
-      height: size,
-      width: size,
-      color: Theme.of(context).dividerColor.withOpacity(0.2),
-      child: const Center(
-        child: CircularProgressIndicator(strokeWidth: 1.5),
+      placeholder: (_, __) => Container(
+        height: size,
+        width: size,
+        color: Theme.of(context).dividerColor.withValues(alpha: 0.2),
       ),
-    );
-  }
-
-  Widget _buildPlaceholder(BuildContext context) {
-    return Container(
-      height: size,
-      width: size,
-      alignment: Alignment.center,
-      color: color ?? Theme.of(context).dividerColor.withOpacity(0.2),
-      child: Text(
-        placeholder.isEmpty
-            ? '/'
-            : placeholder
-                .substring(0, placeholder.length > 2 ? 2 : 1)
-                .toUpperCase(),
-        style: const TextStyle(
-          fontWeight: FontWeight.w500,
-          color: Colors.black54,
+      errorWidget: (_, __, ___) => Container(
+        height: size,
+        width: size,
+        alignment: Alignment.center,
+        color: color ?? Theme.of(context).dividerColor,
+        child: Text(
+          placeholderText.toUpperCase(),
+          style: const TextStyle(fontWeight: FontWeight.w500),
         ),
       ),
     );
