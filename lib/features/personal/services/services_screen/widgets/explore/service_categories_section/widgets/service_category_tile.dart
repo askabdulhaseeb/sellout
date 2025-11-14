@@ -29,11 +29,15 @@ class SeviceCategoryTile extends StatelessWidget {
         width: 100,
         decoration: BoxDecoration(
           border: Border.all(color: Theme.of(context).dividerColor),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Column(
           children: <Widget>[
-            Expanded(child: CustomNetworkImage(imageURL: category.imgURL)),
+            Expanded(
+                child: ClipRRect(
+                    borderRadius:
+                        const BorderRadius.vertical(top: Radius.circular(8)),
+                    child: CustomNetworkImage(imageURL: category.imgURL))),
             Padding(
                 padding: const EdgeInsets.all(4),
                 child: Text(

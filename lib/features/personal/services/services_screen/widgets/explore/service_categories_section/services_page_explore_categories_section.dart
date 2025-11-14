@@ -38,30 +38,11 @@ class ServicesPageExploreCategoriesSection extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 8),
         Consumer<ServicesPageProvider>(
           builder:
               (BuildContext context, ServicesPageProvider pro, Widget? child) {
             final List<ServiceCategoryEntity> categories =
-                pro.serviceCategories; // your list of categories
-            if (pro.isLoading) {
-              // Show a placeholder list while loading
-              return SizedBox(
-                height: 110,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 5, // number of placeholders
-                  separatorBuilder: (_, __) => const SizedBox(width: 10),
-                  itemBuilder: (_, __) => Container(
-                    width: 100,
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-              );
-            }
+                pro.serviceCategories;
             // Show actual list when loaded
             return SizedBox(
               height: 110,
