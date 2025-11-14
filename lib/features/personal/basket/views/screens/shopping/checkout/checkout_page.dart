@@ -25,182 +25,226 @@ class _CheckoutPageState extends State<CheckoutPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final CartProvider cartPro = context.read<CartProvider>();
-      if (LocalAuth.currentUser?.address != null) {
-        cartPro.setAddress(LocalAuth.currentUser!.address.first);
-      }
-      if (cartPro.address != null && cartPro.postageResponseEntity == null) {
-        cartPro.getRates();
+      if (cartPro.address == null) {
+        final List<AddressEntity> addresses =
+            LocalAuth.currentUser?.address ?? <AddressEntity>[];
+        if (addresses.isNotEmpty) {
+          final AddressEntity? def = addresses.firstWhere(
+            (AddressEntity a) => a.isDefault,
+            orElse: () => addresses.first,
+          );
+          cartPro.setAddress(def);
+        }
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final CartProvider cartPro = context.watch<CartProvider>();
-    return SingleChildScrollView(
+    return const SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          Consumer<CartProvider>(
-            builder: (BuildContext context, CartProvider cartPro, _) {
-              return InkWell(
-                onTap: () async {
-                  final AddressEntity? newAddress =
-                      await showModalBottomSheet<AddressEntity>(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AddressBottomSheet(initAddress: cartPro.address);
-                    },
-                  );
-                  if (newAddress != null) {
-                    cartPro.setAddress(newAddress);
-                    await cartPro.getRates();
-                  }
-                },
-                borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: ColorScheme.of(context).outlineVariant,
-                    ),
-                  ),
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
+          _SimpleCheckoutAddressSection(),
+          SizedBox(height: 12),
+          _SimplePostageSection(),
+        ],
+      ),
+    );
+  }
+}
+
+// MARK: Address Section
+class _SimpleCheckoutAddressSection extends StatefulWidget {
+  const _SimpleCheckoutAddressSection();
+
+  @override
+  State<_SimpleCheckoutAddressSection> createState() =>
+      _SimpleCheckoutAddressSectionState();
+}
+
+class _SimpleCheckoutAddressSectionState
+    extends State<_SimpleCheckoutAddressSection> {
+  bool _isLoading = false;
+
+  Future<void> _onAddressTap(CartProvider cartPro) async {
+    final AddressEntity? newAddress = await showModalBottomSheet<AddressEntity>(
+      context: context,
+      builder: (BuildContext context) {
+        return AddressBottomSheet(initAddress: cartPro.address);
+      },
+    );
+    if (newAddress != null) {
+      setState(() => _isLoading = true);
+      cartPro.setAddress(newAddress);
+      await cartPro.getRates();
+      setState(() => _isLoading = false);
+      // Open postage selection bottom sheet after rates are fetched
+      if (mounted && cartPro.postageResponseEntity != null) {
+        await showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          useSafeArea: true,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          builder: (BuildContext context) {
+            return PostageBottomSheet(postage: cartPro.postageResponseEntity!);
+          },
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<CartProvider>(
+      builder: (BuildContext context, CartProvider cartPro, _) {
+        return InkWell(
+          onTap: () => _onAddressTap(cartPro),
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: ColorScheme.of(context).outlineVariant,
+              ),
+            ),
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              '${'post_to'.tr()}:',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium!
-                                    .color,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              cartPro.address?.address1 ?? 'no_address'.tr(),
-                              style: const TextStyle(
-                                fontSize: 13,
-                                height: 1.4,
-                              ),
-                            ),
-                            if (cartPro.address != null) ...<Widget>[
-                              const SizedBox(height: 4),
-                              Text(
-                                '${cartPro.address!.city}, ${cartPro.address!.state?.stateName}\n'
-                                '${cartPro.address!.country.displayName} ${cartPro.address!.postalCode}',
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  height: 1.4,
-                                ),
-                              ),
-                            ]
-                          ],
+                      Text(
+                        '${'post_to'.tr()}:',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: Theme.of(context).textTheme.bodyMedium!.color,
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      Icon(
-                        Icons.chevron_right,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      Text(
+                        cartPro.address?.address1 ?? 'no_address'.tr(),
+                        style: const TextStyle(
+                          fontSize: 13,
+                          height: 1.4,
+                        ),
                       ),
+                      if (cartPro.address != null)
+                        Text(
+                          '${cartPro.address!.city}, ${cartPro.address?.state?.stateName ?? 'na'.tr()}'
+                          '\n${cartPro.address?.country.displayName} ${cartPro.address?.postalCode}',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            height: 1.4,
+                          ),
+                        ),
+                      if (_isLoading)
+                        const Padding(
+                          padding: EdgeInsets.only(top: 8.0),
+                          child: Center(
+                              child: SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                      strokeWidth: 2))),
+                        ),
                     ],
                   ),
                 ),
-              );
-            },
+                const SizedBox(width: 12),
+                Icon(
+                  Icons.chevron_right,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 12),
-          InkWell(
-            onTap: () async {
-              // Ensure postage details are available before opening sheet
-              if (cartPro.postageResponseEntity == null) {
-                await cartPro.getRates();
-              }
-              if (cartPro.postageResponseEntity == null) return;
-              final Map<String, RateEntity>? newSelection =
-                  await showModalBottomSheet<Map<String, RateEntity>>(
+        );
+      },
+    );
+  }
+}
+
+// MARK: Postage Section (simplified)
+class _SimplePostageSection extends StatelessWidget {
+  const _SimplePostageSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<CartProvider>(
+      builder: (BuildContext context, CartProvider cartPro, _) {
+        final bool isLoading = cartPro.loadingPostage;
+        final bool hasPostage = cartPro.postageResponseEntity != null;
+
+        return InkWell(
+          borderRadius: BorderRadius.circular(8),
+          onTap: () async {
+            if (hasPostage && !isLoading) {
+              await showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
                 useSafeArea: true,
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                 ),
-                builder: (BuildContext context) {
-                  return PostageBottomSheet(
-                      postage: cartPro.postageResponseEntity!);
-                },
-              );
-              if (newSelection != null) {
-                setState(() {});
-              }
-            },
-            borderRadius: BorderRadius.circular(8),
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: ColorScheme.of(context).outlineVariant,
+                builder: (_) => PostageBottomSheet(
+                  postage: cartPro.postageResponseEntity!,
                 ),
-              ),
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            '${'postage'.tr()}:',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                              color:
-                                  Theme.of(context).textTheme.bodyMedium!.color,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          // Show warning if items need to be removed
-                          if (cartPro.hasItemsRequiringRemoval) ...<Widget>[
-                            _CheckoutRemovalWarningInline(
-                                postIds: cartPro.itemsRequiringRemovalPostIds),
-                          ] else if (cartPro.postageResponseEntity !=
-                              null) ...<Widget>[
-                            // Show all items with their postage information
-                            _PostageItemsList(
-                              postageResponse: cartPro.postageResponseEntity!,
-                              selectedRates: cartPro.selectedPostageRates,
-                              fastDeliveryPostIds:
-                                  cartPro.fastDeliveryProducts.toSet(),
-                            ),
-                          ]
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Icon(
-                    Icons.chevron_right,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ],
+              );
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: ColorScheme.of(context).outlineVariant,
               ),
             ),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text('postage'.tr(),
+                          style: Theme.of(context).textTheme.bodyMedium),
+                      const SizedBox(height: 8),
+                      if (isLoading)
+                        const Center(
+                          child: SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        ),
+                      if (!isLoading && cartPro.hasItemsRequiringRemoval)
+                        _CheckoutRemovalWarningInline(
+                          postIds: cartPro.itemsRequiringRemovalPostIds,
+                        ),
+                      if (!isLoading && hasPostage)
+                        _PostageItemsList(
+                          postageResponse: cartPro.postageResponseEntity!,
+                          selectedRates: cartPro.selectedPostageRates,
+                          fastDeliveryPostIds:
+                              cartPro.fastDeliveryProducts.toSet(),
+                        )
+                    ],
+                  ),
+                ),
+                Icon(Icons.chevron_right,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant),
+              ],
+            ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -216,158 +260,96 @@ class _PostageItemsList extends StatelessWidget {
   final Map<String, RateEntity> selectedRates;
   final Set<String> fastDeliveryPostIds;
 
-  static final RegExp _currencySymbolRegex = RegExp(r'[£€$₨₹¥₺₽]');
-  static final RegExp _digitRegex = RegExp(r'[0-9]');
-  static final RegExp _letterRegex = RegExp(r'[A-Za-z]');
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Map<String, PostEntity?>>(
       future: _loadPosts(),
-      builder: (BuildContext context,
-          AsyncSnapshot<Map<String, PostEntity?>> snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
+      builder:
+          (BuildContext context, AsyncSnapshot<Map<String, PostEntity?>> snap) {
+        if (!snap.hasData) {
           return const SizedBox(
             height: 40,
             child: Center(
               child: SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2)),
             ),
           );
         }
 
-        final Map<String, PostEntity?> posts =
-            snapshot.data ?? <String, PostEntity?>{};
+        final Map<String, PostEntity?> posts = snap.data!;
+        final address =
+            Provider.of<CartProvider>(context, listen: false).address;
+        debugPrint('Address country: ${address?.country.alpha3}');
+        final currency =
+            CountryHelper.currencySymbolHelper(address?.country.currency ?? '');
+        double total = 0;
         final List<Widget> items = <Widget>[];
-        double total = 0.0;
-        String? totalSymbol;
-        String? totalCurrencyCode;
 
         for (final MapEntry<String, PostageItemDetailEntity> entry
             in postageResponse.detail.entries) {
           final String postId = entry.key;
-          final PostEntity? post = posts[postId];
-          final String title = post?.title ?? 'unknown_product'.tr();
-
           final PostageItemDetailEntity detail = entry.value;
-          final String deliveryType =
-              detail.originalDeliveryType.toLowerCase().trim();
-          final bool fastDeliverySelected =
-              fastDeliveryPostIds.contains(postId);
-          final bool isFree = deliveryType == 'free';
-          final bool isCollection = deliveryType == 'collection';
-          final bool isPaidDelivery = deliveryType.contains('paid');
-          final bool isFastDelivery = deliveryType.contains('fast');
+          final String title = (posts[postId]?.title ?? 'unknown_product'.tr());
+          final String type = detail.originalDeliveryType.toLowerCase().trim();
+          if (type == 'collection') continue;
+          final bool isFree = type == 'free';
+          final bool isPaid = type.contains('paid');
+          final bool isFastType = type.contains('fast');
+          final bool fastEligible = fastDeliveryPostIds.contains(postId);
+          final bool hasRates = detail.shippingDetails.any(
+              (PostageDetailShippingDetailEntity e) =>
+                  e.ratesBuffered.isNotEmpty);
 
-          // Aggregate buffered rates for this item.
-          final List<RateEntity> availableRates = detail.shippingDetails
-              .expand(
-                  (PostageDetailShippingDetailEntity sd) => sd.ratesBuffered)
-              .toList();
+          final bool needsRates = isPaid ||
+              isFastType ||
+              (isFree && fastEligible) ||
+              (isFree && hasRates);
 
-          final bool hasPayableRates = availableRates.isNotEmpty;
-          final bool showRatesForFreeFast = isFree && fastDeliverySelected;
-
-          if (isCollection) {
-            continue;
-          }
-
-          // Skip rendering if item does not require postage selection.
-          final bool requiresRates = isPaidDelivery ||
-              isFastDelivery ||
-              showRatesForFreeFast ||
-              (isFree && hasPayableRates);
-          if (!isFree && !requiresRates && !hasPayableRates) {
-            continue;
-          }
-
-          // Check if rate is selected
           final RateEntity? rate = selectedRates[postId];
 
+          // -------------------------
+          // SELECTED RATE (Price)
+          // -------------------------
           if (rate != null) {
-            final _AmountInfo amountInfo = _resolveAmount(rate, post);
-            total += amountInfo.numeric;
-            totalSymbol ??= amountInfo.symbol;
-            totalCurrencyCode ??= amountInfo.currencyCode;
+            final String raw = (rate.amountBuffered.isNotEmpty
+                    ? rate.amountBuffered
+                    : rate.amount)
+                .trim();
+            final double parsed =
+                double.tryParse(raw.replaceAll(RegExp(r'[^0-9.+-]'), '')) ??
+                    0.0;
+            total += parsed;
 
             items.add(
-              Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Expanded(
-                      child: Text(
-                        title,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              fontSize: 12,
-                            ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      amountInfo.display,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                    ),
-                  ],
-                ),
-              ),
+              _row(
+                  title,
+                  currency + (raw.isNotEmpty ? raw : parsed.toStringAsFixed(2)),
+                  context),
             );
-          } else {
-            final Widget trailing;
-            if (isFree && !showRatesForFreeFast) {
-              trailing = Text(
-                'free'.tr(),
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-              );
-            } else if ((requiresRates && hasPayableRates) ||
-                (!isFree && hasPayableRates)) {
-              trailing = Text(
-                'tap_to_select'.tr(),
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontSize: 11,
-                      fontStyle: FontStyle.italic,
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
-              );
-            } else {
-              continue;
-            }
+            continue;
+          }
 
-            items.add(
-              Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Expanded(
-                      child: Text(
-                        title,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              fontSize: 12,
-                            ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    trailing,
-                  ],
-                ),
-              ),
-            );
+          // -------------------------
+          // NO RATE SELECTED (Free / Tap to select)
+          // -------------------------
+          if (isFree && !fastEligible) {
+            items.add(_row(
+              title,
+              'free'.tr(),
+              context,
+              color: Theme.of(context).colorScheme.primary,
+              isBold: true,
+            ));
+          } else if ((needsRates && hasRates) || (!isFree && hasRates)) {
+            items.add(_row(
+              title,
+              'tap_to_select'.tr(),
+              context,
+              italic: true,
+              color: Theme.of(context).colorScheme.outline,
+            ));
           }
         }
 
@@ -385,18 +367,16 @@ class _PostageItemsList extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text(
-                    'total'.tr(),
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
-                  Text(
-                    _formatTotal(total, totalSymbol, totalCurrencyCode),
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
+                  Text('total'.tr(),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(fontWeight: FontWeight.w600)),
+                  Text('$currency  ${total.toStringAsFixed(2)} ',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(fontWeight: FontWeight.w600)),
                 ],
               ),
             ],
@@ -406,99 +386,50 @@ class _PostageItemsList extends StatelessWidget {
     );
   }
 
-  Future<Map<String, PostEntity?>> _loadPosts() async {
-    await LocalPost.openBox;
-    final Map<String, PostEntity?> result = <String, PostEntity?>{};
-    for (final String postId in postageResponse.detail.keys) {
-      result[postId] = await LocalPost().getPost(postId, silentUpdate: true);
-    }
-    return result;
-  }
-
-  static _AmountInfo _resolveAmount(RateEntity rate, PostEntity? post) {
-    final String raw =
-        (rate.amountBuffered.isNotEmpty ? rate.amountBuffered : rate.amount)
-            .trim();
-    final double numeric = _parseNumericAmount(raw);
-
-    String? currencyCode =
-        rate.currency.isNotEmpty ? rate.currency : post?.currency;
-    currencyCode = (currencyCode != null && currencyCode.isNotEmpty)
-        ? currencyCode.toUpperCase()
-        : null;
-
-    final String resolvedSymbol =
-        CountryHelper.currencySymbolHelper(currencyCode);
-    String display = raw;
-    final bool hasDigits = _digitRegex.hasMatch(raw);
-    final bool hasSymbol = _currencySymbolRegex.hasMatch(raw);
-    final bool hasLetters = _letterRegex.hasMatch(raw);
-
-    if (display.isEmpty && numeric > 0) {
-      display = numeric.toStringAsFixed(2);
-    }
-
-    if (!hasSymbol && hasDigits && !hasLetters) {
-      if (resolvedSymbol.isNotEmpty) {
-        display = '$resolvedSymbol${numeric.toStringAsFixed(2)}';
-      } else if (currencyCode != null) {
-        display = '$currencyCode ${numeric.toStringAsFixed(2)}';
-      } else if (display.isEmpty) {
-        display = numeric.toStringAsFixed(2);
-      }
-    } else if (display.isEmpty) {
-      display = numeric.toStringAsFixed(2);
-    }
-
-    String? symbol = _currencySymbolRegex.firstMatch(display)?.group(0);
-    if ((symbol == null || symbol.isEmpty) && resolvedSymbol.isNotEmpty) {
-      symbol = resolvedSymbol;
-    }
-
-    return _AmountInfo(
-      display: display.isNotEmpty ? display : numeric.toStringAsFixed(2),
-      numeric: numeric,
-      symbol: symbol,
-      currencyCode: currencyCode,
+  Widget _row(
+    String title,
+    String trailing,
+    BuildContext context, {
+    bool isBold = false,
+    bool italic = false,
+    Color? color,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Text(
+              title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style:
+                  Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 12),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            trailing,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  fontSize: 12,
+                  fontWeight: isBold ? FontWeight.w600 : FontWeight.normal,
+                  fontStyle: italic ? FontStyle.italic : FontStyle.normal,
+                  color: color,
+                ),
+          ),
+        ],
+      ),
     );
   }
 
-  static double _parseNumericAmount(String raw) {
-    if (raw.isEmpty) return 0.0;
-    final String cleaned = raw.replaceAll(RegExp(r'[^0-9.+-]'), '');
-    return double.tryParse(cleaned) ?? 0.0;
-  }
-
-  static String _formatTotal(
-      double total, String? symbol, String? currencyCode) {
-    final String value = total.toStringAsFixed(2);
-    if (symbol != null && symbol.isNotEmpty) {
-      return '$symbol$value';
+  Future<Map<String, PostEntity?>> _loadPosts() async {
+    await LocalPost.openBox;
+    final Map<String, PostEntity?> res = <String, PostEntity?>{};
+    for (final String id in postageResponse.detail.keys) {
+      res[id] = await LocalPost().getPost(id, silentUpdate: true);
     }
-    if (currencyCode != null && currencyCode.isNotEmpty) {
-      final String resolvedSymbol =
-          CountryHelper.currencySymbolHelper(currencyCode);
-      if (resolvedSymbol.isNotEmpty) {
-        return '$resolvedSymbol$value';
-      }
-      return '$currencyCode $value';
-    }
-    return value;
+    return res;
   }
-}
-
-class _AmountInfo {
-  const _AmountInfo({
-    required this.display,
-    required this.numeric,
-    this.symbol,
-    this.currencyCode,
-  });
-
-  final String display;
-  final double numeric;
-  final String? symbol;
-  final String? currencyCode;
 }
 
 class _CheckoutRemovalWarningInline extends StatefulWidget {

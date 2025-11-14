@@ -29,7 +29,7 @@ class CountryEntityAdapter extends TypeAdapter<CountryEntity> {
       alpha2: fields[9] as String,
       alpha3: fields[10] as String,
       numberFormat: fields[11] as NumberFormatEntity,
-      currency: (fields[12] as List).cast<String>(),
+      currency: fields[12] as String,
       isActive: fields[13] as bool,
       states: (fields[14] as List).cast<StateEntity>(),
     );

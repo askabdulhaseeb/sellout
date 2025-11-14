@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import '../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../core/functions/app_log.dart';
+import '../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../../../../core/widgets/app_snakebar.dart';
 import '../../../auth/signin/data/models/address_model.dart';
@@ -44,6 +45,10 @@ class CartProvider extends ChangeNotifier {
     this._getPostageDetailUsecase,
     this._addShippingUsecase,
   );
+  // Track if postage rates are loading
+  bool _loadingPostage = false;
+
+  bool get loadingPostage => _loadingPostage;
   // MARK: 🧱  Dependencies
   final GetCartUsecase _getCartUsecase;
   final CartItemStatusUpdateUsecase _cartItemStatusUpdateUsecase;
@@ -141,13 +146,22 @@ class CartProvider extends ChangeNotifier {
     _shoppingBasketType = type;
     notifyListeners();
   }
+
   void setPostageCurrencySymbol(String val) {
     _postageCurrencySymbol = val;
     notifyListeners();
   }
 
+  void setPostageLoading(bool val) {
+    _loadingPostage = val;
+    notifyListeners();
+  }
+
   void setAddress(AddressEntity? value) {
     _address = value;
+    _postageResponseEntity = null;
+    _selectedPostageRates.clear();
+    _selectedRateObjectIds.clear();
     notifyListeners();
   }
 
@@ -303,11 +317,12 @@ class CartProvider extends ChangeNotifier {
 
   Future<DataState<PostageDetailResponseEntity>> getRates() async {
     try {
+      setPostageLoading(true);
       if (_address == null) {
+        setPostageLoading(false);
         return DataFailer<PostageDetailResponseEntity>(
             CustomException('No address found'));
       }
-
       final GetPostageDetailParam params = GetPostageDetailParam(
         buyerAddress: _address!,
         fastDelivery: fastDeliveryProducts,
@@ -317,6 +332,8 @@ class CartProvider extends ChangeNotifier {
           await _getPostageDetailUsecase(params);
       if (result is DataSuccess) {
         _postageResponseEntity = result.entity;
+        _postageCurrencySymbol =
+            CountryHelper.currencySymbolHelper(_address?.country.alpha3 ?? '');
         // Automatically select first rate for each post and store shipmentId
         if (_postageResponseEntity != null) {
           _postageResponseEntity!.detail.forEach(
@@ -327,7 +344,6 @@ class CartProvider extends ChangeNotifier {
                     .expand((PostageDetailShippingDetailEntity sd) =>
                         sd.ratesBuffered)
                     .toList();
-
                 if (rates.isNotEmpty) {
                   final RateEntity firstRate = rates.first;
                   _selectedPostageRates[postId] = firstRate;
@@ -336,14 +352,16 @@ class CartProvider extends ChangeNotifier {
               }
             },
           );
-          notifyListeners();
         }
+        setPostageLoading(false);
 
         return result;
       } else {
+        setPostageLoading(false);
         return DataFailer<PostageDetailResponseEntity>(result.exception!);
       }
     } catch (e, st) {
+      setPostageLoading(false);
       AppLog.error('Failed to fetch postage details',
           name: 'CartProvider.checkout', error: e, stackTrace: st);
       return DataFailer<PostageDetailResponseEntity>(

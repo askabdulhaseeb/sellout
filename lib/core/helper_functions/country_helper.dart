@@ -8,7 +8,7 @@ class CountryHelper {
       case 'GBP':
         return '£';
       default:
-        return '';
+        return 'na';
     }
   }
 
