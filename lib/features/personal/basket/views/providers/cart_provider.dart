@@ -581,6 +581,13 @@ class CartProvider extends ChangeNotifier {
     }
   }
 
+  void clearRatesAndCheckout() {
+    _postageResponseEntity = null;
+    _selectedPostageRates.clear();
+    _selectedRateObjectIds.clear();
+    notifyListeners();
+  }
+
   // MARK: ♻️ RESET
   void reset() {
     _orderBilling = null;
