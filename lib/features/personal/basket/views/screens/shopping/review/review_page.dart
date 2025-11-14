@@ -4,7 +4,7 @@ import '../../../../../../../core/widgets/empty_page_widget.dart';
 import '../../../../domain/entities/cart/add_shipping_response_entity.dart';
 import '../../../../domain/entities/cart/cart_item_entity.dart';
 import '../../../providers/cart_provider.dart';
-import 'review_widgets/review_item_card.dart'; 
+import 'review_widgets/review_item_card.dart';
 
 class ReviewCartPage extends StatelessWidget {
   const ReviewCartPage({super.key});
@@ -48,7 +48,6 @@ class ReviewCartPage extends StatelessWidget {
                           cartItemID: shippingItem.cartItemId,
                           status: shippingItem.status,
                         );
-
                 return ReviewItemCard(
                   detail: detail,
                   shippingDetail: shippingItem,
@@ -67,8 +66,10 @@ class ReviewCartPage extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final List<CartItemEntity> items =
-            cartPro.cartItems.where((CartItemEntity e) => e.inCart).toList();
+        // Only show items with status 'cart'
+        final List<CartItemEntity> items = cartPro.cartItems
+            .where((CartItemEntity e) => e.status == 'cart')
+            .toList();
 
         return Column(
           children: <Widget>[

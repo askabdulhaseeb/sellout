@@ -798,6 +798,7 @@
   "remove_item_cart_continue_checkout": "Delivery is not available for this item. Remove this item from your cart to continue with checkout",
   "invite_supporters": "Invite Supporters",
   "processing_payment":"Processing Payment",
+  "no_item_available": "No item available",
   "invite": "Invite",
   "work":"Work"
   ,

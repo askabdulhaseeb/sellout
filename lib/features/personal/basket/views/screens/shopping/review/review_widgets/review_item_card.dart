@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../auth/signin/domain/entities/address_entity.dart';
 import '../../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../../user/profiles/data/sources/local/local_user.dart';
@@ -110,30 +111,38 @@ class _ReviewItemContent extends StatelessWidget {
             ? shippingDetail!.selectedShipping.first
             : null;
 
+    final CartProvider pro = Provider.of<CartProvider>(context, listen: false);
+    final String currencySymbol = CountryHelper.currencySymbolHelper(
+        pro.address?.country.currency ?? 'USD');
     final String currencyCode = (post?.currency ?? '').toString();
-    final String unitPriceLabel = _formatAmount(unitPrice, currencyCode);
-    final String subtotalLabel = _formatAmount(subtotal, currencyCode);
+    final String unitPriceLabel =
+        _formatAmountWithSymbol(unitPrice, currencySymbol);
+    final String subtotalLabel =
+        _formatAmountWithSymbol(subtotal, currencySymbol);
 
     double totalPrice = subtotal;
-    String totalCurrency = currencyCode;
+    String totalCurrencySymbol = currencySymbol;
     String? shippingLabel;
     final double? shippingAmount = primaryShipping?.convertedBufferAmount;
     final String? shippingCurrency = primaryShipping?.convertedCurrency;
 
     if (shippingAmount != null && shippingAmount > 0) {
-      shippingLabel =
-          _formatAmount(shippingAmount, shippingCurrency ?? currencyCode);
+      final String shippingSymbol =
+          CountryHelper.currencySymbolHelper(shippingCurrency ?? currencyCode);
+      shippingLabel = _formatAmountWithSymbol(shippingAmount, shippingSymbol);
       if (shippingCurrency != null &&
           shippingCurrency.isNotEmpty &&
           shippingCurrency == currencyCode) {
         totalPrice += shippingAmount;
       }
       if (shippingCurrency != null && shippingCurrency.isNotEmpty) {
-        totalCurrency = shippingCurrency;
+        totalCurrencySymbol =
+            CountryHelper.currencySymbolHelper(shippingCurrency);
       }
     }
 
-    final String totalLabel = _formatAmount(totalPrice, totalCurrency);
+    final String totalLabel =
+        _formatAmountWithSymbol(totalPrice, totalCurrencySymbol);
     final String destination = _buildDestination(
       shipping: primaryShipping?.toAddress,
       address: cartPro.address,
@@ -432,11 +441,11 @@ List<String> _compactParts(List<String?> values) => values
     .where((String? value) => value != null && value.trim().isNotEmpty)
     .map((String? value) => value!.trim())
     .toList();
-String _formatAmount(double? amount, String? currency) {
+
+String _formatAmountWithSymbol(double? amount, String? symbol) {
   if (amount == null) return '';
-  final String symbol =
-      currency != null && currency.isNotEmpty ? currency.toUpperCase() : '';
-  return symbol.isEmpty
+  final String s = symbol ?? '';
+  return s.isEmpty
       ? amount.toStringAsFixed(2)
-      : '$symbol ${amount.toStringAsFixed(2)}';
+      : '$s ${amount.toStringAsFixed(2)}';
 }

@@ -29,9 +29,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
         final List<AddressEntity> addresses =
             LocalAuth.currentUser?.address ?? <AddressEntity>[];
         if (addresses.isNotEmpty) {
-          final AddressEntity? def = addresses.firstWhere(
+          final AddressEntity def = addresses.firstWhere(
             (AddressEntity a) => a.isDefault,
-            orElse: () => addresses.first,
           );
           cartPro.setAddress(def);
         }

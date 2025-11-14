@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../features/personal/basket/domain/entities/cart/postage_detail_response_entity.dart';
 import '../../../../features/personal/basket/views/providers/cart_provider.dart';
 import '../../../../features/personal/post/data/sources/local/local_post.dart';
@@ -527,7 +528,7 @@ class _PostageShippingOptionsContent extends StatelessWidget {
     if (rates.isEmpty || displayType == DeliveryType.collection) {
       // Show remove message for delivery types that need rates but don't have them
       if (shouldShowRemoveMessage) {
-        return _PostageRemoveMessage();
+        return const _PostageRemoveMessage();
       }
       return const SizedBox.shrink();
     }
@@ -663,20 +664,10 @@ class _PostageRateOptionWidget extends StatelessWidget {
     // Get the amount with currency symbol
     final String amount =
         rate.amountBuffered.isNotEmpty ? rate.amountBuffered : rate.amount;
-
-    // Try to extract currency from the amount string or use GBP as default
-    String currency = 'GBP'; // Default fallback
+    final CartProvider pro = Provider.of<CartProvider>(context, listen: false);
+    String currency = pro.address?.country.currency ?? '';
     String cleanAmount = amount;
-
-    // Check if amount already contains currency symbols
-    if (!amount.contains('£') &&
-        !amount.contains('\$') &&
-        !amount.contains('€')) {
-      cleanAmount = '${CountryHelper.currencySymbolHelper(currency)}$amount';
-    } else {
-      cleanAmount = amount;
-    }
-
+    cleanAmount = '${CountryHelper.currencySymbolHelper(currency)}$amount';
     return Container(
       margin: EdgeInsets.only(bottom: isLast ? 0 : AppSpacing.sm),
       child: ListTile(
