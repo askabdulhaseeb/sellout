@@ -6,6 +6,7 @@ class ServiceCategoryModel extends ServiceCategoryEntity {
   ServiceCategoryModel({
     required super.label,
     required super.value,
+    required super.imgURL,
     required super.category,
     required super.tags,
     required super.serviceTypes,
@@ -15,13 +16,12 @@ class ServiceCategoryModel extends ServiceCategoryEntity {
     return ServiceCategoryModel(
       label: map['label'] ?? '',
       value: map['value'] ?? '',
+      imgURL: map['img_url'] ?? '',
       category: map['category'] ?? '',
-      tags: List<String>.from(map['tags'] ?? []),
-      serviceTypes: (map['service_types'] as List<dynamic>? ?? [])
+      tags: List<String>.from(map['tags'] ?? <dynamic>[]),
+      serviceTypes: (map['service_types'] as List<dynamic>? ?? <dynamic>[])
           .map((e) => ServiceTypeModel.fromMap(e as Map<String, dynamic>))
           .toList(),
     );
   }
-
-  Map<String, dynamic> toMap() => super.toMap();
 }

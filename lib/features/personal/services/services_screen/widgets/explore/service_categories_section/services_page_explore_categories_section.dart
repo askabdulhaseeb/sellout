@@ -55,7 +55,7 @@ class ServicesPageExploreCategoriesSection extends StatelessWidget {
                   itemBuilder: (_, __) => Container(
                     width: 100,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
+                      color: Colors.grey,
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),

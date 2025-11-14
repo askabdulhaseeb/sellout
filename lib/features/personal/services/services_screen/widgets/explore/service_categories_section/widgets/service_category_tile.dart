@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../domain/entity/service_category_entity.dart';
 import '../../../../providers/services_page_provider.dart';
 import 'categorized_services_screen.dart';
@@ -25,7 +26,6 @@ class SeviceCategoryTile extends StatelessWidget {
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-        height: 100,
         width: 100,
         decoration: BoxDecoration(
           border: Border.all(color: Theme.of(context).dividerColor),
@@ -33,17 +33,7 @@ class SeviceCategoryTile extends StatelessWidget {
         ),
         child: Column(
           children: <Widget>[
-            Expanded(
-              child: ClipRRect(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(12),
-                  ),
-                  child: Container(
-                    color: Colors.green,
-                    height: 90,
-                    width: 100,
-                  )),
-            ),
+            Expanded(child: CustomNetworkImage(imageURL: category.imgURL)),
             Padding(
                 padding: const EdgeInsets.all(4),
                 child: Text(

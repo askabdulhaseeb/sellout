@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import '../../../../../services/data/models/service_category_model.dart';
 import '../../../domain/entities/category_entites/categories_entity.dart';
 import 'sub_models/parent_dropdown_model.dart';
 import 'sub_models/dropdown_option.model.dart';
@@ -49,7 +50,16 @@ class CategoriesModel extends CategoriesEntity {
       return null;
     }
 
+    // --- services ---
+
+    final List<ServiceCategoryModel>? services =
+        (mergedJson['services'] as List<dynamic>?)
+            ?.map((e) => ServiceCategoryModel.fromMap(e))
+            .toList();
+
+    if (services != null) populatedFields.add('serviceCategories');
     // --- Clothes ---
+
     final List<DropdownOptionDataModel>? clothesBrands =
         parseDataList(mergedJson['clothes_brands']);
     if (clothesBrands != null) populatedFields.add('clothesBrands');
@@ -176,6 +186,7 @@ class CategoriesModel extends CategoriesEntity {
       foot: foot,
       food: food,
       drink: drink,
+      services: services,
     );
   }
 
@@ -202,5 +213,6 @@ class CategoriesModel extends CategoriesEntity {
     super.foot,
     super.food,
     super.drink,
+    super.services,
   });
 }
