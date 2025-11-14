@@ -1,9 +1,9 @@
-import 'package:easy_localization/easy_localization.dart';
+import 'service_category_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../data/sources/local/local_service_categories.dart';
 import '../../../../../domain/entity/service_category_entity.dart';
-import 'service_category_tile.dart';
 
 class AllServiceCategoriesGridScreen extends StatefulWidget {
   const AllServiceCategoriesGridScreen({super.key});
