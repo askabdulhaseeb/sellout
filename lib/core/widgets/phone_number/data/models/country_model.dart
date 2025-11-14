@@ -33,18 +33,6 @@ class CountryModel extends CountryEntity {
           .toList();
     }
 
-    // currency may be a String like "GBP" or a List
-    final dynamic rawCurrency = map['currency'];
-    List<String> currencyList = <String>[];
-    if (rawCurrency is String) {
-      currencyList = <String>[rawCurrency];
-    } else if (rawCurrency is Iterable) {
-      currencyList = rawCurrency
-          .map((e) => e?.toString() ?? '')
-          .where((String s) => s.isNotEmpty)
-          .toList();
-    }
-
     // number_format might be an object with {format, regex} or a string
     final dynamic nf = map['number_format'];
     String nfFormat = '';
@@ -105,7 +93,7 @@ class CountryModel extends CountryEntity {
       alpha2: map['alpha_2']?.toString().trim() ?? '',
       alpha3: map['alpha_3']?.toString().trim() ?? '',
       numberFormat: NumberFormatEntity(format: nfFormat, regex: nfRegex),
-      currency: currencyList,
+      currency: map['currency']?.toString().trim() ?? '',
       isActive: map['is_active'] ?? false,
       states: statesList,
     );

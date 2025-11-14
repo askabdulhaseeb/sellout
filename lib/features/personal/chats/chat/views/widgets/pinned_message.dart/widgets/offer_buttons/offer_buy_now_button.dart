@@ -35,7 +35,7 @@ class OfferBuyNowButton extends StatelessWidget {
           AddressBottomSheet(initAddress: cartPro.address),
     );
     if (selectedAddress != null) {
-      cartPro.address = selectedAddress;
+      cartPro.setAddress(selectedAddress);
     }
   }
 
