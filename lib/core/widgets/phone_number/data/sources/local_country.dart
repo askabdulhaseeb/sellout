@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
-
 import '../../../../utilities/app_string.dart';
 import '../../domain/entities/country_entity.dart';
 

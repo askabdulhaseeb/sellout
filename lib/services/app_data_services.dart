@@ -5,6 +5,7 @@ import '../core/functions/app_log.dart';
 import '../core/sources/data_state.dart';
 import '../core/enums/listing/core/listing_type.dart';
 import '../core/widgets/phone_number/data/sources/country_api.dart';
+import '../core/widgets/phone_number/data/sources/local_country.dart';
 import '../core/widgets/phone_number/domain/entities/country_entity.dart';
 import '../features/personal/auth/signin/data/sources/local/local_auth.dart';
 import '../features/personal/auth/signin/domain/params/refresh_token_params.dart';
@@ -33,12 +34,18 @@ class AppDataService {
       '/category/${ListingType.foodAndDrink.json}?list-id=',
     ];
 
-    // Fetch country list as well
+    // Fetch country list as well and update local Hive box
     try {
       final DataState<List<CountryEntity>> result =
           await _countryApi.countries(const Duration(days: 7));
-      if (result is DataSuccess) {
+      if (result is DataSuccess<List<CountryEntity>>) {
         AppLog.info('Successfully fetched countries');
+        // Save to Hive
+        final box = await LocalCountry.openBox;
+        for (final country in result.entity ?? <CountryEntity>[]) {
+          // Use country.shortName or another unique key as Hive key
+          box.put(country.shortName, country);
+        }
       } else if (result is DataFailer) {
         AppLog.error('Failed fetching countries',
             name: 'AppDataService.fetchAllData - country',
