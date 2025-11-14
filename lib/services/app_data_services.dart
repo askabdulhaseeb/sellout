@@ -32,6 +32,7 @@ class AppDataService {
       '/category/${ListingType.vehicle.json}?list-id=',
       '/category/${ListingType.pets.json}?list-id=',
       '/category/${ListingType.foodAndDrink.json}?list-id=',
+      '/category/services'
     ];
 
     // Fetch country list as well and update local Hive box

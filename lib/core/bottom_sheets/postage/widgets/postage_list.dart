@@ -9,8 +9,8 @@ class PostageList extends StatelessWidget {
     required this.selected,
     required this.onSelect,
     required this.cartPro,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final List<MapEntry<String, PostageItemDetailEntity>> entries;
   final Map<String, RateEntity> selected;
