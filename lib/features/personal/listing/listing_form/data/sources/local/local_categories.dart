@@ -2,6 +2,7 @@ import 'package:flutter/rendering.dart';
 import 'package:hive/hive.dart';
 import '../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../core/utilities/app_string.dart';
+import '../../../../../services/domain/entity/service_category_entity.dart';
 import '../../../domain/entities/category_entites/categories_entity.dart';
 import '../../../domain/entities/category_entites/subentities/dropdown_option_data_entity.dart';
 import '../../../domain/entities/category_entites/subentities/dropdown_option_entity.dart';
@@ -79,6 +80,7 @@ class LocalCategoriesSource {
       foot: keepOldIfNullOrEmpty(newEntity.foot, existing.foot),
       food: keepOldIfNullOrEmpty(newEntity.food, existing.food),
       drink: keepOldIfNullOrEmpty(newEntity.drink, existing.drink),
+      services: keepOldIfNullOrEmpty(newEntity.services, existing.services),
     );
 
     await save(merged);
@@ -118,6 +120,11 @@ class LocalCategoriesSource {
   static SubCategoryEntity? get foot => categories?.foot;
   static SubCategoryEntity? get food => categories?.food;
   static SubCategoryEntity? get drink => categories?.drink;
+
+  // ===== Services =====
+  static List<ServiceCategoryEntity>? get services => categories?.services;
+  //
+
   CategoriesEntity? getCategory() => _box.get(_mainKey);
 
 //Find a subcategory based on address example "listingtype/cid/subcat/subcat"

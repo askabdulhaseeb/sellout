@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import '../../../../../services/domain/entity/service_category_entity.dart';
 import '../../../data/models/sub_category_model.dart';
 import 'subentities/parent_dropdown_entity.dart';
 import 'subentities/dropdown_option_data_entity.dart';
@@ -30,6 +31,7 @@ class CategoriesEntity {
     this.transmission,
     this.energyRating,
     this.propertyType,
+    this.services,
   });
 
   // ✅ Category groups
@@ -99,6 +101,9 @@ class CategoriesEntity {
   @HiveField(21)
   final List<DropdownOptionEntity>? propertyType;
 
+  @HiveField(22)
+  final List<ServiceCategoryEntity>? services;
+
   // ✅ CopyWith method
   CategoriesEntity copyWith({
     SubCategoryEntity? items,
@@ -123,6 +128,7 @@ class CategoriesEntity {
     List<DropdownOptionEntity>? transmission,
     List<DropdownOptionEntity>? energyRating,
     List<DropdownOptionEntity>? propertyType,
+    List<ServiceCategoryEntity>? services,
   }) {
     return CategoriesEntity(
       items: items ?? this.items,
@@ -147,6 +153,7 @@ class CategoriesEntity {
       transmission: transmission ?? this.transmission,
       energyRating: energyRating ?? this.energyRating,
       propertyType: propertyType ?? this.propertyType,
+      services: services ?? this.services,
     );
   }
 }

@@ -19,25 +19,28 @@ class ServiceCategoryEntityAdapter extends TypeAdapter<ServiceCategoryEntity> {
     return ServiceCategoryEntity(
       label: fields[0] as String,
       value: fields[1] as String,
-      category: fields[2] as String,
-      tags: (fields[3] as List).cast<String>(),
-      serviceTypes: (fields[4] as List).cast<ServiceTypeEntity>(),
+      imgURL: fields[2] as String,
+      category: fields[3] as String,
+      tags: (fields[4] as List).cast<String>(),
+      serviceTypes: (fields[5] as List).cast<ServiceTypeEntity>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, ServiceCategoryEntity obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.label)
       ..writeByte(1)
       ..write(obj.value)
       ..writeByte(2)
-      ..write(obj.category)
+      ..write(obj.imgURL)
       ..writeByte(3)
-      ..write(obj.tags)
+      ..write(obj.category)
       ..writeByte(4)
+      ..write(obj.tags)
+      ..writeByte(5)
       ..write(obj.serviceTypes);
   }
 

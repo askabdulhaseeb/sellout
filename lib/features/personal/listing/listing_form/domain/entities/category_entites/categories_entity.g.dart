@@ -39,13 +39,14 @@ class CategoriesEntityAdapter extends TypeAdapter<CategoriesEntity> {
       transmission: (fields[19] as List?)?.cast<DropdownOptionEntity>(),
       energyRating: (fields[20] as List?)?.cast<DropdownOptionEntity>(),
       propertyType: (fields[21] as List?)?.cast<DropdownOptionEntity>(),
+      services: (fields[22] as List?)?.cast<ServiceCategoryEntity>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, CategoriesEntity obj) {
     writer
-      ..writeByte(22)
+      ..writeByte(23)
       ..writeByte(0)
       ..write(obj.items)
       ..writeByte(1)
@@ -89,7 +90,9 @@ class CategoriesEntityAdapter extends TypeAdapter<CategoriesEntity> {
       ..writeByte(20)
       ..write(obj.energyRating)
       ..writeByte(21)
-      ..write(obj.propertyType);
+      ..write(obj.propertyType)
+      ..writeByte(22)
+      ..write(obj.services);
   }
 
   @override
