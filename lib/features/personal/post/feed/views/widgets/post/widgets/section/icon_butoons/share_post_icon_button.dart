@@ -1,3 +1,4 @@
+import '../../../../../../../../../../core/widgets/empty_page_widget.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../../../core/utilities/app_string.dart';
@@ -21,49 +22,40 @@ import '../../../../../../../domain/entities/post/post_entity.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../../domain/params/share_in_chat_params.dart';
 
-class SharePostButton extends StatefulWidget {
+class SharePostButton extends StatelessWidget {
   const SharePostButton({required this.post, super.key});
   final PostEntity post;
 
-  @override
-  State<SharePostButton> createState() => _SharePostButtonState();
-}
+  String get postLink => '${AppRoutes.baseURL}/product/${post.postID}';
 
-class _SharePostButtonState extends State<SharePostButton> {
-  String get postLink => '${AppRoutes.baseURL}/product/${widget.post.postID}';
-  Future<void> _showPrivateChatBottomSheet(BuildContext context) async {
+  Future<void> _showShareBottomSheet({
+    required BuildContext context,
+    required Widget Function(String) bottomSheetBuilder,
+  }) async {
     final List<String>? receiverIds = await showModalBottomSheet<List<String>>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      builder: (BuildContext ctx) {
-        return SelectReceiversBottomsheet(postLink: postLink);
-      },
+      builder: (BuildContext ctx) => bottomSheetBuilder(postLink),
     );
     if (receiverIds == null || receiverIds.isEmpty) return;
     debugPrint('✅ Selected IDs: $receiverIds');
     debugPrint('🔗 Link to share: $postLink');
   }
 
-  Future<void> _showGroupChatBottomSheet(BuildContext context) async {
-    final List<String>? receiverIds = await showModalBottomSheet<List<String>>(
-      isScrollControlled: true,
-      context: context,
-      useSafeArea: true,
-      builder: (BuildContext ctx) {
-        return SelectGroupsBottomsheet(postLink: postLink);
-      },
-    );
-    if (receiverIds == null || receiverIds.isEmpty) return;
-    debugPrint('✅ Selected IDs: $receiverIds');
-    debugPrint('🔗 Link to share: $postLink');
-  }
-
-  void _handleShare(String value) {
+  void _handleShare(BuildContext context, String value) {
     if (value == 'message') {
-      _showPrivateChatBottomSheet(context);
+      _showShareBottomSheet(
+        context: context,
+        bottomSheetBuilder: (String link) =>
+            SelectReceiversBottomsheet(postLink: link),
+      );
     } else if (value == 'group') {
-      _showGroupChatBottomSheet(context);
+      _showShareBottomSheet(
+        context: context,
+        bottomSheetBuilder: (String link) =>
+            SelectGroupsBottomsheet(postLink: link),
+      );
     }
   }
 
@@ -75,37 +67,39 @@ class _SharePostButtonState extends State<SharePostButton> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
       color: Theme.of(context).scaffoldBackgroundColor,
       icon: const CustomSvgIcon(assetPath: AppStrings.selloutShareIcon),
-      onSelected: _handleShare,
+      onSelected: (String value) => _handleShare(context, value),
       itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-        PopupMenuItem<String>(
+        _buildMenuItem(
+          context,
           value: 'message',
-          child: Row(
-            spacing: 8,
-            children: <Widget>[
-              const CustomSvgIcon(
-                  size: 16, assetPath: AppStrings.selloutShareAsMessageIcon),
-              Text(
-                'share_as_message'.tr(),
-                style: TextTheme.of(context).bodySmall,
-              ),
-            ],
-          ),
+          icon: AppStrings.selloutShareAsMessageIcon,
+          text: 'share_as_message'.tr(),
         ),
-        PopupMenuItem<String>(
+        _buildMenuItem(
+          context,
           value: 'group',
-          child: Row(
-            spacing: 8,
-            children: <Widget>[
-              const CustomSvgIcon(
-                  size: 16, assetPath: AppStrings.selloutShareInGroupIcon),
-              Text(
-                'share_in_group'.tr(),
-                style: TextTheme.of(context).bodySmall,
-              ),
-            ],
-          ),
+          icon: AppStrings.selloutShareInGroupIcon,
+          text: 'share_in_group'.tr(),
         ),
       ],
+    );
+  }
+
+  PopupMenuItem<String> _buildMenuItem(
+    BuildContext context, {
+    required String value,
+    required String icon,
+    required String text,
+  }) {
+    return PopupMenuItem<String>(
+      value: value,
+      child: Row(
+        spacing: 8,
+        children: <Widget>[
+          CustomSvgIcon(size: 16, assetPath: icon),
+          Text(text, style: TextTheme.of(context).bodySmall),
+        ],
+      ),
     );
   }
 }
@@ -202,41 +196,50 @@ class _SelectReceiversBottomsheetState
                     hint: 'search'.tr(),
                   ),
                 ),
-                Expanded(
-                  child: ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: filteredUsers.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final UserEntity user = filteredUsers[index];
-                      final bool isSelected = selectedIds.contains(user.uid);
-                      return CheckboxListTile(
-                        value: isSelected,
-                        onChanged: (bool? checked) {
-                          setState(() {
-                            if (checked == true) {
-                              selectedIds.add(user.uid);
-                            } else {
-                              selectedIds.remove(user.uid);
-                            }
-                          });
-                        },
-                        title: Text(
-                          user.displayName,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        subtitle: Text(user.email),
-                        secondary: ProfilePhoto(
-                          size: 30,
-                          url: user.profilePhotoURL,
-                          placeholder: user.displayName,
-                        ),
-                      );
-                    },
+                if (filteredUsers.isEmpty)
+                  Expanded(
+                    child: EmptyPageWidget(
+                      icon: Icons.person_off,
+                      childBelow: Text('no_supporters_available'.tr()),
+                    ),
+                  )
+                else
+                  Expanded(
+                    child: ListView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: filteredUsers.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final UserEntity user = filteredUsers[index];
+                        final bool isSelected = selectedIds.contains(user.uid);
+                        return CheckboxListTile(
+                          value: isSelected,
+                          onChanged: (bool? checked) {
+                            setState(() {
+                              if (checked == true) {
+                                selectedIds.add(user.uid);
+                              } else {
+                                selectedIds.remove(user.uid);
+                              }
+                            });
+                          },
+                          title: Text(
+                            user.displayName,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          subtitle: Text(user.email),
+                          secondary: ProfilePhoto(
+                            size: 30,
+                            url: user.profilePhotoURL,
+                            placeholder: user.displayName,
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
                 Padding(
                   padding: const EdgeInsets.all(16),
                   child: CustomElevatedButton(
+                    isDisable: selectedIds.isEmpty,
                     onTap: () async {
                       final ShareInChatUsecase shareInChatUsecase =
                           ShareInChatUsecase(locator());
@@ -250,12 +253,15 @@ class _SelectReceiversBottomsheetState
                           endPointChatType: 'private',
                         ),
                       );
+                      if (!context.mounted) return;
                       if (result is DataSuccess) {
                         Navigator.pop(context);
-                        AppSnackBar.success(
-                          context,
-                          'post_shared_successfully'.tr(),
-                        );
+                        if (mounted) {
+                          AppSnackBar.success(
+                            context,
+                            'post_shared_successfully'.tr(),
+                          );
+                        }
                       } else {
                         AppSnackBar.error(
                           context,
@@ -350,43 +356,52 @@ class _SelectGroupsBottomsheetState extends State<SelectGroupsBottomsheet> {
                 hint: 'search'.tr(),
               ),
             ),
-            Expanded(
-              child: ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                itemCount: filteredGroups.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final ChatEntity group = filteredGroups[index];
-                  final bool isSelected =
-                      selectedGroupIds.contains(group.chatId);
-                  return CheckboxListTile(
-                    value: isSelected,
-                    onChanged: (bool? checked) {
-                      setState(() {
-                        if (checked == true) {
-                          selectedGroupIds.add(group.chatId);
-                        } else {
-                          selectedGroupIds.remove(group.chatId);
-                        }
-                      });
-                    },
-                    title: Text(
-                      group.groupInfo?.title ?? '',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    subtitle: Text(
-                        '${'members'.tr()}: ${group.groupInfo?.participants.length ?? 0}'),
-                    secondary: ProfilePhoto(
-                      size: 30,
-                      url: group.groupInfo?.groupThumbnailURL,
-                      placeholder: group.groupInfo?.title ?? '',
-                    ),
-                  );
-                },
+            if (filteredGroups.isEmpty)
+              Expanded(
+                child: EmptyPageWidget(
+                  icon: Icons.group_off,
+                  childBelow: Text('no_groups_found'.tr()),
+                ),
+              )
+            else
+              Expanded(
+                child: ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: filteredGroups.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final ChatEntity group = filteredGroups[index];
+                    final bool isSelected =
+                        selectedGroupIds.contains(group.chatId);
+                    return CheckboxListTile(
+                      value: isSelected,
+                      onChanged: (bool? checked) {
+                        setState(() {
+                          if (checked == true) {
+                            selectedGroupIds.add(group.chatId);
+                          } else {
+                            selectedGroupIds.remove(group.chatId);
+                          }
+                        });
+                      },
+                      title: Text(
+                        group.groupInfo?.title ?? '',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      subtitle: Text(
+                          '${'members'.tr()}: ${group.groupInfo?.participants.length ?? 0}'),
+                      secondary: ProfilePhoto(
+                        size: 30,
+                        url: group.groupInfo?.groupThumbnailURL,
+                        placeholder: group.groupInfo?.title ?? '',
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
             Padding(
               padding: const EdgeInsets.all(16),
               child: CustomElevatedButton(
+                isDisable: selectedGroupIds.isEmpty,
                 onTap: () async {
                   final ShareInChatUsecase shareInChatUsecase =
                       ShareInChatUsecase(locator());
@@ -399,13 +414,15 @@ class _SelectGroupsBottomsheetState extends State<SelectGroupsBottomsheet> {
                       endPointChatType: 'group',
                     ),
                   );
-
+                  if (!context.mounted) return;
                   if (result is DataSuccess) {
                     Navigator.pop(context);
-                    AppSnackBar.success(
-                      context,
-                      'post_shared_successfully'.tr(),
-                    );
+                    if (mounted) {
+                      AppSnackBar.success(
+                        context,
+                        'post_shared_successfully'.tr(),
+                      );
+                    }
                   } else {
                     AppSnackBar.error(
                       context,

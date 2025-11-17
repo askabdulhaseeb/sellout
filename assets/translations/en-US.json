@@ -803,6 +803,8 @@
   "work":"Work",
   "show_in_maps":"Show in Maps",
   "no_supporters_to_invite": "No supporters to invite",
+  "no_supporters_available":"No supporters available",
+  "no_groups_available":"No groups available",
   "no_supporters": "You don’t have any supporters yet",
   "invite_to_group": "Invite to Group",
   "send": "Send",

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
 import 'get_it.dart';
 import '../core/functions/app_log.dart';
@@ -10,7 +11,7 @@ import '../core/widgets/phone_number/domain/entities/country_entity.dart';
 import '../features/personal/auth/signin/domain/usecase/refresh_token_usecase.dart';
 import '../features/personal/listing/listing_form/domain/usecase/get_category_by_endpoint_usecase.dart';
 
-class AppDataService {
+class AppDataService extends WidgetsBindingObserver {
   factory AppDataService() => _instance;
   AppDataService._internal();
   static final AppDataService _instance = AppDataService._internal();
@@ -19,6 +20,31 @@ class AppDataService {
       GetCategoryByEndpointUsecase(locator());
   final RefreshTokenUsecase _refreshUsecase = RefreshTokenUsecase(locator());
   final CountryApi _countryApi = locator<CountryApi>();
+
+  Timer? _refreshTimer;
+
+  void startTokenRefreshScheduler() {
+    // Start periodic refresh every 10 minutes
+    _refreshTimer?.cancel();
+    _refreshTimer = Timer.periodic(const Duration(minutes: 10), (_) async {
+      await ensureTokenRefreshed();
+    });
+    // Listen for app lifecycle changes
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  void stopTokenRefreshScheduler() {
+    _refreshTimer?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed ||
+        state == AppLifecycleState.paused) {
+      ensureTokenRefreshed();
+    }
+  }
 
   Future<void> ensureTokenRefreshed() async {
     try {
