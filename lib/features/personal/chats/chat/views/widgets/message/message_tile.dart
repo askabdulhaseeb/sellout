@@ -37,7 +37,7 @@ class MessageTile extends StatelessWidget {
               // 🔹 Name + timestamp above the message
               if (timeDiff != null && timeDiff!.inMinutes > 1)
                 Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20, top: 12),
+                  padding: const EdgeInsets.only(left: 16, right: 16, top: 12),
                   child: MessageSenderName(
                     senderId: message.sendBy,
                     isBusiness: isBusiness,

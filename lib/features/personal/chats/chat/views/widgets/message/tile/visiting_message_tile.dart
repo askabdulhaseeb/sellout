@@ -55,6 +55,7 @@ class VisitingMessageTile extends StatelessWidget {
         final String subtitle = tr('your_booking_details');
         return Container(
           decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: showButtons

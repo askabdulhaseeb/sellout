@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../chat_dashboard/data/models/chat/chat_model.dart';
 import '../../../chat_dashboard/data/sources/local/local_unseen_messages.dart';
 import '../providers/chat_provider.dart';
@@ -38,6 +39,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(LocalAuth.currentUser?.token);
     return Consumer<ChatProvider>(
       builder: (BuildContext context, ChatProvider pro, _) {
         final ChatEntity? chat = pro.chat;

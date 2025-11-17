@@ -107,6 +107,7 @@ class _MessagesListState extends State<MessagesList> {
         });
         return Expanded(
           child: ListView.builder(
+            padding: const EdgeInsets.all(0),
             physics: const BouncingScrollPhysics(),
             cacheExtent: 50,
             controller: widget.controller,
