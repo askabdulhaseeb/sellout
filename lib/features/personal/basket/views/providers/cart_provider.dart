@@ -549,6 +549,8 @@ class CartProvider extends ChangeNotifier {
             ),
             builder: (_) => const PaymentSuccessSheet(),
           );
+          // Pop the previous screen after showing the success sheet
+          Navigator.pop(context);
         }
       } else {
         AppSnackBar.show('payment_not_completed'.tr());

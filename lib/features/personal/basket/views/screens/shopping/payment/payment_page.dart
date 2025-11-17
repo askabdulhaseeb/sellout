@@ -77,7 +77,7 @@ class _CartPaymentPageState extends State<CartPaymentPage> {
       await Stripe.instance.presentPaymentSheet();
 
       if (!mounted) return;
-      _returnToReview(message: 'payment_successful'.tr());
+      Navigator.pop(context);
     } on StripeException catch (e) {
       final String message = e.error.message ?? 'payment_failed'.tr();
       _returnToReview(

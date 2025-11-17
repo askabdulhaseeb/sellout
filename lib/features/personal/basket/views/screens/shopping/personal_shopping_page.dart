@@ -19,17 +19,16 @@ class PersonalShoppingPage extends StatefulWidget {
 }
 
 void _clearCartCheckoutState(BuildContext context) {
-  final cartPro = Provider.of<CartProvider>(context, listen: false);
+  final CartProvider cartPro =
+      Provider.of<CartProvider>(context, listen: false);
   cartPro.clearRatesAndCheckout();
 }
 
 @override
 Widget build(BuildContext context) {
-  return WillPopScope(
-    onWillPop: () async {
-      _clearCartCheckoutState(context);
-      return true;
-    },
+  return PopScope(
+    onPopInvokedWithResult: (bool didPop, dynamic result) =>
+        {_clearCartCheckoutState(context)},
     child: PopScope(
       onPopInvokedWithResult: (bool didPop, dynamic result) =>
           context.read<CartProvider>().reset(),

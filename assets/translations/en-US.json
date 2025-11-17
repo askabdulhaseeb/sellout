@@ -800,8 +800,8 @@
   "processing_payment":"Processing Payment",
   "no_item_available": "No item available",
   "invite": "Invite",
-  "work":"Work"
-  ,
+  "work":"Work",
+  "show_in_maps":"Show in Maps",
   "no_supporters_to_invite": "No supporters to invite",
   "no_supporters": "You don’t have any supporters yet",
   "invite_to_group": "Invite to Group",

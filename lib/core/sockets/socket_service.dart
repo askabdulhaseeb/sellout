@@ -22,6 +22,7 @@ class SocketService with WidgetsBindingObserver {
 
     _isInitialized = true;
     WidgetsBinding.instance.addObserver(this);
+    
 
     // 👂 Listen to UID changes
     LocalAuth.uidNotifier.addListener(() {
