@@ -200,6 +200,8 @@
   "select_item": "Select Item",
   "quantity": "Quantity",
   "saved_posts": "Saved posts",
+  "save_post_failed": "Failed to save post. Please try again.",
+  "unsave_post_failed": "Failed to unsave post. Please try again.",
   "size": "Size",
   "color": "Color",
   "total": "Total",

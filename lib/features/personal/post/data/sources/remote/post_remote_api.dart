@@ -242,15 +242,15 @@ class PostRemoteApiImpl implements PostRemoteApi {
 
       if (result is DataSuccess) {
         AppLog.info(
-          'Post report successful',
-          name: 'PostRemoteApiImpl.reportPost - success',
+          'Post save/unsave successful ',
+          name: 'PostRemoteApiImpl.savePost - success',
         );
-        debugPrint('Post report successful: postID = $postID');
+        debugPrint('Post save/unsave successful: postID = $postID');
         return DataSuccess<bool>(result.data ?? '', true);
       } else {
         AppLog.error(
-          result.exception?.message ?? 'Unknown error during report',
-          name: 'PostRemoteApiImpl.reportPost - failed',
+          result.exception?.message ?? 'Unknown error during save/unsave',
+          name: 'PostRemoteApiImpl.savePost - failed',
           error: result.exception,
         );
         return DataFailer<bool>(
@@ -260,7 +260,7 @@ class PostRemoteApiImpl implements PostRemoteApi {
     } catch (e, stk) {
       AppLog.error(
         e.toString(),
-        name: 'PostRemoteApiImpl.reportPost - catch',
+        name: 'PostRemoteApiImpl.savePost - catch',
         error: e,
         stackTrace: stk,
       );
