@@ -130,11 +130,10 @@ class _ReviewItemContent extends StatelessWidget {
       final String shippingSymbol =
           CountryHelper.currencySymbolHelper(shippingCurrency ?? currencyCode);
       shippingLabel = _formatAmountWithSymbol(shippingAmount, shippingSymbol);
-      if (shippingCurrency != null &&
-          shippingCurrency.isNotEmpty &&
-          shippingCurrency == currencyCode) {
-        totalPrice += shippingAmount;
-      }
+
+      // Always add shipping
+      totalPrice += shippingAmount;
+
       if (shippingCurrency != null && shippingCurrency.isNotEmpty) {
         totalCurrencySymbol =
             CountryHelper.currencySymbolHelper(shippingCurrency);
@@ -148,18 +147,60 @@ class _ReviewItemContent extends StatelessWidget {
       address: cartPro.address,
     );
 
+    // ------------------------------------------
+    // ⚡ Attribute Chips
+    // ------------------------------------------
     final List<Widget> attributeChips = <Widget>[];
+
     final String? conditionCode = post?.condition?.code as String?;
     if (conditionCode != null && conditionCode.isNotEmpty) {
       attributeChips.add(_InfoPill(conditionCode));
     }
+
     if (detail.size != null && detail.size!.isNotEmpty) {
       attributeChips.add(_InfoPill('${'size'.tr()}: ${detail.size}'));
     }
+
+    // --------------------------
+    // ⭐ NEW COLORED DOT HERE
+    // --------------------------
     if (detail.color != null && detail.color!.isNotEmpty) {
-      attributeChips.add(_InfoPill('${'color'.tr()}: ${detail.color}'));
+      attributeChips.add(
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface.withOpacity(0.08),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 14,
+                height: 14,
+                decoration: BoxDecoration(
+                  color: Color(
+                    int.parse(
+                      detail.color!.replaceFirst('#', '0xff'),
+                    ),
+                  ),
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                'color'.tr(),
+                style: theme.textTheme.labelSmall,
+              ),
+            ],
+          ),
+        ),
+      );
     }
 
+    // ------------------------------------------
+    // Main UI
+    // ------------------------------------------
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),

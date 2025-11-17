@@ -11,9 +11,8 @@ class ServicesPageExploreCategoriesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // List<ServiceCategoryEntity> categories =
-    //     LocalServiceCategory().getAllCategories();
-    return Column(
+
+    return Column(mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Row(

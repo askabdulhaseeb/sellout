@@ -103,7 +103,6 @@ class OfferBuyNowButton extends StatelessWidget {
                 );
 
                 await Stripe.instance.presentPaymentSheet();
-
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('payment_successful'.tr())),
                 );
