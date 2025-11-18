@@ -6,6 +6,7 @@ import '../../../../../../core/sources/api_call.dart';
 import '../../../../../../core/sources/local/local_request_history.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../basket/domain/usecase/cart/get_cart_usecase.dart';
+import '../../../../chats/chat/domain/params/post_inquiry_params.dart';
 import '../../../domain/entities/post/post_entity.dart';
 import '../../../domain/params/add_to_cart_param.dart';
 import '../../../domain/params/feed_response_params.dart';
@@ -22,6 +23,7 @@ abstract interface class PostRemoteApi {
   Future<DataState<bool>> addToCart(AddToCartParam param);
   Future<DataState<bool>> reportPost(ReportParams params);
   Future<DataState<bool>> savePost(String postID);
+  Future<DataState<bool>> startInquiryChat(PostInquiryParams param);
 }
 
 class PostRemoteApiImpl implements PostRemoteApi {
@@ -261,6 +263,43 @@ class PostRemoteApiImpl implements PostRemoteApi {
       AppLog.error(
         e.toString(),
         name: 'PostRemoteApiImpl.savePost - catch',
+        error: e,
+        stackTrace: stk,
+      );
+      return DataFailer<bool>(CustomException(e.toString()));
+    }
+  }
+
+  @override
+  Future<DataState<bool>> startInquiryChat(PostInquiryParams param) async {
+    const String endpoint = '/chat/inquiry/start';
+    try {
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.post,
+        isAuth: true,
+        body: json.encode(param.toJson()),
+      );
+      if (result is DataSuccess) {
+        AppLog.info(
+          'Inquiry chat started successfully',
+          name: 'PostRemoteApiImpl.startInquiryChat - success',
+        );
+        return DataSuccess<bool>(result.data ?? '', true);
+      } else {
+        AppLog.error(
+          result.exception?.message ?? 'Failed to start inquiry chat',
+          name: 'PostRemoteApiImpl.startInquiryChat - failed',
+          error: result.exception,
+        );
+        return DataFailer<bool>(
+          result.exception ?? CustomException('something_wrong'.tr()),
+        );
+      }
+    } catch (e, stk) {
+      AppLog.error(
+        e.toString(),
+        name: 'PostRemoteApiImpl.startInquiryChat - catch',
         error: e,
         stackTrace: stk,
       );
