@@ -100,6 +100,8 @@ class _PostInquiryDialogState extends State<_PostInquiryDialog> {
       final PostInquiryParams params = PostInquiryParams(
         postId: widget.post.postID,
         text: inquiryText,
+          
+
       );
 
       await createPostInquiryUsecase.call(params);
