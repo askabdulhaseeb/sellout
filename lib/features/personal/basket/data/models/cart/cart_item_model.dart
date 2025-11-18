@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../domain/entities/cart/cart_entity.dart';
 import 'cart_model.dart';

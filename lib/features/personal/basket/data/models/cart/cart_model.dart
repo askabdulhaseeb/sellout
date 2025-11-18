@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../domain/entities/cart/cart_item_entity.dart';
 
 class CartItemModel extends CartItemEntity {
@@ -20,7 +21,7 @@ class CartItemModel extends CartItemEntity {
         color: json['color'],
         size: json['size'],
         cartItemID: json['cart_item_id'],
-        status: json['status'],
+        status: CartItemStatusType.fromJson(json['status']),
       );
 
   factory CartItemModel.fromEntity(CartItemEntity entity) => CartItemModel(

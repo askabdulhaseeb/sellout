@@ -1,3 +1,5 @@
+import '../../../../../../core/enums/cart/cart_item_type.dart';
+
 class AddShippingResponseEntity {
   AddShippingResponseEntity({
     required this.message,
@@ -35,7 +37,7 @@ class AddShippingCartItemEntity {
   final List<SelectedShippingEntity> selectedShipping;
   final String postId;
   final String listId;
-  final String status;
+  final CartItemStatusType status;
   final String? color;
   final String? size;
 }

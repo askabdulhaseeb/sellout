@@ -1,7 +1,7 @@
+import '../../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../domain/entities/cart/add_shipping_response_entity.dart';
 
 class AddShippingResponseModel extends AddShippingResponseEntity {
-
   factory AddShippingResponseModel.fromJson(Map<String, dynamic> json) {
     return AddShippingResponseModel(
       message: json['message']?.toString() ?? '',
@@ -26,13 +26,6 @@ class AddShippingResponseModel extends AddShippingResponseEntity {
 }
 
 class AddShippingCartModel extends AddShippingCartEntity {
-  AddShippingCartModel({
-    required super.updatedAt,
-    required List<AddShippingCartItemModel> items,
-  })  : cartItemsModel = items,
-        super(cartItems: items);
-
-  final List<AddShippingCartItemModel> cartItemsModel;
 
   factory AddShippingCartModel.fromJson(Map<String, dynamic> json) {
     final List<dynamic> rawItems = json['cart_items'] is List
@@ -47,6 +40,13 @@ class AddShippingCartModel extends AddShippingCartEntity {
           .toList(),
     );
   }
+  AddShippingCartModel({
+    required super.updatedAt,
+    required List<AddShippingCartItemModel> items,
+  })  : cartItemsModel = items,
+        super(cartItems: items);
+
+  final List<AddShippingCartItemModel> cartItemsModel;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'updated_at': updatedAt,
@@ -57,19 +57,6 @@ class AddShippingCartModel extends AddShippingCartEntity {
 }
 
 class AddShippingCartItemModel extends AddShippingCartItemEntity {
-  AddShippingCartItemModel({
-    required super.quantity,
-    required super.cartItemId,
-    required List<SelectedShippingModel> selected,
-    required super.postId,
-    required super.listId,
-    required super.status,
-    super.color,
-    super.size,
-  })  : selectedShippingModel = selected,
-        super(selectedShipping: selected);
-
-  final List<SelectedShippingModel> selectedShippingModel;
 
   factory AddShippingCartItemModel.fromJson(Map<String, dynamic> json) {
     final List<dynamic> rawSelected = json['selected_shipping'] is List
@@ -85,11 +72,24 @@ class AddShippingCartItemModel extends AddShippingCartItemEntity {
           .toList(),
       postId: json['post_id']?.toString() ?? '',
       listId: json['list_id']?.toString() ?? '',
-      status: json['status']?.toString() ?? '',
+      status: CartItemStatusType.fromJson(json['status']?.toString() ?? ''),
       color: json['color']?.toString(),
       size: json['size']?.toString(),
     );
   }
+  AddShippingCartItemModel({
+    required super.quantity,
+    required super.cartItemId,
+    required List<SelectedShippingModel> selected,
+    required super.postId,
+    required super.listId,
+    required super.status,
+    super.color,
+    super.size,
+  })  : selectedShippingModel = selected,
+        super(selectedShipping: selected);
+
+  final List<SelectedShippingModel> selectedShippingModel;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'quantity': quantity,
@@ -106,43 +106,6 @@ class AddShippingCartItemModel extends AddShippingCartItemEntity {
 }
 
 class SelectedShippingModel extends SelectedShippingEntity {
-  SelectedShippingModel({
-    ShippingAddressModel? from,
-    ShippingAddressModel? to,
-    required super.deliveryType,
-    super.serviceName,
-    super.rateObjectId,
-    super.parcelIndex,
-    super.convertedCurrency,
-    super.nativeBufferAmount,
-    SelectedShippingParcelModel? parcel,
-    super.parcelId,
-    super.shipmentId,
-    super.provider,
-    super.convertedBufferAmount,
-    SelectedShippingFastDeliveryModel? fastDelivery,
-    super.nativeCurrency,
-    super.coreAmount,
-    super.serviceToken,
-    super.note,
-    super.packagingStrategy,
-    super.parcelCount,
-    super.additionalData,
-  })  : fromAddressModel = from,
-        toAddressModel = to,
-        parcelModel = parcel,
-        fastDeliveryModel = fastDelivery,
-        super(
-          fromAddress: from,
-          toAddress: to,
-          parcel: parcel,
-          fastDelivery: fastDelivery,
-        );
-
-  final ShippingAddressModel? fromAddressModel;
-  final ShippingAddressModel? toAddressModel;
-  final SelectedShippingParcelModel? parcelModel;
-  final SelectedShippingFastDeliveryModel? fastDeliveryModel;
 
   factory SelectedShippingModel.fromJson(Map<String, dynamic> json) {
     final Map<String, dynamic> jsonCopy = Map<String, dynamic>.from(json);
@@ -219,6 +182,43 @@ class SelectedShippingModel extends SelectedShippingEntity {
       additionalData: additional.isEmpty ? null : additional,
     );
   }
+  SelectedShippingModel({
+    ShippingAddressModel? from,
+    ShippingAddressModel? to,
+    required super.deliveryType,
+    super.serviceName,
+    super.rateObjectId,
+    super.parcelIndex,
+    super.convertedCurrency,
+    super.nativeBufferAmount,
+    SelectedShippingParcelModel? parcel,
+    super.parcelId,
+    super.shipmentId,
+    super.provider,
+    super.convertedBufferAmount,
+    SelectedShippingFastDeliveryModel? fastDelivery,
+    super.nativeCurrency,
+    super.coreAmount,
+    super.serviceToken,
+    super.note,
+    super.packagingStrategy,
+    super.parcelCount,
+    super.additionalData,
+  })  : fromAddressModel = from,
+        toAddressModel = to,
+        parcelModel = parcel,
+        fastDeliveryModel = fastDelivery,
+        super(
+          fromAddress: from,
+          toAddress: to,
+          parcel: parcel,
+          fastDelivery: fastDelivery,
+        );
+
+  final ShippingAddressModel? fromAddressModel;
+  final ShippingAddressModel? toAddressModel;
+  final SelectedShippingParcelModel? parcelModel;
+  final SelectedShippingFastDeliveryModel? fastDeliveryModel;
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{
