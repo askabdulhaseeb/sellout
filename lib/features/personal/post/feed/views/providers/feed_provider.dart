@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,7 +9,7 @@ import '../../../../chats/chat/views/providers/chat_provider.dart';
 import '../../../../chats/chat/views/screens/chat_screen.dart';
 import '../../../../chats/chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../../../chats/chat_dashboard/domain/usecase/get_my_chats_usecase.dart';
-import '../../../domain/entities/post_entity.dart';
+import '../../../domain/entities/post/post_entity.dart';
 import '../../../domain/params/create_offer_params.dart';
 import '../../../domain/params/feed_response_params.dart';
 import '../../../domain/params/get_feed_params.dart';
@@ -26,31 +25,59 @@ class FeedProvider extends ChangeNotifier {
     this._getMyChatsUsecase,
     this._updateOfferUsecase,
   );
+
+  // ——————————————————————————————
+  // Dependencies
+  // ——————————————————————————————
   final GetFeedUsecase _getFeedUsecase;
   final CreateOfferUsecase _createOfferUsecase;
   final UpdateOfferUsecase _updateOfferUsecase;
   final GetMyChatsUsecase _getMyChatsUsecase;
-  // final UpdateOfferStatusUsecase _updateOfferStatusUsecase;
 
-  String _offerAmount = '';
-  String get offerAmount => _offerAmount;
-  String? _nextPageToken;
+  // ——————————————————————————————
+  // Feed Data and Pagination
+  // ——————————————————————————————
   final ScrollController scrollController = ScrollController();
-  List<PostEntity> get posts => _posts;
   List<PostEntity> _posts = <PostEntity>[];
-//
+  List<PostEntity> get posts => _posts;
+
+  String? _nextPageToken;
+  bool _noMorePosts = false;
+  bool get noMorePosts => _noMorePosts;
+
+  // ——————————————————————————————
+  // Loading States
+  // ——————————————————————————————
+  bool _feedLoading = false;
+  bool get feedLoading => _feedLoading;
+
+  bool _feedLoadingMore = false;
+  bool get feedLoadingMore => _feedLoadingMore;
+
   bool _isLoading = false;
   bool get isLoading => _isLoading;
-  void setIsLoading(bool value) {
-    _isLoading = value;
+
+  // ——————————————————————————————
+  // Offer Amount
+  // ——————————————————————————————
+  String _offerAmount = '';
+  String get offerAmount => _offerAmount;
+
+  // ——————————————————————————————
+  // Setters
+  // ——————————————————————————————
+  void setFeedLoading(bool value) {
+    _feedLoading = value;
     notifyListeners();
   }
 
-//
-  bool _feedLoading = true;
-  bool get feedLoading => _feedLoading;
-  void setFeedLoading(bool value) {
-    _feedLoading = value;
+  void setFeedLoadingMore(bool value) {
+    _feedLoadingMore = value;
+    notifyListeners();
+  }
+
+  void setIsLoading(bool value) {
+    _isLoading = value;
     notifyListeners();
   }
 
@@ -59,55 +86,94 @@ class FeedProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // ——————————————————————————————
+  // FEED LOGIC
+  // ——————————————————————————————
+
+  /// Load first page of posts
   Future<void> loadInitialFeed(String type) async {
+    AppLog.info('Loading initial feed...',
+        name: 'FeedProvider.loadInitialFeed');
     setFeedLoading(true);
     _nextPageToken = null;
-    _posts = <PostEntity>[];
+    _noMorePosts = false;
+    _posts.clear();
+
     await _fetchFeed(type, _nextPageToken);
+
     setFeedLoading(false);
   }
 
+  /// Load next page of posts (pagination)
   Future<void> loadMoreFeed(String type) async {
-    if (_isLoading || _nextPageToken == null) return;
-    setFeedLoading(true);
-    try {
-      await _fetchFeed(type, _nextPageToken);
-    } finally {
-      setFeedLoading(false);
-    }
+    if (_feedLoadingMore || _nextPageToken == null || _noMorePosts) return;
+
+    AppLog.info('Loading more feed...', name: 'FeedProvider.loadMoreFeed');
+    setFeedLoadingMore(true);
+
+    await _fetchFeed(type, _nextPageToken);
+
+    setFeedLoadingMore(false);
   }
 
+  /// Refresh feed (pull-to-refresh)
+  Future<void> refreshFeed(String type) async {
+    AppLog.info('Refreshing feed...', name: 'FeedProvider.refreshFeed');
+    _nextPageToken = null;
+    _noMorePosts = false;
+    _posts.clear();
+    notifyListeners();
+
+    await loadInitialFeed(type);
+  }
+
+  /// Internal fetch function for API call
   Future<void> _fetchFeed(String type, String? key) async {
     AppLog.info('Fetching feed started', name: 'FeedProvider._fetchFeed');
+    try {
+      final GetFeedParams params = GetFeedParams(type: type, key: key ?? '');
+      final DataState<GetFeedResponse> result = await _getFeedUsecase(params);
 
-    final GetFeedParams params = GetFeedParams(type: type, key: key ?? '');
-    final DataState<GetFeedResponse> result = await _getFeedUsecase(params);
+      if (result is DataSuccess && result.entity != null) {
+        AppLog.info('Feed data success from API',
+            name: 'FeedProvider._fetchFeed');
 
-    if (result is DataSuccess && result.entity != null) {
-      AppLog.info('Feed data success from API',
-          name: 'FeedProvider._fetchFeed');
+        final List<PostEntity> fetchedPosts = result.entity!.posts;
+        _nextPageToken = result.entity!.nextPageToken;
 
-      final List<PostEntity> fetchedPosts = result.entity!.posts;
-      _nextPageToken = result.entity!.nextPageToken;
-      // Merge + dedupe
-      final Map<String, PostEntity> unique = <String, PostEntity>{
-        for (final PostEntity p in <PostEntity>[..._posts, ...fetchedPosts])
-          p.postID: p
-      };
-      _posts = unique.values.toList();
-      AppLog.info('Total unique posts after merge: ${_posts.length}',
-          name: 'FeedProvider._fetchFeed');
-    } else if (result is DataFailer) {
-      AppLog.error(
-        'Feed API failed: ${result.exception?.message ?? 'something_wrong'.tr()}',
-        name: 'FeedProvider._fetchFeed',
-      );
-    } else {
-      AppLog.error('Unknown failure in fetching feed',
-          name: 'FeedProvider._fetchFeed');
+        if (fetchedPosts.isEmpty) {
+          _noMorePosts = true;
+          AppLog.info('No more posts available',
+              name: 'FeedProvider._fetchFeed');
+        } else {
+          // Merge + remove duplicates
+          final Map<String, PostEntity> unique = <String, PostEntity>{
+            for (final PostEntity p in <PostEntity>[..._posts, ...fetchedPosts])
+              p.postID: p
+          };
+          _posts = unique.values.toList();
+          AppLog.info('Total unique posts: ${_posts.length}',
+              name: 'FeedProvider._fetchFeed');
+        }
+      } else if (result is DataFailer) {
+        AppLog.error(
+          result.exception?.message ?? 'something_wrong'.tr(),
+          name: 'FeedProvider._fetchFeed - DataFailer',
+        );
+      } else {
+        AppLog.error('Unknown feed fetch error',
+            name: 'FeedProvider._fetchFeed');
+      }
+    } catch (e) {
+      AppLog.error(e.toString(), name: 'FeedProvider._fetchFeed - Exception');
+    } finally {
+      notifyListeners();
     }
   }
 
+  // ——————————————————————————————
+  // OFFER CREATION
+  // ——————————————————————————————
   Future<DataState<bool>> createOffer({
     required BuildContext context,
     required String postId,
@@ -121,31 +187,33 @@ class FeedProvider extends ChangeNotifier {
     setIsLoading(true);
 
     final CreateOfferparams params = CreateOfferparams(
-        postId: postId,
-        offerAmount: offerAmount,
-        currency: currency,
-        quantity: quantity,
-        listId: listId,
-        size: size,
-        color: color);
+      postId: postId,
+      offerAmount: offerAmount,
+      currency: currency,
+      quantity: quantity,
+      listId: listId,
+      size: size,
+      color: color,
+    );
+
     try {
       final DataState<bool> result = await _createOfferUsecase.call(params);
 
       if (result is DataSuccess && result.data != null) {
-        debugPrint('provider data: ${result.data}');
+        AppLog.info('Offer created successfully',
+            name: 'FeedProvider.createOffer');
 
         final DataState<List<ChatEntity>> chatResult =
             await _getMyChatsUsecase.call(<String>[result.data!]);
+
         if (chatResult is DataSuccess && chatResult.entity!.isNotEmpty) {
           final ChatProvider chatProvider =
               Provider.of<ChatProvider>(context, listen: false);
           chatProvider.setChat(context, chatResult.entity!.first);
-          Navigator.of(context).pushReplacementNamed(
-            ChatScreen.routeName,
-          );
+          Navigator.of(context).pushReplacementNamed(ChatScreen.routeName);
           return result;
         } else if (chatResult is DataFailer) {
-          AppLog.error(result.exception?.message ?? 'something_wrong'.tr(),
+          AppLog.error(chatResult.exception?.message ?? 'something_wrong'.tr(),
               name: 'FeedProvider.createOffer - chatResult failed');
         }
       } else {
@@ -163,6 +231,9 @@ class FeedProvider extends ChangeNotifier {
     return DataFailer<bool>(CustomException('something_wrong'.tr()));
   }
 
+  // ——————————————————————————————
+  // OFFER UPDATE
+  // ——————————————————————————————
   Future<DataState<bool>> updateOffer({
     required BuildContext context,
     required String offerId,
@@ -173,11 +244,11 @@ class FeedProvider extends ChangeNotifier {
     String? offerStatus,
     int? quantity,
     int? offerAmount,
-    // required int? minoffer,
     String size = '',
     String color = '',
   }) async {
     setIsLoading(true);
+
     final UpdateOfferParams params = UpdateOfferParams(
       currency: currency ?? '',
       counterOffer: counterOffer,
@@ -190,11 +261,14 @@ class FeedProvider extends ChangeNotifier {
       size: size,
       color: color,
     );
+
     debugPrint(jsonEncode(params.toMap()));
+
     try {
       final DataState<bool> result = await _updateOfferUsecase.call(params);
       if (result is DataSuccess && result.data != null) {
-        debugPrint('provider data: ${result.data}');
+        AppLog.info('Offer updated successfully',
+            name: 'FeedProvider.updateOffer');
       } else {
         AppLog.error(result.exception?.message ?? 'something_wrong'.tr(),
             name: 'FeedProvider.updateOffer - API failed');
@@ -205,6 +279,7 @@ class FeedProvider extends ChangeNotifier {
     } finally {
       setIsLoading(false);
     }
+
     return DataFailer<bool>(CustomException('something_wrong'.tr()));
   }
 }

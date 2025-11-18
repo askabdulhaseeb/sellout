@@ -13,7 +13,7 @@ class GettedMessageModel extends GettedMessageEntity {
     return GettedMessageModel(
       chatID: chatID,
       messages: List<MessageModel>.from((map['messages'] ?? <dynamic>[])
-          ?.map((dynamic x) => MessageModel.fromJson(x))),
+          ?.map((dynamic x) => MessageModel.fromMap(x))),
       lastEvaluatedKey: map['lastEvaluatedKey'] == null
           ? null
           : MessageLastEvaluatedKeyModel.fromMap(

@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../providers/send_message_provider.dart';
 
 class SendMessageFIeld extends StatelessWidget {
@@ -12,7 +12,11 @@ class SendMessageFIeld extends StatelessWidget {
     return Consumer<SendMessageProvider>(
       builder: (_, SendMessageProvider msgPro, __) {
         return CustomTextFormField(
-          readOnly: msgPro.isLoading ? true : false,
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+          dense: true,
+          keyboardType: TextInputType.multiline,
+          autoFocus: true,
           controller: msgPro.message,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(5),

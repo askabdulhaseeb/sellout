@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/utilities/app_validators.dart';
-import '../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../core/widgets/custom_textformfield.dart';
 import '../providers/add_service_provider.dart';
 
 class AddServiceDescriptionSection extends StatelessWidget {

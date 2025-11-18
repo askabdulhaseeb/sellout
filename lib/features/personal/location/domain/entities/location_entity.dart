@@ -21,7 +21,7 @@ class LocationEntity {
   @HiveField(3)
   final String? address;
   @HiveField(4)
-  final double? latitude;
+  final double latitude;
   @HiveField(5)
-  final double? longitude;
+  final double longitude;
 }

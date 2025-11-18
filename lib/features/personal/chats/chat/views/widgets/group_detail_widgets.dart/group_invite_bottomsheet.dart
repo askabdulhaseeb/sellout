@@ -1,8 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
 import '../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../core/widgets/profile_photo.dart';
 import '../../../../../../../services/get_it.dart';
@@ -27,7 +25,6 @@ void showInviteBottomSheet(BuildContext context, ChatProvider pro) {
       final UserEntity? user = result.entity;
       if (user != null) users.add(user);
     }
-
     return users;
   }
 
@@ -36,7 +33,6 @@ void showInviteBottomSheet(BuildContext context, ChatProvider pro) {
           .map((ChatParticipantEntity e) => e.uid)
           .toList() ??
       <String>[];
-
   final List<SupporterDetailEntity> supporters =
       LocalAuth.currentUser?.supporters ?? <SupporterDetailEntity>[];
 
@@ -98,11 +94,14 @@ void showInviteBottomSheet(BuildContext context, ChatProvider pro) {
                   child: isAlreadyParticipant
                       ? CustomElevatedButton(
                           isLoading: false,
-                          bgColor: AppTheme.secondaryColor.withAlpha(30),
-                          textColor: AppTheme.secondaryColor,
+                          bgColor: Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withAlpha(30),
+                          textColor: Theme.of(context).colorScheme.secondary,
                           textStyle: Theme.of(context).textTheme.bodySmall,
                           title: 'participant'.tr(),
-                          onTap: () {}, // disabled
+                          onTap: () {},
                         )
                       : isAlreadyInvited
                           ? CustomElevatedButton(
@@ -111,12 +110,13 @@ void showInviteBottomSheet(BuildContext context, ChatProvider pro) {
                               textColor: Colors.grey,
                               textStyle: Theme.of(context).textTheme.bodySmall,
                               title: 'invited'.tr(),
-                              onTap: () {}, // disabled
+                              onTap: () {},
                             )
                           : CustomElevatedButton(
                               isLoading: false,
-                              bgColor: AppTheme.primaryColor.withAlpha(30),
-                              textColor: AppTheme.primaryColor,
+                              bgColor:
+                                  Theme.of(context).primaryColor.withAlpha(30),
+                              textColor: Theme.of(context).primaryColor,
                               textStyle: Theme.of(context).textTheme.bodySmall,
                               title: 'invite'.tr(),
                               onTap: () {

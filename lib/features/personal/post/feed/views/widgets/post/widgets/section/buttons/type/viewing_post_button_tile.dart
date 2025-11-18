@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../../../routes/app_linking.dart';
 import '../../../../../../../../../visits/view/book_visit/screens/booking_screen.dart';
-import '../../../../../../../../domain/entities/post_entity.dart';
+import '../../../../../../../../domain/entities/post/post_entity.dart';
 import 'widgets/post_make_offer_button.dart';
 
 class ViewingPostButtonTile extends StatelessWidget {

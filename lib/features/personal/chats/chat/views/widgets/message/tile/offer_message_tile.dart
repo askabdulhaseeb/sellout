@@ -30,6 +30,7 @@ class OfferMessageTile extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(8),
       ),
+      margin: EdgeInsets.all(showButtons ? 0 : 16),
       padding: const EdgeInsets.all(8),
       child: Column(
         children: <Widget>[

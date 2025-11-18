@@ -22,7 +22,8 @@ class SendMessagePanel extends StatelessWidget {
           msgPro.stopRecording(),
       child: Container(
         padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(color: Theme.of(context).dividerColor),
+        decoration:
+            BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
         child: ValueListenableBuilder<TextEditingValue>(
           valueListenable: msgPro.message,
           builder: (BuildContext context, TextEditingValue messageValue, _) {

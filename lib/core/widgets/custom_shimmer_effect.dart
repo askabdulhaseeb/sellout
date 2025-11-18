@@ -1,14 +1,32 @@
 import 'package:flutter/material.dart';
 
-class CustomShimmer extends StatefulWidget {
-  const CustomShimmer({required this.child, super.key});
+const LinearGradient _shimmerGradient = LinearGradient(
+  colors: <Color>[
+    Color(0xFFE7E7E7),
+    Color(0xFFFDFDFD),
+    Color(0xFFE7E7E7),
+  ],
+  stops: <double>[0.25, 0.5, 0.75],
+  begin: Alignment(-1.0, -0.3),
+  end: Alignment(1.0, 0.3),
+  tileMode: TileMode.clamp,
+);
+
+class ShimmerLoading extends StatefulWidget {
+  const ShimmerLoading({
+    required this.isLoading,
+    required this.child,
+    super.key,
+  });
+
+  final bool isLoading;
   final Widget child;
 
   @override
-  State<CustomShimmer> createState() => _CustomShimmerState();
+  State<ShimmerLoading> createState() => _ShimmerLoadingState();
 }
 
-class _CustomShimmerState extends State<CustomShimmer>
+class _ShimmerLoadingState extends State<ShimmerLoading>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
@@ -17,7 +35,7 @@ class _CustomShimmerState extends State<CustomShimmer>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(seconds: 2),
     )..repeat();
   }
 
@@ -29,23 +47,26 @@ class _CustomShimmerState extends State<CustomShimmer>
 
   @override
   Widget build(BuildContext context) {
+    if (!widget.isLoading) {
+      return widget.child;
+    }
+
     return AnimatedBuilder(
       animation: _controller,
-      builder: (BuildContext context, _) {
+      builder: (BuildContext context, Widget? child) {
+        // Shift gradient to create shimmer effect
+        final double slidePercent = _controller.value * 2 - 1; // -1 to 1
         return ShaderMask(
-          shaderCallback: (Rect bounds) {
-            return LinearGradient(
-              colors: <Color>[
-                Colors.grey.shade300,
-                Colors.white,
-                Colors.grey.shade300
-              ],
-              stops: const <double>[0.1, 0.5, 0.9],
-              begin: Alignment(-1.0 - 3.0 * _controller.value, 0),
-              end: Alignment(1.0 + 3.0 * _controller.value, 0),
-            ).createShader(bounds);
-          },
           blendMode: BlendMode.srcATop,
+          shaderCallback: (Rect bounds) {
+            final Rect rect = Rect.fromLTWH(
+              bounds.width * slidePercent,
+              0.0,
+              bounds.width,
+              bounds.height,
+            );
+            return _shimmerGradient.createShader(rect);
+          },
           child: widget.child,
         );
       },

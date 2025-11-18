@@ -22,7 +22,7 @@ class CustomNetworkImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String placeholderText = placeholder.isEmpty
-        ? '/'
+        ? ''
         : placeholder.length > 1
             ? placeholder.substring(0, 2)
             : placeholder;

@@ -46,7 +46,6 @@ class BookingProvider extends ChangeNotifier {
   MessageEntity? _messageentity;
   List<UserEntity> employees = <UserEntity>[];
   UserEntity? selectedEmployee;
-
   DateTime get selectedDate => _selectedDate;
   String? get selectedTime => _selectedTime;
   bool get isLoading => _isLoading;

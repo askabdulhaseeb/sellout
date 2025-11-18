@@ -9,7 +9,7 @@ import '../features/personal/auth/find_account/view/screens/send_code_screen.dar
 import '../features/personal/auth/signin/views/screens/verify_two_factor_screen.dart';
 import '../features/personal/auth/welcome_screen/view/screens/welcome_screen.dart';
 import '../features/personal/visits/view/visit_calender.dart/screens/visit_calender_screen.dart';
-import '../features/personal/cart/views/screens/personal_cart_screen.dart';
+import '../features/personal/basket/views/screens/personal_shopping_basket_screen.dart';
 import '../features/personal/chats/chat/views/screens/chat_screen.dart';
 import '../features/personal/listing/listing_form/views/screens/add_listing_form_screen.dart';
 import '../features/personal/auth/signin/views/screens/sign_in_screen.dart';
@@ -31,7 +31,6 @@ import '../features/personal/services/service_detail/screens/service_detail_scre
 import '../features/personal/setting/setting_dashboard/view/screens/personal_more_information_setting_screen.dart';
 import '../features/personal/setting/setting_options/account_edit/screens/edit_setting_account_screen.dart';
 import '../features/personal/setting/setting_options/account_edit/screens/personal_setting_account.dart';
-import '../features/personal/setting/setting_options/balance_screen/screens/balance_screen.dart';
 import '../features/personal/setting/setting_options/privacy_setting/screen/privacy_screen.dart';
 import '../features/personal/setting/setting_options/security/screens/setting_security_screen.dart';
 import '../features/personal/setting/setting_options/setting_notification/screens/pages/personal_setting_email_notification_screen.dart';
@@ -49,6 +48,7 @@ import '../features/personal/setting/setting_options/time_away/screens/automatic
 import '../features/personal/setting/setting_options/time_away/screens/time_away_screen.dart';
 import '../features/personal/user/profiles/views/params/about_us.dart';
 import '../features/personal/user/profiles/views/screens/edit_profile_screen.dart';
+import '../features/settings/views/screens/connect_bank_screen.dart';
 import 'app_linking.dart';
 
 class AppRoutes {
@@ -101,6 +101,7 @@ class AppRoutes {
     VerifyTwoFactorScreen.routeName: (_) => const VerifyTwoFactorScreen(),
     // DAHSBOARD
     DashboardScreen.routeName: (_) => const DashboardScreen(),
+    //add listings
     AddListingFormScreen.routeName: (_) => const AddListingFormScreen(),
     // POST
     PostDetailScreen.routeName: (_) => const PostDetailScreen(),
@@ -112,18 +113,11 @@ class AppRoutes {
     ChatScreen.routeName: (_) => const ChatScreen(),
     //BOOKING
     BookingScreen.routeName: (_) => const BookingScreen(),
-    // CART
-    PersonalCartScreen.routeName: (_) => const PersonalCartScreen(),
-
+    // Shoppig Basket
+    PersonalShoppingBasketScreen.routeName: (_) =>
+        const PersonalShoppingBasketScreen(),
     //Review
     WriteReviewScreen.routeName: (_) => const WriteReviewScreen(),
-    // Explore
-    // ExplorePopularScreen.routeName: (_) => const ExplorePopularScreen(),
-    // ExploreCLothFOotScreen.routeName: (_) => const ExploreCLothFOotScreen(),
-    // ExplorePetsScreen.routeName: (_) => const ExplorePetsScreen(),
-    // ExplorePropertyScreen.routeName: (_) => const ExplorePropertyScreen(),
-    // ExploreFoodDrinkScreen.routeName: (_) => const ExploreFoodDrinkScreen(),
-    // ExploreVehiclesScreen.routeName: (_) => const ExploreVehiclesScreen(),
     // Profile
     EditProfileScreen.routeName: (_) => const EditProfileScreen(),
     //services
@@ -158,11 +152,12 @@ class AppRoutes {
     CommunityStandardsScreen.routeName: (_) => const CommunityStandardsScreen(),
     AboutUsScreen.routeName: (_) => const AboutUsScreen(),
     ChangePasswordScreen.routeName: (_) => const ChangePasswordScreen(),
-    BalanceScreen.routeName: (_) => const BalanceScreen(),
     YourOrdersScreen.routeName: (_) => const YourOrdersScreen(),
     OrderBuyerScreen.routeName: (_) => const OrderBuyerScreen(),
     SavedPostsPage.routeName: (_) => const SavedPostsPage(),
     BuyAgainScreen.routeName: (_) => const BuyAgainScreen(),
+    ConnectBankScreen.routeName: (_) => const ConnectBankScreen(),
+    //
     VisitCalenderScreen.routeName: (_) => const VisitCalenderScreen(),
   };
 }

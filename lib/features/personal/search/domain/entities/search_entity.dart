@@ -1,11 +1,11 @@
 import '../../../../business/core/domain/entity/service/service_entity.dart';
-import '../../../post/domain/entities/post_entity.dart';
+import '../../../post/domain/entities/post/post_entity.dart';
 import '../../../user/profiles/domain/entities/user_entity.dart';
 
 class SearchEntity {
-
   SearchEntity({
-    required this.count, this.posts,
+    required this.count,
+    this.posts,
     this.users,
     this.services,
     this.lastEvaluatedKey,
@@ -15,7 +15,7 @@ class SearchEntity {
   final List<ServiceEntity>? services;
   final int count;
   final String? lastEvaluatedKey;
-  
+
   SearchEntity copyWith({
     List<PostEntity>? posts,
     List<UserEntity>? users,

@@ -1,13 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../../../../../../core/dialogs/cart/add_to_cart_dialog.dart';
+import '../../../../../../../../../../../../core/dialogs/post/post_tile_cloth_foot_dialog.dart';
 import '../../../../../../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../../../../services/get_it.dart';
-import '../../../../../../../../../domain/entities/post_entity.dart';
+import '../../../../../../../../../domain/entities/post/post_entity.dart';
 import '../../../../../../../../../domain/entities/size_color/color_entity.dart';
 import '../../../../../../../../../domain/entities/size_color/size_color_entity.dart';
 import '../../../../../../../../../domain/params/add_to_cart_param.dart';
@@ -39,10 +39,14 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
     setState(() => isLoading = true);
 
     try {
-      if (widget.post.sizeColors.isNotEmpty && !widget.detailWidget) {
+      if (widget.post.type == ListingType.clothAndFoot &&
+          !widget.detailWidget) {
         await showDialog(
           context: context,
-          builder: (_) => AddToCartDialog(post: widget.post),
+          builder: (_) => PostTileClothFootDialog(
+            post: widget.post,
+            actionType: PostTileClothFootType.add,
+          ),
         );
       } else if (widget.post.listID == ListingType.clothAndFoot.json) {
         final AddToCartUsecase usecase = AddToCartUsecase(locator());
@@ -55,10 +59,9 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
         );
         if (result is DataSuccess) {
           if (mounted) {
-            AppSnackBar.showSnackBar(
+            AppSnackBar.info(
               context,
               'successfull_add_to_basket'.tr(),
-              backgroundColor: Colors.green,
             );
           }
         } else {
@@ -70,7 +73,7 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
           if (mounted) {
             AppSnackBar.showSnackBar(
               context,
-              result.exception?.message ?? 'something_wrong'.tr(),
+              result.exception?.detail ?? 'something_wrong'.tr(),
             );
           }
         }
@@ -81,10 +84,9 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
         );
         if (result is DataSuccess) {
           if (mounted) {
-            AppSnackBar.showSnackBar(
+            AppSnackBar.success(
               context,
               'successfull_add_to_basket'.tr(),
-              backgroundColor: Colors.green,
             );
           }
         } else {
@@ -94,9 +96,9 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
             error: result.exception,
           );
           if (mounted) {
-            AppSnackBar.showSnackBar(
+            AppSnackBar.error(
               context,
-              result.exception?.message ?? 'something_wrong'.tr(),
+              result.exception?.detail ?? 'something_wrong'.tr(),
             );
           }
         }
@@ -128,8 +130,7 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
       border: Border.all(color: color, width: 2),
       textColor: color,
       textStyle: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.w400,
         color: color,
       ),
     );

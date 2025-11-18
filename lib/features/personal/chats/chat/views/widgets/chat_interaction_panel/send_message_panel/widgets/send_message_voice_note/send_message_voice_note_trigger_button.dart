@@ -6,9 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:just_audio/just_audio.dart';
-
 import '../../../../../../../../../../core/helper_functions/duration_format_helper.dart';
-import '../../../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../../../../../attachment/domain/entities/attachment_entity.dart';
@@ -23,56 +21,76 @@ class VoiceRecordTrigger extends StatefulWidget {
 }
 
 class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
-  // Recorder & waveform
   final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
   late final RecorderController _waveformController;
-
-  // Send message provider
   late final SendMessageProvider _msgPro;
 
-  // State
   bool _isRecording = false;
   String? _recordPath;
   Duration _duration = Duration.zero;
+  bool _recorderInitialized = false;
 
   @override
   void initState() {
     super.initState();
-
     _msgPro = Provider.of<SendMessageProvider>(context, listen: false);
     _waveformController = RecorderController();
-    _initializeRecorder();
   }
 
+  /// Ensures recorder is ready after permission is granted
   Future<void> _initializeRecorder() async {
-    final PermissionStatus status = await Permission.microphone.request();
-    if (!status.isGranted) return;
+    if (_recorderInitialized) return;
     await _recorder.openRecorder();
     await _recorder.setSubscriptionDuration(const Duration(milliseconds: 100));
+    _recorderInitialized = true;
   }
 
   Future<void> _playSound(String assetPath) async {
     final AudioPlayer player = AudioPlayer();
     try {
-      await player.setAsset(assetPath); // Load asset
-      await player.play(); // Play immediately
+      await player.setAsset(assetPath);
+      await player.play();
     } catch (e) {
       debugPrint('Error playing sound $assetPath: $e');
     } finally {
-      player.dispose(); // Dispose after playing
+      player.dispose();
     }
   }
 
   Future<void> _startRecording() async {
+    // Check permission first
+    PermissionStatus status = await Permission.microphone.status;
+
+    if (!status.isGranted) {
+      status = await Permission.microphone.request();
+    }
+
+    if (status.isPermanentlyDenied) {
+      openAppSettings();
+      return;
+    }
+
+    if (!status.isGranted) {
+      // Permission denied but not permanent → stop here
+      return;
+    }
+
+    // Permission granted → initialize recorder if not already
+    await _initializeRecorder();
+
+    // Prepare file path
     final Directory dir = await getApplicationDocumentsDirectory();
     _recordPath =
         '${dir.path}/audio_${DateTime.now().millisecondsSinceEpoch}.aac';
+
+    // Start recording
     await _recorder.startRecorder(toFile: _recordPath, codec: Codec.aacADTS);
     _waveformController.record();
     _playSound(AppStrings.recordingStartSound);
     _msgPro.startRecording();
-    // Listen to real duration
-    _recorder.onProgress!.listen((RecordingDisposition event) {
+
+    // Track duration
+    _recorder.onProgress?.listen((RecordingDisposition event) {
       setState(() {
         _duration = event.duration;
       });
@@ -109,7 +127,6 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
         _msgPro.sendVoiceNote(context);
       }
     }
-
     _recordPath = null;
   }
 
@@ -139,7 +156,7 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
         children: <Widget>[
           if (_isRecording)
             CustomIconButton(
-              bgColor: AppTheme.primaryColor.withValues(alpha: 0.1),
+              bgColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
               onPressed: _deleteRecording,
               icon: Icons.delete,
               iconColor: Theme.of(context).colorScheme.error,
@@ -149,10 +166,10 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
               child: AudioWaveforms(
                 size: const Size(double.infinity, 40),
                 recorderController: _waveformController,
-                waveStyle: const WaveStyle(
+                waveStyle: WaveStyle(
                   waveThickness: 2,
                   scaleFactor: 50,
-                  waveColor: AppTheme.primaryColor,
+                  waveColor: Theme.of(context).primaryColor,
                   extendWaveform: true,
                   showMiddleLine: false,
                 ),
@@ -199,7 +216,7 @@ class _RecordingMicWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: AppTheme.secondaryColor.withValues(alpha: 0.3),
+        color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.3),
       ),
       child: Row(
         children: <Widget>[
@@ -213,7 +230,7 @@ class _RecordingMicWidget extends StatelessWidget {
           const SizedBox(width: 8),
           _PulsatingMic(
             isRecording: isRecording,
-            color: AppTheme.secondaryColor,
+            color: Theme.of(context).colorScheme.secondary,
             onPressed: onSendRecording,
           ),
         ],
@@ -251,11 +268,11 @@ class _PulsatingMicState extends State<_PulsatingMic>
     );
 
     _animation = TweenSequence<double>(
-      [
+      <TweenSequenceItem<double>>[
         TweenSequenceItem<double>(
-            tween: Tween<double>(begin: 1.0, end: 1.3), weight: 50),
+            tween: Tween<double>(begin: 1.0, end: 1.3), weight: 10),
         TweenSequenceItem<double>(
-            tween: Tween<double>(begin: 1.3, end: 1.0), weight: 50),
+            tween: Tween<double>(begin: 1.3, end: 1.0), weight: 10),
       ],
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 

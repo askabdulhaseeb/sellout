@@ -1,12 +1,20 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+
 import 'package:provider/provider.dart';
+import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/dropdowns/color_dropdown.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
-import '../../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../../core/widgets/custom_dropdown.dart';
+import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
+
+import '../../../../../marketplace/views/widgets/market_categorized_filters_page_widgets/widgets/vehicle_filter/widget/year_picker_dropdown.dart';
+import '../../../data/sources/local/local_categories.dart';
+import '../../../domain/entities/category_entites/subentities/dropdown_option_entity.dart';
+import '../../../domain/entities/category_entites/subentities/parent_dropdown_entity.dart';
+import '../../../domain/entities/color_options_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
-import '../custom_listing_dropdown.dart';
 
 class AddListingVehicleBasicInfoSection extends StatefulWidget {
   const AddListingVehicleBasicInfoSection({super.key});
@@ -20,145 +28,214 @@ class _AddListingVehicleBasicInfoSectionState
     extends State<AddListingVehicleBasicInfoSection> {
   @override
   Widget build(BuildContext context) {
+    final List<DropdownOptionEntity> vehiclecatgory =
+        LocalCategoriesSource.vehicles ?? <DropdownOptionEntity>[];
+    final List<ParentDropdownEntity> bodyType =
+        LocalCategoriesSource.bodyType ?? <ParentDropdownEntity>[];
+    final List<DropdownOptionEntity> fuelType =
+        LocalCategoriesSource.fuelType ?? <DropdownOptionEntity>[];
+    final List<DropdownOptionEntity> make =
+        LocalCategoriesSource.make ?? <DropdownOptionEntity>[];
+    final List<DropdownOptionEntity> transmission =
+        LocalCategoriesSource.transmission ?? <DropdownOptionEntity>[];
+    final List<DropdownOptionEntity> emissionStandards =
+        LocalCategoriesSource.emissionStandards ?? <DropdownOptionEntity>[];
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         return Column(
+          spacing: AppSpacing.vSm,
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            /// Price
-            CustomTextFormField(
-                controller: formPro.price,
-                labelText: 'price'.tr(),
-                hint: 'Ex. 12000.0',
-                showSuffixIcon: false,
-                readOnly: formPro.isLoading,
-                prefixText: LocalAuth.currency.toUpperCase(),
-                keyboardType: TextInputType.number,
-                validator: (String? value) => AppValidator.isEmpty(value)),
+            /// Category
+            CustomDropdown<DropdownOptionEntity>(
+              items: vehiclecatgory.map((DropdownOptionEntity opt) {
+                return DropdownMenuItem<DropdownOptionEntity>(
+                  value: opt,
+                  child: Text(opt.label),
+                );
+              }).toList(),
+              selectedItem: formPro.findByValue(
+                  //The static method 'findByValue' can't be accessed through an instance.
+//Try using the class 'AddListingFormProvider' to access the method
+                  vehiclecatgory,
+                  formPro.selectedVehicleCategory ?? ''),
+              validator: (bool? value) => AppValidator.requireSelection(value),
+              hint: 'select_category'.tr(),
+              title: 'category'.tr(),
+              onChanged: (DropdownOptionEntity? value) =>
+                  formPro.setVehicleCategory(value?.value.value),
+            ),
 
             /// Year
-            CustomTextFormField(
-                controller: formPro.year,
-                labelText: 'year'.tr(),
-                hint: 'Ex. 2025',
-                showSuffixIcon: false,
-                readOnly: formPro.isLoading,
-                keyboardType: TextInputType.number,
-                validator: (String? value) => AppValidator.isEmpty(value)),
-
-            /// Body type dynamic dropdown *second part of address
-            CustomListingDropDown<AddListingFormProvider>(
-              validator: (bool? p0) => null,
-              hint: 'body_type',
-              parentValue: formPro.selectedVehicleCategory,
-              categoryKey: 'body_type',
-              selectedValue: formPro.selectedBodyType,
-              title: 'body_type',
-              onChanged: (String? value) => formPro.setBodyType(value ?? ''),
+            CustomYearDropdown(
+              hintText: 'year'.tr(),
+              title: 'year'.tr(),
+              selectedYear: formPro.year,
+              onChanged: (String? value) => formPro.setYear(value),
+              validator: (bool? value) => AppValidator.requireSelection(value),
             ),
 
-            /// Emission standard dynamic dropdown
-            CustomListingDropDown<AddListingFormProvider>(
-              validator: (bool? p0) => null,
-              hint: 'emission_standards',
-              categoryKey: 'emission_standards',
-              selectedValue: formPro.emission,
-              title: 'emission_standards',
-              onChanged: (String? value) => formPro.setemissionType(value),
+            AddListingBodyTypeWidget(list: bodyType),
+            // 🔹 Emission standard
+            CustomDropdown<DropdownOptionEntity>(
+              items: emissionStandards
+                  .map((DropdownOptionEntity e) =>
+                      DropdownMenuItem<DropdownOptionEntity>(
+                        value: e,
+                        child: Text(e.label),
+                      ))
+                  .toList(),
+              selectedItem: formPro.findByValue(
+                  emissionStandards, formPro.emission ?? ''),
+              validator: (bool? value) => AppValidator.requireSelection(value),
+              hint: 'emission_standards'.tr(),
+              title: 'emission_standards'.tr(),
+              onChanged: (DropdownOptionEntity? value) =>
+                  formPro.setEmissionType(value?.value.value),
             ),
 
-            /// Make dynamic dropdown
-            CustomListingDropDown<AddListingFormProvider>(
-              validator: (bool? p0) => null,
-              hint: 'make',
-              categoryKey: 'make',
-              selectedValue: formPro.make,
+            // 🔹 Make
+            CustomDropdown<DropdownOptionEntity>(
+              items: make
+                  .map((DropdownOptionEntity e) =>
+                      DropdownMenuItem<DropdownOptionEntity>(
+                        value: e,
+                        child: Text(e.label),
+                      ))
+                  .toList(),
+              selectedItem: formPro.findByValue(make, formPro.make ?? ''),
+              validator: (bool? value) => AppValidator.requireSelection(value),
+              hint: 'make'.tr(),
               title: 'make'.tr(),
-              onChanged: (String? value) => formPro.seteMake(value),
+              onChanged: (DropdownOptionEntity? value) =>
+                  formPro.setMake(value?.value.value),
             ),
 
-            /// Model field
+            // 🔹 Fuel type
+            CustomDropdown<DropdownOptionEntity>(
+              items: fuelType
+                  .map((DropdownOptionEntity e) =>
+                      DropdownMenuItem<DropdownOptionEntity>(
+                        value: e,
+                        child: Text(e.label),
+                      ))
+                  .toList(),
+              selectedItem:
+                  formPro.findByValue(fuelType, formPro.fuelType ?? ''),
+              validator: (bool? value) => AppValidator.requireSelection(value),
+              hint: 'fuel_type'.tr(),
+              title: 'fuel_type'.tr(),
+              onChanged: (DropdownOptionEntity? value) =>
+                  formPro.setFuelType(value?.value.value),
+            ),
+
+            // 🔹 Transmission
+            CustomDropdown<DropdownOptionEntity>(
+              items: transmission
+                  .map((DropdownOptionEntity e) =>
+                      DropdownMenuItem<DropdownOptionEntity>(
+                        value: e,
+                        child: Text(e.label),
+                      ))
+                  .toList(),
+              selectedItem: formPro.findByValue(
+                  transmission, formPro.transmissionType ?? ''),
+              validator: (bool? value) => AppValidator.requireSelection(value),
+              hint: 'transmission'.tr(),
+              title: 'transmission'.tr(),
+              onChanged: (DropdownOptionEntity? value) =>
+                  formPro.setTransmissionType(value?.value.value ?? ''),
+            ),
+
+            /// Color dropdown
+            ColorDropdown(
+              validator: (bool? value) => AppValidator.requireSelection(value),
+              title: 'color'.tr(),
+              selectedColor: formPro.selectedVehicleColor,
+              onColorChanged: (ColorOptionEntity? value) =>
+                  formPro.setVehicleColor(value),
+            ),
+
+            /// Price
+            CustomTextFormField(
+              controller: formPro.price,
+              labelText: 'price'.tr(),
+              hint: 'Ex. 12000.0',
+              showSuffixIcon: false,
+              readOnly: formPro.isLoading,
+              prefixText: LocalAuth.currency.toUpperCase(),
+              keyboardType: TextInputType.number,
+              validator: (String? value) => AppValidator.isEmpty(value),
+            ),
+
+            /// Model
             CustomTextFormField(
               controller: formPro.model,
               labelText: 'model'.tr(),
-              hint: 'Ex. Toyota Camry or Corolla',
+              hint: 'model'.tr(),
               showSuffixIcon: false,
               readOnly: formPro.isLoading,
               keyboardType: TextInputType.text,
-              validator: AppValidator.isEmpty,
+              validator: (String? value) => AppValidator.isEmpty(value),
             ),
-
-            /// Fuel type dynamic dropdown
-            CustomListingDropDown<AddListingFormProvider>(
-              validator: (bool? p0) => null,
-              hint: 'fuel_type',
-              categoryKey: 'fuel_type',
-              selectedValue: formPro.fuelTYpe,
-              title: 'fuel_type',
-              onChanged: (String? value) => formPro.setFuelType(value),
-            ),
-
-            /// Transmission dynamic dropdown
-            CustomListingDropDown<AddListingFormProvider>(
-              validator: (bool? p0) => null,
-              hint: 'transmission',
-              categoryKey: 'transmission',
-              selectedValue: formPro.transmissionType,
-              title: 'transmission',
-              onChanged: (String? value) =>
-                  formPro.setTransmissionType(value ?? ''),
-            ),
-
-            ColorDropdown(
-              validator: (bool? p0) => null,
-              title: 'color'.tr(),
-              selectedColor: formPro.selectedVehicleColor,
-              onColorChanged: (String? value) =>
-                  formPro.setVehicleColor(value ?? ''),
-            )
-
-            /// Color with color dots
-            //   FutureBuilder<List<ColorOptionEntity>>(
-            //     future: formPro.(),
-            //     builder: (BuildContext context,
-            //         AsyncSnapshot<List<ColorOptionEntity>> snapshot) {
-            //       if (snapshot.connectionState == ConnectionState.waiting) {
-            //         return const Center(child: CircularProgressIndicator());
-            //       }
-            //       final List<ColorOptionEntity> colorOptionsList =
-            //           snapshot.data ?? [];
-            //       return CustomDropdown<String>(
-            //         isSearchable: true,
-            //         padding: const EdgeInsets.symmetric(vertical: 4),
-            //         hint: 'color'.tr(),
-            //         selectedItem: formPro.selectedVehicleColor,
-            //         title: 'color'.tr(),
-            //         validator: (_) => null,
-            //         items: colorOptionsList.map((ColorOptionEntity color) {
-            //           return DropdownMenuItem<String>(
-            //             value: color.value,
-            //             child: Row(
-            //               children: <Widget>[
-            //                 CircleAvatar(
-            //                   radius: 10,
-            //                   backgroundColor: Color(
-            //                     int.parse(
-            //                         '0xFF${color.value.replaceAll('#', '')}'),
-            //                   ),
-            //                 ),
-            //                 const SizedBox(width: 8),
-            //                 Expanded(child: Text(color.label)),
-            //               ],
-            //             ),
-            //           );
-            //         }).toList(),
-            //         onChanged: (String? newValue) =>
-            //             formPro.setVehicleColor(newValue ?? ''),
-            //       );
-            //     },
-            //   ),
           ],
+        );
+      },
+    );
+  }
+}
+
+class AddListingBodyTypeWidget extends StatelessWidget {
+  const AddListingBodyTypeWidget({
+    required this.list,
+    super.key,
+  });
+
+  final List<ParentDropdownEntity> list;
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<AddListingFormProvider>(
+      builder: (BuildContext context, AddListingFormProvider formPro, _) {
+        // Find matches safely
+        final Iterable<ParentDropdownEntity> matches = list.where(
+          (ParentDropdownEntity p) =>
+              p.category == formPro.selectedVehicleCategory,
+        );
+
+        // Get the first match or null
+        final ParentDropdownEntity? match =
+            matches.isNotEmpty ? matches.first : null;
+
+        // Options are empty if no match
+        final List<DropdownOptionEntity> options =
+            match?.options ?? <DropdownOptionEntity>[];
+
+        return CustomDropdown<DropdownOptionEntity>(
+          items: options
+              .map(
+                (DropdownOptionEntity opt) =>
+                    DropdownMenuItem<DropdownOptionEntity>(
+                  value: opt,
+                  child: Text(opt.label),
+                ),
+              )
+              .toList(),
+
+          // selectedItem safe
+          selectedItem: ParentDropdownEntity.getOptionByValue(
+            formPro.selectedBodyType ?? '',
+            options,
+          ),
+
+          validator: (bool? value) => AppValidator.requireSelection(value),
+          hint: 'body_type'.tr(),
+          title: 'body_type'.tr(),
+
+          // onChanged safe
+          onChanged: (DropdownOptionEntity? value) =>
+              formPro.setBodyType(value?.value.value ?? ''),
         );
       },
     );

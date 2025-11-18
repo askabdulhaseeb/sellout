@@ -1,40 +1,58 @@
 import 'package:flutter/material.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../core/widgets/phone_number/domain/entities/country_entity.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/phone_number_entity.dart';
-import '../../../../auth/signin/data/models/address_model.dart';
-import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../auth/signin/domain/entities/address_entity.dart';
 import '../../domain/usecase/add_address_usecase.dart';
 import '../../domain/usecase/update_address_usecase.dart';
 import '../params/add_address_param.dart';
 
 class AddAddressProvider extends ChangeNotifier {
   AddAddressProvider(this._addAddressUsecase, this._updateAddressUsecase);
+  
+  // MARK: Address 
+
+  AddressEntity? _selectedAddress;
+  AddressEntity? get selectedAddress => _selectedAddress;
+  set selectedAddress(AddressEntity? value) {
+    _selectedAddress = value;
+    notifyListeners();
+  }
+
+  // MARK: Dependencies 
   final AddAddressUsecase _addAddressUsecase;
   final UpdateAddressUsecase _updateAddressUsecase;
 
-  // ===========================
-  // Variables
-  // ===========================
+  // MARK: Internal state / variables 
 
   PhoneNumberEntity? _phoneNumber;
+
+  final TextEditingController _recipientNameController =
+      TextEditingController();
   final TextEditingController _postalCodeController = TextEditingController();
   final TextEditingController _address1Controller = TextEditingController();
-  final TextEditingController _townCityController = TextEditingController();
-  String _selectedCountry = '';
+  final TextEditingController _address2Controller = TextEditingController();
+
+  String? _city;
+  StateEntity? _state;
+  CountryEntity? _selectedCountryEntity;
+
   bool _isDefault = false;
   String _addressId = '';
   String _action = '';
   String? _addressCategory;
-  // ===========================
-  // Getters
-  // ===========================
+
+  // MARK: Public getters
 
   PhoneNumberEntity? get phoneNumber => _phoneNumber;
+  TextEditingController get recipientNameController => _recipientNameController;
   TextEditingController get postalCodeController => _postalCodeController;
   TextEditingController get address1Controller => _address1Controller;
-  TextEditingController get townCityController => _townCityController;
-  String get selectedCountry => _selectedCountry;
+  TextEditingController get address2Controller => _address2Controller;
+  String? get city => _city;
+  StateEntity? get state => _state;
+  CountryEntity? get selectedCountryEntity => _selectedCountryEntity;
   String get addressId => _addressId;
   bool get isDefault => _isDefault;
   String get action => _action;
@@ -42,28 +60,34 @@ class AddAddressProvider extends ChangeNotifier {
 
   AddressParams get addressParams => AddressParams(
         addressId: addressId,
-        recipientName: LocalAuth.currentUser?.displayName ?? '',
+        recipientName: _recipientNameController.text,
         address1: _address1Controller.text,
-        townCity: _townCityController.text,
-        phoneNumber: LocalAuth.currentUser?.phoneNumber ?? '',
+        address2: _address2Controller.text,
+        city: _city ?? '',
+        state: _state?.stateName ?? '',
+        phoneNumber: _phoneNumber?.fullNumber ?? '',
         postalCode: _postalCodeController.text,
         addressCategory: _addressCategory ?? '',
-        country: _selectedCountry,
+        country: _selectedCountryEntity?.countryName ?? '',
         isDefault: _isDefault,
         action: _action,
       );
 
-  // ===========================
-  // Setters
-  // ===========================
+  // MARK: Setters/set functions
 
-  set phoneNumber(PhoneNumberEntity? value) {
+  void setPhoneNumber(PhoneNumberEntity? value) {
     _phoneNumber = value;
     notifyListeners();
   }
 
-  set action(String value) {
-    _action = value;
+  void setCity(String value) {
+    _city = value;
+    notifyListeners();
+  }
+
+  void setStateEntity(StateEntity value) {
+    _state = value;
+    _city = null;
     notifyListeners();
   }
 
@@ -72,54 +96,65 @@ class AddAddressProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateVariable(AddressEntity address) async {
-    // phoneNumber =   await PhoneNumberEntity.fromJson(address.phoneNumber, address.country);
+  set action(String value) {
+    _action = value;
+    notifyListeners();
+  }
+
+  Future<void> updateVariable(AddressEntity address) async {
+    _phoneNumber = await PhoneNumberEntity.fromJson(address.phoneNumber);
+    // Set country
+    _selectedCountryEntity = address.country;
+    // Set state and city
+    _state = address.state;
+    _city = address.city;
+    // Set other fields
     _postalCodeController.text = address.postalCode;
-    _address1Controller.text = address.address;
-    _townCityController.text = address.townCity;
-    _selectedCountry = address.country;
+    _address1Controller.text = address.address1;
+    _address2Controller.text = address.address2;
+    _recipientNameController.text = address.recipientName;
     _isDefault = address.isDefault;
     _addressId = address.addressID;
+    _addressCategory = address.category;
+    _selectedAddress = address;
+    notifyListeners();
   }
 
-  set selectedCountry(String value) {
-    _selectedCountry = value;
-    notifyListeners(); // Make sure to notify listeners to update the UI
+  void setCountryEntity(CountryEntity? value) {
+    _selectedCountryEntity = value;
+    debugPrint(_selectedCountryEntity?.states.first.stateName);
+    // Reset dependent fields when country changes
+    _state = null;
+    _city = null;
+    notifyListeners();
   }
 
-  // ===========================
-  // View Functions
-  // ===========================
   void toggleDefault() {
     _isDefault = !_isDefault;
     notifyListeners();
   }
 
-  // ===========================
-  // API Functions
-  // ===========================
-
+  // MARK: API Functions
   Future<DataState<bool>> saveAddress(BuildContext context) async {
     try {
       final DataState<bool> result =
           await _addAddressUsecase.call(addressParams);
-      debugPrint('add address data ${addressParams.toMap()}');
       if (result is DataSuccess<bool>) {
         debugPrint(result.data);
         Navigator.pop(context);
         return result;
       } else if (result is DataFailer<bool>) {
         final String error = result.exception?.reason ?? 'Unknown error';
-        _showErrorSnackbar(context, error);
+        AppSnackBar.showSnackBar(context, error);
         return DataFailer<bool>(CustomException(error));
       } else {
         const String error = 'Unexpected error';
-        _showErrorSnackbar(context, error);
+        AppSnackBar.showSnackBar(context, error);
         return DataFailer<bool>(CustomException(error));
       }
     } catch (e, stc) {
       final String error = 'Exception: $stc';
-      _showErrorSnackbar(context, error);
+      AppSnackBar.showSnackBar(context, error);
       return DataFailer<bool>(CustomException(error));
     }
   }
@@ -135,37 +170,34 @@ class AddAddressProvider extends ChangeNotifier {
         return result;
       } else if (result is DataFailer<bool>) {
         final String error = result.exception?.reason ?? 'Unknown error';
-        _showErrorSnackbar(context, error);
+        AppSnackBar.show(error);
         return DataFailer<bool>(CustomException(error));
       } else {
         const String error = 'Unexpected error';
-        _showErrorSnackbar(context, error);
+        AppSnackBar.show(error);
         return DataFailer<bool>(CustomException(error));
       }
     } catch (e, stc) {
       final String error = 'Exception: $stc';
-      _showErrorSnackbar(context, error);
+      AppSnackBar.show(error);
       return DataFailer<bool>(CustomException(error));
     }
   }
 
-  void _showErrorSnackbar(BuildContext context, String message) {
-    // Show snackbar with error message
-    AppSnackBar.showSnackBar(context, message);
-  }
-
-  // ===========================
-  // Cleanup
-  // ===========================
+  // MARK: Cleanup
   void disposeControllers() {
-    phoneNumber = null;
+    _phoneNumber = null;
     _action = '';
     _addressId = '';
     _postalCodeController.clear();
     _address1Controller.clear();
-    _townCityController.clear();
-    _selectedCountry = '';
+    _address2Controller.clear();
+    _selectedCountryEntity = null;
+    _recipientNameController.clear();
+    _city = null;
+    _state = null;
     _addressCategory = null;
     _isDefault = false;
+    notifyListeners();
   }
 }

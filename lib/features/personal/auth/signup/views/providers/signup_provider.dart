@@ -15,6 +15,7 @@ import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../dashboard/views/screens/dashboard_screen.dart';
 import '../../../../user/profiles/domain/usecase/edit_profile_detail_usecase.dart';
 import '../../../../user/profiles/views/params/update_user_params.dart';
+import '../../../signin/data/sources/local/local_auth.dart';
 import '../../../signin/domain/params/login_params.dart';
 import '../../../signin/domain/usecase/login_usecase.dart';
 import '../../domain/usecase/register_user_usecase.dart';
@@ -68,15 +69,8 @@ class SignupProvider extends ChangeNotifier {
   Gender? _gender;
   Gender? get gender => _gender;
 
-  void setGender(Gender value) {
+  void setGender(Gender? value) {
     _gender = value;
-    notifyListeners();
-  }
-
-  //
-  String? _getOTP;
-  set getOTP(String? value) {
-    _getOTP = value;
     notifyListeners();
   }
 
@@ -323,7 +317,6 @@ class SignupProvider extends ChangeNotifier {
 
   /// api calls
   Future<bool> basicInfoPushData(BuildContext context) async {
-    debugPrint('basic info push data initiated');
     isLoading = true;
     try {
       //
@@ -339,7 +332,6 @@ class SignupProvider extends ChangeNotifier {
         _uid = result.entity?.toString();
         _loginUsecase
             .call(LoginParams(email: email.text, password: password.text));
-        debugPrint('signin success');
         startResendCodeTimer();
         return true;
       } else {
@@ -379,7 +371,6 @@ class SignupProvider extends ChangeNotifier {
         SignupOptParams(uid: _uid ?? ''),
       );
       if (result is DataSuccess) {
-        getOTP = result.entity;
         startResendCodeTimer();
         return true;
       } else {
@@ -422,14 +413,6 @@ class SignupProvider extends ChangeNotifier {
         name: 'SignupProvider.verifyOtp - otp',
       );
       AppSnackBar.showSnackBar(context, 'otp_requirement'.tr());
-      return false;
-    }
-    if (_getOTP != null) {
-      AppLog.error(
-        'otp not match',
-        name: 'SignupProvider.verifyOtp - otp',
-      );
-      AppSnackBar.showSnackBar(context, 'otp_not_match'.tr());
       return false;
     }
     try {
@@ -509,8 +492,12 @@ class SignupProvider extends ChangeNotifier {
 
   /// reset
   reset() {
-    _uid = null;
-    _getOTP = null;
+    _uid =
+        (LocalAuth.uid != null && LocalAuth.currentUser?.otpVerified == false)
+            ? LocalAuth.uid
+            : null;
+    _resendCodeTimer?.cancel();
+    _resentCodeSeconds = 0;
     name.text = '';
     username.text = '';
     email.text = '';
@@ -523,7 +510,10 @@ class SignupProvider extends ChangeNotifier {
     _attachment = null;
     _phoneNumber = null;
     _isLoading = false;
-    _currentPage = SignupPageType.basicInfo;
+    _currentPage =
+        (LocalAuth.uid != null && LocalAuth.currentUser?.otpVerified == false)
+            ? SignupPageType.otp
+            : SignupPageType.basicInfo;
     _resendCodeTimer?.cancel();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();

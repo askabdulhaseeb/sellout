@@ -6,8 +6,8 @@ import '../../../../chat_dashboard/data/sources/local/local_chat.dart';
 import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../providers/chat_provider.dart';
 import '../message/tile/offer_message_tile.dart';
+import '../message/tile/quote_message_tile.dart';
 import '../message/tile/visiting_message_tile.dart';
-import 'widgets/shape_borders/visiting_tile_handle_border.dart.dart';
 
 class ChatPinnedMessage extends StatelessWidget {
   const ChatPinnedMessage({
@@ -34,7 +34,10 @@ class ChatPinnedMessage extends StatelessWidget {
                 ? VisitingMessageTileAnimated(
                     message: chat.pinnedMessage!,
                   )
-                : const SizedBox.shrink();
+                : chat.pinnedMessage!.quoteDetail != null
+                    ? QuoteMessageTile(
+                        message: chat.pinnedMessage!, pinnedMessage: true)
+                    : const SizedBox.shrink();
       },
     );
   }
@@ -59,7 +62,6 @@ class _OfferMessageTileAnimatedState extends State<OfferMessageTileAnimated>
   Widget build(BuildContext context) {
     return Consumer<ChatProvider>(
       builder: (BuildContext context, ChatProvider pro, _) => AnimatedContainer(
-        height: pro.showPinnedMessage ? null : 0,
         width: double.infinity,
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
@@ -102,52 +104,38 @@ class VisitingMessageTileAnimated extends StatefulWidget {
 }
 
 class _VisitingMessageTileAnimatedState
-    extends State<VisitingMessageTileAnimated> {
+    extends State<VisitingMessageTileAnimated> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Consumer<ChatProvider>(
       builder: (BuildContext context, ChatProvider pro, _) {
-        return PopScope(
-          onPopInvokedWithResult: (bool didPop, dynamic result) =>
-              pro.resetPinnedMessageExpandedState(),
-          child: AnimatedContainer(
-            height: pro.showPinnedMessage ? null : 0,
-            duration: const Duration(microseconds: 1000),
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: <Widget>[
-                Material(
-                  shape: const VisitileTileWithHandleBorder(),
-                  elevation: pro.showPinnedMessage ? 4 : 0,
-                  color: Theme.of(context).primaryColor,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 30),
-                    child: VisitingMessageTile(
-                      collapsable: true,
+        return AnimatedContainer(
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+          ),
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          alignment: Alignment.topCenter,
+          child: pro.showPinnedMessage
+              ? Column(
+                  children: <Widget>[
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      height: 1,
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                    ),
+                    VisitingMessageTile(
                       message: widget.message,
                       showButtons: true,
                     ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 5,
-                  right: 20,
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    onTap: () {
-                      debugPrint('visiting pinned tile expand/collapse');
-                      pro.setPinnedMessageExpandedState();
-                    },
-                    child: const Icon(
-                      Icons.keyboard_double_arrow_down_outlined,
-                      color: Colors.white,
-                      size: 20,
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      height: 1,
+                      color: Theme.of(context).colorScheme.outlineVariant,
                     ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+                  ],
+                )
+              : const SizedBox.shrink(),
         );
       },
     );

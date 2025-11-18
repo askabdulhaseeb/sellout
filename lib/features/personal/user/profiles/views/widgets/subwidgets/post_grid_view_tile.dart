@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/dialogs/cart/add_to_cart_dialog.dart';
+import '../../../../../../../core/dialogs/post/post_tile_cloth_foot_dialog.dart';
 import '../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/data_state.dart';
@@ -13,8 +13,7 @@ import '../../../../../../../core/widgets/rating_display_widget.dart';
 import '../../../../../../../services/get_it.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../listing/listing_form/views/providers/add_listing_form_provider.dart';
-import '../../../../../listing/listing_form/views/screens/add_listing_form_screen.dart';
-import '../../../../../post/domain/entities/post_entity.dart';
+import '../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../post/domain/params/add_to_cart_param.dart';
 import '../../../../../post/domain/usecase/add_to_cart_usecase.dart';
 import '../../../../../post/post_detail/views/screens/post_detail_screen.dart';
@@ -100,15 +99,9 @@ class PostGridViewTile extends StatelessWidget {
                       bgColor: Theme.of(context).primaryColor.withAlpha(40),
                       icon: AppStrings.selloutPostGridTileEditIcon,
                       onPressed: () {
-                        final AddListingFormProvider pro =
-                            Provider.of<AddListingFormProvider>(context,
-                                listen: false);
-                        pro.reset();
-                        pro.setListingType(post.type);
-                        pro.setPost(post);
-                        pro.updateVariables();
-                        Navigator.pushNamed(
-                            context, AddListingFormScreen.routeName);
+                        Provider.of<AddListingFormProvider>(context,
+                                listen: false)
+                            .startediting(post);
                       },
                     ),
                     CustomIconButton(
@@ -139,11 +132,12 @@ class PostGridViewTileBasketButton extends StatelessWidget {
   Widget build(BuildContext context) {
     Future<void> addToBasket(BuildContext context, PostEntity post) async {
       try {
-        if (post.sizeColors.isNotEmpty) {
+        if (post.clothFootInfo?.sizeColors.isNotEmpty == true) {
           await showDialog(
             context: context,
             builder: (BuildContext context) {
-              return AddToCartDialog(post: post);
+              return PostTileClothFootDialog(
+                  post: post, actionType: PostTileClothFootType.add);
             },
           );
         } else {
@@ -152,10 +146,9 @@ class PostGridViewTileBasketButton extends StatelessWidget {
             AddToCartParam(post: post, quantity: 1),
           );
           if (result is DataSuccess) {
-            AppSnackBar.showSnackBar(
+            AppSnackBar.success(
               context,
               'successfull_add_to_basket'.tr(),
-              backgroundColor: Colors.green,
             );
           } else {
             AppLog.error(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../personal/post/data/sources/local/local_post.dart';
-import '../../../../../personal/post/domain/entities/post_entity.dart';
+import '../../../../../personal/post/domain/entities/post/post_entity.dart';
 import '../../../../../personal/user/profiles/views/widgets/subwidgets/post_grid_view_tile.dart';
 import '../../../../core/domain/entity/business_entity.dart';
 import '../../providers/business_page_provider.dart';

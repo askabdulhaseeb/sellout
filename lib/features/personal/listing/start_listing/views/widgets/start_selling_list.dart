@@ -17,57 +17,57 @@ class StartSellingList extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<ListingType> list = ListingType.list;
 
+    // Filter by translated text instead of code
     final List<ListingType> filteredList = list.where((ListingType type) {
-      final String code = type.code.toLowerCase();
-      return code.contains(searchQuery.toLowerCase());
+      final String translated = type.code.tr().toLowerCase(); // translate here
+      return translated.contains(searchQuery.toLowerCase());
     }).toList();
 
     return ListView(
+      padding: const EdgeInsets.all(0),
       primary: false,
       shrinkWrap: true,
       children: filteredList
           .map(
-            (ListingType type) => Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: InkWell(
-                onTap: () {
-                  final AddListingFormProvider pro =
-                      Provider.of<AddListingFormProvider>(
-                    context,
-                    listen: false,
-                  );
-                  pro.setListingType(type);
-                  Navigator.of(context)
-                      .pushNamed(AddListingFormScreen.routeName);
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.outlineVariant,
-                    ),
+            (ListingType type) => InkWell(
+              onTap: () {
+                final AddListingFormProvider pro =
+                    Provider.of<AddListingFormProvider>(
+                  context,
+                  listen: false,
+                );
+                pro.setListingType(type);
+                Navigator.of(context).pushNamed(AddListingFormScreen.routeName);
+              },
+              child: Container(
+                margin: const EdgeInsets.symmetric(vertical: 4),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
                   ),
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                        height: 40,
-                        width: 40,
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Theme.of(context).dividerColor),
-                        child: Image.asset(
-                          type.icon,
-                        ),
+                ),
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      height: 35,
+                      width: 35,
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: Theme.of(context).colorScheme.outlineVariant,
                       ),
-                      const SizedBox(width: 16),
-                      Text(
-                        type.code,
-                        style: const TextStyle(fontWeight: FontWeight.w600),
-                      ).tr(),
-                    ],
-                  ),
+                      child: Image.asset(
+                        type.icon,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Text(
+                      type.code.tr(), // show translated text
+                      style: const TextStyle(fontWeight: FontWeight.w400),
+                    ),
+                  ],
                 ),
               ),
             ),

@@ -13,11 +13,8 @@ import 'widgets/vehicle_filter/vehicle_filter_widget.dart';
 
 class MarketFilterContainer extends StatelessWidget {
   const MarketFilterContainer({
-    required this.screenWidth,
     super.key,
   });
-
-  final double screenWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -38,15 +35,15 @@ class MarketFilterContainer extends StatelessWidget {
           if (marketPro.marketplaceCategory == ListingType.items)
             const ItemFilterWidget(),
           if (marketPro.marketplaceCategory == ListingType.clothAndFoot)
-            MarketClothFootFilterSection(screenWidth: screenWidth),
+            const MarketClothFootFilterSection(),
           if (marketPro.marketplaceCategory == ListingType.pets)
             const PetsFilterWIdget(),
           if (marketPro.marketplaceCategory == ListingType.vehicle)
             const VehicleFIlterWidget(),
           if (marketPro.marketplaceCategory == ListingType.property)
-            PropertyFilterSection(screenWidth: screenWidth),
+            const PropertyFilterSection(),
           if (marketPro.marketplaceCategory == ListingType.foodAndDrink)
-            FoodDrinkFilterSection(screenWidth: screenWidth),
+            const FoodDrinkFilterSection(),
           const MarketFilterButtons(),
         ],
       ),

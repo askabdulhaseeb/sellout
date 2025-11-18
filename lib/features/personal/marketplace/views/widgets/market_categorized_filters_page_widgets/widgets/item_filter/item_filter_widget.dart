@@ -22,7 +22,6 @@ class ItemFilterWidget extends StatelessWidget {
               subCategory: marketPro.selectedSubCategory,
               onSelected: marketPro.setSelectedCategory,
             ),
-            const SizedBox(height: 8),
             const ItemFilterDeliveryAddedWidget(),
             const MarketFilterPriceWIdget(),
           ],

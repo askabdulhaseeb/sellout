@@ -17,7 +17,7 @@ import '../../../../marketplace/domain/params/post_by_filter_params.dart';
 import '../../../../marketplace/domain/usecase/post_by_filters_usecase.dart';
 import '../../../../marketplace/views/enums/sort_enums.dart';
 import '../../../../order/domain/params/get_order_params.dart';
-import '../../../../post/domain/entities/post_entity.dart';
+import '../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../post/domain/usecase/get_specific_post_usecase.dart';
 import '../../../../review/domain/entities/review_entity.dart';
 import '../../../../review/domain/param/get_review_param.dart';

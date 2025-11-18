@@ -9,9 +9,8 @@ import '../../../../../core/sources/data_state.dart';
 import '../../../../../core/widgets/app_snakebar.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../listing/listing_form/data/models/sub_category_model.dart';
-import '../../../listing/listing_form/data/sources/remote/dropdown_listing_api.dart';
 import '../../../location/domain/entities/location_entity.dart';
-import '../../../post/domain/entities/post_entity.dart';
+import '../../../post/domain/entities/post/post_entity.dart';
 import '../../../post/post_detail/views/screens/post_detail_screen.dart';
 import '../../domain/enum/radius_type.dart';
 import '../../domain/params/filter_params.dart';
@@ -29,7 +28,7 @@ class MarketPlaceProvider extends ChangeNotifier {
     setLoading(true);
     setMainPageKey('');
     try {
-      final PostByFiltersParams params = _buildPostByFiltersParams();
+      final PostByFiltersParams params = _buildPostMarketSearchParams();
       final DataState<List<PostEntity>> result =
           await _getPostByFiltersUsecase(params);
       if (result is DataSuccess<List<PostEntity>>) {
@@ -52,9 +51,9 @@ class MarketPlaceProvider extends ChangeNotifier {
 
   Future<bool> loadChipsPosts() async {
     setMainPageKey('');
+    setChoiceChipPosts(<PostEntity>[]);
     try {
       setLoading(true);
-      setChoiceChipPosts(<PostEntity>[]);
       final PostByFiltersParams params = PostByFiltersParams(
         category: _chipsCategory ?? '',
         filters: <FilterParam>[],
@@ -64,9 +63,9 @@ class MarketPlaceProvider extends ChangeNotifier {
       if (result is DataSuccess<List<PostEntity>>) {
         setChoiceChipPosts(result.entity ?? <PostEntity>[]);
         setMainPageKey(result.data);
-
         return true;
       } else {
+        setChoiceChipPosts(<PostEntity>[]);
         debugPrint(
             'Failed: ${result.exception?.message ?? 'something_wrong'.tr()}');
       }
@@ -120,9 +119,9 @@ class MarketPlaceProvider extends ChangeNotifier {
         if (newPosts.isEmpty) {
           _mainPageKey = null; // No more data
         } else {
-          choicePosts?.addAll(newPosts); // Append new posts
+          choicePosts?.addAll(newPosts);
           setChoiceChipPosts(List<PostEntity>.from(choicePosts ?? <dynamic>[]));
-          setMainPageKey(result.data); // 👈 Update lastKey
+          setMainPageKey(result.data);
         }
       } else {
         debugPrint(
@@ -153,7 +152,6 @@ class MarketPlaceProvider extends ChangeNotifier {
       } else {
         AppSnackBar.showSnackBar(
             context, 'no_posts_found_with_this_access_code'.tr());
-        setPosts(<PostEntity>[]);
         debugPrint(
             'Failed: ${result.exception?.message ?? 'something_wrong'.tr()}');
       }
@@ -176,14 +174,26 @@ class MarketPlaceProvider extends ChangeNotifier {
     await loadPosts();
   }
 
-  void locationSheetApplyButton(BuildContext context) async {
-    await loadPosts();
+  void updateLocation(
+    LatLng? latlngVal,
+    LocationEntity? locationVal,
+  ) {
+    _selectedlatlng = latlngVal ?? LocalAuth.latlng;
+    _selectedLocation = locationVal;
+    notifyListeners();
+    debugPrint(
+        'Updated LatLng: $_selectedlatlng, Location: $_selectedLocation in marketplaceProvider');
   }
 
-  void updateLocation(LatLng? latlng, LocationEntity? location) {
-    _selectedlatlng = latlng;
-    _selectedLocation = location;
-    notifyListeners();
+  void updateLocationSheet(LatLng? latlngVal, LocationEntity? locationVal,
+      RadiusType radiusTypeVal, double selectedRadVal) async {
+    _radiusType = radiusTypeVal;
+    _selectedRadius = selectedRadVal;
+    _bottomsheetLatLng = latlngVal ?? LocalAuth.latlng;
+    _bottomsheetLocation = locationVal;
+    debugPrint(
+        'Updated LatLng: $_bottomsheetLatLng, Location: $_bottomsheetLocation in marketplaceProvider for bottomsheet');
+    await loadPosts();
   }
 
   void filterSheetResetButton() {
@@ -195,10 +205,8 @@ class MarketPlaceProvider extends ChangeNotifier {
   }
 
   void resetLocationBottomsheet() async {
-    _radiusType = RadiusType.worldwide;
-    _selectedRadius = 10;
-    _selectedlatlng = LocalAuth.latlng;
-    updateLocation(null, null);
+    updateLocationSheet(null, null, RadiusType.worldwide, 5);
+    notifyListeners();
   }
 
 // set functions
@@ -339,7 +347,6 @@ class MarketPlaceProvider extends ChangeNotifier {
     _isFilteringPosts = value;
     if (value == false) {
       filterSheetResetButton();
-      resetLocationBottomsheet();
       setSort(SortOption.newlyList);
     }
     notifyListeners();
@@ -382,46 +389,48 @@ class MarketPlaceProvider extends ChangeNotifier {
   }
 
   void resetFilters() {
-    // // Marketplace Main Category
-    // _marketplaceCategory = null;
-    _selectedSubCategory = null;
     // Cloth & Foot
-    _cLothFootCategory = ListingType.clothAndFoot.cids.first;
-    _selectedSize = <String>[];
-    _selectedColor = <String>[];
-    _brand = null;
+    setClothFootCategory(ListingType.clothAndFoot.cids.first);
+
     // Items
-    _listingItemCategory = null;
+    setItemCategory(null);
+    setDeliveryType(null);
     // Pets
-    _age = null;
-    _readyToLeave = null;
-    _petCategory = null;
+    setAge(null);
+    setReadyToLeave(null);
+    setPetCategory(null);
+
     // Property
-    _propertyCategory = ListingType.property.cids.first;
-    _propertyType = null;
-    _energyRating = null;
+    setProperyyCategory(ListingType.property.cids.first);
+    setPropertyType(null);
+    setEnergyRating(null);
+
     // Food & Drink
-    _foodDrinkCategory = ListingType.foodAndDrink.cids.first;
+    setFoodDrinkCategory(ListingType.foodAndDrink.cids.first);
+
     // Vehicles
-    _make = null;
-    _year = null;
-    _vehicleCatgory = null;
+    setMake(null);
+    setYear(null);
+    setVehicleCategory(null);
     vehicleModel.clear();
+
     // Location
-    _selectedlatlng = LocalAuth.latlng;
-    _selectedLocation = null;
-    _selectedRadius = 5;
-    _radiusType = RadiusType.worldwide;
-    // Post data
-    _posts = null;
-    _selectedSubCategory = null;
-    _addedFilterOption = null;
+    _selectedlatlng = LocalAuth.latlng; // ✅ no setter exists, keep direct
+    _selectedLocation = null; // ✅ no setter exists, keep direct
+
+    // Posts
+    setPosts(null);
+    setSelectedCategory(null);
+    setAddedFilterOption(null);
+
     // Delivery & Condition
-    _selectedDeliveryType = null;
-    _selectedConditionType = null;
+    setDeliveryType(null);
+    setConditionType(null);
+
     // UI
-    _isLoading = false;
-    _isFilteringPosts = false;
+    setLoading(false);
+    setFilteringBool(false);
+
     // Text controllers
     queryController.clear();
     minPriceController.clear();
@@ -429,6 +438,53 @@ class MarketPlaceProvider extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  // void resetFilters() {
+  //   // // Marketplace Main Category
+  //   // _marketplaceCategory = null;
+  //   _selectedSubCategory = null;
+  //   // Cloth & Foot
+  //   _cLothFootCategory = ListingType.clothAndFoot.cids.first;
+  //   _selectedSize = <String>[];
+  //   _selectedColor = <String>[];
+  //   _brand = null;
+  //   // Items
+  //   _listingItemCategory = null;
+  //   // Pets
+  //   _age = null;
+  //   _readyToLeave = null;
+  //   _petCategory = null;
+  //   // Property
+  //   _propertyCategory = ListingType.property.cids.first;
+  //   _propertyType = null;
+  //   _energyRating = null;
+  //   // Food & Drink
+  //   _foodDrinkCategory = ListingType.foodAndDrink.cids.first;
+  //   // Vehicles
+  //   _make = null;
+  //   _year = null;
+  //   _vehicleCatgory = null;
+  //   vehicleModel.clear();
+  //   // Location
+  //   _selectedlatlng = LocalAuth.latlng;
+  //   _selectedLocation = null;
+  //   // Post data
+  //   _posts = null;
+  //   _selectedSubCategory = null;
+  //   _addedFilterOption = null;
+  //   // Delivery & Condition
+  //   _selectedDeliveryType = null;
+  //   _selectedConditionType = null;
+  //   // UI
+  //   _isLoading = false;
+  //   _isFilteringPosts = false;
+  //   // Text controllers
+  //   queryController.clear();
+  //   minPriceController.clear();
+  //   maxPriceController.clear();
+
+  //   notifyListeners();
+  // }
 
 //variables
   ListingType? _marketplaceCategory;
@@ -449,10 +505,6 @@ class MarketPlaceProvider extends ChangeNotifier {
   String? _year;
   String? _vehicleCatgory;
   String? _propertyType;
-  LatLng? _selectedlatlng = LocalAuth.latlng;
-  LocationEntity? _selectedLocation;
-  double _selectedRadius = 5;
-  RadiusType _radiusType = RadiusType.worldwide;
   DeliveryType? _selectedDeliveryType;
   ConditionType? _selectedConditionType;
   int? _rating;
@@ -464,7 +516,12 @@ class MarketPlaceProvider extends ChangeNotifier {
   SortOption? _selectedSortOption = SortOption.newlyList;
   String? _brand;
   String? _mainPageKey;
-
+  LatLng _selectedlatlng = LocalAuth.latlng;
+  LatLng _bottomsheetLatLng = LocalAuth.latlng;
+  LocationEntity? _selectedLocation;
+  LocationEntity? _bottomsheetLocation;
+  double _selectedRadius = 5;
+  RadiusType _radiusType = RadiusType.worldwide;
 // Getters
   ListingType? get marketplaceCategory => _marketplaceCategory;
   String? get chipsCategory => _chipsCategory;
@@ -487,11 +544,6 @@ class MarketPlaceProvider extends ChangeNotifier {
   String? get year => _year;
   String? get vehicleCatgory => _vehicleCatgory;
 
-  String? get propertyType => _propertyType;
-  LatLng? get selectedlatlng => _selectedlatlng;
-  LocationEntity? get selectedLocation => _selectedLocation;
-  double get selectedRadius => _selectedRadius;
-  RadiusType get radiusType => _radiusType;
   DeliveryType? get selectedDeliveryType => _selectedDeliveryType;
   ConditionType? get selectedConditionType => _selectedConditionType;
   int? get rating => _rating;
@@ -502,7 +554,13 @@ class MarketPlaceProvider extends ChangeNotifier {
   SortOption? get selectedSortOption => _selectedSortOption;
   String? get brand => _brand;
   String? get mainPageKey => _mainPageKey;
-
+  String? get propertyType => _propertyType;
+  LatLng get selectedlatlng => _selectedlatlng;
+  LatLng get bottomsheetLatLng => _bottomsheetLatLng;
+  LocationEntity? get selectedLocation => _selectedLocation;
+  LocationEntity? get bottomsheetLocation => _bottomsheetLocation;
+  double get selectedRadius => _selectedRadius;
+  RadiusType get radiusType => _radiusType;
 // textfield controllers
   TextEditingController minPriceController = TextEditingController();
   TextEditingController maxPriceController = TextEditingController();
@@ -513,6 +571,27 @@ class MarketPlaceProvider extends ChangeNotifier {
   TextEditingController usernameController = TextEditingController();
 
 //params
+  PostByFiltersParams _buildPostMarketSearchParams() {
+    return PostByFiltersParams(
+      lastKey: _mainPageKey,
+      query: queryController.text,
+      size: _selectedSize,
+      colors: _selectedColor,
+      sort: _selectedSortOption,
+      address: _selectedSubCategory?.address,
+      clientLat: _bottomsheetLatLng != const LatLng(0, 0)
+          ? _bottomsheetLatLng.latitude
+          : null,
+      clientLng: _bottomsheetLatLng != const LatLng(0, 0)
+          ? _bottomsheetLatLng.longitude
+          : null,
+      distance:
+          _radiusType == RadiusType.local ? _selectedRadius.toInt() : null,
+      category: _marketplaceCategory?.json ?? '',
+      filters: _buildFilters(),
+    );
+  }
+
   PostByFiltersParams _buildPostByFiltersParams() {
     return PostByFiltersParams(
       lastKey: _mainPageKey,
@@ -522,13 +601,11 @@ class MarketPlaceProvider extends ChangeNotifier {
       sort: _selectedSortOption,
       address: _selectedSubCategory?.address,
       clientLat: _selectedlatlng != const LatLng(0, 0)
-          ? _selectedlatlng?.latitude
+          ? _selectedlatlng.latitude
           : null,
       clientLng: _selectedlatlng != const LatLng(0, 0)
-          ? _selectedlatlng?.longitude
+          ? _selectedlatlng.longitude
           : null,
-      distance:
-          _radiusType == RadiusType.local ? _selectedRadius.toInt() : null,
       category: _marketplaceCategory?.json ?? '',
       filters: _buildFilters(),
     );
@@ -702,10 +779,10 @@ class MarketPlaceProvider extends ChangeNotifier {
   Future<void> fetchDropdownListings() async {
     try {
       setLoading(true);
-      String endpoint = '/category/${_marketplaceCategory?.json}?list-id=';
-      await DropDownListingAPI()
-          .fetchAndStore(endpoint)
-          .timeout(const Duration(seconds: 10));
+      // String endpoint = '/category/${_marketplaceCategory?.json}?list-id=';
+      // await DropDownListingAPI()
+      //     .fetchAndStore(endpoint)
+      //     .timeout(const Duration(seconds: 10));
       loadFilteredContainerPosts();
       setLoading(false);
     } catch (e) {

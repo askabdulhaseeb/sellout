@@ -1,5 +1,5 @@
 import '../../../../../core/usecase/usecase.dart';
-import '../entities/post_entity.dart';
+import '../entities/post/post_entity.dart';
 import '../params/get_specific_post_param.dart';
 import '../repositories/post_repository.dart';
 

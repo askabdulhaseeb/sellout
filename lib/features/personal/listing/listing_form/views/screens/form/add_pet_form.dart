@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/widgets/editable_availablity_widget.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../../widgets/core/add_listing_update_button_widget.dart';
@@ -17,48 +18,25 @@ class AddPetForm extends StatefulWidget {
 }
 
 class _AddPetFormState extends State<AddPetForm> {
-  bool isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    Future<void>.microtask(() => _loadDropdowns());
-  }
-
-  Future<void> _loadDropdowns() async {
-    final AddListingFormProvider formPro =
-        Provider.of<AddListingFormProvider>(context, listen: false);
-    await formPro.fetchDropdownListings(
-        '/category/${formPro.listingType?.json}?list-id=');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
-        if (formPro.isDropdownLoading) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
         return Form(
           key: formPro.petKey,
-          child: ListView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            children: <Widget>[
-              const AddListingBasicInfoSection(),
-              const AddListingPetAgeLeaveWidget(),
-              // SubCategorySelectableWidget(
-              //   listType: formPro.listingType,
-              //   subCategory: formPro.selectedCategory,
-              //   onSelected: formPro.setSelectedCategory,
-              // ),
-              const AddListingPriceAndQuantityWidget(),
-              const AddListingConditionOfferSection(),
-              const EditableAvailabilityWidget(),
-              if (formPro.post == null) const AddListingPostButtonWidget(),
-              if (formPro.post != null) const AddListingUpdateButtons(),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              spacing: AppSpacing.vSm,
+              children: <Widget>[
+                const AddListingBasicInfoSection(),
+                const AddListingPetAgeLeaveWidget(),
+                const AddListingPriceAndQuantityWidget(),
+                const AddListingConditionOfferSection(),
+                const EditableAvailabilityWidget(),
+                if (formPro.post == null) const AddListingPostButtonWidget(),
+                if (formPro.post != null) const AddListingUpdateButtons(),
+              ],
+            ),
           ),
         );
       },

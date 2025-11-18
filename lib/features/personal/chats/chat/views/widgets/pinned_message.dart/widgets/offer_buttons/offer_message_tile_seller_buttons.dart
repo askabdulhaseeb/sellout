@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../post/feed/views/providers/feed_provider.dart';
 import '../../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
@@ -29,7 +28,7 @@ class OfferTileUpdateButons extends StatelessWidget {
             border: Border.all(color: Theme.of(context).primaryColor),
             textColor: Theme.of(context).primaryColor,
             textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppTheme.primaryColor,
+                  color: Theme.of(context).primaryColor,
                   fontWeight: FontWeight.w500,
                 ),
             bgColor: Colors.transparent,

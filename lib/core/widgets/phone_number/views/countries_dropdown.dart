@@ -1,21 +1,25 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../services/get_it.dart';
 import '../../../usecase/usecase.dart';
+import '../../../utilities/app_validators.dart';
 import '../data/sources/local_country.dart';
 import '../domain/entities/country_entity.dart';
 import '../domain/usecase/get_counties_usecase.dart';
 import '../../custom_dropdown.dart';
+import '../../../sources/data_state.dart';
 
 class CountryDropdownField extends StatefulWidget {
   const CountryDropdownField({
     required this.onChanged,
     this.initialValue,
+    this.validator,
     super.key,
   });
 
-  final String? initialValue;
-  final void Function(String) onChanged;
+  final CountryEntity? initialValue;
+  final void Function(CountryEntity) onChanged;
+  final String? Function(bool?)? validator;
 
   @override
   State<CountryDropdownField> createState() => _CountryDropdownFieldState();
@@ -23,55 +27,132 @@ class CountryDropdownField extends StatefulWidget {
 
 class _CountryDropdownFieldState extends State<CountryDropdownField> {
   List<CountryEntity> countries = <CountryEntity>[];
-  String? selectedCountry;
-  GetCountiesUsecase? getCountiesUsecase;
+  CountryEntity? selectedCountry;
 
   @override
   void initState() {
     super.initState();
-    _init();
+    selectedCountry = widget.initialValue;
+    _loadCountries();
   }
 
-  Future<void> _init() async {
-    getCountiesUsecase = GetCountiesUsecase(locator());
+  Future<void> _loadCountries() async {
+    final GetCountiesUsecase getCountries = GetCountiesUsecase(locator());
     await LocalCountry().refresh();
+
     final DataState<List<CountryEntity>> result =
-        await getCountiesUsecase!.call(const Duration(days: 1));
+        await getCountries.call(const Duration(hours: 1));
 
-    if (result is DataSuccess) {
-      countries = result.entity ?? LocalCountry().activeCounties;
-    }
+    final List<CountryEntity>? remote =
+        (result is DataSuccess) ? result.entity : null;
+    countries = (remote != null && remote.isNotEmpty)
+        ? remote
+        : LocalCountry().activeCountries;
 
-    // Set initial value if available
-    if (widget.initialValue != null &&
-        countries
-            .any((CountryEntity e) => e.displayName == widget.initialValue)) {
-      selectedCountry = widget.initialValue;
-    }
-
-    setState(() {});
+    selectedCountry ??= countries
+            .where((CountryEntity e) => e.isActive)
+            .firstWhereOrNull((_) => true) ??
+        (countries.isNotEmpty ? countries.first : null);
+    if (mounted) setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return CustomDropdown<String>(
-      title: 'country'.tr(),
-      items: countries
-          .where((CountryEntity e) => e.isActive)
-          .map((CountryEntity country) => DropdownMenuItem<String>(
-                value: country.displayName,
-                child: Text(country.displayName),
-              ))
-          .toList(),
-      selectedItem: selectedCountry,
-      onChanged: (String? value) {
-        if (value == null) return;
-        setState(() {
-          selectedCountry = value;
-          widget.onChanged(value); // This will notify the parent
-        });
+    final List<CountryEntity> activeCountries =
+        countries.where((CountryEntity e) => e.isActive).toList();
+    final List<CountryEntity> sourceList =
+        activeCountries.isEmpty ? countries : activeCountries;
+
+    return CustomDropdown<CountryEntity>(
+      title: 'Country',
+      hint: '',
+      searchBy: (DropdownMenuItem<CountryEntity> item) {
+        final CountryEntity? country = item.value;
+        return country?.displayName ?? '';
       },
-      validator: (_) => null,
+      selectedItemBuilder: (CountryEntity? country) {
+        if (country == null) return const SizedBox.shrink();
+        return Row(
+          children: <Widget>[
+            _CountryFlag(flag: country.flag),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                country.displayName,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        );
+      },
+      selectedItemPadding:
+          const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+      items: sourceList.map((CountryEntity country) {
+        return DropdownMenuItem<CountryEntity>(
+          value: country,
+          child: Row(
+            children: <Widget>[
+              _CountryFlag(flag: country.flag),
+              Expanded(
+                child: Text(
+                  country.displayName,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+      selectedItem: selectedCountry,
+      onChanged: (CountryEntity? value) {
+        if (value == null) return;
+        setState(() => selectedCountry = value);
+        widget.onChanged(value);
+      },
+      validator: (bool? val) => widget.validator != null
+          ? widget.validator!(val)
+          : AppValidator.requireSelection(val),
     );
   }
+}
+
+class _CountryFlag extends StatelessWidget {
+  const _CountryFlag({required this.flag});
+  final String flag;
+
+  @override
+  Widget build(BuildContext context) {
+    return flag.isEmpty
+        ? Container(
+            height: 16,
+            width: 20,
+            decoration: BoxDecoration(
+              color:
+                  Theme.of(context).colorScheme.outlineVariant.withOpacity(0.3),
+              borderRadius: BorderRadius.circular(4),
+            ),
+          )
+        : ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: SizedBox(
+              height: 16,
+              width: 20,
+              child: SvgPicture.network(
+                flag,
+                fit: BoxFit.cover,
+                placeholderBuilder: (BuildContext context) => const SizedBox(
+                  width: 20,
+                  height: 16,
+                  child:
+                      Center(child: CircularProgressIndicator(strokeWidth: 1)),
+                ),
+              ),
+            ),
+          );
+  }
+}
+
+extension _FirstWhereOrNull<T> on Iterable<T> {
+  T? firstWhereOrNull(bool Function(T) test) => fold<T?>(
+      null, (T? prev, T element) => prev ?? (test(element) ? element : null));
 }

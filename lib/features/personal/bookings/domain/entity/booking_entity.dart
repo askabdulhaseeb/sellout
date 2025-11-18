@@ -55,6 +55,41 @@ class BookingEntity {
   @HiveField(99)
   final String notes;
 
+  BookingEntity copyWith({
+    String? businessID,
+    String? serviceID,
+    String? bookingID,
+    String? customerID,
+    String? employeeID,
+    String? trackingID,
+    StatusType? status,
+    BookingPaymentDetailEntity? paymentDetail,
+    DateTime? bookedAt,
+    DateTime? endAt,
+    DateTime? cancelledAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? notes,
+  }) {
+    return BookingEntity(
+      businessID: businessID ?? this.businessID,
+      serviceID: serviceID ?? this.serviceID,
+      bookingID: bookingID ?? this.bookingID,
+      customerID: customerID ?? this.customerID,
+      employeeID: employeeID ?? this.employeeID,
+      trackingID: trackingID ?? this.trackingID,
+      status: status ?? this.status,
+      paymentDetail:
+          paymentDetail ?? this.paymentDetail as BookingPaymentDetailEntity,
+      bookedAt: bookedAt ?? this.bookedAt,
+      endAt: endAt ?? this.endAt,
+      cancelledAt: cancelledAt ?? this.cancelledAt,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      notes: notes ?? this.notes,
+    );
+  }
+
   bool get amICustomer => customerID == LocalAuth.uid;
   bool get isCompleted =>
       status == StatusType.completed ||

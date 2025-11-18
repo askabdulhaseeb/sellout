@@ -29,6 +29,8 @@ class LocalNotifications {
     await _box.put(notification.notificationId, notification);
   }
 
+  Future<void> handleNotificationData() async {}
+
   /// Get all notifications as a list
   static Future<List<NotificationEntity>> getAllNotifications() async {
     return _box.values

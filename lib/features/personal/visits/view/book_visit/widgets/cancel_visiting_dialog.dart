@@ -17,18 +17,26 @@ class CancelVisitingDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Center(child: Text('are_you_sure'.tr())),
-      content:
-          Text(textAlign: TextAlign.center, 'cancel_viewing_description'.tr()),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      title: Center(
+        child: Text(
+          'are_you_sure'.tr(),
+          style: TextTheme.of(context).titleMedium,
+        ),
+      ),
+      content: Text(
+        textAlign: TextAlign.center,
+        'cancel_viewing_description'.tr(),
+        style: TextTheme.of(context).bodyMedium,
+      ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       actions: <Widget>[
         Row(
+          spacing: 4,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Expanded(
               child: CustomElevatedButton(
-                  padding: const EdgeInsets.all(12),
-                  margin: const EdgeInsets.all(6),
                   bgColor: Colors.transparent,
                   border: Border.all(color: Theme.of(context).primaryColor),
                   textColor: Theme.of(context).primaryColor,
@@ -45,8 +53,6 @@ class CancelVisitingDialog extends StatelessWidget {
             ),
             Expanded(
               child: CustomElevatedButton(
-                padding: const EdgeInsets.all(12),
-                margin: const EdgeInsets.all(6),
                 textStyle: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,

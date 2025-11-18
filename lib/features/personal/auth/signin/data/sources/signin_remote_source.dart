@@ -4,12 +4,14 @@ import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
 import '../../../../../../core/sources/local/hive_db.dart';
 import '../../domain/params/login_params.dart';
+import '../../domain/params/refresh_token_params.dart';
 import '../../domain/params/two_factor_params.dart';
 import '../models/current_user_model.dart';
 import 'local/local_auth.dart';
 
 abstract interface class SigninRemoteSource {
   Future<DataState<bool>> signin(LoginParams params);
+  Future<DataState<String>> refreshToken(RefreshTokenParams params);
   Future<DataState<bool>> verifyTwoFactorAuth(TwoFactorParams params);
   Future<DataState<bool>> resendTwoFactorCode(TwoFactorParams params);
 }
@@ -31,7 +33,8 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
         debugPrint('Signin Success in Remote Source');
         final Map<String, dynamic> jsonMap = jsonDecode(responce.data ?? '');
         if (jsonMap['require_2fa'] == true) {
-          AppLog.info('require_2fa', name: 'SignInRemoteSourceImpl - if');
+          AppLog.info('require_2fa',
+              name: 'SignInRemoteSourceImpl.signin - if');
           return DataSuccess<bool>(responce.data ?? '', true);
         } else {
           await HiveDB.signout();
@@ -43,13 +46,60 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
           return responce;
         }
       } else {
-        debugPrint('Signin Failed in Remote Source');
-        return DataFailer<bool>(CustomException('Signin Failed'));
+        AppLog.error('Signin Failed in Remote Source',
+            name: 'SignInRemoteSourceImpl.signin - else',
+            error: responce.exception?.message ?? 'something_wrong'.tr());
+        return DataFailer<bool>(
+            responce.exception ?? CustomException('signin failed'));
       }
     } catch (e, stc) {
       AppLog.error('signIn error',
-          name: 'SignInRemoteSourceImpl - catch ', error: e, stackTrace: stc);
+          name: 'SignInRemoteSourceImpl.signin - catch ',
+          error: e,
+          stackTrace: stc);
       return DataFailer<bool>(CustomException('Signin Failed: $e'));
+    }
+  }
+
+  @override
+  Future<DataState<String>> refreshToken(RefreshTokenParams params) async {
+    try {
+      final DataState<String> response = await ApiCall<String>().call(
+        endpoint: '/userAuth/refresh',
+        requestType: ApiRequestType.post,
+        body: json.encode(params.toJson()),
+        isConnectType: true,
+        isAuth: false,
+      );
+
+      if (response is DataSuccess<String>) {
+        final Map<String, dynamic> jsonMap =
+            (response.data != null && response.data!.isNotEmpty)
+                ? jsonDecode(response.data!) as Map<String, dynamic>
+                : <String, dynamic>{};
+        if (jsonMap.isNotEmpty) {
+          await LocalAuth.updateToken(jsonMap['token']?.toString());
+        }
+        return response;
+      }
+
+      AppLog.error(
+        response.exception?.message ?? 'something_wrong'.tr(),
+        name: 'SignInRemoteSourceImpl.refreshToken - else',
+        error: response.exception?.reason,
+      );
+      return DataFailer<String>(
+        response.exception ?? CustomException('refresh_token_failed'),
+      );
+    } catch (e, stc) {
+      AppLog.error(
+        e.toString(),
+        name: 'SignInRemoteSourceImpl.refreshToken - catch',
+        stackTrace: stc,
+      );
+      return DataFailer<String>(
+        CustomException('refresh_token_failed: $e'),
+      );
     }
   }
 

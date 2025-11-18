@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 import '../../../../../core/enums/core/status_type.dart';
-import '../../../auth/signin/data/models/address_model.dart';
+import '../../../auth/signin/domain/entities/address_entity.dart';
 import 'order_payment_detail_entity.dart';
 part 'order_entity.g.dart';
 

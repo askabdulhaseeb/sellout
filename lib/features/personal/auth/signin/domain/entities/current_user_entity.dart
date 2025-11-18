@@ -7,7 +7,7 @@ import '../../../../setting/setting_dashboard/domain/entities/notification_entit
 import '../../../../setting/setting_dashboard/domain/entities/privacy_settings_entity.dart';
 import '../../../../setting/setting_dashboard/domain/entities/time_away_entity.dart';
 import '../../../../user/profiles/domain/entities/supporter_detail_entity.dart';
-import '../../data/models/address_model.dart';
+import 'address_entity.dart';
 import 'login_detail_entity.dart';
 import 'login_info_entity.dart';
 part 'current_user_entity.g.dart';
@@ -19,6 +19,7 @@ class CurrentUserEntity {
   CurrentUserEntity({
     required this.message,
     required this.token,
+    required this.refreshToken,
     required this.userID,
     required this.email,
     required this.userName,
@@ -65,23 +66,25 @@ class CurrentUserEntity {
 
   @HiveField(2)
   final String token; // JWT token for authenticated user
-
   @HiveField(3)
+  final String refreshToken; // Token to refresh JWT
+
+  @HiveField(4)
   final String userID; // Unique ID of the user
 
-  @HiveField(11)
+  @HiveField(5)
   final String email; // User email
 
-  @HiveField(12)
+  @HiveField(6)
   final String userName; // Username
 
-  @HiveField(13)
+  @HiveField(7)
   final String displayName; // Full display name
 
-  @HiveField(14)
+  @HiveField(8)
   final String? currency; // Preferred currency (e.g., PKR, GBP)
 
-  @HiveField(15)
+  @HiveField(9)
   final PrivacyType privacy; // Profile visibility (public/private)
 
   @HiveField(16)
@@ -123,7 +126,7 @@ class CurrentUserEntity {
   final bool imageVerified; // Image verification status
 
   @HiveField(42)
-  final bool? otpVerified; // email verification status
+  final bool otpVerified; // email verification status
 
   @HiveField(43)
   final AttachmentEntity? verificationImage; // ID/KYC image
@@ -193,6 +196,7 @@ class CurrentUserEntity {
 
   CurrentUserEntity copyWith(
       {String? token,
+      String? refreshToken,
       List<AddressEntity>? address,
       bool? twoStepAuthEnabled,
       List<SupporterDetailEntity>? supporting,
@@ -205,6 +209,7 @@ class CurrentUserEntity {
     return CurrentUserEntity(
         message: message,
         token: token ?? this.token,
+        refreshToken: refreshToken ?? this.refreshToken,
         otpVerified: otpVerified ?? this.otpVerified,
         countryCode: countryCode ?? this.countryCode,
         phoneNumber: phoneNumber ?? this.phoneNumber,

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../../../../../../domain/entities/post_entity.dart';
+import '../../../../../../../domain/entities/post/post_entity.dart';
 import 'type/post_button_for_user_tile.dart';
 import 'type/store_post_button_tile.dart';
 import 'type/viewing_post_button_tile.dart';
@@ -25,7 +25,7 @@ class PostButtonSection extends StatelessWidget {
             ? PostButtonsForUser(post: post)
             : GestureDetector(
                 onTap: () {
-                  if (LocalAuth.currentUser?.userID == null) {
+                  if (LocalAuth.uid == null) {
                     AppSnackBar.showSnackBar(
                         context, 'please_login_first'.tr());
                   }
@@ -33,7 +33,7 @@ class PostButtonSection extends StatelessWidget {
                 child: LocalAuth.uid == post.createdBy
                     ? PostButtonsForUser(post: post)
                     : AbsorbPointer(
-                        absorbing: LocalAuth.currentUser?.userID == null,
+                        absorbing: LocalAuth.uid == null,
                         child: (post.type == ListingType.pets ||
                                 post.type == ListingType.vehicle ||
                                 post.type == ListingType.property)

@@ -6,6 +6,11 @@ import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../../attachment/domain/entities/picked_attachment_option.dart';
 import '../../../../../attachment/views/screens/pickable_attachment_screen.dart';
+import '../../../../search/domain/entities/search_entity.dart';
+import '../../../../search/domain/enums/search_entity_type.dart';
+import '../../../../search/domain/params/search_enum.dart';
+import '../../../../search/domain/usecase/search_usecase.dart';
+import '../../../../user/profiles/data/models/user_model.dart';
 import '../../../chat_dashboard/data/models/chat/chat_model.dart';
 import '../../domain/params/send_message_param.dart';
 import '../../domain/usecase/send_message_usecase.dart';
@@ -13,8 +18,10 @@ import '../../domain/usecase/send_message_usecase.dart';
 class SendMessageProvider extends ChangeNotifier {
   SendMessageProvider(
     this._sendMessageUsecase,
+    this._searchUsecase,
   );
   final SendMessageUsecase _sendMessageUsecase;
+  final SearchUsecase _searchUsecase;
 
   //varibales
   bool _isLoading = false;
@@ -25,7 +32,10 @@ class SendMessageProvider extends ChangeNotifier {
   final List<PickedAttachment> _document = <PickedAttachment>[];
   final List<PickedAttachment> _contact = <PickedAttachment>[];
   final List<PickedAttachment> _voiceNote = <PickedAttachment>[];
-
+  final List<UserEntity> _users = [];
+  String? _lastUserKey;
+  bool _hasMoreUsers = true;
+  bool _isUserLoading = false;
   TextSelection lastSelection = const TextSelection.collapsed(offset: 0);
 
   //getters
@@ -35,6 +45,9 @@ class SendMessageProvider extends ChangeNotifier {
   List<PickedAttachment> get document => _document;
   List<PickedAttachment> get contact => _contact;
   List<PickedAttachment> get voiceNote => _voiceNote;
+  List<UserEntity> get users => _users;
+  bool get hasMoreUsers => _hasMoreUsers;
+  bool get isUserLoading => _isUserLoading;
 
   TextEditingController get message => _message;
   // set functions
@@ -128,6 +141,70 @@ class SendMessageProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> searchUsers(String query) async {
+    if (_isUserLoading) return;
+    _isUserLoading = true;
+    notifyListeners();
+
+    final DataState<SearchEntity> result = await _searchUsecase.call(
+      SearchParams(
+        entityType: SearchEntityType.users,
+        query: query,
+        lastEvaluatedKey: '',
+        pageSize: 15,
+      ),
+    );
+
+    if (result is DataSuccess<SearchEntity>) {
+      _users.clear();
+      _users.addAll(result.entity?.users ?? []);
+      _lastUserKey = result.entity?.lastEvaluatedKey;
+      _hasMoreUsers = (_users.length >= 15); // or check lastEvaluatedKey
+    } else {
+      _users.clear();
+      _hasMoreUsers = false;
+    }
+
+    _isUserLoading = false;
+    notifyListeners();
+  }
+
+  // Load more users
+  Future<void> loadMoreUsers(String query) async {
+    if (!_hasMoreUsers || _isUserLoading) return;
+
+    _isUserLoading = true;
+    notifyListeners();
+
+    final DataState<SearchEntity> result = await _searchUsecase.call(
+      SearchParams(
+        entityType: SearchEntityType.users,
+        query: query,
+        lastEvaluatedKey: _lastUserKey ?? '',
+        pageSize: 15,
+      ),
+    );
+
+    if (result is DataSuccess<SearchEntity>) {
+      final List<UserEntity> newUsers = result.entity?.users ?? [];
+      _users.addAll(newUsers);
+      _lastUserKey = result.entity?.lastEvaluatedKey;
+      _hasMoreUsers = (newUsers.length >= 15); // stop if less than pageSize
+    } else {
+      _hasMoreUsers = false;
+    }
+
+    _isUserLoading = false;
+    notifyListeners();
+  }
+
+  void resetUserSearch() {
+    _users.clear();
+    _lastUserKey = null;
+    _hasMoreUsers = true;
+    notifyListeners();
+  }
+
   void removePickedAttachment(PickedAttachment attachment) {
     _attachments.remove(attachment);
     notifyListeners();
@@ -216,6 +293,7 @@ class SendMessageProvider extends ChangeNotifier {
     if (result is DataSuccess) {
       _contact.clear();
       setLoading(false);
+      Navigator.pop(context);
     } else {
       AppSnackBar.showSnackBar(
           // ignore: use_build_context_synchronously

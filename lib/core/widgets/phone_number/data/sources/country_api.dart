@@ -30,10 +30,58 @@ class CountryApiImpl implements CountryApi {
           return DataSuccess<List<CountryEntity>>('', countries);
         }
 
-        final List<dynamic> list = json.decode(raw);
+        // Try to decode the response into a List. Be defensive about types
+        // because some APIs return wrapped objects or JSON-encoded strings.
+        dynamic decoded;
+        try {
+          decoded = json.decode(raw);
+        } catch (e) {
+          // If json.decode fails, log and return empty list
+          AppLog.error(
+            'Failed to decode countries response: $e',
+            name: 'CountryApiImpl.countries - decode',
+            error: e,
+          );
+          return DataSuccess<List<CountryEntity>>('', countries);
+        }
+
+        List<dynamic>? list;
+        if (decoded is List) {
+          list = decoded;
+        } else if (decoded is Map) {
+          // Common case: { data: [...] } or similar
+          if (decoded['data'] is List) {
+            list = decoded['data'] as List<dynamic>;
+          } else {
+            // If map directly contains country entries, try to use values
+            final Iterable<dynamic> values = decoded.values;
+            list = values.where((e) => e != null).toList();
+          }
+        } else if (decoded is String) {
+          // Sometimes the API returns a JSON encoded string; try decoding again
+          try {
+            final dynamic second = json.decode(decoded);
+            if (second is List) {
+              list = second;
+            }
+          } catch (_) {
+            // ignore
+          }
+        }
+
+        if (list == null || list.isEmpty) {
+          return DataSuccess<List<CountryEntity>>('', countries);
+        }
+
         for (dynamic item in list) {
-          final CountryEntity country = CountryModel.fromMap(item);
-          countries.add(country);
+          try {
+            final CountryEntity country = CountryModel.fromMap(item);
+            countries.add(country);
+          } catch (e) {
+            AppLog.error('Failed parse country item: $e',
+                name: 'CountryApiImpl.countries - parse-item', error: e);
+            // continue parsing other items
+          }
         }
         return DataSuccess<List<CountryEntity>>('', countries);
       } else {
@@ -55,18 +103,41 @@ class CountryApiImpl implements CountryApi {
   }
 
   Future<List<CountryEntity>> _localCounties(Duration duration) async {
-    final List<CountryEntity> countries = LocalCountry().activeCounties;
+    final List<CountryEntity> countries = LocalCountry().activeCountries;
     if (countries.isNotEmpty) return countries;
 
     final ApiRequestEntity? local = await LocalRequestHistory()
         .request(endpoint: '/country', duration: duration);
 
     if (local == null) return countries;
-    final List<dynamic> list = local.decodedData;
+
+    final dynamic decoded = local.decodedData;
+    List<dynamic>? list;
+    if (decoded is List) {
+      list = decoded;
+    } else if (decoded is String) {
+      try {
+        final dynamic second = json.decode(decoded);
+        if (second is List) list = second;
+      } catch (_) {}
+    } else if (decoded is Map) {
+      if (decoded['data'] is List) {
+        list = decoded['data'] as List<dynamic>;
+      } else {
+        list = decoded.values.where((e) => e != null).toList();
+      }
+    }
+
+    if (list == null) return countries;
 
     for (dynamic item in list) {
-      final CountryEntity country = CountryModel.fromMap(item);
-      countries.add(country);
+      try {
+        final CountryEntity country = CountryModel.fromMap(item);
+        countries.add(country);
+      } catch (e) {
+        AppLog.error('Failed parse local country item: $e',
+            name: 'CountryApiImpl._localCounties - parse-item', error: e);
+      }
     }
     return countries;
   }

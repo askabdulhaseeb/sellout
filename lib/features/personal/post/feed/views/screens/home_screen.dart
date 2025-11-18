@@ -15,34 +15,40 @@ class HomeScreen extends HookWidget {
     final FeedProvider feedProvider = context.read<FeedProvider>();
     const String type = 'post';
 
+    // Initial feed load
     useEffect(() {
       if (feedProvider.posts.isEmpty) {
-        Future<void>.microtask(() {
-          feedProvider.loadInitialFeed(type);
-        });
+        Future.microtask(() => feedProvider.loadInitialFeed(type));
       }
       return null;
-    }, const <Object?>[]);
+    }, <Object?>[]);
+
     // Scroll listener for pagination
     useEffect(() {
       scrollController.addListener(() {
         if (scrollController.position.pixels >=
-            scrollController.position.maxScrollExtent - 600) {
+            scrollController.position.maxScrollExtent - 400) {
           feedProvider.loadMoreFeed(type);
         }
       });
       return null;
     }, <Object?>[scrollController]);
+
     return PersonalScaffold(
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(
-            decelerationRate: ScrollDecelerationRate.normal),
-        controller: scrollController,
-        slivers: const <Widget>[
-          SliverToBoxAdapter(child: HomePromoListSection()),
-          SliverToBoxAdapter(child: SizedBox(height: 16)),
-          HomePostListSection(),
-        ],
+      body: RefreshIndicator(
+        color: Theme.of(context).primaryColor,
+        onRefresh: () async {
+          await feedProvider.refreshFeed(type);
+        },
+        child: CustomScrollView(
+          controller: scrollController,
+          physics: const BouncingScrollPhysics(),
+          slivers: const <Widget>[
+            SliverToBoxAdapter(child: HomePromoListSection()),
+            SliverToBoxAdapter(child: SizedBox(height: 16)),
+            HomePostListSection(),
+          ],
+        ),
       ),
     );
   }

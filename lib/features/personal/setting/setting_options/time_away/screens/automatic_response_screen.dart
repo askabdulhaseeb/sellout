@@ -1,9 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../../../core/theme/app_theme.dart';
-import '../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../setting_dashboard/view/providers/personal_setting_provider.dart';
 
@@ -76,7 +74,7 @@ class _AutomaticResponseScreenState extends State<AutomaticResponseScreen> {
                 Text(
                   startDate != null ? displayFormat.format(startDate!) : '--',
                   style: textTheme.bodyLarge
-                      ?.copyWith(color: AppTheme.primaryColor),
+                      ?.copyWith(color: Theme.of(context).primaryColor),
                 ),
               ],
             ),
@@ -97,7 +95,7 @@ class _AutomaticResponseScreenState extends State<AutomaticResponseScreen> {
                 Text(
                   endDate != null ? displayFormat.format(endDate!) : '--',
                   style: textTheme.bodyLarge
-                      ?.copyWith(color: AppTheme.primaryColor),
+                      ?.copyWith(color: Theme.of(context).primaryColor),
                 ),
               ],
             ),

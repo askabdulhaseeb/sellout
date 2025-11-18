@@ -1,22 +1,25 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import 'package:http/http.dart' as http;
 
 class VideoWidget extends StatefulWidget {
   const VideoWidget({
     required this.videoSource,
-    this.play = true,
-    this.fit = BoxFit.cover,
-    this.durationFontSize = 12,
     super.key,
-    this.showTime = false,
+    this.play = true,
+    this.fit = BoxFit.fill,
+    this.showTime = true,
+    this.square = false,
+    this.durationFontSize = 12,
   });
 
   final dynamic videoSource;
   final bool play;
   final BoxFit fit;
-  final double durationFontSize;
   final bool showTime;
+  final bool square;
+  final double durationFontSize;
 
   @override
   State<VideoWidget> createState() => _VideoWidgetState();
@@ -26,19 +29,73 @@ class _VideoWidgetState extends State<VideoWidget> {
   VideoPlayerController? _controller;
   bool _initialized = false;
   bool _hasError = false;
+  bool _ended = false;
+  bool _formatSupported = true;
+
+  static const supportedFormats = [
+    'mp4',
+    'mov',
+    'mkv',
+    'webm',
+    'avi',
+    'flv',
+    '3gp',
+    'm4v'
+  ];
 
   @override
   void initState() {
     super.initState();
-    _initializeVideo();
+    _checkFormatAndInit();
   }
 
-  Future<void> _initializeVideo() async {
+  Future<void> _checkFormatAndInit() async {
     try {
-      if (widget.videoSource is Uri &&
-              (widget.videoSource as Uri).isScheme('http') ||
-          widget.videoSource is String &&
-              (widget.videoSource as String).startsWith('http')) {
+      String? url;
+      if (widget.videoSource is String) {
+        url = widget.videoSource;
+      } else if (widget.videoSource is Uri) {
+        url = widget.videoSource.toString();
+      }
+
+      if (url != null) {
+        final extension = url.split('.').last.toLowerCase();
+        if (!supportedFormats.contains(extension)) {
+          // Check header type if available
+          try {
+            final response = await http.head(Uri.parse(url));
+            final contentType = response.headers['content-type'] ?? '';
+            if (!contentType.startsWith('video/')) {
+              setState(() {
+                _formatSupported = false;
+                _hasError = true;
+              });
+              return;
+            }
+          } catch (_) {
+            setState(() {
+              _formatSupported = false;
+              _hasError = true;
+            });
+            return;
+          }
+        }
+      }
+
+      // If format is fine, initialize video
+      await _initVideo();
+    } catch (e) {
+      debugPrint('VideoWidget format check error: $e');
+      setState(() => _hasError = true);
+    }
+  }
+
+  Future<void> _initVideo() async {
+    try {
+      if ((widget.videoSource is Uri &&
+              (widget.videoSource as Uri).isScheme('http')) ||
+          (widget.videoSource is String &&
+              (widget.videoSource as String).startsWith('http'))) {
         final uri = widget.videoSource is Uri
             ? widget.videoSource
             : Uri.parse(widget.videoSource);
@@ -46,40 +103,32 @@ class _VideoWidgetState extends State<VideoWidget> {
       } else if (widget.videoSource is Uri &&
           (widget.videoSource as Uri).isScheme('file')) {
         final Uri uri = widget.videoSource as Uri;
-        final String filePath = uri.toFilePath();
-        if (filePath.isNotEmpty) {
-          _controller = VideoPlayerController.file(File(filePath));
-        } else {
-          throw Exception('Invalid file path for URI.');
-        }
+        _controller = VideoPlayerController.file(File(uri.toFilePath()));
       } else if (widget.videoSource is String) {
-        final String path = widget.videoSource as String;
-        final File file = File(path);
-        if (file.existsSync()) {
-          _controller = VideoPlayerController.file(file);
-        } else {
-          throw Exception('File not found at $path');
-        }
+        _controller = VideoPlayerController.file(File(widget.videoSource));
       } else {
-        throw Exception('Unsupported URI type or scheme.');
+        throw Exception('Unsupported source type: ${widget.videoSource}');
       }
 
       await _controller!.initialize();
+      _controller!.setLooping(false);
 
-      if (mounted) {
-        setState(() {
-          _initialized = true;
-        });
+      if (widget.play) _controller!.play();
 
-        if (widget.play) _controller!.play();
-        _controller!.setLooping(true);
-      }
+      _controller!.addListener(() {
+        if (mounted) {
+          final v = _controller!.value;
+          if (v.position >= v.duration && !v.isPlaying && !_ended) {
+            setState(() => _ended = true);
+          }
+          setState(() {});
+        }
+      });
+
+      if (mounted) setState(() => _initialized = true);
     } catch (e) {
-      if (mounted) {
-        setState(() {
-          _hasError = true;
-        });
-      }
+      debugPrint('VideoWidget error: $e');
+      if (mounted) setState(() => _hasError = true);
     }
   }
 
@@ -89,53 +138,62 @@ class _VideoWidgetState extends State<VideoWidget> {
     super.dispose();
   }
 
-  // Format video duration
-  String _formatDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final String minutes = twoDigits(duration.inMinutes.remainder(60));
-    final String seconds = twoDigits(duration.inSeconds.remainder(60));
-    return '$minutes:$seconds';
+  String _format(Duration d) {
+    String two(int n) => n.toString().padLeft(2, '0');
+    return '${two(d.inMinutes.remainder(60))}:${two(d.inSeconds.remainder(60))}';
+  }
+
+  void _togglePlayPause() {
+    if (_ended) {
+      _controller!.seekTo(Duration.zero);
+      _controller!.play();
+      setState(() => _ended = false);
+    } else if (_controller!.value.isPlaying) {
+      _controller!.pause();
+    } else {
+      _controller!.play();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_hasError) {
-      return const Center(child: Icon(Icons.error, color: Colors.red));
+    if (_hasError || !_formatSupported) {
+      return const Center(
+        child: Icon(Icons.error_outline, color: Colors.red, size: 36),
+      );
     }
 
     if (!_initialized) {
       return const Center(child: CircularProgressIndicator());
     }
 
+    final aspectRatio = widget.square
+        ? 1.0
+        : (_controller!.value.aspectRatio == 0
+            ? 16 / 9
+            : _controller!.value.aspectRatio);
+
+    final position = _controller!.value.position;
+    final duration = _controller!.value.duration;
+
     return Stack(
       alignment: Alignment.center,
-      children: <Widget>[
+      children: [
         AspectRatio(
-          aspectRatio: _controller!.value.aspectRatio,
-          child: FittedBox(
-            fit: widget.fit,
-            clipBehavior: Clip.hardEdge,
-            child: Container(
-              color: Colors.grey,
-              width: _controller!.value.size.width,
-              height: _controller!.value.size.height,
-              child: VideoPlayer(_controller!),
-            ),
-          ),
+          aspectRatio: aspectRatio,
+          child: VideoPlayer(_controller!),
         ),
         if (widget.play)
           GestureDetector(
-            onTap: () {
-              setState(() {
-                _controller!.value.isPlaying
-                    ? _controller!.pause()
-                    : _controller!.play();
-              });
-            },
+            onTap: _togglePlayPause,
             child: CircleAvatar(
               backgroundColor: Colors.black54,
               child: Icon(
-                _controller!.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                _ended
+                    ? Icons.replay
+                    : _controller!.value.isPlaying
+                        ? Icons.pause
+                        : Icons.play_arrow,
                 color: Colors.white,
               ),
             ),
@@ -151,7 +209,9 @@ class _VideoWidgetState extends State<VideoWidget> {
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
-                _formatDuration(_controller!.value.duration),
+                _controller!.value.isPlaying || _ended
+                    ? '${_format(position)} / ${_format(duration)}'
+                    : _format(duration),
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: widget.durationFontSize,

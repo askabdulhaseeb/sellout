@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../providers/marketplace_provider.dart';
 
 class FilterSheetHeaderSection extends StatelessWidget {
@@ -32,7 +31,7 @@ class FilterSheetHeaderSection extends StatelessWidget {
               'reset'.tr(),
               style: TextTheme.of(context)
                   .labelSmall
-                  ?.copyWith(color: AppTheme.primaryColor),
+                  ?.copyWith(color: Theme.of(context).primaryColor),
             ),
           ),
         ],

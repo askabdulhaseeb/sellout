@@ -22,20 +22,19 @@ class ServicePageFinishedAppointmentSection extends StatelessWidget {
         // 🔥 Filter finished appointments — adjust statuses as needed
         final List<BookingEntity> finishedBookings = allUserBookings
             .where((BookingEntity booking) =>
-                booking.status == StatusType.completed ||
+                booking.status == StatusType.completed &&
+                    booking.paymentDetail?.status == StatusType.paid ||
                 booking.status == StatusType.cancelled)
             .toList();
-
         if (finishedBookings.isEmpty) {
           return Center(child: Text('no_apointment_found'.tr()));
         }
-
         return ListView.builder(
           shrinkWrap: true,
           primary: false,
           itemCount: finishedBookings.length,
           itemBuilder: (BuildContext context, int index) {
-            return AppointmentTile(booking: finishedBookings[index]);
+            return AppointmentTile(booking: finishedBookings);
           },
         );
       },

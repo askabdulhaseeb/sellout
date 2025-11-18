@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/theme/app_theme.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/custom_pin_input_field.dart';
 import '../../../../../../core/widgets/sellout_title.dart';
@@ -71,7 +70,7 @@ class EnterCodeScreen extends StatelessWidget {
               child: Text(
                 'didnot_get_code'.tr(),
                 style: textTheme.bodyMedium
-                    ?.copyWith(color: AppTheme.primaryColor),
+                    ?.copyWith(color: Theme.of(context).primaryColor),
               ),
             ),
             const SizedBox(height: 4),

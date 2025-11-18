@@ -1,8 +1,8 @@
 import 'dart:convert';
-
-import '../../../../../core/enums/business/services/service_category_type.dart';
 import '../../../../../core/enums/business/services/service_model_type.dart';
 import '../../../../attachment/domain/entities/picked_attachment.dart';
+import '../../../../personal/services/domain/entity/service_category_entity.dart';
+import '../../../../personal/services/domain/entity/service_type_entity.dart';
 
 class AddServiceParam {
   AddServiceParam(
@@ -21,13 +21,11 @@ class AddServiceParam {
       required this.attachments, //files
       required this.isMobile, //mobile_service
       required this.employeeIDs, //employee_ids
-      this.serviceID = ''
-
-      });
+      this.serviceID = ''});
 
   final String name;
-  final ServiceCategoryType? category;
-  final ServiceType? type;
+  final ServiceCategoryEntity? category;
+  final ServiceTypeEntity? type;
   final ServiceModelType? model;
   final int? hours;
   final int? mints;
@@ -45,8 +43,8 @@ class AddServiceParam {
   Map<String, String> toMap() {
     return <String, String>{
       'service_name': name.trim(),
-      'service_category': category?.json ?? '',
-      'service_type': type?.json ?? '',
+      'service_category': category?.value ?? '',
+      'service_type': type?.value ?? '',
       'service_model': model?.json ?? '',
       'business_id': businessID,
       'time': (((hours ?? 0) * 60) + (mints ?? 0)).toString(),
@@ -57,6 +55,7 @@ class AddServiceParam {
       'description': description.trim(),
       'included_in_service': included.trim(),
       'not_included_in_service': excluded.trim(),
-    'employee_ids': jsonEncode(employeeIDs),     };
+      'employee_ids': jsonEncode(employeeIDs),
+    };
   }
 }

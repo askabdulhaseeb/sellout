@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import '../../../domain/entities/post_entity.dart';
+import '../post/post_entity.dart';
 part 'feed_entity.g.dart';
 
 @HiveType(typeId: 60)

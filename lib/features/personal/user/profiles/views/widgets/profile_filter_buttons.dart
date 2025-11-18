@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/utilities/app_string.dart';
-import '../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../data/models/user_model.dart';
 import '../enums/profile_page_tab_type.dart';
@@ -22,39 +22,42 @@ class ProfileFilterSection extends StatelessWidget {
     final bool isStore = (pageType!.code == ProfilePageTabType.store.code);
     return Consumer<ProfileProvider>(
       builder: (BuildContext context, ProfileProvider pro, Widget? child) =>
-          Row(
-        spacing: 4,
-        children: <Widget>[
-          Flexible(child: ProfilePostSearchField(isStore: isStore)),
-          Expanded(
-              child: CustomFilterButton(
-                  iconFirst: false,
-                  onPressed: () => showModalBottomSheet(
-                        context: context,
-                        builder: (BuildContext context) =>
-                            StoreCategoryBottomSheet(
-                          isStore: isStore,
+          Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Row(
+          spacing: 4,
+          children: <Widget>[
+            Flexible(child: ProfilePostSearchField(isStore: isStore)),
+            Expanded(
+                child: CustomFilterButton(
+                    iconFirst: false,
+                    onPressed: () => showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext context) =>
+                              StoreCategoryBottomSheet(
+                            isStore: isStore,
+                          ),
                         ),
-                      ),
-                  label: 'category'.tr(),
-                  icon: AppStrings.selloutDropDownIcon)),
-          Expanded(
-              child: CustomFilterButton(
-                  iconFirst: true,
-                  onPressed: () => showModalBottomSheet(
-                        context: context,
-                        showDragHandle: false,
-                        isDismissible: false,
-                        useSafeArea: true,
-                        isScrollControlled: true,
-                        builder: (BuildContext context) =>
-                            StoreFilterBottomSheet(
-                          isStore: isStore,
+                    label: 'category'.tr(),
+                    icon: AppStrings.selloutDropDownIcon)),
+            Expanded(
+                child: CustomFilterButton(
+                    iconFirst: true,
+                    onPressed: () => showModalBottomSheet(
+                          context: context,
+                          showDragHandle: false,
+                          isDismissible: false,
+                          useSafeArea: true,
+                          isScrollControlled: true,
+                          builder: (BuildContext context) =>
+                              StoreFilterBottomSheet(
+                            isStore: isStore,
+                          ),
                         ),
-                      ),
-                  label: 'filter'.tr(),
-                  icon: AppStrings.selloutFilterIcon)),
-        ],
+                    label: 'filter'.tr(),
+                    icon: AppStrings.selloutFilterIcon)),
+          ],
+        ),
       ),
     );
   }
@@ -123,7 +126,7 @@ class _ProfilePostSearchFieldState extends State<ProfilePostSearchField> {
   void _onSearchChanged(ProfileProvider pro, String value) {
     // Debounce to prevent too many API calls
     if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
+    _debounce = Timer(const Duration(milliseconds: 600), () {
       if (widget.isStore) {
         pro.loadStorePosts(); // ← Add query to API if needed
       } else {
@@ -152,15 +155,6 @@ class _ProfilePostSearchFieldState extends State<ProfilePostSearchField> {
       controller: controller,
       hint: 'search'.tr(),
       style: TextTheme.of(context).bodyMedium,
-      prefix: const Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          CustomSvgIcon(
-            assetPath: AppStrings.selloutSearchIcon,
-            size: 16,
-          ),
-        ],
-      ),
       onChanged: (String value) => _onSearchChanged(pro, value),
     );
   }

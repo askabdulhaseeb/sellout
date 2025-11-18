@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
-import '../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../core/widgets/custom_textformfield.dart';
 import '../../providers/marketplace_provider.dart';
 
 class MarketplaceSearchField extends StatefulWidget {
@@ -42,7 +42,7 @@ class _MarketplaceSearchFieldState extends State<MarketplaceSearchField> {
           autoFocus: false,
           onChanged: (String value) => _onSearchChanged(pro, value),
           controller: pro.queryController,
-          hint: 'search'.tr(),
+          hint: 'search_prodcuts_here'.tr(),
           prefixIcon: const Icon(CupertinoIcons.search),
           suffixIcon: (pro.isLoading && pro.queryController.text.isNotEmpty)
               ? const Padding(

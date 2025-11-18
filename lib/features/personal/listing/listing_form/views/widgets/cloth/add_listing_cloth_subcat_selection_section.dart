@@ -15,11 +15,13 @@ class AddListingClothSubcatSelectionSection extends StatelessWidget {
     return Consumer<AddListingFormProvider>(
         builder: (BuildContext context, AddListingFormProvider addPro, _) {
       return CustomToggleSwitch<String>(
+        verticalPadding: 8,
+        containerHeight: 40,
         isShaded: false,
         labels: subCategories,
         labelStrs: subCategories.map((String e) => e.tr()).toList(),
-        labelText: 'please_select'.tr(),
-        initialValue: addPro.selectedClothSubCategory,
+        labelText: '',
+        initialValue: addPro.selectedClothSubType,
         onToggle: addPro.setSelectedClothSubCategory,
       );
     });

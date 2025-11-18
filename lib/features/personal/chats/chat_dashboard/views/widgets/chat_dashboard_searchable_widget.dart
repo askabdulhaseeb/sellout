@@ -4,6 +4,7 @@ import '../../../../../../core/utilities/app_string.dart';
 import '../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../../../../../core/widgets/searchable_textfield.dart';
 import '../../../create_chat/view/screens/create_group_bottomsheet.dart';
+import '../../../create_chat/view/screens/create_private_chat_bottomsheet.dart';
 import '../providers/chat_dashboard_provider.dart';
 
 class ChatDashboardSearchableWidget extends StatelessWidget {
@@ -19,8 +20,17 @@ class ChatDashboardSearchableWidget extends StatelessWidget {
           children: <Widget>[
             Expanded(
               child: SearchableTextfield(
+                borderRadius: 8,
                 controller: pagePro.searchController,
-                onChanged: (String value) {},
+                onChanged: (String value) {
+                  if (ChatPageType.orders == pagePro.currentPage) {
+                    pagePro.updateSearchQuery(value);
+                  } else if (ChatPageType.services == pagePro.currentPage) {
+                    pagePro.updateSearchQuery(value);
+                  } else if (ChatPageType.groups == pagePro.currentPage) {
+                    pagePro.updateSearchQuery(value);
+                  }
+                },
               ),
             ),
             const SizedBox(width: 8),
@@ -28,23 +38,19 @@ class ChatDashboardSearchableWidget extends StatelessWidget {
                 ? GestureDetector(
                     onTap: () => Navigator.push(
                         context,
-                        MaterialPageRoute<CreateGroupBottomSheet>(
+                        MaterialPageRoute<CreatePrivateChatBottomsheet>(
                             builder: (BuildContext context) =>
-                                const CreateGroupBottomSheet())),
+                                CreatePrivateChatBottomsheet())),
                     child: Container(
                         padding: const EdgeInsets.all(11),
                         decoration: BoxDecoration(
                             border: Border.all(
                                 color: ColorScheme.of(context).outlineVariant),
-                            borderRadius: BorderRadius.circular(12)),
+                            borderRadius: BorderRadius.circular(8)),
                         child: const CustomSvgIcon(
                             assetPath: AppStrings.selloutAddChatIcon)))
-                : pagePro.currentPage == ChatPageType.services
-                    ? IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.card_membership_sharp),
-                      )
-                    : GestureDetector(
+                : pagePro.currentPage == ChatPageType.groups
+                    ? GestureDetector(
                         onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute<CreateGroupBottomSheet>(
@@ -56,9 +62,10 @@ class ChatDashboardSearchableWidget extends StatelessWidget {
                                 border: Border.all(
                                     color:
                                         ColorScheme.of(context).outlineVariant),
-                                borderRadius: BorderRadius.circular(12)),
+                                borderRadius: BorderRadius.circular(8)),
                             child: const CustomSvgIcon(
                                 assetPath: AppStrings.selloutAddChatIcon)))
+                    : const SizedBox.shrink()
           ],
         ),
       );

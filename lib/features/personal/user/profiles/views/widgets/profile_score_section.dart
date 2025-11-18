@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/app_theme.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../domain/entities/user_entity.dart';
 import 'score_widget_bottomsheets/employyement_details_bottomsheet.dart';
@@ -77,8 +76,8 @@ class ProfileScoreSection extends StatelessWidget {
                 Expanded(
                     child: SupportButton(
                   supporterId: user?.uid ?? '',
-                  supportColor: AppTheme.primaryColor,
-                  supportingColor: AppTheme.secondaryColor,
+                  supportColor: Theme.of(context).primaryColor,
+                  supportingColor: Theme.of(context).colorScheme.secondary,
                   supportTextColor: ColorScheme.of(context).onPrimary,
                   supportingTextColor: ColorScheme.of(context).onPrimary,
                 ))

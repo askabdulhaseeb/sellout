@@ -20,4 +20,9 @@ class SettingRepositoryImpl implements SettingRepository {
       ConnectAccountSessionParams params) {
     return api.connectAccountSession(params);
   }
+
+  @override
+  Future<DataState<bool>> getWallet(String params) {
+    return api.getWallet(params);
+  }
 }

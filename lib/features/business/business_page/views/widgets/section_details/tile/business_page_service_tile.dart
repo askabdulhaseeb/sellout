@@ -15,7 +15,6 @@ class BusinessPageServiceTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isMe = LocalAuth.currentUser?.businessID == service.businessID;
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
       child: SizedBox(

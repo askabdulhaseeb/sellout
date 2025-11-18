@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
@@ -7,7 +6,7 @@ import '../../../../review/domain/entities/review_entity.dart';
 import '../../../../review/domain/param/get_review_param.dart';
 import '../../../../review/domain/usecase/get_reviews_usecase.dart';
 import '../../../data/sources/local/local_post.dart';
-import '../../../domain/entities/post_entity.dart';
+import '../../../domain/entities/post/post_entity.dart';
 import '../../../domain/usecase/get_specific_post_usecase.dart';
 
 class PostDetailProvider extends ChangeNotifier {
@@ -75,7 +74,7 @@ class PostDetailProvider extends ChangeNotifier {
     }
     try {
       final DataState<PostEntity> result = await _getSpecificPostUsecase(
-        GetSpecificPostParam(postId: postId, silentUpdate: false),
+        GetSpecificPostParam(postId: postId, silentUpdate: true),
       );
       if (result is DataSuccess) {
         _setPost(result.entity);

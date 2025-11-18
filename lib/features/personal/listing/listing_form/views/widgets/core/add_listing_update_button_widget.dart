@@ -11,30 +11,31 @@ class AddListingUpdateButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AddListingFormProvider formPro =
-        Provider.of<AddListingFormProvider>(context, listen: false);
-    return Row(
-      spacing: 6,
-      children: <Widget>[
-        Expanded(
-          child: CustomElevatedButton(
-              bgColor: ColorScheme.of(context).surface,
-              border: Border.all(color: ColorScheme.of(context).onSurface),
-              title: 'delete'.tr(),
-              textColor: ColorScheme.of(context).onSurface,
-              isLoading: formPro.isLoading,
-              onTap: () {}),
-        ),
-        Expanded(
-          child: CustomElevatedButton(
-            title: 'update'.tr(),
-            isLoading: formPro.isLoading,
-            onTap: () {
-              formPro.submit(context);
-            },
+    // final AddListingFormProvider formPro =
+    //     Provider.of<AddListingFormProvider>(context, listen: false);
+    return Consumer<AddListingFormProvider>(
+      builder: (BuildContext context, AddListingFormProvider formPro,
+              Widget? child) =>
+          Row(
+        spacing: 6,
+        children: <Widget>[
+          // Expanded(
+          //   child: CustomElevatedButton(
+          //       bgColor: ColorScheme.of(context).surface,
+          //       border: Border.all(color: ColorScheme.of(context).onSurface),
+          //       title: 'delete'.tr(),
+          //       textColor: ColorScheme.of(context).onSurface,
+          //       isLoading: formPro.isLoading,
+          //       onTap: () {}),
+          // ),
+          Expanded(
+            child: CustomElevatedButton(
+                title: 'update'.tr(),
+                isLoading: formPro.isLoading,
+                onTap: () => formPro.submit(context)),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

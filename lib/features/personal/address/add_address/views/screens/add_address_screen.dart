@@ -1,14 +1,21 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../core/utilities/app_validators.dart';
+import '../../../../../../core/constants/app_spacings.dart';
+import '../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/custom_radio_toggle_tile.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/phone_number_entity.dart';
 import '../../../../../../core/widgets/phone_number/views/countries_dropdown.dart';
+import '../../../../../../core/widgets/phone_number/domain/entities/country_entity.dart';
 import '../../../../../../core/widgets/phone_number/views/phone_number_input_field.dart';
+import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
+import '../../../../../../services/get_it.dart';
 import '../../../../auth/signin/domain/entities/address_entity.dart';
+import '../../domain/usecase/add_address_usecase.dart';
+import '../../domain/usecase/update_address_usecase.dart';
 import '../provider/add_address_provider.dart';
 
 class AddEditAddressScreen extends StatefulWidget {
@@ -22,128 +29,191 @@ class AddEditAddressScreen extends StatefulWidget {
 class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
   @override
   Widget build(BuildContext context) {
-    final AddAddressProvider provider =
-        Provider.of<AddAddressProvider>(context, listen: false);
-    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+    return ChangeNotifierProvider<AddAddressProvider>(
+      create: (_) => AddAddressProvider(
+        locator<AddAddressUsecase>(),
+        locator<UpdateAddressUsecase>(),
+      ),
+      child: AddEditAddressView(initAddress: widget.initAddress),
+    );
+  }
+}
+
+class AddEditAddressView extends StatefulWidget {
+  const AddEditAddressView({this.initAddress, super.key});
+  final AddressEntity? initAddress;
+
+  @override
+  State<AddEditAddressView> createState() => _AddEditAddressViewState();
+}
+
+class _AddEditAddressViewState extends State<AddEditAddressView> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final AddAddressProvider pro = context.read<AddAddressProvider>();
+      if (widget.initAddress != null) {
+        pro.updateVariable(widget.initAddress!);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final AddAddressProvider provider = context.read<AddAddressProvider>();
 
     return PopScope(
       onPopInvokedWithResult: (bool didPop, dynamic result) =>
           provider.disposeControllers(),
       child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: AppBarTitle(titleKey: 'address'.tr()),
+        ),
         body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Form(
-              key: formKey,
-              child: Column(
-                spacing: 4,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  CustomTextFormField(
-                    labelText: 'postcode'.tr(),
-                    controller: provider.postalCodeController,
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'This field is required.';
-                      }
-                      return null;
+          padding: const EdgeInsets.all(16),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              spacing: AppSpacing.vSm,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                CustomTextFormField(
+                  labelText: 'recipient_name'.tr(),
+                  controller: provider.recipientNameController,
+                  validator: AppValidator.isEmpty,
+                ),
+                Consumer<AddAddressProvider>(
+                  builder: (_, AddAddressProvider pro, __) =>
+                      CountryDropdownField(
+                    initialValue: pro.selectedCountryEntity,
+                    onChanged: (CountryEntity value) {
+                      pro.setCountryEntity(value);
                     },
+                    validator: AppValidator.requireSelection,
                   ),
-                  CustomTextFormField(
-                    labelText: 'address'.tr(),
-                    controller: provider.address1Controller,
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'This field is required.';
-                      }
-                      return null;
+                ),
+                Consumer<AddAddressProvider>(
+                  builder: (_, AddAddressProvider pro, __) =>
+                      CustomDropdown<StateEntity>(
+                    title: 'state'.tr(),
+                    items:
+                        (pro.selectedCountryEntity?.states ?? <StateEntity>[])
+                            .map((StateEntity state) =>
+                                DropdownMenuItem<StateEntity>(
+                                  value: state,
+                                  child: Text(state.stateName),
+                                ))
+                            .toList(),
+                    selectedItem: pro.state,
+                    onChanged: (StateEntity? value) {
+                      if (value != null) pro.setStateEntity(value);
                     },
+                    validator: AppValidator.requireSelection,
                   ),
-                  CustomTextFormField(
-                    labelText: '${'town'.tr()}/${'city'.tr()}',
-                    controller: provider.townCityController,
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'field_left_empty'.tr();
-                      }
-                      const String regex =
-                          r'^[a-zA-Z]+/[a-zA-Z]+$'; // Strict city/town format without spaces
-                      final RegExp regExp = RegExp(regex);
-                      if (!regExp.hasMatch(value)) {
-                        return 'please_follow_format_town'; // Adjust this message as needed
-                      }
-                      return null;
+                ),
+                Consumer<AddAddressProvider>(
+                  builder: (_, AddAddressProvider pro, __) =>
+                      CustomDropdown<String>(
+                    title: 'city'.tr(),
+                    items: (pro.state?.cities ?? <String>[])
+                        .map((String city) => DropdownMenuItem<String>(
+                              value: city,
+                              child: Text(city),
+                            ))
+                        .toList(),
+                    selectedItem: pro.city,
+                    onChanged: (String? value) {
+                      if (value != null) pro.setCity(value);
                     },
+                    validator: AppValidator.requireSelection,
                   ),
-                  Consumer<AddAddressProvider>(
-                    builder: (BuildContext context, AddAddressProvider pros,
-                            Widget? child) =>
-                        CustomDropdown<String>(
-                      title: 'address_category'.tr(),
-                      items: <String>['home', 'work'].map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      selectedItem: pros.addressCategory,
-                      onChanged: (String? value) {
-                        if (value != null) {
-                          pros.setaddressCategory(value);
-                        }
-                      },
-                      validator: (_) => null,
-                    ),
+                ),
+                CustomTextFormField(
+                  labelText: 'address_1'.tr(),
+                  controller: provider.address1Controller,
+                  validator: AppValidator.isEmpty,
+                ),
+                CustomTextFormField(
+                  labelText: 'address_2'.tr(),
+                  controller: provider.address2Controller,
+                ),
+
+                CustomTextFormField(
+                  labelText: 'postal_code'.tr(),
+                  controller: provider.postalCodeController,
+                  validator: AppValidator.isEmpty,
+                ),
+
+                // 🟢 Consumer for Address Category Dropdown
+                Consumer<AddAddressProvider>(
+                  builder: (_, AddAddressProvider pro, __) =>
+                      CustomDropdown<String>(
+                    title: 'address_category'.tr(),
+                    items: <String>['home', 'work']
+                        .map((String value) => DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value.tr()),
+                            ))
+                        .toList(),
+                    selectedItem: pro.addressCategory,
+                    onChanged: (String? value) {
+                      if (value != null) pro.setaddressCategory(value);
+                    },
+                    validator: AppValidator.requireSelection,
                   ),
-                  PhoneNumberInputField(
-                    initialValue: provider.phoneNumber,
+                ),
+
+                // 🟢 Consumer for Phone Number
+                Consumer<AddAddressProvider>(
+                  builder: (_, AddAddressProvider pro, __) =>
+                      PhoneNumberInputField(
+                    initialCountry: pro.selectedCountryEntity,
+                    initialValue: pro.phoneNumber,
                     labelText: 'phone_number'.tr(),
                     onChange: (PhoneNumberEntity? value) {
-                      provider.phoneNumber = value;
+                      pro.setPhoneNumber(value);
                     },
                   ),
-                  CountryDropdownField(
-                    initialValue: provider.selectedCountry,
-                    onChanged: (String value) {
-                      provider.selectedCountry = value;
-                    },
+                ),
+
+                Consumer<AddAddressProvider>(
+                  builder: (_, AddAddressProvider pro, __) =>
+                      CustomRadioToggleTile(
+                    title: 'Make this default address',
+                    selectedValue: pro.isDefault,
+                    onChanged: pro.toggleDefault,
                   ),
-                  Consumer<AddAddressProvider>(
-                    builder:
-                        (BuildContext context, AddAddressProvider provider, _) {
-                      return CustomRadioToggleTile(
-                        title: 'Make this default address',
-                        selectedValue: provider.isDefault,
-                        onChanged: () {
-                          provider
-                              .toggleDefault(); // Update the value when clicked
-                        },
-                      );
-                    },
-                  )
-                ],
-              ),
-            )),
-        bottomSheet: BottomAppBar(
-            height: 100,
-            elevation: 0,
-            color: Theme.of(context).scaffoldBackgroundColor,
-            child: CustomElevatedButton(
+                ),
+              ],
+            ),
+          ),
+        ),
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Consumer<AddAddressProvider>(
+            builder: (_, AddAddressProvider pro, __) => CustomElevatedButton(
               isLoading: false,
               onTap: () {
-                if (formKey.currentState?.validate() ?? false) {
+                if (_formKey.currentState?.validate() ?? false) {
                   if (widget.initAddress?.addressID == null ||
                       widget.initAddress?.addressID == '') {
-                    provider.saveAddress(context);
+                    pro.saveAddress(context);
                   } else {
-                    provider.action = 'update';
-                    provider.updateAddress(context);
+                    pro.action = 'update';
+                    pro.updateAddress(context);
                   }
                 }
               },
               title: widget.initAddress?.addressID == null
                   ? 'save_address'.tr()
                   : 'update_address'.tr(),
-            )),
+            ),
+          ),
+        ),
       ),
     );
   }

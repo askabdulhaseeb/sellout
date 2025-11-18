@@ -16,7 +16,7 @@ class CategorizedServicesScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: AppBarTitle(
-          titleKey: pro.selectedCategory?.code.tr() ?? 'na'.tr(),
+          titleKey: pro.selectedCategory?.label ?? 'na'.tr(),
         ),
       ),
       body: Consumer<ServicesPageProvider>(

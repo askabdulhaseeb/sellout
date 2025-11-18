@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/theme/app_theme.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../domain/entities/user_entity.dart';
 import '../enums/profile_page_tab_type.dart';
@@ -128,7 +127,7 @@ class ProfileGridTypeSelectionSection extends StatelessWidget {
                                       height: 1,
                                       color: hiddenTabs
                                               .contains(userPro.displayType)
-                                          ? AppTheme.primaryColor
+                                          ? Theme.of(context).primaryColor
                                           : Colors.transparent,
                                     ),
                                     Container(
@@ -190,7 +189,9 @@ class _IconButton extends StatelessWidget {
           Container(
             height: 1,
             decoration: BoxDecoration(
-              color: isSelected ? AppTheme.primaryColor : Colors.transparent,
+              color: isSelected
+                  ? Theme.of(context).primaryColor
+                  : Colors.transparent,
             ),
           ),
           Container(

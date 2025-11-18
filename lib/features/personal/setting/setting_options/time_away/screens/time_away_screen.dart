@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import '../../../../../../core/theme/app_theme.dart';
 import '../../../../../../core/widgets/in_dev_mode.dart';
 import 'automatic_response_screen.dart';
 
@@ -40,7 +39,7 @@ class TimeAwayScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 4, bottom: 16),
                   child: Text('none_scheduled'.tr(),
                       style: textTheme.bodySmall
-                          ?.copyWith(color: AppTheme.primaryColor)),
+                          ?.copyWith(color: Theme.of(context).primaryColor)),
                 ),
               ],
             ),
@@ -66,7 +65,7 @@ class TimeAwayScreen extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 4, bottom: 16),
                 child: Text('no_message'.tr(),
                     style: textTheme.bodySmall
-                        ?.copyWith(color: AppTheme.primaryColor)),
+                        ?.copyWith(color: Theme.of(context).primaryColor)),
               ),
             ],
           ),
@@ -83,7 +82,7 @@ class TimeAwayScreen extends StatelessWidget {
                 child: Text(
                   'tell_us_what_you_think'.tr(),
                   style: textTheme.bodySmall?.copyWith(
-                    color: AppTheme.primaryColor,
+                    color: Theme.of(context).primaryColor,
                     decoration: TextDecoration.underline,
                   ),
                 ),

@@ -4,7 +4,7 @@ import '../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../chats/chat_dashboard/domain/entities/messages/message_entity.dart';
-import '../../../../post/domain/entities/post_entity.dart';
+import '../../../../post/domain/entities/post/post_entity.dart';
 import '../provider/booking_provider.dart';
 import '../screens/booking_screen.dart';
 import 'package:provider/provider.dart';
@@ -112,7 +112,7 @@ class CancelAndChangeButtons extends StatelessWidget {
             if (!cancellationTimeOver)
               Expanded(
                 child: CustomElevatedButton(
-                  margin: const EdgeInsets.all(4),
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
                   padding: const EdgeInsets.all(4),
                   bgColor: Colors.transparent,
                   border: Border.all(color: Theme.of(context).primaryColor),
@@ -136,7 +136,7 @@ class CancelAndChangeButtons extends StatelessWidget {
             Expanded(
               child: CustomElevatedButton(
                 padding: const EdgeInsets.all(4),
-                margin: const EdgeInsets.all(4),
+                margin: const EdgeInsets.symmetric(horizontal: 4),
                 title: 'change_date'.tr(),
                 isLoading: false,
                 textStyle: TextStyle(

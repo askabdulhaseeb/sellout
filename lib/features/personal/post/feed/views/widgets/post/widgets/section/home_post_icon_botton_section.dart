@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../../../../../domain/entities/post_entity.dart';
-import 'icon_butoons/chat_with_seller_icon_button.dart';
+import '../../../../../../domain/entities/post/post_entity.dart';
+import 'icon_butoons/post_inquiry_buttons.dart';
 import 'icon_butoons/save_post_icon_button.dart';
 import 'icon_butoons/share_post_icon_button.dart';
 
 class HomePostIconBottonSection extends StatelessWidget {
-  const HomePostIconBottonSection({required this.post, super.key});
+  const HomePostIconBottonSection(
+      {required this.post, this.isPreview = false, super.key});
   final PostEntity post;
-
+  final bool isPreview;
   @override
   Widget build(BuildContext context) {
     final bool isMine = post.createdBy == LocalAuth.uid;
@@ -16,12 +17,13 @@ class HomePostIconBottonSection extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: <Widget>[
-          if (!isMine) ChatwithSellerIconButton(userId: post.createdBy),
+          if (!isMine && !isPreview)
+            CreatePostInquiryChatButton(post: post),
           SharePostButton(
             post: post,
           ),
           const Spacer(),
-          if (!isMine)
+          if (!isMine && !isPreview)
             SavePostIconButton(
               postId: post.postID,
             )

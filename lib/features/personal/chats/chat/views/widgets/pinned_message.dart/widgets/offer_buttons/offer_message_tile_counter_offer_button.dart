@@ -1,10 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../services/get_it.dart';
-import '../../../../../../../post/domain/entities/post_entity.dart';
+import '../../../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../../../post/domain/usecase/get_specific_post_usecase.dart';
 import '../../../../../../../post/feed/views/widgets/post/widgets/section/bottomsheets/make_offer_bottomsheet/make_an_offer_bottomsheet.dart';
 import '../../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
@@ -59,9 +58,9 @@ class OfferMessageTileCounterOfferButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 4),
         borderRadius: BorderRadius.circular(6),
         textStyle: TextTheme.of(context).bodySmall?.copyWith(
-            color: AppTheme.primaryColor, fontWeight: FontWeight.w500),
+            color: Theme.of(context).primaryColor, fontWeight: FontWeight.w500),
         border: Border.all(color: Colors.transparent),
-        bgColor: AppTheme.primaryColor.withValues(alpha: 0.08),
+        bgColor: Theme.of(context).primaryColor.withValues(alpha: 0.08),
         title: 'counter'.tr(),
         isLoading: false,
         onTap: () {

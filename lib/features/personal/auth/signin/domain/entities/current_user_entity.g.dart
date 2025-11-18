@@ -19,12 +19,13 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
     return CurrentUserEntity(
       message: fields[1] as String,
       token: fields[2] as String,
-      userID: fields[3] as String,
-      email: fields[11] as String,
-      userName: fields[12] as String,
-      displayName: fields[13] as String,
-      currency: fields[14] as String?,
-      privacy: fields[15] as PrivacyType,
+      refreshToken: fields[3] as String,
+      userID: fields[4] as String,
+      email: fields[5] as String,
+      userName: fields[6] as String,
+      displayName: fields[7] as String,
+      currency: fields[8] as String?,
+      privacy: fields[9] as PrivacyType,
       countryAlpha3: fields[16] as String,
       countryCode: fields[17] as String,
       phoneNumber: fields[18] as String,
@@ -33,7 +34,7 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       chatIDs: (fields[31] as List).cast<String>(),
       businessIDs: (fields[32] as List).cast<String>(),
       imageVerified: fields[41] as bool,
-      otpVerified: fields[42] as bool?,
+      otpVerified: fields[42] as bool,
       verificationImage: fields[43] as AttachmentEntity?,
       profileImage: (fields[40] as List).cast<AttachmentEntity>(),
       lastLoginTime: fields[97] as DateTime,
@@ -64,22 +65,24 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
   @override
   void write(BinaryWriter writer, CurrentUserEntity obj) {
     writer
-      ..writeByte(41)
+      ..writeByte(42)
       ..writeByte(1)
       ..write(obj.message)
       ..writeByte(2)
       ..write(obj.token)
       ..writeByte(3)
+      ..write(obj.refreshToken)
+      ..writeByte(4)
       ..write(obj.userID)
-      ..writeByte(11)
+      ..writeByte(5)
       ..write(obj.email)
-      ..writeByte(12)
+      ..writeByte(6)
       ..write(obj.userName)
-      ..writeByte(13)
+      ..writeByte(7)
       ..write(obj.displayName)
-      ..writeByte(14)
+      ..writeByte(8)
       ..write(obj.currency)
-      ..writeByte(15)
+      ..writeByte(9)
       ..write(obj.privacy)
       ..writeByte(16)
       ..write(obj.countryAlpha3)

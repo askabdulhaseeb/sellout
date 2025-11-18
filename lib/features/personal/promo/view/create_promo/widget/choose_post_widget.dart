@@ -1,13 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/theme/app_theme.dart';
-import '../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/custom_network_image.dart';
-import '../../../../post/domain/entities/post_entity.dart';
+import '../../../../post/domain/entities/post/post_entity.dart';
 import '../provider/promo_provider.dart';
-import 'choose_post_bottomsheet.dart';
+import '../screens/pages/choose_linked_post_screen.dart';
 
 class ChoosePostForPromoWidget extends StatelessWidget {
   const ChoosePostForPromoWidget({super.key});
@@ -16,19 +15,15 @@ class ChoosePostForPromoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-          ),
-          builder: (BuildContext context) => const ChoosePostBottomSheet(),
-        );
+        Navigator.push(
+            context,
+            MaterialPageRoute<ChooseLinkedPromoPost>(
+                builder: (BuildContext context) =>
+                    const ChooseLinkedPromoPost()));
       },
       child: Consumer<PromoProvider>(
         builder: (BuildContext context, PromoProvider pro, _) {
           final PostEntity? selectedPost = pro.post;
-
           return selectedPost == null
               ? const PostSelectionField()
               : const SelectedPostTile();
@@ -44,7 +39,6 @@ class PostSelectionField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // final PromoProvider pro = Provider.of<PromoProvider>(context);
-
     return AbsorbPointer(
       child: CustomTextFormField(
         controller: TextEditingController(),
@@ -107,11 +101,12 @@ class SelectedPostTile extends StatelessWidget {
               SizedBox(
                 width: 80,
                 child: CustomElevatedButton(
-                  bgColor: AppTheme.primaryColor.withValues(alpha: 0.1),
+                  bgColor:
+                      Theme.of(context).primaryColor.withValues(alpha: 0.1),
                   isLoading: false,
                   onTap: () => pro.clearPost(),
                   textStyle: TextTheme.of(context).labelMedium?.copyWith(
-                        color: AppTheme.primaryColor,
+                        color: Theme.of(context).primaryColor,
                       ),
                   title: 'deselect'.tr(),
                 ),

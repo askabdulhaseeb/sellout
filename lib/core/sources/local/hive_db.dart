@@ -10,12 +10,13 @@ import '../../../features/business/core/domain/entity/business_entity.dart';
 import '../../../features/business/core/domain/entity/business_travel_detail_entity.dart';
 import '../../../features/business/core/domain/entity/routine_entity.dart';
 import '../../../features/business/core/domain/entity/service/service_entity.dart';
+import '../../../features/personal/auth/signin/domain/entities/address_entity.dart';
 import '../../../features/personal/auth/signin/domain/entities/login_detail_entity.dart';
 import '../../../features/personal/auth/signin/domain/entities/login_info_entity.dart';
 import '../../../features/personal/bookings/data/sources/local_booking.dart';
 import '../../../features/personal/bookings/domain/entity/booking_entity.dart';
 import '../../../features/personal/bookings/domain/entity/booking_payment_detail_entity.dart';
-import '../../../features/personal/cart/data/sources/local_cart.dart';
+import '../../../features/personal/basket/data/sources/local/local_cart.dart';
 import '../../../features/personal/chats/chat/data/sources/local/local_message.dart';
 import '../../../features/personal/chats/chat/domain/entities/getted_message_entity.dart';
 import '../../../features/personal/chats/chat/domain/entities/message_last_evaluated_key_entity.dart';
@@ -27,14 +28,18 @@ import '../../../features/personal/chats/chat_dashboard/domain/entities/chat/par
 import '../../../features/personal/chats/chat_dashboard/domain/entities/chat/participant/invitation_entity.dart';
 import '../../../features/personal/chats/chat_dashboard/domain/entities/chat/unread_message_entity.dart';
 import '../../../features/personal/chats/chat_dashboard/domain/entities/messages/message_entity.dart';
+import '../../../features/personal/chats/quote/domain/entites/quote_detail_entity.dart';
+import '../../../features/personal/chats/quote/domain/entites/service_employee_entity.dart';
 import '../../../features/personal/listing/listing_form/data/sources/local/local_colors.dart';
-import '../../../features/personal/listing/listing_form/data/sources/local/local_dropdown_listings.dart';
+import '../../../features/personal/listing/listing_form/data/sources/local/local_categories.dart';
 import '../../../features/personal/listing/listing_form/data/sources/local/local_listing.dart';
+import '../../../features/personal/listing/listing_form/domain/entities/category_entites/categories_entity.dart';
+import '../../../features/personal/listing/listing_form/domain/entities/category_entites/subentities/parent_dropdown_entity.dart';
+import '../../../features/personal/listing/listing_form/domain/entities/category_entites/subentities/dropdown_option_data_entity.dart';
+import '../../../features/personal/listing/listing_form/domain/entities/category_entites/subentities/dropdown_option_entity.dart';
 import '../../../features/personal/listing/listing_form/domain/entities/color_options_entity.dart';
-import '../../../features/personal/listing/listing_form/domain/entities/dropdown_listings_entity.dart';
 import '../../../features/personal/listing/listing_form/domain/entities/listing_entity.dart';
 import '../../../features/personal/listing/listing_form/domain/entities/sub_category_entity.dart';
-import '../../../features/personal/auth/signin/data/models/address_model.dart';
 import '../../../features/personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../../features/personal/location/domain/entities/location_entity.dart';
 import '../../../features/personal/notifications/data/source/local/local_notification.dart';
@@ -46,7 +51,14 @@ import '../../../features/personal/post/domain/entities/feed/feed_entity.dart';
 import '../../../features/personal/post/domain/entities/meetup/availability_entity.dart';
 import '../../../features/personal/post/domain/entities/offer/offer_amount_info_entity.dart';
 import '../../../features/personal/post/domain/entities/offer/offer_detail_entity.dart';
-import '../../../features/personal/post/domain/entities/post_entity.dart';
+import '../../../features/personal/post/domain/entities/post/package_detail_entity.dart';
+import '../../../features/personal/post/domain/entities/post/post_cloth_foot_entity.dart';
+import '../../../features/personal/post/domain/entities/post/post_entity.dart';
+import '../../../features/personal/post/domain/entities/post/post_food_drink_entity.dart';
+import '../../../features/personal/post/domain/entities/post/post_item_entity.dart';
+import '../../../features/personal/post/domain/entities/post/post_pet_entity.dart';
+import '../../../features/personal/post/domain/entities/post/post_property_entity.dart';
+import '../../../features/personal/post/domain/entities/post/post_vehicle_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/color_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/size_color_entity.dart';
 import '../../../features/personal/post/domain/entities/visit/visiting_entity.dart';
@@ -55,6 +67,9 @@ import '../../../features/personal/promo/data/source/local/local_promo.dart';
 import '../../../features/personal/promo/domain/entities/promo_entity.dart';
 import '../../../features/personal/review/data/sources/local_review.dart';
 import '../../../features/personal/review/domain/entities/review_entity.dart';
+import '../../../features/personal/services/data/sources/local/local_service_categories.dart';
+import '../../../features/personal/services/domain/entity/service_category_entity.dart';
+import '../../../features/personal/services/domain/entity/service_type_entity.dart';
 import '../../../features/personal/setting/setting_dashboard/domain/entities/notification_entity.dart';
 import '../../../features/personal/setting/setting_dashboard/domain/entities/privacy_settings_entity.dart';
 import '../../../features/personal/setting/setting_dashboard/domain/entities/time_away_entity.dart';
@@ -146,8 +161,6 @@ class HiveDB {
     Hive.registerAdapter(UnreadMessageEntityAdapter()); // 55
     Hive.registerAdapter(PromoEntityAdapter()); // 56
     Hive.registerAdapter(NotificationSettingsEntityAdapter()); // 57
-    Hive.registerAdapter(DropdownOptionEntityAdapter()); //58
-    Hive.registerAdapter(DropdownCategoryEntityAdapter()); //59
     Hive.registerAdapter(FeedEntityAdapter()); //60
     Hive.registerAdapter(OrderEntityAdapter()); //61
     Hive.registerAdapter(OrderPaymentDetailEntityAdapter()); //62
@@ -156,6 +169,23 @@ class HiveDB {
     Hive.registerAdapter(NotificationEntityAdapter()); //65
     Hive.registerAdapter(NotificationMetadataEntityAdapter()); //66
     Hive.registerAdapter(CounterOfferEnumAdapter()); //67
+    Hive.registerAdapter(PostClothFootEntityAdapter()); //68
+    Hive.registerAdapter(PostVehicleEntityAdapter()); //69
+    Hive.registerAdapter(PostPetEntityAdapter()); //70
+    Hive.registerAdapter(PostPropertyEntityAdapter()); //71
+    Hive.registerAdapter(PostFoodDrinkEntityAdapter()); //72
+    Hive.registerAdapter(PostItemEntityAdapter()); //73
+    Hive.registerAdapter(PackageDetailEntityAdapter()); //75
+    Hive.registerAdapter(ServiceCategoryEntityAdapter()); //76
+    Hive.registerAdapter(ServiceTypeEntityAdapter()); //77
+    Hive.registerAdapter(CategoriesEntityAdapter()); //78
+    Hive.registerAdapter(DropdownOptionEntityAdapter()); //79
+    Hive.registerAdapter(DropdownOptionDataEntityAdapter()); //80
+    Hive.registerAdapter(ParentDropdownEntityAdapter()); //81
+    Hive.registerAdapter(QuoteDetailEntityAdapter()); //82
+    Hive.registerAdapter(ServiceEmployeeEntityAdapter()); //83
+    Hive.registerAdapter(NumberFormatEntityAdapter()); //84
+    Hive.registerAdapter(StateEntityAdapter()); //85
 
     // Hive box Open
     await refresh();
@@ -178,10 +208,11 @@ class HiveDB {
     await LocalCountry().refresh();
     await LocalUnreadMessagesService().refresh();
     await LocalPromo().refresh();
-    await LocalDropDownListings().refresh();
+    await LocalCategoriesSource().refresh();
     await LocalColors().refresh();
     await LocalOrders().refresh();
     await LocalNotifications().refresh();
+    await LocalServiceCategory().refresh();
   }
 
   static Future<void> signout() async {
@@ -200,11 +231,11 @@ class HiveDB {
     await LocalBooking().clear();
     await LocalUnreadMessagesService().clear();
     await LocalPromo().clear();
-    await LocalDropDownListings().clear();
     await LocalColors().clear();
     await LocalOrders().clear();
     await LocalNotifications().clear();
-
+    // await LocalServiceCategory().clear();
+    await LocalCategoriesSource().clear();
     // await LocalCountry().clear();
   }
 }

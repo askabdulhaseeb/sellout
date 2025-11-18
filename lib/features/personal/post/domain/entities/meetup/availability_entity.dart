@@ -36,7 +36,7 @@ class AvailabilityEntity {
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
-      'day': day.toString(), // or use a custom way to serialize DayType
+      'day': day.json, // or use a custom way to serialize DayType
       'isOpen': isOpen,
       'openingTime': openingTime,
       'closingTime': closingTime,

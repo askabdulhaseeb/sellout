@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../core/theme/app_theme.dart';
-import '../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../core/widgets/custom_elevated_button.dart';
 import '../providers/marketplace_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -31,9 +30,9 @@ void showPrivateSearchDialog(BuildContext context) {
                   const Spacer(),
                   Text(
                     'private'.tr(),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: AppTheme.primaryColor,
+                      color: Theme.of(context).primaryColor,
                       fontSize: 18,
                     ),
                   ),

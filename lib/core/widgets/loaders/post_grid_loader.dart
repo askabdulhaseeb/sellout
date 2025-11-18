@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../custom_shimmer_effect.dart';
+
 class PostGridLoader extends StatelessWidget {
   const PostGridLoader({super.key});
 
@@ -26,52 +28,55 @@ class LoadingPostTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        AspectRatio(
-          aspectRatio: 1,
-          child: Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Theme.of(context).dividerColor,
-              borderRadius: BorderRadius.circular(8),
+    return ShimmerLoading(
+      isLoading: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          AspectRatio(
+            aspectRatio: 1,
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Theme.of(context).dividerColor,
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
           ),
-        ),
-        SizedBox(
-          height: 80,
-          child: Column(
-            spacing: 6,
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              const SizedBox(height: 2),
-              Container(
-                width: 100,
-                height: 15,
-                decoration: BoxDecoration(
-                    color: Theme.of(context).dividerColor,
-                    borderRadius: BorderRadius.circular(2)),
-              ),
-              Container(
-                width: 100,
-                height: 15,
-                decoration: BoxDecoration(
-                    color: Theme.of(context).dividerColor,
-                    borderRadius: BorderRadius.circular(2)),
-              ),
-              Container(
-                width: 40,
-                height: 15,
-                decoration: BoxDecoration(
-                    color: Theme.of(context).dividerColor,
-                    borderRadius: BorderRadius.circular(2)),
-              ),
-            ],
+          SizedBox(
+            height: 80,
+            child: Column(
+              spacing: 6,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const SizedBox(height: 2),
+                Container(
+                  width: 100,
+                  height: 15,
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).dividerColor,
+                      borderRadius: BorderRadius.circular(2)),
+                ),
+                Container(
+                  width: 100,
+                  height: 15,
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).dividerColor,
+                      borderRadius: BorderRadius.circular(2)),
+                ),
+                Container(
+                  width: 40,
+                  height: 15,
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).dividerColor,
+                      borderRadius: BorderRadius.circular(2)),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -20,50 +20,41 @@ class GroupChatDashbordTile extends StatelessWidget {
         await LocalUnreadMessagesService().clearCount(chat.chatId);
         Navigator.of(context).pushNamed(ChatScreen.routeName);
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Row(
+      child: Row(
+        children: <Widget>[
+          ProfilePhoto(
+            url: chat.groupInfo?.groupThumbnailURL,
+            placeholder: chat.groupInfo?.title ?? '',
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                ProfilePhoto(
-                  url: chat.groupInfo?.groupThumbnailURL,
-                  placeholder: chat.groupInfo?.title ?? '',
+                Text(
+                  chat.groupInfo?.title ?? '',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        chat.groupInfo?.title ?? '',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        chat.lastMessage?.displayText ?? '',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-                Column(
-                  children: <Widget>[
-                    Text(
-                      chat.lastMessage?.createdAt.timeAgo ?? '',
-                      style: const TextStyle(fontSize: 10),
-                    ),
-                    UnreadMessageBadgeWidget(chatId: chat.chatId),
-                  ],
+                Text(
+                  chat.lastMessage?.displayText ?? '',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
-            const Divider()
-          ],
-        ),
+          ),
+          Column(
+            children: <Widget>[
+              Text(
+                chat.lastMessage?.createdAt.timeAgo ?? '',
+                style: const TextStyle(fontSize: 10),
+              ),
+              UnreadMessageBadgeWidget(chatId: chat.chatId),
+            ],
+          ),
+        ],
       ),
     );
   }

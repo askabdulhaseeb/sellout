@@ -2,7 +2,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../../core/constants/app_spacings.dart';
+import '../../../../../../../core/utilities/app_validators.dart';
+import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_Switch_list_tile.dart';
 import '../../../../../post/domain/entities/discount_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
@@ -27,26 +29,28 @@ class _AddListingDiscountSectionState extends State<AddListingDiscountSection> {
     super.dispose();
   }
 
-  Widget buildDiscountField({
+  Widget _buildDiscountField({
     required double width,
+    required String label,
+    required num value,
+    required Function(num) onChanged,
     required int index,
-    required DiscountEntity discount,
-    required AddListingFormProvider addPro,
   }) {
-    // Initialize controller if not exists
     _controllers.putIfAbsent(
       index,
-      () => TextEditingController(text: discount.discount.toString()),
+      () => TextEditingController(
+        text: value == 0 ? '' : value.toString(),
+      ),
     );
 
-// Inside buildDiscountField:
     return SizedBox(
       width: width / 3,
       child: CustomTextFormField(
-        labelText: ' ${discount.quantity} ${'items'.tr()}',
+        validator: AppValidator.isEmpty,
+        labelText: label,
         controller: _controllers[index],
-        onChanged: (String value) {
-          double parsed = double.tryParse(value) ?? 0.0;
+        onChanged: (String val) {
+          num parsed = num.tryParse(val) ?? 0;
           if (parsed > 100) {
             parsed = 100;
             _controllers[index]!.text = '100';
@@ -54,11 +58,9 @@ class _AddListingDiscountSectionState extends State<AddListingDiscountSection> {
               TextPosition(offset: _controllers[index]!.text.length),
             );
           }
-          addPro.setDiscounts(
-            discount.copyWith(discount: parsed),
-          );
+          onChanged(parsed);
         },
-        hint: 'Ex.${discount.quantity * 5}',
+        hint: '0',
         keyboardType: TextInputType.number,
         textAlign: TextAlign.end,
         suffixIcon: const Opacity(
@@ -75,29 +77,66 @@ class _AddListingDiscountSectionState extends State<AddListingDiscountSection> {
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.sizeOf(context).width - 32 - 28;
+
     return Consumer<AddListingFormProvider>(
-      builder: (BuildContext context, AddListingFormProvider addPro, _) {
+      builder: (BuildContext context, AddListingFormProvider provider, _) {
+        final DiscountEntity discount = provider.discounts ??
+            DiscountEntity(twoItems: 0, threeItems: 0, fiveItems: 0);
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             CustomSwitchListTile(
               title: 'select_discount'.tr(),
-              value: addPro.isDiscounted,
-              onChanged: (bool value) => addPro.setIsDiscount(value),
+              value: provider.isDiscounted,
+              onChanged: (bool value) => provider.setIsDiscount(value),
             ),
-            if (addPro.isDiscounted)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: List<Widget>.generate(
-                  addPro.discounts.length,
-                  (int index) => buildDiscountField(
-                    width: width,
-                    index: index,
-                    discount: addPro.discounts[index],
-                    addPro: addPro,
-                  ),
-                ),
-              ),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: provider.isDiscounted
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: AppSpacing.vSm),
+                      child: Wrap(
+                        spacing: AppSpacing.hSm,
+                        runSpacing: AppSpacing.vSm,
+                        children: <Widget>[
+                          _buildDiscountField(
+                            width: width,
+                            label: '2 ${'items'.tr()}',
+                            value: discount.twoItems,
+                            index: 0,
+                            onChanged: (num val) {
+                              provider.setDiscounts(
+                                discount.copyWith(twoItems: val),
+                              );
+                            },
+                          ),
+                          _buildDiscountField(
+                            width: width,
+                            label: '3 ${'items'.tr()}',
+                            value: discount.threeItems,
+                            index: 1,
+                            onChanged: (num val) {
+                              provider.setDiscounts(
+                                discount.copyWith(threeItems: val),
+                              );
+                            },
+                          ),
+                          _buildDiscountField(
+                            width: width,
+                            label: '5 ${'items'.tr()}',
+                            value: discount.fiveItems,
+                            index: 2,
+                            onChanged: (num val) {
+                              provider.setDiscounts(
+                                discount.copyWith(fiveItems: val),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
           ],
         );
       },

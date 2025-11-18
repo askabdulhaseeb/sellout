@@ -51,7 +51,7 @@ class GetServiceByBusinessIdRemoteImpl implements GetServiceByBusinessIdRemote {
             raw,
             ServicesListResponceModel(
               message: data['message'] ?? '',
-              nextKey: data['nextKey'],
+              nextKey: data['next_key'],
               services: servicesList,
             ),
           );
@@ -65,7 +65,7 @@ class GetServiceByBusinessIdRemoteImpl implements GetServiceByBusinessIdRemote {
             raw,
             ServicesListResponceModel(
               message: data['message'] ?? '',
-              nextKey: data['nextKey'],
+              nextKey: data['next_key'],
               services: servicesList,
             ));
       } else {

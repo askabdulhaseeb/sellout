@@ -2,7 +2,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
-import '../../../../auth/signin/data/models/address_model.dart';
+import '../../../../auth/signin/domain/entities/address_entity.dart';
 import 'business_profile_detail_entity.dart';
 import 'supporter_detail_entity.dart';
 import 'user_stripe_account_entity.dart';
@@ -16,6 +16,7 @@ class UserEntity {
     required this.email,
     required this.username,
     required this.displayName,
+    required this.bio,
     required this.privacyType,
     required this.profilePic,
     required this.isImageVerified,
@@ -56,24 +57,26 @@ class UserEntity {
   @HiveField(3)
   final String displayName;
   @HiveField(4)
-  final PrivacyType privacyType;
+  final String bio;
   @HiveField(5)
-  final List<AttachmentEntity> profilePic;
+  final PrivacyType privacyType;
   @HiveField(6)
-  final List<AttachmentEntity> verificationPic;
+  final List<AttachmentEntity> profilePic;
   @HiveField(7)
-  final bool isImageVerified;
+  final List<AttachmentEntity> verificationPic;
   @HiveField(8)
-  final String currency;
+  final bool isImageVerified;
   @HiveField(9)
-  final String language;
+  final String currency;
   @HiveField(10)
-  final List<double> listOfReviews;
+  final String language;
   @HiveField(11)
-  final String countryAlpha3;
+  final List<double> listOfReviews;
   @HiveField(12)
-  final String countryCode;
+  final String countryAlpha3;
   @HiveField(13)
+  final String countryCode;
+  @HiveField(14)
   final String phoneNumber;
   //
   @HiveField(30)

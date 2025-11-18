@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
-
 import '../functions/app_log.dart';
 
 class AppValidator {
@@ -37,7 +36,10 @@ class AppValidator {
   }
 
   static String? isEmpty(String? value) {
-    return (value?.isEmpty ?? true) ? 'Field could not be empty' : null;
+    if (value == null || value.isEmpty) {
+      return 'field_left_empty'.tr();
+    }
+    return null;
   }
 
   static String? lessThenDigits(String? value, int digits) {
@@ -66,29 +68,41 @@ class AppValidator {
 
   static String? customRegExp(String formate, String? value,
       {String? message}) {
+    debugPrint('[AppValidator] pattern: $formate  rawValue: $value');
     try {
       if (formate.isEmpty) return null;
-      if (!RegExp(r'$formate').hasMatch(value ?? '')) {
+      // Normalize the input: strip common separators and whitespace so a
+      // pattern expecting digits will match even if value contains spaces/dashes.
+      final String raw = value ?? '';
+      final String normalized = raw.replaceAll(RegExp(r'[\s\-\(\)\.]'), '');
+      debugPrint('[AppValidator] normalizedValue: $normalized');
+
+      final RegExp regex = RegExp(formate);
+      if (!regex.hasMatch(normalized)) {
         return message ??
-            (kDebugMode ? 'Invlide $value' : 'invalid_value'.tr());
+            (kDebugMode ? 'Invalid $normalized' : 'invalid_value'.tr());
       }
     } catch (e) {
       AppLog.error(
         e.toString(),
-        name: 'AppValidator.customRegExp - $value',
+        name: 'AppValidator.customRegExp',
         error: e,
       );
+      debugPrint('[AppValidator] regex error: $e\n$formate\nvalue:$value');
     }
     return null;
   }
 
-  static String? validatePhoneOrEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter a phone number or email';
+  static String? requireSelection(bool? value, {String? message}) {
+    if (value == null || value == false) {
+      return message ?? 'select_dropdown'.tr();
     }
-    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value) &&
-        !RegExp(r'^\+?[0-9]{10,}$').hasMatch(value)) {
-      return 'Please enter a valid phone number or email';
+    return null;
+  }
+
+  static String? requireLocation(bool? value, {String? message}) {
+    if (value == null || value == false) {
+      return message ?? 'location_is_required'.tr();
     }
     return null;
   }

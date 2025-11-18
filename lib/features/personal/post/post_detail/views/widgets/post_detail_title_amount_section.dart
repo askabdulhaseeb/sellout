@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../domain/entities/post_entity.dart';
+import '../../../domain/entities/post/post_entity.dart';
 
 class PostDetailTitleAmountSection extends StatelessWidget {
   const PostDetailTitleAmountSection({required this.post, super.key});

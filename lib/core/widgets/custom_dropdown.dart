@@ -1,209 +1,395 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
+import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'costom_textformfield.dart';
+import 'custom_textformfield.dart';
 
-class CustomDropdown<T> extends FormField<bool> {
-  CustomDropdown({
+class CustomDropdown<T> extends StatefulWidget {
+  const CustomDropdown({
     required this.title,
     required this.items,
     required this.selectedItem,
     required this.onChanged,
-    required FormFieldValidator<bool> validator,
-    this.isSearchable = false,
-    this.padding,
-    this.height,
-    this.width,
+    required this.validator,
+    this.overlayAbove = false,
+    this.prefix,
+    this.sufixIcon,
+    this.prefixIcon,
+    this.initialText = '',
     this.hint,
-    super.key,
-  }) : super(
-          validator: validator,
-          builder: (FormFieldState<bool> state) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                // ignore: always_specify_types
-                _Widget(
-                  title: title,
-                  items: items,
-                  selectedItem: selectedItem,
-                  onChanged: onChanged,
-                  hint: hint,
-                  padding: padding,
-                  height: height,
-                  isSearchable: isSearchable,
-                  width: width,
-                ),
-                if (state.hasError)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(
-                      state.errorText ?? '',
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                  ),
-              ],
-            );
-          },
-        );
-
-  final String title;
-  final void Function(T?)? onChanged;
-  final T? selectedItem;
-  final List<DropdownMenuItem<T>> items;
-  final String? hint;
-  final double? height;
-  final double? width;
-  final EdgeInsetsGeometry? padding;
-  final bool isSearchable;
-
-  Widget build(BuildContext context) {
-    // ignore: always_specify_types
-    return _Widget(
-      title: title,
-      items: items,
-      selectedItem: selectedItem,
-      onChanged: onChanged,
-      padding: padding,
-      height: height,
-      isSearchable: isSearchable,
-      width: width,
-      hint: hint,
-    );
-  }
-}
-
-class _Widget<T> extends StatelessWidget {
-  _Widget({
-    required this.title,
-    required this.items,
-    required this.selectedItem,
-    required this.onChanged,
-    this.isSearchable = true,
-    this.padding,
-    this.height,
     this.width,
-    this.hint,
+    this.height,
+    this.searchBy,
+    this.onSearchChanged,
+    this.isDynamic = false,
+    this.selectedItemBuilder,
+    this.selectedItemPadding,
     super.key,
   });
+
   final String title;
-  final void Function(T?)? onChanged;
-  final T? selectedItem;
   final List<DropdownMenuItem<T>> items;
-  final TextEditingController _search = TextEditingController();
-  final EdgeInsetsGeometry? padding;
+  final T? selectedItem;
+  final void Function(T?)? onChanged;
+  final String? Function(bool?) validator;
+  final bool overlayAbove;
+  final Widget? prefix;
+  final bool? sufixIcon;
+  final IconData? prefixIcon;
+  final String? initialText;
   final String? hint;
-  final double? height;
   final double? width;
-  final bool isSearchable;
+  final double? height;
+  final String Function(DropdownMenuItem<T>)? searchBy;
+  final Future<List<DropdownMenuItem<T>>> Function(String)? onSearchChanged;
+  final bool isDynamic;
+  final Widget? Function(T?)? selectedItemBuilder;
+  final EdgeInsetsGeometry? selectedItemPadding;
+
+  @override
+  State<CustomDropdown<T>> createState() => _CustomDropdownState<T>();
+}
+
+class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
+  final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+  final LayerLink _layerLink = LayerLink();
+
+  OverlayEntry? _overlayEntry;
+  bool _isDropdownOpen = false;
+  String _searchText = '';
+  List<DropdownMenuItem<T>> _dynamicItems = <DropdownMenuItem<T>>[];
+  Timer? _debounce;
+  bool _hasSetInitialText = false;
+  String _selectedDisplayText = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _setInitialText();
+    _updateControllerValue();
+    _focusNode.addListener(_handleFocusChange);
+  }
+
+  @override
+  void didUpdateWidget(CustomDropdown<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!_focusNode.hasFocus && !_hasSetInitialText) {
+      _setInitialText();
+    }
+    // Always update controller value if selectedItem changes
+    if (oldWidget.selectedItem != widget.selectedItem) {
+      _updateControllerValue();
+    }
+  }
+
+  void _setInitialText() {
+    if (!mounted) return;
+    if (widget.selectedItemBuilder != null) return;
+    if (widget.initialText != null && widget.initialText!.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        if (_controller.text != widget.initialText) {
+          _controller.text = widget.initialText!;
+          _hasSetInitialText = true;
+        }
+      });
+    }
+  }
+
+  void _updateControllerValue() {
+    if (!mounted || widget.isDynamic) return;
+
+    DropdownMenuItem<T>? selectedItem;
+    for (final DropdownMenuItem<T> item in widget.items) {
+      if (item.value == widget.selectedItem) {
+        selectedItem = item;
+        break;
+      }
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      String newText = '';
+      if (selectedItem != null) {
+        newText = widget.searchBy?.call(selectedItem) ??
+            (selectedItem.child is Text
+                ? (selectedItem.child as Text).data ?? ''
+                : selectedItem.value.toString());
+      }
+
+      _selectedDisplayText = newText;
+      _syncControllerText();
+    });
+  }
+
+  void _syncControllerText() {
+    if (!mounted) return;
+    final bool hasCustomDisplay = widget.selectedItemBuilder != null;
+
+    if (hasCustomDisplay) {
+      if (_focusNode.hasFocus) {
+        final String next = _selectedDisplayText;
+        if (_controller.text != next) {
+          _controller.text = next;
+        }
+        if (_controller.text.isNotEmpty) {
+          _controller.selection = TextSelection(
+            baseOffset: 0,
+            extentOffset: _controller.text.length,
+          );
+        }
+      } else {
+        if (_controller.text.isNotEmpty) {
+          _controller.text = '';
+        }
+      }
+    } else {
+      final String next = _selectedDisplayText;
+      if (_controller.text != next) {
+        _controller.text = next;
+      }
+    }
+  }
+
+  List<DropdownMenuItem<T>> _getFilteredItems() {
+    if (widget.isDynamic) return _dynamicItems;
+    if (_searchText.isEmpty) return widget.items;
+    return widget.items
+        .where((DropdownMenuItem<T> item) => (_getItemText(item).toLowerCase())
+            .contains(_searchText.toLowerCase()))
+        .toList();
+  }
+
+  String _getItemText(DropdownMenuItem<T> item) {
+    return widget.searchBy?.call(item) ??
+        (item.child is Text
+            ? (item.child as Text).data ?? ''
+            : item.value.toString());
+  }
+
+  void _handleFocusChange() {
+    if (!_focusNode.hasFocus) {
+      _closeDropdown();
+    } else {
+      _openDropdown();
+    }
+    _syncControllerText();
+  }
+
+  void _openDropdown() {
+    if (_overlayEntry != null || !mounted) return;
+    setState(() => _isDropdownOpen = true);
+    _overlayEntry = _createOverlayEntry();
+    Overlay.of(context).insert(_overlayEntry!);
+  }
+
+  void _closeDropdown() {
+    if (!mounted) return;
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+    setState(() {
+      _isDropdownOpen = false;
+      _searchText = '';
+    });
+    _focusNode.unfocus();
+  }
+
+  OverlayEntry _createOverlayEntry() {
+    final RenderBox? renderBox = context.findRenderObject() as RenderBox?;
+    if (renderBox == null) {
+      return OverlayEntry(builder: (_) => const SizedBox());
+    }
+
+    final Size size = renderBox.size;
+    final Offset offset = renderBox.localToGlobal(Offset.zero);
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double spaceBelow = screenHeight - offset.dy - size.height;
+    final double spaceAbove = offset.dy;
+
+    const double itemHeight = 48.0;
+
+    return OverlayEntry(
+      builder: (_) {
+        final items = _getFilteredItems();
+        final num calculatedHeight =
+            (items.length * itemHeight).clamp(0, 200.0);
+        final bool showAbove = widget.overlayAbove ||
+            spaceBelow < calculatedHeight && spaceAbove > spaceBelow;
+        final Offset dropdownOffset = showAbove
+            ? Offset(0, -calculatedHeight - 5)
+            : Offset(0, size.height + 5);
+
+        return Stack(
+          children: [
+            Positioned.fill(
+              child: GestureDetector(
+                onTap: _closeDropdown,
+                behavior: HitTestBehavior.translucent,
+              ),
+            ),
+            Positioned(
+              width: size.width,
+              child: CompositedTransformFollower(
+                link: _layerLink,
+                showWhenUnlinked: false,
+                offset: dropdownOffset,
+                child: AnimatedSize(
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeInOut,
+                  child: Material(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                          maxHeight: calculatedHeight.toDouble()),
+                      child: StatefulBuilder(
+                        builder: (context, setStateOverlay) {
+                          return AnimatedSize(
+                            duration: const Duration(milliseconds: 250),
+                            curve: Curves.easeInOut,
+                            child: items.isEmpty
+                                ? Padding(
+                                    padding: const EdgeInsets.all(8),
+                                    child: Text(
+                                      '${'no_data_found'.tr()}!',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                              fontWeight: FontWeight.bold),
+                                    ),
+                                  )
+                                : ListView.separated(
+                                    padding: EdgeInsets.zero,
+                                    shrinkWrap: true,
+                                    itemCount: items.length,
+                                    separatorBuilder: (_, __) => Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 4, vertical: 0),
+                                      height: 1,
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: ColorScheme.of(context)
+                                                  .outlineVariant)),
+                                    ),
+                                    itemBuilder: (_, index) {
+                                      final DropdownMenuItem<T> item =
+                                          items[index];
+                                      return GestureDetector(
+                                        child: AnimatedSize(
+                                          duration:
+                                              const Duration(milliseconds: 250),
+                                          curve: Curves.easeInOut,
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8, vertical: 10),
+                                            child: item.child,
+                                          ),
+                                        ),
+                                        onTap: () {
+                                          widget.onChanged?.call(item.value);
+                                          _closeDropdown();
+                                        },
+                                      );
+                                    },
+                                  ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _focusNode.removeListener(_handleFocusChange);
+    _focusNode.dispose();
+    _controller.dispose();
+    _overlayEntry?.remove();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return items.isEmpty
-        ? kDebugMode
-            ? Text(
-                '$title is disabled - display only in testing Mode',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              )
-            : const SizedBox()
-        : Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              if (title.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Text(
-                    title,
-                    style: const TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                ),
-              Container(
-                width: width ?? double.infinity,
-                height: height ?? 48,
-                decoration: BoxDecoration(
-                  backgroundBlendMode: BlendMode.color,
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    // width: 0.5,
-                    color: ColorScheme.of(context).outlineVariant,
-                  ),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton2<T>(
-                    iconStyleData: IconStyleData(
-                      icon: Icon(
-                        Icons.keyboard_arrow_down_rounded,
-                        color: ColorScheme.of(context).outline,
+    final bool useCustomSelectedDisplay = widget.selectedItemBuilder != null;
+    return CompositedTransformTarget(
+      link: _layerLink,
+      child: SizedBox(
+        width: widget.width,
+        height: widget.height,
+        child: GestureDetector(
+          onTap: () {
+            if (!_isDropdownOpen) _openDropdown();
+          },
+          child: CustomTextFormField(
+            prefix: widget.prefix,
+            labelText: widget.title,
+            prefixIcon:
+                widget.prefixIcon != null ? Icon(widget.prefixIcon) : null,
+            controller: _controller,
+            focusNode: _focusNode,
+            hint: widget.hint ?? 'select_an_item'.tr(),
+            suffixIcon: useCustomSelectedDisplay || widget.sufixIcon == false
+                ? null
+                : Icon(_isDropdownOpen
+                    ? Icons.keyboard_arrow_up_rounded
+                    : Icons.keyboard_arrow_down_rounded),
+            onChanged: (String value) {
+              setState(() => _searchText = value);
+              if (_isDropdownOpen) _overlayEntry?.markNeedsBuild();
+              if (widget.isDynamic && widget.onSearchChanged != null) {
+                _debounce?.cancel();
+                _debounce = Timer(const Duration(milliseconds: 600), () async {
+                  final List<DropdownMenuItem<T>> results =
+                      await widget.onSearchChanged!(value);
+                  if (!mounted) return;
+                  setState(() => _dynamicItems = results);
+                  if (_isDropdownOpen) _overlayEntry?.markNeedsBuild();
+                });
+              }
+            },
+            validator: (String? value) =>
+                widget.validator(widget.selectedItem != null),
+            overlayChild: useCustomSelectedDisplay
+                ? Row(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Expanded(
+                        child: widget.selectedItem == null
+                            ? const SizedBox.shrink()
+                            : (widget.selectedItemBuilder!(
+                                    widget.selectedItem) ??
+                                const SizedBox.shrink()),
                       ),
-                    ),
-                    isExpanded: true,
-                    hint: Text(
-                      hint ?? 'select_item',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextTheme.of(context).bodyMedium?.copyWith(
-                          color: ColorScheme.of(context).outlineVariant),
-                    ).tr(),
-                    items: items,
-                    value: selectedItem,
-                    onChanged: onChanged,
-                    buttonStyleData: ButtonStyleData(
-                      padding:
-                          padding ?? const EdgeInsets.symmetric(horizontal: 12),
-                    ),
-                    dropdownSearchData: isSearchable == false
-                        ? null
-                        : DropdownSearchData<T>(
-                            searchController: _search,
-                            searchInnerWidgetHeight: 70,
-                            searchInnerWidget: CustomTextFormField(
-                              fieldPadding: const EdgeInsets.all(4),
-                              dense: true,
-                              style: TextTheme.of(context).labelMedium,
-                              contentPadding: const EdgeInsets.all(4),
-                              controller: _search,
-                              isExpanded: true,
-                            ),
-                            searchMatchFn: (
-                              DropdownMenuItem<T> item,
-                              String searchValue,
-                            ) {
-                              return item.value
-                                  .toString()
-                                  .toLowerCase()
-                                  .trim()
-                                  .contains(searchValue.toLowerCase().trim());
-                            },
-                          ),
-                    style: TextTheme.of(context).bodyMedium,
-                    dropdownStyleData: DropdownStyleData(
-                        elevation: 0,
-                        maxHeight: 250,
-                        decoration: BoxDecoration(
-                            boxShadow: <BoxShadow>[
-                              BoxShadow(
-                                  color:
-                                      Theme.of(context).scaffoldBackgroundColor)
-                            ],
-                            borderRadius: BorderRadius.circular(8),
-                            backgroundBlendMode: BlendMode.color,
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            border: Border.all(
-                                color: ColorScheme.of(context)
-                                    .outline
-                                    .withValues(alpha: 0.2))),
-                        offset: const Offset(0, 0),
-                        isOverButton: false),
-                    menuItemStyleData: const MenuItemStyleData(
-                      height: 60,
-                    ),
-                  ),
-                ),
-              )
-            ],
-          );
+                      const SizedBox(width: 6),
+                      Icon(
+                        _isDropdownOpen
+                            ? Icons.keyboard_arrow_up_rounded
+                            : Icons.keyboard_arrow_down_rounded,
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                      ),
+                    ],
+                  )
+                : null,
+            overlayPadding: useCustomSelectedDisplay
+                ? widget.selectedItemPadding ??
+                    const EdgeInsets.only(left: 12, right: 12)
+                : widget.selectedItemPadding,
+          ),
+        ),
+      ),
+    );
   }
 }

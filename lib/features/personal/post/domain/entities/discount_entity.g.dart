@@ -17,19 +17,22 @@ class DiscountEntityAdapter extends TypeAdapter<DiscountEntity> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return DiscountEntity(
-      quantity: fields[0] as int,
-      discount: fields[1] as num,
+      twoItems: fields[0] as num,
+      threeItems: fields[1] as num,
+      fiveItems: fields[2] as num,
     );
   }
 
   @override
   void write(BinaryWriter writer, DiscountEntity obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
-      ..write(obj.quantity)
+      ..write(obj.twoItems)
       ..writeByte(1)
-      ..write(obj.discount);
+      ..write(obj.threeItems)
+      ..writeByte(2)
+      ..write(obj.fiveItems);
   }
 
   @override

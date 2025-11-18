@@ -33,7 +33,7 @@ class _MarketplaceChoiceChipsState extends State<MarketplaceChoiceChips> {
           ...ListingType.values.map((ListingType e) => e.json)
         ];
         return SizedBox(
-          height: 40, // Ensures consistent height for chips
+          height: 40,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -43,7 +43,6 @@ class _MarketplaceChoiceChipsState extends State<MarketplaceChoiceChips> {
               final String? json = jsons[index];
               final bool isSelected = selectedJson == json;
               final String label = json?.tr() ?? 'all'.tr();
-
               return ChoiceChip(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 showCheckmark: false,

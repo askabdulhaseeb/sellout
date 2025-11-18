@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/enums/chat/chat_participant_role.dart';
 import '../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../core/widgets/profile_photo.dart';
 import '../../../../../../../services/get_it.dart';
@@ -69,7 +68,7 @@ class ParticipantTile extends StatelessWidget {
                     textStyle: Theme.of(context)
                         .textTheme
                         .labelSmall
-                        ?.copyWith(color: AppTheme.primaryColor),
+                        ?.copyWith(color: Theme.of(context).primaryColor),
                     isLoading: false,
                     onTap: () {
                       pro.removeFromGroup(context, participant?.uid ?? '');

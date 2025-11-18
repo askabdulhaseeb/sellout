@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../../core/widgets/attachment_slider.dart';
-import '../../../../../domain/entities/post_entity.dart';
+import '../../../../../domain/entities/post/post_entity.dart';
 import '../../../../../post_detail/views/screens/post_detail_screen.dart';
 import 'section/buttons/home_post_button_section.dart';
 import 'section/home_post_header_section.dart';
@@ -23,14 +24,17 @@ class HomePostTile extends StatelessWidget {
       child: Column(
         children: <Widget>[
           PostHeaderSection(post: post),
-          AttachmentsSlider(
-            attachments: post.fileUrls,
+          AttachmentsSlider.mixed(
+            remote: post.fileUrls,
           ),
           HomePostIconBottonSection(post: post),
           HomePostTitleSection(post: post),
           PostButtonSection(
             detailWidget: false,
             post: post,
+          ),
+          const SizedBox(
+            height: AppSpacing.vMd,
           ),
           Container(
             height: 4,

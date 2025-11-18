@@ -11,8 +11,8 @@ import '../model/hold_service_payment_model.dart';
 abstract interface class AppointmentApi {
   Future<DataState<bool>> updateAppointment(UpdateAppointmentParams params);
   Future<DataState<HoldServiceResponse>> holdServicePayment(
-    HoldServiceParams params,
-  );
+      HoldServiceParams params);
+  Future<DataState<bool>> releasePayment(String transactionId);
 }
 
 class AppointmentApiImpl implements AppointmentApi {
@@ -65,8 +65,7 @@ class AppointmentApiImpl implements AppointmentApi {
         isConnectType: true,
       );
       if (result is DataSuccess) {
-        AppLog.info(result.data.toString(),
-            name: 'AppointmnetApi.holdServicePayment - if');
+        AppLog.info('', name: 'AppointmnetApi.holdServicePayment - if');
         final HoldServiceResponse holdServiceModel =
             HoldServiceResponse.fromJson(result.data ?? '');
         return DataSuccess<HoldServiceResponse>(
@@ -80,6 +79,35 @@ class AppointmentApiImpl implements AppointmentApi {
       AppLog.error('something_wrong'.tr(),
           name: 'AppointmnetApi.holdServicePayment - catch');
       return DataFailer<HoldServiceResponse>(CustomException(e.toString()));
+    }
+  }
+
+  @override
+  Future<DataState<bool>> releasePayment(String transactionId) async {
+    try {
+      const String endpoint = '/payment/release';
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.post,
+        body: json.encode(<String, String>{'transaction_id': transactionId}),
+        isAuth: true,
+        isConnectType: true,
+      );
+      if (result is DataSuccess) {
+        AppLog.info('', name: 'AppointmnetApi.releaseQuotePayment - success');
+        return DataSuccess<bool>(result.data ?? '', true);
+      } else {
+        debugPrint(
+            json.encode(<String, String>{'transaction_id': transactionId}));
+        AppLog.error(result.exception?.message ?? 'something_wrong'.tr(),
+            name: 'AppointmnetApi.releaseQuotePayment - else',
+            error: result.exception?.reason);
+        return DataFailer<bool>(result.exception!);
+      }
+    } catch (e) {
+      AppLog.error('something_wrong'.tr(),
+          name: 'AppointmnetApi.releaseQuotePayment - catch');
+      return DataFailer<bool>(CustomException(e.toString()));
     }
   }
 }

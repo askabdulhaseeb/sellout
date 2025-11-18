@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/enums/core/attachment_type.dart';
-import '../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../providers/signup_provider.dart';
 
@@ -37,7 +36,8 @@ class SignupPhotoVerificationPage extends StatelessWidget {
                   child: pro.attachment == null
                       ? Container(
                           decoration: BoxDecoration(
-                              border: Border.all(color: AppTheme.primaryColor),
+                              border: Border.all(
+                                  color: Theme.of(context).primaryColor),
                               borderRadius: BorderRadius.circular(15)),
                           child: Column(
                             spacing: 8,
@@ -45,14 +45,15 @@ class SignupPhotoVerificationPage extends StatelessWidget {
                             children: <Widget>[
                               Container(
                                 decoration: BoxDecoration(
-                                    color: AppTheme.primaryColor
+                                    color: Theme.of(context)
+                                        .primaryColor
                                         .withValues(alpha: 0.3),
-                                    // border: Border.all(color: AppTheme.primaryColor),
+                                    // border: Border.all(color: Theme.of(context).primaryColor),
                                     borderRadius: BorderRadius.circular(15)),
                                 padding: const EdgeInsets.all(16),
-                                child: const Icon(
+                                child: Icon(
                                   CupertinoIcons.person_badge_plus,
-                                  color: AppTheme.primaryColor,
+                                  color: Theme.of(context).primaryColor,
                                 ),
                               ),
                               Text('upload_selfie_verification',

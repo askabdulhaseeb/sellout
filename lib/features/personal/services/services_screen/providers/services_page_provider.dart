@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import '../../../../../core/enums/business/services/service_category_type.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/api_call.dart';
 import '../../../../business/business_page/domain/params/get_business_bookings_params.dart';
@@ -12,9 +11,12 @@ import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../bookings/data/sources/local_booking.dart';
 import '../../../bookings/domain/entity/booking_entity.dart';
 import '../../../location/domain/entities/location_entity.dart';
+import '../../../marketplace/domain/enum/radius_type.dart';
 import '../../../marketplace/domain/params/filter_params.dart';
+import '../../domain/entity/service_category_entity.dart';
 import '../../domain/params/service_sort_options.dart';
 import '../../domain/params/services_by_filters_params.dart';
+import '../../domain/usecase/get_service_categories_usecase.dart';
 import '../../domain/usecase/get_services_by_query_usecase.dart';
 import '../../domain/usecase/get_special_offer_usecase.dart';
 import '../enums/service_appointment_section_type.dart';
@@ -26,26 +28,17 @@ class ServicesPageProvider extends ChangeNotifier {
     this._getBookingsListUsecase,
     this._getBusinessByIdUsecase,
     this._getServiceByCategory,
+    this._getServiceCategories,
   );
   final GetSpecialOfferUsecase _getSpecialOfferUsecase;
   final GetMyBookingsListUsecase _getBookingsListUsecase;
   final GetBusinessByIdUsecase _getBusinessByIdUsecase;
   final GetServicesByQueryUsecase _getServiceByCategory;
+  final GetServiceCategoriesUsecase _getServiceCategories;
   //
-  final Map<String, bool> _expandedDescriptions = <String, bool>{};
-  bool isDescriptionExpanded(String serviceId) {
-    return _expandedDescriptions[serviceId] ?? false;
-  }
-
-  void toggleDescription(String serviceId) {
-    _expandedDescriptions[serviceId] = !isDescriptionExpanded(serviceId);
-    notifyListeners();
-  }
-
-  //
-  ServiceCategoryType? _selectedCategory;
-  ServiceCategoryType? get selectedCategory => _selectedCategory;
-  void setSelectedCategory(ServiceCategoryType category) {
+  ServiceCategoryEntity? _selectedCategory;
+  ServiceCategoryEntity? get selectedCategory => _selectedCategory;
+  void setSelectedCategory(ServiceCategoryEntity category) {
     _selectedCategory = category;
     notifyListeners();
   }
@@ -82,29 +75,66 @@ class ServicesPageProvider extends ChangeNotifier {
   }
 
   //
+  List<ServiceCategoryEntity> _serviceCategories = [];
+  List<ServiceCategoryEntity> get serviceCategories => _serviceCategories;
+
+  //
+  String? _serviceNextKey;
+
+  void setServicesKey(String? value) {
+    _serviceNextKey = value;
+    notifyListeners();
+  }
+
+  ServiceByFiltersParams get serviceParams => ServiceByFiltersParams(
+        lastKey: _serviceNextKey,
+        filters: getFilterParams(),
+        query: search.text,
+        sort: _selectedSortOption,
+        clientLat: _selectedlatlng != const LatLng(0, 0)
+            ? _selectedlatlng.latitude
+            : null,
+        clientLng: _selectedlatlng != const LatLng(0, 0)
+            ? _selectedlatlng.longitude
+            : null,
+        distance:
+            _radiusType == RadiusType.local ? _selectedRadius.toInt() : null,
+      );
+
+  //
   TextEditingController minPriceController = TextEditingController();
   TextEditingController maxPriceController = TextEditingController();
 
   // Initial fetch
-  Future<void> fetchServicesByCategory(ServiceCategoryType category) async {
+  Future<void> fetchServicesByCategory(ServiceCategoryEntity category) async {
     if (_isLoading) return;
     clearCategorizedServices();
     _setLoading(true);
     final ServiceByFiltersParams params = ServiceByFiltersParams(
-        category: category.json, filters: <FilterParam>[]);
+        category: category.value, filters: <FilterParam>[]);
     final DataState<List<ServiceEntity>> result =
         await _getServiceByCategory.call(params);
     if (result is DataSuccess) {}
+    _setLoading(false);
+  }
 
+  //
+  Future<void> fetchServiceCategory() async {
+    if (_isLoading) return;
+    _setLoading(true);
+    final DataState<List<ServiceCategoryEntity>> result =
+        await _getServiceCategories.call(null);
+    if (result is DataSuccess) {
+      _serviceCategories.addAll(result.entity ?? []);
+    } else {}
     _setLoading(false);
   }
 
   //
   final List<ServiceEntity> _serviceResults = <ServiceEntity>[];
-  // String? _serviceNextKey;
+  //
   ServiceSortOption? _selectedSortOption = ServiceSortOption.bestMatch;
   ServiceSortOption? get selectedSortOption => _selectedSortOption;
-
   void setSortOption(ServiceSortOption option) {
     _selectedSortOption = option;
     searchServices();
@@ -129,26 +159,54 @@ class ServicesPageProvider extends ChangeNotifier {
   }
 
   Future<void> searchServices() async {
+    setServicesKey('');
     searchedServices.clear();
     final DataState<List<ServiceEntity>> result =
-        await _getServiceByCategory.call(
-      ServiceByFiltersParams(
-          filters: getFilterParams(),
-          query: search.text,
-          sort: _selectedSortOption,
-          clientLat: _selectedLatLng.latitude,
-          clientLng: _selectedLatLng.longitude),
-    );
+        await _getServiceByCategory.call(serviceParams);
     if (result is DataSuccess) {
       searchedServices.clear();
+      setServicesKey(result.data);
       searchedServices.addAll(result.entity ?? <ServiceEntity>[]);
     }
-
     _isLoading = false;
     notifyListeners();
   }
 
-  //
+  Future<void> loadMoreServices() async {
+    if (_serviceNextKey == null || _serviceNextKey!.isEmpty) {
+      return;
+    }
+    try {
+      debugPrint(
+          'searched services length:${searchedServices.length.toString()}');
+      _setLoading(true);
+      final DataState<List<ServiceEntity>> result =
+          await _getServiceByCategory(serviceParams);
+      if (result is DataSuccess<List<ServiceEntity>>) {
+        final List<ServiceEntity> newServices =
+            result.entity ?? <ServiceEntity>[];
+        if (newServices.isEmpty) {
+          debugPrint(
+              'searched services length:${searchedServices.length.toString()}');
+          _serviceNextKey = null;
+        } else {
+          searchedServices.addAll(newServices);
+          debugPrint(
+              'searched services length:${searchedServices.length.toString()}');
+          setServicesKey(result.data);
+        }
+      } else {
+        debugPrint(
+          'Failed to load more: ${result.exception?.message ?? 'something_wrong'}',
+        );
+      }
+    } catch (e) {
+      debugPrint('Error loading more posts: $e');
+    } finally {
+      _setLoading(false);
+    }
+  }
+
   Future<List<ServiceEntity>> getSpecialOffer() async {
     try {
       if (_specialOffer.isNotEmpty) return specialOffer;
@@ -238,7 +296,6 @@ class ServicesPageProvider extends ChangeNotifier {
       ServiceAppointmentSectionType.upcoming;
   ServiceAppointmentSectionType get serviceAppointmentSectionType =>
       _serviceAppointmentSectionType;
-
   void setServiceAppointmentSectionType(ServiceAppointmentSectionType value) {
     _serviceAppointmentSectionType = value;
     notifyListeners();
@@ -278,8 +335,6 @@ class ServicesPageProvider extends ChangeNotifier {
         value: maxPriceController.text.trim(),
       ));
     }
-    // Add more filters below as needed...
-
     return params;
   }
 
@@ -291,20 +346,41 @@ class ServicesPageProvider extends ChangeNotifier {
     searchServices();
   }
 
-  ///
-  ///
-  ///
-  ///
-  LatLng _selectedLatLng = LatLng(
-      LocalAuth.currentUser?.location?.latitude ?? 0,
-      LocalAuth.currentUser?.location?.longitude ?? 0);
-  String _selectedLocationName = '';
-  LatLng get selectedLatLng => _selectedLatLng;
-  String get selectedLocationName => _selectedLocationName;
-
-  void updateLocation(LatLng location, String name) {
-    _selectedLatLng = location;
-    _selectedLocationName = name;
+  void updateLocation(
+    LatLng? latlngVal,
+    LocationEntity? locationVal,
+  ) {
+    _selectedlatlng = latlngVal ?? LocalAuth.latlng;
+    _selectedLocation = locationVal;
+    debugPrint(
+        'Updated LatLng: $_selectedlatlng, Location: $_selectedLocation in marketplaceProvider');
     notifyListeners();
   }
+
+  void updateLocationSheet(LatLng? latlngVal, LocationEntity? locationVal,
+      RadiusType radiusTypeVal, double selectedRadVal) async {
+    _radiusType = radiusTypeVal;
+    _selectedRadius = selectedRadVal;
+    _selectedlatlng = latlngVal ?? LocalAuth.latlng;
+    _selectedLocation = locationVal;
+    debugPrint(
+        'Updated LatLng: $_selectedlatlng, Location: $_selectedLocation in marketplaceProvider');
+    await searchServices();
+  }
+
+  void resetLocationBottomsheet() async {
+    updateLocationSheet(null, null, RadiusType.worldwide, 5);
+    notifyListeners();
+  }
+
+  //
+  LatLng _selectedlatlng = LocalAuth.latlng;
+  LocationEntity? _selectedLocation;
+  double _selectedRadius = 5;
+  RadiusType _radiusType = RadiusType.worldwide;
+  //
+  LatLng get selectedlatlng => _selectedlatlng;
+  LocationEntity? get selectedLocation => _selectedLocation;
+  double get selectedRadius => _selectedRadius;
+  RadiusType get radiusType => _radiusType;
 }

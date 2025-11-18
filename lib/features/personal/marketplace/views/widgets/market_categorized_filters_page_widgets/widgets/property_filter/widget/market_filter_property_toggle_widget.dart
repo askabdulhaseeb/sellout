@@ -7,11 +7,8 @@ import '../../../../../providers/marketplace_provider.dart';
 
 class MarketFilterPropertyToggleWidget extends StatelessWidget {
   const MarketFilterPropertyToggleWidget({
-    required this.screenWidth,
     super.key,
   });
-
-  final double screenWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +28,11 @@ class MarketFilterPropertyToggleWidget extends StatelessWidget {
               child: Center(
                 child: CustomToggleSwitch<String>(
                     unseletedBorderColor: Colors.transparent,
-                    verticalPadding: 6,
                     isShaded: false,
-                    customWidths: <double>[
-                      screenWidth * 0.39,
-                      screenWidth * 0.39
-                    ],
+                    verticalMargin: 4,
+                    horizontalMargin: 4,
+                    containerHeight: 40,
+                    verticalPadding: 8,
                     labels: subCategories,
                     labelStrs: subCategories.map((String e) => e.tr()).toList(),
                     labelText: '',

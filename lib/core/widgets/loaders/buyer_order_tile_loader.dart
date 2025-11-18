@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../custom_shimmer_effect.dart';
+
 class BuyerOrderTileLoader extends StatelessWidget {
   const BuyerOrderTileLoader({super.key});
 
@@ -7,69 +9,71 @@ class BuyerOrderTileLoader extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color baseColor = Theme.of(context).dividerColor;
     final BorderRadius radius = BorderRadius.circular(2);
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          // Image placeholder
-          ClipRRect(
-            borderRadius: radius,
-            child: Container(
-              height: 60,
-              width: 60,
-              color: baseColor,
+    return ShimmerLoading(
+      isLoading: true,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            ClipRRect(
+              borderRadius: radius,
+              child: Container(
+                height: 60,
+                width: 60,
+                color: baseColor,
+              ),
             ),
-          ),
-          const SizedBox(width: 8),
-          // Text placeholders
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    _buildBox(height: 12, width: 60, color: baseColor),
-                    const SizedBox(width: 6),
-                    _buildBox(height: 10, width: 40, color: baseColor),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                _buildBox(height: 12, width: double.infinity, color: baseColor),
-                const SizedBox(height: 8),
-                Row(
-                  children: <Widget>[
-                    _buildBox(height: 12, width: 50, color: baseColor),
-                    const SizedBox(width: 6),
-                    _buildBox(height: 12, width: 40, color: baseColor),
-                  ],
-                ),
-              ],
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      _buildBox(height: 12, width: 60, color: baseColor),
+                      const SizedBox(width: 6),
+                      _buildBox(height: 10, width: 40, color: baseColor),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  _buildBox(
+                      height: 12, width: double.infinity, color: baseColor),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: <Widget>[
+                      _buildBox(height: 12, width: 50, color: baseColor),
+                      const SizedBox(width: 6),
+                      _buildBox(height: 12, width: 40, color: baseColor),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(width: 12),
-          // Button placeholders
-          SizedBox(
-            width: 110,
-            child: Column(
-              children: <Widget>[
-                _buildBox(
-                  height: 28,
-                  width: 80,
-                  color: baseColor,
-                  radius: BorderRadius.circular(20),
-                ),
-                const SizedBox(height: 8),
-                _buildBox(
-                  height: 28,
-                  width: 80,
-                  color: baseColor,
-                  radius: BorderRadius.circular(20),
-                ),
-              ],
+            const SizedBox(width: 12),
+            // Button placeholders
+            SizedBox(
+              width: 110,
+              child: Column(
+                children: <Widget>[
+                  _buildBox(
+                    height: 28,
+                    width: 80,
+                    color: baseColor,
+                    radius: BorderRadius.circular(20),
+                  ),
+                  const SizedBox(height: 8),
+                  _buildBox(
+                    height: 28,
+                    width: 80,
+                    color: baseColor,
+                    radius: BorderRadius.circular(20),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

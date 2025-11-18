@@ -108,10 +108,10 @@ class ApiCall<T> {
         AppLog.error(
           '${response.statusCode} - API: message -> ${decoded['message']} - detail -> ${decoded['details']}',
           name: 'ApiCall.call - else',
-          error: CustomException('ERROR: ${decoded['error']}'),
+          error: 'ERROR: ${decoded['error']}',
         );
         return DataFailer<T>(CustomException('ERROR: ${decoded['message']}',
-            reason: decoded['error']));
+            detail: '${decoded['details']}', reason: decoded['error']));
       }
     } catch (e) {
       AppLog.error(
@@ -235,13 +235,10 @@ class ApiCall<T> {
         );
         return DataFailer<T>(CustomException('ERROR: ${decoded['message']}'));
       }
-    } catch (e) {
+    } catch (e, stc) {
       debugPrint('🔴 ERROR: $fieldsMap');
-      AppLog.error(
-        'ApiCall.callFormData - Catch ERROR: ${e.toString()}',
-        name: 'ApiCall.callFormData - Catch',
-        error: CustomException(e.toString()),
-      );
+      AppLog.error('ApiCall.callFormData - Catch ERROR: ${e.toString()}',
+          name: 'ApiCall.callFormData - Catch', error: e, stackTrace: stc);
       return DataFailer<T>(CustomException(e.toString()));
     }
   }
