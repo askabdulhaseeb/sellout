@@ -1,129 +1,135 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/constants/app_spacings.dart';
+import '../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../core/widgets/custom_dropdown.dart';
+import '../../../domain/entities/category_entites/subentities/dropdown_option_entity.dart';
+import '../../../domain/entities/category_entites/subentities/parent_dropdown_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
-import '../custom_listing_dropdown.dart';
+import '../../../data/sources/local/local_categories.dart';
 
 class AddListingPetAgeLeaveWidget extends StatelessWidget {
   const AddListingPetAgeLeaveWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle? textStyle = Theme.of(context).textTheme.bodyMedium;
+    final List<DropdownOptionEntity> ageOptions =
+        LocalCategoriesSource.age ?? <DropdownOptionEntity>[];
+    final List<DropdownOptionEntity> readyToLeaveOptions =
+        LocalCategoriesSource.readyToLeave ?? <DropdownOptionEntity>[];
+    final List<DropdownOptionEntity> petCategories =
+        LocalCategoriesSource.pets ?? <DropdownOptionEntity>[];
+    final List<ParentDropdownEntity> breedOptions =
+        LocalCategoriesSource.breed ?? <ParentDropdownEntity>[];
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
+        final ParentDropdownEntity? matchedBreed = breedOptions
+            .where(
+                (ParentDropdownEntity p) => p.category == formPro.petCategory)
+            .cast<ParentDropdownEntity?>()
+            .firstOrNull;
+        final List<DropdownOptionEntity> breedList =
+            matchedBreed?.options ?? <DropdownOptionEntity>[];
         return Column(
+          spacing: AppSpacing.vXs,
           children: <Widget>[
+            /// Age + Ready to leave
             Row(
+              spacing: AppSpacing.hSm,
               children: <Widget>[
                 Expanded(
-                  child: CustomListingDropDown<AddListingFormProvider>(
-                    validator: (bool? p0) => null,
-                    hint: 'age',
-                    categoryKey: 'age',
-                    selectedValue: formPro.age,
+                  child: CustomDropdown<DropdownOptionEntity>(
+                    items: ageOptions
+                        .map(
+                          (DropdownOptionEntity opt) =>
+                              DropdownMenuItem<DropdownOptionEntity>(
+                            value: opt,
+                            child: Text(opt.label),
+                          ),
+                        )
+                        .toList(),
+                    selectedItem: formPro.findByValue(
+                      ageOptions,
+                      formPro.age ?? '',
+                    ),
+                    validator: (bool? value) =>
+                        AppValidator.requireSelection(value),
+                    hint: 'age'.tr(),
                     title: 'age'.tr(),
-                    onChanged: formPro.setAge,
+                    onChanged: (DropdownOptionEntity? value) =>
+                        formPro.setAge(value?.value.value),
                   ),
                 ),
-                const SizedBox(width: 16),
                 Expanded(
-                  child: CustomListingDropDown<AddListingFormProvider>(
-                    validator: (bool? p0) => null,
-                    hint: 'ready_to_leave',
-                    categoryKey: 'ready_to_leave',
-                    selectedValue: formPro.time,
+                  child: CustomDropdown<DropdownOptionEntity>(
+                    items: readyToLeaveOptions
+                        .map(
+                          (DropdownOptionEntity opt) =>
+                              DropdownMenuItem<DropdownOptionEntity>(
+                            value: opt,
+                            child: Text(opt.label),
+                          ),
+                        )
+                        .toList(),
+                    selectedItem: formPro.findByValue(
+                      readyToLeaveOptions,
+                      formPro.readyToLeave ?? '',
+                    ),
+                    validator: (bool? value) =>
+                        AppValidator.requireSelection(value),
+                    hint: 'ready_to_leave'.tr(),
                     title: 'ready_to_leave'.tr(),
-                    onChanged: formPro.setTime,
+                    onChanged: (DropdownOptionEntity? value) =>
+                        formPro.setReadyToLeave(value?.value.value),
                   ),
                 ),
               ],
             ),
-            CustomListingDropDown<AddListingFormProvider>(
-                validator: (bool? p0) => null,
-                title: 'category',
-                hint: 'select_category',
-                categoryKey: 'pets',
-                selectedValue: formPro.petCategory,
-                onChanged: (String? p0) => formPro.setPetCategory(p0)),
-            CustomListingDropDown<AddListingFormProvider>(
-                validator: (bool? p0) => null,
-                parentValue: formPro.petCategory,
-                title: 'breed',
-                hint: 'breed',
-                categoryKey: 'breed',
-                selectedValue: formPro.breed,
-                onChanged: (String? p0) => formPro.setPetBreed(p0)),
-            // LocationField(
-            //   onLocationSelected: (LocationNameEntity location) async {
-            //     final LatLng coords =
-            //         await formPro.getLocationCoordinates(location.description);
-            //     formPro.setMeetupLocation(LocationModel(
-            //         address: location.structuredFormatting.secondaryText,
-            //         id: location.placeId,
-            //         title: location.structuredFormatting.mainText,
-            //         url:
-            //             'https://maps.google.com/?q=${coords.latitude},${coords.longitude}',
-            //         latitude: coords.latitude,
-            //         longitude: coords.longitude));
-            //   },
-            //   initialText: formPro.selectedmeetupLocation?.address,
-            // ),
-            CustomDropdown<bool>(
-              height: 50,
-              selectedItem: formPro.vaccinationUpToDate,
-              items: <DropdownMenuItem<bool>>[
-                DropdownMenuItem<bool>(
-                  value: true,
-                  child: Text('yes'.tr(), style: textStyle),
-                ),
-                DropdownMenuItem<bool>(
-                  value: false,
-                  child: Text('no'.tr(), style: textStyle),
-                ),
-              ],
-              onChanged: formPro.setVaccinationUpToDate,
-              validator: (_) =>
-                  formPro.vaccinationUpToDate == null ? 'required'.tr() : null,
-              title: 'vaccination_up_to_date'.tr(),
+            /// Pet Category
+            CustomDropdown<DropdownOptionEntity>(
+              items: petCategories
+                  .map(
+                    (DropdownOptionEntity opt) =>
+                        DropdownMenuItem<DropdownOptionEntity>(
+                      value: opt,
+                      child: Text(opt.label),
+                    ),
+                  )
+                  .toList(),
+              selectedItem: formPro.findByValue(
+                petCategories,
+                formPro.petCategory ?? '',
+              ),
+              validator: (bool? value) => AppValidator.requireSelection(value),
+              hint: 'select_category'.tr(),
+              title: 'category'.tr(),
+              onChanged: (DropdownOptionEntity? value) =>
+                  formPro.setPetCategory(value?.value.value),
             ),
-            CustomDropdown<bool>(
-              height: 50,
-              selectedItem: formPro.wormAndFleaTreated,
-              items: <DropdownMenuItem<bool>>[
-                DropdownMenuItem<bool>(
-                  value: true,
-                  child: Text('yes'.tr(), style: textStyle),
+            /// Breed dropdown (only if category selected)
+            if (formPro.petCategory != null && formPro.petCategory!.isNotEmpty)
+              CustomDropdown<DropdownOptionEntity>(
+                items: breedList
+                    .map(
+                      (DropdownOptionEntity opt) =>
+                          DropdownMenuItem<DropdownOptionEntity>(
+                        value: opt,
+                        child: Text(opt.label),
+                      ),
+                    )
+                    .toList(),
+                selectedItem: formPro.findByValue(
+                  breedList,
+                  formPro.breed ?? '',
                 ),
-                DropdownMenuItem<bool>(
-                  value: false,
-                  child: Text('no'.tr(), style: textStyle),
-                ),
-              ],
-              onChanged: formPro.setWormFleeTreated,
-              validator: (_) =>
-                  formPro.wormAndFleaTreated == null ? 'required'.tr() : null,
-              title: 'worm_flee_treated'.tr(),
-            ),
-            CustomDropdown<bool>(
-              height: 50,
-              selectedItem: formPro.healthChecked,
-              items: <DropdownMenuItem<bool>>[
-                DropdownMenuItem<bool>(
-                  value: true,
-                  child: Text('yes'.tr(), style: textStyle),
-                ),
-                DropdownMenuItem<bool>(
-                  value: false,
-                  child: Text('no'.tr(), style: textStyle),
-                ),
-              ],
-              onChanged: formPro.setHealthChecked,
-              validator: (_) =>
-                  formPro.healthChecked == null ? 'required'.tr() : null,
-              title: 'health_checked'.tr(),
-            ),
+                validator: (bool? value) =>
+                    AppValidator.requireSelection(value),
+                hint: 'breed'.tr(),
+                title: 'breed'.tr(),
+                onChanged: (DropdownOptionEntity? value) =>
+                    formPro.setPetBreed(value?.value.value),
+              ),
           ],
         );
       },

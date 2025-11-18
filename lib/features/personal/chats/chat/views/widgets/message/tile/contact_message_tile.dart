@@ -1,14 +1,8 @@
-import 'dart:io';
-import 'dart:typed_data';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../../../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../../../core/widgets/custom_memory_image.dart';
+import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../attachment/domain/entities/attachment_entity.dart';
+import '../../../../../../user/profiles/views/screens/user_profile_screen.dart';
 
 class ContactMessageTile extends StatefulWidget {
   const ContactMessageTile({
@@ -25,128 +19,81 @@ class ContactMessageTile extends StatefulWidget {
 }
 
 class _ContactMessageTileState extends State<ContactMessageTile> {
-  Contact? _contact;
+  String displayName = '';
+  String photoUrl = '';
+  String uid = '';
 
   @override
   void initState() {
     super.initState();
-    _downloadAndParseContact();
+    _loadVcf();
   }
 
-  Future<void> _downloadAndParseContact() async {
+  Future<void> _loadVcf() async {
     try {
-      final Directory dir = await getApplicationDocumentsDirectory();
-      final String filePath = '${dir.path}/${widget.attachment.originalName}';
-      final File file = File(filePath);
-
-      // Download only if not cached
-      if (!file.existsSync()) {
-        final http.Response response =
-            await http.get(Uri.parse(widget.attachment.url));
-        if (response.statusCode == 200) {
-          await file.writeAsBytes(response.bodyBytes);
-        } else {
-          throw Exception('Failed to download VCF');
+      final http.Response response =
+          await http.get(Uri.parse(widget.attachment.url));
+      if (response.statusCode == 200) {
+        final List<String> lines = response.body.split('\n');
+        for (String line in lines) {
+          if (line.startsWith('FN:')) displayName = line.substring(3).trim();
+          if (line.startsWith('PHOTO:')) {
+            photoUrl = line.split('PHOTO:').last.trim();
+            debugPrint('Photo VCF: $photoUrl');
+          }
+          if (line.startsWith('NOTE:')) uid = line.substring(5).trim();
         }
+        setState(() {});
       }
-
-      final String content = await file.readAsString();
-      final Contact parsedContact = Contact.fromVCard(content);
-      setState(() {
-        _contact = parsedContact;
-      });
     } catch (e) {
-      debugPrint('Error downloading/parsing contact: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to load contact')),
-      );
-    }
-  }
+      debugPrint('Error loading VCF: $e');
 
-  Future<void> _openSms(String phone) async {
-    final Uri uri = Uri(scheme: 'sms', path: phone);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   const SnackBar(content: Text('failed_to_load_contact')),
+      // );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final ColorScheme colorScheme = theme.colorScheme;
 
-    final String displayName = _contact?.displayName ??
-        widget.attachment.originalName.replaceAll('.vcf', '');
-    final String displayPhone = (_contact?.phones.isNotEmpty ?? false)
-        ? _contact!.phones.first.number
-        : '••• ••• ••••';
-    final String displayOrg = (_contact?.organizations.isNotEmpty ?? false)
-        ? _contact!.organizations.first.title
-        : '';
-
-    final Uint8List? displayPhoto = _contact?.photo;
-
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+    return GestureDetector(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute<UserProfileScreen>(
+          builder: (_) => UserProfileScreen(uid: uid),
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              CustomMemoryImage(
-                showLoader: true,
-                size: 50,
-                displayName: displayName,
-                photo: displayPhoto,
-              ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      displayName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
-                        color: colorScheme.onSurface,
-                      ),
-                    ),
-                    if (displayOrg.isNotEmpty)
-                      Text(
-                        displayOrg,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          fontWeight: FontWeight.w500,
-                          color: colorScheme.outline,
-                        ),
-                      ),
-                  ],
+      child: Container(
+        padding: const EdgeInsets.all(2),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: CustomNetworkImage(
+                    size: 50,
+                    placeholder: displayName,
+                    imageURL: photoUrl,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: SizedBox(
-              width: 100,
-              child: CustomElevatedButton(
-                onTap: () => _openSms(displayPhone),
-                isLoading: false,
-                title: 'message'.tr(),
-                textStyle: theme.textTheme.bodySmall,
-                bgColor: theme.scaffoldBackgroundColor,
-              ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    displayName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.w500),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

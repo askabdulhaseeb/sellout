@@ -16,25 +16,22 @@ class ProfileGridSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Consumer<ProfileProvider>(
-        builder: (BuildContext context, ProfileProvider profile, _) {
-          return profile.displayType == ProfilePageTabType.orders
-              ? ProfileOrdersSection(user: user)
-              : profile.displayType == ProfilePageTabType.store
-                  ? ProfileStoreGridview(user: user)
-                  : profile.displayType == ProfilePageTabType.promos
-                      ? ProfilePromoGridview(user: user)
-                      : profile.displayType == ProfilePageTabType.viewing
-                          ? ProfileMyViewingGridview(
-                              user: user,
-                            )
-                          : profile.displayType == ProfilePageTabType.saved
-                              ? const ProfileMySavedGridview()
-                              : ProfileReviewSection(user: user);
-        },
-      ),
+    return Consumer<ProfileProvider>(
+      builder: (BuildContext context, ProfileProvider profile, _) {
+        return profile.displayType == ProfilePageTabType.orders
+            ? ProfileOrdersSection(user: user)
+            : profile.displayType == ProfilePageTabType.store
+                ? ProfileStoreGridview(user: user)
+                : profile.displayType == ProfilePageTabType.promos
+                    ? ProfilePromoGridview(user: user)
+                    : profile.displayType == ProfilePageTabType.viewing
+                        ? ProfileMyViewingGridview(
+                            user: user,
+                          )
+                        : profile.displayType == ProfilePageTabType.saved
+                            ? const ProfileMySavedGridview()
+                            : ProfileReviewSection(user: user);
+      },
     );
   }
 }

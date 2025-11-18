@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/extension/int_ext.dart';
 import '../../../../../core/utilities/app_validators.dart';
-import '../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../personal/auth/signin/data/sources/local/local_auth.dart';
 import '../providers/add_service_provider.dart';

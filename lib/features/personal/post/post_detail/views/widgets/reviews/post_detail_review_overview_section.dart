@@ -11,7 +11,7 @@ import '../../../../../review/domain/param/get_review_param.dart';
 import '../../../../../review/views/params/review_list_param.dart';
 import '../../../../../review/views/screens/review_list_screen.dart';
 import '../../../../../review/views/screens/write_review_screen.dart';
-import '../../../../domain/entities/post_entity.dart';
+import '../../../../domain/entities/post/post_entity.dart';
 import '../../providers/post_detail_provider.dart';
 import 'post_detail_review_attachment_list_widget.dart';
 import 'post_detail_review_header.dart';

@@ -37,7 +37,7 @@ class ShadowContainer extends StatelessWidget {
             BoxDecoration(
               border: Border.all(
                   color: !showShadow
-                      ? ColorScheme.of(context).outlineVariant
+                      ? ColorScheme.of(context).onSurface.withValues(alpha: 0.2)
                       : Colors.transparent),
               color: color ?? Theme.of(context).scaffoldBackgroundColor,
               borderRadius: borderRadius ?? BorderRadius.circular(8),

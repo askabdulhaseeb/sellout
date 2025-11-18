@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../../../../core/extension/datetime_ext.dart';
 import '../../../../../../../../../../core/sources/api_call.dart';
-import '../../../../../../../../../../core/theme/app_theme.dart';
+import '../../../../../../../../../../core/widgets/loaders/simple_tile_loader.dart';
 import '../../../../../../../../../../services/get_it.dart';
 import '../../../../../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../../../../../../business/core/domain/usecase/get_business_by_id_usecase.dart';
@@ -23,11 +23,9 @@ class PrivateChatBusinessTile extends StatelessWidget {
       builder: (BuildContext context,
           AsyncSnapshot<DataState<BusinessEntity?>> snapshot) {
         final BusinessEntity? business = snapshot.data?.entity;
-
         if (business == null) {
-          return const SizedBox(); // Don't show anything while loading or if not found
+          return const SimpleTileLoader();
         }
-
         return Row(
           children: <Widget>[
             ProfilePictureWithStatus(
@@ -45,16 +43,17 @@ class PrivateChatBusinessTile extends StatelessWidget {
                   Row(
                     spacing: 2,
                     children: <Widget>[
-                      Text(
-                        business.displayName ?? '',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      Flexible(
+                        child: Text(
+                          business.displayName ?? '',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ),
-                      const SizedBox(width: 4),
-                      const CircleAvatar(
+                      CircleAvatar(
                         radius: 8,
-                        backgroundColor: AppTheme.primaryColor,
+                        backgroundColor: Theme.of(context).primaryColor,
                         child: Text(
                           'B',
                           style: TextStyle(fontSize: 10, color: Colors.white),

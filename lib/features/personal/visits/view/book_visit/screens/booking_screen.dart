@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../../bookings/domain/entity/booking_entity.dart';
-import '../../../../post/domain/entities/post_entity.dart';
+import '../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../post/domain/entities/visit/visiting_entity.dart';
 import '../provider/booking_provider.dart';
 import '../widgets/booking_calender.dart';
@@ -61,12 +61,11 @@ class BookingScreen extends StatelessWidget {
               if (service != null || booking != null)
                 BookViewProductDetail(
                     post: post, service: service, texttheme: texttheme),
-              if (visit?.dateTime != null)
-                BookVisitButton(
-                  post: post,
-                  service: service,
-                  booking: booking,
-                )
+              BookVisitButton(
+                post: post,
+                service: service,
+                booking: booking,
+              )
             ],
           ),
         ),

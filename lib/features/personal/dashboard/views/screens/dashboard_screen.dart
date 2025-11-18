@@ -18,15 +18,22 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final CurrentUserEntity? uid = LocalAuth.currentUser;
+    final bool otpVerified = LocalAuth.currentUser?.otpVerified ?? false;
     AppLog.info('Current User ID: ${uid?.userID}');
     // Check if the user is a regular user or business user
     final List<Widget> screens = <Widget>[
       const HomeScreen(),
       const MarketPlaceScreen(),
       const ServicesScreen(),
-      uid == null ? const WelcomeScreen() : const StartListingScreen(),
-      uid == null ? const WelcomeScreen() : const ChatDashboardScreen(),
-      uid == null ? const WelcomeScreen() : const ProfileScreen(),
+      (uid == null && !otpVerified)
+          ? const WelcomeScreen()
+          : const StartListingScreen(),
+      (uid == null && !otpVerified)
+          ? const WelcomeScreen()
+          : const ChatDashboardScreen(),
+      (uid == null && !otpVerified)
+          ? const WelcomeScreen()
+          : const ProfileScreen(),
     ];
 
     return Scaffold(

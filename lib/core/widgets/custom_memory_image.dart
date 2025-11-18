@@ -32,7 +32,7 @@ class CustomMemoryImage extends StatelessWidget {
             .bodySmall!
             .copyWith(fontWeight: FontWeight.bold, color: Colors.white);
 
-    if (photo != null) {
+    if (photo != null && photo!.isNotEmpty) {
       return Container(
         width: size,
         height: size,
@@ -48,6 +48,7 @@ class CustomMemoryImage extends StatelessWidget {
             width: size,
             height: size,
             gaplessPlayback: true,
+            filterQuality: FilterQuality.high,
             errorBuilder: (_, __, ___) {
               return _buildInitials(backgroundColor, initialsStyle);
             },

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../core/enums/listing/core/delivery_type.dart';
@@ -13,20 +14,20 @@ class DeliveryFilterDropdown extends StatelessWidget {
       builder: (BuildContext context, MarketPlaceProvider marketPro, _) {
         return CustomDropdown<DeliveryType>(
           title: '',
-          hint: 'delivery',
+          hint: 'delivery'.tr(),
           items: DeliveryType.values
               .map(
                 (DeliveryType item) => DropdownMenuItem<DeliveryType>(
                   value: item,
                   child: Text(
-                    item.json,
+                    item.json.tr(),
                     style: TextTheme.of(context).bodyMedium,
                   ),
                 ),
               )
               .toList(),
           selectedItem: marketPro.selectedDeliveryType,
-          onChanged: marketPro.setDeliveryType,
+          onChanged: (DeliveryType? val) => marketPro.setDeliveryType(val),
           validator: (_) => null,
         );
       },

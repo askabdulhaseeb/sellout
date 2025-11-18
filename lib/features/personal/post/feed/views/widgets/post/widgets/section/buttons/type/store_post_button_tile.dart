@@ -1,13 +1,16 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../../../../../../../../../../../core/enums/listing/core/delivery_type.dart';
+import '../../../../../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../../../../../core/extension/string_ext.dart';
 import '../../../../../../../../../../../core/widgets/custom_dropdown.dart';
-import '../../../../../../../../domain/entities/post_entity.dart';
+import '../../../../../../../../domain/entities/post/post_entity.dart';
 import '../../../../../../../../domain/entities/size_color/color_entity.dart';
 import '../../../../../../../../domain/entities/size_color/size_color_entity.dart';
 import 'size_chart_button_tile.dart';
 import 'widgets/post_add_to_basket_button.dart';
 import 'widgets/post_buy_now_button.dart';
+import 'widgets/post_collection_button.dart';
 import 'widgets/post_make_offer_button.dart';
 
 class StorePostButtonTile extends StatefulWidget {
@@ -21,7 +24,6 @@ class StorePostButtonTile extends StatefulWidget {
 }
 
 class _StorePostButtonTileState extends State<StorePostButtonTile> {
-  // int quantity = 1;
   SizeColorEntity? selectedSize;
   ColorEntity? selectedColor;
 
@@ -29,7 +31,7 @@ class _StorePostButtonTileState extends State<StorePostButtonTile> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        if (widget.post.sizeColors.isNotEmpty && widget.detailWidget)
+        if (widget.post.type == ListingType.clothAndFoot && widget.detailWidget)
           Row(
             spacing: 12,
             children: <Widget>[
@@ -37,7 +39,7 @@ class _StorePostButtonTileState extends State<StorePostButtonTile> {
                 child: CustomDropdown<SizeColorEntity>(
                   title: '',
                   hint: 'select_your_size'.tr(),
-                  items: widget.post.sizeColors
+                  items: widget.post.clothFootInfo!.sizeColors
                       .map((SizeColorEntity e) =>
                           DropdownMenuItem<SizeColorEntity>(
                             value: e,
@@ -85,51 +87,80 @@ class _StorePostButtonTileState extends State<StorePostButtonTile> {
               ),
             ],
           ),
+        // Collection Section
+        if (widget.post.deliveryType == DeliveryType.collection)
+          PostCollectionButtons(
+            post: widget.post,
+          ),
+        if (widget.post.deliveryType != DeliveryType.collection)
+          _DeliverySection(
+            post: widget.post,
+            detailWidget: widget.detailWidget,
+            selectedColor: selectedColor,
+            selectedSize: selectedSize,
+          ),
+        if (widget.post.type == ListingType.clothAndFoot && widget.detailWidget)
+          SizeChartButtonTile(
+              sizeChartURL: widget.post.clothFootInfo?.sizeChartUrl?.url ?? '')
+      ],
+    );
+  }
+}
+
+class _DeliverySection extends StatelessWidget {
+  const _DeliverySection({
+    required this.post,
+    required this.detailWidget,
+    this.selectedColor,
+    this.selectedSize,
+  });
+
+  final PostEntity post;
+  final bool detailWidget;
+  final ColorEntity? selectedColor;
+  final SizeColorEntity? selectedSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
         Row(
           spacing: 12,
           children: <Widget>[
             Expanded(
-                child: PostBuyNowButton(
-              detailWidgetColor: selectedColor,
-              detailWidgetSize: selectedSize,
-              post: widget.post,
-              detailWidget: widget.detailWidget,
-            )),
-            if (widget.post.acceptOffers == true)
+              child: PostBuyNowButton(
+                detailWidgetColor: selectedColor,
+                detailWidgetSize: selectedSize,
+                post: post,
+                detailWidget: detailWidget,
+              ),
+            ),
+            if (post.acceptOffers == true)
               Expanded(
-                  child: PostMakeOfferButton(
-                post: widget.post,
-                detailWidget: widget.detailWidget,
-              )),
+                child: PostMakeOfferButton(
+                  detailWidgetColor: selectedColor,
+                  detailWidgetSize: selectedSize,
+                  post: post,
+                  detailWidget: detailWidget,
+                ),
+              ),
           ],
         ),
+        const SizedBox(height: 8),
         Row(
           spacing: 12,
           children: <Widget>[
-            // Expanded(
-            //   child: PostCounterWidget(
-            //     initialQuantity: quantity,
-            //     maxQuantity: selectedColor?.quantity ?? widget.post.quantity,
-            //     onChanged: (int value) {
-            //       setState(() {
-            //         quantity = value;
-            //       });
-            //     },
-            //   ),
-            // ),
             Expanded(
-                child: PostAddToBasketButton(
-              detailWidget: widget.detailWidget,
-              detailWidgetColor: selectedColor,
-              detailWidgetSize: selectedSize,
-              post: widget.post,
-            )),
+              child: PostAddToBasketButton(
+                detailWidget: detailWidget,
+                detailWidgetColor: selectedColor,
+                detailWidgetSize: selectedSize,
+                post: post,
+              ),
+            ),
           ],
         ),
-        if (widget.post.sizeColors.isNotEmpty &&
-            widget.detailWidget &&
-            widget.post.sizeChartUrl != null)
-          SizeChartButtonTile(sizeChartURL: widget.post.sizeChartUrl?.url ?? '')
       ],
     );
   }

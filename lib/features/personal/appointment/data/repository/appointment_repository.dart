@@ -10,11 +10,18 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
   final AppointmentApi _appointmentApi;
 
   @override
-  Future<DataState<bool>> updateAppointment(UpdateAppointmentParams p) async =>
-      await _appointmentApi.updateAppointment(p);
+  Future<DataState<bool>> updateAppointment(UpdateAppointmentParams p) async {
+    return await _appointmentApi.updateAppointment(p);
+  }
+
   @override
   Future<DataState<HoldServiceResponse>> holdServicePayment(
-    HoldServiceParams params,
-  ) async =>
-      await _appointmentApi.holdServicePayment(params);
+      HoldServiceParams p) async {
+    return await _appointmentApi.holdServicePayment(p);
+  }
+
+  @override
+  Future<DataState<bool>> releasePayment(String transactionId) async {
+    return await _appointmentApi.releasePayment(transactionId);
+  }
 }

@@ -27,28 +27,74 @@ class PromoHomeGridViewTile extends StatelessWidget {
           builder: (_) => PromoScreen(promo: promo),
         );
       },
-      child: Column(
-        spacing: 4,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          AspectRatio(
-            aspectRatio: 1,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Stack(
+          children: <Widget>[
+            /// Background image
+            Positioned.fill(
               child: CustomNetworkImage(
                 imageURL: imageUrl,
                 fit: BoxFit.cover,
                 placeholder: promo.title,
               ),
             ),
-          ),
-          Text(
-            promo.title,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
-            style: const TextStyle(fontWeight: FontWeight.w500),
-          ),
-        ],
+
+            /// Gradient overlay (for text readability)
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [
+                      Colors.black.withOpacity(0.6),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            /// Title + price at the bottom
+            Positioned(
+              left: 8,
+              right: 8,
+              bottom: 8,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    promo.title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      shadows: [
+                        Shadow(
+                          blurRadius: 4,
+                          color: Colors.black38,
+                          offset: Offset(1, 1),
+                        )
+                      ],
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (promo.price != null)
+                    Text(
+                      '${promo.price}',
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

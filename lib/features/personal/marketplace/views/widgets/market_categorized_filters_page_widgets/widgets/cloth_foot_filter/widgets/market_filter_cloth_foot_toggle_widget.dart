@@ -7,11 +7,8 @@ import '../../../../../providers/marketplace_provider.dart';
 
 class MarketFilterClothFootToggleWidget extends StatelessWidget {
   const MarketFilterClothFootToggleWidget({
-    required this.screenWidth,
     super.key,
   });
-
-  final double screenWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -24,19 +21,19 @@ class MarketFilterClothFootToggleWidget extends StatelessWidget {
         children: <Widget>[
           Expanded(
             child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 4),
               decoration: BoxDecoration(
                   border:
                       Border.all(color: ColorScheme.of(context).outlineVariant),
                   borderRadius: BorderRadius.circular(8)),
               child: Center(
                 child: CustomToggleSwitch<String>(
+                    verticalMargin: 4,
+                    horizontalMargin: 4,
+                    containerHeight: 40,
+                    verticalPadding: 8,
                     unseletedBorderColor: Colors.transparent,
-                    verticalPadding: 6,
                     isShaded: false,
-                    customWidths: <double>[
-                      screenWidth * 0.39,
-                      screenWidth * 0.39
-                    ],
                     labels: subCategories,
                     labelStrs: subCategories.map((String e) => e.tr()).toList(),
                     labelText: '',

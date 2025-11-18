@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../core/helper_functions/country_helper.dart';
-import '../../../../../../core/theme/app_theme.dart';
 import '../../../../../../core/utilities/app_string.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/custom_network_image.dart';
@@ -11,7 +10,8 @@ import '../../../../../../core/sources/api_call.dart';
 import '../../../../../../core/widgets/shadow_container.dart';
 import '../../../../../../core/widgets/step_progress_indicator.dart';
 import '../../../../../../services/get_it.dart' show locator;
-import '../../../../post/domain/entities/post_entity.dart';
+import '../../../../post/domain/entities/post/post_entity.dart';
+
 import '../../../../post/domain/usecase/get_specific_post_usecase.dart';
 import '../../../../post/feed/views/widgets/post/widgets/section/buttons/type/widgets/post_buy_now_button.dart';
 import '../../../domain/entities/order_entity.dart';
@@ -135,7 +135,7 @@ class OrderBuyerScreenBottomButtons extends StatelessWidget {
                 onTap: () {},
                 title: 'tell_us_what_you_think'.tr(),
                 bgColor: Colors.transparent,
-                textStyle: const TextStyle(color: AppTheme.primaryColor),
+                textStyle: TextStyle(color: Theme.of(context).primaryColor),
               ),
               if (order.orderStatus == StatusType.shipped ||
                   order.orderStatus == StatusType.pending)
@@ -165,9 +165,10 @@ class OrderBuyerAddressWIdget extends StatelessWidget {
         Text('delivery_address'.tr(),
             style: const TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
-        Text(orderData.shippingAddress.address),
-        Text(orderData.shippingAddress.townCity),
-        Text(orderData.shippingAddress.country),
+        Text(orderData.shippingAddress.address1),
+        Text(orderData.shippingAddress.city),
+        Text(orderData.shippingAddress.state?.stateName ?? ''),
+        Text(orderData.shippingAddress.country.countryName),
       ],
     );
   }
@@ -308,7 +309,7 @@ class BuyerOrderProductDetailWidget extends StatelessWidget {
               buyNowColor: Colors.transparent,
               buyNowTextStyle: TextTheme.of(context)
                   .bodyMedium
-                  ?.copyWith(color: AppTheme.primaryColor)),
+                  ?.copyWith(color: Theme.of(context).primaryColor)),
         ],
       ),
     );

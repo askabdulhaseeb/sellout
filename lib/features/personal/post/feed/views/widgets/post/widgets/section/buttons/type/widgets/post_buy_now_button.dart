@@ -1,13 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../../../../../../core/dialogs/post/buy_now_dailog.dart';
+import '../../../../../../../../../../../../core/dialogs/post/post_tile_cloth_foot_dialog.dart';
+import '../../../../../../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../../../../services/get_it.dart';
-import '../../../../../../../../../../cart/views/screens/personal_cart_screen.dart';
-import '../../../../../../../../../domain/entities/post_entity.dart';
+import '../../../../../../../../../../basket/views/screens/personal_shopping_basket_screen.dart';
+import '../../../../../../../../../domain/entities/post/post_entity.dart';
 import '../../../../../../../../../domain/entities/size_color/color_entity.dart';
 import '../../../../../../../../../domain/entities/size_color/size_color_entity.dart';
 import '../../../../../../../../../domain/params/add_to_cart_param.dart';
@@ -22,6 +23,7 @@ class PostBuyNowButton extends StatefulWidget {
     this.buyNowText,
     this.buyNowTextStyle,
     this.buyNowColor,
+    this.border,
     this.padding,
     this.margin,
     super.key,
@@ -34,6 +36,7 @@ class PostBuyNowButton extends StatefulWidget {
   final String? buyNowText;
   final TextStyle? buyNowTextStyle;
   final Color? buyNowColor;
+  final BoxBorder? border;
   final EdgeInsetsGeometry? padding;
   final EdgeInsetsGeometry? margin;
 
@@ -50,12 +53,13 @@ class _PostBuyNowButtonState extends State<PostBuyNowButton> {
 
     try {
       final AddToCartUsecase usecase = AddToCartUsecase(locator());
-
       // If product has variants but detailWidget is not showing, open selection dialog
-      if (widget.post.sizeColors.isNotEmpty && !widget.detailWidget) {
+      if (widget.post.type == ListingType.clothAndFoot &&
+          !widget.detailWidget) {
         await showDialog(
           context: context,
-          builder: (_) => BuyNowDialog(post: widget.post),
+          builder: (_) => PostTileClothFootDialog(
+              post: widget.post, actionType: PostTileClothFootType.buy),
         );
       } else {
         // Prepare add to cart param
@@ -65,12 +69,11 @@ class _PostBuyNowButtonState extends State<PostBuyNowButton> {
           size: widget.detailWidgetSize,
           quantity: 1,
         );
-
         final DataState<bool> result = await usecase(param);
-
         if (result is DataSuccess) {
           if (mounted) {
-            await Navigator.of(context).pushNamed(PersonalCartScreen.routeName);
+            await Navigator.of(context)
+                .pushNamed(PersonalShoppingBasketScreen.routeName);
           }
         } else {
           AppLog.error(
@@ -81,7 +84,7 @@ class _PostBuyNowButtonState extends State<PostBuyNowButton> {
           if (mounted) {
             AppSnackBar.showSnackBar(
               context,
-              result.exception?.message ?? 'something_wrong'.tr(),
+              result.exception?.detail ?? 'something_wrong'.tr(),
             );
           }
         }
@@ -106,6 +109,7 @@ class _PostBuyNowButtonState extends State<PostBuyNowButton> {
   @override
   Widget build(BuildContext context) {
     return CustomElevatedButton(
+      border: widget.border,
       onTap: () => _buyNow(context),
       title: widget.buyNowText ?? 'buy_now'.tr(),
       isLoading: isLoading,

@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../features/personal/review/domain/entities/review_entity.dart';
-import '../theme/app_theme.dart';
 
 class LinearRatingGraphWidget extends StatelessWidget {
   const LinearRatingGraphWidget({
@@ -121,7 +120,7 @@ class _LinearProgressTile extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: Text(
                   '$percent%',
-                  style: const TextStyle(color: AppTheme.primaryColor),
+                  style: TextStyle(color: Theme.of(context).primaryColor),
                 ),
               ),
             ),

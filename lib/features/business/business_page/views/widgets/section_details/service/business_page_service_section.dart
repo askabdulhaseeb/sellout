@@ -10,8 +10,14 @@ import '../tile/business_page_service_tile.dart';
 import 'business_page_service_filter_section.dart';
 
 class BusinessPageServiceSection extends StatefulWidget {
-  const BusinessPageServiceSection({required this.business, super.key});
+  const BusinessPageServiceSection({
+    required this.business,
+    required this.scrollController,
+    super.key,
+  });
+
   final BusinessEntity business;
+  final ScrollController scrollController;
 
   @override
   State<BusinessPageServiceSection> createState() =>
@@ -23,10 +29,33 @@ class _BusinessPageServiceSectionState
   @override
   void initState() {
     super.initState();
+
+    widget.scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<BusinessPageProvider>(context, listen: false)
-          .getServicesByQuery();
+          .getServicesByQuery(reset: true);
     });
+  }
+
+  void _onScroll() {
+    if (!widget.scrollController.hasClients) return;
+
+    final double maxScroll = widget.scrollController.position.maxScrollExtent;
+    final double currentScroll = widget.scrollController.position.pixels;
+
+    if (currentScroll >= maxScroll - 200) {
+      final BusinessPageProvider provider =
+          Provider.of<BusinessPageProvider>(context, listen: false);
+      if (!provider.isLoadingMore && provider.hasMore) {
+        provider.getServicesByQuery(reset: false);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.scrollController.removeListener(_onScroll);
+    super.dispose();
   }
 
   @override
@@ -38,20 +67,26 @@ class _BusinessPageServiceSectionState
         Consumer<BusinessPageProvider>(
           builder: (BuildContext context, BusinessPageProvider pagePro, _) {
             final List<ServiceEntity> services = pagePro.services;
-            if (pagePro.isLoading) {
+            if (pagePro.isLoading && services.isEmpty) {
               return const Center(child: Loader());
             }
             if (services.isEmpty) {
-              return BusinessPageEmptyServiceWidget(business: widget.business);
+              return const BusinessPageEmptyServiceWidget();
             }
-
             return ListView.builder(
-              primary: false,
+              controller: null,
+              physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
-              itemCount: services.length,
+              itemCount: services.length + (pagePro.isLoadingMore ? 1 : 0),
               itemBuilder: (BuildContext context, int index) {
-                final ServiceEntity service = services[index];
-                return BusinessPageServiceTile(service: service);
+                if (index < services.length) {
+                  return BusinessPageServiceTile(service: services[index]);
+                } else {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: Center(child: Loader()),
+                  );
+                }
               },
             );
           },

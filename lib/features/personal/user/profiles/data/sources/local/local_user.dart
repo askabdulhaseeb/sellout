@@ -1,11 +1,9 @@
 import 'package:hive_flutter/hive_flutter.dart';
-
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../services/get_it.dart';
 import '../../../domain/entities/user_entity.dart';
 import '../../../domain/usecase/get_user_by_uid.dart';
-
 export '../../models/user_model.dart';
 
 class LocalUser {

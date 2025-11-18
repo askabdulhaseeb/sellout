@@ -1,9 +1,9 @@
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/api_call.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../../../../post/data/models/post_model.dart';
+import '../../../../../post/data/models/post/post_model.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
-import '../../../../../post/domain/entities/post_entity.dart';
+import '../../../../../post/domain/entities/post/post_entity.dart';
 
 abstract interface class PostByUserRemote {
   Future<DataState<List<PostEntity>>> getPostByUser(String? userId);

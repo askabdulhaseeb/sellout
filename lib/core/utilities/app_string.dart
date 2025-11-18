@@ -171,6 +171,98 @@ class AppStrings {
       'assets/icons/svg_icons/selloutCartTrashIcon.svg';
 
   static const String sel = '';
+  // Categories images
+  static const String automotiveServices =
+      'assets/images/services_categories/automotiveServices.jpg';
+  static const String carRentalAndHires =
+      'assets/images/services_categories/carRentalAndHires.jpg';
+  static const String carWash = 'assets/images/services_categories/carWash.jpg';
+  static const String childCareAndBabySitting =
+      'assets/images/services_categories/childCareAndBabySitting.jpg';
+  static const String cleaningAndHouseKeeping =
+      'assets/images/services_categories/cleaningAndHouseKeeping.jpg';
+  static const String consulting =
+      'assets/images/services_categories/consultancy.jpg';
+  static const String contentCreationAndSocialMedia =
+      'assets/images/services_categories/contentCreationAndSocialMedia.jpg';
+  static const String cosmeticSurgery =
+      'assets/images/services_categories/cosmeticSurgery.jpg';
+  static const String deliveryServices =
+      'assets/images/services_categories/deliveryServices.jpg';
+  static const String designAndCreativeServices =
+      'assets/images/services_categories/designAndCreativeServices.jpg';
+  static const String drivingInstructor =
+      'assets/images/services_categories/drivingInstructor.jpg';
+  static const String educationAndTutoring =
+      'assets/images/services_categories/educationAndTutoring.jpg';
+  static const String electricalServices =
+      'assets/images/services_categories/electricalServices.jpg';
+  static const String eventsAndShows =
+      'assets/images/services_categories/eventAndShows.jpg';
+  static const String eyebrowsAndLashes =
+      'assets/images/services_categories/eyebrowsAndLashes.jpg';
+  static const String fitnessAndPersonalTraining =
+      'assets/images/services_categories/fitnessAndPersonalTraining.jpg';
+  static const String foodAndCatering =
+      'assets/images/services_categories/foodAndCatering.jpg';
+  static const String gameDevelopment =
+      'assets/images/services_categories/gameDevelopment.jpg';
+  static const String gasServices =
+      'assets/images/services_categories/gasServices.jpg';
+  static const String hairAndShows =
+      'assets/images/services_categories/hairAndShows.jpg';
+  static const String haircutBeard =
+      'assets/images/services_categories/haircut_beard.jpg';
+  static const String hairStyling =
+      'assets/images/services_categories/hairStyling.jpg';
+  static const String healthAndWellness =
+      'assets/images/services_categories/healthAndwellness.jpg';
+  static const String hireFamilyServices =
+      'assets/images/services_categories/hireFamilyServices.jpg';
+  static const String homeImprovementAndMaintenance =
+      'assets/images/services_categories/homeImprovementAndMaintenance.jpg';
+  static const String itAndSoftwares =
+      'assets/images/services_categories/itAndSoftwares.jpg';
+  static const String legalServices =
+      'assets/images/services_categories/legalServices.jpg';
+  static const String marketingAndAdvertising =
+      'assets/images/services_categories/marketingAndAdvertising.jpg';
+  static const String massages =
+      'assets/images/services_categories/massages.jpg';
+  static const String medicalHealthCenter =
+      'assets/images/services_categories/medicalHealthCenter.jpg';
+  static const String mobileAndSoftware =
+      'assets/images/services_categories/mobileAndSoftware.jpg';
+  static const String railServices =
+      'assets/images/services_categories/railServices.jpg';
+  static const String petServices =
+      'assets/images/services_categories/petServices.jpg';
+  static const String photographyAndVideography =
+      'assets/images/services_categories/photoGraphyAndVideoGraphy.jpg';
+  static const String plumbing =
+      'assets/images/services_categories/plumbing.jpg';
+  static const String realStateAndProperties =
+      'assets/images/services_categories/realStateAndProperties.jpg';
+  static const String recruitment =
+      'assets/images/services_categories/recruitment.jpg';
+  static const String securityAndBodyGuardServices =
+      'assets/images/services_categories/securityAndBodyGuardServices.jpg';
+  static const String tattooServices =
+      'assets/images/services_categories/tattooServices.jpg';
+  static const String therapy = 'assets/images/services_categories/therapy.jpg';
+  static const String transportation =
+      'assets/images/services_categories/transportation.jpg';
+  static const String travelAndTourism =
+      'assets/images/services_categories/travelAndTourism.jpg';
+  static const String writingAndTranslations =
+      'assets/images/services_categories/writingAndTranslations.jpg';
+  static const String beautyAndCosmetics =
+      'assets/images/services_categories/beautyAndCosmetics.jpg';
+  static const String nailServices =
+      'assets/images/services_categories/nailServices.jpg';
+  static const String hairRemoval =
+      'assets/images/services_categories/hairRemoval.jpg';
+  static const String ab = 'assets/images/services_cAndShows.jpg';
 
   // Hive Boxes
   static String get localAuthBox => 'com.sellout.local-auth';
@@ -192,9 +284,10 @@ class AppStrings {
   static String get localColorBox => 'com.sellout.local-colors-box';
   static String get localDropDownListingBox => 'com.sellout.dropdown-listings';
   static String get localPostListCache => 'com.sellout.local-post-list-cache';
-  static String get localOrdersBox => 'com.sellout.local-orders-box';
-  static String get localNotificationBox =>
-      'com.sellout.local-notifications-box';
+  static String get localOrdersBox => 'com.sellout.local-orders';
+  static String get localNotificationBox => 'com.sellout.local-notifications';
+  static String get localServiceCategoriesBox =>
+      'com.sellout.local-service-categories';
   // Socket Events
   static String get newMessage => 'new_message';
   static String get updatedMessage => 'updated_message';

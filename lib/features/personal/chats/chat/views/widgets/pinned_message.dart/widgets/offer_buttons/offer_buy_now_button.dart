@@ -8,7 +8,8 @@ import '../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../services/get_it.dart';
 import '../../../../../../../auth/signin/data/models/address_model.dart';
 import '../../../../../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../../../../../../cart/views/providers/cart_provider.dart';
+import '../../../../../../../auth/signin/domain/entities/address_entity.dart';
+import '../../../../../../../basket/views/providers/cart_provider.dart';
 import '../../../../../../../post/domain/params/offer_payment_params.dart';
 import '../../../../../../../post/domain/usecase/offer_payment_usecase.dart';
 
@@ -34,7 +35,7 @@ class OfferBuyNowButton extends StatelessWidget {
           AddressBottomSheet(initAddress: cartPro.address),
     );
     if (selectedAddress != null) {
-      cartPro.address = selectedAddress;
+      cartPro.setAddress(selectedAddress);
     }
   }
 
@@ -102,7 +103,6 @@ class OfferBuyNowButton extends StatelessWidget {
                 );
 
                 await Stripe.instance.presentPaymentSheet();
-
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('payment_successful'.tr())),
                 );

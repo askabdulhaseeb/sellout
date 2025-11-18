@@ -37,6 +37,8 @@ class VisitCalenderTile extends StatelessWidget {
           }
         }
         return Container(
+          margin: const EdgeInsets.only(left: 50),
+          padding: const EdgeInsets.symmetric(horizontal: 4),
           height: 80,
           decoration: BoxDecoration(
             border: Border.all(color: Theme.of(context).colorScheme.secondary),

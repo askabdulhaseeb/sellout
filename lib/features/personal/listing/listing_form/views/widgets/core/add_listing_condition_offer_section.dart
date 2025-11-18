@@ -1,11 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../core/enums/listing/core/privacy_type.dart';
+import '../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
-import '../../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_toggle_switch.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../data/sources/remote/get_access_code_api.dart';
@@ -19,6 +21,7 @@ class AddListingConditionOfferSection extends StatelessWidget {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         return Column(
+          spacing: AppSpacing.vMd,
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -26,6 +29,8 @@ class AddListingConditionOfferSection extends StatelessWidget {
                 formPro.listingType != ListingType.pets)
               CustomToggleSwitch<ConditionType>(
                 isShaded: false,
+                verticalPadding: 8,
+                containerHeight: 48,
                 labels: ConditionType.list,
                 labelStrs: ConditionType.list
                     .map<String>((ConditionType e) => e.code.tr())
@@ -35,6 +40,8 @@ class AddListingConditionOfferSection extends StatelessWidget {
                 onToggle: formPro.setCondition,
               ),
             CustomToggleSwitch<bool>(
+              verticalPadding: 8,
+              containerHeight: 48,
               isShaded: false,
               labels: const <bool>[true, false],
               labelStrs: <String>['yes'.tr(), 'no'.tr()],
@@ -47,13 +54,21 @@ class AddListingConditionOfferSection extends StatelessWidget {
                 controller: formPro.minimumOffer,
                 labelText: 'minimum_offerd_amount'.tr(),
                 showSuffixIcon: false,
-                prefixText: LocalAuth.currency.toUpperCase(),
-                hint: '8.0',
+                prefixIcon: SizedBox(
+                  width: 40,
+                  child: Center(
+                    child: Text(
+                      CountryHelper.currencySymbolHelper(
+                          LocalAuth.currency.toUpperCase()),
+                    ),
+                  ),
+                ),
                 keyboardType: TextInputType.number,
                 validator: (String? value) => AppValidator.isEmpty(value),
               ),
             CustomToggleSwitch<PrivacyType>(
-              horizontalPadding: 2,
+              verticalPadding: 8,
+              containerHeight: 48,
               isShaded: false,
               labels: PrivacyType.list,
               labelStrs: PrivacyType.list

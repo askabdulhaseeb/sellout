@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../providers/marketplace_provider.dart';
 
 class MarketFilterSearchField extends StatelessWidget {
@@ -14,7 +14,7 @@ class MarketFilterSearchField extends StatelessWidget {
     final MarketPlaceProvider marketPro =
         Provider.of<MarketPlaceProvider>(context, listen: false);
     return CustomTextFormField(
-      autoFocus: false,
+      autoFocus: true,
       controller: marketPro.queryController,
       hint: 'search'.tr(),
     );

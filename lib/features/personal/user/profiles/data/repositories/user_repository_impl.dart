@@ -1,7 +1,7 @@
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
-import '../../../../post/domain/entities/post_entity.dart';
+import '../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../post/domain/entities/visit/visiting_entity.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/user_repositories.dart';
@@ -59,5 +59,10 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
   Future<DataState<String>> addRemoveSupporters(
       AddRemoveSupporterParams params) async {
     return await userProfileRemoteSource.addRemoveSupporters(params);
+  }
+
+  @override
+  Future<DataState<bool?>> deleteUser(String value) async {
+    return await userProfileRemoteSource.deleteUser(value);
   }
 }

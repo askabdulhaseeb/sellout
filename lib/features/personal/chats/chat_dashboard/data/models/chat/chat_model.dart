@@ -39,7 +39,7 @@ class ChatModel extends ChatEntity {
         createdBy: json['created_by'],
         lastMessage: json['last_message'] == null
             ? null
-            : MessageModel.fromJson(json['last_message']),
+            : MessageModel.fromMap(json['last_message']),
         productInfo: json['product_info'] == null
             ? null
             : OfferAmountInfoModel.fromJson(json['product_info']),
@@ -56,6 +56,6 @@ class ChatModel extends ChatEntity {
             : GroupInfoModel.fromJson(json['group_info']),
         pinnedMessage: json['pinned_message'] == null
             ? null
-            : MessageModel.fromJson(json['pinned_message']));
+            : MessageModel.fromMap(json['pinned_message']));
   }
 }

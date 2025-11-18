@@ -19,6 +19,10 @@ class ChatTypeAdapter extends TypeAdapter<ChatType> {
         return ChatType.product;
       case 2:
         return ChatType.group;
+      case 3:
+        return ChatType.service;
+      case 4:
+        return ChatType.requestQuote;
       default:
         return ChatType.private;
     }
@@ -35,6 +39,12 @@ class ChatTypeAdapter extends TypeAdapter<ChatType> {
         break;
       case ChatType.group:
         writer.writeByte(2);
+        break;
+      case ChatType.service:
+        writer.writeByte(3);
+        break;
+      case ChatType.requestQuote:
+        writer.writeByte(4);
         break;
     }
   }

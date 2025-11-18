@@ -1,19 +1,25 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/functions/app_log.dart';
-import '../../../../core/widgets/loaders/loader.dart';
 import '../../domain/entities/picked_attachment_option.dart';
 import '../providers/picked_media_provider.dart';
-import '../widgets/picked_media_display_limits_widget.dart';
-import '../widgets/picked_media_display_tile.dart';
+import '../widgets/app_bar_components/back_button.dart';
+import '../widgets/app_bar_components/progress_bar.dart';
+import '../widgets/app_bar_components/selection_counter.dart'
+    show SelectionCounter;
+import '../widgets/app_bar_components/submit_button.dart';
+import '../widgets/media_grid.dart';
+import '../widgets/picked_media_strip.dart';
+import '../widgets/scroll_to_top_button.dart';
+import '../widgets/empty_gallery_state.dart';
+import '../widgets/permission_denied_state.dart';
+import '../widgets/initial_loading_state.dart';
+import '../widgets/load_more_indicator.dart';
+import '../widgets/end_of_list_indicator.dart';
 
 class PickableAttachmentScreen extends StatefulWidget {
-  PickableAttachmentScreen({PickableAttachmentOption? option, super.key})
-      : option = option ?? PickableAttachmentOption();
-  final PickableAttachmentOption option;
-
-  static const String routeName = '/selectable-attachment';
+  const PickableAttachmentScreen({super.key, this.option});
+  final PickableAttachmentOption? option;
 
   @override
   State<PickableAttachmentScreen> createState() =>
@@ -21,140 +27,151 @@ class PickableAttachmentScreen extends StatefulWidget {
 }
 
 class _PickableAttachmentScreenState extends State<PickableAttachmentScreen> {
-  // Prompt
-  // In Flutter, I want to display the whole gallary in a screen like whatsapp,
-  // from where user can pick media, but i also don't want to crash the
-  // application as there are alot of photos in the gallary,
-  // how can i display that images, videos, document, audio or any type of
-  // media file from local storage
+  late final ScrollController _scrollController;
 
-  final int _pageSize = 60;
-  final List<AssetEntity> _mediaList = <AssetEntity>[];
-  bool _isLoading = true;
-  int _currentPage = 0;
-  int _lastPage = 0;
+  final GlobalKey _gridKey = GlobalKey();
+  final Map<int, GlobalKey> _tileKeys =
+      <int, GlobalKey<State<StatefulWidget>>>{};
 
   @override
   void initState() {
     super.initState();
-    Provider.of<PickedMediaProvider>(context, listen: false)
-        .setOption(context, widget.option);
-    _requestPermissionAndLoad();
-  }
-
-  Future<void> _requestPermissionAndLoad() async {
-    final PermissionState ps = await PhotoManager.requestPermissionExtend();
-    if (ps.isAuth) {
-      AppLog.info(
-        'Permission granted',
-        name: 'PickableAttachmentScreen._requestPermissionAndLoad - if',
+    _scrollController = ScrollController();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<PickedMediaProvider>(context, listen: false).init(
+        context,
+        widget.option ?? PickableAttachmentOption(),
       );
-      _loadMoreMedia();
-    } else {
-      // TODO: Handle permission denied
-      AppLog.error(
-        'Permission denied',
-        name: 'PickableAttachmentScreen._requestPermissionAndLoad - else',
-        error: ps,
-      );
-      // Handle permission denied
-    }
-  }
-
-  Future<void> _loadMoreMedia() async {
-    if (_currentPage == _lastPage && !_isLoading) return;
-    RequestType type = widget.option.type.requestType;
-    AppLog.info(
-      'Selected type: $type',
-      name: 'PickableAttachmentScreen._loadMoreMedia',
-    );
-    final List<AssetPathEntity> albums = await PhotoManager.getAssetPathList(
-      type: type,
-      filterOption: FilterOptionGroup(
-        imageOption: const FilterOption(
-          sizeConstraint: SizeConstraint(
-            minWidth: 100,
-            minHeight: 100,
-          ),
-        ),
-        videoOption: FilterOption(
-          sizeConstraint: const SizeConstraint(
-            minWidth: 100,
-            minHeight: 100,
-          ),
-          durationConstraint:
-              DurationConstraint(max: widget.option.maxVideoDuration),
-        ),
-        orders: <OrderOption>[
-          const OrderOption(type: OrderOptionType.createDate, asc: false),
-        ],
-      ),
-    );
-    AppLog.info(
-      'Step 2 - Load more media',
-      name: 'PickableAttachmentScreen._loadMoreMedia',
-    );
-    try {
-      final List<AssetEntity> media = await albums[0]
-          .getAssetListPaged(page: _currentPage, size: _pageSize);
-      final int totalImages = await albums[0].assetCountAsync;
-      _mediaList.addAll(media);
-      _currentPage++;
-      _lastPage = (totalImages / _pageSize).ceil();
-    } catch (e) {
-      AppLog.error(
-        'PickableAttachmentScreen:_loadMoreMedia  $e',
-        name: 'PickableAttachmentScreen._loadMoreMedia - catch',
-        error: e,
-      );
-    }
-    setState(() {
-      _isLoading = false;
     });
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    final PickedMediaProvider provider =
+        Provider.of<PickedMediaProvider>(context, listen: false);
+    if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent - 400 &&
+        !provider.isLoadingMore &&
+        provider.hasMoreMedia) {
+      provider.loadMoreMedia();
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    _tileKeys.clear();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: false,
-        title: const PickedMediaDisplayLimitsWidget(),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.check),
-            onPressed: () async =>
-                await Provider.of<PickedMediaProvider>(context, listen: false)
-                    .onSubmit(context),
-          ),
-        ],
-      ),
-      body: _isLoading
-          ? const Center(child: Loader())
-          : NotificationListener<ScrollNotification>(
-              onNotification: (ScrollNotification scrollInfo) {
-                if (!_isLoading &&
-                    scrollInfo.metrics.pixels ==
-                        scrollInfo.metrics.maxScrollExtent) {
-                  _loadMoreMedia();
-                }
-                return false;
-              },
-              child: _mediaList.isEmpty
-                  ? const Center(child: Text('Not Found'))
-                  : GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 2,
-                        mainAxisSpacing: 2,
-                      ),
-                      itemCount: _mediaList.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final AssetEntity media = _mediaList[index];
-                        return PickedMediaDisplayTile(media: media);
-                      },
+    return Consumer<PickedMediaProvider>(
+      builder: (BuildContext context, PickedMediaProvider provider, _) {
+        final int selectedCount = provider.pickedMedia.length;
+        final int maxCount = provider.option.maxAttachments;
+        final double progress = (selectedCount / maxCount).clamp(0.0, 1.0);
+        final bool hasSelection = selectedCount > 0;
+        return Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          appBar: AppBar(
+            scrolledUnderElevation: 0,
+            automaticallyImplyLeading: false,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            elevation: 0.3,
+            surfaceTintColor: Theme.of(context).colorScheme.surfaceTint,
+            title: Column(
+              children: [
+                Row(
+                  children: <Widget>[
+                    AppBarBackButton(
+                      onPressed: () => Navigator.pop(context),
+                      isActive: hasSelection,
                     ),
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          SelectionCounter(
+                            selectedCount: selectedCount,
+                            maxCount: maxCount,
+                            label: 'select'.tr(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SubmitButton(
+                      isActive: hasSelection,
+                      onPressed: hasSelection
+                          ? () => provider.onSubmit(context)
+                          : null,
+                    ),
+                  ],
+                ),
+                SelectionProgressBar(progress: progress),
+              ],
             ),
+          ),
+          body: provider.permissionDenied
+              ? const PermissionDeniedState()
+              : provider.initialLoading
+                  ? const InitialLoadingState()
+                  : provider.mediaList.isEmpty
+                      ? const EmptyGalleryState()
+                      : SafeArea(
+                          child: Stack(
+                            children: <Widget>[
+                              CustomScrollView(
+                                controller: _scrollController,
+                                physics: const BouncingScrollPhysics(),
+                                slivers: <Widget>[
+                                  MediaGrid(
+                                    provider: provider,
+                                    gridKey: _gridKey,
+                                    tileKeys: _tileKeys,
+                                  ),
+                                  if (provider.isLoadingMore)
+                                    const LoadMoreIndicator(),
+                                  if (!provider.hasMoreMedia)
+                                    const EndOfListIndicator(),
+                                ],
+                              ),
+                              Positioned(
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                child: SafeArea(
+                                  minimum: const EdgeInsets.only(
+                                    bottom: 8,
+                                    left: 8,
+                                    right: 8,
+                                  ),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: PickedMediaStrip(
+                                          onItemTap: (int index) =>
+                                              provider.scrollToSelected(
+                                            context,
+                                            index,
+                                            _scrollController,
+                                            _tileKeys,
+                                          ),
+                                        ),
+                                      ),
+                                      ScrollToTopButton(
+                                          scrollController: _scrollController),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+        );
+      },
     );
   }
 }

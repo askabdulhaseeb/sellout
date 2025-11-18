@@ -1,9 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../../core/widgets/custom_svg_icon.dart';
+import '../../../../../../location/domain/entities/location_entity.dart';
 import '../../../../../../order/view/screens/your_order_screen.dart';
 import '../../../../../domain/enum/radius_type.dart';
 import '../../../../providers/marketplace_provider.dart';
@@ -26,39 +27,46 @@ class MarketPlaceHeaderButtons extends StatelessWidget {
           spacing: 4,
           children: <Widget>[
             _HeaderButton(
-                onPressed: () => showModalBottomSheet(
-                      enableDrag: false,
-                      isDismissible: false,
-                      useSafeArea: true,
-                      isScrollControlled: true,
-                      context: context,
+                onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute<LocationRadiusBottomSheet>(
                       builder: (BuildContext context) =>
-                          const LocationRadiusBottomSheet(),
-                    ),
+                          LocationRadiusBottomSheet(
+                        initialLocation: pro.bottomsheetLocation,
+                        initialLatLng: pro.bottomsheetLatLng,
+                        initialRadius: pro.selectedRadius,
+                        initialRadiusType: pro.radiusType,
+                        onReset: () => pro.resetLocationBottomsheet(),
+                        onUpdateLocation: (RadiusType radiusType, double radius,
+                                LatLng latlng, LocationEntity? location) =>
+                            pro.updateLocationSheet(
+                                latlng, location, radiusType, radius),
+                      ),
+                    )),
                 icon: AppStrings.selloutMarketplaceLocationIcon,
-                label: pro.radiusType == RadiusType.worldwide
-                    ? 'location'
-                    : '${pro.selectedRadius.toInt()} km'),
+                label: pro.bottomsheetLocation == null
+                    ? 'location'.tr()
+                    : '${pro.bottomsheetLocation?.title}'),
             if (pro.queryController.text.isEmpty)
               _HeaderButton(
                 onPressed: () =>
                     Navigator.pushNamed(context, YourOrdersScreen.routeName),
                 icon: null,
-                label: 'your_orders',
+                label: 'your_orders'.tr(),
               ),
             if (pro.queryController.text.isEmpty)
               _HeaderButton(
                 onPressed: () =>
                     Navigator.pushNamed(context, SavedPostsPage.routeName),
                 icon: null,
-                label: 'saved',
+                label: 'saved'.tr(),
               ),
             if (pro.queryController.text.isEmpty)
               _HeaderButton(
                 onPressed: () =>
                     Navigator.pushNamed(context, BuyAgainScreen.routeName),
                 icon: null,
-                label: 'buy_again',
+                label: 'buy_again'.tr(),
               ),
             if (pro.queryController.text.isNotEmpty)
               _HeaderButton(
@@ -67,7 +75,7 @@ class MarketPlaceHeaderButtons extends StatelessWidget {
                   builder: (BuildContext context) => const SortBottomSheet(),
                 ),
                 icon: AppStrings.selloutMarketplaceSortIcon,
-                label: 'sort',
+                label: 'sort'.tr(),
               ),
             if (pro.queryController.text.isNotEmpty)
               _HeaderButton(
@@ -81,7 +89,7 @@ class MarketPlaceHeaderButtons extends StatelessWidget {
                       const MarketPlaceFilterBottomSheet(),
                 ),
                 icon: AppStrings.selloutMarketplaceFilterIcon,
-                label: 'filter',
+                label: 'filter'.tr(),
               ),
           ],
         ),
@@ -97,15 +105,15 @@ class _HeaderButton extends StatelessWidget {
     this.icon,
   });
 
-  final String? icon; // icon is now nullable
+  final String? icon;
   final String label;
   final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final TextStyle? textStyle =
-        theme.textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w400);
+    final TextStyle? textStyle = theme.textTheme.labelSmall
+        ?.copyWith(fontWeight: FontWeight.w400, fontSize: 10);
 
     return Expanded(
       child: InkWell(
@@ -120,19 +128,22 @@ class _HeaderButton extends StatelessWidget {
                 Border.all(color: theme.colorScheme.outlineVariant, width: 1),
           ),
           child: Row(
+            spacing: 4,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              if (icon != null) ...<Widget>[
+              if (icon != null)
                 CustomSvgIcon(
                   assetPath: icon!,
                   size: 14,
-                  color: AppTheme.primaryColor,
+                  color: Theme.of(context).primaryColor,
                 ),
-                const SizedBox(width: 6),
-              ],
-              Text(
-                label.tr(),
-                style: textStyle,
+              Flexible(
+                child: Text(
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  label,
+                  style: textStyle,
+                ),
               ),
             ],
           ),

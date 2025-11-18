@@ -79,7 +79,10 @@ class _ExpandableTextState extends State<ExpandableText> {
 
     if (!isExpanded) {
       // Collapsed mode: RichText with "show more" inline
-      final displayedText = plainText.substring(0, widget.maxLength);
+      final int endIndex = plainText.length < widget.maxLength
+          ? plainText.length
+          : widget.maxLength;
+      final String displayedText = plainText.substring(0, endIndex);
       return RichText(
         text: TextSpan(
           text: '$displayedText... ',

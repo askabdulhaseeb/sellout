@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../../../../core/utilities/app_string.dart';
 import '../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../routes/app_linking.dart';
+import '../../../../../settings/views/screens/connect_bank_screen.dart';
 import '../../../../order/view/screens/your_order_screen.dart';
-import '../../../setting_options/balance_screen/screens/balance_screen.dart';
 import '../../../setting_options/privacy_setting/screen/privacy_screen.dart';
 import 'personal_more_information_setting_screen.dart';
 import '../../../setting_options/setting_notification/screens/personal_setting_notification_screen.dart';
@@ -84,15 +84,6 @@ class PersonalSettingScreen extends StatelessWidget {
           ),
           InDevMode(
             child: PersonalSettingTile(
-              icon: AppStrings.selloutBalanaceSettingIcon,
-              title: 'balance'.tr(),
-              onTap: () {
-                AppNavigator.pushNamed(BalanceScreen.routeName);
-              },
-            ),
-          ),
-          InDevMode(
-            child: PersonalSettingTile(
               icon: AppStrings.selloutPaymentSettingIcon,
               title: 'postage'.tr(),
               onTap: () {},
@@ -105,13 +96,17 @@ class PersonalSettingScreen extends StatelessWidget {
               onTap: () {},
             ),
           ),
-          InDevMode(
-            child: PersonalSettingTile(
-              icon: AppStrings.selloutYouorderSettingIcon,
-              title: 'your_orders'.tr(),
-              onTap: () =>
-                  Navigator.of(context).pushNamed(YourOrdersScreen.routeName),
-            ),
+          PersonalSettingTile(
+            icon: AppStrings.selloutYouorderSettingIcon,
+            title: 'your_orders'.tr(),
+            onTap: () =>
+                Navigator.of(context).pushNamed(YourOrdersScreen.routeName),
+          ),
+          PersonalSettingTile(
+            icon: AppStrings.selloutMoreSettingIcon,
+            title: 'connect_bank_account'.tr(),
+            onTap: () =>
+                Navigator.of(context).pushNamed(ConnectBankScreen.routeName),
           ),
           PersonalSettingTile(
             icon: AppStrings.selloutMoreSettingIcon,

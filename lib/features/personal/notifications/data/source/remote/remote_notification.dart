@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../../../../../../../core/sources/api_call.dart';
 import '../../../../../../core/functions/app_log.dart';
+import '../../../../../../core/sources/local/local_request_history.dart';
 import '../../../domain/entities/notification_entity.dart';
 import '../../models/notification_model.dart';
 
@@ -12,6 +13,22 @@ class NotificationRemoteImpl implements NotificationRemote {
   @override
   Future<DataState<List<NotificationEntity>>> getAllNotifications() async {
     const String endpoint = '/notification/get';
+
+    // Try to get cached local data
+    final ApiRequestEntity? localData = await LocalRequestHistory().request(
+      endpoint: endpoint,
+      duration: const Duration(days: 1),
+    );
+
+    // If local data exists, use it directly
+    if (localData?.encodedData != null) {
+      final List<dynamic> decoded = json.decode(localData!.encodedData);
+      final List<NotificationEntity> list =
+          decoded.map((e) => NotificationModel.fromMap(e)).toList();
+      return DataSuccess<List<NotificationEntity>>('Success', list);
+    }
+
+    // If no cached data, hit the API
     final DataState<String> result = await ApiCall<String>().call(
       endpoint: endpoint,
       requestType: ApiRequestType.get,
@@ -24,12 +41,6 @@ class NotificationRemoteImpl implements NotificationRemote {
       final List<dynamic> decoded = json.decode(raw);
       final List<NotificationEntity> list =
           decoded.map((e) => NotificationModel.fromMap(e)).toList();
-
-      // If you want to save locally:
-      // for (final notification in list) {
-      //   await LocalNotifications.save(notification);
-      // }
-
       return DataSuccess<List<NotificationEntity>>('Success', list);
     } else {
       AppLog.error('NotificationRemote.getAllNotifications');

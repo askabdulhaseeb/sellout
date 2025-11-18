@@ -13,9 +13,9 @@ class OfferAmountInfoModel extends OfferAmountInfoEntity {
   factory OfferAmountInfoModel.fromJson(Map<String, dynamic> json) =>
       OfferAmountInfoModel(
         offer: double.tryParse(json['offer']?.toString() ?? '0.0') ?? 0.0,
-        currency: json['currency'],
-        isAccepted: json['is_accepted'],
-        id: json['id'],
+        currency: json['currency']?.toString() ?? '',
+        isAccepted: json['is_accepted'] ?? false,
+        id: json['id'] ?? '',
         type: ChatType.fromJson(json['type']),
       );
 

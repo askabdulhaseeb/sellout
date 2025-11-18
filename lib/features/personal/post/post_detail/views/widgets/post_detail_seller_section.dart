@@ -9,8 +9,8 @@ import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../user/profiles/data/models/user_model.dart';
 import '../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../../user/profiles/domain/usecase/get_user_by_uid.dart';
-import '../../../domain/entities/post_entity.dart';
-import '../../../feed/views/widgets/post/widgets/section/icon_butoons/chat_with_seller_icon_button.dart';
+import '../../../domain/entities/post/post_entity.dart';
+import '../../../feed/views/widgets/post/widgets/section/icon_butoons/post_inquiry_buttons.dart';
 import '../../../feed/views/widgets/post/widgets/section/icon_butoons/save_post_icon_button.dart';
 import '../../../feed/views/widgets/post/widgets/section/icon_butoons/share_post_icon_button.dart';
 import '../../../../../../../../../core/widgets/profile_photo.dart';
@@ -123,8 +123,7 @@ class _PostDetailSellerSectionState extends State<PostDetailSellerSection> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              if (!isMine)
-                ChatwithSellerIconButton(userId: widget.post.createdBy),
+              if (!isMine) CreatePostInquiryChatButton(post: widget.post),
               SharePostButton(
                 post: widget.post,
               ),

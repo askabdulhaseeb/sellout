@@ -6,7 +6,7 @@ import '../../../../../core/media_preview/view/screens/media_preview_screen.dart
 import '../../../../../core/sources/data_state.dart';
 import '../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../business/core/domain/entity/service/service_entity.dart';
-import '../../../post/domain/entities/post_entity.dart';
+import '../../../post/domain/entities/post/post_entity.dart';
 import '../../domain/enums/review_sort_type.dart';
 import '../../domain/param/create_review_params.dart';
 import '../../domain/usecase/create_review_usecase.dart';

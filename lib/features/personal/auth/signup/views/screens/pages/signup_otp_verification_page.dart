@@ -1,14 +1,18 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../providers/signup_provider.dart';
 
-class SignupOtpVerificationPage extends StatelessWidget {
+class SignupOtpVerificationPage extends StatefulWidget {
   const SignupOtpVerificationPage({super.key});
 
+  @override
+  State<SignupOtpVerificationPage> createState() =>
+      _SignupOtpVerificationPageState();
+}
+
+class _SignupOtpVerificationPageState extends State<SignupOtpVerificationPage> {
   @override
   Widget build(BuildContext context) {
     return Consumer<SignupProvider>(
@@ -30,21 +34,26 @@ class SignupOtpVerificationPage extends StatelessWidget {
               readOnly: pro.isLoading,
               onFieldSubmitted: (String p0) =>
                   p0.length == 6 ? pro.onNext(context) : null,
-              onChanged: kDebugMode
-                  ? (String p0) => p0.length == 6 ? pro.onNext(context) : null
-                  : null,
+              onChanged: (String p0) =>
+                  p0.length == 6 ? pro.onNext(context) : null,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text('${'resend_code'.tr()}: ${pro.resentCodeSeconds}s'),
-                TextButton(
-                  onPressed:
-                      (pro.resendCodeTimer?.isActive ?? false) || pro.isLoading
-                          ? null
-                          : () async => pro.sendOtp(context),
-                  child: Text('resend_code'.tr()),
-                )
+                if (!pro.isLoading)
+                  TextButton(
+                    onPressed: (pro.resendCodeTimer?.isActive ?? false) ||
+                            pro.isLoading
+                        ? null
+                        : () async => pro.sendOtp(context),
+                    child: Text('resend_code'.tr()),
+                  ),
+                if (pro.isLoading)
+                  const SizedBox(
+                    width: 100,
+                    child: LinearProgressIndicator(),
+                  )
               ],
             ),
           ],

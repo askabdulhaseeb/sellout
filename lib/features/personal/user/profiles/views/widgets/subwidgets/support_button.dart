@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../services/get_it.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -82,9 +81,9 @@ class _SupportButtonState extends State<SupportButton> {
         padding: const EdgeInsets.all(6),
         bgColor: isSupporting
             ? (widget.supportingColor ??
-                AppTheme.secondaryColor.withValues(alpha: 0.1))
+                Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1))
             : (widget.supportColor ??
-                AppTheme.primaryColor.withValues(alpha: 0.1)),
+                Theme.of(context).primaryColor.withValues(alpha: 0.1)),
         textStyle: TextTheme.of(context).labelMedium?.copyWith(
               color: isSupporting
                   ? (widget.supportingTextColor ??

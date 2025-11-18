@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 import '../../features/personal/auth/signin/data/sources/local/local_auth.dart';
+import '../../features/personal/bookings/data/sources/local_booking.dart';
 import '../../features/personal/chats/chat/data/sources/local/local_message.dart';
 import '../../features/personal/chats/chat_dashboard/data/models/message/message_model.dart';
 import '../../features/personal/chats/chat_dashboard/data/sources/local/local_chat.dart';
@@ -21,6 +22,7 @@ class SocketService with WidgetsBindingObserver {
 
     _isInitialized = true;
     WidgetsBinding.instance.addObserver(this);
+    
 
     // 👂 Listen to UID changes
     LocalAuth.uidNotifier.addListener(() {
@@ -91,6 +93,11 @@ class SocketService with WidgetsBindingObserver {
     socket!.on('new-notification', (dynamic data) async {
       AppLog.info('🔔 New notification: $data',
           name: 'SocketService.new-notification');
+      if (data['metadata'] != null && data['metadata']['booking_id'] != null) {
+        final Map<String, dynamic> metadata =
+            Map<String, dynamic>.from(data['metadata']);
+        await LocalBooking().update(metadata['booking_id'], metadata);
+      }
       LocalNotifications.saveNotification(NotificationModel.fromMap(data));
     });
 
@@ -101,25 +108,25 @@ class SocketService with WidgetsBindingObserver {
     socket!.on('newMessage', (dynamic data) async {
       AppLog.info('📨 New message received: $data',
           name: 'SocketService.newMessage');
-      await LocalChatMessage().saveMessage(MessageModel.fromJson(data));
+      await LocalChatMessage().saveMessage(MessageModel.fromMap(data));
     });
 
     socket!.on('updatedMessage', (dynamic data) async {
       AppLog.info('📝 Message update arrived: $data',
           name: 'SocketService.updatedMessage');
-      await LocalChatMessage().saveMessage(MessageModel.fromJson(data));
+      await LocalChatMessage().saveMessage(MessageModel.fromMap(data));
     });
 
     socket!.on('update-pinned-message', (dynamic data) async {
       AppLog.info('📝 Updated Pinned Message  arrived: $data',
           name: 'SocketService.updatedPinnedMessage');
-      await LocalChat().updatePinnedMessage(MessageModel.fromJson(data));
+      await LocalChat().updatePinnedMessage(MessageModel.fromMap(data));
     });
 
     socket!.on('new-pinned-message', (dynamic data) async {
       AppLog.info('📝 New Pinned Message arrived: $data',
           name: 'SocketService.newPinnedMessage');
-      await LocalChat().updatePinnedMessage(MessageModel.fromJson(data));
+      await LocalChat().updatePinnedMessage(MessageModel.fromMap(data));
     });
 
     socket!.onAny((String event, dynamic data) {

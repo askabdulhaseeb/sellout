@@ -1,11 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../core/widgets/in_dev_mode.dart';
 import '../../providers/add_listing_form_provider.dart';
-import '../../screens/add_listing_preview_screen.dart';
 
 class AddListingPostButtonWidget extends StatelessWidget {
   const AddListingPostButtonWidget({super.key});
@@ -29,37 +27,24 @@ class AddListingPostButtonWidget extends StatelessWidget {
           ),
           InDevMode(
             child: CustomElevatedButton(
-                border: Border.all(color: ColorScheme.of(context).outline),
-                textColor: ColorScheme.of(context).outline,
-                bgColor: Colors.transparent,
-                title: 'preview_listing'.tr(),
-                isLoading: formPro.isLoading,
-                onTap: () async {
-                  if (formPro.attachments.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content:
-                          Text('please_add_at_least_one_photo_or_video'.tr()),
-                    ));
-                    return;
-                  }
-                  Navigator.push(
-                      context,
-                      // ignore: always_specify_types
-                      MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            const AddListingPreviewScreen(),
-                      ));
-                }),
-          ),
-          InDevMode(
-            child: CustomElevatedButton(
-                border: Border.all(color: ColorScheme.of(context).secondary),
-                textColor: ColorScheme.of(context).secondary,
+                border:
+                    Border.all(color: Theme.of(context).colorScheme.secondary),
+                textColor: Theme.of(context).colorScheme.secondary,
                 bgColor: Colors.transparent,
                 title: 'promotion_boost'.tr(),
                 isLoading: false,
                 onTap: () {}),
           ),
+          // --- PREVIEW BUTTON ---
+          CustomElevatedButton(
+            border: Border.all(color: Theme.of(context).colorScheme.outline),
+            textColor: Theme.of(context).colorScheme.outline,
+            bgColor: Colors.transparent,
+            title: 'preview_listing'.tr(),
+            isLoading: formPro.isLoading,
+            onTap: () async => await formPro.getPreview(context),
+          ),
+
           CustomElevatedButton(
             title: 'post'.tr(),
             isLoading: formPro.isLoading,

@@ -3,9 +3,9 @@ import 'package:hive/hive.dart';
 import '../../../../features/business/core/data/sources/local_business.dart';
 import '../../../../features/business/core/domain/entity/business_entity.dart';
 import '../../../../features/personal/auth/signin/data/sources/local/local_auth.dart';
-import '../../../../features/personal/cart/data/models/cart/cart_item_model.dart';
-import '../../../../features/personal/cart/data/sources/local_cart.dart';
-import '../../../../features/personal/cart/views/screens/personal_cart_screen.dart';
+import '../../../../features/personal/basket/data/models/cart/cart_item_model.dart';
+import '../../../../features/personal/basket/data/sources/local/local_cart.dart';
+import '../../../../features/personal/basket/views/screens/personal_shopping_basket_screen.dart';
 import '../../../../features/personal/notifications/view/screens/notification_screen.dart';
 import '../../../../features/personal/search/view/view/search_screen.dart';
 import '../../../../features/personal/user/profiles/data/sources/local/local_user.dart';
@@ -22,7 +22,7 @@ personalAppbar(BuildContext context) {
     centerTitle: false,
     surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-    shadowColor: Theme.of(context).dividerColor,
+    shadowColor: Theme.of(context).colorScheme.outlineVariant,
     title: Row(
       children: <Widget>[
         if (LocalAuth.currentUser != null)
@@ -103,7 +103,7 @@ personalAppbar(BuildContext context) {
                   _IconButton(
                     icon: AppStrings.selloutShoppingCartIcon,
                     onPressed: () => Navigator.of(context)
-                        .pushNamed(PersonalCartScreen.routeName),
+                        .pushNamed(PersonalShoppingBasketScreen.routeName),
                   ),
                   if (cart.cartItemsCount > 0)
                     Positioned(
@@ -203,7 +203,7 @@ class _IconButton extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: Theme.of(context).dividerColor,
+            color: Theme.of(context).colorScheme.outlineVariant,
             borderRadius: BorderRadius.circular(10),
           ),
           child: CustomSvgIcon(

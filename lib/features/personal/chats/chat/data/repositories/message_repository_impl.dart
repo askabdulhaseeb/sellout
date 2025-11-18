@@ -5,6 +5,7 @@ import '../../../../post/domain/params/share_in_chat_params.dart';
 import '../../../../post/domain/params/update_offer_params.dart';
 import '../../domain/entities/getted_message_entity.dart';
 import '../../domain/params/leave_group_params.dart';
+import '../../domain/params/post_inquiry_params.dart';
 import '../../domain/params/send_invite_to_group_params.dart';
 import '../../domain/params/send_message_param.dart';
 import '../../domain/repositories/message_reposity.dart';
@@ -61,5 +62,10 @@ class MessageRepositoryImpl implements MessageRepository {
   @override
   Future<DataState<String>> offerPayment(OfferPaymentParams param) async {
     return await offerRemoteApi.offerPayment(param);
+  }
+
+  @override
+  Future<DataState<bool>> createPostInquiry(PostInquiryParams params) async {
+    return await remoteSource.createPostInquiry(params);
   }
 }

@@ -1,11 +1,8 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../features/attachment/domain/entities/attachment_entity.dart';
 import '../../../../features/attachment/domain/entities/picked_attachment.dart';
-import '../../../theme/app_theme.dart';
 import '../provider/media_preview_provider.dart';
 import '../widgets/media_llistview_widget.dart';
 import '../widgets/preview_widget.dart';
@@ -94,7 +91,7 @@ class _ReviewMediaPreviewContentState extends State<ReviewMediaPreviewContent> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: AppTheme.primaryColor,
+        backgroundColor: Theme.of(context).primaryColor,
         onPressed: _showMediaOptions,
         tooltip: 'add_media'.tr(),
         child: const Icon(Icons.add),

@@ -11,12 +11,12 @@ class ServiceSearchResults extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme txt = Theme.of(context).textTheme;
+
     return Consumer<ServicesPageProvider>(
       builder: (BuildContext context, ServicesPageProvider pro, Widget? child) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const SizedBox(height: 16),
             Text(
               'result'.tr(),
               style: txt.titleMedium,
@@ -27,7 +27,7 @@ class ServiceSearchResults extends StatelessWidget {
                   crossAxisCount: 2,
                   crossAxisSpacing: 6.0,
                   mainAxisSpacing: 6.0,
-                  childAspectRatio: 0.8,
+                  childAspectRatio: 0.68,
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 physics: const NeverScrollableScrollPhysics(),

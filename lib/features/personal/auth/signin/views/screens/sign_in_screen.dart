@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/utilities/app_validators.dart';
-import '../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/password_textformfield.dart';
 import '../../../../../../core/widgets/sellout_title.dart';
@@ -17,9 +17,6 @@ class SignInScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final GlobalKey<FormState> signInFormKey = GlobalKey<FormState>();
-
-    final SigninProvider authPro =
-        Provider.of<SigninProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -73,31 +70,35 @@ class SignInScreen extends StatelessWidget {
           );
         }),
       ),
-      bottomSheet: BottomAppBar(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        height: 150,
-        child: Column(
-          children: <Widget>[
-            CustomElevatedButton(
-                padding: const EdgeInsets.all(0),
-                title: 'dont_have_account'.tr(),
-                textStyle: TextTheme.of(context).bodyMedium,
-                isLoading: false,
-                bgColor: Colors.transparent,
-                border: null,
-                onTap: () async {
-                  if (!signInFormKey.currentState!.validate()) {
-                    return;
-                  }
-                  await Navigator.pushReplacementNamed(
-                      context, SignupScreen.routeName);
-                }),
-            CustomElevatedButton(
-              title: 'login'.tr(),
-              isLoading: authPro.isLoading,
-              onTap: () async => await authPro.signIn(context),
-            ),
-          ],
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Consumer<SigninProvider>(
+          builder:
+              (BuildContext context, SigninProvider authPro, Widget? child) =>
+                  Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              CustomElevatedButton(
+                  padding: const EdgeInsets.all(0),
+                  title: 'dont_have_account'.tr(),
+                  textStyle: TextTheme.of(context).bodyMedium,
+                  isLoading: false,
+                  bgColor: Colors.transparent,
+                  border: null,
+                  onTap: () async {
+                    if (!signInFormKey.currentState!.validate()) {
+                      return;
+                    }
+                    await Navigator.pushReplacementNamed(
+                        context, SignupScreen.routeName);
+                  }),
+              CustomElevatedButton(
+                title: 'login'.tr(),
+                isLoading: authPro.isLoading,
+                onTap: () async => await authPro.signIn(context),
+              ),
+            ],
+          ),
         ),
       ),
     );

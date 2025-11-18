@@ -1,8 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../../../../../../../core/widgets/empty_page_widget.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
-import '../../../../../post/domain/entities/post_entity.dart';
+import '../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../data/sources/local/local_user.dart';
 import '../subwidgets/post_grid_view_tile.dart';
 
@@ -19,16 +21,20 @@ class ProfileMySavedGridview extends StatelessWidget {
         }
 
         if (!snapshot.hasData || snapshot.data == null) {
-          return Center(child: Text('my_saved_posts'.tr()));
+          return Center(
+              child: EmptyPageWidget(
+                  icon: CupertinoIcons.photo,
+                  childBelow: Text('no_posts_found'.tr())));
         }
-
         final List<String> saved = snapshot.data?.saved ?? <String>[];
-
         if (saved.isEmpty) {
-          return Center(child: Text('my_saved_posts'.tr()));
+          return Center(
+              child: EmptyPageWidget(
+                  icon: CupertinoIcons.photo,
+                  childBelow: Text('no_posts_found'.tr())));
         }
-
         return GridView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           itemCount: saved.length,
           shrinkWrap: true,
           primary: false,

@@ -1,29 +1,28 @@
 import 'package:hive/hive.dart';
-
 import '../../../../../../../core/enums/message/message_type.dart';
 import '../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../post/domain/entities/offer/offer_detail_entity.dart';
 import '../../../../../post/domain/entities/visit/visiting_entity.dart';
-
+import '../../../../quote/domain/entites/quote_detail_entity.dart';
 part 'message_entity.g.dart';
 
 @HiveType(typeId: 13)
 class MessageEntity {
-  MessageEntity({
-    required this.persons,
-    required this.fileUrl,
-    required this.updatedAt,
-    required this.createdAt,
-    required this.messageId,
-    required this.text,
-    required this.displayText,
-    required this.sendBy,
-    required this.chatId,
-    this.visitingDetail,
-    this.type,
-    this.source,
-    this.offerDetail,
-  });
+  MessageEntity(
+      {required this.persons,
+      required this.fileUrl,
+      required this.updatedAt,
+      required this.createdAt,
+      required this.messageId,
+      required this.text,
+      required this.displayText,
+      required this.sendBy,
+      required this.chatId,
+      this.visitingDetail,
+      this.type,
+      this.source,
+      this.offerDetail,
+      this.quoteDetail});
 
   @HiveField(0)
   final List<String> persons;
@@ -51,6 +50,8 @@ class MessageEntity {
   final String? source;
   @HiveField(12)
   final OfferDetailEntity? offerDetail;
+  @HiveField(13)
+  final QuoteDetailEntity? quoteDetail;
 
   String? get postImage => fileUrl.first.url;
   MessageEntity copyWith({

@@ -1,5 +1,5 @@
 import '../../../domain/entities/feed/feed_entity.dart';
-import '../post_model.dart';
+import '../post/post_model.dart';
 
 class FeedModel extends FeedEntity {
   FeedModel({

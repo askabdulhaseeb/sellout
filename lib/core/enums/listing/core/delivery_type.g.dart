@@ -18,7 +18,9 @@ class DeliveryTypeAdapter extends TypeAdapter<DeliveryType> {
       case 1:
         return DeliveryType.freeDelivery;
       case 2:
-        return DeliveryType.collocation;
+        return DeliveryType.collection;
+      case 3:
+        return DeliveryType.fastDelivery;
       default:
         return DeliveryType.paid;
     }
@@ -33,8 +35,11 @@ class DeliveryTypeAdapter extends TypeAdapter<DeliveryType> {
       case DeliveryType.freeDelivery:
         writer.writeByte(1);
         break;
-      case DeliveryType.collocation:
+      case DeliveryType.collection:
         writer.writeByte(2);
+        break;
+      case DeliveryType.fastDelivery:
+        writer.writeByte(3);
         break;
     }
   }

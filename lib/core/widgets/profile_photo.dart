@@ -5,7 +5,7 @@ class ProfilePhoto extends StatelessWidget {
   const ProfilePhoto({
     required this.url,
     this.isCircle = false,
-    this.placeholder = '/',
+    this.placeholder = 'na',
     this.size = 24,
     super.key,
   });
@@ -26,33 +26,65 @@ class ProfilePhoto extends StatelessWidget {
     final bool isValidUrl = url != null &&
         (url!.startsWith('http://') || url!.startsWith('https://'));
 
-    if (isCircle) {
-      return CircleAvatar(
-        radius: size,
-        backgroundImage: isValidUrl ? CachedNetworkImageProvider(url!) : null,
-        backgroundColor: Theme.of(context).dividerColor,
-        child: !isValidUrl
-            ? Text(
+    // ✅ Safe fallback: empty or invalid URL
+    if (!isValidUrl) {
+      return isCircle
+          ? CircleAvatar(
+              radius: size,
+              backgroundColor: Theme.of(context).dividerColor.withOpacity(0.2),
+              child: Text(
                 placeholderText.toUpperCase(),
                 style: const TextStyle(fontWeight: FontWeight.w500),
-              )
-            : null,
+              ),
+            )
+          : _textPlaceholder(context, placeholderText);
+    }
+
+    // ✅ For circular image
+    if (isCircle) {
+      return ClipOval(
+        child: CachedNetworkImage(
+          imageUrl: url!,
+          fit: BoxFit.cover,
+          height: size * 2,
+          width: size * 2,
+          placeholder: (_, __) => _staticPlaceholder(context),
+          errorWidget: (_, __, ___) =>
+              _textPlaceholder(context, placeholderText),
+          // Added protection for Flutter image decoder crash
+          imageBuilder:
+              (BuildContext context, ImageProvider<Object> imageProvider) =>
+                  Image(
+            image: imageProvider,
+            fit: BoxFit.cover,
+            errorBuilder:
+                (BuildContext context, Object error, StackTrace? stackTrace) =>
+                    _textPlaceholder(context, placeholderText),
+          ),
+        ),
       );
     }
 
+    // ✅ For rectangular image
     return ClipRRect(
       borderRadius: BorderRadius.circular(8),
-      child: isValidUrl
-          ? CachedNetworkImage(
-              imageUrl: url!,
-              height: size * 2,
-              width: size * 2,
-              fit: BoxFit.cover,
-              placeholder: (_, __) => _staticPlaceholder(context),
-              errorWidget: (_, __, ___) =>
+      child: CachedNetworkImage(
+        imageUrl: url!,
+        height: size * 2,
+        width: size * 2,
+        fit: BoxFit.cover,
+        placeholder: (_, __) => _staticPlaceholder(context),
+        errorWidget: (_, __, ___) => _textPlaceholder(context, placeholderText),
+        imageBuilder:
+            (BuildContext context, ImageProvider<Object> imageProvider) =>
+                Image(
+          image: imageProvider,
+          fit: BoxFit.cover,
+          errorBuilder:
+              (BuildContext context, Object error, StackTrace? stackTrace) =>
                   _textPlaceholder(context, placeholderText),
-            )
-          : _textPlaceholder(context, placeholderText),
+        ),
+      ),
     );
   }
 
@@ -60,8 +92,8 @@ class ProfilePhoto extends StatelessWidget {
     return Container(
       height: size * 2,
       width: size * 2,
-      color: Theme.of(context).dividerColor,
       alignment: Alignment.center,
+      color: Theme.of(context).dividerColor.withOpacity(0.2),
       child: Text(
         placeholderText.toUpperCase(),
         style: const TextStyle(fontWeight: FontWeight.w500),
@@ -73,7 +105,7 @@ class ProfilePhoto extends StatelessWidget {
     return Container(
       height: size * 2,
       width: size * 2,
-      color: Theme.of(context).dividerColor.withValues(alpha: 0.2),
+      color: Theme.of(context).dividerColor.withOpacity(0.2),
     );
   }
 }

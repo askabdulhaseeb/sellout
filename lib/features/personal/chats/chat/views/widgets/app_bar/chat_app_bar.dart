@@ -26,11 +26,13 @@ chatAppBar(BuildContext context) {
           },
         ),
         Expanded(
-          child: chat?.type == ChatType.product
+          child: chat?.productInfo?.type == ChatType.product
               ? const ProductChatTitleWidget()
-              : chat?.type == ChatType.group
-                  ? const GroupChatTitleWidget()
-                  : const PrivateChatTitleWidget(),
+              : chat?.productInfo?.type == ChatType.service
+                  ? const PrivateChatTitleWidget()
+                  : chat?.type == ChatType.group
+                      ? const GroupChatTitleWidget()
+                      : const PrivateChatTitleWidget(),
         ),
       ],
     ),

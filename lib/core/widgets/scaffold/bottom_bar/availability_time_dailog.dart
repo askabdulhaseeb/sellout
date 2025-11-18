@@ -6,13 +6,30 @@ import '../../../../features/personal/post/domain/entities/meetup/availability_e
 import '../../custom_dropdown.dart';
 import '../../custom_elevated_button.dart';
 
-class AvailabilityTimeDialog extends StatelessWidget {
+class AvailabilityTimeDialog extends StatefulWidget {
   const AvailabilityTimeDialog({
     required this.entity,
     super.key,
   });
 
   final AvailabilityEntity entity;
+
+  @override
+  State<AvailabilityTimeDialog> createState() => _AvailabilityTimeDialogState();
+}
+
+class _AvailabilityTimeDialogState extends State<AvailabilityTimeDialog> {
+  String? _selectedStartTime;
+  String? _selectedEndTime;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedStartTime =
+        widget.entity.openingTime.isNotEmpty ? widget.entity.openingTime : null;
+    _selectedEndTime =
+        widget.entity.closingTime.isNotEmpty ? widget.entity.closingTime : null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,28 +49,36 @@ class AvailabilityTimeDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text(
-              'set_time_range'.tr(),
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+            Row(
+              children: [
+                const CloseButton(),
+                Text(
+                  'set_time_range'.tr(),
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             Row(
               children: <Widget>[
                 Expanded(
                   child: CustomDropdown<String>(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
                     title: 'start_time'.tr(),
-                    selectedItem: entity.openingTime.isNotEmpty
-                        ? entity.openingTime
-                        : null,
+                    selectedItem: _selectedStartTime,
                     hint: 'start_time'.tr(),
                     validator: (_) => null,
                     onChanged: (String? newValue) {
-                      if (newValue != null) {
-                        provider.updateOpeningTime(entity.day, newValue);
-                      }
+                      setState(() {
+                        _selectedStartTime = newValue;
+                        // reset end time if invalid
+                        if (_selectedEndTime != null &&
+                            !provider.isClosingTimeValid(
+                                _selectedStartTime!, _selectedEndTime!)) {
+                          _selectedEndTime = null;
+                        }
+                      });
                     },
                     items: timeSlots.map((String item) {
                       return DropdownMenuItem<String>(
@@ -69,23 +94,20 @@ class AvailabilityTimeDialog extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: CustomDropdown<String>(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
                     title: 'end_time'.tr(),
-                    selectedItem: entity.closingTime.isNotEmpty
-                        ? entity.closingTime
-                        : null,
+                    selectedItem: _selectedEndTime,
                     hint: 'end_time'.tr(),
                     validator: (_) => null,
                     onChanged: (String? newValue) {
-                      if (newValue != null) {
-                        provider.setClosingTime(entity.day, newValue);
-                      }
+                      setState(() {
+                        _selectedEndTime = newValue;
+                      });
                     },
                     items: timeSlots.map((String item) {
-                      final bool isEnabled = entity.openingTime.isEmpty
+                      final bool isEnabled = _selectedStartTime == null
                           ? false
                           : provider.isClosingTimeValid(
-                              entity.openingTime, item);
+                              _selectedStartTime!, item);
                       return DropdownMenuItem<String>(
                         value: item,
                         enabled: isEnabled,
@@ -103,7 +125,17 @@ class AvailabilityTimeDialog extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: CustomElevatedButton(
-                onTap: () => Navigator.pop(context),
+                onTap: () {
+                  if (_selectedStartTime != null) {
+                    provider.updateOpeningTime(
+                        widget.entity.day, _selectedStartTime!);
+                  }
+                  if (_selectedEndTime != null) {
+                    provider.setClosingTime(
+                        widget.entity.day, _selectedEndTime!);
+                  }
+                  Navigator.pop(context);
+                },
                 isLoading: false,
                 title: 'done'.tr(),
               ),

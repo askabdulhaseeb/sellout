@@ -25,7 +25,7 @@ class SignupBasicInfoParams {
       'email': email.trim(),
       'password': password.trim(),
       'country_code': phone.countryCode.trim(),
-      'phone_number': phone.number.trim(),
+      'phone_number': phone.fullNumber.trim(),
       'profile_type': privacy.json.trim(),
     };
   }

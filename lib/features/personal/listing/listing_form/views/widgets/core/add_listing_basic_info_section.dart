@@ -1,8 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
-import '../../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../attachment_selection/add_listing_attachment_selection_widget.dart';
 
@@ -14,16 +15,18 @@ class AddListingBasicInfoSection extends StatelessWidget {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         return Column(
+          spacing: AppSpacing.vMd,
           children: <Widget>[
+            const SizedBox(
+              height: 0,
+            ),
             CustomTextFormField(
               controller: formPro.title,
-              labelText: 'what_are_you_selling'.tr(),
-              hint: 'enter_product_name'.tr(),
+              // labelText: 'enter_product_name'.tr(),
+              hint: 'what_are_you_selling'.tr(),
               showSuffixIcon: true,
-              validator: (String? value) =>
-                  AppValidator.isEmpty(formPro.title.text),
+              validator: (String? value) => AppValidator.isEmpty(value),
             ),
-            const SizedBox(height: 16),
             const AddListingAttachmentSelectionWidget(),
             CustomTextFormField(
               contentPadding: const EdgeInsets.all(6),
@@ -31,10 +34,8 @@ class AddListingBasicInfoSection extends StatelessWidget {
               hint: 'enter_product_description'.tr(),
               isExpanded: true,
               maxLines: 5,
-              showSuffixIcon: false,
-              labelText: 'describe_product'.tr(),
-              validator: (String? value) =>
-                  AppValidator.isEmpty(formPro.title.text),
+              // labelText: 'describe_product'.tr(),
+              validator: (String? value) => AppValidator.isEmpty(value),
             ),
           ],
         );

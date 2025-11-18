@@ -1,12 +1,12 @@
 enum NotificationType {
   all(
     code: 'all',
-    jsonKey: 'notifications.all',
+    jsonKey: '',
     cids: <String>[],
   ),
   orders(
     code: 'orders',
-    jsonKey: 'notifications.orders',
+    jsonKey: 'new_order',
     cids: <String>[
       'order_status_update',
       'new_order',
@@ -16,7 +16,7 @@ enum NotificationType {
   ),
   services(
     code: 'services',
-    jsonKey: 'notifications.services',
+    jsonKey: 'booking_created',
     cids: <String>[
       'business_removed',
       'business_left',
@@ -24,7 +24,7 @@ enum NotificationType {
   ),
   requests(
     code: 'requests',
-    jsonKey: 'notifications.requests',
+    jsonKey: 'new_chat_message',
     cids: <String>[
       'new_chat_message',
     ],

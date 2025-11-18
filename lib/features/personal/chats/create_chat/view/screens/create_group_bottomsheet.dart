@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/enums/core/attachment_type.dart';
 import '../../../../../../core/sources/data_state.dart';
-import '../../../../../../core/theme/app_theme.dart';
-import '../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/profile_photo.dart';
 import '../../../../../../services/get_it.dart';
@@ -115,8 +114,8 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
                                       ? Icons.cancel_outlined
                                       : Icons.add_circle_outline,
                                   color: isSelected
-                                      ? AppTheme.secondaryColor
-                                      : AppTheme.primaryColor,
+                                      ? Theme.of(context).colorScheme.secondary
+                                      : Theme.of(context).primaryColor,
                                 ),
                                 onPressed: () {
                                   p.toggleSupporter(user.uid);

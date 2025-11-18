@@ -2,9 +2,9 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../personal/chats/create_chat/view/provider/create_private_chat_provider.dart';
+import '../../../../../../personal/chats/quote/view/screens/request_quote_screen.dart';
 import '../../../../../core/domain/entity/business_entity.dart';
 import '../../../providers/business_page_provider.dart';
 
@@ -39,11 +39,10 @@ class _BusinessPageServiceFilterSectionState
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<BusinessPageProvider, CreatePrivateChatProvider>(
+    return Consumer<BusinessPageProvider>(
       builder: (
         BuildContext context,
         BusinessPageProvider businessPro,
-        CreatePrivateChatProvider chatPro,
         _,
       ) {
         return Padding(
@@ -60,19 +59,23 @@ class _BusinessPageServiceFilterSectionState
                   contentPadding: const EdgeInsets.all(8),
                   controller: _queryController,
                   hint: 'search'.tr(),
-                  onChanged: (value) => _onSearchChanged(value, businessPro),
+                  onChanged: (String value) =>
+                      _onSearchChanged(value, businessPro),
                 ),
               ),
-              Flexible(
-                flex: 1,
+              FittedBox(
                 child: CustomElevatedButton(
                   bgColor: Colors.transparent,
                   border: Border.all(color: Theme.of(context).primaryColor),
                   margin: EdgeInsets.zero,
                   padding: const EdgeInsets.all(8),
-                  isLoading: chatPro.isLoading,
-                  onTap: () => chatPro.startPrivateChat(
-                      context, widget.business.businessID ?? ''),
+                  isLoading: false,
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute<RequestQuoteScreen>(
+                        builder: (BuildContext context) => RequestQuoteScreen(
+                            businessId: widget.business.businessID ?? ''),
+                      )),
                   textStyle: Theme.of(context)
                       .textTheme
                       .bodySmall

@@ -1,7 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/enums/core/status_type.dart';
+import '../../../../../../core/widgets/empty_page_widget.dart';
 import '../../../../../../core/widgets/loaders/seller_order_tile_loader.dart';
 import '../../../../order/domain/entities/order_entity.dart';
 import '../../domain/entities/user_entity.dart';
@@ -32,71 +34,77 @@ class _ProfileOrdersSectionState extends State<ProfileOrdersSection> {
   Widget build(BuildContext context) {
     return Consumer<ProfileProvider>(
       builder: (BuildContext context, ProfileProvider pro, Widget? child) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            CustomToggleSwitch<StatusType>(
-              borderRad: 6,
-              borderWidth: 0.5,
-              horizontalPadding: 2,
-              verticalPadding: 6,
-              isShaded: true,
-              selectedColors: <Color>[
-                StatusType.processing.color,
-                StatusType.shipped.color,
-                StatusType.delivered.color,
-                StatusType.cancelled.color
-              ],
-              seletedFontSize: 12,
-              unseletedBorderColor:
-                  Theme.of(context).colorScheme.outlineVariant,
-              labelText: '',
-              labels: const <StatusType>[
-                StatusType.processing,
-                StatusType.shipped,
-                StatusType.delivered,
-                StatusType.cancelled
-              ],
-              labelStrs: <String>[
-                'new_order'.tr(),
-                'dispatched'.tr(),
-                'delivered'.tr(),
-                'canceled'.tr(),
-              ],
-              initialValue: pro.status,
-              onToggle: (StatusType val) {
-                pro.setStatus(val);
-                pro.getOrdersByStatus(widget.user?.uid ?? '');
-              },
-            ),
-            const SizedBox(height: 8),
-            if (pro.isLoading)
-              ListView.builder(
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: 10,
-                itemBuilder: (BuildContext context, int index) {
-                  return const SellerOrderTileLoader();
-                },
-              )
-            else if (pro.orders.isEmpty)
-              Center(child: Text('no_orders_found'.tr()))
-            else
-              ListView.builder(
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: pro.orders.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final OrderEntity order = pro.orders[index];
-                  return SellerOrderTile(
-                    order: order,
-                    selectedStatus: pro.status,
-                  );
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              CustomToggleSwitch<StatusType>(
+                borderRad: 6,
+                borderWidth: 0.5,
+                horizontalPadding: 2,
+                verticalPadding: 6,
+                isShaded: false,
+                selectedColors: <Color>[
+                  StatusType.processing.color,
+                  StatusType.shipped.color,
+                  StatusType.delivered.color,
+                  StatusType.cancelled.color
+                ],
+                unseletedBorderColor:
+                    Theme.of(context).colorScheme.outlineVariant,
+                labelText: '',
+                labels: const <StatusType>[
+                  StatusType.processing,
+                  StatusType.shipped,
+                  StatusType.delivered,
+                  StatusType.cancelled
+                ],
+                labelStrs: <String>[
+                  'new_order'.tr(),
+                  'dispatched'.tr(),
+                  'delivered'.tr(),
+                  'canceled'.tr(),
+                ],
+                initialValue: pro.status,
+                onToggle: (StatusType val) {
+                  pro.setStatus(val);
+                  pro.getOrdersByStatus(widget.user?.uid ?? '');
                 },
               ),
-          ],
+              const SizedBox(height: 8),
+              if (pro.isLoading)
+                ListView.builder(
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: 8,
+                  itemBuilder: (BuildContext context, int index) {
+                    return const SellerOrderTileLoader();
+                  },
+                )
+              else if (pro.orders.isEmpty)
+                Center(
+                    child: EmptyPageWidget(
+                  icon: CupertinoIcons.cube_box,
+                  childBelow: Text('no_orders_found'.tr()),
+                ))
+              else
+                ListView.builder(
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: pro.orders.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final OrderEntity order = pro.orders[index];
+                    return SellerOrderTile(
+                      order: order,
+                      selectedStatus: pro.status,
+                    );
+                  },
+                ),
+            ],
+          ),
         );
       },
     );

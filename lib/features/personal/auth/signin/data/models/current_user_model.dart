@@ -9,6 +9,7 @@ import '../../../../setting/setting_dashboard/data/models/privacy_setting_model.
 import '../../../../setting/setting_dashboard/data/models/time_away_model.dart';
 import '../../../../user/profiles/data/models/supporter_detail_model.dart';
 import '../../../../user/profiles/domain/entities/supporter_detail_entity.dart';
+import '../../domain/entities/address_entity.dart';
 import '../../domain/entities/current_user_entity.dart';
 import '../../domain/entities/login_info_entity.dart';
 import 'address_model.dart';
@@ -20,6 +21,7 @@ class CurrentUserModel extends CurrentUserEntity {
   CurrentUserModel({
     required super.message,
     required super.token,
+    required super.refreshToken,
     required super.userID,
     required super.email,
     required super.userName,
@@ -79,10 +81,10 @@ class CurrentUserModel extends CurrentUserEntity {
     return CurrentUserModel(
       message: json['message'] ?? '',
       token: json['token'] ?? '',
+      refreshToken: json['refresh_token'] ?? '',
       userID: userData['user_id'] ?? userData['owner_id'] ?? '',
       email: userData['email'] ?? userData['owner_email'] ?? '',
-      otpVerified:
-          userData['otp_verified'] == null ? userData['otp_verified'] : false,
+      otpVerified: userData['otp_verified'] ?? false,
       userName: userData['user_name'] ?? '',
       displayName: userData['display_name'] ?? '',
       currency: userData['currency'] ?? 'gbp',

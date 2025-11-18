@@ -1,5 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import '../../../../../core/enums/core/status_type.dart';
+import '../../../../../core/extension/string_ext.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../../../../core/utilities/app_string.dart';
 import '../../domain/entity/booking_entity.dart';
@@ -22,6 +25,25 @@ class LocalBooking {
 
   Future<void> save(BookingEntity booking) async {
     await _box.put(booking.bookingID, booking);
+  }
+
+  Future<void> update(String bookingId, Map<String, dynamic> metadata) async {
+    final BookingEntity? existing = _box.get(bookingId);
+
+    if (existing != null) {
+      final BookingEntity updated = existing.copyWith(
+        serviceID: metadata['service_id'] ?? existing.serviceID,
+        employeeID: metadata['employee_id'] ?? existing.employeeID,
+        businessID: metadata['business_id'] ?? existing.businessID,
+        bookedAt: (metadata['book_at']?.toString() ?? '')
+            .toDateTime(), // use your extension
+        status: StatusType.fromJson(metadata['status']),
+        updatedAt: DateTime.now(),
+      );
+
+      await _box.put(bookingId, updated);
+      debugPrint('booking updated');
+    }
   }
 
   Future<void> clear() async => await _box.clear();

@@ -20,7 +20,7 @@ class PromoEntityAdapter extends TypeAdapter<PromoEntity> {
       promoId: fields[0] as String,
       title: fields[1] as String,
       createdBy: fields[2] as String,
-      createdAt: fields[3] as String,
+      createdAt: fields[3] as DateTime,
       promoType: fields[4] as String,
       isActive: fields[5] as bool,
       fileUrl: fields[6] as String,

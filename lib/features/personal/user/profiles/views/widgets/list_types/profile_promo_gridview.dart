@@ -3,8 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../../core/widgets/empty_page_widget.dart';
 import '../../../../../../../routes/app_linking.dart';
 import '../../../../../../../services/get_it.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -40,9 +41,10 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
   void _filterPromos(String query) {
     final String lowerQuery = query.toLowerCase();
     setState(() {
-      _filteredPromos = _allPromos.where((PromoEntity promo) {
-        return promo.title.toLowerCase().contains(lowerQuery);
-      }).toList();
+      _filteredPromos = _allPromos
+          .where((PromoEntity promo) =>
+              promo.title.toLowerCase().contains(lowerQuery))
+          .toList();
     });
   }
 
@@ -56,8 +58,9 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
   Widget build(BuildContext context) {
     final ProfileProvider pro =
         Provider.of<ProfileProvider>(context, listen: false);
+
     if (widget.user?.uid == null) {
-      return const Center(child: Text('user_not_found'));
+      return const SizedBox.shrink();
     }
 
     final GetPromoByIdUsecase getPromoByIdUsecase =
@@ -69,13 +72,25 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
       builder: (BuildContext context,
           AsyncSnapshot<DataState<List<PromoEntity>>> snapshot) {
         if (!snapshot.hasData || snapshot.data?.entity == null) {
-          return Center(child: Text('no_promo_found'.tr()));
+          return Column(
+            children: <Widget>[
+              if (pro.user?.uid == LocalAuth.uid)
+                _SearchBar(controller: _searchController),
+              Center(
+                  child: EmptyPageWidget(
+                icon: CupertinoIcons.film,
+                childBelow: Text('no_promo_found'.tr()),
+              )),
+            ],
+          );
         }
 
-        // Ensure safe access
-        _allPromos = snapshot.data!.entity ?? [];
+        // 🔹 Sort by newest first
+        _allPromos = snapshot.data!.entity ?? <PromoEntity>[];
         _allPromos.sort((PromoEntity a, PromoEntity b) =>
             b.createdAt.compareTo(a.createdAt));
+
+        // 🔹 Apply search filter on sorted list
         _filteredPromos = _searchController.text.isEmpty
             ? _allPromos
             : _allPromos
@@ -90,9 +105,16 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
               _SearchBar(controller: _searchController),
             const SizedBox(height: 10),
             if (_filteredPromos.isEmpty)
-              Center(child: Text('no_promo_found'.tr()))
+              Center(
+                child: EmptyPageWidget(
+                  icon: CupertinoIcons.film,
+                  childBelow: Text('no_promo_found'.tr()),
+                ),
+              )
             else
               GridView.builder(
+                reverse: true,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: _filteredPromos.length,
@@ -100,10 +122,11 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
                   crossAxisCount: 2,
                   crossAxisSpacing: 6,
                   mainAxisSpacing: 6,
-                  childAspectRatio: 0.84,
+                  childAspectRatio: 1,
                 ),
                 itemBuilder: (BuildContext context, int index) {
-                  return PromoHomeGridViewTile(promo: _filteredPromos[index]);
+                  final PromoEntity promo = _filteredPromos[index];
+                  return PromoHomeGridViewTile(promo: promo);
                 },
               ),
           ],
@@ -122,44 +145,47 @@ class _SearchBar extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
 
-    return Row(
-      children: <Widget>[
-        Expanded(
-          flex: 5,
-          child: CustomTextFormField(
-            borderRadius: 4,
-            dense: true,
-            contentPadding: const EdgeInsets.all(6),
-            fieldPadding: const EdgeInsets.all(0),
-            hint: 'search'.tr(),
-            style: theme.textTheme.bodyMedium,
-            controller: controller,
-          ),
-        ),
-        Expanded(
-          flex: 2,
-          child: CustomElevatedButton(
-            prefixSuffixPadding: const EdgeInsets.all(4),
-            margin: const EdgeInsets.all(6),
-            borderRadius: BorderRadius.circular(4),
-            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
-            isLoading: false,
-            title: 'promo'.tr(),
-            textStyle: TextStyle(
-              fontSize: 12,
-              color: colorScheme.onPrimary,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            flex: 5,
+            child: CustomTextFormField(
+              borderRadius: 4,
+              dense: true,
+              contentPadding: const EdgeInsets.all(6),
+              fieldPadding: const EdgeInsets.all(0),
+              hint: 'search'.tr(),
+              style: theme.textTheme.bodyMedium,
+              controller: controller,
             ),
-            prefix: Icon(
-              CupertinoIcons.add_circled,
-              size: 12,
-              color: colorScheme.onPrimary,
-            ),
-            onTap: () {
-              AppNavigator.pushNamed(CreatePromoScreen.routeName);
-            },
           ),
-        ),
-      ],
+          Expanded(
+            flex: 2,
+            child: CustomElevatedButton(
+              prefixSuffixPadding: const EdgeInsets.all(4),
+              margin: const EdgeInsets.all(6),
+              borderRadius: BorderRadius.circular(4),
+              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
+              isLoading: false,
+              title: 'promo'.tr(),
+              textStyle: TextStyle(
+                fontSize: 12,
+                color: colorScheme.onPrimary,
+              ),
+              prefix: Icon(
+                CupertinoIcons.add_circled,
+                size: 12,
+                color: colorScheme.onPrimary,
+              ),
+              onTap: () {
+                AppNavigator.pushNamed(CreatePromoScreen.routeName);
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

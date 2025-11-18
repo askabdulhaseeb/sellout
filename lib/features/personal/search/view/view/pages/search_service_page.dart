@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/widgets/costom_textformfield.dart';
+import '../../../../../../core/widgets/custom_textformfield.dart';
 import '../../provider/search_provider.dart';
 import '../../../../services/services_screen/widgets/explore/services_grid_tile.dart';
 
@@ -38,9 +38,10 @@ class _SearchServicesSectionState extends State<SearchServicesSection> {
           alignment: Alignment.centerRight,
           children: <Widget>[
             CustomTextFormField(
-              prefixIcon: const Icon(CupertinoIcons.search),
+              dense: true,
               contentPadding:
-                  const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+              prefixIcon: const Icon(CupertinoIcons.search, size: 16),
               controller: controller,
               hint: 'search'.tr(),
               onChanged: provider.searchServices,

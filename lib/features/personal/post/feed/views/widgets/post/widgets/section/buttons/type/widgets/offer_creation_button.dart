@@ -9,7 +9,7 @@ import '../../../../../../../../../../chats/chat/views/providers/chat_provider.d
 import '../../../../../../../../../../chats/chat/views/screens/chat_screen.dart';
 import '../../../../../../../../../../chats/chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../../../../../../../../../chats/chat_dashboard/domain/usecase/get_my_chats_usecase.dart';
-import '../../../../../../../../../domain/entities/post_entity.dart';
+import '../../../../../../../../../domain/entities/post/post_entity.dart';
 import '../../../../../../../../../domain/entities/size_color/color_entity.dart';
 import '../../../../../../../../../domain/params/create_offer_params.dart';
 import '../../../../../../../../../domain/usecase/create_offer_usecase.dart';
@@ -37,7 +37,7 @@ class OfferCreationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final enteredAmount = int.tryParse(priceController.text.trim()) ?? 0;
+    final int enteredAmount = int.tryParse(priceController.text.trim()) ?? 0;
     return CustomElevatedButton(
       isLoading: false,
       title: 'make_offer'.tr(),

@@ -15,6 +15,7 @@ import '../../../../chat_dashboard/domain/entities/chat/participant/chat_partici
 import '../../../../chat_dashboard/domain/entities/chat/participant/invitation_entity.dart';
 import '../../../domain/entities/getted_message_entity.dart';
 import '../../../domain/params/leave_group_params.dart';
+import '../../../domain/params/post_inquiry_params.dart';
 import '../../../domain/params/send_invite_to_group_params.dart';
 import '../../../domain/params/send_message_param.dart';
 import '../../models/getted_message_model.dart';
@@ -31,6 +32,7 @@ abstract interface class MessagesRemoteSource {
   Future<DataState<bool>> removeParticipants(LeaveGroupParams params);
   Future<DataState<bool>> sendInviteToGroup(SendGroupInviteParams params);
   Future<DataState<bool>> sharePostToChat(ShareInChatParams params);
+  Future<DataState<bool>> createPostInquiry(PostInquiryParams params);
 }
 
 class MessagesRemoteSourceImpl implements MessagesRemoteSource {
@@ -94,7 +96,7 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
       if (result is DataSuccess) {
         final Map<String, dynamic> responseData = jsonDecode(result.data ?? '');
         final Map<String, dynamic> data = responseData['items'];
-        final MessageModel newMsg = MessageModel.fromJson(data);
+        final MessageModel newMsg = MessageModel.fromMap(data);
         final String chatId = data['chat_id'];
         await LocalChatMessage().saveMessage(newMsg);
         AppLog.info(
@@ -305,6 +307,45 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
         stackTrace: stc,
       );
       return DataFailer<bool>(CustomException('something_wrong'.tr()));
+    }
+  }
+
+  @override
+  Future<DataState<bool>> createPostInquiry(PostInquiryParams params) async {
+    try {
+      const String endpoint = '/chat/post/inquiry';
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.post,
+        isAuth: true,
+        body: jsonEncode(params.toJson()),
+      );
+
+      if (result is DataSuccess) {
+        AppLog.info(
+          'Post inquiry created successfully',
+          name: 'MessagesRemoteSourceImpl.createPostInquiry - success',
+        );
+        debugPrint('✅ [createPostInquiry] Inquiry created: ${result.data}');
+        return DataSuccess<bool>(result.data ?? '', true);
+      } else {
+        AppLog.error(
+          'Failed to create post inquiry',
+          name: 'MessagesRemoteSourceImpl.createPostInquiry - failed',
+          error: result.exception,
+        );
+        return DataFailer<bool>(
+          result.exception ?? CustomException('something_wrong'.tr()),
+        );
+      }
+    } catch (e, stk) {
+      AppLog.error(
+        'Exception while creating post inquiry',
+        name: 'MessagesRemoteSourceImpl.createPostInquiry - catch',
+        error: e.toString(),
+        stackTrace: stk,
+      );
+      return DataFailer<bool>(CustomException(e.toString()));
     }
   }
 

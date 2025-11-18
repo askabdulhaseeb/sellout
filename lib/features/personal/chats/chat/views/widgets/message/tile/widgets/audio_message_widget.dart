@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../core/helper_functions/duration_format_helper.dart';
-import '../../../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../../../../../core/widgets/custom_svg_icon.dart';
@@ -209,9 +208,9 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
             children: <Widget>[
               IconButton(
                 onPressed: () {},
-                icon: const Icon(
+                icon: Icon(
                   Icons.play_circle_fill_outlined,
-                  color: AppTheme.primaryColor,
+                  color: Theme.of(context).primaryColor,
                   size: 30,
                 ),
               ),
@@ -250,7 +249,7 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
                 icon: _playerController.playerState.isPlaying
                     ? Icons.pause_circle
                     : Icons.play_circle_fill_outlined,
-                iconColor: AppTheme.primaryColor,
+                iconColor: Theme.of(context).primaryColor,
                 bgColor: Colors.transparent,
                 iconSize: 40,
               ),
@@ -264,7 +263,7 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
                   playerWaveStyle: PlayerWaveStyle(
                     scaleFactor: 5,
                     fixedWaveColor: colorScheme.outline,
-                    liveWaveColor: AppTheme.primaryColor,
+                    liveWaveColor: Theme.of(context).primaryColor,
                     showSeekLine: false,
                     seekLineColor: Colors.transparent,
                   ),

@@ -69,7 +69,7 @@ class OrderModel extends OrderEntity {
       'payment_detail': OrderPaymentDetailModel.fromEntity(paymentDetail)
           .toJson(), // Payment detail already properly typed
       'shipping_address': AddressModel.fromEntity(shippingAddress)
-          .shippingAddressToJson() // Ensure AddressModel has toJson method
+          .toShippingJson() // Ensure AddressModel has toJson method
     };
   }
 }

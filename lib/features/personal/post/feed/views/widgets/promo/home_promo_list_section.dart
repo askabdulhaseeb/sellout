@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/theme/app_theme.dart';
 import '../../../../../../../core/widgets/loaders/promo_tile_loader.dart';
 import '../../../../../promo/domain/entities/promo_entity.dart';
 import '../../../../../promo/view/create_promo/provider/promo_provider.dart';
@@ -34,7 +33,6 @@ class _HomePromoListSectionState extends State<HomePromoListSection> {
     final List<PromoEntity>? pro = promoProvider.promoList;
     final bool isLoading = promoProvider.isLoadig;
     final bool showMore = (pro?.length ?? 0) <= 3;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -43,27 +41,21 @@ class _HomePromoListSectionState extends State<HomePromoListSection> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Text(
-                'promo'.tr(),
-                style: TextTheme.of(context)
-                    .bodyLarge
-                    ?.copyWith(fontWeight: FontWeight.w600),
-              ),
-              const Spacer(),
               if (!showMore && !isLoading)
                 GestureDetector(
-                  onTap: () => showBottomSheet(
-                    context: context,
-                    builder: (BuildContext context) => PromoHomeGridView(
-                      promos: pro,
-                    ),
-                  ),
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute<PromoHomeGridView>(
+                        builder: (BuildContext context) => PromoHomeGridView(
+                          promos: pro,
+                        ),
+                      )),
                   child: Text(
                     'view_more'.tr(),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppTheme.primaryColor,
+                          color: Theme.of(context).primaryColor,
                           decoration: TextDecoration.underline,
-                          decorationColor: AppTheme.primaryColor,
+                          decorationColor: Theme.of(context).primaryColor,
                         ),
                   ),
                 ),

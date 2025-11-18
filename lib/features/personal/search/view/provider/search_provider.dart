@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../domain/entities/search_entity.dart';
+import '../../domain/enums/search_entity_type.dart';
 import '../../domain/params/search_enum.dart';
 import '../../domain/usecase/search_usecase.dart';
-import '../../../post/domain/entities/post_entity.dart';
+import '../../../post/domain/entities/post/post_entity.dart';
 import '../../../user/profiles/domain/entities/user_entity.dart';
 
 class SearchProvider extends ChangeNotifier {

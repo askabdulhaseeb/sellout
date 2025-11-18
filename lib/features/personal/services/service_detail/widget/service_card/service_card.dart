@@ -12,7 +12,6 @@ import 'widget/service_card_image_section.dart';
 
 class ServiceCard extends StatelessWidget {
   const ServiceCard({required this.service, super.key});
-
   final ServiceEntity service;
 
   @override

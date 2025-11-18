@@ -108,5 +108,10 @@
 		</array>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>LSApplicationQueriesSchemes</key>
+        <array>
+        <string>sms</string>
+        <string>tel</string>
+        </array>
 	</dict>
 </plist>

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MessageTimeDivider extends StatelessWidget {
-  const MessageTimeDivider({super.key, required this.label});
+  const MessageTimeDivider({required this.label, super.key});
   final String label;
 
   @override
@@ -13,8 +13,7 @@ class MessageTimeDivider extends StatelessWidget {
           margin: const EdgeInsets.symmetric(vertical: 4),
           padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
           decoration: BoxDecoration(
-            color:
-                ColorScheme.of(context).primaryContainer.withValues(alpha: 0.5),
+            color: Theme.of(context).disabledColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(6),
           ),
           child: Text(

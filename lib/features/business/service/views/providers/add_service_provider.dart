@@ -1,8 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-import '../../../../../core/enums/business/services/service_category_type.dart';
 import '../../../../../core/enums/business/services/service_model_type.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/functions/permission_fun.dart';
@@ -13,6 +11,9 @@ import '../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../attachment/domain/entities/picked_attachment_option.dart';
 import '../../../../attachment/views/screens/pickable_attachment_screen.dart';
 import '../../../../personal/auth/signin/data/sources/local/local_auth.dart';
+import '../../../../personal/services/data/sources/local/local_service_categories.dart';
+import '../../../../personal/services/domain/entity/service_category_entity.dart';
+import '../../../../personal/services/domain/entity/service_type_entity.dart';
 import '../../../core/domain/entity/business_entity.dart';
 import '../../../core/domain/entity/service/service_entity.dart';
 import '../../domain/params/add_service_param.dart';
@@ -195,8 +196,8 @@ class AddServiceProvider extends ChangeNotifier {
   final TextEditingController _included = TextEditingController();
   final TextEditingController _notIncluded = TextEditingController();
   final List<PickedAttachment> _attachments = <PickedAttachment>[];
-  ServiceCategoryType? _selectedCategory;
-  ServiceType? _selectedType;
+  ServiceCategoryEntity? _selectedCategory;
+  ServiceTypeEntity? _selectedType;
   ServiceModelType? _selectedModelType;
   List<String> _selectedEmployeeUIDs = <String>[];
   ServiceEntity? _currentService;
@@ -218,8 +219,8 @@ class AddServiceProvider extends ChangeNotifier {
   TextEditingController get included => _included;
   TextEditingController get notIncluded => _notIncluded;
   List<PickedAttachment> get attachments => _attachments;
-  ServiceCategoryType? get selectedCategory => _selectedCategory;
-  ServiceType? get selectedType => _selectedType;
+  ServiceCategoryEntity? get selectedCategory => _selectedCategory;
+  ServiceTypeEntity? get selectedType => _selectedType;
   ServiceModelType? get selectedModelType => _selectedModelType;
   List<String> get selectedEmployeeUIDs => _selectedEmployeeUIDs;
   //
@@ -238,13 +239,13 @@ class AddServiceProvider extends ChangeNotifier {
     });
   }
 
-  void setSelectedCategory(ServiceCategoryType? value) {
+  void setSelectedCategory(ServiceCategoryEntity? value) {
     _selectedCategory = value;
     _selectedType = null;
     notifyListeners();
   }
 
-  void setSelectedType(ServiceType? value) {
+  void setSelectedType(ServiceTypeEntity? value) {
     _selectedType = value;
     notifyListeners();
   }
@@ -271,8 +272,8 @@ class AddServiceProvider extends ChangeNotifier {
 
   void setService(ServiceEntity service) {
     _currentService = service;
-    _selectedCategory = ServiceCategoryType.fromJson(service.category);
-    _selectedType = getServiceTypeFromString(service.type);
+    _selectedCategory = LocalServiceCategory().getCategory(service.category);
+    // _selectedType = getServiceTypeFromString(service.type);
     _selectedModelType = ServiceModelType.fromJson(service.model);
     _selectedHour = service.time ~/ 60;
     _selectedMinute = service.time % 60;
@@ -285,13 +286,13 @@ class AddServiceProvider extends ChangeNotifier {
     _selectedEmployeeUIDs = service.employeesID;
   }
 
-  ServiceType getServiceTypeFromString(String value) {
-    return ServiceCategoryType.values
-        .expand((ServiceCategoryType category) => category.serviceTypes)
-        .firstWhere(
-            (ServiceType type) => type.code == value || type.json == value,
-            orElse: () => _selectedCategory!.serviceTypes.first);
-  }
+  // ServiceTypeEntity getServiceTypeFromString(String value) {
+  //   return ServiceCategoryEntity.values
+  //       .expand((ServiceCategoryType category) => category.serviceTypes)
+  //       .firstWhere(
+  //           (ServiceType type) => type.code == value || type.json == value,
+  //           orElse: () => _selectedCategory!.serviceTypes.first);
+  // }
 
   set isLoading(bool value) {
     _isLoading = value;
