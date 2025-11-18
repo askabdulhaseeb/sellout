@@ -105,7 +105,7 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
   Future<DataState<ChatEntity>> createInquiryChat(
       PostInquiryParams params) async {
     try {
-      const String endpoint = '/chat/create';
+      const String endpoint = '/chat/post/inquiry';
       final DataState<ChatEntity> result = await ApiCall<ChatEntity>().call(
         endpoint: endpoint,
         requestType: ApiRequestType.post,
