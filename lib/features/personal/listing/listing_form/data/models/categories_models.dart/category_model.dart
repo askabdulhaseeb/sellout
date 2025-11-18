@@ -51,13 +51,24 @@ class CategoriesModel extends CategoriesEntity {
     }
 
     // --- services ---
-
-    final List<ServiceCategoryModel>? services =
-        (mergedJson['services'] as List<dynamic>?)
-            ?.map((e) => ServiceCategoryModel.fromMap(e))
-            .toList();
-
-    if (services != null) populatedFields.add('serviceCategories');
+    List<ServiceCategoryModel>? services;
+    if (decoded is List &&
+        decoded.isNotEmpty &&
+        decoded[0]['services'] != null) {
+      final Map<String, dynamic> servicesMap =
+          decoded[0]['services'] as Map<String, dynamic>;
+      services = servicesMap.values
+          .map((dynamic value) => ServiceCategoryModel.fromMap(value))
+          .toList();
+      if (services.isNotEmpty) populatedFields.add('serviceCategories');
+    } else if (mergedJson['services'] is List) {
+      // fallback to old logic if needed
+      services = (mergedJson['services'] as List<dynamic>?)
+          ?.map((e) => ServiceCategoryModel.fromMap(e))
+          .toList();
+      if (services != null && services.isNotEmpty)
+        populatedFields.add('serviceCategories');
+    }
     // --- Clothes ---
 
     final List<DropdownOptionDataModel>? clothesBrands =
