@@ -71,7 +71,8 @@ class LocalCart {
     }
   }
 
-  Future<void> updateStatus(CartItemEntity item, CartItemStatusType type) async {
+  Future<void> updateStatus(
+      CartItemEntity item, CartItemStatusType type) async {
     try {
       final String me = LocalAuth.uid ?? '';
       if (me.isEmpty) {
@@ -86,7 +87,7 @@ class LocalCart {
         throw Exception('Cart item not found');
       }
 
-      currentCart.items[itemIndex].status = type.json;
+      currentCart.items[itemIndex].status = type;
       await save(currentCart);
     } catch (e) {
       rethrow; // Re-throw to allow caller to handle

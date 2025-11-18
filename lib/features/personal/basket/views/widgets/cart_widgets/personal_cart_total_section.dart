@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snakebar.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
@@ -31,7 +32,11 @@ class PersonalCartTotalSection extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               const Divider(),
-              if (cartPro.cartType == CartType.shoppingBasket)
+              if (cartPro.cartType == CartType.shoppingBasket &&
+                  cartPro.cartItems
+                      .map((CartItemEntity e) =>
+                          e.status == CartItemStatusType.cart)
+                      .isNotEmpty)
                 ListTile(
                   dense: true,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 8),
@@ -92,10 +97,8 @@ class PersonalCartTotalSection extends StatelessWidget {
                       }
                     }
                   } else if (cartPro.cartType == CartType.reviewOrder) {
-                    //TODO: add review page functionality
                     cartPro.setCartType(CartType.payment);
                   } else if (cartPro.cartType == CartType.payment) {
-                    //TODO: add payment page functionality
                     await cartPro.processPayment(context);
                   }
                 },
