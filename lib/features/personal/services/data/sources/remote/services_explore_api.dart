@@ -56,13 +56,14 @@ class ServicesExploreApiImpl implements ServicesExploreApi {
     }
   }
 
+  @override
   Future<DataState<List<ServiceCategoryEntity>>> serviceCategories() async {
     final List<ServiceCategoryEntity> categories = <ServiceCategoryEntity>[];
 
     // 1️⃣ Try fetching cached raw data from LocalRequestHistory
     final ApiRequestEntity? cachedRaw = await LocalRequestHistory().request(
       endpoint: 'category/services',
-      baseURL: '', // your baseURL
+      baseURL: '',
       duration: const Duration(days: 1),
     );
 

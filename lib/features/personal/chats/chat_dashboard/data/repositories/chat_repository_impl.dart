@@ -1,4 +1,5 @@
 import '../../../../../../core/sources/data_state.dart';
+import '../../../chat/domain/params/post_inquiry_params.dart';
 import '../../domain/entities/chat/chat_entity.dart';
 import '../../domain/params/create_chat_params.dart';
 import '../../domain/repositories/chat_repository.dart';
@@ -17,5 +18,10 @@ class ChatRepositoryImpl implements ChatRepository {
   Future<DataState<ChatEntity>> createChat(
       CreateChatParams params) async {
     return await remoteSource.createChat(params);
+  }
+
+  @override
+  Future<DataState<ChatEntity>> createInquiryChat(PostInquiryParams params) async {
+    return await remoteSource.createInquiryChat(params);
   }
 }
