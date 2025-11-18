@@ -61,6 +61,7 @@ import '../features/personal/auth/signup/domain/usecase/send_opt_usecase.dart';
 import '../features/personal/auth/signup/domain/usecase/verify_opt_usecase.dart';
 import '../features/personal/auth/signup/domain/usecase/verify_user_by_image_usecase.dart';
 import '../features/personal/auth/signup/views/providers/signup_provider.dart';
+import '../features/personal/chats/chat/domain/usecase/create_post_inquiry_usecase.dart';
 import '../features/personal/chats/quote/data/repo/quote_repo_impl.dart';
 import '../features/personal/chats/quote/data/source/remote/quote_remote_api.dart';
 import '../features/personal/chats/quote/domain/repo/quote_repo.dart';
@@ -331,6 +332,8 @@ void _chat() {
       () => ChatRepositoryImpl(remoteSource: locator()));
   locator
       .registerFactory<GetMyChatsUsecase>(() => GetMyChatsUsecase(locator()));
+  locator.registerFactory<CreatePostInquiryUsecase>(
+      () => CreatePostInquiryUsecase(locator()));
   locator.registerLazySingleton<ChatDashboardProvider>(
       () => ChatDashboardProvider(locator()));
   locator.registerLazySingleton<CreateChatGroupProvider>(
