@@ -40,6 +40,8 @@ enum MessageType {
   requestQuote('request_quote', 'request_quote'),
   @HiveField(17)
   quote('quote', 'quote'),
+  @HiveField(18)
+  inquiry('inquiry', 'inquiry'),
   @HiveField(99)
   none('none', 'none');
 
@@ -58,7 +60,8 @@ enum MessageType {
         value != 'leave_group' &&
         value != 'request_quote' &&
         value != 'quote' &&
-        value != 'simple') {
+        value != 'simple' &&
+        value != 'inquiry') {
       AppLog.error(
         'MessageType.fromvalue: $value',
         name: 'MessageType.fromJson - if',
