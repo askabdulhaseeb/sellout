@@ -4,25 +4,29 @@ import '../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../post/domain/entities/offer/offer_detail_entity.dart';
 import '../../../../../post/domain/entities/visit/visiting_entity.dart';
 import '../../../../quote/domain/entites/quote_detail_entity.dart';
+import 'message_post_detail_entity.dart';
 part 'message_entity.g.dart';
 
 @HiveType(typeId: 13)
+@HiveType(typeId: 13)
 class MessageEntity {
-  MessageEntity(
-      {required this.persons,
-      required this.fileUrl,
-      required this.updatedAt,
-      required this.createdAt,
-      required this.messageId,
-      required this.text,
-      required this.displayText,
-      required this.sendBy,
-      required this.chatId,
-      this.visitingDetail,
-      this.type,
-      this.source,
-      this.offerDetail,
-      this.quoteDetail});
+  MessageEntity({
+    required this.persons,
+    required this.fileUrl,
+    required this.updatedAt,
+    required this.createdAt,
+    required this.messageId,
+    required this.text,
+    required this.displayText,
+    required this.sendBy,
+    required this.chatId,
+    this.visitingDetail,
+    this.type,
+    this.source,
+    this.offerDetail,
+    this.quoteDetail,
+    this.postDetail,
+  });
 
   @HiveField(0)
   final List<String> persons;
@@ -53,7 +57,12 @@ class MessageEntity {
   @HiveField(13)
   final QuoteDetailEntity? quoteDetail;
 
+  /// Post detail for inquiry messages
+  @HiveField(14)
+  final MessagePostDetailEntity? postDetail;
+
   String? get postImage => fileUrl.first.url;
+
   MessageEntity copyWith({
     List<String>? persons,
     List<AttachmentEntity>? fileUrl,
@@ -68,6 +77,8 @@ class MessageEntity {
     MessageType? type,
     String? source,
     OfferDetailEntity? offerDetail,
+    QuoteDetailEntity? quoteDetail,
+    MessagePostDetailEntity? postDetail,
   }) {
     return MessageEntity(
       persons: persons ?? this.persons,
@@ -83,6 +94,8 @@ class MessageEntity {
       type: type ?? this.type,
       source: source ?? this.source,
       offerDetail: offerDetail ?? this.offerDetail,
+      quoteDetail: quoteDetail ?? this.quoteDetail,
+      postDetail: postDetail ?? this.postDetail,
     );
   }
 }

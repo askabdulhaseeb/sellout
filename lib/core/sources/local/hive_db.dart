@@ -28,6 +28,7 @@ import '../../../features/personal/chats/chat_dashboard/domain/entities/chat/par
 import '../../../features/personal/chats/chat_dashboard/domain/entities/chat/participant/invitation_entity.dart';
 import '../../../features/personal/chats/chat_dashboard/domain/entities/chat/unread_message_entity.dart';
 import '../../../features/personal/chats/chat_dashboard/domain/entities/messages/message_entity.dart';
+import '../../../features/personal/chats/chat_dashboard/domain/entities/messages/message_post_detail_entity.dart';
 import '../../../features/personal/chats/quote/domain/entites/quote_detail_entity.dart';
 import '../../../features/personal/chats/quote/domain/entites/service_employee_entity.dart';
 import '../../../features/personal/listing/listing_form/data/sources/local/local_colors.dart';
@@ -188,6 +189,7 @@ class HiveDB {
     Hive.registerAdapter(NumberFormatEntityAdapter()); //84
     Hive.registerAdapter(StateEntityAdapter()); //85
     Hive.registerAdapter(CartItemStatusTypeAdapter()); //86
+    Hive.registerAdapter(MessagePostDetailEntityAdapter()); //87
 
     // Hive box Open
     await refresh();

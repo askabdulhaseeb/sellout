@@ -13,6 +13,7 @@ import 'tile/offer_message_tile.dart';
 import 'tile/quote_message_tile.dart';
 import 'tile/visiting_message_tile.dart';
 import 'tile/text_message_tile.dart';
+import 'inquiry_message_tile.dart';
 
 class MessageTile extends StatelessWidget {
   const MessageTile({required this.message, required this.timeDiff, super.key});
@@ -79,7 +80,7 @@ class MessageTile extends StatelessWidget {
                                                 )
                                               : MessageType.inquiry ==
                                                       message.type
-                                                  ? _InquiryMessageTile(
+                                                  ? InquiryMessageTile(
                                                       message: message)
                                                   : Text(
                                                       '${message.displayText} - ${message.type?.code.tr()}',
@@ -89,43 +90,7 @@ class MessageTile extends StatelessWidget {
   }
 }
 
-// Private widget for inquiry messages
-class _InquiryMessageTile extends StatelessWidget {
-  const _InquiryMessageTile({required this.message});
-  final MessageEntity message;
-
-  @override
-  Widget build(BuildContext context) {
-    // You can customize the UI as needed
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            message.text,
-            style: Theme.of(context)
-                .textTheme
-                .bodyMedium
-                ?.copyWith(fontWeight: FontWeight.w500),
-          ),
-          if (message.postImage != null) ...<Widget>[
-            const SizedBox(height: 6),
-            Text(
-              '${'post'.tr()}: ${message.sendBy}',
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
+// ...existing code...
 
 class MessageSenderName extends StatelessWidget {
   const MessageSenderName({
