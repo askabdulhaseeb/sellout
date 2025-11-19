@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -36,23 +37,25 @@ class InquiryMessageTile extends StatelessWidget {
                     children: <Widget>[
                       if (postEntity != null && postEntity.imageURL.isNotEmpty)
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius:
+                              BorderRadius.circular(AppSpacing.radiusMd),
                           child: CustomNetworkImage(
                             imageURL: postEntity.imageURL,
                             size: 80,
                             fit: BoxFit.cover,
                           ),
                         ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: AppSpacing.hSm),
                       Expanded(
                         child: Container(
-                          padding: const EdgeInsets.all(6),
+                          padding: const EdgeInsets.all(AppSpacing.sm),
                           decoration: BoxDecoration(
                             color: Theme.of(context)
                                 .colorScheme
                                 .primary
                                 .withValues(alpha: 0.07),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius:
+                                BorderRadius.circular(AppSpacing.radiusMd),
                           ),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -60,13 +63,15 @@ class InquiryMessageTile extends StatelessWidget {
                             children: <Widget>[
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 2),
+                                    horizontal: AppSpacing.md,
+                                    vertical: AppSpacing.xs),
                                 decoration: BoxDecoration(
                                   color: Theme.of(context)
                                       .colorScheme
                                       .primary
                                       .withValues(alpha: 0.12),
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(
+                                      AppSpacing.radiusSm),
                                 ),
                                 child: Text(
                                   message.type?.code.tr() ?? '',
@@ -96,7 +101,7 @@ class InquiryMessageTile extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.vSm),
                 // Title and price row
                 Row(
                   children: <Widget>[

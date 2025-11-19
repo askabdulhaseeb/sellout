@@ -201,7 +201,7 @@ class _PostInquiryDialogState extends State<_PostInquiryDialog> {
               const SizedBox(height: 12),
 
               /// OPTIONS
-              ...List.generate(
+              ...List<Widget>.generate(
                 options.length,
                 (int i) => Padding(
                   padding: const EdgeInsets.symmetric(vertical: 6),
