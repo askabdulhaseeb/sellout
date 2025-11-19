@@ -18,7 +18,6 @@ class CartModel extends CartEntity {
 
   factory CartModel.fromRaw(String value) =>
       CartModel.fromJson(json.decode(value));
-
   factory CartModel.fromJson(Map<String, dynamic> value) => CartModel(
         updatedAt: DateTime.parse(value['updated_at']),
         createdAt: DateTime.parse(value['created_at']),

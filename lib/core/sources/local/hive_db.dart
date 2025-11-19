@@ -81,6 +81,7 @@ import '../../../features/personal/order/domain/entities/order_entity.dart';
 import '../../../features/personal/order/domain/entities/order_payment_detail_entity.dart';
 import '../../../features/personal/user/profiles/domain/entities/supporter_detail_entity.dart';
 import '../../../features/personal/user/profiles/domain/entities/user_stripe_account_entity.dart';
+import '../../enums/cart/cart_item_type.dart';
 import '../../enums/chat/chat_participant_role.dart';
 import '../../enums/core/status_type.dart';
 import '../../enums/listing/core/boolean_status_type.dart';
@@ -186,6 +187,7 @@ class HiveDB {
     Hive.registerAdapter(ServiceEmployeeEntityAdapter()); //83
     Hive.registerAdapter(NumberFormatEntityAdapter()); //84
     Hive.registerAdapter(StateEntityAdapter()); //85
+    Hive.registerAdapter(CartItemStatusTypeAdapter()); //86
 
     // Hive box Open
     await refresh();

@@ -49,6 +49,8 @@ class MessageTypeAdapter extends TypeAdapter<MessageType> {
         return MessageType.requestQuote;
       case 17:
         return MessageType.quote;
+      case 18:
+        return MessageType.inquiry;
       case 99:
         return MessageType.none;
       default:
@@ -112,6 +114,9 @@ class MessageTypeAdapter extends TypeAdapter<MessageType> {
         break;
       case MessageType.quote:
         writer.writeByte(17);
+        break;
+      case MessageType.inquiry:
+        writer.writeByte(18);
         break;
       case MessageType.none:
         writer.writeByte(99);
