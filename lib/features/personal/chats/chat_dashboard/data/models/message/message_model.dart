@@ -5,6 +5,7 @@ import '../../../../../post/data/models/offer/offer_detail_model.dart';
 import '../../../../../post/data/models/visit/visiting_model.dart';
 import '../../../../quote/data/models/quote_detail_model.dart';
 import '../../../domain/entities/messages/message_entity.dart';
+import '../../../domain/entities/messages/message_post_detail_entity.dart';
 
 class MessageModel extends MessageEntity {
   MessageModel({
@@ -22,6 +23,7 @@ class MessageModel extends MessageEntity {
     super.source,
     super.offerDetail,
     super.quoteDetail,
+    super.postDetail,
   });
 
   factory MessageModel.fromMap(Map<String, dynamic> json) {
@@ -60,6 +62,9 @@ class MessageModel extends MessageEntity {
       quoteDetail: json['quote_detail'] == null
           ? null
           : QuoteDetailModel.fromMap(json['quote_detail']),
+      postDetail: json['post_detail'] == null
+          ? null
+          : MessagePostDetailEntity.fromJson(json['post_detail']),
     );
   }
 }

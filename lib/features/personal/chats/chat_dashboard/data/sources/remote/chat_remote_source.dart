@@ -1,10 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/api_call.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../chat/domain/params/post_inquiry_params.dart';
 import '../../../domain/params/create_chat_params.dart';
 import '../../models/chat/chat_model.dart';
+import '../local/local_chat.dart';
 
 abstract interface class ChatRemoteSource {
   Future<DataState<List<ChatEntity>>> getChats(List<String>? params);
@@ -33,10 +35,17 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
           return DataFailer<List<ChatEntity>>(
               CustomException('something_wrong'.tr()));
         }
-        final Map<String, dynamic> response = jsonDecode(rawData);
-        final Map<String, dynamic> chatJson = response['data']['chat'];
-        final ChatEntity chat = ChatModel.fromJson(chatJson);
-        return DataSuccess<List<ChatEntity>>(rawData, [chat]);
+        final dynamic mapp = json.decode(rawData);
+        final List<dynamic> data = mapp['chats'] as List<dynamic>;
+        debugPrint('Total fetched chats are ${data.length}');
+        //
+        final List<ChatEntity> chats = <ChatEntity>[];
+        for (final dynamic element in data) {
+          final ChatEntity chat = ChatModel.fromJson(element);
+          chats.add(chat);
+          await LocalChat().save(chat);
+        }
+        return DataSuccess<List<ChatEntity>>(rawData, chats);
       } else {
         AppLog.error(
           'get chats - ERROR',
@@ -68,10 +77,10 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
               fieldsMap: params.toMap(),
               attachments: params.attachments);
       if (result is DataSuccess) {
-        final Map<String, dynamic> map = jsonDecode(result.data ?? '');
-        final ChatEntity chat = ChatModel.fromJson(map['data']['chat']);
-        // Optionally save to local or return as needed
-        return DataSuccess<ChatEntity>(result.data ?? '', chat);
+        Map<String, dynamic> map = jsonDecode(result.data ?? '');
+        ChatModel chat = ChatModel.fromJson(map['data']);
+        LocalChat().save(chat);
+        return DataSuccess<ChatEntity>(result.data ?? '', result.entity);
       } else {
         AppLog.error(
           'Create ${params.type} chat - ERROR',
@@ -92,7 +101,7 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
     }
   }
 
-  @override
+   @override
   Future<DataState<ChatEntity>> createInquiryChat(
       PostInquiryParams params) async {
     AppLog.info(
