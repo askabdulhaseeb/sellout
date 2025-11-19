@@ -101,7 +101,7 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
     }
   }
 
-   @override
+  @override
   Future<DataState<ChatEntity>> createInquiryChat(
       PostInquiryParams params) async {
     AppLog.info(
@@ -113,7 +113,7 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
       final DataState<ChatEntity> result = await ApiCall<ChatEntity>().call(
         endpoint: endpoint,
         requestType: ApiRequestType.post,
-        body: jsonEncode(params.toJson()),
+        body: json.encode(params.toJson()),
       );
       if (result is DataSuccess) {
         AppLog.info(
@@ -121,12 +121,21 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
           name: 'ChatRemoteSourceImpl.createInquiryChat',
         );
         final Map<String, dynamic> response = jsonDecode(result.data ?? '');
-        final Map<String, dynamic> chatJson = response['data']['chat'];
+        final chatJson = response['data']['chat'];
+        final messageJson = response['data']['message']?['items'];
+        debugPrint('chatJson: $chatJson');
+        debugPrint('messageJson: $messageJson');
+
+        // If chatJson is missing required fields, you may need to merge or supplement it:
+        if (chatJson != null && messageJson != null) {
+          chatJson['last_message'] =
+              messageJson; // or whatever your ChatModel expects
+        }
         final ChatEntity chat = ChatModel.fromJson(chatJson);
         return DataSuccess<ChatEntity>(result.data ?? '', chat);
       } else {
         AppLog.error(
-          'Create inquiry chat - ERROR | params: \\${params.toJson()}',
+          'Create inquiry chat - ERROR | params: ${params.toJson()}',
           name: 'ChatRemoteSourceImpl.createInquiryChat - else',
           error: result.exception,
         );
@@ -134,12 +143,11 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
           result.exception ?? CustomException('something_wrong'.tr()),
         );
       }
-    } catch (e) {
-      AppLog.error(
-        'Create inquiry chat - ERROR | params: \\${params.toJson()}',
-        name: 'ChatRemoteSourceImpl.createInquiryChat - catch',
-        error: CustomException(e.toString()),
-      );
+    } catch (e, stc) {
+      AppLog.error('Create inquiry chat - ERROR | params: ${params.toJson()}',
+          name: 'ChatRemoteSourceImpl.createInquiryChat - catch',
+          error: CustomException(e.toString()),
+          stackTrace: stc);
       return DataFailer<ChatEntity>(CustomException(e.toString()));
     }
   }
