@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../../../core/widgets/empty_page_widget.dart';
 import '../../../../domain/entities/cart/add_shipping_response_entity.dart';
 import '../../../../domain/entities/cart/cart_item_entity.dart';
@@ -17,7 +18,8 @@ class ReviewCartPage extends StatelessWidget {
     if (shippingResponse != null) {
       final List<AddShippingCartItemEntity> shippingItems = shippingResponse
           .cart.cartItems
-          .where((AddShippingCartItemEntity item) => item.status == 'cart')
+          .where((AddShippingCartItemEntity item) =>
+              item.status == CartItemStatusType.cart)
           .toList();
       final Map<String, CartItemEntity> cartItemMap = <String, CartItemEntity>{
         for (final CartItemEntity item in cartPro.cartItems)
@@ -68,7 +70,7 @@ class ReviewCartPage extends StatelessWidget {
 
         // Only show items with status 'cart'
         final List<CartItemEntity> items = cartPro.cartItems
-            .where((CartItemEntity e) => e.status == 'cart')
+            .where((CartItemEntity e) => e.status == CartItemStatusType.cart)
             .toList();
 
         return Column(

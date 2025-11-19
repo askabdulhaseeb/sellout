@@ -7,7 +7,7 @@ Future<File> createUserVcf(UserEntity user) async {
 BEGIN:VCARD
 VERSION:3.0
 FN:${user.displayName}
-PHOTO:${user.profilePic.first.url}
+PHOTO:${user.profilePic.isNotEmpty ? user.profilePic.first.url : ''}
 NOTE:${user.uid}
 END:VCARD
 ''';

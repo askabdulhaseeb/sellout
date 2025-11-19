@@ -9,6 +9,8 @@ import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../data/models/cart/add_shipping_response_model.dart';
 import '../../../data/models/cart/cart_item_model.dart';
 import '../../../data/sources/local/local_cart.dart';
+import '../../../../post/data/sources/local/local_post.dart';
+import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../domain/enums/cart_type.dart';
 import '../../providers/cart_provider.dart';
 
@@ -67,19 +69,37 @@ class PersonalCartTotalSection extends StatelessWidget {
                           cartPro.hasItemsRequiringRemoval,
                       onTap: () async {
                         if (cartPro.cartType == CartType.shoppingBasket) {
-                          if (cartPro.cartItems.isNotEmpty)
+                          if (cartPro.cartItems.isNotEmpty) {
                             await cartPro.getRates();
+                          }
                           cartPro.setCartType(CartType.checkoutOrder);
                         } else if (cartPro.cartType == CartType.checkoutOrder) {
                           if (cartPro.hasItemsRequiringRemoval) {
-                            // Do nothing; button disabled visually.
                             return;
                           }
 
-                          // Submit shipping selection to API
+                          // Check if fastDeliveryProducts is empty and all cart items are free delivery
+                          final bool fastDeliveryEmpty =
+                              cartPro.fastDeliveryProducts.isEmpty;
+                          final bool allFreeDelivery =
+                              cartPro.cartItems.isNotEmpty &&
+                                  cartPro.cartItems.every((item) {
+                                    // Look up the post and check deliveryType
+                                    final post = LocalPost().post(item.postID);
+                                    if (post == null) return false;
+                                    return post.deliveryType ==
+                                        DeliveryType.freeDelivery;
+                                  });
+
+                          if (fastDeliveryEmpty && allFreeDelivery) {
+                            // No need to submit shipping, move to review order
+                            cartPro.setCartType(CartType.reviewOrder);
+                            return;
+                          }
+
+                          // Otherwise, submit shipping selection to API
                           final DataState<AddShippingResponseModel> result =
                               await cartPro.submitShipping();
-
                           if (result is DataSuccess<AddShippingResponseModel>) {
                             // Move to review order after successful API call
                             final String? message = result.entity?.message;

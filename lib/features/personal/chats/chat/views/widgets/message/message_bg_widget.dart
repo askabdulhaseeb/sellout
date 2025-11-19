@@ -23,7 +23,7 @@ class MessageBgWidget extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
         constraints: BoxConstraints(
-          maxWidth: size.width * 0.7,
+          maxWidth: size.width * 0.9,
           minWidth: 20,
         ),
         decoration: BoxDecoration(

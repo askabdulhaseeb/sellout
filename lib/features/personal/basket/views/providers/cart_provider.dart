@@ -455,7 +455,7 @@ class CartProvider extends ChangeNotifier {
   Future<DataState<AddShippingResponseModel>> submitShipping() async {
     try {
       final List<ShippingItemParam> shippingList = buildShippingList();
-      if (shippingList.isEmpty) {
+      if (shippingList.isEmpty ) {
         AppLog.error('No shipping items to submit',
             name: 'CartProvider.submitShipping');
         return DataFailer<AddShippingResponseModel>(
