@@ -160,7 +160,6 @@ class _PostInquiryDialogState extends State<_PostInquiryDialog> {
           if (chatEntity != null) {
             Provider.of<ChatProvider>(context, listen: false)
                 .openChat(context, chatEntity);
-            Navigator.of(context).pop(); // Close dialog after success
           } else {
             AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
           }
