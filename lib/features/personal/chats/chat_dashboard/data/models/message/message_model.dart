@@ -49,13 +49,13 @@ class MessageModel extends MessageEntity {
           : VisitingModel.fromJson(json['visiting_detail']),
       createdAt:
           (json['created_at']?.toString() ?? '').toDateTime() ?? DateTime.now(),
-      messageId: json['message_id'],
+      messageId: json['message_id']?.toString() ?? '',
       text: json['text']?.toString() ?? '',
       type: MessageType.fromJson(json['type']),
-      displayText: json['display_text'],
-      sendBy: json['send_by'],
-      chatId: json['chat_id'],
-      source: json['source'] ?? '',
+      displayText: json['display_text']?.toString() ?? '',
+      sendBy: json['send_by']?.toString() ?? '',
+      chatId: json['chat_id']?.toString() ?? '',
+      source: json['source']?.toString() ?? '',
       offerDetail: json['offer_detail'] == null
           ? null
           : OfferDetailModel.fromJson(json['offer_detail']),

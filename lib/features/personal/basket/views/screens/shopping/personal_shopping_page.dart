@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/widgets/empty_page_widget.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../../../core/widgets/empty_page_widget.dart';
+import '../../../data/sources/local/local_cart.dart';
 import '../../../domain/enums/cart_type.dart';
 import '../../providers/cart_provider.dart';
 import '../../widgets/cart_widgets/personal_cart_step_indicator.dart';
@@ -11,80 +13,26 @@ import 'checkout/checkout_page.dart';
 import 'payment/payment_page.dart';
 import 'review/review_page.dart';
 
-class PersonalShoppingPage extends StatefulWidget {
+class PersonalShoppingPage extends HookWidget {
   const PersonalShoppingPage({super.key});
 
   @override
-  State<PersonalShoppingPage> createState() => _PersonalShoppingPageState();
-}
-
-void _clearCartCheckoutState(BuildContext context) {
-  final CartProvider cartPro =
-      Provider.of<CartProvider>(context, listen: false);
-  cartPro.clearRatesAndCheckout();
-}
-
-@override
-Widget build(BuildContext context) {
-  return PopScope(
-    onPopInvokedWithResult: (bool didPop, dynamic result) =>
-        {_clearCartCheckoutState(context)},
-    child: PopScope(
-      onPopInvokedWithResult: (bool didPop, dynamic result) =>
-          context.read<CartProvider>().reset(),
-      child: Builder(
-        builder: (BuildContext context) {
-          final CartProvider cartPro = context.watch<CartProvider>();
-          if (cartPro.cartItems.isEmpty) {
-            return const EmptyPageWidget(icon: Icons.shopping_cart_outlined);
-          } else {
-            return Column(
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                const PersonalCartStepIndicator(),
-                const SizedBox(height: 24),
-                Expanded(
-                  child: Builder(builder: (BuildContext context) {
-                    if (cartPro.cartType == CartType.shoppingBasket) {
-                      return const CartPage();
-                    } else if (cartPro.cartType == CartType.checkoutOrder) {
-                      return const CheckoutPage();
-                    } else if (cartPro.cartType == CartType.reviewOrder) {
-                      return const ReviewCartPage();
-                    } else if (cartPro.cartType == CartType.payment) {
-                      return const CartPaymentPage();
-                    }
-                    return const SizedBox.shrink();
-                  }),
-                ),
-                const PersonalCartTotalSection(),
-              ],
-            );
-          }
-        },
-      ),
-    ),
-  );
-}
-
-class _PersonalShoppingPageState extends State<PersonalShoppingPage> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CartProvider>().getCart();
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    debugPrint(' token ${LocalAuth.token}');
+    useEffect(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.read<CartProvider>().getCart();
+      });
+      return null;
+    }, <Object?>[]);
+    useValueListenable(LocalCart().listenable());
+    final String uid = LocalAuth.uid ?? '';
+    final CartEntity cartEntity = LocalCart().entity(uid);
+    final List<CartItemEntity> allItems = cartEntity.cartItems;
     final CartProvider cartPro = context.watch<CartProvider>();
-
     return PopScope(
       onPopInvokedWithResult: (bool didPop, dynamic result) =>
           context.read<CartProvider>().reset(),
-      child: cartPro.cartItems.isEmpty
+      child: allItems.isEmpty
           ? const EmptyPageWidget(icon: Icons.shopping_cart_outlined)
           : Column(
               mainAxisSize: MainAxisSize.max,
@@ -105,7 +53,7 @@ class _PersonalShoppingPageState extends State<PersonalShoppingPage> {
                     return const SizedBox.shrink();
                   }),
                 ),
-                const PersonalCartTotalSection(),
+                if (allItems.isNotEmpty) const PersonalCartTotalSection(),
               ],
             ),
     );
