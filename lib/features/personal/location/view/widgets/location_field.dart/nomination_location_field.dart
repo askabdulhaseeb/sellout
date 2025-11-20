@@ -52,6 +52,18 @@ class NominationLocationField extends StatefulWidget {
 }
 
 class _NominationLocationFieldState extends State<NominationLocationField> {
+  @override
+  void didUpdateWidget(covariant NominationLocationField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // If selectedLatLng changed or became null, reset controller and map
+    if (widget.selectedLatLng != oldWidget.selectedLatLng) {
+      if (widget.selectedLatLng == null &&
+          (widget.initialText == null || widget.initialText!.isEmpty)) {
+        _controller.clear();
+        setState(() {});
+      }
+    }
+  }
   final TextEditingController _controller = TextEditingController();
   final MapController _mapController = MapController();
   late LatLng _selectedLatLng;
@@ -66,8 +78,8 @@ class _NominationLocationFieldState extends State<NominationLocationField> {
       _controller.text = widget.initialText!;
     }
   }
-
-  void setLoading(bool val) {}
+  void setLoading(bool val) {
+  }
 
   Future<List<NominationLocationEntity>> fetchSuggestions(String query) async {
     if (query.trim().isEmpty) return <NominationLocationEntity>[];
@@ -142,7 +154,6 @@ class _NominationLocationFieldState extends State<NominationLocationField> {
           items: const <DropdownMenuItem<NominationLocationEntity>>[],
           initialText: widget.initialText,
           hint: widget.hint != '' ? widget.hint : 'location'.tr(),
-          isDynamic: true,
           searchBy: (DropdownMenuItem<NominationLocationEntity> item) =>
               item.value?.displayName ?? '',
           onSearchChanged: (String query) async {
