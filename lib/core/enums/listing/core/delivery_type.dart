@@ -5,6 +5,8 @@ part 'delivery_type.g.dart';
 
 @HiveType(typeId: 24)
 enum DeliveryType {
+  /// List of all delivery types except fastDelivery
+
   @HiveField(0)
   paid(
     'paid_delivery',
@@ -60,5 +62,7 @@ enum DeliveryType {
     return DeliveryType.collection;
   }
 
-  static List<DeliveryType> get list => DeliveryType.values;
+  static List<DeliveryType> get list => DeliveryType.values
+      .where((DeliveryType e) => e != DeliveryType.fastDelivery)
+      .toList();
 }

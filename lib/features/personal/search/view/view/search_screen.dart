@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../core/constants/app_spacings.dart';
 import '../../../../../core/widgets/custom_toggle_switch.dart';
 import '../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../domain/enums/search_entity_type.dart';
@@ -55,11 +56,11 @@ class _SearchScreenState extends State<SearchScreen> {
                 Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
+            spacing: AppSpacing.vSm,
             children: <Widget>[
               CustomToggleSwitch<SearchEntityType>(
                 verticalPadding: 4,
                 isShaded: false,
-                unseletedBorderColor: ColorScheme.of(context).outlineVariant,
                 unseletedTextColor: ColorScheme.of(context).onSurface,
                 borderWidth: 1,
                 labels: SearchEntityType.values,
