@@ -37,7 +37,7 @@ class FilterSheetDeliveryTypeTile extends StatelessWidget {
             focusedBorder: InputBorder.none,
             contentPadding: EdgeInsets.zero,
           ),
-          items: DeliveryType.values.map((DeliveryType type) {
+          items: DeliveryType.list.map((DeliveryType type) {
             return DropdownMenuItem<DeliveryType>(
               value: type,
               child: Text(

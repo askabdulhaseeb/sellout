@@ -235,6 +235,8 @@ class MarketPlaceProvider extends ChangeNotifier {
 
   void setFoodDrinkCategory(String category) {
     _foodDrinkCategory = category;
+    _selectedSubCategory = null;
+
     notifyListeners();
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../listing/listing_form/views/widgets/category/subcateogry_selectable_widget.dart';
 import '../../../../providers/marketplace_provider.dart';
 import '../market_filter_price_widget.dart';
@@ -14,6 +15,7 @@ class ItemFilterWidget extends StatelessWidget {
     return Consumer<MarketPlaceProvider>(
       builder: (BuildContext context, MarketPlaceProvider marketPro, _) {
         return Column(
+          spacing: AppSpacing.vSm,
           children: <Widget>[
             const MarketFilterSearchField(),
             SubCategorySelectableWidget<MarketPlaceProvider>(

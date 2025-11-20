@@ -22,12 +22,11 @@ class MarketFilterFoodDrinkCategoryAndLocationWIdget extends StatelessWidget {
         children: <Widget>[
           Expanded(
             child: SubCategorySelectableWidget<MarketPlaceProvider>(
-              listenProvider:
-                  Provider.of<MarketPlaceProvider>(context, listen: false),
               title: false,
               listType: marketPro.marketplaceCategory,
               subCategory: marketPro.selectedSubCategory,
               onSelected: marketPro.setSelectedCategory,
+              cid: marketPro.foodDrinkCategory,
             ),
           ),
           Expanded(

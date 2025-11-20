@@ -145,9 +145,9 @@ class _VideoWidgetState extends State<VideoWidget> {
 
   void _togglePlayPause() {
     if (_ended) {
+      setState(() => _ended = false); // Reset ended before playing
       _controller!.seekTo(Duration.zero);
       _controller!.play();
-      setState(() => _ended = false);
     } else if (_controller!.value.isPlaying) {
       _controller!.pause();
     } else {
@@ -189,11 +189,7 @@ class _VideoWidgetState extends State<VideoWidget> {
             child: CircleAvatar(
               backgroundColor: Colors.black54,
               child: Icon(
-                _ended
-                    ? Icons.replay
-                    : _controller!.value.isPlaying
-                        ? Icons.pause
-                        : Icons.play_arrow,
+                _controller!.value.isPlaying ? Icons.pause : Icons.play_arrow,
                 color: Colors.white,
               ),
             ),

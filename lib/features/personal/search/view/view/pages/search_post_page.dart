@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../user/profiles/views/widgets/subwidgets/post_grid_view_tile.dart';
 import '../../provider/search_provider.dart';
@@ -33,6 +34,7 @@ class _SearchPostsSectionState extends State<SearchPostsSection> {
     final SearchProvider provider = context.watch<SearchProvider>();
 
     return Column(
+      spacing: AppSpacing.vSm,
       children: <Widget>[
         Stack(
           alignment: Alignment.centerRight,
@@ -61,21 +63,17 @@ class _SearchPostsSectionState extends State<SearchPostsSection> {
             child: CustomScrollView(
               controller: provider.currentScrollController,
               slivers: <Widget>[
-                SliverPadding(
-                  padding: const EdgeInsets.all(8),
-                  sliver: SliverGrid(
-                    delegate: SliverChildBuilderDelegate(
-                      (BuildContext context, int index) =>
-                          PostGridViewTile(post: provider.postResults[index]),
-                      childCount: provider.postResults.length,
-                    ),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 6.0,
-                      mainAxisSpacing: 6.0,
-                      childAspectRatio: 0.66,
-                    ),
+                SliverGrid(
+                  delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) =>
+                        PostGridViewTile(post: provider.postResults[index]),
+                    childCount: provider.postResults.length,
+                  ),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 6.0,
+                    mainAxisSpacing: 6.0,
+                    childAspectRatio: 0.66,
                   ),
                 ),
                 if (provider.isLoading)
