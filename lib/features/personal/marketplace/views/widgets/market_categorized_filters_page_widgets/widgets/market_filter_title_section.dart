@@ -15,99 +15,60 @@ class MarketFilterTitleSection extends StatelessWidget {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final MarketPlaceProvider marketPro =
         Provider.of<MarketPlaceProvider>(context, listen: false);
+
+    final ListingType? category = marketPro.marketplaceCategory;
+
+    String title;
+    String subtitle;
+    Color? subtitleColor = colorScheme.onSurface.withValues(alpha: 0.6);
+
+    switch (category) {
+      case ListingType.items:
+        title = 'popular_items'.tr();
+        subtitle = '${'find_perfect'.tr()} ${'pouplar'.tr()} ${'items'.tr()}';
+        break;
+      case ListingType.clothAndFoot:
+        title = category != null ? category.json.tr() : '';
+        subtitle = '${'find_perfect'.tr()} ${'outfit'.tr()}';
+        break;
+      case ListingType.vehicle:
+        title = category != null ? category.json.tr() : '';
+        subtitle =
+            '${'find_perfect'.tr()} ${category != null ? category.json.tr() : ''}';
+        break;
+      case ListingType.foodAndDrink:
+        title = category != null ? category.json.tr() : '';
+        subtitle = '${'find_perfect'.tr()} ${'meal_and_drink'.tr()}';
+        break;
+      case ListingType.property:
+        title = category != null ? category.json.tr() : '';
+        subtitle =
+            '${'find_perfect'.tr()} ${category != null ? category.json.tr() : ''}';
+        break;
+      case ListingType.pets:
+        title = category != null ? category.json.tr() : '';
+        subtitle =
+            '${'find_perfect'.tr()} ${category != null ? category.json.tr() : ''}';
+        subtitleColor = colorScheme.outline;
+        break;
+      default:
+        title = '';
+        subtitle = '';
+    }
+
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Column(
         children: <Widget>[
-          if (marketPro.marketplaceCategory == ListingType.items)
-            Column(
-              children: <Widget>[
-                Text('popular_items'.tr(), style: textTheme.titleMedium),
-                Text(
-                  '${'find_perfect'.tr()} ${'pouplar'.tr()} ${'items'.tr()}',
-                  style: textTheme.labelMedium?.copyWith(
-                    color: colorScheme.outline,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+          Text(title, style: textTheme.titleMedium),
+          Text(
+            subtitle,
+            style: textTheme.labelMedium?.copyWith(
+              color: subtitleColor,
+              fontWeight: FontWeight.w500,
             ),
-          if (marketPro.marketplaceCategory == ListingType.clothAndFoot)
-            Column(
-              children: <Widget>[
-                Text(marketPro.marketplaceCategory?.json.tr() ?? '',
-                    style: textTheme.titleMedium),
-                Text(
-                  '${'find_perfect'.tr()} ${'outfit'.tr()}',
-                  style: textTheme.labelMedium?.copyWith(
-                    color: colorScheme.outline,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          if (marketPro.marketplaceCategory == ListingType.vehicle)
-            Column(
-              children: <Widget>[
-                Text(marketPro.marketplaceCategory?.json.tr() ?? '',
-                    style: textTheme.titleMedium),
-                Text(
-                  '${'find_perfect'.tr()} ${marketPro.marketplaceCategory?.json.tr() ?? ''}',
-                  style: textTheme.labelMedium?.copyWith(
-                    color: colorScheme.outline,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          if (marketPro.marketplaceCategory == ListingType.foodAndDrink)
-            Column(
-              children: <Widget>[
-                Text(marketPro.marketplaceCategory?.json.tr() ?? '',
-                    style: textTheme.titleMedium),
-                Text(
-                  '${'find_perfect'.tr()} ${'meal_and_drink'.tr()}',
-                  style: textTheme.labelMedium?.copyWith(
-                    color: colorScheme.outline,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          if (marketPro.marketplaceCategory == ListingType.property)
-            Column(
-              children: <Widget>[
-                Text(marketPro.marketplaceCategory?.json.tr() ?? '',
-                    style: textTheme.titleMedium),
-                Text(
-                  '${'find_perfect'.tr()} ${marketPro.marketplaceCategory?.json.tr() ?? ''}',
-                  style: textTheme.labelMedium?.copyWith(
-                    color: colorScheme.outline,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          if (marketPro.marketplaceCategory == ListingType.pets)
-            Column(
-              children: <Widget>[
-                Text(marketPro.marketplaceCategory?.json.tr() ?? '',
-                    style: textTheme.titleMedium),
-                Text(
-                  '${'find_perfect'.tr()} ${marketPro.marketplaceCategory?.json.tr() ?? ''}',
-                  style: textTheme.labelMedium?.copyWith(
-                    color: colorScheme.outline,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
+            textAlign: TextAlign.center,
+          ),
         ],
       ),
     );
