@@ -26,7 +26,7 @@ class MarketFilterContainer extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: ColorScheme.of(context).outlineVariant),
+        border: Border.all(color: ColorScheme.of(context).outline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
