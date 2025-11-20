@@ -41,6 +41,7 @@ class CustomTextFormField extends StatefulWidget {
     this.showOverlayWhenFocused = false,
     //
     this.focusNode,
+    this.autovalidateMode = AutovalidateMode.disabled,
     super.key,
   }) : _controller = controller;
 
@@ -78,6 +79,7 @@ class CustomTextFormField extends StatefulWidget {
   final Widget? overlayChild;
   final EdgeInsetsGeometry? overlayPadding;
   final bool showOverlayWhenFocused;
+  final AutovalidateMode autovalidateMode;
 
   @override
   CustomTextFormFieldState createState() => CustomTextFormFieldState();
@@ -126,6 +128,7 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
           Builder(
             builder: (BuildContext context) {
               Widget textField = TextFormField(
+                autovalidateMode: widget.autovalidateMode,
                 focusNode: widget.focusNode,
                 initialValue: widget.initialValue,
                 controller: widget._controller,
