@@ -18,15 +18,16 @@ import '../../../../../../../../chats/chat_dashboard/domain/entities/chat/partic
 import '../../../../../../../../user/profiles/domain/entities/supporter_detail_entity.dart';
 import '../../../../../../../../user/profiles/domain/entities/user_entity.dart';
 import '../../../../../../../../user/profiles/domain/usecase/get_user_by_uid.dart';
-import '../../../../../../../domain/entities/post/post_entity.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../../domain/params/share_in_chat_params.dart';
 
 class SharePostButton extends StatelessWidget {
-  const SharePostButton({required this.post, super.key});
-  final PostEntity post;
+  const SharePostButton(
+      {required this.postId, required this.tappableWidget, super.key});
+  final String postId;
+  final Widget tappableWidget;
 
-  String get postLink => '${AppRoutes.baseURL}/product/${post.postID}';
+  String get postLink => '${AppRoutes.baseURL}/product/$postId';
 
   Future<void> _showShareBottomSheet({
     required BuildContext context,
@@ -66,7 +67,7 @@ class SharePostButton extends StatelessWidget {
       elevation: 10,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
       color: Theme.of(context).scaffoldBackgroundColor,
-      icon: const CustomSvgIcon(assetPath: AppStrings.selloutShareIcon),
+      icon: tappableWidget,
       onSelected: (String value) => _handleShare(context, value),
       itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
         _buildMenuItem(
