@@ -2,6 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/widgets/custom_dropdown.dart';
+import 'package:flutter/cupertino.dart';
+import '../../../../../core/widgets/empty_page_widget.dart';
 import '../../domain/entities/review_entity.dart';
 import '../../domain/enums/review_sort_type.dart';
 import '../params/review_list_param.dart';
@@ -30,6 +32,12 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
       body: Consumer<ReviewProvider>(
         builder: (BuildContext context, ReviewProvider pro, _) {
           final List<ReviewEntity> reviews = pro.reviews();
+          if (reviews.isEmpty) {
+            return EmptyPageWidget(
+              icon: CupertinoIcons.star_lefthalf_fill,
+              childBelow: Text('no_reviews_found'.tr()),
+            );
+          }
           return Column(
             children: <Widget>[
               SizedBox(

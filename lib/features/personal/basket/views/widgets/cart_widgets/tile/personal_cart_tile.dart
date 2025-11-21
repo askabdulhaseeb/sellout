@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
+import '../../../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../../../core/extension/string_ext.dart';
 import '../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../../core/widgets/app_snakebar.dart';
@@ -12,6 +13,7 @@ import '../../../../../auth/signin/domain/repositories/signin_repository.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../../../core/enums/listing/core/delivery_type.dart';
+import '../../../../../post/feed/views/widgets/post/widgets/section/icon_butoons/share_post_icon_button.dart';
 import '../../../../../post/post_detail/views/screens/post_detail_screen.dart';
 import '../../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../../domain/entities/cart/cart_item_entity.dart';
@@ -336,39 +338,40 @@ class _PersonalCartTileState extends State<PersonalCartTile>
             const SizedBox(height: AppSpacing.vSm),
 
             /// Switch Row
-            Row(
-              spacing: AppSpacing.hSm,
-              children: <Widget>[
-                Text(
-                  'need_fast_delivery'.tr(),
-                  style: textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w400,
+            if (widget.item.status == CartItemStatusType.cart)
+              Row(
+                spacing: AppSpacing.hSm,
+                children: <Widget>[
+                  Text(
+                    'need_fast_delivery'.tr(),
+                    style: textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
-                ),
-                CustomSwitch(
-                  value: isActive,
-                  onChanged: (bool val) {
-                    // Update local UI state and persist change to provider's
-                    // fast-delivery id list.
-                    final CartProvider provider =
-                        Provider.of<CartProvider>(context, listen: false);
-                    setState(() {
-                      debugPrint('fast delivery for ${widget.item.postID}');
-                      isActive = val;
-                      _deliveryType = val
-                          ? DeliveryType.fastDelivery
-                          : (post?.deliveryType ?? DeliveryType.collection);
-                    });
-                    if (val) {
-                      provider.addFastDeliveryProduct(widget.item.postID);
-                    } else {
-                      provider.removeFastDeliveryProduct(widget.item.postID);
-                    }
-                    debugPrint('Item switch toggled: $val');
-                  },
-                ),
-              ],
-            ),
+                  CustomSwitch(
+                    value: isActive,
+                    onChanged: (bool val) {
+                      // Update local UI state and persist change to provider's
+                      // fast-delivery id list.
+                      final CartProvider provider =
+                          Provider.of<CartProvider>(context, listen: false);
+                      setState(() {
+                        debugPrint('fast delivery for ${widget.item.postID}');
+                        isActive = val;
+                        _deliveryType = val
+                            ? DeliveryType.fastDelivery
+                            : (post?.deliveryType ?? DeliveryType.collection);
+                      });
+                      if (val) {
+                        provider.addFastDeliveryProduct(widget.item.postID);
+                      } else {
+                        provider.removeFastDeliveryProduct(widget.item.postID);
+                      }
+                      debugPrint('Item switch toggled: $val');
+                    },
+                  ),
+                ],
+              ),
 
             /// Save Later / Share
             SaveLaterWidget(item: widget.item),
@@ -401,12 +404,14 @@ class _SaveLaterWidgetState extends State<SaveLaterWidget> {
     });
 
     try {
+      final CartProvider cartProvider = Provider.of<CartProvider>(context, listen: false);
       final DataState<bool> result =
-          await Provider.of<CartProvider>(context, listen: false)
-              .updateStatus(widget.item);
+          await cartProvider.updateStatus(widget.item);
 
       if (mounted) {
         if (result is DataSuccess) {
+          // Remove from fast delivery if present
+          cartProvider.removeFastDeliveryProduct(widget.item.postID);
           AppSnackBar.showSnackBar(
             context,
             'Item status updated successfully'.tr(),
@@ -484,13 +489,18 @@ class _SaveLaterWidgetState extends State<SaveLaterWidget> {
           width: 1,
           color: scheme.outline.withValues(alpha: 0.1),
         ),
-        Text(
+                  SharePostButton(
+            tappableWidget:
+                  Text(
           'share'.tr(),
           style: textTheme.bodySmall?.copyWith(
             color: scheme.secondary,
             fontWeight: FontWeight.w500,
           ),
         ),
+            postId: widget.item.postID,
+          ),
+       
       ],
     );
   }

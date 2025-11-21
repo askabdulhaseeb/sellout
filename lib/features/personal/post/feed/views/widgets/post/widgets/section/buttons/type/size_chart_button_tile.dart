@@ -7,20 +7,25 @@ class SizeChartButtonTile extends StatelessWidget {
   final String sizeChartURL;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
+    return ExpansionTile(
+      tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+      showTrailingIcon: true,
+      maintainState: true,
+      collapsedShape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: ColorScheme.of(context).outlineVariant)),
-      child: ExpansionTile(
-        childrenPadding: const EdgeInsets.all(12),
-        title: Text(
-          'size_chart'.tr(),
-          style: TextTheme.of(context)
-              .bodyMedium
-              ?.copyWith(color: ColorScheme.of(context).outlineVariant),
-        ),
-        children: <Widget>[
-          ConstrainedBox(
+          side: BorderSide(color: ColorScheme.of(context).outline)),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+          side: BorderSide(color: ColorScheme.of(context).outline)),
+      title: Text(
+        'size_chart'.tr(),
+        style: TextTheme.of(context).bodyMedium?.copyWith(
+            color: ColorScheme.of(context).onSurface.withValues(alpha: 0.6)),
+      ),
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: ConstrainedBox(
             constraints: BoxConstraints(
               maxHeight: MediaQuery.of(context).size.height * 0.36,
             ),
@@ -34,8 +39,8 @@ class SizeChartButtonTile extends StatelessWidget {
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

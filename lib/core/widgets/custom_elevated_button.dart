@@ -51,7 +51,7 @@ class CustomElevatedButton extends StatelessWidget {
       decoration: BoxDecoration(
         color: bgColorCore,
         borderRadius: borderRadius ?? BorderRadius.circular(8),
-        border: border ?? Border.all(color: colorScheme.primary),
+        border: border ?? Border.all(color: bgColorCore),
       ),
       child: Material(
         borderRadius: borderRadius ?? BorderRadius.circular(8),

@@ -50,7 +50,7 @@ class PostGridViewTile extends StatelessWidget {
                   ),
                 ),
                 if (!isMe &&
-                    ListingType.viewingList
+                    ListingType.storeList
                         .contains(ListingType.fromJson(post.listID)))
                   PostGridViewTileBasketButton(post: post)
               ],
