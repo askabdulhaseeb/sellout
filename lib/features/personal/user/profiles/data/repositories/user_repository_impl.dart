@@ -65,4 +65,5 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
   Future<DataState<bool?>> deleteUser(String value) async {
     return await userProfileRemoteSource.deleteUser(value);
   }
+
 }

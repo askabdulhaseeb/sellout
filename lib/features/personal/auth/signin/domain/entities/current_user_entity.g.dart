@@ -24,8 +24,9 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       email: fields[5] as String,
       userName: fields[6] as String,
       displayName: fields[7] as String,
-      currency: fields[8] as String?,
-      privacy: fields[9] as PrivacyType,
+      bio: fields[8] as String,
+      currency: fields[9] as String?,
+      privacy: fields[10] as PrivacyType,
       countryAlpha3: fields[16] as String,
       countryCode: fields[17] as String,
       phoneNumber: fields[18] as String,
@@ -57,7 +58,7 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       accountType: fields[22] as String?,
       dob: fields[23] as DateTime?,
       saved: (fields[24] as List).cast<String>(),
-      listOfReviews: (fields[25] as List).cast<int>(),
+      listOfReviews: (fields[25] as List).cast<double>(),
       location: fields[155] as LocationEntity?,
     );
   }
@@ -65,7 +66,7 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
   @override
   void write(BinaryWriter writer, CurrentUserEntity obj) {
     writer
-      ..writeByte(42)
+      ..writeByte(43)
       ..writeByte(1)
       ..write(obj.message)
       ..writeByte(2)
@@ -81,8 +82,10 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       ..writeByte(7)
       ..write(obj.displayName)
       ..writeByte(8)
-      ..write(obj.currency)
+      ..write(obj.bio)
       ..writeByte(9)
+      ..write(obj.currency)
+      ..writeByte(10)
       ..write(obj.privacy)
       ..writeByte(16)
       ..write(obj.countryAlpha3)

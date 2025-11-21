@@ -2,24 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/widgets/profile_photo.dart';
 import '../../../../../../core/widgets/rating_display_widget.dart';
-import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../review/domain/entities/review_entity.dart';
 import '../../../../review/views/params/review_list_param.dart';
 import '../../../../review/views/screens/review_list_screen.dart';
+import '../../domain/entities/user_entity.dart';
 import '../providers/profile_provider.dart';
-import 'subwidgets/profile_edit_settings_widget.dart';
 
-class ProfileHeaderSection extends StatelessWidget {
-  const ProfileHeaderSection({super.key});
+class UserProfileHeaderSection extends StatelessWidget {
+  const UserProfileHeaderSection({required this.user, super.key});
+  final UserEntity? user;
 
   @override
   Widget build(BuildContext context) {
-    final CurrentUserEntity? user = LocalAuth.currentUser;
     final double screenWidth = MediaQuery.of(context).size.width;
     final double photoSize = screenWidth * 0.25;
     final double nameFontSize = screenWidth * 0.045;
     final double bioFontSize = screenWidth * 0.037;
-    final double verticalGap = screenWidth * 0.03;   
+    final double verticalGap = screenWidth * 0.03;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -30,7 +29,7 @@ class ProfileHeaderSection extends StatelessWidget {
             width: photoSize,
             height: photoSize,
             child: ProfilePhoto(
-              url: user?.profileImageUrl,
+              url: user?.profilePhotoURL,
               placeholder: user?.displayName ?? '',
             ),
           ),
@@ -53,7 +52,6 @@ class ProfileHeaderSection extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const ProfileEditAndSettingsWidget(),
                   ],
                 ),
                 SizedBox(height: verticalGap),
@@ -66,7 +64,7 @@ class ProfileHeaderSection extends StatelessWidget {
                         await Provider.of<ProfileProvider>(
                       context,
                       listen: false,
-                    ).getReviews(user?.userID);
+                    ).getReviews(user?.uid);
                     Navigator.of(context).push(
                       MaterialPageRoute<ReviewListScreenParam>(
                         builder: (BuildContext context) => ReviewListScreen(

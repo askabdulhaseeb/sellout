@@ -98,7 +98,7 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
                 .map((dynamic e) => AttachmentModel.fromJson(e))
                 .toList();
         // ✅ Update LocalAuth.currentUser properly and save it to Hive
-        LocalAuth.currentUser!.profileImage = profilephoto;
+        await LocalAuth().updateProfilePicture(profilephoto);
         return DataSuccess<List<AttachmentEntity>>('', profilephoto);
       } else {
         AppLog.error(result.exception!.message,

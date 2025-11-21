@@ -6,8 +6,8 @@ import '../../data/sources/local/local_user.dart';
 import '../providers/profile_provider.dart';
 import '../widgets/profile_grid_section.dart';
 import '../widgets/profile_grid_type_selection_section.dart';
-import '../widgets/profile_header_section.dart';
 import '../widgets/profile_score_section.dart';
+import '../widgets/user_profile_header_section.dart';
 
 class UserProfileScreen extends StatelessWidget {
   const UserProfileScreen({required this.uid, super.key});
@@ -33,7 +33,7 @@ class UserProfileScreen extends StatelessWidget {
             return SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  ProfileHeaderSection(user: user),
+                  UserProfileHeaderSection(user: user),
                   ProfileScoreSection(user: user),
                   ProfileGridTypeSelectionSection(user: user),
                   // ProfileFilterSection(user: user),

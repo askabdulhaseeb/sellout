@@ -21,23 +21,27 @@ class ProfileScreen extends StatelessWidget {
             Provider.of<ProfileProvider>(context, listen: false).getUserByUid(),
         builder: (BuildContext context,
             AsyncSnapshot<DataState<UserEntity?>?> snapshot) {
-          // Show loader until data is fully fetched
           if (snapshot.connectionState != ConnectionState.done) {
-            return const Center(
-              child:
-                  CircularProgressIndicator(), // You can replace this with your custom loader
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           final UserEntity? user = snapshot.data?.entity;
-          return SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                ProfileHeaderSection(user: user),
-                ProfileScoreSection(user: user),
-                ProfileGridTypeSelectionSection(user: user),
-                ProfileGridSection(user: user),
-              ],
+          return RefreshIndicator(
+            onRefresh: () async {
+              await Provider.of<ProfileProvider>(context, listen: false)
+                  .getUserByUid();
+              // Optionally, you can use setState in a StatefulWidget to trigger a rebuild if needed
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                children: <Widget>[
+                  const ProfileHeaderSection(),
+                  ProfileScoreSection(user: user),
+                  ProfileGridTypeSelectionSection(user: user),
+                  ProfileGridSection(user: user),
+                ],
+              ),
             ),
           );
         },
