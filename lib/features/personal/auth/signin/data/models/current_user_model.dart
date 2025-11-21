@@ -26,6 +26,7 @@ class CurrentUserModel extends CurrentUserEntity {
     required super.email,
     required super.userName,
     required super.displayName,
+    required super.bio,
     required super.currency,
     required super.privacy,
     required super.countryAlpha3,
@@ -60,9 +61,7 @@ class CurrentUserModel extends CurrentUserEntity {
     required super.accountStatus,
     required super.listOfReviews,
     required super.location,
-  }) : super(
-            inHiveAt: DateTime
-                .now()); //The named parameter 'accountStatus' is required, but there's no corresponding argument.Try adding the required argument.dartmissing_required_argumentThe named parameter 'listOfReviews' is required, but there's no corresponding argument.Try adding the required argument.
+  }) : super(inHiveAt: DateTime.now());
 
   factory CurrentUserModel.fromRawJson(String str) =>
       CurrentUserModel.fromJson(json.decode(str));
@@ -87,9 +86,11 @@ class CurrentUserModel extends CurrentUserEntity {
       otpVerified: userData['otp_verified'] ?? false,
       userName: userData['user_name'] ?? '',
       displayName: userData['display_name'] ?? '',
+      bio: userData['bio'] ?? '',
       currency: userData['currency'] ?? 'gbp',
       accountStatus: userData['account_status'] ?? '',
-      listOfReviews: List<int>.from(userData['list_of_reviews'] ?? <dynamic>[]),
+      listOfReviews:
+          List<double>.from(userData['list_of_reviews'] ?? <dynamic>[]),
       privacy: PrivacyType.fromJson(userData['profile_type'] ?? 'public'),
       countryAlpha3: userData['country_alpha_3'] ?? '',
       countryCode: userData['country_code'] ?? '',

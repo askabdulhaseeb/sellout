@@ -1,4 +1,3 @@
-import 'package:hive/hive.dart';
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../business/core/domain/entity/business_employee_entity.dart';
@@ -7,6 +6,7 @@ import '../../../../setting/setting_dashboard/domain/entities/notification_entit
 import '../../../../setting/setting_dashboard/domain/entities/privacy_settings_entity.dart';
 import '../../../../setting/setting_dashboard/domain/entities/time_away_entity.dart';
 import '../../../../user/profiles/domain/entities/supporter_detail_entity.dart';
+import 'package:hive/hive.dart';
 import 'address_entity.dart';
 import 'login_detail_entity.dart';
 import 'login_info_entity.dart';
@@ -14,8 +14,6 @@ part 'current_user_entity.g.dart';
 
 @HiveType(typeId: 0)
 class CurrentUserEntity {
-  // 2FA status
-
   CurrentUserEntity({
     required this.message,
     required this.token,
@@ -24,6 +22,7 @@ class CurrentUserEntity {
     required this.email,
     required this.userName,
     required this.displayName,
+    required this.bio,
     required this.currency,
     required this.privacy,
     required this.countryAlpha3,
@@ -82,9 +81,12 @@ class CurrentUserEntity {
   final String displayName; // Full display name
 
   @HiveField(8)
-  final String? currency; // Preferred currency (e.g., PKR, GBP)
+  final String bio; // bio
 
   @HiveField(9)
+  final String? currency; // Preferred currency (e.g., PKR, GBP)
+
+  @HiveField(10)
   final PrivacyType privacy; // Profile visibility (public/private)
 
   @HiveField(16)
@@ -113,7 +115,7 @@ class CurrentUserEntity {
   final List<String> saved; // IDs of saved items
 
   @HiveField(25)
-  final List<int> listOfReviews; // User reviews/ratings received
+  final List<double> listOfReviews; // User reviews/ratings received
 
   @HiveField(21)
   final List<AddressEntity> address; // Physical addresses
@@ -194,6 +196,9 @@ class CurrentUserEntity {
   @HiveField(153)
   final bool? twoStepAuthEnabled;
 
+  String get profileImageUrl =>
+      profileImage.isNotEmpty ? profileImage.first.url : '';
+
   CurrentUserEntity copyWith(
       {String? token,
       String? refreshToken,
@@ -205,18 +210,21 @@ class CurrentUserEntity {
       String? countryCode,
       String? displayName,
       bool? otpVerified,
+      List<AttachmentEntity>? profileImage,
       TimeAwayEntity? timeAway}) {
     return CurrentUserEntity(
-        message: message,
-        token: token ?? this.token,
+        profileImage: profileImage ?? this.profileImage,
         refreshToken: refreshToken ?? this.refreshToken,
         otpVerified: otpVerified ?? this.otpVerified,
         countryCode: countryCode ?? this.countryCode,
         phoneNumber: phoneNumber ?? this.phoneNumber,
         displayName: displayName ?? this.displayName,
-        address: address ?? this.address,
         supporting: supporting ?? this.supporting,
+        address: address ?? this.address,
+        token: token ?? this.token,
         dob: dob ?? this.dob,
+        bio: bio,
+        message: message,
         userID: userID,
         email: email,
         userName: userName,
@@ -228,7 +236,6 @@ class CurrentUserEntity {
         businessIDs: businessIDs,
         imageVerified: imageVerified,
         verificationImage: verificationImage,
-        profileImage: profileImage,
         lastLoginTime: lastLoginTime,
         createdAt: createdAt,
         updatedAt: updatedAt,

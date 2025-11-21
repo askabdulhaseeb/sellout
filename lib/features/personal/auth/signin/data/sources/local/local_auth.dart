@@ -2,11 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:latlong2/latlong.dart';
 import '../../../../../../../services/app_data_services.dart';
+import '../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../domain/entities/current_user_entity.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 export '../../../domain/entities/current_user_entity.dart';
 
 class LocalAuth {
+  /// Updates the profile picture for the current user and saves it locally.
+  Future<void> updateProfilePicture(
+      List<AttachmentEntity> newProfileImages) async {
+    final CurrentUserEntity? existing = currentUser;
+    if (existing == null) return;
+    final updated = existing.copyWith(profileImage: newProfileImages);
+    await _box.put(boxTitle, updated);
+  }
+
   static final String boxTitle = AppStrings.localAuthBox;
   static Box<CurrentUserEntity> get _box =>
       Hive.box<CurrentUserEntity>(boxTitle);
@@ -53,6 +63,6 @@ class LocalAuth {
 
   Future<void> signout() async {
     await _box.clear();
-    uidNotifier.value = null; // ✅ notify socket to disconnect
+    uidNotifier.value = null;
   }
 }

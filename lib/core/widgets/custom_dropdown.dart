@@ -40,7 +40,6 @@ class CustomDropdown<T> extends StatefulWidget {
   final double? height;
   final String Function(DropdownMenuItem<T>)? searchBy;
   final Future<List<DropdownMenuItem<T>>> Function(String)? onSearchChanged;
-
   final Widget? Function(T?)? selectedItemBuilder;
   final EdgeInsetsGeometry? selectedItemPadding;
 
@@ -51,7 +50,7 @@ class CustomDropdown<T> extends StatefulWidget {
 class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
   DropdownMenuItem<T>? _findSelectedAsyncItem() {
     if (widget.selectedItem == null) return null;
-    for (final item in _asyncLoadedItems) {
+    for (final DropdownMenuItem<T> item in _asyncLoadedItems) {
       if (item.value == widget.selectedItem) return item;
     }
     return null;
@@ -66,7 +65,6 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
   String _searchText = '';
   List<DropdownMenuItem<T>> _asyncLoadedItems = <DropdownMenuItem<T>>[];
   Timer? _debounce;
-  bool _hasSetInitialText = false;
   String? _lastInitialText;
   String _selectedDisplayText = '';
 
@@ -84,7 +82,6 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
     super.didUpdateWidget(oldWidget);
     // Only set initial text if it changed
     if (widget.initialText != _lastInitialText) {
-      _hasSetInitialText = false;
       _setInitialText();
       _lastInitialText = widget.initialText;
     }
@@ -101,7 +98,6 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         _controller.text = widget.initialText!;
-        _hasSetInitialText = true;
       });
     }
   }
