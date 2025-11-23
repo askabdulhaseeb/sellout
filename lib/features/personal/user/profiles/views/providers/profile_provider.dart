@@ -220,19 +220,19 @@ class ProfileProvider extends ChangeNotifier {
   void storefilterSheetResetButton() async {
     _storeMinPriceController.clear();
     _storeMaxPriceController.clear();
-    _storeSelectedConditionType = null;
-    _storeSelectedDeliveryType = null;
-    _storeSort = null;
+    setStoreDeliveryType(null);
+    setStoreConditionType(null);
+    setStoreSort(null);
     await loadStorePosts();
   }
 
   void viewingfilterSheetResetButton() async {
     _viewingMinPriceController.clear();
     _viewingMaxPriceController.clear();
-    _viewingSelectedConditionType = null;
-    _viewingSelectedDeliveryType = null;
-    _viewingSort = null;
-    await loadStorePosts();
+    setViewingDeliveryType(null);
+    setViewingConditionType(null);
+    setViewingSort(null);
+    await loadViewingPosts();
   }
 
   void resetStoreCategoryButton() {

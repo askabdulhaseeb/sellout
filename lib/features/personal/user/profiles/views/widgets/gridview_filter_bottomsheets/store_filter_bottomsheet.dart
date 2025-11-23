@@ -13,61 +13,54 @@ class StoreFilterBottomSheet extends StatelessWidget {
   final bool isStore;
   @override
   Widget build(BuildContext context) {
-    return Consumer<ProfileProvider>(
-      builder: (context, pro, _) => BottomSheet(
-        showDragHandle: false,
-        enableDrag: false,
-        onClosing: () {},
-        backgroundColor: Colors.transparent,
-        builder: (BuildContext context) {
-          return Container(
-            height: 500,
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(24)),
-            ),
-            child: Column(
-              children: <Widget>[
-                StoreFilterSheetHeaderSection(
-                  isStore: isStore,
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      spacing: 8,
-                      children: <Widget>[
-                        StoreFilterSheetCustomerReviewTile(
+    return BottomSheet(
+      showDragHandle: false,
+      enableDrag: false,
+      onClosing: () {},
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return Container(
+          height: 500,
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Column(
+            children: <Widget>[
+              StoreFilterSheetHeaderSection(
+                isStore: isStore,
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    spacing: 8,
+                    children: <Widget>[
+                      StoreFilterSheetCustomerReviewTile(
+                        isStore: isStore,
+                      ),
+                      ExpandablePriceRangeTile(
+                        isStore: isStore,
+                      ),
+                      if (isStore == true)
+                        StoreFilterSheetConditionTile(
                           isStore: isStore,
                         ),
-                        ExpandablePriceRangeTile(
+                      if (isStore == true)
+                        StoreFilterSheetDeliveryTypeTile(
                           isStore: isStore,
                         ),
-                        Consumer<ProfileProvider>(
-                          builder: (context, pro, _) => StoreFilterSheetConditionTile(
-                            isStore: isStore,
-                            pro: pro,
-                          ),
-                        ),
-                        Consumer<ProfileProvider>(
-                          builder: (context, pro, _) => StoreFilterSheetDeliveryTypeTile(
-                            isStore: isStore,
-                            pro: pro,
-                          ),
-                        ),
-                      ],
-                    ),
+                    ],
                   ),
                 ),
-                StoreFilterSheetApplyButton(
-                  isStore: isStore,
-                )
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+              StoreFilterSheetApplyButton(
+                isStore: isStore,
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -142,7 +135,7 @@ class _ExpandablePriceRangeTileState extends State<ExpandablePriceRangeTile> {
   @override
   Widget build(BuildContext context) {
     return Consumer<ProfileProvider>(
-      builder: (context, marketPro, _) {
+      builder: (BuildContext context, ProfileProvider marketPro, _) {
         final TextEditingController minPriceController = widget.isStore
             ? marketPro.storeMinPriceController
             : marketPro.viewingMinPriceController;
@@ -214,121 +207,126 @@ class _ExpandablePriceRangeTileState extends State<ExpandablePriceRangeTile> {
 }
 
 class StoreFilterSheetConditionTile extends StatelessWidget {
+  const StoreFilterSheetConditionTile({required this.isStore, super.key});
   final bool isStore;
-  final ProfileProvider pro;
-  const StoreFilterSheetConditionTile({required this.isStore, required this.pro, super.key});
 
   @override
   Widget build(BuildContext context) {
-    final ConditionType? selectedType = isStore
-        ? pro.storeSelectedConditionType
-        : pro.viewingSelectedConditionType;
-
-    return ListTile(
-      title: Text(
-        'condition'.tr(),
-        style: Theme.of(context).textTheme.titleMedium,
-      ),
-      subtitle: DropdownButtonFormField<ConditionType>(
-        icon: Icon(
-          Icons.keyboard_arrow_down_rounded,
-          color: Theme.of(context).colorScheme.outline,
+    return Consumer<ProfileProvider>(
+        builder: (BuildContext context, ProfileProvider pro, Widget? child) {
+      return ListTile(
+        title: Text(
+          'condition'.tr(),
+          style: Theme.of(context).textTheme.titleMedium,
         ),
-        value: selectedType,
-        isExpanded: true,
-        dropdownColor: Theme.of(context).cardColor,
-        decoration: const InputDecoration(
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          isDense: true,
-          contentPadding: EdgeInsets.zero,
+        subtitle: DropdownButtonFormField<ConditionType>(
+          icon: Icon(
+            Icons.keyboard_arrow_down_rounded,
+            color: Theme.of(context).colorScheme.outline,
+          ),
+          value: isStore
+              ? pro.storeSelectedConditionType
+              : pro.viewingSelectedConditionType,
+          isExpanded: true,
+          dropdownColor: Theme.of(context).cardColor,
+          decoration: const InputDecoration(
+            border: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            isDense: true,
+            contentPadding: EdgeInsets.zero,
+          ),
+          hint: Text(
+            'select_condition'.tr(),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(color: Theme.of(context).colorScheme.outline),
+          ),
+          items: ConditionType.values.map((ConditionType type) {
+            return DropdownMenuItem<ConditionType>(
+              value: type,
+              child: Text(
+                type.code.tr(),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(color: Theme.of(context).colorScheme.onSurface),
+              ),
+            );
+          }).toList(),
+          onChanged: (ConditionType? newValue) {
+            if (isStore) {
+              pro.setStoreConditionType(newValue);
+            } else {
+              pro.setViewingConditionType(newValue);
+            }
+          },
         ),
-        hint: Text(
-          'select_condition'.tr(),
-          style: Theme.of(context)
-              .textTheme
-              .bodyMedium
-              ?.copyWith(color: Theme.of(context).colorScheme.outline),
-        ),
-        items: ConditionType.values.map((ConditionType type) {
-          return DropdownMenuItem<ConditionType>(
-            value: type,
-            child: Text(
-              type.code.tr(),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface),
-            ),
-          );
-        }).toList(),
-        onChanged: (ConditionType? newValue) {
-          if (isStore) {
-            pro.setStoreConditionType(newValue);
-          } else {
-            pro.setViewingConditionType(newValue);
-          }
-        },
-      ),
-    );
+      );
+    });
   }
 }
 
 class StoreFilterSheetDeliveryTypeTile extends StatelessWidget {
   final bool isStore;
-  final ProfileProvider pro;
-  const StoreFilterSheetDeliveryTypeTile({required this.isStore, required this.pro, super.key});
+
+  const StoreFilterSheetDeliveryTypeTile({required this.isStore, super.key});
 
   @override
   Widget build(BuildContext context) {
-    final DeliveryType? selectedType = isStore
-        ? pro.storeSelectedDeliveryType
-        : pro.viewingSelectedDeliveryType;
-
-    return ListTile(
-      title: Text(
-        'delivery_type'.tr(),
-        style: Theme.of(context).textTheme.titleMedium,
-      ),
-      subtitle: DropdownButtonFormField<DeliveryType>(
-        icon: Icon(
-          Icons.keyboard_arrow_down_rounded,
-          color: Theme.of(context).colorScheme.outline,
+    return Consumer<ProfileProvider>(
+        builder: (BuildContext context, ProfileProvider pro, Widget? child) {
+      return ListTile(
+        title: Text(
+          'delivery_type'.tr(),
+          style: Theme.of(context).textTheme.titleMedium,
         ),
-        value: selectedType,
-        isExpanded: true,
-        hint: Text(
-          'select_delivery_type'.tr(),
-          style: Theme.of(context)
-              .textTheme
-              .bodyMedium
-              ?.copyWith(color: Theme.of(context).colorScheme.outline),
+        subtitle: DropdownButtonFormField<DeliveryType>(
+          icon: Icon(
+            Icons.keyboard_arrow_down_rounded,
+            color: Theme.of(context).colorScheme.outline,
+          ),
+          value: isStore
+              ? pro.storeSelectedDeliveryType
+              : pro.viewingSelectedDeliveryType,
+          isExpanded: true,
+          hint: Text(
+            'select_delivery_type'.tr(),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(color: Theme.of(context).colorScheme.outline),
+          ),
+          decoration: const InputDecoration(
+            isDense: true,
+            border: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            contentPadding: EdgeInsets.zero,
+          ),
+          items: DeliveryType.values.map((DeliveryType type) {
+            return DropdownMenuItem<DeliveryType>(
+              value: type,
+              child: Text(
+                type.code.tr(),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(color: Theme.of(context).colorScheme.onSurface),
+              ),
+            );
+          }).toList(),
+          onChanged: (DeliveryType? newValue) {
+            if (isStore) {
+              pro.setStoreDeliveryType(newValue);
+            } else {
+              pro.setViewingDeliveryType(newValue);
+            }
+          },
         ),
-        decoration: const InputDecoration(
-          isDense: true,
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          contentPadding: EdgeInsets.zero,
-        ),
-        items: DeliveryType.values.map((DeliveryType type) {
-          return DropdownMenuItem<DeliveryType>(
-            value: type,
-            child: Text(
-              type.code.tr(),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface),
-            ),
-          );
-        }).toList(),
-        onChanged: (DeliveryType? newValue) {
-          if (isStore) {
-            pro.setStoreDeliveryType(newValue);
-          } else {
-            pro.setViewingDeliveryType(newValue);
-          }
-        },
-      ),
-    );
+      );
+    });
   }
 }
 
@@ -356,9 +354,9 @@ class StoreFilterSheetHeaderSection extends StatelessWidget {
           TextButton(
             onPressed: () {
               if (isStore) {
-                pro.storefilterSheetApplyButton();
+                pro.storefilterSheetResetButton();
               } else {
-                pro.viewingfilterSheetApplyButton();
+                pro.viewingfilterSheetResetButton();
               }
             },
             child: Text(
