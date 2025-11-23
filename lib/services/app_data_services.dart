@@ -24,9 +24,9 @@ class AppDataService extends WidgetsBindingObserver {
   Timer? _refreshTimer;
 
   void startTokenRefreshScheduler() {
-    // Start periodic refresh every 10 minutes
+    // Start periodic refresh every 5 minutes
     _refreshTimer?.cancel();
-    _refreshTimer = Timer.periodic(const Duration(minutes: 10), (_) async {
+    _refreshTimer = Timer.periodic(const Duration(minutes: 5), (_) async {
       await ensureTokenRefreshed();
     });
     // Listen for app lifecycle changes
@@ -40,8 +40,7 @@ class AppDataService extends WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed ||
-        state == AppLifecycleState.paused) {
+    if (state == AppLifecycleState.resumed) {
       ensureTokenRefreshed();
     }
   }
