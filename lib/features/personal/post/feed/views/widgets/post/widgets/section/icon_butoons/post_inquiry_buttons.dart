@@ -191,7 +191,7 @@ class _PostInquiryDialogState extends State<_PostInquiryDialog> {
   @override
   Widget build(BuildContext context) {
     final double dialogMaxWidth =
-        MediaQuery.of(context).size.width * 0.9; // responsive
+        MediaQuery.of(context).size.width * 0.9; 
 
     debugPrint('_PostInquiryDialog build for post: \\${widget.post.postID}');
     return AlertDialog(

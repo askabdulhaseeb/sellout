@@ -140,12 +140,12 @@ class PostGridViewTileBasketButton extends StatelessWidget {
                   post: post, actionType: PostTileClothFootType.add);
             },
           );
-        } else {
+        } else { 
           final AddToCartUsecase usecase = AddToCartUsecase(locator());
           final DataState<bool> result = await usecase(
             AddToCartParam(post: post, quantity: 1),
           );
-          if (result is DataSuccess) {
+          if (result is DataSuccess && context.mounted) {
             AppSnackBar.success(
               context,
               'successfull_add_to_basket'.tr(),
