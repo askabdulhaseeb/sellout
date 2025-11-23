@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
-import '../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../dashboard/views/screens/dashboard_screen.dart';
 import '../../../signup/views/screens/signup_screen.dart';

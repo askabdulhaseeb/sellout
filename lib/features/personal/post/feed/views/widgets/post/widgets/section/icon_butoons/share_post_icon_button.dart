@@ -2,7 +2,7 @@ import '../../../../../../../../../../core/widgets/empty_page_widget.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../../../core/utilities/app_string.dart';
-import '../../../../../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../../../../../../../../../core/widgets/custom_textformfield.dart';

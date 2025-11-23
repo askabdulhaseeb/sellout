@@ -6,7 +6,7 @@ import '../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../core/sources/data_state.dart';
-import '../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../core/widgets/app_snackbar.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../listing/listing_form/data/models/sub_category_model.dart';
 import '../../../location/domain/entities/location_entity.dart';

@@ -5,7 +5,7 @@ import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../../../core/extension/string_ext.dart';
 import '../../../../../../../core/helper_functions/country_helper.dart';
-import '../../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../core/widgets/custom_switch_list_tile.dart';
 import '../../../../../../../routes/app_linking.dart';

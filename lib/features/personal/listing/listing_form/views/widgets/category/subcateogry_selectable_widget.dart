@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/enums/listing/core/listing_type.dart';
-import '../../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../../core/widgets/app_snackbar.dart';
 import '../../../data/sources/local/local_categories.dart';
 import '../../../domain/entities/sub_category_entity.dart';
 import 'category_selection_bottom_sheet.dart';

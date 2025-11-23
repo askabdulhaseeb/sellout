@@ -98,9 +98,9 @@ class CurrentUserModel extends CurrentUserEntity {
       language: userData['language'] ?? 'en',
       address: addressList,
       chatIDs: List<String>.from(
-          (userData['chat_ids'] ?? <dynamic>[]).map((e) => e.toString())),
+          (userData['chat_ids'] ?? <dynamic>[]).map((dynamic e) => e.toString())),
       businessIDs: List<String>.from(
-          (userData['business_ids'] ?? <dynamic>[]).map((e) => e.toString())),
+          (userData['business_ids'] ?? <dynamic>[]).map((dynamic e) => e.toString())),
       imageVerified: userData['image_verified'] ?? false,
       verificationImage: userData['verification_pic'] != null
           ? AttachmentModel.fromJson(userData['verification_pic'])

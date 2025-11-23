@@ -6,7 +6,7 @@ import '../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/utilities/app_string.dart';
-import '../../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../core/widgets/rating_display_widget.dart';

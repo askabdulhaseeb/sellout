@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/sources/data_state.dart';
-import '../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../data/models/cart/add_shipping_response_model.dart';

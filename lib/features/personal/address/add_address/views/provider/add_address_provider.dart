@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../../core/sources/data_state.dart';
-import '../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/country_entity.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/phone_number_entity.dart';
 import '../../../../auth/signin/domain/entities/address_entity.dart';

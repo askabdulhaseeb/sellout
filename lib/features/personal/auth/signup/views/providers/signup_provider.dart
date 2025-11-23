@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
-import '../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/phone_number_entity.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';

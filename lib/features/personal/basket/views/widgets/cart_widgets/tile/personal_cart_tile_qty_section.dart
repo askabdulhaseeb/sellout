@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../../../../core/extension/int_ext.dart';
 import '../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../../core/widgets/app_snackbar.dart';
 
 import '../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../data/sources/local/local_cart.dart';

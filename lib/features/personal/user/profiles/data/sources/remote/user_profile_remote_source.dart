@@ -122,19 +122,94 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
         requestType: ApiRequestType.patch,
         body: json.encode(params.toMap()),
       );
-      AppLog.info(params.toMap().toString(),
-          name: 'user\'s attributes to be updated');
+
       if (result is DataSuccess<String>) {
+        AppLog.info(result.data ?? '',
+            name: 'UserProfileRemoteSourceImpl.updatePRofileDetail - success');
+
+        // Parse updatedAttributes from API response and update LocalAuth.currentUser
+        final String? raw = result.data;
+        String? newDisplayName;
+        String? newBio;
+        try {
+          if (raw != null && raw.isNotEmpty) {
+            final Map<String, dynamic> decoded = jsonDecode(raw);
+            if (decoded.containsKey('updatedAttributes')) {
+              final attrs = decoded['updatedAttributes'] as Map<String, dynamic>;
+              newDisplayName = attrs['display_name'] as String?;
+              newBio = attrs['bio'] as String?;
+            }
+          }
+        } catch (_) {}
+
+        final CurrentUserEntity? current = LocalAuth.currentUser;
+        if (current != null && (newDisplayName != null || newBio != null)) {
+          final CurrentUserEntity updated = current.copyWith(
+            displayName: newDisplayName ?? current.displayName,
+            // bio is not in copyWith, so set below
+          );
+          // If bio is not in copyWith, create a new instance with updated bio
+          final CurrentUserEntity updatedWithBio = newBio != null
+              ? CurrentUserEntity(
+                  // ...existing code...
+                  message: updated.message,
+                  token: updated.token,
+                  refreshToken: updated.refreshToken,
+                  userID: updated.userID,
+                  email: updated.email,
+                  userName: updated.userName,
+                  displayName: updated.displayName,
+                  bio: newBio,
+                  currency: updated.currency,
+                  privacy: updated.privacy,
+                  countryAlpha3: updated.countryAlpha3,
+                  countryCode: updated.countryCode,
+                  phoneNumber: updated.phoneNumber,
+                  language: updated.language,
+                  address: updated.address,
+                  chatIDs: updated.chatIDs,
+                  businessIDs: updated.businessIDs,
+                  imageVerified: updated.imageVerified,
+                  otpVerified: updated.otpVerified,
+                  verificationImage: updated.verificationImage,
+                  lastLoginTime: updated.lastLoginTime,
+                  createdAt: updated.createdAt,
+                  updatedAt: updated.updatedAt,
+                  inHiveAt: updated.inHiveAt,
+                  businessStatus: updated.businessStatus,
+                  businessName: updated.businessName,
+                  businessID: updated.businessID,
+                  logindetail: updated.logindetail,
+                  loginActivity: updated.loginActivity,
+                  employeeList: updated.employeeList,
+                  notification: updated.notification,
+                  twoStepAuthEnabled: updated.twoStepAuthEnabled,
+                  supporters: updated.supporters,
+                  supporting: updated.supporting,
+                  privacySettings: updated.privacySettings,
+                  timeAway: updated.timeAway,
+                  accountStatus: updated.accountStatus,
+                  accountType: updated.accountType,
+                  dob: updated.dob,
+                  saved: updated.saved,
+                  listOfReviews: updated.listOfReviews,
+                  profileImage: updated.profileImage,
+                  location: updated.location,
+                )
+              : updated;
+          await LocalAuth().signin(updatedWithBio);
+        }
+
         return DataSuccess<String>(result.data ?? '', result.data);
       } else {
         AppLog.error(result.exception!.message,
-            name: 'UserRepositoryImpl.updateProfileDetail: else');
+            name: 'UserProfileRemoteSourceImpl.updateRofileDetail: else');
         return DataFailer<String>(
             CustomException(result.exception?.message ?? 'something_wrong'));
       }
     } catch (e) {
       AppLog.error(e.toString(),
-          name: 'UserRepositoryImpl.updateProfileDetail: catch');
+          name: 'UserProfileRemoteSourceImpl.updateProfileDetail: catch');
       return DataFailer<String>(CustomException('something_wrong'));
     }
   }
