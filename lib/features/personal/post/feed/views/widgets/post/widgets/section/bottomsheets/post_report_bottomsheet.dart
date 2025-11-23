@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../../../../../../core/params/report_params.dart';
 import '../../../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../../../core/utilities/app_validators.dart';
-import '../../../../../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../../../../../core/widgets/empty_page_widget.dart';

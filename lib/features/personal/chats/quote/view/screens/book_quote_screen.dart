@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../core/widgets/calender/create_booking_widgets/widgets/create_booking_calender.dart';
 import '../../../../../../core/widgets/calender/create_booking_widgets/widgets/create_booking_slots_with_slot_entity.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';

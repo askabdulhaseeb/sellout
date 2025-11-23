@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/usecase/usecase.dart';
 import '../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/profile_photo.dart';
@@ -96,11 +95,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 width: double.infinity,
                 child: CustomElevatedButton(
                     onTap: () {
-                      final Future<void> result =
-                          pro.updateProfileDetail(context);
-                      if (result is DataSuccess) {
-                        Navigator.pop(context);
-                      }
+                      pro.updateProfileDetail(context);
+                      Navigator.pop(context);
                     },
                     isLoading: false,
                     title: 'save_changes'.tr()),

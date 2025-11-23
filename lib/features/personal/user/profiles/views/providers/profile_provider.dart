@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/enums/core/status_type.dart';
+import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
@@ -119,7 +120,8 @@ class ProfileProvider extends ChangeNotifier {
   //---------------------------------------------------------------------------------text controllers
   TextEditingController namecontroller =
       TextEditingController(text: LocalAuth.currentUser?.displayName);
-  TextEditingController biocontroller = TextEditingController();
+  TextEditingController biocontroller =
+      TextEditingController(text: LocalAuth.currentUser?.bio);
   TextEditingController storeQueryController = TextEditingController();
   TextEditingController viewingQueryController = TextEditingController();
 
@@ -297,21 +299,14 @@ class ProfileProvider extends ChangeNotifier {
           await _updateProfilePictureUsecase.call(pickedAttachment.single);
       if (result is DataSuccess) {
         setProfilePhoto();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(
-            'profile_picture_updated_successfully'.tr(),
-          )),
-        );
+        AppSnackBar.success(
+            context, 'profile_picture_updated_successfully'.tr());
         notifyListeners();
         setLoading(false);
       } else {
         AppLog.error(result.exception!.message,
             name: 'ProfileProvider.updateProfilePicture - else');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('something_wrong'.tr())),
-        );
-
+        AppSnackBar.error(context, 'something_wrong'.tr());
         setLoading(false);
       }
     }
@@ -328,13 +323,15 @@ class ProfileProvider extends ChangeNotifier {
     if (result is DataSuccess) {
       AppLog.info('profile_updated_successfully'.tr());
       setLoading(false);
-      Navigator.pop(context);
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
     } else {
       AppLog.error(result.exception!.message,
           name: 'ProfileProvider.updateProfileDetail - else');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('something_wrong'.tr())),
-      );
+      if (context.mounted) {
+        AppSnackBar.error(context, 'something_wrong'.tr());
+      }
       setLoading(false);
     }
   }

@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../../../core/utilities/app_string.dart';
-import '../../../../../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../../../../../../../../../core/widgets/shadow_container.dart';
@@ -131,14 +131,23 @@ class _PostInquiryDialogState extends State<_PostInquiryDialog> {
     return '';
   }
 
-  Future<void> _sendInquiry(BuildContext context) async {
+  Future<void> _sendInquiry(BuildContext contexts) async {
     final String text = inquiryText;
+
+    // Use the dialog context if possible, else close dialog before showing snackbar
+    void showErrorSnackBar(String message) {
+      if (context.mounted) {
+        Navigator.of(context).pop();
+        // After popping, use the parent context for snackbar
+        AppSnackBar.error(contexts, message);
+      } else if (contexts.mounted) {
+        AppSnackBar.error(contexts, message);
+      }
+    }
 
     if (text.isEmpty) {
       debugPrint('SendInquiry: Text is empty, aborting.');
-      if (context.mounted) {
-        AppSnackBar.showSnackBar(context, 'somthing_wrong'.tr());
-      }
+      showErrorSnackBar('somthing_wrong'.tr());
       return;
     }
 
@@ -161,22 +170,18 @@ class _PostInquiryDialogState extends State<_PostInquiryDialog> {
             Provider.of<ChatProvider>(context, listen: false)
                 .openChat(context, chatEntity);
           } else {
-            AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
+            showErrorSnackBar('something_wrong'.tr());
           }
         }
       } else {
         debugPrint(
             'SendInquiry: Inquiry result.entity is null for post: \\${widget.post.postID}');
-        if (context.mounted) {
-          AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
-        }
+        showErrorSnackBar('something_wrong'.tr());
       }
     } catch (_) {
       debugPrint(
           'SendInquiry: Error sending inquiry for post: \\${widget.post.postID}');
-      if (context.mounted) {
-        AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
-      }
+      showErrorSnackBar('something_wrong'.tr());
     } finally {
       debugPrint('SendInquiry: Setting loading to false');
       if (mounted) setState(() => _isLoading = false);

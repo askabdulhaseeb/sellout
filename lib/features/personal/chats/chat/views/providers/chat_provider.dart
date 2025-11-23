@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
-import '../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../listing/listing_form/views/widgets/attachment_selection/cept_group_invite_usecase.dart';
 import '../../../chat_dashboard/data/sources/local/local_chat.dart';

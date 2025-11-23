@@ -26,22 +26,15 @@ class ProfileScreen extends StatelessWidget {
           }
 
           final UserEntity? user = snapshot.data?.entity;
-          return RefreshIndicator(
-            onRefresh: () async {
-              await Provider.of<ProfileProvider>(context, listen: false)
-                  .getUserByUid();
-              // Optionally, you can use setState in a StatefulWidget to trigger a rebuild if needed
-            },
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: Column(
-                children: <Widget>[
-                  const ProfileHeaderSection(),
-                  ProfileScoreSection(user: user),
-                  ProfileGridTypeSelectionSection(user: user),
-                  ProfileGridSection(user: user),
-                ],
-              ),
+          return SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              children: <Widget>[
+                const ProfileHeaderSection(),
+                ProfileScoreSection(user: user),
+                ProfileGridTypeSelectionSection(user: user),
+                ProfileGridSection(user: user),
+              ],
             ),
           );
         },

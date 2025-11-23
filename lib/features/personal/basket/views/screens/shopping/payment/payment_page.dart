@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../domain/enums/cart_type.dart';
 import '../../../providers/cart_provider.dart';
 
