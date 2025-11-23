@@ -70,7 +70,7 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
             name: 'post_add_to_basket_button.dart',
             error: result.exception,
           );
-          if (mounted) {
+          if (context.mounted) {
             AppSnackBar.showSnackBar(
               context,
               result.exception?.detail ?? 'something_wrong'.tr(),

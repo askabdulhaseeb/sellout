@@ -13,52 +13,61 @@ class StoreFilterBottomSheet extends StatelessWidget {
   final bool isStore;
   @override
   Widget build(BuildContext context) {
-    return BottomSheet(
-      showDragHandle: false,
-      enableDrag: false,
-      onClosing: () {},
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return Container(
-          height: 500,
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          child: Column(
-            children: <Widget>[
-              StoreFilterSheetHeaderSection(
-                isStore: isStore,
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    spacing: 8,
-                    children: <Widget>[
-                      StoreFilterSheetCustomerReviewTile(
-                        isStore: isStore,
-                      ),
-                      ExpandablePriceRangeTile(
-                        isStore: isStore,
-                      ),
-                      StoreFilterSheetConditionTile(
-                        isStore: isStore,
-                      ),
-                      StoreFilterSheetDeliveryTypeTile(
-                        isStore: isStore,
-                      ),
-                    ],
+    return Consumer<ProfileProvider>(
+      builder: (context, pro, _) => BottomSheet(
+        showDragHandle: false,
+        enableDrag: false,
+        onClosing: () {},
+        backgroundColor: Colors.transparent,
+        builder: (BuildContext context) {
+          return Container(
+            height: 500,
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            child: Column(
+              children: <Widget>[
+                StoreFilterSheetHeaderSection(
+                  isStore: isStore,
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      spacing: 8,
+                      children: <Widget>[
+                        StoreFilterSheetCustomerReviewTile(
+                          isStore: isStore,
+                        ),
+                        ExpandablePriceRangeTile(
+                          isStore: isStore,
+                        ),
+                        Consumer<ProfileProvider>(
+                          builder: (context, pro, _) => StoreFilterSheetConditionTile(
+                            isStore: isStore,
+                            pro: pro,
+                          ),
+                        ),
+                        Consumer<ProfileProvider>(
+                          builder: (context, pro, _) => StoreFilterSheetDeliveryTypeTile(
+                            isStore: isStore,
+                            pro: pro,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              StoreFilterSheetApplyButton(
-                isStore: isStore,
-              )
-            ],
-          ),
-        );
-      },
+                StoreFilterSheetApplyButton(
+                  isStore: isStore,
+                )
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }
@@ -132,133 +141,132 @@ class _ExpandablePriceRangeTileState extends State<ExpandablePriceRangeTile> {
 
   @override
   Widget build(BuildContext context) {
-    final ProfileProvider marketPro =
-        Provider.of<ProfileProvider>(context, listen: false);
+    return Consumer<ProfileProvider>(
+      builder: (context, marketPro, _) {
+        final TextEditingController minPriceController = widget.isStore
+            ? marketPro.storeMinPriceController
+            : marketPro.viewingMinPriceController;
 
-    final TextEditingController minPriceController = widget.isStore
-        ? marketPro.storeMinPriceController
-        : marketPro.viewingMinPriceController;
+        final TextEditingController maxPriceController = widget.isStore
+            ? marketPro.storeMaxPriceController
+            : marketPro.viewingMaxPriceController;
 
-    final TextEditingController maxPriceController = widget.isStore
-        ? marketPro.storeMaxPriceController
-        : marketPro.viewingMaxPriceController;
-
-    return Column(
-      children: <Widget>[
-        ListTile(
-          onTap: () {
-            setState(() {
-              _isExpanded = !_isExpanded;
-            });
-          },
-          title: Text(
-            'price'.tr(),
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          subtitle: Text(
-            !_isExpanded ? 'select_price_range'.tr() : '',
-            style: Theme.of(context)
-                .textTheme
-                .bodyMedium
-                ?.copyWith(color: Theme.of(context).colorScheme.outline),
-          ),
-          trailing: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Icon(
-                _isExpanded
-                    ? Icons.keyboard_arrow_up_rounded
-                    : Icons.keyboard_arrow_down_rounded,
+        return Column(
+          children: <Widget>[
+            ListTile(
+              onTap: () {
+                setState(() {
+                  _isExpanded = !_isExpanded;
+                });
+              },
+              title: Text(
+                'price'.tr(),
+                style: Theme.of(context).textTheme.titleMedium,
               ),
-            ],
-          ),
-        ),
-        if (_isExpanded)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: CustomTextFormField(
-                    controller: minPriceController,
-                    keyboardType: TextInputType.number,
-                    labelText: 'min_price'.tr(),
+              subtitle: Text(
+                !_isExpanded ? 'select_price_range'.tr() : '',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(color: Theme.of(context).colorScheme.outline),
+              ),
+              trailing: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Icon(
+                    _isExpanded
+                        ? Icons.keyboard_arrow_up_rounded
+                        : Icons.keyboard_arrow_down_rounded,
+                    color: Theme.of(context).colorScheme.outline,
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: CustomTextFormField(
-                    controller: maxPriceController,
-                    keyboardType: TextInputType.number,
-                    labelText: 'max_price'.tr(),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        if (_isExpanded) const SizedBox(height: 16),
-      ],
+            if (_isExpanded)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: CustomTextFormField(
+                        controller: minPriceController,
+                        keyboardType: TextInputType.number,
+                        labelText: 'min_price'.tr(),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: CustomTextFormField(
+                        controller: maxPriceController,
+                        keyboardType: TextInputType.number,
+                        labelText: 'max_price'.tr(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            if (_isExpanded) const SizedBox(height: 16),
+          ],
+        );
+      },
     );
   }
 }
 
 class StoreFilterSheetConditionTile extends StatelessWidget {
   final bool isStore;
-  const StoreFilterSheetConditionTile({required this.isStore, super.key});
+  final ProfileProvider pro;
+  const StoreFilterSheetConditionTile({required this.isStore, required this.pro, super.key});
 
   @override
   Widget build(BuildContext context) {
+    final ConditionType? selectedType = isStore
+        ? pro.storeSelectedConditionType
+        : pro.viewingSelectedConditionType;
+
     return ListTile(
       title: Text(
         'condition'.tr(),
         style: Theme.of(context).textTheme.titleMedium,
       ),
-      subtitle: Consumer<ProfileProvider>(
-        builder: (BuildContext context, ProfileProvider pro, _) {
-          final ConditionType? selectedType = isStore
-              ? pro.storeSelectedConditionType
-              : pro.viewingSelectedConditionType;
-
-          return DropdownButtonFormField<ConditionType>(
-            icon: Icon(
-              Icons.keyboard_arrow_down_rounded,
-              color: Theme.of(context).colorScheme.outline,
+      subtitle: DropdownButtonFormField<ConditionType>(
+        icon: Icon(
+          Icons.keyboard_arrow_down_rounded,
+          color: Theme.of(context).colorScheme.outline,
+        ),
+        value: selectedType,
+        isExpanded: true,
+        dropdownColor: Theme.of(context).cardColor,
+        decoration: const InputDecoration(
+          border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          isDense: true,
+          contentPadding: EdgeInsets.zero,
+        ),
+        hint: Text(
+          'select_condition'.tr(),
+          style: Theme.of(context)
+              .textTheme
+              .bodyMedium
+              ?.copyWith(color: Theme.of(context).colorScheme.outline),
+        ),
+        items: ConditionType.values.map((ConditionType type) {
+          return DropdownMenuItem<ConditionType>(
+            value: type,
+            child: Text(
+              type.code.tr(),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface),
             ),
-            value: selectedType,
-            isExpanded: true,
-            dropdownColor: Theme.of(context).cardColor,
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              isDense: true,
-              contentPadding: EdgeInsets.zero,
-            ),
-            hint: Text(
-              'select_condition'.tr(),
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: Theme.of(context).colorScheme.outline),
-            ),
-            items: ConditionType.values.map((ConditionType type) {
-              return DropdownMenuItem<ConditionType>(
-                value: type,
-                child: Text(
-                  type.code.tr(),
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface),
-                ),
-              );
-            }).toList(),
-            onChanged: (ConditionType? newValue) {
-              if (isStore) {
-                pro.setStoreConditionType(newValue);
-              } else {
-                pro.setViewingConditionType(newValue);
-              }
-            },
           );
+        }).toList(),
+        onChanged: (ConditionType? newValue) {
+          if (isStore) {
+            pro.setStoreConditionType(newValue);
+          } else {
+            pro.setViewingConditionType(newValue);
+          }
         },
       ),
     );
@@ -266,61 +274,58 @@ class StoreFilterSheetConditionTile extends StatelessWidget {
 }
 
 class StoreFilterSheetDeliveryTypeTile extends StatelessWidget {
-  const StoreFilterSheetDeliveryTypeTile({required this.isStore, super.key});
   final bool isStore;
+  final ProfileProvider pro;
+  const StoreFilterSheetDeliveryTypeTile({required this.isStore, required this.pro, super.key});
 
   @override
   Widget build(BuildContext context) {
+    final DeliveryType? selectedType = isStore
+        ? pro.storeSelectedDeliveryType
+        : pro.viewingSelectedDeliveryType;
+
     return ListTile(
       title: Text(
         'delivery_type'.tr(),
         style: Theme.of(context).textTheme.titleMedium,
       ),
-      subtitle: Consumer<ProfileProvider>(
-        builder: (BuildContext context, ProfileProvider pro, _) {
-          final DeliveryType? selectedType = isStore
-              ? pro.storeSelectedDeliveryType
-              : pro.viewingSelectedDeliveryType;
-
-          return DropdownButtonFormField<DeliveryType>(
-            icon: Icon(
-              Icons.keyboard_arrow_down_rounded,
-              color: Theme.of(context).colorScheme.outline,
+      subtitle: DropdownButtonFormField<DeliveryType>(
+        icon: Icon(
+          Icons.keyboard_arrow_down_rounded,
+          color: Theme.of(context).colorScheme.outline,
+        ),
+        value: selectedType,
+        isExpanded: true,
+        hint: Text(
+          'select_delivery_type'.tr(),
+          style: Theme.of(context)
+              .textTheme
+              .bodyMedium
+              ?.copyWith(color: Theme.of(context).colorScheme.outline),
+        ),
+        decoration: const InputDecoration(
+          isDense: true,
+          border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          contentPadding: EdgeInsets.zero,
+        ),
+        items: DeliveryType.values.map((DeliveryType type) {
+          return DropdownMenuItem<DeliveryType>(
+            value: type,
+            child: Text(
+              type.code.tr(),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface),
             ),
-            value: selectedType,
-            isExpanded: true,
-            hint: Text(
-              'select_delivery_type'.tr(),
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: Theme.of(context).colorScheme.outline),
-            ),
-            decoration: const InputDecoration(
-              isDense: true,
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              contentPadding: EdgeInsets.zero,
-            ),
-            items: DeliveryType.values.map((DeliveryType type) {
-              return DropdownMenuItem<DeliveryType>(
-                value: type,
-                child: Text(
-                  type.code.tr(),
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface),
-                ),
-              );
-            }).toList(),
-            onChanged: (DeliveryType? newValue) {
-              if (isStore) {
-                pro.setStoreDeliveryType(newValue);
-              } else {
-                pro.setViewingDeliveryType(newValue);
-              }
-            },
           );
+        }).toList(),
+        onChanged: (DeliveryType? newValue) {
+          if (isStore) {
+            pro.setStoreDeliveryType(newValue);
+          } else {
+            pro.setViewingDeliveryType(newValue);
+          }
         },
       ),
     );

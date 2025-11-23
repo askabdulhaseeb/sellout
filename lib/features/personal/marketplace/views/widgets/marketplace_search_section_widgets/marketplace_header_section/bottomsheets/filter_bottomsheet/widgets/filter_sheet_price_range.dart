@@ -44,6 +44,7 @@ class _ExpandablePriceRangeTileState extends State<ExpandablePriceRangeTile> {
                 _isExpanded
                     ? Icons.keyboard_arrow_up_rounded
                     : Icons.keyboard_arrow_down_rounded,
+                color: Theme.of(context).colorScheme.outline,
               ),
             ],
           ),
