@@ -58,7 +58,18 @@ class SettingSecurityScreen extends StatelessWidget {
             title: 'two_step_verification'.tr(),
             subtitle: 'verify_with_4_digit_code'.tr(),
             onTap: () {
-              const TwoFactorAuthBottomSheet();
+              showModalBottomSheet(
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                  useSafeArea: true,
+                  isDismissible: false,
+                  enableDrag: false,
+                  isScrollControlled: true,
+                  context: context,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(16)),
+                  ),
+                  builder: (_) => const TwoFactorAuthBottomSheet());
             },
           ),
           const Divider(),

@@ -178,9 +178,9 @@ class AppSnackBar {
                                   opacity: contentProgress,
                                   duration: const Duration(milliseconds: 400),
                                   child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
                                       Text(
                                         message,
@@ -188,16 +188,15 @@ class AppSnackBar {
                                             ?.copyWith(
                                           color: textColor,
                                           fontWeight: FontWeight.w400,
-                                          fontSize: 15,
+                                          fontSize: 10,
                                         ),
-                                        maxLines: 2,
+                                        maxLines: 5,
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ],
                                   ),
                                 ),
                               ),
-
                               // Close Button
                               if (dismissible)
                                 GestureDetector(
