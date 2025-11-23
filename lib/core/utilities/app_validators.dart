@@ -7,7 +7,7 @@ class AppValidator {
     if (!RegExp(
             r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
         .hasMatch(value ?? '')) {
-      return 'Email is Invalid';
+      return 'invalid_value'.tr(args: ['email']);
     }
     return null;
   }
@@ -16,20 +16,20 @@ class AppValidator {
     final String input = value?.trim() ?? '';
 
     if (input.isEmpty) {
-      return 'Password cannot be empty';
+      return 'password_empty'.tr();
     }
 
     if (input.length < 6) {
-      return 'Password should be at least 6 characters long';
+      return 'six_characters_atleast'.tr();
     }
 
     final bool hasLetter = RegExp(r'[A-Za-z]').hasMatch(input);
     final bool hasDigit = RegExp(r'\d').hasMatch(input);
-    final bool hasSymbol =
-        RegExp(r'[!@#\$%^&*(),.?":{}|<>_\-\\/\[\]=+;~`]').hasMatch(input);
+    // Require at least one special character (not letter or digit)
+    final bool hasSpecial = RegExp(r'[^A-Za-z0-9]').hasMatch(input);
 
-    if (!hasLetter || !hasDigit || !hasSymbol) {
-      return 'Use a combination of letters, digits, and symbols for a strong password';
+    if (!hasLetter || !hasDigit || !hasSpecial) {
+      return 'letter_digit_combination'.tr();
     }
 
     return null;
@@ -44,26 +44,26 @@ class AppValidator {
 
   static String? lessThenDigits(String? value, int digits) {
     return ((value?.length ?? 0) < digits)
-        ? 'Enter more then $digits characters'
+        ? 'enter_more_than_characters'.tr(args: [digits.toString()])
         : null;
   }
 
   static String? greaterThen(String? input, double compairWith) {
     return ((double.tryParse(input ?? '0') ?? 0.0) > compairWith)
         ? null
-        : 'New input must be greater then $compairWith';
+        : 'greater_than'.tr(args: [compairWith.toString()]);
   }
 
   static String? lessThen(String? input, double compairWith) {
     return ((double.tryParse(input ?? '0') ?? (compairWith + 1)) < compairWith)
         ? null
-        : 'New input must be Less then $compairWith';
+        : 'less_than'.tr(args: [compairWith.toString()]);
   }
 
   static String? confirmPassword(String first, String second) {
     return first.trim() == second.trim() && first.isNotEmpty
         ? null
-        : 'Password & Confirm Password must be same';
+        : 'passwords_must_match'.tr();
   }
 
   static String? customRegExp(String formate, String? value,
