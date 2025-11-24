@@ -90,17 +90,19 @@ class CurrentUserModel extends CurrentUserEntity {
       currency: userData['currency'] ?? 'gbp',
       accountStatus: userData['account_status'] ?? '',
       listOfReviews:
-          List<double>.from(userData['list_of_reviews'] ?? <dynamic>[]),
+          (userData['list_of_reviews'] as List<dynamic>? ?? <dynamic>[])
+              .map((e) => (e is int) ? e.toDouble() : (e is double ? e : 0.0))
+              .toList(),
       privacy: PrivacyType.fromJson(userData['profile_type'] ?? 'public'),
       countryAlpha3: userData['country_alpha_3'] ?? '',
       countryCode: userData['country_code'] ?? '',
       phoneNumber: userData['phone_number'] ?? '',
       language: userData['language'] ?? 'en',
       address: addressList,
-      chatIDs: List<String>.from(
-          (userData['chat_ids'] ?? <dynamic>[]).map((dynamic e) => e.toString())),
-      businessIDs: List<String>.from(
-          (userData['business_ids'] ?? <dynamic>[]).map((dynamic e) => e.toString())),
+      chatIDs: List<String>.from((userData['chat_ids'] ?? <dynamic>[])
+          .map((dynamic e) => e.toString())),
+      businessIDs: List<String>.from((userData['business_ids'] ?? <dynamic>[])
+          .map((dynamic e) => e.toString())),
       imageVerified: userData['image_verified'] ?? false,
       verificationImage: userData['verification_pic'] != null
           ? AttachmentModel.fromJson(userData['verification_pic'])

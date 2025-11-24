@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../functions/app_log.dart';
 
 class AppValidator {
+
   static String? email(String? value) {
     if (!RegExp(
             r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
@@ -23,12 +24,12 @@ class AppValidator {
       return 'six_characters_atleast'.tr();
     }
 
-    final bool hasLetter = RegExp(r'[A-Za-z]').hasMatch(input);
+    final bool hasUppercase = RegExp(r'[A-Z]').hasMatch(input);
+    final bool hasLowercase = RegExp(r'[a-z]').hasMatch(input);
     final bool hasDigit = RegExp(r'\d').hasMatch(input);
-    // Require at least one special character (not letter or digit)
-    final bool hasSpecial = RegExp(r'[^A-Za-z0-9]').hasMatch(input);
+    final bool hasSpecial = RegExp(r'[@$!%*?&]').hasMatch(input);
 
-    if (!hasLetter || !hasDigit || !hasSpecial) {
+    if (!hasUppercase || !hasLowercase || !hasDigit || !hasSpecial) {
       return 'letter_digit_combination'.tr();
     }
 
@@ -40,12 +41,6 @@ class AppValidator {
       return 'field_left_empty'.tr();
     }
     return null;
-  }
-
-  static String? lessThenDigits(String? value, int digits) {
-    return ((value?.length ?? 0) < digits)
-        ? 'enter_more_than_characters'.tr(args: [digits.toString()])
-        : null;
   }
 
   static String? greaterThen(String? input, double compairWith) {
@@ -108,4 +103,5 @@ class AppValidator {
   }
 
   static String? retaunNull(String? value) => null;
+
 }

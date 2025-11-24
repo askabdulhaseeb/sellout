@@ -117,14 +117,16 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      String newText = '';
-      if (selectedItem != null) {
-        newText = widget.searchBy?.call(selectedItem) ??
-            (selectedItem.child is Text
-                ? (selectedItem.child as Text).data ?? ''
-                : selectedItem.value.toString());
+      if (selectedItem != null && selectedItem.child is Text) {
+        final String newText = (selectedItem.child as Text).data ?? '';
+        _selectedDisplayText = newText;
+        _controller.text = newText;
+      } else {
+        _selectedDisplayText = '';
+        if (_controller.text.isNotEmpty) {
+          _controller.text = '';
+        }
       }
-      _selectedDisplayText = newText;
       _syncControllerText();
     });
   }
@@ -135,6 +137,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
 
     if (hasCustomDisplay) {
       if (_focusNode.hasFocus) {
+        // When focused, show the selected display text (if any)
         final String next = _selectedDisplayText;
         if (_controller.text != next) {
           _controller.text = next;
@@ -146,12 +149,13 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
           );
         }
       } else {
-        // Only clear if selectedItem is null (reset case)
+        // When not focused, clear the controller if no selection
         if (_controller.text.isNotEmpty && widget.selectedItem == null) {
           _controller.text = '';
         }
       }
     } else {
+      // For plain dropdowns, always sync controller to selected display text
       final String next = _selectedDisplayText;
       if (_controller.text != next) {
         _controller.text = next;

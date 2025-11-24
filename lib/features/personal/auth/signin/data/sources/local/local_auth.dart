@@ -3,17 +3,59 @@ import 'package:hive/hive.dart';
 import 'package:latlong2/latlong.dart';
 import '../../../../../../../services/app_data_services.dart';
 import '../../../../../../attachment/domain/entities/attachment_entity.dart';
+import '../../../domain/entities/address_entity.dart';
 import '../../../domain/entities/current_user_entity.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 export '../../../domain/entities/current_user_entity.dart';
 
 class LocalAuth {
+  /// Notifies listeners when the address list changes.
+  static final ValueNotifier<List<AddressEntity>> addressListNotifier =
+      ValueNotifier<List<AddressEntity>>(_getCurrentAddresses());
+
+  static List<AddressEntity> _getCurrentAddresses() {
+    return currentUser?.address ?? <AddressEntity>[];
+  }
+
+  void _notifyAddressListChanged() {
+    addressListNotifier.value =
+        List<AddressEntity>.from(_getCurrentAddresses());
+  }
+
+  /// Updates or adds a single address in the current user's address list.
+  Future<void> updateOrAddAddress(AddressEntity address) async {
+    final CurrentUserEntity? existing = currentUser;
+    if (existing == null) return;
+    final List<AddressEntity> addresses =
+        List<AddressEntity>.from(existing.address);
+    final int index = addresses.indexWhere(
+        (a) => a.addressID == address.addressID && address.addressID != '');
+    if (index != -1) {
+      addresses[index] = address;
+    } else {
+      addresses.add(address);
+    }
+    final CurrentUserEntity updated = existing.copyWith(address: addresses);
+    await _box.put(boxTitle, updated);
+    _notifyAddressListChanged();
+  }
+
+  /// Updates the address list for the current user and saves it locally.
+  Future<void> updateAddress(List<AddressEntity> newAddresses) async {
+    final CurrentUserEntity? existing = currentUser;
+    if (existing == null) return;
+    final CurrentUserEntity updated = existing.copyWith(address: newAddresses);
+    await _box.put(boxTitle, updated);
+    _notifyAddressListChanged();
+  }
+
   /// Updates the profile picture for the current user and saves it locally.
   Future<void> updateProfilePicture(
       List<AttachmentEntity> newProfileImages) async {
     final CurrentUserEntity? existing = currentUser;
     if (existing == null) return;
-    final updated = existing.copyWith(profileImage: newProfileImages);
+    final CurrentUserEntity updated =
+        existing.copyWith(profileImage: newProfileImages);
     await _box.put(boxTitle, updated);
   }
 

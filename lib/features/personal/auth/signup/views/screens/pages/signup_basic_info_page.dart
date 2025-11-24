@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
@@ -40,7 +39,7 @@ class SignupBasicInfoPage extends StatelessWidget {
                     labelText: 'full_name'.tr(),
                     autofillHints: const <String>[AutofillHints.name],
                     validator: (String? value) =>
-                        AppValidator.lessThenDigits(value, 3),
+                        AppValidator.isEmpty(value),
                   ),
                   CustomTextFormField(
                     controller: pro.username,
@@ -50,7 +49,7 @@ class SignupBasicInfoPage extends StatelessWidget {
                     readOnly: pro.isLoading,
                     autofillHints: const <String>[AutofillHints.username],
                     validator: (String? value) =>
-                        AppValidator.lessThenDigits(value, 3),
+                        AppValidator.isEmpty(value),
                   ),
                   const SizedBox(height: 8),
                   PhoneNumberInputField(
