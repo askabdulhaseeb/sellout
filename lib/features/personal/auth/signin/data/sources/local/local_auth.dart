@@ -9,7 +9,6 @@ import '../../../../../../../core/utilities/app_string.dart';
 export '../../../domain/entities/current_user_entity.dart';
 
 class LocalAuth {
-  /// Notifies listeners when the address list changes.
   static final ValueNotifier<List<AddressEntity>> addressListNotifier =
       ValueNotifier<List<AddressEntity>>(_getCurrentAddresses());
 
@@ -22,7 +21,6 @@ class LocalAuth {
         List<AddressEntity>.from(_getCurrentAddresses());
   }
 
-  /// Updates or adds a single address in the current user's address list.
   Future<void> updateOrAddAddress(AddressEntity address) async {
     final CurrentUserEntity? existing = currentUser;
     if (existing == null) return;
@@ -84,7 +82,7 @@ class LocalAuth {
 
   static String? get token => currentUser?.token;
   static String? get uid => currentUser?.userID;
-  static String get currency => currentUser?.currency ?? 'gbp';
+  static String get currency => currentUser?.currency ?? 'GBP';
   static LatLng get latlng => LatLng(
       currentUser?.location?.latitude ?? 51.509865,
       currentUser?.location?.longitude ?? -0.118092);

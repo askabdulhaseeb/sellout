@@ -26,7 +26,7 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       displayName: fields[7] as String,
       bio: fields[8] as String,
       currency: fields[9] as String?,
-      privacy: fields[10] as PrivacyType,
+      privacyType: fields[10] as PrivacyType,
       countryAlpha3: fields[16] as String,
       countryCode: fields[17] as String,
       phoneNumber: fields[18] as String,
@@ -86,7 +86,7 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       ..writeByte(9)
       ..write(obj.currency)
       ..writeByte(10)
-      ..write(obj.privacy)
+      ..write(obj.privacyType)
       ..writeByte(16)
       ..write(obj.countryAlpha3)
       ..writeByte(17)

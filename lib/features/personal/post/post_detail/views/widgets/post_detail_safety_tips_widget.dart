@@ -20,27 +20,24 @@ class PostDetailSafetyTipsWidget extends StatelessWidget {
       'safety_point_3',
       'safety_point_4',
     ];
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text('safety_matters_title'.tr(), style: titleStyle),
-          const SizedBox(height: 8),
-          ...tips.map(
-            (String tip) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 2),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text('• ', style: bulletTextStyle),
-                  Expanded(child: Text(tip.tr(), style: bulletTextStyle)),
-                ],
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text('safety_matters_title'.tr(), style: titleStyle),
+        const SizedBox(height: 8),
+        ...tips.map(
+          (String tip) => Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text('• ', style: bulletTextStyle),
+                Expanded(child: Text(tip.tr(), style: bulletTextStyle)),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

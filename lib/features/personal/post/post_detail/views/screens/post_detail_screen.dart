@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../data/sources/local/local_post.dart';
@@ -59,7 +60,7 @@ class PostDetailScreen extends StatelessWidget {
             return const SizedBox();
           }
 
-          return SingleChildScrollView(
+          return SingleChildScrollView(padding: const EdgeInsets.all(AppSpacing.vXl),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[

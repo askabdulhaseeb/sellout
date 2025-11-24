@@ -23,83 +23,78 @@ class InquiryMessageTile extends StatelessWidget {
       future: LocalPost().getPost(post?.postId ?? ''),
       builder: (BuildContext context, AsyncSnapshot<PostEntity?> snapshot) {
         final PostEntity? postEntity = snapshot.data;
-
         return MessageBgWidget(
           isMe: isMe,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               if (post != null) ...<Widget>[
-                SizedBox(
-                  height: 80,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      if (postEntity != null && postEntity.imageURL.isNotEmpty)
-                        ClipRRect(
-                          borderRadius:
-                              BorderRadius.circular(AppSpacing.radiusMd),
-                          child: CustomNetworkImage(
-                            imageURL: postEntity.imageURL,
-                            size: 80,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      SizedBox(width: AppSpacing.hSm),
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.all(AppSpacing.sm),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .primary
-                                .withValues(alpha: 0.07),
-                            borderRadius:
-                                BorderRadius.circular(AppSpacing.radiusMd),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: AppSpacing.md,
-                                    vertical: AppSpacing.xs),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .primary
-                                      .withValues(alpha: 0.12),
-                                  borderRadius: BorderRadius.circular(
-                                      AppSpacing.radiusSm),
-                                ),
-                                child: Text(
-                                  message.type?.code.tr() ?? '',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelSmall
-                                      ?.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: 0.5,
-                                      ),
-                                ),
-                              ),
-                              Text(
-                                message.text,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(fontWeight: FontWeight.w500),
-                              ),
-                            ],
-                          ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    if (postEntity != null && postEntity.imageURL.isNotEmpty)
+                      ClipRRect(
+                        borderRadius:
+                            BorderRadius.circular(AppSpacing.radiusSm),
+                        child: CustomNetworkImage(
+                          imageURL: postEntity.imageURL,
+                          size: 80,
+                          fit: BoxFit.cover,
                         ),
                       ),
-                    ],
-                  ),
+                    const SizedBox(width: AppSpacing.hSm),
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.all(AppSpacing.xs),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withValues(alpha: 0.07),
+                          borderRadius:
+                              BorderRadius.circular(AppSpacing.radiusSm),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.md,
+                                  vertical: AppSpacing.xs),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withValues(alpha: 0.12),
+                                borderRadius:
+                                    BorderRadius.circular(AppSpacing.radiusSm),
+                              ),
+                              child: Text(
+                                message.type?.code.tr() ?? '',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelSmall
+                                    ?.copyWith(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 0.5,
+                                    ),
+                              ),
+                            ),
+                            Text(
+                              message.text,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(fontWeight: FontWeight.w500),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: AppSpacing.vSm),
                 // Title and price row
@@ -126,7 +121,7 @@ class InquiryMessageTile extends StatelessWidget {
                 ),
               ],
               // Action Buttons
-              if (postEntity != null)
+              if (postEntity != null && postEntity.createdBy != LocalAuth.uid)
                 PostButtonSection(
                   post: postEntity,
                   detailWidget: false,

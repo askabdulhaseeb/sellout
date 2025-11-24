@@ -33,7 +33,9 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
         final dynamic parsed = json.decode(local.encodedData);
         final List<dynamic> ordersJson = parsed['orders'] ?? <dynamic>[];
         final List<OrderEntity> orders = ordersJson
-            .map<OrderEntity>((dynamic e) => OrderModel.fromJson(e))
+            .where((dynamic e) => e != null)
+            .map<OrderEntity>(
+                (dynamic e) => OrderModel.fromJson(e as Map<String, dynamic>))
             .toList();
 
         await LocalOrders().saveAll(orders);
@@ -49,7 +51,9 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
         final dynamic parsed = json.decode(raw);
         final List<dynamic> ordersJson = parsed['orders'] ?? <dynamic>[];
         final List<OrderEntity> orders = ordersJson
-            .map<OrderEntity>((dynamic e) => OrderModel.fromJson(e))
+            .where((dynamic e) => e != null)
+            .map<OrderEntity>(
+                (dynamic e) => OrderModel.fromJson(e as Map<String, dynamic>))
             .toList();
 
         // save fresh response to cache
@@ -89,9 +93,11 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
       if (result is DataSuccess) {
         final String raw = result.data ?? '';
         final dynamic parsed = json.decode(raw);
-        final List<dynamic> ordersJson = parsed['orders'];
+        final List<dynamic> ordersJson = parsed['orders'] ?? <dynamic>[];
         final List<OrderEntity> orders = ordersJson
-            .map<OrderEntity>((dynamic e) => OrderModel.fromJson(e))
+            .where((dynamic e) => e != null)
+            .map<OrderEntity>(
+                (dynamic e) => OrderModel.fromJson(e as Map<String, dynamic>))
             .toList();
         // 🔄 Optional: still save locally
         await LocalOrders().save(orders.first);

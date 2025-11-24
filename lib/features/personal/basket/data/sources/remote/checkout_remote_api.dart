@@ -59,6 +59,7 @@ class CheckoutRemoteAPIImpl implements CheckoutRemoteAPI {
       if (result is DataSuccess<String>) {
         final Map<String, dynamic> responseMap = jsonDecode(result.data ?? '');
         final String clientSecret = responseMap['clientSecret'];
+        AppLog.info(result.data.toString());
         AppLog.info('Payment successful',
             name: 'CheckoutRemoteAPIImpl.cartPayIntent - if');
         return DataSuccess<String>(result.data ?? '', clientSecret);
