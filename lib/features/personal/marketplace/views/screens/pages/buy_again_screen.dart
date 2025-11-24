@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../core/sources/data_state.dart';
-import '../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../core/widgets/empty_page_widget.dart';
 import '../../../../../../core/widgets/loaders/buyer_order_tile_loader.dart';
-import '../../../../../../core/widgets/rating_display_widget.dart';
 import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -14,8 +12,6 @@ import '../../../../order/domain/params/get_order_params.dart';
 import '../../../../order/domain/usecase/get_orders_buyer_id.dart';
 import '../../../../post/data/sources/local/local_post.dart';
 import '../../../../post/domain/entities/post/post_entity.dart';
-import '../../../../post/feed/views/widgets/post/widgets/section/buttons/type/widgets/post_buy_now_button.dart';
-import '../../../../post/post_detail/views/screens/post_detail_screen.dart';
 
 class BuyAgainScreen extends StatelessWidget {
   const BuyAgainScreen({super.key});
@@ -82,7 +78,6 @@ class _BuyAgainSectionState extends State<BuyAgainSection> {
           // If the widget was removed from the tree, stop processing.
           if (!mounted) return;
           setState(() {});
-
           // Load posts one by one. Break early if unmounted to avoid calling
           // setState after dispose and to stop unnecessary work.
           for (final OrderEntity order in deliveredOrders) {
@@ -100,9 +95,8 @@ class _BuyAgainSectionState extends State<BuyAgainSection> {
         // FutureBuilder happy; the builder will still receive the completed
         // future and render an appropriate UI.
       } finally {
-        if (!mounted) {
-          return;
-        }
+        if (!mounted) return;
+      
         postsLoading = false;
         if (mounted) setState(() {});
       }
@@ -119,14 +113,19 @@ class _BuyAgainSectionState extends State<BuyAgainSection> {
       builder: (BuildContext context,
           AsyncSnapshot<DataState<List<OrderEntity>>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return ListView.separated(
+          return GridView.builder(
             padding: const EdgeInsets.all(16),
             shrinkWrap: widget.shrinkWrap,
             physics: effectivePhysics,
             itemCount: 10,
-            separatorBuilder: (_, __) => const Divider(height: 1),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 6.0,
+              mainAxisSpacing: 6.0,
+              childAspectRatio: 0.66,
+            ),
             itemBuilder: (BuildContext context, int index) {
-              return const BuyerOrderTileLoader();
+              return const _SkeletonGridViewTile();
             },
           );
         } else if (snapshot.hasError) {
@@ -163,7 +162,7 @@ class _BuyAgainSectionState extends State<BuyAgainSection> {
             childAspectRatio: 0.66,
           ),
           itemBuilder: (BuildContext context, int index) {
-            return _PostGridViewTile(post: posts[index]);
+            return const BuyerOrderTileLoader();
           },
         );
       },
@@ -171,94 +170,31 @@ class _BuyAgainSectionState extends State<BuyAgainSection> {
   }
 }
 
-class _PostGridViewTile extends StatelessWidget {
-  const _PostGridViewTile({required this.post});
-  final PostEntity post;
+class _SkeletonGridViewTile extends StatelessWidget {
+  const _SkeletonGridViewTile();
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.of(context).pushNamed(
-          PostDetailScreen.routeName,
-          arguments: <String, dynamic>{'pid': post.postID},
-        );
-      },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          // Image
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: CustomNetworkImage(
-                fit: BoxFit.cover,
-                imageURL: post.imageURL,
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        // Image skeleton
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: Container(
+              color: Colors.grey[300],
             ),
           ),
-          const SizedBox(height: 4),
-          // Title + Rating + Price + Buy button
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                post.title,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                ),
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        RatingDisplayWidget(
-                          fontSize: 10,
-                          size: 12,
-                          ratingList: post.listOfReviews ?? <double>[],
-                        ),
-                        Text(
-                          post.priceStr,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  PostBuyNowButton(
-                    margin: const EdgeInsets.all(0),
-                    detailWidgetColor: null,
-                    detailWidgetSize: null,
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                    post: post,
-                    detailWidget: false,
-                    buyNowColor: Colors.transparent,
-                    border: Border.all(color: Theme.of(context).primaryColor),
-                    buyNowText: 'buy_again'.tr(),
-                    buyNowTextStyle: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                      fontSize: 8,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 4),
+        // Text and button skeleton
+        Container(
+          height: 60,
+          color: Colors.grey[300],
+        ),
+      ],
     );
   }
 }

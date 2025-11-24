@@ -30,7 +30,7 @@ class MessageBgWidget extends StatelessWidget {
             color: color ??
                 (isMe
                     ? Theme.of(context).scaffoldBackgroundColor
-                    : Theme.of(context).colorScheme.primaryContainer),
+                    : Theme.of(context).colorScheme.primaryFixedDim),
             borderRadius: BorderRadius.circular(6)),
         child: child,
       ),

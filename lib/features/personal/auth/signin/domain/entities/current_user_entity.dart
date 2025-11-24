@@ -24,7 +24,7 @@ class CurrentUserEntity {
     required this.displayName,
     required this.bio,
     required this.currency,
-    required this.privacy,
+    required this.privacyType,
     required this.countryAlpha3,
     required this.countryCode,
     required this.phoneNumber,
@@ -87,7 +87,7 @@ class CurrentUserEntity {
   final String? currency; // Preferred currency (e.g., PKR, GBP)
 
   @HiveField(10)
-  final PrivacyType privacy; // Profile visibility (public/private)
+  final PrivacyType privacyType;
 
   @HiveField(16)
   final String countryAlpha3; // Country in Alpha-3 code
@@ -211,7 +211,8 @@ class CurrentUserEntity {
       String? displayName,
       bool? otpVerified,
       List<AttachmentEntity>? profileImage,
-      TimeAwayEntity? timeAway}) {
+      TimeAwayEntity? timeAway,
+      PrivacyType? privacyType}) {
     return CurrentUserEntity(
         profileImage: profileImage ?? this.profileImage,
         refreshToken: refreshToken ?? this.refreshToken,
@@ -229,7 +230,7 @@ class CurrentUserEntity {
         email: email,
         userName: userName,
         currency: currency,
-        privacy: privacy,
+        privacyType: privacyType ?? this.privacyType,
         countryAlpha3: countryAlpha3,
         language: language,
         chatIDs: chatIDs,
