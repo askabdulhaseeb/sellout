@@ -1,21 +1,21 @@
 import 'dart:convert';
-import '../../../../../../core/enums/listing/core/privacy_type.dart';
+import 'address_model.dart';
+import 'login_info_model.dart';
+import 'login_detail_model.dart';
+import '../../domain/entities/address_entity.dart';
+import '../../domain/entities/login_info_entity.dart';
+import '../../domain/entities/current_user_entity.dart';
+export '../../domain/entities/current_user_entity.dart';
 import '../../../../../../core/extension/string_ext.dart';
 import '../../../../../attachment/data/attchment_model.dart';
-import '../../../../../business/core/data/models/business_employee_model.dart';
 import '../../../../location/data/models/location_model.dart';
+import '../../../../../../core/enums/listing/core/privacy_type.dart';
+import '../../../../user/profiles/data/models/supporter_detail_model.dart';
+import '../../../../../business/core/data/models/business_employee_model.dart';
+import '../../../../setting/setting_dashboard/data/models/time_away_model.dart';
+import '../../../../user/profiles/domain/entities/supporter_detail_entity.dart';
 import '../../../../setting/setting_dashboard/data/models/notification_model.dart';
 import '../../../../setting/setting_dashboard/data/models/privacy_setting_model.dart';
-import '../../../../setting/setting_dashboard/data/models/time_away_model.dart';
-import '../../../../user/profiles/data/models/supporter_detail_model.dart';
-import '../../../../user/profiles/domain/entities/supporter_detail_entity.dart';
-import '../../domain/entities/address_entity.dart';
-import '../../domain/entities/current_user_entity.dart';
-import '../../domain/entities/login_info_entity.dart';
-import 'address_model.dart';
-import 'login_detail_model.dart';
-import 'login_info_model.dart';
-export '../../domain/entities/current_user_entity.dart';
 
 class CurrentUserModel extends CurrentUserEntity {
   CurrentUserModel({
@@ -89,10 +89,7 @@ class CurrentUserModel extends CurrentUserEntity {
       bio: userData['bio'] ?? '',
       currency: userData['currency'] ?? 'gbp',
       accountStatus: userData['account_status'] ?? '',
-      listOfReviews:
-          (userData['list_of_reviews'] as List<dynamic>? ?? <dynamic>[])
-              .map((e) => (e is int) ? e.toDouble() : (e is double ? e : 0.0))
-              .toList(),
+      listOfReviews: _parseListOfReviews(userData['list_of_reviews']),
       privacy: PrivacyType.fromJson(userData['profile_type'] ?? 'public'),
       countryAlpha3: userData['country_alpha_3'] ?? '',
       countryCode: userData['country_code'] ?? '',
@@ -156,5 +153,17 @@ class CurrentUserModel extends CurrentUserEntity {
           ? TimeAwayModel.fromJson(userData['time_away'])
           : null,
     );
+  }
+
+  /// Safely parses the list of reviews, converting numeric values to double.
+  static List<double> _parseListOfReviews(dynamic reviewsData) {
+    if (reviewsData is! List) return <double>[];
+
+    return reviewsData.map((dynamic e) {
+      if (e is int) return e.toDouble();
+      if (e is double) return e;
+      if (e is String) return double.tryParse(e) ?? 0.0;
+      return 0.0;
+    }).toList();
   }
 }

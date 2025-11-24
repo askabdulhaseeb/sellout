@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../../core/constants/app_spacings.dart';
+import '../../../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../auth/signin/domain/entities/address_entity.dart';
@@ -105,7 +107,6 @@ class _ReviewItemContent extends StatelessWidget {
         false;
     final bool showFastBadge =
         cartPro.fastDeliveryProducts.contains(detail.postID) || fastRequested;
-
     final SelectedShippingEntity? primaryShipping =
         (shippingDetail?.selectedShipping.isNotEmpty ?? false)
             ? shippingDetail!.selectedShipping.first
@@ -174,7 +175,7 @@ class _ReviewItemContent extends StatelessWidget {
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
-            children: [
+            children: <Widget>[
               Container(
                 width: 14,
                 height: 14,
@@ -234,11 +235,16 @@ class _ReviewItemContent extends StatelessWidget {
                   ),
                 ),
               ),
-              if (showFastBadge) ...<Widget>[
-                const _FastDeliveryBadge(),
-                const SizedBox(width: 8),
-              ],
-              _QuantityChip(quantity: quantity),
+              Column(
+                spacing: AppSpacing.vXs,
+                children: <Widget>[
+                  _QuantityChip(quantity: quantity),
+                  if (showFastBadge) ...<Widget>[
+                    const _FastDeliveryBadge(),
+                    const SizedBox(width: 8),
+                  ],
+                ],
+              )
             ],
           ),
           const SizedBox(height: 16),
@@ -326,17 +332,19 @@ class _FastDeliveryBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final DeliveryType del = DeliveryType.fastDelivery;
+
     final ThemeData theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primary.withOpacity(0.12),
+        color: del.bgColor.withOpacity(0.12),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
-        'fast_delivery'.tr(),
+        del.code.tr(),
         style: theme.textTheme.labelSmall?.copyWith(
-          color: theme.colorScheme.primary,
+          color: del.color,
           fontWeight: FontWeight.w600,
         ),
       ),
