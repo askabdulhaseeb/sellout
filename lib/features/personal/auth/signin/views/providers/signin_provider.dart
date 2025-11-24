@@ -116,13 +116,13 @@ class SigninProvider extends ChangeNotifier {
           );
         }
       } else {
+        AppSnackBar.show('something_wrong'.tr());
         debugPrint('two factor authentication Error in Provider');
         AppLog.error(
           'two factor authentication Error in Provider',
           name: 'SigninProvider.verifyTwoFactorAuth - Else',
           error: result,
         );
-        // Show error message
       }
     } catch (e) {
       debugPrint(e.toString());

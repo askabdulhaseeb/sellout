@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../features/personal/address/add_address/views/screens/add_address_screen.dart';
 import '../../../features/personal/auth/signin/domain/entities/address_entity.dart';
+import '../../widgets/custom_elevated_button.dart';
 
 class SelectableAddressTile extends StatelessWidget {
   const SelectableAddressTile({
@@ -51,8 +52,9 @@ class SelectableAddressTile extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color:
-                      isSelected ? Theme.of(context).colorScheme.secondary : Colors.grey,
+                  color: isSelected
+                      ? Theme.of(context).colorScheme.secondary
+                      : Colors.grey,
                   width: 2,
                 ),
                 color: isSelected
@@ -89,7 +91,7 @@ class SelectableAddressTile extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 8), 
                   // Address with home icon
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,13 +123,15 @@ class SelectableAddressTile extends StatelessWidget {
                         color: Colors.grey[600],
                       ),
                       const SizedBox(width: 4),
-                      Text(
-                        address.phoneNumber.isNotEmpty
-                            ? address.phoneNumber
-                            : 'No phone',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 14,
+                      Flexible(
+                        child: Text(
+                          address.phoneNumber.isNotEmpty
+                              ? address.phoneNumber
+                              : 'No phone',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 14,
+                          ),
                         ),
                       ),
                     ],
@@ -137,13 +141,15 @@ class SelectableAddressTile extends StatelessWidget {
             ),
             // Edit button
             Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               spacing: 4,
-              children: [
+              children: <Widget>[
                 if (showButtons && isSelected)
                   Container(
                     margin: const EdgeInsets.only(left: 8),
-                    child: OutlinedButton(
-                      onPressed: () async {
+                    child: CustomElevatedButton(
+                      padding: const EdgeInsets.all(4),
+                      onTap: () async {
                         Navigator.of(context).push<AddressEntity?>(
                           MaterialPageRoute<AddressEntity?>(
                             builder: (BuildContext context) {
@@ -152,28 +158,16 @@ class SelectableAddressTile extends StatelessWidget {
                           ),
                         );
                       },
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide(
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      child: Text(
-                        'edit_address'.tr(),
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                      border:
+                          Border.all(color: ColorScheme.of(context).secondary),
+                      bgColor: Colors.transparent,
+                      isLoading: false,
+                      title: 'edit_address'.tr(),
+                      textStyle: TextTheme.of(context).bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.secondary),
                     ),
                   ),
-                if (address.isDefault) ...[
+                if (address.isDefault) ...<Widget>[
                   const SizedBox(width: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -186,8 +180,8 @@ class SelectableAddressTile extends StatelessWidget {
                     ),
                     child: Text(
                       'default'.tr().toUpperCase(),
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSecondary,
                         fontSize: 10,
                         fontWeight: FontWeight.w500,
                       ),

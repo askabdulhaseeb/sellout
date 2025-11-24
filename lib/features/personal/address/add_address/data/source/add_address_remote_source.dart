@@ -22,19 +22,16 @@ class AddAddressRemoteSourceImpl extends AddAddressRemoteSource {
         body: json.encode(params.toMap()),
       );
       if (result is DataSuccess<bool>) {
-        AppLog.info(result.toString(),
-            name: 'AddAddressRemoteSourceImpl.addAddress');
+        AppLog.info('address added successfully',
+            name: 'AddAddressRemoteSourceImpl.addAddress - success');
         final Map<String, dynamic> decoded = jsonDecode(result.data ?? '{}');
         final List<AddressEntity> updatedAddressList =
             (decoded['updatedAddress'] as List<dynamic>)
                 .map((e) => AddressModel.fromJson(e as Map<String, dynamic>))
                 .toList();
-
-        final CurrentUserEntity? updatedUser = LocalAuth.currentUser?.copyWith(
-          address: updatedAddressList,
-        );
-        if (updatedUser != null) {
-          await LocalAuth().signin(updatedUser);
+        // Use updateOrAddAddress for the last/added address
+        if (updatedAddressList.isNotEmpty) {
+          await LocalAuth().updateOrAddAddress(updatedAddressList.last);
         }
         return DataSuccess<bool>(result.data ?? '', true);
       } else {
@@ -73,11 +70,9 @@ class AddAddressRemoteSourceImpl extends AddAddressRemoteSource {
             (decoded['updatedAddress'] as List<dynamic>)
                 .map((e) => AddressModel.fromJson(e as Map<String, dynamic>))
                 .toList();
-        final CurrentUserEntity? updatedUser = LocalAuth.currentUser?.copyWith(
-          address: updatedAddressList,
-        );
-        if (updatedUser != null) {
-          await LocalAuth().signin(updatedUser);
+        // Use updateOrAddAddress for the last/updated address
+        if (updatedAddressList.isNotEmpty) {
+          await LocalAuth().updateOrAddAddress(updatedAddressList.last);
         }
         return DataSuccess<bool>(result.data ?? '', true);
       } else {

@@ -61,7 +61,7 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
     countries = (result is DataSuccess && result.entity != null
             ? result.entity!
             : LocalCountry().activeCountries)
-        .where((c) => c.isActive)
+        .where((CountryEntity c) => c.isActive)
         .toList();
 
     // Find selected country
@@ -69,7 +69,7 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
 
     // 1️⃣ Try initialCountry
     if (widget.initialCountry != null) {
-      for (final c in countries) {
+      for (final CountryEntity c in countries) {
         if (c.alpha2.toLowerCase() ==
             widget.initialCountry!.alpha2.toLowerCase()) {
           selectedCountry = c;
@@ -80,31 +80,13 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
 
     // 2️⃣ Try initialValue if still null
     if (selectedCountry == null && widget.initialValue != null) {
-      for (final c in countries) {
+      for (final CountryEntity c in countries) {
         if (c.countryCode == widget.initialValue!.countryCode) {
           selectedCountry = c;
           break;
         }
       }
     }
-
-    // 3️⃣ Default to Pakistan if still null
-    if (selectedCountry == null) {
-      for (final c in countries) {
-        final dial = c.countryCode.toLowerCase();
-        final a2 = c.alpha2.toLowerCase();
-        if (dial == '+92' || a2 == 'pk') {
-          selectedCountry = c;
-          break;
-        }
-      }
-    }
-
-    // 4️⃣ Fallback to first active country
-    if (selectedCountry == null && countries.isNotEmpty) {
-      selectedCountry = countries.first;
-    }
-
     // Update controller
     if (widget.initialValue != null) {
       controller.text = widget.initialValue!.number;
@@ -147,13 +129,15 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
               selectedItemBuilder: (CountryEntity? country) {
                 if (country == null) return const SizedBox.shrink();
                 return Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     _CountryFlag(flag: country.flag),
                     const SizedBox(width: 8),
-                    Expanded(
+                    Flexible(
                       child: Text(
                         '${country.countryCode} ${country.displayName}',
                         overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
                     ),
                   ],
@@ -165,13 +149,15 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
                 return DropdownMenuItem<CountryEntity>(
                   value: country,
                   child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       _CountryFlag(flag: country.flag),
                       const SizedBox(width: 8),
-                      Expanded(
+                      Flexible(
                         child: Text(
                           '${country.countryCode} ${country.displayName}',
                           overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
                         ),
                       ),
                     ],
@@ -187,6 +173,8 @@ class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
                 ));
               },
               validator: (bool? val) => AppValidator.requireSelection(val),
+              // Prevent double display in controller for non-Text items
+              initialText: '',
             ),
             const SizedBox(width: 12),
             Expanded(

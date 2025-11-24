@@ -11,9 +11,55 @@ import '../core/widgets/phone_number/domain/entities/country_entity.dart';
 import '../features/personal/auth/signin/domain/usecase/refresh_token_usecase.dart';
 import '../features/personal/listing/listing_form/domain/usecase/get_category_by_endpoint_usecase.dart';
 
+class TokenRefreshScheduler {
+  TokenRefreshScheduler({
+    required this.onRefresh,
+    this.refreshInterval = const Duration(minutes: 10),
+  });
+  final Future<void> Function() onRefresh;
+  Duration refreshInterval;
+  Timer? _refreshTimer;
+  Timer? _remainingTimer;
+  DateTime? _nextRefreshTime;
+
+  void setInterval(Duration interval) {
+    refreshInterval = interval;
+    if (_refreshTimer != null) {
+      start();
+    }
+  }
+
+  void start() {
+    _refreshTimer?.cancel();
+    _remainingTimer?.cancel();
+    _nextRefreshTime = DateTime.now().add(refreshInterval);
+    _refreshTimer = Timer.periodic(refreshInterval, (_) async {
+      await onRefresh();
+      _nextRefreshTime = DateTime.now().add(refreshInterval);
+    });
+    _remainingTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+      if (_nextRefreshTime != null) {
+        final Duration remaining = _nextRefreshTime!.difference(DateTime.now());
+        final int seconds = remaining.inSeconds > 0 ? remaining.inSeconds : 0;
+        // ignore: avoid_print
+        print('[Token Refresh] Time remaining for next refresh: ${seconds}s');
+      }
+    });
+  }
+
+  void stop() {
+    _refreshTimer?.cancel();
+    _remainingTimer?.cancel();
+  }
+}
+
 class AppDataService extends WidgetsBindingObserver {
   factory AppDataService() => _instance;
-  AppDataService._internal();
+  AppDataService._internal() {
+    // Always start the token refresh scheduler when the service is created
+    _tokenRefreshScheduler.start();
+    WidgetsBinding.instance.addObserver(this);
+  }
   static final AppDataService _instance = AppDataService._internal();
 
   final GetCategoryByEndpointUsecase _categoryUsecase =
@@ -21,20 +67,17 @@ class AppDataService extends WidgetsBindingObserver {
   final RefreshTokenUsecase _refreshUsecase = RefreshTokenUsecase(locator());
   final CountryApi _countryApi = locator<CountryApi>();
 
-  Timer? _refreshTimer;
+  final TokenRefreshScheduler _tokenRefreshScheduler = TokenRefreshScheduler(
+    onRefresh: () => AppDataService().ensureTokenRefreshed(),
+  );
 
-  void startTokenRefreshScheduler() {
-    // Start periodic refresh every 5 minutes
-    _refreshTimer?.cancel();
-    _refreshTimer = Timer.periodic(const Duration(minutes: 5), (_) async {
-      await ensureTokenRefreshed();
-    });
-    // Listen for app lifecycle changes
-    WidgetsBinding.instance.addObserver(this);
+  void setTokenRefreshInterval(Duration interval) {
+    _tokenRefreshScheduler.setInterval(interval);
   }
 
+  // The scheduler is always running. Only stop it if you want to fully shut down (e.g. on logout)
   void stopTokenRefreshScheduler() {
-    _refreshTimer?.cancel();
+    _tokenRefreshScheduler.stop();
     WidgetsBinding.instance.removeObserver(this);
   }
 

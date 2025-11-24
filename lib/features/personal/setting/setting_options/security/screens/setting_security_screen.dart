@@ -35,7 +35,8 @@ class SettingSecurityScreen extends StatelessWidget {
           Text(
             'setting_security_subheader'.tr(),
             style: TextTheme.of(context).bodyMedium?.copyWith(
-                  color: ColorScheme.of(context).outline,
+                  color:
+                      ColorScheme.of(context).onSurface.withValues(alpha: 0.5),
                   letterSpacing: 0.25,
                 ),
           ),
@@ -120,7 +121,7 @@ class _SecurityTile extends StatelessWidget {
         subtitle: Text(
           subtitle,
           style: TextTheme.of(context).bodySmall?.copyWith(
-                color: ColorScheme.of(context).outline,
+                color: ColorScheme.of(context).onSurface.withValues(alpha: 0.5),
                 letterSpacing: 0.25,
               ),
         ),
