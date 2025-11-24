@@ -115,6 +115,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
         }
       }
     }
+    
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       if (selectedItem != null && selectedItem.child is Text) {
