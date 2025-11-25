@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../features/personal/post/data/sources/local/local_post.dart';
 
 class PostHeaderWidget extends StatefulWidget {
-  const PostHeaderWidget({required this.postId, Key? key}) : super(key: key);
+  const PostHeaderWidget({required this.postId, super.key});
   final String postId;
 
   @override
@@ -25,8 +25,9 @@ class _PostHeaderWidgetState extends State<PostHeaderWidget> {
       future: _postFuture,
       builder: (BuildContext c, AsyncSnapshot<dynamic> snap) {
         if (snap.hasError) return const Text('Error loading post');
-        if (snap.connectionState != ConnectionState.done)
+        if (snap.connectionState != ConnectionState.done) {
           return const CircularProgressIndicator(strokeWidth: 2);
+        }
 
         final dynamic post = snap.data;
         return Row(

@@ -79,7 +79,7 @@ class ServiceEntity {
   String get priceStr =>
       '${CountryHelper.currencySymbolHelper(currency)}$price'.toUpperCase();
 
-  Future<double> getLocalPrice(GetExchangeRateUsecase usecase) async {
+  Future<double?> getLocalPrice(GetExchangeRateUsecase usecase) async {
     final String fromCurrency = currency;
     final String toCurrency = LocalAuth.currency;
     if (fromCurrency == toCurrency) return price;
@@ -92,8 +92,8 @@ class ServiceEntity {
     if (result is DataSuccess<ExchangeRateEntity>) {
       return price * result.entity!.rate;
     }
-    // Fallback to static rate
-    return price * CountryHelper.getExchangeRate(fromCurrency, toCurrency);
+    // No fallback - return null if currency conversion fails
+    return null;
   }
 
   // final List<ServiceReport> serviceReports;
