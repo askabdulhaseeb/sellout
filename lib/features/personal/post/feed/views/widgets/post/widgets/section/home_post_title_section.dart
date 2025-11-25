@@ -26,12 +26,22 @@ class HomePostTitleSection extends StatelessWidget {
                   ),
                 ),
               ),
-              Text(
-                '${CountryHelper.currencySymbolHelper(post.currency)}${post.price.toString()}',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w400,
-                ),
+              FutureBuilder<String>(
+                future: post.getPriceStr(),
+                builder:
+                    (BuildContext context, AsyncSnapshot<String> snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Text('...');
+                  }
+
+                  return Text(
+                    snapshot.data!,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  );
+                },
               ),
             ],
           ),
