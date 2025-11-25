@@ -24,7 +24,7 @@ class ConditionDeliveryWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               PostRatingSection(post: post),
               if (post.listID == ListingType.items.json ||
@@ -67,6 +67,7 @@ class ConditionDeliveryWidget extends StatelessWidget {
       required String value}) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final TextTheme textTheme = Theme.of(context).textTheme;
+    final double screenWidth = MediaQuery.of(context).size.width;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -74,7 +75,8 @@ class ConditionDeliveryWidget extends StatelessWidget {
         Icon(Icons.circle, size: 8, color: iconColor),
         const SizedBox(width: 6),
         ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 130),
+          constraints:
+              BoxConstraints(maxWidth: screenWidth * 0.25), // Responsive width
           child: Text.rich(
             TextSpan(
               children: <InlineSpan>[
