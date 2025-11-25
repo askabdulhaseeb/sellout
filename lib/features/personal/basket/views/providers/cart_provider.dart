@@ -12,13 +12,13 @@ import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../auth/signin/domain/entities/address_entity.dart';
 import '../../data/models/cart/add_shipping_response_model.dart';
 import '../../data/models/cart/cart_model.dart';
-import '../../data/models/checkout/order_billing_model.dart';
 import '../../data/sources/local/local_cart.dart';
 import '../../domain/entities/cart/cart_entity.dart';
 import '../../domain/entities/cart/add_shipping_response_entity.dart';
 import '../../domain/entities/cart/postage_detail_response_entity.dart';
 import '../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../domain/entities/checkout/check_out_entity.dart';
+import '../../domain/entities/checkout/payment_intent_entity.dart';
 import '../../domain/enums/cart_type.dart';
 import '../../domain/enums/shopping_basket_type.dart';
 import '../../domain/param/cart_item_update_qty_param.dart';
@@ -68,7 +68,7 @@ class CartProvider extends ChangeNotifier {
   String _postageCurrencySymbol = '';
   bool _isFetchingCart = false;
   final List<String> _fastDeliveryProducts = <String>[];
-  OrderBillingModel? _orderBilling;
+  PaymentIntentEntity? _orderBilling;
   PostageDetailResponseEntity? _postageResponseEntity;
   AddShippingResponseEntity? _addShippingResponse;
   // selected postage rate per postID
@@ -90,7 +90,7 @@ class CartProvider extends ChangeNotifier {
   ShoppingBasketPageType get shoppingBasketType => _shoppingBasketType;
   List<CartItemEntity> get cartItems => _cartItems;
   List<String> get fastDeliveryProducts => _fastDeliveryProducts;
-  OrderBillingModel? get orderBilling => _orderBilling;
+  PaymentIntentEntity? get orderBilling => _orderBilling;
   PostageDetailResponseEntity? get postageResponseEntity =>
       _postageResponseEntity;
   AddShippingResponseEntity? get addShippingResponse => _addShippingResponse;
@@ -508,27 +508,28 @@ class CartProvider extends ChangeNotifier {
     }
   }
 
-  Future<DataState<String>> getBillingDetails() async {
+  Future<DataState<PaymentIntentEntity>> getBillingDetails() async {
     try {
-      final DataState<String> state = await _payIntentUsecase.call('');
-      if (state is DataSuccess<String>) {
-        // final Map<String, dynamic> jsonMap = jsonDecode(state.data ?? '{}');
-        // _orderBilling = OrderBillingModel.fromMap(jsonMap);
+      final DataState<PaymentIntentEntity> state =
+          await _payIntentUsecase.call('');
+      if (state is DataSuccess<PaymentIntentEntity>) {
+        _orderBilling = state.entity;
         return state;
       }
-      return DataFailer<String>(
+      return DataFailer<PaymentIntentEntity>(
           CustomException('Failed to get billing details'));
     } catch (e, st) {
       AppLog.error('Billing details error',
           name: 'CartProvider.getBillingDetails', error: e, stackTrace: st);
-      return DataFailer<String>(CustomException(e.toString()));
+      return DataFailer<PaymentIntentEntity>(CustomException(e.toString()));
     }
   }
 
   Future<void> processPayment(BuildContext context) async {
     try {
-      final DataState<String> billingDetails = await getBillingDetails();
-      final String? clientSecret = billingDetails.entity;
+      final DataState<PaymentIntentEntity> billingDetails =
+          await getBillingDetails();
+      final String? clientSecret = billingDetails.entity?.clientSecret;
       if (clientSecret == null || clientSecret.isEmpty) {
         AppSnackBar.show('something_wrong'.tr());
         return;
@@ -538,20 +539,16 @@ class CartProvider extends ChangeNotifier {
           await presentStripePaymentSheet(clientSecret, context);
 
       if (intent.status == PaymentIntentsStatus.Succeeded) {
-        if (context.mounted) {
-          showModalBottomSheet(
-            context: context,
-            useSafeArea: true,
-            isScrollControlled: true,
-            enableDrag: false,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            ),
-            builder: (_) => const PaymentSuccessSheet(),
-          );
-          // Pop the previous screen after showing the success sheet
-          Navigator.pop(context);
-        }
+        showModalBottomSheet(
+          context: context,
+          useSafeArea: true,
+          isScrollControlled: true,
+          enableDrag: false,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          builder: (_) => const PaymentSuccessSheet(),
+        );
       } else {
         AppSnackBar.show('payment_not_completed'.tr());
       }

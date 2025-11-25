@@ -4,6 +4,7 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/widgets/app_snackbar.dart';
+import '../../../../domain/entities/checkout/payment_intent_entity.dart';
 import '../../../../domain/enums/cart_type.dart';
 import '../../../providers/cart_provider.dart';
 
@@ -56,8 +57,9 @@ class _CartPaymentPageState extends State<CartPaymentPage> {
 
     final CartProvider cartPro = context.read<CartProvider>();
     try {
-      final DataState<String> billingState = await cartPro.getBillingDetails();
-      final String? clientSecret = billingState.entity;
+      final DataState<PaymentIntentEntity> billingState =
+          await cartPro.getBillingDetails();
+      final String? clientSecret = billingState.entity?.clientSecret;
 
       if (clientSecret == null || clientSecret.isEmpty) {
         _returnToReview(

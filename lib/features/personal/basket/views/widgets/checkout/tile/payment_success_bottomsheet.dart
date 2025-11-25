@@ -5,9 +5,7 @@ import '../../../../../../../core/bottom_sheets/widgets/address_tile.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../core/widgets/in_dev_mode.dart';
-import '../../../../../../../routes/app_linking.dart';
-import '../../../../../dashboard/views/screens/dashboard_screen.dart';
-import '../../../../domain/entities/checkout/order_billing_entity.dart';
+import '../../../../domain/entities/checkout/payment_item_entity.dart';
 import '../../../providers/cart_provider.dart';
 
 class PaymentSuccessSheet extends StatefulWidget {
@@ -98,10 +96,7 @@ class _PaymentSuccessSheetState extends State<PaymentSuccessSheet> {
               border: Border.all(color: ColorScheme.of(context).onSurface),
               textColor: ColorScheme.of(context).onSurface,
               onTap: () {
-                AppNavigator.pushNamedAndRemoveUntil(
-                  DashboardScreen.routeName,
-                  (_) => false,
-                );
+                Navigator.pop(context); // Just close the bottom sheet
               },
               title: 'continue'.tr(),
               isLoading: false,
@@ -157,7 +152,7 @@ class OrderSuccessTile extends StatelessWidget {
     super.key,
   });
 
-  final OrderItemEntity? item;
+  final PaymentItemEntity? item;
   final String currency;
 
   @override
@@ -170,7 +165,9 @@ class OrderSuccessTile extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: CustomNetworkImage(
-              imageURL: item?.imageUrls.first,
+              imageURL: item?.imageUrls.isNotEmpty == true
+                  ? item!.imageUrls.first
+                  : '',
               size: 60,
             ),
           ),
@@ -189,7 +186,7 @@ class OrderSuccessTile extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Quantity: ${item?.quantity}',
+                  'Quantity: ${item?.quantity ?? 0}',
                   style: const TextStyle(
                     fontSize: 12,
                   ),

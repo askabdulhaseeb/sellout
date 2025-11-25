@@ -181,20 +181,12 @@ class PostEntity {
   String get imageURL => fileUrls.isEmpty ? '' : fileUrls.first.url;
   String get priceStr =>
       '${CountryHelper.currencySymbolHelper(currency)}$price'.toUpperCase();
-  // double get discountedPrice {
-  //   if (hasDiscount) {
-  //     if (discount == null) return price;
-  //     final DiscountEntity dis = discount!;
-  //     return price - (price * dis.discount / 100);
-  //   }
-  //   return price;
-  // }
 
   // Package detail helper methods
   String get packageDimensions =>
       '${packageDetail.length}L x ${packageDetail.width}W x ${packageDetail.height}H';
 
-  Future<double> getLocalPrice(GetExchangeRateUsecase usecase) async {
+  Future<double?> getLocalPrice(GetExchangeRateUsecase usecase) async {
     final String fromCurrency = currency ?? 'GBP';
     final String toCurrency = LocalAuth.currency;
     if (fromCurrency == toCurrency) return price;
@@ -207,7 +199,6 @@ class PostEntity {
     if (result is DataSuccess<ExchangeRateEntity>) {
       return price * result.entity!.rate;
     }
-    // Fallback to static rate
-    return price * CountryHelper.getExchangeRate(fromCurrency, toCurrency);
+    return null;
   }
 }

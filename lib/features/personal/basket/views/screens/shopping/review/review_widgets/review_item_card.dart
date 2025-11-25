@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../../core/helper_functions/country_helper.dart';
@@ -235,19 +234,13 @@ class _ReviewItemContent extends StatelessWidget {
                   ),
                 ),
               ),
-              Column(
-                spacing: AppSpacing.vXs,
-                children: <Widget>[
-                  _QuantityChip(quantity: quantity),
-                  if (showFastBadge) ...<Widget>[
-                    const _FastDeliveryBadge(),
-                    const SizedBox(width: 8),
-                  ],
-                ],
-              )
+              if (showFastBadge) ...<Widget>[
+                const _FastDeliveryBadge(),
+              ],
             ],
           ),
           const SizedBox(height: 16),
+          // Product data section - full width
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -266,6 +259,7 @@ class _ReviewItemContent extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
+                    const SizedBox(height: 4),
                     if (attributeChips.isNotEmpty) ...<Widget>[
                       const SizedBox(height: 8),
                       Wrap(
@@ -277,17 +271,15 @@ class _ReviewItemContent extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: 12),
-              Flexible(
-                child: _PriceBreakdown(
-                  unitPriceLabel: unitPriceLabel,
-                  quantity: quantity,
-                  subtotalLabel: subtotalLabel,
-                  totalLabel: totalLabel,
-                  shippingLabel: shippingLabel,
-                ),
-              ),
             ],
+          ),
+          const SizedBox(height: 16),
+          // Total and subtotal section below
+          _PriceBreakdown(
+            totalLabel: totalLabel,
+            shippingLabel: shippingLabel,
+            unitPriceLabel: unitPriceLabel,
+            quantity: quantity,
           ),
           if (destination.isNotEmpty) ...<Widget>[
             const SizedBox(height: 16),
@@ -334,13 +326,13 @@ class _FastDeliveryBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DeliveryType del = DeliveryType.fastDelivery;
+    const DeliveryType del = DeliveryType.fastDelivery;
 
     final ThemeData theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: del.bgColor.withOpacity(0.12),
+        color: del.bgColor.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
@@ -354,83 +346,50 @@ class _FastDeliveryBadge extends StatelessWidget {
   }
 }
 
-class _QuantityChip extends StatelessWidget {
-  const _QuantityChip({required this.quantity});
-
-  final int quantity;
-
-  @override
-  Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.primary.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        '${'quantity'.tr()}: $quantity',
-        style: theme.textTheme.labelSmall?.copyWith(
-          color: theme.colorScheme.primary,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-}
-
 class _PriceBreakdown extends StatelessWidget {
   const _PriceBreakdown({
+    required this.totalLabel,
     required this.unitPriceLabel,
     required this.quantity,
-    required this.subtotalLabel,
-    required this.totalLabel,
     this.shippingLabel,
   });
 
-  final String unitPriceLabel;
-  final int quantity;
-  final String subtotalLabel;
   final String totalLabel;
   final String? shippingLabel;
+  final String unitPriceLabel;
+  final int quantity;
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          '$unitPriceLabel × $quantity',
-          style: theme.textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        if (shippingLabel != null && shippingLabel!.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(top: 4),
-            child: Text(
-              '${'shipping'.tr()}: $shippingLabel',
-              style: theme.textTheme.bodySmall,
-            ),
-          ),
-        Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: Text(
-            '${'subtotal'.tr()}: $subtotalLabel',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 6),
-          child: Text(
-            '${'total'.tr()}: $totalLabel',
+        if (shippingLabel != null && shippingLabel!.isNotEmpty) ...<Widget>[
+          Text(
+            '${'subtotal'.tr()}: $unitPriceLabel × $quantity',
             style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w400,
             ),
           ),
+          Text(
+            '${'shipping'.tr()}: $shippingLabel',
+            style: theme.textTheme.bodyMedium,
+          ),
+          const SizedBox(),
+          const SizedBox(height: 8),
+        ],
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text(
+              '${'total'.tr()}: $totalLabel',
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(),
+          ],
         ),
       ],
     );
@@ -448,7 +407,7 @@ class _InfoPill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface.withOpacity(0.08),
+        color: theme.colorScheme.surface.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
