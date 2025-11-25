@@ -1,7 +1,11 @@
 import 'package:hive_flutter/hive_flutter.dart';
-
 import '../../../../../../core/helper_functions/country_helper.dart';
+import '../../../../../../core/sources/data_state.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
+import '../../../../../personal/auth/signin/data/sources/local/local_auth.dart';
+import '../../../../../personal/payment/domain/entities/exchange_rate_entity.dart';
+import '../../../../../personal/payment/domain/params/get_exchange_rate_params.dart';
+import '../../../../../personal/payment/domain/usecase/get_exchange_rate_usecase.dart';
 import '../business_employee_entity.dart';
 part 'service_entity.g.dart';
 
@@ -74,5 +78,23 @@ class ServiceEntity {
       attachments.isEmpty ? null : attachments.first.url;
   String get priceStr =>
       '${CountryHelper.currencySymbolHelper(currency)}$price'.toUpperCase();
+
+  Future<double> getLocalPrice(GetExchangeRateUsecase usecase) async {
+    final String fromCurrency = currency;
+    final String toCurrency = LocalAuth.currency;
+    if (fromCurrency == toCurrency) return price;
+
+    final GetExchangeRateParams params = GetExchangeRateParams(
+      from: fromCurrency,
+      to: toCurrency,
+    );
+    final DataState<ExchangeRateEntity> result = await usecase(params);
+    if (result is DataSuccess<ExchangeRateEntity>) {
+      return price * result.entity!.rate;
+    }
+    // Fallback to static rate
+    return price * CountryHelper.getExchangeRate(fromCurrency, toCurrency);
+  }
+
   // final List<ServiceReport> serviceReports;
 }

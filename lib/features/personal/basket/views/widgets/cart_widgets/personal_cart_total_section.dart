@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
@@ -47,7 +48,7 @@ class PersonalCartTotalSection extends StatelessWidget {
                           '${'subtotal'.tr()} (${cart.cartItems.length} ${'items'.tr()})',
                         ),
                         trailing: Text(
-                          cart.cartTotal.toStringAsFixed(2),
+                          CountryHelper.formatPrice(cart.cartTotal, LocalAuth.currency),
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,

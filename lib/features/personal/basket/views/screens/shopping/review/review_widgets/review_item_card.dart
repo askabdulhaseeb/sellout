@@ -253,7 +253,7 @@ class _ReviewItemContent extends StatelessWidget {
             children: <Widget>[
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: CustomNetworkImage(imageURL: image, size: 78),
+                child: CustomNetworkImage(imageURL: image, size: 64),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -278,12 +278,14 @@ class _ReviewItemContent extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              _PriceBreakdown(
-                unitPriceLabel: unitPriceLabel,
-                quantity: quantity,
-                subtotalLabel: subtotalLabel,
-                totalLabel: totalLabel,
-                shippingLabel: shippingLabel,
+              Flexible(
+                child: _PriceBreakdown(
+                  unitPriceLabel: unitPriceLabel,
+                  quantity: quantity,
+                  subtotalLabel: subtotalLabel,
+                  totalLabel: totalLabel,
+                  shippingLabel: shippingLabel,
+                ),
               ),
             ],
           ),
