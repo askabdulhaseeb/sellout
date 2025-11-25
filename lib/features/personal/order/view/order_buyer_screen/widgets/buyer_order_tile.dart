@@ -62,12 +62,16 @@ class BuyerOrderTileWidget extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  Text(
-                    post!.priceStr,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(fontWeight: FontWeight.w500),
+                  FutureBuilder<String>(
+                    future: post!.getPriceStr(),
+                    builder:
+                        (BuildContext context, AsyncSnapshot<String> snapshot) {
+                      if (!snapshot.hasData) {
+                        return const Text('...');
+                      }
+
+                      return Text(snapshot.data!);
+                    },
                   ),
                   const SizedBox(width: 8),
                   Text(

@@ -43,7 +43,7 @@ class VisitingMessageTile extends StatelessWidget {
             post?.fileUrls.isNotEmpty == true ? post!.fileUrls.first.url : '';
         final String title = post?.title ?? '';
         final String currency = post?.currency ?? '**';
-        final double price = post?.price ?? 0.0;
+        final double price = post?.price ?? 0;
         final String date =
             message.visitingDetail?.dateTime.dateWithMonthOnly ?? '';
         final String time = message.visitingDetail?.visitingTime ?? '';

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:hive/hive.dart';
 import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../core/enums/listing/core/item_condition_type.dart';
@@ -5,6 +6,7 @@ import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../core/sources/data_state.dart';
+import '../../../../../../services/get_it.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../location/domain/entities/location_entity.dart';
@@ -40,39 +42,26 @@ class PostEntity {
     required this.condition,
     required this.listOfReviews,
     required this.categoryType,
-    // Location
     required this.currentLongitude,
     required this.currentLatitude,
     required this.collectionLatitude,
     required this.collectionLongitude,
     required this.collectionLocation,
     required this.meetUpLocation,
-    // Delivery
     required this.deliveryType,
     required this.localDelivery,
     required this.internationalDelivery,
-    // Availability
     required this.availability,
-    // Attachments
     required this.fileUrls,
-    // Discount
     required this.hasDiscount,
     required this.discount,
-    // Cloth Foot
     required this.clothFootInfo,
-    // Property
     required this.propertyInfo,
-    // Pets
     required this.petInfo,
-    // Vehicle
     required this.vehicleInfo,
-    // Food Drink
     required this.foodDrinkInfo,
-    // Item
     required this.itemInfo,
-    // Package Detail
     required this.packageDetail,
-    // Other fields
     required this.isActive,
     required this.createdBy,
     required this.updatedBy,
@@ -82,6 +71,7 @@ class PostEntity {
     DateTime? inHiveAt,
   }) : inHiveAt = inHiveAt ?? DateTime.now();
 
+  // 🔹 Base Fields
   @HiveField(0)
   final String listID;
   @HiveField(1)
@@ -114,14 +104,18 @@ class PostEntity {
   final List<double>? listOfReviews;
   @HiveField(16)
   final String categoryType;
+
+  // 🔹 Attachments
   @HiveField(17)
   final List<AttachmentEntity> fileUrls;
-  //
+
+  // 🔹 Discount
   @HiveField(18)
   final DiscountEntity? discount;
   @HiveField(19)
   final bool hasDiscount;
-  //
+
+  // 🔹 Location
   @HiveField(20)
   final double currentLongitude;
   @HiveField(21)
@@ -134,35 +128,36 @@ class PostEntity {
   final LocationEntity? collectionLocation;
   @HiveField(25)
   final LocationEntity? meetUpLocation;
-  //
+
+  // 🔹 Delivery Options
   @HiveField(26)
   final int? localDelivery;
   @HiveField(27)
   final int? internationalDelivery;
-  //
+
+  // 🔹 Category Details
   @HiveField(28)
   final PostClothFootEntity? clothFootInfo;
-  //
   @HiveField(29)
   final PostVehicleEntity? vehicleInfo;
-  //
   @HiveField(30)
   final PostPetEntity? petInfo;
-  //
   @HiveField(31)
   final PostPropertyEntity? propertyInfo;
-  //
   @HiveField(32)
   final PostFoodDrinkEntity? foodDrinkInfo;
-  //
   @HiveField(33)
   final PostItemEntity? itemInfo;
 
-  @HiveField(34) // NEW FIELD - Package Detail
+  // 🔹 Package
+  @HiveField(34)
   final PackageDetailEntity packageDetail;
-  //
+
+  // 🔹 Availability
   @HiveField(35)
   final List<AvailabilityEntity>? availability;
+
+  // 🔹 Activity / Audit
   @HiveField(36)
   final bool isActive;
   @HiveField(37)
@@ -171,34 +166,44 @@ class PostEntity {
   final DateTime createdAt;
   @HiveField(39)
   final String? accessCode;
-  @HiveField(40, defaultValue: '')
+  @HiveField(40)
   final String updatedBy;
-  @HiveField(41, defaultValue: null)
+  @HiveField(41)
   final DateTime? updatedAt;
   @HiveField(42)
   final DateTime inHiveAt;
 
-  String get imageURL => fileUrls.isEmpty ? '' : fileUrls.first.url;
-  String get priceStr =>
-      '${CountryHelper.currencySymbolHelper(currency)}$price'.toUpperCase();
+  // 🔹 Main Image
+  String get imageURL => fileUrls.isNotEmpty ? fileUrls.first.url : '';
 
-  // Package detail helper methods
-  String get packageDimensions =>
-      '${packageDetail.length}L x ${packageDetail.width}W x ${packageDetail.height}H';
+  // 🔹 Local Currency Price String (Async)
+  Future<String> getPriceStr() async {
+    final double? converted = await getLocalPrice();
+    if (converted == null) return 'na'.tr();
 
-  Future<double?> getLocalPrice(GetExchangeRateUsecase usecase) async {
-    final String fromCurrency = currency ?? 'GBP';
-    final String toCurrency = LocalAuth.currency;
-    if (fromCurrency == toCurrency) return price;
+    return '${CountryHelper.currencySymbolHelper(LocalAuth.currency)}'
+        '${converted.toStringAsFixed(2)}';
+  }
 
-    final GetExchangeRateParams params = GetExchangeRateParams(
-      from: fromCurrency,
-      to: toCurrency,
-    );
-    final DataState<ExchangeRateEntity> result = await usecase(params);
+  // 🔹 Local Price (Converted)
+  Future<double?> getLocalPrice() async {
+    final String from = currency ?? 'GBP';
+    final String to = LocalAuth.currency;
+
+    if (from == to) return price;
+
+    final GetExchangeRateParams params =
+        GetExchangeRateParams(from: from, to: to);
+    final DataState<ExchangeRateEntity> result =
+        await GetExchangeRateUsecase(locator()).call(params);
+
     if (result is DataSuccess<ExchangeRateEntity>) {
       return price * result.entity!.rate;
     }
+
     return null;
   }
+
+  String get packageDimensions =>
+      '${packageDetail.length}L x ${packageDetail.width}W x ${packageDetail.height}H';
 }

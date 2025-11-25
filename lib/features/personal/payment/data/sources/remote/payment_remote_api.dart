@@ -1,9 +1,6 @@
-import 'dart:convert';
-
 import 'package:easy_localization/easy_localization.dart';
-
+import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
-import '../../../../../../core/sources/data_state.dart';
 import '../../../domain/entities/exchange_rate_entity.dart';
 import '../../../domain/params/get_exchange_rate_params.dart';
 import '../../models/exchange_rate_model.dart';
@@ -21,14 +18,15 @@ class PaymentRemoteApiImpl implements PaymentRemoteApi {
     try {
       final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,
-        requestType: ApiRequestType.post, // Assuming POST since it has body
-        isAuth: false, // Adjust if auth needed
+        requestType: ApiRequestType.post,
         body: json.encode(params.toJson()),
       );
 
       if (result is DataSuccess) {
         final String rawData = result.data ?? '';
         if (rawData.isEmpty) {
+          AppLog.info('Empty exchange rate data received from API',
+              name: 'PaymentRemoteApiImpl.getExchangeRate');
           return DataFailer<ExchangeRateEntity>(
             result.exception ?? CustomException('something_wrong'.tr()),
           );
@@ -37,14 +35,22 @@ class PaymentRemoteApiImpl implements PaymentRemoteApi {
         final Map<String, dynamic> jsonMap = json.decode(rawData);
         final ExchangeRateEntity exchangeRate =
             ExchangeRateModel.fromJson(jsonMap);
-
+        AppLog.info('Empty exchange rate data received from API',
+            name: 'PaymentRemoteApiImpl.getExchangeRate - success');
         return DataSuccess<ExchangeRateEntity>(rawData, exchangeRate);
       } else {
+        AppLog.error('Empty exchange rate data received from API',
+            name: 'PaymentRemoteApiImpl.getExchangeRate - failure');
         return DataFailer<ExchangeRateEntity>(
           result.exception ?? CustomException('something_wrong'.tr()),
         );
       }
-    } catch (e) {
+    } catch (e, stc) {
+      AppLog.error('Empty exchange rate data received from API',
+          name: 'PaymentRemoteApiImpl.getExchangeRate - catch',
+          error: e,
+          stackTrace: stc);
+
       return DataFailer<ExchangeRateEntity>(CustomException(e.toString()));
     }
   }
