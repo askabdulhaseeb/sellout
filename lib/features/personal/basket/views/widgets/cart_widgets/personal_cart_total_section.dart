@@ -102,7 +102,7 @@ class PersonalCartTotalSection extends StatelessWidget {
                               await cartPro.submitShipping();
                           if (result is DataSuccess<AddShippingResponseModel>) {
                             // Move to review order after successful API call
-                            final String? message = result.entity?.message;
+                            final String? message = result.exception?.message;
                             if (message != null && message.isNotEmpty) {
                               AppSnackBar.show(message);
                             }

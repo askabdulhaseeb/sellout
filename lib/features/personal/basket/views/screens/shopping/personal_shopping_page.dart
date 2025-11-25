@@ -10,8 +10,8 @@ import '../../widgets/cart_widgets/personal_cart_step_indicator.dart';
 import '../../widgets/cart_widgets/personal_cart_total_section.dart';
 import 'cart/cart_page.dart';
 import 'checkout/checkout_page.dart';
-import 'payment/payment_page.dart';
-import 'review/review_page.dart';
+import 'cart_payment/cart_payment_page.dart';
+import 'cart_review/cart_review_page.dart';
 
 class PersonalShoppingPage extends HookWidget {
   const PersonalShoppingPage({super.key});
