@@ -1,10 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/bottom_sheets/widgets/address_tile.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
-import '../../../../../../../core/widgets/in_dev_mode.dart';
+import '../../../../domain/entities/checkout/billing_details_entity.dart';
 import '../../../../domain/entities/checkout/payment_item_entity.dart';
 import '../../../providers/cart_provider.dart';
 
@@ -15,23 +14,52 @@ class PaymentSuccessSheet extends StatefulWidget {
   State<PaymentSuccessSheet> createState() => _PaymentSuccessSheetState();
 }
 
-class _PaymentSuccessSheetState extends State<PaymentSuccessSheet> {
+class _PaymentSuccessSheetState extends State<PaymentSuccessSheet>
+    with SingleTickerProviderStateMixin {
   bool showOrderInfo = false;
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+
+    _scaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.elasticOut,
+      ),
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
+      ),
+    );
+
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final CartProvider pro = Provider.of<CartProvider>(context, listen: false);
+    final BillingDetailsEntity? billing = pro.orderBilling?.billingDetails;
+
     return Scaffold(
       extendBody: false,
       extendBodyBehindAppBar: false,
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(Icons.close),
-        ),
-      ),
       body: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(20, 24, 20, 150),
@@ -45,30 +73,22 @@ class _PaymentSuccessSheetState extends State<PaymentSuccessSheet> {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(height: 16),
-            Text(
-              textAlign: TextAlign.center,
-              'payment_successful_description'.tr(),
-              style: TextStyle(color: Colors.grey.shade600),
+            ScaleTransition(
+              scale: _scaleAnimation,
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: Icon(Icons.check_circle_outline_rounded,
+                    color: Theme.of(context).primaryColor, size: 80),
+              ),
             ),
-            const SizedBox(height: 16),
-            Icon(Icons.check_circle_outline_rounded,
-                color: Theme.of(context).primaryColor, size: 60),
-            const SizedBox(height: 16),
-            if (showOrderInfo) CartPaymentSuccessDetailsSection(pro: pro),
-            if (!showOrderInfo)
-              Text(
-                '${'order_total'.tr()}: ${pro.orderBilling?.billingDetails.grandTotal}${pro.orderBilling?.billingDetails.currency}',
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(
+                textAlign: TextAlign.center,
+                'payment_successful_description'.tr(),
                 style: TextStyle(color: Colors.grey.shade600),
               ),
-          ],
-        ),
-      ),
-      bottomSheet: BottomAppBar(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        height: 150,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
+            ),
             TextButton.icon(
               iconAlignment: IconAlignment.end,
               onPressed: () {
@@ -82,21 +102,35 @@ class _PaymentSuccessSheetState extends State<PaymentSuccessSheet> {
                       : Icons.keyboard_arrow_up_rounded,
                   color: showOrderInfo
                       ? Theme.of(context).primaryColor
-                      : ColorScheme.of(context).outlineVariant),
+                      : ColorScheme.of(context).outline),
               label: Text(
                 showOrderInfo ? 'hide_order_info'.tr() : 'see_order_info'.tr(),
                 style: TextTheme.of(context).bodySmall?.copyWith(
                     color: showOrderInfo
                         ? Theme.of(context).primaryColor
-                        : ColorScheme.of(context).outlineVariant),
+                        : ColorScheme.of(context).outline),
               ),
+            ),
+            if (showOrderInfo) CartPaymentSuccessDetailsSection(pro: pro),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              '${'order_total'.tr()}: ${billing?.grandTotal ?? ''} ${billing?.currency ?? ''}',
+              style: Theme.of(context).textTheme.titleMedium,
             ),
             CustomElevatedButton(
               bgColor: Theme.of(context).scaffoldBackgroundColor,
               border: Border.all(color: ColorScheme.of(context).onSurface),
               textColor: ColorScheme.of(context).onSurface,
               onTap: () {
-                Navigator.pop(context); // Just close the bottom sheet
+                Navigator.pop(context);
               },
               title: 'continue'.tr(),
               isLoading: false,
@@ -104,6 +138,37 @@ class _PaymentSuccessSheetState extends State<PaymentSuccessSheet> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _CustomAddressSection extends StatelessWidget {
+  const _CustomAddressSection({
+    required this.name,
+    required this.street,
+    required this.city,
+    required this.country,
+  });
+  final String name;
+  final String street;
+  final String city;
+  final String country;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          'postage_to'.tr(),
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        const SizedBox(height: 6),
+        Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
+        Text(street),
+        Text(city),
+        Text(country),
+      ],
     );
   }
 }
@@ -118,28 +183,28 @@ class CartPaymentSuccessDetailsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final BillingDetailsEntity? billing = pro.orderBilling?.billingDetails;
+
     return Column(
-      spacing: 5,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          '${'order_total'.tr()}:${pro.orderBilling?.billingDetails.grandTotal}',
-          style: TextTheme.of(context).titleSmall,
+        _CustomAddressSection(
+          name: pro.address?.address1 ?? '',
+          street: pro.address?.city ?? '',
+          city: pro.address?.state?.stateName ?? '',
+          country: pro.address?.country.countryName ?? '',
         ),
-        InDevMode(child: AddressTile(address: pro.address!, onTap: () {})),
-        SizedBox(
-          child: ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: pro.cartItems.length,
-            itemBuilder: (BuildContext context, int index) {
-              return OrderSuccessTile(
-                  currency: pro.orderBilling?.billingDetails.currency ?? '',
-                  item: pro.orderBilling?.items[index]);
-            },
-          ),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: pro.cartItems.length,
+          itemBuilder: (BuildContext context, int index) {
+            return OrderSuccessTile(
+              currency: billing?.currency ?? '',
+              item: pro.orderBilling?.items[index],
+            );
+          },
         ),
-        const SizedBox(height: 200)
       ],
     );
   }
@@ -157,56 +222,51 @@ class OrderSuccessTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: CustomNetworkImage(
-              imageURL: item?.imageUrls.isNotEmpty == true
-                  ? item!.imageUrls.first
-                  : '',
-              size: 60,
-            ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: CustomNetworkImage(
+            imageURL:
+                item?.imageUrls.isNotEmpty == true ? item!.imageUrls.first : '',
+            size: 60,
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  item?.name ?? '',
-                  maxLines: 1,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  'Quantity: ${item?.quantity ?? 0}',
-                  style: const TextStyle(
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                item?.price ?? '',
-                style: Theme.of(context).textTheme.titleSmall,
+                item?.name ?? '',
+                maxLines: 1,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-              Text(currency.toUpperCase()),
+              const SizedBox(height: 2),
+              Text(
+                'Quantity: ${item?.quantity ?? 0}',
+                style: const TextStyle(
+                  fontSize: 12,
+                ),
+              ),
             ],
           ),
-        ],
-      ),
+        ),
+        const SizedBox(width: 12),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: <Widget>[
+            Text(
+              item?.price ?? '',
+              style: Theme.of(context).textTheme.titleSmall,
+            )
+          ],
+        ),
+      ],
     );
   }
 }

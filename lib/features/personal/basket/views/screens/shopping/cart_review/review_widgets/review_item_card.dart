@@ -117,9 +117,6 @@ class _ReviewItemContent extends StatelessWidget {
     final String currencyCode = (post?.currency ?? '').toString();
     final String unitPriceLabel =
         _formatAmountWithSymbol(unitPrice, currencySymbol);
-    final String subtotalLabel =
-        _formatAmountWithSymbol(subtotal, currencySymbol);
-
     double totalPrice = subtotal;
     String totalCurrencySymbol = currencySymbol;
     String? shippingLabel;

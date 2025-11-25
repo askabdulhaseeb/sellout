@@ -1,12 +1,13 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
+import '../../../providers/cart_provider.dart';
+import '../../../../domain/enums/cart_type.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../domain/entities/checkout/payment_intent_entity.dart';
-import '../../../../domain/enums/cart_type.dart';
-import '../../../providers/cart_provider.dart';
+import '../../../widgets/checkout/tile/payment_success_bottomsheet.dart';
 
 class CartPaymentPage extends StatefulWidget {
   const CartPaymentPage({super.key});
@@ -78,8 +79,29 @@ class _CartPaymentPageState extends State<CartPaymentPage> {
 
       await Stripe.instance.presentPaymentSheet();
 
-      if (!mounted) return;
-      Navigator.pop(context);
+      // Check payment status
+      final PaymentIntent intent =
+          await Stripe.instance.retrievePaymentIntent(clientSecret);
+
+      if (intent.status == PaymentIntentsStatus.Succeeded) {
+        await showModalBottomSheet(
+          context: context,
+          useSafeArea: true,
+          isScrollControlled: true,
+          enableDrag: false,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          builder: (_) => const PaymentSuccessSheet(),
+        );
+        Navigator.pop(context);
+      } else {
+        _returnToReview(
+          message: 'payment_not_completed'.tr(),
+          isError: true,
+        );
+        return;
+      }
     } on StripeException catch (e) {
       final String message = e.error.message ?? 'payment_failed'.tr();
       _returnToReview(
