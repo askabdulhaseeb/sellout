@@ -21,6 +21,13 @@ class OrderEntity {
     required this.paymentDetail,
     required this.shippingAddress,
     required this.businessId,
+    this.size,
+    this.color,
+    this.listId,
+    this.isBusinessOrder,
+    this.transactionId,
+    this.trackId,
+    this.deliveryPaidBy,
   });
 
   @HiveField(0)
@@ -65,6 +72,27 @@ class OrderEntity {
   @HiveField(13)
   final String businessId;
 
+  @HiveField(14)
+  final String? size;
+
+  @HiveField(15)
+  final String? color;
+
+  @HiveField(16)
+  final String? listId;
+
+  @HiveField(17)
+  final bool? isBusinessOrder;
+
+  @HiveField(18)
+  final String? transactionId;
+
+  @HiveField(19)
+  final String? trackId;
+
+  @HiveField(20)
+  final String? deliveryPaidBy;
+
   OrderEntity copyWith({
     String? orderId,
     String? buyerId,
@@ -80,6 +108,13 @@ class OrderEntity {
     OrderPaymentDetailEntity? paymentDetail,
     AddressEntity? shippingAddress,
     String? businessId,
+    String? size,
+    String? color,
+    String? listId,
+    bool? isBusinessOrder,
+    String? transactionId,
+    String? trackId,
+    String? deliveryPaidBy,
   }) {
     return OrderEntity(
       orderId: orderId ?? this.orderId,
@@ -96,6 +131,13 @@ class OrderEntity {
       paymentDetail: paymentDetail ?? this.paymentDetail,
       shippingAddress: shippingAddress ?? this.shippingAddress,
       businessId: businessId ?? this.businessId,
+      size: size ?? this.size,
+      color: color ?? this.color,
+      listId: listId ?? this.listId,
+      isBusinessOrder: isBusinessOrder ?? this.isBusinessOrder,
+      transactionId: transactionId ?? this.transactionId,
+      trackId: trackId ?? this.trackId,
+      deliveryPaidBy: deliveryPaidBy ?? this.deliveryPaidBy,
     );
   }
 }
