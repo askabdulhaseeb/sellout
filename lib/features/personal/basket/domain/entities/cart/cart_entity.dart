@@ -1,5 +1,8 @@
 import 'package:hive/hive.dart';
+import '../../../../../../core/helper_functions/country_helper.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../post/data/sources/local/local_post.dart';
+import '../../../../post/domain/entities/post/post_entity.dart';
 import 'cart_item_entity.dart';
 export 'cart_item_entity.dart';
 part 'cart_entity.g.dart';
@@ -32,9 +35,17 @@ class CartEntity {
 
   double get cartTotal {
     double tt = 0;
+    final String userCurrency = LocalAuth.currency;
     for (final CartItemEntity item in items) {
       if (item.inCart) {
-        tt += (item.quantity * (LocalPost().post(item.postID)?.price ?? 0));
+        final PostEntity? post = LocalPost().post(item.postID);
+        if (post != null) {
+          final String postCurrency = post.currency ?? 'GBP';
+          final double rate =
+              CountryHelper.getExchangeRate(postCurrency, userCurrency);
+          final double convertedPrice = post.price * rate;
+          tt += (item.quantity * convertedPrice);
+        }
       }
     }
     return tt;
@@ -42,9 +53,17 @@ class CartEntity {
 
   double get saveLaterTotal {
     double tt = 0;
+    final String userCurrency = LocalAuth.currency;
     for (final CartItemEntity item in items) {
       if (!item.inCart) {
-        tt += (item.quantity * (LocalPost().post(item.postID)?.price ?? 0));
+        final PostEntity? post = LocalPost().post(item.postID);
+        if (post != null) {
+          final String postCurrency = post.currency ?? 'GBP';
+          final double rate =
+              CountryHelper.getExchangeRate(postCurrency, userCurrency);
+          final double convertedPrice = post.price * rate;
+          tt += (item.quantity * convertedPrice);
+        }
       }
     }
     return tt;

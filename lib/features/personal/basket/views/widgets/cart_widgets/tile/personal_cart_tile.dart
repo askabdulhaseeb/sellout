@@ -73,11 +73,7 @@ class _PersonalCartTileState extends State<PersonalCartTile>
   @override
   void initState() {
     super.initState();
-    // Cache-backed future: avoids repeated loads across rebuilds/tiles
     _loadFuture = _loadData();
-    // Initialize switch state from provider's fast-delivery list.
-    // listen: false is safe here since we only want the initial value; the
-    // widget updates the provider when toggled.
     final CartProvider provider =
         Provider.of<CartProvider>(context, listen: false);
     isActive = provider.fastDeliveryProducts.contains(widget.item.postID);
@@ -293,11 +289,13 @@ class _PersonalCartTileState extends State<PersonalCartTile>
                             ),
                           ),
                           const SizedBox(width: AppSpacing.hSm),
-                          Text(
-                            '${CountryHelper.currencySymbolHelper(post?.currency)}${(widget.item.quantity * (post?.price ?? 0)).toStringAsFixed(0)}'
-                                .toUpperCase(),
-                            style: textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
+                          Flexible(
+                            child: Text(
+                              '${CountryHelper.currencySymbolHelper(post?.currency)}${(widget.item.quantity * (post?.price ?? 0)).toStringAsFixed(0)}'
+                                  .toUpperCase(),
+                              style: textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ],
@@ -404,7 +402,8 @@ class _SaveLaterWidgetState extends State<SaveLaterWidget> {
     });
 
     try {
-      final CartProvider cartProvider = Provider.of<CartProvider>(context, listen: false);
+      final CartProvider cartProvider =
+          Provider.of<CartProvider>(context, listen: false);
       final DataState<bool> result =
           await cartProvider.updateStatus(widget.item);
 
@@ -489,18 +488,16 @@ class _SaveLaterWidgetState extends State<SaveLaterWidget> {
           width: 1,
           color: scheme.outline.withValues(alpha: 0.1),
         ),
-                  SharePostButton(
-            tappableWidget:
-                  Text(
-          'share'.tr(),
-          style: textTheme.bodySmall?.copyWith(
-            color: scheme.secondary,
-            fontWeight: FontWeight.w500,
+        SharePostButton(
+          tappableWidget: Text(
+            'share'.tr(),
+            style: textTheme.bodySmall?.copyWith(
+              color: scheme.secondary,
+              fontWeight: FontWeight.w500,
+            ),
           ),
+          postId: widget.item.postID,
         ),
-            postId: widget.item.postID,
-          ),
-       
       ],
     );
   }

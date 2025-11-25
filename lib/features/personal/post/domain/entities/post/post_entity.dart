@@ -4,8 +4,13 @@ import '../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../../core/helper_functions/country_helper.dart';
+import '../../../../../../core/sources/data_state.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../location/domain/entities/location_entity.dart';
+import '../../../../payment/domain/entities/exchange_rate_entity.dart';
+import '../../../../payment/domain/params/get_exchange_rate_params.dart';
+import '../../../../payment/domain/usecase/get_exchange_rate_usecase.dart';
 import '../discount_entity.dart';
 import '../meetup/availability_entity.dart';
 import 'package_detail_entity.dart';
@@ -188,4 +193,21 @@ class PostEntity {
   // Package detail helper methods
   String get packageDimensions =>
       '${packageDetail.length}L x ${packageDetail.width}W x ${packageDetail.height}H';
+
+  Future<double> getLocalPrice(GetExchangeRateUsecase usecase) async {
+    final String fromCurrency = currency ?? 'GBP';
+    final String toCurrency = LocalAuth.currency;
+    if (fromCurrency == toCurrency) return price;
+
+    final GetExchangeRateParams params = GetExchangeRateParams(
+      from: fromCurrency,
+      to: toCurrency,
+    );
+    final DataState<ExchangeRateEntity> result = await usecase(params);
+    if (result is DataSuccess<ExchangeRateEntity>) {
+      return price * result.entity!.rate;
+    }
+    // Fallback to static rate
+    return price * CountryHelper.getExchangeRate(fromCurrency, toCurrency);
+  }
 }
