@@ -99,7 +99,7 @@ class PostModel extends PostEntity {
           bool.tryParse(json['accept_offers']?.toString() ?? 'false') ?? false,
       minOfferAmount:
           double.tryParse(json['min_offer_amount']?.toString() ?? '0.0') ?? 0.0,
-      privacy: PrivacyType.fromJson(json['post_privacy']),
+      privacy: PrivacyType.fromJson(json['post_privacy'] ?? 'public'),
       condition: ConditionType.fromJson(json['item_condition']),
       deliveryType: DeliveryType.fromJson(json['delivery_type']),
       listOfReviews: List<double>.from(

@@ -22,7 +22,7 @@ class UserEntityAdapter extends TypeAdapter<UserEntity> {
       username: fields[2] as String,
       displayName: fields[3] as String,
       bio: fields[4] as String,
-      privacyType: fields[5] as PrivacyType,
+      privacyType: fields[5] as PrivacyType?,
       profilePic: (fields[6] as List).cast<AttachmentEntity>(),
       isImageVerified: fields[8] as bool,
       verificationPic: (fields[7] as List).cast<AttachmentEntity>(),
