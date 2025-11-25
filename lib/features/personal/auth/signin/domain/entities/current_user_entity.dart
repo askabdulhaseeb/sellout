@@ -87,7 +87,7 @@ class CurrentUserEntity {
   final String? currency; // Preferred currency (e.g., PKR, GBP)
 
   @HiveField(10)
-  final PrivacyType privacyType;
+  final PrivacyType? privacyType;
 
   @HiveField(16)
   final String countryAlpha3; // Country in Alpha-3 code

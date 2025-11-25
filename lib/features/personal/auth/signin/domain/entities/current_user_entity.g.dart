@@ -26,7 +26,7 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       displayName: fields[7] as String,
       bio: fields[8] as String,
       currency: fields[9] as String?,
-      privacyType: fields[10] as PrivacyType,
+      privacyType: fields[10] as PrivacyType?,
       countryAlpha3: fields[16] as String,
       countryCode: fields[17] as String,
       phoneNumber: fields[18] as String,
