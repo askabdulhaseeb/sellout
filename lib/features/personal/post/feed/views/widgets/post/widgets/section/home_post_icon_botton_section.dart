@@ -15,20 +15,23 @@ class HomePostIconBottonSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isMine = post.createdBy == LocalAuth.uid;
-    return Row(
-      children: <Widget>[
-        if (!isMine || isPreview) CreatePostInquiryChatButton(post: post),
-        SharePostButton(
-          tappableWidget:
-              const CustomSvgIcon(assetPath: AppStrings.selloutShareIcon),
-          postId: post.postID,
-        ),
-        const Spacer(),
-        if (!isMine || isPreview)
-          SavePostIconButton(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Row(
+        children: <Widget>[
+          if (!isMine || isPreview) CreatePostInquiryChatButton(post: post),
+          SharePostButton(
+            tappableWidget:
+                const CustomSvgIcon(assetPath: AppStrings.selloutShareIcon),
             postId: post.postID,
-          )
-      ],
+          ),
+          const Spacer(),
+          if (!isMine || isPreview)
+            SavePostIconButton(
+              postId: post.postID,
+            )
+        ],
+      ),
     );
   }
 }
