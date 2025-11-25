@@ -21,11 +21,15 @@ class PostDetailTitleAmountSection extends StatelessWidget {
                   ?.copyWith(fontSize: 16, fontWeight: FontWeight.w500),
             ),
           ),
-          Text(
-            post.priceStr.toString(),
-            style: TextTheme.of(context)
-                .titleSmall
-                ?.copyWith(fontSize: 16, fontWeight: FontWeight.w600),
+          FutureBuilder<String>(
+            future: post.getPriceStr(),
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              if (!snapshot.hasData) {
+                return const Text('...');
+              }
+
+              return Text(snapshot.data!);
+            },
           ),
         ],
       ),

@@ -7,7 +7,7 @@ class ExchangeRateModel extends ExchangeRateEntity {
 
   factory ExchangeRateModel.fromJson(Map<String, dynamic> json) {
     return ExchangeRateModel(
-      rate: double.tryParse(json['rate']?.toString() ?? '0.0') ?? 0.0,
+      rate: json['exchangeRate'] ?? 0.0,
     );
   }
 }

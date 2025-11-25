@@ -1142,7 +1142,7 @@ class AddListingFormProvider extends ChangeNotifier
         businessID: null,
         title: title.text,
         description: description.text,
-        price: double.tryParse(price.text) ?? 0.0,
+        price: double.tryParse(price.text) ?? 0,
         quantity: int.tryParse(quantity.text) ?? 1,
         currency: LocalAuth.currency,
         type: listingType,

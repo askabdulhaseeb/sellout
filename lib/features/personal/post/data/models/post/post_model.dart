@@ -90,7 +90,7 @@ class PostModel extends PostEntity {
       businessID: json['business_id']?.toString(),
       title: json['title']?.toString() ?? '',
       description: json['description']?.toString() ?? '',
-      price: double.tryParse(json['price']?.toString() ?? '0.0') ?? 0.0,
+      price: json['price'] ?? 0.0,
       quantity: int.tryParse(json['quantity']?.toString() ?? '0') ?? 0,
       currency: json['currency']?.toString() ?? 'gbp',
       type: ListingType.fromJson(json['list_id']),

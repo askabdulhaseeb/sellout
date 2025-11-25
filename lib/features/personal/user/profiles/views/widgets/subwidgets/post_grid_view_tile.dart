@@ -76,11 +76,16 @@ class PostGridViewTile extends StatelessWidget {
                       ratingList: post.listOfReviews ?? <double>[],
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      post.priceStr,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    FutureBuilder<String>(
+                      future: post.getPriceStr(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<String> snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Text('...');
+                        }
+
+                        return Text(snapshot.data!);
+                      },
                     ),
                   ],
                 ),
@@ -140,7 +145,7 @@ class PostGridViewTileBasketButton extends StatelessWidget {
                   post: post, actionType: PostTileClothFootType.add);
             },
           );
-        } else { 
+        } else {
           final AddToCartUsecase usecase = AddToCartUsecase(locator());
           final DataState<bool> result = await usecase(
             AddToCartParam(post: post, quantity: 1),

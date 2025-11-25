@@ -20,14 +20,15 @@ class PackageDetailModel extends PackageDetailEntity {
 
   factory PackageDetailModel.fromJson(Map<String, dynamic> json) {
     return PackageDetailModel(
-      length: double.tryParse(json['length']?.toString() ?? '0') ?? 0.0,
-      width: double.tryParse(json['width']?.toString() ?? '0') ?? 0.0,
-      weight: double.tryParse(json['weight']?.toString() ?? '0') ?? 0.0,
-      height: double.tryParse(json['height']?.toString() ?? '0') ?? 0.0,
+length: (json['length'] ?? 0).toDouble(),
+width: (json['width'] ?? 0).toDouble(),
+weight: (json['weight'] ?? 0).toDouble(),
+height: (json['height'] ?? 0).toDouble(),
+
     );
   }
 
-  Map<String, dynamic> toMap() => <String, dynamic>{
+  Map<String, dynamic> toMap() => <String,dynamic>{
         'length': length,
         'width': width,
         'weight': weight,

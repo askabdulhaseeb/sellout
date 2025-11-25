@@ -56,11 +56,16 @@ class ProfileVisitGridviewTile extends StatelessWidget {
                         style: const TextStyle(
                             fontWeight: FontWeight.w500, fontSize: 14),
                       ),
-                      Text(
-                        post.priceStr,
-                        maxLines: 1,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 16),
+                      FutureBuilder<String>(
+                        future: post.getPriceStr(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<String> snapshot) {
+                          if (!snapshot.hasData) {
+                            return const Text('...');
+                          }
+
+                          return Text(snapshot.data!);
+                        },
                       ),
                     ],
                   ),
