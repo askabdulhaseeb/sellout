@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../../../core/extension/string_ext.dart';
-import '../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../core/widgets/custom_switch_list_tile.dart';
@@ -158,220 +157,139 @@ class _PersonalCartTileState extends State<PersonalCartTile>
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            /// Seller info
-            Row(
-              children: <Widget>[
-                Text.rich(
-                  TextSpan(children: <InlineSpan>[
-                    TextSpan(
-                      text: '${'seller'.tr()}: ',
-                      style: textTheme.bodySmall?.copyWith(
-                        color: scheme.outline,
-                      ),
-                    ),
-                    TextSpan(
-                      text: seller?.displayName ?? '',
-                      style: textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ]),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(left: AppSpacing.sm),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.xs, vertical: AppSpacing.xs),
-                  decoration: BoxDecoration(
-                    color: displayDeliveryType.bgColor.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-                    border: Border.all(
-                      color: displayDeliveryType.color.withValues(alpha: 0.3),
-                      width: 1,
-                    ),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                        color:
-                            displayDeliveryType.color.withValues(alpha: 0.08),
-                        blurRadius: 4,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: displayDeliveryType.color.withValues(alpha: 0.6),
-                      ),
-                      const SizedBox(width: AppSpacing.hXs),
-                      Text(
-                        displayDeliveryType.code.tr(),
-                        style: textTheme.labelSmall?.copyWith(
-                          color: displayDeliveryType.color,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.3,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
-            const SizedBox(height: AppSpacing.vXs),
-            Text(
-              '${calculateReviewPercentage(seller?.listOfReviews ?? <double>[])}% ${'positive_feedback'.tr()}',
-              style: textTheme.labelSmall?.copyWith(
-                color: scheme.outline.withValues(alpha: 0.8),
-              ),
-            ),
-
-            const SizedBox(height: AppSpacing.vSm),
-
-            /// Product row
-            Row(
+            ///MARK: Seller info
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                /// Product Image
-                GestureDetector(
-                  onTap: () {
-                    AppNavigator.pushNamed(
-                      PostDetailScreen.routeName,
-                      arguments: <String, String>{'pid': widget.item.postID},
-                    );
-                  },
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-                    child: CustomNetworkImage(
-                      imageURL: post?.imageURL,
-                      size: 60,
+                Row(
+                  children: <Widget>[
+                    Text.rich(
+                      TextSpan(children: <InlineSpan>[
+                        TextSpan(
+                          text: '${'seller'.tr()}: ',
+                          style: textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.6)),
+                        ),
+                        TextSpan(
+                          text: seller?.displayName ?? '',
+                          style: textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.6)),
+                        ),
+                      ]),
                     ),
-                  ),
+                  ],
                 ),
-                const SizedBox(width: AppSpacing.hSm),
-
-                /// Product Info
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Flexible(
-                            child: Text(
-                              post?.title ?? '',
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: AppSpacing.hSm),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppSpacing.xs,
-                              vertical: AppSpacing.xs,
-                            ),
-                            decoration: BoxDecoration(
-                              color: scheme.primary.withValues(alpha: 0.08),
-                              borderRadius:
-                                  BorderRadius.circular(AppSpacing.radiusXs),
-                            ),
-                            child: Text(
-                              post?.condition.code.tr() ?? '',
-                              style: textTheme.labelSmall?.copyWith(
-                                fontSize: 9,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: AppSpacing.hSm),
-                          Flexible(
-                            child: Text(
-                              '${CountryHelper.currencySymbolHelper(post?.currency)}${(widget.item.quantity * (post?.price ?? 0)).toStringAsFixed(0)}'
-                                  .toUpperCase(),
-                              style: textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: AppSpacing.vXs),
-
-                      /// Size and Color Row
-                      Row(
-                        children: <Widget>[
-                          if (widget.item.size != null)
-                            Text(
-                              '${'size'.tr()}: ${widget.item.size}',
-                              style: textTheme.bodySmall,
-                            ),
-                          if (widget.item.color != null)
-                            Container(
-                              margin:
-                                  const EdgeInsets.only(left: AppSpacing.sm),
-                              width: AppSpacing.hMd,
-                              height: AppSpacing.vMd,
-                              decoration: BoxDecoration(
-                                color: widget.item.color.toColor(),
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                        ],
-                      ),
-
-                      const SizedBox(height: AppSpacing.vXs),
-                      PersonalCartTileQtySection(item: widget.item, post: post),
-                    ],
+                const SizedBox(height: AppSpacing.vXs),
+                Text(
+                  '${calculateReviewPercentage(seller?.listOfReviews ?? <double>[])}% ${'positive_feedback'.tr()}',
+                  style: textTheme.labelSmall?.copyWith(
+                    color: scheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ],
             ),
-
             const SizedBox(height: AppSpacing.vSm),
 
-            /// Switch Row
+            ///MARK: Product row
+            _ProductInfo(
+                widget: widget,
+                post: post,
+                textTheme: textTheme,
+                scheme: scheme),
+            const SizedBox(height: AppSpacing.vSm),
+
+            ///MARK: Delivery Section
             if (widget.item.status == CartItemStatusType.cart)
               Row(
-                spacing: AppSpacing.hSm,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text(
-                    'need_fast_delivery'.tr(),
-                    style: textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w400,
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.xs, vertical: AppSpacing.xs),
+                    decoration: BoxDecoration(
+                      color:
+                          displayDeliveryType.bgColor.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+                      border: Border.all(
+                        color: displayDeliveryType.color.withValues(alpha: 0.3),
+                        width: 1,
+                      ),
+                      boxShadow: <BoxShadow>[
+                        BoxShadow(
+                          color:
+                              displayDeliveryType.color.withValues(alpha: 0.08),
+                          blurRadius: 4,
+                          offset: const Offset(0, 1),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Icon(
+                          Icons.circle,
+                          size: 8,
+                          color:
+                              displayDeliveryType.color.withValues(alpha: 0.6),
+                        ),
+                        const SizedBox(width: AppSpacing.hXs),
+                        Text(
+                          displayDeliveryType.code.tr(),
+                          style: textTheme.labelSmall?.copyWith(
+                            color: displayDeliveryType.color,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  CustomSwitch(
-                    value: isActive,
-                    onChanged: (bool val) {
-                      // Update local UI state and persist change to provider's
-                      // fast-delivery id list.
-                      final CartProvider provider =
-                          Provider.of<CartProvider>(context, listen: false);
-                      setState(() {
-                        debugPrint('fast delivery for ${widget.item.postID}');
-                        isActive = val;
-                        _deliveryType = val
-                            ? DeliveryType.fastDelivery
-                            : (post?.deliveryType ?? DeliveryType.collection);
-                      });
-                      if (val) {
-                        provider.addFastDeliveryProduct(widget.item.postID);
-                      } else {
-                        provider.removeFastDeliveryProduct(widget.item.postID);
-                      }
-                      debugPrint('Item switch toggled: $val');
-                    },
+                  Row(
+                    spacing: AppSpacing.hSm,
+                    children: <Widget>[
+                      Text(
+                        'need_fast_delivery'.tr(),
+                        style: textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      CustomSwitch(
+                        value: isActive,
+                        onChanged: (bool val) {
+                          // Update local UI state and persist change to provider's
+                          // fast-delivery id list.
+                          final CartProvider provider =
+                              Provider.of<CartProvider>(context, listen: false);
+                          setState(() {
+                            debugPrint(
+                                'fast delivery for ${widget.item.postID}');
+                            isActive = val;
+                            _deliveryType = val
+                                ? DeliveryType.fastDelivery
+                                : (post?.deliveryType ??
+                                    DeliveryType.collection);
+                          });
+                          if (val) {
+                            provider.addFastDeliveryProduct(widget.item.postID);
+                          } else {
+                            provider
+                                .removeFastDeliveryProduct(widget.item.postID);
+                          }
+                          debugPrint('Item switch toggled: $val');
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
 
-            /// Save Later / Share
+            ///MARK: Delete/Later/Share
             SaveLaterWidget(item: widget.item),
           ],
         );
@@ -381,6 +299,151 @@ class _PersonalCartTileState extends State<PersonalCartTile>
 
   @override
   bool get wantKeepAlive => true;
+}
+
+class _ProductInfo extends StatelessWidget {
+  const _ProductInfo({
+    required this.widget,
+    required this.post,
+    required this.textTheme,
+    required this.scheme,
+  });
+
+  final PersonalCartTile widget;
+  final PostEntity? post;
+  final TextTheme textTheme;
+  final ColorScheme scheme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        /// Product Image
+        GestureDetector(
+          onTap: () {
+            AppNavigator.pushNamed(
+              PostDetailScreen.routeName,
+              arguments: <String, String>{'pid': widget.item.postID},
+            );
+          },
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+            child: CustomNetworkImage(
+              imageURL: post?.imageURL,
+              size: 60,
+            ),
+          ),
+        ),
+
+        const SizedBox(width: AppSpacing.hSm),
+
+        /// RIGHT SIDE
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              /// TITLE + CONDITION BADGE + PRICE (Right)
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// LEFT SIDE: TITLE + NEW BADGE
+                  Expanded(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        /// TITLE
+                        Flexible(
+                          child: Text(
+                            post?.title ?? '',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(width: 6),
+
+                        /// CONDITION / NEW BADGE
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 4,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: scheme.primary.withValues(alpha: 0.08),
+                            borderRadius:
+                                BorderRadius.circular(AppSpacing.radiusXs),
+                          ),
+                          child: Text(
+                            post?.condition.code.tr() ?? '',
+                            style: textTheme.labelSmall?.copyWith(
+                              fontSize: 9,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(width: 6),
+
+                  /// RIGHT SIDE: PRICE
+                  FutureBuilder<String>(
+                    future: post?.getPriceStr(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return const Text('...');
+                      }
+                      return Text(
+                        snapshot.data!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: AppSpacing.vXs),
+
+              /// SIZE + COLOR
+              Row(
+                children: <Widget>[
+                  if (widget.item.size != null)
+                    Text(
+                      '${'size'.tr()}: ${widget.item.size}',
+                      style: textTheme.bodySmall,
+                    ),
+                  if (widget.item.color != null)
+                    Container(
+                      margin: const EdgeInsets.only(left: AppSpacing.sm),
+                      width: AppSpacing.hMd,
+                      height: AppSpacing.vMd,
+                      decoration: BoxDecoration(
+                        color: widget.item.color.toColor(),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                ],
+              ),
+
+              const SizedBox(height: AppSpacing.vXs),
+
+              /// QTY SECTION
+              PersonalCartTileQtySection(item: widget.item, post: post),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 class SaveLaterWidget extends StatefulWidget {

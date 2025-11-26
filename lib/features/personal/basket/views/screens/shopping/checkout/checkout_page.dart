@@ -212,8 +212,14 @@ class _SimplePostageSection extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text('postage'.tr(),
-                          style: Theme.of(context).textTheme.bodyMedium),
+                      Text(
+                        '${'postage'.tr()}:',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: Theme.of(context).textTheme.bodyMedium!.color,
+                        ),
+                      ),
                       const SizedBox(height: 8),
                       if (isLoading)
                         const Center(

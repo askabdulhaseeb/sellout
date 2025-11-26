@@ -47,7 +47,8 @@ class WelcomeScreen extends StatelessWidget {
               'Sellout_welcome_description'.tr(),
               style: TextTheme.of(context).titleMedium?.copyWith(
                   fontSize: 18,
-                  color: ColorScheme.of(context).outline,
+                  color:
+                      ColorScheme.of(context).onSurface.withValues(alpha: 0.6),
                   fontWeight: FontWeight.w400),
               maxLines: 4,
               textAlign: TextAlign.center,
@@ -62,12 +63,18 @@ class WelcomeScreen extends StatelessWidget {
           children: <Widget>[
             CustomElevatedButton(
               title: 'login'.tr(),
+              textStyle: TextTheme.of(context)
+                  .bodyLarge
+                  ?.copyWith(color: ColorScheme.of(context).onPrimary),
               isLoading: false,
               onTap: () async =>
                   await AppNavigator.pushNamed(SignInScreen.routeName),
             ),
             CustomElevatedButton(
               title: 'create_account'.tr(),
+              textStyle: TextTheme.of(context)
+                  .bodyLarge
+                  ?.copyWith(color: ColorScheme.of(context).onSurface),
               isLoading: false,
               bgColor: Colors.transparent,
               border: Border.all(color: Theme.of(context).dividerColor),

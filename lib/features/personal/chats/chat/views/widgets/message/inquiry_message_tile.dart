@@ -1,8 +1,8 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../../core/widgets/shadow_container.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../post/domain/entities/post/post_entity.dart';
@@ -44,45 +44,12 @@ class InquiryMessageTile extends StatelessWidget {
                       ),
                     const SizedBox(width: AppSpacing.hSm),
                     Expanded(
-                      child: Container(
+                      child: ShadowContainer(
                         padding: const EdgeInsets.all(AppSpacing.xs),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .primary
-                              .withValues(alpha: 0.07),
-                          borderRadius:
-                              BorderRadius.circular(AppSpacing.radiusSm),
-                        ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: AppSpacing.md,
-                                  vertical: AppSpacing.xs),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .primary
-                                    .withValues(alpha: 0.12),
-                                borderRadius:
-                                    BorderRadius.circular(AppSpacing.radiusSm),
-                              ),
-                              child: Text(
-                                message.type?.code.tr() ?? '',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelSmall
-                                    ?.copyWith(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 0.5,
-                                    ),
-                              ),
-                            ),
                             Text(
                               message.text,
                               style: Theme.of(context)

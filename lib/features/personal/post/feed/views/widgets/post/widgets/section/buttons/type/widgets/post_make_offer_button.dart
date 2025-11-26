@@ -56,6 +56,7 @@ class _PostMakeOfferButtonState extends State<PostMakeOfferButton> {
   @override
   Widget build(BuildContext context) {
     return CustomElevatedButton(
+      margin: const EdgeInsets.symmetric(vertical: 8),
       bgColor: Theme.of(context).primaryColor,
       onTap: () {
         if (widget.post.type == ListingType.clothAndFoot &&
