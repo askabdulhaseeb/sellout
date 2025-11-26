@@ -22,8 +22,6 @@ class _PostCollectionButtonsState extends State<PostCollectionButtons> {
   Future<void> openGoogleMaps(String url) async {
     final Uri googleMapsUrl = Uri.parse(url);
 
-  
-
     if (await canLaunchUrl(googleMapsUrl)) {
       await launchUrl(googleMapsUrl);
     } else {
@@ -34,14 +32,12 @@ class _PostCollectionButtonsState extends State<PostCollectionButtons> {
   @override
   Widget build(BuildContext context) {
     return CustomElevatedButton(
-      bgColor: Colors.transparent,
-      border: Border.all(color: Theme.of(context).colorScheme.primary),
-      textColor: Theme.of(context).colorScheme.primary,
-      title: 'show_in_maps'.tr(),
+      // bgColor: Colors.transparent,
+      // border: Border.all(color: Theme.of(context).colorScheme.primary),
+      // textColor: Theme.of(context).colorScheme.primary,
+      title: 'collection_only'.tr(),
       isLoading: _isLoadingRoute,
-      onTap: () => openGoogleMaps(
-        widget.post.collectionLocation?.url ?? ''
-      ),
+      onTap: () => openGoogleMaps(widget.post.collectionLocation?.url ?? ''),
     );
   }
 }

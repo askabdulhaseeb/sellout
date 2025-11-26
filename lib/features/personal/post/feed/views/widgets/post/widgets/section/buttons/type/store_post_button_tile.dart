@@ -130,6 +130,7 @@ class _DeliverySection extends StatelessWidget {
           children: <Widget>[
             Expanded(
               child: PostBuyNowButton(
+                margin: const EdgeInsets.symmetric(vertical: 8),
                 detailWidgetColor: selectedColor,
                 detailWidgetSize: selectedSize,
                 post: post,
@@ -147,7 +148,6 @@ class _DeliverySection extends StatelessWidget {
               ),
           ],
         ),
-        const SizedBox(height: 8),
         Row(
           spacing: 12,
           children: <Widget>[

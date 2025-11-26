@@ -126,9 +126,6 @@ class _PaymentSuccessSheetState extends State<PaymentSuccessSheet>
               style: Theme.of(context).textTheme.titleMedium,
             ),
             CustomElevatedButton(
-              bgColor: Theme.of(context).scaffoldBackgroundColor,
-              border: Border.all(color: ColorScheme.of(context).onSurface),
-              textColor: ColorScheme.of(context).onSurface,
               onTap: () {
                 Navigator.pop(context);
               },
@@ -160,7 +157,7 @@ class _CustomAddressSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          'postage_to'.tr(),
+          '${'post_to'.tr()}:',
           style: Theme.of(context).textTheme.titleSmall,
         ),
         const SizedBox(height: 6),
@@ -194,6 +191,12 @@ class CartPaymentSuccessDetailsSection extends StatelessWidget {
           city: pro.address?.state?.stateName ?? '',
           country: pro.address?.country.countryName ?? '',
         ),
+        const SizedBox(height: 6),
+        Text(
+          '${'items'.tr()}:',
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        const SizedBox(height: 6),
         ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -222,51 +225,55 @@ class OrderSuccessTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: CustomNetworkImage(
-            imageURL:
-                item?.imageUrls.isNotEmpty == true ? item!.imageUrls.first : '',
-            size: 60,
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: CustomNetworkImage(
+              imageURL: item?.imageUrls.isNotEmpty == true
+                  ? item!.imageUrls.first
+                  : '',
+              size: 60,
+            ),
           ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  item?.name ?? '',
+                  maxLines: 1,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Quantity: ${item?.quantity ?? 0}',
+                  style: const TextStyle(
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
               Text(
-                item?.name ?? '',
-                maxLines: 1,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                'Quantity: ${item?.quantity ?? 0}',
-                style: const TextStyle(
-                  fontSize: 12,
-                ),
-              ),
+                item?.price ?? '',
+                style: Theme.of(context).textTheme.titleSmall,
+              )
             ],
           ),
-        ),
-        const SizedBox(width: 12),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: <Widget>[
-            Text(
-              item?.price ?? '',
-              style: Theme.of(context).textTheme.titleSmall,
-            )
-          ],
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

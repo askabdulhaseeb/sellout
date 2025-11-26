@@ -123,6 +123,7 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
     final Color color = Theme.of(context).primaryColor;
 
     return CustomElevatedButton(
+      margin: const EdgeInsets.symmetric(vertical: 8),
       onTap: () => _addToBasket(context),
       title: 'add_to_basket'.tr(),
       isLoading: isLoading,
