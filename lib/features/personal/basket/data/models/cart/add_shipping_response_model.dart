@@ -1,7 +1,7 @@
 import '../../../../../../core/enums/cart/cart_item_type.dart';
-import '../../../domain/entities/cart/add_shipping_response_entity.dart';
+import '../../../domain/entities/cart/added_shipping_response_entity.dart';
 
-class AddShippingResponseModel extends AddShippingResponseEntity {
+class AddShippingResponseModel extends AddedShippingResponseEntity {
   factory AddShippingResponseModel.fromJson(Map<String, dynamic> json) {
     return AddShippingResponseModel(
       message: json['message']?.toString() ?? '',
@@ -183,9 +183,8 @@ class SelectedShippingModel extends SelectedShippingEntity {
     );
   }
   SelectedShippingModel({
-    ShippingAddressModel? from,
+    required super.deliveryType, ShippingAddressModel? from,
     ShippingAddressModel? to,
-    required super.deliveryType,
     super.serviceName,
     super.rateObjectId,
     super.parcelIndex,

@@ -1,7 +1,7 @@
 import '../../../../../../core/enums/cart/cart_item_type.dart';
 
-class AddShippingResponseEntity {
-  AddShippingResponseEntity({
+class AddedShippingResponseEntity {
+  AddedShippingResponseEntity({
     required this.message,
     required this.cart,
   });

@@ -1,13 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../../../features/personal/basket/domain/entities/cart/postage_detail_response_entity.dart';
 import '../../../../features/personal/basket/views/providers/cart_provider.dart';
 import '../../../../features/personal/post/data/sources/local/local_post.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../features/personal/post/domain/entities/post/post_entity.dart';
 import '../../../enums/listing/core/delivery_type.dart';
-import '../../../helper_functions/country_helper.dart';
 import '../../../constants/app_spacings.dart';
 import '../../../widgets/custom_network_image.dart';
 import '../../../widgets/shadow_container.dart';
@@ -660,14 +658,6 @@ class _PostageRateOptionWidget extends StatelessWidget {
     final String label = '${rate.provider} · ${rate.serviceLevel.name}';
     final String key =
         '${rate.provider}::${rate.serviceLevel.token}::${rate.amountBuffered.isNotEmpty ? rate.amountBuffered : rate.amount}';
-
-    // Get the amount with currency symbol
-    final String amount =
-        rate.amountBuffered.isNotEmpty ? rate.amountBuffered : rate.amount;
-    final CartProvider pro = Provider.of<CartProvider>(context, listen: false);
-    String currency = pro.address?.country.currency ?? '';
-    String cleanAmount = amount;
-    cleanAmount = '${CountryHelper.currencySymbolHelper(currency)}$amount';
     return Container(
       margin: EdgeInsets.only(bottom: isLast ? 0 : AppSpacing.sm),
       child: ListTile(
@@ -718,12 +708,18 @@ class _PostageRateOptionWidget extends StatelessWidget {
                     ),
               ),
             ),
-            Text(
-              cleanAmount,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
+            FutureBuilder<String>(
+              future: rate.getPriceStr(),
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                if (!snapshot.hasData) return const Text('...');
+                return Text(
+                  snapshot.data!,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                );
+              },
+            )
           ],
         ),
         onTap: () {

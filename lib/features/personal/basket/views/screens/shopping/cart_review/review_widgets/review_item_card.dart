@@ -6,8 +6,9 @@ import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../auth/signin/domain/entities/address_entity.dart';
 import '../../../../../../post/data/sources/local/local_post.dart';
+import '../../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../../user/profiles/data/sources/local/local_user.dart';
-import '../../../../../domain/entities/cart/add_shipping_response_entity.dart';
+import '../../../../../domain/entities/cart/added_shipping_response_entity.dart';
 import '../../../../../domain/entities/cart/cart_item_entity.dart';
 import '../../../../providers/cart_provider.dart';
 
@@ -19,8 +20,6 @@ class ReviewItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String postId = detail.postID;
-
-    // Try to render cached post & seller immediately if available
     final dynamic cachedPost = LocalPost().post(postId);
     if (cachedPost != null) {
       final dynamic cachedSeller =
@@ -78,7 +77,7 @@ class _ReviewItemContent extends StatelessWidget {
     required this.shippingDetail,
   });
 
-  final dynamic post;
+  final PostEntity post;
   final dynamic seller;
   final CartItemEntity detail;
   final AddShippingCartItemEntity? shippingDetail;
@@ -86,19 +85,15 @@ class _ReviewItemContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final String? image = post?.imageURL as String?;
+    final String? image = post.imageURL as String?;
     final String title = (() {
-      final dynamic raw = post?.title;
+      final dynamic raw = post.title;
       if (raw is String && raw.trim().isNotEmpty) {
         return raw;
       }
       return detail.postID;
     })();
-    final double unitPrice = (post?.price ?? 0) is num
-        ? (post?.price ?? 0).toDouble()
-        : double.tryParse((post?.price ?? '0').toString()) ?? 0.0;
     final int quantity = detail.quantity;
-    final double subtotal = unitPrice * quantity;
 
     final CartProvider cartPro = Provider.of<CartProvider>(context);
     final bool fastRequested = shippingDetail?.selectedShipping.any(
@@ -111,34 +106,6 @@ class _ReviewItemContent extends StatelessWidget {
             ? shippingDetail!.selectedShipping.first
             : null;
 
-    final CartProvider pro = Provider.of<CartProvider>(context, listen: false);
-    final String currencySymbol = CountryHelper.currencySymbolHelper(
-        pro.address?.country.currency ?? 'USD');
-    final String currencyCode = (post?.currency ?? '').toString();
-    final String unitPriceLabel =
-        _formatAmountWithSymbol(unitPrice, currencySymbol);
-    double totalPrice = subtotal;
-    String totalCurrencySymbol = currencySymbol;
-    String? shippingLabel;
-    final double? shippingAmount = primaryShipping?.convertedBufferAmount;
-    final String? shippingCurrency = primaryShipping?.convertedCurrency;
-
-    if (shippingAmount != null && shippingAmount > 0) {
-      final String shippingSymbol =
-          CountryHelper.currencySymbolHelper(shippingCurrency ?? currencyCode);
-      shippingLabel = _formatAmountWithSymbol(shippingAmount, shippingSymbol);
-
-      // Always add shipping
-      totalPrice += shippingAmount;
-
-      if (shippingCurrency != null && shippingCurrency.isNotEmpty) {
-        totalCurrencySymbol =
-            CountryHelper.currencySymbolHelper(shippingCurrency);
-      }
-    }
-
-    final String totalLabel =
-        _formatAmountWithSymbol(totalPrice, totalCurrencySymbol);
     final String destination = _buildDestination(
       shipping: primaryShipping?.toAddress,
       address: cartPro.address,
@@ -148,11 +115,6 @@ class _ReviewItemContent extends StatelessWidget {
     // ⚡ Attribute Chips
     // ------------------------------------------
     final List<Widget> attributeChips = <Widget>[];
-
-    final String? conditionCode = post?.condition?.code as String?;
-    if (conditionCode != null && conditionCode.isNotEmpty) {
-      attributeChips.add(_InfoPill(conditionCode));
-    }
 
     if (detail.size != null && detail.size!.isNotEmpty) {
       attributeChips.add(_InfoPill('${'size'.tr()}: ${detail.size}'));
@@ -272,11 +234,33 @@ class _ReviewItemContent extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           // Total and subtotal section below
-          _PriceBreakdown(
-            totalLabel: totalLabel,
-            shippingLabel: shippingLabel,
-            unitPriceLabel: unitPriceLabel,
-            quantity: quantity,
+          FutureBuilder<double?>(
+            future: post.getLocalPrice(),
+            builder: (BuildContext context, AsyncSnapshot<double?> snap) {
+              if (!snap.hasData) {
+                return const SizedBox(
+                  height: 40,
+                  child:
+                      Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                );
+              }
+
+              final double unitPrice = snap.data ?? 0.0;
+              final double? nativeShipping =
+                  primaryShipping?.nativeBufferAmount;
+
+              final double totalAmount =
+                  unitPrice * quantity + (nativeShipping ?? 0.0);
+
+              return _PriceBreakdown(
+                total:
+                    '${CountryHelper.currencySymbolHelper(primaryShipping?.nativeCurrency)}${totalAmount.toStringAsFixed(2)}',
+                shippingLabel:
+                    '${CountryHelper.currencySymbolHelper(primaryShipping?.nativeCurrency)}${(nativeShipping ?? 0.0).toStringAsFixed(2)}',
+                unitPriceLabel: post.getPriceStr(),
+                quantity: quantity,
+              );
+            },
           ),
           if (destination.isNotEmpty) ...<Widget>[
             const SizedBox(height: 16),
@@ -345,15 +329,14 @@ class _FastDeliveryBadge extends StatelessWidget {
 
 class _PriceBreakdown extends StatelessWidget {
   const _PriceBreakdown({
-    required this.totalLabel,
+    required this.total,
     required this.unitPriceLabel,
     required this.quantity,
     this.shippingLabel,
   });
-
-  final String totalLabel;
+  final String? total;
   final String? shippingLabel;
-  final String unitPriceLabel;
+  final Future<String> unitPriceLabel;
   final int quantity;
 
   @override
@@ -363,12 +346,17 @@ class _PriceBreakdown extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         if (shippingLabel != null && shippingLabel!.isNotEmpty) ...<Widget>[
-          Text(
-            '${'subtotal'.tr()}: $unitPriceLabel × $quantity',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w400,
-            ),
-          ),
+          FutureBuilder<String>(
+              future: unitPriceLabel,
+              builder:
+                  (BuildContext context, AsyncSnapshot<String> asyncSnapshot) {
+                return Text(
+                  '${'subtotal'.tr()}: ${asyncSnapshot.data} × $quantity',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w400,
+                  ),
+                );
+              }),
           Text(
             '${'shipping'.tr()}: $shippingLabel',
             style: theme.textTheme.bodyMedium,
@@ -380,7 +368,7 @@ class _PriceBreakdown extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text(
-              '${'total'.tr()}: $totalLabel',
+              '${'total'.tr()}: $total',
               style: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.w500,
               ),
@@ -448,11 +436,3 @@ List<String> _compactParts(List<String?> values) => values
     .where((String? value) => value != null && value.trim().isNotEmpty)
     .map((String? value) => value!.trim())
     .toList();
-
-String _formatAmountWithSymbol(double? amount, String? symbol) {
-  if (amount == null) return '';
-  final String s = symbol ?? '';
-  return s.isEmpty
-      ? amount.toStringAsFixed(2)
-      : '$s ${amount.toStringAsFixed(2)}';
-}

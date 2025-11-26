@@ -1,4 +1,6 @@
 import 'package:hive/hive.dart';
+import '../../../../../../core/helper_functions/country_helper.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../post/data/sources/local/local_post.dart';
 import 'cart_item_entity.dart';
 export 'cart_item_entity.dart';
@@ -29,6 +31,18 @@ class CartEntity {
 
   List<CartItemEntity> get saveLaterItems =>
       items.where((CartItemEntity item) => !item.inCart).toList();
+
+  Future<String> cartTotalPriceString() async {
+    double tt = 0;
+    for (final CartItemEntity item in items) {
+      if (item.inCart) {
+        final double price =
+            await LocalPost().post(item.postID)?.getLocalPrice() ?? 0;
+        tt += item.quantity * price;
+      }
+    }
+    return '${CountryHelper.currencySymbolHelper(LocalAuth.currency)}${tt.toStringAsFixed(2)}';
+  }
 
   double get cartTotal {
     double tt = 0;
