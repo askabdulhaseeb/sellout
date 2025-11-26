@@ -43,9 +43,9 @@ class PersonalCartTotalSection extends StatelessWidget {
                             sum +
                             item.selectedShipping.fold<double>(
                               0.0,
-                              (double innerSum, shipping) =>
-                                  innerSum +
-                                  (shipping.nativeBufferAmount),
+                              (double innerSum,
+                                      SelectedShippingEntity shipping) =>
+                                  innerSum + (shipping.nativeBufferAmount),
                             ),
                       ) ??
                       0.0;
@@ -64,20 +64,21 @@ class PersonalCartTotalSection extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                _buildTile(
-                  '${'subtotal'.tr()} (${cart.cartItems.length} ${'items'.tr()})',
-                  trailing: FutureBuilder<String>(
-                    future: cart.cartTotalPriceString(),
-                    builder:
-                        (BuildContext context, AsyncSnapshot<String> snapshot) {
-                      return Text(
-                        snapshot.data ?? '0.00',
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      );
-                    },
+                if (cartPro.cartType != CartType.payment)
+                  _buildTile(
+                    '${'subtotal'.tr()} (${cart.cartItems.length} ${'items'.tr()})',
+                    trailing: FutureBuilder<String>(
+                      future: cart.cartTotalPriceString(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<String> snapshot) {
+                        return Text(
+                          snapshot.data ?? '0.00',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        );
+                      },
+                    ),
                   ),
-                ),
                 if (hasShipping && cartPro.cartType == CartType.reviewOrder)
                   _buildTile(
                     'delivery'.tr(),
@@ -89,9 +90,9 @@ class PersonalCartTotalSection extends StatelessWidget {
                                 sum +
                                 item.selectedShipping.fold<double>(
                                   0.0,
-                                  (double innerSum, shipping) =>
-                                      innerSum +
-                                      (shipping.nativeBufferAmount ),
+                                  (double innerSum,
+                                          SelectedShippingEntity shipping) =>
+                                      innerSum + (shipping.nativeBufferAmount),
                                 ),
                           ).toStringAsFixed(2)}',
                       style: const TextStyle(

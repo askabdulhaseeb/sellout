@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../../core/helper_functions/country_helper.dart';
+import '../../../../../../../../core/widgets/shadow_container.dart';
 import '../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../../auth/signin/domain/entities/address_entity.dart';
 import '../../../../../../post/data/sources/local/local_post.dart';
@@ -122,12 +123,7 @@ class _ReviewItemContent extends StatelessWidget {
       int colorValue =
           int.tryParse(detail!.color!.replaceFirst('#', '0xff')) ?? 0xff000000;
       attributeChips.add(
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surface.withOpacity(0.08),
-            borderRadius: BorderRadius.circular(4),
-          ),
+        ShadowContainer(
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -150,13 +146,7 @@ class _ReviewItemContent extends StatelessWidget {
       );
     }
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: theme.colorScheme.outline),
-      ),
+    return ShadowContainer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
