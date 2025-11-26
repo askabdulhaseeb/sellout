@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../core/enums/listing/core/delivery_type.dart';
-import '../../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../auth/signin/data/sources/local/local_auth.dart';
