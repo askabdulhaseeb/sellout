@@ -45,7 +45,7 @@ class PersonalCartTotalSection extends StatelessWidget {
                               0.0,
                               (double innerSum, shipping) =>
                                   innerSum +
-                                  (shipping.nativeBufferAmount ?? 0.0),
+                                  (shipping.nativeBufferAmount),
                             ),
                       ) ??
                       0.0;
@@ -91,7 +91,7 @@ class PersonalCartTotalSection extends StatelessWidget {
                                   0.0,
                                   (double innerSum, shipping) =>
                                       innerSum +
-                                      (shipping.nativeBufferAmount ?? 0.0),
+                                      (shipping.nativeBufferAmount ),
                                 ),
                           ).toStringAsFixed(2)}',
                       style: const TextStyle(
