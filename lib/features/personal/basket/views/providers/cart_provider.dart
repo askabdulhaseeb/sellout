@@ -70,9 +70,9 @@ class CartProvider extends ChangeNotifier {
   PostageDetailResponseEntity? _postageResponseEntity;
   AddedShippingResponseEntity? _addShippingResponse;
   // selected postage rate per postID
-  final Map<String, RateEntity> _selectedPostageRates = <String, RateEntity>{};
+  Map<String, RateEntity> _selectedPostageRates = <String, RateEntity>{};
   // Map to store selected rate objectId for each postId
-  final Map<String, String> _selectedRateObjectIds = <String, String>{};
+  Map<String, String> _selectedRateObjectIds = <String, String>{};
 
   AddressEntity? _address = (LocalAuth.currentUser?.address != null &&
           LocalAuth.currentUser!.address
@@ -136,9 +136,9 @@ class CartProvider extends ChangeNotifier {
   // MARK: ✏️ Setters
   void setCartType(CartType type) {
     _cartType = type;
-    if (_cartType == CartType.shoppingBasket ||
-        _cartType == CartType.checkoutOrder) {
-      _addShippingResponse = null;
+    if (_cartType == CartType.shoppingBasket) {
+      _selectedPostageRates = <String, RateEntity>{};
+      _selectedRateObjectIds = <String, String>{};
     }
     notifyListeners();
   }

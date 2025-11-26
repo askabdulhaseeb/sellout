@@ -35,7 +35,9 @@ class ReviewCartPage extends StatelessWidget {
           Expanded(
             child: ListView.separated(
               itemCount: shippingItems.length,
-              separatorBuilder: (_, __) => const SizedBox.shrink(),
+              separatorBuilder: (_, __) => const SizedBox(
+                height: 4,
+              ),
               itemBuilder: (BuildContext context, int index) {
                 final AddShippingCartItemEntity shippingItem =
                     shippingItems[index];
