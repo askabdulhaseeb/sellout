@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import '../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../core/functions/app_log.dart';
-import '../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../../../../core/widgets/app_snackbar.dart';
 import '../../../auth/signin/data/models/address_model.dart';
@@ -14,7 +13,7 @@ import '../../data/models/cart/add_shipping_response_model.dart';
 import '../../data/models/cart/cart_model.dart';
 import '../../data/sources/local/local_cart.dart';
 import '../../domain/entities/cart/cart_entity.dart';
-import '../../domain/entities/cart/add_shipping_response_entity.dart';
+import '../../domain/entities/cart/added_shipping_response_entity.dart';
 import '../../domain/entities/cart/postage_detail_response_entity.dart';
 import '../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../domain/entities/checkout/check_out_entity.dart';
@@ -65,12 +64,11 @@ class CartProvider extends ChangeNotifier {
   CartItemStatusType _basketItemStatus = CartItemStatusType.cart;
 
   List<CartItemEntity> _cartItems = <CartItemEntity>[];
-  String _postageCurrencySymbol = '';
   bool _isFetchingCart = false;
   final List<String> _fastDeliveryProducts = <String>[];
   PaymentIntentEntity? _orderBilling;
   PostageDetailResponseEntity? _postageResponseEntity;
-  AddShippingResponseEntity? _addShippingResponse;
+  AddedShippingResponseEntity? _addShippingResponse;
   // selected postage rate per postID
   final Map<String, RateEntity> _selectedPostageRates = <String, RateEntity>{};
   // Map to store selected rate objectId for each postId
@@ -93,11 +91,10 @@ class CartProvider extends ChangeNotifier {
   PaymentIntentEntity? get orderBilling => _orderBilling;
   PostageDetailResponseEntity? get postageResponseEntity =>
       _postageResponseEntity;
-  AddShippingResponseEntity? get addShippingResponse => _addShippingResponse;
+  AddedShippingResponseEntity? get addShippingResponse => _addShippingResponse;
   Map<String, RateEntity> get selectedPostageRates => _selectedPostageRates;
   CartItemStatusType get basketItemStatus => _basketItemStatus;
   AddressEntity? get address => _address;
-  String get postageCurrencySymbol => _postageCurrencySymbol;
 
   /// Returns true if any cart item requires removal because delivery is unavailable.
   /// Criteria: originalDeliveryType is paid or fast delivery AND no rates found.
@@ -144,11 +141,6 @@ class CartProvider extends ChangeNotifier {
 
   void setBasketPageType(ShoppingBasketPageType type) {
     _shoppingBasketType = type;
-    notifyListeners();
-  }
-
-  void setPostageCurrencySymbol(String val) {
-    _postageCurrencySymbol = val;
     notifyListeners();
   }
 
@@ -332,8 +324,6 @@ class CartProvider extends ChangeNotifier {
           await _getPostageDetailUsecase(params);
       if (result is DataSuccess) {
         _postageResponseEntity = result.entity;
-        _postageCurrencySymbol =
-            CountryHelper.currencySymbolHelper(_address?.country.alpha3 ?? '');
         // Automatically select first rate for each post and store shipmentId
         if (_postageResponseEntity != null) {
           _postageResponseEntity!.detail.forEach(

@@ -346,12 +346,12 @@ class _ProductInfo extends StatelessWidget {
               /// TITLE + CONDITION BADGE + PRICE (Right)
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: <Widget>[
                   /// LEFT SIDE: TITLE + NEW BADGE
                   Expanded(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                      children: <Widget>[
                         /// TITLE
                         Flexible(
                           child: Text(
@@ -394,7 +394,7 @@ class _ProductInfo extends StatelessWidget {
                   /// RIGHT SIDE: PRICE
                   FutureBuilder<String>(
                     future: post?.getPriceStr(),
-                    builder: (context, snapshot) {
+                    builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
                       if (!snapshot.hasData) {
                         return const Text('...');
                       }

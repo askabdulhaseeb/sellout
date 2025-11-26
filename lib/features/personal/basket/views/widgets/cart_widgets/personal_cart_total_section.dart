@@ -6,6 +6,7 @@ import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../post/domain/entities/post/post_entity.dart';
 import '../../../data/models/cart/add_shipping_response_model.dart';
 import '../../../data/models/cart/cart_item_model.dart';
 import '../../../data/sources/local/local_cart.dart';
@@ -46,13 +47,18 @@ class PersonalCartTotalSection extends StatelessWidget {
                         title: Text(
                           '${'subtotal'.tr()} (${cart.cartItems.length} ${'items'.tr()})',
                         ),
-                        trailing: Text(
-                          cart.cartTotal.toStringAsFixed(2),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
+                        trailing: FutureBuilder<String>(
+                            future: cart.cartTotalPriceString(),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<String> asyncSnapshot) {
+                              return Text(
+                                asyncSnapshot.data ?? '',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              );
+                            }),
                       ),
                     CustomElevatedButton(
                       title: cartPro.cartType == CartType.shoppingBasket
@@ -81,15 +87,16 @@ class PersonalCartTotalSection extends StatelessWidget {
                           // Check if fastDeliveryProducts is empty and all cart items are free delivery
                           final bool fastDeliveryEmpty =
                               cartPro.fastDeliveryProducts.isEmpty;
-                          final bool allFreeDelivery =
-                              cartPro.cartItems.isNotEmpty &&
-                                  cartPro.cartItems.every((item) {
-                                    // Look up the post and check deliveryType
-                                    final post = LocalPost().post(item.postID);
-                                    if (post == null) return false;
-                                    return post.deliveryType ==
-                                        DeliveryType.freeDelivery;
-                                  });
+                          final bool allFreeDelivery = cartPro
+                                  .cartItems.isNotEmpty &&
+                              cartPro.cartItems.every((CartItemEntity item) {
+                                // Look up the post and check deliveryType
+                                final PostEntity? post =
+                                    LocalPost().post(item.postID);
+                                if (post == null) return false;
+                                return post.deliveryType ==
+                                    DeliveryType.freeDelivery;
+                              });
 
                           if (fastDeliveryEmpty && allFreeDelivery) {
                             // No need to submit shipping, move to review order

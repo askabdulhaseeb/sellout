@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../../../core/widgets/empty_page_widget.dart';
-import '../../../../domain/entities/cart/add_shipping_response_entity.dart';
+import '../../../../domain/entities/cart/added_shipping_response_entity.dart';
 import '../../../../domain/entities/cart/cart_item_entity.dart';
 import '../../../providers/cart_provider.dart';
 import 'review_widgets/review_item_card.dart';
@@ -13,7 +13,7 @@ class ReviewCartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final CartProvider cartPro = context.watch<CartProvider>();
-    final AddShippingResponseEntity? shippingResponse =
+    final AddedShippingResponseEntity? shippingResponse =
         cartPro.addShippingResponse;
     if (shippingResponse != null) {
       final List<AddShippingCartItemEntity> shippingItems = shippingResponse
@@ -35,7 +35,7 @@ class ReviewCartPage extends StatelessWidget {
           Expanded(
             child: ListView.separated(
               itemCount: shippingItems.length,
-              separatorBuilder: (_, __) => const Divider(),
+              separatorBuilder: (_, __) => const SizedBox.shrink(),
               itemBuilder: (BuildContext context, int index) {
                 final AddShippingCartItemEntity shippingItem =
                     shippingItems[index];
