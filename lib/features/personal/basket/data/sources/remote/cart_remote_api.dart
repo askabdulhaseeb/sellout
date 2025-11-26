@@ -265,6 +265,10 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
         body: jsonEncode(param.toJson()),
       );
       if (result is DataSuccess<String>) {
+        AppLog.info(
+          jsonEncode(result.data),
+          name: 'CartRemoteAPIImpl.addShipping - If',
+        );
         final String raw = result.data ?? '';
         if (raw.isEmpty) {
           AppLog.error(

@@ -1,22 +1,21 @@
 import '../../../../../../core/enums/cart/cart_item_type.dart';
+import '../../../../auth/signin/domain/entities/address_entity.dart';
 
 class AddedShippingResponseEntity {
   AddedShippingResponseEntity({
     required this.message,
     required this.cart,
   });
-
   final String message;
-  final AddShippingCartEntity cart;
+  final AddedShippingCartEntity cart;
 }
 
-class AddShippingCartEntity {
-  AddShippingCartEntity({
+class AddedShippingCartEntity {
+  AddedShippingCartEntity({
     required this.updatedAt,
     required this.cartItems,
   });
-
-  final String updatedAt;
+  final DateTime updatedAt;
   final List<AddShippingCartItemEntity> cartItems;
 }
 
@@ -25,131 +24,85 @@ class AddShippingCartItemEntity {
     required this.quantity,
     required this.cartItemId,
     required this.selectedShipping,
-    required this.postId,
-    required this.listId,
-    required this.status,
+    this.postId,
+    this.listId,
     this.color,
     this.size,
+    this.status,
   });
-
   final int quantity;
   final String cartItemId;
   final List<SelectedShippingEntity> selectedShipping;
-  final String postId;
-  final String listId;
-  final CartItemStatusType status;
+  final String? postId;
+  final String? listId;
   final String? color;
   final String? size;
+  final CartItemStatusType? status;
 }
 
 class SelectedShippingEntity {
   SelectedShippingEntity({
-    this.fromAddress,
-    this.toAddress,
+    required this.parcel,
+    required this.serviceName,
+    required this.rateObjectId,
+    required this.parcelIndex,
+    required this.convertedCurrency,
+    required this.nativeBufferAmount,
+    required this.toAddress,
+    required this.parcelId,
+    required this.shipmentId,
+    required this.provider,
+    required this.convertedBufferAmount,
+    required this.fastDelivery,
     required this.deliveryType,
-    this.serviceName,
-    this.rateObjectId,
-    this.parcelIndex,
-    this.convertedCurrency,
-    this.nativeBufferAmount,
-    this.parcel,
-    this.parcelId,
-    this.shipmentId,
-    this.provider,
-    this.convertedBufferAmount,
-    this.fastDelivery,
-    this.nativeCurrency,
-    this.coreAmount,
-    this.serviceToken,
-    this.note,
-    this.packagingStrategy,
-    this.parcelCount,
-    this.additionalData,
+    required this.nativeCurrency,
+    required this.coreAmount,
+    required this.fromAddress,
+    required this.serviceToken,
   });
-
-  final ShippingAddressEntity? fromAddress;
-  final ShippingAddressEntity? toAddress;
+  final ParcelEntity parcel;
+  final String serviceName;
+  final String rateObjectId;
+  final int parcelIndex;
+  final String convertedCurrency;
+  final double nativeBufferAmount;
+  final AddressEntity toAddress;
+  final String parcelId;
+  final String shipmentId;
+  final String provider;
+  final double convertedBufferAmount;
+  final FastDeliveryEntity fastDelivery;
   final String deliveryType;
-  final String? serviceName;
-  final String? rateObjectId;
-  final int? parcelIndex;
-  final String? convertedCurrency;
-  final double? nativeBufferAmount;
-  final SelectedShippingParcelEntity? parcel;
-  final String? parcelId;
-  final String? shipmentId;
-  final String? provider;
-  final double? convertedBufferAmount;
-  final SelectedShippingFastDeliveryEntity? fastDelivery;
-  final String? nativeCurrency;
-  final double? coreAmount;
-  final String? serviceToken;
-  final String? note;
-  final String? packagingStrategy;
-  final int? parcelCount;
-  final Map<String, dynamic>? additionalData;
+  final String nativeCurrency;
+  final double coreAmount;
+  final AddressEntity fromAddress;
+  final String serviceToken;
 }
 
-class ShippingAddressEntity {
-  ShippingAddressEntity({
-    this.zip,
-    this.country,
-    this.city,
-    this.phone,
-    this.name,
-    this.street1,
-    this.state,
-    this.email,
-    this.address1,
-    this.addressCategory,
-    this.phoneNumber,
-    this.recipientName,
-    this.postalCode,
-    this.isDefault,
+class ParcelEntity {
+  ParcelEntity({
+    required this.length,
+    required this.width,
+    required this.distanceUnit,
+    required this.weight,
+    required this.massUnit,
+    required this.height,
   });
-
-  final String? zip;
-  final String? country;
-  final String? city;
-  final String? phone;
-  final String? name;
-  final String? street1;
-  final String? state;
-  final String? email;
-  final String? address1;
-  final String? addressCategory;
-  final String? phoneNumber;
-  final String? recipientName;
-  final String? postalCode;
-  final bool? isDefault;
+  final String length;
+  final String width;
+  final String distanceUnit;
+  final String weight;
+  final String massUnit;
+  final String height;
 }
 
-class SelectedShippingParcelEntity {
-  SelectedShippingParcelEntity({
-    this.length,
-    this.width,
-    this.height,
-    this.distanceUnit,
-    this.weight,
-    this.massUnit,
-  });
-
-  final String? length;
-  final String? width;
-  final String? height;
-  final String? distanceUnit;
-  final String? weight;
-  final String? massUnit;
-}
-
-class SelectedShippingFastDeliveryEntity {
-  SelectedShippingFastDeliveryEntity({
+class FastDeliveryEntity {
+  FastDeliveryEntity({
     required this.available,
     required this.requested,
     this.message,
   });
-
   final bool available;
-  final bool requested;
   final String? message;
+  final bool requested;
 }
