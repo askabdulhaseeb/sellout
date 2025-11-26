@@ -34,9 +34,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
           // FIXED: orElse must return AddressEntity
           final AddressEntity def = addresses.firstWhere(
             (AddressEntity a) => a.isDefault,
-            orElse: () {
-              return addresses.first;
-            },
           );
           cartPro.setAddress(def);
         }
@@ -261,7 +258,6 @@ class _SimplePostageSectionState extends State<_SimplePostageSection> {
                             return const SizedBox.shrink();
                           }
                           final Map<String, String> prices = snapPrices.data!;
-                          double total = 0;
                           final List<Widget> items = <Widget>[];
                           for (final MapEntry<String,
                                   PostageItemDetailEntity> entry
@@ -274,9 +270,6 @@ class _SimplePostageSectionState extends State<_SimplePostageSection> {
 
                             final String? priceStr = prices[postId];
                             if (priceStr != null) {
-                              total += double.tryParse(priceStr.replaceAll(
-                                      RegExp(r'[^0-9.]'), '')) ??
-                                  0.0;
                               items.add(_row(title, priceStr, context));
                             } else {
                               final bool isFree = detail.originalDeliveryType
@@ -294,29 +287,6 @@ class _SimplePostageSectionState extends State<_SimplePostageSection> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               ...items,
-                              if (total > 0)
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 8),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Text('total'.tr(),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium
-                                              ?.copyWith(
-                                                  fontWeight: FontWeight.w600)),
-                                      Text(
-                                          '${CountryHelper.currencySymbolHelper(LocalAuth.currency)}${total.toStringAsFixed(2)}',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium
-                                              ?.copyWith(
-                                                  fontWeight: FontWeight.w600)),
-                                    ],
-                                  ),
-                                ),
                             ],
                           );
                         },

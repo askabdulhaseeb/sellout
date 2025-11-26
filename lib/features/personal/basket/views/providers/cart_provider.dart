@@ -136,6 +136,10 @@ class CartProvider extends ChangeNotifier {
   // MARK: ✏️ Setters
   void setCartType(CartType type) {
     _cartType = type;
+    if (_cartType == CartType.shoppingBasket ||
+        _cartType == CartType.checkoutOrder) {
+      _addShippingResponse = null;
+    }
     notifyListeners();
   }
 

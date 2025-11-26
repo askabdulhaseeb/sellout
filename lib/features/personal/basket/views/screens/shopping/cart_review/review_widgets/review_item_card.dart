@@ -2,8 +2,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../core/enums/listing/core/delivery_type.dart';
+import '../../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../../core/helper_functions/country_helper.dart';
+import '../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../../auth/signin/domain/entities/address_entity.dart';
 import '../../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../../post/domain/entities/post/post_entity.dart';
@@ -14,13 +16,14 @@ import '../../../../providers/cart_provider.dart';
 
 class ReviewItemCard extends StatelessWidget {
   const ReviewItemCard({required this.detail, this.shippingDetail, super.key});
-  final CartItemEntity detail;
+  final CartItemEntity? detail;
   final AddShippingCartItemEntity? shippingDetail;
 
   @override
   Widget build(BuildContext context) {
-    final String postId = detail.postID;
+    final String postId = detail?.postID ?? '';
     final dynamic cachedPost = LocalPost().post(postId);
+
     if (cachedPost != null) {
       final dynamic cachedSeller =
           LocalUser().userEntity(cachedPost?.createdBy ?? '');
@@ -45,7 +48,6 @@ class ReviewItemCard extends StatelessWidget {
 
         final dynamic fetchedPost = snap.data;
         if (fetchedPost == null) {
-          // Post not available
           return Padding(
             padding: const EdgeInsets.all(12),
             child: Text('item_details_unavailable'.tr()),
@@ -79,51 +81,47 @@ class _ReviewItemContent extends StatelessWidget {
 
   final PostEntity post;
   final dynamic seller;
-  final CartItemEntity detail;
+  final CartItemEntity? detail;
   final AddShippingCartItemEntity? shippingDetail;
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final String? image = post.imageURL as String?;
-    final String title = (() {
-      final dynamic raw = post.title;
-      if (raw is String && raw.trim().isNotEmpty) {
-        return raw;
-      }
-      return detail.postID;
-    })();
-    final int quantity = detail.quantity;
+    final String title = (post.title.trim().isNotEmpty)
+        ? post.title
+        : detail?.postID ?? 'Unknown';
+    final int quantity = detail?.quantity ?? 1;
 
     final CartProvider cartPro = Provider.of<CartProvider>(context);
-    final bool fastRequested = shippingDetail?.selectedShipping.any(
-            (SelectedShippingEntity s) => s.fastDelivery?.requested ?? false) ??
+    final bool fastRequested = shippingDetail?.selectedShipping
+            .any((SelectedShippingEntity s) => s.fastDelivery.requested) ??
         false;
     final bool showFastBadge =
-        cartPro.fastDeliveryProducts.contains(detail.postID) || fastRequested;
+        cartPro.fastDeliveryProducts.contains(detail?.postID ?? '') ||
+            fastRequested;
+
     final SelectedShippingEntity? primaryShipping =
         (shippingDetail?.selectedShipping.isNotEmpty ?? false)
             ? shippingDetail!.selectedShipping.first
             : null;
+
+    final int parcelCount = shippingDetail?.selectedShipping.length ?? 0;
 
     final String destination = _buildDestination(
       shipping: primaryShipping?.toAddress,
       address: cartPro.address,
     );
 
-    // ------------------------------------------
-    // ⚡ Attribute Chips
-    // ------------------------------------------
     final List<Widget> attributeChips = <Widget>[];
 
-    if (detail.size != null && detail.size!.isNotEmpty) {
-      attributeChips.add(_InfoPill('${'size'.tr()}: ${detail.size}'));
+    if (detail?.size != null && detail!.size!.isNotEmpty) {
+      attributeChips.add(_InfoPill('${'size'.tr()}: ${detail!.size}'));
     }
 
-    // --------------------------
-    // ⭐ NEW COLORED DOT HERE
-    // --------------------------
-    if (detail.color != null && detail.color!.isNotEmpty) {
+    if (detail?.color != null && detail!.color!.isNotEmpty) {
+      int colorValue =
+          int.tryParse(detail!.color!.replaceFirst('#', '0xff')) ?? 0xff000000;
       attributeChips.add(
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -138,11 +136,7 @@ class _ReviewItemContent extends StatelessWidget {
                 width: 14,
                 height: 14,
                 decoration: BoxDecoration(
-                  color: Color(
-                    int.parse(
-                      detail.color!.replaceFirst('#', '0xff'),
-                    ),
-                  ),
+                  color: Color(colorValue),
                   shape: BoxShape.circle,
                 ),
               ),
@@ -157,17 +151,12 @@ class _ReviewItemContent extends StatelessWidget {
       );
     }
 
-    // ------------------------------------------
-    // Main UI
-    // ------------------------------------------
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: theme.colorScheme.outline,
-        ),
+        border: Border.all(color: theme.colorScheme.outline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,13 +182,10 @@ class _ReviewItemContent extends StatelessWidget {
                   ),
                 ),
               ),
-              if (showFastBadge) ...<Widget>[
-                const _FastDeliveryBadge(),
-              ],
+              if (showFastBadge) const _FastDeliveryBadge(),
             ],
           ),
           const SizedBox(height: 16),
-          // Product data section - full width
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -218,7 +204,6 @@ class _ReviewItemContent extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 4),
                     if (attributeChips.isNotEmpty) ...<Widget>[
                       const SizedBox(height: 8),
                       Wrap(
@@ -233,7 +218,6 @@ class _ReviewItemContent extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          // Total and subtotal section below
           FutureBuilder<double?>(
             future: post.getLocalPrice(),
             builder: (BuildContext context, AsyncSnapshot<double?> snap) {
@@ -246,19 +230,17 @@ class _ReviewItemContent extends StatelessWidget {
               }
 
               final double unitPrice = snap.data ?? 0.0;
-              final double? nativeShipping =
-                  primaryShipping?.nativeBufferAmount;
-
-              final double totalAmount =
-                  unitPrice * quantity + (nativeShipping ?? 0.0);
+              final double nativeShipping =
+                  primaryShipping?.nativeBufferAmount ?? 0.0;
+              final double totalAmount = unitPrice * quantity + nativeShipping;
 
               return _PriceBreakdown(
                 total:
                     '${CountryHelper.currencySymbolHelper(primaryShipping?.nativeCurrency)}${totalAmount.toStringAsFixed(2)}',
-                shippingLabel:
-                    '${CountryHelper.currencySymbolHelper(primaryShipping?.nativeCurrency)}${(nativeShipping ?? 0.0).toStringAsFixed(2)}',
-                unitPriceLabel: post.getPriceStr(),
+                unitPrice: unitPrice,
                 quantity: quantity,
+                shippingLabel:
+                    '${CountryHelper.currencySymbolHelper(primaryShipping?.nativeCurrency)}${nativeShipping.toStringAsFixed(2)}${parcelCount > 1 ? ' ($parcelCount ${'parcels'.tr()})' : ''}',
               );
             },
           ),
@@ -269,11 +251,8 @@ class _ReviewItemContent extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Icon(
-                  Icons.location_on_outlined,
-                  color: theme.colorScheme.primary,
-                  size: 20,
-                ),
+                Icon(Icons.location_on_outlined,
+                    color: theme.colorScheme.primary, size: 20),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Column(
@@ -286,10 +265,7 @@ class _ReviewItemContent extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        destination,
-                        style: theme.textTheme.bodyMedium,
-                      ),
+                      Text(destination, style: theme.textTheme.bodyMedium),
                     ],
                   ),
                 ),
@@ -308,7 +284,6 @@ class _FastDeliveryBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const DeliveryType del = DeliveryType.fastDelivery;
-
     final ThemeData theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -330,40 +305,43 @@ class _FastDeliveryBadge extends StatelessWidget {
 class _PriceBreakdown extends StatelessWidget {
   const _PriceBreakdown({
     required this.total,
-    required this.unitPriceLabel,
+    required this.unitPrice,
     required this.quantity,
     this.shippingLabel,
   });
+
   final String? total;
-  final String? shippingLabel;
-  final Future<String> unitPriceLabel;
+  final double unitPrice;
   final int quantity;
+  final String? shippingLabel;
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final double subtotal = unitPrice * quantity;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        if (shippingLabel != null && shippingLabel!.isNotEmpty) ...<Widget>[
-          FutureBuilder<String>(
-              future: unitPriceLabel,
-              builder:
-                  (BuildContext context, AsyncSnapshot<String> asyncSnapshot) {
-                return Text(
-                  '${'subtotal'.tr()}: ${asyncSnapshot.data} × $quantity',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w400,
-                  ),
-                );
-              }),
+        // Subtotal with quantity
+        Text(
+          '${'subtotal'.tr()} ($quantity): ${CountryHelper.currencySymbolHelper(LocalAuth.currency)}${subtotal.toStringAsFixed(2)}',
+          style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+
+        // Shipping if available
+        if (shippingLabel != null && shippingLabel!.isNotEmpty) ...[
+          const SizedBox(height: 4),
           Text(
             '${'shipping'.tr()}: $shippingLabel',
             style: theme.textTheme.bodyMedium,
           ),
-          const SizedBox(),
-          const SizedBox(height: 8),
         ],
+
+        const SizedBox(height: 8),
+        // Total
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -373,7 +351,6 @@ class _PriceBreakdown extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            const SizedBox(),
           ],
         ),
       ],
@@ -392,47 +369,37 @@ class _InfoPill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface.withValues(alpha: 0.08),
+        color: theme.colorScheme.surface.withOpacity(0.08),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Text(
-        text,
-        style: theme.textTheme.labelSmall,
-      ),
+      child: Text(text, style: theme.textTheme.labelSmall),
     );
   }
 }
 
-String _buildDestination({
-  ShippingAddressEntity? shipping,
-  AddressEntity? address,
-}) {
-  final List<String> shippingParts = _compactParts(<String?>[
-    shipping?.address1 ?? shipping?.street1,
+String _buildDestination({AddressEntity? shipping, AddressEntity? address}) {
+  List<String> shippingParts = _compactParts(<String?>[
+    shipping?.address1,
     shipping?.city,
-    shipping?.state,
-    shipping?.country,
-    shipping?.postalCode ?? shipping?.zip,
+    shipping?.state?.stateName,
+    shipping?.country.displayName,
+    shipping?.postalCode
   ]);
-  if (shippingParts.isNotEmpty) {
-    return shippingParts.join(', ');
-  }
+  if (shippingParts.isNotEmpty) return shippingParts.join(', ');
 
-  final List<String> addressParts = _compactParts(<String?>[
+  List<String> addressParts = _compactParts(<String?>[
     address?.address1,
     address?.city,
     address?.state?.stateName,
     address?.country.displayName,
-    address?.postalCode,
+    address?.postalCode
   ]);
-  if (addressParts.isNotEmpty) {
-    return addressParts.join(', ');
-  }
+  if (addressParts.isNotEmpty) return addressParts.join(', ');
 
   return '';
 }
 
 List<String> _compactParts(List<String?> values) => values
-    .where((String? value) => value != null && value.trim().isNotEmpty)
-    .map((String? value) => value!.trim())
+    .where((String? v) => v != null && v.trim().isNotEmpty)
+    .map((String? v) => v!.trim())
     .toList();

@@ -39,17 +39,8 @@ class ReviewCartPage extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) {
                 final AddShippingCartItemEntity shippingItem =
                     shippingItems[index];
-                final CartItemEntity detail =
-                    cartItemMap[shippingItem.cartItemId] ??
-                        CartItemEntity(
-                          quantity: shippingItem.quantity,
-                          postID: shippingItem.postId,
-                          listID: shippingItem.listId,
-                          color: shippingItem.color,
-                          size: shippingItem.size,
-                          cartItemID: shippingItem.cartItemId,
-                          status: shippingItem.status,
-                        );
+                final CartItemEntity? detail =
+                    cartItemMap[shippingItem.cartItemId];
                 return ReviewItemCard(
                   detail: detail,
                   shippingDetail: shippingItem,

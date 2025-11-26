@@ -43,7 +43,16 @@ class CartEntity {
     }
     return '${CountryHelper.currencySymbolHelper(LocalAuth.currency)}${tt.toStringAsFixed(2)}';
   }
-
+ Future<double> cartTotalPrice() async {
+    double total = 0.0;
+    for (final CartItemEntity item in items) {
+      if (item.inCart) {
+        final double price = await LocalPost().post(item.postID)?.getLocalPrice() ?? 0.0;
+        total += item.quantity * price;
+      }
+    }
+    return total;
+  }
   double get cartTotal {
     double tt = 0;
     for (final CartItemEntity item in items) {
