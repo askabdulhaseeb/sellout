@@ -8,8 +8,8 @@ class PostageFooter extends StatelessWidget {
     required this.postage,
     required this.cartPro,
     required this.onApply,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final PostageDetailResponseEntity postage;
   final CartProvider cartPro;

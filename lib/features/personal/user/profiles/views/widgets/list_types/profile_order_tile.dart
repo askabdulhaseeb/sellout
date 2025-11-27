@@ -97,7 +97,7 @@ class SellerOrderTile extends StatelessWidget {
                               ?.copyWith(
                                   color: Theme.of(context).colorScheme.outline),
                         ),
-                      if (selectedStatus.code == StatusType.processing.code)
+                      if (selectedStatus == StatusType.pending)
                         Text(
                           'congrats_order'.tr(),
                           style: Theme.of(context)

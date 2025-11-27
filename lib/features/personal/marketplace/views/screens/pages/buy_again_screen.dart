@@ -96,7 +96,7 @@ class _BuyAgainSectionState extends State<BuyAgainSection> {
         // future and render an appropriate UI.
       } finally {
         if (!mounted) return;
-      
+
         postsLoading = false;
         if (mounted) setState(() {});
       }

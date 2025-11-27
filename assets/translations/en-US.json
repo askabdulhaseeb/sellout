@@ -1210,6 +1210,11 @@
   "inquiry_pet_vaccinated": "Is the pet vaccinated?",
   "inquiry_pet_pictures": "Can I see recent pictures or videos?",
   "inquiry_pet_delivery": "Is delivery/transport available?",
+    "inquiry_other": "Other",
   "inquiry_pet_age_breed": "What's the age and breed?",
-  "inquiry_other": "Other"
+  "do_you_really_want_to_delete_your_account": "Do you really want to delete your account? This action cannot be undone.",
+  "services_coming_soon_subtitle": "Book appointments and discover amazing services available around you. Find what you need, right at your fingertips!",
+  "coming_soon": "Coming soon"
+
+
 }

@@ -304,7 +304,7 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
       return DataFailer<bool?>(CustomException('User ID is null'));
     }
 
-    final String endpoint = '/noAuth/entity/$value';
+    final String endpoint = '/user/delete/$value';
     try {
       final DataState<bool> result = await ApiCall<bool>().call(
         endpoint: endpoint,
@@ -312,7 +312,6 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
         requestType: ApiRequestType.delete,
       );
       if (result is DataSuccess<bool>) {
-        await LocalAuth().signout();
         return DataSuccess<bool>('', true);
       }
       return DataFailer<bool?>(CustomException('user not deletd'));
