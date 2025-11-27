@@ -41,10 +41,10 @@ class FindAccountScreen extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text('find_account_description'.tr(),
                     textAlign: TextAlign.center,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(color: ColorScheme.of(context).outline)),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: ColorScheme.of(context)
+                            .onSurface
+                            .withValues(alpha: 0.6))),
                 const SizedBox(
                   height: 20,
                   width: double.infinity,

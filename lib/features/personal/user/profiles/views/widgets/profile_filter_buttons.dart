@@ -83,7 +83,8 @@ class CustomFilterButton extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: ColorScheme.of(context).outlineVariant),
+        border: Border.all(
+            color: ColorScheme.of(context).onSurface.withValues(alpha: 0.2)),
         borderRadius: BorderRadius.circular(8),
       ),
       padding: const EdgeInsets.all(6),
@@ -98,7 +99,8 @@ class CustomFilterButton extends StatelessWidget {
               Text(
                 label,
                 style: textTheme.labelMedium?.copyWith(
-                  color: ColorScheme.of(context).outline,
+                  color:
+                      ColorScheme.of(context).onSurface.withValues(alpha: 0.2),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),

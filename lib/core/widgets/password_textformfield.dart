@@ -92,8 +92,10 @@ class PasswordTextFormFieldState extends State<PasswordTextFormField> {
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: ColorScheme.of(context).outlineVariant),
+                  borderSide: BorderSide(
+                      color: ColorScheme.of(context)
+                          .onSurface
+                          .withValues(alpha: 0.4)),
                   borderRadius: BorderRadius.circular(8),
                 )),
           ),
