@@ -35,6 +35,7 @@ class VisitingMessageTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(message.visitingDetail?.status.json);
     return FutureBuilder<PostEntity?>(
       future: LocalPost().getPost(message.visitingDetail?.postID ?? ''),
       builder: (BuildContext context, AsyncSnapshot<PostEntity?> snapshot) {
@@ -63,14 +64,15 @@ class VisitingMessageTile extends StatelessWidget {
                   : ColorScheme.of(context).outlineVariant,
             ),
           ),
-          margin: EdgeInsets.all(showButtons ? 0 : 4),
+          margin: EdgeInsets.all(showButtons ? 0 : 16),
           padding: showButtons
               ? const EdgeInsets.symmetric(horizontal: 16)
               : const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              if (showButtons)
+              if (showButtons &&
+                  message.visitingDetail?.status == StatusType.pending)
                 VisitingMessageTileUpdateButtonsWidget(
                     message: message, post: post),
               Text(

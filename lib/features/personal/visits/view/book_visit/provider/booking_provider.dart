@@ -349,7 +349,6 @@ class BookingProvider extends ChangeNotifier {
       datetime: formattedDateTime,
       messageId: messageId ?? '',
       status: status,
-      businessId: 'null',
     );
 
     final DataState<VisitingEntity> result = await _updateVisitUseCase(params);
