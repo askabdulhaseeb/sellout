@@ -20,10 +20,10 @@ class ChatSelectablePageTypeWidget extends StatelessWidget {
               final bool isSelected = pagePro.currentPage == tab;
               final Color borderColor = isSelected
                   ? Theme.of(context).primaryColor
-                  : ColorScheme.of(context).outlineVariant;
+                  : ColorScheme.of(context).outline;
               final Color color = isSelected
                   ? Theme.of(context).primaryColor
-                  : ColorScheme.of(context).outline;
+                  : ColorScheme.of(context).onSurface.withValues(alpha: 0.4);
               return Expanded(
                 child: GestureDetector(
                   onTap: () => pagePro.setCurrentTabIndex(tab),

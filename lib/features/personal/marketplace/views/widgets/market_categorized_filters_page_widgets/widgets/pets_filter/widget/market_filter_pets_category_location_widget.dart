@@ -44,7 +44,7 @@ class MarketFilterPetsCategoryAndLocationWidget extends StatelessWidget {
                 displayMode: MapDisplayMode.neverShowMap,
                 initialText: marketPro.selectedLocation?.address ?? '',
                 onLocationSelected: (LocationEntity p0, LatLng p1) {
-                  marketPro.updateLocation(p1, p0);
+                  marketPro.updateFilterContainerLocation(p1, p0);
                 },
               ),
             ),

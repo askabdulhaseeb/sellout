@@ -31,7 +31,7 @@ class ProfileScreen extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 const ProfileHeaderSection(),
-                ProfileScoreSection(user: user),
+                const ProfileScoreSection(),
                 ProfileGridTypeSelectionSection(user: user),
                 ProfileGridSection(user: user),
               ],

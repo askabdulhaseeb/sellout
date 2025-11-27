@@ -56,14 +56,14 @@ class _NominationLocationFieldState extends State<NominationLocationField> {
   void didUpdateWidget(covariant NominationLocationField oldWidget) {
     super.didUpdateWidget(oldWidget);
     // If selectedLatLng changed or became null, reset controller and map
-    if (widget.selectedLatLng != oldWidget.selectedLatLng) {
-      if (widget.selectedLatLng == null &&
-          (widget.initialText == null || widget.initialText!.isEmpty)) {
+
+    if (widget.initialText == null || widget.initialText!.isEmpty) {
+      setState(() {
         _controller.clear();
-        setState(() {});
-      }
+      });
     }
   }
+
   final TextEditingController _controller = TextEditingController();
   final MapController _mapController = MapController();
   late LatLng _selectedLatLng;
@@ -78,8 +78,8 @@ class _NominationLocationFieldState extends State<NominationLocationField> {
       _controller.text = widget.initialText!;
     }
   }
-  void setLoading(bool val) {
-  }
+
+  void setLoading(bool val) {}
 
   Future<List<NominationLocationEntity>> fetchSuggestions(String query) async {
     if (query.trim().isEmpty) return <NominationLocationEntity>[];

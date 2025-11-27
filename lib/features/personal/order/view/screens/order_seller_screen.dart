@@ -4,8 +4,10 @@ import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../core/enums/core/status_type.dart';
 import '../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../services/get_it.dart';
 import '../../../../business/core/domain/usecase/get_business_by_id_usecase.dart';
+import '../../../auth/signin/domain/entities/address_entity.dart';
 import '../../../chats/create_chat/view/provider/create_private_chat_provider.dart';
 import '../../../post/domain/usecase/get_specific_post_usecase.dart';
 import '../../domain/entities/order_entity.dart';
@@ -13,6 +15,7 @@ import '../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../../user/profiles/domain/usecase/get_user_by_uid.dart';
 import '../provider/order_provider.dart';
+import 'invoice_screen.dart';
 
 class OrderSellerScreen extends StatelessWidget {
   const OrderSellerScreen({super.key});
@@ -140,19 +143,40 @@ class OrderDispatchedToWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
     return Column(
-      spacing: 4,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          '${'dispatched_to'.tr()}: ',
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              fontWeight: FontWeight.w400,
-              color: ColorScheme.of(context).onSurface.withValues(alpha: 0.3)),
+        Row(
+          children: <Widget>[
+            Icon(
+              Icons.local_shipping_outlined,
+              size: 18,
+              color: colorScheme.onSurface.withValues(alpha: 0.5),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              'dispatched_to'.tr(),
+              style: textTheme.labelMedium?.copyWith(
+                fontWeight: FontWeight.w500,
+                color: colorScheme.onSurface.withOpacity(0.7),
+              ),
+            ),
+          ],
         ),
+        const SizedBox(height: 4),
         OrderRecieverNameAddressWidget(
-          address: order.shippingAddress.address1,
+          address: order.shippingAddress,
           name: order.shippingAddress.recipientName,
+          nameTextStyle: textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: colorScheme.onSurface,
+          ),
+          addressTextStyle: textTheme.bodySmall?.copyWith(
+            color: colorScheme.onSurface.withOpacity(0.7),
+          ),
         ),
       ],
     );
@@ -193,7 +217,7 @@ class OrderInfoWidget extends StatelessWidget {
                     ?.copyWith(fontSize: 10),
               ),
             ),
-            const ViewInvoiceButton()
+            // const ViewInvoiceButton()
           ],
         ),
       ],
@@ -211,7 +235,12 @@ class ViewInvoiceButton extends StatelessWidget {
         final OrderEntity order = pro.order!;
         return InkWell(
           onTap: () {
-            // Add your invoice viewing logic here
+            Navigator.push(
+                context,
+                MaterialPageRoute<InvoiceScreen>(
+                  builder: (BuildContext context) =>
+                      InvoiceScreen(order: order),
+                ));
           },
           child: Text(
             'view_invoice'.tr(),
@@ -248,36 +277,18 @@ class OrderActionButtonsList extends StatelessWidget {
               ),
             if (order.orderStatus == StatusType.delivered)
               OrderActionButton(
-                isLoading: orderPro.isLoading,
+                isLoading: false,
                 keyName: 'posted',
                 color: order.orderStatus.color,
                 onTap: () {},
               ),
             if (order.orderStatus == StatusType.cancelled)
               OrderActionButton(
-                isLoading: orderPro.isLoading,
+                isLoading: false,
                 keyName: 'cancelled',
                 color: order.orderStatus.color,
                 onTap: () {},
               ),
-            OrderActionButton(
-              isLoading: orderPro.isLoading,
-              keyName: 'add_tracking_number',
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.4),
-              onTap: () {},
-            ),
-            OrderActionButton(
-              isLoading: orderPro.isLoading,
-              keyName: 'leave_feedback',
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.4),
-              onTap: () {},
-            ),
             if (order.orderStatus == StatusType.pending)
               OrderActionButton(
                 isLoading: orderPro.isLoading,
@@ -291,15 +302,6 @@ class OrderActionButtonsList extends StatelessWidget {
               ),
             OrderActionButton(
               isLoading: orderPro.isLoading,
-              keyName: 'view_payment_details',
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.4),
-              onTap: () {},
-            ),
-            OrderActionButton(
-              isLoading: orderPro.isLoading,
               keyName: 'contact_buyer',
               color: Theme.of(context)
                   .colorScheme
@@ -310,23 +312,49 @@ class OrderActionButtonsList extends StatelessWidget {
                     .startPrivateChat(context, order.buyerId);
               },
             ),
-            OrderActionButton(
-              isLoading: orderPro.isLoading,
-              keyName: 'report_buyer',
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.4),
-              onTap: () {},
+            InDevMode(
+              child: OrderActionButton(
+                isLoading: false,
+                keyName: 'leave_feedback',
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.4),
+                onTap: () {},
+              ),
             ),
-            OrderActionButton(
-              isLoading: orderPro.isLoading,
-              keyName: 'send_refund',
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.4),
-              onTap: () {},
+            InDevMode(
+              child: OrderActionButton(
+                isLoading: orderPro.isLoading,
+                keyName: 'view_payment_details',
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.4),
+                onTap: () {},
+              ),
+            ),
+            InDevMode(
+              child: OrderActionButton(
+                isLoading: false,
+                keyName: 'report_buyer',
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.4),
+                onTap: () {},
+              ),
+            ),
+            InDevMode(
+              child: OrderActionButton(
+                isLoading: orderPro.isLoading,
+                keyName: 'send_refund',
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.4),
+                onTap: () {},
+              ),
             ),
           ],
         );
@@ -439,10 +467,15 @@ class OrderRecieverNameAddressWidget extends StatefulWidget {
   const OrderRecieverNameAddressWidget({
     required this.name,
     required this.address,
+    this.nameTextStyle,
+    this.addressTextStyle,
     super.key,
   });
+
   final String name;
-  final String address;
+  final AddressEntity address;
+  final TextStyle? nameTextStyle;
+  final TextStyle? addressTextStyle;
 
   @override
   State<OrderRecieverNameAddressWidget> createState() =>
@@ -455,46 +488,66 @@ class _OrderRecieverNameAddressWidgetState
   OverlayEntry? _overlayEntry;
 
   void _toggleOverlay() {
-    if (_overlayEntry == null) {
-      final RenderBox renderBox =
-          _rowKey.currentContext!.findRenderObject() as RenderBox;
-      final Offset offset = renderBox.localToGlobal(Offset.zero);
-      final Size size = renderBox.size;
+    if (_overlayEntry != null) {
+      _overlayEntry?.remove();
+      _overlayEntry = null;
+      return;
+    }
 
-      _overlayEntry = OverlayEntry(
-        builder: (BuildContext context) => Positioned(
-          left: offset.dx,
-          top: offset.dy + size.height + 4,
-          width: size.width,
-          child: Material(
-            borderRadius: BorderRadius.circular(8),
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                backgroundBlendMode: BlendMode.color,
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.2)),
-              ),
-              child: Text(
-                maxLines: 10,
-                widget.address,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
+    final RenderBox? renderBox =
+        _rowKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox == null) return;
+
+    final Offset offset = renderBox.localToGlobal(Offset.zero);
+    final Size size = renderBox.size;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double overlayWidth = size.width + 50; // wider overlay
+
+    _overlayEntry = OverlayEntry(
+      builder: (BuildContext context) => Positioned(
+        left: offset.dx,
+        top: offset.dy + size.height + 6,
+        width: overlayWidth > screenWidth ? screenWidth - 16 : overlayWidth,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.2)),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 6,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Column(
+              children: <Widget>[
+                Text(
+                  '${widget.address.city} /  ${widget.address.address1}',
+                  style: widget.addressTextStyle ??
+                      Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface),
+                ),
+                Text(
+                  '${widget.address.state?.stateName} / ${widget.address.country.countryName}',
+                  style: widget.addressTextStyle ??
+                      Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface),
+                ),
+              ],
             ),
           ),
         ),
-      );
-
-      Overlay.of(context).insert(_overlayEntry!);
-    } else {
-      _overlayEntry?.remove();
-      _overlayEntry = null;
-    }
+      ),
+    );
+    Overlay.of(context).insert(_overlayEntry!);
   }
 
   @override
@@ -505,33 +558,35 @@ class _OrderRecieverNameAddressWidgetState
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 150,
-      child: Row(
-        key: _rowKey,
-        children: <Widget>[
-          Expanded(
-            child: Text(
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              widget.name,
-              style: Theme.of(context)
-                  .textTheme
-                  .labelSmall
-                  ?.copyWith(fontSize: 12),
-            ),
+    return Row(
+      key: _rowKey,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Expanded(
+          child: Text(
+            widget.name,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: widget.nameTextStyle ??
+                Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(fontWeight: FontWeight.bold),
           ),
-          InkWell(
-            onTap: _toggleOverlay,
-            child: Icon(
-              size: 16,
-              _overlayEntry == null
-                  ? Icons.keyboard_arrow_down
-                  : Icons.keyboard_arrow_up,
-            ),
+        ),
+        const SizedBox(width: 4),
+        InkWell(
+          onTap: _toggleOverlay,
+          borderRadius: BorderRadius.circular(16),
+          child: Icon(
+            _overlayEntry == null
+                ? Icons.keyboard_arrow_down
+                : Icons.keyboard_arrow_up,
+            size: 20,
+            color: Theme.of(context).colorScheme.primary,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

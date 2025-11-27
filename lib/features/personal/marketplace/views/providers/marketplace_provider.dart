@@ -174,15 +174,26 @@ class MarketPlaceProvider extends ChangeNotifier {
     await loadPosts();
   }
 
-  void updateLocation(
-    LatLng? latlngVal,
-    LocationEntity? locationVal,
+  void updateFilterContainerLocation(
+    LatLng latlngVal,
+    LocationEntity locationVal,
   ) {
-    _selectedlatlng = latlngVal ?? LocalAuth.latlng;
+    _selectedlatlng = latlngVal;
     _selectedLocation = locationVal;
     notifyListeners();
     debugPrint(
         'Updated LatLng: $_selectedlatlng, Location: $_selectedLocation in marketplaceProvider');
+  }
+
+  void resetFilterContainerLocation(
+    LatLng? latlngVal,
+    LocationEntity? locationVal,
+  ) {
+    _selectedlatlng = latlngVal ?? const LatLng(0, 0);
+    _selectedLocation = locationVal;
+    notifyListeners();
+    debugPrint(
+        'Reseting LatLng: $_selectedlatlng, Location: $_selectedLocation in marketplaceProvider');
   }
 
   void updateLocationSheet(LatLng? latlngVal, LocationEntity? locationVal,
@@ -417,7 +428,7 @@ class MarketPlaceProvider extends ChangeNotifier {
     vehicleModel.clear();
 
     // Location
-    updateLocation(null, null);
+    resetFilterContainerLocation(null, null);
 
     // Posts
     setPosts(null);

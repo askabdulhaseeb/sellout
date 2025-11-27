@@ -38,7 +38,7 @@ class _YourOrdersScreenState extends State<YourOrdersScreen> {
     futureOrders = GetOrderByUidUsecase(locator()).call(
       GetOrderParams(user: GetOrderUserType.buyerId, value: uid),
     );
-    
+
     // Fetch orders and posts asynchronously
     futureOrders.then((DataState<List<OrderEntity>> dataState) async {
       if (dataState is DataSuccess<List<OrderEntity>>) {
@@ -56,7 +56,8 @@ class _YourOrdersScreenState extends State<YourOrdersScreen> {
           final PostEntity? post = await LocalPost().getPost(order.postId);
           if (post != null) {
             postCache[order.postId] = post;
-            setState(() {}); // update UI once post is available
+            if (!mounted) return;
+            setState(() {});
           }
         }
       }

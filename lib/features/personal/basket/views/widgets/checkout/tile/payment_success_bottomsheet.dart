@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../domain/entities/checkout/billing_details_entity.dart';
@@ -122,7 +123,7 @@ class _PaymentSuccessSheetState extends State<PaymentSuccessSheet>
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              '${'order_total'.tr()}: ${billing?.grandTotal ?? ''} ${billing?.currency ?? ''}',
+              '${'order_total'.tr()}: ${CountryHelper.currencySymbolHelper(billing?.currency)}${billing?.grandTotal ?? ''}',
               style: Theme.of(context).textTheme.titleMedium,
             ),
             CustomElevatedButton(
@@ -267,9 +268,9 @@ class OrderSuccessTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
               Text(
-                item?.price ?? '',
+                '${CountryHelper.currencySymbolHelper(currency)}${item?.totalPrice}',
                 style: Theme.of(context).textTheme.titleSmall,
-              )
+              ),
             ],
           ),
         ],

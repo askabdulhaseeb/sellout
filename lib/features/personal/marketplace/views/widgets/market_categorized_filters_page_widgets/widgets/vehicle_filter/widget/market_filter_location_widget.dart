@@ -24,9 +24,11 @@ class MarketFilterLocationWidget extends StatelessWidget {
               validator: (bool? p0) => null,
               selectedLatLng: marketPro.selectedlatlng,
               displayMode: MapDisplayMode.neverShowMap,
-              initialText: marketPro.selectedLocation?.address ?? '',
+              initialText: marketPro.selectedLocation?.address == ''
+                  ? marketPro.selectedLocation?.address
+                  : '',
               onLocationSelected: (LocationEntity p0, LatLng p1) {
-                marketPro.updateLocation(p1, p0);
+                marketPro.updateFilterContainerLocation(p1, p0);
               },
             ),
           )
