@@ -55,10 +55,11 @@ class BusinessProfileScreen extends StatelessWidget {
           ),
           bottomNavigationBar: const BusinessBottomNavBar(),
         ),
-     ComingSoonOverlay(
-              title: 'coming_soon'.tr(),
-              subtitle: 'services_coming_soon_subtitle'.tr(),
-              icon: CupertinoIcons.hourglass), ],
+        ComingSoonOverlay(
+            title: 'coming_soon'.tr(),
+            subtitle: 'services_coming_soon_subtitle'.tr(),
+            icon: CupertinoIcons.hourglass),
+      ],
     );
   }
 }

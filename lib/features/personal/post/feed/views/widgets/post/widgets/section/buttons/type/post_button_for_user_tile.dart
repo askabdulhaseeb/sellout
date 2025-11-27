@@ -21,14 +21,14 @@ class PostButtonsForUser extends StatelessWidget {
     return Column(
       children: <Widget>[
         Row(spacing: 8, children: <Widget>[
-          Expanded(
-              child: InDevMode(
-            child: CustomElevatedButton(
-                isLoading: false,
-                bgColor: Theme.of(context).colorScheme.secondary,
-                onTap: () {},
-                title: 'promote'.tr()),
-          )),
+          // Expanded(
+          //     child: InDevMode(
+          //   child: CustomElevatedButton(
+          //       isLoading: false,
+          //       bgColor: Theme.of(context).colorScheme.secondary,
+          //       onTap: () {},
+          //       title: 'promote'.tr()),
+          // )),
           Expanded(
             child: CustomElevatedButton(
                 textColor: Theme.of(context).colorScheme.onSurface,

@@ -15,6 +15,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   easy_localization: ^3.0.7
   dropdown_button2: ^2.3.9
+  pdf: ^3.11.3
+  printing: ^5.10.0
 
   app_links: ^6.3.2
 

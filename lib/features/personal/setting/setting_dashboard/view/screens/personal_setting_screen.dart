@@ -46,13 +46,13 @@ class PersonalSettingScreen extends StatelessWidget {
                   context, PersonalSettingNotificationScreen.routeName);
             },
           ),
-          InDevMode(
-            child: PersonalSettingTile(
-              icon: AppStrings.selloutPaymentSettingIcon,
-              title: 'payment'.tr(),
-              onTap: () {},
-            ),
-          ),
+          // InDevMode(
+          //   child: PersonalSettingTile(
+          //     icon: AppStrings.selloutPaymentSettingIcon,
+          //     title: 'payment'.tr(),
+          //     onTap: () {},
+          //   ),
+          // ),
           PersonalSettingTile(
             icon: AppStrings.selloutPrivacySettingIcon,
             title: 'privacy'.tr(),
@@ -102,11 +102,13 @@ class PersonalSettingScreen extends StatelessWidget {
             onTap: () =>
                 Navigator.of(context).pushNamed(YourOrdersScreen.routeName),
           ),
-          PersonalSettingTile(
-            icon: AppStrings.selloutMoreSettingIcon,
-            title: 'connect_bank_account'.tr(),
-            onTap: () =>
-                Navigator.of(context).pushNamed(ConnectBankScreen.routeName),
+          InDevMode(
+            child: PersonalSettingTile(
+              icon: AppStrings.selloutMoreSettingIcon,
+              title: 'connect_bank_account'.tr(),
+              onTap: () =>
+                  Navigator.of(context).pushNamed(ConnectBankScreen.routeName),
+            ),
           ),
           PersonalSettingTile(
             icon: AppStrings.selloutMoreSettingIcon,

@@ -22,6 +22,7 @@ class NotificationRemoteImpl implements NotificationRemote {
 
     // If local data exists, use it directly
     if (localData?.encodedData != null) {
+      debugPrint(localData?.encodedData);
       final List<dynamic> decoded = json.decode(localData!.encodedData);
       final List<NotificationEntity> list =
           decoded.map((e) => NotificationModel.fromMap(e)).toList();

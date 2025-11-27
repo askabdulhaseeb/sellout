@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/widgets/custom_textformfield.dart';
-import '../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/phone_number_entity.dart';
 import '../../../../../../core/widgets/phone_number/views/phone_number_input_field.dart';
 import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
@@ -21,23 +19,23 @@ class EditAccountSettingScreen extends StatefulWidget {
 }
 
 class _EditAccountSettingScreenState extends State<EditAccountSettingScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   final TextEditingController _nameController =
       TextEditingController(text: LocalAuth.currentUser?.displayName);
-  final TextEditingController _emailController =
-      TextEditingController(text: LocalAuth.currentUser?.email);
-  // String? _selectedGender = 'male'; // not in update user
-  String? _selectedLanguage = LocalAuth.currentUser?.language;
-  // String? _selectedCountry = LocalAuth.currentUser?.countryAlpha3;
+
   PhoneNumberEntity? _phoneEntity = PhoneNumberEntity(
-      countryCode: LocalAuth.currentUser?.countryCode ?? '+92',
+      countryCode: LocalAuth.currentUser?.countryCode ?? '',
       number: LocalAuth.currentUser?.phoneNumber ?? '00000000');
+
   DateTime? _birthday = LocalAuth.currentUser?.dob;
+
   @override
   Widget build(BuildContext context) {
     debugPrint(_birthday.toString());
-    final TextTheme textTheme = Theme.of(context).textTheme;
     final PersonalSettingProvider pro =
         Provider.of<PersonalSettingProvider>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
         title: const AppBarTitle(titleKey: 'edit_account'),
@@ -45,95 +43,62 @@ class _EditAccountSettingScreenState extends State<EditAccountSettingScreen> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            CustomTextFormField(
-              labelText: 'name'.tr(),
-              controller: _nameController,
-              onChanged: (String value) => pro.setName(value),
-            ),
-            PhoneNumberInputField(
-              onChange: (PhoneNumberEntity phone) {
-                _phoneEntity = phone;
-                pro.setPhone(phone);
-              },
-              initialValue: _phoneEntity,
-              labelText: 'phone_number'.tr(),
-            ),
-            BirthdayPicker(
-              label: 'birthday'.tr(),
-              initialDate: _birthday,
-              onDateSelected: (DateTime date) {
-                setState(() => _birthday = date);
-                pro.setDob(date);
-              },
-            ),
-            const SizedBox(height: 24),
-            CustomElevatedButton(
-              bgColor: Theme.of(context).colorScheme.secondary,
-              isLoading: pro.isLoading,
-              onTap: () {
-                pro.updateProfileDetail(
-                  context,
-                );
-              },
-              title: 'save_settings'.tr(),
-            ),
-            // InDevMode(
-            //   child: CustomDropdown<String>(
-            //       title: 'gender'.tr(),
-            //       items: <String>['male'.tr(), 'female'.tr()]
-            //           .map((String g) => DropdownMenuItem<String>(
-            //               value: g,
-            //               child: Text(
-            //                 g,
-            //                 style: textTheme.bodyMedium,
-            //               )))
-            //           .toList(),
-            //       selectedItem: _selectedGender,
-            //       onChanged: (String? val) {
-            //         setState(() => _selectedGender = val);
-            //         pro.setGender(val);
-            //       },
-            //       validator: (bool? val) => null),
-            // ),
-            InDevMode(
-              child: CustomDropdown<String>(
-                title: 'language'.tr(),
-                items: <String>['eng']
-                    .map((String lang) => DropdownMenuItem<String>(
-                          value: lang,
-                          child: Text(
-                            lang,
-                            style: textTheme.bodyMedium,
-                          ),
-                        ))
-                    .toList(),
-                selectedItem: _selectedLanguage,
-                onChanged: (String? val) {
-                  setState(() => _selectedLanguage = val);
-                  pro.setLanguage(val);
+        child: Form(
+          key: _formKey, // <-- Add form key
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              // NAME FIELD
+              CustomTextFormField(
+                labelText: 'name'.tr(),
+                controller: _nameController,
+                onChanged: (String value) => pro.setName(value),
+                validator: (String? value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'name_required'.tr(); // add this localization key
+                  }
+                  if (value.trim().length < 2) {
+                    return 'name_too_short'.tr(); // optional
+                  }
+                  return null;
                 },
-                validator: (bool? val) => null,
               ),
-            ),
-            InDevMode(
-              child: CustomTextFormField(
-                labelText: 'email'.tr(),
-                controller: _emailController,
+
+              // PHONE NUMBER FIELD
+              PhoneNumberInputField(
+                onChange: (PhoneNumberEntity phone) {
+                  _phoneEntity = phone;
+                  pro.setPhone(phone);
+                },
+                initialValue: _phoneEntity,
+                labelText: 'phone_number'.tr(),
               ),
-            ),
-            // InDevMode(
-            //   child: CountryDropdownField(
-            //     onChanged: (String val) {
-            //       setState(() => _selectedCountry = val);
-            //       pro.setCountry(val);
-            //     },
-            //     initialValue: _selectedCountry,
-            //   ),
-            // ),
-          ],
+
+              // BIRTHDAY PICKER
+              BirthdayPicker(
+                label: 'birthday'.tr(),
+                initialDate: _birthday,
+                onDateSelected: (DateTime date) {
+                  setState(() => _birthday = date);
+                  pro.setDob(date);
+                },
+              ),
+
+              const SizedBox(height: 24),
+
+              // SAVE BUTTON
+              CustomElevatedButton(
+                bgColor: Theme.of(context).colorScheme.secondary,
+                isLoading: pro.isLoading,
+                onTap: () {
+                  if (_formKey.currentState!.validate()) {
+                    pro.updateProfileDetail(context);
+                  }
+                },
+                title: 'save_settings'.tr(),
+              ),
+            ],
+          ),
         ),
       ),
     );

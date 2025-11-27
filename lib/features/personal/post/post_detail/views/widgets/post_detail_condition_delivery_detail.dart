@@ -15,7 +15,6 @@ class ConditionDeliveryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final TextTheme textTheme = Theme.of(context).textTheme;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -50,12 +49,12 @@ class ConditionDeliveryWidget extends StatelessWidget {
                 ),
             ],
           ),
-          if (post.listID == ListingType.items.json)
-            Text(
-              '${'return'.tr()}: dummy data',
-              style:
-                  textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
-            ),
+          // if (post.listID == ListingType.items.json)
+          //   Text(
+          //     '${'return'.tr()}: dummy data',
+          //     style:
+          //         textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
+          //   ),
         ],
       ),
     );

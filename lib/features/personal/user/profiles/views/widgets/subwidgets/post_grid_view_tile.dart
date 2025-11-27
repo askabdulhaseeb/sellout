@@ -9,6 +9,7 @@ import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../../core/widgets/rating_display_widget.dart';
 import '../../../../../../../services/get_it.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -109,15 +110,19 @@ class PostGridViewTile extends StatelessWidget {
                             .startediting(post);
                       },
                     ),
-                    CustomIconButton(
-                      iconSize: 16,
-                      iconColor: Theme.of(context).colorScheme.secondary,
-                      padding: const EdgeInsets.all(4),
-                      margin: EdgeInsets.zero,
-                      bgColor:
-                          Theme.of(context).colorScheme.secondary.withAlpha(40),
-                      icon: AppStrings.selloutPostGridTilePromoteIcon,
-                      onPressed: () {},
+                    InDevMode(
+                      child: CustomIconButton(
+                        iconSize: 16,
+                        iconColor: Theme.of(context).colorScheme.secondary,
+                        padding: const EdgeInsets.all(4),
+                        margin: EdgeInsets.zero,
+                        bgColor: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withAlpha(40),
+                        icon: AppStrings.selloutPostGridTilePromoteIcon,
+                        onPressed: () {},
+                      ),
                     ),
                   ],
                 )
