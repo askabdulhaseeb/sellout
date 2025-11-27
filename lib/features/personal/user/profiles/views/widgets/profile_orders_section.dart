@@ -53,7 +53,10 @@ class _ProfileOrdersSectionState extends State<ProfileOrdersSection> {
                   StatusType.delivered.color,
                   StatusType.canceled.color
                 ],
-                unseletedBorderColor: Theme.of(context).colorScheme.outline,
+                unseletedBorderColor: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.2),
                 labelText: '',
                 labels: const <StatusType>[
                   StatusType.pending,
