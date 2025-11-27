@@ -99,8 +99,10 @@ class _SignupDobPageState extends State<SignupDobPage> {
                             horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
                           border: Border.all(
-                              color:
-                                  Theme.of(context).colorScheme.outlineVariant),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.2)),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
