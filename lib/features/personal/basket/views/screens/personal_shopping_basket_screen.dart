@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import '../../../../../core/constants/app_spacings.dart';
 import '../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
-import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../marketplace/views/screens/pages/buy_again_screen.dart';
 import '../providers/cart_provider.dart';
 import '../widgets/shopping_basket_tabbar.dart';
@@ -22,9 +21,7 @@ class PersonalShoppingBasketScreen extends HookWidget {
         context.read<CartProvider>().getCart(forceRefresh: true);
       });
       return null;
-    },  []);
-
-    debugPrint(' token [33m${LocalAuth.token}[0m');
+    },  <String>[]);
     return PopScope(
       onPopInvokedWithResult: (bool didPop, dynamic result) =>
           context.read<CartProvider>().reset(),

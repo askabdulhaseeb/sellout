@@ -86,6 +86,7 @@ import '../features/personal/payment/data/sources/remote/payment_remote_api.dart
 import '../features/personal/payment/domain/repositories/payment_repository.dart';
 import '../features/personal/payment/domain/usecase/get_exchange_rate_usecase.dart';
 import '../features/personal/services/domain/usecase/get_service_categories_usecase.dart';
+import '../features/personal/user/profiles/domain/usecase/delete_user_usecase.dart';
 import '../features/personal/visits/domain/usecase/book_service_usecase.dart';
 import '../features/personal/visits/domain/usecase/get_visit_by_post_usecase.dart';
 import '../features/personal/visits/domain/usecase/update_visit_usecase.dart';
@@ -282,6 +283,8 @@ void _auth() {
       () => VerifyOtpUseCase(locator()));
   locator.registerFactory<FindAccountProvider>(
       () => FindAccountProvider(locator(), locator(), locator(), locator()));
+  locator
+      .registerFactory<DeleteUserUsecase>(() => DeleteUserUsecase(locator()));
 }
 
 void _servicePage() {

@@ -75,7 +75,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   provider.switchType(value);
                 },
               ),
-              Expanded(
+              Flexible(
                 child: IndexedStack(
                   index: provider.currentType.index,
                   children: const <Widget>[

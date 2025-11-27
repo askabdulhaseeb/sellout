@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class PostageHeader extends StatelessWidget {
-  const PostageHeader({Key? key}) : super(key: key);
+  const PostageHeader({super.key});
 
   @override
   Widget build(BuildContext context) {

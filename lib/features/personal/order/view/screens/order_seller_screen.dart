@@ -63,7 +63,7 @@ class OrderSellerScreen extends StatelessWidget {
             leading: IconButton(
               style: IconButton.styleFrom(
                 backgroundColor:
-                    Theme.of(context).colorScheme.outline.withAlpha(25),
+                    Theme.of(context).colorScheme.onSurface.withAlpha(25),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -148,7 +148,7 @@ class OrderDispatchedToWidget extends StatelessWidget {
           '${'dispatched_to'.tr()}: ',
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
               fontWeight: FontWeight.w400,
-              color: ColorScheme.of(context).outline.withValues(alpha: 0.3)),
+              color: ColorScheme.of(context).onSurface.withValues(alpha: 0.3)),
         ),
         OrderRecieverNameAddressWidget(
           address: order.shippingAddress.address1,
@@ -177,7 +177,7 @@ class OrderInfoWidget extends StatelessWidget {
           '${'order_number'.tr()}:',
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
               fontWeight: FontWeight.w400,
-              color: ColorScheme.of(context).outline.withValues(alpha: 0.3)),
+              color: ColorScheme.of(context).onSurface.withValues(alpha: 0.3)),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -238,7 +238,7 @@ class OrderActionButtonsList extends StatelessWidget {
         final OrderEntity order = orderPro.order!;
         return Column(
           children: <Widget>[
-            if (order.orderStatus == StatusType.pending.json)
+            if (order.orderStatus == StatusType.pending)
               OrderActionButton(
                 isLoading: orderPro.isLoading,
                 keyName: 'post_now',
@@ -246,7 +246,7 @@ class OrderActionButtonsList extends StatelessWidget {
                 onTap: () => orderPro.updateSellerOrder(
                     order.orderId, StatusType.delivered),
               ),
-            if (order.orderStatus == StatusType.delivered.json)
+            if (order.orderStatus == StatusType.delivered)
               OrderActionButton(
                 isLoading: orderPro.isLoading,
                 keyName: 'posted',
@@ -263,33 +263,48 @@ class OrderActionButtonsList extends StatelessWidget {
             OrderActionButton(
               isLoading: orderPro.isLoading,
               keyName: 'add_tracking_number',
-              color: Theme.of(context).colorScheme.outline,
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.4),
               onTap: () {},
             ),
             OrderActionButton(
               isLoading: orderPro.isLoading,
               keyName: 'leave_feedback',
-              color: Theme.of(context).colorScheme.outline,
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.4),
               onTap: () {},
             ),
-            if (order.orderStatus == StatusType.pending.json)
+            if (order.orderStatus == StatusType.pending)
               OrderActionButton(
                 isLoading: orderPro.isLoading,
                 keyName: 'cancel_order',
-                color: Theme.of(context).colorScheme.outline,
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.4),
                 onTap: () => orderPro.updateSellerOrder(
                     order.orderId, StatusType.cancelled),
               ),
             OrderActionButton(
               isLoading: orderPro.isLoading,
               keyName: 'view_payment_details',
-              color: Theme.of(context).colorScheme.outline,
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.4),
               onTap: () {},
             ),
             OrderActionButton(
               isLoading: orderPro.isLoading,
               keyName: 'contact_buyer',
-              color: Theme.of(context).colorScheme.outline,
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.4),
               onTap: () {
                 Provider.of<CreatePrivateChatProvider>(context, listen: false)
                     .startPrivateChat(context, order.buyerId);
@@ -298,13 +313,19 @@ class OrderActionButtonsList extends StatelessWidget {
             OrderActionButton(
               isLoading: orderPro.isLoading,
               keyName: 'report_buyer',
-              color: Theme.of(context).colorScheme.outline,
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.4),
               onTap: () {},
             ),
             OrderActionButton(
               isLoading: orderPro.isLoading,
               keyName: 'send_refund',
-              color: Theme.of(context).colorScheme.outline,
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.4),
               onTap: () {},
             ),
           ],
@@ -402,7 +423,7 @@ class OrderScreenPostInfo extends StatelessWidget {
                 '${'ordered_on'.tr()}: ${DateFormat.yMMMMd().format(order.createdAt)}',
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       color: ColorScheme.of(context)
-                          .outline
+                          .onSurface
                           .withValues(alpha: 0.4),
                     ),
               ),
@@ -456,7 +477,7 @@ class _OrderRecieverNameAddressWidgetState
                 border: Border.all(
                     color: Theme.of(context)
                         .colorScheme
-                        .outline
+                        .onSurface
                         .withValues(alpha: 0.2)),
               ),
               child: Text(
