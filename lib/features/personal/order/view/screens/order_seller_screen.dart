@@ -15,7 +15,6 @@ import '../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../../user/profiles/domain/usecase/get_user_by_uid.dart';
 import '../provider/order_provider.dart';
-import 'invoice_screen.dart';
 
 class OrderSellerScreen extends StatelessWidget {
   const OrderSellerScreen({super.key});
