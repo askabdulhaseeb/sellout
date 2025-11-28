@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
+import '../../../../../core/utilities/app_string.dart';
+
 class AboutUsScreen extends StatelessWidget {
   const AboutUsScreen({super.key});
   static const String routeName = '/about_us';
@@ -58,7 +60,10 @@ class AboutUsScreen extends StatelessWidget {
                         Text(
                           roleKey.tr(),
                           style: textTheme.labelMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.outline,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withValues(alpha: 0.4),
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -74,7 +79,8 @@ class AboutUsScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
                 descriptionKey.tr(),
                 style: textTheme.bodySmall?.copyWith(
-                  color: ColorScheme.of(context).outline,
+                  color:
+                      ColorScheme.of(context).onSurface.withValues(alpha: 0.4),
                 ),
               ),
             ],
@@ -117,8 +123,10 @@ class AboutUsScreen extends StatelessWidget {
               Text(
                 textAlign: TextAlign.center,
                 contentKey.tr(),
-                style: textTheme.bodySmall
-                    ?.copyWith(color: ColorScheme.of(context).outline),
+                style: textTheme.bodySmall?.copyWith(
+                    color: ColorScheme.of(context)
+                        .onSurface
+                        .withValues(alpha: 0.4)),
               ),
             ],
           ),
@@ -139,10 +147,11 @@ class AboutUsScreen extends StatelessWidget {
             Text(
               textAlign: TextAlign.center,
               'about_us_desc'.tr(),
-              style: textTheme.bodySmall
-                  ?.copyWith(color: ColorScheme.of(context).outline),
+              style: textTheme.bodySmall?.copyWith(
+                  color:
+                      ColorScheme.of(context).onSurface.withValues(alpha: 0.4)),
             ),
-            const GetInTouchButton(),
+            // const GetInTouchButton(),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -153,21 +162,23 @@ class AboutUsScreen extends StatelessWidget {
                 ),
                 Text(
                   'meet_sellout_team_desc'.tr(),
-                  style: textTheme.bodySmall
-                      ?.copyWith(color: ColorScheme.of(context).outline),
+                  style: textTheme.bodySmall?.copyWith(
+                      color: ColorScheme.of(context)
+                          .onSurface
+                          .withValues(alpha: 0.4)),
                 ),
                 buildCard('zubair_name', 'zubair_role', 'zubair_description',
-                    'assets/images/zubair.png'),
+                    AppStrings.zubair),
                 buildCard('abdul_name', 'abdul_role', 'abdul_description',
-                    'assets/images/abdul.png'),
+                    AppStrings.abdul),
                 buildCard('ahmed_name', 'ahmed_role', 'ahmed_description',
-                    'assets/images/ahmed.png'),
+                    AppStrings.ahmed),
                 buildCard('rafah_name', 'rafah_role', 'rafah_description',
-                    'assets/images/rafah.png'),
+                    AppStrings.ayhab),
                 buildCard('hammad_name', 'hammad_role', 'hammad_description',
-                    'assets/images/rafah.png'),
+                    AppStrings.hammad),
                 buildCard('ahmer_name', 'ahmer_role', 'ahmer_description',
-                    'assets/images/rafah.png'),
+                    AppStrings.ahmer),
               ],
             ),
             const SizedBox(height: 16),
@@ -181,8 +192,10 @@ class AboutUsScreen extends StatelessWidget {
                 Text(
                   textAlign: TextAlign.center,
                   'why_choose_desc'.tr(),
-                  style: textTheme.bodySmall
-                      ?.copyWith(color: ColorScheme.of(context).outline),
+                  style: textTheme.bodySmall?.copyWith(
+                      color: ColorScheme.of(context)
+                          .onSurface
+                          .withValues(alpha: 0.4)),
                 ),
                 const SizedBox(height: 12),
                 buildWhyCard('global_reach_title', 'global_reach_desc'),

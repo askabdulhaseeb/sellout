@@ -175,7 +175,15 @@ class AppStrings {
 
   // MARK: Images
   // Background images
-    static const String chatBGJpg = 'assets/images/ChatBG.jpg';
+  static const String chatBGJpg = 'assets/images/ChatBG.jpg';
+  // Team member images
+  static const String abdul = 'assets/images/sellout_team/abdul.jpg';
+  static const String ahmed = 'assets/images/sellout_team/ahmed.png';
+  static const String ahmer = 'assets/images/sellout_team/ahmer.png';
+  static const String ayhab = 'assets/images/sellout_team/ayhab.png';
+  static const String hammad = 'assets/images/sellout_team/hammad.png';
+  static const String zubair = 'assets/images/sellout_team/zubair.jpg';
+
   // Categories images
   static const String automotiveServices =
       'assets/images/services_categories/automotiveServices.jpg';

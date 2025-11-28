@@ -8,7 +8,6 @@ import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../core/widgets/password_textformfield.dart';
 import '../../../../../../../core/widgets/phone_number/domain/entities/phone_number_entity.dart';
 import '../../../../../../../core/widgets/phone_number/views/phone_number_input_field.dart';
-import '../../../../../setting/setting_options/terms&policies/acceptable_user_policy.dart';
 import '../../../../../setting/setting_options/terms&policies/privacy_policy.dart';
 import '../../../../../setting/setting_options/terms&policies/terms_condition_screen.dart';
 import '../../../../signin/views/screens/sign_in_screen.dart';

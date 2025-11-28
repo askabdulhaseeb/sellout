@@ -39,14 +39,14 @@ import '../features/personal/setting/setting_options/setting_notification/screen
 import '../features/personal/setting/setting_options/setting_notification/screens/personal_setting_notification_screen.dart';
 import '../features/personal/setting/setting_dashboard/view/screens/personal_setting_screen.dart';
 import '../features/personal/setting/setting_options/terms&policies/acceptable_user_policy.dart';
-import '../features/personal/setting/setting_options/terms&policies/chnage_password_screen.dart';
+import '../features/personal/setting/setting_options/terms&policies/change_password_screen.dart';
 import '../features/personal/setting/setting_options/terms&policies/community_standard_screen.dart';
 import '../features/personal/setting/setting_options/terms&policies/cookie_policy.dart';
 import '../features/personal/setting/setting_options/terms&policies/dispute_resolution_policy.dart';
 import '../features/personal/setting/setting_options/terms&policies/terms_condition_screen.dart';
 import '../features/personal/setting/setting_options/time_away/screens/automatic_response_screen.dart';
 import '../features/personal/setting/setting_options/time_away/screens/time_away_screen.dart';
-import '../features/personal/user/profiles/views/params/about_us.dart';
+import '../features/personal/setting/setting_options/terms&policies/about_us_screen.dart';
 import '../features/personal/user/profiles/views/screens/edit_profile_screen.dart';
 import '../features/settings/views/screens/connect_bank_screen.dart';
 import 'app_linking.dart';
