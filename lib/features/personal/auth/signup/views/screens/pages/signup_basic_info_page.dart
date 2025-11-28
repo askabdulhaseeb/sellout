@@ -8,7 +8,10 @@ import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../core/widgets/password_textformfield.dart';
 import '../../../../../../../core/widgets/phone_number/domain/entities/phone_number_entity.dart';
 import '../../../../../../../core/widgets/phone_number/views/phone_number_input_field.dart';
+import '../../../../../setting/setting_options/terms&policies/acceptable_user_policy.dart';
+import '../../../../../setting/setting_options/terms&policies/privacy_policy.dart';
 import '../../../../signin/views/screens/sign_in_screen.dart';
+// Import your PrivacyPolicyScreen
 import '../../providers/signup_provider.dart';
 
 class SignupBasicInfoPage extends StatelessWidget {
@@ -38,8 +41,7 @@ class SignupBasicInfoPage extends StatelessWidget {
                     hint: 'Ex. John Snow',
                     labelText: 'full_name'.tr(),
                     autofillHints: const <String>[AutofillHints.name],
-                    validator: (String? value) =>
-                        AppValidator.isEmpty(value),
+                    validator: (String? value) => AppValidator.isEmpty(value),
                   ),
                   CustomTextFormField(
                     controller: pro.username,
@@ -48,8 +50,7 @@ class SignupBasicInfoPage extends StatelessWidget {
                     showSuffixIcon: true,
                     readOnly: pro.isLoading,
                     autofillHints: const <String>[AutofillHints.username],
-                    validator: (String? value) =>
-                        AppValidator.isEmpty(value),
+                    validator: (String? value) => AppValidator.isEmpty(value),
                   ),
                   const SizedBox(height: 8),
                   PhoneNumberInputField(
@@ -129,7 +130,8 @@ class SignupBasicInfoPage extends StatelessWidget {
                         TextSpan(
                           text: 'customer_agreement_conditions'.tr(),
                           recognizer: TapGestureRecognizer()
-                            ..onTap = () => Navigator.of(context).pop(),
+                            ..onTap = () => Navigator.pushNamed(
+                                context, AcceptableUsePolicyScreen.routeName),
                           style: TextStyle(
                             color: Theme.of(context).primaryColor,
                             fontWeight: FontWeight.bold,
@@ -141,7 +143,8 @@ class SignupBasicInfoPage extends StatelessWidget {
                         TextSpan(
                           text: 'privacy_policy'.tr(),
                           recognizer: TapGestureRecognizer()
-                            ..onTap = () => Navigator.of(context).pop(),
+                            ..onTap = () => Navigator.pushNamed(
+                                context, PrivacyPolicyScreen.routeName),
                           style: TextStyle(
                             color: Theme.of(context).primaryColor,
                             fontWeight: FontWeight.bold,

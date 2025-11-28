@@ -239,7 +239,7 @@ class HiveDB {
     await LocalOrders().clear();
     await LocalNotifications().clear();
     // await LocalServiceCategory().clear();
-    await LocalCategoriesSource().clear();
+    // await LocalCategoriesSource().clear();
     // await LocalCountry().clear();
   }
 }
