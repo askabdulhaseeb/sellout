@@ -10,6 +10,7 @@ import '../../../../../../../core/widgets/phone_number/domain/entities/phone_num
 import '../../../../../../../core/widgets/phone_number/views/phone_number_input_field.dart';
 import '../../../../../setting/setting_options/terms&policies/acceptable_user_policy.dart';
 import '../../../../../setting/setting_options/terms&policies/privacy_policy.dart';
+import '../../../../../setting/setting_options/terms&policies/terms_condition_screen.dart';
 import '../../../../signin/views/screens/sign_in_screen.dart';
 // Import your PrivacyPolicyScreen
 import '../../providers/signup_provider.dart';
@@ -131,7 +132,7 @@ class SignupBasicInfoPage extends StatelessWidget {
                           text: 'customer_agreement_conditions'.tr(),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () => Navigator.pushNamed(
-                                context, AcceptableUsePolicyScreen.routeName),
+                                context, TermsOfServiceScreen.routeName),
                           style: TextStyle(
                             color: Theme.of(context).primaryColor,
                             fontWeight: FontWeight.bold,

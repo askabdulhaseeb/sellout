@@ -40,7 +40,7 @@ import '../features/personal/setting/setting_options/setting_notification/screen
 import '../features/personal/setting/setting_dashboard/view/screens/personal_setting_screen.dart';
 import '../features/personal/setting/setting_options/terms&policies/acceptable_user_policy.dart';
 import '../features/personal/setting/setting_options/terms&policies/chnage_password_screen.dart';
-import '../features/personal/setting/setting_options/terms&policies/community_standard_screeen.dart';
+import '../features/personal/setting/setting_options/terms&policies/community_standard_screen.dart';
 import '../features/personal/setting/setting_options/terms&policies/cookie_policy.dart';
 import '../features/personal/setting/setting_options/terms&policies/dispute_resolution_policy.dart';
 import '../features/personal/setting/setting_options/terms&policies/terms_condition_screen.dart';
