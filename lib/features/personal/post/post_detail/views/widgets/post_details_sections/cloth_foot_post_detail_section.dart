@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../domain/entities/post/post_entity.dart';
-import '../post_detail_condition_delivery_detail.dart';
 import '../post_detail_description_section.dart';
 import '../post_detail_postage_return_delivery.dart';
 import '../post_detail_safety_tips_widget.dart';
@@ -21,7 +20,6 @@ class ClothFootPostDetailSection extends StatelessWidget {
     AppLog.info('PostID: ${post.postID} ');
     return SingleChildScrollView(
       child: Column(children: <Widget>[
-        ConditionDeliveryWidget(post: post),
         Divider(
           color: Theme.of(context).dividerColor,
         ),

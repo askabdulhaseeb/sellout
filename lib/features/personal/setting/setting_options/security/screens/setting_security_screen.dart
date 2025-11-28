@@ -4,7 +4,7 @@ import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../terms&policies/chnage_password_screen.dart';
+import '../../terms&policies/change_password_screen.dart';
 import '../bottomsheets/login_activity_bottomsheet.dart';
 import '../bottomsheets/two_factor_bottomsheet.dart';
 

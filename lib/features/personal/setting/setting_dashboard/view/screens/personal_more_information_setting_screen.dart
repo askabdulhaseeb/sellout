@@ -11,7 +11,7 @@ import '../../../../../../services/get_it.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../dashboard/views/screens/dashboard_screen.dart';
 import '../../../../user/profiles/domain/usecase/delete_user_usecase.dart';
-import '../../../../user/profiles/views/params/about_us.dart';
+import '../../../setting_options/terms&policies/about_us_screen.dart';
 import '../../../setting_options/terms&policies/acceptable_user_policy.dart';
 import '../../../setting_options/terms&policies/community_standard_screen.dart';
 import '../../../setting_options/terms&policies/cookie_policy.dart';
