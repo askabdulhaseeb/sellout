@@ -8,6 +8,7 @@ import '../features/personal/auth/find_account/view/screens/new_password_screen.
 import '../features/personal/auth/find_account/view/screens/send_code_screen.dart';
 import '../features/personal/auth/signin/views/screens/verify_two_factor_screen.dart';
 import '../features/personal/auth/welcome_screen/view/screens/welcome_screen.dart';
+import '../features/personal/setting/setting_options/terms&policies/privacy_policy.dart';
 import '../features/personal/visits/view/visit_calender.dart/screens/visit_calender_screen.dart';
 import '../features/personal/basket/views/screens/personal_shopping_basket_screen.dart';
 import '../features/personal/chats/chat/views/screens/chat_screen.dart';
@@ -42,7 +43,6 @@ import '../features/personal/setting/setting_options/terms&policies/chnage_passw
 import '../features/personal/setting/setting_options/terms&policies/community_standard_screeen.dart';
 import '../features/personal/setting/setting_options/terms&policies/cookie_policy.dart';
 import '../features/personal/setting/setting_options/terms&policies/dispute_resolution_policy.dart';
-import '../features/personal/setting/setting_options/terms&policies/privacy_policy.dart';
 import '../features/personal/setting/setting_options/terms&policies/terms_condition_screen.dart';
 import '../features/personal/setting/setting_options/time_away/screens/automatic_response_screen.dart';
 import '../features/personal/setting/setting_options/time_away/screens/time_away_screen.dart';

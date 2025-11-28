@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:latlong2/latlong.dart';
-import '../../../../../../../services/app_data_services.dart';
 import '../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../domain/entities/address_entity.dart';
 import '../../../domain/entities/current_user_entity.dart';
@@ -74,7 +73,6 @@ class LocalAuth {
   Future<void> signin(CurrentUserEntity currentUser) async {
     await _box.put(boxTitle, currentUser);
     uidNotifier.value = currentUser.userID;
-    await AppDataService().fetchAllData();
   }
 
   static CurrentUserEntity? get currentUser =>
