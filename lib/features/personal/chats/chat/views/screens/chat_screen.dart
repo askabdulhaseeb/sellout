@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../core/utilities/app_string.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../chat_dashboard/data/models/chat/chat_model.dart';
 import '../../../chat_dashboard/data/sources/local/local_unseen_messages.dart';
 import '../providers/chat_provider.dart';
 import '../widgets/app_bar/chat_app_bar.dart';
 import '../widgets/chat_interaction_panel/chat_interaction_panel.dart';
-import '../widgets/painters/chat_bg_painter.dart';
 import '../widgets/pinned_message.dart/pinned_message.dart';
 import '../widgets/message/messages_list.dart';
 
@@ -53,7 +53,9 @@ class _ChatScreenState extends State<ChatScreen> {
             appBar: chatAppBar(context),
             body: Stack(
               children: <Widget>[
-                const Positioned.fill(child: ChatBackground()),
+                Positioned.fill(
+                    child:
+                        Image.asset(AppStrings.chatBGJpg, fit: BoxFit.cover)),
                 Positioned.fill(
                   child: Column(
                     children: <Widget>[

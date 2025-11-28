@@ -3,7 +3,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AppStrings {
   // static var local;
-  // Svg Icons
+  // MARK: Svg Icons
+  // icons
   static const String selloutMyUsersListIcon =
       'assets/icons/svg_icons/selloutMyUsersListIcon.svg';
   static const String selloutNotificationBellIcon =
@@ -171,6 +172,10 @@ class AppStrings {
       'assets/icons/svg_icons/selloutCartTrashIcon.svg';
 
   static const String sel = '';
+
+  // MARK: Images
+  // Background images
+    static const String chatBGJpg = 'assets/images/ChatBG.jpg';
   // Categories images
   static const String automotiveServices =
       'assets/images/services_categories/automotiveServices.jpg';
@@ -263,8 +268,32 @@ class AppStrings {
   static const String hairRemoval =
       'assets/images/services_categories/hairRemoval.jpg';
   static const String ab = 'assets/images/services_cAndShows.jpg';
+  // Maketplace CATEGORIES
+  static const String clothfootmarketplace =
+      'assets/images/marketplace_filters/clothfoot_marketplace.jpg';
+  static const String fooddrinkmarketplace =
+      'assets/images/marketplace_filters/fooddrink_marketplace.jpg';
+  static const String petsmarketplaceex =
+      'assets/images/marketplace_filters/pets_marketplace.jpg';
+  static const String popularmarketplace =
+      'assets/images/marketplace_filters/popular_marketplace.jpg';
+  static const String propertymarketplace =
+      'assets/images/marketplace_filters/property_marketplace.jpg';
+  static const String vehiclemarketplace =
+      'assets/images/marketplace_filters/vehicle_marketplace.jpg';
+  // Payment method images
+  static String get amex => 'assets/images/payment_methods/amex.png';
+  static String get applePayBlack =>
+      'assets/images/payment_methods/apple-pay-black.png';
+  static String get dinersClub =>
+      'assets/images/payment_methods/diners-club.png';
+  static String get mastercard =>
+      'assets/images/payment_methods/mastercard.png';
+  static String get paypal => 'assets/images/payment_methods/paypal.png';
+  static String get visa => 'assets/images/payment_methods/visa.png';
+  static String get stripe => 'assets/images/payment_methods/stripe.png';
 
-  // Hive Boxes
+  // MARK: Hive Boxes
   static String get localAuthBox => 'com.sellout.local-auth';
   static String get localUsersBox => 'com.sellout.local-users';
   static String get localRequestHistory => 'com.sellout.request_history';
@@ -294,7 +323,7 @@ class AppStrings {
   static String get getOnlineUsers => 'getOnlineUsers';
   static String get newNotification => 'new-notification';
   static String get lastSeen => 'lastSeen';
-  // audio
+  // MARK: Audio Files
   static const String recordingDeleteSound =
       'assets/audio/delete_recording_sound.mp3';
   static const String recordingShareSound =
@@ -302,31 +331,6 @@ class AppStrings {
   static const String recordingStartSound =
       'assets/audio/start_recording_sound.mp3';
 
-  // [IMAGES]
-  // Maketplace CATEGORIES
-  static const String clothfootmarketplace =
-      'assets/images/marketplace_filters/clothfoot_marketplace.jpg';
-  static const String fooddrinkmarketplace =
-      'assets/images/marketplace_filters/fooddrink_marketplace.jpg';
-  static const String petsmarketplaceex =
-      'assets/images/marketplace_filters/pets_marketplace.jpg';
-  static const String popularmarketplace =
-      'assets/images/marketplace_filters/popular_marketplace.jpg';
-  static const String propertymarketplace =
-      'assets/images/marketplace_filters/property_marketplace.jpg';
-  static const String vehiclemarketplace =
-      'assets/images/marketplace_filters/vehicle_marketplace.jpg';
-  // Payment METHODS
-  static String get amex => 'assets/images/payment_methods/amex.png';
-  static String get applePayBlack =>
-      'assets/images/payment_methods/apple-pay-black.png';
-  static String get dinersClub =>
-      'assets/images/payment_methods/diners-club.png';
-  static String get mastercard =>
-      'assets/images/payment_methods/mastercard.png';
-  static String get paypal => 'assets/images/payment_methods/paypal.png';
-  static String get visa => 'assets/images/payment_methods/visa.png';
-  static String get stripe => 'assets/images/payment_methods/stripe.png';
   //app LOGO
   static String get selloutLogo => 'assets/images/sellout_logo.png';
 

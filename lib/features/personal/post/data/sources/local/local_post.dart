@@ -50,20 +50,28 @@ class LocalPost {
   }
 
   Future<PostEntity?> getPost(String id, {bool? silentUpdate}) async {
-    final PostEntity? po = post(id);
-    if (po == null) {
-      final GetSpecificPostUsecase getSpecificPostUsecase =
-          GetSpecificPostUsecase(locator());
-      final DataState<PostEntity> result = await getSpecificPostUsecase(
-        GetSpecificPostParam(postId: id, silentUpdate: silentUpdate ?? true),
-      );
-      if (result is DataSuccess) {
-        return result.entity;
+    try {
+      final PostEntity? po = post(id);
+      if (po == null) {
+        final GetSpecificPostUsecase getSpecificPostUsecase =
+            GetSpecificPostUsecase(locator());
+        final DataState<PostEntity> result = await getSpecificPostUsecase(
+          GetSpecificPostParam(postId: id, silentUpdate: silentUpdate ?? true),
+        );
+        if (result is DataSuccess) {
+          return result.entity;
+        } else {
+          return null;
+        }
       } else {
-        return null;
+        return po;
       }
-    } else {
-      return po;
+    } catch (e) {
+      // If a type error or any error occurs, delete the faulty post and return null
+      try {
+        await _box.delete(id);
+      } catch (_) {}
+      return null;
     }
   }
 
