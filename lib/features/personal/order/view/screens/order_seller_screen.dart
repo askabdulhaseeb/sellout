@@ -235,12 +235,12 @@ class ViewInvoiceButton extends StatelessWidget {
         final OrderEntity order = pro.order!;
         return InkWell(
           onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute<InvoiceScreen>(
-                  builder: (BuildContext context) =>
-                      InvoiceScreen(order: order),
-                ));
+            // Navigator.push(
+            //     context,
+            //     MaterialPageRoute<InvoiceScreen>(
+            //       builder: (BuildContext context) =>
+            //           InvoiceScreen(order: order),
+            //     ));
           },
           child: Text(
             'view_invoice'.tr(),
