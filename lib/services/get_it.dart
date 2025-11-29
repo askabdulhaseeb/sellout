@@ -61,6 +61,7 @@ import '../features/personal/auth/signup/domain/usecase/send_opt_usecase.dart';
 import '../features/personal/auth/signup/domain/usecase/verify_opt_usecase.dart';
 import '../features/personal/auth/signup/domain/usecase/verify_user_by_image_usecase.dart';
 import '../features/personal/auth/signup/views/providers/signup_provider.dart';
+import '../features/personal/basket/domain/usecase/checkout/pay_intent_usecase.dart';
 import '../features/personal/chats/chat/domain/usecase/create_post_inquiry_usecase.dart';
 import '../features/personal/chats/quote/data/repo/quote_repo_impl.dart';
 import '../features/personal/chats/quote/data/source/remote/quote_remote_api.dart';
@@ -91,19 +92,15 @@ import '../features/personal/visits/domain/usecase/book_service_usecase.dart';
 import '../features/personal/visits/domain/usecase/get_visit_by_post_usecase.dart';
 import '../features/personal/visits/domain/usecase/update_visit_usecase.dart';
 import '../features/personal/basket/data/repositories/cart_repository_impl.dart';
-import '../features/personal/basket/data/repositories/checkout_repository_impl.dart';
 import '../features/personal/basket/data/sources/remote/cart_remote_api.dart';
 import '../features/personal/basket/data/sources/remote/checkout_remote_api.dart';
 import '../features/personal/basket/domain/repositories/cart_repository.dart';
-import '../features/personal/basket/domain/repositories/checkout_repository.dart';
 import '../features/personal/basket/domain/usecase/cart/add_shipping_usecase.dart';
 import '../features/personal/basket/domain/usecase/cart/cart_item_status_update_usecase.dart';
 import '../features/personal/basket/domain/usecase/cart/cart_update_qty_usecase.dart';
 import '../features/personal/basket/domain/usecase/cart/get_cart_usecase.dart';
 import '../features/personal/basket/domain/usecase/cart/get_postage_detail_usecase.dart';
 import '../features/personal/basket/domain/usecase/cart/remove_from_cart_usecase.dart';
-import '../features/personal/basket/domain/usecase/checkout/get_checkout_usecase.dart';
-import '../features/personal/basket/domain/usecase/checkout/pay_intent_usecase.dart';
 import '../features/personal/basket/views/providers/cart_provider.dart';
 import '../features/personal/chats/chat/data/repositories/message_repository_impl.dart';
 import '../features/personal/chats/chat/data/sources/remote/messages_remote_source.dart';
@@ -436,10 +433,6 @@ void _cart() {
       () => CartUpdateQtyUsecase(locator()));
   // checkout
   locator.registerFactory<CheckoutRemoteAPI>(() => CheckoutRemoteAPIImpl());
-  locator.registerFactory<CheckoutRepository>(
-      () => CheckoutRepositoryImpl(locator()));
-  locator
-      .registerFactory<GetCheckoutUsecase>(() => GetCheckoutUsecase(locator()));
   locator.registerFactory<PayIntentUsecase>(() => PayIntentUsecase(locator()));
   // provider
   locator.registerLazySingleton<CartProvider>(() => CartProvider(locator(),

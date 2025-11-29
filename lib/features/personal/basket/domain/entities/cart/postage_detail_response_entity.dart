@@ -48,7 +48,7 @@ class PostageDetailSummaryEntity {
 class PostageItemDetailEntity {
   PostageItemDetailEntity({
     required this.postId,
-    required this.id,
+    required this.cartItemId,
     required this.packageDetail,
     required this.fromAddress,
     required this.toAddress,
@@ -65,7 +65,7 @@ class PostageItemDetailEntity {
   });
 
   final String postId;
-  final String id;
+  final String cartItemId;
   final Map<String, dynamic> packageDetail;
   final AddressEntity fromAddress;
   final AddressEntity toAddress;

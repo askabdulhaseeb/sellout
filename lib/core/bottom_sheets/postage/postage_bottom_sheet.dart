@@ -61,10 +61,10 @@ class _PostageBottomSheetState extends State<PostageBottomSheet> {
                 itemCount: entries.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 8),
                 itemBuilder: (BuildContext context, int index) {
-                  final String postId = entries[index].key;
+                  final String cartItemId = entries[index].value.cartItemId;
                   final PostageItemDetailEntity detail = entries[index].value;
                   return PostageItemCard(
-                    postId: postId,
+                    cartItemId: cartItemId,
                     detail: detail,
                   );
                 },

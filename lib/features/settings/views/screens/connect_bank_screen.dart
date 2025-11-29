@@ -30,7 +30,7 @@ class ConnectBankScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(28),
               boxShadow: <BoxShadow>[
                 BoxShadow(
-                  color: Colors.black.withValues(alpha:0.15),
+                  color: Colors.black.withValues(alpha: 0.15),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -79,7 +79,7 @@ class ConnectBankScreen extends StatelessWidget {
                           Text(
                             'connect_bank_description'.tr(),
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: onPrimary.withOpacity(0.9),
+                              color: onPrimary.withValues(alpha: 0.9),
                               fontSize: 13,
                               height: 1.4,
                             ),
