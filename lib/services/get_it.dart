@@ -442,15 +442,8 @@ void _cart() {
       .registerFactory<GetCheckoutUsecase>(() => GetCheckoutUsecase(locator()));
   locator.registerFactory<PayIntentUsecase>(() => PayIntentUsecase(locator()));
   // provider
-  locator.registerLazySingleton<CartProvider>(() => CartProvider(
-      locator(),
-      locator(),
-      locator(),
-      locator(),
-      locator(),
-      locator(),
-      locator(),
-      locator()));
+  locator.registerLazySingleton<CartProvider>(() => CartProvider(locator(),
+      locator(), locator(), locator(), locator(), locator(), locator()));
 }
 
 void _business() {
