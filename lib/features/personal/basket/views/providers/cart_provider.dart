@@ -28,7 +28,6 @@ import '../../domain/usecase/cart/cart_update_qty_usecase.dart';
 import '../../domain/usecase/cart/get_cart_usecase.dart';
 import '../../domain/usecase/cart/get_postage_detail_usecase.dart';
 import '../../domain/usecase/cart/remove_from_cart_usecase.dart';
-import '../../domain/usecase/checkout/get_checkout_usecase.dart';
 import '../../domain/usecase/checkout/pay_intent_usecase.dart';
 import '../widgets/checkout/tile/payment_success_bottomsheet.dart';
 
@@ -38,7 +37,6 @@ class CartProvider extends ChangeNotifier {
     this._cartItemStatusUpdateUsecase,
     this._removeFromCartUsecase,
     this._cartUpdateQtyUsecase,
-    this._getCheckoutUsecase,
     this._payIntentUsecase,
     this._getPostageDetailUsecase,
     this._addShippingUsecase,
@@ -52,7 +50,6 @@ class CartProvider extends ChangeNotifier {
   final CartItemStatusUpdateUsecase _cartItemStatusUpdateUsecase;
   final RemoveFromCartUsecase _removeFromCartUsecase;
   final CartUpdateQtyUsecase _cartUpdateQtyUsecase;
-  final GetCheckoutUsecase _getCheckoutUsecase;
   final PayIntentUsecase _payIntentUsecase;
   final GetPostageDetailUsecase _getPostageDetailUsecase;
   final AddShippingUsecase _addShippingUsecase;
@@ -481,7 +478,6 @@ class CartProvider extends ChangeNotifier {
   }
 
   // MARK:  PAYMENT
-
   Future<DataState<PaymentIntentEntity>> getBillingDetails() async {
     try {
       final DataState<PaymentIntentEntity> state =
