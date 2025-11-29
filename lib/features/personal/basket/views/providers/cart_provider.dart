@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
@@ -6,14 +5,12 @@ import '../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../../../../core/widgets/app_snackbar.dart';
-import '../../../auth/signin/data/models/address_model.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../auth/signin/domain/entities/address_entity.dart';
 import '../../data/models/cart/add_shipping_response_model.dart';
 import '../../data/models/cart/cart_model.dart';
 import '../../data/sources/local/local_cart.dart';
 import '../../domain/entities/cart/cart_entity.dart';
-import '../../domain/entities/cart/added_shipping_response_entity.dart';
 import '../../domain/entities/cart/postage_detail_response_entity.dart';
 import '../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../domain/entities/checkout/payment_intent_entity.dart';
@@ -64,11 +61,25 @@ class CartProvider extends ChangeNotifier {
   final List<String> _fastDeliveryProducts = <String>[];
   PaymentIntentEntity? _orderBilling;
   PostageDetailResponseEntity? _postageResponseEntity;
-  AddedShippingResponseEntity? _addShippingResponse;
   // selected postage rate per postID
   Map<String, RateEntity> _selectedPostageRates = <String, RateEntity>{};
   // Map to store selected rate objectId for each postId
-  Map<String, String> _selectedRateObjectIds = <String, String>{};
+  List<ShippingItemParam> _selectedShippingItems = <ShippingItemParam>[];
+
+  List<ShippingItemParam> get selectedShippingItems => _selectedShippingItems;
+
+  void updateShippingSelection(String cartItemId, String objectId) {
+    final idx = _selectedShippingItems
+        .indexWhere((item) => item.cartItemId == cartItemId);
+    if (idx >= 0) {
+      _selectedShippingItems[idx] =
+          ShippingItemParam(cartItemId: cartItemId, objectId: objectId);
+    } else {
+      _selectedShippingItems
+          .add(ShippingItemParam(cartItemId: cartItemId, objectId: objectId));
+    }
+    notifyListeners();
+  }
 
   AddressEntity? _address = (LocalAuth.currentUser?.address != null &&
           LocalAuth.currentUser!.address
@@ -87,7 +98,6 @@ class CartProvider extends ChangeNotifier {
   PaymentIntentEntity? get orderBilling => _orderBilling;
   PostageDetailResponseEntity? get postageResponseEntity =>
       _postageResponseEntity;
-  AddedShippingResponseEntity? get addShippingResponse => _addShippingResponse;
   Map<String, RateEntity> get selectedPostageRates => _selectedPostageRates;
   CartItemStatusType get basketItemStatus => _basketItemStatus;
   AddressEntity? get address => _address;
@@ -132,10 +142,7 @@ class CartProvider extends ChangeNotifier {
   // MARK: ✏️ Setters
   void setCartType(CartType type) {
     _cartType = type;
-    if (_cartType == CartType.shoppingBasket) {
-      _selectedPostageRates = <String, RateEntity>{};
-      _selectedRateObjectIds = <String, String>{};
-    }
+    if (_cartType == CartType.shoppingBasket) {}
     notifyListeners();
   }
 
@@ -153,8 +160,8 @@ class CartProvider extends ChangeNotifier {
     _address = value;
     _postageResponseEntity = null;
     _selectedPostageRates.clear();
-    _selectedRateObjectIds.clear();
-    notifyListeners();
+    _selectedShippingItems.clear();
+    getRates();
   }
 
   void addFastDeliveryProduct(String id) {
@@ -337,7 +344,6 @@ class CartProvider extends ChangeNotifier {
                 if (rates.isNotEmpty) {
                   final RateEntity firstRate = rates.first;
                   _selectedPostageRates[postId] = firstRate;
-                  _selectedRateObjectIds[postId] = firstRate.objectId;
                 }
               }
             },
@@ -359,92 +365,15 @@ class CartProvider extends ChangeNotifier {
     }
   }
 
-  void selectPostageRate(String postId, RateEntity rate) {
-    if (postId.isEmpty) return;
-    _selectedPostageRates[postId] = rate;
-    _selectedRateObjectIds[postId] = rate.objectId;
-
+  void selectPostageRate(RateEntity rate) {
+    if (rate.objectId.isEmpty) return;
     notifyListeners();
-  }
-
-  /// Build a checkout payload map. This includes buyer address, cart items
-  /// (only items currently in cart), selected postage rates per post, and
-  /// the shipping payload derived from selected rates.
-  Map<String, dynamic> buildCheckoutMap() {
-    if (_address == null) return <String, dynamic>{};
-
-    final Map<String, dynamic> buyerAddress =
-        AddressModel.fromEntity(_address!).toJson();
-
-    final List<Map<String, dynamic>> items = _cartItems
-        .where((CartItemEntity it) => it.inCart)
-        .map((CartItemEntity it) => <String, dynamic>{
-              'cart_item_id': it.cartItemID,
-              'post_id': it.postID,
-              'quantity': it.quantity,
-            })
-        .toList();
-
-    final Map<String, dynamic> postage = <String, dynamic>{};
-    _selectedPostageRates.forEach((String postId, RateEntity rate) {
-      postage[postId] = <String, dynamic>{
-        'provider': rate.provider,
-        'service_level': <String, String>{
-          'name': rate.serviceLevel.name,
-          'token': rate.serviceLevel.token,
-        },
-        'amount':
-            rate.amountBuffered.isNotEmpty ? rate.amountBuffered : rate.amount,
-        'provider_image75': rate.providerImage75,
-      };
-    });
-
-    final List<Map<String, dynamic>> shipping = buildShippingList()
-        .map((ShippingItemParam item) => item.toJson())
-        .toList();
-
-    return <String, dynamic>{
-      'buyer_address': buyerAddress,
-      'items': items,
-      'postage': postage,
-      if (shipping.isNotEmpty) 'shipping': shipping,
-    };
-  }
-
-  /// JSON-encoded checkout payload.
-  String buildCheckoutJson() => json.encode(buildCheckoutMap());
-
-  List<ShippingItemParam> buildShippingList() {
-    final List<ShippingItemParam> shippingList = <ShippingItemParam>[];
-
-    // Map each cart item to its selected shipping shipment ID
-    for (final CartItemEntity item in _cartItems) {
-      if (!item.inCart) continue;
-
-      final String? objectId = _selectedRateObjectIds[item.postID];
-      if (objectId == null || objectId.isEmpty) {
-        // Skip items without selected shipping (e.g., collection/free delivery)
-        continue;
-      }
-
-      shippingList.add(ShippingItemParam(
-        cartItemId: item.cartItemID,
-        objectId: objectId,
-      ));
-    }
-
-    return shippingList;
-  }
-
-  /// Build shipping payload using SubmitShippingParam.
-  SubmitShippingParam buildShippingPayload() {
-    return SubmitShippingParam(shipping: buildShippingList());
   }
 
   //MARK: Add Shippments
   Future<DataState<AddShippingResponseModel>> submitShipping() async {
     try {
-      final List<ShippingItemParam> shippingList = buildShippingList();
+      final List<ShippingItemParam> shippingList = _selectedShippingItems;
       if (shippingList.isEmpty) {
         AppLog.error('No shipping items to submit',
             name: 'CartProvider.submitShipping');
@@ -452,12 +381,12 @@ class CartProvider extends ChangeNotifier {
             CustomException('No shipping items to submit'));
       }
 
-      final SubmitShippingParam payload = buildShippingPayload();
+      final SubmitShippingParam payload =
+          SubmitShippingParam(shipping: _selectedShippingItems);
       final DataState<AddShippingResponseModel> result =
           await _addShippingUsecase(payload);
 
       if (result is DataSuccess<AddShippingResponseModel>) {
-        _addShippingResponse = result.entity;
         AppLog.info('Shipping submitted successfully',
             name: 'CartProvider.submitShipping');
         return result;
@@ -551,7 +480,6 @@ class CartProvider extends ChangeNotifier {
   void clearRatesAndCheckout() {
     _postageResponseEntity = null;
     _selectedPostageRates.clear();
-    _selectedRateObjectIds.clear();
     notifyListeners();
   }
 
@@ -559,9 +487,7 @@ class CartProvider extends ChangeNotifier {
   void reset() {
     _orderBilling = null;
     _postageResponseEntity = null;
-    _addShippingResponse = null;
     _selectedPostageRates.clear();
-    _selectedRateObjectIds.clear();
     _fastDeliveryProducts.clear();
     _basketItemStatus = CartItemStatusType.cart;
     _cartType = CartType.shoppingBasket;

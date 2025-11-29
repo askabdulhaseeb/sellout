@@ -12,6 +12,7 @@ import '../../../data/models/cart/cart_item_model.dart';
 import '../../../data/sources/local/local_cart.dart';
 import '../../../../post/data/sources/local/local_post.dart';
 import '../../../../../../core/enums/listing/core/delivery_type.dart';
+import '../../../domain/entities/checkout/payment_intent_entity.dart';
 import '../../../domain/enums/cart_type.dart';
 import '../../providers/cart_provider.dart';
 
@@ -132,13 +133,14 @@ class PersonalCartTotalSection extends StatelessWidget {
         cartPro.setCartType(CartType.reviewOrder);
         return;
       }
-
       final DataState<AddShippingResponseModel> result =
           await cartPro.submitShipping();
       if (result is DataSuccess<AddShippingResponseModel>) {
-        final String? message = result.exception?.message;
-        if (message != null && message.isNotEmpty) AppSnackBar.show(message);
-        cartPro.setCartType(CartType.reviewOrder);
+        final DataState<PaymentIntentEntity> billingResult =
+            await cartPro.getBillingDetails();
+        if (billingResult is DataSuccess) {
+          cartPro.setCartType(CartType.reviewOrder);
+        }
       } else if (context.mounted) {
         AppSnackBar.show(
             result.exception?.reason ?? 'failed_to_submit_shipping'.tr());
