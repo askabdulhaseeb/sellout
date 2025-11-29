@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/widgets/coming_soon_overlay.dart';
 import '../../../../../core/widgets/scaffold/bottom_bar/business_bottom_nav_bar.dart';
@@ -24,34 +23,39 @@ class BusinessProfileScreen extends StatelessWidget {
     return Stack(
       children: <Widget>[
         PersonalScaffold(
-          body: SingleChildScrollView(
-            controller: scrollController,
-            child: FutureBuilder<BusinessEntity?>(
-              future: Provider.of<BusinessPageProvider>(context, listen: false)
-                  .getBusinessByID(businessID),
-              initialData: LocalBusiness().business(businessID),
-              builder: (
-                BuildContext context,
-                AsyncSnapshot<BusinessEntity?> snapshot,
-              ) {
-                final BusinessEntity? business =
-                    snapshot.data ?? LocalBusiness().business(businessID);
-                return business == null
-                    ? Center(child: const Text('something_wrong').tr())
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          BusinessPageHeaderSection(business: business),
-                          BusinessPageScoreSection(business: business),
-                          BusinessPageTableSection(business: business),
-                          BusinessPageTapPageSection(
-                            business: business,
-                            scrollController: scrollController,
-                          ),
-                        ],
-                      );
-              },
-            ),
+          body: Stack(
+            children: [
+              
+              SingleChildScrollView(
+                controller: scrollController,
+                child: FutureBuilder<BusinessEntity?>(
+                  future: Provider.of<BusinessPageProvider>(context, listen: false)
+                      .getBusinessByID(businessID),
+                  initialData: LocalBusiness().business(businessID),
+                  builder: (
+                    BuildContext context,
+                    AsyncSnapshot<BusinessEntity?> snapshot,
+                  ) {
+                    final BusinessEntity? business =
+                        snapshot.data ?? LocalBusiness().business(businessID);
+                    return business == null
+                        ? Center(child: const Text('something_wrong').tr())
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              BusinessPageHeaderSection(business: business),
+                              BusinessPageScoreSection(business: business),
+                              BusinessPageTableSection(business: business),
+                              BusinessPageTapPageSection(
+                                business: business,
+                                scrollController: scrollController,
+                              ),
+                            ],
+                          );
+                  },
+                ),
+              ),
+            ],
           ),
           bottomNavigationBar: const BusinessBottomNavBar(),
         ),
