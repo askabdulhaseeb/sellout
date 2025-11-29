@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/helper_functions/country_helper.dart';
+import '../../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
@@ -15,7 +15,6 @@ import '../../../../post/data/sources/local/local_post.dart';
 import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../domain/enums/cart_type.dart';
 import '../../providers/cart_provider.dart';
-import '../../../domain/entities/cart/added_shipping_response_entity.dart';
 
 class PersonalCartTotalSection extends StatelessWidget {
   const PersonalCartTotalSection({super.key});
@@ -31,92 +30,58 @@ class PersonalCartTotalSection extends StatelessWidget {
         );
         return Consumer<CartProvider>(
           builder: (BuildContext context, CartProvider cartPro, _) {
-            Future<String> calculateTotal(
-                CartProvider cartPro, CartEntity cart) async {
-              final double subtotal = await cart.cartTotalPrice();
-
-              // Sum all shipping amounts for all items
-              final double shippingTotal =
-                  cartPro.addShippingResponse?.cart.cartItems.fold<double>(
-                        0.0,
-                        (double sum, AddShippingCartItemEntity item) =>
-                            sum +
-                            item.selectedShipping.fold<double>(
-                              0.0,
-                              (double innerSum,
-                                      SelectedShippingEntity shipping) =>
-                                  innerSum + (shipping.nativeBufferAmount),
-                            ),
-                      ) ??
-                      0.0;
-
-              final double total = subtotal + shippingTotal;
-
-              return '${CountryHelper.currencySymbolHelper(LocalAuth.currency)}${total.toStringAsFixed(2)}';
-            }
-
             if (cartPro.cartItems.isEmpty) return const SizedBox.shrink();
-            final bool hasShipping =
-                cartPro.addShippingResponse?.cart.cartItems.isNotEmpty == true;
-            final bool isReviewOrder = cartPro.cartType == CartType.reviewOrder;
-
             return Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                if (cartPro.cartType != CartType.payment)
+                if (cartPro.cartType == CartType.shoppingBasket)
                   _buildTile(
-                    '${'subtotal'.tr()} (${cart.cartItems.length} ${'items'.tr()})',
-                    trailing: FutureBuilder<String>(
-                      future: cart.cartTotalPriceString(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<String> snapshot) {
-                        return Text(
-                          snapshot.data ?? '0.00',
+                      '${'subtotal'.tr()} (${cart.cartItems.length} ${'items'.tr()})',
+                      trailing: FutureBuilder<String>(
+                        future: cart.cartTotalPriceString(),
+                        builder: (BuildContext context,
+                                AsyncSnapshot<dynamic> snapshot) =>
+                            Text(
+                          snapshot.data?.toString() ?? '',
                           style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 16),
-                        );
-                      },
-                    ),
-                  ),
-                if (hasShipping && cartPro.cartType == CartType.reviewOrder)
-                  _buildTile(
-                    'delivery'.tr(),
-                    trailing: Text(
-                      '${CountryHelper.currencySymbolHelper(LocalAuth.currency)}'
-                      '${cartPro.addShippingResponse!.cart.cartItems.fold<double>(
-                            0.0,
-                            (double sum, AddShippingCartItemEntity item) =>
-                                sum +
-                                item.selectedShipping.fold<double>(
-                                  0.0,
-                                  (double innerSum,
-                                          SelectedShippingEntity shipping) =>
-                                      innerSum + (shipping.nativeBufferAmount),
-                                ),
-                          ).toStringAsFixed(2)}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        ),
+                      )),
+                if (cartPro.cartType == CartType.reviewOrder)
+                  Column(
+                    children: <Widget>[
+                      _buildTile(
+                        '${'subtotal'.tr()} (${cart.cartItems.length} ${'items'.tr()})',
+                        trailing: Text(
+                          cartPro.orderBilling?.billingDetails
+                                  .deliveryPriceString ??
+                              '',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
                       ),
-                    ),
-                  ),
-                if (isReviewOrder && cartPro.cartType == CartType.reviewOrder)
-                  _buildTile(
-                    'total'.tr(),
-                    trailing: FutureBuilder<String>(
-                      future: calculateTotal(cartPro, cart),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<String> snapshot) {
-                        if (!snapshot.hasData) return const SizedBox.shrink();
-                        return Text(
-                          snapshot.data!,
+                      _buildTile(
+                        'delivery'.tr(),
+                        trailing: Text(
+                          cartPro.orderBilling?.billingDetails
+                                  .deliveryPriceString ??
+                              '',
                           style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 18),
-                        );
-                      },
-                    ),
-                    bold: true,
+                        ),
+                      ),
+                      _buildTile(
+                        'total'.tr(),
+                        trailing: Text(
+                          cartPro.orderBilling?.billingDetails
+                                  .totalPriceString ??
+                              '',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
+                      ),
+                    ],
                   ),
                 CustomElevatedButton(
                   title: _getButtonTitle(cartPro.cartType),

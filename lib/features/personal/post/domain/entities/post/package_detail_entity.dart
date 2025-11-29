@@ -21,10 +21,6 @@ class PackageDetailEntity {
   @HiveField(3)
   final double height;
 
-  @override
-  String toString() {
-    return 'PackageDetailEntity(length: $length, width: $width, weight: $weight, height: $height)';
-  }
 
   // Copy with method for easy updates
   PackageDetailEntity copyWith({

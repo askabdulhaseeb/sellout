@@ -16,7 +16,6 @@ import '../../domain/entities/cart/cart_entity.dart';
 import '../../domain/entities/cart/added_shipping_response_entity.dart';
 import '../../domain/entities/cart/postage_detail_response_entity.dart';
 import '../../../../../core/enums/listing/core/delivery_type.dart';
-import '../../domain/entities/checkout/check_out_entity.dart';
 import '../../domain/entities/checkout/payment_intent_entity.dart';
 import '../../domain/enums/cart_type.dart';
 import '../../domain/enums/shopping_basket_type.dart';
@@ -482,25 +481,6 @@ class CartProvider extends ChangeNotifier {
   }
 
   // MARK:  PAYMENT
-  Future<DataState<CheckOutEntity>> payment() async {
-    try {
-      if ((LocalAuth.currentUser?.address ?? <AddressEntity>[]).isEmpty) {
-        return DataFailer<CheckOutEntity>(CustomException('No address found'));
-      }
-      _address ??= LocalAuth.currentUser?.address
-          .where((AddressEntity e) => e.isDefault)
-          .first;
-      if (_address == null) {
-        return DataFailer<CheckOutEntity>(
-            CustomException('No default address'));
-      }
-      return await _getCheckoutUsecase(_address!);
-    } catch (e) {
-      AppLog.error(e.toString(),
-          name: 'CartProvider.checkout - Catch', error: e);
-      return DataFailer<CheckOutEntity>(CustomException(e.toString()));
-    }
-  }
 
   Future<DataState<PaymentIntentEntity>> getBillingDetails() async {
     try {
@@ -521,9 +501,7 @@ class CartProvider extends ChangeNotifier {
 
   Future<void> processPayment(BuildContext context) async {
     try {
-      final DataState<PaymentIntentEntity> billingDetails =
-          await getBillingDetails();
-      final String? clientSecret = billingDetails.entity?.clientSecret;
+      final String? clientSecret = _orderBilling?.clientSecret;
       if (clientSecret == null || clientSecret.isEmpty) {
         AppSnackBar.show('something_wrong'.tr());
         return;

@@ -90,7 +90,7 @@ class CurrentUserModel extends CurrentUserEntity {
       currency: userData['currency'] ?? 'gbp',
       accountStatus: userData['account_status'] ?? '',
       listOfReviews: _parseListOfReviews(userData['list_of_reviews']),
-      privacyType: PrivacyType.fromJson(userData['profile_type'] ?? 'public'),
+      privacyType: PrivacyType.fromJson(userData['profile_type']),
       countryAlpha3: userData['country_alpha_3'] ?? '',
       countryCode: userData['country_code'] ?? '',
       phoneNumber: userData['phone_number'] ?? '',
