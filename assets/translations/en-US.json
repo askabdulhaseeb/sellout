@@ -207,6 +207,8 @@
   "total": "Total",
   "subtotal": "Subtotal",
   "postage_fee": "Postage Fee",
+  "shipping_provider":"Shipping Provider",
+  "shipping_service":"Shipping Service",
   "business": "Business",
   "details": "Details",
   "calender": "Calender",
