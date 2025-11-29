@@ -18,7 +18,7 @@ enum PrivacyType {
   final IconData icon;
 
   static PrivacyType fromJson(String? val) {
-    return PrivacyType.values.firstWhere(
+    return list.firstWhere(
       (PrivacyType e) => e.json == val,
       orElse: () => PrivacyType.public,
     );

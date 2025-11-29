@@ -13,10 +13,10 @@ class PackageDetailModel extends PackageDetailEntity {
 
   factory PackageDetailModel.fromJson(Map<String, dynamic> json) {
     return PackageDetailModel(
-      length: _toDouble(json['length']),
-      width: _toDouble(json['width']),
-      weight: _toDouble(json['weight']),
-      height: _toDouble(json['height']),
+      length: double.tryParse(json['length'].toString()) ?? 0.0,
+      width: double.tryParse(json['length'].toString()) ?? 0.0,
+      weight: double.tryParse(json['length'].toString()) ?? 0.0,
+      height: double.tryParse(json['length'].toString()) ?? 0.0,
     );
   }
   PackageDetailModel({
@@ -26,17 +26,7 @@ class PackageDetailModel extends PackageDetailEntity {
     required super.height,
   });
 
-  // SAFE HELPER to convert any type → double
-  static double _toDouble(dynamic value) {
-    if (value == null) return 0.0;
-
-    if (value is double) return value;
-    if (value is int) return value.toDouble();
-
-    if (value is String) return double.tryParse(value) ?? 0.0;
-
-    return 0.0;
-  }
+ 
 
   Map<String, dynamic> toMap() => <String, dynamic>{
         'length': length,
