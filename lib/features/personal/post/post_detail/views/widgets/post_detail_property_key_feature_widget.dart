@@ -30,59 +30,52 @@ class PostDetailPropertyKeyFeaturesWidget extends StatelessWidget {
           '${post.propertyInfo?.bedroom} ${'bedrooms'.tr()}'),
       _Feature(AppStrings.selloutPostDetailBathroomIcon,
           '${post.propertyInfo?.bathroom} ${'bathrooms'.tr()}'),
-      const _Feature(AppStrings.selloutPostDetailGardenIcon, '***'),
-      const _Feature(AppStrings.selloutPostDetailAreaIcon, '***** sq ft'),
     ];
 
     final double screenWidth = MediaQuery.of(context).size.width;
     const double horizontalPadding = 16 * 2;
     const double spacing = 12;
 
-    // total width available for both items in a row
     final double availableWidth = screenWidth - horizontalPadding - spacing;
 
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text('key_features_title'.tr(), style: titleStyle),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: spacing,
-            runSpacing: spacing,
-            children: List.generate(features.length, (int index) {
-              final _Feature f = features[index];
-              final double itemWidth = (index == 0 || index == 3 || index == 4)
-                  ? availableWidth * 0.52
-                  : availableWidth * 0.48;
-              return Container(
-                width: itemWidth,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).dividerColor,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    CustomSvgIcon(assetPath: f.icon, color: iconColor),
-                    const SizedBox(width: 8),
-                    Flexible(
-                      child: Text(
-                        f.value,
-                        style: featureTextStyle,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text('key_features_title'.tr(), style: titleStyle),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: spacing,
+          runSpacing: spacing,
+          children: List.generate(features.length, (int index) {
+            final _Feature f = features[index];
+            final double itemWidth = (index == 0 || index == 3 || index == 4)
+                ? availableWidth * 0.52
+                : availableWidth * 0.48;
+            return Container(
+              width: itemWidth,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).dividerColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  CustomSvgIcon(assetPath: f.icon, color: iconColor),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      f.value,
+                      style: featureTextStyle,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ],
-                ),
-              );
-            }),
-          ),
-        ],
-      ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ),
+      ],
     );
   }
 }

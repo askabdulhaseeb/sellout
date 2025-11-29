@@ -13,6 +13,7 @@ import 'tile/offer_message_tile.dart';
 import 'tile/quote_message_tile.dart';
 import 'tile/visiting_message_tile.dart';
 import 'tile/text_message_tile.dart';
+import 'inquiry_message_tile.dart';
 
 class MessageTile extends StatelessWidget {
   const MessageTile({required this.message, required this.timeDiff, super.key});
@@ -77,13 +78,19 @@ class MessageTile extends StatelessWidget {
                                               ? SimpleMessageTile(
                                                   message: message,
                                                 )
-                                              : Text(
-                                                  '${message.displayText} - ${message.type?.code.tr()}',
-                                                )
+                                              : MessageType.inquiry ==
+                                                      message.type
+                                                  ? InquiryMessageTile(
+                                                      message: message)
+                                                  : Text(
+                                                      '${message.displayText} - ${message.type?.code.tr()}',
+                                                    )
             ],
           );
   }
 }
+
+// ...existing code...
 
 class MessageSenderName extends StatelessWidget {
   const MessageSenderName({

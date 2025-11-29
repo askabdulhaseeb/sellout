@@ -1,4 +1,13 @@
+import 'package:easy_localization/easy_localization.dart';
+
+import '../../../../../../core/helper_functions/country_helper.dart';
+import '../../../../../../core/sources/api_call.dart';
+import '../../../../../../services/get_it.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../auth/signin/domain/entities/address_entity.dart';
+import '../../../../payment/domain/entities/exchange_rate_entity.dart';
+import '../../../../payment/domain/params/get_exchange_rate_params.dart';
+import '../../../../payment/domain/usecase/get_exchange_rate_usecase.dart';
 
 class PostageDetailResponseEntity {
   PostageDetailResponseEntity({
@@ -152,6 +161,43 @@ class RateEntity {
   final BufferDetailsEntity bufferDetails;
   final String amountBuffered;
   final String amountLocalBuffered;
+  Future<double?> getLocalPrice() async {
+    // provider currency
+    final String from = currency;
+    // user’s local currency
+    final String to = LocalAuth.currency;
+
+    // parse buffered amount to double
+    final double buffered = double.tryParse(amountBuffered) ??
+        double.tryParse(bufferedAmount) ??
+        0.0;
+
+    if (from == to) {
+      // same currency, return buffered amount
+      return buffered;
+    }
+
+    // different currency, get exchange rate
+    final GetExchangeRateParams params =
+        GetExchangeRateParams(from: from, to: to);
+    final DataState<ExchangeRateEntity> result =
+        await GetExchangeRateUsecase(locator()).call(params);
+
+    if (result is DataSuccess<ExchangeRateEntity> && result.entity != null) {
+      return buffered * result.entity!.rate; // convert to local currency
+    }
+
+    return null; // conversion failed
+  }
+
+
+  Future<String> getPriceStr() async {
+    final double? converted = await getLocalPrice();
+    if (converted == null) return 'na'.tr();
+
+    return '${CountryHelper.currencySymbolHelper(LocalAuth.currency)}'
+        '${converted.toStringAsFixed(2)}';
+  }
 }
 
 class ServiceLevelEntity {
@@ -173,8 +219,8 @@ class BufferDetailsEntity {
     required this.bufferPercent,
     required this.bufferFlat,
     required this.minBuffer,
-    this.maxBuffer,
     required this.roundTo,
+    this.maxBuffer,
   });
 
   final double bufferPercent;

@@ -9,28 +9,25 @@ class PostDetailDescriptionSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const Divider(),
-          Text(
-            '''${'product_description'.tr()}:''',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 6),
-          Text(
-            '''${'about_item'.tr()}:''',
-            style: Theme.of(context).textTheme.titleSmall,
-          ),
-          ExpandableText(
-            text: post.description,
-            isHtml: true,
-          ),
-        ],
-      ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        const Divider(),
+        Text(
+          '''${'product_description'.tr()}:''',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const SizedBox(height: 6),
+        Text(
+          '''${'about_item'.tr()}:''',
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        ExpandableText(
+          text: post.description,
+          isHtml: true,
+        ),
+      ],
     );
   }
 }

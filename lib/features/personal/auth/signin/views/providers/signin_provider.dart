@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
-import '../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../dashboard/views/screens/dashboard_screen.dart';
 import '../../../signup/views/screens/signup_screen.dart';
@@ -116,13 +116,13 @@ class SigninProvider extends ChangeNotifier {
           );
         }
       } else {
+        AppSnackBar.show('something_wrong'.tr());
         debugPrint('two factor authentication Error in Provider');
         AppLog.error(
           'two factor authentication Error in Provider',
           name: 'SigninProvider.verifyTwoFactorAuth - Else',
           error: result,
         );
-        // Show error message
       }
     } catch (e) {
       debugPrint(e.toString());

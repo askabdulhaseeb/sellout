@@ -48,7 +48,7 @@ class AccountSettingsScreen extends StatelessWidget {
           ),
           _InfoTile(
             label: 'phone_number'.tr(),
-            value: '${user?.countryCode ?? ''} ${user?.phoneNumber ?? ''}',
+            value: '${user?.phoneNumber}',
             isVerified: false,
           ),
           //       _InfoTile(
@@ -98,7 +98,8 @@ class _InfoTile extends StatelessWidget {
         children: <Widget>[
           Text(
             label,
-            style: textTheme.labelMedium?.copyWith(color: colorScheme.outline),
+            style: textTheme.labelMedium
+                ?.copyWith(color: colorScheme.onSurface.withValues(alpha: 0.4)),
           ),
           const SizedBox(height: 4),
           Row(

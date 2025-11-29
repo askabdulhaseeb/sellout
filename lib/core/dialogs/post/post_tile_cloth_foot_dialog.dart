@@ -10,7 +10,7 @@ import '../../../services/get_it.dart';
 import '../../extension/string_ext.dart';
 import '../../functions/app_log.dart';
 import '../../sources/data_state.dart';
-import '../../widgets/app_snakebar.dart';
+import '../../widgets/app_snackbar.dart';
 import '../../widgets/custom_dropdown.dart';
 import '../../widgets/custom_elevated_button.dart';
 import '../../../features/personal/post/domain/usecase/add_to_cart_usecase.dart';

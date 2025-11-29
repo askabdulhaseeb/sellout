@@ -76,11 +76,9 @@ class _CountryDropdownFieldState extends State<CountryDropdownField> {
           children: <Widget>[
             _CountryFlag(flag: country.flag),
             const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                country.displayName,
-                overflow: TextOverflow.ellipsis,
-              ),
+            Text(
+              country.displayName,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         );
@@ -93,11 +91,10 @@ class _CountryDropdownFieldState extends State<CountryDropdownField> {
           child: Row(
             children: <Widget>[
               _CountryFlag(flag: country.flag),
-              Expanded(
-                child: Text(
-                  country.displayName,
-                  overflow: TextOverflow.ellipsis,
-                ),
+              const SizedBox(width: 8),
+              Text(
+                country.displayName,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),

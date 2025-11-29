@@ -2,6 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/sources/data_state.dart';
+import '../../../../../../core/utilities/app_string.dart';
+import '../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../../../../../core/widgets/rating_display_widget.dart';
 import '../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../../business/core/domain/usecase/get_business_by_id_usecase.dart';
@@ -67,7 +69,6 @@ class _PostDetailSellerSectionState extends State<PostDetailSellerSection> {
 
     return Container(
       margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: ColorScheme.of(context).outlineVariant),
@@ -125,7 +126,9 @@ class _PostDetailSellerSectionState extends State<PostDetailSellerSection> {
             children: <Widget>[
               if (!isMine) CreatePostInquiryChatButton(post: widget.post),
               SharePostButton(
-                post: widget.post,
+                tappableWidget:
+                    const CustomSvgIcon(assetPath: AppStrings.selloutShareIcon),
+                postId: widget.post.postID,
               ),
               if (!isMine)
                 SavePostIconButton(

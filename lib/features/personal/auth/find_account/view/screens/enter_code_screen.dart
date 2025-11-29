@@ -39,15 +39,17 @@ class EnterCodeScreen extends StatelessWidget {
             Text(
               'enter_code_description'.tr(),
               textAlign: TextAlign.center,
-              style: textTheme.bodySmall
-                  ?.copyWith(color: ColorScheme.of(context).outline),
+              style: textTheme.bodySmall?.copyWith(
+                  color:
+                      ColorScheme.of(context).onSurface.withValues(alpha: 0.4)),
             ),
             const SizedBox(height: 12),
             Text(
               'sent_code_to'.tr(),
               textAlign: TextAlign.center,
-              style: textTheme.bodySmall
-                  ?.copyWith(color: ColorScheme.of(context).outline),
+              style: textTheme.bodySmall?.copyWith(
+                  color:
+                      ColorScheme.of(context).onSurface.withValues(alpha: 0.4)),
             ),
             const SizedBox(height: 4),
             Consumer<FindAccountProvider>(
@@ -95,7 +97,9 @@ class EnterCodeScreen extends StatelessWidget {
                           Text(
                             '${'resend_code'.tr()}: ',
                             style: textTheme.bodyMedium?.copyWith(
-                                color: ColorScheme.of(context).outline),
+                                color: ColorScheme.of(context)
+                                    .onSurface
+                                    .withValues(alpha: 0.4)),
                           ),
                           Text(
                             '${minutes.toString()}:${seconds.toString().padLeft(2, '0')}',

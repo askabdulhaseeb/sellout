@@ -22,8 +22,7 @@ class MarketFilterPropertyToggleWidget extends StatelessWidget {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                  border:
-                      Border.all(color: ColorScheme.of(context).outlineVariant),
+                  border: Border.all(color: ColorScheme.of(context).outline),
                   borderRadius: BorderRadius.circular(8)),
               child: Center(
                 child: CustomToggleSwitch<String>(

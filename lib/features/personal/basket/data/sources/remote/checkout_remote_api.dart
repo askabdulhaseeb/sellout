@@ -5,11 +5,13 @@ import '../../../../../../core/sources/api_call.dart';
 import '../../../../auth/signin/data/models/address_model.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../domain/entities/checkout/check_out_entity.dart';
+import '../../../domain/entities/checkout/payment_intent_entity.dart';
 import '../../models/checkout/check_out_model.dart';
+import '../../models/checkout/payment_intent_model.dart';
 
 abstract interface class CheckoutRemoteAPI {
   Future<DataState<CheckOutEntity>> getCheckout(AddressModel address);
-  Future<DataState<String>> cartPayIntent();
+  Future<DataState<PaymentIntentEntity>> cartPayIntent();
 }
 
 class CheckoutRemoteAPIImpl implements CheckoutRemoteAPI {
@@ -47,7 +49,7 @@ class CheckoutRemoteAPIImpl implements CheckoutRemoteAPI {
   }
 
   @override
-  Future<DataState<String>> cartPayIntent() async {
+  Future<DataState<PaymentIntentEntity>> cartPayIntent() async {
     try {
       debugPrint(LocalAuth.token);
       const String endpoint = '/payment/cart';
@@ -57,27 +59,30 @@ class CheckoutRemoteAPIImpl implements CheckoutRemoteAPI {
         requestType: ApiRequestType.post,
       );
       if (result is DataSuccess<String>) {
-        final Map<String, dynamic> responseMap = jsonDecode(result.data ?? '');
-        final String clientSecret = responseMap['clientSecret'];
-        AppLog.info('Payment successful',
-            name: 'CheckoutRemoteAPIImpl.cartPayIntent - if');
-        return DataSuccess<String>(result.data ?? '', clientSecret);
+        final PaymentIntentEntity paymentIntent =
+            PaymentIntentModel.fromRawJson(result.data ?? '');
+        AppLog.info(result.data.toString());
+        AppLog.info('Payment intent created successfully',
+            name: 'CheckoutRemoteAPIImpl.cartPayIntent - success');
+        return DataSuccess<PaymentIntentEntity>(
+            result.data ?? '', paymentIntent);
       } else {
         AppLog.error(
           '',
-          name: 'CheckoutRemoteAPIImpl.payIntent - Else',
+          name: 'CheckoutRemoteAPIImpl.cartPayIntent - Else',
           error: result.exception?.reason ?? 'something_wrong'.tr(),
         );
-        return DataFailer<String>(
-            CustomException('Failed to add payment Address'));
+        return DataFailer<PaymentIntentEntity>(
+            CustomException('Failed to create payment intent'));
       }
-    } catch (e) {
+    } catch (e, stc) {
       AppLog.error(
         e.toString(),
-        name: 'CheckoutRemoteAPIImpl.paymentAddress - Catch',
+        stackTrace: stc,
+        name: 'CheckoutRemoteAPIImpl.cartPayIntent - Catch',
         error: e,
       );
-      return DataFailer<String>(CustomException(e.toString()));
+      return DataFailer<PaymentIntentEntity>(CustomException(e.toString()));
     }
   }
 }

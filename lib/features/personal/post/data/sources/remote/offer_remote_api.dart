@@ -101,9 +101,10 @@ class OfferRemoteApiImpl implements OfferRemoteApi {
       } else {
         debugPrint('❌ Offer payment failed at response stage');
         AppLog.error(
-          result.exception?.message ?? 'Unknown error during offer payment',
-          name: 'PostRemoteApiImpl.offerPayment - else',
-          error: result.exception,
+          result.exception?.reason ?? 'Unknown error during offer payment',
+          name:
+              'PostRemoteApiImpl.offerPayment - else ,Status code:${result.data}}',
+          error: result.exception?.detail,
         );
         return DataFailer<String>(
           CustomException(result.exception?.message ?? 'something_wrong'.tr()),

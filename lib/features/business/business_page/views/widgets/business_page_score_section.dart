@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../personal/user/profiles/views/widgets/score_widget_bottomsheets/employyement_details_bottomsheet.dart';
+import '../../../../personal/user/profiles/views/widgets/score_widget_bottomsheets/employment_details_bottomsheet.dart';
 import '../../../../personal/user/profiles/views/widgets/subwidgets/support_button.dart';
 import '../../../../personal/user/profiles/views/widgets/score_widget_bottomsheets/supporter_bottom_sheet.dart';
 import '../../../core/domain/entity/business_entity.dart';

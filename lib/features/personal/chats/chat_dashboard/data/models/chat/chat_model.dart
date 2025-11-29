@@ -36,7 +36,7 @@ class ChatModel extends ChatEntity {
                 .map((dynamic x) => ChatParticipantModel.fromJson(x))),
         ids: List<String>.from(
             (json['ids'] ?? <dynamic>[]).map((dynamic x) => x)),
-        createdBy: json['created_by'],
+        createdBy: json['created_by'] ?? json['send_by'] ?? '',
         lastMessage: json['last_message'] == null
             ? null
             : MessageModel.fromMap(json['last_message']),

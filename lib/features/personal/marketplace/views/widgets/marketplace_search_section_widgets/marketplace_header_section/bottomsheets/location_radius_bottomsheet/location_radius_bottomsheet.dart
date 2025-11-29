@@ -62,10 +62,10 @@ class _LocationRadiusBottomSheetState extends State<LocationRadiusBottomSheet> {
     });
   }
 
-  void _updateLocation(LatLng latlng, LocationEntity location) {
+  void _updateLocation(LatLng? latlng, LocationEntity? location) {
     setState(() {
-      _selectedLatLng = latlng;
-      _selectedLocation = location;
+      _selectedLatLng = latlng ?? _selectedLatLng;
+      _selectedLocation = location ?? _selectedLocation;
     });
   }
 
@@ -121,7 +121,7 @@ class _LocationRadiusBottomSheetState extends State<LocationRadiusBottomSheet> {
                     displayMode: MapDisplayMode.alwaysShowMap,
                     showMapCircle: true,
                     initialText: _selectedLocation?.address,
-                    onLocationSelected: (LocationEntity loc, LatLng latlng) =>
+                    onLocationSelected: (LocationEntity? loc, LatLng? latlng) =>
                         _updateLocation(latlng, loc),
                   ),
                   const SizedBox(height: 24),

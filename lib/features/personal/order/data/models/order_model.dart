@@ -14,12 +14,20 @@ class OrderModel extends OrderEntity {
         orderType: json['order_type'] ?? '',
         price: (json['price'] as num).toDouble(),
         totalAmount: (json['total_amount'] as num).toDouble(),
-        quantity: json['quantity'],
+        quantity: json['quantity'] ?? 0,
         createdAt: DateTime.parse(json['created_at']),
         updatedAt: DateTime.parse(json['updated_at']),
         paymentDetail: OrderPaymentDetailModel.fromJson(json['payment_detail']),
-        shippingAddress: AddressModel.fromJson(json['shipping_address']),
-        businessId: json['business_id'] ?? 'null');
+        shippingAddress: AddressModel.fromJson(
+            json['shipping_detail']['addresses']['to_address']),
+        businessId: json['business_id'] ?? '',
+        size: json['size'],
+        color: json['color'],
+        listId: json['list_id'],
+        isBusinessOrder: json['is_business_order'],
+        transactionId: json['transaction_id'],
+        trackId: json['track_id'],
+        deliveryPaidBy: json['delivery_paid_by']);
   }
   factory OrderModel.fromEntity(OrderEntity entity) {
     return OrderModel(
@@ -36,7 +44,14 @@ class OrderModel extends OrderEntity {
         updatedAt: entity.updatedAt,
         paymentDetail: OrderPaymentDetailModel.fromEntity(entity.paymentDetail),
         shippingAddress: AddressModel.fromEntity(entity.shippingAddress),
-        businessId: entity.businessId);
+        businessId: entity.businessId,
+        size: entity.size,
+        color: entity.color,
+        listId: entity.listId,
+        isBusinessOrder: entity.isBusinessOrder,
+        transactionId: entity.transactionId,
+        trackId: entity.trackId,
+        deliveryPaidBy: entity.deliveryPaidBy);
   }
   const OrderModel({
     required super.orderId,
@@ -53,6 +68,13 @@ class OrderModel extends OrderEntity {
     required super.paymentDetail,
     required super.shippingAddress,
     required super.businessId,
+    super.size,
+    super.color,
+    super.listId,
+    super.isBusinessOrder,
+    super.transactionId,
+    super.trackId,
+    super.deliveryPaidBy,
   });
 
   Map<String, dynamic> toJson() {
@@ -66,10 +88,10 @@ class OrderModel extends OrderEntity {
       'price': price,
       'total_amount': totalAmount,
       'quantity': quantity,
-      'payment_detail': OrderPaymentDetailModel.fromEntity(paymentDetail)
-          .toJson(), // Payment detail already properly typed
-      'shipping_address': AddressModel.fromEntity(shippingAddress)
-          .toShippingJson() // Ensure AddressModel has toJson method
+      'payment_detail':
+          OrderPaymentDetailModel.fromEntity(paymentDetail).toJson(),
+      'shipping_address':
+          AddressModel.fromEntity(shippingAddress).toShippingJson()
     };
   }
 }

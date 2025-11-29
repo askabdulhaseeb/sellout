@@ -23,21 +23,10 @@ class PropertyPostDetailSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          // PostDetailTitleAmountSection(post: post),
-          // ConditionDeliveryWidget(post: post),
-
-          // PostButtonSection(
-          //   detailWidget: true,
-          //   post: post,
-          // ),
-          // PostVehicleDetailWidget(post: post),
-          // PostPetDetailWidget(post: post),
           PostDetailPropertyKeyFeaturesWidget(
             post: post,
           ),
           PostDetailDescriptionSection(post: post),
-          // const PostDetailSafetyTipsWidget(),
-          // ReturnPosrtageAndExtraDetailsSection(post: post),
           PostDetailPropertyLocationLocationWidget(
               location: post.meetUpLocation),
           PostDetailSellerSection(post: post),

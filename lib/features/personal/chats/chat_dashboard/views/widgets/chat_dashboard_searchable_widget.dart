@@ -45,7 +45,9 @@ class ChatDashboardSearchableWidget extends StatelessWidget {
                         padding: const EdgeInsets.all(11),
                         decoration: BoxDecoration(
                             border: Border.all(
-                                color: ColorScheme.of(context).outlineVariant),
+                                color: ColorScheme.of(context)
+                                    .onSurface
+                                    .withValues(alpha: 0.4)),
                             borderRadius: BorderRadius.circular(8)),
                         child: const CustomSvgIcon(
                             assetPath: AppStrings.selloutAddChatIcon)))
@@ -59,12 +61,10 @@ class ChatDashboardSearchableWidget extends StatelessWidget {
                         child: Container(
                             padding: const EdgeInsets.all(11),
                             decoration: BoxDecoration(
-                                border: Border.all(
-                                    color:
-                                        ColorScheme.of(context).outlineVariant),
+                                border:
+                                    Border.all(color: ColorScheme.of(context).outlineVariant),
                                 borderRadius: BorderRadius.circular(8)),
-                            child: const CustomSvgIcon(
-                                assetPath: AppStrings.selloutAddChatIcon)))
+                            child: const CustomSvgIcon(assetPath: AppStrings.selloutAddChatIcon)))
                     : const SizedBox.shrink()
           ],
         ),

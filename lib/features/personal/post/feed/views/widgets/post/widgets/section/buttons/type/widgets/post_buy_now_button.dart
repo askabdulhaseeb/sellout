@@ -4,7 +4,7 @@ import '../../../../../../../../../../../../core/dialogs/post/post_tile_cloth_fo
 import '../../../../../../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../../../../services/get_it.dart';
 import '../../../../../../../../../../basket/views/screens/personal_shopping_basket_screen.dart';

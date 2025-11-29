@@ -26,14 +26,14 @@ class UpdateUserParams {
   final String? bio;
   final PhoneNumberEntity? phone;
   final DateTime? dob;
-  final PrivacyType? privacyType; // "profile_type"
+  final PrivacyType? privacyType; 
   final LocationModel? location;
   final TimeAwayModel? timeAway;
   final PrivacySettingsModel? privacySettings;
   final bool? twoFactorAuth;
   final bool? pushNotification;
   final bool? emailNotification;
-  final String? country; //country_alpha_3
+  final String? country; 
   final String? gender;
   final String? language;
 

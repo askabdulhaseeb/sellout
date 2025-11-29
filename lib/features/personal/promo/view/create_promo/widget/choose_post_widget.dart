@@ -91,9 +91,16 @@ class SelectedPostTile extends StatelessWidget {
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      post.priceStr,
-                      style: const TextStyle(color: Colors.black87),
+                    FutureBuilder<String>(
+                      future: post.getPriceStr(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<String> snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Text('...');
+                        }
+
+                        return Text(snapshot.data!);
+                      },
                     ),
                   ],
                 ),

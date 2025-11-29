@@ -56,7 +56,8 @@ class _YourOrdersScreenState extends State<YourOrdersScreen> {
           final PostEntity? post = await LocalPost().getPost(order.postId);
           if (post != null) {
             postCache[order.postId] = post;
-            setState(() {}); // update UI once post is available
+            if (!mounted) return;
+            setState(() {});
           }
         }
       }

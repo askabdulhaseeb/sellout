@@ -8,13 +8,14 @@ import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../../core/enums/routine/day_type.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
-import '../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../dashboard/views/screens/dashboard_screen.dart';
 import '../../../../location/domain/entities/location_entity.dart';
+import '../../../../post/data/models/post/package_detail_model.dart';
 import '../../../../post/domain/entities/discount_entity.dart';
 import '../../../../post/domain/entities/meetup/availability_entity.dart';
 import '../../../../post/domain/entities/post/post_entity.dart';
@@ -82,10 +83,10 @@ class AddListingFormProvider extends ChangeNotifier
   double parseNum(String s) => double.tryParse(s) ?? 0.0;
 
   PackageDetailEntity? get pkgDetails => PackageDetailEntity(
-        length: packageLength.text,
-        width: packageWidth.text,
-        height: packageHeight.text,
-        weight: packageWeight.text,
+        length: double.tryParse(packageLength.text) ?? 0.0,
+        width: double.tryParse(packageWidth.text) ?? 0.0,
+        height: double.tryParse(packageHeight.text) ?? 0.0,
+        weight: double.tryParse(packageWeight.text) ?? 0.0,
       );
 
   // Mixin state accessor
@@ -1055,9 +1056,8 @@ class AddListingFormProvider extends ChangeNotifier
     }
 
     try {
-      final PackageDetailEntity previewPackageDetail = pkgDetails ??
-          PackageDetailEntity(
-              length: '0', width: '0', weight: '0', height: '0');
+      final PackageDetailEntity previewPackageDetail =
+          pkgDetails ?? PackageDetailModel.empty;
 
       final PostClothFootEntity previewClothInfo =
           listingType == ListingType.clothAndFoot

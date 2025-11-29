@@ -7,9 +7,7 @@ import '../../../../../../core/widgets/attachment_slider.dart';
 import '../../../../../../core/widgets/custom_toggle_switch.dart';
 import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
-import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../post/domain/entities/post/post_entity.dart';
-import '../../../../post/feed/views/widgets/post/widgets/section/buttons/home_post_button_section.dart';
 import '../../../../post/feed/views/widgets/post/widgets/section/buttons/type/store_post_button_tile.dart';
 import '../../../../post/feed/views/widgets/post/widgets/section/buttons/type/viewing_post_button_tile.dart';
 import '../../../../post/feed/views/widgets/post/widgets/section/home_post_header_section.dart';
@@ -78,6 +76,9 @@ class _AddListingPreviewScreenState extends State<AddListingPreviewScreen> {
                       });
                     },
                   ),
+                  const SizedBox(
+                    height: 8,
+                  ),
                   _previewMode == _PreviewMode.feed
                       ? _FeedPreviewSection(
                           post: previewPost,
@@ -110,18 +111,17 @@ class _FeedPreviewSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        PostHeaderSection(post: post),
+        AbsorbPointer(absorbing: true, child: PostHeaderSection(post: post)),
         AttachmentsSlider.mixed(
           remote: post.fileUrls,
           picked: pickedAttachments,
         ),
-        HomePostIconBottonSection(
-          post: post,
-          isPreview: true
-        ),
+        AbsorbPointer(
+            absorbing: true,
+            child: HomePostIconBottonSection(post: post, isPreview: true)),
         HomePostTitleSection(post: post),
         AbsorbPointer(
-          absorbing: LocalAuth.currentUser?.userID == null,
+          absorbing: true,
           child: (post.type == ListingType.pets ||
                   post.type == ListingType.vehicle ||
                   post.type == ListingType.property)
@@ -172,25 +172,39 @@ class _DetailPreviewSection extends StatelessWidget {
         if (sources.isNotEmpty) ...<Widget>[
           PostDetailAttachmentSlider.sources(sources: sources),
           const SizedBox(height: 12),
-             PostDetailTitleAmountSection(post: post),
-        PostButtonSection(
-          detailWidget: true,
-          post: post,
-        ),
+          PostDetailTitleAmountSection(post: post),
+          AbsorbPointer(
+            absorbing: true,
+            child: (post.type == ListingType.pets ||
+                    post.type == ListingType.vehicle ||
+                    post.type == ListingType.property)
+                ? ViewingPostButtonTile(
+                    post: post,
+                    detailWidget: false,
+                  )
+                : StorePostButtonTile(
+                    post: post,
+                    detailWidget: false,
+                  ),
+          ),
+          const SizedBox(height: AppSpacing.vMd),
         ],
-        post.listID == ListingType.items.json
-            ? ItemPostDetailSection(post: post)
-            : post.listID == ListingType.clothAndFoot.json
-                ? ClothFootPostDetailSection(post: post)
-                : post.listID == ListingType.foodAndDrink.json
-                    ? FoodDrinkPostDetailSection(post: post)
-                    : post.listID == ListingType.property.json
-                        ? PropertyPostDetailSection(post: post)
-                        : post.listID == ListingType.pets.json
-                            ? PetsPostDetailSection(post: post)
-                            : post.listID == ListingType.vehicle.json
-                                ? VehiclePostDetailSection(post: post)
-                                : const SizedBox.shrink(),
+        AbsorbPointer(
+          absorbing: true,
+          child: post.listID == ListingType.items.json
+              ? ItemPostDetailSection(post: post)
+              : post.listID == ListingType.clothAndFoot.json
+                  ? ClothFootPostDetailSection(post: post)
+                  : post.listID == ListingType.foodAndDrink.json
+                      ? FoodDrinkPostDetailSection(post: post)
+                      : post.listID == ListingType.property.json
+                          ? PropertyPostDetailSection(post: post)
+                          : post.listID == ListingType.pets.json
+                              ? PetsPostDetailSection(post: post)
+                              : post.listID == ListingType.vehicle.json
+                                  ? VehiclePostDetailSection(post: post)
+                                  : const SizedBox.shrink(),
+        ),
       ],
     );
   }

@@ -20,6 +20,7 @@ class _TwoFactorAuthBottomSheetState extends State<TwoFactorAuthBottomSheet> {
       UpdateProfileDetailUsecase(locator());
   late bool isTwoFactorEnabled;
   late String uid;
+  bool loading = false;
 
   @override
   void initState() {
@@ -47,6 +48,16 @@ class _TwoFactorAuthBottomSheetState extends State<TwoFactorAuthBottomSheet> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => Navigator.of(context).pop(),
+                tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
+              ),
+            ],
+          ),
           Text(
             'two_step_verification'.tr(),
             style: textTheme.bodyMedium,
@@ -63,6 +74,7 @@ class _TwoFactorAuthBottomSheetState extends State<TwoFactorAuthBottomSheet> {
 
           // ✅ Use custom switch tile
           CustomSwitchListTile(
+            loading: loading,
             title: 'enable_2fa'.tr(),
             value: isTwoFactorEnabled,
             onChanged: (bool value) async {
@@ -70,6 +82,9 @@ class _TwoFactorAuthBottomSheetState extends State<TwoFactorAuthBottomSheet> {
                 debugPrint('UID is empty');
                 return;
               }
+              setState(() {
+                loading = true;
+              });
               final DataState<String> result = await usecase.call(
                 UpdateUserParams(
                   twoFactorAuth: value,
@@ -80,8 +95,12 @@ class _TwoFactorAuthBottomSheetState extends State<TwoFactorAuthBottomSheet> {
                 await _updateLocalUser(value);
                 setState(() {
                   isTwoFactorEnabled = value;
+                  loading = false;
                 });
               } else {
+                setState(() {
+                  loading = false;
+                });
                 // ignore: use_build_context_synchronously
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(

@@ -6,7 +6,7 @@ import '../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../core/sources/data_state.dart';
-import '../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../core/widgets/app_snackbar.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../listing/listing_form/data/models/sub_category_model.dart';
 import '../../../location/domain/entities/location_entity.dart';
@@ -174,15 +174,26 @@ class MarketPlaceProvider extends ChangeNotifier {
     await loadPosts();
   }
 
-  void updateLocation(
-    LatLng? latlngVal,
-    LocationEntity? locationVal,
+  void updateFilterContainerLocation(
+    LatLng latlngVal,
+    LocationEntity locationVal,
   ) {
-    _selectedlatlng = latlngVal ?? LocalAuth.latlng;
+    _selectedlatlng = latlngVal;
     _selectedLocation = locationVal;
     notifyListeners();
     debugPrint(
         'Updated LatLng: $_selectedlatlng, Location: $_selectedLocation in marketplaceProvider');
+  }
+
+  void resetFilterContainerLocation(
+    LatLng? latlngVal,
+    LocationEntity? locationVal,
+  ) {
+    _selectedlatlng = latlngVal ?? const LatLng(0, 0);
+    _selectedLocation = locationVal;
+    notifyListeners();
+    debugPrint(
+        'Reseting LatLng: $_selectedlatlng, Location: $_selectedLocation in marketplaceProvider');
   }
 
   void updateLocationSheet(LatLng? latlngVal, LocationEntity? locationVal,
@@ -235,6 +246,8 @@ class MarketPlaceProvider extends ChangeNotifier {
 
   void setFoodDrinkCategory(String category) {
     _foodDrinkCategory = category;
+    _selectedSubCategory = null;
+
     notifyListeners();
   }
 
@@ -415,8 +428,7 @@ class MarketPlaceProvider extends ChangeNotifier {
     vehicleModel.clear();
 
     // Location
-    _selectedlatlng = LocalAuth.latlng; // ✅ no setter exists, keep direct
-    _selectedLocation = null; // ✅ no setter exists, keep direct
+    resetFilterContainerLocation(null, null);
 
     // Posts
     setPosts(null);
@@ -438,53 +450,6 @@ class MarketPlaceProvider extends ChangeNotifier {
 
     notifyListeners();
   }
-
-  // void resetFilters() {
-  //   // // Marketplace Main Category
-  //   // _marketplaceCategory = null;
-  //   _selectedSubCategory = null;
-  //   // Cloth & Foot
-  //   _cLothFootCategory = ListingType.clothAndFoot.cids.first;
-  //   _selectedSize = <String>[];
-  //   _selectedColor = <String>[];
-  //   _brand = null;
-  //   // Items
-  //   _listingItemCategory = null;
-  //   // Pets
-  //   _age = null;
-  //   _readyToLeave = null;
-  //   _petCategory = null;
-  //   // Property
-  //   _propertyCategory = ListingType.property.cids.first;
-  //   _propertyType = null;
-  //   _energyRating = null;
-  //   // Food & Drink
-  //   _foodDrinkCategory = ListingType.foodAndDrink.cids.first;
-  //   // Vehicles
-  //   _make = null;
-  //   _year = null;
-  //   _vehicleCatgory = null;
-  //   vehicleModel.clear();
-  //   // Location
-  //   _selectedlatlng = LocalAuth.latlng;
-  //   _selectedLocation = null;
-  //   // Post data
-  //   _posts = null;
-  //   _selectedSubCategory = null;
-  //   _addedFilterOption = null;
-  //   // Delivery & Condition
-  //   _selectedDeliveryType = null;
-  //   _selectedConditionType = null;
-  //   // UI
-  //   _isLoading = false;
-  //   _isFilteringPosts = false;
-  //   // Text controllers
-  //   queryController.clear();
-  //   minPriceController.clear();
-  //   maxPriceController.clear();
-
-  //   notifyListeners();
-  // }
 
 //variables
   ListingType? _marketplaceCategory;

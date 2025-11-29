@@ -54,7 +54,7 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       packageDetail: fields[34] as PackageDetailEntity,
       isActive: fields[36] as bool,
       createdBy: fields[37] as String,
-      updatedBy: fields[40] == null ? '' : fields[40] as String,
+      updatedBy: fields[40] as String,
       createdAt: fields[38] as DateTime,
       updatedAt: fields[41] as DateTime?,
       accessCode: fields[39] as String?,

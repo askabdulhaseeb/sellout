@@ -1,5 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../core/widgets/coming_soon_overlay.dart';
 import '../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../providers/services_page_provider.dart';
@@ -41,9 +44,9 @@ class _ServicesScreenState extends State<ServicesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final ServicesPageProvider pro = Provider.of<ServicesPageProvider>(context);
     return PersonalScaffold(
-      body: SingleChildScrollView(
+        body: Stack(children: [
+      SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         controller: _scrollController,
         child: const Column(
@@ -56,6 +59,10 @@ class _ServicesScreenState extends State<ServicesScreen> {
           ],
         ),
       ),
-    );
+      ComingSoonOverlay(
+          title: 'coming_soon'.tr(),
+          subtitle: 'services_coming_soon_subtitle'.tr(),
+          icon: CupertinoIcons.hourglass),
+    ]));
   }
 }

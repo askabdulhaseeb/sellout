@@ -17,10 +17,10 @@ class PackageDetailEntityAdapter extends TypeAdapter<PackageDetailEntity> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return PackageDetailEntity(
-      length: fields[0] as String,
-      width: fields[1] as String,
-      weight: fields[2] as String,
-      height: fields[3] as String,
+      length: fields[0] as double,
+      width: fields[1] as double,
+      weight: fields[2] as double,
+      height: fields[3] as double,
     );
   }
 

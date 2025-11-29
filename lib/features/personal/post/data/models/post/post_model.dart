@@ -90,7 +90,7 @@ class PostModel extends PostEntity {
       businessID: json['business_id']?.toString(),
       title: json['title']?.toString() ?? '',
       description: json['description']?.toString() ?? '',
-      price: double.tryParse(json['price']?.toString() ?? '0.0') ?? 0.0,
+      price: double.tryParse(json['price'].toString()) ?? 0.0,
       quantity: int.tryParse(json['quantity']?.toString() ?? '0') ?? 0,
       currency: json['currency']?.toString() ?? 'gbp',
       type: ListingType.fromJson(json['list_id']),
@@ -99,7 +99,7 @@ class PostModel extends PostEntity {
           bool.tryParse(json['accept_offers']?.toString() ?? 'false') ?? false,
       minOfferAmount:
           double.tryParse(json['min_offer_amount']?.toString() ?? '0.0') ?? 0.0,
-      privacy: PrivacyType.fromJson(json['post_privacy']),
+      privacy: PrivacyType.fromJson(json['post_privacy'] ?? 'public'),
       condition: ConditionType.fromJson(json['item_condition']),
       deliveryType: DeliveryType.fromJson(json['delivery_type']),
       listOfReviews: List<double>.from(

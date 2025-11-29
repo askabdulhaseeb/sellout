@@ -47,6 +47,7 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
     );
   }
 
+// Inside _buildChooseMembers
   Widget _buildChooseMembers(CreateChatGroupProvider provider,
       List<SupporterDetailEntity> supporters) {
     return PopScope(
@@ -55,9 +56,7 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
         appBar: AppBar(
           centerTitle: true,
           leading: BackButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
+            onPressed: () => Navigator.pop(context),
           ),
           title: Text('choose_members'.tr(),
               style: TextTheme.of(context).titleMedium),
@@ -72,23 +71,67 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
                 itemBuilder: (BuildContext context, int index) {
                   final SupporterDetailEntity supporter = supporters[index];
                   final String userId = supporter.userID;
+
                   return FutureBuilder<DataState<UserEntity?>>(
                     future: getUserByUidUsecase(userId),
                     builder: (BuildContext context,
                         AsyncSnapshot<DataState<UserEntity?>> snapshot) {
+                      // SKELETON LOADING
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return ListTile(
-                          title: Text('loading...'.tr()),
-                          leading: const CircularProgressIndicator(),
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 8.0),
+                          child: Row(
+                            children: <Widget>[
+                              Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade300,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Container(
+                                      height: 14,
+                                      color: Colors.grey.shade300,
+                                      margin: const EdgeInsets.only(bottom: 6),
+                                    ),
+                                    Container(
+                                      height: 12,
+                                      width: 100,
+                                      color: Colors.grey.shade300,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Container(
+                                width: 35,
+                                height: 35,
+                                color: Colors.grey.shade300,
+                              ),
+                            ],
+                          ),
                         );
                       }
-                      if (snapshot.hasError ||
+
+                      // NULL / ERROR CHECKS
+                      if (!snapshot.hasData ||
                           snapshot.data == null ||
                           snapshot.data!.entity == null) {
-                        return const ListTile(
-                            title: Text('Error loading user'));
+                        return ListTile(
+                          leading: const Icon(Icons.error_outline),
+                          title: Text('user_not_found'.tr()),
+                        );
                       }
+
                       final UserEntity user = snapshot.data!.entity!;
+
                       return ListTile(
                         minTileHeight: 70,
                         leading: ProfilePhoto(
@@ -100,6 +143,7 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
                           user.displayName,
                           style: TextTheme.of(context).bodyMedium,
                           maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         trailing: Consumer<CreateChatGroupProvider>(
                           builder: (BuildContext context,
@@ -135,16 +179,14 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
               left: 16,
               right: 16,
               child: Consumer<CreateChatGroupProvider>(
-                builder: (BuildContext context, CreateChatGroupProvider pro,
-                        Widget? child) =>
-                    Column(
+                builder:
+                    (BuildContext context, CreateChatGroupProvider pro, _) =>
+                        Column(
                   children: <Widget>[
                     if (pro.selectedUserIds.length >= 2)
                       CustomElevatedButton(
                         isLoading: false,
-                        onTap: () {
-                          setState(() => step = 2);
-                        },
+                        onTap: () => setState(() => step = 2),
                         title: 'next'.tr(),
                       ),
                   ],
