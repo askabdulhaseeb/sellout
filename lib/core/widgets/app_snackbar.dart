@@ -76,7 +76,7 @@ class AppSnackBar {
           duration: duration,
           padding: EdgeInsets.zero,
           content: TweenAnimationBuilder<double>(
-            tween: Tween(begin: 0, end: 1),
+            tween: Tween<double>(begin: 0, end: 1),
             duration: const Duration(milliseconds: 1000),
             curve: Curves.easeOutCubic,
             builder: (BuildContext context, double value, _) {
@@ -105,7 +105,7 @@ class AppSnackBar {
                       borderRadius: borderRadius,
                       boxShadow: <BoxShadow>[
                         BoxShadow(
-                          color: background.withOpacity(0.25),
+                          color: background.withValues(alpha: 0.25),
                           blurRadius: 18,
                           offset: const Offset(0, 6),
                         ),
@@ -115,7 +115,7 @@ class AppSnackBar {
                       children: <Widget>[
                         // Progress Indicator (Bottom Bar)
                         if (duration.inSeconds > 2)
-                          Positioned(
+                          Positioned.fill(
                             bottom: 0,
                             left: 0,
                             right: 0,
@@ -139,14 +139,14 @@ class AppSnackBar {
                         // Snackbar Content
                         Padding(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.md,
+                            horizontal: AppSpacing.sm,
                             vertical: AppSpacing.sm,
                           ),
                           child: Row(
                             children: <Widget>[
                               // Icon
                               TweenAnimationBuilder<double>(
-                                tween: Tween(begin: 0, end: 1),
+                                tween: Tween<double>(begin: 0, end: 1),
                                 duration: const Duration(milliseconds: 600),
                                 curve: Curves.elasticOut,
                                 builder:
@@ -158,7 +158,8 @@ class AppSnackBar {
                                           const EdgeInsets.all(AppSpacing.xs),
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: Colors.white.withOpacity(0.15),
+                                        color: Colors.white
+                                            .withValues(alpha: 0.15),
                                       ),
                                       child: Icon(
                                         icon,
@@ -178,26 +179,27 @@ class AppSnackBar {
                                   opacity: contentProgress,
                                   duration: const Duration(milliseconds: 400),
                                   child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
-                                      Text(
-                                        message,
-                                        style: theme.textTheme.bodyMedium
-                                            ?.copyWith(
-                                          color: textColor,
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 15,
+                                      Flexible(
+                                        child: Text(
+                                          message,
+                                          style: theme.textTheme.bodyMedium
+                                              ?.copyWith(
+                                            color: textColor,
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 10,
+                                          ),
+                                          maxLines: 12,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ],
                                   ),
                                 ),
                               ),
-
                               // Close Button
                               if (dismissible)
                                 GestureDetector(
@@ -207,11 +209,12 @@ class AppSnackBar {
                                         const EdgeInsets.all(AppSpacing.xs),
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: Colors.white.withOpacity(0.15),
+                                      color:
+                                          Colors.white.withValues(alpha: 0.15),
                                     ),
                                     child: Icon(
                                       Icons.close_rounded,
-                                      color: textColor.withOpacity(0.9),
+                                      color: textColor.withValues(alpha: 0.9),
                                       size: 16,
                                     ),
                                   ),
@@ -255,7 +258,7 @@ class AppSnackBar {
 
   static void successGlobal(String message, {bool dismissible = true}) {
     final BuildContext? ctx = messengerKey.currentContext ?? _rootContext();
-    final Color? color = ctx != null
+    final Color color = ctx != null
         ? Theme.of(ctx).colorScheme.secondaryContainer
         : Colors.green;
     show(
@@ -283,7 +286,7 @@ class AppSnackBar {
 
   static void warningGlobal(String message, {bool dismissible = true}) {
     final BuildContext? ctx = messengerKey.currentContext ?? _rootContext();
-    final Color? color = ctx != null
+    final Color color = ctx != null
         ? Theme.of(ctx).colorScheme.tertiaryContainer
         : Colors.amber;
     show(
@@ -297,7 +300,7 @@ class AppSnackBar {
 
   static void infoGlobal(String message, {bool dismissible = true}) {
     final BuildContext? ctx = messengerKey.currentContext ?? _rootContext();
-    final Color? color = ctx != null
+    final Color color = ctx != null
         ? Theme.of(ctx).colorScheme.primaryContainer
         : Colors.blueAccent;
     show(

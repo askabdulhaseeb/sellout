@@ -14,10 +14,10 @@ class DisputeResolutionScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: SingleChildScrollView(
           child: Text('dispute_resolution_content'.tr(),
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: ColorScheme.of(context).outline)),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: ColorScheme.of(context)
+                      .onSurface
+                      .withValues(alpha: 0.4))),
         ),
       ),
     );

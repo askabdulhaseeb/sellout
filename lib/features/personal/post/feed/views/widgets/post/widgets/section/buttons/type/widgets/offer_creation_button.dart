@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../../../../services/get_it.dart';
 import '../../../../../../../../../../chats/chat/views/providers/chat_provider.dart';

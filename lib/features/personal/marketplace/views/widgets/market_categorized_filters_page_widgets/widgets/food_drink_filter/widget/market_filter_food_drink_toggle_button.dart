@@ -7,11 +7,8 @@ import '../../../../../providers/marketplace_provider.dart';
 
 class MarketFilterFoodDrinkToggleWidget extends StatelessWidget {
   const MarketFilterFoodDrinkToggleWidget({
-    required this.screenWidth,
     super.key,
   });
-
-  final double screenWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -25,24 +22,22 @@ class MarketFilterFoodDrinkToggleWidget extends StatelessWidget {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                  border:
-                      Border.all(color: ColorScheme.of(context).outlineVariant),
+                  border: Border.all(color: ColorScheme.of(context).outline),
                   borderRadius: BorderRadius.circular(8)),
               child: Center(
                 child: CustomToggleSwitch<String>(
-                    unseletedBorderColor: Colors.transparent,
-                    verticalPadding: 6,
-                    isShaded: false,
-                    // customWidths: <double>[
-                    //   screenWidth * 0.39,
-                    //   screenWidth * 0.39
-                    // ],
-                    labels: subCategories,
-                    labelStrs: subCategories.map((String e) => e.tr()).toList(),
-                    labelText: '',
-                    initialValue: marketPro.foodDrinkCategory,
-                    onToggle: (String p0) =>
-                        marketPro.setFoodDrinkCategory(p0)),
+                  verticalMargin: 2,
+                  horizontalMargin: 2,
+                  containerHeight: 40,
+                  verticalPadding: 8,
+                  unseletedBorderColor: Colors.transparent,
+                  isShaded: false,
+                  labels: subCategories,
+                  labelStrs: subCategories.map((String e) => e.tr()).toList(),
+                  labelText: '',
+                  initialValue: marketPro.foodDrinkCategory,
+                  onToggle: (String p0) => marketPro.setFoodDrinkCategory(p0),
+                ),
               ),
             ),
           ),

@@ -81,7 +81,12 @@ import '../features/personal/location/domain/repo/location_repo.dart';
 import '../features/personal/location/domain/usecase/location_name_usecase.dart';
 import '../features/personal/location/view/provider/location_field_provider.dart';
 import '../features/personal/marketplace/data/source/marketplace_remote_source.dart';
+import '../features/personal/payment/data/repositories/payment_repository_impl.dart';
+import '../features/personal/payment/data/sources/remote/payment_remote_api.dart';
+import '../features/personal/payment/domain/repositories/payment_repository.dart';
+import '../features/personal/payment/domain/usecase/get_exchange_rate_usecase.dart';
 import '../features/personal/services/domain/usecase/get_service_categories_usecase.dart';
+import '../features/personal/user/profiles/domain/usecase/delete_user_usecase.dart';
 import '../features/personal/visits/domain/usecase/book_service_usecase.dart';
 import '../features/personal/visits/domain/usecase/get_visit_by_post_usecase.dart';
 import '../features/personal/visits/domain/usecase/update_visit_usecase.dart';
@@ -229,6 +234,7 @@ void setupLocator() {
   _location();
   _categories();
   _quote();
+  _payment();
 }
 
 void _auth() {
@@ -277,6 +283,8 @@ void _auth() {
       () => VerifyOtpUseCase(locator()));
   locator.registerFactory<FindAccountProvider>(
       () => FindAccountProvider(locator(), locator(), locator(), locator()));
+  locator
+      .registerFactory<DeleteUserUsecase>(() => DeleteUserUsecase(locator()));
 }
 
 void _servicePage() {
@@ -434,15 +442,8 @@ void _cart() {
       .registerFactory<GetCheckoutUsecase>(() => GetCheckoutUsecase(locator()));
   locator.registerFactory<PayIntentUsecase>(() => PayIntentUsecase(locator()));
   // provider
-  locator.registerLazySingleton<CartProvider>(() => CartProvider(
-      locator(),
-      locator(),
-      locator(),
-      locator(),
-      locator(),
-      locator(),
-      locator(),
-      locator()));
+  locator.registerLazySingleton<CartProvider>(() => CartProvider(locator(),
+      locator(), locator(), locator(), locator(), locator(), locator()));
 }
 
 void _business() {
@@ -746,4 +747,12 @@ void _quote() {
 
   locator.registerFactory<QuoteProvider>(
       () => QuoteProvider(locator(), locator(), locator(), locator()));
+}
+
+void _payment() {
+  locator.registerFactory<PaymentRemoteApi>(() => PaymentRemoteApiImpl());
+  locator.registerFactory<PaymentRepository>(
+      () => PaymentRepositoryImpl(locator()));
+  locator.registerFactory<GetExchangeRateUsecase>(
+      () => GetExchangeRateUsecase(locator()));
 }

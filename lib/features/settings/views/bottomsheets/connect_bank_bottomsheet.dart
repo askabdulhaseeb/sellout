@@ -4,7 +4,7 @@ import '../../../../core/sources/data_state.dart';
 import '../../../../core/constants/app_spacings.dart';
 import '../../../../core/utilities/app_string.dart';
 import '../../../../core/utilities/app_validators.dart';
-import '../../../../core/widgets/app_snakebar.dart';
+import '../../../../core/widgets/app_snackbar.dart';
 import '../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../core/widgets/custom_svg_icon.dart';
 import '../../../../core/widgets/custom_textformfield.dart';

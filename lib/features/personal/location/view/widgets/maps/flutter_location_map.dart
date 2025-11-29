@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../../../../marketplace/domain/enum/radius_type.dart';
@@ -84,8 +85,10 @@ class _FlutterLocationMapState extends State<FlutterLocationMap> {
           ),
           children: <Widget>[
             TileLayer(
-              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-              userAgentPackageName: 'com.sellout.sellout',
+              urlTemplate: dotenv.env['MAP_TILE_URL'] ??
+                  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+              userAgentPackageName:
+                  dotenv.env['APP_PACKAGE_NAME'] ?? 'com.sellout.sellout',
             ),
             MarkerLayer(
               markers: <Marker>[

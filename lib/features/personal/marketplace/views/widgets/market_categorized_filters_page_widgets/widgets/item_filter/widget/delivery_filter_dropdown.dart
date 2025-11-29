@@ -15,7 +15,7 @@ class DeliveryFilterDropdown extends StatelessWidget {
         return CustomDropdown<DeliveryType>(
           title: '',
           hint: 'delivery'.tr(),
-          items: DeliveryType.values
+          items: DeliveryType.list
               .map(
                 (DeliveryType item) => DropdownMenuItem<DeliveryType>(
                   value: item,

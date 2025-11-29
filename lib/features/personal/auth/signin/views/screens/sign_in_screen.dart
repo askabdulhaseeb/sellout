@@ -84,7 +84,7 @@ class SignInScreen extends StatelessWidget {
                   textStyle: TextTheme.of(context).bodyMedium,
                   isLoading: false,
                   bgColor: Colors.transparent,
-                  border: null,
+                  border: Border.all(color: Colors.transparent),
                   onTap: () async {
                     if (!signInFormKey.currentState!.validate()) {
                       return;

@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../domain/entities/cart/cart_entity.dart';
 import 'cart_model.dart';
@@ -19,7 +18,6 @@ class CartModel extends CartEntity {
 
   factory CartModel.fromRaw(String value) =>
       CartModel.fromJson(json.decode(value));
-
   factory CartModel.fromJson(Map<String, dynamic> value) => CartModel(
         updatedAt: DateTime.parse(value['updated_at']),
         createdAt: DateTime.parse(value['created_at']),

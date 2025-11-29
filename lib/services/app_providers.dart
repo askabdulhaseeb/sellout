@@ -101,7 +101,7 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
 
   ChangeNotifierProvider<CartProvider>.value(
       value: CartProvider(locator(), locator(), locator(), locator(), locator(),
-          locator(), locator(), locator())),
+          locator(), locator())),
   ChangeNotifierProvider<ReviewProvider>.value(
       value: ReviewProvider(locator())),
   //
@@ -114,11 +114,6 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
           locator(), locator(), locator(), locator(), locator())),
   ChangeNotifierProvider<AddServiceProvider>.value(
       value: AddServiceProvider(locator(), locator())),
-
-  ChangeNotifierProvider<MarketPlaceProvider>.value(
-      value: MarketPlaceProvider(
-    locator(),
-  )),
 //
   ChangeNotifierProvider<BookingProvider>.value(
       value: BookingProvider(locator(), locator(), locator(), locator(),
@@ -135,8 +130,6 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
       value: MarketPlaceProvider(locator())),
   ChangeNotifierProvider<VisitCalenderProvider>.value(
       value: VisitCalenderProvider(locator())),
-  ChangeNotifierProvider<NotificationProvider>.value(
-      value: NotificationProvider(locator())),
   ChangeNotifierProvider<NotificationProvider>.value(
       value: NotificationProvider(locator())),
   ChangeNotifierProvider<QuoteProvider>.value(

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../domain/entities/post/post_entity.dart';
 
 class HomePostTitleSection extends StatelessWidget {
@@ -26,12 +25,22 @@ class HomePostTitleSection extends StatelessWidget {
                   ),
                 ),
               ),
-              Text(
-                '${CountryHelper.currencySymbolHelper(post.currency)}${post.price.toString()}',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w400,
-                ),
+              FutureBuilder<String>(
+                future: post.getPriceStr(),
+                builder:
+                    (BuildContext context, AsyncSnapshot<String> snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Text('...');
+                  }
+
+                  return Text(
+                    snapshot.data!,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  );
+                },
               ),
             ],
           ),

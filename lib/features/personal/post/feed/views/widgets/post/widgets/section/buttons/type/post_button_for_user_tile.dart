@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../../../../visits/view/visit_calender.dart/screens/visit_calender_screen.dart';
 import '../../../../../../../../../listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../../../../../../../../domain/entities/post/post_entity.dart';
@@ -21,14 +20,14 @@ class PostButtonsForUser extends StatelessWidget {
     return Column(
       children: <Widget>[
         Row(spacing: 8, children: <Widget>[
-          Expanded(
-              child: InDevMode(
-            child: CustomElevatedButton(
-                isLoading: false,
-                bgColor: Theme.of(context).colorScheme.secondary,
-                onTap: () {},
-                title: 'promote'.tr()),
-          )),
+          // Expanded(
+          //     child: InDevMode(
+          //   child: CustomElevatedButton(
+          //       isLoading: false,
+          //       bgColor: Theme.of(context).colorScheme.secondary,
+          //       onTap: () {},
+          //       title: 'promote'.tr()),
+          // )),
           Expanded(
             child: CustomElevatedButton(
                 textColor: Theme.of(context).colorScheme.onSurface,

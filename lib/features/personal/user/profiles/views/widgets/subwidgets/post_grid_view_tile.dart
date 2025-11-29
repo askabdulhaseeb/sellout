@@ -6,9 +6,10 @@ import '../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/utilities/app_string.dart';
-import '../../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../../core/widgets/rating_display_widget.dart';
 import '../../../../../../../services/get_it.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -50,7 +51,7 @@ class PostGridViewTile extends StatelessWidget {
                   ),
                 ),
                 if (!isMe &&
-                    ListingType.viewingList
+                    ListingType.storeList
                         .contains(ListingType.fromJson(post.listID)))
                   PostGridViewTileBasketButton(post: post)
               ],
@@ -76,11 +77,16 @@ class PostGridViewTile extends StatelessWidget {
                       ratingList: post.listOfReviews ?? <double>[],
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      post.priceStr,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    FutureBuilder<String>(
+                      future: post.getPriceStr(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<String> snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Text('...');
+                        }
+
+                        return Text(snapshot.data!);
+                      },
                     ),
                   ],
                 ),
@@ -104,15 +110,19 @@ class PostGridViewTile extends StatelessWidget {
                             .startediting(post);
                       },
                     ),
-                    CustomIconButton(
-                      iconSize: 16,
-                      iconColor: Theme.of(context).colorScheme.secondary,
-                      padding: const EdgeInsets.all(4),
-                      margin: EdgeInsets.zero,
-                      bgColor:
-                          Theme.of(context).colorScheme.secondary.withAlpha(40),
-                      icon: AppStrings.selloutPostGridTilePromoteIcon,
-                      onPressed: () {},
+                    InDevMode(
+                      child: CustomIconButton(
+                        iconSize: 16,
+                        iconColor: Theme.of(context).colorScheme.secondary,
+                        padding: const EdgeInsets.all(4),
+                        margin: EdgeInsets.zero,
+                        bgColor: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withAlpha(40),
+                        icon: AppStrings.selloutPostGridTilePromoteIcon,
+                        onPressed: () {},
+                      ),
                     ),
                   ],
                 )
@@ -145,7 +155,7 @@ class PostGridViewTileBasketButton extends StatelessWidget {
           final DataState<bool> result = await usecase(
             AddToCartParam(post: post, quantity: 1),
           );
-          if (result is DataSuccess) {
+          if (result is DataSuccess && context.mounted) {
             AppSnackBar.success(
               context,
               'successfull_add_to_basket'.tr(),

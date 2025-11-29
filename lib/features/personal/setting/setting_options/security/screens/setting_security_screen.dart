@@ -4,7 +4,7 @@ import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../terms&policies/chnage_password_screen.dart';
+import '../../terms&policies/change_password_screen.dart';
 import '../bottomsheets/login_activity_bottomsheet.dart';
 import '../bottomsheets/two_factor_bottomsheet.dart';
 
@@ -35,7 +35,8 @@ class SettingSecurityScreen extends StatelessWidget {
           Text(
             'setting_security_subheader'.tr(),
             style: TextTheme.of(context).bodyMedium?.copyWith(
-                  color: ColorScheme.of(context).outline,
+                  color:
+                      ColorScheme.of(context).onSurface.withValues(alpha: 0.5),
                   letterSpacing: 0.25,
                 ),
           ),
@@ -58,7 +59,18 @@ class SettingSecurityScreen extends StatelessWidget {
             title: 'two_step_verification'.tr(),
             subtitle: 'verify_with_4_digit_code'.tr(),
             onTap: () {
-              const TwoFactorAuthBottomSheet();
+              showModalBottomSheet(
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                  useSafeArea: true,
+                  isDismissible: false,
+                  enableDrag: false,
+                  isScrollControlled: true,
+                  context: context,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(16)),
+                  ),
+                  builder: (_) => const TwoFactorAuthBottomSheet());
             },
           ),
           const Divider(),
@@ -109,7 +121,7 @@ class _SecurityTile extends StatelessWidget {
         subtitle: Text(
           subtitle,
           style: TextTheme.of(context).bodySmall?.copyWith(
-                color: ColorScheme.of(context).outline,
+                color: ColorScheme.of(context).onSurface.withValues(alpha: 0.5),
                 letterSpacing: 0.25,
               ),
         ),

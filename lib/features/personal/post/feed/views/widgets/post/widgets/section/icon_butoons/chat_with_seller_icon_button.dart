@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../../../../../core/enums/listing/core/listing_type.dart';
-import '../../../../../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../../core/widgets/shadow_container.dart';
 import '../../../../../../../../../../services/get_it.dart';

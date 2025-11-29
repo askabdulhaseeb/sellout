@@ -91,9 +91,7 @@ class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
                                 width: isSelected ? 2 : 1,
                                 color: isSelected
                                     ? Theme.of(context).primaryColor
-                                    : Theme.of(context)
-                                        .colorScheme
-                                        .outlineVariant),
+                                    : Theme.of(context).colorScheme.outline),
                             label: item.child,
                             selected: isSelected,
                             shape: RoundedRectangleBorder(
@@ -136,7 +134,6 @@ class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
       child: GestureDetector(
         onTap: _toggleDropdown,
         child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 4),
           width: widget.width ?? double.infinity,
           height: widget.height ?? 48,
           padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: 12),
@@ -148,7 +145,7 @@ class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
             border: Border.all(
               color: widget.selectedItems.isNotEmpty
                   ? Theme.of(context).primaryColor
-                  : colorScheme.outlineVariant,
+                  : colorScheme.outline,
               width: widget.selectedItems.isNotEmpty ? 2 : 1,
             ),
           ),
@@ -160,7 +157,7 @@ class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: widget.selectedItems.isNotEmpty
                             ? colorScheme.primary
-                            : colorScheme.outline,
+                            : colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                 ),
               ),

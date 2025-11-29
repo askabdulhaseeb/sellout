@@ -57,7 +57,7 @@ class UserModel extends UserEntity {
         username: json['user_name'] ?? '',
         displayName: json['display_name'] ?? '',
         bio: json['bio'] ?? '',
-        privacyType: PrivacyType.fromJson(json['profile_type']),
+        privacyType: PrivacyType.fromJson(json['profile_type'] ?? 'public'),
         profilePic: List<AttachmentModel>.from(
             (json['profile_pic'] ?? <dynamic>[])
                 .map((dynamic x) => AttachmentModel.fromJson(x))),

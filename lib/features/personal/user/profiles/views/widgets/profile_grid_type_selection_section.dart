@@ -101,9 +101,9 @@ class ProfileGridTypeSelectionSection extends StatelessWidget {
                                                       userPro.displayType)
                                                   ? Theme.of(context)
                                                       .primaryColor
-                                                  : Theme.of(context)
-                                                      .colorScheme
-                                                      .outline,
+                                                  : ColorScheme.of(context)
+                                                      .onSurface
+                                                      .withValues(alpha: 0.4),
                                               fontWeight: hiddenTabs.contains(
                                                       userPro.displayType)
                                                   ? FontWeight.bold
@@ -111,15 +111,16 @@ class ProfileGridTypeSelectionSection extends StatelessWidget {
                                             ),
                                           ),
                                           Icon(
-                                            Icons.keyboard_arrow_down_outlined,
-                                            size: 18,
-                                            color: hiddenTabs.contains(
-                                                    userPro.displayType)
-                                                ? Theme.of(context).primaryColor
-                                                : Theme.of(context)
-                                                    .colorScheme
-                                                    .outline,
-                                          ),
+                                              Icons
+                                                  .keyboard_arrow_down_outlined,
+                                              size: 18,
+                                              color: hiddenTabs.contains(
+                                                      userPro.displayType)
+                                                  ? Theme.of(context)
+                                                      .primaryColor
+                                                  : ColorScheme.of(context)
+                                                      .onSurface
+                                                      .withValues(alpha: 0.4)),
                                         ],
                                       ),
                                     ),
@@ -134,8 +135,9 @@ class ProfileGridTypeSelectionSection extends StatelessWidget {
                                       height: 1,
                                       decoration: BoxDecoration(
                                           color: ColorScheme.of(context)
-                                              .outlineVariant),
-                                    )
+                                              .onSurface
+                                              .withValues(alpha: 0.2)),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -181,7 +183,7 @@ class _IconButton extends StatelessWidget {
                 fontSize: 14,
                 color: isSelected
                     ? Theme.of(context).primaryColor
-                    : Theme.of(context).colorScheme.outline,
+                    : ColorScheme.of(context).onSurface.withValues(alpha: 0.2),
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),
@@ -196,8 +198,9 @@ class _IconButton extends StatelessWidget {
           ),
           Container(
             height: 1,
-            decoration:
-                BoxDecoration(color: ColorScheme.of(context).outlineVariant),
+            decoration: BoxDecoration(
+                color:
+                    ColorScheme.of(context).onSurface.withValues(alpha: 0.2)),
           )
         ],
       ),

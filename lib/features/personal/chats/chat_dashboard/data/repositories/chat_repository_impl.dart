@@ -15,13 +15,13 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   @override
-  Future<DataState<ChatEntity>> createChat(
-      CreateChatParams params) async {
+  Future<DataState<ChatEntity>> createChat(CreateChatParams params) async {
     return await remoteSource.createChat(params);
   }
 
   @override
-  Future<DataState<ChatEntity>> createInquiryChat(PostInquiryParams params) async {
+  Future<DataState<ChatEntity>> createInquiryChat(
+      PostInquiryParams params) async {
     return await remoteSource.createInquiryChat(params);
   }
 }

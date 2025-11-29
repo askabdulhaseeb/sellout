@@ -4,7 +4,7 @@ import '../../../../../../../../../../../../core/dialogs/post/post_tile_cloth_fo
 import '../../../../../../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../../../../services/get_it.dart';
 import '../../../../../../../../../domain/entities/post/post_entity.dart';
@@ -70,7 +70,7 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
             name: 'post_add_to_basket_button.dart',
             error: result.exception,
           );
-          if (mounted) {
+          if (context.mounted) {
             AppSnackBar.showSnackBar(
               context,
               result.exception?.detail ?? 'something_wrong'.tr(),
@@ -123,6 +123,7 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
     final Color color = Theme.of(context).primaryColor;
 
     return CustomElevatedButton(
+      margin: const EdgeInsets.symmetric(vertical: 8),
       onTap: () => _addToBasket(context),
       title: 'add_to_basket'.tr(),
       isLoading: isLoading,

@@ -1,11 +1,14 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:sellout/core/widgets/custom_network_image.dart';
-import 'package:sellout/core/widgets/video_widget.dart';
-
-import 'attachment_constants.dart';
+import '../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../../core/widgets/video_widget.dart';
 import 'attachment_source.dart';
+
+class AttachmentConstants {
+  static const double thumbSize = 80.0;
+  static const double horizontalMargin = 16.0;
+  static const double thumbHeight = 90.0;
+}
 
 class AttachmentThumbnails extends StatelessWidget {
   const AttachmentThumbnails({
@@ -39,10 +42,7 @@ class AttachmentThumbnails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(
-        horizontal: AttachmentConstants.horizontalMargin,
-      ),
+    return SizedBox(
       height: AttachmentConstants.thumbHeight,
       child: ListView.builder(
         key: const PageStorageKey<String>('thumbnails_list'),

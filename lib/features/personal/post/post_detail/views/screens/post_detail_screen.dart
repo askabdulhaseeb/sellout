@@ -65,8 +65,11 @@ class PostDetailScreen extends StatelessWidget {
               children: <Widget>[
                 // Attachments slider (if any)
                 if ((post.fileUrls).isNotEmpty) ...<Widget>[
-                  PostDetailAttachmentSlider.remote(
-                    attachments: post.fileUrls,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: PostDetailAttachmentSlider.remote(
+                      attachments: post.fileUrls,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   PostDetailTitleAmountSection(post: post),
@@ -76,21 +79,27 @@ class PostDetailScreen extends StatelessWidget {
                     post: post,
                   ),
                 ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child:
 
-                // Details section based on listing type
-                post.listID == ListingType.items.json
-                    ? ItemPostDetailSection(post: post)
-                    : post.listID == ListingType.clothAndFoot.json
-                        ? ClothFootPostDetailSection(post: post)
-                        : post.listID == ListingType.foodAndDrink.json
-                            ? FoodDrinkPostDetailSection(post: post)
-                            : post.listID == ListingType.property.json
-                                ? PropertyPostDetailSection(post: post)
-                                : post.listID == ListingType.pets.json
-                                    ? PetsPostDetailSection(post: post)
-                                    : post.listID == ListingType.vehicle.json
-                                        ? VehiclePostDetailSection(post: post)
-                                        : const SizedBox.shrink(),
+                      // Details section based on listing type
+                      post.listID == ListingType.items.json
+                          ? ItemPostDetailSection(post: post)
+                          : post.listID == ListingType.clothAndFoot.json
+                              ? ClothFootPostDetailSection(post: post)
+                              : post.listID == ListingType.foodAndDrink.json
+                                  ? FoodDrinkPostDetailSection(post: post)
+                                  : post.listID == ListingType.property.json
+                                      ? PropertyPostDetailSection(post: post)
+                                      : post.listID == ListingType.pets.json
+                                          ? PetsPostDetailSection(post: post)
+                                          : post.listID ==
+                                                  ListingType.vehicle.json
+                                              ? VehiclePostDetailSection(
+                                                  post: post)
+                                              : const SizedBox.shrink(),
+                )
               ],
             ),
           );

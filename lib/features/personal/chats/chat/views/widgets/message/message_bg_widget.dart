@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../../../core/theme/app_colors.dart';
 
 class MessageBgWidget extends StatelessWidget {
   const MessageBgWidget({
@@ -23,14 +24,14 @@ class MessageBgWidget extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
         constraints: BoxConstraints(
-          maxWidth: size.width * 0.7,
+          maxWidth: size.width * 0.9,
           minWidth: 20,
         ),
         decoration: BoxDecoration(
             color: color ??
                 (isMe
                     ? Theme.of(context).scaffoldBackgroundColor
-                    : Theme.of(context).colorScheme.primaryContainer),
+                    : AppColors.lightPrimaryColor),
             borderRadius: BorderRadius.circular(6)),
         child: child,
       ),

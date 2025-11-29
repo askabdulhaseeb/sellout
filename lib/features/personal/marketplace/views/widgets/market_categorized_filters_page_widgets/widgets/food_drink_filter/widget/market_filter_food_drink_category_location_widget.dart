@@ -22,12 +22,11 @@ class MarketFilterFoodDrinkCategoryAndLocationWIdget extends StatelessWidget {
         children: <Widget>[
           Expanded(
             child: SubCategorySelectableWidget<MarketPlaceProvider>(
-              listenProvider:
-                  Provider.of<MarketPlaceProvider>(context, listen: false),
               title: false,
               listType: marketPro.marketplaceCategory,
               subCategory: marketPro.selectedSubCategory,
               onSelected: marketPro.setSelectedCategory,
+              cid: marketPro.foodDrinkCategory,
             ),
           ),
           Expanded(
@@ -37,7 +36,7 @@ class MarketFilterFoodDrinkCategoryAndLocationWIdget extends StatelessWidget {
                 displayMode: MapDisplayMode.neverShowMap,
                 initialText: marketPro.selectedLocation?.address ?? '',
                 onLocationSelected: (LocationEntity p0, LatLng p1) =>
-                    marketPro.updateLocation(p1, p0)),
+                    marketPro.updateFilterContainerLocation(p1, p0)),
           )
         ],
       ),

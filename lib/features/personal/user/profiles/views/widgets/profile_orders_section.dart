@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../core/widgets/empty_page_widget.dart';
 import '../../../../../../core/widgets/loaders/seller_order_tile_loader.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../order/domain/entities/order_entity.dart';
 import '../../domain/entities/user_entity.dart';
 import '../providers/profile_provider.dart';
@@ -32,6 +33,7 @@ class _ProfileOrdersSectionState extends State<ProfileOrdersSection> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(LocalAuth.token);
     return Consumer<ProfileProvider>(
       builder: (BuildContext context, ProfileProvider pro, Widget? child) {
         return Padding(
@@ -49,13 +51,15 @@ class _ProfileOrdersSectionState extends State<ProfileOrdersSection> {
                   StatusType.processing.color,
                   StatusType.shipped.color,
                   StatusType.delivered.color,
-                  StatusType.cancelled.color
+                  StatusType.canceled.color
                 ],
-                unseletedBorderColor:
-                    Theme.of(context).colorScheme.outlineVariant,
+                unseletedBorderColor: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.2),
                 labelText: '',
                 labels: const <StatusType>[
-                  StatusType.processing,
+                  StatusType.pending,
                   StatusType.shipped,
                   StatusType.delivered,
                   StatusType.cancelled

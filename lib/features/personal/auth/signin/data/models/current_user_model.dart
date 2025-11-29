@@ -1,21 +1,21 @@
 import 'dart:convert';
-import '../../../../../../core/enums/listing/core/privacy_type.dart';
+import 'address_model.dart';
+import 'login_info_model.dart';
+import 'login_detail_model.dart';
+import '../../domain/entities/address_entity.dart';
+import '../../domain/entities/login_info_entity.dart';
+import '../../domain/entities/current_user_entity.dart';
+export '../../domain/entities/current_user_entity.dart';
 import '../../../../../../core/extension/string_ext.dart';
 import '../../../../../attachment/data/attchment_model.dart';
-import '../../../../../business/core/data/models/business_employee_model.dart';
 import '../../../../location/data/models/location_model.dart';
+import '../../../../../../core/enums/listing/core/privacy_type.dart';
+import '../../../../user/profiles/data/models/supporter_detail_model.dart';
+import '../../../../../business/core/data/models/business_employee_model.dart';
+import '../../../../setting/setting_dashboard/data/models/time_away_model.dart';
+import '../../../../user/profiles/domain/entities/supporter_detail_entity.dart';
 import '../../../../setting/setting_dashboard/data/models/notification_model.dart';
 import '../../../../setting/setting_dashboard/data/models/privacy_setting_model.dart';
-import '../../../../setting/setting_dashboard/data/models/time_away_model.dart';
-import '../../../../user/profiles/data/models/supporter_detail_model.dart';
-import '../../../../user/profiles/domain/entities/supporter_detail_entity.dart';
-import '../../domain/entities/address_entity.dart';
-import '../../domain/entities/current_user_entity.dart';
-import '../../domain/entities/login_info_entity.dart';
-import 'address_model.dart';
-import 'login_detail_model.dart';
-import 'login_info_model.dart';
-export '../../domain/entities/current_user_entity.dart';
 
 class CurrentUserModel extends CurrentUserEntity {
   CurrentUserModel({
@@ -26,8 +26,9 @@ class CurrentUserModel extends CurrentUserEntity {
     required super.email,
     required super.userName,
     required super.displayName,
+    required super.bio,
     required super.currency,
-    required super.privacy,
+    required super.privacyType,
     required super.countryAlpha3,
     required super.countryCode,
     required super.phoneNumber,
@@ -60,9 +61,7 @@ class CurrentUserModel extends CurrentUserEntity {
     required super.accountStatus,
     required super.listOfReviews,
     required super.location,
-  }) : super(
-            inHiveAt: DateTime
-                .now()); //The named parameter 'accountStatus' is required, but there's no corresponding argument.Try adding the required argument.dartmissing_required_argumentThe named parameter 'listOfReviews' is required, but there's no corresponding argument.Try adding the required argument.
+  }) : super(inHiveAt: DateTime.now());
 
   factory CurrentUserModel.fromRawJson(String str) =>
       CurrentUserModel.fromJson(json.decode(str));
@@ -87,19 +86,20 @@ class CurrentUserModel extends CurrentUserEntity {
       otpVerified: userData['otp_verified'] ?? false,
       userName: userData['user_name'] ?? '',
       displayName: userData['display_name'] ?? '',
+      bio: userData['bio'] ?? '',
       currency: userData['currency'] ?? 'gbp',
       accountStatus: userData['account_status'] ?? '',
-      listOfReviews: List<int>.from(userData['list_of_reviews'] ?? <dynamic>[]),
-      privacy: PrivacyType.fromJson(userData['profile_type'] ?? 'public'),
+      listOfReviews: _parseListOfReviews(userData['list_of_reviews']),
+      privacyType: PrivacyType.fromJson(userData['profile_type']),
       countryAlpha3: userData['country_alpha_3'] ?? '',
       countryCode: userData['country_code'] ?? '',
       phoneNumber: userData['phone_number'] ?? '',
       language: userData['language'] ?? 'en',
       address: addressList,
-      chatIDs: List<String>.from(
-          (userData['chat_ids'] ?? <dynamic>[]).map((e) => e.toString())),
-      businessIDs: List<String>.from(
-          (userData['business_ids'] ?? <dynamic>[]).map((e) => e.toString())),
+      chatIDs: List<String>.from((userData['chat_ids'] ?? <dynamic>[])
+          .map((dynamic e) => e.toString())),
+      businessIDs: List<String>.from((userData['business_ids'] ?? <dynamic>[])
+          .map((dynamic e) => e.toString())),
       imageVerified: userData['image_verified'] ?? false,
       verificationImage: userData['verification_pic'] != null
           ? AttachmentModel.fromJson(userData['verification_pic'])
@@ -153,5 +153,17 @@ class CurrentUserModel extends CurrentUserEntity {
           ? TimeAwayModel.fromJson(userData['time_away'])
           : null,
     );
+  }
+
+  /// Safely parses the list of reviews, converting numeric values to double.
+  static List<double> _parseListOfReviews(dynamic reviewsData) {
+    if (reviewsData is! List) return <double>[];
+
+    return reviewsData.map((dynamic e) {
+      if (e is int) return e.toDouble();
+      if (e is double) return e;
+      if (e is String) return double.tryParse(e) ?? 0.0;
+      return 0.0;
+    }).toList();
   }
 }

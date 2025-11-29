@@ -40,22 +40,22 @@ class NewPasswordScreen extends StatelessWidget {
                 ),
                 Text('create_new_password'.tr(),
                     textAlign: TextAlign.center,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(color: ColorScheme.of(context).outline)),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: ColorScheme.of(context)
+                            .onSurface
+                            .withValues(alpha: 0.4))),
                 Text('six_characters_atleast'.tr(),
                     textAlign: TextAlign.center,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(color: ColorScheme.of(context).outline)),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: ColorScheme.of(context)
+                            .onSurface
+                            .withValues(alpha: 0.4))),
                 Text('letter_digit_combination'.tr(),
                     textAlign: TextAlign.center,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(color: ColorScheme.of(context).outline)),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: ColorScheme.of(context)
+                            .onSurface
+                            .withValues(alpha: 0.4))),
                 const SizedBox(
                   height: 20,
                   width: double.infinity,

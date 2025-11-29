@@ -15,10 +15,33 @@ class LocalPost {
       await Hive.openBox<PostEntity>(boxTitle);
 
   Future<Box<PostEntity>> refresh() async {
-    final bool isOpen = Hive.isBoxOpen(boxTitle);
-    if (isOpen) {
-      return _box;
-    } else {
+    try {
+      final bool isOpen = Hive.isBoxOpen(boxTitle);
+      final Box<PostEntity> box =
+          isOpen ? _box : await Hive.openBox<PostEntity>(boxTitle);
+
+      // Check for type errors in all posts and remove faulty ones
+      final List<String> faultyKeys = <String>[];
+      for (final String key in box.keys.cast<String>()) {
+        try {
+          final PostEntity? post = box.get(key);
+          // Try to access a required field to trigger type errors
+          if (post == null) {
+            faultyKeys.add(key);
+          }
+        } catch (_) {
+          faultyKeys.add(key);
+        }
+      }
+      if (faultyKeys.isNotEmpty) {
+        await box.deleteAll(faultyKeys);
+      }
+      return box;
+    } catch (e) {
+      // If opening the box fails due to a type error, delete the box file and recreate
+      try {
+        await Hive.deleteBoxFromDisk(boxTitle);
+      } catch (_) {}
       return await Hive.openBox<PostEntity>(boxTitle);
     }
   }
@@ -50,20 +73,27 @@ class LocalPost {
   }
 
   Future<PostEntity?> getPost(String id, {bool? silentUpdate}) async {
-    final PostEntity? po = post(id);
-    if (po == null) {
-      final GetSpecificPostUsecase getSpecificPostUsecase =
-          GetSpecificPostUsecase(locator());
-      final DataState<PostEntity> result = await getSpecificPostUsecase(
-        GetSpecificPostParam(postId: id, silentUpdate: silentUpdate ?? true),
-      );
-      if (result is DataSuccess) {
-        return result.entity;
+    try {
+      final PostEntity? po = post(id);
+      if (po == null) {
+        final GetSpecificPostUsecase getSpecificPostUsecase =
+            GetSpecificPostUsecase(locator());
+        final DataState<PostEntity> result = await getSpecificPostUsecase(
+          GetSpecificPostParam(postId: id, silentUpdate: silentUpdate ?? true),
+        );
+        if (result is DataSuccess) {
+          return result.entity;
+        } else {
+          return null;
+        }
       } else {
-        return null;
+        return po;
       }
-    } else {
-      return po;
+    } catch (e) {
+      try {
+        await _box.delete(id);
+      } catch (_) {}
+      return null;
     }
   }
 

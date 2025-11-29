@@ -169,7 +169,7 @@ class _ToggleButton<T> extends StatelessWidget {
         ? (solidbgColor
             ? color // full solid
             : color.withValues(alpha: isShaded ? 0.1 : 0))
-        : scheme.outline.withValues(alpha: isShaded ? 0.1 : 0);
+        : scheme.outlineVariant.withValues(alpha: isShaded ? 0.1 : 0);
     // 🔹 Text color logic
     final Color textColor = isSelected
         ? (solidbgColor

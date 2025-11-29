@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:provider/provider.dart';
 import '../../../../../../../../../../core/enums/listing/core/listing_type.dart';
+import '../../../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../../../core/utilities/app_string.dart';
-import '../../../../../../../../../../core/widgets/app_snakebar.dart';
+import '../../../../../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../../../../../../../../../core/widgets/shadow_container.dart';
 import '../../../../../../../../../../services/get_it.dart';
 import '../../../../../../../../chats/chat/domain/params/post_inquiry_params.dart';
+import '../../../../../../../../chats/chat/views/providers/chat_provider.dart';
+import '../../../../../../../../chats/chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../../../../../../../chats/chat_dashboard/domain/usecase/create_inquiry_chat_usecase.dart';
 import '../../../../../../../domain/entities/post/post_entity.dart';
 
@@ -21,8 +25,10 @@ class CreatePostInquiryChatButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('CreatePostInquiryChatButton build for post: \\${post.postID}');
     return GestureDetector(
       onTap: () {
+        debugPrint('Inquiry button tapped for post: \\${post.postID}');
         showDialog(
           context: context,
           barrierDismissible: true,
@@ -112,33 +118,72 @@ class _PostInquiryDialogState extends State<_PostInquiryDialog> {
   }
 
   String get inquiryText {
-    if (selectedOption == 4) return _controller.text.trim();
-    if (selectedOption != null) return options[selectedOption!].tr();
+    if (selectedOption == 4) {
+      debugPrint(
+          'InquiryText: Other selected, text: \\${_controller.text.trim()}');
+      return _controller.text.trim();
+    }
+    if (selectedOption != null) {
+      debugPrint('InquiryText: Option selected: \\${options[selectedOption!]}');
+      return options[selectedOption!].tr();
+    }
+    debugPrint('InquiryText: No option selected');
     return '';
   }
 
-  Future<void> _sendInquiry(BuildContext context) async {
+  Future<void> _sendInquiry(BuildContext contexts) async {
     final String text = inquiryText;
 
+    // Use the dialog context if possible, else close dialog before showing snackbar
+    void showErrorSnackBar(String message) {
+      if (context.mounted) {
+        Navigator.of(context).pop();
+        // After popping, use the parent context for snackbar
+        AppSnackBar.error(contexts, message);
+      } else if (contexts.mounted) {
+        AppSnackBar.error(contexts, message);
+      }
+    }
+
     if (text.isEmpty) {
-      AppSnackBar.showSnackBar(context, 'somthing_wrong'.tr());
+      debugPrint('SendInquiry: Text is empty, aborting.');
+      showErrorSnackBar('somthing_wrong'.tr());
       return;
     }
 
-    setState(() => _isLoading = true);
+    if (mounted) setState(() => _isLoading = true);
+    debugPrint(
+        'SendInquiry: Sending inquiry for post: \\${widget.post.postID}, text: \\$text');
 
     try {
       final CreateInquiryChatUseacse usecase =
           CreateInquiryChatUseacse(locator());
+      final DataState<ChatEntity> result = await usecase(
+          PostInquiryParams(postId: widget.post.postID, text: text));
 
-      await usecase(PostInquiryParams(postId: widget.post.postID, text: text));
-
-      if (mounted) Navigator.of(context).pop();
-    } catch (_) {
-      if (context.mounted) {
-        AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
+      if (result.entity != null) {
+        debugPrint(
+            'SendInquiry: Inquiry sent successfully for post: \\${widget.post.postID}');
+        if (context.mounted) {
+          final ChatEntity? chatEntity = result.entity;
+          if (chatEntity != null) {
+            Provider.of<ChatProvider>(context, listen: false)
+                .openChat(context, chatEntity);
+          } else {
+            showErrorSnackBar('something_wrong'.tr());
+          }
+        }
+      } else {
+        debugPrint(
+            'SendInquiry: Inquiry result.entity is null for post: \\${widget.post.postID}');
+        showErrorSnackBar('something_wrong'.tr());
       }
+    } catch (_) {
+      debugPrint(
+          'SendInquiry: Error sending inquiry for post: \\${widget.post.postID}');
+      showErrorSnackBar('something_wrong'.tr());
     } finally {
+      debugPrint('SendInquiry: Setting loading to false');
       if (mounted) setState(() => _isLoading = false);
     }
   }
@@ -146,8 +191,9 @@ class _PostInquiryDialogState extends State<_PostInquiryDialog> {
   @override
   Widget build(BuildContext context) {
     final double dialogMaxWidth =
-        MediaQuery.of(context).size.width * 0.9; // responsive
+        MediaQuery.of(context).size.width * 0.9; 
 
+    debugPrint('_PostInquiryDialog build for post: \\${widget.post.postID}');
     return AlertDialog(
       title: Text('inquiry_post_title'.tr()),
       content: ConstrainedBox(
@@ -160,7 +206,7 @@ class _PostInquiryDialogState extends State<_PostInquiryDialog> {
               const SizedBox(height: 12),
 
               /// OPTIONS
-              ...List.generate(
+              ...List<Widget>.generate(
                 options.length,
                 (int i) => Padding(
                   padding: const EdgeInsets.symmetric(vertical: 6),
@@ -174,8 +220,11 @@ class _PostInquiryDialogState extends State<_PostInquiryDialog> {
                       dense: true,
                       visualDensity: VisualDensity.compact,
                       title: Text(options[i].tr()),
-                      onChanged: (int? val) =>
-                          setState(() => selectedOption = val),
+                      onChanged: (int? val) {
+                        debugPrint(
+                            'RadioListTile changed: selectedOption = \\$val');
+                        setState(() => selectedOption = val);
+                      },
                       contentPadding: const EdgeInsets.symmetric(horizontal: 8),
                     ),
                   ),
@@ -209,13 +258,19 @@ class _PostInquiryDialogState extends State<_PostInquiryDialog> {
           bgColor: Colors.transparent,
           textColor: Theme.of(context).primaryColor,
           border: Border.all(color: Theme.of(context).primaryColor),
-          onTap: () => Navigator.of(context).pop(),
+          onTap: () {
+            debugPrint('Cancel button tapped in inquiry dialog');
+            Navigator.of(context).pop();
+          },
           title: 'cancel'.tr(),
           isLoading: false,
         ),
         CustomElevatedButton(
           isLoading: _isLoading,
-          onTap: () => _sendInquiry(context),
+          onTap: () {
+            debugPrint('Send button tapped in inquiry dialog');
+            _sendInquiry(context);
+          },
           title: 'send'.tr(),
         ),
       ],

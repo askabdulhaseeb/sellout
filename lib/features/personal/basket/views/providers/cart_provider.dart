@@ -1,24 +1,19 @@
-import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import '../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../core/functions/app_log.dart';
-import '../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../core/sources/data_state.dart';
-import '../../../../../core/widgets/app_snakebar.dart';
-import '../../../auth/signin/data/models/address_model.dart';
+import '../../../../../core/widgets/app_snackbar.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../auth/signin/domain/entities/address_entity.dart';
 import '../../data/models/cart/add_shipping_response_model.dart';
 import '../../data/models/cart/cart_model.dart';
-import '../../data/models/checkout/order_billing_model.dart';
 import '../../data/sources/local/local_cart.dart';
 import '../../domain/entities/cart/cart_entity.dart';
-import '../../domain/entities/cart/add_shipping_response_entity.dart';
 import '../../domain/entities/cart/postage_detail_response_entity.dart';
 import '../../../../../core/enums/listing/core/delivery_type.dart';
-import '../../domain/entities/checkout/check_out_entity.dart';
+import '../../domain/entities/checkout/payment_intent_entity.dart';
 import '../../domain/enums/cart_type.dart';
 import '../../domain/enums/shopping_basket_type.dart';
 import '../../domain/param/cart_item_update_qty_param.dart';
@@ -30,7 +25,6 @@ import '../../domain/usecase/cart/cart_update_qty_usecase.dart';
 import '../../domain/usecase/cart/get_cart_usecase.dart';
 import '../../domain/usecase/cart/get_postage_detail_usecase.dart';
 import '../../domain/usecase/cart/remove_from_cart_usecase.dart';
-import '../../domain/usecase/checkout/get_checkout_usecase.dart';
 import '../../domain/usecase/checkout/pay_intent_usecase.dart';
 import '../widgets/checkout/tile/payment_success_bottomsheet.dart';
 
@@ -40,7 +34,6 @@ class CartProvider extends ChangeNotifier {
     this._cartItemStatusUpdateUsecase,
     this._removeFromCartUsecase,
     this._cartUpdateQtyUsecase,
-    this._getCheckoutUsecase,
     this._payIntentUsecase,
     this._getPostageDetailUsecase,
     this._addShippingUsecase,
@@ -54,7 +47,6 @@ class CartProvider extends ChangeNotifier {
   final CartItemStatusUpdateUsecase _cartItemStatusUpdateUsecase;
   final RemoveFromCartUsecase _removeFromCartUsecase;
   final CartUpdateQtyUsecase _cartUpdateQtyUsecase;
-  final GetCheckoutUsecase _getCheckoutUsecase;
   final PayIntentUsecase _payIntentUsecase;
   final GetPostageDetailUsecase _getPostageDetailUsecase;
   final AddShippingUsecase _addShippingUsecase;
@@ -65,16 +57,29 @@ class CartProvider extends ChangeNotifier {
   CartItemStatusType _basketItemStatus = CartItemStatusType.cart;
 
   List<CartItemEntity> _cartItems = <CartItemEntity>[];
-  String _postageCurrencySymbol = '';
   bool _isFetchingCart = false;
   final List<String> _fastDeliveryProducts = <String>[];
-  OrderBillingModel? _orderBilling;
+  PaymentIntentEntity? _orderBilling;
   PostageDetailResponseEntity? _postageResponseEntity;
-  AddShippingResponseEntity? _addShippingResponse;
   // selected postage rate per postID
-  final Map<String, RateEntity> _selectedPostageRates = <String, RateEntity>{};
+  Map<String, RateEntity> _selectedPostageRates = <String, RateEntity>{};
   // Map to store selected rate objectId for each postId
-  final Map<String, String> _selectedRateObjectIds = <String, String>{};
+  List<ShippingItemParam> _selectedShippingItems = <ShippingItemParam>[];
+
+  List<ShippingItemParam> get selectedShippingItems => _selectedShippingItems;
+
+  void updateShippingSelection(String cartItemId, String objectId) {
+    final idx = _selectedShippingItems
+        .indexWhere((item) => item.cartItemId == cartItemId);
+    if (idx >= 0) {
+      _selectedShippingItems[idx] =
+          ShippingItemParam(cartItemId: cartItemId, objectId: objectId);
+    } else {
+      _selectedShippingItems
+          .add(ShippingItemParam(cartItemId: cartItemId, objectId: objectId));
+    }
+    notifyListeners();
+  }
 
   AddressEntity? _address = (LocalAuth.currentUser?.address != null &&
           LocalAuth.currentUser!.address
@@ -90,14 +95,12 @@ class CartProvider extends ChangeNotifier {
   ShoppingBasketPageType get shoppingBasketType => _shoppingBasketType;
   List<CartItemEntity> get cartItems => _cartItems;
   List<String> get fastDeliveryProducts => _fastDeliveryProducts;
-  OrderBillingModel? get orderBilling => _orderBilling;
+  PaymentIntentEntity? get orderBilling => _orderBilling;
   PostageDetailResponseEntity? get postageResponseEntity =>
       _postageResponseEntity;
-  AddShippingResponseEntity? get addShippingResponse => _addShippingResponse;
   Map<String, RateEntity> get selectedPostageRates => _selectedPostageRates;
   CartItemStatusType get basketItemStatus => _basketItemStatus;
   AddressEntity? get address => _address;
-  String get postageCurrencySymbol => _postageCurrencySymbol;
 
   /// Returns true if any cart item requires removal because delivery is unavailable.
   /// Criteria: originalDeliveryType is paid or fast delivery AND no rates found.
@@ -139,16 +142,12 @@ class CartProvider extends ChangeNotifier {
   // MARK: ✏️ Setters
   void setCartType(CartType type) {
     _cartType = type;
+    if (_cartType == CartType.shoppingBasket) {}
     notifyListeners();
   }
 
   void setBasketPageType(ShoppingBasketPageType type) {
     _shoppingBasketType = type;
-    notifyListeners();
-  }
-
-  void setPostageCurrencySymbol(String val) {
-    _postageCurrencySymbol = val;
     notifyListeners();
   }
 
@@ -161,8 +160,8 @@ class CartProvider extends ChangeNotifier {
     _address = value;
     _postageResponseEntity = null;
     _selectedPostageRates.clear();
-    _selectedRateObjectIds.clear();
-    notifyListeners();
+    _selectedShippingItems.clear();
+    getRates();
   }
 
   void addFastDeliveryProduct(String id) {
@@ -332,8 +331,6 @@ class CartProvider extends ChangeNotifier {
           await _getPostageDetailUsecase(params);
       if (result is DataSuccess) {
         _postageResponseEntity = result.entity;
-        _postageCurrencySymbol =
-            CountryHelper.currencySymbolHelper(_address?.country.alpha3 ?? '');
         // Automatically select first rate for each post and store shipmentId
         if (_postageResponseEntity != null) {
           _postageResponseEntity!.detail.forEach(
@@ -347,7 +344,6 @@ class CartProvider extends ChangeNotifier {
                 if (rates.isNotEmpty) {
                   final RateEntity firstRate = rates.first;
                   _selectedPostageRates[postId] = firstRate;
-                  _selectedRateObjectIds[postId] = firstRate.objectId;
                 }
               }
             },
@@ -369,92 +365,15 @@ class CartProvider extends ChangeNotifier {
     }
   }
 
-  void selectPostageRate(String postId, RateEntity rate) {
-    if (postId.isEmpty) return;
-    _selectedPostageRates[postId] = rate;
-    _selectedRateObjectIds[postId] = rate.objectId;
-
+  void selectPostageRate(RateEntity rate) {
+    if (rate.objectId.isEmpty) return;
     notifyListeners();
-  }
-
-  /// Build a checkout payload map. This includes buyer address, cart items
-  /// (only items currently in cart), selected postage rates per post, and
-  /// the shipping payload derived from selected rates.
-  Map<String, dynamic> buildCheckoutMap() {
-    if (_address == null) return <String, dynamic>{};
-
-    final Map<String, dynamic> buyerAddress =
-        AddressModel.fromEntity(_address!).toJson();
-
-    final List<Map<String, dynamic>> items = _cartItems
-        .where((CartItemEntity it) => it.inCart)
-        .map((CartItemEntity it) => <String, dynamic>{
-              'cart_item_id': it.cartItemID,
-              'post_id': it.postID,
-              'quantity': it.quantity,
-            })
-        .toList();
-
-    final Map<String, dynamic> postage = <String, dynamic>{};
-    _selectedPostageRates.forEach((String postId, RateEntity rate) {
-      postage[postId] = <String, dynamic>{
-        'provider': rate.provider,
-        'service_level': <String, String>{
-          'name': rate.serviceLevel.name,
-          'token': rate.serviceLevel.token,
-        },
-        'amount':
-            rate.amountBuffered.isNotEmpty ? rate.amountBuffered : rate.amount,
-        'provider_image75': rate.providerImage75,
-      };
-    });
-
-    final List<Map<String, dynamic>> shipping = buildShippingList()
-        .map((ShippingItemParam item) => item.toJson())
-        .toList();
-
-    return <String, dynamic>{
-      'buyer_address': buyerAddress,
-      'items': items,
-      'postage': postage,
-      if (shipping.isNotEmpty) 'shipping': shipping,
-    };
-  }
-
-  /// JSON-encoded checkout payload.
-  String buildCheckoutJson() => json.encode(buildCheckoutMap());
-
-  List<ShippingItemParam> buildShippingList() {
-    final List<ShippingItemParam> shippingList = <ShippingItemParam>[];
-
-    // Map each cart item to its selected shipping shipment ID
-    for (final CartItemEntity item in _cartItems) {
-      if (!item.inCart) continue;
-
-      final String? objectId = _selectedRateObjectIds[item.postID];
-      if (objectId == null || objectId.isEmpty) {
-        // Skip items without selected shipping (e.g., collection/free delivery)
-        continue;
-      }
-
-      shippingList.add(ShippingItemParam(
-        cartItemId: item.cartItemID,
-        objectId: objectId,
-      ));
-    }
-
-    return shippingList;
-  }
-
-  /// Build shipping payload using SubmitShippingParam.
-  SubmitShippingParam buildShippingPayload() {
-    return SubmitShippingParam(shipping: buildShippingList());
   }
 
   //MARK: Add Shippments
   Future<DataState<AddShippingResponseModel>> submitShipping() async {
     try {
-      final List<ShippingItemParam> shippingList = buildShippingList();
+      final List<ShippingItemParam> shippingList = _selectedShippingItems;
       if (shippingList.isEmpty) {
         AppLog.error('No shipping items to submit',
             name: 'CartProvider.submitShipping');
@@ -462,12 +381,12 @@ class CartProvider extends ChangeNotifier {
             CustomException('No shipping items to submit'));
       }
 
-      final SubmitShippingParam payload = buildShippingPayload();
+      final SubmitShippingParam payload =
+          SubmitShippingParam(shipping: _selectedShippingItems);
       final DataState<AddShippingResponseModel> result =
           await _addShippingUsecase(payload);
 
       if (result is DataSuccess<AddShippingResponseModel>) {
-        _addShippingResponse = result.entity;
         AppLog.info('Shipping submitted successfully',
             name: 'CartProvider.submitShipping');
         return result;
@@ -488,47 +407,26 @@ class CartProvider extends ChangeNotifier {
   }
 
   // MARK:  PAYMENT
-  Future<DataState<CheckOutEntity>> payment() async {
+  Future<DataState<PaymentIntentEntity>> getBillingDetails() async {
     try {
-      if ((LocalAuth.currentUser?.address ?? <AddressEntity>[]).isEmpty) {
-        return DataFailer<CheckOutEntity>(CustomException('No address found'));
-      }
-      _address ??= LocalAuth.currentUser?.address
-          .where((AddressEntity e) => e.isDefault)
-          .first;
-      if (_address == null) {
-        return DataFailer<CheckOutEntity>(
-            CustomException('No default address'));
-      }
-      return await _getCheckoutUsecase(_address!);
-    } catch (e) {
-      AppLog.error(e.toString(),
-          name: 'CartProvider.checkout - Catch', error: e);
-      return DataFailer<CheckOutEntity>(CustomException(e.toString()));
-    }
-  }
-
-  Future<DataState<String>> getBillingDetails() async {
-    try {
-      final DataState<String> state = await _payIntentUsecase.call('');
-      if (state is DataSuccess<String>) {
-        // final Map<String, dynamic> jsonMap = jsonDecode(state.data ?? '{}');
-        // _orderBilling = OrderBillingModel.fromMap(jsonMap);
+      final DataState<PaymentIntentEntity> state =
+          await _payIntentUsecase.call('');
+      if (state is DataSuccess<PaymentIntentEntity>) {
+        _orderBilling = state.entity;
         return state;
       }
-      return DataFailer<String>(
+      return DataFailer<PaymentIntentEntity>(
           CustomException('Failed to get billing details'));
     } catch (e, st) {
       AppLog.error('Billing details error',
           name: 'CartProvider.getBillingDetails', error: e, stackTrace: st);
-      return DataFailer<String>(CustomException(e.toString()));
+      return DataFailer<PaymentIntentEntity>(CustomException(e.toString()));
     }
   }
 
   Future<void> processPayment(BuildContext context) async {
     try {
-      final DataState<String> billingDetails = await getBillingDetails();
-      final String? clientSecret = billingDetails.entity;
+      final String? clientSecret = _orderBilling?.clientSecret;
       if (clientSecret == null || clientSecret.isEmpty) {
         AppSnackBar.show('something_wrong'.tr());
         return;
@@ -538,20 +436,16 @@ class CartProvider extends ChangeNotifier {
           await presentStripePaymentSheet(clientSecret, context);
 
       if (intent.status == PaymentIntentsStatus.Succeeded) {
-        if (context.mounted) {
-          showModalBottomSheet(
-            context: context,
-            useSafeArea: true,
-            isScrollControlled: true,
-            enableDrag: false,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            ),
-            builder: (_) => const PaymentSuccessSheet(),
-          );
-          // Pop the previous screen after showing the success sheet
-          Navigator.pop(context);
-        }
+        showModalBottomSheet(
+          context: context,
+          useSafeArea: true,
+          isScrollControlled: true,
+          enableDrag: false,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          builder: (_) => const PaymentSuccessSheet(),
+        );
       } else {
         AppSnackBar.show('payment_not_completed'.tr());
       }
@@ -586,7 +480,6 @@ class CartProvider extends ChangeNotifier {
   void clearRatesAndCheckout() {
     _postageResponseEntity = null;
     _selectedPostageRates.clear();
-    _selectedRateObjectIds.clear();
     notifyListeners();
   }
 
@@ -594,9 +487,7 @@ class CartProvider extends ChangeNotifier {
   void reset() {
     _orderBilling = null;
     _postageResponseEntity = null;
-    _addShippingResponse = null;
     _selectedPostageRates.clear();
-    _selectedRateObjectIds.clear();
     _fastDeliveryProducts.clear();
     _basketItemStatus = CartItemStatusType.cart;
     _cartType = CartType.shoppingBasket;

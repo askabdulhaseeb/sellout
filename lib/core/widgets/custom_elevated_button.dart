@@ -42,17 +42,16 @@ class CustomElevatedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color bgColorCore = isDisable
-        ? Theme.of(context).colorScheme.outlineVariant
-        : bgColor ?? Theme.of(context).primaryColor;
+    final colorScheme = Theme.of(context).colorScheme;
+    final Color bgColorCore =
+        isDisable ? colorScheme.outlineVariant : bgColor ?? colorScheme.primary;
 
     return Container(
       margin: margin ?? const EdgeInsets.symmetric(vertical: 8),
-      // constraints: BoxConstraints(maxWidth: mWidth ?? maxWidth),
       decoration: BoxDecoration(
         color: bgColorCore,
         borderRadius: borderRadius ?? BorderRadius.circular(8),
-        border: border,
+        border: border ?? Border.all(color: bgColorCore),
       ),
       child: Material(
         borderRadius: borderRadius ?? BorderRadius.circular(8),
@@ -61,9 +60,7 @@ class CustomElevatedButton extends StatelessWidget {
           borderRadius: borderRadius ?? BorderRadius.circular(8),
           onTap: (isDisable || isLoading) ? null : onTap,
           child: Padding(
-            padding: padding ??
-                const EdgeInsets.symmetric(
-                    vertical: 6), // zubair's recommended design
+            padding: padding ?? const EdgeInsets.symmetric(vertical: 6),
             child: Row(
               mainAxisAlignment: rowAlignment ?? MainAxisAlignment.center,
               children: <Widget>[
@@ -76,8 +73,8 @@ class CustomElevatedButton extends StatelessWidget {
                   _PulsingDots(
                     color: textColor ??
                         (bgColor == Colors.transparent
-                            ? Colors.black
-                            : Colors.white),
+                            ? colorScheme.onSurface
+                            : colorScheme.onPrimary),
                   )
                 else
                   Text(
@@ -86,9 +83,8 @@ class CustomElevatedButton extends StatelessWidget {
                         TextStyle(
                             color: textColor ??
                                 (bgColor == Colors.transparent
-                                    ? null
-                                    : Colors.white),
-                            fontSize: 16,
+                                    ? colorScheme.onSurface
+                                    : colorScheme.onPrimary),
                             fontWeight: fontWeight),
                   ),
                 if (!isLoading && suffix != null)

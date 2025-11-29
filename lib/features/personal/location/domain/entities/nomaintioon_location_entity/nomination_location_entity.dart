@@ -1,4 +1,3 @@
-// location_name_entity.dart
 class NominationLocationEntity {
   NominationLocationEntity({
     required this.placeId,

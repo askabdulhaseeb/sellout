@@ -22,7 +22,6 @@ class UpdateVisitParams {
       if (query == 'status') 'status': status,
       'message_id': messageId,
       if (query == 'date') 'date_time': datetime,
-      'business_id': businessId ?? 'null',
     };
   }
 }

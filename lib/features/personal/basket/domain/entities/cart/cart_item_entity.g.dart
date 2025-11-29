@@ -23,7 +23,7 @@ class CartItemEntityAdapter extends TypeAdapter<CartItemEntity> {
       color: fields[3] as String?,
       size: fields[4] as String?,
       cartItemID: fields[5] as String,
-      status: fields[6] as String,
+      status: fields[6] as CartItemStatusType,
     );
   }
 

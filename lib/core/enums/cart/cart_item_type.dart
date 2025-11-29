@@ -1,9 +1,15 @@
-enum CartItemStatusType {
-  cart('cart', 'cart', 'save_later', 'add_cart'),
-  saveLater('save_later', 'save_later', 'move_to_cart', 'save_later');
+import 'package:hive/hive.dart';
+part 'cart_item_type.g.dart';
 
-  // Add the following line:
-  const CartItemStatusType(this.code, this.json, this.tileActionCode, this.action);
+@HiveType(typeId: 86)
+enum CartItemStatusType {
+  @HiveField(0)
+  cart('cart', 'cart', 'save_later', 'add_cart'),
+  @HiveField(1)
+  saveLater('save_later', 'saved_later', 'move_to_cart', 'save_later');
+
+  const CartItemStatusType(
+      this.code, this.json, this.tileActionCode, this.action);
   final String code;
   final String json;
   final String tileActionCode;
@@ -17,7 +23,6 @@ enum CartItemStatusType {
   }
 
   static List<CartItemStatusType> get list => values.toList();
-
   static List<String> get codeList =>
       values.map((CartItemStatusType e) => e.code).toList();
 }

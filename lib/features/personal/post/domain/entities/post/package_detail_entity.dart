@@ -10,28 +10,24 @@ class PackageDetailEntity {
     required this.height,
   });
   @HiveField(0)
-  final String length;
+  final double length;
 
   @HiveField(1)
-  final String width;
+  final double width;
 
   @HiveField(2)
-  final String weight;
+  final double weight;
 
   @HiveField(3)
-  final String height;
+  final double height;
 
-  @override
-  String toString() {
-    return 'PackageDetailEntity(length: $length, width: $width, weight: $weight, height: $height)';
-  }
 
   // Copy with method for easy updates
   PackageDetailEntity copyWith({
-    String? length,
-    String? width,
-    String? weight,
-    String? height,
+    double? length,
+    double? width,
+    double? weight,
+    double? height,
   }) {
     return PackageDetailEntity(
       length: length ?? this.length,

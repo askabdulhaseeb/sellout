@@ -20,7 +20,6 @@ class CustomDropdown<T> extends StatefulWidget {
     this.height,
     this.searchBy,
     this.onSearchChanged,
-    this.isDynamic = false,
     this.selectedItemBuilder,
     this.selectedItemPadding,
     super.key,
@@ -41,7 +40,6 @@ class CustomDropdown<T> extends StatefulWidget {
   final double? height;
   final String Function(DropdownMenuItem<T>)? searchBy;
   final Future<List<DropdownMenuItem<T>>> Function(String)? onSearchChanged;
-  final bool isDynamic;
   final Widget? Function(T?)? selectedItemBuilder;
   final EdgeInsetsGeometry? selectedItemPadding;
 
@@ -50,6 +48,14 @@ class CustomDropdown<T> extends StatefulWidget {
 }
 
 class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
+  DropdownMenuItem<T>? _findSelectedAsyncItem() {
+    if (widget.selectedItem == null) return null;
+    for (final DropdownMenuItem<T> item in _asyncLoadedItems) {
+      if (item.value == widget.selectedItem) return item;
+    }
+    return null;
+  }
+
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   final LayerLink _layerLink = LayerLink();
@@ -57,14 +63,15 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
   OverlayEntry? _overlayEntry;
   bool _isDropdownOpen = false;
   String _searchText = '';
-  List<DropdownMenuItem<T>> _dynamicItems = <DropdownMenuItem<T>>[];
+  List<DropdownMenuItem<T>> _asyncLoadedItems = <DropdownMenuItem<T>>[];
   Timer? _debounce;
-  bool _hasSetInitialText = false;
+  String? _lastInitialText;
   String _selectedDisplayText = '';
 
   @override
   void initState() {
     super.initState();
+    _lastInitialText = widget.initialText;
     _setInitialText();
     _updateControllerValue();
     _focusNode.addListener(_handleFocusChange);
@@ -73,8 +80,10 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
   @override
   void didUpdateWidget(CustomDropdown<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!_focusNode.hasFocus && !_hasSetInitialText) {
+    // Only set initial text if it changed
+    if (widget.initialText != _lastInitialText) {
       _setInitialText();
+      _lastInitialText = widget.initialText;
     }
     // Always update controller value if selectedItem changes
     if (oldWidget.selectedItem != widget.selectedItem) {
@@ -88,37 +97,37 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
     if (widget.initialText != null && widget.initialText!.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        if (_controller.text != widget.initialText) {
-          _controller.text = widget.initialText!;
-          _hasSetInitialText = true;
-        }
+        _controller.text = widget.initialText!;
       });
     }
   }
 
   void _updateControllerValue() {
-    if (!mounted || widget.isDynamic) return;
-
+    if (!mounted) return;
     DropdownMenuItem<T>? selectedItem;
-    for (final DropdownMenuItem<T> item in widget.items) {
-      if (item.value == widget.selectedItem) {
-        selectedItem = item;
-        break;
+    if (widget.onSearchChanged != null) {
+      selectedItem = _findSelectedAsyncItem();
+    } else {
+      for (final DropdownMenuItem<T> item in widget.items) {
+        if (item.value == widget.selectedItem) {
+          selectedItem = item;
+          break;
+        }
       }
     }
-
+    
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-
-      String newText = '';
-      if (selectedItem != null) {
-        newText = widget.searchBy?.call(selectedItem) ??
-            (selectedItem.child is Text
-                ? (selectedItem.child as Text).data ?? ''
-                : selectedItem.value.toString());
+      if (selectedItem != null && selectedItem.child is Text) {
+        final String newText = (selectedItem.child as Text).data ?? '';
+        _selectedDisplayText = newText;
+        _controller.text = newText;
+      } else {
+        _selectedDisplayText = '';
+        if (_controller.text.isNotEmpty) {
+          _controller.text = '';
+        }
       }
-
-      _selectedDisplayText = newText;
       _syncControllerText();
     });
   }
@@ -129,6 +138,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
 
     if (hasCustomDisplay) {
       if (_focusNode.hasFocus) {
+        // When focused, show the selected display text (if any)
         final String next = _selectedDisplayText;
         if (_controller.text != next) {
           _controller.text = next;
@@ -140,11 +150,13 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
           );
         }
       } else {
-        if (_controller.text.isNotEmpty) {
+        // When not focused, clear the controller if no selection
+        if (_controller.text.isNotEmpty && widget.selectedItem == null) {
           _controller.text = '';
         }
       }
     } else {
+      // For plain dropdowns, always sync controller to selected display text
       final String next = _selectedDisplayText;
       if (_controller.text != next) {
         _controller.text = next;
@@ -153,12 +165,16 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
   }
 
   List<DropdownMenuItem<T>> _getFilteredItems() {
-    if (widget.isDynamic) return _dynamicItems;
-    if (_searchText.isEmpty) return widget.items;
-    return widget.items
-        .where((DropdownMenuItem<T> item) => (_getItemText(item).toLowerCase())
-            .contains(_searchText.toLowerCase()))
-        .toList();
+    if (widget.onSearchChanged != null) {
+      return _asyncLoadedItems;
+    } else {
+      if (_searchText.isEmpty) return widget.items;
+      return widget.items
+          .where((DropdownMenuItem<T> item) =>
+              (_getItemText(item).toLowerCase())
+                  .contains(_searchText.toLowerCase()))
+          .toList();
+    }
   }
 
   String _getItemText(DropdownMenuItem<T> item) {
@@ -211,7 +227,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
 
     return OverlayEntry(
       builder: (_) {
-        final items = _getFilteredItems();
+        final List<DropdownMenuItem<T>> items = _getFilteredItems();
         final num calculatedHeight =
             (items.length * itemHeight).clamp(0, 200.0);
         final bool showAbove = widget.overlayAbove ||
@@ -221,7 +237,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
             : Offset(0, size.height + 5);
 
         return Stack(
-          children: [
+          children: <Widget>[
             Positioned.fill(
               child: GestureDetector(
                 onTap: _closeDropdown,
@@ -246,7 +262,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
                       constraints: BoxConstraints(
                           maxHeight: calculatedHeight.toDouble()),
                       child: StatefulBuilder(
-                        builder: (context, setStateOverlay) {
+                        builder: (BuildContext context, setStateOverlay) {
                           return AnimatedSize(
                             duration: const Duration(milliseconds: 250),
                             curve: Curves.easeInOut,
@@ -275,7 +291,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
                                               color: ColorScheme.of(context)
                                                   .outlineVariant)),
                                     ),
-                                    itemBuilder: (_, index) {
+                                    itemBuilder: (_, int index) {
                                       final DropdownMenuItem<T> item =
                                           items[index];
                                       return GestureDetector(
@@ -291,6 +307,19 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
                                         ),
                                         onTap: () {
                                           widget.onChanged?.call(item.value);
+                                          // After selection, update controller value to show selected item
+                                          setState(() {
+                                            _selectedDisplayText = widget
+                                                    .searchBy
+                                                    ?.call(item) ??
+                                                (item.child is Text
+                                                    ? (item.child as Text)
+                                                            .data ??
+                                                        ''
+                                                    : item.value.toString());
+                                            _controller.text =
+                                                _selectedDisplayText;
+                                          });
                                           _closeDropdown();
                                         },
                                       );
@@ -348,13 +377,15 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
             onChanged: (String value) {
               setState(() => _searchText = value);
               if (_isDropdownOpen) _overlayEntry?.markNeedsBuild();
-              if (widget.isDynamic && widget.onSearchChanged != null) {
+              if (widget.onSearchChanged != null) {
                 _debounce?.cancel();
                 _debounce = Timer(const Duration(milliseconds: 600), () async {
                   final List<DropdownMenuItem<T>> results =
                       await widget.onSearchChanged!(value);
                   if (!mounted) return;
-                  setState(() => _dynamicItems = results);
+                  setState(() => _asyncLoadedItems = results);
+                  // After loading, update controller value to show selected item if any
+                  _updateControllerValue();
                   if (_isDropdownOpen) _overlayEntry?.markNeedsBuild();
                 });
               }

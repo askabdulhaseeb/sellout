@@ -15,7 +15,7 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
       final DataState<String> response = await ApiCall<String>().call(
         endpoint: params.endpoint,
         requestType: ApiRequestType.get,
-        isAuth: true,
+        isAuth: false,
       );
 
       if (response is DataSuccess<String>) {

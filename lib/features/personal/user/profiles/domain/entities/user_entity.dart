@@ -59,7 +59,7 @@ class UserEntity {
   @HiveField(4)
   final String bio;
   @HiveField(5)
-  final PrivacyType privacyType;
+  final PrivacyType? privacyType;
   @HiveField(6)
   final List<AttachmentEntity> profilePic;
   @HiveField(7)

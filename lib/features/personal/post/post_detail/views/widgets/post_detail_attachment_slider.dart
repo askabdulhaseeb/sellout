@@ -4,7 +4,6 @@ import '../../../../../attachment/domain/entities/attachment_entity.dart'
     as remote;
 import '../../../../../attachment/domain/entities/picked_attachment.dart'
     as picked;
-import 'attachments/attachment_constants.dart';
 import 'attachments/attachment_source.dart';
 import 'attachments/attachment_thumbnails.dart' as modular;
 import 'attachments/main_attachment_display.dart';
@@ -52,9 +51,8 @@ class _PostDetailAttachmentSliderState
 
   void _onPageChanged(int index) {
     setState(() => selectedIndex = index);
-
-    const double itemWidth = AttachmentConstants.thumbSize;
-    const double horizontalMargin = AttachmentConstants.horizontalMargin;
+    const double horizontalMargin = 16.0;
+    const double itemWidth = 80.0;
     final double availableWidth =
         MediaQuery.of(context).size.width - (horizontalMargin * 2);
 
@@ -145,8 +143,6 @@ class _MainAttachmentDisplayKeepAliveState
   Widget build(BuildContext context) {
     super.build(context);
     return Container(
-      margin: const EdgeInsets.symmetric(
-          horizontal: AttachmentConstants.horizontalMargin, vertical: 2),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
       ),

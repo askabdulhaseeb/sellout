@@ -5,6 +5,7 @@ import '../../../../../post/data/models/offer/offer_detail_model.dart';
 import '../../../../../post/data/models/visit/visiting_model.dart';
 import '../../../../quote/data/models/quote_detail_model.dart';
 import '../../../domain/entities/messages/message_entity.dart';
+import '../../../domain/entities/messages/message_post_detail_entity.dart';
 
 class MessageModel extends MessageEntity {
   MessageModel({
@@ -22,6 +23,7 @@ class MessageModel extends MessageEntity {
     super.source,
     super.offerDetail,
     super.quoteDetail,
+    super.postDetail,
   });
 
   factory MessageModel.fromMap(Map<String, dynamic> json) {
@@ -47,19 +49,22 @@ class MessageModel extends MessageEntity {
           : VisitingModel.fromJson(json['visiting_detail']),
       createdAt:
           (json['created_at']?.toString() ?? '').toDateTime() ?? DateTime.now(),
-      messageId: json['message_id'],
+      messageId: json['message_id']?.toString() ?? '',
       text: json['text']?.toString() ?? '',
       type: MessageType.fromJson(json['type']),
-      displayText: json['display_text'],
-      sendBy: json['send_by'],
-      chatId: json['chat_id'],
-      source: json['source'] ?? '',
+      displayText: json['display_text']?.toString() ?? '',
+      sendBy: json['send_by']?.toString() ?? '',
+      chatId: json['chat_id']?.toString() ?? '',
+      source: json['source']?.toString() ?? '',
       offerDetail: json['offer_detail'] == null
           ? null
           : OfferDetailModel.fromJson(json['offer_detail']),
       quoteDetail: json['quote_detail'] == null
           ? null
           : QuoteDetailModel.fromMap(json['quote_detail']),
+      postDetail: json['post_detail'] == null
+          ? null
+          : MessagePostDetailEntity.fromJson(json['post_detail']),
     );
   }
 }
