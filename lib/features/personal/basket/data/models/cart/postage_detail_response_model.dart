@@ -1,3 +1,4 @@
+import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../auth/signin/data/models/address_model.dart';
 import '../../../domain/entities/cart/postage_detail_response_entity.dart';
 
@@ -116,7 +117,8 @@ class PostageItemDetailModel extends PostageItemDetailEntity {
       totalQuantity: json['total_quantity'] ?? 0,
       parcelCount: json['parcel_count'] ?? 0,
       packagingStrategy: json['packaging_strategy'] ?? '',
-      originalDeliveryType: json['original_delivery_type'] ?? '',
+      originalDeliveryType:
+          DeliveryType.fromJson(json['original_delivery_type']),
       deliveryRequirements: PostageDetailDeliveryRequirementsModel.fromJson(
           json['delivery_requirements'] is Map<String, dynamic>
               ? json['delivery_requirements']

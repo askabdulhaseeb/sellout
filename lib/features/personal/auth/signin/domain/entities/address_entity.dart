@@ -4,6 +4,34 @@ part 'address_entity.g.dart';
 
 @HiveType(typeId: 6)
 class AddressEntity {
+  AddressEntity copyWith({
+    String? addressID,
+    String? phoneNumber,
+    String? recipientName,
+    String? address1,
+    String? address2,
+    String? category,
+    String? postalCode,
+    String? city,
+    StateEntity? state,
+    CountryEntity? country,
+    bool? isDefault,
+  }) {
+    return AddressEntity(
+      addressID: addressID ?? this.addressID,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      recipientName: recipientName ?? this.recipientName,
+      address1: address1 ?? this.address1,
+      address2: address2 ?? this.address2,
+      category: category ?? this.category,
+      postalCode: postalCode ?? this.postalCode,
+      city: city ?? this.city,
+      state: state ?? this.state,
+      country: country ?? this.country,
+      isDefault: isDefault ?? this.isDefault,
+    );
+  }
+
   AddressEntity({
     required this.addressID,
     required this.phoneNumber,

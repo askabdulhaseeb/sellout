@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 
+import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../core/sources/api_call.dart';
 import '../../../../../../services/get_it.dart';
@@ -74,7 +75,7 @@ class PostageItemDetailEntity {
   final int totalQuantity;
   final int parcelCount;
   final String packagingStrategy;
-  final String originalDeliveryType;
+  final DeliveryType originalDeliveryType;
   final PostageDetailDeliveryRequirementsEntity deliveryRequirements;
   final List<PostageDetailShippingDetailEntity> shippingDetails;
   final FastDeliveryEntity fastDelivery;

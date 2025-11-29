@@ -20,18 +20,9 @@ class LocalAuth {
         List<AddressEntity>.from(_getCurrentAddresses());
   }
 
-  Future<void> updateOrAddAddress(AddressEntity address) async {
+  Future<void> updateOrAddAddress(List<AddressEntity> addresses) async {
     final CurrentUserEntity? existing = currentUser;
     if (existing == null) return;
-    final List<AddressEntity> addresses =
-        List<AddressEntity>.from(existing.address);
-    final int index = addresses.indexWhere(
-        (a) => a.addressID == address.addressID && address.addressID != '');
-    if (index != -1) {
-      addresses[index] = address;
-    } else {
-      addresses.add(address);
-    }
     final CurrentUserEntity updated = existing.copyWith(address: addresses);
     await _box.put(boxTitle, updated);
     _notifyAddressListChanged();
