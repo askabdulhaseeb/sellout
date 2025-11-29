@@ -31,7 +31,7 @@ class AddAddressRemoteSourceImpl extends AddAddressRemoteSource {
                 .toList();
         // Use updateOrAddAddress for the last/added address
         if (updatedAddressList.isNotEmpty) {
-          await LocalAuth().updateOrAddAddress(updatedAddressList.last);
+          await LocalAuth().updateOrAddAddress(updatedAddressList);
         }
         return DataSuccess<bool>(result.data ?? '', true);
       } else {
@@ -72,7 +72,7 @@ class AddAddressRemoteSourceImpl extends AddAddressRemoteSource {
                 .toList();
         // Use updateOrAddAddress for the last/updated address
         if (updatedAddressList.isNotEmpty) {
-          await LocalAuth().updateOrAddAddress(updatedAddressList.last);
+          await LocalAuth().updateOrAddAddress(updatedAddressList);
         }
         return DataSuccess<bool>(result.data ?? '', true);
       } else {

@@ -101,8 +101,7 @@ class CartProvider extends ChangeNotifier {
     if (_postageResponseEntity == null) return false;
     for (final PostageItemDetailEntity detail
         in _postageResponseEntity!.detail.values) {
-      final DeliveryType deliveryType =
-          DeliveryType.fromJson(detail.originalDeliveryType);
+      final DeliveryType deliveryType = detail.originalDeliveryType;
       final bool isDeliveryNeeded = deliveryType == DeliveryType.paid ||
           deliveryType == DeliveryType.fastDelivery;
       if (!isDeliveryNeeded) continue;
@@ -119,8 +118,7 @@ class CartProvider extends ChangeNotifier {
     final List<String> ids = <String>[];
     _postageResponseEntity!.detail
         .forEach((String postId, PostageItemDetailEntity detail) {
-      final DeliveryType deliveryType =
-          DeliveryType.fromJson(detail.originalDeliveryType);
+      final DeliveryType deliveryType = detail.originalDeliveryType;
       final bool isDeliveryNeeded = deliveryType == DeliveryType.paid ||
           deliveryType == DeliveryType.fastDelivery;
       if (!isDeliveryNeeded) return;

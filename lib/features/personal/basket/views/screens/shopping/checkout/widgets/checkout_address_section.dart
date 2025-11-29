@@ -53,13 +53,17 @@ class SimpleCheckoutAddressSectionState
         if (cartPro.address == null &&
             LocalAuth.currentUser?.address != null &&
             LocalAuth.currentUser!.address.isNotEmpty) {
-          final defaultAddress = LocalAuth.currentUser!.address.firstWhere(
-            (e) => e.isDefault,
-            orElse: () => LocalAuth.currentUser!.address.first,
-          );
+          AddressEntity? defaultAddress;
+          for (final AddressEntity addr in LocalAuth.currentUser!.address) {
+            if (addr.isDefault) {
+              defaultAddress = addr;
+              break;
+            }
+          }
+          defaultAddress ??= LocalAuth.currentUser!.address[0];
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted && cartPro.address == null) {
-              cartPro.setAddress(defaultAddress);
+              cartPro.setAddress(defaultAddress!);
             }
           });
         }

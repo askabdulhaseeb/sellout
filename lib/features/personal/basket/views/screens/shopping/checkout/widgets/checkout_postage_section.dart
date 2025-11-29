@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../core/bottom_sheets/postage/postage_bottom_sheet.dart';
+import '../../../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../../../core/widgets/shadow_container.dart';
 import '../../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../../post/domain/entities/post/post_entity.dart';
@@ -113,33 +114,35 @@ class SimplePostageSectionState extends State<SimplePostageSection> {
                       }
                       final Map<String, String> prices = snapPrices.data!;
                       final List<Widget> items = <Widget>[];
-                      // Build a lookup map for cartItemId -> PostageItemDetailEntity
-                      final Map<String, PostageItemDetailEntity>
-                          detailByCartId = <String, PostageItemDetailEntity>{
-                        for (final PostageItemDetailEntity detail
-                            in cartPro.postageResponseEntity!.detail.values)
-                          detail.cartItemId: detail
-                      };
-                      for (final ShippingItemParam item
-                          in cartPro.selectedShippingItems) {
-                        final String cartItemId = item.cartItemId;
-                        final PostageItemDetailEntity? detail =
-                            detailByCartId[cartItemId];
-                        if (detail == null) continue;
+                      // Show all products, not just those in selectedShippingItems
+                      for (final PostageItemDetailEntity detail
+                          in cartPro.postageResponseEntity!.detail.values) {
+                        final String cartItemId = detail.cartItemId;
                         final String title = posts[detail.postId]?.title ??
                             'unknown_product'.tr();
                         final String? priceStr = prices[cartItemId];
+                        final DeliveryType deliveryType =
+                            detail.originalDeliveryType;
+                        final bool isFree =
+                            deliveryType == DeliveryType.freeDelivery;
+                        final bool isFast =
+                            deliveryType == DeliveryType.fastDelivery;
+                        final bool isPaid = deliveryType == DeliveryType.paid;
+                        final bool needsRates = isPaid || isFast;
                         if (priceStr != null) {
                           items.add(_row(title, priceStr, context));
-                        } else {
-                          final bool isFree = detail.originalDeliveryType
-                              .toLowerCase()
-                              .contains('free');
+                        } else if (needsRates) {
+                          // Paid or fast delivery but no rates: show remove item message
                           items.add(_row(
                               title,
-                              isFree ? 'free'.tr() : 'tap_to_select'.tr(),
+                              'remove_item_cart_continue_checkout'.tr(),
                               context,
-                              italic: true));
+                              italic: true,
+                              color: Theme.of(context).colorScheme.error));
+                        } else if (isFree && !isFast) {
+                          // Free delivery and not fast: show free
+                          items.add(
+                              _row(title, 'free'.tr(), context, italic: true));
                         }
                       }
 

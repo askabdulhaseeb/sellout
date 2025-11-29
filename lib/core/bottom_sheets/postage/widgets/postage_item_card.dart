@@ -27,12 +27,41 @@ class _PostageItemCardState extends State<PostageItemCard> {
   @override
   Widget build(BuildContext context) {
     // Hide collection items
-    final DeliveryType deliveryType =
-        DeliveryType.fromJson(widget.detail.originalDeliveryType);
+    final DeliveryType deliveryType = widget.detail.originalDeliveryType;
     if (deliveryType == DeliveryType.collection) {
       return const SizedBox.shrink();
     }
-
+    if (deliveryType == DeliveryType.freeDelivery &&
+        widget.detail.fastDelivery.requested == false) {
+      return ShadowContainer(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            _buildHeader(context),
+            const SizedBox(height: AppSpacing.md),
+            Padding(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.check_circle_outline,
+                      color: Theme.of(context).colorScheme.primary),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      'free'.tr(),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall
+                          ?.copyWith(fontStyle: FontStyle.italic),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
     return ShadowContainer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,8 +76,7 @@ class _PostageItemCardState extends State<PostageItemCard> {
 
   Widget _buildHeader(BuildContext context) {
     final List<RateEntity> rates = _getAllRates();
-    final DeliveryType deliveryType =
-        DeliveryType.fromJson(widget.detail.originalDeliveryType);
+    final DeliveryType deliveryType = widget.detail.originalDeliveryType;
 
     final bool hasRates = rates.isNotEmpty;
     final bool isFree = deliveryType == DeliveryType.freeDelivery;
@@ -97,38 +125,70 @@ class _PostageItemCardState extends State<PostageItemCard> {
 
   Widget _buildShippingOptions(BuildContext context) {
     final List<RateEntity> rates = _getAllRates();
-    if (rates.isEmpty) {
+    final DeliveryType deliveryType = widget.detail.originalDeliveryType;
+    final bool isFree = deliveryType == DeliveryType.freeDelivery;
+    final bool isFast = deliveryType == DeliveryType.fastDelivery;
+    final bool isPaid = deliveryType == DeliveryType.paid;
+    final bool needsRates = isPaid || isFast;
+
+    if (rates.isNotEmpty) {
+      final CartProvider cartPro = Provider.of<CartProvider>(context);
+      ShippingItemParam? selectedItem =
+          cartPro.selectedShippingItems.firstWhere(
+        (ShippingItemParam item) =>
+            item.cartItemId == widget.cartItemId && item.objectId.isNotEmpty,
+        orElse: () => ShippingItemParam(cartItemId: '', objectId: ''),
+      );
+      String selectedObjectId = selectedItem.objectId;
+
+      // If no selection exists for this cartItemId, auto-select the first rate
+      if (selectedObjectId.isEmpty && rates.isNotEmpty) {
+        selectedObjectId = rates.first.objectId;
+        // Update provider so state is consistent
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          cartPro.updateShippingSelection(widget.cartItemId, selectedObjectId);
+        });
+      }
+
+      return SizedBox(
+        child: ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          cacheExtent: 5000,
+          itemCount: rates.length,
+          itemBuilder: (BuildContext context, int index) {
+            final RateEntity rate = rates[index];
+            return _buildRateOption(context, rate, selectedObjectId, cartPro);
+          },
+        ),
+      );
+    } else if (needsRates) {
+      // Paid or fast delivery but no rates: show remove item message
       return _buildNoRatesMessage(context);
+    } else if (isFree && !isFast) {
+      // Free delivery and not fast: show free
+      return Padding(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: Row(
+          children: <Widget>[
+            Icon(Icons.check_circle_outline,
+                color: Theme.of(context).colorScheme.primary),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: Text(
+                'free'.tr(),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall
+                    ?.copyWith(fontStyle: FontStyle.italic),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return const SizedBox.shrink();
     }
-    final CartProvider cartPro = Provider.of<CartProvider>(context);
-    ShippingItemParam? selectedItem = cartPro.selectedShippingItems.firstWhere(
-      (ShippingItemParam item) =>
-          item.cartItemId == widget.cartItemId && item.objectId.isNotEmpty,
-      orElse: () => ShippingItemParam(cartItemId: '', objectId: ''),
-    );
-    String selectedObjectId = selectedItem.objectId;
-
-    // If no selection exists for this cartItemId, auto-select the first rate
-    if (selectedObjectId.isEmpty && rates.isNotEmpty) {
-      selectedObjectId = rates.first.objectId;
-      // Update provider so state is consistent
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        cartPro.updateShippingSelection(widget.cartItemId, selectedObjectId);
-      });
-    }
-
-    return SizedBox(
-      child: ListView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        cacheExtent: 5000,
-        itemCount: rates.length,
-        itemBuilder: (BuildContext context, int index) {
-          final RateEntity rate = rates[index];
-          return _buildRateOption(context, rate, selectedObjectId, cartPro);
-        },
-      ),
-    );
   }
 
   Widget _buildRateOption(BuildContext context, RateEntity rate,
@@ -184,18 +244,13 @@ class _PostageItemCardState extends State<PostageItemCard> {
   }
 
   List<RateEntity> _getAllRates() {
-    final List<RateEntity> allRates = widget.detail.shippingDetails
-        .expand((PostageDetailShippingDetailEntity shippingDetail) =>
-            shippingDetail.ratesBuffered)
+    final CartProvider cartPro = Provider.of<CartProvider>(context);
+    final PostageItemDetailEntity? detail =
+        cartPro.postageResponseEntity?.detail[widget.cartItemId];
+    if (detail == null) return <RateEntity>[];
+    return detail.shippingDetails
+        .expand<RateEntity>(
+            (PostageDetailShippingDetailEntity sd) => sd.ratesBuffered)
         .toList();
-    final Set<String> seen = <String>{};
-    final List<RateEntity> uniqueRates = <RateEntity>[];
-    for (final RateEntity rate in allRates) {
-      if (!seen.contains(rate.objectId)) {
-        seen.add(rate.objectId);
-        uniqueRates.add(rate);
-      }
-    }
-    return uniqueRates;
   }
 }
