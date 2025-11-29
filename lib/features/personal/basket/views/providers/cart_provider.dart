@@ -81,14 +81,7 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  AddressEntity? _address = (LocalAuth.currentUser?.address != null &&
-          LocalAuth.currentUser!.address
-              .where((AddressEntity e) => e.isDefault)
-              .isNotEmpty)
-      ? LocalAuth.currentUser!.address
-          .where((AddressEntity e) => e.isDefault)
-          .first
-      : null;
+  AddressEntity? _address;
 
   // MARK: 🧭 Getters
   CartType get cartType => _cartType;
@@ -331,26 +324,35 @@ class CartProvider extends ChangeNotifier {
           await _getPostageDetailUsecase(params);
       if (result is DataSuccess) {
         _postageResponseEntity = result.entity;
-        // Automatically select first rate for each post and store shipmentId
+        // Refresh selectedShippingItems to match available rates for each cart item
+        _selectedShippingItems.clear();
         if (_postageResponseEntity != null) {
           _postageResponseEntity!.detail.forEach(
             (String postId, PostageItemDetailEntity detail) {
-              // Only auto-select if not already selected
-              if (!_selectedPostageRates.containsKey(postId)) {
-                final List<RateEntity> rates = detail.shippingDetails
-                    .expand((PostageDetailShippingDetailEntity sd) =>
-                        sd.ratesBuffered)
-                    .toList();
-                if (rates.isNotEmpty) {
-                  final RateEntity firstRate = rates.first;
-                  _selectedPostageRates[postId] = firstRate;
+              final List<RateEntity> rates = detail.shippingDetails
+                  .expand((PostageDetailShippingDetailEntity sd) =>
+                      sd.ratesBuffered)
+                  .toList();
+              final Set<String> seen = <String>{};
+              final List<RateEntity> uniqueRates = <RateEntity>[];
+              for (final RateEntity rate in rates) {
+                if (!seen.contains(rate.objectId)) {
+                  seen.add(rate.objectId);
+                  uniqueRates.add(rate);
                 }
+              }
+              if (uniqueRates.isNotEmpty) {
+                _selectedShippingItems.add(
+                  ShippingItemParam(
+                    cartItemId: detail.cartItemId,
+                    objectId: uniqueRates.first.objectId,
+                  ),
+                );
               }
             },
           );
         }
         setPostageLoading(false);
-
         return result;
       } else {
         setPostageLoading(false);

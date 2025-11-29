@@ -55,7 +55,7 @@ class _PostageBottomSheetState extends State<PostageBottomSheet> {
             const SizedBox(height: 8),
             Expanded(
               child: ListView.separated(
-                cacheExtent: 200,
+                cacheExtent: 5000,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 itemCount: entries.length,

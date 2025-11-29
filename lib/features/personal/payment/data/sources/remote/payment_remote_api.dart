@@ -14,6 +14,13 @@ class PaymentRemoteApiImpl implements PaymentRemoteApi {
   @override
   Future<DataState<ExchangeRateEntity>> getExchangeRate(
       GetExchangeRateParams params) async {
+    if (params.from == params.to) {
+      const ExchangeRateEntity exchangeRate = ExchangeRateEntity(
+        rate: 1.0,
+      );
+      return DataSuccess<ExchangeRateEntity>('', exchangeRate);
+    }
+
     const String endpoint = 'payment/get/exchangeRate';
     try {
       final DataState<String> result = await ApiCall<String>().call(

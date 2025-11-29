@@ -10,21 +10,25 @@ import '../../../constants/app_spacings.dart';
 import 'package:provider/provider.dart';
 import '../../../widgets/shadow_container.dart';
 
-class PostageItemCard extends StatelessWidget {
+class PostageItemCard extends StatefulWidget {
   const PostageItemCard({
     required this.cartItemId,
     required this.detail,
     super.key,
   });
-
   final String cartItemId;
   final PostageItemDetailEntity detail;
 
   @override
+  State<PostageItemCard> createState() => _PostageItemCardState();
+}
+
+class _PostageItemCardState extends State<PostageItemCard> {
+  @override
   Widget build(BuildContext context) {
     // Hide collection items
     final DeliveryType deliveryType =
-        DeliveryType.fromJson(detail.originalDeliveryType);
+        DeliveryType.fromJson(widget.detail.originalDeliveryType);
     if (deliveryType == DeliveryType.collection) {
       return const SizedBox.shrink();
     }
@@ -44,12 +48,12 @@ class PostageItemCard extends StatelessWidget {
   Widget _buildHeader(BuildContext context) {
     final List<RateEntity> rates = _getAllRates();
     final DeliveryType deliveryType =
-        DeliveryType.fromJson(detail.originalDeliveryType);
+        DeliveryType.fromJson(widget.detail.originalDeliveryType);
 
     final bool hasRates = rates.isNotEmpty;
     final bool isFree = deliveryType == DeliveryType.freeDelivery;
     final bool isFast = deliveryType == DeliveryType.fastDelivery;
-    final PostEntity? post = LocalPost().post(cartItemId);
+    final PostEntity? post = LocalPost().post(widget.detail.postId);
     final String badgeText = isFast
         ? 'fast_delivery'.tr()
         : isFree
@@ -99,7 +103,7 @@ class PostageItemCard extends StatelessWidget {
     final CartProvider cartPro = Provider.of<CartProvider>(context);
     ShippingItemParam? selectedItem = cartPro.selectedShippingItems.firstWhere(
       (ShippingItemParam item) =>
-          item.cartItemId == cartItemId && item.objectId.isNotEmpty,
+          item.cartItemId == widget.cartItemId && item.objectId.isNotEmpty,
       orElse: () => ShippingItemParam(cartItemId: '', objectId: ''),
     );
     String selectedObjectId = selectedItem.objectId;
@@ -109,23 +113,28 @@ class PostageItemCard extends StatelessWidget {
       selectedObjectId = rates.first.objectId;
       // Update provider so state is consistent
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        cartPro.updateShippingSelection(cartItemId, selectedObjectId);
+        cartPro.updateShippingSelection(widget.cartItemId, selectedObjectId);
       });
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        ...rates.map((RateEntity rate) =>
-            _buildRateOption(context, rate, selectedObjectId, cartPro)),
-      ],
+    return SizedBox(
+      child: ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        cacheExtent: 5000,
+        itemCount: rates.length,
+        itemBuilder: (BuildContext context, int index) {
+          final RateEntity rate = rates[index];
+          return _buildRateOption(context, rate, selectedObjectId, cartPro);
+        },
+      ),
     );
   }
 
   Widget _buildRateOption(BuildContext context, RateEntity rate,
       String selectedObjectId, CartProvider cartPro) {
     void select() {
-      cartPro.updateShippingSelection(cartItemId, rate.objectId);
+      cartPro.updateShippingSelection(widget.cartItemId, rate.objectId);
     }
 
     return ListTile(
@@ -152,9 +161,6 @@ class PostageItemCard extends StatelessWidget {
   }
 
   // Removed legacy _buildRateOption with onSelect reference and duplicate signature.
-
-  // Legacy commented and duplicate Card code removed. Only new logic remains.
-
   Widget _buildNoRatesMessage(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -178,7 +184,7 @@ class PostageItemCard extends StatelessWidget {
   }
 
   List<RateEntity> _getAllRates() {
-    final List<RateEntity> allRates = detail.shippingDetails
+    final List<RateEntity> allRates = widget.detail.shippingDetails
         .expand((PostageDetailShippingDetailEntity shippingDetail) =>
             shippingDetail.ratesBuffered)
         .toList();

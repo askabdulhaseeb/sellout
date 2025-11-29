@@ -1,4 +1,3 @@
-// ----------------- Address Section -----------------
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +6,7 @@ import '../../../../../../../../core/bottom_sheets/postage/postage_bottom_sheet.
 import '../../../../../../../../core/widgets/shadow_container.dart';
 import '../../../../../../auth/signin/domain/entities/address_entity.dart';
 import '../../../../providers/cart_provider.dart';
+import '../../../../../../auth/signin/data/sources/local/local_auth.dart';
 
 class SimpleCheckoutAddressSection extends StatefulWidget {
   const SimpleCheckoutAddressSection({super.key});
@@ -48,54 +48,70 @@ class SimpleCheckoutAddressSectionState
   @override
   Widget build(BuildContext context) {
     return Consumer<CartProvider>(
-      builder: (_, CartProvider cartPro, __) => InkWell(
-        onTap: () => _onAddressTap(cartPro),
-        borderRadius: BorderRadius.circular(8),
-        child: ShadowContainer(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      '${'post_to'.tr()}:',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                        color: Theme.of(context).textTheme.bodyMedium!.color,
-                      ),
-                    ),
-                    Text(cartPro.address?.address1 ?? 'no_address'.tr(),
-                        style: const TextStyle(fontSize: 13, height: 1.4)),
-                    if (cartPro.address != null)
+      builder: (_, CartProvider cartPro, __) {
+        // Set default address if not set and available in LocalAuth
+        if (cartPro.address == null &&
+            LocalAuth.currentUser?.address != null &&
+            LocalAuth.currentUser!.address.isNotEmpty) {
+          final defaultAddress = LocalAuth.currentUser!.address.firstWhere(
+            (e) => e.isDefault,
+            orElse: () => LocalAuth.currentUser!.address.first,
+          );
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted && cartPro.address == null) {
+              cartPro.setAddress(defaultAddress);
+            }
+          });
+        }
+        return InkWell(
+          onTap: () => _onAddressTap(cartPro),
+          borderRadius: BorderRadius.circular(8),
+          child: ShadowContainer(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
                       Text(
-                        '${cartPro.address!.city}, ${cartPro.address?.state?.stateName ?? 'na'.tr()}'
-                        '\n${cartPro.address?.country.displayName} ${cartPro.address?.postalCode}',
-                        style: const TextStyle(fontSize: 13, height: 1.4),
-                      ),
-                    if (_isLoading)
-                      const Padding(
-                        padding: EdgeInsets.only(top: 8),
-                        child: Center(
-                          child: SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
+                        '${'post_to'.tr()}:',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: Theme.of(context).textTheme.bodyMedium!.color,
                         ),
                       ),
-                  ],
+                      Text(cartPro.address?.address1 ?? 'no_address'.tr(),
+                          style: const TextStyle(fontSize: 13, height: 1.4)),
+                      if (cartPro.address != null)
+                        Text(
+                          '${cartPro.address!.city}, ${cartPro.address?.state?.stateName ?? 'na'.tr()}'
+                          '\n${cartPro.address?.country.displayName} ${cartPro.address?.postalCode}',
+                          style: const TextStyle(fontSize: 13, height: 1.4),
+                        ),
+                      if (_isLoading)
+                        const Padding(
+                          padding: EdgeInsets.only(top: 8),
+                          child: Center(
+                            child: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Icon(Icons.chevron_right,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant),
-            ],
+                const SizedBox(width: 12),
+                Icon(Icons.chevron_right,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
