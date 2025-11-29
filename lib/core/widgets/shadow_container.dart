@@ -28,7 +28,8 @@ class ShadowContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 600),
         padding:
             padding ?? const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         margin:

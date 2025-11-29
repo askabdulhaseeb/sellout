@@ -12,12 +12,12 @@ import '../../../widgets/shadow_container.dart';
 
 class PostageItemCard extends StatelessWidget {
   const PostageItemCard({
-    required this.postId,
+    required this.cartItemId,
     required this.detail,
     super.key,
   });
 
-  final String postId;
+  final String cartItemId;
   final PostageItemDetailEntity detail;
 
   @override
@@ -49,7 +49,7 @@ class PostageItemCard extends StatelessWidget {
     final bool hasRates = rates.isNotEmpty;
     final bool isFree = deliveryType == DeliveryType.freeDelivery;
     final bool isFast = deliveryType == DeliveryType.fastDelivery;
-    final PostEntity? post = LocalPost().post(postId);
+    final PostEntity? post = LocalPost().post(cartItemId);
     final String badgeText = isFast
         ? 'fast_delivery'.tr()
         : isFree
@@ -99,17 +99,17 @@ class PostageItemCard extends StatelessWidget {
     final CartProvider cartPro = Provider.of<CartProvider>(context);
     ShippingItemParam? selectedItem = cartPro.selectedShippingItems.firstWhere(
       (ShippingItemParam item) =>
-          item.cartItemId == postId && item.objectId.isNotEmpty,
+          item.cartItemId == cartItemId && item.objectId.isNotEmpty,
       orElse: () => ShippingItemParam(cartItemId: '', objectId: ''),
     );
     String selectedObjectId = selectedItem.objectId;
 
-    // If no selection exists for this postId, auto-select the first rate
+    // If no selection exists for this cartItemId, auto-select the first rate
     if (selectedObjectId.isEmpty && rates.isNotEmpty) {
       selectedObjectId = rates.first.objectId;
       // Update provider so state is consistent
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        cartPro.updateShippingSelection(postId, selectedObjectId);
+        cartPro.updateShippingSelection(cartItemId, selectedObjectId);
       });
     }
 
@@ -125,7 +125,7 @@ class PostageItemCard extends StatelessWidget {
   Widget _buildRateOption(BuildContext context, RateEntity rate,
       String selectedObjectId, CartProvider cartPro) {
     void select() {
-      cartPro.updateShippingSelection(postId, rate.objectId);
+      cartPro.updateShippingSelection(cartItemId, rate.objectId);
     }
 
     return ListTile(

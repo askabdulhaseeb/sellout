@@ -85,7 +85,7 @@ class PersonalCartTotalSection extends StatelessWidget {
                   ),
                 CustomElevatedButton(
                   title: _getButtonTitle(cartPro.cartType),
-                  isLoading: false,
+                  isLoading: cartPro.loadingPostage,
                   isDisable: cartPro.cartType == CartType.checkoutOrder &&
                       cartPro.hasItemsRequiringRemoval,
                   onTap: () async => _handleButtonTap(context, cartPro, cart),

@@ -81,7 +81,7 @@ class PostageDetailSummaryModel extends PostageDetailSummaryEntity {
 class PostageItemDetailModel extends PostageItemDetailEntity {
   PostageItemDetailModel({
     required super.postId,
-    required super.id,
+    required super.cartItemId,
     required super.packageDetail,
     required super.fromAddress,
     required super.toAddress,
@@ -100,7 +100,7 @@ class PostageItemDetailModel extends PostageItemDetailEntity {
   factory PostageItemDetailModel.fromJson(Map<String, dynamic> json) {
     return PostageItemDetailModel(
       postId: json['post_id'] ?? '',
-      id: json['id'] ?? '',
+      cartItemId: json['id'] ?? '',
       packageDetail: json['package_detail'] is Map<String, dynamic>
           ? json['package_detail']
           : <String, dynamic>{},
@@ -137,7 +137,7 @@ class PostageItemDetailModel extends PostageItemDetailEntity {
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'post_id': postId,
-        'id': id,
+        'id': cartItemId,
         'package_detail': packageDetail,
         'fromAddress': (fromAddress as AddressModel).toJson(),
         'toAddress': (toAddress as AddressModel).toJson(),
