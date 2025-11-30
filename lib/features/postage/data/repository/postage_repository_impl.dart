@@ -2,6 +2,8 @@ import '../../../../../core/sources/data_state.dart';
 import '../../../personal/basket/data/models/cart/add_shipping_response_model.dart';
 import '../../../personal/basket/domain/param/get_postage_detail_params.dart';
 import '../../../personal/basket/domain/param/submit_shipping_param.dart';
+import '../../domain/params/add_lable_params.dart';
+import '../../domain/params/add_postage_label_params.dart';
 import '../../domain/repository/postage_repository.dart';
 import '../models/postage_detail_repsonse_model.dart';
 import '../source/remote/postage_remote_source.dart';
@@ -20,5 +22,15 @@ class PostageRepositoryImpl implements PostageRepository {
   Future<DataState<AddShippingResponseModel>> addShipping(
       SubmitShippingParam param) async {
     return await _remoteAPI.addShipping(param);
+  }
+
+  @override
+  Future<DataState<bool>> buyPostageLabel(BuyPostageLabelParams param) async {
+    return await _remoteAPI.buyPostageLabel(param);
+  }
+
+  @override
+  Future<DataState<bool>> buyLabel(BuyLabelParams param) async {
+    return await _remoteAPI.buylabel(param);
   }
 }
