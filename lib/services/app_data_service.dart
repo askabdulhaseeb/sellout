@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
 import 'category_data_service.dart';
-import 'get_it.dart';
 import '../core/functions/app_log.dart';
 import '../core/sources/data_state.dart';
 import '../core/widgets/phone_number/data/sources/country_api.dart';
@@ -9,6 +8,7 @@ import '../core/widgets/phone_number/data/sources/local_country.dart';
 import '../core/widgets/phone_number/domain/entities/country_entity.dart';
 import '../features/personal/auth/signin/domain/usecase/refresh_token_usecase.dart';
 import 'token_refresh_scheduler.dart';
+import 'get_it.dart';
 
 class AppDataService extends WidgetsBindingObserver {
   factory AppDataService() => _instance;

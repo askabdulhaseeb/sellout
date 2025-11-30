@@ -227,17 +227,17 @@ class LocalCategoriesSource {
       SubCategoryEntity? current = root;
 
       for (int i = 0; i < partsToTraverse.length; i++) {
-        final currentPart = partsToTraverse[i];
+        final String currentPart = partsToTraverse[i];
         debugPrint(
             '🔎 Looking for part[$i]: "$currentPart" in "${current?.title}"');
 
-        if (current?.subCategory == []) {
+        if (current?.subCategory == <dynamic>[]) {
           debugPrint('❌ No subcategories available in "${current?.title}"');
           break;
         }
 
         debugPrint('📋 Available subcategories in "${current?.title}":');
-        for (final sub in current?.subCategory ?? []) {
+        for (final sub in current?.subCategory ?? <dynamic>[]) {
           debugPrint(
               '   - "${sub.title}" (cid: ${sub.cid}, address: ${sub.address})');
         }
@@ -245,16 +245,16 @@ class LocalCategoriesSource {
         SubCategoryEntity? foundSubCategory;
 
         if (listingType == ListingType.items) {
-          final searchTerm = _normalizeForMatching(currentPart);
+          final String searchTerm = _normalizeForMatching(currentPart);
           debugPrint('🟢 ITEMS - Searching for: "$searchTerm"');
 
-          for (final sub in current?.subCategory ?? []) {
-            final subTitle = _normalizeForMatching(sub.title);
-            final subAddress =
+          for (final sub in current?.subCategory ?? <dynamic>[]) {
+            final String subTitle = _normalizeForMatching(sub.title);
+            final String subAddress =
                 sub.address != null ? _normalizeForMatching(sub.address!) : '';
-            final subCid = _normalizeForMatching(sub.cid);
+            final String subCid = _normalizeForMatching(sub.cid);
 
-            final matches = subTitle.contains(searchTerm) ||
+            final bool matches = subTitle.contains(searchTerm) ||
                 searchTerm.contains(subTitle) ||
                 subAddress.contains(searchTerm) ||
                 subCid.contains(searchTerm) ||
@@ -269,11 +269,11 @@ class LocalCategoriesSource {
         } else {
           debugPrint('🟡 STANDARD - Searching for: "$currentPart"');
 
-          for (final sub in current?.subCategory ?? []) {
-            final cidMatch = sub.cid == currentPart;
-            final titleMatch = _normalizeForMatching(sub.title) ==
+          for (final sub in current?.subCategory ?? <dynamic>[]) {
+            final bool cidMatch = sub.cid == currentPart;
+            final bool titleMatch = _normalizeForMatching(sub.title) ==
                 _normalizeForMatching(currentPart);
-            final addressMatch = sub.address != null &&
+            final bool addressMatch = sub.address != null &&
                 _normalizeForMatching(sub.address!) ==
                     _normalizeForMatching(currentPart);
 
@@ -295,7 +295,7 @@ class LocalCategoriesSource {
         }
       }
 
-      debugPrint('🎯 FINAL RESULT: "${current?.title ?? []}"');
+      debugPrint('🎯 FINAL RESULT: "${current?.title ?? <dynamic>[]}"');
       return current;
     } catch (e, stackTrace) {
       debugPrint('💥 ERROR in findSubCategoryByAddress: $e');

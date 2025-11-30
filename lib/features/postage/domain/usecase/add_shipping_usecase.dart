@@ -1,7 +1,7 @@
 import '../../../../../../core/usecase/usecase.dart';
-import '../../../../../postage/domain/repository/postage_repository.dart';
-import '../../../data/models/cart/add_shipping_response_model.dart';
-import '../../param/submit_shipping_param.dart';
+import '../../../personal/basket/data/models/cart/add_shipping_response_model.dart';
+import '../../../personal/basket/domain/param/submit_shipping_param.dart';
+import '../repository/postage_repository.dart';
 
 class AddShippingUsecase
     implements UseCase<AddShippingResponseModel, SubmitShippingParam> {
