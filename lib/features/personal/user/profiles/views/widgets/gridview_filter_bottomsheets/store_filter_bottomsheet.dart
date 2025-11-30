@@ -78,7 +78,7 @@ class StoreFilterSheetCustomerReviewTile extends StatelessWidget {
         subtitle: Consumer<ProfileProvider>(
           builder: (BuildContext context, ProfileProvider pro, _) =>
               DropdownButtonFormField<SortOption>(
-            value: isStore ? pro.storeSort : pro.viewingSort,
+            initialValue: isStore ? pro.storeSort : pro.viewingSort,
             isExpanded: true,
             hint: Text(
               'sort_by_choice'.tr(),
@@ -224,7 +224,7 @@ class StoreFilterSheetConditionTile extends StatelessWidget {
             Icons.keyboard_arrow_down_rounded,
             color: Theme.of(context).colorScheme.outline,
           ),
-          value: isStore
+          initialValue: isStore
               ? pro.storeSelectedConditionType
               : pro.viewingSelectedConditionType,
           isExpanded: true,
@@ -269,9 +269,9 @@ class StoreFilterSheetConditionTile extends StatelessWidget {
 }
 
 class StoreFilterSheetDeliveryTypeTile extends StatelessWidget {
-  final bool isStore;
 
   const StoreFilterSheetDeliveryTypeTile({required this.isStore, super.key});
+  final bool isStore;
 
   @override
   Widget build(BuildContext context) {
@@ -287,7 +287,7 @@ class StoreFilterSheetDeliveryTypeTile extends StatelessWidget {
             Icons.keyboard_arrow_down_rounded,
             color: Theme.of(context).colorScheme.outline,
           ),
-          value: isStore
+          initialValue: isStore
               ? pro.storeSelectedDeliveryType
               : pro.viewingSelectedDeliveryType,
           isExpanded: true,

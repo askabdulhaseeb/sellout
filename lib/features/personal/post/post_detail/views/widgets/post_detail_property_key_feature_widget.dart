@@ -6,7 +6,7 @@ import '../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../../domain/entities/post/post_entity.dart';
 
 class PostDetailPropertyKeyFeaturesWidget extends StatelessWidget {
-  const PostDetailPropertyKeyFeaturesWidget({super.key, required this.post});
+  const PostDetailPropertyKeyFeaturesWidget({required this.post, super.key});
   final PostEntity post;
   @override
   Widget build(BuildContext context) {

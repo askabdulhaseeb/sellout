@@ -214,7 +214,7 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
       right: 00,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
+        children: <Widget>[
           if (_isRecording)
             Text(
               _formatTime(_recordingSeconds),

@@ -50,7 +50,7 @@ class _CancelOrderButtonState extends State<CancelOrderButton> {
           SnackBar(
             content: Text(
               'order_cancel_failed'
-                  .tr(args: [result.exception?.message ?? 'Unknown error']),
+                  .tr(args: <String>[result.exception?.message ?? 'Unknown error']),
             ),
             backgroundColor: Colors.red,
           ),
@@ -59,7 +59,7 @@ class _CancelOrderButtonState extends State<CancelOrderButton> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content:
-                Text('order_cancel_failed'.tr(args: ['Unexpected response'])),
+                Text('order_cancel_failed'.tr(args: <String>['Unexpected response'])),
             backgroundColor: Colors.red,
           ),
         );
@@ -68,7 +68,7 @@ class _CancelOrderButtonState extends State<CancelOrderButton> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('order_cancel_failed'.tr(args: [e.toString()])),
+          content: Text('order_cancel_failed'.tr(args: <String>[e.toString()])),
           backgroundColor: Colors.red,
         ),
       );

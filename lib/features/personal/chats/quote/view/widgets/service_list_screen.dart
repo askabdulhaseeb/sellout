@@ -19,7 +19,7 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
   final GetServicesByQueryUsecase _servicesUsecase =
       GetServicesByQueryUsecase(locator());
   final ScrollController _scrollController = ScrollController();
-  final List<ServiceEntity> _services = [];
+  final List<ServiceEntity> _services = <ServiceEntity>[];
   String _lastKey = '';
   bool _hasMore = true;
   bool _isLoading = false;
@@ -49,17 +49,17 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
 
     setState(() => _isLoading = true);
 
-    final result = await _servicesUsecase.call(ServiceByFiltersParams(
+    final DataState<List<ServiceEntity>> result = await _servicesUsecase.call(ServiceByFiltersParams(
       lastKey: _lastKey,
       query: '',
-      filters: [
+      filters: <FilterParam>[
         FilterParam(
             attribute: 'business_id', operator: 'eq', value: widget.businessId),
       ],
     ));
 
     if (result is DataSuccess) {
-      final fetched = result.entity ?? [];
+      final List<ServiceEntity> fetched = result.entity ?? <ServiceEntity>[];
       if (reset) _services.clear();
       _services.addAll(fetched);
       _lastKey = result.data ?? '';
@@ -74,16 +74,16 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Select Services")),
+      appBar: AppBar(title: const Text('Select Services')),
       body: ListView.builder(
         controller: _scrollController,
         padding: const EdgeInsets.all(12),
         itemCount: _services.length + (_isLoading ? 1 : 0),
-        itemBuilder: (context, index) {
+        itemBuilder: (BuildContext context, int index) {
           if (index >= _services.length) {
             return const Center(child: CircularProgressIndicator());
           }
-          final service = _services[index];
+          final ServiceEntity service = _services[index];
           return Card(
             child: ListTile(
               leading: ClipRRect(
@@ -98,7 +98,7 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
                   // Provider.of<QuoteProvider>(context, listen: false)
                   //     .addService(service, 1);
                 },
-                child: const Text("Add"),
+                child: const Text('Add'),
               ),
             ),
           );
@@ -113,7 +113,7 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
             //   MaterialPageRoute(builder: (_) => BookQuoteScreen(service: )), // step 2
             // );
           },
-          child: const Text("Next"),
+          child: const Text('Next'),
         ),
       ),
     );

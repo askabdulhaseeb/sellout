@@ -21,7 +21,7 @@ class FilterSheetConditionTile extends StatelessWidget {
               Icons.keyboard_arrow_down_rounded,
               color: ColorScheme.of(context).outline,
             ),
-            value: pro.selectedConditionType,
+            initialValue: pro.selectedConditionType,
             isExpanded: true,
             dropdownColor: Theme.of(context).cardColor,
             decoration: const InputDecoration(

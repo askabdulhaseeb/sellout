@@ -43,7 +43,7 @@ class _FlutterLocationMapState extends State<FlutterLocationMap> {
     // Run heavy calculation off the main thread
     final LatLngBounds bounds = await compute(
       _calculateBounds,
-      [
+      <double>[
         widget.selectedLatLng.latitude,
         widget.selectedLatLng.longitude,
         radiusKm,

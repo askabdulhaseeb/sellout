@@ -46,7 +46,7 @@ class AddListingVehicleTransmissionEngineMileageSection
                 Flexible(
                   flex: 1,
                   child: CustomDropdown<DropdownOptionEntity>(
-                    items: mileageUnit.map((opt) {
+                    items: mileageUnit.map((DropdownOptionEntity opt) {
                       return DropdownMenuItem<DropdownOptionEntity>(
                         value: opt,
                         child: Text(opt.label), // display label

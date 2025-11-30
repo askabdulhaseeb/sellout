@@ -39,19 +39,19 @@ class CreatePrivateChatBottomsheet extends StatelessWidget {
           physics: const BouncingScrollPhysics(),
           itemCount: supporters.length,
           itemBuilder: (BuildContext context, int index) {
-            final supporter = supporters[index];
+            final SupporterDetailEntity supporter = supporters[index];
             final String userId = supporter.userID;
 
             return FutureBuilder<DataState<UserEntity?>>(
               future: getUserByUidUsecase(userId),
-              builder: (context, snapshot) {
+              builder: (BuildContext context, AsyncSnapshot<DataState<UserEntity?>> snapshot) {
                 // SKELETON LOADING
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16.0, vertical: 8.0),
                     child: Row(
-                      children: [
+                      children: <Widget>[
                         // Avatar skeleton
                         Container(
                           width: 40,
@@ -66,7 +66,7 @@ class CreatePrivateChatBottomsheet extends StatelessWidget {
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
+                            children: <Widget>[
                               Container(
                                 height: 14,
                                 color: Colors.grey.shade300,
@@ -102,7 +102,7 @@ class CreatePrivateChatBottomsheet extends StatelessWidget {
                   );
                 }
 
-                final user = snapshot.data!.entity!;
+                final UserEntity user = snapshot.data!.entity!;
 
                 return ListTile(
                   minTileHeight: 70,

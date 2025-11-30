@@ -22,7 +22,7 @@ class GetServiceSlotsUsecase
 
       if (bookingsResult is DataSuccess && bookingsResult.data != null) {
         // Generate service slots using the SlotEntity
-        final slots = ServiceSlotHelper.generateServiceSlots(
+        final List<SlotEntity> slots = ServiceSlotHelper.generateServiceSlots(
           bookings: bookingsResult.entity!,
           openingTime: params.openingTime,
           closingTime: params.closingTime,
@@ -80,7 +80,7 @@ class ServiceSlotHelper {
           .add(Duration(minutes: serviceDuration)); // full service duration
 
       // check overlap with booked ranges using full service duration
-      final bool isBooked = bookedRanges.any((range) {
+      final bool isBooked = bookedRanges.any((Map<String, DateTime> range) {
         final DateTime bookedStart = range['start']!;
         final DateTime bookedEnd = range['end']!;
         // overlap if service duration window touches booked window

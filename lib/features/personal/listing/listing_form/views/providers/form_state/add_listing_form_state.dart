@@ -13,6 +13,11 @@ import '../../../domain/entities/color_options_entity.dart';
 import '../../widgets/core/delivery_section/enums/delivery_payer.dart';
 
 class AddListingFormState {
+
+  // Constructor
+  AddListingFormState() {
+    _initializeDefaults();
+  }
   // Text controllers
   final TextEditingController title = TextEditingController();
   final TextEditingController description = TextEditingController();
@@ -96,11 +101,6 @@ class AddListingFormState {
   LocationEntity? selectedCollectionLocation;
   LatLng? meetupLatLng;
   LatLng? collectionLatLng;
-
-  // Constructor
-  AddListingFormState() {
-    _initializeDefaults();
-  }
 
   void _initializeDefaults() {
     propertySubCategory = _getDefaultCategory(ListingType.property);
@@ -214,12 +214,12 @@ class AddListingFormState {
   bool get isTitleValid => title.text.trim().isNotEmpty;
   bool get isDescriptionValid => description.text.trim().isNotEmpty;
   bool get isPriceValid {
-    final value = double.tryParse(price.text);
+    final double? value = double.tryParse(price.text);
     return value != null && value > 0;
   }
 
   bool get isQuantityValid {
-    final value = int.tryParse(quantity.text);
+    final int? value = int.tryParse(quantity.text);
     return value != null && value > 0;
   }
 

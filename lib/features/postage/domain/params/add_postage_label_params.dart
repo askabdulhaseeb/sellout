@@ -11,7 +11,7 @@ class BuyPostageLabelParams {
   final String objectId;
 
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'object_id': objectId,
     };
   }

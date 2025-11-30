@@ -16,7 +16,7 @@ class ServiceFilterSheetCustomerReviewTile extends StatelessWidget {
         style: Theme.of(context).textTheme.titleMedium,
       ),
       subtitle: DropdownButtonFormField<ReviewFilterParam>(
-        value: ReviewFilterParamExtension.fromJson(provider.rating),
+        initialValue: ReviewFilterParamExtension.fromJson(provider.rating),
         isExpanded: true,
         hint: Text(
           'select_customer_review'.tr(),

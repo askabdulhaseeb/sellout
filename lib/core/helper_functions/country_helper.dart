@@ -22,7 +22,7 @@ class CountryHelper {
     if (upper.length == 2) return upper;
 
     // Alpha-3 codes to Alpha-2
-    const Map<String, String> alpha3ToAlpha2 = {
+    const Map<String, String> alpha3ToAlpha2 = <String, String>{
       'PAK': 'PK',
       'USA': 'US',
       'GBR': 'GB',
@@ -32,7 +32,7 @@ class CountryHelper {
     };
 
     // Full country names to Alpha-2
-    const Map<String, String> fullNameToAlpha2 = {
+    const Map<String, String> fullNameToAlpha2 = <String, String>{
       'PAKISTAN': 'PK',
       'UNITED STATES': 'US',
       'UNITED KINGDOM': 'GB',

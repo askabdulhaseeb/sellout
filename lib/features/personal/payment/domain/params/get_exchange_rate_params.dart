@@ -8,7 +8,7 @@ class GetExchangeRateParams {
   final String to;
 
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'from_currency': from,
       'to_currency': to,
     };

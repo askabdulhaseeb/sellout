@@ -24,7 +24,7 @@ class BusinessProfileScreen extends StatelessWidget {
       children: <Widget>[
         PersonalScaffold(
           body: Stack(
-            children: [
+            children: <Widget>[
               
               SingleChildScrollView(
                 controller: scrollController,

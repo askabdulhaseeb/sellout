@@ -8,9 +8,9 @@ import '../../features/personal/listing/listing_form/domain/usecase/get_category
 import 'get_it.dart';
 
 class CategoryDataService {
+  factory CategoryDataService() => _instance;
   CategoryDataService._internal();
   static final CategoryDataService _instance = CategoryDataService._internal();
-  factory CategoryDataService() => _instance;
 
   final GetCategoryByEndpointUsecase _categoryUsecase =
       GetCategoryByEndpointUsecase(locator());

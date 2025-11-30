@@ -62,9 +62,9 @@ class CartProvider extends ChangeNotifier {
   PaymentIntentEntity? _orderBilling;
   PostageDetailResponseEntity? _postageResponseEntity;
   // selected postage rate per postID
-  Map<String, RateEntity> _selectedPostageRates = <String, RateEntity>{};
+  final Map<String, RateEntity> _selectedPostageRates = <String, RateEntity>{};
   // Map to store selected rate objectId for each postId
-  List<ShippingItemParam> _selectedShippingItems = <ShippingItemParam>[];
+  final List<ShippingItemParam> _selectedShippingItems = <ShippingItemParam>[];
 
   List<ShippingItemParam> get selectedShippingItems => _selectedShippingItems;
 
@@ -330,8 +330,7 @@ class CartProvider extends ChangeNotifier {
         // Refresh selectedShippingItems to match available rates for each cart item
         _selectedShippingItems.clear();
         if (_postageResponseEntity != null) {
-          _postageResponseEntity!.detail.forEach(
-            (PostageItemDetailEntity detail) {
+          for (PostageItemDetailEntity detail in _postageResponseEntity!.detail) {
               final List<RateEntity> rates = detail.shippingDetails
                   .expand((PostageDetailShippingDetailEntity sd) =>
                       sd.ratesBuffered)
@@ -352,8 +351,7 @@ class CartProvider extends ChangeNotifier {
                   ),
                 );
               }
-            },
-          );
+            }
         }
         setPostageLoading(false);
         return result;

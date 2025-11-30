@@ -24,7 +24,7 @@ class MessagePostDetailEntity {
   @HiveField(3)
   final String? currency;
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => <String, dynamic>{
         'post_id': postId,
         'title': title,
         'price': price,
