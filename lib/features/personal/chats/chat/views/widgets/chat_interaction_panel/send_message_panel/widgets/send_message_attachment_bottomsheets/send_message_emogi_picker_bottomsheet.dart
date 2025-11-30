@@ -42,7 +42,7 @@ class _EmojiPickerBottomSheet extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(25),
-        boxShadow: [
+        boxShadow: <BoxShadow>[
           BoxShadow(
             color: Colors.black.withOpacity(0.15),
             blurRadius: 10,

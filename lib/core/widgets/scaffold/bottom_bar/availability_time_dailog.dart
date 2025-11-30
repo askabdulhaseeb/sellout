@@ -50,7 +50,7 @@ class _AvailabilityTimeDialogState extends State<AvailabilityTimeDialog> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Row(
-              children: [
+              children: <Widget>[
                 const CloseButton(),
                 Text(
                   'set_time_range'.tr(),

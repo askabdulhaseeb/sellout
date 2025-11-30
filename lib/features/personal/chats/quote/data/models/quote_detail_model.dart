@@ -16,7 +16,7 @@ class QuoteDetailModel extends QuoteDetailEntity {
   /// --- From Map ---
   factory QuoteDetailModel.fromMap(Map<String, dynamic> map) {
     return QuoteDetailModel(
-      serviceEmployee: (map['services_and_employees'] as List? ?? [])
+      serviceEmployee: (map['services_and_employees'] as List? ?? <dynamic>[])
           .map((e) => ServiceEmployeeModel.fromMap(e))
           .toList(),
       sellerId: map['seller_id']?.toString() ?? '',

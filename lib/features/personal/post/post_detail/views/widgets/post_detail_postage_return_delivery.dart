@@ -11,11 +11,11 @@ class ReturnPosrtageAndExtraDetailsSection extends StatelessWidget {
   final PostEntity post;
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       children: <Widget>[
         // PostDetailPostageReturnSection(post: post),
-        const SelloutBankGuranterWidget(),
-        const ReturnPolicyDetails(),
+        SelloutBankGuranterWidget(),
+        ReturnPolicyDetails(),
       ],
     );
   }

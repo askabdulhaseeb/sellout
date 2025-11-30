@@ -66,8 +66,9 @@ class CategoriesModel extends CategoriesEntity {
       services = (mergedJson['services'] as List<dynamic>?)
           ?.map((e) => ServiceCategoryModel.fromMap(e))
           .toList();
-      if (services != null && services.isNotEmpty)
+      if (services != null && services.isNotEmpty) {
         populatedFields.add('serviceCategories');
+      }
     }
     // --- Clothes ---
 

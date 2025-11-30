@@ -8,7 +8,7 @@ class AppValidator {
     if (!RegExp(
             r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
         .hasMatch(value ?? '')) {
-      return 'invalid_value'.tr(args: ['email']);
+      return 'invalid_value'.tr(args: <String>['email']);
     }
     return null;
   }
@@ -46,13 +46,13 @@ class AppValidator {
   static String? greaterThen(String? input, double compairWith) {
     return ((double.tryParse(input ?? '0') ?? 0.0) > compairWith)
         ? null
-        : 'greater_than'.tr(args: [compairWith.toString()]);
+        : 'greater_than'.tr(args: <String>[compairWith.toString()]);
   }
 
   static String? lessThen(String? input, double compairWith) {
     return ((double.tryParse(input ?? '0') ?? (compairWith + 1)) < compairWith)
         ? null
-        : 'less_than'.tr(args: [compairWith.toString()]);
+        : 'less_than'.tr(args: <String>[compairWith.toString()]);
   }
 
   static String? confirmPassword(String first, String second) {

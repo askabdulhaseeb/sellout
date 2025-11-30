@@ -21,7 +21,7 @@ class FilterSheetDeliveryTypeTile extends StatelessWidget {
             Icons.keyboard_arrow_down_rounded,
             color: ColorScheme.of(context).outline,
           ),
-          value: pro.selectedDeliveryType,
+          initialValue: pro.selectedDeliveryType,
           isExpanded: true,
           hint: Text(
             'select_delivery_type'.tr(),

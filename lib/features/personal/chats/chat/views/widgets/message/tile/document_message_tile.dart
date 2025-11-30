@@ -62,10 +62,10 @@ class _DocumentTileState extends State<DocumentTile> {
       }
 
       final int contentLength = response.contentLength ?? 0;
-      final List<int> bytes = [];
+      final List<int> bytes = <int>[];
       int received = 0;
 
-      await response.stream.listen(
+      response.stream.listen(
         (List<int> newBytes) {
           bytes.addAll(newBytes);
           received += newBytes.length;
@@ -111,7 +111,7 @@ class _DocumentTileState extends State<DocumentTile> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return GestureDetector(
       onTap: _isDownloaded

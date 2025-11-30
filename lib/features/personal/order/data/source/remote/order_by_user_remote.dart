@@ -84,7 +84,7 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
   @override
   Future<DataState<List<OrderEntity>>> getOrderByOrderId(String? params) async {
     try {
-      final String endpoint = '/orders/${params}';
+      final String endpoint = '/orders/$params';
       // 🌐 Always hit network
       final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,

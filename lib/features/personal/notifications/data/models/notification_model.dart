@@ -33,7 +33,7 @@ class NotificationModel extends NotificationEntity {
   }
 
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'notification_id': notificationId,
       'user_id': userId,
       'type': type,

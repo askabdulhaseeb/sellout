@@ -45,7 +45,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
   @override
   Widget build(BuildContext context) {
     return PersonalScaffold(
-        body: Stack(children: [
+        body: Stack(children: <Widget>[
       SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         controller: _scrollController,

@@ -42,7 +42,7 @@ class CustomElevatedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final Color bgColorCore =
         isDisable ? colorScheme.outlineVariant : bgColor ?? colorScheme.primary;
 

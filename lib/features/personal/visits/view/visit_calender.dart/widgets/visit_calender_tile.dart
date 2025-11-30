@@ -8,7 +8,7 @@ import '../../../../user/profiles/domain/entities/user_entity.dart';
 import '../../../../user/profiles/domain/usecase/get_user_by_uid.dart';
 
 class VisitCalenderTile extends StatelessWidget {
-  const VisitCalenderTile({super.key, required this.visit});
+  const VisitCalenderTile({required this.visit, super.key});
   final VisitingEntity visit;
 
   @override
@@ -118,7 +118,7 @@ class VisitCalenderTile extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: <Widget>[
                 Container(height: 12, width: 100, color: Colors.grey.shade300),
                 const SizedBox(height: 4),
                 Container(height: 10, width: 140, color: Colors.grey.shade300),

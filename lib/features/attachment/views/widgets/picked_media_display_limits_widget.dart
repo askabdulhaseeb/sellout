@@ -52,7 +52,7 @@ class PickedMediaDisplayLimitsWidget extends StatelessWidget {
   Color _getContainerColor(
       BuildContext context, int selectedCount, int maxCount) {
     if (selectedCount == 0) {
-      return Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3);
+      return Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3);
     } else if (selectedCount < maxCount) {
       return Theme.of(context).colorScheme.primary.withOpacity(0.15);
     } else {
@@ -74,7 +74,7 @@ class PickedMediaDisplayLimitsWidget extends StatelessWidget {
       BuildContext context, int selectedCount, int maxCount) {
     if (selectedCount == 0) return null;
 
-    return [
+    return <BoxShadow>[
       BoxShadow(
         color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
         blurRadius: selectedCount == maxCount ? 12 : 6,

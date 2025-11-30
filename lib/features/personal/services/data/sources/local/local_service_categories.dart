@@ -33,7 +33,7 @@ class LocalServiceCategory {
 
   /// Save multiple service categories at once
   Future<void> saveAll(List<ServiceCategoryEntity> categories) async {
-    final Map<String, ServiceCategoryEntity> map = {
+    final Map<String, ServiceCategoryEntity> map = <String, ServiceCategoryEntity>{
       for (ServiceCategoryEntity category in categories)
         category.value: category,
     };

@@ -75,7 +75,7 @@ class ServicesPageProvider extends ChangeNotifier {
   }
 
   //
-  List<ServiceCategoryEntity> _serviceCategories = [];
+  final List<ServiceCategoryEntity> _serviceCategories = <ServiceCategoryEntity>[];
   List<ServiceCategoryEntity> get serviceCategories => _serviceCategories;
 
   //
@@ -125,7 +125,7 @@ class ServicesPageProvider extends ChangeNotifier {
     final DataState<List<ServiceCategoryEntity>> result =
         await _getServiceCategories.call(null);
     if (result is DataSuccess) {
-      _serviceCategories.addAll(result.entity ?? []);
+      _serviceCategories.addAll(result.entity ?? <ServiceCategoryEntity>[]);
     } else {}
     _setLoading(false);
   }

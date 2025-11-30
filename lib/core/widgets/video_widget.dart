@@ -32,7 +32,7 @@ class _VideoWidgetState extends State<VideoWidget> {
   bool _ended = false;
   bool _formatSupported = true;
 
-  static const supportedFormats = [
+  static const List<String> supportedFormats = <String>[
     'mp4',
     'mov',
     'mkv',
@@ -59,12 +59,12 @@ class _VideoWidgetState extends State<VideoWidget> {
       }
 
       if (url != null) {
-        final extension = url.split('.').last.toLowerCase();
+        final String extension = url.split('.').last.toLowerCase();
         if (!supportedFormats.contains(extension)) {
           // Check header type if available
           try {
-            final response = await http.head(Uri.parse(url));
-            final contentType = response.headers['content-type'] ?? '';
+            final http.Response response = await http.head(Uri.parse(url));
+            final String contentType = response.headers['content-type'] ?? '';
             if (!contentType.startsWith('video/')) {
               setState(() {
                 _formatSupported = false;
@@ -117,7 +117,7 @@ class _VideoWidgetState extends State<VideoWidget> {
 
       _controller!.addListener(() {
         if (mounted) {
-          final v = _controller!.value;
+          final VideoPlayerValue v = _controller!.value;
           if (v.position >= v.duration && !v.isPlaying && !_ended) {
             setState(() => _ended = true);
           }
@@ -167,18 +167,18 @@ class _VideoWidgetState extends State<VideoWidget> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    final aspectRatio = widget.square
+    final double aspectRatio = widget.square
         ? 1.0
         : (_controller!.value.aspectRatio == 0
             ? 16 / 9
             : _controller!.value.aspectRatio);
 
-    final position = _controller!.value.position;
-    final duration = _controller!.value.duration;
+    final Duration position = _controller!.value.position;
+    final Duration duration = _controller!.value.duration;
 
     return Stack(
       alignment: Alignment.center,
-      children: [
+      children: <Widget>[
         AspectRatio(
           aspectRatio: aspectRatio,
           child: VideoPlayer(_controller!),

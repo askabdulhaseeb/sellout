@@ -4,6 +4,20 @@ part 'address_entity.g.dart';
 
 @HiveType(typeId: 6)
 class AddressEntity {
+
+  AddressEntity({
+    required this.addressID,
+    required this.phoneNumber,
+    required this.recipientName,
+    required this.address1,
+    required this.address2,
+    required this.category,
+    required this.postalCode,
+    required this.city,
+    required this.state,
+    required this.country,
+    required this.isDefault,
+  });
   AddressEntity copyWith({
     String? addressID,
     String? phoneNumber,
@@ -31,20 +45,6 @@ class AddressEntity {
       isDefault: isDefault ?? this.isDefault,
     );
   }
-
-  AddressEntity({
-    required this.addressID,
-    required this.phoneNumber,
-    required this.recipientName,
-    required this.address1,
-    required this.address2,
-    required this.category,
-    required this.postalCode,
-    required this.city,
-    required this.state,
-    required this.country,
-    required this.isDefault,
-  });
 
   @HiveField(0)
   final String addressID;

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 
 class StripeOnboardingScreen extends StatefulWidget {
-  final String url;
   const StripeOnboardingScreen({super.key, required this.url});
+  final String url;
 
   @override
   State<StripeOnboardingScreen> createState() => _StripeOnboardingScreenState();

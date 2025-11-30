@@ -138,7 +138,7 @@ class _PriceBreakdown extends StatelessWidget {
           ),
         ),
 
-        if ((shippingPrice ?? 0.0) > 0) ...[
+        if ((shippingPrice ?? 0.0) > 0) ...<Widget>[
           const SizedBox(height: 4),
           Text(
             '${'shipping'.tr()}: $currency${shippingPrice?.toStringAsFixed(2) ?? '0.00'}',

@@ -20,7 +20,7 @@ class ServiceTypeEntity {
   @HiveField(1)
   final String label;
 
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toMap() => <String, dynamic>{
         'value': value,
         'label': label,
       };

@@ -94,8 +94,9 @@ class ProfileHeaderSection extends StatelessWidget {
                 Consumer<ProfileProvider>(
                   builder: (BuildContext context, ProfileProvider provider, Widget? child) {
                     final CurrentUserEntity? user = LocalAuth.currentUser;
-                    if ((user?.bio ?? '').isEmpty)
+                    if ((user?.bio ?? '').isEmpty) {
                       return const SizedBox.shrink();
+                    }
                     return Text(
                       user?.bio ?? '',
                       maxLines: 4,

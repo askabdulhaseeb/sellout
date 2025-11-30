@@ -262,7 +262,7 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
                         formPro.packageHeight.text = d[2].toString();
                       },
                     );
-                  }).toList(),
+                  }),
 
                   // Fourth tile: Custom size (inputs)
                   CustomSizeTile(formPro: formPro),

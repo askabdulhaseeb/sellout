@@ -1,4 +1,13 @@
 class SubmitShippingParam {
+
+  factory SubmitShippingParam.fromJson(Map<String, dynamic> json) {
+    return SubmitShippingParam(
+      shipping: (json['shipping'] as List<dynamic>)
+          .map((dynamic e) =>
+              ShippingItemParam.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+  }
   SubmitShippingParam({required this.shipping});
 
   final List<ShippingItemParam> shipping;
@@ -9,20 +18,18 @@ class SubmitShippingParam {
     };
   }
 
-  factory SubmitShippingParam.fromJson(Map<String, dynamic> json) {
-    return SubmitShippingParam(
-      shipping: (json['shipping'] as List<dynamic>)
-          .map((dynamic e) =>
-              ShippingItemParam.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
-  }
-
   @override
   String toString() => 'SubmitShippingParam(shipping: $shipping)';
 }
 
 class ShippingItemParam {
+
+  factory ShippingItemParam.fromJson(Map<String, dynamic> json) {
+    return ShippingItemParam(
+      cartItemId: json['cart_item_id'] ?? '',
+      objectId: json['object_id'] ?? '',
+    );
+  }
   ShippingItemParam({
     required this.cartItemId,
     required this.objectId,
@@ -36,13 +43,6 @@ class ShippingItemParam {
       'cart_item_id': cartItemId,
       'object_id': objectId,
     };
-  }
-
-  factory ShippingItemParam.fromJson(Map<String, dynamic> json) {
-    return ShippingItemParam(
-      cartItemId: json['cart_item_id'] ?? '',
-      objectId: json['object_id'] ?? '',
-    );
   }
 
   @override

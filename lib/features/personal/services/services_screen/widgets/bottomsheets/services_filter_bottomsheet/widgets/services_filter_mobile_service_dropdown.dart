@@ -20,7 +20,7 @@ class FilterSheetMobileServiceTile extends StatelessWidget {
               Icons.keyboard_arrow_down_rounded,
               color: ColorScheme.of(context).outline,
             ),
-            value: pro.selectedIsMobileService,
+            initialValue: pro.selectedIsMobileService,
             isExpanded: true,
             decoration: const InputDecoration(
               border: InputBorder.none,

@@ -78,7 +78,7 @@ class WeightUnitSync {
   String _format(double value) {
     final String s =
         (value >= 10 ? value.toStringAsFixed(1) : value.toStringAsFixed(2))
-            .replaceAll(RegExp(r"\.0+"), '');
+            .replaceAll(RegExp(r'\.0+'), '');
     return s;
   }
 }
