@@ -34,7 +34,8 @@ class NominationLocationModel extends NominationLocationEntity {
       displayName: map['display_name'] as String,
       type: map['type'] as String,
       address: map['address'] != null
-          ? AddressModel.fromJson(map['address'] as Map<String, dynamic>)
+          ? NominationAddressModel.fromJson(
+              map['address'] as Map<String, dynamic>)
           : null,
       boundingBox: map['boundingbox'] != null
           ? BoundingBoxModel.fromJson(map['boundingbox'] as List<dynamic>)
@@ -46,8 +47,8 @@ class NominationLocationModel extends NominationLocationEntity {
       NominationLocationModel.fromJson(json.decode(str));
 }
 
-class AddressModel extends AddressEntity {
-  AddressModel({
+class NominationAddressModel extends NominationAddressEntity {
+  NominationAddressModel({
     super.city,
     super.county,
     super.state,
@@ -55,8 +56,8 @@ class AddressModel extends AddressEntity {
     super.countryCode,
   });
 
-  factory AddressModel.fromJson(Map<String, dynamic> map) {
-    return AddressModel(
+  factory NominationAddressModel.fromJson(Map<String, dynamic> map) {
+    return NominationAddressModel(
       city: map['city'] as String?,
       county: map['county'] as String?,
       state: map['state'] as String?,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../features/personal/basket/domain/entities/cart/postage_detail_response_entity.dart';
 import '../../../features/personal/basket/views/providers/cart_provider.dart';
+import '../../../features/postage/domain/entities/postage_detail_response_entity.dart';
 import 'widgets/postage_header.dart';
 import 'widgets/postage_item_card.dart';
 

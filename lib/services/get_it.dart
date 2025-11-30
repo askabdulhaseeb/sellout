@@ -96,11 +96,9 @@ import '../features/personal/basket/data/sources/remote/cart_remote_api.dart';
 import '../features/personal/basket/data/sources/remote/checkout_remote_api.dart';
 import '../features/personal/basket/domain/repositories/cart_repository.dart';
 import '../features/personal/basket/domain/repositories/checkout_repository.dart';
-import '../features/personal/basket/domain/usecase/cart/add_shipping_usecase.dart';
 import '../features/personal/basket/domain/usecase/cart/cart_item_status_update_usecase.dart';
 import '../features/personal/basket/domain/usecase/cart/cart_update_qty_usecase.dart';
 import '../features/personal/basket/domain/usecase/cart/get_cart_usecase.dart';
-import '../features/personal/basket/domain/usecase/cart/get_postage_detail_usecase.dart';
 import '../features/personal/basket/domain/usecase/cart/remove_from_cart_usecase.dart';
 import '../features/personal/basket/domain/usecase/checkout/pay_intent_usecase.dart';
 import '../features/personal/basket/views/providers/cart_provider.dart';
@@ -206,6 +204,8 @@ import '../features/personal/user/profiles/views/providers/profile_provider.dart
 import '../features/postage/data/repository/postage_repository_impl.dart';
 import '../features/postage/data/source/remote/postage_remote_source.dart';
 import '../features/postage/domain/repository/postage_repository.dart';
+import '../features/postage/domain/usecase/add_shipping_usecase.dart';
+import '../features/postage/domain/usecase/get_postage_detail_usecase.dart';
 
 final GetIt locator = GetIt.instance;
 
