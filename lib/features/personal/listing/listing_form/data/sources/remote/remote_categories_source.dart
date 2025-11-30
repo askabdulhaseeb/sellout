@@ -1,6 +1,5 @@
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/api_call.dart';
-import '../../../../../../../core/sources/data_state.dart';
 
 abstract interface class RemoteCategoriesSource {
   Future<DataState<String>> fetchCategoriesFromApi(String endpoint);

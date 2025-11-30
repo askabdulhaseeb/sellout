@@ -203,6 +203,9 @@ import '../features/personal/user/profiles/domain/usecase/get_post_by_id_usecase
 import '../features/personal/user/profiles/domain/usecase/get_user_by_uid.dart';
 import '../features/personal/order/domain/usecase/update_order_usecase.dart';
 import '../features/personal/user/profiles/views/providers/profile_provider.dart';
+import '../features/postage/data/repository/postage_repository_impl.dart';
+import '../features/postage/data/source/remote/postage_remote_source.dart';
+import '../features/postage/domain/repository/postage_repository.dart';
 
 final GetIt locator = GetIt.instance;
 
@@ -234,6 +237,7 @@ void setupLocator() {
   _categories();
   _quote();
   _payment();
+  _postage();
 }
 
 void _auth() {
@@ -423,10 +427,6 @@ void _cart() {
   locator.registerFactory<CartRemoteAPI>(() => CartRemoteAPIImpl());
   locator.registerFactory<CartRepository>(() => CartRepositoryImpl(locator()));
   locator.registerFactory<GetCartUsecase>(() => GetCartUsecase(locator()));
-  locator.registerFactory<GetPostageDetailUsecase>(
-      () => GetPostageDetailUsecase(locator()));
-  locator
-      .registerFactory<AddShippingUsecase>(() => AddShippingUsecase(locator()));
   locator.registerFactory<CartItemStatusUpdateUsecase>(
       () => CartItemStatusUpdateUsecase(locator()));
   locator.registerFactory<RemoveFromCartUsecase>(
@@ -753,4 +753,14 @@ void _payment() {
       () => PaymentRepositoryImpl(locator()));
   locator.registerFactory<GetExchangeRateUsecase>(
       () => GetExchangeRateUsecase(locator()));
+}
+
+void _postage() {
+  locator.registerFactory<PostageRemoteApi>(() => PostageRemoteApiImpl());
+  locator.registerFactory<PostageRepository>(
+      () => PostageRepositoryImpl(locator()));
+  locator.registerFactory<GetPostageDetailUsecase>(
+      () => GetPostageDetailUsecase(locator()));
+  locator
+      .registerFactory<AddShippingUsecase>(() => AddShippingUsecase(locator()));
 }
