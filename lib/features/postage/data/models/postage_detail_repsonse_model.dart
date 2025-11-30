@@ -1,6 +1,6 @@
 import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../personal/auth/signin/data/models/address_model.dart';
-import '../../../personal/basket/domain/entities/cart/postage_detail_response_entity.dart';
+import '../../domain/entities/postage_detail_response_entity.dart';
 
 class PostageDetailResponseModel extends PostageDetailResponseEntity {
   PostageDetailResponseModel({
@@ -101,9 +101,7 @@ class PostageItemDetailModel extends PostageItemDetailEntity {
           ? json['package_detail']
           : <String, dynamic>{},
       fromAddress: AddressModel.fromJson(
-          json['fromAddress'] is Map<String, dynamic>
-              ? json['fromAddress']
-              : <String, dynamic>{}),
+          json['fromAddress']),
       toAddress: AddressModel.fromJson(json['toAddress'] is Map<String, dynamic>
           ? json['toAddress']
           : <String, dynamic>{}),

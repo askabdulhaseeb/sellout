@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import '../../../../../../../../core/bottom_sheets/postage/postage_bottom_sheet.dart';
 import '../../../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../../../core/widgets/shadow_container.dart';
+import '../../../../../../../postage/domain/entities/postage_detail_response_entity.dart';
 import '../../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../../post/domain/entities/post/post_entity.dart';
-import '../../../../../domain/entities/cart/postage_detail_response_entity.dart';
 import '../../../../../domain/param/submit_shipping_param.dart';
 import '../../../../providers/cart_provider.dart';
 

@@ -1,13 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../core/helper_functions/country_helper.dart';
-import '../../../../../../core/sources/api_call.dart';
-import '../../../../../../services/get_it.dart';
 import '../../../personal/auth/signin/data/sources/local/local_auth.dart';
-import '../../../personal/location/domain/entities/nomaintioon_location_entity/nomination_location_entity.dart';
+import '../../../personal/auth/signin/domain/entities/address_entity.dart';
 import '../../../personal/payment/domain/entities/exchange_rate_entity.dart';
 import '../../../personal/payment/domain/params/get_exchange_rate_params.dart';
 import '../../../personal/payment/domain/usecase/get_exchange_rate_usecase.dart';
+import '../../../../../../core/sources/api_call.dart';
+import '../../../../../../services/get_it.dart';
 
 class PostageDetailResponseEntity {
   PostageDetailResponseEntity({
