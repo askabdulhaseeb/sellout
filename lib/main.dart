@@ -1,18 +1,18 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'core/sockets/socket_service.dart';
 import 'core/theme/app_theme.dart';
-import 'services/app_data_services.dart';
+import 'services/app_data_service.dart';
 import 'services/app_providers.dart';
 import 'core/sources/local/hive_db.dart';
 import 'core/utilities/app_localization.dart';
 import 'services/get_it.dart';
 import 'routes/app_linking.dart';
 import 'routes/app_routes.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

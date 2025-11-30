@@ -7,6 +7,10 @@ import '../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../services/get_it.dart';
 import '../../../../business/core/domain/usecase/get_business_by_id_usecase.dart';
+import '../../../../postage/domain/params/add_lable_params.dart';
+import '../../../../postage/domain/params/add_postage_label_params.dart';
+import '../../../../postage/domain/usecase/buy_label_usecsae.dart';
+import '../../../../postage/domain/usecase/buy_postage_label_usecase.dart';
 import '../../../auth/signin/domain/entities/address_entity.dart';
 import '../../../chats/create_chat/view/provider/create_private_chat_provider.dart';
 import '../../../post/domain/usecase/get_specific_post_usecase.dart';
@@ -273,6 +277,28 @@ class OrderActionButtonsList extends StatelessWidget {
                 color: order.orderStatus.color,
                 onTap: () => orderPro.updateSellerOrder(
                     order.orderId, StatusType.processing),
+              ),
+            if (order.orderStatus == StatusType.processing &&
+                order.deliveryPaidBy == 'buyer')
+              OrderActionButton(
+                isLoading: false,
+                keyName: 'buy_label'.tr(),
+                color: order.orderStatus.color,
+                onTap: () {
+                  BuyLabelUsecase(locator())
+                      .call(BuyLabelParams(orderId: order.orderId));
+                },
+              ),
+            if (order.orderStatus == StatusType.processing &&
+                order.deliveryPaidBy == 'seller')
+              OrderActionButton(
+                isLoading: false,
+                keyName: 'choose_postage',
+                color: order.orderStatus.color,
+                onTap: () {
+                  BuyPostageLabelUsecase(locator())
+                      .call(BuyPostageLabelParams(objectId: order.orderId));
+                },
               ),
             if (order.orderStatus == StatusType.delivered)
               OrderActionButton(

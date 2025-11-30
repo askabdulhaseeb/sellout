@@ -6,6 +6,8 @@ import '../../../../personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../../../personal/basket/data/models/cart/add_shipping_response_model.dart';
 import '../../../../personal/basket/domain/param/get_postage_detail_params.dart';
 import '../../../../personal/basket/domain/param/submit_shipping_param.dart';
+import '../../../domain/params/add_lable_params.dart';
+import '../../../domain/params/add_postage_label_params.dart';
 import '../../models/postage_detail_repsonse_model.dart';
 
 abstract interface class PostageRemoteApi {
@@ -13,6 +15,8 @@ abstract interface class PostageRemoteApi {
       GetPostageDetailParam param);
   Future<DataState<AddShippingResponseModel>> addShipping(
       SubmitShippingParam param);
+  Future<DataState<bool>> buyPostageLabel(BuyPostageLabelParams param);
+  Future<DataState<bool>> buylabel(BuyLabelParams param);
 }
 
 class PostageRemoteApiImpl implements PostageRemoteApi {
@@ -146,6 +150,86 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
       );
       return DataFailer<AddShippingResponseModel>(
           CustomException(e.toString()));
+    }
+  }
+
+  @override
+  Future<DataState<bool>> buyPostageLabel(BuyPostageLabelParams param) async {
+    try {
+      debugPrint(LocalAuth.token);
+      const String endpoint = '/postage/buy/label';
+      final DataState<String> result = await ApiCall<String>().call(
+        endpoint: endpoint,
+        isAuth: true,
+        requestType: ApiRequestType.post,
+        body: jsonEncode(param.toJson()),
+      );
+      if (result is DataSuccess<bool>) {
+        final String raw = result.data ?? '';
+        AppLog.info(
+          param.toJson().toString(),
+          name: 'PostageRemoteApiImpl.buyPostageLabel - If',
+        );
+
+        AppLog.info('Fetched postage details',
+            name: 'PostageRemoteApiImpl.buyPostageLabel - Success');
+        return DataSuccess<bool>(raw, true);
+      } else {
+        AppLog.error(
+          '',
+          name: 'PostageRemoteApiImpl.buyPostageLabel - Else',
+          error: result.exception?.reason ?? 'something_wrong'.tr(),
+        );
+        return DataFailer<bool>(
+            CustomException('Failed to get postage details'));
+      }
+    } catch (e) {
+      AppLog.error(
+        e.toString(),
+        name: 'PostageRemoteApiImpl.buyPostageLabel - Catch',
+        error: e,
+      );
+      return DataFailer<bool>(CustomException(e.toString()));
+    }
+  }
+
+  @override
+  Future<DataState<bool>> buylabel(BuyLabelParams param) async {
+    try {
+      debugPrint(LocalAuth.token);
+      const String endpoint = '/order/buy/label';
+      final DataState<String> result = await ApiCall<String>().call(
+        endpoint: endpoint,
+        isAuth: true,
+        requestType: ApiRequestType.post,
+        body: jsonEncode(param.toJson()),
+      );
+      if (result is DataSuccess<bool>) {
+        final String raw = result.data ?? '';
+        AppLog.info(
+          param.toJson().toString(),
+          name: 'PostageRemoteApiImpl.buyPostageLabel - If',
+        );
+
+        AppLog.info('Fetched postage details',
+            name: 'PostageRemoteApiImpl.buyPostageLabel - Success');
+        return DataSuccess<bool>(raw, true);
+      } else {
+        AppLog.error(
+          '',
+          name: 'PostageRemoteApiImpl.buyPostageLabel - Else',
+          error: result.exception?.reason ?? 'something_wrong'.tr(),
+        );
+        return DataFailer<bool>(
+            CustomException('Failed to get postage details'));
+      }
+    } catch (e) {
+      AppLog.error(
+        e.toString(),
+        name: 'PostageRemoteApiImpl.buyPostageLabel - Catch',
+        error: e,
+      );
+      return DataFailer<bool>(CustomException(e.toString()));
     }
   }
 }
