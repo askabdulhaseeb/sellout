@@ -29,13 +29,16 @@ class OrderPaymentDetailEntityAdapter
       sellerId: fields[8] as String,
       postCurrency: fields[9] as String,
       deliveryPrice: fields[10] as double,
+      convertedPrice: fields[11] as double,
+      netChargePerItem: fields[12] as double,
+      buyerCurrency: fields[13] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, OrderPaymentDetailEntity obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(14)
       ..writeByte(0)
       ..write(obj.method)
       ..writeByte(1)
@@ -57,7 +60,13 @@ class OrderPaymentDetailEntityAdapter
       ..writeByte(9)
       ..write(obj.postCurrency)
       ..writeByte(10)
-      ..write(obj.deliveryPrice);
+      ..write(obj.deliveryPrice)
+      ..writeByte(11)
+      ..write(obj.convertedPrice)
+      ..writeByte(12)
+      ..write(obj.netChargePerItem)
+      ..writeByte(13)
+      ..write(obj.buyerCurrency);
   }
 
   @override

@@ -15,6 +15,9 @@ class OrderPaymentDetailEntity {
     required this.sellerId,
     required this.postCurrency,
     required this.deliveryPrice,
+    required this.convertedPrice,
+    required this.netChargePerItem,
+    required this.buyerCurrency,
   });
 
   @HiveField(0)
@@ -49,4 +52,13 @@ class OrderPaymentDetailEntity {
 
   @HiveField(10)
   final double deliveryPrice;
+
+  @HiveField(11)
+  final double convertedPrice;
+
+  @HiveField(12)
+  final double netChargePerItem;
+
+  @HiveField(13)
+  final String buyerCurrency;
 }

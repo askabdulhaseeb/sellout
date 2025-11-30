@@ -92,7 +92,6 @@ class OrderEntity {
 
   @HiveField(20)
   final String? deliveryPaidBy;
-
   OrderEntity copyWith({
     String? orderId,
     String? buyerId,
