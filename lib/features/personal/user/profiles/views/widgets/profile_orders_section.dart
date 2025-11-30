@@ -103,7 +103,6 @@ class _ProfileOrdersSectionState extends State<ProfileOrdersSection> {
                     final OrderEntity order = pro.orders[index];
                     return SellerOrderTile(
                       order: order,
-                      selectedStatus: pro.status,
                     );
                   },
                 ),

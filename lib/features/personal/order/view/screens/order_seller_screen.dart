@@ -269,10 +269,10 @@ class OrderActionButtonsList extends StatelessWidget {
             if (order.orderStatus == StatusType.pending)
               OrderActionButton(
                 isLoading: orderPro.isLoading,
-                keyName: 'post_now',
+                keyName: 'start_order',
                 color: order.orderStatus.color,
                 onTap: () => orderPro.updateSellerOrder(
-                    order.orderId, StatusType.delivered),
+                    order.orderId, StatusType.processing),
               ),
             if (order.orderStatus == StatusType.delivered)
               OrderActionButton(

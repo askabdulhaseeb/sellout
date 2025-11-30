@@ -1,8 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../core/enums/core/status_type.dart';
+import '../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../routes/app_linking.dart';
+import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../order/view/screens/order_seller_screen.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
 
@@ -12,15 +14,15 @@ import '../../../../../post/domain/entities/post/post_entity.dart';
 class SellerOrderTile extends StatelessWidget {
   const SellerOrderTile({
     required this.order,
-    required this.selectedStatus,
     super.key,
   });
 
   final OrderEntity order;
-  final StatusType selectedStatus;
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('Building SellerOrderTile for orderId: ${LocalAuth.token}');
+    final StatusType selectedStatus = order.orderStatus;
     return FutureBuilder<PostEntity?>(
       future: LocalPost().getPost(order.postId),
       builder: (BuildContext context, AsyncSnapshot<PostEntity?> snapshot) {
@@ -66,7 +68,7 @@ class SellerOrderTile extends StatelessWidget {
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
                       Text(
-                        '\$${order.price}',
+                        '${CountryHelper.currencySymbolHelper(order.paymentDetail.postCurrency)} ${order.paymentDetail.price}',
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
                       if (selectedStatus == StatusType.delivered)

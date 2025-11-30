@@ -14,8 +14,12 @@ class OrderPaymentDetailModel extends OrderPaymentDetailEntity {
       sellerId: entity.sellerId,
       postCurrency: entity.postCurrency,
       deliveryPrice: entity.deliveryPrice,
+      convertedPrice: entity.convertedPrice,
+      netChargePerItem: entity.netChargePerItem,
+      buyerCurrency: entity.buyerCurrency,
     );
   }
+
   const OrderPaymentDetailModel({
     required super.method,
     required super.status,
@@ -28,6 +32,9 @@ class OrderPaymentDetailModel extends OrderPaymentDetailEntity {
     required super.sellerId,
     required super.postCurrency,
     required super.deliveryPrice,
+    required super.convertedPrice,
+    required super.netChargePerItem,
+    required super.buyerCurrency,
   });
 
   factory OrderPaymentDetailModel.fromJson(Map<String, dynamic> json) {
@@ -49,6 +56,13 @@ class OrderPaymentDetailModel extends OrderPaymentDetailEntity {
       deliveryPrice: (json['delivery_price'] is num)
           ? (json['delivery_price'] as num).toDouble()
           : 0.0,
+      convertedPrice: (json['converted_price'] is num)
+          ? (json['converted_price'] as num).toDouble()
+          : 0.0,
+      netChargePerItem: (json['net_charge_per_item'] is num)
+          ? (json['net_charge_per_item'] as num).toDouble()
+          : 0.0,
+      buyerCurrency: json['buyer_currency'] ?? '',
     );
   }
 
@@ -65,6 +79,9 @@ class OrderPaymentDetailModel extends OrderPaymentDetailEntity {
       'seller_id': sellerId,
       'post_currency': postCurrency,
       'delivery_price': deliveryPrice,
+      'converted_price': convertedPrice,
+      'net_charge_per_item': netChargePerItem,
+      'buyer_currency': buyerCurrency,
     };
   }
 }
