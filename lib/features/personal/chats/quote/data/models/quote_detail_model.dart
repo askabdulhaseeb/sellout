@@ -1,9 +1,7 @@
-import 'package:hive/hive.dart';
 import '../../../../../../core/enums/core/status_type.dart';
 import '../../domain/entites/quote_detail_entity.dart';
 import 'service_employee_model.dart';
 
-@HiveType(typeId: 21)
 class QuoteDetailModel extends QuoteDetailEntity {
   QuoteDetailModel({
     required super.serviceEmployee,

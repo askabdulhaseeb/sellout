@@ -18,12 +18,13 @@ class SimplePostageSection extends StatefulWidget {
 }
 
 class SimplePostageSectionState extends State<SimplePostageSection> {
-  // Fetch posts from local storage
   Future<Map<String, PostEntity?>> _getPosts(CartProvider cartPro) async {
     await LocalPost.openBox;
     final Map<String, PostEntity?> posts = <String, PostEntity?>{};
-    for (final String id in cartPro.postageResponseEntity!.detail.keys) {
-      posts[id] = await LocalPost().getPost(id, silentUpdate: true);
+    for (final PostageItemDetailEntity detail
+        in cartPro.postageResponseEntity!.detail) {
+      posts[detail.cartItemId] =
+          await LocalPost().getPost(detail.postId, silentUpdate: true);
     }
     return posts;
   }
@@ -32,35 +33,29 @@ class SimplePostageSectionState extends State<SimplePostageSection> {
     final Map<String, String> prices = <String, String>{};
     final PostageDetailResponseEntity? postage = cartPro.postageResponseEntity;
     if (postage == null) return prices;
-    // Build a lookup map for cartItemId -> PostageItemDetailEntity
-    final Map<String, PostageItemDetailEntity> detailByCartId =
+
+    final Map<String, PostageItemDetailEntity> detailById =
         <String, PostageItemDetailEntity>{
-      for (final PostageItemDetailEntity detail in postage.detail.values)
-        detail.cartItemId: detail
+      for (final PostageItemDetailEntity d in postage.detail) d.cartItemId: d
     };
+
     for (final ShippingItemParam item in cartPro.selectedShippingItems) {
-      final String cartItemId = item.cartItemId;
-      final String objectId = item.objectId;
-      final PostageItemDetailEntity? detail = detailByCartId[cartItemId];
+      final PostageItemDetailEntity? detail = detailById[item.cartItemId];
       if (detail == null) continue;
-      final Iterable<RateEntity> allRates = detail.shippingDetails
-          .expand((PostageDetailShippingDetailEntity sd) => sd.ratesBuffered);
-      final RateEntity? rate = allRates.cast<RateEntity?>().firstWhere(
-            (RateEntity? rate) => rate?.objectId == objectId,
-            orElse: () => null,
-          );
-      if (rate == null) continue;
-      prices[cartItemId] = await rate.getPriceStr();
+      final RateEntity rate = detail.shippingDetails
+          .expand((PostageDetailShippingDetailEntity sd) => sd.ratesBuffered)
+          .where((RateEntity r) => r.objectId == item.objectId)
+          .first; // Safe fallback
+      prices[item.cartItemId] = await rate.getPriceStr();
     }
+
     return prices;
   }
 
   @override
   Widget build(BuildContext context) {
     final CartProvider cartPro = context.watch<CartProvider>();
-    if (cartPro.postageResponseEntity == null) {
-      return const SizedBox.shrink();
-    }
+    if (cartPro.postageResponseEntity == null) return const SizedBox.shrink();
     final bool isLoading = cartPro.loadingPostage;
 
     return InkWell(
@@ -76,7 +71,6 @@ class SimplePostageSectionState extends State<SimplePostageSection> {
             ),
             builder: (_) => const PostageBottomSheet(),
           );
-          // No need to call setState, provider will notify
         }
       },
       child: ShadowContainer(
@@ -109,48 +103,48 @@ class SimplePostageSectionState extends State<SimplePostageSection> {
                     future: _getConvertedPrices(cartPro),
                     builder:
                         (_, AsyncSnapshot<Map<String, String>> snapPrices) {
-                      if (!snapPrices.hasData) {
-                        return const SizedBox.shrink();
-                      }
+                      if (!snapPrices.hasData) return const SizedBox.shrink();
                       final Map<String, String> prices = snapPrices.data!;
                       final List<Widget> items = <Widget>[];
-                      // Show all products, not just those in selectedShippingItems
+
                       for (final PostageItemDetailEntity detail
-                          in cartPro.postageResponseEntity!.detail.values) {
-                        final String cartItemId = detail.cartItemId;
-                        final String title = posts[detail.postId]?.title ??
-                            'unknown_product'.tr();
-                        final String? priceStr = prices[cartItemId];
-                        final DeliveryType deliveryType =
-                            detail.originalDeliveryType;
-                        final bool isFree =
-                            deliveryType == DeliveryType.freeDelivery;
+                          in cartPro.postageResponseEntity!.detail) {
+                        final String cartId = detail.cartItemId;
+                        final String title =
+                            posts[cartId]?.title ?? 'unknown_product'.tr();
+                        final DeliveryType type = detail.originalDeliveryType;
+                        final bool isFree = type == DeliveryType.freeDelivery;
                         final bool isFast =
-                            deliveryType == DeliveryType.fastDelivery;
-                        final bool isPaid = deliveryType == DeliveryType.paid;
+                            detail.fastDelivery.requested == true;
+                        final bool isPaid = type == DeliveryType.paid;
                         final bool needsRates = isPaid || isFast;
-                        if (priceStr != null) {
-                          items.add(_row(title, priceStr, context));
+
+                        String text;
+                        bool italic = false;
+                        Color? color;
+
+                        if (prices.containsKey(cartId)) {
+                          text = prices[cartId]!;
                         } else if (needsRates) {
-                          // Paid or fast delivery but no rates: show remove item message
-                          items.add(_row(
-                              title,
-                              'remove_item_cart_continue_checkout'.tr(),
-                              context,
-                              italic: true,
-                              color: Theme.of(context).colorScheme.error));
+                          text = 'remove_item_cart_continue_checkout'.tr();
+                          italic = true;
+                          color = Theme.of(context).colorScheme.error;
                         } else if (isFree && !isFast) {
-                          // Free delivery and not fast: show free
-                          items.add(
-                              _row(title, 'free'.tr(), context, italic: true));
+                          text = 'free'.tr();
+                          italic = true;
+                        } else {
+                          text = '';
+                        }
+
+                        if (text.isNotEmpty) {
+                          items.add(_row(title, text, context,
+                              italic: italic, color: color));
                         }
                       }
 
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          ...items,
-                        ],
+                        children: items,
                       );
                     },
                   );
