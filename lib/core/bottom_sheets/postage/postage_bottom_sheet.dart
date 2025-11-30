@@ -17,8 +17,7 @@ class _PostageBottomSheetState extends State<PostageBottomSheet> {
   Widget build(BuildContext context) {
     final CartProvider cartPro = context.read<CartProvider>();
     final PostageDetailResponseEntity? postage = cartPro.postageResponseEntity;
-    final List<MapEntry<String, PostageItemDetailEntity>>? entries =
-        postage?.detail.entries.toList();
+    final List<PostageItemDetailEntity>? entries = postage?.detail;
 
     if (postage == null || entries == null || entries.isEmpty) {
       return SafeArea(
@@ -61,8 +60,8 @@ class _PostageBottomSheetState extends State<PostageBottomSheet> {
                 itemCount: entries.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 8),
                 itemBuilder: (BuildContext context, int index) {
-                  final String cartItemId = entries[index].value.cartItemId;
-                  final PostageItemDetailEntity detail = entries[index].value;
+                  final String cartItemId = entries[index].cartItemId;
+                  final PostageItemDetailEntity detail = entries[index];
                   return PostageItemCard(
                     cartItemId: cartItemId,
                     detail: detail,

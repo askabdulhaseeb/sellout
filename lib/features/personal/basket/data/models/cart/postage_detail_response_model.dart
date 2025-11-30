@@ -2,6 +2,7 @@ import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../auth/signin/data/models/address_model.dart';
 import '../../../domain/entities/cart/postage_detail_response_entity.dart';
 
+
 class PostageDetailResponseModel extends PostageDetailResponseEntity {
   PostageDetailResponseModel({
     required super.success,
@@ -14,18 +15,14 @@ class PostageDetailResponseModel extends PostageDetailResponseEntity {
   factory PostageDetailResponseModel.fromJson(Map<String, dynamic> json) {
     return PostageDetailResponseModel(
       success: json['success'] ?? false,
-      detail: json['detail'] == null
-          ? {}
-          : Map<String, PostageItemDetailEntity>.from(
-              (json['detail'] as Map).map(
-                (key, value) => MapEntry(
-                  key as String,
-                  PostageItemDetailModel.fromJson(value is Map<String, dynamic>
-                      ? value
-                      : <String, dynamic>{}),
-                ),
-              ),
-            ),
+    detail: json['detail'] != null && json['detail'] is Map
+    ? (json['detail'] as Map<String, dynamic>)
+        .values
+        .map((e) => PostageItemDetailModel.fromJson(
+            e is Map<String, dynamic> ? e : <String, dynamic>{}))
+        .toList()
+    : <PostageItemDetailModel>[],
+
       summary: PostageDetailSummaryModel.fromJson(
           json['summary'] is Map<String, dynamic>
               ? json['summary']
@@ -38,8 +35,9 @@ class PostageDetailResponseModel extends PostageDetailResponseEntity {
   Map<String, dynamic> toJson() => <String, dynamic>{
         'success': success,
         'summary': (summary as PostageDetailSummaryModel).toJson(),
-        'detail': detail.map((key, value) =>
-            MapEntry(key, (value as PostageItemDetailModel).toJson())),
+        'detail': detail
+            .map((e) => (e as PostageItemDetailModel).toJson())
+            .toList(),
         'cached_at': cachedAt,
         'cache_key': cacheKey,
       };
@@ -109,10 +107,11 @@ class PostageItemDetailModel extends PostageItemDetailEntity {
           json['fromAddress'] is Map<String, dynamic>
               ? json['fromAddress']
               : <String, dynamic>{}),
-      toAddress: AddressModel.fromJson(json['toAddress'] is Map<String, dynamic>
-          ? json['toAddress']
-          : <String, dynamic>{}),
-      sellerId: json['seller_id'],
+      toAddress: AddressModel.fromJson(
+          json['toAddress'] is Map<String, dynamic>
+              ? json['toAddress']
+              : <String, dynamic>{}),
+      sellerId: json['seller_id'] ?? '',
       itemCount: json['item_count'] ?? 0,
       totalQuantity: json['total_quantity'] ?? 0,
       parcelCount: json['parcel_count'] ?? 0,
@@ -160,6 +159,8 @@ class PostageItemDetailModel extends PostageItemDetailEntity {
       };
 }
 
+// ---------------------- OTHER MODELS (unchanged) ----------------------
+
 class PostageDetailDeliveryRequirementsModel
     extends PostageDetailDeliveryRequirementsEntity {
   PostageDetailDeliveryRequirementsModel({
@@ -185,6 +186,7 @@ class PostageDetailDeliveryRequirementsModel
         'fast_delivery_item_ids': fastDeliveryItemIds,
       };
 }
+
 
 class PostageDetailShippingDetailModel
     extends PostageDetailShippingDetailEntity {

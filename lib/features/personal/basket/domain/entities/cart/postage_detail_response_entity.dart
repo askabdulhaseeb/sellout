@@ -21,7 +21,7 @@ class PostageDetailResponseEntity {
 
   final bool success;
   final PostageDetailSummaryEntity summary;
-  final Map<String, PostageItemDetailEntity> detail;
+  final List<PostageItemDetailEntity> detail;
   final String cachedAt;
   final String cacheKey;
 }

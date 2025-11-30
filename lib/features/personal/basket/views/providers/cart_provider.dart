@@ -69,8 +69,8 @@ class CartProvider extends ChangeNotifier {
   List<ShippingItemParam> get selectedShippingItems => _selectedShippingItems;
 
   void updateShippingSelection(String cartItemId, String objectId) {
-    final idx = _selectedShippingItems
-        .indexWhere((item) => item.cartItemId == cartItemId);
+    final int idx = _selectedShippingItems
+        .indexWhere((ShippingItemParam item) => item.cartItemId == cartItemId);
     if (idx >= 0) {
       _selectedShippingItems[idx] =
           ShippingItemParam(cartItemId: cartItemId, objectId: objectId);
@@ -100,10 +100,10 @@ class CartProvider extends ChangeNotifier {
   bool get hasItemsRequiringRemoval {
     if (_postageResponseEntity == null) return false;
     for (final PostageItemDetailEntity detail
-        in _postageResponseEntity!.detail.values) {
+        in _postageResponseEntity!.detail) {
       final DeliveryType deliveryType = detail.originalDeliveryType;
       final bool isDeliveryNeeded = deliveryType == DeliveryType.paid ||
-          deliveryType == DeliveryType.fastDelivery;
+          detail.fastDelivery.requested == true;
       if (!isDeliveryNeeded) continue;
       final bool hasRates = detail.shippingDetails
           .expand((PostageDetailShippingDetailEntity sd) => sd.ratesBuffered)
@@ -116,17 +116,22 @@ class CartProvider extends ChangeNotifier {
   List<String> get itemsRequiringRemovalPostIds {
     if (_postageResponseEntity == null) return <String>[];
     final List<String> ids = <String>[];
-    _postageResponseEntity!.detail
-        .forEach((String postId, PostageItemDetailEntity detail) {
+
+    final List<PostageItemDetailEntity> details =
+        _postageResponseEntity!.detail;
+    // List case
+    for (final PostageItemDetailEntity detail in details) {
       final DeliveryType deliveryType = detail.originalDeliveryType;
       final bool isDeliveryNeeded = deliveryType == DeliveryType.paid ||
           deliveryType == DeliveryType.fastDelivery;
-      if (!isDeliveryNeeded) return;
+      if (!isDeliveryNeeded) continue;
+
       final bool hasRates = detail.shippingDetails
           .expand((PostageDetailShippingDetailEntity sd) => sd.ratesBuffered)
           .isNotEmpty;
-      if (!hasRates) ids.add(postId);
-    });
+      if (!hasRates) ids.add(detail.postId); // use postId from detail
+    }
+
     return ids;
   }
 
@@ -326,7 +331,7 @@ class CartProvider extends ChangeNotifier {
         _selectedShippingItems.clear();
         if (_postageResponseEntity != null) {
           _postageResponseEntity!.detail.forEach(
-            (String postId, PostageItemDetailEntity detail) {
+            (PostageItemDetailEntity detail) {
               final List<RateEntity> rates = detail.shippingDetails
                   .expand((PostageDetailShippingDetailEntity sd) =>
                       sd.ratesBuffered)
@@ -408,6 +413,7 @@ class CartProvider extends ChangeNotifier {
 
   // MARK:  PAYMENT
   Future<DataState<PaymentIntentEntity>> getBillingDetails() async {
+    setPostageLoading(true);
     try {
       final DataState<PaymentIntentEntity> state =
           await _payIntentUsecase.call('');
@@ -421,6 +427,8 @@ class CartProvider extends ChangeNotifier {
       AppLog.error('Billing details error',
           name: 'CartProvider.getBillingDetails', error: e, stackTrace: st);
       return DataFailer<PaymentIntentEntity>(CustomException(e.toString()));
+    } finally {
+      setPostageLoading(false);
     }
   }
 
