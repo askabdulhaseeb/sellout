@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 part 'chat_type.g.dart';
 
 @HiveType(typeId: 28)
@@ -20,7 +20,7 @@ enum ChatType {
   final String json;
 
   static ChatType fromJson(String? json) => values.firstWhere(
-        (ChatType e) => e.json == json,
-        orElse: () => ChatType.private,
-      );
+    (ChatType e) => e.json == json,
+    orElse: () => ChatType.private,
+  );
 }

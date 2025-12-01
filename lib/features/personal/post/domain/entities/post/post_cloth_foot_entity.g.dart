@@ -8,7 +8,7 @@ part of 'post_cloth_foot_entity.dart';
 
 class PostClothFootEntityAdapter extends TypeAdapter<PostClothFootEntity> {
   @override
-  final int typeId = 68;
+  final typeId = 68;
 
   @override
   PostClothFootEntity read(BinaryReader reader) {
@@ -29,12 +29,12 @@ class PostClothFootEntityAdapter extends TypeAdapter<PostClothFootEntity> {
   void write(BinaryWriter writer, PostClothFootEntity obj) {
     writer
       ..writeByte(5)
-      ..writeByte(71)
-      ..write(obj.sizeColors)
       ..writeByte(60)
       ..write(obj.sizeChartUrl)
       ..writeByte(61)
       ..write(obj.type)
+      ..writeByte(71)
+      ..write(obj.sizeColors)
       ..writeByte(72)
       ..write(obj.brand)
       ..writeByte(73)

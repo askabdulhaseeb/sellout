@@ -8,7 +8,7 @@ part of 'business_entity.dart';
 
 class BusinessEntityAdapter extends TypeAdapter<BusinessEntity> {
   @override
-  final int typeId = 39;
+  final typeId = 39;
 
   @override
   BusinessEntity read(BinaryReader reader) {
@@ -42,7 +42,7 @@ class BusinessEntityAdapter extends TypeAdapter<BusinessEntity> {
   @override
   void write(BinaryWriter writer, BusinessEntity obj) {
     writer
-      ..writeByte(20)
+      ..writeByte(19)
       ..writeByte(0)
       ..write(obj.businessID)
       ..writeByte(1)
@@ -80,9 +80,7 @@ class BusinessEntityAdapter extends TypeAdapter<BusinessEntity> {
       ..writeByte(20)
       ..write(obj.supporters)
       ..writeByte(21)
-      ..write(obj.supportings)
-      ..writeByte(99)
-      ..write(obj.inHiveAt);
+      ..write(obj.supportings);
   }
 
   @override

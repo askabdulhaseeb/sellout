@@ -1,13 +1,10 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import 'dropdown_option_entity.dart';
 part 'parent_dropdown_entity.g.dart';
 
 @HiveType(typeId: 81)
 class ParentDropdownEntity {
-  ParentDropdownEntity({
-    required this.category,
-    required this.options,
-  });
+  ParentDropdownEntity({required this.category, required this.options});
 
   @HiveField(0)
   final String category;
@@ -17,10 +14,13 @@ class ParentDropdownEntity {
 
   /// Simple helper — no parsing logic here
   static DropdownOptionEntity? getOptionByValue(
-      String value, List<DropdownOptionEntity> options) {
+    String value,
+    List<DropdownOptionEntity> options,
+  ) {
     try {
-      return options
-          .firstWhere((DropdownOptionEntity opt) => opt.value.value == value);
+      return options.firstWhere(
+        (DropdownOptionEntity opt) => opt.value.value == value,
+      );
     } catch (e) {
       return null;
     }

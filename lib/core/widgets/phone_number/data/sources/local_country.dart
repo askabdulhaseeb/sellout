@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import '../../../../utilities/app_string.dart';
 import '../../domain/entities/country_entity.dart';
 
@@ -20,7 +20,8 @@ class LocalCountry {
 
     final String normalized = trimmed.toLowerCase();
 
-    final CountryEntity? direct = _box.get(trimmed) ??
+    final CountryEntity? direct =
+        _box.get(trimmed) ??
         _box.get(normalized) ??
         _box.get(trimmed.toUpperCase());
     if (direct != null) return direct;
@@ -52,7 +53,8 @@ class LocalCountry {
     final CountryEntity? foundCountry = country(trimmedCountry);
     if (foundCountry == null) {
       debugPrint(
-          'LocalCountry.getStateByName: no country found for "$countryName"');
+        'LocalCountry.getStateByName: no country found for "$countryName"',
+      );
       return null;
     }
 
@@ -67,7 +69,8 @@ class LocalCountry {
     }
 
     debugPrint(
-        'LocalCountry.getStateByName: no state "$stateName" found in "$countryName"');
+      'LocalCountry.getStateByName: no state "$stateName" found in "$countryName"',
+    );
     return null;
   }
 

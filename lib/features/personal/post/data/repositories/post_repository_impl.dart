@@ -22,7 +22,7 @@ class PostRepositoryImpl implements PostRepository {
   @override
   Future<DataState<PostEntity>> getPost(
     String id, {
-    bool silentUpdate = true,
+    required bool silentUpdate,
   }) async {
     return await postRemoteApi.getPost(id, silentUpdate: silentUpdate);
   }

@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import '../../../domain/entities/color_options_entity.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../models/color_option_model.dart';
@@ -36,7 +36,7 @@ class LocalColors {
       .map((ColorOptionEntity e) => ColorOptionModel.fromEntity(e))
       .toList();
 
-ColorOptionEntity? getColor(String hexValue) {
-  return _box.get(hexValue);
-}
+  ColorOptionEntity? getColor(String hexValue) {
+    return _box.get(hexValue);
+  }
 }

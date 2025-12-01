@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import '../post/post_entity.dart';
 part 'feed_entity.g.dart';
 

@@ -9,7 +9,7 @@ part of 'business_profile_detail_entity.dart';
 class ProfileBusinessDetailEntityAdapter
     extends TypeAdapter<ProfileBusinessDetailEntity> {
   @override
-  final int typeId = 48;
+  final typeId = 48;
 
   @override
   ProfileBusinessDetailEntity read(BinaryReader reader) {

@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 
 import '../../../../core/enums/core/attachment_type.dart';
 export '../../../../core/enums/core/attachment_type.dart';

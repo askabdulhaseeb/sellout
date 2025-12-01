@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import 'color_entity.dart';
 part 'size_color_entity.g.dart';
 

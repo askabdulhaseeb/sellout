@@ -43,7 +43,7 @@ import '../features/personal/auth/find_account/domain/repository/find_account_re
 import '../features/personal/auth/find_account/domain/use_cases/find_account_usecase.dart';
 import '../features/personal/auth/find_account/domain/use_cases/newpassword_usecase.dart';
 import '../features/personal/auth/find_account/domain/use_cases/send_otp_usecase.dart';
-import '../features/personal/auth/find_account/domain/use_cases/verify_otpUsecase.dart';
+import '../features/personal/auth/find_account/domain/use_cases/verify_otp_usecase.dart';
 import '../features/personal/auth/find_account/view/providers/find_account_provider.dart';
 import '../features/personal/auth/signin/data/repositories/signin_repository_impl.dart';
 import '../features/personal/auth/signin/data/sources/signin_remote_source.dart';
@@ -242,148 +242,199 @@ void setupLocator() {
 
 void _auth() {
   locator.registerFactory<SigninRemoteSource>(() => SigninRemoteSourceImpl());
-  locator
-      .registerFactory<SigninRepository>(() => SigninRepositoryImpl(locator()));
+  locator.registerFactory<SigninRepository>(
+    () => SigninRepositoryImpl(locator()),
+  );
   locator.registerFactory<LoginUsecase>(() => LoginUsecase(locator()));
   locator.registerFactory<RefreshTokenUsecase>(
-      () => RefreshTokenUsecase(locator()));
-  locator.registerLazySingleton<SigninProvider>(() => SigninProvider(
-        locator(),
-        locator(),
-        locator(),
-      ));
+    () => RefreshTokenUsecase(locator()),
+  );
+  locator.registerLazySingleton<SigninProvider>(
+    () => SigninProvider(locator(), locator(), locator()),
+  );
   // Signup
   locator.registerFactory<SignupApi>(() => SignupApiImpl());
-  locator
-      .registerFactory<SignupRepository>(() => SignupRepositoryImpl(locator()));
+  locator.registerFactory<SignupRepository>(
+    () => SignupRepositoryImpl(locator()),
+  );
   // locator.registerFactory<GetCountiesUsecase>(
   //     () => GetCountiesUsecase(locator()));
   locator.registerFactory<RegisterUserUsecase>(
-      () => RegisterUserUsecase(locator()));
+    () => RegisterUserUsecase(locator()),
+  );
   locator.registerFactory<VerifyTwoFactorUseCase>(
-      () => VerifyTwoFactorUseCase(locator()));
+    () => VerifyTwoFactorUseCase(locator()),
+  );
   locator.registerFactory<ResendTwoFactorUseCase>(
-      () => ResendTwoFactorUseCase(locator()));
+    () => ResendTwoFactorUseCase(locator()),
+  );
   locator.registerFactory<SendPhoneOtpUsecase>(
-      () => SendPhoneOtpUsecase(locator()));
+    () => SendPhoneOtpUsecase(locator()),
+  );
   locator.registerFactory<VerifyPhoneOtpUsecase>(
-      () => VerifyPhoneOtpUsecase(locator()));
+    () => VerifyPhoneOtpUsecase(locator()),
+  );
   locator.registerFactory<VerifyUserByImageUsecase>(
-      () => VerifyUserByImageUsecase(locator()));
-  locator.registerLazySingleton<SignupProvider>(() => SignupProvider(
-      locator(), locator(), locator(), locator(), locator(), locator()));
+    () => VerifyUserByImageUsecase(locator()),
+  );
+  locator.registerLazySingleton<SignupProvider>(
+    () => SignupProvider(
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+    ),
+  );
   locator.registerFactory<FindAccountRemoteDataSource>(
-      () => FindAccountRemoteDataSourceimpl());
+    () => FindAccountRemoteDataSourceimpl(),
+  );
   locator.registerLazySingleton<FindAccountRepository>(
-      () => FindAccountRepositoryImpl(locator()));
+    () => FindAccountRepositoryImpl(locator()),
+  );
   locator.registerLazySingleton<FindAccountUsecase>(
-      () => FindAccountUsecase(locator()));
+    () => FindAccountUsecase(locator()),
+  );
   locator.registerLazySingleton<SendEmailForOtpUsecase>(
-      () => SendEmailForOtpUsecase(locator()));
+    () => SendEmailForOtpUsecase(locator()),
+  );
   locator.registerLazySingleton<NewPasswordUsecase>(
-      () => NewPasswordUsecase(locator()));
+    () => NewPasswordUsecase(locator()),
+  );
   locator.registerLazySingleton<VerifyOtpUseCase>(
-      () => VerifyOtpUseCase(locator()));
+    () => VerifyOtpUseCase(locator()),
+  );
   locator.registerFactory<FindAccountProvider>(
-      () => FindAccountProvider(locator(), locator(), locator(), locator()));
-  locator
-      .registerFactory<DeleteUserUsecase>(() => DeleteUserUsecase(locator()));
+    () => FindAccountProvider(locator(), locator(), locator(), locator()),
+  );
+  locator.registerFactory<DeleteUserUsecase>(
+    () => DeleteUserUsecase(locator()),
+  );
 }
 
 void _servicePage() {
   locator.registerFactory<ServicesExploreApi>(() => ServicesExploreApiImpl());
   locator.registerFactory<PersonalServicesRepository>(
-      () => PersonalServicesRepositoryImpl(locator()));
+    () => PersonalServicesRepositoryImpl(locator()),
+  );
   locator.registerFactory<GetSpecialOfferUsecase>(
-      () => GetSpecialOfferUsecase(locator()));
+    () => GetSpecialOfferUsecase(locator()),
+  );
   locator.registerFactory<GetServicesByQueryUsecase>(
-      () => GetServicesByQueryUsecase(locator()));
-  locator.registerLazySingleton<ServicesPageProvider>(() =>
-      ServicesPageProvider(
-          locator(), locator(), locator(), locator(), locator()));
+    () => GetServicesByQueryUsecase(locator()),
+  );
+  locator.registerLazySingleton<ServicesPageProvider>(
+    () => ServicesPageProvider(
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+    ),
+  );
 }
 
 void _profile() {
   locator.registerFactory<UserProfileRemoteSource>(
-      () => UserProfileRemoteSourceImpl());
+    () => UserProfileRemoteSourceImpl(),
+  );
   locator.registerFactory<PostByUserRemote>(() => PostByUserRemoteImpl());
   locator.registerFactory<MyVisitingRemote>(() => MyVisitingRemoteImpl());
-  locator.registerFactory<UserProfileRepository>(() =>
-      UserProfileRepositoryImpl(locator(), locator(), locator(), locator()));
+  locator.registerFactory<UserProfileRepository>(
+    () => UserProfileRepositoryImpl(locator(), locator(), locator(), locator()),
+  );
   locator.registerFactory<GetUserByUidUsecase>(
-      () => GetUserByUidUsecase(locator()));
+    () => GetUserByUidUsecase(locator()),
+  );
   locator.registerFactory<GetImVisiterUsecase>(
-      () => GetImVisiterUsecase(locator()));
+    () => GetImVisiterUsecase(locator()),
+  );
   locator.registerFactory<GetVisitByPostUsecase>(
-      () => GetVisitByPostUsecase(locator()));
+    () => GetVisitByPostUsecase(locator()),
+  );
   locator.registerFactory<GetImHostUsecase>(() => GetImHostUsecase(locator()));
-  locator
-      .registerFactory<GetPostByIdUsecase>(() => GetPostByIdUsecase(locator()));
+  locator.registerFactory<GetPostByIdUsecase>(
+    () => GetPostByIdUsecase(locator()),
+  );
   locator.registerFactory<UpdateProfilePictureUsecase>(
-      () => UpdateProfilePictureUsecase(locator()));
+    () => UpdateProfilePictureUsecase(locator()),
+  );
   locator.registerFactory<UpdateProfileDetailUsecase>(
-      () => UpdateProfileDetailUsecase(locator()));
+    () => UpdateProfileDetailUsecase(locator()),
+  );
   locator.registerFactory<AddRemoveSupporterUsecase>(
-      () => AddRemoveSupporterUsecase(locator()));
-  locator.registerLazySingleton<ProfileProvider>(() => ProfileProvider(
-        locator(),
-        locator(),
-        locator(),
-        locator(),
-        locator(),
-        locator(),
-        locator(),
-        locator(),
-      ));
+    () => AddRemoveSupporterUsecase(locator()),
+  );
+  locator.registerLazySingleton<ProfileProvider>(
+    () => ProfileProvider(
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+    ),
+  );
 }
 
 void _chat() {
   locator.registerFactory<ChatRemoteSource>(() => ChatRemoteSourceImpl());
   locator.registerFactory<ChatRepository>(
-      () => ChatRepositoryImpl(remoteSource: locator()));
-  locator
-      .registerFactory<GetMyChatsUsecase>(() => GetMyChatsUsecase(locator()));
+    () => ChatRepositoryImpl(remoteSource: locator()),
+  );
+  locator.registerFactory<GetMyChatsUsecase>(
+    () => GetMyChatsUsecase(locator()),
+  );
   locator.registerFactory<CreatePostInquiryUsecase>(
-      () => CreatePostInquiryUsecase(locator()));
+    () => CreatePostInquiryUsecase(locator()),
+  );
   locator.registerLazySingleton<ChatDashboardProvider>(
-      () => ChatDashboardProvider(locator()));
+    () => ChatDashboardProvider(locator()),
+  );
   locator.registerLazySingleton<CreateChatGroupProvider>(
-      () => CreateChatGroupProvider(locator()));
+    () => CreateChatGroupProvider(locator()),
+  );
   locator.registerLazySingleton<CreatePrivateChatProvider>(
-      () => CreatePrivateChatProvider(locator()));
+    () => CreatePrivateChatProvider(locator()),
+  );
 }
 
 void _message() {
-  locator
-      .registerFactory<MessagesRemoteSource>(() => MessagesRemoteSourceImpl());
+  locator.registerFactory<MessagesRemoteSource>(
+    () => MessagesRemoteSourceImpl(),
+  );
   locator.registerFactory<MessageRepository>(
-      () => MessageRepositoryImpl(locator(), locator()));
-  locator
-      .registerFactory<GetMessagesUsecase>(() => GetMessagesUsecase(locator()));
-  locator
-      .registerFactory<SendMessageUsecase>(() => SendMessageUsecase(locator()));
-  locator
-      .registerFactory<ShareInChatUsecase>(() => ShareInChatUsecase(locator()));
-  locator
-      .registerFactory<LeaveGroupUsecase>(() => LeaveGroupUsecase(locator()));
+    () => MessageRepositoryImpl(locator(), locator()),
+  );
+  locator.registerFactory<GetMessagesUsecase>(
+    () => GetMessagesUsecase(locator()),
+  );
+  locator.registerFactory<SendMessageUsecase>(
+    () => SendMessageUsecase(locator()),
+  );
+  locator.registerFactory<ShareInChatUsecase>(
+    () => ShareInChatUsecase(locator()),
+  );
+  locator.registerFactory<LeaveGroupUsecase>(
+    () => LeaveGroupUsecase(locator()),
+  );
 
   locator.registerFactory<OfferPaymentUsecase>(
-      () => OfferPaymentUsecase(locator()));
+    () => OfferPaymentUsecase(locator()),
+  );
   locator.registerFactory<SendGroupInviteUsecase>(
-      () => SendGroupInviteUsecase(locator()));
+    () => SendGroupInviteUsecase(locator()),
+  );
   locator.registerFactory<AcceptGorupInviteUsecase>(
-      () => AcceptGorupInviteUsecase(locator()));
-  locator.registerFactory(() => ChatProvider(
-        locator(),
-        locator(),
-        locator(),
-        locator(),
-        locator(),
-      ));
-  locator.registerFactory(() => SendMessageProvider(
-        locator(),
-        locator(),
-      ));
+    () => AcceptGorupInviteUsecase(locator()),
+  );
+  locator.registerFactory(
+    () => ChatProvider(locator(), locator(), locator(), locator(), locator()),
+  );
+  locator.registerFactory(() => SendMessageProvider(locator(), locator()));
 }
 
 void _feed() {
@@ -391,35 +442,41 @@ void _feed() {
   locator.registerFactory<OfferRemoteApi>(() => OfferRemoteApiImpl());
 
   locator.registerFactory<PostRepository>(
-      () => PostRepositoryImpl(locator(), locator()));
+    () => PostRepositoryImpl(locator(), locator()),
+  );
   locator.registerFactory<PromoRemoteDataSource>(
-      () => PromoRemoteDataSourceImpl());
-  locator
-      .registerFactory<PromoRepository>(() => PromoRepositoryImpl(locator()));
+    () => PromoRemoteDataSourceImpl(),
+  );
+  locator.registerFactory<PromoRepository>(
+    () => PromoRepositoryImpl(locator()),
+  );
   locator.registerFactory<GetFeedUsecase>(() => GetFeedUsecase(locator()));
   locator.registerFactory<AddToCartUsecase>(() => AddToCartUsecase(locator()));
-  locator
-      .registerFactory<CreateOfferUsecase>(() => CreateOfferUsecase(locator()));
-  locator
-      .registerFactory<UpdateOfferUsecase>(() => UpdateOfferUsecase(locator()));
+  locator.registerFactory<CreateOfferUsecase>(
+    () => CreateOfferUsecase(locator()),
+  );
+  locator.registerFactory<UpdateOfferUsecase>(
+    () => UpdateOfferUsecase(locator()),
+  );
   locator.registerFactory<GetPromoFollowerUseCase>(
-      () => GetPromoFollowerUseCase(locator()));
-  locator.registerLazySingleton<FeedProvider>(() => FeedProvider(
-        locator(),
-        locator(),
-        locator(),
-        locator(),
-      ));
-  locator
-      .registerFactory<CreatePromoUsecase>(() => CreatePromoUsecase(locator()));
+    () => GetPromoFollowerUseCase(locator()),
+  );
+  locator.registerLazySingleton<FeedProvider>(
+    () => FeedProvider(locator(), locator(), locator(), locator()),
+  );
+  locator.registerFactory<CreatePromoUsecase>(
+    () => CreatePromoUsecase(locator()),
+  );
 
   locator.registerLazySingleton<PromoProvider>(
-      () => PromoProvider(locator(), locator()));
+    () => PromoProvider(locator(), locator()),
+  );
 }
 
 void _post() {
   locator.registerFactory<GetSpecificPostUsecase>(
-      () => GetSpecificPostUsecase(locator()));
+    () => GetSpecificPostUsecase(locator()),
+  );
 }
 
 void _cart() {
@@ -428,20 +485,33 @@ void _cart() {
   locator.registerFactory<CartRepository>(() => CartRepositoryImpl(locator()));
   locator.registerFactory<GetCartUsecase>(() => GetCartUsecase(locator()));
   locator.registerFactory<CartItemStatusUpdateUsecase>(
-      () => CartItemStatusUpdateUsecase(locator()));
+    () => CartItemStatusUpdateUsecase(locator()),
+  );
   locator.registerFactory<RemoveFromCartUsecase>(
-      () => RemoveFromCartUsecase(locator()));
+    () => RemoveFromCartUsecase(locator()),
+  );
   locator.registerFactory<CartUpdateQtyUsecase>(
-      () => CartUpdateQtyUsecase(locator()));
+    () => CartUpdateQtyUsecase(locator()),
+  );
   // checkout
   locator.registerFactory<CheckoutRemoteAPI>(() => CheckoutRemoteAPIImpl());
   locator.registerFactory<CheckoutRepository>(
-      () => CheckoutRepositoryImpl(locator()));
+    () => CheckoutRepositoryImpl(locator()),
+  );
 
   locator.registerFactory<PayIntentUsecase>(() => PayIntentUsecase(locator()));
   // provider
-  locator.registerLazySingleton<CartProvider>(() => CartProvider(locator(),
-      locator(), locator(), locator(), locator(), locator(), locator()));
+  locator.registerLazySingleton<CartProvider>(
+    () => CartProvider(
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+    ),
+  );
 }
 
 void _business() {
@@ -450,62 +520,81 @@ void _business() {
   //
   // REPOSITORIES
   locator.registerFactory<BusinessRepository>(
-      () => BusinessRepositoryImpl(locator(), locator()));
+    () => BusinessRepositoryImpl(locator(), locator()),
+  );
   //
   // USECASES
   locator.registerFactory<GetBusinessByIdUsecase>(
-      () => GetBusinessByIdUsecase(locator()));
+    () => GetBusinessByIdUsecase(locator()),
+  );
   //
   // Providers
-  locator.registerLazySingleton<BusinessPageProvider>(() =>
-      BusinessPageProvider(
-          locator(), locator(), locator(), locator(), locator()));
+  locator.registerLazySingleton<BusinessPageProvider>(
+    () => BusinessPageProvider(
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+    ),
+  );
 }
 
 void _services() {
   // API
   locator.registerFactory<GetServiceByBusinessIdRemote>(
-      () => GetServiceByBusinessIdRemoteImpl());
+    () => GetServiceByBusinessIdRemoteImpl(),
+  );
   locator.registerFactory<ServiceRemoteApi>(() => ServiceRemoteApiImpl());
   locator.registerFactory<AddServiceRemoteApi>(() => AddServiceRemoteApiImpl());
 
   //
   // REPOSITORIES
 
-  locator
-      .registerFactory<CreateChatUsecase>(() => CreateChatUsecase(locator()));
+  locator.registerFactory<CreateChatUsecase>(
+    () => CreateChatUsecase(locator()),
+  );
   locator.registerFactory<BusinessPageRepository>(
-      () => BusinessPageRepositoryImpl(locator(), locator()));
+    () => BusinessPageRepositoryImpl(locator(), locator()),
+  );
   locator.registerFactory<AddServiceRepository>(
-      () => AddServiceRepositoryImpl(locator()));
+    () => AddServiceRepositoryImpl(locator()),
+  );
   //
   // USECASES
   locator.registerFactory<GetServiceCategoriesUsecase>(
-      () => GetServiceCategoriesUsecase(locator()));
+    () => GetServiceCategoriesUsecase(locator()),
+  );
   locator.registerFactory<GetServicesListByBusinessIdUsecase>(
-      () => GetServicesListByBusinessIdUsecase(locator()));
+    () => GetServicesListByBusinessIdUsecase(locator()),
+  );
   locator.registerFactory<GetServiceByIdUsecase>(
-      () => GetServiceByIdUsecase(locator()));
+    () => GetServiceByIdUsecase(locator()),
+  );
   locator.registerFactory(() => AddServiceUsecase(locator()));
   locator.registerFactory(() => UpdateServiceUsecase(locator()));
   //
   // Providers
   locator.registerLazySingleton<AddServiceProvider>(
-      () => AddServiceProvider(locator(), locator()));
+    () => AddServiceProvider(locator(), locator()),
+  );
 }
 
 void _booking() {
   // API
   locator.registerFactory<BusinessBookingRemote>(
-      () => BusinessBookingRemoteImpl());
+    () => BusinessBookingRemoteImpl(),
+  );
   //
   // REPOSITORIES
   //
   // USECASES
   locator.registerFactory<GetMyBookingsListUsecase>(
-      () => GetMyBookingsListUsecase(locator()));
+    () => GetMyBookingsListUsecase(locator()),
+  );
   locator.registerFactory<GetBookingsByServiceIdListUsecase>(
-      () => GetBookingsByServiceIdListUsecase(locator()));
+    () => GetBookingsByServiceIdListUsecase(locator()),
+  );
   //
   // Providers
 }
@@ -517,19 +606,24 @@ void _appointment() {
   // REPOSITORIES
   //
   locator.registerFactory<AppointmentRepository>(
-      () => AppointmentRepositoryImpl(locator()));
+    () => AppointmentRepositoryImpl(locator()),
+  );
   // USECASES
   //
 
   locator.registerFactory<UpdateAppointmentUsecase>(
-      () => UpdateAppointmentUsecase(locator()));
+    () => UpdateAppointmentUsecase(locator()),
+  );
   locator.registerFactory<HoldServicePaymentUsecase>(
-      () => HoldServicePaymentUsecase(locator()));
+    () => HoldServicePaymentUsecase(locator()),
+  );
   locator.registerFactory<ReleasePaymentUsecase>(
-      () => ReleasePaymentUsecase(locator()));
+    () => ReleasePaymentUsecase(locator()),
+  );
   // Providers
-  locator.registerFactory<AppointmentTileProvider>(() =>
-      AppointmentTileProvider(locator(), locator(), locator(), locator()));
+  locator.registerFactory<AppointmentTileProvider>(
+    () => AppointmentTileProvider(locator(), locator(), locator(), locator()),
+  );
 }
 
 void _review() {
@@ -537,15 +631,18 @@ void _review() {
   locator.registerFactory<ReviewRemoteApi>(() => ReviewRemoteApiImpl());
   //
   // REPOSITORIES
-  locator
-      .registerFactory<ReviewRepository>(() => ReviewRepositoryImpl(locator()));
+  locator.registerFactory<ReviewRepository>(
+    () => ReviewRepositoryImpl(locator()),
+  );
   //
   // USECASES
-  locator
-      .registerFactory<GetReviewsUsecase>(() => GetReviewsUsecase(locator()));
+  locator.registerFactory<GetReviewsUsecase>(
+    () => GetReviewsUsecase(locator()),
+  );
   //
   locator.registerFactory<CreateReviewUsecase>(
-      () => CreateReviewUsecase(locator()));
+    () => CreateReviewUsecase(locator()),
+  );
   locator.registerFactory<ReviewProvider>(() => ReviewProvider(locator()));
 
   // Providers
@@ -557,91 +654,113 @@ void _country() {
   //
   // REPOSITORIES
   locator.registerFactory<PhoneNumberRepository>(
-      () => PhoneNumberRepositoryImpl(locator()));
+    () => PhoneNumberRepositoryImpl(locator()),
+  );
   //
   // USECASES
-  locator
-      .registerFactory<GetCountiesUsecase>(() => GetCountiesUsecase(locator()));
+  locator.registerFactory<GetCountiesUsecase>(
+    () => GetCountiesUsecase(locator()),
+  );
   // Providers
 }
 
 void _marketplace() {
   locator.registerFactory<MarketPlaceRemoteSource>(
-      () => MarketPlaceRemoteSourceImpl());
+    () => MarketPlaceRemoteSourceImpl(),
+  );
   locator.registerFactory<GetPostByFiltersUsecase>(
-      () => GetPostByFiltersUsecase(locator()));
-  locator
-      .registerFactory<MarketPlaceRepo>(() => MarketPlaceRepoImpl(locator()));
+    () => GetPostByFiltersUsecase(locator()),
+  );
+  locator.registerFactory<MarketPlaceRepo>(
+    () => MarketPlaceRepoImpl(locator()),
+  );
   locator.registerFactory<MarketPlaceProvider>(
-      () => MarketPlaceProvider(locator()));
+    () => MarketPlaceProvider(locator()),
+  );
 }
 
 void _bookvisit() {
   locator.registerFactory<BookVisitApi>(() => BookVisitApiImpl());
   locator.registerFactory<BookVisitRepo>(() => BookVisitRepoImpl(locator()));
-  locator
-      .registerFactory<UpdateVisitUseCase>(() => UpdateVisitUseCase(locator()));
+  locator.registerFactory<UpdateVisitUseCase>(
+    () => UpdateVisitUseCase(locator()),
+  );
   // locator.registerFactory<UpdateVisitStatusUseCase>(
   //     () => UpdateVisitStatusUseCase(locator()));
   locator.registerFactory<BookVisitUseCase>(() => BookVisitUseCase(locator()));
-  locator
-      .registerFactory<BookServiceUsecase>(() => BookServiceUsecase(locator()));
+  locator.registerFactory<BookServiceUsecase>(
+    () => BookServiceUsecase(locator()),
+  );
 
-  locator.registerFactory<BookingProvider>(() => BookingProvider(locator(),
-      locator(), locator(), locator(), locator(), locator(), locator()));
+  locator.registerFactory<BookingProvider>(
+    () => BookingProvider(
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+    ),
+  );
 }
 
 void _addlisting() {
   locator.registerFactory<AddListingRemoteApi>(() => AddListingRemoteApiImpl());
 
   locator.registerFactory<AddListingRepo>(() => AddListingRepoImpl(locator()));
-  locator
-      .registerFactory<AddListingUsecase>(() => AddListingUsecase(locator()));
-  locator
-      .registerFactory<EditListingUsecase>(() => EditListingUsecase(locator()));
+  locator.registerFactory<AddListingUsecase>(
+    () => AddListingUsecase(locator()),
+  );
+  locator.registerFactory<EditListingUsecase>(
+    () => EditListingUsecase(locator()),
+  );
   locator.registerFactory<AddListingFormProvider>(
     () => AddListingFormProvider(locator(), locator()),
   );
 }
 
 void _sockets() {
-  locator.registerFactory<SocketService>(
-    () => SocketService(locator()),
-  );
-  locator.registerFactory<SocketImplementations>(
-    () => SocketImplementations(),
-  );
+  locator.registerFactory<SocketService>(() => SocketService(locator()));
+  locator.registerFactory<SocketImplementations>(() => SocketImplementations());
 }
 
 void _addaddress() {
   // API
   locator.registerFactory<AddAddressRemoteSource>(
-      () => AddAddressRemoteSourceImpl());
+    () => AddAddressRemoteSourceImpl(),
+  );
   //
   // REPOSITORIES
   locator.registerFactory<AddAddressRepository>(
-      () => AddAddressRepositoryImpl(locator()));
+    () => AddAddressRepositoryImpl(locator()),
+  );
   //
   // USECASES
-  locator
-      .registerFactory<AddAddressUsecase>(() => AddAddressUsecase(locator()));
+  locator.registerFactory<AddAddressUsecase>(
+    () => AddAddressUsecase(locator()),
+  );
   locator.registerFactory<UpdateAddressUsecase>(
-      () => UpdateAddressUsecase(locator()));
+    () => UpdateAddressUsecase(locator()),
+  );
   //
   // Providers
   locator.registerFactory<AddAddressProvider>(
-      () => AddAddressProvider(locator(), locator()));
+    () => AddAddressProvider(locator(), locator()),
+  );
 }
 
 void _search() {
   // API
   //
   locator.registerFactory<SearchRemoteDataSource>(
-      () => SearchRemoteDataSourceImpl());
+    () => SearchRemoteDataSourceImpl(),
+  );
   // REPOSITORIES
   //
-  locator
-      .registerFactory<SearchRepository>(() => SearchRepositoryImpl(locator()));
+  locator.registerFactory<SearchRepository>(
+    () => SearchRepositoryImpl(locator()),
+  );
   // USECASES
   //
   locator.registerFactory<SearchUsecase>(() => SearchUsecase(locator()));
@@ -657,16 +776,20 @@ void _settings() {
   // REPOSITORIES
   //
   locator.registerFactory<SettingRepository>(
-      () => SettingRepositoryImpl(locator()));
+    () => SettingRepositoryImpl(locator()),
+  );
   // USECASES
   //
   locator.registerFactory<ChangePasswordUseCase>(
-      () => ChangePasswordUseCase(locator()));
+    () => ChangePasswordUseCase(locator()),
+  );
   locator.registerFactory<ConnectAccountSessionUseCase>(
-      () => ConnectAccountSessionUseCase(locator()));
+    () => ConnectAccountSessionUseCase(locator()),
+  );
   // Providers
   locator.registerFactory<SettingSecurityProvider>(
-      () => SettingSecurityProvider(locator(), locator()));
+    () => SettingSecurityProvider(locator(), locator()),
+  );
 }
 
 void _order() {
@@ -674,13 +797,16 @@ void _order() {
   //
   locator.registerFactory<OrderByUserRemote>(() => OrderByUserRemoteImpl());
   // REPOSITORIES
-  locator
-      .registerFactory<OrderRepository>(() => OrderRepositoryImpl(locator()));
+  locator.registerFactory<OrderRepository>(
+    () => OrderRepositoryImpl(locator()),
+  );
   // USECASES
   locator.registerFactory<GetOrderByUidUsecase>(
-      () => GetOrderByUidUsecase(locator()));
-  locator
-      .registerFactory<UpdateOrderUsecase>(() => UpdateOrderUsecase(locator()));
+    () => GetOrderByUidUsecase(locator()),
+  );
+  locator.registerFactory<UpdateOrderUsecase>(
+    () => UpdateOrderUsecase(locator()),
+  );
   // Providers
   locator.registerFactory<OrderProvider>(() => OrderProvider(locator()));
   // locator.registerLazySingleton<PersonalSettingBuyerOrderProvider>(
@@ -692,15 +818,18 @@ void _notification() {
   locator.registerFactory<NotificationRemote>(() => NotificationRemoteImpl());
   // REPOSITORIES
   locator.registerFactory<NotificationRepository>(
-      () => NotificationRepositoryImpl(locator()));
+    () => NotificationRepositoryImpl(locator()),
+  );
   // USECASES
   //
   locator.registerFactory<GetAllNotificationsUseCase>(
-      () => GetAllNotificationsUseCase(locator()));
+    () => GetAllNotificationsUseCase(locator()),
+  );
 
   // Providers
   locator.registerFactory<NotificationProvider>(
-      () => NotificationProvider(locator()));
+    () => NotificationProvider(locator()),
+  );
 }
 
 void _location() {
@@ -710,7 +839,8 @@ void _location() {
   locator.registerFactory<LocationRepo>(() => LocationRepoImpl(locator()));
   // USECASES
   locator.registerFactory<NominationLocationUsecase>(
-      () => NominationLocationUsecase(locator()));
+    () => NominationLocationUsecase(locator()),
+  );
   //Providers
   locator.registerFactory<LocationProvider>(() => LocationProvider(locator()));
 }
@@ -721,9 +851,7 @@ void _categories() {
     () => RemoteCategoriesSourceImpl(),
   );
   // REPOSITORIES
-  locator.registerFactory<CategoriesRepo>(
-    () => CategoriesRepoImpl(locator()),
-  );
+  locator.registerFactory<CategoriesRepo>(() => CategoriesRepoImpl(locator()));
   // USECASES
   locator.registerFactory<GetCategoryByEndpointUsecase>(
     () => GetCategoryByEndpointUsecase(locator()),
@@ -732,35 +860,46 @@ void _categories() {
 
 void _quote() {
   locator.registerFactory<QuoteRemoteDataSource>(
-      () => QuoteRemoteDataSourceImpl());
+    () => QuoteRemoteDataSourceImpl(),
+  );
   locator.registerFactory<QuoteRepo>(() => QuoteRepoImpl(locator()));
   locator.registerFactory<RequestQuoteUsecase>(
-      () => RequestQuoteUsecase(locator()));
+    () => RequestQuoteUsecase(locator()),
+  );
   locator.registerFactory<HoldQuotePayUsecase>(
-      () => HoldQuotePayUsecase(locator()));
-  locator
-      .registerFactory<UpdateQuoteUsecase>(() => UpdateQuoteUsecase(locator()));
+    () => HoldQuotePayUsecase(locator()),
+  );
+  locator.registerFactory<UpdateQuoteUsecase>(
+    () => UpdateQuoteUsecase(locator()),
+  );
   locator.registerFactory<GetServiceSlotsUsecase>(
-      () => GetServiceSlotsUsecase(locator()));
+    () => GetServiceSlotsUsecase(locator()),
+  );
 
   locator.registerFactory<QuoteProvider>(
-      () => QuoteProvider(locator(), locator(), locator(), locator()));
+    () => QuoteProvider(locator(), locator(), locator(), locator()),
+  );
 }
 
 void _payment() {
   locator.registerFactory<PaymentRemoteApi>(() => PaymentRemoteApiImpl());
   locator.registerFactory<PaymentRepository>(
-      () => PaymentRepositoryImpl(locator()));
+    () => PaymentRepositoryImpl(locator()),
+  );
   locator.registerFactory<GetExchangeRateUsecase>(
-      () => GetExchangeRateUsecase(locator()));
+    () => GetExchangeRateUsecase(locator()),
+  );
 }
 
 void _postage() {
   locator.registerFactory<PostageRemoteApi>(() => PostageRemoteApiImpl());
   locator.registerFactory<PostageRepository>(
-      () => PostageRepositoryImpl(locator()));
+    () => PostageRepositoryImpl(locator()),
+  );
   locator.registerFactory<GetPostageDetailUsecase>(
-      () => GetPostageDetailUsecase(locator()));
-  locator
-      .registerFactory<AddShippingUsecase>(() => AddShippingUsecase(locator()));
+    () => GetPostageDetailUsecase(locator()),
+  );
+  locator.registerFactory<AddShippingUsecase>(
+    () => AddShippingUsecase(locator()),
+  );
 }

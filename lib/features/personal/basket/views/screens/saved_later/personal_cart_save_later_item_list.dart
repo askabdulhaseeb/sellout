@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import '../../../../../../core/widgets/empty_page_widget.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../data/models/cart/cart_item_model.dart';

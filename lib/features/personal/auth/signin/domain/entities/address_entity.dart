@@ -1,10 +1,9 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/country_entity.dart';
 part 'address_entity.g.dart';
 
 @HiveType(typeId: 6)
 class AddressEntity {
-
   AddressEntity({
     required this.addressID,
     required this.phoneNumber,

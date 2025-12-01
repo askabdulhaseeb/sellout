@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import '../../../../../core/enums/core/status_type.dart';
 import '../../../auth/signin/domain/entities/address_entity.dart';
 import 'order_payment_detail_entity.dart';

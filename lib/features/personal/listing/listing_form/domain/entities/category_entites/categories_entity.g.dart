@@ -8,7 +8,7 @@ part of 'categories_entity.dart';
 
 class CategoriesEntityAdapter extends TypeAdapter<CategoriesEntity> {
   @override
-  final int typeId = 78;
+  final typeId = 78;
 
   @override
   CategoriesEntity read(BinaryReader reader) {

@@ -8,7 +8,7 @@ part of 'address_entity.dart';
 
 class AddressEntityAdapter extends TypeAdapter<AddressEntity> {
   @override
-  final int typeId = 6;
+  final typeId = 6;
 
   @override
   AddressEntity read(BinaryReader reader) {

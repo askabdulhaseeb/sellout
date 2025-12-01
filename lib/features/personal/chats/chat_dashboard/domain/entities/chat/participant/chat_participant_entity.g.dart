@@ -8,7 +8,7 @@ part of 'chat_participant_entity.dart';
 
 class ChatParticipantEntityAdapter extends TypeAdapter<ChatParticipantEntity> {
   @override
-  final int typeId = 11;
+  final typeId = 11;
 
   @override
   ChatParticipantEntity read(BinaryReader reader) {

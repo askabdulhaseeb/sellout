@@ -8,7 +8,7 @@ part of 'business_address_entity.dart';
 
 class BusinessAddressEntityAdapter extends TypeAdapter<BusinessAddressEntity> {
   @override
-  final int typeId = 43;
+  final typeId = 43;
 
   @override
   BusinessAddressEntity read(BinaryReader reader) {
@@ -18,7 +18,7 @@ class BusinessAddressEntityAdapter extends TypeAdapter<BusinessAddressEntity> {
     };
     return BusinessAddressEntity(
       city: fields[0] as String,
-      postalCode: fields[1] as int,
+      postalCode: (fields[1] as num).toInt(),
       firstAddress: fields[2] as String,
       secondaryAddress: fields[3] as String,
     );

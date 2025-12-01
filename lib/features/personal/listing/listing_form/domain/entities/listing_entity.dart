@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 
 import '../../../../../../core/enums/listing/core/listing_type.dart';
 import 'sub_category_entity.dart';

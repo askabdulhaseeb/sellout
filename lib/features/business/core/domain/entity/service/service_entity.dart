@@ -1,4 +1,5 @@
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
+
 import '../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';

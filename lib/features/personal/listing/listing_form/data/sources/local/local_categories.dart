@@ -1,5 +1,5 @@
 import 'package:flutter/rendering.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import '../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../services/domain/entity/service_category_entity.dart';
@@ -50,31 +50,49 @@ class LocalCategoriesSource {
 
     final CategoriesEntity merged = existing.copyWith(
       bodyType: keepOldIfNullOrEmpty(newEntity.bodyType, existing.bodyType),
-      clothesSizes:
-          keepOldIfNullOrEmpty(newEntity.clothesSizes, existing.clothesSizes),
+      clothesSizes: keepOldIfNullOrEmpty(
+        newEntity.clothesSizes,
+        existing.clothesSizes,
+      ),
       footSizes: keepOldIfNullOrEmpty(newEntity.footSizes, existing.footSizes),
-      clothesBrands:
-          keepOldIfNullOrEmpty(newEntity.clothesBrands, existing.clothesBrands),
+      clothesBrands: keepOldIfNullOrEmpty(
+        newEntity.clothesBrands,
+        existing.clothesBrands,
+      ),
       footwearBrands: keepOldIfNullOrEmpty(
-          newEntity.footwearBrands, existing.footwearBrands),
+        newEntity.footwearBrands,
+        existing.footwearBrands,
+      ),
       age: keepOldIfNullOrEmpty(newEntity.age, existing.age),
       breed: keepOldIfNullOrEmpty(newEntity.breed, existing.breed),
       pets: keepOldIfNullOrEmpty(newEntity.pets, existing.pets),
-      readyToLeave:
-          keepOldIfNullOrEmpty(newEntity.readyToLeave, existing.readyToLeave),
+      readyToLeave: keepOldIfNullOrEmpty(
+        newEntity.readyToLeave,
+        existing.readyToLeave,
+      ),
       vehicles: keepOldIfNullOrEmpty(newEntity.vehicles, existing.vehicles),
       emissionStandards: keepOldIfNullOrEmpty(
-          newEntity.emissionStandards, existing.emissionStandards),
+        newEntity.emissionStandards,
+        existing.emissionStandards,
+      ),
       fuelType: keepOldIfNullOrEmpty(newEntity.fuelType, existing.fuelType),
       make: keepOldIfNullOrEmpty(newEntity.make, existing.make),
-      mileageUnit:
-          keepOldIfNullOrEmpty(newEntity.mileageUnit, existing.mileageUnit),
-      transmission:
-          keepOldIfNullOrEmpty(newEntity.transmission, existing.transmission),
-      energyRating:
-          keepOldIfNullOrEmpty(newEntity.energyRating, existing.energyRating),
-      propertyType:
-          keepOldIfNullOrEmpty(newEntity.propertyType, existing.propertyType),
+      mileageUnit: keepOldIfNullOrEmpty(
+        newEntity.mileageUnit,
+        existing.mileageUnit,
+      ),
+      transmission: keepOldIfNullOrEmpty(
+        newEntity.transmission,
+        existing.transmission,
+      ),
+      energyRating: keepOldIfNullOrEmpty(
+        newEntity.energyRating,
+        existing.energyRating,
+      ),
+      propertyType: keepOldIfNullOrEmpty(
+        newEntity.propertyType,
+        existing.propertyType,
+      ),
       items: keepOldIfNullOrEmpty(newEntity.items, existing.items),
       clothes: keepOldIfNullOrEmpty(newEntity.clothes, existing.clothes),
       foot: keepOldIfNullOrEmpty(newEntity.foot, existing.foot),
@@ -127,8 +145,8 @@ class LocalCategoriesSource {
 
   CategoriesEntity? getCategory() => _box.get(_mainKey);
 
-//Find a subcategory based on address example "listingtype/cid/subcat/subcat"
-//Find an item subcategory based on address example "listingtype/subcat/subcat"
+  //Find a subcategory based on address example "listingtype/cid/subcat/subcat"
+  //Find an item subcategory based on address example "listingtype/subcat/subcat"
   SubCategoryEntity? findSubCategoryByAddress(String address) {
     try {
       debugPrint('🔍 FINDING SUBCATEGORY FOR ADDRESS: "$address"');
@@ -170,11 +188,13 @@ class LocalCategoriesSource {
             if (segment == ListingType.clothAndFoot.cids.first) {
               root = categories?.clothes;
               debugPrint(
-                  '👕 Clothes root: ${root != null ? "FOUND" : "NOT FOUND"}');
+                '👕 Clothes root: ${root != null ? "FOUND" : "NOT FOUND"}',
+              );
             } else if (segment == ListingType.clothAndFoot.cids.last) {
               root = categories?.foot;
               debugPrint(
-                  '👟 Foot root: ${root != null ? "FOUND" : "NOT FOUND"}');
+                '👟 Foot root: ${root != null ? "FOUND" : "NOT FOUND"}',
+              );
             } else {
               debugPrint('⚠️ Unknown cloth/foot segment "$segment"');
               root = categories?.clothes ?? categories?.foot;
@@ -183,7 +203,8 @@ class LocalCategoriesSource {
           } else {
             root = categories?.clothes;
             debugPrint(
-                '👕 Default clothes root: ${root != null ? "FOUND" : "NOT FOUND"}');
+              '👕 Default clothes root: ${root != null ? "FOUND" : "NOT FOUND"}',
+            );
           }
           break;
         case ListingType.foodAndDrink:
@@ -192,11 +213,13 @@ class LocalCategoriesSource {
             if (segment == ListingType.foodAndDrink.cids.first) {
               root = categories?.food;
               debugPrint(
-                  '🍕 Food root: ${root != null ? "FOUND" : "NOT FOUND"}');
+                '🍕 Food root: ${root != null ? "FOUND" : "NOT FOUND"}',
+              );
             } else if (segment == ListingType.foodAndDrink.cids.last) {
               root = categories?.drink;
               debugPrint(
-                  '🥤 Drink root: ${root != null ? "FOUND" : "NOT FOUND"}');
+                '🥤 Drink root: ${root != null ? "FOUND" : "NOT FOUND"}',
+              );
             } else {
               debugPrint('⚠️ Unknown food/drink segment "$segment"');
               root = categories?.food ?? categories?.drink;
@@ -205,7 +228,8 @@ class LocalCategoriesSource {
           } else {
             root = categories?.food;
             debugPrint(
-                '🍕 Default food root: ${root != null ? "FOUND" : "NOT FOUND"}');
+              '🍕 Default food root: ${root != null ? "FOUND" : "NOT FOUND"}',
+            );
           }
           break;
         case ListingType.property:
@@ -229,7 +253,8 @@ class LocalCategoriesSource {
       for (int i = 0; i < partsToTraverse.length; i++) {
         final String currentPart = partsToTraverse[i];
         debugPrint(
-            '🔎 Looking for part[$i]: "$currentPart" in "${current?.title}"');
+          '🔎 Looking for part[$i]: "$currentPart" in "${current?.title}"',
+        );
 
         if (current?.subCategory == <dynamic>[]) {
           debugPrint('❌ No subcategories available in "${current?.title}"');
@@ -239,7 +264,8 @@ class LocalCategoriesSource {
         debugPrint('📋 Available subcategories in "${current?.title}":');
         for (final sub in current?.subCategory ?? <dynamic>[]) {
           debugPrint(
-              '   - "${sub.title}" (cid: ${sub.cid}, address: ${sub.address})');
+            '   - "${sub.title}" (cid: ${sub.cid}, address: ${sub.address})',
+          );
         }
 
         SubCategoryEntity? foundSubCategory;
@@ -250,11 +276,13 @@ class LocalCategoriesSource {
 
           for (final sub in current?.subCategory ?? <dynamic>[]) {
             final String subTitle = _normalizeForMatching(sub.title);
-            final String subAddress =
-                sub.address != null ? _normalizeForMatching(sub.address!) : '';
+            final String subAddress = sub.address != null
+                ? _normalizeForMatching(sub.address!)
+                : '';
             final String subCid = _normalizeForMatching(sub.cid);
 
-            final bool matches = subTitle.contains(searchTerm) ||
+            final bool matches =
+                subTitle.contains(searchTerm) ||
                 searchTerm.contains(subTitle) ||
                 subAddress.contains(searchTerm) ||
                 subCid.contains(searchTerm) ||
@@ -271,9 +299,11 @@ class LocalCategoriesSource {
 
           for (final sub in current?.subCategory ?? <dynamic>[]) {
             final bool cidMatch = sub.cid == currentPart;
-            final bool titleMatch = _normalizeForMatching(sub.title) ==
+            final bool titleMatch =
+                _normalizeForMatching(sub.title) ==
                 _normalizeForMatching(currentPart);
-            final bool addressMatch = sub.address != null &&
+            final bool addressMatch =
+                sub.address != null &&
                 _normalizeForMatching(sub.address!) ==
                     _normalizeForMatching(currentPart);
 
@@ -290,7 +320,8 @@ class LocalCategoriesSource {
           debugPrint('➡️ Moving to: "${current.title}"');
         } else {
           debugPrint(
-              '❌ No match found for "$currentPart" - stopping at "${current?.title}"');
+            '❌ No match found for "$currentPart" - stopping at "${current?.title}"',
+          );
           break;
         }
       }

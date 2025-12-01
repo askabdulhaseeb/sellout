@@ -31,8 +31,9 @@ class PostDetailProvider extends ChangeNotifier {
 
   void setReviews(List<ReviewEntity> value) {
     _reviews = value;
-    _reviews
-        .sort((ReviewEntity a, ReviewEntity b) => a.rating.compareTo(b.rating));
+    _reviews.sort(
+      (ReviewEntity a, ReviewEntity b) => a.rating.compareTo(b.rating),
+    );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });
@@ -43,8 +44,9 @@ class PostDetailProvider extends ChangeNotifier {
       if (_reviews.isNotEmpty) {
         return DataSuccess<List<ReviewEntity>>('', _reviews);
       }
-      final DataState<List<ReviewEntity>> result =
-          await _getReviewsUsecase(param);
+      final DataState<List<ReviewEntity>> result = await _getReviewsUsecase(
+        param,
+      );
       if (result is DataSuccess) {
         setReviews(result.entity ?? <ReviewEntity>[]);
         return result;
@@ -67,7 +69,7 @@ class PostDetailProvider extends ChangeNotifier {
       .toList();
 
   Future<DataState<PostEntity>> getPost(String postId) async {
-    final DataState<PostEntity> local = LocalPost().dataState(postId);
+    final DataState<PostEntity> local = await LocalPost().getFreshPost(postId);
 
     if (local is DataSuccess) {
       _setPost(local.entity);

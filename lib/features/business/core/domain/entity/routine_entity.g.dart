@@ -8,7 +8,7 @@ part of 'routine_entity.dart';
 
 class RoutineEntityAdapter extends TypeAdapter<RoutineEntity> {
   @override
-  final int typeId = 42;
+  final typeId = 42;
 
   @override
   RoutineEntity read(BinaryReader reader) {

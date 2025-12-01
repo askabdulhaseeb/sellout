@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../domain/entities/chat/unread_message_entity.dart';
@@ -31,13 +31,17 @@ class LocalUnreadMessagesService {
     final UnreadMessageEntity? entity = _box.get(chatId);
     if (entity != null) {
       entity.count += 1;
-      AppLog.info('unread coount incremented',
-          name: 'LocalUnreadMessagesService.increment - if');
+      AppLog.info(
+        'unread coount incremented',
+        name: 'LocalUnreadMessagesService.increment - if',
+      );
       await entity.save();
     } else {
       await _box.put(chatId, UnreadMessageEntity(chatId: chatId, count: 1));
-      AppLog.info('unread coount incremented',
-          name: 'LocalUnreadMessagesService.increment - else');
+      AppLog.info(
+        'unread coount incremented',
+        name: 'LocalUnreadMessagesService.increment - else',
+      );
     }
   }
 

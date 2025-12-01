@@ -1,5 +1,6 @@
 import 'dart:io';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter/material.dart';
+import 'package:hive_ce_flutter/adapters.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../features/attachment/domain/entities/attachment_entity.dart';
 import '../../../features/business/core/data/sources/local_business.dart';
@@ -196,10 +197,10 @@ class HiveDB {
   }
 
   static Future<void> refresh() async {
-    await LocalPost().refresh();
     await LocalAuth().refresh();
-    await LocalUser().refresh();
+    await LocalPost().refresh();
     await LocalRequestHistory().refresh();
+    await LocalUser().refresh();
     await LocalListing().refresh();
     await LocalChat().refresh();
     await LocalChatMessage().refresh();
@@ -220,24 +221,36 @@ class HiveDB {
   }
 
   static Future<void> signout() async {
-    await LocalPost().clear();
-    await LocalAuth().signout();
-    await LocalUser().clear();
-    await LocalRequestHistory().clear();
-    await LocalListing().clear();
-    await LocalChat().clear();
-    await LocalChatMessage().clear();
-    await LocalVisit().clear();
-    await LocalCart().clear();
-    await LocalBusiness().clear();
-    await LocalService().clear();
-    await LocalReview().clear();
-    await LocalBooking().clear();
-    await LocalUnreadMessagesService().clear();
-    await LocalPromo().clear();
-    await LocalColors().clear();
-    await LocalOrders().clear();
-    await LocalNotifications().clear();
+    // Wrap each clear in try-catch to handle PathNotFoundException for lock files
+    Future<void> safeClear(Future<void> Function() clearFn, String name) async {
+      try {
+        await clearFn();
+      } catch (e) {
+        debugPrint('HiveDB.signout: Error clearing $name: $e');
+      }
+    }
+
+    await safeClear(() => LocalPost().clear(), 'LocalPost');
+    await safeClear(() => LocalAuth().signout(), 'LocalAuth');
+    await safeClear(() => LocalUser().clear(), 'LocalUser');
+    await safeClear(() => LocalRequestHistory().clear(), 'LocalRequestHistory');
+    await safeClear(() => LocalListing().clear(), 'LocalListing');
+    await safeClear(() => LocalChat().clear(), 'LocalChat');
+    await safeClear(() => LocalChatMessage().clear(), 'LocalChatMessage');
+    await safeClear(() => LocalVisit().clear(), 'LocalVisit');
+    await safeClear(() => LocalCart().clear(), 'LocalCart');
+    await safeClear(() => LocalBusiness().clear(), 'LocalBusiness');
+    await safeClear(() => LocalService().clear(), 'LocalService');
+    await safeClear(() => LocalReview().clear(), 'LocalReview');
+    await safeClear(() => LocalBooking().clear(), 'LocalBooking');
+    await safeClear(
+      () => LocalUnreadMessagesService().clear(),
+      'LocalUnreadMessagesService',
+    );
+    await safeClear(() => LocalPromo().clear(), 'LocalPromo');
+    await safeClear(() => LocalColors().clear(), 'LocalColors');
+    await safeClear(() => LocalOrders().clear(), 'LocalOrders');
+    await safeClear(() => LocalNotifications().clear(), 'LocalNotifications');
     // await LocalServiceCategory().clear();
     // await LocalCategoriesSource().clear();
     // await LocalCountry().clear();

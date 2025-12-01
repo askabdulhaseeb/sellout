@@ -9,7 +9,7 @@ part of 'order_payment_detail_entity.dart';
 class OrderPaymentDetailEntityAdapter
     extends TypeAdapter<OrderPaymentDetailEntity> {
   @override
-  final int typeId = 62;
+  final typeId = 62;
 
   @override
   OrderPaymentDetailEntity read(BinaryReader reader) {
@@ -21,16 +21,16 @@ class OrderPaymentDetailEntityAdapter
       method: fields[0] as String,
       status: fields[1] as String,
       timestamp: fields[2] as DateTime,
-      quantity: fields[3] as int,
-      price: fields[4] as double,
+      quantity: (fields[3] as num).toInt(),
+      price: (fields[4] as num).toDouble(),
       paymentIndentId: fields[5] as String,
       transactionChargeCurrency: fields[6] as String,
-      transactionChargePerItem: fields[7] as double,
+      transactionChargePerItem: (fields[7] as num).toDouble(),
       sellerId: fields[8] as String,
       postCurrency: fields[9] as String,
-      deliveryPrice: fields[10] as double,
-      convertedPrice: fields[11] as double,
-      netChargePerItem: fields[12] as double,
+      deliveryPrice: (fields[10] as num).toDouble(),
+      convertedPrice: (fields[11] as num).toDouble(),
+      netChargePerItem: (fields[12] as num).toDouble(),
       buyerCurrency: fields[13] as String,
     );
   }

@@ -15,8 +15,9 @@ class RefreshTokenUsecase implements UseCase<String, RefreshTokenParams> {
   }
 
   Future<DataState<String>> refreshIfNeeded() async {
-    try {
-      final String? uid = LocalAuth.uid;
+          final String? uid = LocalAuth.uid;
+
+    try { 
       final String refreshToken = LocalAuth.currentUser?.refreshToken ?? '';
       if (uid == null || refreshToken.isEmpty) {
         AppLog.error('No user or refresh token available for refresh',

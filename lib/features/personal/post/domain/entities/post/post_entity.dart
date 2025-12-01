@@ -1,5 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
@@ -192,10 +192,13 @@ class PostEntity {
 
     if (from == to) return price;
 
-    final GetExchangeRateParams params =
-        GetExchangeRateParams(from: from, to: to);
-    final DataState<ExchangeRateEntity> result =
-        await GetExchangeRateUsecase(locator()).call(params);
+    final GetExchangeRateParams params = GetExchangeRateParams(
+      from: from,
+      to: to,
+    );
+    final DataState<ExchangeRateEntity> result = await GetExchangeRateUsecase(
+      locator(),
+    ).call(params);
 
     if (result is DataSuccess<ExchangeRateEntity>) {
       return price * result.entity!.rate;

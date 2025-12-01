@@ -8,7 +8,7 @@ part of 'api_request_entity.dart';
 
 class ApiRequestEntityAdapter extends TypeAdapter<ApiRequestEntity> {
   @override
-  final int typeId = 3;
+  final typeId = 3;
 
   @override
   ApiRequestEntity read(BinaryReader reader) {

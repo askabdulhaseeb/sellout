@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/utilities/app_string.dart';
 import '../../../../../../services/get_it.dart';

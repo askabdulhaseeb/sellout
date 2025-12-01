@@ -6,7 +6,7 @@ import '../../../../setting/setting_dashboard/domain/entities/notification_entit
 import '../../../../setting/setting_dashboard/domain/entities/privacy_settings_entity.dart';
 import '../../../../setting/setting_dashboard/domain/entities/time_away_entity.dart';
 import '../../../../user/profiles/domain/entities/supporter_detail_entity.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import 'address_entity.dart';
 import 'login_detail_entity.dart';
 import 'login_info_entity.dart';
@@ -24,7 +24,7 @@ class CurrentUserEntity {
     required this.displayName,
     required this.bio,
     required this.currency,
-    required this.privacyType,
+    // required this.privacyType,
     required this.countryAlpha3,
     required this.countryCode,
     required this.phoneNumber,
@@ -86,8 +86,8 @@ class CurrentUserEntity {
   @HiveField(9)
   final String? currency; // Preferred currency (e.g., PKR, GBP)
 
-  @HiveField(10)
-  final PrivacyType? privacyType;
+  // @HiveField(10)
+  // final PrivacyType? privacyType;
 
   @HiveField(16)
   final String countryAlpha3; // Country in Alpha-3 code
@@ -199,63 +199,65 @@ class CurrentUserEntity {
   String get profileImageUrl =>
       profileImage.isNotEmpty ? profileImage.first.url : '';
 
-  CurrentUserEntity copyWith(
-      {String? token,
-      String? refreshToken,
-      List<AddressEntity>? address,
-      bool? twoStepAuthEnabled,
-      List<SupporterDetailEntity>? supporting,
-      DateTime? dob,
-      String? phoneNumber,
-      String? countryCode,
-      String? displayName,
-      bool? otpVerified,
-      List<AttachmentEntity>? profileImage,
-      TimeAwayEntity? timeAway,
-      PrivacyType? privacyType}) {
+  CurrentUserEntity copyWith({
+    String? token,
+    String? refreshToken,
+    List<AddressEntity>? address,
+    bool? twoStepAuthEnabled,
+    List<SupporterDetailEntity>? supporting,
+    DateTime? dob,
+    String? phoneNumber,
+    String? countryCode,
+    String? displayName,
+    bool? otpVerified,
+    List<AttachmentEntity>? profileImage,
+    TimeAwayEntity? timeAway,
+    PrivacyType? privacyType,
+  }) {
     return CurrentUserEntity(
-        profileImage: profileImage ?? this.profileImage,
-        refreshToken: refreshToken ?? this.refreshToken,
-        otpVerified: otpVerified ?? this.otpVerified,
-        countryCode: countryCode ?? this.countryCode,
-        phoneNumber: phoneNumber ?? this.phoneNumber,
-        displayName: displayName ?? this.displayName,
-        supporting: supporting ?? this.supporting,
-        address: address ?? this.address,
-        token: token ?? this.token,
-        dob: dob ?? this.dob,
-        bio: bio,
-        message: message,
-        userID: userID,
-        email: email,
-        userName: userName,
-        currency: currency,
-        privacyType: privacyType ?? this.privacyType,
-        countryAlpha3: countryAlpha3,
-        language: language,
-        chatIDs: chatIDs,
-        businessIDs: businessIDs,
-        imageVerified: imageVerified,
-        verificationImage: verificationImage,
-        lastLoginTime: lastLoginTime,
-        createdAt: createdAt,
-        updatedAt: updatedAt,
-        inHiveAt: inHiveAt,
-        businessStatus: businessStatus,
-        businessName: businessName,
-        businessID: businessID,
-        logindetail: logindetail,
-        loginActivity: loginActivity,
-        employeeList: employeeList,
-        notification: notification,
-        twoStepAuthEnabled: twoStepAuthEnabled,
-        supporters: supporters,
-        privacySettings: privacySettings,
-        timeAway: timeAway,
-        accountStatus: accountStatus,
-        accountType: accountType,
-        saved: saved,
-        listOfReviews: listOfReviews,
-        location: location);
+      profileImage: profileImage ?? this.profileImage,
+      refreshToken: refreshToken ?? this.refreshToken,
+      otpVerified: otpVerified ?? this.otpVerified,
+      countryCode: countryCode ?? this.countryCode,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      displayName: displayName ?? this.displayName,
+      supporting: supporting ?? this.supporting,
+      address: address ?? this.address,
+      token: token ?? this.token,
+      dob: dob ?? this.dob,
+      bio: bio,
+      message: message,
+      userID: userID,
+      email: email,
+      userName: userName,
+      currency: currency,
+      // privacyType: privacyType ?? this.privacyType,
+      countryAlpha3: countryAlpha3,
+      language: language,
+      chatIDs: chatIDs,
+      businessIDs: businessIDs,
+      imageVerified: imageVerified,
+      verificationImage: verificationImage,
+      lastLoginTime: lastLoginTime,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      inHiveAt: inHiveAt,
+      businessStatus: businessStatus,
+      businessName: businessName,
+      businessID: businessID,
+      logindetail: logindetail,
+      loginActivity: loginActivity,
+      employeeList: employeeList,
+      notification: notification,
+      twoStepAuthEnabled: twoStepAuthEnabled,
+      supporters: supporters,
+      privacySettings: privacySettings,
+      timeAway: timeAway,
+      accountStatus: accountStatus,
+      accountType: accountType,
+      saved: saved,
+      listOfReviews: listOfReviews,
+      location: location,
+    );
   }
 }

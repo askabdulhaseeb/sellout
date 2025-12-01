@@ -8,7 +8,7 @@ part of 'service_entity.dart';
 
 class ServiceEntityAdapter extends TypeAdapter<ServiceEntity> {
   @override
-  final int typeId = 46;
+  final typeId = 46;
 
   @override
   ServiceEntity read(BinaryReader reader) {
@@ -29,9 +29,9 @@ class ServiceEntityAdapter extends TypeAdapter<ServiceEntity> {
       category: fields[8] as String,
       model: fields[9] as String,
       type: fields[10] as String,
-      price: fields[11] as double,
+      price: (fields[11] as num).toDouble(),
       listOfReviews: (fields[12] as List).cast<double>(),
-      time: fields[13] as int,
+      time: (fields[13] as num).toInt(),
       createdAt: fields[14] as DateTime,
       attachments: fields[15] == null
           ? []
@@ -44,7 +44,7 @@ class ServiceEntityAdapter extends TypeAdapter<ServiceEntity> {
   @override
   void write(BinaryWriter writer, ServiceEntity obj) {
     writer
-      ..writeByte(20)
+      ..writeByte(19)
       ..writeByte(0)
       ..write(obj.businessID)
       ..writeByte(1)
@@ -77,8 +77,6 @@ class ServiceEntityAdapter extends TypeAdapter<ServiceEntity> {
       ..write(obj.createdAt)
       ..writeByte(15)
       ..write(obj.attachments)
-      ..writeByte(16)
-      ..write(obj.inHiveAt)
       ..writeByte(17)
       ..write(obj.excluded)
       ..writeByte(18)

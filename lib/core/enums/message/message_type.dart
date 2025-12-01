@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import '../../functions/app_log.dart';
 part 'message_type.g.dart';
 
@@ -70,7 +70,9 @@ enum MessageType {
     if (value == null) {
       return MessageType.text;
     }
-    return values.firstWhere((MessageType e) => e.json == value,
-        orElse: () => MessageType.text);
+    return values.firstWhere(
+      (MessageType e) => e.json == value,
+      orElse: () => MessageType.text,
+    );
   }
 }

@@ -2,7 +2,7 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import '../../../../../../core/utilities/app_string.dart';
 import '../../features/personal/chats/chat/data/models/message_last_evaluated_key.dart';
 import '../../features/personal/chats/chat/data/sources/local/local_message.dart';
@@ -24,8 +24,9 @@ class SocketImplementations {
     final String chatId = data['chat_id'];
 
     //  Fetch existing chat messages
-    final List<MessageEntity> existingMessages =
-        LocalChatMessage().messages(chatId);
+    final List<MessageEntity> existingMessages = LocalChatMessage().messages(
+      chatId,
+    );
 
     //  Check for duplicates
     final bool isDuplicate = existingMessages.any(
@@ -97,8 +98,9 @@ class SocketImplementations {
       return;
     }
 
-    final Box<GettedMessageEntity> box =
-        Hive.box<GettedMessageEntity>(AppStrings.localChatMessagesBox);
+    final Box<GettedMessageEntity> box = Hive.box<GettedMessageEntity>(
+      AppStrings.localChatMessagesBox,
+    );
     final GettedMessageEntity? existing = box.get(chatId);
 
     if (existing == null) {
@@ -112,24 +114,30 @@ class SocketImplementations {
 
     if (index == -1) {
       AppLog.error(
-          'Message with messageId: $updatedMessageId not found in chatId: $chatId');
+        'Message with messageId: $updatedMessageId not found in chatId: $chatId',
+      );
       return;
     }
 
     try {
-      final List<MessageEntity> updatedMessages =
-          List<MessageEntity>.from(existing.messages);
+      final List<MessageEntity> updatedMessages = List<MessageEntity>.from(
+        existing.messages,
+      );
       updatedMessages[index] = MessageModel.fromMap(messageData);
       final GettedMessageEntity updatedEntity = GettedMessageEntity(
-          chatID: existing.chatID,
-          messages: updatedMessages,
-          lastEvaluatedKey: existing.lastEvaluatedKey);
+        chatID: existing.chatID,
+        messages: updatedMessages,
+        lastEvaluatedKey: existing.lastEvaluatedKey,
+      );
 
       await box.put(chatId, updatedEntity);
       AppLog.info('Successfully updated messages in Hive for chatId: $chatId');
     } catch (e, stackTrace) {
-      AppLog.error('Error saving updated messages to Hive: $e',
-          stackTrace: stackTrace, name: 'SocketService.updatedMessage');
+      AppLog.error(
+        'Error saving updated messages to Hive: $e',
+        stackTrace: stackTrace,
+        name: 'SocketService.updatedMessage',
+      );
     }
   }
 
@@ -141,5 +149,5 @@ class SocketImplementations {
   }
 
   // Notifictions
-//   Future<void> handleNotification(Map<String, dynamic> data) async {}
+  //   Future<void> handleNotification(Map<String, dynamic> data) async {}
 }

@@ -1,5 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/utilities/app_string.dart';
 import '../../../../../../services/get_it.dart';
@@ -8,6 +8,22 @@ import '../../../domain/entities/post/post_entity.dart';
 import '../../../domain/usecase/get_specific_post_usecase.dart';
 
 class LocalPost {
+  /// Always fetches a fresh post from remote, does not use local cache.
+  Future<DataState<PostEntity>> getFreshPost(
+    String id
+  ) async {
+    try {
+      final GetSpecificPostUsecase getSpecificPostUsecase =
+          GetSpecificPostUsecase(locator());
+      final DataState<PostEntity> result = await getSpecificPostUsecase(
+        GetSpecificPostParam(postId: id, silentUpdate: false),
+      );
+      return result;
+    } catch (e) {
+      return DataFailer<PostEntity>(CustomException(e.toString()));
+    }
+  }
+
   static final String boxTitle = AppStrings.localPostsBox;
   static Box<PostEntity> get _box => Hive.box<PostEntity>(boxTitle); // box
 
@@ -17,8 +33,9 @@ class LocalPost {
   Future<Box<PostEntity>> refresh() async {
     try {
       final bool isOpen = Hive.isBoxOpen(boxTitle);
-      final Box<PostEntity> box =
-          isOpen ? _box : await Hive.openBox<PostEntity>(boxTitle);
+      final Box<PostEntity> box = isOpen
+          ? _box
+          : await Hive.openBox<PostEntity>(boxTitle);
 
       // Check for type errors in all posts and remove faulty ones
       final List<String> faultyKeys = <String>[];

@@ -8,7 +8,7 @@ part of 'service_type_entity.dart';
 
 class ServiceTypeEntityAdapter extends TypeAdapter<ServiceTypeEntity> {
   @override
-  final int typeId = 77;
+  final typeId = 77;
 
   @override
   ServiceTypeEntity read(BinaryReader reader) {

@@ -1,4 +1,5 @@
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
+
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -41,8 +42,9 @@ class LocalVisit {
     if (me.isEmpty) {
       return DataSuccess<List<VisitingEntity>>(me, <VisitingEntity>[]);
     }
-    final List<VisitingEntity> result =
-        _box.values.where((VisitingEntity e) => e.visiterID == me).toList();
+    final List<VisitingEntity> result = _box.values
+        .where((VisitingEntity e) => e.visiterID == me)
+        .toList();
     return DataSuccess<List<VisitingEntity>>(me, result);
   }
 
@@ -51,8 +53,9 @@ class LocalVisit {
       return DataSuccess('', <VisitingEntity>[]); // or your own empty state
     }
 
-    final List<VisitingEntity> result =
-        _box.values.where((VisitingEntity e) => e.postID == postID).toList();
+    final List<VisitingEntity> result = _box.values
+        .where((VisitingEntity e) => e.postID == postID)
+        .toList();
 
     return DataSuccess('', result);
   }
@@ -62,8 +65,9 @@ class LocalVisit {
     if (me.isEmpty) {
       return DataSuccess<List<VisitingEntity>>(me, <VisitingEntity>[]);
     }
-    final List<VisitingEntity> result =
-        _box.values.where((VisitingEntity e) => e.hostID == me).toList();
+    final List<VisitingEntity> result = _box.values
+        .where((VisitingEntity e) => e.hostID == me)
+        .toList();
     return DataSuccess<List<VisitingEntity>>(me, result);
   }
 }

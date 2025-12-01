@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:latlong2/latlong.dart';
 import '../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../domain/entities/address_entity.dart';
@@ -16,8 +16,9 @@ class LocalAuth {
   }
 
   void _notifyAddressListChanged() {
-    addressListNotifier.value =
-        List<AddressEntity>.from(_getCurrentAddresses());
+    addressListNotifier.value = List<AddressEntity>.from(
+      _getCurrentAddresses(),
+    );
   }
 
   Future<void> updateOrAddAddress(List<AddressEntity> addresses) async {
@@ -39,11 +40,13 @@ class LocalAuth {
 
   /// Updates the profile picture for the current user and saves it locally.
   Future<void> updateProfilePicture(
-      List<AttachmentEntity> newProfileImages) async {
+    List<AttachmentEntity> newProfileImages,
+  ) async {
     final CurrentUserEntity? existing = currentUser;
     if (existing == null) return;
-    final CurrentUserEntity updated =
-        existing.copyWith(profileImage: newProfileImages);
+    final CurrentUserEntity updated = existing.copyWith(
+      profileImage: newProfileImages,
+    );
     await _box.put(boxTitle, updated);
   }
 
@@ -57,15 +60,28 @@ class LocalAuth {
       await Hive.openBox<CurrentUserEntity>(boxTitle);
 
   Future<Box<CurrentUserEntity>> refresh() async {
-    final bool isOpen = Hive.isBoxOpen(boxTitle);
-    return isOpen ? _box : await Hive.openBox<CurrentUserEntity>(boxTitle);
+    if (Hive.isBoxOpen(boxTitle)) {
+      return Hive.box<CurrentUserEntity>(boxTitle);
+    }
+    try {
+      return await Hive.openBox<CurrentUserEntity>(boxTitle);
+    } catch (e) {
+      // If there's a type mismatch (schema change), delete and recreate the box
+      debugPrint('LocalAuth: Error opening box, deleting corrupted data: $e');
+      try {
+        await Hive.deleteBoxFromDisk(boxTitle);
+      } catch (deleteError) {
+        // Ignore PathNotFoundException - the box/lock file may already be deleted
+        debugPrint('LocalAuth: Error deleting box from disk: $deleteError');
+      }
+      return await Hive.openBox<CurrentUserEntity>(boxTitle);
+    }
   }
 
   Future<void> signin(CurrentUserEntity currentUser) async {
     await _box.put(boxTitle, currentUser);
     uidNotifier.value = currentUser.userID;
   }
-
   static CurrentUserEntity? get currentUser =>
       _box.isEmpty ? null : _box.get(boxTitle);
 
@@ -73,8 +89,9 @@ class LocalAuth {
   static String? get uid => currentUser?.userID;
   static String get currency => currentUser?.currency ?? 'GBP';
   static LatLng get latlng => LatLng(
-      currentUser?.location?.latitude ?? 51.509865,
-      currentUser?.location?.longitude ?? -0.118092);
+    currentUser?.location?.latitude ?? 51.509865,
+    currentUser?.location?.longitude ?? -0.118092,
+  );
 
   static Future<void> updateToken(String? token) async {
     final CurrentUserEntity? existing = currentUser;
@@ -91,7 +108,12 @@ class LocalAuth {
   }
 
   Future<void> signout() async {
-    await _box.clear();
+    try {
+      await _box.clear();
+    } catch (e) {
+      // Ignore errors when clearing box (e.g., PathNotFoundException for lock files)
+      debugPrint('LocalAuth: Error clearing box during signout: $e');
+    }
     uidNotifier.value = null;
   }
 }
