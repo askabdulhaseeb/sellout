@@ -72,6 +72,8 @@ dependencies:
   # url_launcher: ^6.2.5
   flutter_svg: ^2.2.0
 
+  flutter_native_splash: ^2.4.7
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -82,7 +84,6 @@ dev_dependencies:
   hive_ce_generator: ^1.7.0
 
   flutter_launcher_icons: ^0.13.1
-  flutter_native_splash: ^2.4.0
 
 flutter_launcher_icons:
   android: true
@@ -102,9 +103,9 @@ flutter_icons:
 flutter_native_splash:
   android: true
   ios: true
-  color_dark: "#000000"
-  color: "#ffffff"
-  image: "assets/icons/icon.png"
+  color_dark: "#0E0E0E"
+  color: "#FFFFFF"
+  image: "assets/icons/sellout-bg.png"
 
 
 flutter:

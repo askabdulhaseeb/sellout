@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/foundation.dart';
@@ -16,45 +17,36 @@ import 'routes/app_routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: WidgetsBinding.instance);
+
   AppNavigator().init();
-  Object? initError;
-  try {
-    await HiveDB.init();
-    await dotenv.load(fileName: kDebugMode ? 'dev.env' : 'prod.env');
-    Stripe.publishableKey = dotenv.env['STRIPE_PUBLISHABLE_KEY'] ?? '';
-    await Stripe.instance.applySettings();
-    setupLocator();
-    await EasyLocalization.ensureInitialized();
-    SocketService(locator()).initAndListen();
-    await AppDataService().fetchAllData();
-  } catch (e, st) {
-    debugPrint('App initialization failed: $e\n$st');
-    initError = e;
-  }
+  await HiveDB.init();
+  await dotenv.load(fileName: kDebugMode ? 'dev.env' : 'prod.env');
+  Stripe.publishableKey = dotenv.env['STRIPE_PUBLISHABLE_KEY'] ?? '';
+  await Stripe.instance.applySettings();
+  setupLocator();
+  await EasyLocalization.ensureInitialized();
+  SocketService(locator()).initAndListen();
+  AppDataService().fetchAllData();
+
+  FlutterNativeSplash.remove();
+
   runApp(
     EasyLocalization(
       supportedLocales: const <Locale>[AppLocalization.en],
       path: AppLocalization.filePath,
       fallbackLocale: AppLocalization.defaultLocale,
       startLocale: AppLocalization.defaultLocale,
-      child: MyApp(initError: initError),
+      child: const MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  final Object? initError;
-  const MyApp({super.key, this.initError});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    if (initError != null) {
-      return MaterialApp(
-        home: Scaffold(
-          body: Center(child: Text('Initialization failed: $initError')),
-        ),
-      );
-    }
     return MultiProvider(
       providers: appProviders,
       child: MaterialApp(

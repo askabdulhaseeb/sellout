@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hive_ce/hive.dart';
 import 'category_data_service.dart';
@@ -71,9 +72,21 @@ class AppDataService extends WidgetsBindingObserver {
   // Fetch all initial data
   // ---------------------------------------------------------------
   Future<void> fetchAllData() async {
-    await ensureTokenRefreshed();
-    await _fetchCountries();
-    await fetchCategoriesIfEmpty(); // uses new separated method
+    try {
+      await ensureTokenRefreshed();
+    } catch (e, s) {
+      AppLog.error('Error refreshing token', error: e, stackTrace: s);
+    }
+    try {
+      await _fetchCountries();
+    } catch (e, s) {
+      AppLog.error('Error fetching countries', error: e, stackTrace: s);
+    }
+    try {
+      await fetchCategoriesIfEmpty();
+    } catch (e, s) {
+      AppLog.error('Error fetching categories', error: e, stackTrace: s);
+    }
   }
 
   // ---------------------------------------------------------------
@@ -86,9 +99,12 @@ class AppDataService extends WidgetsBindingObserver {
       );
 
       if (result is DataSuccess<List<CountryEntity>>) {
+        final List<CountryEntity> processed = await compute(
+          _processCountries,
+          result.entity ?? [],
+        );
         final Box<CountryEntity> box = LocalCountry().localBox;
-
-        for (final dynamic c in result.entity ?? <dynamic>[]) {
+        for (final c in processed) {
           box.put(c.shortName, c);
         }
         AppLog.info('Countries updated');
@@ -112,5 +128,9 @@ class AppDataService extends WidgetsBindingObserver {
     }
   }
 
-  // Category fetching logic is now in CategoryDataService
+  // Top-level function for isolate
+  List<CountryEntity> _processCountries(List<CountryEntity> countries) {
+    // Do heavy processing here if needed
+    return countries;
+  }
 }
