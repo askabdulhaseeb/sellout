@@ -13,8 +13,9 @@ abstract interface class CartRemoteAPI {
   Future<void> clearCart();
   Future<DataState<bool>> updateQty(CartItemUpdateQtyParam param);
   Future<DataState<bool>> updateStatus(
-      CartItemModel params, CartItemStatusType action);
-
+    CartItemModel params,
+    CartItemStatusType action,
+  );
 }
 
 class CartRemoteAPIImpl implements CartRemoteAPI {
@@ -38,7 +39,7 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
           'CartRemoteAPIImpl.getCart - Cart Item: ${cartModel.cartItems.length} - Total: ${cartModel.items.length}',
           name: 'CartRemoteAPIImpl.getCart - Success',
         );
-        await LocalCart().save(cartModel);
+        await LocalCart().save(cartModel.cartID, cartModel);
         return DataSuccess<CartEntity>(raw, cartModel);
       } else {
         AppLog.error(
@@ -106,7 +107,8 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
           error: CustomException('Failed to remove product from cart'),
         );
         return DataFailer<bool>(
-            CustomException('Failed to remove product from cart'));
+          CustomException('Failed to remove product from cart'),
+        );
       }
     } catch (e) {
       AppLog.error(

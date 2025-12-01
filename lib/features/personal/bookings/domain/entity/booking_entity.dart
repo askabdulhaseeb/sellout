@@ -1,5 +1,4 @@
 import 'package:hive_ce/hive.dart';
-
 import '../../../../../core/enums/core/status_type.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
 import 'booking_payment_detail_entity.dart';
@@ -29,7 +28,7 @@ class BookingEntity {
   @HiveField(1)
   final String? serviceID;
   @HiveField(2)
-  final String? bookingID;
+  final String bookingID;
   @HiveField(3)
   final String customerID;
   @HiveField(4)

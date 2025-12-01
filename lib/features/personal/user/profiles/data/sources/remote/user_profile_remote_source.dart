@@ -67,12 +67,8 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
           );
         }
 
-        // ⛔ No isolate: just parse normally
         final UserEntity entity = UserModel.fromRawJson(rawJson);
-
-        // Save to local cache
-        await LocalUser().save(entity);
-
+        await LocalUser().save(entity.uid, entity);
         return DataSuccess<UserEntity>(rawJson, entity);
       }
 

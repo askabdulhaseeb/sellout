@@ -17,28 +17,44 @@ import 'routes/app_routes.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   AppNavigator().init();
-  await HiveDB.init();
-  await dotenv.load(fileName: kDebugMode ? 'dev.env' : 'prod.env');
-  Stripe.publishableKey = dotenv.env['STRIPE_PUBLISHABLE_KEY'] ?? '';
-  await Stripe.instance.applySettings();
-  setupLocator();
-  await EasyLocalization.ensureInitialized();
-  SocketService(locator()).initAndListen();
-  await AppDataService().fetchAllData();
-  runApp(EasyLocalization(
-    supportedLocales: const <Locale>[AppLocalization.en],
-    path: AppLocalization.filePath,
-    fallbackLocale: AppLocalization.defaultLocale,
-    startLocale: AppLocalization.defaultLocale,
-    child: const MyApp(),
-  ));
+  Object? initError;
+  try {
+    await HiveDB.init();
+    await dotenv.load(fileName: kDebugMode ? 'dev.env' : 'prod.env');
+    Stripe.publishableKey = dotenv.env['STRIPE_PUBLISHABLE_KEY'] ?? '';
+    await Stripe.instance.applySettings();
+    setupLocator();
+    await EasyLocalization.ensureInitialized();
+    SocketService(locator()).initAndListen();
+    await AppDataService().fetchAllData();
+  } catch (e, st) {
+    debugPrint('App initialization failed: $e\n$st');
+    initError = e;
+  }
+  runApp(
+    EasyLocalization(
+      supportedLocales: const <Locale>[AppLocalization.en],
+      path: AppLocalization.filePath,
+      fallbackLocale: AppLocalization.defaultLocale,
+      startLocale: AppLocalization.defaultLocale,
+      child: MyApp(initError: initError),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final Object? initError;
+  const MyApp({super.key, this.initError});
 
   @override
   Widget build(BuildContext context) {
+    if (initError != null) {
+      return MaterialApp(
+        home: Scaffold(
+          body: Center(child: Text('Initialization failed: $initError')),
+        ),
+      );
+    }
     return MultiProvider(
       providers: appProviders,
       child: MaterialApp(

@@ -37,8 +37,10 @@ class ApiCall<T> {
       // if (!url.endsWith('/')) url += '/';
 
       /// Request
-      final http.Request request =
-          http.Request(requestType.json, Uri.parse(url));
+      final http.Request request = http.Request(
+        requestType.json,
+        Uri.parse(url),
+      );
 
       /// Request Fields
       if (fieldsMap != null && fieldsMap.isNotEmpty) {
@@ -46,9 +48,11 @@ class ApiCall<T> {
       }
 
       if (attachments != null && attachments.isNotEmpty) {
-        request.bodyFields.addEntries(attachments.map((PickedAttachment e) {
-          return MapEntry<String, String>('files', e.file.path);
-        }));
+        request.bodyFields.addEntries(
+          attachments.map((PickedAttachment e) {
+            return MapEntry<String, String>('files', e.file.path);
+          }),
+        );
       }
 
       /// Request Header
@@ -63,8 +67,9 @@ class ApiCall<T> {
         if (token == null) {
           return DataFailer<T>(CustomException('Unauthorized Access'));
         }
-        final String tokenStr =
-            token.startsWith('Bearer') ? token : 'Bearer $token';
+        final String tokenStr = token.startsWith('Bearer')
+            ? token
+            : 'Bearer $token';
         headers.addAll(<String, String>{'Authorization': tokenStr});
       }
       request.headers.addAll(headers);
@@ -96,7 +101,10 @@ class ApiCall<T> {
             url: url,
             encodedData: data,
           );
-          await LocalRequestHistory().save(apiRequestEntity);
+          await LocalRequestHistory().save(
+            apiRequestEntity.url,
+            apiRequestEntity,
+          );
           return DataSuccess<T>(data, null);
         }
       } else {
@@ -110,8 +118,13 @@ class ApiCall<T> {
           name: 'ApiCall.call - else',
           error: 'ERROR: ${decoded['error']}',
         );
-        return DataFailer<T>(CustomException('ERROR: ${decoded['message']}',
-            detail: '${decoded['details']}', reason: decoded['error']));
+        return DataFailer<T>(
+          CustomException(
+            'ERROR: ${decoded['message']}',
+            detail: '${decoded['details']}',
+            reason: decoded['error'],
+          ),
+        );
       }
     } catch (e) {
       AppLog.error(
@@ -144,8 +157,10 @@ class ApiCall<T> {
       url = '$url${endpoint.startsWith('/') ? endpoint : '/$endpoint'}';
 
       /// Request
-      http.MultipartRequest request =
-          http.MultipartRequest(requestType.json, Uri.parse(url));
+      http.MultipartRequest request = http.MultipartRequest(
+        requestType.json,
+        Uri.parse(url),
+      );
 
       if (fieldsMap != null && fieldsMap.isNotEmpty) {
         request.fields.addAll(fieldsMap);
@@ -170,12 +185,8 @@ class ApiCall<T> {
           final String mimeType =
               lookupMimeType(file.path) ?? 'application/octet-stream';
           final MediaType mediaType = MediaType.parse(mimeType);
-          final http.MultipartFile multipartFile =
-              await http.MultipartFile.fromPath(
-            key,
-            file.path,
-            contentType: mediaType,
-          );
+          final http.MultipartFile multipartFile = await http
+              .MultipartFile.fromPath(key, file.path, contentType: mediaType);
           request.files.add(multipartFile);
         }
       }
@@ -192,8 +203,9 @@ class ApiCall<T> {
         if (token == null) {
           return DataFailer<T>(CustomException('Unauthorized Access'));
         }
-        final String tokenStr =
-            token.startsWith('Bearer') ? token : 'Bearer $token';
+        final String tokenStr = token.startsWith('Bearer')
+            ? token
+            : 'Bearer $token';
         headers.addAll(<String, String>{'Authorization': tokenStr});
       }
 
@@ -218,7 +230,10 @@ class ApiCall<T> {
             url: url,
             encodedData: data,
           );
-          await LocalRequestHistory().save(apiRequestEntity);
+          await LocalRequestHistory().save(
+            apiRequestEntity.url,
+            apiRequestEntity,
+          );
           return DataSuccess<T>(data, null);
         }
       } else {
@@ -237,8 +252,12 @@ class ApiCall<T> {
       }
     } catch (e, stc) {
       debugPrint('🔴 ERROR: $fieldsMap');
-      AppLog.error('ApiCall.callFormData - Catch ERROR: ${e.toString()}',
-          name: 'ApiCall.callFormData - Catch', error: e, stackTrace: stc);
+      AppLog.error(
+        'ApiCall.callFormData - Catch ERROR: ${e.toString()}',
+        name: 'ApiCall.callFormData - Catch',
+        error: e,
+        stackTrace: stc,
+      );
       return DataFailer<T>(CustomException(e.toString()));
     }
   }

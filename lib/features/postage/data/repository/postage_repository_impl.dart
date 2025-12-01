@@ -27,7 +27,7 @@ class PostageRepositoryImpl implements PostageRepository {
   }
 
   @override
-  Future<DataState<bool>> getOrderPostageDetail(
+  Future<DataState<PostageDetailResponseModel>> getOrderPostageDetail(
     GetOrderPostageDetailParam param,
   ) async {
     return await _remoteAPI.getOrderPostageDetail(param);

@@ -48,7 +48,7 @@ class SocketImplementations {
           (ChatEntity chat) => chat.chatId == chatId,
         );
         if (fetchedChat != null) {
-          LocalChat().save(fetchedChat);
+          LocalChat().save(fetchedChat.chatId, fetchedChat);
           localChat = fetchedChat;
         }
       } else {
@@ -69,12 +69,12 @@ class SocketImplementations {
         paginationKey: data['message_id'],
       ),
     );
-    LocalChatMessage().save(updatedEntity, chatId);
+    LocalChatMessage().saveGettedMessageEntity(updatedEntity, chatId);
 
     // ✅ Update local chat lastMessage
     if (localChat != null) {
       final updatedChat = localChat.copyWith(lastMessage: newMsg);
-      LocalChat().save(updatedChat);
+      LocalChat().save(updatedChat.chatId, updatedChat);
     }
 
     //  Unread count

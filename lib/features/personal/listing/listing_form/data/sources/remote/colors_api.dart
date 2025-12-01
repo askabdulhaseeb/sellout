@@ -16,11 +16,12 @@ class ColorOptionsApi {
 
       if (response is DataSuccess) {
         final Map<String, dynamic> decoded = json.decode(response.data ?? '{}');
-        final List<ColorOptionModel> colors =
-            ColorOptionModel.listFromApi(decoded);
+        final List<ColorOptionModel> colors = ColorOptionModel.listFromApi(
+          decoded,
+        );
 
         // Save to local
-        await LocalColors().saveAll(colors);
+        await LocalColors().saveAllColors(colors);
 
         return colors;
       } else if (response is DataFailer) {
@@ -31,8 +32,7 @@ class ColorOptionsApi {
         );
 
         // Fallback: load local
-        return LocalColors()
-            .colors
+        return LocalColors().colors
             .map((ColorOptionEntity e) => ColorOptionModel.fromEntity(e))
             .toList();
       } else {
@@ -41,8 +41,7 @@ class ColorOptionsApi {
           name: 'ColorOptionsApi.getColors',
         );
 
-        return LocalColors()
-            .colors
+        return LocalColors().colors
             .map((ColorOptionEntity e) => ColorOptionModel.fromEntity(e))
             .toList();
       }
@@ -53,8 +52,7 @@ class ColorOptionsApi {
         error: e,
       );
       // Fallback: load local
-      return LocalColors()
-          .colors
+      return LocalColors().colors
           .map((ColorOptionEntity e) => ColorOptionModel.fromEntity(e))
           .toList();
     }

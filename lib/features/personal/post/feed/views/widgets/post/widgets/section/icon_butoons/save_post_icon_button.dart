@@ -10,10 +10,7 @@ import '../../../../../../../../user/profiles/data/sources/local/local_user.dart
 import '../../../../../../../domain/usecase/save_post_usecase.dart';
 
 class SavePostIconButton extends StatefulWidget {
-  const SavePostIconButton({
-    required this.postId,
-    super.key,
-  });
+  const SavePostIconButton({required this.postId, super.key});
 
   final String postId;
 
@@ -64,8 +61,9 @@ class _SavePostIconButtonState extends State<SavePostIconButton> {
       _updateLocalStorage(previousState);
 
       // Show error message
-      final String errorMessage =
-          isSaved ? 'unsave_post_failed'.tr() : 'save_post_failed'.tr();
+      final String errorMessage = isSaved
+          ? 'unsave_post_failed'.tr()
+          : 'save_post_failed'.tr();
       AppSnackBar.showSnackBar(context, errorMessage);
     }
   }
@@ -92,7 +90,7 @@ class _SavePostIconButtonState extends State<SavePostIconButton> {
     // This is a limitation that should be addressed in Priority 3
     user.saved.clear();
     user.saved.addAll(updatedSaved);
-    LocalUser().save(user);
+    LocalUser().save(user.uid, user);
   }
 
   @override
@@ -100,27 +98,28 @@ class _SavePostIconButtonState extends State<SavePostIconButton> {
     return InkWell(
       onTap: isLoading ? null : _handleToggleSave,
       child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
-          transitionBuilder: (Widget child, Animation<double> animation) {
-            return ScaleTransition(scale: animation, child: child);
-          },
-          child: isLoading
-              ? const SizedBox(
-                  key: ValueKey<String>('loading'),
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : isSaved
-                  ? Icon(
-                      key: const ValueKey<String>('saved'),
-                      Icons.bookmark_added,
-                      color: Theme.of(context).primaryColor,
-                    )
-                  : const CustomSvgIcon(
-                      key: ValueKey<String>('unsaved'),
-                      assetPath: AppStrings.selloutSaveIcon,
-                    )),
+        duration: const Duration(milliseconds: 300),
+        transitionBuilder: (Widget child, Animation<double> animation) {
+          return ScaleTransition(scale: animation, child: child);
+        },
+        child: isLoading
+            ? const SizedBox(
+                key: ValueKey<String>('loading'),
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : isSaved
+            ? Icon(
+                key: const ValueKey<String>('saved'),
+                Icons.bookmark_added,
+                color: Theme.of(context).primaryColor,
+              )
+            : const CustomSvgIcon(
+                key: ValueKey<String>('unsaved'),
+                assetPath: AppStrings.selloutSaveIcon,
+              ),
+      ),
     );
   }
 }

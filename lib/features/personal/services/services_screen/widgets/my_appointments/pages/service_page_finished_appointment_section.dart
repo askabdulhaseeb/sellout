@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 
 import '../../../../../../../core/enums/core/status_type.dart';
+import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../appointment/view/screens/appointment_tile.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../bookings/data/sources/local_booking.dart';
@@ -15,7 +16,7 @@ class ServicePageFinishedAppointmentSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return ValueListenableBuilder<Box<BookingEntity>>(
       valueListenable: Hive.box<BookingEntity>(
-        LocalBooking.boxTitle,
+        AppStrings.localBookingsBox,
       ).listenable(),
       builder: (BuildContext context, Box<BookingEntity> box, _) {
         final List<BookingEntity> allUserBookings = LocalBooking().userBooking(

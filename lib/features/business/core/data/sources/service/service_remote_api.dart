@@ -27,7 +27,7 @@ class ServiceRemoteApiImpl implements ServiceRemoteApi {
           return DataFailer<ServiceEntity?>(CustomException('na'.tr()));
         }
         final ServiceEntity service = ServiceModel.fromRawJson(raw);
-        await LocalService().save(service);
+        await LocalService().save(serviceID,service);
         return DataSuccess<ServiceEntity?>(raw, service);
       } else {
         AppLog.error(

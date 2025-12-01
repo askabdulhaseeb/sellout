@@ -43,7 +43,8 @@ class MyVisitingRemoteImpl implements MyVisitingRemote {
   }
 
   Future<DataState<List<VisitingEntity>>> _result(
-      DataState<bool> restul) async {
+    DataState<bool> restul,
+  ) async {
     if (restul is DataSuccess<bool>) {
       final String raw = restul.data ?? '';
       final dynamic useable = json.decode(raw);
@@ -52,7 +53,7 @@ class MyVisitingRemoteImpl implements MyVisitingRemote {
       final List<VisitingEntity> list = <VisitingEntity>[];
       for (dynamic item in rawList) {
         final VisitingEntity visiting = VisitingModel.fromJson(item);
-        await LocalVisit().save(visiting);
+        await LocalVisit().save(visiting.visitingID, visiting);
         list.add(visiting);
       }
       return DataSuccess<List<VisitingEntity>>('Success', list);

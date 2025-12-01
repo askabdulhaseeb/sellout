@@ -8,9 +8,13 @@ import '../params/get_order_postage_detail_params.dart';
 
 abstract interface class PostageRepository {
   Future<DataState<PostageDetailResponseModel>> getPostageDetails(
-      GetPostageDetailParam param);
+    GetPostageDetailParam param,
+  );
   Future<DataState<AddShippingResponseModel>> addShipping(
-      SubmitShippingParam param);
-  Future<DataState<bool>> getOrderPostageDetail(GetOrderPostageDetailParam param);
+    SubmitShippingParam param,
+  );
+  Future<DataState<PostageDetailResponseModel>> getOrderPostageDetail(
+    GetOrderPostageDetailParam param,
+  );
   Future<DataState<bool>> buyLabel(BuyLabelParams param);
 }

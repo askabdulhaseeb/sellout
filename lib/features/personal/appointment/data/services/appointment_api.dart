@@ -11,7 +11,8 @@ import '../model/hold_service_payment_model.dart';
 abstract interface class AppointmentApi {
   Future<DataState<bool>> updateAppointment(UpdateAppointmentParams params);
   Future<DataState<HoldServiceResponse>> holdServicePayment(
-      HoldServiceParams params);
+    HoldServiceParams params,
+  );
   Future<DataState<bool>> releasePayment(String transactionId);
 }
 
@@ -37,7 +38,7 @@ class AppointmentApiImpl implements AppointmentApi {
           final Map<String, dynamic> jsonMap = json.decode(result.data ?? '');
           final Map<String, dynamic> updatedMap = jsonMap['updatedBooking'];
           final BookingModel booking = BookingModel.fromMap(updatedMap);
-          await LocalBooking().save(booking);
+          await LocalBooking().save(booking.bookingID, booking);
         }
         return DataSuccess<bool>(result.data ?? '', true);
       } else {
@@ -69,15 +70,21 @@ class AppointmentApiImpl implements AppointmentApi {
         final HoldServiceResponse holdServiceModel =
             HoldServiceResponse.fromJson(result.data ?? '');
         return DataSuccess<HoldServiceResponse>(
-            result.data ?? '', holdServiceModel);
+          result.data ?? '',
+          holdServiceModel,
+        );
       } else {
-        AppLog.error(result.exception?.message ?? 'something_wrong'.tr(),
-            name: 'AppointmnetApi.holdServicePayment - else');
+        AppLog.error(
+          result.exception?.message ?? 'something_wrong'.tr(),
+          name: 'AppointmnetApi.holdServicePayment - else',
+        );
         return DataFailer<HoldServiceResponse>(result.exception!);
       }
     } catch (e) {
-      AppLog.error('something_wrong'.tr(),
-          name: 'AppointmnetApi.holdServicePayment - catch');
+      AppLog.error(
+        'something_wrong'.tr(),
+        name: 'AppointmnetApi.holdServicePayment - catch',
+      );
       return DataFailer<HoldServiceResponse>(CustomException(e.toString()));
     }
   }
@@ -98,15 +105,20 @@ class AppointmentApiImpl implements AppointmentApi {
         return DataSuccess<bool>(result.data ?? '', true);
       } else {
         debugPrint(
-            json.encode(<String, String>{'transaction_id': transactionId}));
-        AppLog.error(result.exception?.message ?? 'something_wrong'.tr(),
-            name: 'AppointmnetApi.releaseQuotePayment - else',
-            error: result.exception?.reason);
+          json.encode(<String, String>{'transaction_id': transactionId}),
+        );
+        AppLog.error(
+          result.exception?.message ?? 'something_wrong'.tr(),
+          name: 'AppointmnetApi.releaseQuotePayment - else',
+          error: result.exception?.reason,
+        );
         return DataFailer<bool>(result.exception!);
       }
     } catch (e) {
-      AppLog.error('something_wrong'.tr(),
-          name: 'AppointmnetApi.releaseQuotePayment - catch');
+      AppLog.error(
+        'something_wrong'.tr(),
+        name: 'AppointmnetApi.releaseQuotePayment - catch',
+      );
       return DataFailer<bool>(CustomException(e.toString()));
     }
   }

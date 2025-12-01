@@ -15,7 +15,7 @@ class PhoneNumberEntity {
 
   static Future<PhoneNumberEntity> fromJson(String fullPhone) async {
     // Open the Hive box to access stored country data
-    final Box<CountryEntity> box = await LocalCountry.openBox;
+    final Box<CountryEntity> box = LocalCountry().localBox;
 
     // If the box is empty, we need to fetch countries
     if (box.isEmpty) {
@@ -57,7 +57,7 @@ class PhoneNumberEntity {
 
     if (result is DataSuccess) {
       final List<CountryEntity> countries = result.entity ?? <CountryEntity>[];
-      final Box<CountryEntity> box = await LocalCountry.openBox;
+      final Box<CountryEntity> box = LocalCountry().localBox;
 
       // Clear the existing data and store the new countries in Hive
       await box.clear();
