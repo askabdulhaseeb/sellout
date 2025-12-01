@@ -1,5 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/adapters.dart';
 
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/utilities/app_string.dart';
@@ -49,8 +49,9 @@ class LocalService {
   Future<ServiceEntity?> getService(String id) async {
     final ServiceEntity? po = service(id);
     if (po == null) {
-      final GetServiceByIdUsecase getUsercase =
-          GetServiceByIdUsecase(locator());
+      final GetServiceByIdUsecase getUsercase = GetServiceByIdUsecase(
+        locator(),
+      );
       final DataState<ServiceEntity?> result = await getUsercase(id);
       if (result is DataSuccess) {
         return result.entity;

@@ -8,7 +8,7 @@ part of 'service_employee_entity.dart';
 
 class ServiceEmployeeEntityAdapter extends TypeAdapter<ServiceEmployeeEntity> {
   @override
-  final int typeId = 83;
+  final typeId = 83;
 
   @override
   ServiceEmployeeEntity read(BinaryReader reader) {
@@ -18,7 +18,7 @@ class ServiceEmployeeEntityAdapter extends TypeAdapter<ServiceEmployeeEntity> {
     };
     return ServiceEmployeeEntity(
       serviceId: fields[1] as String,
-      quantity: fields[2] as int,
+      quantity: (fields[2] as num).toInt(),
       bookAt: fields[3] as String,
     );
   }

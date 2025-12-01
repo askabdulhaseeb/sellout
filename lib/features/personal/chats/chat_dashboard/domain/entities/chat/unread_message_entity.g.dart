@@ -8,7 +8,7 @@ part of 'unread_message_entity.dart';
 
 class UnreadMessageEntityAdapter extends TypeAdapter<UnreadMessageEntity> {
   @override
-  final int typeId = 55;
+  final typeId = 55;
 
   @override
   UnreadMessageEntity read(BinaryReader reader) {
@@ -18,7 +18,7 @@ class UnreadMessageEntityAdapter extends TypeAdapter<UnreadMessageEntity> {
     };
     return UnreadMessageEntity(
       chatId: fields[0] as String,
-      count: fields[1] as int,
+      count: (fields[1] as num).toInt(),
     );
   }
 

@@ -8,7 +8,7 @@ part of 'getted_message_entity.dart';
 
 class GettedMessageEntityAdapter extends TypeAdapter<GettedMessageEntity> {
   @override
-  final int typeId = 33;
+  final typeId = 33;
 
   @override
   GettedMessageEntity read(BinaryReader reader) {
@@ -26,15 +26,13 @@ class GettedMessageEntityAdapter extends TypeAdapter<GettedMessageEntity> {
   @override
   void write(BinaryWriter writer, GettedMessageEntity obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.messages)
       ..writeByte(1)
       ..write(obj.lastEvaluatedKey)
       ..writeByte(2)
-      ..write(obj.chatID)
-      ..writeByte(99)
-      ..write(obj.inHiveAt);
+      ..write(obj.chatID);
   }
 
   @override

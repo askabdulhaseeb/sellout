@@ -1,4 +1,5 @@
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
+
 part 'discount_entity.g.dart';
 
 @HiveType(typeId: 21)
@@ -19,11 +20,7 @@ class DiscountEntity {
   num fiveItems;
 
   // copyWith method
-  DiscountEntity copyWith({
-    num? twoItems,
-    num? threeItems,
-    num? fiveItems,
-  }) {
+  DiscountEntity copyWith({num? twoItems, num? threeItems, num? fiveItems}) {
     return DiscountEntity(
       twoItems: twoItems ?? this.twoItems,
       threeItems: threeItems ?? this.threeItems,

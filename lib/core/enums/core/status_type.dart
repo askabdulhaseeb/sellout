@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 part 'status_type.g.dart';
 
 const Color _blueBG = Color.fromARGB(255, 215, 235, 248);

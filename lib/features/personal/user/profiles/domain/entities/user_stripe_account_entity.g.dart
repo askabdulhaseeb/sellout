@@ -9,7 +9,7 @@ part of 'user_stripe_account_entity.dart';
 class UserStripeAccountEntityAdapter
     extends TypeAdapter<UserStripeAccountEntity> {
   @override
-  final int typeId = 45;
+  final typeId = 45;
 
   @override
   UserStripeAccountEntity read(BinaryReader reader) {

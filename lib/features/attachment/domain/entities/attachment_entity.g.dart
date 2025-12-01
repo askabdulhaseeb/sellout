@@ -8,7 +8,7 @@ part of 'attachment_entity.dart';
 
 class AttachmentEntityAdapter extends TypeAdapter<AttachmentEntity> {
   @override
-  final int typeId = 4;
+  final typeId = 4;
 
   @override
   AttachmentEntity read(BinaryReader reader) {

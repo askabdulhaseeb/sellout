@@ -1,17 +1,17 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 part 'post_pet_entity.g.dart';
 
 @HiveType(typeId: 70)
 class PostPetEntity {
   PostPetEntity({
-      required   this.age,
-      required   this.breed,
-      required   this.healthChecked,
-      required   this.petsCategory,
-      required   this.readyToLeave,
-      required   this.wormAndFleaTreated,
-      required   this.vaccinationUpToDate,
-      required   this.address
+    required this.age,
+    required this.breed,
+    required this.healthChecked,
+    required this.petsCategory,
+    required this.readyToLeave,
+    required this.wormAndFleaTreated,
+    required this.vaccinationUpToDate,
+    required this.address,
   });
 
   @HiveField(0)

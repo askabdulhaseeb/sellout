@@ -8,7 +8,7 @@ part of 'delivery_type.dart';
 
 class DeliveryTypeAdapter extends TypeAdapter<DeliveryType> {
   @override
-  final int typeId = 24;
+  final typeId = 24;
 
   @override
   DeliveryType read(BinaryReader reader) {
@@ -31,16 +31,12 @@ class DeliveryTypeAdapter extends TypeAdapter<DeliveryType> {
     switch (obj) {
       case DeliveryType.paid:
         writer.writeByte(0);
-        break;
       case DeliveryType.freeDelivery:
         writer.writeByte(1);
-        break;
       case DeliveryType.collection:
         writer.writeByte(2);
-        break;
       case DeliveryType.fastDelivery:
         writer.writeByte(3);
-        break;
     }
   }
 

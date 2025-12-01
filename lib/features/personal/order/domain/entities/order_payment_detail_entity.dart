@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 part 'order_payment_detail_entity.g.dart';
 
 @HiveType(typeId: 62)

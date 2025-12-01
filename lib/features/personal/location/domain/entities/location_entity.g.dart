@@ -8,7 +8,7 @@ part of 'location_entity.dart';
 
 class LocationEntityAdapter extends TypeAdapter<LocationEntity> {
   @override
-  final int typeId = 17;
+  final typeId = 17;
 
   @override
   LocationEntity read(BinaryReader reader) {
@@ -21,8 +21,8 @@ class LocationEntityAdapter extends TypeAdapter<LocationEntity> {
       id: fields[0] as String?,
       title: fields[2] as String?,
       url: fields[1] as String?,
-      latitude: fields[4] as double,
-      longitude: fields[5] as double,
+      latitude: (fields[4] as num).toDouble(),
+      longitude: (fields[5] as num).toDouble(),
     );
   }
 

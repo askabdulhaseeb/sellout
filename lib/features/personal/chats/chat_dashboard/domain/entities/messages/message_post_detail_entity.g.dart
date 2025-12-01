@@ -9,7 +9,7 @@ part of 'message_post_detail_entity.dart';
 class MessagePostDetailEntityAdapter
     extends TypeAdapter<MessagePostDetailEntity> {
   @override
-  final int typeId = 87;
+  final typeId = 87;
 
   @override
   MessagePostDetailEntity read(BinaryReader reader) {

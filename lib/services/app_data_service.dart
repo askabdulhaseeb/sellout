@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import 'category_data_service.dart';
 import '../core/functions/app_log.dart';
 import '../core/sources/data_state.dart';
@@ -58,10 +58,12 @@ class AppDataService extends WidgetsBindingObserver {
     try {
       await _refreshUsecase.refreshIfNeeded();
     } catch (e, s) {
-      AppLog.error('Exception ensuring token refresh',
-          error: e,
-          stackTrace: s,
-          name: 'AppDataService.ensureTokenRefreshed - catch');
+      AppLog.error(
+        'Exception ensuring token refresh',
+        error: e,
+        stackTrace: s,
+        name: 'AppDataService.ensureTokenRefreshed - catch',
+      );
     }
   }
 
@@ -79,8 +81,9 @@ class AppDataService extends WidgetsBindingObserver {
   // ---------------------------------------------------------------
   Future<void> _fetchCountries() async {
     try {
-      final DataState<List<CountryEntity>> result =
-          await _countryApi.countries(const Duration(days: 7));
+      final DataState<List<CountryEntity>> result = await _countryApi.countries(
+        const Duration(days: 7),
+      );
 
       if (result is DataSuccess<List<CountryEntity>>) {
         final Box<CountryEntity> box = await LocalCountry.openBox;
@@ -93,12 +96,19 @@ class AppDataService extends WidgetsBindingObserver {
       }
 
       if (result is DataFailer) {
-        AppLog.error('Failed fetching countries',
-            error: result.exception, name: 'AppDataService._fetchCountries');
+        AppLog.error(
+          'Failed fetching countries',
+          error: result.exception,
+          name: 'AppDataService._fetchCountries',
+        );
       }
     } catch (e, s) {
-      AppLog.error('Exception fetching countries',
-          error: e, stackTrace: s, name: 'AppDataService._fetchCountries');
+      AppLog.error(
+        'Exception fetching countries',
+        error: e,
+        stackTrace: s,
+        name: 'AppDataService._fetchCountries',
+      );
     }
   }
 

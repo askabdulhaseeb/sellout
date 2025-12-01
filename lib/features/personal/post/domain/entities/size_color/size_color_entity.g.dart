@@ -8,7 +8,7 @@ part of 'size_color_entity.dart';
 
 class SizeColorEntityAdapter extends TypeAdapter<SizeColorEntity> {
   @override
-  final int typeId = 22;
+  final typeId = 22;
 
   @override
   SizeColorEntity read(BinaryReader reader) {

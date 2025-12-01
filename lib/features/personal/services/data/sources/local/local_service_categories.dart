@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/utilities/app_string.dart';
@@ -33,10 +33,11 @@ class LocalServiceCategory {
 
   /// Save multiple service categories at once
   Future<void> saveAll(List<ServiceCategoryEntity> categories) async {
-    final Map<String, ServiceCategoryEntity> map = <String, ServiceCategoryEntity>{
-      for (ServiceCategoryEntity category in categories)
-        category.value: category,
-    };
+    final Map<String, ServiceCategoryEntity> map =
+        <String, ServiceCategoryEntity>{
+          for (ServiceCategoryEntity category in categories)
+            category.value: category,
+        };
     await _box.putAll(map);
   }
 

@@ -18,7 +18,7 @@ abstract interface class PostRemoteApi {
   Future<DataState<GetFeedResponse>> getFeed(GetFeedParams params);
   Future<DataState<PostEntity>> getPost(
     String id, {
-    bool silentUpdate = true,
+    required bool silentUpdate,
   });
   Future<DataState<bool>> addToCart(AddToCartParam param);
   Future<DataState<bool>> reportPost(ReportParams params);
@@ -46,7 +46,8 @@ class PostRemoteApiImpl implements PostRemoteApi {
         rawData = request.encodedData;
       } else {
         debugPrint(
-            '[FeedAPI] No valid cache found. Fetching from network 🌐...');
+          '[FeedAPI] No valid cache found. Fetching from network 🌐...',
+        );
         final DataState<String> result = await ApiCall<String>().call(
           endpoint: endpoint,
           requestType: ApiRequestType.get,
@@ -63,7 +64,8 @@ class PostRemoteApiImpl implements PostRemoteApi {
           }
         } else {
           debugPrint(
-              '[FeedAPI] Network call failed : ${result.exception?.message}');
+            '[FeedAPI] Network call failed : ${result.exception?.message}',
+          );
           return DataFailer<GetFeedResponse>(
             result.exception ?? CustomException('something_wrong'.tr()),
           );
@@ -75,38 +77,35 @@ class PostRemoteApiImpl implements PostRemoteApi {
       final List<dynamic> list = jsonMap['response'] ?? <dynamic>[];
       final String? nextPageToken = jsonMap['nextPageToken'];
 
-      final List<PostEntity> posts =
-          list.map<PostEntity>((item) => PostModel.fromJson(item)).toList();
+      final List<PostEntity> posts = list
+          .map<PostEntity>((item) => PostModel.fromJson(item))
+          .toList();
 
       debugPrint('[FeedAPI] Next page token: $nextPageToken');
 
       return DataSuccess<GetFeedResponse>(
         '',
-        GetFeedResponse(
-          nextPageToken: nextPageToken,
-          posts: posts,
-        ),
+        GetFeedResponse(nextPageToken: nextPageToken, posts: posts),
       );
     } catch (e) {
       debugPrint('[FeedAPI] Exception occurred 💥: $e');
-      return DataFailer<GetFeedResponse>(
-        CustomException(e.toString()),
-      );
+      return DataFailer<GetFeedResponse>(CustomException(e.toString()));
     }
   }
 
   @override
   Future<DataState<PostEntity>> getPost(
     String id, {
-    bool silentUpdate = true,
+    required bool silentUpdate,
   }) async {
     try {
       if (silentUpdate) {
         debugPrint('updating post silently: $id');
         ApiRequestEntity? request = await LocalRequestHistory().request(
           endpoint: '/post/$id',
-          duration:
-              kDebugMode ? const Duration(days: 1) : const Duration(hours: 1),
+          duration: kDebugMode
+              ? const Duration(days: 1)
+              : const Duration(hours: 1),
         );
         if (request != null) {
           final PostEntity? post = LocalPost().post(id);
@@ -129,7 +128,8 @@ class PostRemoteApiImpl implements PostRemoteApi {
         final String raw = result.data ?? '';
         if (raw.isEmpty) {
           return DataFailer<PostEntity>(
-              result.exception ?? CustomException('something_wrong'.tr()));
+            result.exception ?? CustomException('something_wrong'.tr()),
+          );
         }
         final dynamic item = json.decode(raw);
         final PostEntity post = PostModel.fromJson(item);

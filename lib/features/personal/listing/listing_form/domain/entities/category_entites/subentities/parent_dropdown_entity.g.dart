@@ -8,7 +8,7 @@ part of 'parent_dropdown_entity.dart';
 
 class ParentDropdownEntityAdapter extends TypeAdapter<ParentDropdownEntity> {
   @override
-  final int typeId = 81;
+  final typeId = 81;
 
   @override
   ParentDropdownEntity read(BinaryReader reader) {

@@ -1,4 +1,5 @@
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
+
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../services/get_it.dart';
@@ -44,8 +45,9 @@ class LocalUser {
     if (entity != null) {
       return entity;
     } else {
-      final GetUserByUidUsecase getUserByUidUsecase =
-          GetUserByUidUsecase(locator());
+      final GetUserByUidUsecase getUserByUidUsecase = GetUserByUidUsecase(
+        locator(),
+      );
       final DataState<UserEntity?> user = await getUserByUidUsecase(id);
       if (user is DataSuccess) {
         return user.entity;

@@ -1,4 +1,5 @@
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
+
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/utilities/app_string.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -23,7 +24,8 @@ class LocalOrders {
     final String id = value ?? LocalAuth.uid ?? '';
     if (id.isEmpty) {
       return DataFailer<List<OrderEntity>>(
-          CustomException('sellerId is empty'));
+        CustomException('sellerId is empty'),
+      );
     }
     final List<OrderEntity> orders = _box.values.where((OrderEntity order) {
       return order.sellerId == id;
@@ -41,7 +43,7 @@ class LocalOrders {
 
   Future<void> saveAll(List<OrderEntity> orders) async {
     final Map<String, OrderEntity> map = <String, OrderEntity>{
-      for (OrderEntity order in orders) order.orderId: order
+      for (OrderEntity order in orders) order.orderId: order,
     };
     await _box.putAll(map);
   }

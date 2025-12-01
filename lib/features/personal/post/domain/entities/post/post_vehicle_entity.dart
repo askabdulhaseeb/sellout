@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 part 'post_vehicle_entity.g.dart';
 
 @HiveType(typeId: 69)
@@ -51,6 +51,6 @@ class PostVehicleEntity {
   final String? exteriorColor;
   @HiveField(14)
   final String? vehiclesCategory;
-    @HiveField(15)
+  @HiveField(15)
   final String address;
 }

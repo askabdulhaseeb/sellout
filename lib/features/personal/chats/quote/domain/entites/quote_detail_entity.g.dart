@@ -8,7 +8,7 @@ part of 'quote_detail_entity.dart';
 
 class QuoteDetailEntityAdapter extends TypeAdapter<QuoteDetailEntity> {
   @override
-  final int typeId = 82;
+  final typeId = 82;
 
   @override
   QuoteDetailEntity read(BinaryReader reader) {
@@ -22,7 +22,7 @@ class QuoteDetailEntityAdapter extends TypeAdapter<QuoteDetailEntity> {
       buyerId: fields[2] as String,
       quoteId: fields[3] as String,
       status: fields[4] as StatusType,
-      price: fields[5] as double,
+      price: (fields[5] as num).toDouble(),
       currency: fields[6] as String,
     );
   }

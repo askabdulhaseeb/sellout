@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import '../../../../../services/get_it.dart';
 import '../../../../sources/data_state.dart';
 import '../../data/sources/local_country.dart';
@@ -6,10 +6,7 @@ import '../usecase/get_counties_usecase.dart';
 import 'country_entity.dart';
 
 class PhoneNumberEntity {
-  PhoneNumberEntity({
-    required this.countryCode,
-    required this.number,
-  });
+  PhoneNumberEntity({required this.countryCode, required this.number});
 
   final String countryCode;
   final String number;
@@ -26,12 +23,15 @@ class PhoneNumberEntity {
     }
 
     // Get all active countries from Hive
-    final List<CountryEntity> allCountries =
-        box.values.where((CountryEntity country) => country.isActive).toList();
+    final List<CountryEntity> allCountries = box.values
+        .where((CountryEntity country) => country.isActive)
+        .toList();
 
     // Sort country codes descending by length to match longest one first
-    allCountries.sort((CountryEntity a, CountryEntity b) =>
-        b.countryCode.length.compareTo(a.countryCode.length));
+    allCountries.sort(
+      (CountryEntity a, CountryEntity b) =>
+          b.countryCode.length.compareTo(a.countryCode.length),
+    );
 
     // Try to match the phone number with a country code
     for (final CountryEntity country in allCountries) {
@@ -48,10 +48,12 @@ class PhoneNumberEntity {
 
   // Fetch and store countries in Hive
   static Future<void> _fetchAndStoreCountries() async {
-    GetCountiesUsecase getCountiesUsecase =
-        GetCountiesUsecase(locator()); // Make sure to initialize it properly
-    final DataState<List<CountryEntity>> result =
-        await getCountiesUsecase.call(const Duration(days: 1));
+    GetCountiesUsecase getCountiesUsecase = GetCountiesUsecase(
+      locator(),
+    ); // Make sure to initialize it properly
+    final DataState<List<CountryEntity>> result = await getCountiesUsecase.call(
+      const Duration(days: 1),
+    );
 
     if (result is DataSuccess) {
       final List<CountryEntity> countries = result.entity ?? <CountryEntity>[];

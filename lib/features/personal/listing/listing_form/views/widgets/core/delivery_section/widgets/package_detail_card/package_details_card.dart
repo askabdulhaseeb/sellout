@@ -162,7 +162,8 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
 
     // Size grouping based on volume (cm^3)
     String groupBySize(List<dynamic> dims) {
-      final double v = (dims[0] as num).toDouble() *
+      final double v =
+          (dims[0] as num).toDouble() *
           (dims[1] as num).toDouble() *
           (dims[2] as num).toDouble();
       const double smallMax = 20000; // up to 20k cm^3
@@ -199,10 +200,10 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
     // Precompute grouped presets
     final Map<String, List<Map<String, dynamic>>> sizeGrouped =
         <String, List<Map<String, dynamic>>>{
-      'small': <Map<String, dynamic>>[],
-      'medium': <Map<String, dynamic>>[],
-      'large': <Map<String, dynamic>>[],
-    };
+          'small': <Map<String, dynamic>>[],
+          'medium': <Map<String, dynamic>>[],
+          'large': <Map<String, dynamic>>[],
+        };
     for (final Map<String, dynamic> p in packPresets) {
       final String g = groupForPreset(p);
       sizeGrouped[g]!.add(p);
@@ -211,10 +212,12 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
       sizeGrouped[k]!.sort((Map<String, dynamic> a, Map<String, dynamic> b) {
         final List<dynamic> da = a['dims'];
         final List<dynamic> db = b['dims'];
-        final double va = (da[0] as num).toDouble() *
+        final double va =
+            (da[0] as num).toDouble() *
             (da[1] as num).toDouble() *
             (da[2] as num).toDouble();
-        final double vb = (db[0] as num).toDouble() *
+        final double vb =
+            (db[0] as num).toDouble() *
             (db[1] as num).toDouble() *
             (db[2] as num).toDouble();
         return va.compareTo(vb);
@@ -238,11 +241,13 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
             spacing: AppSpacing.vSm,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Builder(builder: (BuildContext context) {
-                final String? dims = selectedDimsText();
-                final String? preset = matchedPresetLabel();
-                return SelectedBanner(dimsText: dims, presetLabel: preset);
-              }),
+              Builder(
+                builder: (BuildContext context) {
+                  final String? dims = selectedDimsText();
+                  final String? preset = matchedPresetLabel();
+                  return SelectedBanner(dimsText: dims, presetLabel: preset);
+                },
+              ),
               const InfoNotice(),
               Column(
                 children: <Widget>[
@@ -263,16 +268,11 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
                       },
                     );
                   }),
-
                   // Fourth tile: Custom size (inputs)
                   CustomSizeTile(formPro: formPro),
                 ],
               ),
-              WeightSection(
-                controller: _weightSync.displayController,
-                isKg: _isKg,
-                onToggleUnit: (bool toKg) => _toggleUnit(formPro, toKg),
-              ),
+              WeightSection(controller: _weightSync.displayController),
             ],
           ),
         ),

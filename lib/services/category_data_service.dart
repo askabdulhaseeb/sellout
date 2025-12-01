@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import '../../features/personal/listing/listing_form/data/sources/local/local_categories.dart';
 import '../../features/personal/listing/listing_form/domain/entities/category_entites/categories_entity.dart';
 import '../../core/functions/app_log.dart';
@@ -26,10 +26,12 @@ class CategoryDataService {
         AppLog.info('Categories already exist → skipping fetch');
       }
     } catch (e, s) {
-      AppLog.error('Error checking categories box',
-          error: e,
-          stackTrace: s,
-          name: 'CategoryDataService.ensureCategoriesLoaded');
+      AppLog.error(
+        'Error checking categories box',
+        error: e,
+        stackTrace: s,
+        name: 'CategoryDataService.ensureCategoriesLoaded',
+      );
     }
   }
 
@@ -51,15 +53,10 @@ class CategoryDataService {
         if (result is DataSuccess) {
           AppLog.info('Fetched: $endpoint');
         } else if (result is DataFailer) {
-          AppLog.error('Failed fetching $endpoint',
-              error: result.exception,
-              name: 'CategoryDataService.fetchCategories');
+          AppLog.error('Failed fetching $endpoint', error: result.exception);
         }
       } catch (e, s) {
-        AppLog.error('Exception fetching $endpoint',
-            error: e,
-            stackTrace: s,
-            name: 'CategoryDataService.fetchCategories');
+        AppLog.error('Exception fetching $endpoint', error: e, stackTrace: s);
       }
     }
   }

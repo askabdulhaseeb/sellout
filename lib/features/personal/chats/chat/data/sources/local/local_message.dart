@@ -1,4 +1,5 @@
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
+
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../chat_dashboard/data/sources/local/local_chat.dart';
@@ -53,11 +54,13 @@ class LocalChatMessage {
     final GettedMessageEntity? entity = _box.get(chatId);
     if (entity == null) return;
 
-    final List<MessageEntity> updatedMessages =
-        List<MessageEntity>.from(entity.messages);
+    final List<MessageEntity> updatedMessages = List<MessageEntity>.from(
+      entity.messages,
+    );
 
     final int existingIndex = updatedMessages.indexWhere(
-        (MessageEntity msg) => msg.messageId == newMessage.messageId);
+      (MessageEntity msg) => msg.messageId == newMessage.messageId,
+    );
 
     if (existingIndex != -1) {
       updatedMessages[existingIndex] = newMessage;
@@ -69,8 +72,9 @@ class LocalChatMessage {
       AppLog.info('➕ Message added to existing chat');
     }
 
-    final GettedMessageEntity updatedEntity =
-        entity.copyWith(messages: updatedMessages);
+    final GettedMessageEntity updatedEntity = entity.copyWith(
+      messages: updatedMessages,
+    );
     await _box.put(chatId, updatedEntity);
   }
 
@@ -96,10 +100,7 @@ class LocalChatMessage {
         }
         // }
       }
-      AppLog.info(
-        'New Message - updated: ${old.length}',
-        name: chatID,
-      );
+      AppLog.info('New Message - updated: ${old.length}', name: chatID);
       final GettedMessageEntity newGettedMessage = GettedMessageEntity(
         chatID: id,
         messages: old,
@@ -126,8 +127,9 @@ class LocalChatMessage {
         .toList();
     if (getted.isEmpty) return <MessageEntity>[];
     final List<MessageEntity> msgs = getted[0].messages;
-    msgs.sort((MessageEntity a, MessageEntity b) =>
-        b.createdAt.compareTo(a.createdAt));
+    msgs.sort(
+      (MessageEntity a, MessageEntity b) => b.createdAt.compareTo(a.createdAt),
+    );
     return msgs;
   }
 }

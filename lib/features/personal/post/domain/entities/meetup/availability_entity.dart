@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import '../../../../../../core/enums/routine/day_type.dart';
 part 'availability_entity.g.dart';
 

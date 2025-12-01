@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
+
 import '../../../../../../core/enums/chat/chat_page_type.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
@@ -71,21 +72,26 @@ class ChatDashboardProvider extends ChangeNotifier {
     if (_page == ChatPageType.orders) {
       // Orders tab: show private and product chats
       filtered = filtered
-          .where((ChatEntity c) =>
-              c.type == ChatType.private ||
-              (c.type == ChatType.product &&
-                  c.productInfo?.type != ChatType.service))
+          .where(
+            (ChatEntity c) =>
+                c.type == ChatType.private ||
+                (c.type == ChatType.product &&
+                    c.productInfo?.type != ChatType.service),
+          )
           .toList();
     } else if (_page == ChatPageType.services) {
       filtered = filtered
-          .where((ChatEntity c) =>
-              c.type == ChatType.product &&
-              c.productInfo?.type == ChatType.service)
+          .where(
+            (ChatEntity c) =>
+                c.type == ChatType.product &&
+                c.productInfo?.type == ChatType.service,
+          )
           .toList();
     } else if (_page == ChatPageType.groups) {
       // Groups tab: only group chats
-      filtered =
-          filtered.where((ChatEntity c) => c.type == ChatType.group).toList();
+      filtered = filtered
+          .where((ChatEntity c) => c.type == ChatType.group)
+          .toList();
     }
     // --- Search filter ---
     if (_searchQuery.isNotEmpty) {
@@ -113,9 +119,12 @@ class ChatDashboardProvider extends ChangeNotifier {
 
     // --- Sort by lastMessage date ---
     _filteredChats = filtered
-      ..sort((ChatEntity a, ChatEntity b) =>
-          (b.lastMessage?.createdAt ?? DateTime(0))
-              .compareTo(a.lastMessage?.createdAt ?? DateTime(0)));
+      ..sort(
+        (ChatEntity a, ChatEntity b) =>
+            (b.lastMessage?.createdAt ?? DateTime(0)).compareTo(
+              a.lastMessage?.createdAt ?? DateTime(0),
+            ),
+      );
 
     notifyListeners();
   }
@@ -135,8 +144,9 @@ class ChatDashboardProvider extends ChangeNotifier {
       if (chat.type == ChatType.product &&
           chat.productInfo?.id != null &&
           postCache[chat.productInfo!.id] == null) {
-        postCache[chat.productInfo!.id] =
-            await LocalPost().getPost(chat.productInfo!.id);
+        postCache[chat.productInfo!.id] = await LocalPost().getPost(
+          chat.productInfo!.id,
+        );
       }
     }
     notifyListeners();
@@ -145,8 +155,9 @@ class ChatDashboardProvider extends ChangeNotifier {
   /// --- Fetch chats from backend ---
   Future<DataState<List<ChatEntity>>> getChats() async {
     setLoading(true);
-    final DataState<List<ChatEntity>> result =
-        await _getMyChatsUsecase.call(null);
+    final DataState<List<ChatEntity>> result = await _getMyChatsUsecase.call(
+      null,
+    );
 
     if (result is DataSuccess) {
       // Save to Hive, Hive listener updates provider automatically

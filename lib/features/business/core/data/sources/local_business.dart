@@ -1,5 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/adapters.dart';
 
 import '../../../../../core/sources/data_state.dart';
 import '../../../../../core/utilities/app_string.dart';
@@ -42,8 +42,9 @@ class LocalBusiness {
   Future<BusinessEntity?> getBusiness(String id) async {
     final BusinessEntity? po = business(id);
     if (po == null) {
-      final GetBusinessByIdUsecase getUsercase =
-          GetBusinessByIdUsecase(locator());
+      final GetBusinessByIdUsecase getUsercase = GetBusinessByIdUsecase(
+        locator(),
+      );
       final DataState<BusinessEntity?> result = await getUsercase(id);
       if (result is DataSuccess) {
         return result.entity;

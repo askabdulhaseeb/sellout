@@ -1,4 +1,5 @@
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
+
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../services/get_it.dart';
@@ -43,7 +44,7 @@ class LocalChat {
     }
   }
 
-//
+  //
   Future<void> updateLastMessage(String chatId, MessageEntity newMsg) async {
     final ChatEntity? existing = _box.get(chatId);
     if (existing == null) {
@@ -62,12 +63,12 @@ class LocalChat {
       // If chat does not exist locally, you might fetch it
       await GetMyChatsUsecase(locator()).call(<String>[newMsg.chatId]);
     } else {
-      final ChatEntity updated = existing.copyWith(
-        pinnedMessage: newMsg,
-      );
+      final ChatEntity updated = existing.copyWith(pinnedMessage: newMsg);
 
       await _box.put(
-          newMsg.chatId, updated); // This notifies listeners if UI is listening
+        newMsg.chatId,
+        updated,
+      ); // This notifies listeners if UI is listening
     }
   }
 }

@@ -8,7 +8,7 @@ part of 'review_entity.dart';
 
 class ReviewEntityAdapter extends TypeAdapter<ReviewEntity> {
   @override
-  final int typeId = 47;
+  final typeId = 47;
 
   @override
   ReviewEntity read(BinaryReader reader) {
@@ -22,7 +22,7 @@ class ReviewEntityAdapter extends TypeAdapter<ReviewEntity> {
       sellerID: fields[2] as String?,
       businessID: fields[3] as String?,
       serviceID: fields[4] as String?,
-      rating: fields[5] as double,
+      rating: (fields[5] as num).toDouble(),
       title: fields[6] as String,
       text: fields[7] as String,
       typeSTR: fields[8] as String,
@@ -35,7 +35,7 @@ class ReviewEntityAdapter extends TypeAdapter<ReviewEntity> {
   @override
   void write(BinaryWriter writer, ReviewEntity obj) {
     writer
-      ..writeByte(13)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.postID)
       ..writeByte(1)
@@ -59,9 +59,7 @@ class ReviewEntityAdapter extends TypeAdapter<ReviewEntity> {
       ..writeByte(11)
       ..write(obj.fileUrls)
       ..writeByte(12)
-      ..write(obj.createdAt)
-      ..writeByte(99)
-      ..write(obj.inHiveAt);
+      ..write(obj.createdAt);
   }
 
   @override

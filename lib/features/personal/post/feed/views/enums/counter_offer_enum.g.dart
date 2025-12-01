@@ -8,7 +8,7 @@ part of 'counter_offer_enum.dart';
 
 class CounterOfferEnumAdapter extends TypeAdapter<CounterOfferEnum> {
   @override
-  final int typeId = 67;
+  final typeId = 67;
 
   @override
   CounterOfferEnum read(BinaryReader reader) {
@@ -27,10 +27,8 @@ class CounterOfferEnumAdapter extends TypeAdapter<CounterOfferEnum> {
     switch (obj) {
       case CounterOfferEnum.seller:
         writer.writeByte(0);
-        break;
       case CounterOfferEnum.buyer:
         writer.writeByte(1);
-        break;
     }
   }
 

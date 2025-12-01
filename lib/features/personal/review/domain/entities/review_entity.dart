@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 
 import '../../../../attachment/domain/entities/attachment_entity.dart';
 import '../enums/review_type.dart';

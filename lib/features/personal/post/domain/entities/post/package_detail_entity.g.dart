@@ -8,7 +8,7 @@ part of 'package_detail_entity.dart';
 
 class PackageDetailEntityAdapter extends TypeAdapter<PackageDetailEntity> {
   @override
-  final int typeId = 75;
+  final typeId = 75;
 
   @override
   PackageDetailEntity read(BinaryReader reader) {
@@ -17,10 +17,10 @@ class PackageDetailEntityAdapter extends TypeAdapter<PackageDetailEntity> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return PackageDetailEntity(
-      length: fields[0] as double,
-      width: fields[1] as double,
-      weight: fields[2] as double,
-      height: fields[3] as double,
+      length: (fields[0] as num).toDouble(),
+      width: (fields[1] as num).toDouble(),
+      weight: (fields[2] as num).toDouble(),
+      height: (fields[3] as num).toDouble(),
     );
   }
 

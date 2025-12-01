@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 part 'country_entity.g.dart';
 
 @HiveType(typeId: 51)
@@ -22,22 +22,22 @@ class CountryEntity {
   });
 
   factory CountryEntity.empty() => CountryEntity(
-        flag: '',
-        shortName: '',
-        displayName: '',
-        countryName: '',
-        countryCode: '',
-        countryCodes: const <String>[],
-        language: '',
-        iosCode: '',
-        isoCode: '',
-        alpha2: '',
-        alpha3: '',
-        numberFormat: NumberFormatEntity(format: '', regex: ''),
-        currency: '',
-        isActive: false,
-        states: const <StateEntity>[],
-      );
+    flag: '',
+    shortName: '',
+    displayName: '',
+    countryName: '',
+    countryCode: '',
+    countryCodes: const <String>[],
+    language: '',
+    iosCode: '',
+    isoCode: '',
+    alpha2: '',
+    alpha3: '',
+    numberFormat: NumberFormatEntity(format: '', regex: ''),
+    currency: '',
+    isActive: false,
+    states: const <StateEntity>[],
+  );
 
   @HiveField(0)
   final String flag;
@@ -109,14 +109,14 @@ class NumberFormatEntity {
 
 @HiveType(typeId: 85)
 class StateEntity {
-  StateEntity(
-      {required this.stateName, required this.stateCode, required this.cities});
+  StateEntity({
+    required this.stateName,
+    required this.stateCode,
+    required this.cities,
+  });
 
-  factory StateEntity.empty() => StateEntity(
-        stateName: 'na',
-        stateCode: 'na',
-        cities: const <String>[],
-      );
+  factory StateEntity.empty() =>
+      StateEntity(stateName: 'na', stateCode: 'na', cities: const <String>[]);
 
   @HiveField(0)
   final String stateName;

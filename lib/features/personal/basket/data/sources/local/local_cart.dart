@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
+
 import '../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../core/enums/cart/cart_item_type.dart';
@@ -16,10 +17,19 @@ class LocalCart {
       await Hive.openBox<CartEntity>(boxTitle);
 
   Future<Box<CartEntity>> refresh() async {
-    final bool isOpen = Hive.isBoxOpen(boxTitle);
-    if (isOpen) {
+    if (Hive.isBoxOpen(boxTitle)) {
       return _box;
-    } else {
+    }
+    try {
+      return await Hive.openBox<CartEntity>(boxTitle);
+    } catch (e) {
+      // If there's a type mismatch (schema change), delete and recreate the box
+      debugPrint('LocalCart: Error opening box, deleting corrupted data: $e');
+      try {
+        await Hive.deleteBoxFromDisk(boxTitle);
+      } catch (deleteError) {
+        debugPrint('LocalCart: Error deleting box from disk: $deleteError');
+      }
       return await Hive.openBox<CartEntity>(boxTitle);
     }
   }
@@ -31,17 +41,33 @@ class LocalCart {
 
   Future<void> clear() async => await _box.clear();
 
-  CartEntity entity(String value) => _box.values.firstWhere(
+  CartEntity entity(String value) {
+    try {
+      return _box.values.firstWhere(
         (CartEntity element) => element.cartID == value,
         orElse: () => CartModel(),
       );
+    } catch (e) {
+      // Type mismatch error - clear corrupted data
+      debugPrint('LocalCart.entity: Type error, clearing cart: $e');
+      _box.clear();
+      return CartModel();
+    }
+  }
 
   DataState<CartEntity?> state(String value) {
-    final CartEntity? entity = _box.get(value);
-    if (entity != null) {
-      return DataSuccess<CartEntity?>(value, entity);
-    } else {
-      return DataFailer<CartEntity?>(CustomException('Loading...'));
+    try {
+      final CartEntity? entity = _box.get(value);
+      if (entity != null) {
+        return DataSuccess<CartEntity?>(value, entity);
+      } else {
+        return DataFailer<CartEntity?>(CustomException('Loading...'));
+      }
+    } catch (e) {
+      // Type mismatch error - clear corrupted data
+      debugPrint('LocalCart.state: Type error, clearing cart: $e');
+      _box.clear();
+      return DataFailer<CartEntity?>(CustomException('Cart data corrupted, cleared'));
     }
   }
 
@@ -58,7 +84,8 @@ class LocalCart {
 
       final CartEntity currentCart = entity(me);
       final int itemIndex = currentCart.items.indexWhere(
-          (CartItemEntity element) => element.cartItemID == item.cartItemID);
+        (CartItemEntity element) => element.cartItemID == item.cartItemID,
+      );
 
       if (itemIndex == -1) {
         throw Exception('Cart item not found');
@@ -72,7 +99,9 @@ class LocalCart {
   }
 
   Future<void> updateStatus(
-      CartItemEntity item, CartItemStatusType type) async {
+    CartItemEntity item,
+    CartItemStatusType type,
+  ) async {
     try {
       final String me = LocalAuth.uid ?? '';
       if (me.isEmpty) {
@@ -81,7 +110,8 @@ class LocalCart {
 
       final CartEntity currentCart = entity(me);
       final int itemIndex = currentCart.items.indexWhere(
-          (CartItemEntity element) => element.cartItemID == item.cartItemID);
+        (CartItemEntity element) => element.cartItemID == item.cartItemID,
+      );
 
       if (itemIndex == -1) {
         throw Exception('Cart item not found');
@@ -108,7 +138,8 @@ class LocalCart {
       final CartEntity currentCart = entity(me);
       final int initialLength = currentCart.items.length;
       currentCart.items.removeWhere(
-          (CartItemEntity element) => element.cartItemID == itemID);
+        (CartItemEntity element) => element.cartItemID == itemID,
+      );
 
       if (currentCart.items.length == initialLength) {
         throw Exception('Cart item not found');

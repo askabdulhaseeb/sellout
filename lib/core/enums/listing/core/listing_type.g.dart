@@ -8,7 +8,7 @@ part of 'listing_type.dart';
 
 class ListingTypeAdapter extends TypeAdapter<ListingType> {
   @override
-  final int typeId = 9;
+  final typeId = 9;
 
   @override
   ListingType read(BinaryReader reader) {
@@ -35,22 +35,16 @@ class ListingTypeAdapter extends TypeAdapter<ListingType> {
     switch (obj) {
       case ListingType.items:
         writer.writeByte(0);
-        break;
       case ListingType.clothAndFoot:
         writer.writeByte(1);
-        break;
       case ListingType.vehicle:
         writer.writeByte(2);
-        break;
       case ListingType.foodAndDrink:
         writer.writeByte(3);
-        break;
       case ListingType.property:
         writer.writeByte(4);
-        break;
       case ListingType.pets:
         writer.writeByte(5);
-        break;
     }
   }
 

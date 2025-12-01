@@ -8,7 +8,7 @@ part of 'color_entity.dart';
 
 class ColorEntityAdapter extends TypeAdapter<ColorEntity> {
   @override
-  final int typeId = 23;
+  final typeId = 23;
 
   @override
   ColorEntity read(BinaryReader reader) {
@@ -18,7 +18,7 @@ class ColorEntityAdapter extends TypeAdapter<ColorEntity> {
     };
     return ColorEntity(
       code: fields[0] as String,
-      quantity: fields[1] as int,
+      quantity: (fields[1] as num).toInt(),
     );
   }
 

@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import '../../../../../../core/enums/core/status_type.dart';
 import '../../../feed/views/enums/counter_offer_enum.dart';
 part 'offer_detail_entity.g.dart';

@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import '../../../../../../../core/enums/chat/chat_participant_role.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/api_call.dart';
@@ -60,8 +60,10 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
       }
       //
       final dynamic data = json.decode(raw);
-      final GettedMessageEntity getted =
-          GettedMessageModel.fromMap(data, chatID);
+      final GettedMessageEntity getted = GettedMessageModel.fromMap(
+        data,
+        chatID,
+      );
       await LocalChatMessage().save(getted, chatID);
       return DataSuccess<GettedMessageEntity>(result.data ?? '', getted);
     } else {
@@ -136,8 +138,9 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
 
       if (result is DataSuccess) {
         debugPrint('Invite Accepted - Success: ${result.data}');
-        final Map<String, dynamic> responseData =
-            jsonDecode(result.data ?? '{}');
+        final Map<String, dynamic> responseData = jsonDecode(
+          result.data ?? '{}',
+        );
         final DateTime joinAt = DateTime.parse(responseData['join_at']);
         final String uid = LocalAuth.uid ?? '';
         final ChatEntity? chat = LocalChat().chatEntity(groupId);
@@ -147,8 +150,9 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
           final List<ChatParticipantEntity>? participants =
               chat.groupInfo?.participants;
           if (invitations != null && participants != null) {
-            final int inviteIndex =
-                invitations.indexWhere((InvitationEntity p) => p.uid == uid);
+            final int inviteIndex = invitations.indexWhere(
+              (InvitationEntity p) => p.uid == uid,
+            );
             if (inviteIndex != -1) {
               final InvitationEntity invite = invitations[inviteIndex];
               // ✅ Convert invitation to participant
@@ -168,8 +172,9 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
               invitations.removeAt(inviteIndex);
 
               // ✅ Save updated chat to Hive
-              final Box<ChatEntity> box =
-                  Hive.box<ChatEntity>(AppStrings.localChatsBox);
+              final Box<ChatEntity> box = Hive.box<ChatEntity>(
+                AppStrings.localChatsBox,
+              );
               box.put(chat.chatId, chat);
             }
           }
@@ -201,9 +206,10 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
     try {
       const String endpoint = '/chat/group/removal';
       final DataState<bool> result = await ApiCall<bool>().call(
-          endpoint: endpoint,
-          requestType: ApiRequestType.patch,
-          body: jsonEncode(params.toMap()));
+        endpoint: endpoint,
+        requestType: ApiRequestType.patch,
+        body: jsonEncode(params.toMap()),
+      );
       if (result is DataSuccess) {
         debugPrint('Group Leave/remove - Success: ${result.data}');
         // final Map<String, dynamic> responseData = jsonDecode(result.data ?? '{}');
@@ -214,11 +220,13 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
           final List<ChatParticipantEntity>? participants =
               chat.groupInfo?.participants;
           if (participants != null) {
-            final int inviteIndex = participants
-                .indexWhere((ChatParticipantEntity p) => p.uid == uid);
+            final int inviteIndex = participants.indexWhere(
+              (ChatParticipantEntity p) => p.uid == uid,
+            );
             participants.removeAt(inviteIndex);
-            final Box<ChatEntity> box =
-                Hive.box<ChatEntity>(AppStrings.localChatsBox);
+            final Box<ChatEntity> box = Hive.box<ChatEntity>(
+              AppStrings.localChatsBox,
+            );
             box.put(chat.chatId, chat);
           }
         }
@@ -245,14 +253,16 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
 
   @override
   Future<DataState<bool>> sendInviteToGroup(
-      SendGroupInviteParams params) async {
+    SendGroupInviteParams params,
+  ) async {
     try {
       debugPrint(jsonEncode(params.toMap()));
       const String endpoint = '/chat/group/add';
       final DataState<bool> result = await ApiCall<bool>().call(
-          endpoint: endpoint,
-          requestType: ApiRequestType.patch,
-          body: jsonEncode(params.toMap()));
+        endpoint: endpoint,
+        requestType: ApiRequestType.patch,
+        body: jsonEncode(params.toMap()),
+      );
 
       if (result is DataSuccess) {
         debugPrint('Group Invite sent - Success: ${result.data}');
@@ -268,10 +278,12 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
         );
       }
     } catch (e, stc) {
-      AppLog.error('Invite send error - ERROR',
-          name: 'MessagesRemoteSourceImpl.sendInviteToGroup - catch',
-          error: CustomException(e.toString()),
-          stackTrace: stc);
+      AppLog.error(
+        'Invite send error - ERROR',
+        name: 'MessagesRemoteSourceImpl.sendInviteToGroup - catch',
+        error: CustomException(e.toString()),
+        stackTrace: stc,
+      );
       return DataFailer<bool>(CustomException(e.toString()));
     }
   }

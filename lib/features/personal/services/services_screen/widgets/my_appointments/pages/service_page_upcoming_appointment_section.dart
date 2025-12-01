@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
+
 import '../../../../../../../core/enums/core/status_type.dart';
 import '../../../../../appointment/view/screens/appointment_tile.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -13,20 +14,24 @@ class ServicePageUpcomingAppointmentSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<Box<BookingEntity>>(
-      valueListenable:
-          Hive.box<BookingEntity>(LocalBooking.boxTitle).listenable(),
+      valueListenable: Hive.box<BookingEntity>(
+        LocalBooking.boxTitle,
+      ).listenable(),
       builder: (BuildContext context, Box<BookingEntity> box, _) {
         // 1️⃣ All user bookings
-        final List<BookingEntity> allUserBookings =
-            LocalBooking().userBooking(LocalAuth.uid ?? '');
+        final List<BookingEntity> allUserBookings = LocalBooking().userBooking(
+          LocalAuth.uid ?? '',
+        );
         // 2️⃣ Filter pending + accepted
         final List<BookingEntity> pendingBookings = allUserBookings
-            .where((BookingEntity booking) =>
-                booking.status == StatusType.pending ||
-                booking.status == StatusType.accepted ||
-                booking.status == StatusType.inprogress ||
-                (booking.status == StatusType.completed &&
-                    booking.paymentDetail?.status == StatusType.onHold))
+            .where(
+              (BookingEntity booking) =>
+                  booking.status == StatusType.pending ||
+                  booking.status == StatusType.accepted ||
+                  booking.status == StatusType.inprogress ||
+                  (booking.status == StatusType.completed &&
+                      booking.paymentDetail?.status == StatusType.onHold),
+            )
             .toList();
         if (pendingBookings.isEmpty) {
           return Center(child: Text('no_apointment_found'.tr()));
@@ -54,9 +59,7 @@ class ServicePageUpcomingAppointmentSection extends StatelessWidget {
                 groupedEntries[index].value;
 
             // 📝 Pass grouped bookings or just the trackingID to your tile
-            return AppointmentTile(
-              booking: groupedBookings,
-            );
+            return AppointmentTile(booking: groupedBookings);
           },
         );
       },
