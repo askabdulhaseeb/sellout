@@ -272,7 +272,11 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
                   CustomSizeTile(formPro: formPro),
                 ],
               ),
-              WeightSection(controller: _weightSync.displayController),
+              WeightSection(
+                controller: _weightSync.displayController,
+                isKg: _isKg,
+                onToggleUnit: (bool toKg) => _toggleUnit(formPro, toKg),
+              ),
             ],
           ),
         ),
