@@ -205,6 +205,8 @@ import '../features/postage/data/repository/postage_repository_impl.dart';
 import '../features/postage/data/source/remote/postage_remote_source.dart';
 import '../features/postage/domain/repository/postage_repository.dart';
 import '../features/postage/domain/usecase/add_shipping_usecase.dart';
+import '../features/postage/domain/usecase/buy_label_usecsae.dart';
+import '../features/postage/domain/usecase/get_order_postage_detail_usecase.dart';
 import '../features/postage/domain/usecase/get_postage_detail_usecase.dart';
 
 final GetIt locator = GetIt.instance;
@@ -899,6 +901,12 @@ void _postage() {
   locator.registerFactory<GetPostageDetailUsecase>(
     () => GetPostageDetailUsecase(locator()),
   );
+  locator.registerFactory<BuyLabelUsecase>(() => BuyLabelUsecase(locator()));
+
+  locator.registerFactory<GetOrderPostageDetailUsecase>(
+    () => GetOrderPostageDetailUsecase(locator()),
+  );
+
   locator.registerFactory<AddShippingUsecase>(
     () => AddShippingUsecase(locator()),
   );

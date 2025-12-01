@@ -7,22 +7,25 @@ import '../../../../personal/basket/data/models/cart/add_shipping_response_model
 import '../../../../personal/basket/domain/param/get_postage_detail_params.dart';
 import '../../../../personal/basket/domain/param/submit_shipping_param.dart';
 import '../../../domain/params/add_lable_params.dart';
-import '../../../domain/params/add_postage_label_params.dart';
+import '../../../domain/params/get_order_postage_detail_params.dart';
 import '../../models/postage_detail_repsonse_model.dart';
 
 abstract interface class PostageRemoteApi {
   Future<DataState<PostageDetailResponseModel>> getPostageDetails(
-      GetPostageDetailParam param);
+    GetPostageDetailParam param,
+  );
   Future<DataState<AddShippingResponseModel>> addShipping(
-      SubmitShippingParam param);
-  Future<DataState<bool>> buyPostageLabel(BuyPostageLabelParams param);
+    SubmitShippingParam param,
+  );
+  Future<DataState<bool>> getOrderPostageDetail(GetOrderPostageDetailParam param);
   Future<DataState<bool>> buylabel(BuyLabelParams param);
 }
 
 class PostageRemoteApiImpl implements PostageRemoteApi {
   @override
   Future<DataState<PostageDetailResponseModel>> getPostageDetails(
-      GetPostageDetailParam param) async {
+    GetPostageDetailParam param,
+  ) async {
     try {
       debugPrint(LocalAuth.token);
       const String endpoint = '/cart/get/postage';
@@ -44,18 +47,21 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
             name: 'PostageRemoteApiImpl.getPostageDetails - Empty',
           );
           return DataFailer<PostageDetailResponseModel>(
-              CustomException('Empty postage details response'));
+            CustomException('Empty postage details response'),
+          );
         }
         final Map<String, dynamic> json =
             (jsonDecode(raw) is Map<String, dynamic>)
-                ? jsonDecode(raw) as Map<String, dynamic>
-                : <String, dynamic>{};
+            ? jsonDecode(raw) as Map<String, dynamic>
+            : <String, dynamic>{};
 
         final PostageDetailResponseModel model =
             PostageDetailResponseModel.fromJson(json);
         AppLog.info(model.toJson().toString());
-        AppLog.info('Fetched postage details',
-            name: 'PostageRemoteApiImpl.getPostageDetails - Success');
+        AppLog.info(
+          'Fetched postage details',
+          name: 'PostageRemoteApiImpl.getPostageDetails - Success',
+        );
         return DataSuccess<PostageDetailResponseModel>(raw, model);
       } else {
         AppLog.error(
@@ -64,7 +70,8 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
           error: result.exception?.reason ?? 'something_wrong'.tr(),
         );
         return DataFailer<PostageDetailResponseModel>(
-            CustomException('Failed to get postage details'));
+          CustomException('Failed to get postage details'),
+        );
       }
     } catch (e) {
       AppLog.error(
@@ -73,13 +80,15 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
         error: e,
       );
       return DataFailer<PostageDetailResponseModel>(
-          CustomException(e.toString()));
+        CustomException(e.toString()),
+      );
     }
   }
 
   @override
   Future<DataState<AddShippingResponseModel>> addShipping(
-      SubmitShippingParam param) async {
+    SubmitShippingParam param,
+  ) async {
     try {
       const String endpoint = '/cart/add/shipping';
       final DataState<String> result = await ApiCall<String>().call(
@@ -140,7 +149,8 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
           error: result.exception?.reason ?? 'something_wrong'.tr(),
         );
         return DataFailer<AddShippingResponseModel>(
-            result.exception ?? CustomException('Failed to add shipping'));
+          result.exception ?? CustomException('Failed to add shipping'),
+        );
       }
     } catch (e) {
       AppLog.error(
@@ -149,15 +159,18 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
         error: e,
       );
       return DataFailer<AddShippingResponseModel>(
-          CustomException(e.toString()));
+        CustomException(e.toString()),
+      );
     }
   }
 
   @override
-  Future<DataState<bool>> buyPostageLabel(BuyPostageLabelParams param) async {
+  Future<DataState<bool>> getOrderPostageDetail(
+    GetOrderPostageDetailParam param,
+  ) async {
     try {
       debugPrint(LocalAuth.token);
-      const String endpoint = '/postage/buy/label';
+      const String endpoint = '/orders/shipping/rates';
       final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,
         isAuth: true,
@@ -171,8 +184,10 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
           name: 'PostageRemoteApiImpl.buyPostageLabel - If',
         );
 
-        AppLog.info('Fetched postage details',
-            name: 'PostageRemoteApiImpl.buyPostageLabel - Success');
+        AppLog.info(
+          'Fetched postage details',
+          name: 'PostageRemoteApiImpl.buyPostageLabel - Success',
+        );
         return DataSuccess<bool>(raw, true);
       } else {
         AppLog.error(
@@ -181,7 +196,8 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
           error: result.exception?.reason ?? 'something_wrong'.tr(),
         );
         return DataFailer<bool>(
-            CustomException('Failed to get postage details'));
+          CustomException('Failed to get postage details'),
+        );
       }
     } catch (e) {
       AppLog.error(
@@ -197,36 +213,40 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
   Future<DataState<bool>> buylabel(BuyLabelParams param) async {
     try {
       debugPrint(LocalAuth.token);
-      const String endpoint = '/order/buy/label';
+      const String endpoint = '/orders/buy/label';
       final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,
         isAuth: true,
         requestType: ApiRequestType.post,
         body: jsonEncode(param.toJson()),
       );
+      debugPrint('Buy label result: ${param.toJson()}');
       if (result is DataSuccess<bool>) {
         final String raw = result.data ?? '';
         AppLog.info(
           param.toJson().toString(),
-          name: 'PostageRemoteApiImpl.buyPostageLabel - If',
+          name: 'PostageRemoteApiImpl.buylabel - If',
         );
 
-        AppLog.info('Fetched postage details',
-            name: 'PostageRemoteApiImpl.buyPostageLabel - Success');
+        AppLog.info(
+          'Fetched postage details',
+          name: 'PostageRemoteApiImpl.buylabel - Success',
+        );
         return DataSuccess<bool>(raw, true);
       } else {
         AppLog.error(
           '',
-          name: 'PostageRemoteApiImpl.buyPostageLabel - Else',
+          name: 'PostageRemoteApiImpl.buylabel - Else',
           error: result.exception?.reason ?? 'something_wrong'.tr(),
         );
         return DataFailer<bool>(
-            CustomException('Failed to get postage details'));
+          CustomException('Failed to get postage details'),
+        );
       }
     } catch (e) {
       AppLog.error(
         e.toString(),
-        name: 'PostageRemoteApiImpl.buyPostageLabel - Catch',
+        name: 'PostageRemoteApiImpl.buylabel - Catch',
         error: e,
       );
       return DataFailer<bool>(CustomException(e.toString()));
