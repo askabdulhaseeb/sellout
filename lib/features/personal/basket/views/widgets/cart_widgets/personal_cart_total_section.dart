@@ -58,12 +58,12 @@ class PersonalCartTotalSection extends StatelessWidget {
                   Column(
                     children: <Widget>[
                       _buildTile(
-                        '${'subtotal'.tr()} (${cart.cartItems.length} ${'items'.tr()})',
+                        '${'subtotal'.tr()} (${cartPro.orderBilling?.items.length} ${'items'.tr()})',
                         trailing: Text(
                           cartPro
                                   .orderBilling
                                   ?.billingDetails
-                                  .deliveryPriceString ??
+                                  .subTotalPriceString ??
                               '',
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
@@ -144,29 +144,32 @@ class PersonalCartTotalSection extends StatelessWidget {
     if (cartPro.cartType == CartType.checkoutOrder) {
       if (cartPro.hasItemsRequiringRemoval) return;
 
-      final bool fastDeliveryEmpty = cartPro.fastDeliveryProducts.isEmpty;
-      final bool allFreeDelivery =
-          cartPro.cartItems.isNotEmpty &&
-          cartPro.cartItems.every((CartItemEntity item) {
-            final PostEntity? post = LocalPost().post(item.postID);
-            return post?.deliveryType == DeliveryType.freeDelivery;
-          });
+      final bool hasPaidOrFast = cartPro.cartItems.any((CartItemEntity item) {
+        final PostEntity? post = LocalPost().post(item.postID);
+        return post?.deliveryType == DeliveryType.paid ||
+            (post?.deliveryType == DeliveryType.freeDelivery &&
+                cartPro.fastDeliveryProducts.contains(item));
+      });
 
-      if (fastDeliveryEmpty && allFreeDelivery) {
+      if (hasPaidOrFast) {
+        final DataState<AddShippingResponseModel> result = await cartPro
+            .submitShipping();
+        if (result is! DataSuccess<AddShippingResponseModel> &&
+            context.mounted) {
+          AppSnackBar.show(
+            result.exception?.reason ?? 'failed_to_submit_shipping'.tr(),
+          );
+        }
+      }
+
+      final DataState<PaymentIntentEntity> billingResult = await cartPro
+          .getBillingDetails();
+      if (billingResult is DataSuccess) {
         cartPro.setCartType(CartType.reviewOrder);
         return;
-      }
-      final DataState<AddShippingResponseModel> result = await cartPro
-          .submitShipping();
-      if (result is DataSuccess<AddShippingResponseModel>) {
-        final DataState<PaymentIntentEntity> billingResult = await cartPro
-            .getBillingDetails();
-        if (billingResult is DataSuccess) {
-          cartPro.setCartType(CartType.reviewOrder);
-        }
       } else if (context.mounted) {
         AppSnackBar.show(
-          result.exception?.reason ?? 'failed_to_submit_shipping'.tr(),
+          billingResult.exception?.reason ?? 'failed_to_get_billing'.tr(),
         );
       }
       return;

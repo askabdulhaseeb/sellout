@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../core/enums/core/status_type.dart';
+import '../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../services/get_it.dart';
 import '../../../../business/core/domain/usecase/get_business_by_id_usecase.dart';
 import '../../../../postage/domain/params/add_lable_params.dart';
-import '../../../../postage/domain/params/add_postage_label_params.dart';
+import '../../../../postage/domain/params/get_order_postage_detail_params.dart';
 import '../../../../postage/domain/usecase/buy_label_usecsae.dart';
-import '../../../../postage/domain/usecase/buy_postage_label_usecase.dart';
+import '../../../../postage/domain/usecase/get_order_postage_detail_usecase.dart';
 import '../../../auth/signin/domain/entities/address_entity.dart';
 import '../../../chats/create_chat/view/provider/create_private_chat_provider.dart';
 import '../../../post/domain/usecase/get_specific_post_usecase.dart';
@@ -30,8 +31,10 @@ class OrderSellerScreen extends StatelessWidget {
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final String orderId = args['order-id'] ?? '';
 
-    final OrderProvider orderPro =
-        Provider.of<OrderProvider>(context, listen: false);
+    final OrderProvider orderPro = Provider.of<OrderProvider>(
+      context,
+      listen: false,
+    );
     if (orderPro.order?.orderId != orderId) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         orderPro.loadOrder(orderId);
@@ -48,10 +51,12 @@ class OrderSellerScreen extends StatelessWidget {
         }
 
         final bool isBusiness = order.sellerId.startsWith('BU');
-        final GetSpecificPostUsecase getPostUsecase =
-            GetSpecificPostUsecase(locator());
-        final GetUserByUidUsecase getUserUsecase =
-            GetUserByUidUsecase(locator());
+        final GetSpecificPostUsecase getPostUsecase = GetSpecificPostUsecase(
+          locator(),
+        );
+        final GetUserByUidUsecase getUserUsecase = GetUserByUidUsecase(
+          locator(),
+        );
         final GetBusinessByIdUsecase getBusinessUsecase =
             GetBusinessByIdUsecase(locator());
 
@@ -61,15 +66,15 @@ class OrderSellerScreen extends StatelessWidget {
             centerTitle: true,
             title: Text(
               'order_details'.tr(),
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyLarge
-                  ?.copyWith(fontWeight: FontWeight.w500),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
             ),
             leading: IconButton(
               style: IconButton.styleFrom(
-                backgroundColor:
-                    Theme.of(context).colorScheme.onSurface.withAlpha(25),
+                backgroundColor: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withAlpha(25),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -80,30 +85,39 @@ class OrderSellerScreen extends StatelessWidget {
           ),
           body: FutureBuilder<DataState<PostEntity>>(
             future: getPostUsecase(GetSpecificPostParam(postId: order.postId)),
-            builder: (BuildContext context,
-                AsyncSnapshot<DataState<PostEntity>> postSnap) {
-              if (postSnap.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              final PostEntity? post = postSnap.data?.entity;
-              if (post == null) {
-                return Center(child: Text('something_wrong'.tr()));
-              }
-
-              return FutureBuilder<DataState<dynamic>>(
-                future: isBusiness
-                    ? getBusinessUsecase(order.sellerId)
-                    : getUserUsecase(order.sellerId),
-                builder: (BuildContext context,
-                    AsyncSnapshot<DataState<dynamic>> userSnap) {
-                  if (userSnap.connectionState == ConnectionState.waiting) {
+            builder:
+                (
+                  BuildContext context,
+                  AsyncSnapshot<DataState<PostEntity>> postSnap,
+                ) {
+                  if (postSnap.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   }
-                  return _buildOrderDetailBody(context, post);
+
+                  final PostEntity? post = postSnap.data?.entity;
+                  if (post == null) {
+                    return Center(child: Text('something_wrong'.tr()));
+                  }
+
+                  return FutureBuilder<DataState<dynamic>>(
+                    future: isBusiness
+                        ? getBusinessUsecase(order.sellerId)
+                        : getUserUsecase(order.sellerId),
+                    builder:
+                        (
+                          BuildContext context,
+                          AsyncSnapshot<DataState<dynamic>> userSnap,
+                        ) {
+                          if (userSnap.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          return _buildOrderDetailBody(context, post);
+                        },
+                  );
                 },
-              );
-            },
           ),
         );
       },
@@ -137,10 +151,7 @@ Widget _buildOrderDetailBody(BuildContext context, PostEntity post) {
 }
 
 class OrderDispatchedToWidget extends StatelessWidget {
-  const OrderDispatchedToWidget({
-    required this.order,
-    super.key,
-  });
+  const OrderDispatchedToWidget({required this.order, super.key});
 
   final OrderEntity order;
 
@@ -187,10 +198,7 @@ class OrderDispatchedToWidget extends StatelessWidget {
 }
 
 class OrderInfoWidget extends StatelessWidget {
-  const OrderInfoWidget({
-    required this.order,
-    super.key,
-  });
+  const OrderInfoWidget({required this.order, super.key});
 
   final OrderEntity order;
 
@@ -203,8 +211,9 @@ class OrderInfoWidget extends StatelessWidget {
         Text(
           '${'order_number'.tr()}:',
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              fontWeight: FontWeight.w400,
-              color: ColorScheme.of(context).onSurface.withValues(alpha: 0.3)),
+            fontWeight: FontWeight.w400,
+            color: ColorScheme.of(context).onSurface.withValues(alpha: 0.3),
+          ),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -214,10 +223,9 @@ class OrderInfoWidget extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 order.orderId,
-                style: Theme.of(context)
-                    .textTheme
-                    .labelSmall
-                    ?.copyWith(fontSize: 10),
+                style: Theme.of(
+                  context,
+                ).textTheme.labelSmall?.copyWith(fontSize: 10),
               ),
             ),
             // const ViewInvoiceButton()
@@ -276,17 +284,20 @@ class OrderActionButtonsList extends StatelessWidget {
                 keyName: 'start_order',
                 color: order.orderStatus.color,
                 onTap: () => orderPro.updateSellerOrder(
-                    order.orderId, StatusType.processing),
+                  order.orderId,
+                  StatusType.processing,
+                ),
               ),
             if (order.orderStatus == StatusType.processing &&
                 order.deliveryPaidBy == 'buyer')
               OrderActionButton(
                 isLoading: false,
-                keyName: 'buy_label'.tr(),
+                keyName: 'buy_label',
                 color: order.orderStatus.color,
                 onTap: () {
-                  BuyLabelUsecase(locator())
-                      .call(BuyLabelParams(orderId: order.orderId));
+                  BuyLabelUsecase(
+                    locator(),
+                  ).call(BuyLabelParams(orderId: order.orderId));
                 },
               ),
             if (order.orderStatus == StatusType.processing &&
@@ -296,8 +307,9 @@ class OrderActionButtonsList extends StatelessWidget {
                 keyName: 'choose_postage',
                 color: order.orderStatus.color,
                 onTap: () {
-                  BuyPostageLabelUsecase(locator())
-                      .call(BuyPostageLabelParams(objectId: order.orderId));
+                  GetOrderPostageDetailUsecase(
+                    locator(),
+                  ).call(GetOrderPostageDetailParam(orderId: order.orderId));
                 },
               ),
             if (order.orderStatus == StatusType.delivered)
@@ -318,33 +330,34 @@ class OrderActionButtonsList extends StatelessWidget {
               OrderActionButton(
                 isLoading: orderPro.isLoading,
                 keyName: 'cancel_order',
-                color: Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.4),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.4),
                 onTap: () => orderPro.updateSellerOrder(
-                    order.orderId, StatusType.cancelled),
+                  order.orderId,
+                  StatusType.cancelled,
+                ),
               ),
             OrderActionButton(
               isLoading: orderPro.isLoading,
               keyName: 'contact_buyer',
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.4),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.4),
               onTap: () {
-                Provider.of<CreatePrivateChatProvider>(context, listen: false)
-                    .startPrivateChat(context, order.buyerId);
+                Provider.of<CreatePrivateChatProvider>(
+                  context,
+                  listen: false,
+                ).startPrivateChat(context, order.buyerId);
               },
             ),
             InDevMode(
               child: OrderActionButton(
                 isLoading: false,
                 keyName: 'leave_feedback',
-                color: Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.4),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.4),
                 onTap: () {},
               ),
             ),
@@ -352,10 +365,9 @@ class OrderActionButtonsList extends StatelessWidget {
               child: OrderActionButton(
                 isLoading: orderPro.isLoading,
                 keyName: 'view_payment_details',
-                color: Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.4),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.4),
                 onTap: () {},
               ),
             ),
@@ -363,10 +375,9 @@ class OrderActionButtonsList extends StatelessWidget {
               child: OrderActionButton(
                 isLoading: false,
                 keyName: 'report_buyer',
-                color: Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.4),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.4),
                 onTap: () {},
               ),
             ),
@@ -374,10 +385,9 @@ class OrderActionButtonsList extends StatelessWidget {
               child: OrderActionButton(
                 isLoading: orderPro.isLoading,
                 keyName: 'send_refund',
-                color: Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.4),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.4),
                 onTap: () {},
               ),
             ),
@@ -456,16 +466,16 @@ class OrderScreenPostInfo extends StatelessWidget {
                     child: Text(
                       post.title,
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                        fontWeight: FontWeight.w600,
+                      ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   Text(
-                    '${order.paymentDetail.postCurrency}${order.totalAmount}',
+                    '${CountryHelper.currencySymbolHelper(order.paymentDetail.postCurrency)}${order.totalAmount.toStringAsFixed(2)}',
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ],
               ),
@@ -475,10 +485,10 @@ class OrderScreenPostInfo extends StatelessWidget {
               Text(
                 '${'ordered_on'.tr()}: ${DateFormat.yMMMMd().format(order.createdAt)}',
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: ColorScheme.of(context)
-                          .onSurface
-                          .withValues(alpha: 0.4),
-                    ),
+                  color: ColorScheme.of(
+                    context,
+                  ).onSurface.withValues(alpha: 0.4),
+                ),
               ),
             ],
           ),
@@ -534,19 +544,22 @@ class _OrderRecieverNameAddressWidgetState
         top: offset.dy + size.height + 6,
         width: overlayWidth > screenWidth ? screenWidth - 16 : overlayWidth,
         child: Material(
-          color: Colors.transparent,
+          color: Theme.of(context).colorScheme.surface,
           child: Container(
             padding: const EdgeInsets.all(12),
             margin: const EdgeInsets.symmetric(horizontal: 8),
             decoration: BoxDecoration(
+              backgroundBlendMode: BlendMode.color,
               color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.2)),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.2),
+              ),
               boxShadow: <BoxShadow>[
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 6,
                   offset: const Offset(0, 3),
                 ),
@@ -556,15 +569,19 @@ class _OrderRecieverNameAddressWidgetState
               children: <Widget>[
                 Text(
                   '${widget.address.city} /  ${widget.address.address1}',
-                  style: widget.addressTextStyle ??
+                  style:
+                      widget.addressTextStyle ??
                       Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface),
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 ),
                 Text(
                   '${widget.address.state?.stateName} / ${widget.address.country.countryName}',
-                  style: widget.addressTextStyle ??
+                  style:
+                      widget.addressTextStyle ??
                       Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface),
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 ),
               ],
             ),
@@ -592,11 +609,11 @@ class _OrderRecieverNameAddressWidgetState
             widget.name,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: widget.nameTextStyle ??
-                Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(fontWeight: FontWeight.bold),
+            style:
+                widget.nameTextStyle ??
+                Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
         const SizedBox(width: 4),

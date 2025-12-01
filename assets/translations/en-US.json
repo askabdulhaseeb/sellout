@@ -809,6 +809,7 @@
   "processing_payment":"Processing Payment",
   "no_item_available": "No item available",
   "invite": "Invite",
+
   "work":"Work",
   "show_in_maps":"Show in Maps",
   "no_supporters_to_invite": "No supporters to invite",
@@ -1219,6 +1220,8 @@
   "services_coming_soon_subtitle": "Book appointments and discover amazing services available around you. Find what you need, right at your fingertips!",
   "business_employment_coming_soon": "Business and employment details are coming soon! Stay tuned for exciting updates.",
   "coming_soon": "Coming soon",
-  "employment_details": "Employment Details" 
+  "employment_details": "Employment Details",
+  "buy_label":"Buy label",
+  "choose_postage":"Choose Postage"
 
 }
