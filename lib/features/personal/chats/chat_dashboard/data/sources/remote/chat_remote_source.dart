@@ -33,7 +33,8 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
         final String rawData = result.data ?? '';
         if (rawData.isEmpty) {
           return DataFailer<List<ChatEntity>>(
-              CustomException('something_wrong'.tr()));
+            CustomException('something_wrong'.tr()),
+          );
         }
         final dynamic mapp = json.decode(rawData);
         final List<dynamic> data = mapp['chats'] as List<dynamic>;
@@ -43,7 +44,7 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
         for (final dynamic element in data) {
           final ChatEntity chat = ChatModel.fromJson(element);
           chats.add(chat);
-          await LocalChat().save(chat);
+          await LocalChat().save(chat.chatId, chat);
         }
         return DataSuccess<List<ChatEntity>>(rawData, chats);
       } else {
@@ -53,7 +54,8 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
           error: result.exception,
         );
         return DataFailer<List<ChatEntity>>(
-            result.exception ?? CustomException('something_wrong'.tr()));
+          result.exception ?? CustomException('something_wrong'.tr()),
+        );
       }
     } catch (e, stc) {
       AppLog.error(
@@ -72,14 +74,15 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
       const String endpoint = '/chat/create';
       final DataState<ChatEntity> result = await ApiCall<ChatEntity>()
           .callFormData(
-              endpoint: endpoint,
-              requestType: ApiRequestType.post,
-              fieldsMap: params.toMap(),
-              attachments: params.attachments);
+            endpoint: endpoint,
+            requestType: ApiRequestType.post,
+            fieldsMap: params.toMap(),
+            attachments: params.attachments,
+          );
       if (result is DataSuccess) {
         Map<String, dynamic> map = jsonDecode(result.data ?? '');
         ChatModel chat = ChatModel.fromJson(map['data']);
-        LocalChat().save(chat);
+        LocalChat().save(chat.chatId, chat);
         return DataSuccess<ChatEntity>(result.data ?? '', result.entity);
       } else {
         AppLog.error(
@@ -103,7 +106,8 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
 
   @override
   Future<DataState<ChatEntity>> createInquiryChat(
-      PostInquiryParams params) async {
+    PostInquiryParams params,
+  ) async {
     AppLog.info(
       'Attempting to create inquiry chat | params: \\${params.toJson()}',
       name: 'ChatRemoteSourceImpl.createInquiryChat',
@@ -144,10 +148,12 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
         );
       }
     } catch (e, stc) {
-      AppLog.error('Create inquiry chat - ERROR | params: ${params.toJson()}',
-          name: 'ChatRemoteSourceImpl.createInquiryChat - catch',
-          error: CustomException(e.toString()),
-          stackTrace: stc);
+      AppLog.error(
+        'Create inquiry chat - ERROR | params: ${params.toJson()}',
+        name: 'ChatRemoteSourceImpl.createInquiryChat - catch',
+        error: CustomException(e.toString()),
+        stackTrace: stc,
+      );
       return DataFailer<ChatEntity>(CustomException(e.toString()));
     }
   }

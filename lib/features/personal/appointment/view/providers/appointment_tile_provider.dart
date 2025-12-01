@@ -23,30 +23,31 @@ import '../widgets/appointment_tile_success_payment_bottomsheet.dart';
 
 class AppointmentTileProvider extends ChangeNotifier {
   AppointmentTileProvider(
-      this._updateAppointmentUsecase,
-      this._holdServicePaymentUsecase,
-      this._getBookingUsecase,
-      this._releasePaymentUsecase);
+    this._updateAppointmentUsecase,
+    this._holdServicePaymentUsecase,
+    this._getBookingUsecase,
+    this._releasePaymentUsecase,
+  );
   final UpdateAppointmentUsecase _updateAppointmentUsecase;
   final HoldServicePaymentUsecase _holdServicePaymentUsecase;
   final GetMyBookingsListUsecase _getBookingUsecase;
   final ReleasePaymentUsecase _releasePaymentUsecase;
 
-//
+  //
   BusinessEntity? _business;
   BusinessEntity? get business => _business;
   void setbusiness(BusinessEntity? data) {
     _business = data;
   }
 
-//
+  //
   ServiceEntity? _service;
   ServiceEntity? get service => _service;
   void setService(ServiceEntity? data) {
     _service = data;
   }
 
-//
+  //
   UserEntity? _user;
   UserEntity? get user => _user;
   void setUser(UserEntity user) {
@@ -54,10 +55,10 @@ class AppointmentTileProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-//
+  //
   bool _isLoading = false;
   bool get isLoading => _isLoading;
-//
+  //
   void setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
@@ -65,13 +66,14 @@ class AppointmentTileProvider extends ChangeNotifier {
 
   Future<void> onCancel(BuildContext context, BookingEntity booking) async {
     try {
-      if (booking.bookingID == null) return;
       setLoading(true);
       final DataState<bool> result = await _updateAppointmentUsecase.call(
-          UpdateAppointmentParams(
-              bookingID: booking.bookingID ?? '',
-              newStatus: 'cancel',
-              apiKey: 'status'));
+        UpdateAppointmentParams(
+          bookingID: booking.bookingID,
+          newStatus: 'cancel',
+          apiKey: 'status',
+        ),
+      );
       if (result is DataSuccess) {
         setLoading(false);
         return;
@@ -84,10 +86,7 @@ class AppointmentTileProvider extends ChangeNotifier {
         return;
       }
     } catch (e) {
-      AppSnackBar.showSnackBar(
-        context,
-        e.toString(),
-      );
+      AppSnackBar.showSnackBar(context, e.toString());
       AppLog.error(
         e.toString(),
         name: 'AppointmentTileProvider.onCancel - catch',
@@ -99,14 +98,20 @@ class AppointmentTileProvider extends ChangeNotifier {
   }
 
   Future<void> onBookAgain(BuildContext context, BookingEntity booking) async {
-    AppNavigator.pushNamed(BookingScreen.routeName,
-        arguments: <String, dynamic>{'service': service, 'business': business});
+    AppNavigator.pushNamed(
+      BookingScreen.routeName,
+      arguments: <String, dynamic>{'service': service, 'business': business},
+    );
   }
 
   Future<void> onLeaveReview(
-      BuildContext context, BookingEntity booking) async {
-    AppNavigator.pushNamed(WriteReviewScreen.routeName,
-        arguments: <String, dynamic>{'service': service});
+    BuildContext context,
+    BookingEntity booking,
+  ) async {
+    AppNavigator.pushNamed(
+      WriteReviewScreen.routeName,
+      arguments: <String, dynamic>{'service': service},
+    );
   }
 
   Future<void> onChange(BuildContext context, BookingEntity booking) async {
@@ -116,7 +121,7 @@ class AppointmentTileProvider extends ChangeNotifier {
       arguments: <String, dynamic>{
         'booking': booking,
         'service': service,
-        'business': business
+        'business': business,
       },
     );
   }
@@ -152,8 +157,9 @@ class AppointmentTileProvider extends ChangeNotifier {
   Future<void> releasePayment(String? transactionId) async {
     setLoading(true);
     debugPrint(transactionId);
-    final DataState<bool> result =
-        await _releasePaymentUsecase.call(transactionId ?? '');
+    final DataState<bool> result = await _releasePaymentUsecase.call(
+      transactionId ?? '',
+    );
     setLoading(false);
     if (result is DataSuccess<String>) {
     } else {
@@ -162,7 +168,9 @@ class AppointmentTileProvider extends ChangeNotifier {
   }
 
   Future<void> showPaymentSheet(
-      BuildContext context, HoldServiceResponse holdserviceresponse) async {
+    BuildContext context,
+    HoldServiceResponse holdserviceresponse,
+  ) async {
     try {
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
@@ -179,19 +187,21 @@ class AppointmentTileProvider extends ChangeNotifier {
       // Handle Stripe-specific errors
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text('Payment canceled: ${e.error.localizedMessage}')),
+          content: Text('Payment canceled: ${e.error.localizedMessage}'),
+        ),
       );
     } catch (e) {
       // Handle general errors
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Something went wrong')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Something went wrong')));
     }
   }
 
   Future<void> updateBooking(BuildContext context, String bookingID) async {
-    final GetBookingsParams bookingparams =
-        GetBookingsParams(bookingID: bookingID);
+    final GetBookingsParams bookingparams = GetBookingsParams(
+      bookingID: bookingID,
+    );
     setLoading(true);
     await _getBookingUsecase.call(bookingparams);
     setLoading(false);

@@ -2,24 +2,23 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../business/core/domain/usecase/get_business_by_id_usecase.dart';
+import '../../../../postage/domain/params/add_lable_params.dart';
+import '../../../../postage/domain/usecase/buy_label_usecsae.dart';
+import '../../../chats/create_chat/view/provider/create_private_chat_provider.dart';
 import '../../../../../core/enums/core/status_type.dart';
 import '../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../services/get_it.dart';
-import '../../../../business/core/domain/usecase/get_business_by_id_usecase.dart';
-import '../../../../postage/domain/params/add_lable_params.dart';
-import '../../../../postage/domain/params/get_order_postage_detail_params.dart';
-import '../../../../postage/domain/usecase/buy_label_usecsae.dart';
-import '../../../../postage/domain/usecase/get_order_postage_detail_usecase.dart';
 import '../../../auth/signin/domain/entities/address_entity.dart';
-import '../../../chats/create_chat/view/provider/create_private_chat_provider.dart';
 import '../../../post/domain/usecase/get_specific_post_usecase.dart';
 import '../../domain/entities/order_entity.dart';
 import '../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../../user/profiles/domain/usecase/get_user_by_uid.dart';
 import '../provider/order_provider.dart';
+import 'order_postage_bottom_sheet.dart';
 
 class OrderSellerScreen extends StatelessWidget {
   const OrderSellerScreen({super.key});
@@ -307,9 +306,11 @@ class OrderActionButtonsList extends StatelessWidget {
                 keyName: 'choose_postage',
                 color: order.orderStatus.color,
                 onTap: () {
-                  GetOrderPostageDetailUsecase(
-                    locator(),
-                  ).call(GetOrderPostageDetailParam(orderId: order.orderId));
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (BuildContext context) =>
+                        OrderPostageBottomSheet(orderId: order.orderId),
+                  );
                 },
               ),
             if (order.orderStatus == StatusType.delivered)

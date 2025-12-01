@@ -72,7 +72,7 @@ class ListingAPI {
     for (dynamic item in data) {
       final ListingEntity entity = ListingModel.fromJson(item);
       listings.add(entity);
-      await LocalListing().save(entity);
+      await LocalListing().save(entity.listId, entity);
     }
     return listings;
   }

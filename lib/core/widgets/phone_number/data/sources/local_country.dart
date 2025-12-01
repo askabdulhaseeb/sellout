@@ -1,18 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive_ce/hive.dart';
+import '../../../../sources/local/local_hive_box.dart';
 import '../../../../utilities/app_string.dart';
 import '../../domain/entities/country_entity.dart';
 
-class LocalCountry {
-  static final String boxTitle = AppStrings.localCountryBox;
-  static Box<CountryEntity> get _box => Hive.box<CountryEntity>(boxTitle);
-  static Future<Box<CountryEntity>> get openBox async =>
-      Hive.openBox<CountryEntity>(boxTitle);
-
-  Future<Box<CountryEntity>> refresh() async {
-    final bool isOpen = Hive.isBoxOpen(boxTitle);
-    return isOpen ? _box : Hive.openBox<CountryEntity>(boxTitle);
-  }
+class LocalCountry extends LocalHiveBox<CountryEntity> {
+   @override
+  String get boxName =>  AppStrings.localCountryBox;
+  Box<CountryEntity> get localBox => box;
 
   CountryEntity? country(String code) {
     final String trimmed = code.trim();
@@ -21,12 +16,12 @@ class LocalCountry {
     final String normalized = trimmed.toLowerCase();
 
     final CountryEntity? direct =
-        _box.get(trimmed) ??
-        _box.get(normalized) ??
-        _box.get(trimmed.toUpperCase());
+        localBox.get(trimmed) ??
+        localBox.get(normalized) ??
+        localBox.get(trimmed.toUpperCase());
     if (direct != null) return direct;
 
-    for (final CountryEntity candidate in _box.values) {
+    for (final CountryEntity candidate in localBox.values) {
       final Iterable<String> identifiers = <String>[
         candidate.countryCode,
         candidate.shortName,
@@ -75,5 +70,5 @@ class LocalCountry {
   }
 
   List<CountryEntity> get activeCountries =>
-      _box.values.where((CountryEntity entity) => entity.isActive).toList();
+      localBox.values.where((CountryEntity entity) => entity.isActive).toList();
 }

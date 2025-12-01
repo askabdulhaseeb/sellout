@@ -1,6 +1,7 @@
 import 'package:flutter/rendering.dart';
 import 'package:hive_ce/hive.dart';
 import '../../../../../../../core/enums/listing/core/listing_type.dart';
+import '../../../../../../../core/sources/local/local_hive_box.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../services/domain/entity/service_category_entity.dart';
 import '../../../domain/entities/category_entites/categories_entity.dart';
@@ -9,28 +10,14 @@ import '../../../domain/entities/category_entites/subentities/dropdown_option_en
 import '../../../domain/entities/category_entites/subentities/parent_dropdown_entity.dart';
 import '../../../domain/entities/sub_category_entity.dart';
 
-class LocalCategoriesSource {
-  static String boxTitle = AppStrings.localDropDownListingBox;
+class LocalCategoriesSource extends LocalHiveBox<CategoriesEntity> {
+   @override
+  String get boxName =>  AppStrings.localDropDownListingBox;
+
   static const String _mainKey = 'categories';
 
-  Future<Box<CategoriesEntity>> refresh() async {
-    final bool isOpen = Hive.isBoxOpen(boxTitle);
-    if (isOpen) {
-      return _box;
-    } else {
-      return await Hive.openBox<CategoriesEntity>(boxTitle);
-    }
-  }
-
-  static Future<Box<CategoriesEntity>> openBox() async {
-    return await Hive.openBox<CategoriesEntity>(boxTitle);
-  }
-
-  static Box<CategoriesEntity> get _box => Hive.box<CategoriesEntity>(boxTitle);
-
-  Future<void> save(CategoriesEntity value) async {
-    await _box.put(_mainKey, value);
-  }
+  static Box<CategoriesEntity> get _box =>
+      LocalCategoriesSource().box;
 
   static CategoriesEntity? get categories =>
       _box.isEmpty ? null : _box.get(_mainKey);
@@ -38,7 +25,7 @@ class LocalCategoriesSource {
   Future<void> saveNonNullFields(CategoriesEntity newEntity) async {
     final CategoriesEntity? existing = _box.get(_mainKey);
     if (existing == null) {
-      await save(newEntity);
+      await save(_mainKey, newEntity);
       return;
     }
 
@@ -101,7 +88,7 @@ class LocalCategoriesSource {
       services: keepOldIfNullOrEmpty(newEntity.services, existing.services),
     );
 
-    await save(merged);
+    await save(_mainKey, merged);
   }
 
   // ===== Getters for easy access =====
@@ -345,7 +332,7 @@ class LocalCategoriesSource {
   }
 
   Future<void> updateCategory(CategoriesEntity newEntity) async {
-    await save(newEntity);
+    await save(_mainKey, newEntity);
   }
 
   Future<void> clear() async => await _box.clear();

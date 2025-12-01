@@ -29,6 +29,6 @@ class ApiRequestEntity {
 
   Future<void> updateLastRequest() async {
     lastRequest = DateTime.now();
-    await LocalRequestHistory().save(this);
+    await LocalRequestHistory().save(this.url, this);
   }
 }

@@ -86,7 +86,7 @@ class AppDataService extends WidgetsBindingObserver {
       );
 
       if (result is DataSuccess<List<CountryEntity>>) {
-        final Box<CountryEntity> box = await LocalCountry.openBox;
+        final Box<CountryEntity> box = LocalCountry().localBox;
 
         for (final dynamic c in result.entity ?? <dynamic>[]) {
           box.put(c.shortName, c);

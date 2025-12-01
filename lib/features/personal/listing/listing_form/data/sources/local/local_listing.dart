@@ -1,29 +1,14 @@
 import 'package:hive_ce/hive.dart';
+import '../../../../../../../core/sources/local/local_hive_box.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../domain/entities/listing_entity.dart';
 import '../../models/sub_category_model.dart';
 
-class LocalListing {
-  static final String boxTitle = AppStrings.localListingBox;
-  static Box<ListingEntity> get _box => Hive.box<ListingEntity>(boxTitle);
+class LocalListing extends LocalHiveBox<ListingEntity> {
+  @override
+  String get boxName => AppStrings.localListingBox;
 
-  static Future<Box<ListingEntity>> get openBox async =>
-      await Hive.openBox<ListingEntity>(boxTitle);
-
-  Future<Box<ListingEntity>> refresh() async {
-    final bool isOpen = Hive.isBoxOpen(boxTitle);
-    if (isOpen) {
-      return _box;
-    } else {
-      return await Hive.openBox<ListingEntity>(boxTitle);
-    }
-  }
-
-  Future<void> save(ListingEntity value) async =>
-      await _box.put(value.cid, value);
-
-  Future<void> clear() async => await _box.clear();
-
+  Box<ListingEntity> get _box => box;
   ListingEntity? listingEntity(String value) => _box.get(value);
 
   List<ListingEntity> get listings =>

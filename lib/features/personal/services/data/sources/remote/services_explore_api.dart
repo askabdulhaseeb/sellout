@@ -42,7 +42,7 @@ class ServicesExploreApiImpl implements ServicesExploreApi {
         final List<dynamic> responces = data['response'] ?? <dynamic>[];
         for (dynamic element in responces) {
           final ServiceEntity service = ServiceModel.fromJson(element);
-          await LocalService().save(service);
+          await LocalService().save(service.serviceID, service);
           services.add(service);
         }
         return DataSuccess<List<ServiceEntity>>(raw, services);
@@ -107,7 +107,7 @@ class ServicesExploreApiImpl implements ServicesExploreApi {
               ServiceCategoryModel.fromMap(value);
           categories.add(category);
         });
-        await LocalServiceCategory().saveAll(categories);
+        await LocalServiceCategory().saveAllServiceCategroies(categories);
         return DataSuccess<List<ServiceCategoryEntity>>(raw, categories);
       } else {
         return DataFailer<List<ServiceCategoryEntity>>(

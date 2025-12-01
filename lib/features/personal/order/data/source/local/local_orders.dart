@@ -1,24 +1,16 @@
 import 'package:hive_ce_flutter/hive_flutter.dart';
-
 import '../../../../../../core/sources/data_state.dart';
+import '../../../../../../core/sources/local/local_hive_box.dart';
 import '../../../../../../core/utilities/app_string.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../domain/entities/order_entity.dart';
 export '../../models/order_model.dart';
 
-class LocalOrders {
-  static final String boxTitle = AppStrings.localOrdersBox;
-  static Box<OrderEntity> get _box => Hive.box<OrderEntity>(boxTitle);
-  static Future<Box<OrderEntity>> get openBox async =>
-      await Hive.openBox<OrderEntity>(boxTitle);
-  Future<Box<OrderEntity>> refresh() async {
-    final bool isOpen = Hive.isBoxOpen(boxTitle);
-    if (isOpen) {
-      return _box;
-    } else {
-      return await Hive.openBox<OrderEntity>(boxTitle);
-    }
-  }
+class LocalOrders extends LocalHiveBox<OrderEntity> {
+   @override
+  String get boxName => AppStrings.localOrdersBox;
+
+  Box<OrderEntity> get _box => box;
 
   DataState<List<OrderEntity>> orderBySeller(String? value) {
     final String id = value ?? LocalAuth.uid ?? '';
@@ -37,11 +29,7 @@ class LocalOrders {
     }
   }
 
-  Future<void> save(OrderEntity order) async {
-    await _box.put(order.orderId, order);
-  }
-
-  Future<void> saveAll(List<OrderEntity> orders) async {
+  Future<void> saveAllOrders(List<OrderEntity> orders) async {
     final Map<String, OrderEntity> map = <String, OrderEntity>{
       for (OrderEntity order in orders) order.orderId: order,
     };

@@ -133,7 +133,7 @@ class PostRemoteApiImpl implements PostRemoteApi {
         }
         final dynamic item = json.decode(raw);
         final PostEntity post = PostModel.fromJson(item);
-        await LocalPost().save(post);
+        await LocalPost().save(post.postID, post);
         return DataSuccess<PostEntity>(raw, post);
       } else {
         AppLog.error(

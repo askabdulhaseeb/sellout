@@ -1,34 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
-
 import '../../entities/api_request_entity.dart';
 import '../../extension/duration_ext.dart';
 import '../../extension/string_ext.dart';
 import '../../utilities/app_string.dart';
-
+import 'local_hive_box.dart';
 export '../../entities/api_request_entity.dart';
 
-class LocalRequestHistory {
-  static final String boxTitle = AppStrings.localRequestHistory;
-  static Box<ApiRequestEntity> get _box => Hive.box<ApiRequestEntity>(boxTitle);
+class LocalRequestHistory extends LocalHiveBox<ApiRequestEntity> {
+  @override
+  String get boxName => AppStrings.localRequestHistory;
+
+  Box<ApiRequestEntity> get _box => box;
 
   static Future<Box<ApiRequestEntity>> get openBox async =>
-      await Hive.openBox<ApiRequestEntity>(boxTitle);
-
-  Future<Box<ApiRequestEntity>> refresh() async {
-    final bool isOpen = Hive.isBoxOpen(boxTitle);
-    if (isOpen) {
-      return _box;
-    } else {
-      return await Hive.openBox<ApiRequestEntity>(boxTitle);
-    }
-  }
-
-  Future<void> save(ApiRequestEntity request) async =>
-      await _box.put(request.url.toSHA256(), request);
-
-  Future<void> clear() async => await _box.clear();
+      await Hive.openBox<ApiRequestEntity>(AppStrings.localRequestHistory);
 
   Future<ApiRequestEntity?> request({
     required String endpoint,

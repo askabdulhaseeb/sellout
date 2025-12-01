@@ -17,7 +17,8 @@ abstract interface class ReviewRemoteApi {
 class ReviewRemoteApiImpl implements ReviewRemoteApi {
   @override
   Future<DataState<List<ReviewEntity>>> getReviews(
-      GetReviewParam params) async {
+    GetReviewParam params,
+  ) async {
     try {
       final String endpoint = '/review/get?${params.query}';
       //
@@ -32,7 +33,7 @@ class ReviewRemoteApiImpl implements ReviewRemoteApi {
         if (decoded.isNotEmpty) {
           for (dynamic element in decoded) {
             final ReviewEntity review = ReviewModel.fromJson(element);
-            await LocalReview().save(review);
+            await LocalReview().save(review.reviewID, review);
             reviews.add(review);
           }
           return DataSuccess<List<ReviewEntity>>('', reviews);
@@ -60,7 +61,7 @@ class ReviewRemoteApiImpl implements ReviewRemoteApi {
 
         for (dynamic element in decoded) {
           final ReviewEntity review = ReviewModel.fromJson(element);
-          await LocalReview().save(review);
+          await LocalReview().save(review.reviewID, review);
           reviews.add(review);
         }
         return DataSuccess<List<ReviewEntity>>(raw, reviews);
@@ -89,12 +90,13 @@ class ReviewRemoteApiImpl implements ReviewRemoteApi {
     try {
       const String endpoints = '/review/create';
       final DataState<bool> response = await ApiCall<bool>().callFormData(
-          endpoint: endpoints,
-          requestType: ApiRequestType.post,
-          fieldsMap: params.toMap(),
-          attachments: params.attachments,
-          isAuth: true,
-          isConnectType: false);
+        endpoint: endpoints,
+        requestType: ApiRequestType.post,
+        fieldsMap: params.toMap(),
+        attachments: params.attachments,
+        isAuth: true,
+        isConnectType: false,
+      );
       debugPrint('API Response: $response');
       if (response is DataSuccess<bool>) {
         AppLog.info(
@@ -110,12 +112,11 @@ class ReviewRemoteApiImpl implements ReviewRemoteApi {
         );
         return DataFailer<bool>(
           CustomException(
-              response.exception?.message ?? 'Unknown error occurred'),
+            response.exception?.message ?? 'Unknown error occurred',
+          ),
         );
       } else {
-        return DataFailer<bool>(
-          CustomException('Unexpected response type'),
-        );
+        return DataFailer<bool>(CustomException('Unexpected response type'));
       }
     } catch (e, stackTrace) {
       AppLog.error(

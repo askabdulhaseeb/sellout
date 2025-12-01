@@ -8,9 +8,11 @@ import '../../domain/params/get_business_bookings_params.dart';
 
 abstract interface class BusinessBookingRemote {
   Future<DataState<List<BookingEntity>>> getMyBookings(
-      GetBookingsParams params);
+    GetBookingsParams params,
+  );
   Future<DataState<List<BookingEntity>>> getBookingsByServiceId(
-      GetBookingsParams params);
+    GetBookingsParams params,
+  );
 }
 
 class BusinessBookingRemoteImpl implements BusinessBookingRemote {
@@ -64,12 +66,13 @@ class BusinessBookingRemoteImpl implements BusinessBookingRemote {
 
         for (final dynamic element in list) {
           final BookingEntity booking = BookingModel.fromMap(element);
-          await LocalBooking().save(booking);
+          await LocalBooking().save(booking.bookingID, booking);
           bookingsList.add(booking);
         }
 
         debugPrint(
-            '[$logTag] Successfully fetched and saved ${bookingsList.length} bookings.');
+          '[$logTag] Successfully fetched and saved ${bookingsList.length} bookings.',
+        );
         return DataSuccess<List<BookingEntity>>(raw, bookingsList);
       } else {
         AppLog.error(
@@ -83,11 +86,7 @@ class BusinessBookingRemoteImpl implements BusinessBookingRemote {
         );
       }
     } catch (e) {
-      AppLog.error(
-        e.toString(),
-        name: '$logTag - Exception',
-        error: e,
-      );
+      AppLog.error(e.toString(), name: '$logTag - Exception', error: e);
       return DataSuccess<List<BookingEntity>>(
         'Fallback to empty list due to exception',
         <BookingEntity>[],
@@ -133,7 +132,7 @@ class BusinessBookingRemoteImpl implements BusinessBookingRemote {
 
       for (final dynamic element in list) {
         final BookingEntity booking = BookingModel.fromMap(element);
-        await LocalBooking().save(booking);
+        await LocalBooking().save(booking.bookingID, booking);
         bookingsList.add(booking);
       }
 

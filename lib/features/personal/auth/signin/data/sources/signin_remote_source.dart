@@ -33,30 +33,38 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
         debugPrint('Signin Success in Remote Source');
         final Map<String, dynamic> jsonMap = jsonDecode(responce.data ?? '');
         if (jsonMap['require_2fa'] == true) {
-          AppLog.info('require_2fa',
-              name: 'SignInRemoteSourceImpl.signin - if');
+          AppLog.info(
+            'require_2fa',
+            name: 'SignInRemoteSourceImpl.signin - if',
+          );
           return DataSuccess<bool>(responce.data ?? '', true);
         } else {
           await HiveDB.signout();
-          final CurrentUserModel currentUser =
-              CurrentUserModel.fromRawJson(responce.data ?? '');
+          final CurrentUserModel currentUser = CurrentUserModel.fromRawJson(
+            responce.data ?? '',
+          );
           if (currentUser.logindetail.role != 'founder') {
             await LocalAuth().signin(currentUser);
           }
           return responce;
         }
       } else {
-        AppLog.error('Signin Failed in Remote Source',
-            name: 'SignInRemoteSourceImpl.signin - else',
-            error: responce.exception?.message ?? 'something_wrong'.tr());
+        AppLog.error(
+          'Signin Failed in Remote Source',
+          name: 'SignInRemoteSourceImpl.signin - else',
+          error: responce.exception?.message ?? 'something_wrong'.tr(),
+        );
         return DataFailer<bool>(
-            responce.exception ?? CustomException('signin failed'));
+          responce.exception ?? CustomException('signin failed'),
+        );
       }
     } catch (e, stc) {
-      AppLog.error('signIn error',
-          name: 'SignInRemoteSourceImpl.signin - catch ',
-          error: e,
-          stackTrace: stc);
+      AppLog.error(
+        'signIn error',
+        name: 'SignInRemoteSourceImpl.signin - catch ',
+        error: e,
+        stackTrace: stc,
+      );
       return DataFailer<bool>(CustomException('Signin Failed: $e'));
     }
   }
@@ -75,10 +83,10 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
       if (response is DataSuccess<String>) {
         final Map<String, dynamic> jsonMap =
             (response.data != null && response.data!.isNotEmpty)
-                ? jsonDecode(response.data!) as Map<String, dynamic>
-                : <String, dynamic>{};
+            ? jsonDecode(response.data!) as Map<String, dynamic>
+            : <String, dynamic>{};
         if (jsonMap.isNotEmpty) {
-          await LocalAuth.updateToken(jsonMap['token']?.toString());
+          await LocalAuth().updateToken(jsonMap['token']?.toString());
         }
         return response;
       }
@@ -97,9 +105,7 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
         name: 'SignInRemoteSourceImpl.refreshToken - catch',
         stackTrace: stc,
       );
-      return DataFailer<String>(
-        CustomException('refresh_token_failed: $e'),
-      );
+      return DataFailer<String>(CustomException('refresh_token_failed: $e'));
     }
   }
 
@@ -107,32 +113,40 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
   Future<DataState<bool>> verifyTwoFactorAuth(TwoFactorParams params) async {
     try {
       final DataState<bool> responce = await ApiCall<bool>().call(
-          endpoint: '/userAuth/2FA/verify',
-          requestType: ApiRequestType.post,
-          body: json.encode(params.toJson()),
-          isAuth: false,
-          isConnectType: true);
+        endpoint: '/userAuth/2FA/verify',
+        requestType: ApiRequestType.post,
+        body: json.encode(params.toJson()),
+        isAuth: false,
+        isConnectType: true,
+      );
       debugPrint(params.toJson().toString());
       if (responce is DataSuccess<bool>) {
         debugPrint('verifyTwoFactorAuth Success in Remote Source');
         await HiveDB.signout();
-        final CurrentUserModel currentUser =
-            CurrentUserModel.fromRawJson(responce.data ?? '');
+        final CurrentUserModel currentUser = CurrentUserModel.fromRawJson(
+          responce.data ?? '',
+        );
         await LocalAuth().signin(currentUser);
         return responce;
       } else {
-        AppLog.error(responce.exception?.message ?? 'something_wrong'.tr(),
-            name: 'SignInRemoteSourceImpl.verifyTwoFactorAuth - else',
-            error: responce.exception?.reason ?? '');
+        AppLog.error(
+          responce.exception?.message ?? 'something_wrong'.tr(),
+          name: 'SignInRemoteSourceImpl.verifyTwoFactorAuth - else',
+          error: responce.exception?.reason ?? '',
+        );
         return DataFailer<bool>(
-            CustomException('two step verification Failed'));
+          CustomException('two step verification Failed'),
+        );
       }
     } catch (e, stc) {
-      AppLog.error(e.toString(),
-          name: 'SignInRemoteSourceImpl.verifyTwoFactorAuth - catch',
-          stackTrace: stc);
+      AppLog.error(
+        e.toString(),
+        name: 'SignInRemoteSourceImpl.verifyTwoFactorAuth - catch',
+        stackTrace: stc,
+      );
       return DataFailer<bool>(
-          CustomException('two step verification Failed: $e'));
+        CustomException('two step verification Failed: $e'),
+      );
     }
   }
 
@@ -157,7 +171,8 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
         );
         return DataFailer<bool>(
           CustomException(
-              responce.exception?.message ?? 'something_wrong'.tr()),
+            responce.exception?.message ?? 'something_wrong'.tr(),
+          ),
         );
       }
     } catch (e, stc) {
@@ -166,9 +181,7 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
         name: 'SignInRemoteSourceImpl.resendTwoFactorCode - catch',
         stackTrace: stc,
       );
-      return DataFailer<bool>(
-        CustomException('Resend code failed: $e'),
-      );
+      return DataFailer<bool>(CustomException('Resend code failed: $e'));
     }
   }
 }

@@ -19,7 +19,7 @@ class BookingEntityAdapter extends TypeAdapter<BookingEntity> {
     return BookingEntity(
       businessID: fields[0] as String?,
       serviceID: fields[1] as String?,
-      bookingID: fields[2] as String?,
+      bookingID: fields[2] as String,
       customerID: fields[3] as String,
       employeeID: fields[4] as String,
       trackingID: fields[5] as String?,

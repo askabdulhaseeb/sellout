@@ -1,6 +1,6 @@
 import 'package:hive_ce_flutter/hive_flutter.dart';
-
 import '../../../../../../../core/functions/app_log.dart';
+import '../../../../../../../core/sources/local/local_hive_box.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../chat_dashboard/data/sources/local/local_chat.dart';
 import '../../../../chat_dashboard/data/sources/local/local_unseen_messages.dart';
@@ -8,23 +8,21 @@ import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart'
 import '../../../domain/entities/getted_message_entity.dart';
 
 // getOnlineUsers
-class LocalChatMessage {
-  static final String boxTitle = AppStrings.localChatMessagesBox;
+class LocalChatMessage extends LocalHiveBox<GettedMessageEntity> {
+   @override
+  String get boxName => AppStrings.localChatMessagesBox;
 
-  static Box<GettedMessageEntity> get _box =>
-      Hive.box<GettedMessageEntity>(boxTitle);
-
-  static Box<GettedMessageEntity> get boxLive => _box;
+  Box<GettedMessageEntity> get _box => box;
 
   static Future<Box<GettedMessageEntity>> get openBox async =>
-      await Hive.openBox<GettedMessageEntity>(boxTitle);
+      await Hive.openBox<GettedMessageEntity>(AppStrings.localChatMessagesBox);
 
   Future<Box<GettedMessageEntity>> refresh() async {
-    final bool isOpen = Hive.isBoxOpen(boxTitle);
+    final bool isOpen = Hive.isBoxOpen(AppStrings.localChatMessagesBox);
     if (isOpen) {
       return _box;
     } else {
-      return await Hive.openBox<GettedMessageEntity>(boxTitle);
+      return await Hive.openBox<GettedMessageEntity>(AppStrings.localChatMessagesBox);
     }
   }
 
@@ -78,7 +76,10 @@ class LocalChatMessage {
     await _box.put(chatId, updatedEntity);
   }
 
-  Future<void> save(GettedMessageEntity value, String chatID) async {
+  Future<void> saveGettedMessageEntity(
+    GettedMessageEntity value,
+    String chatID,
+  ) async {
     final String id = value.lastEvaluatedKey?.chatID ?? chatID;
     final GettedMessageEntity? result = entity(id);
     if (result == null) {

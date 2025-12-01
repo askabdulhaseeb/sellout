@@ -41,7 +41,8 @@ class GetServiceByBusinessIdRemoteImpl implements GetServiceByBusinessIdRemote {
             error: raw,
           );
           return DataFailer<ServicesListResponceEntity>(
-              CustomException('something_wrong'.tr()));
+            CustomException('something_wrong'.tr()),
+          );
         }
         final dynamic data = json.decode(raw);
         final List<dynamic> list = data['items'];
@@ -58,16 +59,17 @@ class GetServiceByBusinessIdRemoteImpl implements GetServiceByBusinessIdRemote {
         }
         for (dynamic element in list) {
           final ServiceEntity service = ServiceModel.fromJson(element);
-          await LocalService().save(service);
+          await LocalService().save(service.serviceID, service);
           servicesList.add(service);
         }
         return DataSuccess<ServicesListResponceEntity>(
-            raw,
-            ServicesListResponceModel(
-              message: data['message'] ?? '',
-              nextKey: data['next_key'],
-              services: servicesList,
-            ));
+          raw,
+          ServicesListResponceModel(
+            message: data['message'] ?? '',
+            nextKey: data['next_key'],
+            services: servicesList,
+          ),
+        );
       } else {
         AppLog.error(
           result.exception?.message ?? 'Failed to get services',
@@ -75,7 +77,8 @@ class GetServiceByBusinessIdRemoteImpl implements GetServiceByBusinessIdRemote {
           error: result.exception?.message,
         );
         return DataFailer<ServicesListResponceEntity>(
-            CustomException('something_wrong'));
+          CustomException('something_wrong'),
+        );
       }
     } catch (e) {
       AppLog.error(
@@ -84,7 +87,8 @@ class GetServiceByBusinessIdRemoteImpl implements GetServiceByBusinessIdRemote {
         error: e,
       );
       return DataFailer<ServicesListResponceEntity>(
-          CustomException(e.toString()));
+        CustomException(e.toString()),
+      );
     }
   }
 }

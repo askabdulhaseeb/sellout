@@ -39,7 +39,7 @@ class SelectableAddressTile extends StatelessWidget {
             width: isSelected ? 2 : 1,
           ),
           color: isSelected
-              ? Theme.of(context).colorScheme.secondary.withOpacity(0.05)
+              ? Theme.of(context).colorScheme.secondary.withValues(alpha: 0.05)
               : Colors.transparent,
         ),
         child: Row(
@@ -62,11 +62,7 @@ class SelectableAddressTile extends StatelessWidget {
                     : Colors.transparent,
               ),
               child: isSelected
-                  ? const Icon(
-                      Icons.circle,
-                      color: Colors.white,
-                      size: 8,
-                    )
+                  ? const Icon(Icons.circle, color: Colors.white, size: 8)
                   : null,
             ),
             const SizedBox(width: 12),
@@ -91,7 +87,7 @@ class SelectableAddressTile extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8), 
+                  const SizedBox(height: 8),
                   // Address with home icon
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,13 +154,15 @@ class SelectableAddressTile extends StatelessWidget {
                           ),
                         );
                       },
-                      border:
-                          Border.all(color: ColorScheme.of(context).secondary),
+                      border: Border.all(
+                        color: ColorScheme.of(context).secondary,
+                      ),
                       bgColor: Colors.transparent,
                       isLoading: false,
                       title: 'edit_address'.tr(),
                       textStyle: TextTheme.of(context).bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.secondary),
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
                     ),
                   ),
                 if (address.isDefault) ...<Widget>[

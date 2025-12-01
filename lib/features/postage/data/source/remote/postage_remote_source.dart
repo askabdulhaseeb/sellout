@@ -17,7 +17,9 @@ abstract interface class PostageRemoteApi {
   Future<DataState<AddShippingResponseModel>> addShipping(
     SubmitShippingParam param,
   );
-  Future<DataState<bool>> getOrderPostageDetail(GetOrderPostageDetailParam param);
+  Future<DataState<PostageDetailResponseModel>> getOrderPostageDetail(
+    GetOrderPostageDetailParam param,
+  );
   Future<DataState<bool>> buylabel(BuyLabelParams param);
 }
 
@@ -165,7 +167,7 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
   }
 
   @override
-  Future<DataState<bool>> getOrderPostageDetail(
+  Future<DataState<PostageDetailResponseModel>> getOrderPostageDetail(
     GetOrderPostageDetailParam param,
   ) async {
     try {
@@ -177,35 +179,49 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
         requestType: ApiRequestType.post,
         body: jsonEncode(param.toJson()),
       );
-      if (result is DataSuccess<bool>) {
+      if (result is DataSuccess<String>) {
         final String raw = result.data ?? '';
-        AppLog.info(
-          param.toJson().toString(),
-          name: 'PostageRemoteApiImpl.buyPostageLabel - If',
-        );
+        if (raw.isEmpty) {
+          AppLog.error(
+            'Empty getOrderPostageDetail response',
+            name: 'PostageRemoteApiImpl.getOrderPostageDetail - Empty',
+          );
+          return DataFailer<PostageDetailResponseModel>(
+            CustomException('Empty getOrderPostageDetail response'),
+          );
+        }
+        final Map<String, dynamic> json =
+            (jsonDecode(raw) is Map<String, dynamic>)
+            ? jsonDecode(raw) as Map<String, dynamic>
+            : <String, dynamic>{};
 
+        final PostageDetailResponseModel model =
+            PostageDetailResponseModel.fromJson(json);
+        AppLog.info(model.toJson().toString());
         AppLog.info(
-          'Fetched postage details',
-          name: 'PostageRemoteApiImpl.buyPostageLabel - Success',
+          'Fetched order postage details',
+          name: 'PostageRemoteApiImpl.getOrderPostageDetail - Success',
         );
-        return DataSuccess<bool>(raw, true);
+        return DataSuccess<PostageDetailResponseModel>(raw, model);
       } else {
         AppLog.error(
-          '',
-          name: 'PostageRemoteApiImpl.buyPostageLabel - Else',
+          param.toJson().toString(),
+          name: 'PostageRemoteApiImpl.getOrderPostageDetail - Else',
           error: result.exception?.reason ?? 'something_wrong'.tr(),
         );
-        return DataFailer<bool>(
-          CustomException('Failed to get postage details'),
+        return DataFailer<PostageDetailResponseModel>(
+          CustomException('Failed to get order postage details'),
         );
       }
     } catch (e) {
       AppLog.error(
         e.toString(),
-        name: 'PostageRemoteApiImpl.buyPostageLabel - Catch',
+        name: 'PostageRemoteApiImpl.getOrderPostageDetail - Catch',
         error: e,
       );
-      return DataFailer<bool>(CustomException(e.toString()));
+      return DataFailer<PostageDetailResponseModel>(
+        CustomException(e.toString()),
+      );
     }
   }
 
