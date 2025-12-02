@@ -4,5 +4,7 @@ import '../params/get_exchange_rate_params.dart';
 
 abstract interface class PaymentRepository {
   Future<DataState<ExchangeRateEntity>> getExchangeRate(
-      GetExchangeRateParams params);
+    GetExchangeRateParams params,
+  );
+  Future<DataState<bool>> getWallet(String id);
 }

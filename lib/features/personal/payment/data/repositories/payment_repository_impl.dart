@@ -14,4 +14,8 @@ class PaymentRepositoryImpl implements PaymentRepository {
       GetExchangeRateParams params) async {
     return await remoteApi.getExchangeRate(params);
   }
+  @override
+  Future<DataState<bool>> getWallet(String id)async{
+    return await remoteApi.getWallet(id);
+  }
 }

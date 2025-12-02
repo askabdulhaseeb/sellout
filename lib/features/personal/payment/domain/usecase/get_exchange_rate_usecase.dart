@@ -6,7 +6,6 @@ import '../repositories/payment_repository.dart';
 class GetExchangeRateUsecase
     implements UseCase<ExchangeRateEntity, GetExchangeRateParams> {
   const GetExchangeRateUsecase(this.repository);
-
   final PaymentRepository repository;
 
   @override
