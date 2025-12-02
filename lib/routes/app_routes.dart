@@ -8,6 +8,7 @@ import '../features/personal/auth/find_account/view/screens/new_password_screen.
 import '../features/personal/auth/find_account/view/screens/send_code_screen.dart';
 import '../features/personal/auth/signin/views/screens/verify_two_factor_screen.dart';
 import '../features/personal/auth/welcome_screen/view/screens/welcome_screen.dart';
+import '../features/personal/setting/setting_options/balance/balance_screen.dart';
 import '../features/personal/setting/setting_options/legal_docs/legal_docs_screen.dart';
 import '../features/personal/setting/setting_options/membership_subscription/screen/memberships_and_subscription_screen.dart';
 import '../features/personal/setting/setting_options/terms&policies/privacy_policy.dart';
@@ -163,6 +164,7 @@ class AppRoutes {
     SavedPostsPage.routeName: (_) => const SavedPostsPage(),
     BuyAgainScreen.routeName: (_) => const BuyAgainScreen(),
     ConnectBankScreen.routeName: (_) => const ConnectBankScreen(),
+    BalanceScreen.routeName: (_) => const BalanceScreen(),
     //
     VisitCalenderScreen.routeName: (_) => const VisitCalenderScreen(),
   };

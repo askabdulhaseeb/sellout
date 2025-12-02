@@ -86,6 +86,7 @@ import '../features/personal/payment/data/repositories/payment_repository_impl.d
 import '../features/personal/payment/data/sources/remote/payment_remote_api.dart';
 import '../features/personal/payment/domain/repositories/payment_repository.dart';
 import '../features/personal/payment/domain/usecase/get_exchange_rate_usecase.dart';
+import '../features/personal/payment/domain/usecase/get_wallet_usecase.dart';
 import '../features/personal/services/domain/usecase/get_service_categories_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/delete_user_usecase.dart';
 import '../features/personal/visits/domain/usecase/book_service_usecase.dart';
@@ -891,6 +892,7 @@ void _payment() {
   locator.registerFactory<GetExchangeRateUsecase>(
     () => GetExchangeRateUsecase(locator()),
   );
+  locator.registerFactory<GetWalletUsecase>(() => GetWalletUsecase(locator()));
 }
 
 void _postage() {

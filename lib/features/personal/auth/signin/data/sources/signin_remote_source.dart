@@ -30,10 +30,6 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
         isAuth: false,
       );
       if (responce is DataSuccess<bool>) {
-        AppLog.info(
-          'Signin User: ${responce.data}',
-          name: 'SignInRemoteSourceImpl.signin - success',
-        );
         debugPrint('Signin Success in Remote Source');
         final Map<String, dynamic> jsonMap = jsonDecode(responce.data ?? '');
         if (jsonMap['require_2fa'] == true) {
