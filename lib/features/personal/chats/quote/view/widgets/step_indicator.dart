@@ -27,14 +27,14 @@ class StepIndicator extends StatelessWidget {
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: [
+        children: <Widget>[
           /// 🔘 Custom Toggle inside bordered container
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
             child: CustomToggleSwitch<RequestQuoteStep>(
               isShaded: false,
               labels: labels,
-              labelStrs: labels.map((e) => e.label.tr()).toList(),
+              labelStrs: labels.map((RequestQuoteStep e) => e.label.tr()).toList(),
               labelText: '',
               onToggle: onToggle,
               initialValue: currentStep,

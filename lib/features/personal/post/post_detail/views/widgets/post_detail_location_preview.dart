@@ -7,8 +7,7 @@ import '../../../../location/view/widgets/maps/flutter_location_map.dart';
 
 class PostDetailPropertyLocationLocationWidget extends StatefulWidget {
   const PostDetailPropertyLocationLocationWidget({
-    super.key,
-    required this.location,
+    required this.location, super.key,
   });
   final LocationEntity? location;
 

@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 
 class RadiusSlider extends StatelessWidget {
   const RadiusSlider({
-    super.key,
-    required this.selectedRadius,
-    required this.onChanged,
+    required this.selectedRadius, required this.onChanged, super.key,
   });
 
   final double selectedRadius;

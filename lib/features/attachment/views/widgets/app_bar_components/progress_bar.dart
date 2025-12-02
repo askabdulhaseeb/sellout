@@ -17,7 +17,7 @@ class SelectionProgressBar extends StatelessWidget {
         value: progress,
         minHeight: 6,
         backgroundColor:
-            Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+            Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
         valueColor: AlwaysStoppedAnimation<Color>(
           Theme.of(context).colorScheme.primary,
         ),

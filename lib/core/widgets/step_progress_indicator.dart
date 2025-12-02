@@ -162,7 +162,7 @@ class StepProgressIndicator<T> extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(2),
                     child: Stack(
-                      children: [
+                      children: <Widget>[
                         Container(
                           color: inactiveColor.withOpacity(0.3),
                         ),

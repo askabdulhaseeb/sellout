@@ -14,5 +14,5 @@ enum ShoppingBasketPageType {
     }
   }
 
-  static List<ShoppingBasketPageType> list() => [basket, saved, buyAgain];
+  static List<ShoppingBasketPageType> list() => <ShoppingBasketPageType>[basket, saved, buyAgain];
 }

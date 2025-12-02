@@ -28,7 +28,7 @@ class FilterParam {
   }
 
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'attribute': attribute,
       'operator': operator,
       'value': value != '' ? value : valueList,

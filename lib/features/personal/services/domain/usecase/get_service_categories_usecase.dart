@@ -8,7 +8,7 @@ class GetServiceCategoriesUsecase
   final PersonalServicesRepository repository;
 
   @override
-  Future<DataState<List<ServiceCategoryEntity>>> call(Null) async {
+  Future<DataState<List<ServiceCategoryEntity>>> call(Null Null) async {
     return await repository.serviceCategories();
   }
 }

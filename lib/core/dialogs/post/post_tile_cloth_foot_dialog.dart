@@ -121,11 +121,11 @@ class _PostTileClothFootDialogState extends State<PostTileClothFootDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           spacing: 10,
-          children: [
+          children: <Widget>[
             // Header
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
+              children: <Widget>[
                 const SizedBox(width: 24),
                 Text(
                   'select_size_color'.tr(),
@@ -141,18 +141,18 @@ class _PostTileClothFootDialogState extends State<PostTileClothFootDialog> {
 
             // Dropdowns
             Row(
-              children: [
+              children: <Widget>[
                 Expanded(
                   child: CustomDropdown<SizeColorEntity>(
                     title: 'size'.tr(),
                     hint: 'size'.tr(),
                     items: widget.post.clothFootInfo?.sizeColors
-                            .map((e) => DropdownMenuItem(
+                            .map((SizeColorEntity e) => DropdownMenuItem(
                                 value: e, child: Text(e.value)))
                             .toList() ??
-                        [],
+                        <DropdownMenuItem<SizeColorEntity>>[],
                     selectedItem: selectedSize,
-                    onChanged: (value) => setState(() => selectedSize = value),
+                    onChanged: (SizeColorEntity? value) => setState(() => selectedSize = value),
                     validator: (_) => null,
                   ),
                 ),
@@ -161,9 +161,9 @@ class _PostTileClothFootDialogState extends State<PostTileClothFootDialog> {
                   child: CustomDropdown<ColorEntity>(
                     title: 'color'.tr(),
                     hint: 'color'.tr(),
-                    items: (selectedSize?.colors ?? [])
-                        .where((e) => e.quantity > 0)
-                        .map((e) => DropdownMenuItem(
+                    items: (selectedSize?.colors ?? <ColorEntity>[])
+                        .where((ColorEntity e) => e.quantity > 0)
+                        .map((ColorEntity e) => DropdownMenuItem(
                               value: e,
                               child: Text(
                                 e.code,
@@ -172,7 +172,7 @@ class _PostTileClothFootDialogState extends State<PostTileClothFootDialog> {
                             ))
                         .toList(),
                     selectedItem: selectedColor,
-                    onChanged: (value) => setState(() => selectedColor = value),
+                    onChanged: (ColorEntity? value) => setState(() => selectedColor = value),
                     validator: (_) => null,
                   ),
                 ),

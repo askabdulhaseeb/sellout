@@ -32,7 +32,7 @@ class SendMessageProvider extends ChangeNotifier {
   final List<PickedAttachment> _document = <PickedAttachment>[];
   final List<PickedAttachment> _contact = <PickedAttachment>[];
   final List<PickedAttachment> _voiceNote = <PickedAttachment>[];
-  final List<UserEntity> _users = [];
+  final List<UserEntity> _users = <UserEntity>[];
   String? _lastUserKey;
   bool _hasMoreUsers = true;
   bool _isUserLoading = false;
@@ -157,7 +157,7 @@ class SendMessageProvider extends ChangeNotifier {
 
     if (result is DataSuccess<SearchEntity>) {
       _users.clear();
-      _users.addAll(result.entity?.users ?? []);
+      _users.addAll(result.entity?.users ?? <UserEntity>[]);
       _lastUserKey = result.entity?.lastEvaluatedKey;
       _hasMoreUsers = (_users.length >= 15); // or check lastEvaluatedKey
     } else {
@@ -186,7 +186,7 @@ class SendMessageProvider extends ChangeNotifier {
     );
 
     if (result is DataSuccess<SearchEntity>) {
-      final List<UserEntity> newUsers = result.entity?.users ?? [];
+      final List<UserEntity> newUsers = result.entity?.users ?? <UserEntity>[];
       _users.addAll(newUsers);
       _lastUserKey = result.entity?.lastEvaluatedKey;
       _hasMoreUsers = (newUsers.length >= 15); // stop if less than pageSize

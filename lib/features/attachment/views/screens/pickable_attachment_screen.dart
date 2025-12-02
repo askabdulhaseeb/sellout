@@ -82,7 +82,7 @@ class _PickableAttachmentScreenState extends State<PickableAttachmentScreen> {
             elevation: 0.3,
             surfaceTintColor: Theme.of(context).colorScheme.surfaceTint,
             title: Column(
-              children: [
+              children: <Widget>[
                 Row(
                   children: <Widget>[
                     AppBarBackButton(

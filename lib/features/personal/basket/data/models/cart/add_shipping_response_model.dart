@@ -201,8 +201,7 @@ class ParcelModel extends ParcelEntity {
 class FastDeliveryModel extends FastDeliveryEntity {
   FastDeliveryModel({
     required super.available,
-    super.message,
-    required super.requested,
+    required super.requested, super.message,
   });
 
   factory FastDeliveryModel.fromJson(Map<String, dynamic> json) {

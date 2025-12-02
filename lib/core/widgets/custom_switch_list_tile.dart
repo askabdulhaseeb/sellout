@@ -43,9 +43,7 @@ class CustomSwitchListTile extends StatelessWidget {
 
 class CustomSwitch extends StatelessWidget {
   const CustomSwitch({
-    super.key,
-    required this.value,
-    required this.onChanged,
+    required this.value, required this.onChanged, super.key,
     this.activeColor,
     this.inactiveColor,
     this.thumbColor,

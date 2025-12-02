@@ -5,9 +5,10 @@ class AppCheckboxTheme {
   static CheckboxThemeData get light => CheckboxThemeData(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         side: const BorderSide(color: AppColors.outlineVariant, width: 1),
-        fillColor: WidgetStateProperty.resolveWith<Color?>((states) {
-          if (states.contains(WidgetState.selected))
+        fillColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+          if (states.contains(WidgetState.selected)) {
             return AppColors.primaryColor;
+          }
           return null;
         }),
         checkColor: WidgetStateProperty.all<Color>(Colors.white),
@@ -21,9 +22,10 @@ class AppCheckboxTheme {
   static CheckboxThemeData get dark => CheckboxThemeData(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         side: const BorderSide(color: AppColors.outlineVariant, width: 1),
-        fillColor: WidgetStateProperty.resolveWith<Color?>((states) {
-          if (states.contains(WidgetState.selected))
+        fillColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+          if (states.contains(WidgetState.selected)) {
             return AppColors.primaryColor;
+          }
           return null;
         }),
         checkColor: WidgetStateProperty.all<Color>(Colors.white),

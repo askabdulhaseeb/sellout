@@ -15,8 +15,8 @@ class AvailabilityManager extends ChangeNotifier {
   List<AvailabilityEntity> get availability => _availability;
   void setAvailabilty(List<AvailabilityEntity> val) {
     // Build a map for fast lookup
-    final Map<DayType, AvailabilityEntity> inputMap = {
-      for (final entity in val) entity.day: entity
+    final Map<DayType, AvailabilityEntity> inputMap = <DayType, AvailabilityEntity>{
+      for (final AvailabilityEntity entity in val) entity.day: entity
     };
     _availability = DayType.values.map((DayType day) {
       return inputMap[day] ??

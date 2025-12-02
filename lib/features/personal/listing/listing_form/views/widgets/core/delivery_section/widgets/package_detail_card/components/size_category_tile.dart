@@ -1,15 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:sellout/core/constants/app_spacings.dart';
-import 'package:sellout/core/widgets/custom_elevated_button.dart';
+import '../../../../../../../../../../../core/constants/app_spacings.dart';
+import '../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 
 class SizeCategoryTile extends StatelessWidget {
   const SizeCategoryTile({
-    super.key,
-    required this.label,
-    required this.presets,
-    required this.isSelectedDims,
-    required this.onSelectDims,
+    required this.label, required this.presets, required this.isSelectedDims, required this.onSelectDims, super.key,
   });
 
   final String label;

@@ -135,7 +135,7 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
           if (raw != null && raw.isNotEmpty) {
             final Map<String, dynamic> decoded = jsonDecode(raw);
             if (decoded.containsKey('updatedAttributes')) {
-              final attrs =
+              final Map<String, dynamic> attrs =
                   decoded['updatedAttributes'] as Map<String, dynamic>;
               newDisplayName = attrs['display_name'] as String?;
               newBio = attrs['bio'] as String?;

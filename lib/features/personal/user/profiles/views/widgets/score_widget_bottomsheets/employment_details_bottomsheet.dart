@@ -21,7 +21,7 @@ class EmploymentDetailsBottomSheet extends StatelessWidget {
               elevation: 0,
             ),
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            body: Stack(children: [
+            body: Stack(children: <Widget>[
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.all(16),

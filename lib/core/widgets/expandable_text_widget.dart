@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:html/dom.dart' hide dom, Text;
 import 'package:html/parser.dart' as html_parser;
 
 class ExpandableText extends StatefulWidget {
@@ -61,14 +62,14 @@ class _ExpandableTextState extends State<ExpandableText> {
 
   Widget _buildHtmlText(bool isLong) {
     // Convert HTML to plain text
-    final document = html_parser.parse(widget.text);
-    final plainText = document.body?.text ?? widget.text;
+    final Document document = html_parser.parse(widget.text);
+    final String plainText = document.body?.text ?? widget.text;
 
     if (!isLong) {
       // If text is short, show full HTML
       return Html(
         data: widget.text,
-        style: {
+        style: <String, Style>{
           'body': Style(
             color: Theme.of(context).colorScheme.onSurface.withAlpha(900),
             fontSize: FontSize.medium,
@@ -89,7 +90,7 @@ class _ExpandableTextState extends State<ExpandableText> {
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onSurface.withAlpha(900),
               ),
-          children: [
+          children: <InlineSpan>[
             TextSpan(
               text: 'show_more'.tr(),
               style: TextStyle(
@@ -110,10 +111,10 @@ class _ExpandableTextState extends State<ExpandableText> {
       // Expanded mode: full HTML
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: <Widget>[
           Html(
             data: widget.text,
-            style: {
+            style: <String, Style>{
               'body': Style(
                 color: Theme.of(context).colorScheme.onSurface.withAlpha(900),
                 fontSize: FontSize.medium,

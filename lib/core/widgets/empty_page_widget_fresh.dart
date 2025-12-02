@@ -119,7 +119,7 @@ class _CosmicRotatingLoaderState extends State<CosmicRotatingLoader>
         width: 100,
         child: Stack(
           alignment: Alignment.center,
-          children: [
+          children: <Widget>[
             // 6 rotating category icons
             AnimatedBuilder(
               animation: _rotationController,
@@ -136,7 +136,7 @@ class _CosmicRotatingLoaderState extends State<CosmicRotatingLoader>
             // Center "Sellout" text
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              children: <Widget>[
                 Text(
                   'SELLOUT',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -166,7 +166,7 @@ class _SixCategoryLoaderPainter extends CustomPainter {
   final Color accentColor;
 
   // 6 category icons arranged in a circle
-  static const List<IconData> categoryIcons = [
+  static const List<IconData> categoryIcons = <IconData>[
     Icons.home,
     Icons.shopping_bag,
     Icons.pets,
@@ -262,7 +262,7 @@ class _SixCategoryLoaderPainter extends CustomPainter {
     Color color,
     double opacity,
   ) {
-    final textPainter = TextPainter(
+    final TextPainter textPainter = TextPainter(
       text: TextSpan(
         text: String.fromCharCode(iconData.codePoint),
         style: TextStyle(

@@ -28,7 +28,7 @@ class PickedMediaStrip extends StatelessWidget {
                 : Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [
+                        colors: <Color>[
                           Theme.of(context)
                               .colorScheme
                               .surface
@@ -151,7 +151,7 @@ class _StripItemTileState extends State<_StripItemTile>
             height: 48,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(14),
-              boxShadow: [
+              boxShadow: <BoxShadow>[
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.15),
                   blurRadius: 8,
@@ -165,14 +165,14 @@ class _StripItemTileState extends State<_StripItemTile>
                   ? Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [
+                          colors: <Color>[
                             Theme.of(context)
                                 .colorScheme
-                                .surfaceVariant
+                                .surfaceContainerHighest
                                 .withValues(alpha: 0.4),
                             Theme.of(context)
                                 .colorScheme
-                                .surfaceVariant
+                                .surfaceContainerHighest
                                 .withValues(alpha: 0.2),
                           ],
                         ),
@@ -192,7 +192,7 @@ class _StripItemTileState extends State<_StripItemTile>
                     )
                   : Stack(
                       fit: StackFit.expand,
-                      children: [
+                      children: <Widget>[
                         // Guard against empty bytes to avoid native decoder crash
                         if (widget.thumbnail != null &&
                             widget.thumbnail!.isNotEmpty)
@@ -209,7 +209,7 @@ class _StripItemTileState extends State<_StripItemTile>
                         Container(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              colors: [
+                              colors: <Color>[
                                 Colors.transparent,
                                 Colors.black.withValues(alpha: 0.1),
                               ],

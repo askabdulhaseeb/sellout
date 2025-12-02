@@ -45,7 +45,7 @@ class ProfileGridTypeSelectionSection extends StatelessWidget {
               return SizedBox(
                 height: 36,
                 child: Column(
-                  children: [
+                  children: <Widget>[
                     Row(
                       children: <Widget>[
                         ...visibleTabs.map(

@@ -75,7 +75,7 @@ class AddressModel extends AddressEntity {
 
   String toOfferJson() => json.encode(_addressToJson());
 
-  String toCheckoutJson() => json.encode({
+  String toCheckoutJson() => json.encode(<String, Map<String, dynamic>>{
         'buyer_address': _addressToJson(),
       });
 }

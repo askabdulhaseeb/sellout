@@ -47,7 +47,7 @@ class PromoHomeGridViewTile extends StatelessWidget {
                   gradient: LinearGradient(
                     begin: Alignment.bottomCenter,
                     end: Alignment.topCenter,
-                    colors: [
+                    colors: <Color>[
                       Colors.black.withOpacity(0.6),
                       Colors.transparent,
                     ],
@@ -63,14 +63,14 @@ class PromoHomeGridViewTile extends StatelessWidget {
               bottom: 8,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: <Widget>[
                   Text(
                     promo.title,
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
-                      shadows: [
+                      shadows: <Shadow>[
                         Shadow(
                           blurRadius: 4,
                           color: Colors.black38,

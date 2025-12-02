@@ -8,7 +8,7 @@ import '../../../../bookings/domain/entity/booking_entity.dart';
 import '../../providers/appointment_tile_provider.dart';
 
 class AppointmentTilePaymentButtons extends StatelessWidget {
-  const AppointmentTilePaymentButtons({super.key, required this.booking});
+  const AppointmentTilePaymentButtons({required this.booking, super.key});
   final List<BookingEntity> booking;
 
   @override

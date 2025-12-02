@@ -14,7 +14,7 @@ class PostageDetailResponseModel extends PostageDetailResponseEntity {
     return PostageDetailResponseModel(
       success: json['success'] ?? false,
       detail: json['detail'] == null
-          ? {}
+          ? <String, PostageItemDetailEntity>{}
           : Map<String, PostageItemDetailEntity>.from(
               (json['detail'] as Map).map(
                 (key, value) => MapEntry(
@@ -37,7 +37,7 @@ class PostageDetailResponseModel extends PostageDetailResponseEntity {
   Map<String, dynamic> toJson() => <String, dynamic>{
         'success': success,
         'summary': (summary as PostageDetailSummaryModel).toJson(),
-        'detail': detail.map((key, value) =>
+        'detail': detail.map((String key, PostageItemDetailEntity value) =>
             MapEntry(key, (value as PostageItemDetailModel).toJson())),
         'cached_at': cachedAt,
         'cache_key': cacheKey,
@@ -151,7 +151,7 @@ class PostageItemDetailModel extends PostageItemDetailEntity {
             (deliveryRequirements as PostageDetailDeliveryRequirementsModel)
                 .toJson(),
         'shipping_details': shippingDetails
-            .map((e) => (e as PostageDetailShippingDetailModel).toJson())
+            .map((PostageDetailShippingDetailEntity e) => (e as PostageDetailShippingDetailModel).toJson())
             .toList(),
         'fast_delivery': (fastDelivery as FastDeliveryModel).toJson(),
         'message': message,
@@ -216,7 +216,7 @@ class PostageDetailShippingDetailModel
         'parcelId': parcelId,
         'shipmentId': shipmentId,
         'ratesBuffered':
-            ratesBuffered.map((e) => (e as RateModel).toJson()).toList(),
+            ratesBuffered.map((RateEntity e) => (e as RateModel).toJson()).toList(),
         'parcel': (parcel as ParcelModel).toJson(),
       };
 }
@@ -325,8 +325,7 @@ class BufferDetailsModel extends BufferDetailsEntity {
     required super.bufferPercent,
     required super.bufferFlat,
     required super.minBuffer,
-    super.maxBuffer,
-    required super.roundTo,
+    required super.roundTo, super.maxBuffer,
   });
 
   factory BufferDetailsModel.fromJson(Map<String, dynamic> json) {
@@ -369,6 +368,15 @@ class BufferDetailsModel extends BufferDetailsEntity {
 }
 
 class ServiceLevelModel extends ServiceLevelEntity {
+
+  factory ServiceLevelModel.fromEntity(ServiceLevelEntity entity) {
+    return ServiceLevelModel(
+      name: entity.name,
+      terms: entity.terms,
+      token: entity.token,
+      extendedToken: entity.extendedToken,
+    );
+  }
   ServiceLevelModel({
     required super.name,
     required super.terms,
@@ -391,15 +399,6 @@ class ServiceLevelModel extends ServiceLevelEntity {
         'token': token,
         'extendedToken': extendedToken,
       };
-
-  factory ServiceLevelModel.fromEntity(ServiceLevelEntity entity) {
-    return ServiceLevelModel(
-      name: entity.name,
-      terms: entity.terms,
-      token: entity.token,
-      extendedToken: entity.extendedToken,
-    );
-  }
 }
 
 class ParcelModel extends ParcelEntity {

@@ -114,7 +114,7 @@ class _PriceBreakdown extends StatelessWidget {
         ),
 
         // Shipping if available
-        if (shippingLabel != null && shippingLabel!.isNotEmpty) ...[
+        if (shippingLabel != null && shippingLabel!.isNotEmpty) ...<Widget>[
           const SizedBox(height: 4),
           Text(
             '${'shipping'.tr()}: $shippingLabel',
