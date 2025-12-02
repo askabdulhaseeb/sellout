@@ -68,6 +68,7 @@ dependencies:
   flutter_map: ^8.2.1
   latlong2: ^0.9.1
   flutter_custom_tabs: ^2.4.0
+  flutter_pdfview: ^1.3.2
   url_launcher: ^6.3.2
   # url_launcher: ^6.2.5
   flutter_svg: ^2.2.0
@@ -121,11 +122,15 @@ flutter:
     - assets/images/payment_methods/
     - assets/images/marketplace_filters/
     - assets/images/sellout_team/
-
     - assets/jsons/
     - assets/jsons/foot_brands.json
     - assets/jsons/clothes_brands.json
     - assets/translations/
+    - assets/docs/
+    - assets/docs/privacy_security/
+    - assets/docs/seller-and_consumer_rights/
+    - assets/docs/user_agreement_platform_rules/
+    - assets/docs/intellectual_property/
     
   # example:
   fonts:

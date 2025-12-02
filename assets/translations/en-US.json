@@ -1222,6 +1222,28 @@
   "coming_soon": "Coming soon",
   "employment_details": "Employment Details",
   "buy_label":"Buy label",
-  "choose_postage":"Choose Postage"
+  "choose_postage":"Choose Postage",
+   "legal_documents": {
+    "title": "Legal Documents",
+    "search": "Search documents...",
+    "read": "Read",
+
+    "privacy_security": "Privacy & Security",
+    "privacy_policy": "Privacy Policy",
+    "facial_scan": "Facial Scan Privacy Notice",
+    "cookies_policy": "Cookies Policy",
+
+    "user_agreements": "User Agreements & Platform Rules",
+    "terms_conditions": "Terms & Conditions / User Agreement",
+    "community_standards": "Community Standards / Conduct Policy",
+
+    "seller_consumer": "Seller & Consumer Rights",
+    "selling_practices": "Selling Practices Policy",
+    "refund_cancellation": "Refund & Cancellation Policy",
+    "dispute_resolution": "Dispute Resolution Policy",
+
+    "intellectual_property": "Intellectual Property",
+    "ip_copyright": "Intellectual Property & Copyright Policy"
+  }
 
 }

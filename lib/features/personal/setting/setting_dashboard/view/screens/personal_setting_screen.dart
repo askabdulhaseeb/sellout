@@ -5,6 +5,7 @@ import '../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../../settings/views/screens/connect_bank_screen.dart';
 import '../../../../order/view/screens/your_order_screen.dart';
+import '../../../setting_options/legal_docs/legal_docs_screen.dart';
 import '../../../setting_options/privacy_setting/screen/privacy_screen.dart';
 import 'personal_more_information_setting_screen.dart';
 import '../../../setting_options/setting_notification/screens/personal_setting_notification_screen.dart';
@@ -21,11 +22,12 @@ class PersonalSettingScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('settings'.tr(),
-                style: TextTheme.of(context)
-                    .titleMedium
-                    ?.copyWith(fontWeight: FontWeight.w500))
-            .tr(),
+        title: Text(
+          'settings'.tr(),
+          style: TextTheme.of(
+            context,
+          ).titleMedium?.copyWith(fontWeight: FontWeight.w500),
+        ).tr(),
       ),
       body: ListView(
         physics: const BouncingScrollPhysics(),
@@ -43,7 +45,9 @@ class PersonalSettingScreen extends StatelessWidget {
             title: 'notification'.tr(),
             onTap: () {
               Navigator.pushNamed(
-                  context, PersonalSettingNotificationScreen.routeName);
+                context,
+                PersonalSettingNotificationScreen.routeName,
+              );
             },
           ),
           // InDevMode(
@@ -58,7 +62,9 @@ class PersonalSettingScreen extends StatelessWidget {
             title: 'privacy'.tr(),
             onTap: () {
               Navigator.pushNamed(
-                  context, PersonalPrivacySettingScreen.routeName);
+                context,
+                PersonalPrivacySettingScreen.routeName,
+              );
             },
           ),
           PersonalSettingTile(
@@ -66,6 +72,13 @@ class PersonalSettingScreen extends StatelessWidget {
             title: 'security'.tr(),
             onTap: () {
               AppNavigator.pushNamed(SettingSecurityScreen.routeName);
+            },
+          ),
+          PersonalSettingTile(
+            icon: AppStrings.selloutContactSettingIcon,
+            title: 'legal_documents.title'.tr(),
+            onTap: () {
+              AppNavigator.pushNamed(LegalDocumentsScreen.routeName);
             },
           ),
           InDevMode(
@@ -113,8 +126,9 @@ class PersonalSettingScreen extends StatelessWidget {
           PersonalSettingTile(
             icon: AppStrings.selloutMoreSettingIcon,
             title: 'more_information'.tr(),
-            onTap: () => Navigator.of(context)
-                .pushNamed(PersonalSettingMoreInformationScreen.routeName),
+            onTap: () => Navigator.of(
+              context,
+            ).pushNamed(PersonalSettingMoreInformationScreen.routeName),
           ),
         ],
       ),

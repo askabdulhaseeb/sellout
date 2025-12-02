@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/sockets/socket_service.dart';
 import 'core/theme/app_theme.dart';
+import 'features/personal/setting/setting_dashboard/view/screens/personal_setting_screen.dart';
 import 'services/app_data_service.dart';
 import 'services/app_providers.dart';
 import 'core/sources/local/hive_db.dart';
@@ -60,7 +61,7 @@ class MyApp extends StatelessWidget {
         themeMode: ThemeMode.system,
         routes: AppRoutes.routes,
         // onGenerateRoute: (RouteSettings settings) {},
-        // initialRoute: SignupScreen.routeName,
+        //  initialRoute: PersonalSettingScreen.routeName,
       ),
     );
   }
