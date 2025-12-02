@@ -8,6 +8,7 @@ import '../features/personal/auth/find_account/view/screens/new_password_screen.
 import '../features/personal/auth/find_account/view/screens/send_code_screen.dart';
 import '../features/personal/auth/signin/views/screens/verify_two_factor_screen.dart';
 import '../features/personal/auth/welcome_screen/view/screens/welcome_screen.dart';
+import '../features/personal/setting/setting_options/legal_docs/legal_docs_screen.dart';
 import '../features/personal/setting/setting_options/terms&policies/privacy_policy.dart';
 import '../features/personal/visits/view/visit_calender.dart/screens/visit_calender_screen.dart';
 import '../features/personal/basket/views/screens/personal_shopping_basket_screen.dart';
@@ -87,8 +88,8 @@ class AppRoutes {
     }
   }
 
-  static Map<String, Widget Function(BuildContext)> routes =
-      <String, WidgetBuilder>{
+  static Map<String, Widget Function(BuildContext)>
+  routes = <String, WidgetBuilder>{
     // AUTH
     WelcomeScreen.routeName: (_) => const WelcomeScreen(),
     SignInScreen.routeName: (_) => const SignInScreen(),
@@ -141,6 +142,8 @@ class AppRoutes {
     SettingSecurityScreen.routeName: (_) => const SettingSecurityScreen(),
     PersonalPrivacySettingScreen.routeName: (_) =>
         const PersonalPrivacySettingScreen(),
+    LegalDocumentsScreen.routeName: (_) => const LegalDocumentsScreen(),
+    //
     AutomaticResponseScreen.routeName: (_) => const AutomaticResponseScreen(),
     TimeAwayScreen.routeName: (_) => const TimeAwayScreen(),
     PrivacyPolicyScreen.routeName: (_) => const PrivacyPolicyScreen(),
