@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
-import '../../../../../../../core/sources/local/local_hive_box.dart';
 import 'package:latlong2/latlong.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../attachment/domain/entities/attachment_entity.dart';
@@ -8,25 +7,21 @@ import '../../../domain/entities/address_entity.dart';
 import '../../../domain/entities/current_user_entity.dart';
 export '../../../domain/entities/current_user_entity.dart';
 
-class LocalAuth extends LocalHiveBox<CurrentUserEntity> {
-  @override
-  String get boxName => AppStrings.localAuthBox;
-  final ValueNotifier<List<AddressEntity>> addressListNotifier =
-      ValueNotifier<List<AddressEntity>>(_getCurrentAddressesStatic());
+class LocalAuth {
+  static final String boxTitle = AppStrings.localAuthBox;
+  static Box<CurrentUserEntity> get _box =>
+      Hive.box<CurrentUserEntity>(boxTitle);
 
-  static List<AddressEntity> _getCurrentAddressesStatic() {
-    final Box<CurrentUserEntity>? box = Hive.isBoxOpen(AppStrings.localAuthBox)
-        ? Hive.box<CurrentUserEntity>(AppStrings.localAuthBox)
-        : null;
-    final CurrentUserEntity? user = box?.isEmpty == false
-        ? box?.get(AppStrings.localAuthBox)
-        : null;
-    return user?.address ?? <AddressEntity>[];
+  static final ValueNotifier<List<AddressEntity>> addressListNotifier =
+      ValueNotifier<List<AddressEntity>>(_getCurrentAddresses());
+
+  static List<AddressEntity> _getCurrentAddresses() {
+    return currentUser?.address ?? <AddressEntity>[];
   }
 
   void _notifyAddressListChanged() {
     addressListNotifier.value = List<AddressEntity>.from(
-      currentUser?.address ?? <AddressEntity>[],
+      _getCurrentAddresses(),
     );
   }
 
@@ -34,7 +29,7 @@ class LocalAuth extends LocalHiveBox<CurrentUserEntity> {
     final CurrentUserEntity? existing = currentUser;
     if (existing == null) return;
     final CurrentUserEntity updated = existing.copyWith(address: addresses);
-    await box.put(AppStrings.localAuthBox, updated);
+    await _box.put(boxTitle, updated);
     _notifyAddressListChanged();
   }
 
@@ -43,7 +38,7 @@ class LocalAuth extends LocalHiveBox<CurrentUserEntity> {
     final CurrentUserEntity? existing = currentUser;
     if (existing == null) return;
     final CurrentUserEntity updated = existing.copyWith(address: newAddresses);
-    await box.put(AppStrings.localAuthBox, updated);
+    await _box.put(boxTitle, updated);
     _notifyAddressListChanged();
   }
 
@@ -56,23 +51,46 @@ class LocalAuth extends LocalHiveBox<CurrentUserEntity> {
     final CurrentUserEntity updated = existing.copyWith(
       profileImage: newProfileImages,
     );
-    await box.put(uid, updated);
+    await _box.put(boxTitle, updated);
   }
 
   static final ValueNotifier<String?> uidNotifier = ValueNotifier<String?>(uid);
 
+  static Future<Box<CurrentUserEntity>> get openBox async =>
+      await Hive.openBox<CurrentUserEntity>(boxTitle);
+
+  Future<Box<CurrentUserEntity>> refresh() async {
+    if (Hive.isBoxOpen(boxTitle)) {
+      return Hive.box<CurrentUserEntity>(boxTitle);
+    }
+    try {
+      return await Hive.openBox<CurrentUserEntity>(boxTitle);
+    } catch (e) {
+      debugPrint('LocalAuth: Error opening box, deleting corrupted data: $e');
+      try {
+        await Hive.deleteBoxFromDisk(boxTitle);
+      } catch (deleteError) {
+        debugPrint('LocalAuth: Error deleting box from disk: $deleteError');
+      }
+      return await Hive.openBox<CurrentUserEntity>(boxTitle);
+    }
+  }
+
   Future<void> signin(CurrentUserEntity currentUser) async {
-    await box.put(uid, currentUser);
+    final CurrentUserEntity? existing = LocalAuth.currentUser;
+    if (existing != null && existing.userID == currentUser.userID) {
+      debugPrint(
+        '[LocalAuth] Already signed in as user: \\${currentUser.userID}',
+      );
+      return;
+    }
+    await _box.put(boxTitle, currentUser);
     uidNotifier.value = currentUser.userID;
+    debugPrint('[LocalAuth] Signed in as user: \\${currentUser.userID}');
   }
 
-  static CurrentUserEntity? get currentUser {
-    final Box<CurrentUserEntity>? box = Hive.isBoxOpen(AppStrings.localAuthBox)
-        ? Hive.box<CurrentUserEntity>(AppStrings.localAuthBox)
-        : null;
-    return box?.isEmpty == false ? box?.get(AppStrings.localAuthBox) : null;
-  }
-
+  static CurrentUserEntity? get currentUser =>
+      _box.isEmpty ? null : _box.get(boxTitle);
   static String? get token => currentUser?.token;
   static String? get uid => currentUser?.userID;
   static String get currency => currentUser?.currency ?? 'GBP';
@@ -81,7 +99,7 @@ class LocalAuth extends LocalHiveBox<CurrentUserEntity> {
     currentUser?.location?.longitude ?? -0.118092,
   );
 
-  Future<void> updateToken(String? token) async {
+  static Future<void> updateToken(String? token) async {
     final CurrentUserEntity? existing = currentUser;
     if (existing == null) {
       return;
@@ -92,14 +110,13 @@ class LocalAuth extends LocalHiveBox<CurrentUserEntity> {
     }
 
     final CurrentUserEntity updated = existing.copyWith(token: token);
-    await box.put(uid, updated);
+    await _box.put(boxTitle, updated);
   }
 
   Future<void> signout() async {
     try {
-      await box.clear();
+      await _box.clear();
     } catch (e) {
-      // Ignore errors when clearing box (e.g., PathNotFoundException for lock files)
       debugPrint('LocalAuth: Error clearing box during signout: $e');
     }
     uidNotifier.value = null;

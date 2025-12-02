@@ -65,7 +65,7 @@ class SigninProvider extends ChangeNotifier {
           setSessonKey(jsonMap['session_key']);
           AppNavigator.pushNamed(VerifyTwoFactorScreen.routeName);
         } else if (LocalAuth.uid == null) {
-          AppSnackBar.showSnackBar(context, 'signin_failed'.tr());
+          AppSnackBar.show('signin_failed'.tr());
         } else if (LocalAuth.uid != null &&
             LocalAuth.currentUser?.otpVerified == false) {
           setLoading(false);

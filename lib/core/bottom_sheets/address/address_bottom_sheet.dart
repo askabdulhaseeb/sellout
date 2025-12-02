@@ -27,7 +27,7 @@ class _AddressBottomSheetState extends State<AddressBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<List<AddressEntity>>(
-      valueListenable: LocalAuth().addressListNotifier,
+      valueListenable: LocalAuth.addressListNotifier,
       builder: (BuildContext context, List<AddressEntity> addresses, _) {
         return Container(
           decoration: BoxDecoration(

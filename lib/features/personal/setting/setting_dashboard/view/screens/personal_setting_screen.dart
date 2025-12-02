@@ -6,6 +6,7 @@ import '../../../../../../routes/app_linking.dart';
 import '../../../../../settings/views/screens/connect_bank_screen.dart';
 import '../../../../order/view/screens/your_order_screen.dart';
 import '../../../setting_options/legal_docs/legal_docs_screen.dart';
+import '../../../setting_options/membership_subscription/screen/memberships_and_subscription_screen.dart';
 import '../../../setting_options/privacy_setting/screen/privacy_screen.dart';
 import 'personal_more_information_setting_screen.dart';
 import '../../../setting_options/setting_notification/screens/personal_setting_notification_screen.dart';
@@ -81,17 +82,19 @@ class PersonalSettingScreen extends StatelessWidget {
               AppNavigator.pushNamed(LegalDocumentsScreen.routeName);
             },
           ),
+          PersonalSettingTile(
+            icon: AppStrings.selloutMembershipSettingIcon,
+            title: 'membership_subscription'.tr(),
+            onTap: () {
+              AppNavigator.pushNamed(
+                MembershipsAndSubscriptionScreen.routeName,
+              );
+            },
+          ),
           InDevMode(
             child: PersonalSettingTile(
               icon: AppStrings.selloutContactSettingIcon,
               title: 'contact'.tr(),
-              onTap: () {},
-            ),
-          ),
-          InDevMode(
-            child: PersonalSettingTile(
-              icon: AppStrings.selloutMembershipSettingIcon,
-              title: 'membership_subscription'.tr(),
               onTap: () {},
             ),
           ),

@@ -1,10 +1,11 @@
 import 'dart:convert';
+import '../../../stripe/data/models/stripe_connect_account_model.dart';
+import '../sources/local/local_auth.dart';
 import 'address_model.dart';
 import 'login_info_model.dart';
 import 'login_detail_model.dart';
 import '../../domain/entities/address_entity.dart';
 import '../../domain/entities/login_info_entity.dart';
-import '../../domain/entities/current_user_entity.dart';
 export '../../domain/entities/current_user_entity.dart';
 import '../../../../../../core/extension/string_ext.dart';
 import '../../../../../attachment/data/attchment_model.dart';
@@ -60,6 +61,7 @@ class CurrentUserModel extends CurrentUserEntity {
     required super.accountStatus,
     required super.listOfReviews,
     required super.location,
+    super.stripeConnectAccount,
   }) : super(inHiveAt: DateTime.now());
 
   factory CurrentUserModel.fromRawJson(String str) =>
@@ -160,6 +162,11 @@ class CurrentUserModel extends CurrentUserEntity {
           : PrivacySettingsModel.fromJson(json),
       timeAway: userData['time_away'] != null
           ? TimeAwayModel.fromJson(userData['time_away'])
+          : null,
+      stripeConnectAccount: userData['stripe_connect_account'] != null
+          ? StripeConnectAccountModel.fromJson(
+              userData['stripe_connect_account'],
+            )
           : null,
     );
   }

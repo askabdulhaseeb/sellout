@@ -9,6 +9,7 @@ import '../features/personal/auth/find_account/view/screens/send_code_screen.dar
 import '../features/personal/auth/signin/views/screens/verify_two_factor_screen.dart';
 import '../features/personal/auth/welcome_screen/view/screens/welcome_screen.dart';
 import '../features/personal/setting/setting_options/legal_docs/legal_docs_screen.dart';
+import '../features/personal/setting/setting_options/membership_subscription/screen/memberships_and_subscription_screen.dart';
 import '../features/personal/setting/setting_options/terms&policies/privacy_policy.dart';
 import '../features/personal/visits/view/visit_calender.dart/screens/visit_calender_screen.dart';
 import '../features/personal/basket/views/screens/personal_shopping_basket_screen.dart';
@@ -143,6 +144,8 @@ class AppRoutes {
     PersonalPrivacySettingScreen.routeName: (_) =>
         const PersonalPrivacySettingScreen(),
     LegalDocumentsScreen.routeName: (_) => const LegalDocumentsScreen(),
+    MembershipsAndSubscriptionScreen.routeName: (_) =>
+        const MembershipsAndSubscriptionScreen(),
     //
     AutomaticResponseScreen.routeName: (_) => const AutomaticResponseScreen(),
     TimeAwayScreen.routeName: (_) => const TimeAwayScreen(),
