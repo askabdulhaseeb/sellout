@@ -30,6 +30,10 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
         isAuth: false,
       );
       if (responce is DataSuccess<bool>) {
+        AppLog.info(
+          'Signin User: ${responce.data}',
+          name: 'SignInRemoteSourceImpl.signin - success',
+        );
         debugPrint('Signin Success in Remote Source');
         final Map<String, dynamic> jsonMap = jsonDecode(responce.data ?? '');
         if (jsonMap['require_2fa'] == true) {
@@ -43,6 +47,7 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
           final CurrentUserModel currentUser = CurrentUserModel.fromRawJson(
             responce.data ?? '',
           );
+
           if (currentUser.logindetail.role != 'founder') {
             await LocalAuth().signin(currentUser);
           }
@@ -86,7 +91,7 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
             ? jsonDecode(response.data!) as Map<String, dynamic>
             : <String, dynamic>{};
         if (jsonMap.isNotEmpty) {
-          await LocalAuth().updateToken(jsonMap['token']?.toString());
+          await LocalAuth.updateToken(jsonMap['token']?.toString());
         }
         return response;
       }

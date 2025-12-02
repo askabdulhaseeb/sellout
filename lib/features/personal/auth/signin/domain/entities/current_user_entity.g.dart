@@ -26,6 +26,7 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       displayName: fields[7] as String,
       bio: fields[8] as String,
       currency: fields[9] as String?,
+      stripeConnectAccount: fields[10] as StripeConnectAccountEntity?,
       countryAlpha3: fields[16] as String,
       countryCode: fields[17] as String,
       phoneNumber: fields[18] as String,
@@ -65,7 +66,7 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
   @override
   void write(BinaryWriter writer, CurrentUserEntity obj) {
     writer
-      ..writeByte(42)
+      ..writeByte(43)
       ..writeByte(1)
       ..write(obj.message)
       ..writeByte(2)
@@ -84,6 +85,8 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       ..write(obj.bio)
       ..writeByte(9)
       ..write(obj.currency)
+      ..writeByte(10)
+      ..write(obj.stripeConnectAccount)
       ..writeByte(16)
       ..write(obj.countryAlpha3)
       ..writeByte(17)

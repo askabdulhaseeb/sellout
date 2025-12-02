@@ -14,6 +14,7 @@ import '../../../features/business/core/domain/entity/service/service_entity.dar
 import '../../../features/personal/auth/signin/domain/entities/address_entity.dart';
 import '../../../features/personal/auth/signin/domain/entities/login_detail_entity.dart';
 import '../../../features/personal/auth/signin/domain/entities/login_info_entity.dart';
+import '../../../features/personal/auth/signin/domain/entities/stripe_connect_account_entity.dart';
 import '../../../features/personal/bookings/data/sources/local_booking.dart';
 import '../../../features/personal/bookings/domain/entity/booking_entity.dart';
 import '../../../features/personal/bookings/domain/entity/booking_payment_detail_entity.dart';
@@ -191,6 +192,7 @@ class HiveDB {
     Hive.registerAdapter(StateEntityAdapter()); //85
     Hive.registerAdapter(CartItemStatusTypeAdapter()); //86
     Hive.registerAdapter(MessagePostDetailEntityAdapter()); //87
+    Hive.registerAdapter(StripeConnectAccountEntityAdapter()); //88
 
     // Hive box Open
     await refresh();

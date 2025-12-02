@@ -10,6 +10,7 @@ import 'package:hive_ce/hive.dart';
 import 'address_entity.dart';
 import 'login_detail_entity.dart';
 import 'login_info_entity.dart';
+import 'stripe_connect_account_entity.dart';
 part 'current_user_entity.g.dart';
 
 @HiveType(typeId: 0)
@@ -24,6 +25,7 @@ class CurrentUserEntity {
     required this.displayName,
     required this.bio,
     required this.currency,
+    required this.stripeConnectAccount,
     // required this.privacyType,
     required this.countryAlpha3,
     required this.countryCode,
@@ -85,6 +87,9 @@ class CurrentUserEntity {
 
   @HiveField(9)
   final String? currency; // Preferred currency (e.g., PKR, GBP)
+
+  @HiveField(10)
+  final StripeConnectAccountEntity? stripeConnectAccount; // Preferred currency (e.g., PKR, GBP)
 
   // @HiveField(10)
   // final PrivacyType? privacyType;
@@ -206,6 +211,7 @@ class CurrentUserEntity {
     bool? twoStepAuthEnabled,
     List<SupporterDetailEntity>? supporting,
     DateTime? dob,
+    StripeConnectAccountEntity? stripeConnectAccount,
     String? phoneNumber,
     String? countryCode,
     String? displayName,
@@ -225,6 +231,7 @@ class CurrentUserEntity {
       address: address ?? this.address,
       token: token ?? this.token,
       dob: dob ?? this.dob,
+      stripeConnectAccount: stripeConnectAccount ?? this.stripeConnectAccount,
       bio: bio,
       message: message,
       userID: userID,

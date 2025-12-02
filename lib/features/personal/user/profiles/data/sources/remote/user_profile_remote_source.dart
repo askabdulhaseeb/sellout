@@ -205,6 +205,7 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
                   listOfReviews: updated.listOfReviews,
                   profileImage: updated.profileImage,
                   location: updated.location,
+                  stripeConnectAccount: updated.stripeConnectAccount,
                 )
               : updated;
           await LocalAuth().signin(updatedWithBio);
