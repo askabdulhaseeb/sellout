@@ -18,7 +18,7 @@ class DiscountModel extends DiscountEntity {
 
   // To JSON
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'discount_2_item': twoItems,
       'discount_3_item': threeItems,
       'discount_5_item': fiveItems,

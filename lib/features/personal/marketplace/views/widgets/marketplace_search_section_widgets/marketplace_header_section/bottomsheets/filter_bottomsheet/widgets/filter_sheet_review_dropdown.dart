@@ -16,7 +16,7 @@ class FilterSheetCustomerReviewTile extends StatelessWidget {
         subtitle: Consumer<MarketPlaceProvider>(
           builder: (BuildContext context, MarketPlaceProvider pro, _) =>
               DropdownButtonFormField<ReviewFilterParam>(
-            value: ReviewFilterParamExtension.fromJson(pro.rating),
+            initialValue: ReviewFilterParamExtension.fromJson(pro.rating),
             isExpanded: true,
             hint: Text(
               'select_customer_review'.tr(),

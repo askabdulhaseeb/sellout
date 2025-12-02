@@ -62,15 +62,15 @@ class CartProvider extends ChangeNotifier {
   PaymentIntentEntity? _orderBilling;
   PostageDetailResponseEntity? _postageResponseEntity;
   // selected postage rate per postID
-  Map<String, RateEntity> _selectedPostageRates = <String, RateEntity>{};
+  final Map<String, RateEntity> _selectedPostageRates = <String, RateEntity>{};
   // Map to store selected rate objectId for each postId
-  List<ShippingItemParam> _selectedShippingItems = <ShippingItemParam>[];
+  final List<ShippingItemParam> _selectedShippingItems = <ShippingItemParam>[];
 
   List<ShippingItemParam> get selectedShippingItems => _selectedShippingItems;
 
   void updateShippingSelection(String cartItemId, String objectId) {
-    final idx = _selectedShippingItems
-        .indexWhere((item) => item.cartItemId == cartItemId);
+    final int idx = _selectedShippingItems
+        .indexWhere((ShippingItemParam item) => item.cartItemId == cartItemId);
     if (idx >= 0) {
       _selectedShippingItems[idx] =
           ShippingItemParam(cartItemId: cartItemId, objectId: objectId);

@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/rendering.dart';
-import 'dart:convert';
 import '../../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';

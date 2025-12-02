@@ -211,7 +211,7 @@ class SignupProvider extends ChangeNotifier {
     }
   }
 
-  _moveNext(BuildContext context) async {
+  Future<void> _moveNext(BuildContext context) async {
     final SignupPageType? page = _currentPage.next();
     if (page != null) {
       currentPage = page;
@@ -491,7 +491,7 @@ class SignupProvider extends ChangeNotifier {
   }
 
   /// reset
-  reset() {
+  void reset() {
     _uid =
         (LocalAuth.uid != null && LocalAuth.currentUser?.otpVerified == false)
             ? LocalAuth.uid

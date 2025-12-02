@@ -30,7 +30,7 @@ class DropdownOptionDataModel extends DropdownOptionDataEntity {
 
   /// Convert to Map
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'label': label,
       'value': value,
       'no': no,

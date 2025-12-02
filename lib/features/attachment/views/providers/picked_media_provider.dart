@@ -119,9 +119,9 @@ class PickedMediaProvider extends ChangeNotifier {
       if (newMedia.isEmpty) {
         _hasMoreMedia = false;
       } else {
-        final Set<String> existingIds = _mediaList.map((e) => e.id).toSet();
+        final Set<String> existingIds = _mediaList.map((AssetEntity e) => e.id).toSet();
         final List<AssetEntity> uniqueNewMedia =
-            newMedia.where((m) => !existingIds.contains(m.id)).toList();
+            newMedia.where((AssetEntity m) => !existingIds.contains(m.id)).toList();
 
         if (uniqueNewMedia.isNotEmpty) {
           _mediaList.addAll(uniqueNewMedia);
@@ -143,7 +143,7 @@ class PickedMediaProvider extends ChangeNotifier {
     }
   }
 
-  final Map<String, Uint8List?> _thumbnailCache = {};
+  final Map<String, Uint8List?> _thumbnailCache = <String, Uint8List?>{};
 
   Future<void> cacheThumbnails(List<AssetEntity> assets) async {
     for (final AssetEntity asset in assets) {
@@ -177,7 +177,7 @@ class PickedMediaProvider extends ChangeNotifier {
     } else {
       if (canSelectMore) {
         _pickedMedia.add(media);
-        cacheThumbnails([media]);
+        cacheThumbnails(<AssetEntity>[media]);
       }
     }
     notifyListeners();
@@ -206,7 +206,7 @@ class PickedMediaProvider extends ChangeNotifier {
     AppLog.info(
         'Strip tap detected - pickedIndex: $pickedIndex, assetId: ${tappedAsset.id}');
 
-    final int gridIndex = _mediaList.indexWhere((e) => e.id == tappedAsset.id);
+    final int gridIndex = _mediaList.indexWhere((AssetEntity e) => e.id == tappedAsset.id);
     AppLog.info('Asset found at gridIndex: $gridIndex');
 
     if (gridIndex == -1) {
@@ -292,7 +292,7 @@ class PickedMediaProvider extends ChangeNotifier {
     _loadingMore = true;
     notifyListeners();
 
-    final List<PickedAttachment> attachments = [];
+    final List<PickedAttachment> attachments = <PickedAttachment>[];
 
     try {
       for (final AssetEntity media in _pickedMedia) {

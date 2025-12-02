@@ -111,7 +111,7 @@ class _PickedMediaDisplayTileState extends State<PickedMediaDisplayTile>
                   gradient: LinearGradient(
                     begin: Alignment.bottomCenter,
                     end: Alignment.topCenter,
-                    colors: [
+                    colors: <Color>[
                       Colors.black.withOpacity(0.15),
                       Colors.transparent,
                     ],
@@ -131,7 +131,7 @@ class _PickedMediaDisplayTileState extends State<PickedMediaDisplayTile>
       decoration: BoxDecoration(
         color: bg,
         shape: BoxShape.circle,
-        boxShadow: [
+        boxShadow: <BoxShadow>[
           BoxShadow(
             color: Colors.black.withOpacity(0.25),
             blurRadius: 3,

@@ -26,7 +26,7 @@ class LocalAuth {
     final List<AddressEntity> addresses =
         List<AddressEntity>.from(existing.address);
     final int index = addresses.indexWhere(
-        (a) => a.addressID == address.addressID && address.addressID != '');
+        (AddressEntity a) => a.addressID == address.addressID && address.addressID != '');
     if (index != -1) {
       addresses[index] = address;
     } else {

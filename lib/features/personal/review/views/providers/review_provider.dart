@@ -29,7 +29,7 @@ class ReviewProvider extends ChangeNotifier {
   int get currentIndex => _currentIndex;
   VideoPlayerController? get videoController => _videoController;
   bool get isloading => _isloading;
-  init(ReviewListScreenParam param) {
+  void init(ReviewListScreenParam param) {
     _reviews = param.reviews;
     _sortType = param.sortType ?? ReviewSortType.topReview;
     _star = param.star;

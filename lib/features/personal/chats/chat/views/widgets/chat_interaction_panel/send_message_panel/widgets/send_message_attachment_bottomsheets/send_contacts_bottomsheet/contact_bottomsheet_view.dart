@@ -59,8 +59,9 @@ class _ContactsBottomSheetViewState extends State<ContactsBottomSheetView> {
           Provider.of<SendMessageProvider>(context, listen: false);
       provider.resetUserSearch();
       provider.searchUsers(query);
-      if (_selectedUser != null && !provider.users.contains(_selectedUser))
+      if (_selectedUser != null && !provider.users.contains(_selectedUser)) {
         _selectedUser = null;
+      }
     });
   }
 

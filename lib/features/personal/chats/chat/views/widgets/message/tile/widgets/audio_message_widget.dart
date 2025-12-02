@@ -203,7 +203,7 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
   }
 
   Widget _buildLoadingUI(bool isMe, ColorScheme colorScheme) => Column(
-        children: [
+        children: <Widget>[
           Row(
             children: <Widget>[
               IconButton(
