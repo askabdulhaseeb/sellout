@@ -31,19 +31,17 @@ class PhoneNumberInputField extends StatelessWidget {
     final TextEditingController controller = TextEditingController(
       text: initialValue?.number ?? '',
     );
-    CountryEntity? selectedCountry =
-        initialCountry ??
-        (initialValue != null
-            ? (countries
-                      .where((CountryEntity c) => c.countryCode == initialValue!.countryCode)
-                      .isNotEmpty
-                  ? countries
-                        .where(
-                          (CountryEntity c) => c.countryCode == initialValue!.countryCode,
-                        )
-                        .first
-                  : (countries.isNotEmpty ? countries.first : null))
-            : (countries.isNotEmpty ? countries.first : null));
+    CountryEntity? selectedCountry;
+    if (initialCountry != null) {
+      selectedCountry = initialCountry;
+    } else if (initialValue != null) {
+      final Iterable<CountryEntity> matches = countries.where(
+        (CountryEntity c) => c.countryCode == initialValue!.countryCode,
+      );
+      selectedCountry = matches.isNotEmpty ? matches.first : null;
+    } else {
+      selectedCountry = null;
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,7 +57,7 @@ class PhoneNumberInputField extends StatelessWidget {
         Row(
           children: <Widget>[
             SizedBox(
-              width: 180,
+              width: 100,
               child: CountryTypeAheadField(
                 selectedCountry: selectedCountry,
                 onChanged: (CountryEntity? value) {
