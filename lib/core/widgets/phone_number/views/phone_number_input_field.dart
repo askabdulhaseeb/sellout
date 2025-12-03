@@ -18,13 +18,6 @@ class PhoneNumberInputField extends StatelessWidget {
   final CountryEntity? initialCountry;
   final void Function(PhoneNumberEntity) onChange;
 
-  int? _maxDigits(CountryEntity? c) {
-    if (c == null) return null;
-    final String format = c.numberFormat.format;
-    final int matches = RegExp(r'[Xx]').allMatches(format).length;
-    return matches > 0 ? matches : null;
-  }
-
   @override
   Widget build(BuildContext context) {
     final List<CountryEntity> countries = LocalCountry().activeCountries;
@@ -76,7 +69,6 @@ class PhoneNumberInputField extends StatelessWidget {
               child: CustomTextFormField(
                 controller: controller,
                 readOnly: selectedCountry == null,
-                maxLength: _maxDigits(selectedCountry),
                 keyboardType: TextInputType.number,
                 onChanged: (String value) => onChange(
                   PhoneNumberEntity(
