@@ -19,7 +19,7 @@ class NominationLocationField extends StatefulWidget {
     required this.onLocationSelected,
     required this.selectedLatLng,
     required this.validator,
-    this.initialLocation,
+    this.selectedLocation,
     this.title = '',
     this.hint = '',
     super.key,
@@ -31,15 +31,15 @@ class NominationLocationField extends StatefulWidget {
     this.circleRadius,
     this.radiusType = RadiusType.worldwide,
   });
-  final LocationEntity? initialLocation;
+  final LocationEntity? selectedLocation;
 
   final void Function(LocationEntity, LatLng) onLocationSelected;
   final IconData? prefixIcon;
   final bool? showSuffixIcon;
   final Widget? icon;
   final MapDisplayMode displayMode;
-  final String title;
-  final String hint;
+  final String? title;
+  final String? hint;
   final bool? showMapCircle;
   final double? circleRadius;
   final LatLng? selectedLatLng;
@@ -56,7 +56,31 @@ class _NominationLocationFieldState extends State<NominationLocationField> {
   @override
   void didUpdateWidget(covariant NominationLocationField oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // If selectedLatLng changed or became null, reset controller and map
+    // Sync controller and map with selectedLocation if it changes
+    final LocationEntity? selected = widget.selectedLocation;
+    final LocationEntity? oldSelected = oldWidget.selectedLocation;
+    if (selected != null &&
+        (oldSelected == null || selected.address != oldSelected.address)) {
+      if (_typeAheadController != null) {
+        _typeAheadController!.text = selected.address ?? '';
+        _typeAheadController!.selection = TextSelection.collapsed(
+          offset: _typeAheadController!.text.length,
+        );
+      }
+      _controller.text = selected.address ?? '';
+      _selectedLatLng = LatLng(selected.latitude, selected.longitude);
+      Future<void>.microtask(() {
+        try {
+          _mapController.move(_selectedLatLng, 15);
+        } catch (_) {}
+      });
+    } else if (selected == null && oldSelected != null) {
+      // Clear controller when selectedLocation is reset to null
+      if (_typeAheadController != null) {
+        _typeAheadController!.clear();
+      }
+      _controller.clear();
+    }
   }
 
   final TextEditingController _controller = TextEditingController();
@@ -68,11 +92,11 @@ class _NominationLocationFieldState extends State<NominationLocationField> {
   @override
   void initState() {
     super.initState();
-    if (widget.initialLocation != null) {
-      _controller.text = widget.initialLocation!.address ?? '';
+    if (widget.selectedLocation != null) {
+      _controller.text = widget.selectedLocation!.address ?? '';
       _selectedLatLng = LatLng(
-        widget.initialLocation!.latitude,
-        widget.initialLocation!.longitude,
+        widget.selectedLocation!.latitude,
+        widget.selectedLocation!.longitude,
       );
     } else {
       _selectedLatLng = widget.selectedLatLng ?? LocalAuth.latlng;
@@ -126,6 +150,10 @@ class _NominationLocationFieldState extends State<NominationLocationField> {
       children: <Widget>[
         TypeAheadField<LocationEntity>(
           suggestionsCallback: (String pattern) async {
+            // Prevent suggestions when field is reset/empty
+            if ((_typeAheadController?.text ?? '').isEmpty) {
+              return <LocationEntity>[];
+            }
             return await fetchSuggestions(pattern);
           },
           builder:
@@ -135,13 +163,14 @@ class _NominationLocationFieldState extends State<NominationLocationField> {
                 FocusNode focusNode,
               ) {
                 _typeAheadController = controller;
-                // Show initial value if present
-                if (widget.initialLocation != null && controller.text.isEmpty) {
-                  controller.text = widget.initialLocation!.address ?? '';
+                // Show selected value if present
+                if (widget.selectedLocation != null &&
+                    controller.text.isEmpty) {
+                  controller.text = widget.selectedLocation!.address ?? '';
                 }
                 return CustomTextFormField(
-                  hint: widget.hint,
-                  labelText: widget.title,
+                  hint: widget.hint ?? 'location'.tr(),
+                  labelText: widget.title ?? '',
                   controller: controller,
                   focusNode: focusNode,
                   onTap: () {

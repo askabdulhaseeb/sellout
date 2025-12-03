@@ -32,7 +32,7 @@ class MarketPlaceHeaderButtons extends StatelessWidget {
                     MaterialPageRoute<LocationRadiusBottomSheet>(
                       builder: (BuildContext context) =>
                           LocationRadiusBottomSheet(
-                        initialLocation: pro.bottomsheetLocation,
+                        selectedLocation: pro.bottomsheetLocation,
                         initialLatLng: pro.bottomsheetLatLng,
                         initialRadius: pro.selectedRadius,
                         initialRadiusType: pro.radiusType,

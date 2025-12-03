@@ -21,7 +21,7 @@ class ColorDropdown extends StatefulWidget {
   final ValueChanged<ColorOptionEntity?> onColorChanged;
   final String? Function(bool?) validator;
   final double? colorRadius;
-  final String title;
+  final String? title;
   final VerticalDirection direction;
 
   @override
@@ -92,8 +92,8 @@ class _ColorDropdownState extends State<ColorDropdown> {
                       controller.text = widget.selectedColor!.label;
                     }
                     return CustomTextFormField(
-                      hint: widget.title,
-                      labelText: widget.title,
+                      hint: widget.title ?? 'location'.tr(),
+                      labelText: widget.title ?? '',
                       controller: controller,
 
                       focusNode: focusNode,
