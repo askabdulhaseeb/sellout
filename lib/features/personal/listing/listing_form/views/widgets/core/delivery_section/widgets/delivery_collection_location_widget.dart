@@ -26,7 +26,7 @@ class DeliveryCollectionLocationWidget extends StatelessWidget {
             validator: (bool? value) => AppValidator.requireLocation(value),
             selectedLatLng: formPro.collectionLatLng,
             displayMode: MapDisplayMode.showMapAfterSelection,
-            initialLocation: formPro.selectedCollectionLocation,
+            selectedLocation: formPro.selectedCollectionLocation,
             onLocationSelected: (LocationEntity location, LatLng latLng) {
               formPro.setCollectionLocation(location, latLng);
             },

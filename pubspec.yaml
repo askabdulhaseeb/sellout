@@ -104,9 +104,21 @@ flutter_icons:
 flutter_native_splash:
   android: true
   ios: true
-  color_dark: "#0E0E0E"
+
   color: "#FFFFFF"
-  image: "assets/icons/sellout-bg.png"
+  color_dark: "#0E0E0E"
+
+  image: assets/icons/sellout-bg.png
+
+  # Make sure the image is centered on Android
+  android_gravity: center
+
+  # Android 12+ requires separate config
+  android_12:
+    image: assets/icons/sellout-bg.png
+    color: "#FFFFFF"
+    color_dark: "#0E0E0E"
+
 
 
 flutter:

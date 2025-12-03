@@ -21,20 +21,37 @@ class EditAccountSettingScreen extends StatefulWidget {
 class _EditAccountSettingScreenState extends State<EditAccountSettingScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _nameController =
-      TextEditingController(text: LocalAuth.currentUser?.displayName);
+  final TextEditingController _nameController = TextEditingController(
+    text: LocalAuth.currentUser?.displayName,
+  );
 
-  PhoneNumberEntity? _phoneEntity = PhoneNumberEntity(
-      countryCode: LocalAuth.currentUser?.countryCode ?? '',
-      number: LocalAuth.currentUser?.phoneNumber ?? '00000000');
+  PhoneNumberEntity? _phoneEntity;
 
   DateTime? _birthday = LocalAuth.currentUser?.dob;
 
   @override
+  void initState() {
+    super.initState();
+    _initPhoneEntity();
+  }
+
+  Future<void> _initPhoneEntity() async {
+    final String phone = LocalAuth.currentUser?.phoneNumber ?? '';
+    try {
+      _phoneEntity = await PhoneNumberEntity.fromJson(phone);
+    } catch (_) {
+      _phoneEntity = null;
+    }
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     debugPrint(_birthday.toString());
-    final PersonalSettingProvider pro =
-        Provider.of<PersonalSettingProvider>(context, listen: false);
+    final PersonalSettingProvider pro = Provider.of<PersonalSettingProvider>(
+      context,
+      listen: false,
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -138,9 +155,9 @@ class _BirthdayPickerState extends State<BirthdayPicker> {
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-                  primary: Theme.of(context).primaryColor,
-                ),
+            colorScheme: Theme.of(
+              context,
+            ).colorScheme.copyWith(primary: Theme.of(context).primaryColor),
           ),
           child: child ?? const SizedBox(),
         );

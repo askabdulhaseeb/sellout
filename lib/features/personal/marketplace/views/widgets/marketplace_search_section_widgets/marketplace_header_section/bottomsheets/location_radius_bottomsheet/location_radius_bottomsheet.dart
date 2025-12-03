@@ -17,14 +17,14 @@ class LocationRadiusBottomSheet extends StatefulWidget {
     required this.initialLatLng,
     required this.onUpdateLocation,
     required this.onReset,
-    this.initialLocation,
+    this.selectedLocation,
     super.key,
   });
 
   final RadiusType initialRadiusType;
   final double initialRadius;
   final LatLng initialLatLng;
-  final LocationEntity? initialLocation;
+  final LocationEntity? selectedLocation;
 
   final void Function() onReset;
   final void Function(
@@ -53,7 +53,7 @@ class _LocationRadiusBottomSheetState extends State<LocationRadiusBottomSheet> {
       _radiusType = widget.initialRadiusType;
       _selectedRadius = widget.initialRadius;
       _selectedLatLng = widget.initialLatLng;
-      _selectedLocation = widget.initialLocation;
+      _selectedLocation = widget.selectedLocation;
       if (mounted) {
         setState(() {
           _isLoaded = true;
@@ -120,7 +120,7 @@ class _LocationRadiusBottomSheetState extends State<LocationRadiusBottomSheet> {
                     circleRadius: _selectedRadius,
                     displayMode: MapDisplayMode.alwaysShowMap,
                     showMapCircle: true,
-                    initialLocation: _selectedLocation,
+                    selectedLocation: _selectedLocation,
                     onLocationSelected: (LocationEntity? loc, LatLng? latlng) =>
                         _updateLocation(latlng, loc),
                   ),

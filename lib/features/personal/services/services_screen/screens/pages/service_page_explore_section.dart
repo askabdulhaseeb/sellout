@@ -27,8 +27,10 @@ class _ServicePageExploreSectionState extends State<ServicePageExploreSection> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final ServicesPageProvider pro =
-          Provider.of<ServicesPageProvider>(context, listen: false);
+      final ServicesPageProvider pro = Provider.of<ServicesPageProvider>(
+        context,
+        listen: false,
+      );
       pro.fetchServiceCategory();
     });
   }
@@ -44,10 +46,8 @@ class _ServicePageExploreSectionState extends State<ServicePageExploreSection> {
             if (pro.search.text.isNotEmpty) const ServicesFiltersSection(),
             if (pro.search.text.isEmpty)
               const ServicesPageExploreCategoriesSection(),
-            const SizedBox(
-              height: 6,
-            ),
-            if (pro.search.text.isNotEmpty) const ServiceSearchResults()
+            const SizedBox(height: 6),
+            if (pro.search.text.isNotEmpty) const ServiceSearchResults(),
           ],
         );
       },
@@ -56,9 +56,7 @@ class _ServicePageExploreSectionState extends State<ServicePageExploreSection> {
 }
 
 class ServicesFiltersSection extends StatelessWidget {
-  const ServicesFiltersSection({
-    super.key,
-  });
+  const ServicesFiltersSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -67,26 +65,35 @@ class ServicesFiltersSection extends StatelessWidget {
         spacing: 4,
         children: <Widget>[
           _HeaderButton(
-              onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute<LocationRadiusBottomSheet>(
-                    builder: (BuildContext context) =>
-                        LocationRadiusBottomSheet(
-                      initialLocation: pro.selectedLocation,
-                      initialLatLng: pro.selectedlatlng,
-                      initialRadius: pro.selectedRadius,
-                      initialRadiusType: pro.radiusType,
-                      onReset: () => pro.resetLocationBottomsheet(),
-                      onUpdateLocation: (RadiusType radiusType, double radius,
-                              LatLng latlng, LocationEntity? location) =>
-                          pro.updateLocationSheet(
-                              latlng, location, radiusType, radius),
-                    ),
-                  )),
-              icon: AppStrings.selloutMarketplaceLocationIcon,
-              label: pro.selectedLocation == null
-                  ? 'location'.tr()
-                  : '${pro.selectedLocation?.title}'),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute<LocationRadiusBottomSheet>(
+                builder: (BuildContext context) => LocationRadiusBottomSheet(
+                  selectedLocation: pro.selectedLocation,
+                  initialLatLng: pro.selectedlatlng,
+                  initialRadius: pro.selectedRadius,
+                  initialRadiusType: pro.radiusType,
+                  onReset: () => pro.resetLocationBottomsheet(),
+                  onUpdateLocation:
+                      (
+                        RadiusType radiusType,
+                        double radius,
+                        LatLng latlng,
+                        LocationEntity? location,
+                      ) => pro.updateLocationSheet(
+                        latlng,
+                        location,
+                        radiusType,
+                        radius,
+                      ),
+                ),
+              ),
+            ),
+            icon: AppStrings.selloutMarketplaceLocationIcon,
+            label: pro.selectedLocation == null
+                ? 'location'.tr()
+                : '${pro.selectedLocation?.title}',
+          ),
           _HeaderButton(
             onPressed: () => showModalBottomSheet(
               context: context,
@@ -129,8 +136,10 @@ class _HeaderButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final TextStyle? textStyle = theme.textTheme.labelSmall
-        ?.copyWith(fontWeight: FontWeight.w400, fontSize: 10);
+    final TextStyle? textStyle = theme.textTheme.labelSmall?.copyWith(
+      fontWeight: FontWeight.w400,
+      fontSize: 10,
+    );
 
     return Expanded(
       child: InkWell(
@@ -141,8 +150,10 @@ class _HeaderButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: theme.scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(8),
-            border:
-                Border.all(color: theme.colorScheme.outlineVariant, width: 1),
+            border: Border.all(
+              color: theme.colorScheme.outlineVariant,
+              width: 1,
+            ),
           ),
           child: Row(
             spacing: 4,

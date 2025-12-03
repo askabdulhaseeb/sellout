@@ -151,14 +151,7 @@ class _LinkBankBottomSheetState extends State<LinkBankBottomSheet> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: AppSpacing.vMd),
-                  Container(
-                    padding: const EdgeInsets.all(AppSpacing.md),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.05),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
+
                   const SizedBox(height: AppSpacing.lg),
                   SizedBox(
                     width: double.infinity,
@@ -179,6 +172,7 @@ class _LinkBankBottomSheetState extends State<LinkBankBottomSheet> {
                         Flexible(
                           child: Text(
                             'bank_details_encrypted'.tr(),
+                            textAlign: TextAlign.center,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.primary.withValues(
                                 alpha: 0.7,
