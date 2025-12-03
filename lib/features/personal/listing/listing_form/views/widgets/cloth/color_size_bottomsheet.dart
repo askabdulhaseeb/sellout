@@ -28,8 +28,10 @@ class _SizeColorBottomSheetState extends State<SizeColorBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final AddListingFormProvider provider =
-        Provider.of<AddListingFormProvider>(context, listen: false);
+    final AddListingFormProvider provider = Provider.of<AddListingFormProvider>(
+      context,
+      listen: false,
+    );
     return Container(
       height: MediaQuery.of(context).size.height * 0.8,
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -89,15 +91,21 @@ class BottomSheetHeader extends StatelessWidget {
       children: <Widget>[
         TextButton(
           onPressed: onBack,
-          child: Text('back'.tr(),
-              style: TextStyle(color: Theme.of(context).primaryColor)),
+          child: Text(
+            'back'.tr(),
+            style: TextStyle(color: Theme.of(context).primaryColor),
+          ),
         ),
-        Text('size_and_color'.tr(),
-            style: const TextStyle(fontWeight: FontWeight.bold)),
+        Text(
+          'size_and_color'.tr(),
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         TextButton(
           onPressed: onApply,
-          child: Text('apply'.tr(),
-              style: TextStyle(color: Theme.of(context).primaryColor)),
+          child: Text(
+            'apply'.tr(),
+            style: TextStyle(color: Theme.of(context).primaryColor),
+          ),
         ),
       ],
     );
@@ -112,7 +120,8 @@ class SizeColorListView extends StatelessWidget {
     return Consumer<AddListingFormProvider>(
       builder: (_, AddListingFormProvider provider, __) {
         debugPrint(
-            'SizeColorListView rebuild. Total entries: ${provider.sizeColorEntities.length}');
+          'SizeColorListView rebuild. Total entries: ${provider.sizeColorEntities.length}',
+        );
 
         if (provider.sizeColorEntities.isEmpty) {
           debugPrint('No size-color entries available.');
@@ -125,20 +134,23 @@ class SizeColorListView extends StatelessWidget {
             final SizeColorEntity sizeColorEntry =
                 provider.sizeColorEntities[index];
             debugPrint(
-                'Building size entry: ${sizeColorEntry.value}, colors: ${sizeColorEntry.colors.length}');
+              'Building size entry: ${sizeColorEntry.value}, colors: ${sizeColorEntry.colors.length}',
+            );
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: sizeColorEntry.colors.map((ColorEntity colorEntity) {
                 debugPrint(
-                    'Building color: ${colorEntity.code} with quantity: ${colorEntity.quantity}');
+                  'Building color: ${colorEntity.code} with quantity: ${colorEntity.quantity}',
+                );
 
                 return Container(
                   margin: const EdgeInsets.symmetric(vertical: 8),
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     border: Border.all(
-                        color: ColorScheme.of(context).outlineVariant),
+                      color: ColorScheme.of(context).outlineVariant,
+                    ),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -150,8 +162,11 @@ class SizeColorListView extends StatelessWidget {
                         children: <Widget>[
                           CircleAvatar(
                             radius: 8,
-                            backgroundColor: Color(int.parse(
-                                '0xFF${colorEntity.code.replaceAll('#', '')}')),
+                            backgroundColor: Color(
+                              int.parse(
+                                '0xFF${colorEntity.code.replaceAll('#', '')}',
+                              ),
+                            ),
                           ),
                           const SizedBox(width: 4),
                           Text(colorEntity.code),
@@ -163,7 +178,8 @@ class SizeColorListView extends StatelessWidget {
                         icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () {
                           debugPrint(
-                              'Deleting color: ${colorEntity.code} from size: ${sizeColorEntry.value}');
+                            'Deleting color: ${colorEntity.code} from size: ${sizeColorEntry.value}',
+                          );
                           provider.removeColorFromSize(
                             size: sizeColorEntry.value,
                             color: colorEntity.code,
@@ -217,8 +233,10 @@ class _SizeColorInputRowState extends State<SizeColorInputRow> {
 
   @override
   Widget build(BuildContext context) {
-    final AddListingFormProvider formPro =
-        Provider.of<AddListingFormProvider>(context, listen: false);
+    final AddListingFormProvider formPro = Provider.of<AddListingFormProvider>(
+      context,
+      listen: false,
+    );
 
     return Row(
       spacing: 2,
@@ -227,18 +245,13 @@ class _SizeColorInputRowState extends State<SizeColorInputRow> {
         // Size Dropdown with smooth width animation
         Expanded(
           flex: 2,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeInOut,
-            width: _sizeFocus.hasFocus ? 160 : 120,
-            child: Focus(
-              focusNode: _sizeFocus,
-              child: SizeDropdown(
-                overlayAbove: true,
-                formPro: formPro,
-                selectedSize: widget.selectedSize,
-                onSizeChanged: widget.onSizeChanged,
-              ),
+          child: Focus(
+            focusNode: _sizeFocus,
+            child: SizeDropdown(
+              overlayAbove: true,
+              formPro: formPro,
+              selectedSize: widget.selectedSize,
+              onSizeChanged: widget.onSizeChanged,
             ),
           ),
         ),
@@ -246,22 +259,13 @@ class _SizeColorInputRowState extends State<SizeColorInputRow> {
         // Color Dropdown with smooth width animation
         Expanded(
           flex: 2,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeInOut,
-            width: _colorFocus.hasFocus ? 160 : 120,
-            child: Focus(
-              focusNode: _colorFocus,
-              child: ColorDropdown(
-                overlayAbove: true,
-                validator: (bool? valid) =>
-                    valid == true ? null : 'required'.tr(),
-                selectedColor: widget.selectedColor,
-                onColorChanged: (ColorOptionEntity? value) {
-                  widget.onColorChanged(value);
-                },
-              ),
-            ),
+          child: ColorDropdown(
+            direction: VerticalDirection.up,
+            validator: (bool? valid) => valid == true ? null : 'required'.tr(),
+            selectedColor: widget.selectedColor,
+            onColorChanged: (ColorOptionEntity? value) {
+              widget.onColorChanged(value);
+            },
           ),
         ),
         // Quantity input
@@ -282,10 +286,7 @@ class _SizeColorInputRowState extends State<SizeColorInputRow> {
 }
 
 class AddButton extends StatelessWidget {
-  const AddButton({
-    required this.onAdd,
-    super.key,
-  });
+  const AddButton({required this.onAdd, super.key});
 
   final VoidCallback onAdd;
 
