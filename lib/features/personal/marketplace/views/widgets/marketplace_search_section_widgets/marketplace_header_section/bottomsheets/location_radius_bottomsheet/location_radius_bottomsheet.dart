@@ -120,7 +120,7 @@ class _LocationRadiusBottomSheetState extends State<LocationRadiusBottomSheet> {
                     circleRadius: _selectedRadius,
                     displayMode: MapDisplayMode.alwaysShowMap,
                     showMapCircle: true,
-                    initialText: _selectedLocation?.address,
+                    initialLocation: _selectedLocation,
                     onLocationSelected: (LocationEntity? loc, LatLng? latlng) =>
                         _updateLocation(latlng, loc),
                   ),

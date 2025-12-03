@@ -29,7 +29,7 @@ class EditableAvailabilityWidget extends StatelessWidget {
               title: 'meetup_location'.tr(),
               selectedLatLng: formPro.meetupLatLng,
               displayMode: MapDisplayMode.showMapAfterSelection,
-              initialText: formPro.selectedMeetupLocation?.address ?? '',
+              initialLocation: formPro.selectedMeetupLocation,
               onLocationSelected: (LocationEntity p0, LatLng p1) =>
                   formPro.setMeetupLocation(p0, p1),
             ),

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import '../../../../../core/sources/api_call.dart';
-import '../../domain/entities/nomaintioon_location_entity/nomination_location_entity.dart';
+import '../../domain/entities/location_entity.dart';
 import '../../domain/usecase/location_name_usecase.dart';
 
 class LocationProvider extends ChangeNotifier {
@@ -16,18 +16,18 @@ class LocationProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<NominationLocationEntity> suggestions = <NominationLocationEntity>[];
+  List<LocationEntity> suggestions = <LocationEntity>[];
 
-  Future<List<NominationLocationEntity>> fetchSuggestions(String query) async {
-    if (query.trim().isEmpty) return <NominationLocationEntity>[];
+  Future<List<LocationEntity>> fetchSuggestions(String query) async {
+    if (query.trim().isEmpty) return <LocationEntity>[];
     setLoading(true);
-    final DataState<List<NominationLocationEntity>> result =
+    final DataState<List<LocationEntity>> result =
         await _usecase.call(query);
 
-    if (result is DataSuccess<List<NominationLocationEntity>>) {
-      suggestions = result.entity ?? <NominationLocationEntity>[];
+    if (result is DataSuccess<List<LocationEntity>>) {
+      suggestions = result.entity ?? <LocationEntity>[];
     } else {
-      suggestions = <NominationLocationEntity>[];
+      suggestions = <LocationEntity>[];
     }
 
     setLoading(false);
