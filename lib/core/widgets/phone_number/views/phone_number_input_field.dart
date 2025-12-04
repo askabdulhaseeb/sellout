@@ -5,7 +5,7 @@ import 'country_typeahead_field.dart';
 import '../domain/entities/country_entity.dart';
 import '../domain/entities/phone_number_entity.dart';
 
-class PhoneNumberInputField extends StatelessWidget {
+class PhoneNumberInputField extends StatefulWidget {
   const PhoneNumberInputField({
     required this.onChange,
     this.initialValue,
@@ -19,31 +19,46 @@ class PhoneNumberInputField extends StatelessWidget {
   final void Function(PhoneNumberEntity) onChange;
 
   @override
-  Widget build(BuildContext context) {
-    final List<CountryEntity> countries = LocalCountry().activeCountries;
-    final TextEditingController controller = TextEditingController(
-      text: initialValue?.number ?? '',
-    );
-    CountryEntity? selectedCountry;
-    if (initialCountry != null) {
-      selectedCountry = initialCountry;
-    } else if (initialValue != null) {
+  State<PhoneNumberInputField> createState() => _PhoneNumberInputFieldState();
+}
+
+class _PhoneNumberInputFieldState extends State<PhoneNumberInputField> {
+  late TextEditingController controller;
+  CountryEntity? selectedCountry;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TextEditingController(text: widget.initialValue?.number ?? '');
+    final List<CountryEntity> countries = LocalCountry().getAll();
+    if (widget.initialCountry != null) {
+      selectedCountry = widget.initialCountry;
+    } else if (widget.initialValue != null) {
       final Iterable<CountryEntity> matches = countries.where(
-        (CountryEntity c) => c.countryCode == initialValue!.countryCode,
+        (CountryEntity c) => c.countryCode == widget.initialValue!.countryCode,
       );
       selectedCountry = matches.isNotEmpty ? matches.first : null;
     } else {
       selectedCountry = null;
     }
+  }
 
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        if (labelText.isNotEmpty)
+        if (widget.labelText.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(bottom: 2),
             child: Text(
-              labelText,
+              widget.labelText,
               style: const TextStyle(fontWeight: FontWeight.w500),
             ),
           ),
@@ -54,8 +69,12 @@ class PhoneNumberInputField extends StatelessWidget {
               child: CountryTypeAheadField(
                 selectedCountry: selectedCountry,
                 onChanged: (CountryEntity? value) {
-                  selectedCountry = value;
-                  onChange(
+                  if (mounted) {
+                    setState(() {
+                      selectedCountry = value;
+                    });
+                  }
+                  widget.onChange(
                     PhoneNumberEntity(
                       countryCode: value?.countryCode ?? '',
                       number: controller.text,
@@ -70,7 +89,7 @@ class PhoneNumberInputField extends StatelessWidget {
                 controller: controller,
                 readOnly: selectedCountry == null,
                 keyboardType: TextInputType.number,
-                onChanged: (String value) => onChange(
+                onChanged: (String value) => widget.onChange(
                   PhoneNumberEntity(
                     countryCode: selectedCountry?.countryCode ?? '',
                     number: value,

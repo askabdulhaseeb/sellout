@@ -11,9 +11,15 @@ class AddAddressRepositoryImpl extends AddAddressRepository {
   Future<DataState<bool>> addAddress(AddressParams params) {
     return remoteSource.addAddress(params);
   }
+  
+  @override
+  Future<DataState<bool>> addSellingAddress(AddressParams params) {
+    return remoteSource.addSellingAddress(params);
+  }
 
   @override
   Future<DataState<bool>> updateAddress(AddressParams params) {
     return remoteSource.updateAddress(params);
   }
+
 }

@@ -156,16 +156,20 @@ class AddListingParam {
       'post_privacy': privacyType.json,
       if (privacyType == PrivacyType.private) 'access_code': accessCode ?? '',
       if (postID != null && (oldAttachments?.isNotEmpty ?? false))
-        'old_files': jsonEncode(oldAttachments!
-            .map((AttachmentEntity attachment) =>
-                AttachmentModel.fromEntity(attachment).toJson())
-            .toList()),
+        'old_files': jsonEncode(
+          oldAttachments!
+              .map(
+                (AttachmentEntity attachment) =>
+                    AttachmentModel.fromEntity(attachment).toJson(),
+              )
+              .toList(),
+        ),
     };
   }
 
   Map<String, String> _discountMAP() {
     final Map<String, String> data = <String, String>{
-      'discount': (isDiscounted ?? false).toString()
+      'discount': (isDiscounted ?? false).toString(),
     };
 
     if (isDiscounted == true && discount != null) {
@@ -181,7 +185,7 @@ class AddListingParam {
 
   Map<String, String> _offerMAP() {
     final Map<String, String> data = <String, String>{
-      'accept_offers': acceptOfferJSON
+      'accept_offers': acceptOfferJSON,
     };
     if (acceptOffer) data['min_offer_amount'] = minOfferAmount;
     return data;
@@ -189,7 +193,7 @@ class AddListingParam {
 
   Map<String, String> _deliveryMAP() {
     final Map<String, String> data = <String, String>{
-      'delivery_type': deliveryType.json
+      'delivery_type': deliveryType.json,
     };
 
     if (deliveryType == DeliveryType.paid ||
@@ -202,7 +206,8 @@ class AddListingParam {
     if (deliveryType == DeliveryType.collection) {
       data['collection_location'] = collectionLocation != null
           ? jsonEncode(
-              LocationModel.fromEntity(collectionLocation!).toJsonidurlkeys())
+              LocationModel.fromEntity(collectionLocation!).toJsonidurlkeys(),
+            )
           : '';
     }
 
@@ -222,7 +227,8 @@ class AddListingParam {
     return <String, String>{
       'meet_up_location': meetUpLocation != null
           ? jsonEncode(
-              LocationModel.fromEntity(meetUpLocation!).toJsonidurlkeys())
+              LocationModel.fromEntity(meetUpLocation!).toJsonidurlkeys(),
+            )
           : '',
       'availability': jsonEncode(availbility),
     };
@@ -250,25 +256,29 @@ class AddListingParam {
       'quantity': quantity ?? '1',
       'item_condition': condition?.json ?? '',
     };
-    data.addAll(_baseMap(
-      includeDiscount: true,
-      includeOffer: true,
-      includeDelivery: true,
-      includeListLoc: true,
-    ));
+    data.addAll(
+      _baseMap(
+        includeDiscount: true,
+        includeOffer: true,
+        includeDelivery: true,
+        includeListLoc: true,
+      ),
+    );
     return data;
   }
 
   Map<String, String> _cloth() {
     final List<Map<String, dynamic>> sizeColorsJson =
         (clothfootParams?.sizeColors ?? <SizeColorEntity>[])
-            .map((SizeColorEntity e) => SizeColorModel(
-                  value: e.value,
-                  colors: e.colors
-                      .map((ColorEntity c) => ColorModel.fromEntity(c))
-                      .toList(),
-                  id: e.id,
-                ).toMap())
+            .map(
+              (SizeColorEntity e) => SizeColorModel(
+                value: e.value,
+                colors: e.colors
+                    .map((ColorEntity c) => ColorModel.fromEntity(c))
+                    .toList(),
+                id: e.id,
+              ).toMap(),
+            )
             .toList();
 
     final Map<String, String> data = <String, String>{
@@ -279,12 +289,14 @@ class AddListingParam {
       'type': type ?? '',
     };
 
-    data.addAll(_baseMap(
-      includeDiscount: true,
-      includeOffer: true,
-      includeDelivery: true,
-      includeListLoc: true,
-    ));
+    data.addAll(
+      _baseMap(
+        includeDiscount: true,
+        includeOffer: true,
+        includeDelivery: true,
+        includeListLoc: true,
+      ),
+    );
     return data;
   }
 
@@ -293,12 +305,14 @@ class AddListingParam {
       'type': foodDrinkParams?.type ?? type ?? '',
       'quantity': quantity ?? '',
     };
-    data.addAll(_baseMap(
-      includeDiscount: true,
-      includeOffer: true,
-      includeDelivery: true,
-      includeListLoc: true,
-    ));
+    data.addAll(
+      _baseMap(
+        includeDiscount: true,
+        includeOffer: true,
+        includeDelivery: true,
+        includeListLoc: true,
+      ),
+    );
     return data;
   }
 
@@ -310,23 +324,21 @@ class AddListingParam {
       'body_type': vehicleParams?.bodyType ?? '',
       'emission': vehicleParams?.emission ?? '',
       'year': vehicleParams?.year?.toString() ?? '',
-      'colour': vehicleParams?.exteriorColor ?? '',
+      'interior_color': vehicleParams?.interiorColor?.value ?? '',
+      'exterior_color': vehicleParams?.exteriorColor?.value ?? '',
       'engine_size': vehicleParams?.engineSize?.toString() ?? '',
       'mileage': vehicleParams?.mileage?.toString() ?? '',
       'doors': vehicleParams?.doors?.toString() ?? '',
       'seats': vehicleParams?.seats?.toString() ?? '',
       'transmission': vehicleParams?.transmission ?? '',
-      'author_name': LocalAuth.currentUser?.userName ?? '',
       'mileage_unit': vehicleParams?.mileageUnit ?? '',
       'vehicles_category': vehicleParams?.vehiclesCategory ?? '',
       'fuel_type': vehicleParams?.fuelType ?? '',
     };
 
-    data.addAll(_baseMap(
-      includeOffer: true,
-      includeListLoc: true,
-      includeMeetup: true,
-    ));
+    data.addAll(
+      _baseMap(includeOffer: true, includeListLoc: true, includeMeetup: true),
+    );
     return data;
   }
 
@@ -343,10 +355,7 @@ class AddListingParam {
       'property_type': propertyParams?.propertyType ?? '',
     };
 
-    data.addAll(_baseMap(
-      includeListLoc: true,
-      includeMeetup: true,
-    ));
+    data.addAll(_baseMap(includeListLoc: true, includeMeetup: true));
     return data;
   }
 
@@ -357,18 +366,21 @@ class AddListingParam {
       'ready_to_leave': petsParams?.readyToLeave ?? '',
       'breed': petsParams?.breed ?? '',
       'health_checked': (petsParams?.healthChecked ?? false).toString(),
-      'vaccination_up_to_date':
-          (petsParams?.vaccinationUpToDate ?? false).toString(),
-      'worm_and_flea_treated':
-          (petsParams?.wormAndFleaTreated ?? false).toString(),
+      'vaccination_up_to_date': (petsParams?.vaccinationUpToDate ?? false)
+          .toString(),
+      'worm_and_flea_treated': (petsParams?.wormAndFleaTreated ?? false)
+          .toString(),
       'pets_category': petsParams?.petsCategory ?? '',
     };
 
-    data.addAll(_baseMap(
+    data.addAll(
+      _baseMap(
         includeDiscount: false,
         includeOffer: true,
         includeListLoc: true,
-        includeMeetup: true));
+        includeMeetup: true,
+      ),
+    );
     return data;
   }
 }

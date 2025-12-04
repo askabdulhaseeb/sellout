@@ -2,10 +2,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-
+import '../../../../services/get_it.dart';
+import '../../../sources/api_call.dart';
 import '../data/sources/local_country.dart';
 import '../domain/entities/country_entity.dart';
 import '../../custom_textformfield.dart';
+import '../domain/usecase/get_counties_usecase.dart';
 
 class CountryTypeAheadField extends StatefulWidget {
   const CountryTypeAheadField({
@@ -23,18 +25,54 @@ class CountryTypeAheadField extends StatefulWidget {
 
 class _CountryTypeAheadFieldState extends State<CountryTypeAheadField> {
   late final TextEditingController _controller;
+  List<CountryEntity> _countries = <CountryEntity>[];
+  bool _isLoading = true;
   bool _didSetInitial = false;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
+    _loadCountries();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_didSetInitial && mounted) {
         _controller.text = widget.selectedCountry?.countryCode ?? '';
         _didSetInitial = true;
       }
     });
+  }
+
+  Future<void> _loadCountries() async {
+    try {
+      final GetCountiesUsecase getCountries = GetCountiesUsecase(locator());
+      final DataState<List<CountryEntity>> result = await getCountries.call(
+        const Duration(hours: 1),
+      );
+
+      List<CountryEntity> countries = <CountryEntity>[];
+      if (result is DataSuccess<List<CountryEntity>>) {
+        countries = result.entity ?? <CountryEntity>[];
+      }
+
+      // Fallback to local if remote is empty
+      if (countries.isEmpty) {
+        countries = LocalCountry().activeCountries;
+      }
+
+      if (mounted) {
+        setState(() {
+          _countries = countries;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _countries = LocalCountry().activeCountries;
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -58,21 +96,18 @@ class _CountryTypeAheadFieldState extends State<CountryTypeAheadField> {
 
   @override
   Widget build(BuildContext context) {
-    final List<CountryEntity> countries = LocalCountry().activeCountries;
-
     return TypeAheadField<CountryEntity>(
       suggestionsCallback: (String pattern) {
-        if (pattern.trim().isEmpty) return countries;
-
-        return countries
+        if (_isLoading) return <CountryEntity>[];
+        if (pattern.trim().isEmpty) return _countries;
+        return _countries
             .where(
               (CountryEntity c) =>
                   c.displayName.toLowerCase().contains(pattern.toLowerCase()) ||
-                  c.countryCode.contains(pattern),
+                  c.countryCode.toLowerCase().contains(pattern.toLowerCase()),
             )
             .toList();
       },
-
       builder:
           (
             BuildContext context,
@@ -81,7 +116,7 @@ class _CountryTypeAheadFieldState extends State<CountryTypeAheadField> {
           ) {
             return CustomTextFormField(
               hint: 'country'.tr(),
-              controller: _controller, // ✅ Your controlled controller
+              controller: _controller,
               focusNode: focusNode,
               readOnly: false,
               contentPadding: const EdgeInsets.symmetric(
@@ -91,7 +126,6 @@ class _CountryTypeAheadFieldState extends State<CountryTypeAheadField> {
               borderRadius: 12,
             );
           },
-
       itemBuilder: (BuildContext context, CountryEntity suggestion) {
         return Container(
           padding: const EdgeInsets.all(4),
@@ -112,8 +146,8 @@ class _CountryTypeAheadFieldState extends State<CountryTypeAheadField> {
               const SizedBox(width: 8),
               Flexible(
                 child: Text(
-                  maxLines: 1,
                   suggestion.countryCode,
+                  maxLines: 1,
                   style: const TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 12,
@@ -127,9 +161,11 @@ class _CountryTypeAheadFieldState extends State<CountryTypeAheadField> {
       itemSeparatorBuilder: (BuildContext context, int index) =>
           const Divider(endIndent: 4, indent: 4),
       onSelected: (CountryEntity suggestion) {
-        setState(() {
-          _controller.text = suggestion.countryCode;
-        });
+        if (mounted) {
+          setState(() {
+            _controller.text = suggestion.countryCode;
+          });
+        }
         widget.onChanged(suggestion);
       },
     );

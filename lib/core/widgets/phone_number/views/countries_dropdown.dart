@@ -28,6 +28,24 @@ class CountryDropdownField extends StatefulWidget {
 }
 
 class _CountryDropdownFieldState extends State<CountryDropdownField> {
+  @override
+  void didUpdateWidget(covariant CountryDropdownField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialValue != oldWidget.initialValue &&
+        widget.initialValue != selectedCountry) {
+      setState(() {
+        selectedCountry = widget.initialValue;
+      });
+      if (_controller != null) {
+        Future<void>.microtask(() {
+          if (mounted) {
+            _controller!.text = selectedCountry?.displayName ?? '';
+          }
+        });
+      }
+    }
+  }
+
   CountryEntity? selectedCountry;
   TextEditingController? _controller;
   late Future<List<CountryEntity>> _countriesFuture;

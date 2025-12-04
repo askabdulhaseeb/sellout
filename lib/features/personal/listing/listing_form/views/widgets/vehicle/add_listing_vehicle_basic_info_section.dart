@@ -56,10 +56,11 @@ class _AddListingVehicleBasicInfoSectionState
                 );
               }).toList(),
               selectedItem: formPro.findByValue(
-                  //The static method 'findByValue' can't be accessed through an instance.
-//Try using the class 'AddListingFormProvider' to access the method
-                  vehiclecatgory,
-                  formPro.selectedVehicleCategory ?? ''),
+                //The static method 'findByValue' can't be accessed through an instance.
+                //Try using the class 'AddListingFormProvider' to access the method
+                vehiclecatgory,
+                formPro.selectedVehicleCategory ?? '',
+              ),
               validator: (bool? value) => AppValidator.requireSelection(value),
               hint: 'select_category'.tr(),
               title: 'category'.tr(),
@@ -80,14 +81,18 @@ class _AddListingVehicleBasicInfoSectionState
             // 🔹 Emission standard
             CustomDropdown<DropdownOptionEntity>(
               items: emissionStandards
-                  .map((DropdownOptionEntity e) =>
-                      DropdownMenuItem<DropdownOptionEntity>(
-                        value: e,
-                        child: Text(e.label),
-                      ))
+                  .map(
+                    (DropdownOptionEntity e) =>
+                        DropdownMenuItem<DropdownOptionEntity>(
+                          value: e,
+                          child: Text(e.label),
+                        ),
+                  )
                   .toList(),
               selectedItem: formPro.findByValue(
-                  emissionStandards, formPro.emission ?? ''),
+                emissionStandards,
+                formPro.emission ?? '',
+              ),
               validator: (bool? value) => AppValidator.requireSelection(value),
               hint: 'emission_standards'.tr(),
               title: 'emission_standards'.tr(),
@@ -98,11 +103,13 @@ class _AddListingVehicleBasicInfoSectionState
             // 🔹 Make
             CustomDropdown<DropdownOptionEntity>(
               items: make
-                  .map((DropdownOptionEntity e) =>
-                      DropdownMenuItem<DropdownOptionEntity>(
-                        value: e,
-                        child: Text(e.label),
-                      ))
+                  .map(
+                    (DropdownOptionEntity e) =>
+                        DropdownMenuItem<DropdownOptionEntity>(
+                          value: e,
+                          child: Text(e.label),
+                        ),
+                  )
                   .toList(),
               selectedItem: formPro.findByValue(make, formPro.make ?? ''),
               validator: (bool? value) => AppValidator.requireSelection(value),
@@ -115,14 +122,18 @@ class _AddListingVehicleBasicInfoSectionState
             // 🔹 Fuel type
             CustomDropdown<DropdownOptionEntity>(
               items: fuelType
-                  .map((DropdownOptionEntity e) =>
-                      DropdownMenuItem<DropdownOptionEntity>(
-                        value: e,
-                        child: Text(e.label),
-                      ))
+                  .map(
+                    (DropdownOptionEntity e) =>
+                        DropdownMenuItem<DropdownOptionEntity>(
+                          value: e,
+                          child: Text(e.label),
+                        ),
+                  )
                   .toList(),
-              selectedItem:
-                  formPro.findByValue(fuelType, formPro.fuelType ?? ''),
+              selectedItem: formPro.findByValue(
+                fuelType,
+                formPro.fuelType ?? '',
+              ),
               validator: (bool? value) => AppValidator.requireSelection(value),
               hint: 'fuel_type'.tr(),
               title: 'fuel_type'.tr(),
@@ -133,14 +144,18 @@ class _AddListingVehicleBasicInfoSectionState
             // 🔹 Transmission
             CustomDropdown<DropdownOptionEntity>(
               items: transmission
-                  .map((DropdownOptionEntity e) =>
-                      DropdownMenuItem<DropdownOptionEntity>(
-                        value: e,
-                        child: Text(e.label),
-                      ))
+                  .map(
+                    (DropdownOptionEntity e) =>
+                        DropdownMenuItem<DropdownOptionEntity>(
+                          value: e,
+                          child: Text(e.label),
+                        ),
+                  )
                   .toList(),
               selectedItem: formPro.findByValue(
-                  transmission, formPro.transmissionType ?? ''),
+                transmission,
+                formPro.transmissionType ?? '',
+              ),
               validator: (bool? value) => AppValidator.requireSelection(value),
               hint: 'transmission'.tr(),
               title: 'transmission'.tr(),
@@ -151,10 +166,17 @@ class _AddListingVehicleBasicInfoSectionState
             /// Color dropdown
             ColorDropdown(
               validator: (bool? value) => AppValidator.requireSelection(value),
-              title: 'color'.tr(),
-              selectedColor: formPro.selectedVehicleColor,
+              title: 'interior_color'.tr(),
+              selectedColor: formPro.interiorColor,
               onColorChanged: (ColorOptionEntity? value) =>
-                  formPro.setVehicleColor(value),
+                  formPro.setInteriorColor(value),
+            ),
+            ColorDropdown(
+              validator: (bool? value) => AppValidator.requireSelection(value),
+              title: 'exterior_color'.tr(),
+              selectedColor: formPro.exteriorColor,
+              onColorChanged: (ColorOptionEntity? value) =>
+                  formPro.setExteriorColor(value),
             ),
 
             /// Price
@@ -187,10 +209,7 @@ class _AddListingVehicleBasicInfoSectionState
 }
 
 class AddListingBodyTypeWidget extends StatelessWidget {
-  const AddListingBodyTypeWidget({
-    required this.list,
-    super.key,
-  });
+  const AddListingBodyTypeWidget({required this.list, super.key});
 
   final List<ParentDropdownEntity> list;
 
@@ -205,8 +224,9 @@ class AddListingBodyTypeWidget extends StatelessWidget {
         );
 
         // Get the first match or null
-        final ParentDropdownEntity? match =
-            matches.isNotEmpty ? matches.first : null;
+        final ParentDropdownEntity? match = matches.isNotEmpty
+            ? matches.first
+            : null;
 
         // Options are empty if no match
         final List<DropdownOptionEntity> options =
@@ -217,9 +237,9 @@ class AddListingBodyTypeWidget extends StatelessWidget {
               .map(
                 (DropdownOptionEntity opt) =>
                     DropdownMenuItem<DropdownOptionEntity>(
-                  value: opt,
-                  child: Text(opt.label),
-                ),
+                      value: opt,
+                      child: Text(opt.label),
+                    ),
               )
               .toList(),
 

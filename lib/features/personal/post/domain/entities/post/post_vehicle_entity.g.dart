@@ -29,8 +29,8 @@ class PostVehicleEntityAdapter extends TypeAdapter<PostVehicleEntity> {
       engineSize: (fields[9] as num?)?.toDouble(),
       mileageUnit: fields[10] as String?,
       transmission: fields[11] as String?,
-      interiorColor: fields[12] as String?,
-      exteriorColor: fields[13] as String?,
+      interiorColor: fields[12] as ColorOptionEntity?,
+      exteriorColor: fields[13] as ColorOptionEntity?,
       vehiclesCategory: fields[14] as String?,
       address: fields[15] as String,
     );

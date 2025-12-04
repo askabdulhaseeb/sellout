@@ -1,5 +1,6 @@
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/phone_number_entity.dart';
+import '../../../../address/add_address/views/params/add_address_param.dart';
 import '../../../../location/data/models/location_model.dart';
 import '../../../../setting/setting_dashboard/data/models/privacy_setting_model.dart';
 import '../../../../setting/setting_dashboard/data/models/time_away_model.dart';
@@ -19,6 +20,7 @@ class UpdateUserParams {
     this.emailNotification,
     this.country,
     this.gender,
+    this.sellingAddress,
     this.language,
   });
 
@@ -26,15 +28,16 @@ class UpdateUserParams {
   final String? bio;
   final PhoneNumberEntity? phone;
   final DateTime? dob;
-  final PrivacyType? privacyType; 
+  final PrivacyType? privacyType;
   final LocationModel? location;
   final TimeAwayModel? timeAway;
   final PrivacySettingsModel? privacySettings;
   final bool? twoFactorAuth;
   final bool? pushNotification;
   final bool? emailNotification;
-  final String? country; 
+  final String? country;
   final String? gender;
+  final AddressParams? sellingAddress;
   final String? language;
 
   Map<String, dynamic> toMap() {
@@ -59,10 +62,14 @@ class UpdateUserParams {
       map['gender'] = gender!.trim();
     }
 
-// Language
+    if (sellingAddress != null) {
+      map['selling_address'] = sellingAddress!.toMap();
+    }
+    // Language
     if (language?.trim().isNotEmpty == true) {
       map['language'] = language!.trim();
     }
+
     // Phone
     if (phone != null) {
       if (phone!.countryCode.trim().isNotEmpty) {

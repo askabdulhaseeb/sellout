@@ -4,12 +4,12 @@ import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/country_entity.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/phone_number_entity.dart';
 import '../../../../auth/signin/domain/entities/address_entity.dart';
-import '../../domain/usecase/add_address_usecase.dart';
-import '../../domain/usecase/update_address_usecase.dart';
+import '../../../../user/profiles/domain/usecase/edit_profile_detail_usecase.dart';
+import '../../../../user/profiles/views/params/update_user_params.dart';
 import '../params/add_address_param.dart';
 
-class AddAddressProvider extends ChangeNotifier {
-  AddAddressProvider(this._addAddressUsecase, this._updateAddressUsecase);
+class AddSellingAddressProvider extends ChangeNotifier {
+  AddSellingAddressProvider(this._updateSellingAddressUsecase);
 
   // MARK: Address
 
@@ -21,12 +21,12 @@ class AddAddressProvider extends ChangeNotifier {
   }
 
   // MARK: Dependencies
-  final AddAddressUsecase _addAddressUsecase;
-  final UpdateAddressUsecase _updateAddressUsecase;
+  final UpdateProfileDetailUsecase _updateSellingAddressUsecase;
 
   // MARK: Internal state / variables
 
   PhoneNumberEntity? _phoneNumber;
+  bool _isLoading = false;
 
   final TextEditingController _recipientNameController =
       TextEditingController();
@@ -38,7 +38,7 @@ class AddAddressProvider extends ChangeNotifier {
   StateEntity? _state;
   CountryEntity? _selectedCountryEntity;
 
-  bool _isDefault = false;
+  bool? _isDefault;
   String _addressId = '';
   String _action = '';
   String? _addressCategory;
@@ -46,6 +46,7 @@ class AddAddressProvider extends ChangeNotifier {
   // MARK: Public getters
 
   PhoneNumberEntity? get phoneNumber => _phoneNumber;
+  bool get isLoading => _isLoading;
   TextEditingController get recipientNameController => _recipientNameController;
   TextEditingController get postalCodeController => _postalCodeController;
   TextEditingController get address1Controller => _address1Controller;
@@ -54,7 +55,7 @@ class AddAddressProvider extends ChangeNotifier {
   StateEntity? get state => _state;
   CountryEntity? get selectedCountryEntity => _selectedCountryEntity;
   String get addressId => _addressId;
-  bool get isDefault => _isDefault;
+  bool? get isDefault => _isDefault;
   String get action => _action;
   String? get addressCategory => _addressCategory;
 
@@ -69,11 +70,15 @@ class AddAddressProvider extends ChangeNotifier {
     postalCode: _postalCodeController.text,
     addressCategory: _addressCategory ?? '',
     country: _selectedCountryEntity?.countryName ?? '',
-    isDefault: _isDefault,
+    isDefault: null,
     action: _action,
   );
 
   // MARK: Setters/set functions
+  void setloading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
 
   void setPhoneNumber(PhoneNumberEntity? value) {
     _phoneNumber = value;
@@ -129,60 +134,34 @@ class AddAddressProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleDefault() {
-    _isDefault = !_isDefault;
-    notifyListeners();
-  }
-
   // MARK: API Functions
-  Future<DataState<bool>> saveAddress(BuildContext context) async {
+  Future<DataState<String>> saveSellingAddress(BuildContext context) async {
+    setloading(true);
     try {
-      final DataState<bool> result = await _addAddressUsecase.call(
-        addressParams,
+      final DataState<String> result = await _updateSellingAddressUsecase.call(
+        UpdateUserParams(sellingAddress: addressParams),
       );
-      if (result is DataSuccess<bool>) {
-        debugPrint(result.data);
+      if (!context.mounted) {
+        setloading(false);
+        return DataFailer<String>(CustomException('Context not mounted'));
+      }
+      if (result is DataSuccess) {
+        setloading(false);
         Navigator.pop(context);
         return result;
-      } else if (result is DataFailer<bool>) {
+      } else {
         final String error = result.exception?.reason ?? 'Unknown error';
         AppSnackBar.showSnackBar(context, error);
-        return DataFailer<bool>(CustomException(error));
-      } else {
-        const String error = 'Unexpected error';
-        AppSnackBar.showSnackBar(context, error);
-        return DataFailer<bool>(CustomException(error));
+        setloading(false);
+        return DataFailer<String>(CustomException(error));
       }
     } catch (e, stc) {
       final String error = 'Exception: $stc';
-      AppSnackBar.showSnackBar(context, error);
-      return DataFailer<bool>(CustomException(error));
-    }
-  }
-
-  Future<DataState<bool>> updateAddress(BuildContext context) async {
-    try {
-      final DataState<bool> result = await _updateAddressUsecase.call(
-        addressParams,
-      );
-      debugPrint('add address data ${addressParams.toMap()}');
-      if (result is DataSuccess<bool>) {
-        debugPrint(result.data);
-        Navigator.pop(context);
-        return result;
-      } else if (result is DataFailer<bool>) {
-        final String error = result.exception?.reason ?? 'Unknown error';
-        AppSnackBar.show(error);
-        return DataFailer<bool>(CustomException(error));
-      } else {
-        const String error = 'Unexpected error';
-        AppSnackBar.show(error);
-        return DataFailer<bool>(CustomException(error));
+      if (context.mounted) {
+        AppSnackBar.showSnackBar(context, error);
       }
-    } catch (e, stc) {
-      final String error = 'Exception: $stc';
-      AppSnackBar.show(error);
-      return DataFailer<bool>(CustomException(error));
+      setloading(false);
+      return DataFailer<String>(CustomException(error));
     }
   }
 

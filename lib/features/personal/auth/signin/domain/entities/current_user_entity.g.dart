@@ -31,7 +31,8 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       countryCode: fields[17] as String,
       phoneNumber: fields[18] as String,
       language: fields[19] as String,
-      address: (fields[21] as List).cast<AddressEntity>(),
+      address: (fields[25] as List).cast<AddressEntity>(),
+      sellingAddress: fields[26] as AddressEntity?,
       chatIDs: (fields[31] as List).cast<String>(),
       businessIDs: (fields[32] as List).cast<String>(),
       imageVerified: fields[41] as bool,
@@ -55,10 +56,10 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       privacySettings: fields[151] as PrivacySettingsEntity?,
       timeAway: fields[150] as TimeAwayEntity?,
       accountStatus: fields[20] as String?,
-      accountType: fields[22] as String?,
-      dob: fields[23] as DateTime?,
-      saved: (fields[24] as List).cast<String>(),
-      listOfReviews: (fields[25] as List).cast<double>(),
+      accountType: fields[21] as String?,
+      dob: fields[22] as DateTime?,
+      saved: (fields[23] as List).cast<String>(),
+      listOfReviews: (fields[24] as List).cast<double>(),
       location: fields[155] as LocationEntity?,
     );
   }
@@ -66,7 +67,7 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
   @override
   void write(BinaryWriter writer, CurrentUserEntity obj) {
     writer
-      ..writeByte(43)
+      ..writeByte(44)
       ..writeByte(1)
       ..write(obj.message)
       ..writeByte(2)
@@ -98,15 +99,17 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       ..writeByte(20)
       ..write(obj.accountStatus)
       ..writeByte(21)
-      ..write(obj.address)
-      ..writeByte(22)
       ..write(obj.accountType)
-      ..writeByte(23)
+      ..writeByte(22)
       ..write(obj.dob)
-      ..writeByte(24)
+      ..writeByte(23)
       ..write(obj.saved)
-      ..writeByte(25)
+      ..writeByte(24)
       ..write(obj.listOfReviews)
+      ..writeByte(25)
+      ..write(obj.address)
+      ..writeByte(26)
+      ..write(obj.sellingAddress)
       ..writeByte(31)
       ..write(obj.chatIDs)
       ..writeByte(32)

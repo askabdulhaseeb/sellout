@@ -34,6 +34,7 @@ class CurrentUserModel extends CurrentUserEntity {
     required super.phoneNumber,
     required super.language,
     required super.address,
+    required super.sellingAddress,
     required super.chatIDs,
     required super.businessIDs,
     required super.imageVerified,
@@ -70,12 +71,21 @@ class CurrentUserModel extends CurrentUserEntity {
   factory CurrentUserModel.fromJson(Map<String, dynamic> json) {
     final userData = json['item'] ?? <String, dynamic>{};
     final dynamic addressData = userData['address'];
+    final dynamic sellingAddressData =
+        userData['selling_address'] ?? json['selling_address'];
 
     List<AddressEntity> addressList = <AddressEntity>[];
+    AddressModel? sellingAddressModel;
+
     if (addressData is List) {
       addressList = addressData.map((e) => AddressModel.fromJson(e)).toList();
     } else if (addressData is Map<String, dynamic>) {
       addressList.add(AddressModel.fromJson(addressData));
+    }
+
+    if (sellingAddressData != null &&
+        sellingAddressData is Map<String, dynamic>) {
+      sellingAddressModel = AddressModel.fromJson(sellingAddressData);
     }
 
     return CurrentUserModel(
@@ -97,6 +107,7 @@ class CurrentUserModel extends CurrentUserEntity {
       phoneNumber: userData['phone_number'] ?? '',
       language: userData['language'] ?? 'en',
       address: addressList,
+      sellingAddress: sellingAddressModel,
       chatIDs: List<String>.from(
         (userData['chat_ids'] ?? <dynamic>[]).map((dynamic e) => e.toString()),
       ),

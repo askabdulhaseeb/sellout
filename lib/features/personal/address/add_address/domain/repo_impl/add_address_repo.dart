@@ -3,5 +3,6 @@ import '../../views/params/add_address_param.dart';
 
 abstract class AddAddressRepository {
   Future<DataState<bool>> addAddress(AddressParams params);
+  Future<DataState<bool>> addSellingAddress(AddressParams params);
   Future<DataState<bool>> updateAddress(AddressParams params);
 }

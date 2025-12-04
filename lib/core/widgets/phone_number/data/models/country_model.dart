@@ -1,6 +1,17 @@
 import '../../domain/entities/country_entity.dart';
 import 'dart:convert';
 
+bool _parseBool(dynamic value) {
+  if (value == null) return false;
+  if (value is bool) return value;
+  if (value is int) return value == 1;
+  if (value is String) {
+    final String lower = value.toLowerCase().trim();
+    return lower == 'true' || lower == '1';
+  }
+  return false;
+}
+
 class CountryModel extends CountryEntity {
   CountryModel({
     required super.flag,
@@ -94,7 +105,7 @@ class CountryModel extends CountryEntity {
       alpha3: map['alpha_3']?.toString().trim() ?? '',
       numberFormat: NumberFormatEntity(format: nfFormat, regex: nfRegex),
       currency: map['currency']?.toString().trim() ?? '',
-      isActive: map['is_active'] ?? false,
+      isActive: _parseBool(map['is_active']),
       states: statesList,
     );
   }

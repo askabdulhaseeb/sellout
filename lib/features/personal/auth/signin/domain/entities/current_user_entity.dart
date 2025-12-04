@@ -32,6 +32,7 @@ class CurrentUserEntity {
     required this.phoneNumber,
     required this.language,
     required this.address,
+    required this.sellingAddress,
     required this.chatIDs,
     required this.businessIDs,
     required this.imageVerified,
@@ -110,20 +111,23 @@ class CurrentUserEntity {
   @HiveField(20)
   final String? accountStatus; // active/suspended/etc.
 
-  @HiveField(22)
+  @HiveField(21)
   final String? accountType; // personal/business/etc.
 
-  @HiveField(23)
+  @HiveField(22)
   final DateTime? dob; // Date of Birth
 
-  @HiveField(24)
+  @HiveField(23)
   final List<String> saved; // IDs of saved items
 
-  @HiveField(25)
+  @HiveField(24)
   final List<double> listOfReviews; // User reviews/ratings received
 
-  @HiveField(21)
+  @HiveField(25)
   final List<AddressEntity> address; // Physical addresses
+
+  @HiveField(26)
+  final AddressEntity? sellingAddress; // Selling addresses
 
   // ──────────────────────────────── IMAGES ────────────────────────────────
   @HiveField(40)
@@ -208,6 +212,7 @@ class CurrentUserEntity {
     String? token,
     String? refreshToken,
     List<AddressEntity>? address,
+    AddressEntity? sellingAddress,
     bool? twoStepAuthEnabled,
     List<SupporterDetailEntity>? supporting,
     DateTime? dob,
@@ -229,6 +234,7 @@ class CurrentUserEntity {
       displayName: displayName ?? this.displayName,
       supporting: supporting ?? this.supporting,
       address: address ?? this.address,
+      sellingAddress: sellingAddress ?? this.sellingAddress,
       token: token ?? this.token,
       dob: dob ?? this.dob,
       stripeConnectAccount: stripeConnectAccount ?? this.stripeConnectAccount,

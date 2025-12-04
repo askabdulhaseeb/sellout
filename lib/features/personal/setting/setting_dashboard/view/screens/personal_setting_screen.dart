@@ -4,6 +4,7 @@ import '../../../../../../core/utilities/app_string.dart';
 import '../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../../settings/views/screens/connect_bank_screen.dart';
+import '../../../../address/shipping_address/view/screens/selling_address_screen.dart';
 import '../../../../order/view/screens/your_order_screen.dart';
 import '../../../setting_options/balance/balance_screen.dart';
 import '../../../setting_options/legal_docs/legal_docs_screen.dart';
@@ -92,13 +93,18 @@ class PersonalSettingScreen extends StatelessWidget {
               );
             },
           ),
-            PersonalSettingTile(
+          PersonalSettingTile(
             icon: AppStrings.selloutMembershipSettingIcon,
             title: 'balance'.tr(),
             onTap: () {
-              AppNavigator.pushNamed(
-                BalanceScreen.routeName,
-              );
+              AppNavigator.pushNamed(BalanceScreen.routeName);
+            },
+          ),
+          PersonalSettingTile(
+            icon: AppStrings.selloutMembershipSettingIcon,
+            title: 'selling_address'.tr(),
+            onTap: () {
+              AppNavigator.pushNamed(SellingAddressScreen.routeName);
             },
           ),
           InDevMode(

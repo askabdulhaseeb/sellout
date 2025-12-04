@@ -6,6 +6,7 @@ import '../../../../../../../core/sources/local/local_request_history.dart';
 import '../../../../../../attachment/data/attchment_model.dart';
 import '../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../../attachment/domain/entities/picked_attachment.dart';
+import '../../../../../auth/signin/data/models/address_model.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../domain/entities/supporter_detail_entity.dart';
 import '../../../views/params/add_remove_supporter_params.dart';
@@ -129,7 +130,7 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
         requestType: ApiRequestType.patch,
         body: json.encode(params.toMap()),
       );
-
+      debugPrint('[updatePRofileDetail] params: ${params.toMap()}');
       if (result is DataSuccess<String>) {
         AppLog.info(
           result.data ?? '',
@@ -140,26 +141,50 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
         final String? raw = result.data;
         String? newDisplayName;
         String? newBio;
+        AddressModel? newSellingAddress;
         try {
+          debugPrint('[updatePRofileDetail] raw response: $raw');
           if (raw != null && raw.isNotEmpty) {
             final Map<String, dynamic> decoded = jsonDecode(raw);
+            debugPrint('[updatePRofileDetail] decoded: $decoded');
             if (decoded.containsKey('updatedAttributes')) {
               final Map<String, dynamic> attrs =
                   decoded['updatedAttributes'] as Map<String, dynamic>;
+              debugPrint('[updatePRofileDetail] attrs: $attrs');
               newDisplayName = attrs['display_name'] as String?;
               newBio = attrs['bio'] as String?;
+              if (attrs['selling_address'] != null) {
+                debugPrint(
+                  '[updatePRofileDetail] selling_address: ${attrs['selling_address']}',
+                );
+                newSellingAddress = AddressModel.fromJson(
+                  attrs['selling_address'] as Map<String, dynamic>,
+                );
+                debugPrint(
+                  '[updatePRofileDetail] newSellingAddress: $newSellingAddress',
+                );
+              } else {
+                debugPrint('[updatePRofileDetail] selling_address is null');
+              }
             }
           }
-        } catch (_) {}
+        } catch (e) {
+          debugPrint('[updatePRofileDetail] error parsing selling_address: $e');
+        }
 
         final CurrentUserEntity? current = LocalAuth.currentUser;
-        if (current != null && (newDisplayName != null || newBio != null)) {
+        debugPrint('[updatePRofileDetail] currentUser before update: $current');
+        if (current != null &&
+            (newDisplayName != null ||
+                newBio != null ||
+                newSellingAddress != null)) {
           final CurrentUserEntity updated = current.copyWith(
             displayName: newDisplayName ?? current.displayName,
             // bio is not in copyWith, so set below
           );
           // If bio is not in copyWith, create a new instance with updated bio
-          final CurrentUserEntity updatedWithBio = newBio != null
+          final CurrentUserEntity updatedWithBio =
+              newBio != null || newSellingAddress != null
               ? CurrentUserEntity(
                   // ...existing code...
                   message: updated.message,
@@ -169,7 +194,7 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
                   email: updated.email,
                   userName: updated.userName,
                   displayName: updated.displayName,
-                  bio: newBio,
+                  bio: newBio ?? updated.bio,
                   currency: updated.currency,
                   // privacyType: updated.privacyType,
                   countryAlpha3: updated.countryAlpha3,
@@ -206,9 +231,18 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
                   profileImage: updated.profileImage,
                   location: updated.location,
                   stripeConnectAccount: updated.stripeConnectAccount,
+                  sellingAddress: newSellingAddress ?? updated.sellingAddress,
                 )
               : updated;
+          debugPrint('[updatePRofileDetail] updatedWithBio: $updatedWithBio');
           await LocalAuth().signin(updatedWithBio);
+          debugPrint(
+            '[updatePRofileDetail] after signin, LocalAuth.sellingAddress: ${LocalAuth.sellingAddress}',
+          );
+        } else {
+          debugPrint(
+            '[updatePRofileDetail] currentUser is null or no new data to update',
+          );
         }
 
         return DataSuccess<String>(result.data ?? '', result.data);
@@ -226,6 +260,7 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
         e.toString(),
         name: 'UserProfileRemoteSourceImpl.updateProfileDetail: catch',
       );
+      debugPrint('[updatePRofileDetail] catch error: $e');
       return DataFailer<String>(CustomException('something_wrong'));
     }
   }
