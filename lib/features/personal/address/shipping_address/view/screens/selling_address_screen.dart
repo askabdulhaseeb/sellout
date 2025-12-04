@@ -42,12 +42,11 @@ class _SellingAddressScreenState extends State<SellingAddressScreen> {
                   listen: false,
                 ).setCurrentTab(PersonalBottomNavBarType.home),
         ),
-        title: AppBarTitle(titleKey: 'selling_address'.tr()),
+        title: const AppBarTitle(titleKey: 'selling_address'),
       ),
-      body: ValueListenableBuilder<List<AddressEntity>>(
-        valueListenable: LocalAuth.addressListNotifier,
-        builder: (BuildContext context, List<AddressEntity> addresses, _) {
-          final AddressEntity? addressToShow = LocalAuth.sellingAddress;
+      body: ValueListenableBuilder<AddressEntity?>(
+        valueListenable: LocalAuth.sellingAddressNotifier,
+        builder: (BuildContext context, AddressEntity? addressToShow, _) {
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(

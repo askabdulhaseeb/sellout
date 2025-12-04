@@ -25,7 +25,6 @@ void main() async {
   await Stripe.instance.applySettings();
   setupLocator();
   await EasyLocalization.ensureInitialized();
-  FlutterNativeSplash.remove();
   runApp(
     EasyLocalization(
       supportedLocales: const <Locale>[AppLocalization.en],
@@ -35,8 +34,9 @@ void main() async {
       child: const MyApp(),
     ),
   );
-  // Defer non-critical initializations until after first frame
+  // Remove splash and defer non-critical initializations until after first frame
   WidgetsBinding.instance.addPostFrameCallback((_) {
+    FlutterNativeSplash.remove();
     SocketService(locator()).initAndListen();
     AppDataService().fetchAllData();
   });

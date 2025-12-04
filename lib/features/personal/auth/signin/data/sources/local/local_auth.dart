@@ -14,6 +14,12 @@ class LocalAuth {
 
   static final ValueNotifier<List<AddressEntity>> addressListNotifier =
       ValueNotifier<List<AddressEntity>>(_getCurrentAddresses());
+  static final ValueNotifier<AddressEntity?> sellingAddressNotifier =
+      ValueNotifier<AddressEntity?>(currentUser?.sellingAddress);
+
+  static void notifySellingAddressChanged() {
+    sellingAddressNotifier.value = currentUser?.sellingAddress;
+  }
 
   static List<AddressEntity> _getCurrentAddresses() {
     return currentUser?.address ?? <AddressEntity>[];
@@ -80,6 +86,7 @@ class LocalAuth {
     await _box.put(boxTitle, currentUser);
     uidNotifier.value = currentUser.userID;
     debugPrint('[LocalAuth] Signed in as user: \\${currentUser.userID}');
+    notifySellingAddressChanged();
   }
 
   static CurrentUserEntity? get currentUser =>

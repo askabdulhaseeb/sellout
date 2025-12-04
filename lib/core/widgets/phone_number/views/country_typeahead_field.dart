@@ -123,7 +123,6 @@ class _CountryTypeAheadFieldState extends State<CountryTypeAheadField> {
                 horizontal: 16,
                 vertical: 14,
               ),
-              borderRadius: 12,
             );
           },
       itemBuilder: (BuildContext context, CountryEntity suggestion) {

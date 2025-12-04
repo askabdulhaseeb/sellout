@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../core/functions/app_log.dart';
 import '../../../address/shipping_address/view/screens/selling_address_screen.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../auth/signin/domain/entities/address_entity.dart';
 import '../../../auth/welcome_screen/view/screens/welcome_screen.dart';
 import '../../../listing/start_listing/views/screens/start_listing_screen.dart';
 import '../../../chats/chat_dashboard/views/screens/chat_dashboard_screen.dart';
@@ -18,39 +18,42 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final CurrentUserEntity? uid = LocalAuth.currentUser;
-    final bool otpVerified = LocalAuth.currentUser?.otpVerified ?? false;
+    return ValueListenableBuilder<AddressEntity?>(
+      valueListenable: LocalAuth.sellingAddressNotifier,
+      builder: (BuildContext context, AddressEntity? sellingAddress, _) {
+        final CurrentUserEntity? uid = LocalAuth.currentUser;
+        final bool otpVerified = LocalAuth.currentUser?.otpVerified ?? false;
 
-    // Check if the user is a regular user or business user
-    final bool hasShippingAddress =
-        (LocalAuth.currentUser?.sellingAddress != null);
-    AppLog.info('Current User ID: ${LocalAuth.sellingAddress?.address1}');
 
-    final List<Widget> screens = <Widget>[
-      const HomeScreen(),
-      const MarketPlaceScreen(),
-      const ServicesScreen(),
-      (uid == null && !otpVerified)
-          ? const WelcomeScreen()
-          : (!hasShippingAddress
-                ? const SellingAddressScreen()
-                : const StartListingScreen()),
-      (uid == null && !otpVerified)
-          ? const WelcomeScreen()
-          : const ChatDashboardScreen(),
-      (uid == null && !otpVerified)
-          ? const WelcomeScreen()
-          : const ProfileScreen(),
-    ];
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      resizeToAvoidBottomInset: false,
-      body: Consumer<PersonalBottomNavProvider>(
-        builder: (BuildContext context, PersonalBottomNavProvider navPro, _) {
-          return screens[navPro.currentTabIndex];
-        },
-      ),
+        final List<Widget> screens = <Widget>[
+          const HomeScreen(),
+          const MarketPlaceScreen(),
+          const ServicesScreen(),
+          (uid == null && !otpVerified)
+              ? const WelcomeScreen()
+              : (sellingAddress != null
+                    ?const StartListingScreen(): const SellingAddressScreen()
+                     ),
+          (uid == null && !otpVerified)
+              ? const WelcomeScreen()
+              : const ChatDashboardScreen(),
+          (uid == null && !otpVerified)
+              ? const WelcomeScreen()
+              : const ProfileScreen(),
+        ];
+
+        return Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          resizeToAvoidBottomInset: false,
+          body: Consumer<PersonalBottomNavProvider>(
+            builder:
+                (BuildContext context, PersonalBottomNavProvider navPro, _) {
+                  return screens[navPro.currentTabIndex];
+                },
+          ),
+        );
+      },
     );
   }
 }
