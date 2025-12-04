@@ -1,4 +1,3 @@
-import 'dart:convert';
 import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
@@ -7,7 +6,6 @@ import '../../../../../../core/enums/listing/property/tenure_type.dart';
 import '../../../../../attachment/data/attchment_model.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
-import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../location/data/models/location_model.dart';
 import '../../../../location/domain/entities/location_entity.dart';
 import '../../../../post/data/models/post/package_detail_model.dart';
@@ -23,6 +21,7 @@ import '../../../../post/domain/entities/post/post_vehicle_entity.dart';
 import '../../../../post/domain/entities/size_color/color_entity.dart';
 import '../../../../post/domain/entities/size_color/size_color_entity.dart';
 import '../../domain/entities/sub_category_entity.dart';
+import 'dart:convert';
 
 class AddListingParam {
   AddListingParam({
