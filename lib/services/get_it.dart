@@ -3,6 +3,8 @@ import '../core/sockets/socket_implementations.dart';
 import '../core/sockets/socket_service.dart';
 import '../features/business/business_page/domain/usecase/get_bookings_by_service_id_usecase.dart';
 import '../features/business/business_page/domain/usecase/get_my_bookings_usecase.dart';
+import '../features/personal/address/add_address/domain/usecase/add_selling_address_usecase.dart';
+import '../features/personal/address/add_address/views/provider/add_selling_address_provider.dart';
 import '../features/personal/appointment/data/repository/appointment_repository.dart';
 import '../features/personal/appointment/data/services/appointment_api.dart';
 import '../features/personal/appointment/domain/repository/appointment_repository.dart';
@@ -746,10 +748,17 @@ void _addaddress() {
   locator.registerFactory<UpdateAddressUsecase>(
     () => UpdateAddressUsecase(locator()),
   );
+  locator.registerFactory<AddSellingAddressUsecase>(
+    () => AddSellingAddressUsecase(locator()),
+  );
   //
   // Providers
   locator.registerFactory<AddAddressProvider>(
     () => AddAddressProvider(locator(), locator()),
+  );
+
+  locator.registerFactory<AddSellingAddressProvider>(
+    () => AddSellingAddressProvider(locator()),
   );
 }
 

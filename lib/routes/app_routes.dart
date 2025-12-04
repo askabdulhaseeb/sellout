@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/functions/app_log.dart';
 import '../features/business/service/views/screens/add_service_screen.dart';
+import '../features/personal/address/shipping_address/view/screens/selling_address_screen.dart';
 import '../features/personal/auth/find_account/view/screens/confirm_email_screen.dart';
 import '../features/personal/auth/find_account/view/screens/enter_code_screen.dart';
 import '../features/personal/auth/find_account/view/screens/find_account_screen.dart';
@@ -165,6 +166,7 @@ class AppRoutes {
     BuyAgainScreen.routeName: (_) => const BuyAgainScreen(),
     ConnectBankScreen.routeName: (_) => const ConnectBankScreen(),
     BalanceScreen.routeName: (_) => const BalanceScreen(),
+    SellingAddressScreen.routeName: (_) => const SellingAddressScreen(),
     //
     VisitCalenderScreen.routeName: (_) => const VisitCalenderScreen(),
   };

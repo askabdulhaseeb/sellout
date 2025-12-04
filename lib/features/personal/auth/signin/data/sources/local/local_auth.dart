@@ -77,13 +77,6 @@ class LocalAuth {
   }
 
   Future<void> signin(CurrentUserEntity currentUser) async {
-    final CurrentUserEntity? existing = LocalAuth.currentUser;
-    if (existing != null && existing.userID == currentUser.userID) {
-      debugPrint(
-        '[LocalAuth] Already signed in as user: \\${currentUser.userID}',
-      );
-      return;
-    }
     await _box.put(boxTitle, currentUser);
     uidNotifier.value = currentUser.userID;
     debugPrint('[LocalAuth] Signed in as user: \\${currentUser.userID}');
@@ -98,6 +91,9 @@ class LocalAuth {
     currentUser?.location?.latitude ?? 51.509865,
     currentUser?.location?.longitude ?? -0.118092,
   );
+
+  /// Static getter for selling address
+  static AddressEntity? get sellingAddress => currentUser?.sellingAddress;
 
   static Future<void> updateToken(String? token) async {
     final CurrentUserEntity? existing = currentUser;

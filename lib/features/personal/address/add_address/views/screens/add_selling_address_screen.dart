@@ -6,34 +6,32 @@ import '../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../core/widgets/custom_dropdown.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../core/widgets/custom_radio_toggle_tile.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/phone_number_entity.dart';
 import '../../../../../../core/widgets/phone_number/views/countries_dropdown.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/country_entity.dart';
 import '../../../../../../core/widgets/phone_number/views/phone_number_input_field.dart';
 import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
-import '../../../../../../services/get_it.dart';
 import '../../../../auth/signin/domain/entities/address_entity.dart';
-import '../../domain/usecase/add_address_usecase.dart';
-import '../../domain/usecase/update_address_usecase.dart';
-import '../provider/add_address_provider.dart';
+import '../../../../user/profiles/domain/usecase/edit_profile_detail_usecase.dart';
+import '../../../../../../services/get_it.dart';
+import '../provider/add_selling_address_provider.dart';
 
-class AddEditAddressScreen extends StatefulWidget {
-  const AddEditAddressScreen({this.initAddress, super.key});
+class AddEditSellingAddressScreen extends StatefulWidget {
+  const AddEditSellingAddressScreen({this.initAddress, super.key});
   final AddressEntity? initAddress;
 
   @override
-  State<AddEditAddressScreen> createState() => _AddEditAddressScreenState();
+  State<AddEditSellingAddressScreen> createState() =>
+      _AddEditSellingAddressScreenState();
 }
 
-class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
+class _AddEditSellingAddressScreenState
+    extends State<AddEditSellingAddressScreen> {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<AddAddressProvider>(
-      create: (_) => AddAddressProvider(
-        locator<AddAddressUsecase>(),
-        locator<UpdateAddressUsecase>(),
-      ),
+    return ChangeNotifierProvider<AddSellingAddressProvider>(
+      create: (_) =>
+          AddSellingAddressProvider(locator<UpdateProfileDetailUsecase>()),
       child: AddEditAddressView(initAddress: widget.initAddress),
     );
   }
@@ -54,7 +52,8 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final AddAddressProvider pro = context.read<AddAddressProvider>();
+      final AddSellingAddressProvider pro = context
+          .read<AddSellingAddressProvider>();
       if (widget.initAddress != null) {
         pro.updateVariable(widget.initAddress!);
       }
@@ -63,14 +62,15 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
 
   @override
   Widget build(BuildContext context) {
-    final AddAddressProvider provider = context.read<AddAddressProvider>();
+    final AddSellingAddressProvider provider = context
+        .read<AddSellingAddressProvider>();
 
     return PopScope(
       onPopInvokedWithResult: (bool didPop, dynamic result) =>
           provider.disposeControllers(),
       child: Scaffold(
         appBar: AppBar(
-          centerTitle: true,
+          automaticallyImplyLeading: true,
           title: AppBarTitle(titleKey: 'address'.tr()),
         ),
         body: SingleChildScrollView(
@@ -86,8 +86,8 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
                   controller: provider.recipientNameController,
                   validator: AppValidator.isEmpty,
                 ),
-                Consumer<AddAddressProvider>(
-                  builder: (_, AddAddressProvider pro, __) =>
+                Consumer<AddSellingAddressProvider>(
+                  builder: (_, AddSellingAddressProvider pro, __) =>
                       CountryDropdownField(
                         initialValue: pro.selectedCountryEntity,
                         onChanged: (CountryEntity value) {
@@ -96,8 +96,8 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
                         validator: AppValidator.requireSelection,
                       ),
                 ),
-                Consumer<AddAddressProvider>(
-                  builder: (_, AddAddressProvider pro, __) =>
+                Consumer<AddSellingAddressProvider>(
+                  builder: (_, AddSellingAddressProvider pro, __) =>
                       CustomDropdown<StateEntity>(
                         title: 'state'.tr(),
                         items:
@@ -118,8 +118,8 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
                         validator: AppValidator.requireSelection,
                       ),
                 ),
-                Consumer<AddAddressProvider>(
-                  builder: (_, AddAddressProvider pro, __) =>
+                Consumer<AddSellingAddressProvider>(
+                  builder: (_, AddSellingAddressProvider pro, __) =>
                       CustomDropdown<String>(
                         title: 'city'.tr(),
                         items: (pro.state?.cities ?? <String>[])
@@ -152,31 +152,30 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
                   controller: provider.postalCodeController,
                   validator: AppValidator.isEmpty,
                 ),
-
-                // 🟢 Consumer for Address Category Dropdown
-                Consumer<AddAddressProvider>(
-                  builder: (_, AddAddressProvider pro, __) =>
-                      CustomDropdown<String>(
-                        title: 'address_category'.tr(),
-                        items: <String>['home', 'work']
-                            .map(
-                              (String value) => DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value.tr()),
-                              ),
-                            )
-                            .toList(),
-                        selectedItem: pro.addressCategory,
-                        onChanged: (String? value) {
-                          if (value != null) pro.setaddressCategory(value);
-                        },
-                        validator: AppValidator.requireSelection,
-                      ),
-                ),
+                // // 🟢 Consumer for Address Category Dropdown
+                // Consumer<AddSellingAddressProvider>(
+                //   builder: (_, AddSellingAddressProvider pro, __) =>
+                //       CustomDropdown<String>(
+                //         title: 'address_category'.tr(),
+                //         items: <String>['home', 'work']
+                //             .map(
+                //               (String value) => DropdownMenuItem<String>(
+                //                 value: value,
+                //                 child: Text(value.tr()),
+                //               ),
+                //             )
+                //             .toList(),
+                //         selectedItem: pro.addressCategory,
+                //         onChanged: (String? value) {
+                //           if (value != null) pro.setaddressCategory(value);
+                //         },
+                //         validator: AppValidator.requireSelection,
+                //       ),
+                // ),
 
                 // 🟢 Consumer for Phone Number
-                Consumer<AddAddressProvider>(
-                  builder: (_, AddAddressProvider pro, __) =>
+                Consumer<AddSellingAddressProvider>(
+                  builder: (_, AddSellingAddressProvider pro, __) =>
                       PhoneNumberInputField(
                         initialCountry: pro.selectedCountryEntity,
                         initialValue: pro.phoneNumber,
@@ -186,39 +185,26 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
                         },
                       ),
                 ),
-
-                Consumer<AddAddressProvider>(
-                  builder: (_, AddAddressProvider pro, __) =>
-                      CustomRadioToggleTile(
-                        title: 'Make this default address',
-                        selectedValue: pro.isDefault,
-                        onChanged: pro.toggleDefault,
-                      ),
-                ),
+                const SizedBox(height: 300),
               ],
             ),
           ),
         ),
         bottomNavigationBar: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Consumer<AddAddressProvider>(
-            builder: (_, AddAddressProvider pro, __) => CustomElevatedButton(
-              isLoading: false,
-              onTap: () {
-                if (_formKey.currentState?.validate() ?? false) {
-                  if (widget.initAddress?.addressID == null ||
-                      widget.initAddress?.addressID == '') {
-                    pro.saveAddress(context);
-                  } else {
-                    pro.action = 'update';
-                    pro.updateAddress(context);
-                  }
-                }
-              },
-              title: widget.initAddress?.addressID == null
-                  ? 'save_address'.tr()
-                  : 'update_address'.tr(),
-            ),
+          child: Consumer<AddSellingAddressProvider>(
+            builder: (_, AddSellingAddressProvider pro, __) =>
+                CustomElevatedButton(
+                  isLoading: pro.isLoading,
+                  onTap: () {
+                    if (_formKey.currentState?.validate() ?? false) {
+                      pro.saveSellingAddress(context);
+                    }
+                  },
+                  title: widget.initAddress?.addressID == null
+                      ? 'save_address'.tr()
+                      : 'update_address'.tr(),
+                ),
           ),
         ),
       ),

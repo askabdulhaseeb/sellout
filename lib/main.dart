@@ -18,7 +18,6 @@ import 'routes/app_routes.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: WidgetsBinding.instance);
-
   AppNavigator().init();
   await HiveDB.init();
   await dotenv.load(fileName: kDebugMode ? 'dev.env' : 'prod.env');
@@ -26,11 +25,7 @@ void main() async {
   await Stripe.instance.applySettings();
   setupLocator();
   await EasyLocalization.ensureInitialized();
-  SocketService(locator()).initAndListen();
-  AppDataService().fetchAllData();
-
   FlutterNativeSplash.remove();
-
   runApp(
     EasyLocalization(
       supportedLocales: const <Locale>[AppLocalization.en],
@@ -40,6 +35,11 @@ void main() async {
       child: const MyApp(),
     ),
   );
+  // Defer non-critical initializations until after first frame
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    SocketService(locator()).initAndListen();
+    AppDataService().fetchAllData();
+  });
 }
 
 class MyApp extends StatelessWidget {

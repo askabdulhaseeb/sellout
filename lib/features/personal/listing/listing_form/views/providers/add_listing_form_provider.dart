@@ -239,17 +239,12 @@ class AddListingFormProvider extends ChangeNotifier
     notifyListeners();
   }
 
-  void setVehicleColor(ColorOptionEntity? value) {
-    setVehicleColorLo(value);
-    notifyListeners();
-  }
-
-  void setInteriorColor(String? value) {
+  void setInteriorColor(ColorOptionEntity? value) {
     setInteriorColorLo(value);
     notifyListeners();
   }
 
-  void setExteriorColor(String? value) {
+  void setExteriorColor(ColorOptionEntity? value) {
     setExteriorColorLo(value);
     notifyListeners();
   }
@@ -665,8 +660,8 @@ class AddListingFormProvider extends ChangeNotifier
       engineSize: double.tryParse(engineSize.text) ?? 0.0,
       mileageUnit: _state.mileageUnit ?? '',
       transmission: _state.transmissionType ?? '',
-      interiorColor: _state.interiorColor ?? '',
-      exteriorColor: _state.exteriorColor ?? '',
+      interiorColor: _state.interiorColor,
+      exteriorColor: _state.exteriorColor,
       vehiclesCategory: _state.vehicleCategory ?? '',
     );
 
@@ -960,16 +955,6 @@ class AddListingFormProvider extends ChangeNotifier
     state.emission = vehicleInfo.emission;
     state.interiorColor = vehicleInfo.interiorColor;
     state.exteriorColor = vehicleInfo.exteriorColor;
-    if ((vehicleInfo.exteriorColor ?? '').isNotEmpty) {
-      state.vehicleColor = ColorOptionEntity(
-        label: vehicleInfo.exteriorColor!,
-        value: vehicleInfo.exteriorColor!,
-        shade: '',
-        tag: <String>[],
-      );
-    } else {
-      state.vehicleColor = null;
-    }
   }
 
   void initializePropertyFromPost(PostPropertyEntity propertyInfo) {
@@ -1136,7 +1121,7 @@ class AddListingFormProvider extends ChangeNotifier
               engineSize: double.tryParse(engineSize.text) ?? 0.0,
               mileageUnit: _state.mileageUnit ?? '',
               transmission: _state.transmissionType ?? '',
-              interiorColor: _state.interiorColor ?? '',
+              interiorColor: _state.interiorColor,
               exteriorColor: _state.exteriorColor,
               vehiclesCategory: _state.vehicleCategory ?? '',
             )
