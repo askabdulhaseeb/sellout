@@ -33,8 +33,10 @@ class _RequestQuoteScreenState extends State<RequestQuoteScreen> {
           onPopInvokedWithResult: (bool didPop, dynamic result) =>
               context.read<QuoteProvider>().reset(),
           child: Scaffold(
-            appBar:
-                AppBar(title: Text('request_quote'.tr()), centerTitle: true),
+            appBar: AppBar(
+              title: Text('request_quote'.tr()),
+              centerTitle: true,
+            ),
             body: Column(
               children: <Widget>[
                 StepIndicator(
@@ -59,12 +61,14 @@ class _RequestQuoteScreenState extends State<RequestQuoteScreen> {
                 ),
               ],
             ),
-            bottomNavigationBar: RequestQuoteBottomBar(
-              currentStep: _currentStep,
-              business: business,
-              onStepChanged: (RequestQuoteStep step) {
-                setState(() => _currentStep = step);
-              },
+            bottomNavigationBar: SafeArea(
+              child: RequestQuoteBottomBar(
+                currentStep: _currentStep,
+                business: business,
+                onStepChanged: (RequestQuoteStep step) {
+                  setState(() => _currentStep = step);
+                },
+              ),
             ),
           ),
         );

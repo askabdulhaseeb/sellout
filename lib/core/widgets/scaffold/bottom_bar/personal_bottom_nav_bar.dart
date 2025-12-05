@@ -34,55 +34,57 @@ class _PersonalBottomNavBarState extends State<PersonalBottomNavBar> {
   Widget build(BuildContext context) {
     return Consumer<PersonalBottomNavProvider>(
       builder: (BuildContext context, PersonalBottomNavProvider navPro, _) {
-        return BottomNavigationBar(
-          elevation: 0,
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          type: BottomNavigationBarType.fixed,
-          currentIndex: navPro.currentTabIndex,
-          unselectedItemColor: Theme.of(context).disabledColor,
-          selectedItemColor: Theme.of(context).primaryColor,
-          onTap: (int index) => navPro.setCurrentTabIndex(index),
-          items: PersonalBottomNavBarType.list
-              .map((PersonalBottomNavBarType type) {
-            return BottomNavigationBarItem(
-              icon: Stack(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: CustomSvgIcon(
-                      size: 20,
-                      assetPath: type.icon,
+        return SafeArea(
+          child: BottomNavigationBar(
+            elevation: 0,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            type: BottomNavigationBarType.fixed,
+            currentIndex: navPro.currentTabIndex,
+            unselectedItemColor: Theme.of(context).disabledColor,
+            selectedItemColor: Theme.of(context).primaryColor,
+            onTap: (int index) => navPro.setCurrentTabIndex(index),
+            items: PersonalBottomNavBarType.list.map((
+              PersonalBottomNavBarType type,
+            ) {
+              return BottomNavigationBarItem(
+                icon: Stack(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CustomSvgIcon(size: 20, assetPath: type.icon),
                     ),
-                  ),
-                  if (type == PersonalBottomNavBarType.list[4])
-                    const Positioned(
+                    if (type == PersonalBottomNavBarType.list[4])
+                      const Positioned(
                         top: 0,
                         right: 0,
-                        child: TotalUnreadMessagesBadgeWidget())
-                ],
-              ),
-              activeIcon: Stack(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: CustomSvgIcon(
-                      color: Theme.of(context).primaryColor,
-                      size: 20,
-                      assetPath: type.activeIcon,
+                        child: TotalUnreadMessagesBadgeWidget(),
+                      ),
+                  ],
+                ),
+                activeIcon: Stack(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CustomSvgIcon(
+                        color: Theme.of(context).primaryColor,
+                        size: 20,
+                        assetPath: type.activeIcon,
+                      ),
                     ),
-                  ),
-                  if (type == PersonalBottomNavBarType.list[4])
-                    const Positioned(
+                    if (type == PersonalBottomNavBarType.list[4])
+                      const Positioned(
                         top: 0,
                         right: 0,
-                        child: TotalUnreadMessagesBadgeWidget())
-                ],
-              ),
-              label: type.code.tr(),
-            );
-          }).toList(),
+                        child: TotalUnreadMessagesBadgeWidget(),
+                      ),
+                  ],
+                ),
+                label: type.code.tr(),
+              );
+            }).toList(),
+          ),
         );
       },
     );

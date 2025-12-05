@@ -34,22 +34,25 @@ class _BusinessBottomNavBarState extends State<BusinessBottomNavBar> {
   Widget build(BuildContext context) {
     return Consumer<PersonalBottomNavProvider>(
       builder: (BuildContext context, PersonalBottomNavProvider navPro, _) {
-        return BottomNavigationBar(
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          type: BottomNavigationBarType.fixed,
-          currentIndex: navPro.currentTabIndex,
-          unselectedItemColor: Theme.of(context).disabledColor,
-          selectedItemColor: Theme.of(context).primaryColor,
-          onTap: (int index) => navPro.setCurrentTabIndex(index),
-          items: BusienssBottomNavBarType.list
-              .map((BusienssBottomNavBarType type) {
-            return BottomNavigationBarItem(
-              icon: Icon(type.icon),
-              activeIcon: Icon(type.activeIcon),
-              label: type.code.tr(),
-            );
-          }).toList(),
+        return SafeArea(
+          child: BottomNavigationBar(
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            type: BottomNavigationBarType.fixed,
+            currentIndex: navPro.currentTabIndex,
+            unselectedItemColor: Theme.of(context).disabledColor,
+            selectedItemColor: Theme.of(context).primaryColor,
+            onTap: (int index) => navPro.setCurrentTabIndex(index),
+            items: BusienssBottomNavBarType.list.map((
+              BusienssBottomNavBarType type,
+            ) {
+              return BottomNavigationBarItem(
+                icon: Icon(type.icon),
+                activeIcon: Icon(type.activeIcon),
+                label: type.code.tr(),
+              );
+            }).toList(),
+          ),
         );
       },
     );

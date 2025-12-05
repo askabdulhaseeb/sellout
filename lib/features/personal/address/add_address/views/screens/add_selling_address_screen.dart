@@ -190,21 +190,23 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
             ),
           ),
         ),
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Consumer<AddSellingAddressProvider>(
-            builder: (_, AddSellingAddressProvider pro, __) =>
-                CustomElevatedButton(
-                  isLoading: pro.isLoading,
-                  onTap: () {
-                    if (_formKey.currentState?.validate() ?? false) {
-                      pro.saveSellingAddress(context);
-                    }
-                  },
-                  title: widget.initAddress?.addressID == null
-                      ? 'save_address'.tr()
-                      : 'update_address'.tr(),
-                ),
+        bottomNavigationBar: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Consumer<AddSellingAddressProvider>(
+              builder: (_, AddSellingAddressProvider pro, __) =>
+                  CustomElevatedButton(
+                    isLoading: pro.isLoading,
+                    onTap: () {
+                      if (_formKey.currentState?.validate() ?? false) {
+                        pro.saveSellingAddress(context);
+                      }
+                    },
+                    title: widget.initAddress?.addressID == null
+                        ? 'save_address'.tr()
+                        : 'update_address'.tr(),
+                  ),
+            ),
           ),
         ),
       ),
