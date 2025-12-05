@@ -14,7 +14,6 @@ class CheckoutRemoteAPIImpl implements CheckoutRemoteAPI {
   @override
   Future<DataState<PaymentIntentEntity>> cartPayIntent() async {
     try {
-      debugPrint(LocalAuth.token);
       const String endpoint = '/payment/cart';
       final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,

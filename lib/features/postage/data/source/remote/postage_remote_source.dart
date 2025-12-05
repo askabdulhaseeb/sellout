@@ -29,7 +29,6 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
     GetPostageDetailParam param,
   ) async {
     try {
-      debugPrint(LocalAuth.token);
       const String endpoint = '/cart/get/postage';
       final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,
@@ -171,7 +170,6 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
     GetOrderPostageDetailParam param,
   ) async {
     try {
-      debugPrint(LocalAuth.token);
       const String endpoint = '/orders/shipping/rates';
       final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,
@@ -228,7 +226,6 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
   @override
   Future<DataState<bool>> buylabel(BuyLabelParams param) async {
     try {
-      debugPrint(LocalAuth.token);
       const String endpoint = '/orders/buy/label';
       final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,
