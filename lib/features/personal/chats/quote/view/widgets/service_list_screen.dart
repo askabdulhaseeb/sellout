@@ -16,8 +16,9 @@ class ServiceListScreen extends StatefulWidget {
 }
 
 class _ServiceListScreenState extends State<ServiceListScreen> {
-  final GetServicesByQueryUsecase _servicesUsecase =
-      GetServicesByQueryUsecase(locator());
+  final GetServicesByQueryUsecase _servicesUsecase = GetServicesByQueryUsecase(
+    locator(),
+  );
   final ScrollController _scrollController = ScrollController();
   final List<ServiceEntity> _services = <ServiceEntity>[];
   String _lastKey = '';
@@ -49,14 +50,19 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
 
     setState(() => _isLoading = true);
 
-    final DataState<List<ServiceEntity>> result = await _servicesUsecase.call(ServiceByFiltersParams(
-      lastKey: _lastKey,
-      query: '',
-      filters: <FilterParam>[
-        FilterParam(
-            attribute: 'business_id', operator: 'eq', value: widget.businessId),
-      ],
-    ));
+    final DataState<List<ServiceEntity>> result = await _servicesUsecase.call(
+      ServiceByFiltersParams(
+        lastKey: _lastKey,
+        query: '',
+        filters: <FilterParam>[
+          FilterParam(
+            attribute: 'business_id',
+            operator: 'eq',
+            value: widget.businessId,
+          ),
+        ],
+      ),
+    );
 
     if (result is DataSuccess) {
       final List<ServiceEntity> fetched = result.entity ?? <ServiceEntity>[];
@@ -89,7 +95,9 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
               leading: ClipRRect(
                 borderRadius: BorderRadius.circular(6),
                 child: CustomNetworkImage(
-                    imageURL: service.thumbnailURL, size: 40),
+                  imageURL: service.thumbnailURL,
+                  size: 40,
+                ),
               ),
               title: Text(service.name),
               trailing: ElevatedButton(
@@ -104,16 +112,18 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
           );
         },
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16),
-        child: ElevatedButton(
-          onPressed: () {
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(builder: (_) => BookQuoteScreen(service: )), // step 2
-            // );
-          },
-          child: const Text('Next'),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: ElevatedButton(
+            onPressed: () {
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (_) => BookQuoteScreen(service: )), // step 2
+              // );
+            },
+            child: const Text('Next'),
+          ),
         ),
       ),
     );
