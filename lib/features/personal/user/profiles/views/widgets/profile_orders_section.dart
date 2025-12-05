@@ -33,7 +33,6 @@ class _ProfileOrdersSectionState extends State<ProfileOrdersSection> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(LocalAuth.token);
     return Consumer<ProfileProvider>(
       builder: (BuildContext context, ProfileProvider pro, Widget? child) {
         return Padding(
