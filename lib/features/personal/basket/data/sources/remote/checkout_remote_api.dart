@@ -1,8 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
-import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../domain/entities/checkout/payment_intent_entity.dart';
 import '../../models/checkout/payment_intent_model.dart';
 

@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import '../../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../core/widgets/empty_page_widget.dart';
 import '../../../../../../core/widgets/loaders/seller_order_tile_loader.dart';
-import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../order/domain/entities/order_entity.dart';
 import '../../domain/entities/user_entity.dart';
 import '../providers/profile_provider.dart';
