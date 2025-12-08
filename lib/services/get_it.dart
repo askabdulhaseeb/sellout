@@ -58,6 +58,7 @@ import '../features/personal/auth/signin/views/providers/signin_provider.dart';
 import '../features/personal/auth/signup/data/repositories/signup_repository_impl.dart';
 import '../features/personal/auth/signup/data/sources/signup_api.dart';
 import '../features/personal/auth/signup/domain/repositories/signup_repository.dart';
+import '../features/personal/auth/signup/domain/usecase/is_valid_usecase.dart';
 import '../features/personal/auth/signup/domain/usecase/register_user_usecase.dart';
 import '../features/personal/auth/signup/domain/usecase/send_opt_usecase.dart';
 import '../features/personal/auth/signup/domain/usecase/verify_opt_usecase.dart';
@@ -262,8 +263,7 @@ void _auth() {
   locator.registerFactory<SignupRepository>(
     () => SignupRepositoryImpl(locator()),
   );
-  // locator.registerFactory<GetCountiesUsecase>(
-  //     () => GetCountiesUsecase(locator()));
+  locator.registerFactory<IsValidUsecase>(() => IsValidUsecase(locator()));
   locator.registerFactory<RegisterUserUsecase>(
     () => RegisterUserUsecase(locator()),
   );

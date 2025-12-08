@@ -1,8 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
+import '../../domain/entities/is_valid_response_entity.dart';
 import '../../views/params/signup_basic_info_params.dart';
+import '../../views/params/signup_is_valid_params.dart';
 import '../../views/params/signup_send_opt_params.dart';
 
 abstract interface class SignupApi {
@@ -10,6 +13,7 @@ abstract interface class SignupApi {
   Future<DataState<String>> signupSendOTP(SignupOptParams params);
   Future<DataState<bool>> signupVerifyOTP(SignupOptParams params);
   Future<DataState<bool>> verifyImage(PickedAttachment attachment);
+  Future<DataState<bool>> isValid(SignupIsValidParams params);
 }
 
 class SignupApiImpl implements SignupApi {
@@ -42,15 +46,19 @@ class SignupApiImpl implements SignupApi {
           'Error response from signupBasicInfo: ${response.exception?.message}',
           name: 'SignupApiImpl.signupBasicInfo - DataSuccess else',
         );
-        return DataFailer<String>(CustomException(
-          response.exception?.message ?? 'something_wrong'.tr(),
-        ));
+        return DataFailer<String>(
+          CustomException(
+            response.exception?.message ?? 'something_wrong'.tr(),
+          ),
+        );
       }
     } catch (e, stc) {
-      AppLog.error('Error from signupBasicInfo: $e',
-          name: 'SignupApiImpl.signupBasicInfo - catch',
-          error: e,
-          stackTrace: stc);
+      AppLog.error(
+        'Error from signupBasicInfo: $e',
+        name: 'SignupApiImpl.signupBasicInfo - catch',
+        error: e,
+        stackTrace: stc,
+      );
       return DataFailer<String>(CustomException(e.toString()));
     }
   }
@@ -72,17 +80,24 @@ class SignupApiImpl implements SignupApi {
         }
         return DataSuccess<String>(str, '');
       } else {
-        AppLog.error('',
-            name: 'SignupApiImpl.signupSendOTP - else',
-            error: response.exception?.message ?? 'something_wrong'.tr());
+        AppLog.error(
+          '',
+          name: 'SignupApiImpl.signupSendOTP - else',
+          error: response.exception?.message ?? 'something_wrong'.tr(),
+        );
 
-        return DataFailer<String>(CustomException(
-          response.exception?.message ?? 'something_wrong'.tr(),
-        ));
+        return DataFailer<String>(
+          CustomException(
+            response.exception?.message ?? 'something_wrong'.tr(),
+          ),
+        );
       }
     } catch (e, stc) {
-      AppLog.error('SignupApiImpl.signupSendOTP - catch',
-          error: e, stackTrace: stc);
+      AppLog.error(
+        'SignupApiImpl.signupSendOTP - catch',
+        error: e,
+        stackTrace: stc,
+      );
       return DataFailer<String>(CustomException(e.toString()));
     }
   }
@@ -104,9 +119,11 @@ class SignupApiImpl implements SignupApi {
         // print('new user id: ${data['message']} - $data');
         return DataSuccess<bool>(str, true);
       } else {
-        return DataFailer<bool>(CustomException(
-          response.exception?.message ?? 'something_wrong'.tr(),
-        ));
+        return DataFailer<bool>(
+          CustomException(
+            response.exception?.message ?? 'something_wrong'.tr(),
+          ),
+        );
       }
     } catch (e) {
       return DataFailer<bool>(CustomException(e.toString()));
@@ -138,6 +155,44 @@ class SignupApiImpl implements SignupApi {
         name: 'SignupApiImpl.verifyImage - catch',
         error: e,
       );
+      return DataFailer<bool>(CustomException(e.toString()));
+    }
+  }
+
+  @override
+  Future<DataState<bool>> isValid(SignupIsValidParams params) async {
+    try {
+      String endpoint = 'noAuth/exist?';
+      bool checkEmail = false;
+      if (params.email != null && params.email!.isNotEmpty) {
+        endpoint += 'email=${params.email!}';
+        checkEmail = true;
+      } else if (params.username != null && params.username!.isNotEmpty) {
+        endpoint += 'username=${params.username!}';
+      } else {
+        throw Exception('Either email or username must be provided');
+      }
+      final DataState<String> response = await ApiCall<String>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.get,
+        isAuth: false,
+      );
+      if (response is DataSuccess<String>) {
+        debugPrint('isValid response data: ${response.data}');
+        final String str = response.data ?? '';
+        final Map<String, dynamic> json = jsonDecode(str);
+        final bool result =
+            json['email_exists'] ?? json['username_exists'] ?? false;
+
+        return DataSuccess<bool>(str, result);
+      } else {
+        return DataFailer<bool>(
+          CustomException(
+            response.exception?.message ?? 'something_wrong'.tr(),
+          ),
+        );
+      }
+    } catch (e) {
       return DataFailer<bool>(CustomException(e.toString()));
     }
   }

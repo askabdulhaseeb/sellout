@@ -57,18 +57,21 @@ class PostageItemCard extends StatelessWidget {
   }
 
   List<RateEntity> _getAllRates(BuildContext context) {
-    final CartProvider cartPro =
-        Provider.of<CartProvider>(context, listen: false);
-    final PostageItemDetailEntity? detailFromResponse =
-        cartPro.postageResponseEntity?.detail
-            .where(
-              (PostageItemDetailEntity d) => d.cartItemId == cartItemId,
-            )
-            .first;
+    final CartProvider cartPro = Provider.of<CartProvider>(
+      context,
+      listen: false,
+    );
+    final PostageItemDetailEntity? detailFromResponse = cartPro
+        .postageResponseEntity
+        ?.detail
+        .where((PostageItemDetailEntity d) => d.cartItemId == cartItemId)
+        .first;
     if (detailFromResponse == null) return <RateEntity>[];
     return detailFromResponse.shippingDetails
-        .expand((PostageDetailShippingDetailEntity d) =>
-            d.ratesBuffered.where((RateEntity r) => r.objectId.isNotEmpty))
+        .expand(
+          (PostageDetailShippingDetailEntity d) =>
+              d.ratesBuffered.where((RateEntity r) => r.objectId.isNotEmpty),
+        )
         .toList();
   }
 }
@@ -92,27 +95,31 @@ class _PostageHeader extends StatelessWidget {
     final String badge = isFast
         ? 'fast_delivery'.tr()
         : isFree
-            ? 'free_delivery'.tr()
-            : hasRates
-                ? 'delivery_available'.tr()
-                : 'delivery_unavailable'.tr();
+        ? 'free_delivery'.tr()
+        : hasRates
+        ? 'delivery_available'.tr()
+        : 'delivery_unavailable'.tr();
 
     final Color badgeColor = isFast
         ? DeliveryType.fastDelivery.color
         : isFree && !hasRates
-            ? deliveryType.color
-            : hasRates && !isFree
-                ? deliveryType.color
-                : Theme.of(context).colorScheme.error;
+        ? deliveryType.color
+        : hasRates && !isFree
+        ? deliveryType.color
+        : Theme.of(context).colorScheme.error;
 
     return Row(
       children: <Widget>[
-        Icon(Icons.local_shipping,
-            color: Theme.of(context).colorScheme.onSurface),
+        Icon(
+          Icons.local_shipping,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
         const SizedBox(width: AppSpacing.sm),
         Expanded(
-          child: Text(post?.title ?? 'na'.tr(),
-              style: Theme.of(context).textTheme.titleMedium),
+          child: Text(
+            post?.title ?? 'na'.tr(),
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
         ),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -123,9 +130,9 @@ class _PostageHeader extends StatelessWidget {
           child: Text(
             badge,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: badgeColor,
-                  fontWeight: FontWeight.w500,
-                ),
+              color: badgeColor,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ],
@@ -170,16 +177,18 @@ class _RateList extends StatelessWidget {
             onChanged: (_) =>
                 cartPro.updateShippingSelection(cartItemId, rate.objectId),
           ),
-          title: Text('${rate.provider} · ${rate.serviceLevel.name}',
-              style: Theme.of(context).textTheme.bodyMedium),
+          title: Text(
+            '${rate.provider} · ${rate.serviceLevel.name}',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
           trailing: FutureBuilder<String>(
             future: rate.getPriceStr(),
             builder: (_, AsyncSnapshot<String> snapshot) => Text(
-                snapshot.data ?? '...',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(fontWeight: FontWeight.w600)),
+              snapshot.data ?? '...',
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+            ),
           ),
           onTap: () =>
               cartPro.updateShippingSelection(cartItemId, rate.objectId),
@@ -196,15 +205,18 @@ class _FreeText extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpacing.md),
       child: Row(
         children: <Widget>[
-          Icon(Icons.check_circle_outline,
-              color: Theme.of(context).colorScheme.primary),
+          Icon(
+            Icons.check_circle_outline,
+            color: Theme.of(context).colorScheme.primary,
+          ),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
-            child: Text('free'.tr(),
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(fontStyle: FontStyle.italic)),
+            child: Text(
+              'free'.tr(),
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+            ),
           ),
         ],
       ),
@@ -218,7 +230,9 @@ class _ErrorMessage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.errorContainer.withOpacity(0.1),
+        color: Theme.of(
+          context,
+        ).colorScheme.errorContainer.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
       ),
       child: Row(
@@ -226,8 +240,11 @@ class _ErrorMessage extends StatelessWidget {
           Icon(Icons.error_outline, color: Theme.of(context).colorScheme.error),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
-              child: Text('remove_item_cart_continue_checkout'.tr(),
-                  style: Theme.of(context).textTheme.bodySmall)),
+            child: Text(
+              'remove_item_cart_continue_checkout'.tr(),
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ),
         ],
       ),
     );
