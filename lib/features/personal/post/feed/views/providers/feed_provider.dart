@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snackbar.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../chats/chat/views/providers/chat_provider.dart';
 import '../../../../chats/chat/views/screens/chat_screen.dart';
 import '../../../../chats/chat_dashboard/domain/entities/chat/chat_entity.dart';
@@ -92,8 +93,10 @@ class FeedProvider extends ChangeNotifier {
 
   /// Load first page of posts
   Future<void> loadInitialFeed(String type) async {
-    AppLog.info('Loading initial feed...',
-        name: 'FeedProvider.loadInitialFeed');
+    AppLog.info(
+      'Loading initial feed...',
+      name: 'FeedProvider.loadInitialFeed',
+    );
     setFeedLoading(true);
     _nextPageToken = null;
     _noMorePosts = false;
@@ -135,25 +138,31 @@ class FeedProvider extends ChangeNotifier {
       final DataState<GetFeedResponse> result = await _getFeedUsecase(params);
 
       if (result is DataSuccess && result.entity != null) {
-        AppLog.info('Feed data success from API',
-            name: 'FeedProvider._fetchFeed');
+        AppLog.info(
+          'Feed data success from API',
+          name: 'FeedProvider._fetchFeed',
+        );
 
         final List<PostEntity> fetchedPosts = result.entity!.posts;
         _nextPageToken = result.entity!.nextPageToken;
 
         if (fetchedPosts.isEmpty) {
           _noMorePosts = true;
-          AppLog.info('No more posts available',
-              name: 'FeedProvider._fetchFeed');
+          AppLog.info(
+            'No more posts available',
+            name: 'FeedProvider._fetchFeed',
+          );
         } else {
           // Merge + remove duplicates
           final Map<String, PostEntity> unique = <String, PostEntity>{
             for (final PostEntity p in <PostEntity>[..._posts, ...fetchedPosts])
-              p.postID: p
+              p.postID: p,
           };
           _posts = unique.values.toList();
-          AppLog.info('Total unique posts: ${_posts.length}',
-              name: 'FeedProvider._fetchFeed');
+          AppLog.info(
+            'Total unique posts: ${_posts.length}',
+            name: 'FeedProvider._fetchFeed',
+          );
         }
       } else if (result is DataFailer) {
         AppLog.error(
@@ -161,8 +170,10 @@ class FeedProvider extends ChangeNotifier {
           name: 'FeedProvider._fetchFeed - DataFailer',
         );
       } else {
-        AppLog.error('Unknown feed fetch error',
-            name: 'FeedProvider._fetchFeed');
+        AppLog.error(
+          'Unknown feed fetch error',
+          name: 'FeedProvider._fetchFeed',
+        );
       }
     } catch (e) {
       AppLog.error(e.toString(), name: 'FeedProvider._fetchFeed - Exception');
@@ -178,18 +189,16 @@ class FeedProvider extends ChangeNotifier {
     required BuildContext context,
     required String postId,
     required double offerAmount,
-    required String currency,
     required int quantity,
     required String listId,
     required String? size,
     required String? color,
   }) async {
     setIsLoading(true);
-
     final CreateOfferparams params = CreateOfferparams(
       postId: postId,
       offerAmount: offerAmount,
-      currency: currency,
+      currency: LocalAuth.currency,
       quantity: quantity,
       listId: listId,
       size: size,
@@ -198,29 +207,38 @@ class FeedProvider extends ChangeNotifier {
 
     try {
       final DataState<bool> result = await _createOfferUsecase.call(params);
-
       if (result is DataSuccess && result.data != null) {
-        AppLog.info('Offer created successfully',
-            name: 'FeedProvider.createOffer');
+        AppLog.info(
+          'Offer created successfully',
+          name: 'FeedProvider.createOffer',
+        );
 
-        final DataState<List<ChatEntity>> chatResult =
-            await _getMyChatsUsecase.call(<String>[result.data!]);
+        final DataState<List<ChatEntity>> chatResult = await _getMyChatsUsecase
+            .call(<String>[result.data!]);
 
         if (chatResult is DataSuccess && chatResult.entity!.isNotEmpty) {
-          final ChatProvider chatProvider =
-              Provider.of<ChatProvider>(context, listen: false);
+          final ChatProvider chatProvider = Provider.of<ChatProvider>(
+            context,
+            listen: false,
+          );
           chatProvider.setChat(context, chatResult.entity!.first);
           Navigator.of(context).pushReplacementNamed(ChatScreen.routeName);
           return result;
         } else if (chatResult is DataFailer) {
-          AppLog.error(chatResult.exception?.message ?? 'something_wrong'.tr(),
-              name: 'FeedProvider.createOffer - chatResult failed');
+          AppLog.error(
+            chatResult.exception?.message ?? 'something_wrong'.tr(),
+            name: 'FeedProvider.createOffer - chatResult failed',
+          );
         }
       } else {
-        AppLog.error(result.exception?.message ?? 'something_wrong'.tr(),
-            name: 'FeedProvider.createOffer - API failed');
+        AppLog.error(
+          result.exception?.message ?? 'something_wrong'.tr(),
+          name: 'FeedProvider.createOffer - API failed',
+        );
         AppSnackBar.showSnackBar(
-            context, result.exception?.message ?? 'something_wrong'.tr());
+          context,
+          result.exception?.message ?? 'something_wrong'.tr(),
+        );
       }
     } catch (e) {
       AppLog.error(e.toString(), name: 'FeedProvider.createOffer - catch');
@@ -239,7 +257,6 @@ class FeedProvider extends ChangeNotifier {
     required String offerId,
     required String messageID,
     required String chatId,
-    String? currency,
     bool counterOffer = false,
     String? offerStatus,
     int? quantity,
@@ -250,7 +267,7 @@ class FeedProvider extends ChangeNotifier {
     setIsLoading(true);
 
     final UpdateOfferParams params = UpdateOfferParams(
-      currency: currency ?? '',
+      currency: LocalAuth.currency,
       counterOffer: counterOffer,
       chatID: chatId,
       offerAmount: offerAmount,
@@ -267,11 +284,15 @@ class FeedProvider extends ChangeNotifier {
     try {
       final DataState<bool> result = await _updateOfferUsecase.call(params);
       if (result is DataSuccess && result.data != null) {
-        AppLog.info('Offer updated successfully',
-            name: 'FeedProvider.updateOffer');
+        AppLog.info(
+          'Offer updated successfully',
+          name: 'FeedProvider.updateOffer',
+        );
       } else {
-        AppLog.error(result.exception?.message ?? 'something_wrong'.tr(),
-            name: 'FeedProvider.updateOffer - API failed');
+        AppLog.error(
+          result.exception?.message ?? 'something_wrong'.tr(),
+          name: 'FeedProvider.updateOffer - API failed',
+        );
       }
     } catch (e) {
       AppLog.error(e.toString(), name: 'FeedProvider.updateOffer - catch');

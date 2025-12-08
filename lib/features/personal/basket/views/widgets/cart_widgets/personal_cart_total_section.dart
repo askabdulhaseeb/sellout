@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
-
 import 'package:provider/provider.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snackbar.dart';
@@ -32,84 +31,86 @@ class PersonalCartTotalSection extends StatelessWidget {
         return Consumer<CartProvider>(
           builder: (BuildContext context, CartProvider cartPro, _) {
             if (cartPro.cartItems.isEmpty) return const SizedBox.shrink();
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                if (cartPro.cartType == CartType.shoppingBasket)
-                  _buildTile(
-                    '${'subtotal'.tr()} (${cart.cartItems.length} ${'items'.tr()})',
-                    trailing: FutureBuilder<String>(
-                      future: cart.cartTotalPriceString(),
-                      builder:
-                          (
-                            BuildContext context,
-                            AsyncSnapshot<dynamic> snapshot,
-                          ) => Text(
-                            snapshot.data?.toString() ?? '',
+            return SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  if (cartPro.cartType == CartType.shoppingBasket)
+                    _buildTile(
+                      '${'subtotal'.tr()} (${cart.cartItems.length} ${'items'.tr()})',
+                      trailing: FutureBuilder<String>(
+                        future: cart.cartTotalPriceString(),
+                        builder:
+                            (
+                              BuildContext context,
+                              AsyncSnapshot<dynamic> snapshot,
+                            ) => Text(
+                              snapshot.data?.toString() ?? '',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                      ),
+                    ),
+                  if (cartPro.cartType == CartType.reviewOrder)
+                    Column(
+                      children: <Widget>[
+                        _buildTile(
+                          '${'subtotal'.tr()} (${cartPro.orderBilling?.items.length} ${'items'.tr()})',
+                          trailing: Text(
+                            cartPro
+                                    .orderBilling
+                                    ?.billingDetails
+                                    .subTotalPriceString ??
+                                '',
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
                           ),
+                        ),
+                        _buildTile(
+                          'delivery'.tr(),
+                          trailing: Text(
+                            cartPro
+                                    .orderBilling
+                                    ?.billingDetails
+                                    .deliveryPriceString ??
+                                '',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                        _buildTile(
+                          'total'.tr(),
+                          trailing: Text(
+                            cartPro
+                                    .orderBilling
+                                    ?.billingDetails
+                                    .totalPriceString ??
+                                '',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                  CustomElevatedButton(
+                    title: _getButtonTitle(cartPro.cartType),
+                    isLoading: cartPro.loadingPostage,
+                    isDisable:
+                        cartPro.cartType == CartType.checkoutOrder &&
+                        cartPro.hasItemsRequiringRemoval,
+                    onTap: () async => _handleButtonTap(context, cartPro, cart),
                   ),
-                if (cartPro.cartType == CartType.reviewOrder)
-                  Column(
-                    children: <Widget>[
-                      _buildTile(
-                        '${'subtotal'.tr()} (${cartPro.orderBilling?.items.length} ${'items'.tr()})',
-                        trailing: Text(
-                          cartPro
-                                  .orderBilling
-                                  ?.billingDetails
-                                  .subTotalPriceString ??
-                              '',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                      _buildTile(
-                        'delivery'.tr(),
-                        trailing: Text(
-                          cartPro
-                                  .orderBilling
-                                  ?.billingDetails
-                                  .deliveryPriceString ??
-                              '',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                      _buildTile(
-                        'total'.tr(),
-                        trailing: Text(
-                          cartPro
-                                  .orderBilling
-                                  ?.billingDetails
-                                  .totalPriceString ??
-                              '',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                CustomElevatedButton(
-                  title: _getButtonTitle(cartPro.cartType),
-                  isLoading: cartPro.loadingPostage,
-                  isDisable:
-                      cartPro.cartType == CartType.checkoutOrder &&
-                      cartPro.hasItemsRequiringRemoval,
-                  onTap: () async => _handleButtonTap(context, cartPro, cart),
-                ),
-              ],
+                ],
+              ),
             );
           },
         );

@@ -10,14 +10,12 @@ class MakeCOunterOfferButton extends StatelessWidget {
     required this.message,
     required this.counterOfferAmount,
     required this.counterQuantity,
-    required this.currency,
     super.key,
   });
 
   final MessageEntity message;
   final int counterOfferAmount;
   final int counterQuantity;
-  final String currency;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +24,6 @@ class MakeCOunterOfferButton extends StatelessWidget {
         return CustomElevatedButton(
           onTap: () {
             pro.updateOffer(
-              currency: currency,
               counterOffer: true,
               chatId: message.chatId,
               quantity: counterQuantity,

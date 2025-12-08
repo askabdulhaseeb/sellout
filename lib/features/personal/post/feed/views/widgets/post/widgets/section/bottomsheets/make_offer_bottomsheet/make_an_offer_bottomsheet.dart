@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
+import '../../../../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../buttons/type/widgets/counter_widget.dart';
 import 'widgets/make_counter_offer_button.dart';
 import '../../../../../../../../../chats/chat_dashboard/domain/entities/messages/message_entity.dart';
@@ -42,9 +43,7 @@ class _MakeOfferBottomSheetState extends State<MakeOfferBottomSheet> {
           title: AppBarTitle(
             titleKey: isCounterOffer ? 'counter_offer' : 'make_an_offer',
           ),
-          leading: CloseButton(
-            onPressed: () => Navigator.pop(context),
-          ),
+          leading: CloseButton(onPressed: () => Navigator.pop(context)),
         ),
         body: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
@@ -60,14 +59,48 @@ class _MakeOfferBottomSheetState extends State<MakeOfferBottomSheet> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         /// Starting price
-                        Text(
-                          isCounterOffer
-                              ? '${'offer_price'.tr()}: ${CountryHelper.currencySymbolHelper(widget.message?.offerDetail?.currency)}.${widget.message?.offerDetail?.offerPrice ?? 0}'
-                              : '${'starting_price'.tr()}: ${CountryHelper.currencySymbolHelper(widget.post.currency)}.${widget.post.minOfferAmount} (${'per_unit'.tr()})',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(fontWeight: FontWeight.w400),
+                        FutureBuilder<String>(
+                          future: isCounterOffer
+                              ? widget.message?.offerDetail?.getOfferPriceStr()
+                              : widget.post.getOfferPriceStr(
+                                  offerPrice: widget.post.minOfferAmount,
+                                  quantity: 1,
+                                ),
+                          builder:
+                              (
+                                BuildContext context,
+                                AsyncSnapshot<String> snapshot,
+                              ) {
+                                final String label = isCounterOffer
+                                    ? 'offer_price'.tr()
+                                    : 'starting_price'.tr();
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Text(
+                                    '$label: ...',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(fontWeight: FontWeight.w400),
+                                  );
+                                }
+                                if (snapshot.hasError || !snapshot.hasData) {
+                                  return Text(
+                                    '$label: na',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(fontWeight: FontWeight.w400),
+                                  );
+                                }
+                                return Text(
+                                  isCounterOffer
+                                      ? '$label: ${snapshot.data}'
+                                      : '$label: ${snapshot.data} (${'per_unit'.tr()})',
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(fontWeight: FontWeight.w400),
+                                );
+                              },
                         ),
 
                         /// Offer input
@@ -77,7 +110,7 @@ class _MakeOfferBottomSheetState extends State<MakeOfferBottomSheet> {
                               priceController.text = p0;
                             });
                           },
-                          currency: widget.post.currency ?? '',
+                          currency: LocalAuth.currency,
                           controller: priceController,
                         ),
 
@@ -88,19 +121,16 @@ class _MakeOfferBottomSheetState extends State<MakeOfferBottomSheet> {
                           children: <Widget>[
                             Text(
                               '${'you_are_offering'.tr()} '
-                              '${CountryHelper.currencySymbolHelper(widget.post.currency)}${priceController.text} '
+                              '${CountryHelper.currencySymbolHelper(LocalAuth.currency)}${priceController.text} '
                               '× $quantity ${'units'.tr()} = '
-                              '${CountryHelper.currencySymbolHelper(widget.post.currency)}${(int.tryParse(priceController.text) ?? 0) * quantity}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelLarge
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                              '${CountryHelper.currencySymbolHelper(LocalAuth.currency)}${(int.tryParse(priceController.text) ?? 0) * quantity}',
+                              style: Theme.of(context).textTheme.labelLarge
+                                  ?.copyWith(fontWeight: FontWeight.w600),
                             ),
                             PostCounterWidget(
                               initialQuantity: quantity,
-                              maxQuantity: widget.selectedColor?.quantity ??
+                              maxQuantity:
+                                  widget.selectedColor?.quantity ??
                                   widget.post.quantity,
                               onChanged: (int value) => setState(() {
                                 quantity = value;
@@ -118,8 +148,6 @@ class _MakeOfferBottomSheetState extends State<MakeOfferBottomSheet> {
                               ),
                             if (isCounterOffer)
                               MakeCOunterOfferButton(
-                                currency:
-                                    widget.message?.offerDetail?.currency ?? '',
                                 message: widget.message!,
                                 counterOfferAmount:
                                     int.tryParse(priceController.text) ?? 0,
