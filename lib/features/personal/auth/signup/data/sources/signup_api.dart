@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
-import '../../domain/entities/is_valid_response_entity.dart';
 import '../../views/params/signup_basic_info_params.dart';
 import '../../views/params/signup_is_valid_params.dart';
 import '../../views/params/signup_send_opt_params.dart';
@@ -163,10 +162,8 @@ class SignupApiImpl implements SignupApi {
   Future<DataState<bool>> isValid(SignupIsValidParams params) async {
     try {
       String endpoint = 'noAuth/exist?';
-      bool checkEmail = false;
       if (params.email != null && params.email!.isNotEmpty) {
         endpoint += 'email=${params.email!}';
-        checkEmail = true;
       } else if (params.username != null && params.username!.isNotEmpty) {
         endpoint += 'username=${params.username!}';
       } else {
