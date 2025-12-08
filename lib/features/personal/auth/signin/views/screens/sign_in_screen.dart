@@ -84,7 +84,6 @@ class SignInScreen extends StatelessWidget {
                         CustomElevatedButton(
                           padding: const EdgeInsets.all(0),
                           title: 'dont_have_account'.tr(),
-                          textStyle: TextTheme.of(context).bodyMedium,
                           isLoading: false,
                           bgColor: Colors.transparent,
                           border: Border.all(color: Colors.transparent),

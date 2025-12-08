@@ -1,4 +1,5 @@
 {
+  "username_already_used": "This username is already taken.",
   "sellout": "SellOut",
   "skip": "Skip",
   "sign_up": "Sign Up",
@@ -788,7 +789,7 @@
   "choose_members": "Choose Members",
   "start_chatting": "Start Chatting",
   "storageDenied": "Storage permission denied",
-  "Sellout_welcome_description": "The Social Marketplace that lets you buy & sell and provide services.",
+  "Sellout_welcome_description": "The Social Marketplace that lets you buy & sell and book anything",
   "view_more": "View more",
   "item_removed_successfully": "Item removed successfully",
   "create_yours": "Create yours",
