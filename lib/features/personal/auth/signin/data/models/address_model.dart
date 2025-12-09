@@ -69,7 +69,7 @@ class AddressModel extends AddressEntity {
     'address_1': address1,
     'address_2': address2,
     'city': city,
-    'state': state?.stateName ?? '',
+    'state': state.stateName,
     'phone_number': phoneNumber,
     'postal_code': postalCode,
     'address_category': category,
