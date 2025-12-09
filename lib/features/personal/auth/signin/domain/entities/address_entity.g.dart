@@ -25,7 +25,7 @@ class AddressEntityAdapter extends TypeAdapter<AddressEntity> {
       category: fields[5] as String,
       postalCode: fields[6] as String,
       city: fields[7] as String,
-      state: fields[8] as StateEntity?,
+      state: fields[8] as StateEntity,
       country: fields[9] as CountryEntity,
       isDefault: fields[10] as bool,
     );

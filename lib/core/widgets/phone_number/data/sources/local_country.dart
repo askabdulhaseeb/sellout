@@ -5,8 +5,8 @@ import '../../../../utilities/app_string.dart';
 import '../../domain/entities/country_entity.dart';
 
 class LocalCountry extends LocalHiveBox<CountryEntity> {
-   @override
-  String get boxName =>  AppStrings.localCountryBox;
+  @override
+  String get boxName => AppStrings.localCountryBox;
   Box<CountryEntity> get localBox => box;
 
   CountryEntity? country(String code) {
@@ -58,13 +58,20 @@ class LocalCountry extends LocalHiveBox<CountryEntity> {
     for (final StateEntity state in foundCountry.states) {
       final String name = state.stateName.trim().toLowerCase();
       final String code = state.stateCode.trim().toLowerCase();
-      if (name == normalizedState || code == normalizedState) {
+      // Also try removing spaces for more robust matching
+      final String nameNoSpace = name.replaceAll(' ', '');
+      final String codeNoSpace = code.replaceAll(' ', '');
+      final String normalizedNoSpace = normalizedState.replaceAll(' ', '');
+      if (name == normalizedState ||
+          code == normalizedState ||
+          nameNoSpace == normalizedNoSpace ||
+          codeNoSpace == normalizedNoSpace) {
         return state;
       }
     }
 
     debugPrint(
-      'LocalCountry.getStateByName: no state "$stateName" found in "$countryName"',
+      'LocalCountry.getStateByName: no state match for "$stateName" (normalized: "$normalizedState") found in "$countryName"',
     );
     return null;
   }

@@ -71,7 +71,6 @@ class StepProgressIndicator<T> extends StatelessWidget {
               // DOT
               final int stepIndex = index ~/ 2;
               final int displayIndex = stepIndex + 1;
-              final T stepValue = steps[stepIndex];
               final bool isActive = displayIndex == currentIndex;
               final bool isCompleted = displayIndex < currentIndex;
 

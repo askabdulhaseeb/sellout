@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../features/personal/auth/signin/domain/entities/address_entity.dart';
 
@@ -30,7 +31,10 @@ class AddressTile extends StatelessWidget {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Text('${address.recipientName} . ${address.phoneNumber}'),
-                  Text('${address.address1} . ${address.country.countryName}'),
+                  Text(
+                    '${address.country.countryName} . ${address.state?.stateName ?? 'na'.tr()}',
+                  ),
+                  Text('${address.address1} . ${address.address2}'),
                   Text('${address.city} . ${address.postalCode}'),
                 ],
               ),
