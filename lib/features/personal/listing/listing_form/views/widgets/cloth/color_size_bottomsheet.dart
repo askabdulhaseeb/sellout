@@ -33,6 +33,10 @@ class _SizeColorBottomSheetState extends State<SizeColorBottomSheet> {
       listen: false,
     );
     return Container(
+      decoration: BoxDecoration(
+        backgroundBlendMode: BlendMode.color,
+        color: ColorScheme.of(context).surface,
+      ),
       height: MediaQuery.of(context).size.height * 0.8,
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: Column(
