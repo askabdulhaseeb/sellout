@@ -137,7 +137,6 @@ class _PriceBreakdown extends StatelessWidget {
             fontWeight: FontWeight.w400,
           ),
         ),
-
         if ((shippingPrice ?? 0.0) > 0) ...<Widget>[
           const SizedBox(height: 4),
           Text(

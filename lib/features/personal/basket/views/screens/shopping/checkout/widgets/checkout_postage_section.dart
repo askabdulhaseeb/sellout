@@ -108,8 +108,9 @@ class SimplePostageSectionState extends State<SimplePostageSection> {
                         future: _getConvertedPrices(cartPro),
                         builder:
                             (_, AsyncSnapshot<Map<String, String>> snapPrices) {
-                              if (!snapPrices.hasData)
+                              if (!snapPrices.hasData) {
                                 return const SizedBox.shrink();
+                              }
                               final Map<String, String> prices =
                                   snapPrices.data!;
                               final List<Widget> items = <Widget>[];

@@ -112,7 +112,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
                         Row(
                           children: <Widget>[
                             Text(
-                              'approx_pkr'.tr(args: ['0.00']),
+                              'approx_pkr'.tr(args: <String>['0.00']),
                               style: TextStyle(
                                 color: Colors.grey[600],
                                 fontSize: 12,
@@ -140,7 +140,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Text(
-                              'currency'.tr(args: [_wallet!.currency]),
+                              'currency'.tr(args: <String>[_wallet!.currency]),
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey[700],
@@ -148,7 +148,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
                             ),
                             Text(
                               'updated_at'.tr(
-                                args: [
+                                args: <String>[
                                   DateFormat.Hm().format(
                                     DateTime.tryParse(_wallet!.updatedAt) ??
                                         DateTime.now(),

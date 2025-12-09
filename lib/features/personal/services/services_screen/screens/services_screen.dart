@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/widgets/coming_soon_overlay.dart';
 import '../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';

@@ -9,13 +9,13 @@ class BalanceSkeleton extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
+        children: <Widget>[
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
-              boxShadow: const [
+              boxShadow: const <BoxShadow>[
                 BoxShadow(
                   color: Colors.black12,
                   blurRadius: 8,
@@ -25,9 +25,9 @@ class BalanceSkeleton extends StatelessWidget {
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: <Widget>[
                 Row(
-                  children: [
+                  children: <Widget>[
                     skeletonBox(width: 32, height: 32),
                     const SizedBox(width: 8),
                     skeletonBox(width: 120, height: 18),
@@ -37,7 +37,7 @@ class BalanceSkeleton extends StatelessWidget {
                 skeletonBox(width: 100, height: 32),
                 const SizedBox(height: 8),
                 Row(
-                  children: [
+                  children: <Widget>[
                     skeletonBox(width: 60, height: 14),
                     const SizedBox(width: 8),
                     skeletonBox(width: 60, height: 14),
@@ -46,7 +46,7 @@ class BalanceSkeleton extends StatelessWidget {
                 const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
+                  children: <Widget>[
                     skeletonBox(width: 80, height: 14),
                     skeletonBox(width: 80, height: 14),
                   ],
@@ -54,7 +54,7 @@ class BalanceSkeleton extends StatelessWidget {
                 const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
+                  children: <Widget>[
                     skeletonBox(width: 60, height: 32),
                     skeletonBox(width: 60, height: 32),
                     skeletonBox(width: 60, height: 32),
@@ -65,7 +65,7 @@ class BalanceSkeleton extends StatelessWidget {
                 skeletonBox(width: double.infinity, height: 40),
                 const SizedBox(height: 8),
                 Row(
-                  children: [
+                  children: <Widget>[
                     skeletonBox(width: 16, height: 16),
                     const SizedBox(width: 4),
                     skeletonBox(width: 200, height: 14),

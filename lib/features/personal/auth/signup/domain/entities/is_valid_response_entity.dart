@@ -1,6 +1,4 @@
 class IsValidResponseEntity {
-  final bool usernameExist;
-  final bool emailExist;
 
   IsValidResponseEntity({
     required this.usernameExist,
@@ -13,4 +11,6 @@ class IsValidResponseEntity {
       emailExist: json['email_exist'] ?? false,
     );
   }
+  final bool usernameExist;
+  final bool emailExist;
 }

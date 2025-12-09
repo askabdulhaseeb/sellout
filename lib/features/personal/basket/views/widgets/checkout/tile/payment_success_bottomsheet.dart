@@ -190,7 +190,7 @@ class CartPaymentSuccessDetailsSection extends StatelessWidget {
         _CustomAddressSection(
           name: pro.address?.address1 ?? '',
           street: pro.address?.city ?? '',
-          city: pro.address?.state?.stateName ?? '',
+          city: pro.address?.state.stateName ?? '',
           country: pro.address?.country.countryName ?? '',
         ),
         const SizedBox(height: 6),

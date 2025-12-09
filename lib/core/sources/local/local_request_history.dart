@@ -42,6 +42,7 @@ class LocalRequestHistory extends LocalHiveBox<ApiRequestEntity> {
     }
   }
 
+  @override
   Future<void> delete(String value) async =>
       await _box.delete(value.toSHA256());
 }

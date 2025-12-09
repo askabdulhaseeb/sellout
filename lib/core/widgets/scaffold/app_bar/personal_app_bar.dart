@@ -15,7 +15,7 @@ import '../../../utilities/app_string.dart';
 import '../../custom_svg_icon.dart';
 import '../../profile_photo.dart';
 
-personalAppbar(BuildContext context) {
+AppBar personalAppbar(BuildContext context) {
   final String me = LocalAuth.uid ?? '';
   return AppBar(
     automaticallyImplyLeading: false,

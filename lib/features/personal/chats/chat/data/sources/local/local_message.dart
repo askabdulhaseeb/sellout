@@ -17,6 +17,7 @@ class LocalChatMessage extends LocalHiveBox<GettedMessageEntity> {
   static Future<Box<GettedMessageEntity>> get openBox async =>
       await Hive.openBox<GettedMessageEntity>(AppStrings.localChatMessagesBox);
 
+  @override
   Future<Box<GettedMessageEntity>> refresh() async {
     final bool isOpen = Hive.isBoxOpen(AppStrings.localChatMessagesBox);
     if (isOpen) {
@@ -26,6 +27,7 @@ class LocalChatMessage extends LocalHiveBox<GettedMessageEntity> {
     }
   }
 
+  @override
   Future<void> clear() async => await _box.clear();
 
   Future<void> saveMessage(MessageEntity message) async {

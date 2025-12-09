@@ -36,7 +36,10 @@ class LocalOrders extends LocalHiveBox<OrderEntity> {
     await _box.putAll(map);
   }
 
+  @override
   Future<void> clear() async => await _box.clear();
+  @override
   OrderEntity? get(String id) => _box.get(id);
+  @override
   List<OrderEntity> getAll() => _box.values.toList();
 }

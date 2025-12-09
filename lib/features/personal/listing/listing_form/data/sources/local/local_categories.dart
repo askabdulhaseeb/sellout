@@ -335,5 +335,6 @@ class LocalCategoriesSource extends LocalHiveBox<CategoriesEntity> {
     await save(_mainKey, newEntity);
   }
 
+  @override
   Future<void> clear() async => await _box.clear();
 }

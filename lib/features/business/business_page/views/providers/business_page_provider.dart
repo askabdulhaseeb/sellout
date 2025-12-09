@@ -96,12 +96,12 @@ class BusinessPageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  setLoading(bool value) {
+  void setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
   }
 
-  reset() {
+  void reset() {
     _selectedTab = BusinessPageTabType.services;
     _posts.clear();
     _services.clear();
