@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:hive_ce/hive.dart';
+import '../extension/string_ext.dart';
 import '../sources/local/local_request_history.dart';
 part 'api_request_entity.g.dart';
 
@@ -29,6 +30,6 @@ class ApiRequestEntity {
 
   Future<void> updateLastRequest() async {
     lastRequest = DateTime.now();
-    await LocalRequestHistory().save(this.url, this);
+    await LocalRequestHistory().save(url.toSHA256(), this);
   }
 }
