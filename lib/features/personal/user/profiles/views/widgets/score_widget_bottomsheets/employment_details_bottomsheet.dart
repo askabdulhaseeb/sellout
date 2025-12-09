@@ -71,7 +71,7 @@ class EmploymentDetailsBottomSheet extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(8),
                       child: Column(
-                        children: List.generate(3, (int index) {
+                        children: List<Widget>.generate(3, (int index) {
                           return Column(
                             children: <Widget>[
                               ListTile(

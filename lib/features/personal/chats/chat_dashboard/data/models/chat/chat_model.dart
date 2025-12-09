@@ -59,3 +59,64 @@ class ChatModel extends ChatEntity {
             : MessageModel.fromMap(json['pinned_message']));
   }
 }
+// {
+//     "chats": [
+//         {
+//             "deleted_by": [],
+//             "chat_id": "d7fb48e4-17ac-4fee-a9f4-c7500e0f999f-U-e1d86ab4-99af-4a8d-b48b-7f9f716e4c05-PL",
+//             "updated_at": "2025-12-09T14:16:06.945Z",
+//             "persons": [
+//                 "d7fb48e4-17ac-4fee-a9f4-c7500e0f999f-U",
+//                 "947bb35a-2395-45f9-ad31-3cd4d25d1bb4-U"
+//             ],
+//             "created_by": "d7fb48e4-17ac-4fee-a9f4-c7500e0f999f-U",
+//             "last_message": {
+//                 "persons": [
+//                     "d7fb48e4-17ac-4fee-a9f4-c7500e0f999f-U",
+//                     "947bb35a-2395-45f9-ad31-3cd4d25d1bb4-U"
+//                 ],
+//                 "file_url": null,
+//                 "updated_at": "2025-12-09T14:16:06.945Z",
+//                 "file_status": null,
+//                 "created_at": "2025-12-09T14:16:06.945Z",
+//                 "message_id": "d7fb48e4-17ac-4fee-a9f4-c7500e0f999f-U-2025-12-09T14:16:06.945Z",
+//                 "text": "yes",
+//                 "source": "application",
+//                 "send_by": "d7fb48e4-17ac-4fee-a9f4-c7500e0f999f-U",
+//                 "display_text": "yes",
+//                 "chat_id": "d7fb48e4-17ac-4fee-a9f4-c7500e0f999f-U-e1d86ab4-99af-4a8d-b48b-7f9f716e4c05-PL"
+//             },
+//             "product_info": {
+//                 "type": "product",
+//                 "id": "e1d86ab4-99af-4a8d-b48b-7f9f716e4c05-PL"
+//             },
+//             "participants": [
+//                 {
+//                     "uid": "d7fb48e4-17ac-4fee-a9f4-c7500e0f999f-U",
+//                     "join_at": "2025-12-09T14:15:32.929Z",
+//                     "role": "admin",
+//                     "source": "Inquiry",
+//                     "add_by": "d7fb48e4-17ac-4fee-a9f4-c7500e0f999f-U",
+//                     "chat_at": "2025-12-09T14:15:32.929Z"
+//                 },
+//                 {
+//                     "uid": "947bb35a-2395-45f9-ad31-3cd4d25d1bb4-U",
+//                     "join_at": "2025-12-09T14:15:32.929Z",
+//                     "role": "admin",
+//                     "source": "Inquiry",
+//                     "add_by": "d7fb48e4-17ac-4fee-a9f4-c7500e0f999f-U",
+//                     "chat_at": "2025-12-09T14:15:32.929Z"
+//                 }
+//             ],
+//             "ids": [
+//                 "BID:null",
+//                 "UID:d7fb48e4-17ac-4fee-a9f4-c7500e0f999f-U",
+//                 "PID:e1d86ab4-99af-4a8d-b48b-7f9f716e4c05-PL",
+//                 "POST-BID:null"
+//             ],
+//             "created_at": "2025-12-09T14:15:32.929Z",
+//             "type": "product"
+//         }
+//     ],
+//     "deletedChatIds": []
+// }
