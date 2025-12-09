@@ -23,9 +23,11 @@ class _PersonalBottomNavBarState extends State<PersonalBottomNavBar> {
     final String? uid = LocalAuth.uid;
     if (uid != null) {
       LocalUser().user(uid).then((UserEntity? value) {
-        setState(() {
-          user = value;
-        });
+        if (!mounted) {
+          setState(() {
+            user = value;
+          });
+        }
       });
     }
   }
