@@ -36,7 +36,7 @@ class _OrderPostageBottomSheetState extends State<OrderPostageBottomSheet> {
         ),
         child: FutureBuilder<DataState<PostageDetailResponseEntity>>(
           future: _future,
-          builder: (context, snapshot) {
+          builder: (BuildContext context, AsyncSnapshot<DataState<PostageDetailResponseEntity>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
@@ -53,9 +53,9 @@ class _OrderPostageBottomSheetState extends State<OrderPostageBottomSheet> {
             }
             return Column(
               mainAxisSize: MainAxisSize.min,
-              children: [
+              children: <Widget>[
                 Row(
-                  children: [
+                  children: <Widget>[
                     const Expanded(
                       child: Text(
                         'Choose Postage',
@@ -78,8 +78,8 @@ class _OrderPostageBottomSheetState extends State<OrderPostageBottomSheet> {
                     ),
                     itemCount: entries.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 8),
-                    itemBuilder: (context, index) {
-                      final detail = entries[index];
+                    itemBuilder: (BuildContext context, int index) {
+                      final PostageItemDetailEntity detail = entries[index];
                       return OrderPostageItemCard(
                         detail: detail,
                         selected: _selectedDetail == detail,

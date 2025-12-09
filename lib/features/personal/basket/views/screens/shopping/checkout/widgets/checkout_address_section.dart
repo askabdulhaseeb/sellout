@@ -90,7 +90,7 @@ class SimpleCheckoutAddressSectionState
                           style: const TextStyle(fontSize: 13, height: 1.4)),
                       if (cartPro.address != null)
                         Text(
-                          '${cartPro.address!.city}, ${cartPro.address?.state?.stateName ?? 'na'.tr()}'
+                          '${cartPro.address!.city}, ${cartPro.address?.state.stateName ?? 'na'.tr()}'
                           '\n${cartPro.address?.country.displayName} ${cartPro.address?.postalCode}',
                           style: const TextStyle(fontSize: 13, height: 1.4),
                         ),

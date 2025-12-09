@@ -33,7 +33,7 @@ class AppSnackBar {
       ..showSnackBar(
         SnackBar(
           content: Row(
-            children: [
+            children: <Widget>[
               Icon(icon, color: color ?? Theme.of(ctx).colorScheme.primary),
               const SizedBox(width: 12),
               Expanded(child: Text(message)),

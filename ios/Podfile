@@ -1,4 +1,5 @@
 # Uncomment this line to define a global platform for your project
+source 'https://cdn.cocoapods.org/'
 platform :ios, '15.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
@@ -30,6 +31,8 @@ flutter_ios_podfile_setup
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
+
+  pod 'GoogleMaps'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   target 'RunnerTests' do

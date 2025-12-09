@@ -49,7 +49,6 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
     if (!_hasMore || _isLoading) return;
 
     setState(() => _isLoading = true);
-
     final DataState<List<ServiceEntity>> result = await _servicesUsecase.call(
       ServiceByFiltersParams(
         lastKey: _lastKey,

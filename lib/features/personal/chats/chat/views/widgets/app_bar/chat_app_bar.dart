@@ -8,7 +8,7 @@ import 'group_chat_title_widget.dart';
 import 'private_chat_title_widget.dart';
 import 'product_chat_title_widget.dart';
 
-chatAppBar(BuildContext context) {
+AppBar chatAppBar(BuildContext context) {
   final ChatEntity? chat = Provider.of<ChatProvider>(context).chat;
   return AppBar(
     automaticallyImplyLeading: false,

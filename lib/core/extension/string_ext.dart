@@ -34,7 +34,7 @@ extension StringExt on String {
     return null;
   }
 
-  toSHA256() {
+  String toSHA256() {
     Uint8List bytes = utf8.encode(this);
     Digest digest = sha256.convert(bytes);
     return digest.toString();

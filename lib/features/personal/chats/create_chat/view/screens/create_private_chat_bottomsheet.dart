@@ -39,7 +39,7 @@ class CreatePrivateChatBottomsheet extends StatelessWidget {
           ),
         ),
         body: Column(
-          children: [
+          children: <Widget>[
             const EmptyPageWidget(icon: CupertinoIcons.chat_bubble),
             SizedBox(
               child: ListView.builder(

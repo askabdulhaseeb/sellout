@@ -577,7 +577,7 @@ class _OrderRecieverNameAddressWidgetState
                       ),
                 ),
                 Text(
-                  '${widget.address.state?.stateName} / ${widget.address.country.countryName}',
+                  '${widget.address.state.stateName} / ${widget.address.country.countryName}',
                   style:
                       widget.addressTextStyle ??
                       Theme.of(context).textTheme.bodyMedium?.copyWith(
