@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/adapters.dart';
 import 'package:path_provider/path_provider.dart';
+import '../../utilities/app_string.dart';
 import '../../../features/attachment/domain/entities/attachment_entity.dart';
 import '../../../features/business/core/data/sources/local_business.dart';
 import '../../../features/business/core/data/sources/service/local_service.dart';
@@ -96,15 +97,25 @@ import '../../enums/message/message_type.dart';
 import '../../enums/routine/day_type.dart';
 import '../../widgets/phone_number/data/sources/local_country.dart';
 import '../../widgets/phone_number/domain/entities/country_entity.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'encryption_key_manager.dart';
 import 'local_request_history.dart';
 
 class HiveDB {
+  static const String _encryptionMigratedKey = 'sellout_encryption_migrated_v1';
+
   static Future<void> init() async {
-    // await LocalState.init();
     Directory directory = await getApplicationDocumentsDirectory();
     Hive.init(directory.path);
 
     await Hive.initFlutter();
+
+    // Pre-initialize encryption key for encrypted boxes
+    await EncryptionKeyManager.getEncryptionKey();
+
+    // Handle migration from unencrypted to encrypted storage
+    await _migrateToEncryptedStorage();
 
     // Hive
     Hive.registerAdapter(CurrentUserEntityAdapter()); // 0
@@ -256,5 +267,46 @@ class HiveDB {
     // await LocalServiceCategory().clear();
     // await LocalCategoriesSource().clear();
     // await LocalCountry().clear();
+  }
+
+  /// Migrates existing unencrypted data to encrypted storage.
+  ///
+  /// On first run after encryption is enabled, this clears old unencrypted
+  /// boxes that will now use encryption. Users will need to re-login.
+  static Future<void> _migrateToEncryptedStorage() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final bool alreadyMigrated = prefs.getBool(_encryptionMigratedKey) ?? false;
+
+    if (alreadyMigrated) return;
+
+    debugPrint('HiveDB: Migrating to encrypted storage...');
+
+    // Delete old unencrypted boxes that will now be encrypted
+    // This ensures clean slate for encrypted boxes
+    final List<String> boxesToMigrate = <String>[
+      AppStrings.localAuthBox,
+      AppStrings.localChatsBox,
+      AppStrings.localChatMessagesBox,
+      AppStrings.localOrdersBox,
+      AppStrings.localCartBox,
+      AppStrings.localUsersBox,
+      AppStrings.localBookingsBox,
+      AppStrings.localNotificationBox,
+    ];
+
+    for (final String boxName in boxesToMigrate) {
+      try {
+        if (Hive.isBoxOpen(boxName)) {
+          await Hive.box(boxName).close();
+        }
+        await Hive.deleteBoxFromDisk(boxName);
+        debugPrint('HiveDB: Deleted old unencrypted box: $boxName');
+      } catch (e) {
+        debugPrint('HiveDB: Error migrating box $boxName: $e');
+      }
+    }
+
+    await prefs.setBool(_encryptionMigratedKey, true);
+    debugPrint('HiveDB: Migration to encrypted storage complete');
   }
 }
