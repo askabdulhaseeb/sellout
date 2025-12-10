@@ -13,12 +13,12 @@ class EncryptionKeyManager {
   static const String _encryptionKeyName = 'sellout_hive_encryption_key';
 
   static const FlutterSecureStorage _secureStorage = FlutterSecureStorage(
-    aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,
-    ),
-    iOptions: IOSOptions(
-      accessibility: KeychainAccessibility.first_unlock_this_device,
-    ),
+    // aOptions: AndroidOptions(
+    //   encryptedSharedPreferences: true,
+    // ),
+    // iOptions: IOSOptions(
+    //   accessibility: KeychainAccessibility.first_unlock_this_device,
+    // ),
   );
 
   static Uint8List? _cachedKey;

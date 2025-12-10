@@ -14,15 +14,15 @@ class SecureAuthStorage {
   static const String _userIdKey = 'sellout_user_id';
 
   static const FlutterSecureStorage _storage = FlutterSecureStorage(
-    aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,
-      sharedPreferencesName: 'sellout_secure_prefs',
-      preferencesKeyPrefix: 'sellout_',
-    ),
-    iOptions: IOSOptions(
-      accessibility: KeychainAccessibility.first_unlock_this_device,
-      accountName: 'SelloutAuth',
-    ),
+    // aOptions: AndroidOptions(
+    //   encryptedSharedPreferences: true,
+    //   sharedPreferencesName: 'sellout_secure_prefs',
+    //   preferencesKeyPrefix: 'sellout_',
+    // ),
+    // iOptions: IOSOptions(
+    //   accessibility: KeychainAccessibility.first_unlock_this_device,
+    //   accountName: 'SelloutAuth',
+    // ),
   );
 
   // ─────────────────────────────────────────────────────────────────
