@@ -58,7 +58,7 @@ class AppValidator {
   static String? confirmPassword(String first, String second) {
     return first.trim() == second.trim() && first.isNotEmpty
         ? null
-        : 'passwords_must_match'.tr();
+        : 'passwords_do_not_match'.tr();
   }
 
   static String? customRegExp(String formate, String? value,

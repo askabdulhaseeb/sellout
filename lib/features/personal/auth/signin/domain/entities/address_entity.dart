@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/country_entity.dart';
 part 'address_entity.g.dart';
 
@@ -17,6 +17,33 @@ class AddressEntity {
     required this.country,
     required this.isDefault,
   });
+  AddressEntity copyWith({
+    String? addressID,
+    String? phoneNumber,
+    String? recipientName,
+    String? address1,
+    String? address2,
+    String? category,
+    String? postalCode,
+    String? city,
+    StateEntity? state,
+    CountryEntity? country,
+    bool? isDefault,
+  }) {
+    return AddressEntity(
+      addressID: addressID ?? this.addressID,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      recipientName: recipientName ?? this.recipientName,
+      address1: address1 ?? this.address1,
+      address2: address2 ?? this.address2,
+      category: category ?? this.category,
+      postalCode: postalCode ?? this.postalCode,
+      city: city ?? this.city,
+      state: state ?? this.state,
+      country: country ?? this.country,
+      isDefault: isDefault ?? this.isDefault,
+    );
+  }
 
   @HiveField(0)
   final String addressID;
@@ -35,7 +62,7 @@ class AddressEntity {
   @HiveField(7)
   final String city;
   @HiveField(8)
-  final StateEntity? state;
+  final StateEntity state;
   @HiveField(9)
   final CountryEntity country;
   @HiveField(10)

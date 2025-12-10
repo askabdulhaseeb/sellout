@@ -43,11 +43,12 @@ class CustomElevatedButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final Color bgColorCore =
-        isDisable ? colorScheme.outlineVariant : bgColor ?? colorScheme.primary;
+    final Color bgColorCore = isDisable
+        ? colorScheme.outlineVariant
+        : bgColor ?? colorScheme.primary;
 
     return Container(
-      margin: margin ?? const EdgeInsets.symmetric(vertical: 8),
+      margin: margin ?? const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
         color: bgColorCore,
         borderRadius: borderRadius ?? BorderRadius.circular(8),
@@ -71,7 +72,8 @@ class CustomElevatedButton extends StatelessWidget {
                   ),
                 if (isLoading)
                   _PulsingDots(
-                    color: textColor ??
+                    color:
+                        textColor ??
                         (bgColor == Colors.transparent
                             ? colorScheme.onSurface
                             : colorScheme.onPrimary),
@@ -79,13 +81,16 @@ class CustomElevatedButton extends StatelessWidget {
                 else
                   Text(
                     title,
-                    style: textStyle ??
-                        TextStyle(
-                            color: textColor ??
-                                (bgColor == Colors.transparent
-                                    ? colorScheme.onSurface
-                                    : colorScheme.onPrimary),
-                            fontWeight: fontWeight),
+                    style:
+                        textStyle ??
+                        TextTheme.of(context).bodyLarge?.copyWith(
+                          color:
+                              textColor ??
+                              (bgColor == Colors.transparent
+                                  ? colorScheme.onSurface
+                                  : colorScheme.onPrimary),
+                          fontWeight: fontWeight,
+                        ),
                   ),
                 if (!isLoading && suffix != null)
                   Padding(
@@ -107,9 +112,9 @@ class _PulsingDots extends StatefulWidget {
     double? dotSize,
     double? spacing,
     Duration? duration,
-  })  : dotSize = dotSize ?? 6,
-        spacing = spacing ?? 4,
-        duration = duration ?? const Duration(milliseconds: 1200);
+  }) : dotSize = dotSize ?? 6,
+       spacing = spacing ?? 4,
+       duration = duration ?? const Duration(milliseconds: 1200);
 
   final Color color;
   final double dotSize;
@@ -159,10 +164,7 @@ class _PulsingDotsState extends State<_PulsingDots>
         width: widget.dotSize,
         height: widget.dotSize,
         margin: EdgeInsets.symmetric(horizontal: widget.spacing / 2),
-        decoration: BoxDecoration(
-          color: widget.color,
-          shape: BoxShape.circle,
-        ),
+        decoration: BoxDecoration(color: widget.color, shape: BoxShape.circle),
       ),
     );
   }
@@ -171,11 +173,7 @@ class _PulsingDotsState extends State<_PulsingDots>
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        _dot(_a1),
-        _dot(_a2),
-        _dot(_a3),
-      ],
+      children: <Widget>[_dot(_a1), _dot(_a2), _dot(_a3)],
     );
   }
 }

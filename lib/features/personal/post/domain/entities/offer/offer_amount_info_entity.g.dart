@@ -8,7 +8,7 @@ part of 'offer_amount_info_entity.dart';
 
 class OfferAmountInfoEntityAdapter extends TypeAdapter<OfferAmountInfoEntity> {
   @override
-  final int typeId = 27;
+  final typeId = 27;
 
   @override
   OfferAmountInfoEntity read(BinaryReader reader) {
@@ -17,7 +17,7 @@ class OfferAmountInfoEntityAdapter extends TypeAdapter<OfferAmountInfoEntity> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return OfferAmountInfoEntity(
-      offer: fields[0] as double?,
+      offer: (fields[0] as num?)?.toDouble(),
       currency: fields[1] as String?,
       isAccepted: fields[2] as bool,
       id: fields[3] as String,

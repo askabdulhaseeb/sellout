@@ -8,7 +8,7 @@ part of 'time_away_entity.dart';
 
 class TimeAwayEntityAdapter extends TypeAdapter<TimeAwayEntity> {
   @override
-  final int typeId = 64;
+  final typeId = 64;
 
   @override
   TimeAwayEntity read(BinaryReader reader) {

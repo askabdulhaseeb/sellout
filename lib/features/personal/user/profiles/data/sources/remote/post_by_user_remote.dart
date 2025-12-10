@@ -27,12 +27,11 @@ class PostByUserRemoteImpl implements PostByUserRemote {
       if (result is DataSuccess) {
         final String raw = result.data ?? '';
         final dynamic userable = json.decode(raw);
-
         final List<dynamic> list = userable['items'];
         final List<PostEntity> posts = <PostEntity>[];
         for (dynamic element in list) {
           final PostEntity post = PostModel.fromJson(element);
-          await LocalPost().save(post);
+          await LocalPost().save(post.postID, post);
           posts.add(post);
         }
         return DataSuccess<List<PostEntity>>(raw, posts);

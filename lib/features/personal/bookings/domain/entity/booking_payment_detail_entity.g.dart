@@ -9,7 +9,7 @@ part of 'booking_payment_detail_entity.dart';
 class BookingPaymentDetailEntityAdapter
     extends TypeAdapter<BookingPaymentDetailEntity> {
   @override
-  final int typeId = 50;
+  final typeId = 50;
 
   @override
   BookingPaymentDetailEntity read(BinaryReader reader) {

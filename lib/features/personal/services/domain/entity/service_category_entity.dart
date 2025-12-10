@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import 'service_type_entity.dart';
 part 'service_category_entity.g.dart';
 

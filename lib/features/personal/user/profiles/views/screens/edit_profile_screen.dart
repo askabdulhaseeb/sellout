@@ -29,12 +29,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final ProfileProvider pro =
-        Provider.of<ProfileProvider>(context, listen: false);
+    final ProfileProvider pro = Provider.of<ProfileProvider>(
+      context,
+      listen: false,
+    );
     return Scaffold(
-      appBar: AppBar(
-        title: const AppBarTitle(titleKey: 'edit_profile'),
-      ),
+      appBar: AppBar(title: const AppBarTitle(titleKey: 'edit_profile')),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -42,28 +42,34 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             children: <Widget>[
               Center(
                 child: SizedBox(
-                    height: 100,
-                    width: 100,
-                    child: Consumer<ProfileProvider>(
-                      builder: (BuildContext context, ProfileProvider pr,
-                              Widget? child) =>
-                          ProfilePhoto(
-                        isCircle: false,
-                        url: (pro.profilePhoto != null &&
-                                pro.profilePhoto!.isNotEmpty)
-                            ? pro.profilePhoto!.first.url
-                            : '',
-                      ),
-                    )),
+                  height: 100,
+                  width: 100,
+                  child: Consumer<ProfileProvider>(
+                    builder:
+                        (
+                          BuildContext context,
+                          ProfileProvider pr,
+                          Widget? child,
+                        ) => ProfilePhoto(
+                          isCircle: false,
+                          url:
+                              (pro.profilePhoto != null &&
+                                  pro.profilePhoto!.isNotEmpty)
+                              ? pro.profilePhoto!.first.url
+                              : '',
+                        ),
+                  ),
+                ),
               ),
               const SizedBox(height: 20),
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    backgroundColor:
-                        Theme.of(context).primaryColor.withAlpha(30)),
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  backgroundColor: Theme.of(context).primaryColor.withAlpha(30),
+                ),
                 icon: const Icon(CupertinoIcons.power),
                 label: Text('upload_profile'.tr()),
                 onPressed: () {
@@ -81,7 +87,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 readOnly: true,
                 labelText: 'username'.tr(),
                 controller: TextEditingController(
-                    text: LocalAuth.currentUser?.userName),
+                  text: LocalAuth.currentUser?.userName,
+                ),
               ),
               const SizedBox(height: 16),
               CustomTextFormField(
@@ -94,12 +101,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               SizedBox(
                 width: double.infinity,
                 child: CustomElevatedButton(
-                    onTap: () {
-                      pro.updateProfileDetail(context);
-                      Navigator.pop(context);
-                    },
-                    isLoading: false,
-                    title: 'save_changes'.tr()),
+                  onTap: () {
+                    pro.updateProfileDetail(context);
+                  },
+                  isLoading: false,
+                  title: 'save_changes'.tr(),
+                ),
               ),
             ],
           ),

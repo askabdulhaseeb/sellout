@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 part 'privacy_type.g.dart';
 
 @HiveType(typeId: 26)
@@ -27,8 +27,8 @@ enum PrivacyType {
   static List<PrivacyType> get list => PrivacyType.values;
 
   static List<IconData> get icons => <IconData>[
-        PrivacyType.public.icon,
-        PrivacyType.supporters.icon,
-        PrivacyType.private.icon,
-      ];
+    PrivacyType.public.icon,
+    PrivacyType.supporters.icon,
+    PrivacyType.private.icon,
+  ];
 }

@@ -35,7 +35,7 @@ class AddPromoCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor,
                       borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(8)),
+                          const BorderRadius.vertical(top: Radius.circular(8)),
                     ),
                   ),
                 ),

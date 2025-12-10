@@ -51,15 +51,16 @@ class ReportStep1 extends StatelessWidget {
         final ReportType type = ReportType.values[index];
         return ListTile(
           dense: true,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-          minVerticalPadding: 0,
-          title: Text(
-            type.code.tr(),
-            style: TextTheme.of(context).bodySmall,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 0,
           ),
-          trailing: Icon(Icons.chevron_right,
-              color: Theme.of(context).colorScheme.onSurface),
+          minVerticalPadding: 0,
+          title: Text(type.code.tr(), style: TextTheme.of(context).bodySmall),
+          trailing: Icon(
+            Icons.chevron_right,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           onTap: () => onSelect(type),
         );
       },
@@ -126,8 +127,9 @@ class _ReportStep2State extends State<ReportStep2> {
                       ),
                       title: Text(
                         widget.selectedType.title.tr(),
-                        style: theme.textTheme.bodyLarge
-                            ?.copyWith(fontWeight: FontWeight.w500),
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),
@@ -186,23 +188,25 @@ class ReportStep3 extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         child: Column(
+          spacing: 6,
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             const EmptyPageWidget(icon: Icons.new_releases_rounded),
-            const SizedBox(height: 24),
-            Text(
-              'post_reported_title'.tr(),
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
+            Flexible(
+              child: Text(
+                'post_reported_title'.tr(),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
             ),
-            const SizedBox(height: 8), // reduced gap
-            Text(
-              '${'post_reported_message'.tr()} "${selectedType?.title ?? ''}" ${'post_reported_message_extra'.tr()}',
-              textAlign: TextAlign.center,
+            Flexible(
+              child: Text(
+                '${'post_reported_message'.tr()} "${selectedType?.title ?? ''}" ${'post_reported_message_extra'.tr()}',
+                textAlign: TextAlign.center,
+              ),
             ),
             const Spacer(),
 
@@ -253,6 +257,15 @@ class _PostReportBottomSheetState extends State<PostReportBottomSheet> {
     final List<int> steps = <int>[1, 2, 3];
     return Scaffold(
       appBar: AppBar(
+        leading: BackButton(
+          onPressed: () {
+            if (state.step == 1) {
+              Navigator.pop(context);
+            } else {
+              setState(() => state = state.copyWith(step: state.step - 1));
+            }
+          },
+        ),
         title: const AppBarTitle(titleKey: 'report'),
         actions: <Widget>[
           IconButton(
@@ -280,11 +293,22 @@ class _PostReportBottomSheetState extends State<PostReportBottomSheet> {
                 child: Builder(
                   builder: (_) {
                     if (state.step == 1) {
-                      return ReportStep1(onSelect: (ReportType type) {
-                        setState(() => state =
-                            state.copyWith(step: 2, selectedType: type));
-                      });
+                      return ReportStep1(
+                        onSelect: (ReportType type) {
+                          setState(
+                            () => state = state.copyWith(
+                              step: 2,
+                              selectedType: type,
+                            ),
+                          );
+                        },
+                      );
                     } else if (state.step == 2) {
+                      if (state.selectedType == null) {
+                        return const Center(
+                          child: Text('Please select a report type.'),
+                        );
+                      }
                       return ReportStep2(
                         selectedType: state.selectedType!,
                         noteController: noteController,
@@ -317,6 +341,7 @@ class _PostReportBottomSheetState extends State<PostReportBottomSheet> {
 /// --- CALL THIS FUNCTION TO SHOW BOTTOM SHEET ---
 void showPostReportBottomSheet(BuildContext context, String postId) {
   showModalBottomSheet(
+    useSafeArea: true,
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
@@ -335,11 +360,7 @@ Future<bool> _submitReport(
 ) async {
   final ReportUsecase reportUsecase = ReportUsecase(locator());
   final DataState<bool> result = await reportUsecase.call(
-    ReportParams(
-      title: type.title,
-      reportReason: note,
-      postId: postId,
-    ),
+    ReportParams(title: type.title, reportReason: note, postId: postId),
   );
   if (!context.mounted) return false;
   return result is DataSuccess;

@@ -8,7 +8,7 @@ import '../params/get_feed_params.dart';
 
 abstract interface class PostRepository {
   Future<DataState<GetFeedResponse>> getFeed(GetFeedParams params);
-  Future<DataState<PostEntity>> getPost(String id, {bool silentUpdate = true});
+  Future<DataState<PostEntity>> getPost(String id, { required bool silentUpdate});
   Future<DataState<bool>> addToCart(AddToCartParam param);
   Future<DataState<bool>> createOffer(CreateOfferparams param);
   Future<DataState<bool>> reportPost(ReportParams params);

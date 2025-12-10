@@ -8,7 +8,7 @@ part of 'privacy_type.dart';
 
 class PrivacyTypeAdapter extends TypeAdapter<PrivacyType> {
   @override
-  final int typeId = 26;
+  final typeId = 26;
 
   @override
   PrivacyType read(BinaryReader reader) {
@@ -29,13 +29,10 @@ class PrivacyTypeAdapter extends TypeAdapter<PrivacyType> {
     switch (obj) {
       case PrivacyType.public:
         writer.writeByte(0);
-        break;
       case PrivacyType.supporters:
         writer.writeByte(1);
-        break;
       case PrivacyType.private:
         writer.writeByte(2);
-        break;
     }
   }
 

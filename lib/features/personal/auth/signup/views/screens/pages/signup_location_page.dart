@@ -26,7 +26,9 @@ class SignupLocationPage extends StatelessWidget {
                 Text(
                   'enable_location'.tr(),
                   style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text('location_privacy'.tr()),
@@ -52,7 +54,8 @@ class SignupLocationPage extends StatelessWidget {
                               isLoading: pro.isLoading,
                               bgColor: Colors.transparent,
                               border: Border.all(
-                                  color: Theme.of(context).disabledColor),
+                                color: Theme.of(context).disabledColor,
+                              ),
                               onTap: () => pro.enableLocation(context),
                             ),
                           ),
@@ -61,12 +64,13 @@ class SignupLocationPage extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                CustomElevatedButton(
-                  title: 'next'.tr(),
-                  isLoading: pro.isLoading,
-                  onTap: () => pro.onNext(context),
+                SafeArea(
+                  child: CustomElevatedButton(
+                    title: 'next'.tr(),
+                    isLoading: pro.isLoading,
+                    onTap: () => pro.onNext(context),
+                  ),
                 ),
-                const SizedBox(height: 32),
               ],
             );
           },

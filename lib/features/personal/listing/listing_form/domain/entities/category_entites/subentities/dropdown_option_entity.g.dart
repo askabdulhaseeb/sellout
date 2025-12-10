@@ -8,7 +8,7 @@ part of 'dropdown_option_entity.dart';
 
 class DropdownOptionEntityAdapter extends TypeAdapter<DropdownOptionEntity> {
   @override
-  final int typeId = 79;
+  final typeId = 79;
 
   @override
   DropdownOptionEntity read(BinaryReader reader) {

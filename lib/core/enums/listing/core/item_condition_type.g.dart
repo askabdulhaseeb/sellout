@@ -8,7 +8,7 @@ part of 'item_condition_type.dart';
 
 class ConditionTypeAdapter extends TypeAdapter<ConditionType> {
   @override
-  final int typeId = 25;
+  final typeId = 25;
 
   @override
   ConditionType read(BinaryReader reader) {
@@ -27,10 +27,8 @@ class ConditionTypeAdapter extends TypeAdapter<ConditionType> {
     switch (obj) {
       case ConditionType.newC:
         writer.writeByte(0);
-        break;
       case ConditionType.used:
         writer.writeByte(1);
-        break;
     }
   }
 

@@ -9,7 +9,7 @@ part of 'chat_participant_role.dart';
 class ChatParticipantRoleTypeAdapter
     extends TypeAdapter<ChatParticipantRoleType> {
   @override
-  final int typeId = 12;
+  final typeId = 12;
 
   @override
   ChatParticipantRoleType read(BinaryReader reader) {
@@ -28,10 +28,8 @@ class ChatParticipantRoleTypeAdapter
     switch (obj) {
       case ChatParticipantRoleType.admin:
         writer.writeByte(0);
-        break;
       case ChatParticipantRoleType.member:
         writer.writeByte(1);
-        break;
     }
   }
 

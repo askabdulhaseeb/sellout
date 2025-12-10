@@ -14,7 +14,7 @@ class PickedMediaProvider extends ChangeNotifier {
   bool _initialLoading = true;
   bool _loadingMore = false;
   int _currentPage = 0;
-  final int _pageSize = 60;
+  final int _pageSize = 20;
   AssetPathEntity? _currentAlbum;
   bool _hasMoreMedia = true;
   bool _isDisposed = false;
@@ -33,7 +33,9 @@ class PickedMediaProvider extends ChangeNotifier {
   bool get canSelectMore => _pickedMedia.length < _option.maxAttachments;
 
   Future<void> init(
-      BuildContext context, PickableAttachmentOption option) async {
+    BuildContext context,
+    PickableAttachmentOption option,
+  ) async {
     _option = option;
     _pickedMedia
       ..clear()
@@ -53,21 +55,25 @@ class PickedMediaProvider extends ChangeNotifier {
       try {
         final List<AssetPathEntity> albums =
             await PhotoManager.getAssetPathList(
-          type: _option.type.requestType,
-          filterOption: FilterOptionGroup(
-            imageOption: const FilterOption(
-                sizeConstraint: SizeConstraint(minWidth: 100, minHeight: 100)),
-            videoOption: FilterOption(
-              sizeConstraint:
-                  const SizeConstraint(minWidth: 100, minHeight: 100),
-              durationConstraint:
-                  DurationConstraint(max: _option.maxVideoDuration),
-            ),
-            orders: const <OrderOption>[
-              OrderOption(type: OrderOptionType.createDate, asc: false)
-            ],
-          ),
-        );
+              type: _option.type.requestType,
+              filterOption: FilterOptionGroup(
+                imageOption: const FilterOption(
+                  sizeConstraint: SizeConstraint(minWidth: 100, minHeight: 100),
+                ),
+                videoOption: FilterOption(
+                  sizeConstraint: const SizeConstraint(
+                    minWidth: 100,
+                    minHeight: 100,
+                  ),
+                  durationConstraint: DurationConstraint(
+                    max: _option.maxVideoDuration,
+                  ),
+                ),
+                orders: const <OrderOption>[
+                  OrderOption(type: OrderOptionType.createDate, asc: false),
+                ],
+              ),
+            );
 
         if (albums.isNotEmpty) {
           _currentAlbum = albums.first;
@@ -78,8 +84,11 @@ class PickedMediaProvider extends ChangeNotifier {
           if (mounted) notifyListeners();
         }
       } catch (e, s) {
-        AppLog.error('Error loading albums: $e',
-            name: '_requestPermissionAndLoad', error: s);
+        AppLog.error(
+          'Error loading albums: $e',
+          name: '_requestPermissionAndLoad',
+          error: s,
+        );
         _initialLoading = false;
         _hasMoreMedia = false;
         if (mounted) notifyListeners();
@@ -119,9 +128,12 @@ class PickedMediaProvider extends ChangeNotifier {
       if (newMedia.isEmpty) {
         _hasMoreMedia = false;
       } else {
-        final Set<String> existingIds = _mediaList.map((AssetEntity e) => e.id).toSet();
-        final List<AssetEntity> uniqueNewMedia =
-            newMedia.where((AssetEntity m) => !existingIds.contains(m.id)).toList();
+        final Set<String> existingIds = _mediaList
+            .map((AssetEntity e) => e.id)
+            .toSet();
+        final List<AssetEntity> uniqueNewMedia = newMedia
+            .where((AssetEntity m) => !existingIds.contains(m.id))
+            .toList();
 
         if (uniqueNewMedia.isNotEmpty) {
           _mediaList.addAll(uniqueNewMedia);
@@ -134,8 +146,11 @@ class PickedMediaProvider extends ChangeNotifier {
 
       _initialLoading = false;
     } catch (e, s) {
-      AppLog.error('Error loading media page $_currentPage: $e',
-          name: 'loadMoreMedia', error: s);
+      AppLog.error(
+        'Error loading media page $_currentPage: $e',
+        name: 'loadMoreMedia',
+        error: s,
+      );
       _hasMoreMedia = false;
     } finally {
       _loadingMore = false;
@@ -161,8 +176,11 @@ class PickedMediaProvider extends ChangeNotifier {
           _thumbnailCache[asset.id] = null;
         }
       } catch (e, s) {
-        AppLog.error('Thumbnail fetch failed for ${asset.id}: $e',
-            name: 'cacheThumbnails', error: s);
+        AppLog.error(
+          'Thumbnail fetch failed for ${asset.id}: $e',
+          name: 'cacheThumbnails',
+          error: s,
+        );
         _thumbnailCache[asset.id] = null;
       }
     }
@@ -200,13 +218,20 @@ class PickedMediaProvider extends ChangeNotifier {
     return index == -1 ? null : index;
   }
 
-  void scrollToSelected(BuildContext context, int pickedIndex,
-      ScrollController controller, Map<int, GlobalKey> tileKeys) {
+  void scrollToSelected(
+    BuildContext context,
+    int pickedIndex,
+    ScrollController controller,
+    Map<int, GlobalKey> tileKeys,
+  ) {
     final AssetEntity tappedAsset = _pickedMedia[pickedIndex];
     AppLog.info(
-        'Strip tap detected - pickedIndex: $pickedIndex, assetId: ${tappedAsset.id}');
+      'Strip tap detected - pickedIndex: $pickedIndex, assetId: ${tappedAsset.id}',
+    );
 
-    final int gridIndex = _mediaList.indexWhere((AssetEntity e) => e.id == tappedAsset.id);
+    final int gridIndex = _mediaList.indexWhere(
+      (AssetEntity e) => e.id == tappedAsset.id,
+    );
     AppLog.info('Asset found at gridIndex: $gridIndex');
 
     if (gridIndex == -1) {
@@ -216,14 +241,16 @@ class PickedMediaProvider extends ChangeNotifier {
 
     final GlobalKey? key = tileKeys[gridIndex];
     AppLog.info(
-        'GlobalKey lookup - gridIndex: $gridIndex, key exists: ${key != null}, has context: ${key?.currentContext != null}');
+      'GlobalKey lookup - gridIndex: $gridIndex, key exists: ${key != null}, has context: ${key?.currentContext != null}',
+    );
 
     if (key != null && key.currentContext != null) {
       AppLog.info('✅ Widget visible, direct scroll to gridIndex: $gridIndex');
       _scrollDirectly(key);
     } else {
       AppLog.info(
-          '⚠️ Widget not visible (gridIndex: $gridIndex), jumping to position first...');
+        '⚠️ Widget not visible (gridIndex: $gridIndex), jumping to position first...',
+      );
       _scrollToPositionFirst(gridIndex, controller, tileKeys);
     }
   }
@@ -238,8 +265,11 @@ class PickedMediaProvider extends ChangeNotifier {
       );
       AppLog.info('✅ Direct scroll completed');
     } catch (e, s) {
-      AppLog.error('❌ Direct scroll failed: $e',
-          name: 'scrollToSelected', error: s);
+      AppLog.error(
+        '❌ Direct scroll failed: $e',
+        name: 'scrollToSelected',
+        error: s,
+      );
     }
   }
 
@@ -258,17 +288,21 @@ class PickedMediaProvider extends ChangeNotifier {
         final GlobalKey? currentKey = tileKeys[gridIndex];
         if (currentKey?.currentContext != null) {
           AppLog.info(
-              '✅ Widget visible on attempt $attempt! Using ensureVisible for final positioning');
+            '✅ Widget visible on attempt $attempt! Using ensureVisible for final positioning',
+          );
           _scrollDirectly(currentKey!);
           return;
         }
 
         final double currentOffset = controller.offset;
-        final double newOffset = (currentOffset + scrollStep)
-            .clamp(0.0, controller.position.maxScrollExtent);
+        final double newOffset = (currentOffset + scrollStep).clamp(
+          0.0,
+          controller.position.maxScrollExtent,
+        );
 
         AppLog.info(
-            '📍 Attempt ${attempt + 1}/$maxAttempts: Scrolling from ${currentOffset.toStringAsFixed(1)} to ${newOffset.toStringAsFixed(1)}');
+          '📍 Attempt ${attempt + 1}/$maxAttempts: Scrolling from ${currentOffset.toStringAsFixed(1)} to ${newOffset.toStringAsFixed(1)}',
+        );
 
         controller.jumpTo(newOffset);
 
@@ -276,10 +310,14 @@ class PickedMediaProvider extends ChangeNotifier {
       }
 
       AppLog.error(
-          '❌ Widget still not visible after $maxAttempts attempts. gridIndex: $gridIndex');
+        '❌ Widget still not visible after $maxAttempts attempts. gridIndex: $gridIndex',
+      );
     } catch (e, s) {
-      AppLog.error('❌ Position-first scroll failed: $e',
-          name: 'scrollToPositionFirst', error: s);
+      AppLog.error(
+        '❌ Position-first scroll failed: $e',
+        name: 'scrollToPositionFirst',
+        error: s,
+      );
     }
   }
 
@@ -302,7 +340,8 @@ class PickedMediaProvider extends ChangeNotifier {
               ? AttachmentType.image
               : AttachmentType.video;
           attachments.add(
-              PickedAttachment(file: file, type: type, selectedMedia: media));
+            PickedAttachment(file: file, type: type, selectedMedia: media),
+          );
         }
       }
 
@@ -314,8 +353,11 @@ class PickedMediaProvider extends ChangeNotifier {
         _showErrorSnackbar(context, 'Failed to process selected files');
       }
     } catch (e, s) {
-      AppLog.error('Error preparing attachments: $e',
-          name: 'onSubmit', error: s);
+      AppLog.error(
+        'Error preparing attachments: $e',
+        name: 'onSubmit',
+        error: s,
+      );
       if (mounted) _showErrorSnackbar(context, 'Error preparing files');
     } finally {
       _loadingMore = false;

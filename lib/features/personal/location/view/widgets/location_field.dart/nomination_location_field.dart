@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../../../../../../core/sources/api_call.dart';
-import '../../../../../../core/widgets/custom_dropdown.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+import '../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../marketplace/domain/enum/radius_type.dart';
 import '../../../domain/entities/location_entity.dart';
-import '../../../domain/entities/nomaintioon_location_entity/nomination_location_entity.dart';
 import '../../../domain/enums/map_display_mode.dart';
 import '../../../domain/usecase/location_name_usecase.dart';
 import '../maps/flutter_location_map.dart';
@@ -19,10 +19,10 @@ class NominationLocationField extends StatefulWidget {
     required this.onLocationSelected,
     required this.selectedLatLng,
     required this.validator,
+    this.selectedLocation,
     this.title = '',
     this.hint = '',
     super.key,
-    this.initialText,
     this.prefixIcon,
     this.showSuffixIcon = false,
     this.icon,
@@ -31,15 +31,15 @@ class NominationLocationField extends StatefulWidget {
     this.circleRadius,
     this.radiusType = RadiusType.worldwide,
   });
+  final LocationEntity? selectedLocation;
 
   final void Function(LocationEntity, LatLng) onLocationSelected;
-  final String? initialText;
   final IconData? prefixIcon;
   final bool? showSuffixIcon;
   final Widget? icon;
   final MapDisplayMode displayMode;
-  final String title;
-  final String hint;
+  final String? title;
+  final String? hint;
   final bool? showMapCircle;
   final double? circleRadius;
   final LatLng? selectedLatLng;
@@ -52,15 +52,34 @@ class NominationLocationField extends StatefulWidget {
 }
 
 class _NominationLocationFieldState extends State<NominationLocationField> {
+  TextEditingController? _typeAheadController;
   @override
   void didUpdateWidget(covariant NominationLocationField oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // If selectedLatLng changed or became null, reset controller and map
-
-    if (widget.initialText == null || widget.initialText!.isEmpty) {
-      setState(() {
-        _controller.clear();
+    // Sync controller and map with selectedLocation if it changes
+    final LocationEntity? selected = widget.selectedLocation;
+    final LocationEntity? oldSelected = oldWidget.selectedLocation;
+    if (selected != null &&
+        (oldSelected == null || selected.address != oldSelected.address)) {
+      if (_typeAheadController != null) {
+        _typeAheadController!.text = selected.address ?? '';
+        _typeAheadController!.selection = TextSelection.collapsed(
+          offset: _typeAheadController!.text.length,
+        );
+      }
+      _controller.text = selected.address ?? '';
+      _selectedLatLng = LatLng(selected.latitude, selected.longitude);
+      Future<void>.microtask(() {
+        try {
+          _mapController.move(_selectedLatLng, 15);
+        } catch (_) {}
       });
+    } else if (selected == null && oldSelected != null) {
+      // Clear controller when selectedLocation is reset to null
+      if (_typeAheadController != null) {
+        _typeAheadController!.clear();
+      }
+      _controller.clear();
     }
   }
 
@@ -73,59 +92,43 @@ class _NominationLocationFieldState extends State<NominationLocationField> {
   @override
   void initState() {
     super.initState();
-    _selectedLatLng = widget.selectedLatLng ?? LocalAuth.latlng;
-    if (widget.initialText?.isNotEmpty == true) {
-      _controller.text = widget.initialText!;
+    if (widget.selectedLocation != null) {
+      _controller.text = widget.selectedLocation!.address ?? '';
+      _selectedLatLng = LatLng(
+        widget.selectedLocation!.latitude,
+        widget.selectedLocation!.longitude,
+      );
+    } else {
+      _selectedLatLng = widget.selectedLatLng ?? LocalAuth.latlng;
     }
   }
 
   void setLoading(bool val) {}
 
-  Future<List<NominationLocationEntity>> fetchSuggestions(String query) async {
-    if (query.trim().isEmpty) return <NominationLocationEntity>[];
+  Future<List<LocationEntity>> fetchSuggestions(String query) async {
+    if (query.trim().isEmpty) return <LocationEntity>[];
     setLoading(true);
-
-    // Call your usecase directly
-    final DataState<List<NominationLocationEntity>> result =
+    final DataState<List<LocationEntity>> result =
         await NominationLocationUsecase(locator()).call(query);
-
-    List<NominationLocationEntity> suggestions = <NominationLocationEntity>[];
-    if (result is DataSuccess<List<NominationLocationEntity>>) {
-      suggestions = result.entity ?? <NominationLocationEntity>[];
+    List<LocationEntity> suggestions = <LocationEntity>[];
+    if (result is DataSuccess<List<LocationEntity>>) {
+      suggestions = result.entity ?? <LocationEntity>[];
     }
-
     setLoading(false);
     return suggestions;
   }
 
-  void _handleSuggestionSelected(NominationLocationEntity suggestion) {
-    final double lat = suggestion.lat;
-    final double lon = suggestion.lon;
-    final LatLng latLng = LatLng(lat, lon);
-
-    final LocationEntity location = LocationEntity(
-      id: suggestion.placeId,
-      title: suggestion.address?.city ??
-          suggestion.address?.state ??
-          suggestion.displayName.split(',').first,
-      address: suggestion.displayName,
-      url: 'https://maps.google.com/?q=$lat,$lon',
-      latitude: lat,
-      longitude: lon,
-    );
-
+  void _handleSuggestionSelected(LocationEntity suggestion) {
+    final LatLng latLng = LatLng(suggestion.latitude, suggestion.longitude);
     setState(() {
       _selectedLatLng = latLng;
-      _controller.text = suggestion.displayName;
     });
-
     Future<void>.microtask(() {
       try {
         _mapController.move(latLng, 15);
       } catch (_) {}
     });
-
-    widget.onLocationSelected(location, latLng);
+    widget.onLocationSelected(suggestion, latLng);
   }
 
   bool _shouldShowMap() {
@@ -145,46 +148,63 @@ class _NominationLocationFieldState extends State<NominationLocationField> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        CustomDropdown<NominationLocationEntity>(
-          prefixIcon: widget.prefixIcon,
-          sufixIcon: widget.showSuffixIcon,
-          selectedItem: null,
-          validator: widget.validator,
-          title: widget.title != '' ? widget.title : '',
-          items: const <DropdownMenuItem<NominationLocationEntity>>[],
-          initialText: widget.initialText,
-          hint: widget.hint != '' ? widget.hint : 'location'.tr(),
-          searchBy: (DropdownMenuItem<NominationLocationEntity> item) =>
-              item.value?.displayName ?? '',
-          onSearchChanged: (String query) async {
-            if (_debounce?.isActive ?? false) _debounce?.cancel();
-            final Completer<List<DropdownMenuItem<NominationLocationEntity>>>
-                completer =
-                Completer<List<DropdownMenuItem<NominationLocationEntity>>>();
-
-            _debounce = Timer(const Duration(milliseconds: 500), () async {
-              if (query.isEmpty) {
-                completer
-                    .complete(<DropdownMenuItem<NominationLocationEntity>>[]);
-                return;
-              }
-              final List<NominationLocationEntity> results =
-                  await fetchSuggestions(query);
-              final List<DropdownMenuItem<NominationLocationEntity>> items =
-                  results.map((NominationLocationEntity loc) {
-                return DropdownMenuItem<NominationLocationEntity>(
-                  value: loc,
-                  child: Text(loc.displayName,
-                      maxLines: 2, style: TextTheme.of(context).labelSmall),
+        TypeAheadField<LocationEntity>(
+          suggestionsCallback: (String pattern) async {
+            // Prevent suggestions when field is reset/empty
+            if ((_typeAheadController?.text ?? '').isEmpty) {
+              return <LocationEntity>[];
+            }
+            return await fetchSuggestions(pattern);
+          },
+          builder:
+              (
+                BuildContext context,
+                TextEditingController controller,
+                FocusNode focusNode,
+              ) {
+                _typeAheadController = controller;
+                // Show selected value if present
+                if (widget.selectedLocation != null &&
+                    controller.text.isEmpty) {
+                  controller.text = widget.selectedLocation!.address ?? '';
+                }
+                return CustomTextFormField(
+                  hint: widget.hint ?? 'location'.tr(),
+                  labelText: widget.title ?? '',
+                  controller: controller,
+                  focusNode: focusNode,
+                  onTap: () {
+                    controller.selection = TextSelection(
+                      baseOffset: 0,
+                      extentOffset: controller.text.length,
+                    );
+                  },
                 );
-              }).toList();
-              completer.complete(items);
-            });
-            return completer.future;
+              },
+          itemBuilder: (BuildContext context, LocationEntity suggestion) {
+            return ListTile(
+              leading: const Icon(Icons.location_on),
+              title: Text(
+                suggestion.address ?? '',
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextTheme.of(context).labelSmall,
+              ),
+            );
           },
-          onChanged: (NominationLocationEntity? suggestion) {
-            if (suggestion != null) _handleSuggestionSelected(suggestion);
+          onSelected: (LocationEntity suggestion) {
+            if (_typeAheadController != null) {
+              _typeAheadController!.text = suggestion.address ?? '';
+              _typeAheadController!.selection = TextSelection.collapsed(
+                offset: _typeAheadController!.text.length,
+              );
+            }
+            _handleSuggestionSelected(suggestion);
           },
+          emptyBuilder: (BuildContext context) => Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('no_data_found'.tr()),
+          ),
         ),
         if (_shouldShowMap()) const SizedBox(height: 16),
         if (_shouldShowMap())

@@ -8,7 +8,7 @@ part of 'status_type.dart';
 
 class StatusTypeAdapter extends TypeAdapter<StatusType> {
   @override
-  final int typeId = 35;
+  final typeId = 35;
 
   @override
   StatusType read(BinaryReader reader) {
@@ -53,49 +53,34 @@ class StatusTypeAdapter extends TypeAdapter<StatusType> {
     switch (obj) {
       case StatusType.pending:
         writer.writeByte(0);
-        break;
       case StatusType.inprogress:
         writer.writeByte(11);
-        break;
       case StatusType.inActive:
         writer.writeByte(12);
-        break;
       case StatusType.blocked:
         writer.writeByte(21);
-        break;
       case StatusType.rejected:
         writer.writeByte(22);
-        break;
       case StatusType.cancelled:
         writer.writeByte(23);
-        break;
       case StatusType.canceled:
         writer.writeByte(24);
-        break;
       case StatusType.accepted:
         writer.writeByte(31);
-        break;
       case StatusType.completed:
         writer.writeByte(32);
-        break;
       case StatusType.delivered:
         writer.writeByte(33);
-        break;
       case StatusType.shipped:
         writer.writeByte(34);
-        break;
       case StatusType.active:
         writer.writeByte(35);
-        break;
       case StatusType.onHold:
         writer.writeByte(36);
-        break;
       case StatusType.processing:
         writer.writeByte(37);
-        break;
       case StatusType.paid:
         writer.writeByte(38);
-        break;
     }
   }
 

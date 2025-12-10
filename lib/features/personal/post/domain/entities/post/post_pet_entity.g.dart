@@ -8,7 +8,7 @@ part of 'post_pet_entity.dart';
 
 class PostPetEntityAdapter extends TypeAdapter<PostPetEntity> {
   @override
-  final int typeId = 70;
+  final typeId = 70;
 
   @override
   PostPetEntity read(BinaryReader reader) {

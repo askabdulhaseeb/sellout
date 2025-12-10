@@ -8,7 +8,7 @@ part of 'supporter_detail_entity.dart';
 
 class SupporterDetailEntityAdapter extends TypeAdapter<SupporterDetailEntity> {
   @override
-  final int typeId = 36;
+  final typeId = 36;
 
   @override
   SupporterDetailEntity read(BinaryReader reader) {

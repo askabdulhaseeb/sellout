@@ -8,10 +8,57 @@ import '../../views/params/add_address_param.dart';
 
 abstract interface class AddAddressRemoteSource {
   Future<DataState<bool>> addAddress(AddressParams params);
+  Future<DataState<bool>> addSellingAddress(AddressParams params);
   Future<DataState<bool>> updateAddress(AddressParams params);
 }
 
 class AddAddressRemoteSourceImpl extends AddAddressRemoteSource {
+  @override
+  Future<DataState<bool>> addSellingAddress(AddressParams params) async {
+    try {
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: '/user/add/address',
+        requestType: ApiRequestType.patch,
+        isAuth: true,
+        body: json.encode(params.toMap()),
+      );
+      if (result is DataSuccess<bool>) {
+        AppLog.info(
+          'address added successfully ${result.data.toString()}',
+          name: 'AddAddressRemoteSourceImpl.addSellingAddress - success',
+        );
+        final Map<String, dynamic> decoded = jsonDecode(result.data ?? '{}');
+        final List<AddressEntity> updatedAddressList =
+            (decoded['updatedAddress'] as List<dynamic>)
+                .map((e) => AddressModel.fromJson(e as Map<String, dynamic>))
+                .toList();
+        // Use updateOrAddAddress for the last/added address
+        if (updatedAddressList.isNotEmpty) {
+          await LocalAuth().updateOrAddAddress(updatedAddressList);
+        }
+        return DataSuccess<bool>(result.data ?? '', true);
+      } else {
+        AppLog.error(
+          result.exception?.message ?? 'something_wrong'.tr(),
+          name: 'AddAddressRemoteSourceImpl.addSellingAddress - else',
+        );
+        return DataFailer<bool>(
+          result.exception ??
+              CustomException(
+                result.exception?.reason ?? 'something_wrong'.tr(),
+              ),
+        );
+      }
+    } catch (e, stc) {
+      AppLog.error(
+        e.toString(),
+        name: 'AddAddressRemoteSourceImpl.addSellingAddress - catch',
+        stackTrace: stc,
+      );
+      return DataFailer<bool>(CustomException(e.toString()));
+    }
+  }
+
   @override
   Future<DataState<bool>> addAddress(AddressParams params) async {
     try {
@@ -22,8 +69,10 @@ class AddAddressRemoteSourceImpl extends AddAddressRemoteSource {
         body: json.encode(params.toMap()),
       );
       if (result is DataSuccess<bool>) {
-        AppLog.info('address added successfully',
-            name: 'AddAddressRemoteSourceImpl.addAddress - success');
+        AppLog.info(
+          'address added successfully',
+          name: 'AddAddressRemoteSourceImpl.addAddress - success',
+        );
         final Map<String, dynamic> decoded = jsonDecode(result.data ?? '{}');
         final List<AddressEntity> updatedAddressList =
             (decoded['updatedAddress'] as List<dynamic>)
@@ -31,25 +80,28 @@ class AddAddressRemoteSourceImpl extends AddAddressRemoteSource {
                 .toList();
         // Use updateOrAddAddress for the last/added address
         if (updatedAddressList.isNotEmpty) {
-          await LocalAuth().updateOrAddAddress(updatedAddressList.last);
+          await LocalAuth().updateOrAddAddress(updatedAddressList);
         }
         return DataSuccess<bool>(result.data ?? '', true);
       } else {
-        AppLog.error(result.exception?.message ?? 'something_wrong'.tr(),
-            name: 'AddAddressRemoteSourceImpl.addAddress - else');
+        AppLog.error(
+          result.exception?.message ?? 'something_wrong'.tr(),
+          name: 'AddAddressRemoteSourceImpl.addAddress - else',
+        );
         return DataFailer<bool>(
           result.exception ??
               CustomException(
-                  result.exception?.reason ?? 'something_wrong'.tr()),
+                result.exception?.reason ?? 'something_wrong'.tr(),
+              ),
         );
       }
     } catch (e, stc) {
-      AppLog.error(e.toString(),
-          name: 'AddAddressRemoteSourceImpl.addAddress - catch',
-          stackTrace: stc);
-      return DataFailer<bool>(
-        CustomException(e.toString()),
+      AppLog.error(
+        e.toString(),
+        name: 'AddAddressRemoteSourceImpl.addAddress - catch',
+        stackTrace: stc,
       );
+      return DataFailer<bool>(CustomException(e.toString()));
     }
   }
 
@@ -63,8 +115,10 @@ class AddAddressRemoteSourceImpl extends AddAddressRemoteSource {
         body: json.encode(params.toMap()),
       );
       if (result is DataSuccess<bool>) {
-        AppLog.info(result.data.toString(),
-            name: 'AddAddressRemoteSourceImpl.updateAddress');
+        AppLog.info(
+          result.data.toString(),
+          name: 'AddAddressRemoteSourceImpl.updateAddress',
+        );
         final Map<String, dynamic> decoded = jsonDecode(result.data ?? '{}');
         final List<AddressEntity> updatedAddressList =
             (decoded['updatedAddress'] as List<dynamic>)
@@ -72,25 +126,28 @@ class AddAddressRemoteSourceImpl extends AddAddressRemoteSource {
                 .toList();
         // Use updateOrAddAddress for the last/updated address
         if (updatedAddressList.isNotEmpty) {
-          await LocalAuth().updateOrAddAddress(updatedAddressList.last);
+          await LocalAuth().updateOrAddAddress(updatedAddressList);
         }
         return DataSuccess<bool>(result.data ?? '', true);
       } else {
-        AppLog.error(result.exception?.message ?? 'something_wrong'.tr(),
-            name: 'AddAddressRemoteSourceImpl.updateAddress - else');
+        AppLog.error(
+          result.exception?.message ?? 'something_wrong'.tr(),
+          name: 'AddAddressRemoteSourceImpl.updateAddress - else',
+        );
         return DataFailer<bool>(
           result.exception ??
               CustomException(
-                  result.exception?.reason ?? 'something_wrong'.tr()),
+                result.exception?.reason ?? 'something_wrong'.tr(),
+              ),
         );
       }
     } catch (e, stc) {
-      AppLog.error(e.toString(),
-          name: 'AddAddressRemoteSourceImpl.updateAddress - catch',
-          stackTrace: stc);
-      return DataFailer<bool>(
-        CustomException(e.toString()),
+      AppLog.error(
+        e.toString(),
+        name: 'AddAddressRemoteSourceImpl.updateAddress - catch',
+        stackTrace: stc,
       );
+      return DataFailer<bool>(CustomException(e.toString()));
     }
   }
 }

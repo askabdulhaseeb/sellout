@@ -16,12 +16,11 @@ abstract interface class OrderByUserRemote {
 class OrderByUserRemoteImpl implements OrderByUserRemote {
   @override
   Future<DataState<List<OrderEntity>>> getOrderByQuery(
-      GetOrderParams? params) async {
+    GetOrderParams? params,
+  ) async {
     final String endpoint = params?.endpoint ?? '';
     if (endpoint.isEmpty) {
-      return DataFailer<List<OrderEntity>>(
-        CustomException('invalid_endpoint'),
-      );
+      return DataFailer<List<OrderEntity>>(CustomException('invalid_endpoint'));
     }
 
     try {
@@ -35,10 +34,11 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
         final List<OrderEntity> orders = ordersJson
             .where((dynamic e) => e != null)
             .map<OrderEntity>(
-                (dynamic e) => OrderModel.fromJson(e as Map<String, dynamic>))
+              (dynamic e) => OrderModel.fromJson(e as Map<String, dynamic>),
+            )
             .toList();
 
-        await LocalOrders().saveAll(orders);
+        await LocalOrders().saveAllOrders(orders);
         return DataSuccess<List<OrderEntity>>(local.encodedData, orders);
       }
       final DataState<String> result = await ApiCall<String>().call(
@@ -53,15 +53,17 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
         final List<OrderEntity> orders = ordersJson
             .where((dynamic e) => e != null)
             .map<OrderEntity>(
-                (dynamic e) => OrderModel.fromJson(e as Map<String, dynamic>))
+              (dynamic e) => OrderModel.fromJson(e as Map<String, dynamic>),
+            )
             .toList();
 
         // save fresh response to cache
         await LocalRequestHistory().save(
+          endpoint,
           ApiRequestEntity(url: endpoint, encodedData: raw),
         );
 
-        await LocalOrders().saveAll(orders);
+        await LocalOrders().saveAllOrders(orders);
         return DataSuccess<List<OrderEntity>>(raw, orders);
       } else {
         return DataFailer<List<OrderEntity>>(
@@ -97,10 +99,11 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
         final List<OrderEntity> orders = ordersJson
             .where((dynamic e) => e != null)
             .map<OrderEntity>(
-                (dynamic e) => OrderModel.fromJson(e as Map<String, dynamic>))
+              (dynamic e) => OrderModel.fromJson(e as Map<String, dynamic>),
+            )
             .toList();
         // 🔄 Optional: still save locally
-        await LocalOrders().save(orders.first);
+        await LocalOrders().save(orders.first.orderId, orders.first);
 
         return DataSuccess<List<OrderEntity>>(raw, orders);
       } else {
@@ -124,8 +127,9 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
   @override
   Future<DataState<bool>> createOrder(List<OrderModel> orderData) async {
     try {
-      final List<Map<String, dynamic>> jsonOrders =
-          orderData.map((OrderModel e) => e.toJson()).toList();
+      final List<Map<String, dynamic>> jsonOrders = orderData
+          .map((OrderModel e) => e.toJson())
+          .toList();
 
       final DataState<bool> result = await ApiCall<bool>().call(
         endpoint: '/orders/create',
@@ -142,13 +146,13 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
         );
       }
     } catch (e, stc) {
-      AppLog.error(e.toString(),
-          name: 'PostByUserRemoteImpl.createOrder - catch',
-          error: e,
-          stackTrace: stc);
-      return DataFailer<bool>(
-        CustomException('Failed to create order'),
+      AppLog.error(
+        e.toString(),
+        name: 'PostByUserRemoteImpl.createOrder - catch',
+        error: e,
+        stackTrace: stc,
       );
+      return DataFailer<bool>(CustomException('Failed to create order'));
     }
   }
 
@@ -172,7 +176,7 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
             orderStatus: params.status,
           );
 
-          await LocalOrders().save(updatedOrder);
+          await LocalOrders().save(updatedOrder.orderId, updatedOrder);
         }
 
         return DataSuccess<bool>(result.data ?? '', true);
@@ -192,9 +196,7 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
         error: e,
         stackTrace: stc,
       );
-      return DataFailer<bool>(
-        CustomException('Failed to update order'),
-      );
+      return DataFailer<bool>(CustomException('Failed to update order'));
     }
   }
 }

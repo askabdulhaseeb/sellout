@@ -8,7 +8,7 @@ part of 'country_entity.dart';
 
 class CountryEntityAdapter extends TypeAdapter<CountryEntity> {
   @override
-  final int typeId = 51;
+  final typeId = 51;
 
   @override
   CountryEntity read(BinaryReader reader) {
@@ -84,7 +84,7 @@ class CountryEntityAdapter extends TypeAdapter<CountryEntity> {
 
 class NumberFormatEntityAdapter extends TypeAdapter<NumberFormatEntity> {
   @override
-  final int typeId = 84;
+  final typeId = 84;
 
   @override
   NumberFormatEntity read(BinaryReader reader) {
@@ -121,7 +121,7 @@ class NumberFormatEntityAdapter extends TypeAdapter<NumberFormatEntity> {
 
 class StateEntityAdapter extends TypeAdapter<StateEntity> {
   @override
-  final int typeId = 85;
+  final typeId = 85;
 
   @override
   StateEntity read(BinaryReader reader) {

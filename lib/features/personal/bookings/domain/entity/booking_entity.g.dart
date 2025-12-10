@@ -8,7 +8,7 @@ part of 'booking_entity.dart';
 
 class BookingEntityAdapter extends TypeAdapter<BookingEntity> {
   @override
-  final int typeId = 49;
+  final typeId = 49;
 
   @override
   BookingEntity read(BinaryReader reader) {
@@ -19,7 +19,7 @@ class BookingEntityAdapter extends TypeAdapter<BookingEntity> {
     return BookingEntity(
       businessID: fields[0] as String?,
       serviceID: fields[1] as String?,
-      bookingID: fields[2] as String?,
+      bookingID: fields[2] as String,
       customerID: fields[3] as String,
       employeeID: fields[4] as String,
       trackingID: fields[5] as String?,
@@ -37,7 +37,7 @@ class BookingEntityAdapter extends TypeAdapter<BookingEntity> {
   @override
   void write(BinaryWriter writer, BookingEntity obj) {
     writer
-      ..writeByte(15)
+      ..writeByte(14)
       ..writeByte(0)
       ..write(obj.businessID)
       ..writeByte(1)
@@ -64,8 +64,6 @@ class BookingEntityAdapter extends TypeAdapter<BookingEntity> {
       ..write(obj.createdAt)
       ..writeByte(12)
       ..write(obj.updatedAt)
-      ..writeByte(13)
-      ..write(obj.inHiveAt)
       ..writeByte(99)
       ..write(obj.notes);
   }

@@ -13,7 +13,6 @@ import '../../../domain/entities/color_options_entity.dart';
 import '../../widgets/core/delivery_section/enums/delivery_payer.dart';
 
 class AddListingFormState {
-
   // Constructor
   AddListingFormState() {
     _initializeDefaults();
@@ -33,7 +32,6 @@ class AddListingFormState {
   final TextEditingController bathroom = TextEditingController();
   final TextEditingController location = TextEditingController();
   DiscountEntity? discounts;
-
   final TextEditingController packageHeight = TextEditingController();
   final TextEditingController packageWidth = TextEditingController();
   final TextEditingController packageLength = TextEditingController();
@@ -71,9 +69,8 @@ class AddListingFormState {
   String? bodyType;
   String? vehicleCategory;
   String? mileageUnit;
-  ColorOptionEntity? vehicleColor;
-  String? interiorColor;
-  String? exteriorColor;
+  ColorOptionEntity? interiorColor;
+  ColorOptionEntity? exteriorColor;
 
   // Property state
   bool hasGarden = true;
@@ -176,7 +173,6 @@ class AddListingFormState {
     bodyType = null;
     vehicleCategory = null;
     mileageUnit = null;
-    vehicleColor = null;
   }
 
   void _resetPropertyState() {

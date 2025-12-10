@@ -25,44 +25,50 @@ class BusinessProfileScreen extends StatelessWidget {
         PersonalScaffold(
           body: Stack(
             children: <Widget>[
-              
               SingleChildScrollView(
                 controller: scrollController,
                 child: FutureBuilder<BusinessEntity?>(
-                  future: Provider.of<BusinessPageProvider>(context, listen: false)
-                      .getBusinessByID(businessID),
+                  future: Provider.of<BusinessPageProvider>(
+                    context,
+                    listen: false,
+                  ).getBusinessByID(businessID),
                   initialData: LocalBusiness().business(businessID),
-                  builder: (
-                    BuildContext context,
-                    AsyncSnapshot<BusinessEntity?> snapshot,
-                  ) {
-                    final BusinessEntity? business =
-                        snapshot.data ?? LocalBusiness().business(businessID);
-                    return business == null
-                        ? Center(child: const Text('something_wrong').tr())
-                        : Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              BusinessPageHeaderSection(business: business),
-                              BusinessPageScoreSection(business: business),
-                              BusinessPageTableSection(business: business),
-                              BusinessPageTapPageSection(
-                                business: business,
-                                scrollController: scrollController,
-                              ),
-                            ],
-                          );
-                  },
+                  builder:
+                      (
+                        BuildContext context,
+                        AsyncSnapshot<BusinessEntity?> snapshot,
+                      ) {
+                        final BusinessEntity? business =
+                            snapshot.data ??
+                            LocalBusiness().business(businessID);
+                        return business == null
+                            ? Center(child: const Text('something_wrong').tr())
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  BusinessPageHeaderSection(business: business),
+                                  BusinessPageScoreSection(business: business),
+                                  BusinessPageTableSection(business: business),
+                                  BusinessPageTapPageSection(
+                                    business: business,
+                                    scrollController: scrollController,
+                                  ),
+                                ],
+                              );
+                      },
                 ),
               ),
             ],
           ),
-          bottomNavigationBar: const BusinessBottomNavBar(),
+          bottomNavigationBar: const SafeArea(
+            child:  BusinessBottomNavBar(),
+          ),
         ),
         ComingSoonOverlay(
-            title: 'coming_soon'.tr(),
-            subtitle: 'services_coming_soon_subtitle'.tr(),
-            icon: CupertinoIcons.hourglass),
+          title: 'coming_soon'.tr(),
+          subtitle: 'services_coming_soon_subtitle'.tr(),
+          icon: CupertinoIcons.hourglass,
+        ),
       ],
     );
   }

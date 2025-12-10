@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import '../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import 'message_last_evaluated_key_entity.dart';
 part 'getted_message_entity.g.dart';
@@ -24,8 +24,9 @@ class GettedMessageEntity {
   final DateTime inHiveAt;
 
   List<MessageEntity> sortedMessage() {
-    messages.sort((MessageEntity a, MessageEntity b) =>
-        b.createdAt.compareTo(a.createdAt));
+    messages.sort(
+      (MessageEntity a, MessageEntity b) => b.createdAt.compareTo(a.createdAt),
+    );
     return messages;
   }
 

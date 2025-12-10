@@ -1,31 +1,21 @@
 import 'package:flutter/foundation.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import '../../../../../core/enums/core/status_type.dart';
 import '../../../../../core/extension/string_ext.dart';
 import '../../../../../core/sources/data_state.dart';
+import '../../../../../core/sources/local/local_hive_box.dart';
 import '../../../../../core/utilities/app_string.dart';
 import '../../domain/entity/booking_entity.dart';
 
-class LocalBooking {
-  static final String boxTitle = AppStrings.localBookingsBox;
-  static Box<BookingEntity> get _box => Hive.box<BookingEntity>(boxTitle);
+class LocalBooking extends LocalHiveBox<BookingEntity> {
+  @override
+  String get boxName => AppStrings.localBookingsBox;
 
-  static Future<Box<BookingEntity>> get openBox async =>
-      await Hive.openBox<BookingEntity>(boxTitle);
-
-  Future<Box<BookingEntity>> refresh() async {
-    final bool isOpen = Hive.isBoxOpen(boxTitle);
-    if (isOpen) {
-      return _box;
-    } else {
-      return await Hive.openBox<BookingEntity>(boxTitle);
-    }
-  }
-
-  Future<void> save(BookingEntity booking) async {
-    await _box.put(booking.bookingID, booking);
-  }
+  /// Bookings contain appointment and personal data - encrypt them.
+  @override
+  bool get requiresEncryption => true;
+  
+  Box<BookingEntity> get _box => box;
 
   Future<void> update(String bookingId, Map<String, dynamic> metadata) async {
     final BookingEntity? existing = _box.get(bookingId);
@@ -45,12 +35,6 @@ class LocalBooking {
       debugPrint('booking updated');
     }
   }
-
-  Future<void> clear() async => await _box.clear();
-  // BookingEntity entity(String value) => _box.values.firstWhere(
-  //       (BookingEntity element) => element.cartID == value,
-  //       orElse: () => CartModel(),
-  //     );
 
   DataState<BookingEntity?> state(String value) {
     final BookingEntity? entity = _box.get(value);

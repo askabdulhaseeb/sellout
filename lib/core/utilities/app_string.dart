@@ -338,7 +338,25 @@ class AppStrings {
       'assets/audio/share_recording_sound.mp3';
   static const String recordingStartSound =
       'assets/audio/start_recording_sound.mp3';
-
+  // MARK: Document Files
+  static const String privacyPolicy =
+      'assets/docs/privacy_security/privacy_policy.pdf';
+  static const String termsAndConditionsDocument =
+      'assets/docs/privacy_security/sellOut_cookies_policy.pdf';
+  static const String facialScanPrivacyNotice =
+      'assets/docs/privacy_security/facial_scan_privacy_notice.pdf';
+  static const String refundAndCancellationPolicy =
+      'assets/docs/seller-and_consumer_rights/refund_and_cancellation_policy.pdf';
+  static const String sellingPracticesPolicy =
+      'assets/docs/seller-and_consumer_rights/selling_practices_policy.pdf';
+  static const String sellOutDisputeResolutionPolicy =
+      'assets/docs/seller-and_consumer_rights/sellOut_dispute_resolution_policy.pdf';
+  static const String communityStandardsUserInteractionAndConductPolicy =
+      'assets/docs/user_agreement_platform_rules/community_standards_user_interaction_and_Conduct_policy.pdf';
+  static const String termsAndConditionsUserAgreement =
+      'assets/docs/user_agreement_platform_rules/terms_and_conditions_user_agreement.pdf';
+  static const String intellectualPropertyAndCopyrightPolicy =
+      'assets/docs/intellectual_property/intellectual_property_and_copyright_policy.pdf';
   //app LOGO
   static String get selloutLogo => 'assets/images/sellout_logo.png';
 

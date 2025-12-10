@@ -18,21 +18,24 @@ import '../../domain/params/two_factor_params.dart';
 import '../screens/verify_two_factor_screen.dart';
 
 class SigninProvider extends ChangeNotifier {
-  SigninProvider(this.loginUsecase, this.verifyTwoFactorUseCase,
-      this.resendTwoFactorUseCase);
+  SigninProvider(
+    this.loginUsecase,
+    this.verifyTwoFactorUseCase,
+    this.resendTwoFactorUseCase,
+  );
 
   final LoginUsecase loginUsecase;
   final VerifyTwoFactorUseCase verifyTwoFactorUseCase;
   final ResendTwoFactorUseCase resendTwoFactorUseCase;
   //
   final TextEditingController email = TextEditingController(
-    text: kDebugMode ? 'ahmershurahbeeljan@gmail.com' : '',
+    text: kDebugMode ? 'ahmershurahbeeljan+test@gmail.com' : '',
   );
   //'hammadafzaal06@gmail.com'
   final TextEditingController password = TextEditingController(
-    text: kDebugMode ? 'Shurahbeel_986' : '',
+    text: kDebugMode ? 'Shurahbeel_986@' : '',
   );
-//'Hammad@786'
+  //'Hammad@786'
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
@@ -53,10 +56,7 @@ class SigninProvider extends ChangeNotifier {
     setLoading(true);
     try {
       final DataState<bool> result = await loginUsecase(
-        LoginParams(
-          email: email.text,
-          password: password.text,
-        ),
+        LoginParams(email: email.text, password: password.text),
       );
       if (result is DataSuccess<bool>) {
         debugPrint('Signin Ready');
@@ -65,13 +65,11 @@ class SigninProvider extends ChangeNotifier {
           setSessonKey(jsonMap['session_key']);
           AppNavigator.pushNamed(VerifyTwoFactorScreen.routeName);
         } else if (LocalAuth.uid == null) {
-          AppSnackBar.showSnackBar(context, 'signin_failed'.tr());
+          AppSnackBar.show('signin_failed'.tr());
         } else if (LocalAuth.uid != null &&
             LocalAuth.currentUser?.otpVerified == false) {
           setLoading(false);
-          await AppNavigator.pushNamed(
-            SignupScreen.routeName,
-          );
+          await AppNavigator.pushNamed(SignupScreen.routeName);
         } else {
           setLoading(false);
           await AppNavigator.pushNamedAndRemoveUntil(
@@ -87,13 +85,18 @@ class SigninProvider extends ChangeNotifier {
           error: result,
         );
         AppSnackBar.showSnackBar(
-            context, result.exception?.reason ?? 'something_wrong'.tr());
+          context,
+          result.exception?.reason ?? 'something_wrong'.tr(),
+        );
         // Show error message
       }
     } catch (e) {
       debugPrint(e.toString());
-      AppLog.error(e.toString(),
-          name: 'SigninProvider.signIn - Catch', error: e);
+      AppLog.error(
+        e.toString(),
+        name: 'SigninProvider.signIn - Catch',
+        error: e,
+      );
     }
     setLoading(false);
   }
@@ -102,7 +105,8 @@ class SigninProvider extends ChangeNotifier {
     setLoading(true);
     try {
       final DataState<bool> result = await verifyTwoFactorUseCase(
-          TwoFactorParams(code: twoFACode, sessionKey: sessionKey));
+        TwoFactorParams(code: twoFACode, sessionKey: sessionKey),
+      );
       if (result is DataSuccess<bool>) {
         debugPrint('two factor authentication Ready');
         final Map<String, dynamic> jsonMap = jsonDecode(result.data ?? '');
@@ -126,8 +130,11 @@ class SigninProvider extends ChangeNotifier {
       }
     } catch (e) {
       debugPrint(e.toString());
-      AppLog.error(e.toString(),
-          name: 'SigninProvider.verifyTwoFactorAuth - Catch', error: e);
+      AppLog.error(
+        e.toString(),
+        name: 'SigninProvider.verifyTwoFactorAuth - Catch',
+        error: e,
+      );
     }
     setLoading(false);
     return;
@@ -138,7 +145,9 @@ class SigninProvider extends ChangeNotifier {
 
     try {
       TwoFactorParams params = TwoFactorParams(
-          deviceId: await DeviceInfoUtil.getDeviceId(), sessionKey: sessionKey);
+        deviceId: await DeviceInfoUtil.getDeviceId(),
+        sessionKey: sessionKey,
+      );
       debugPrint(params.resendCodeMap().toString());
       final DataState<bool> result = await resendTwoFactorUseCase(params);
       if (result is DataSuccess<bool>) {
@@ -158,8 +167,11 @@ class SigninProvider extends ChangeNotifier {
       }
     } catch (e) {
       debugPrint(e.toString());
-      AppLog.error(e.toString(),
-          name: 'SigninProvider.resendCode - Catch', error: e);
+      AppLog.error(
+        e.toString(),
+        name: 'SigninProvider.resendCode - Catch',
+        error: e,
+      );
     }
     setLoading(false);
     return;

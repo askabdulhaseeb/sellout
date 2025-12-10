@@ -1,63 +1,35 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import '../../../../../../core/sources/data_state.dart';
+import '../../../../../../core/sources/local/local_hive_box.dart';
 import '../../../../../../core/utilities/app_string.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../domain/entities/post/post_entity.dart';
 import '../../../domain/usecase/get_specific_post_usecase.dart';
 
-class LocalPost {
-  static final String boxTitle = AppStrings.localPostsBox;
-  static Box<PostEntity> get _box => Hive.box<PostEntity>(boxTitle); // box
+class LocalPost extends LocalHiveBox<PostEntity> {
+  @override
+  String get boxName => AppStrings.localPostsBox;
 
-  static Future<Box<PostEntity>> get openBox async =>
-      await Hive.openBox<PostEntity>(boxTitle);
-
-  Future<Box<PostEntity>> refresh() async {
+  Future<DataState<PostEntity>> getFreshPost(String id) async {
     try {
-      final bool isOpen = Hive.isBoxOpen(boxTitle);
-      final Box<PostEntity> box =
-          isOpen ? _box : await Hive.openBox<PostEntity>(boxTitle);
-
-      // Check for type errors in all posts and remove faulty ones
-      final List<String> faultyKeys = <String>[];
-      for (final String key in box.keys.cast<String>()) {
-        try {
-          final PostEntity? post = box.get(key);
-          // Try to access a required field to trigger type errors
-          if (post == null) {
-            faultyKeys.add(key);
-          }
-        } catch (_) {
-          faultyKeys.add(key);
-        }
-      }
-      if (faultyKeys.isNotEmpty) {
-        await box.deleteAll(faultyKeys);
-      }
-      return box;
+      final GetSpecificPostUsecase getSpecificPostUsecase =
+          GetSpecificPostUsecase(locator());
+      final DataState<PostEntity> result = await getSpecificPostUsecase(
+        GetSpecificPostParam(postId: id, silentUpdate: false),
+      );
+      return result;
     } catch (e) {
-      // If opening the box fails due to a type error, delete the box file and recreate
-      try {
-        await Hive.deleteBoxFromDisk(boxTitle);
-      } catch (_) {}
-      return await Hive.openBox<PostEntity>(boxTitle);
+      return DataFailer<PostEntity>(CustomException(e.toString()));
     }
   }
 
-  Future<void> save(PostEntity value) async {
-    await _box.put(value.postID, value);
-  }
+  static Box<PostEntity> get _box =>
+      Hive.box<PostEntity>(AppStrings.localPostsBox); // box
 
-  Future<void> saveAll(List<PostEntity> posts) async {
-    final Map<String, PostEntity> map = <String, PostEntity>{
-      for (PostEntity post in posts) post.postID: post,
-    };
-    await _box.putAll(map);
-  }
-
-  Future<void> clear() async => await _box.clear();
+  static Future<Box<PostEntity>> get openBox async =>
+      await Hive.openBox<PostEntity>(AppStrings.localPostsBox);
 
   PostEntity? post(String id) => _box.get(id);
 

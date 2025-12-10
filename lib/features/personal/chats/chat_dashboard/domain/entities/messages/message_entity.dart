@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import '../../../../../../../core/enums/message/message_type.dart';
 import '../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../post/domain/entities/offer/offer_detail_entity.dart';

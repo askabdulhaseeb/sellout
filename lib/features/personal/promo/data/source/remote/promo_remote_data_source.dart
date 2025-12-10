@@ -91,7 +91,7 @@ class PromoRemoteDataSourceImpl implements PromoRemoteDataSource {
             .map((Map<String, dynamic> map) => PromoModel.fromMap(map))
             .toList();
         // 🔽 Save all promos to Hive
-        await LocalPromo().saveAll(promoModels);
+        await LocalPromo().saveAllPromo(promoModels);
         return DataSuccess<List<PromoEntity>>(result.data ?? '', promoModels);
       } else {
         AppLog.error(
@@ -139,7 +139,7 @@ class PromoRemoteDataSourceImpl implements PromoRemoteDataSource {
             .toList();
 
         // ✅ Save to Hive using LocalPromo
-        await LocalPromo().saveAll(promoModels);
+        await LocalPromo().saveAllPromo(promoModels);
 
         return DataSuccess<List<PromoEntity>>(result.data ?? '', promoModels);
       } else {

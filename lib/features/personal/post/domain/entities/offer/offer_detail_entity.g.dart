@@ -8,7 +8,7 @@ part of 'offer_detail_entity.dart';
 
 class OfferDetailEntityAdapter extends TypeAdapter<OfferDetailEntity> {
   @override
-  final int typeId = 19;
+  final typeId = 19;
 
   @override
   OfferDetailEntity read(BinaryReader reader) {
@@ -20,18 +20,18 @@ class OfferDetailEntityAdapter extends TypeAdapter<OfferDetailEntity> {
       postTitle: fields[0] as String,
       size: fields[1] as String,
       color: fields[2] as String,
-      price: fields[4] as int,
-      minOfferAmount: fields[5] as int,
+      price: (fields[4] as num).toInt(),
+      minOfferAmount: (fields[5] as num).toInt(),
       currency: fields[7] as String,
       offerId: fields[8] as String,
-      offerPrice: fields[9] as int,
+      offerPrice: (fields[9] as num).toInt(),
       offerStatus: fields[6] as StatusType?,
-      quantity: fields[10] as int,
+      quantity: (fields[10] as num).toInt(),
       buyerId: fields[11] as String,
       sellerId: fields[12] as String,
       postId: fields[13] as String,
       counterBy: fields[14] as CounterOfferEnum?,
-      counterAmount: fields[15] as int?,
+      counterAmount: (fields[15] as num?)?.toInt(),
       counterCurrency: fields[16] as String?,
     );
   }

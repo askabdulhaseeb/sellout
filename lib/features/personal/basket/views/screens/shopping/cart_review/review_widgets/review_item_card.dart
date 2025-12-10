@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../../../core/widgets/shadow_container.dart';
-import '../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../domain/entities/checkout/payment_item_entity.dart';
+import '../../../../../domain/entities/checkout/shipping_details_entity.dart';
 
 class ReviewItemCard extends StatelessWidget {
   const ReviewItemCard({required this.detail, super.key});
@@ -36,6 +36,15 @@ class _ReviewItemContent extends StatelessWidget {
     // PaymentItemEntity does not have size/color, so skip attributeChips
     final List<Widget> attributeChips = <Widget>[];
 
+    // Get the first shipping detail if available
+    final ShippingDetailsEntity? shipping =
+        (detail?.shippingDetails.isNotEmpty ?? false)
+            ? detail!.shippingDetails.first
+            : null;
+    final String shippingProvider = shipping?.provider ?? '-';
+    final String shippingService = shipping?.serviceName ?? '-';
+    final double shippingPrice = shipping?.convertedBufferAmount ?? 0.0;
+
     return ShadowContainer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,6 +75,18 @@ class _ReviewItemContent extends StatelessWidget {
                         children: attributeChips,
                       ),
                     ],
+                    // Show shipping provider/service if available
+                    if (shipping != null) ...<Widget>[
+                      const SizedBox(height: 8),
+                      Text(
+                        '${'shipping_provider'.tr()}: $shippingProvider',
+                        style: theme.textTheme.bodySmall,
+                      ),
+                      Text(
+                        '${'shipping_service'.tr()}: $shippingService',
+                        style: theme.textTheme.bodySmall,
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -76,7 +97,9 @@ class _ReviewItemContent extends StatelessWidget {
             total: detail?.totalPrice,
             unitPrice: double.tryParse(detail?.price ?? '') ?? 0.0,
             quantity: quantity,
-            shippingLabel: detail?.deliveryPrice.toString(),
+            shippingPrice: shippingPrice,
+            currency:
+                CountryHelper.currencySymbolHelper(shipping?.convertedCurrency),
           ),
         ],
       ),
@@ -86,38 +109,38 @@ class _ReviewItemContent extends StatelessWidget {
 
 class _PriceBreakdown extends StatelessWidget {
   const _PriceBreakdown({
+    required this.currency,
     required this.total,
     required this.unitPrice,
     required this.quantity,
-    this.shippingLabel,
+    required this.shippingPrice,
   });
-
+  final String currency;
   final String? total;
   final double unitPrice;
   final int quantity;
-  final String? shippingLabel;
+  final double? shippingPrice;
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final double subtotal = unitPrice * quantity;
+    final double totalWithShipping = subtotal + (shippingPrice ?? 0.0);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         // Subtotal with quantity
         Text(
-          '${'subtotal'.tr()} ($quantity): ${CountryHelper.currencySymbolHelper(LocalAuth.currency)}${subtotal.toStringAsFixed(2)}',
+          '${'subtotal'.tr()} ($quantity): $currency${subtotal.toStringAsFixed(2)}',
           style: theme.textTheme.bodyMedium?.copyWith(
             fontWeight: FontWeight.w400,
           ),
         ),
-
-        // Shipping if available
-        if (shippingLabel != null && shippingLabel!.isNotEmpty) ...<Widget>[
+        if ((shippingPrice ?? 0.0) > 0) ...<Widget>[
           const SizedBox(height: 4),
           Text(
-            '${'shipping'.tr()}: $shippingLabel',
+            '${'shipping'.tr()}: $currency${shippingPrice?.toStringAsFixed(2) ?? '0.00'}',
             style: theme.textTheme.bodyMedium,
           ),
         ],
@@ -128,7 +151,7 @@ class _PriceBreakdown extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text(
-              '${'total'.tr()}: $total',
+              '${'total'.tr()}: $currency${totalWithShipping.toStringAsFixed(2)}',
               style: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.w500,
               ),

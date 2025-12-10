@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/adapters.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../../../chat_dashboard/data/models/chat/chat_model.dart';
 import '../../../../chat_dashboard/data/sources/local/local_chat.dart';
@@ -10,10 +10,7 @@ import '../message/tile/quote_message_tile.dart';
 import '../message/tile/visiting_message_tile.dart';
 
 class ChatPinnedMessage extends StatelessWidget {
-  const ChatPinnedMessage({
-    required this.chatId,
-    super.key,
-  });
+  const ChatPinnedMessage({required this.chatId, super.key});
 
   final String chatId;
 
@@ -27,27 +24,22 @@ class ChatPinnedMessage extends StatelessWidget {
           return const SizedBox.shrink();
         }
         return chat.pinnedMessage!.offerDetail != null
-            ? OfferMessageTileAnimated(
-                message: chat.pinnedMessage!,
-              )
+            ? OfferMessageTileAnimated(message: chat.pinnedMessage!)
             : chat.pinnedMessage!.visitingDetail != null
-                ? VisitingMessageTileAnimated(
-                    message: chat.pinnedMessage!,
-                  )
-                : chat.pinnedMessage!.quoteDetail != null
-                    ? QuoteMessageTile(
-                        message: chat.pinnedMessage!, pinnedMessage: true)
-                    : const SizedBox.shrink();
+            ? VisitingMessageTileAnimated(message: chat.pinnedMessage!)
+            : chat.pinnedMessage!.quoteDetail != null
+            ? QuoteMessageTile(
+                message: chat.pinnedMessage!,
+                pinnedMessage: true,
+              )
+            : const SizedBox.shrink();
       },
     );
   }
 }
 
 class OfferMessageTileAnimated extends StatefulWidget {
-  const OfferMessageTileAnimated({
-    required this.message,
-    super.key,
-  });
+  const OfferMessageTileAnimated({required this.message, super.key});
 
   final MessageEntity message;
 
@@ -74,10 +66,7 @@ class _OfferMessageTileAnimatedState extends State<OfferMessageTileAnimated>
               height: 1,
               color: Theme.of(context).dividerColor,
             ),
-            OfferMessageTile(
-              message: widget.message,
-              showButtons: true,
-            ),
+            OfferMessageTile(message: widget.message, showButtons: true),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               height: 1,
@@ -91,10 +80,7 @@ class _OfferMessageTileAnimatedState extends State<OfferMessageTileAnimated>
 }
 
 class VisitingMessageTileAnimated extends StatefulWidget {
-  const VisitingMessageTileAnimated({
-    required this.message,
-    super.key,
-  });
+  const VisitingMessageTileAnimated({required this.message, super.key});
 
   final MessageEntity message;
 
@@ -104,7 +90,8 @@ class VisitingMessageTileAnimated extends StatefulWidget {
 }
 
 class _VisitingMessageTileAnimatedState
-    extends State<VisitingMessageTileAnimated> with TickerProviderStateMixin {
+    extends State<VisitingMessageTileAnimated>
+    with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Consumer<ChatProvider>(

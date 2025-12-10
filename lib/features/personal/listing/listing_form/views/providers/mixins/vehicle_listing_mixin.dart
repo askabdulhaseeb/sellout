@@ -14,9 +14,8 @@ mixin VehicleListingMixin {
   String? get selectedBodyType => state.bodyType;
   String? get selectedVehicleCategory => state.vehicleCategory;
   String? get selectedMileageUnit => state.mileageUnit;
-  ColorOptionEntity? get selectedVehicleColor => state.vehicleColor;
-  String? get interiorColor => state.interiorColor;
-  String? get exteriorColor => state.exteriorColor;
+  ColorOptionEntity? get interiorColor => state.interiorColor;
+  ColorOptionEntity? get exteriorColor => state.exteriorColor;
 
   // Setters
   void setTransmissionTypeLo(String? value) {
@@ -51,16 +50,11 @@ mixin VehicleListingMixin {
     state.mileageUnit = unit;
   }
 
-  void setVehicleColorLo(ColorOptionEntity? value) {
-    state.vehicleColor = value;
-  }
-
-  void setInteriorColorLo(String? value) {
+  void setInteriorColorLo(ColorOptionEntity? value) {
     state.interiorColor = value;
   }
 
-  void setExteriorColorLo(String? value) {
+  void setExteriorColorLo(ColorOptionEntity? value) {
     state.exteriorColor = value;
   }
-
 }

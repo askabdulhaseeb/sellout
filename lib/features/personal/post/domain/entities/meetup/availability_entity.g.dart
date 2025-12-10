@@ -8,7 +8,7 @@ part of 'availability_entity.dart';
 
 class AvailabilityEntityAdapter extends TypeAdapter<AvailabilityEntity> {
   @override
-  final int typeId = 16;
+  final typeId = 16;
 
   @override
   AvailabilityEntity read(BinaryReader reader) {

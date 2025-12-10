@@ -30,7 +30,8 @@ class AddressTile extends StatelessWidget {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Text('${address.recipientName} . ${address.phoneNumber}'),
-                  Text('${address.address1} . ${address.country.countryName}'),
+                  Text(_formatLocationLine()),
+                  Text('${address.address1} . ${address.address2}'),
                   Text('${address.city} . ${address.postalCode}'),
                 ],
               ),
@@ -45,5 +46,22 @@ class AddressTile extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// Formats the country/state line, handling empty values gracefully.
+  String _formatLocationLine() {
+    final String country = address.country.countryName;
+    final String state = address.state.stateName;
+
+    if (country.isEmpty && state.isEmpty) {
+      return '';
+    }
+    if (state.isEmpty) {
+      return country;
+    }
+    if (country.isEmpty) {
+      return state;
+    }
+    return '$country . $state';
   }
 }

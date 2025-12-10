@@ -1,10 +1,8 @@
-
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 part 'message_post_detail_entity.g.dart';
 
 @HiveType(typeId: 87)
 class MessagePostDetailEntity {
-
   MessagePostDetailEntity({this.postId, this.title, this.price, this.currency});
 
   factory MessagePostDetailEntity.fromJson(Map<String, dynamic> json) {
@@ -25,9 +23,9 @@ class MessagePostDetailEntity {
   final String? currency;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-        'post_id': postId,
-        'title': title,
-        'price': price,
-        'currency': currency,
-      };
+    'post_id': postId,
+    'title': title,
+    'price': price,
+    'currency': currency,
+  };
 }

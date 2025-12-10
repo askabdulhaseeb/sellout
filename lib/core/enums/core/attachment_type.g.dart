@@ -8,7 +8,7 @@ part of 'attachment_type.dart';
 
 class AttachmentTypeAdapter extends TypeAdapter<AttachmentType> {
   @override
-  final int typeId = 5;
+  final typeId = 5;
 
   @override
   AttachmentType read(BinaryReader reader) {
@@ -39,28 +39,20 @@ class AttachmentTypeAdapter extends TypeAdapter<AttachmentType> {
     switch (obj) {
       case AttachmentType.image:
         writer.writeByte(0);
-        break;
       case AttachmentType.video:
         writer.writeByte(1);
-        break;
       case AttachmentType.audio:
         writer.writeByte(2);
-        break;
       case AttachmentType.document:
         writer.writeByte(3);
-        break;
       case AttachmentType.other:
         writer.writeByte(4);
-        break;
       case AttachmentType.media:
         writer.writeByte(5);
-        break;
       case AttachmentType.contacts:
         writer.writeByte(6);
-        break;
       case AttachmentType.location:
         writer.writeByte(7);
-        break;
     }
   }
 

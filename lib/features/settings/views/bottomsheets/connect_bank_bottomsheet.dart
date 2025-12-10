@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../../../../core/functions/app_log.dart';
 import '../../../../core/sources/data_state.dart';
 import '../../../../core/constants/app_spacings.dart';
 import '../../../../core/utilities/app_string.dart';
@@ -13,7 +14,6 @@ import '../../../../core/widgets/phone_number/views/countries_dropdown.dart';
 import '../../../../services/get_it.dart';
 import '../../../personal/setting/setting_dashboard/domain/params/create_account_session_params.dart';
 import '../../../personal/setting/setting_dashboard/domain/usecase/connect_account_session_usecase.dart';
-import '../screens/stripe_onboarding_screen.dart';
 
 class LinkBankBottomSheet extends StatefulWidget {
   const LinkBankBottomSheet({super.key});
@@ -53,18 +53,16 @@ class _LinkBankBottomSheetState extends State<LinkBankBottomSheet> {
     final String url = result.entity ?? '';
 
     if (url.isNotEmpty && mounted) {
-      Navigator.pop(context);
-      Navigator.push(
-        context,
-        MaterialPageRoute<StripeOnboardingScreen>(
-          builder: (_) => StripeOnboardingScreen(url: url),
-        ),
-      );
+      AppLog.info('Stripe Onboarding URL: $url');
+      // Navigator.pop(context);
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute<StripeOnboardingScreen>(
+      //     builder: (_) => StripeOnboardingScreen(url: url),
+      //   ),
+      // );
     } else {
-      AppSnackBar.showSnackBar(
-        context,
-        'something_wrong'.tr(),
-      );
+      AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
     }
   }
 
@@ -73,8 +71,9 @@ class _LinkBankBottomSheetState extends State<LinkBankBottomSheet> {
     final ThemeData theme = Theme.of(context);
 
     return Padding(
-      padding:
-          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: Container(
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
@@ -110,8 +109,9 @@ class _LinkBankBottomSheetState extends State<LinkBankBottomSheet> {
                     children: <Widget>[
                       CircleAvatar(
                         radius: 26,
-                        backgroundColor:
-                            theme.colorScheme.primary.withValues(alpha: 0.1),
+                        backgroundColor: theme.colorScheme.primary.withValues(
+                          alpha: 0.1,
+                        ),
                         child: CustomSvgIcon(
                           assetPath: AppStrings.selloutProfileBankIcon,
                           color: theme.colorScheme.primary,
@@ -151,14 +151,7 @@ class _LinkBankBottomSheetState extends State<LinkBankBottomSheet> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: AppSpacing.vMd),
-                  Container(
-                    padding: const EdgeInsets.all(AppSpacing.md),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.05),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
+
                   const SizedBox(height: AppSpacing.lg),
                   SizedBox(
                     width: double.infinity,
@@ -179,9 +172,11 @@ class _LinkBankBottomSheetState extends State<LinkBankBottomSheet> {
                         Flexible(
                           child: Text(
                             'bank_details_encrypted'.tr(),
+                            textAlign: TextAlign.center,
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.primary
-                                  .withValues(alpha: 0.7),
+                              color: theme.colorScheme.primary.withValues(
+                                alpha: 0.7,
+                              ),
                             ),
                           ),
                         ),

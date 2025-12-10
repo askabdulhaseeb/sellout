@@ -10,7 +10,7 @@ class StepProgressIndicator<T> extends StatelessWidget {
     this.onChanged,
     this.pointSize = 32,
     this.pointBorderRadius = 100,
-    this.stepProgress = 1.0, // 0.0 – 1.0 for current line
+    this.stepProgress = 1.0,
     super.key,
   });
 
@@ -71,7 +71,6 @@ class StepProgressIndicator<T> extends StatelessWidget {
               // DOT
               final int stepIndex = index ~/ 2;
               final int displayIndex = stepIndex + 1;
-              final T stepValue = steps[stepIndex];
               final bool isActive = displayIndex == currentIndex;
               final bool isCompleted = displayIndex < currentIndex;
 
@@ -79,52 +78,57 @@ class StepProgressIndicator<T> extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    GestureDetector(
-                      onTap: onChanged == null
-                          ? null
-                          : () => onChanged!(stepValue),
-                      child: TweenAnimationBuilder<double>(
-                        duration: const Duration(milliseconds: 300),
-                        tween: Tween<double>(
-                            begin: 0, end: isCompleted || isActive ? 1 : 0),
-                        builder: (BuildContext context, double value,
-                            Widget? child) {
-                          return Container(
-                            width: pointSize,
-                            height: pointSize,
-                            decoration: BoxDecoration(
-                              color: Colors.transparent,
-                              borderRadius:
-                                  BorderRadius.circular(pointBorderRadius),
-                              border: Border.all(
-                                  color: Color.lerp(
-                                      inactiveColor, activeColor, value)!,
-                                  width: 2),
-                            ),
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: <Widget>[
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Color.lerp(
-                                        Colors.transparent, activeColor, value),
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                AnimatedOpacity(
-                                  opacity: value > 0.6 ? 1 : 0,
-                                  duration: const Duration(milliseconds: 300),
-                                  child: const Icon(
-                                    Icons.check_outlined,
-                                    color: iconColor,
-                                    size: 18,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
+                    TweenAnimationBuilder<double>(
+                      duration: const Duration(milliseconds: 300),
+                      tween: Tween<double>(
+                        begin: 0,
+                        end: isCompleted || isActive ? 1 : 0,
                       ),
+                      builder:
+                          (BuildContext context, double value, Widget? child) {
+                            return Container(
+                              width: pointSize,
+                              height: pointSize,
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                borderRadius: BorderRadius.circular(
+                                  pointBorderRadius,
+                                ),
+                                border: Border.all(
+                                  color: Color.lerp(
+                                    inactiveColor,
+                                    activeColor,
+                                    value,
+                                  )!,
+                                  width: 2,
+                                ),
+                              ),
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: <Widget>[
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Color.lerp(
+                                        Colors.transparent,
+                                        activeColor,
+                                        value,
+                                      ),
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  AnimatedOpacity(
+                                    opacity: value > 0.6 ? 1 : 0,
+                                    duration: const Duration(milliseconds: 300),
+                                    child: const Icon(
+                                      Icons.check_outlined,
+                                      color: iconColor,
+                                      size: 18,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                     ),
                     const SizedBox(height: 6),
                     if (stepsStrs.isNotEmpty)
@@ -132,10 +136,9 @@ class StepProgressIndicator<T> extends StatelessWidget {
                         stepsStrs[stepIndex],
                         maxLines: 2,
                         textAlign: TextAlign.center,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall
-                            ?.copyWith(fontWeight: FontWeight.w500),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w500,
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
                   ],
@@ -163,9 +166,7 @@ class StepProgressIndicator<T> extends StatelessWidget {
                     borderRadius: BorderRadius.circular(2),
                     child: Stack(
                       children: <Widget>[
-                        Container(
-                          color: inactiveColor.withOpacity(0.3),
-                        ),
+                        Container(color: inactiveColor.withOpacity(0.3)),
                         AnimatedFractionallySizedBox(
                           duration: const Duration(milliseconds: 300),
                           widthFactor: fillValue,

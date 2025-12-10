@@ -74,24 +74,27 @@ class _AddressBottomSheetState extends State<AddressBottomSheet> {
                       const Text(
                         'add_a_delivery_or_pickup_address',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ).tr(),
                       CustomElevatedButton(
                         textColor: Theme.of(context).primaryColor,
                         border: Border.all(
-                            color: ColorScheme.of(context).outlineVariant),
+                          color: ColorScheme.of(context).outlineVariant,
+                        ),
                         bgColor: Colors.transparent,
                         title: 'add_a_new_address'.tr(),
                         isLoading: false,
                         onTap: () async {
                           final AddressEntity? newAddress =
                               await Navigator.of(context).push<AddressEntity?>(
-                            MaterialPageRoute<AddressEntity?>(
-                              builder: (BuildContext context) {
-                                return const AddEditAddressScreen();
-                              },
-                            ),
-                          );
+                                MaterialPageRoute<AddressEntity?>(
+                                  builder: (BuildContext context) {
+                                    return const AddEditAddressScreen();
+                                  },
+                                ),
+                              );
                           if (newAddress != null) {
                             // ignore: use_build_context_synchronously
                             Navigator.of(context).pop(newAddress);

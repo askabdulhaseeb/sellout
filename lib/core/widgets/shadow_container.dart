@@ -28,32 +28,36 @@ class ShadowContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 600),
         padding:
             padding ?? const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         margin:
             margin ?? const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-        decoration: decoration ??
+        decoration:
+            decoration ??
             BoxDecoration(
+              backgroundBlendMode: BlendMode.color,
               border: Border.all(
-                  color: !showShadow
-                      ? ColorScheme.of(context).onSurface.withValues(alpha: 0.2)
-                      : Colors.transparent),
+                color: !showShadow
+                    ? ColorScheme.of(context).onSurface.withValues(alpha: 0.2)
+                    : Colors.transparent,
+              ),
               color: color ?? Theme.of(context).scaffoldBackgroundColor,
               borderRadius: borderRadius ?? BorderRadius.circular(8),
               boxShadow: showShadow
                   ? boxShadow ??
-                      <BoxShadow>[
-                        BoxShadow(
-                          color: Theme.of(context)
-                              .textTheme
-                              .titleLarge!
-                              .color!
-                              .withValues(alpha: 0.2),
-                          blurRadius: 8,
-                          offset: const Offset(0, 0),
-                        ),
-                      ]
+                        <BoxShadow>[
+                          BoxShadow(
+                            color: Theme.of(context)
+                                .textTheme
+                                .titleLarge!
+                                .color!
+                                .withValues(alpha: 0.2),
+                            blurRadius: 8,
+                            offset: const Offset(0, 0),
+                          ),
+                        ]
                   : <BoxShadow>[],
             ),
         child: child,

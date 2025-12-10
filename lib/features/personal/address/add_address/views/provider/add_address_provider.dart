@@ -10,8 +10,8 @@ import '../params/add_address_param.dart';
 
 class AddAddressProvider extends ChangeNotifier {
   AddAddressProvider(this._addAddressUsecase, this._updateAddressUsecase);
-  
-  // MARK: Address 
+
+  // MARK: Address
 
   AddressEntity? _selectedAddress;
   AddressEntity? get selectedAddress => _selectedAddress;
@@ -20,11 +20,11 @@ class AddAddressProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // MARK: Dependencies 
+  // MARK: Dependencies
   final AddAddressUsecase _addAddressUsecase;
   final UpdateAddressUsecase _updateAddressUsecase;
 
-  // MARK: Internal state / variables 
+  // MARK: Internal state / variables
 
   PhoneNumberEntity? _phoneNumber;
 
@@ -59,19 +59,19 @@ class AddAddressProvider extends ChangeNotifier {
   String? get addressCategory => _addressCategory;
 
   AddressParams get addressParams => AddressParams(
-        addressId: addressId,
-        recipientName: _recipientNameController.text,
-        address1: _address1Controller.text,
-        address2: _address2Controller.text,
-        city: _city ?? '',
-        state: _state?.stateName ?? '',
-        phoneNumber: _phoneNumber?.fullNumber ?? '',
-        postalCode: _postalCodeController.text,
-        addressCategory: _addressCategory ?? '',
-        country: _selectedCountryEntity?.countryName ?? '',
-        isDefault: _isDefault,
-        action: _action,
-      );
+    addressId: addressId,
+    recipientName: _recipientNameController.text,
+    address1: _address1Controller.text,
+    address2: _address2Controller.text,
+    city: _city ?? '',
+    state: _state?.stateName ?? '',
+    phoneNumber: _phoneNumber?.fullNumber ?? '',
+    postalCode: _postalCodeController.text,
+    addressCategory: _addressCategory ?? '',
+    country: _selectedCountryEntity?.countryName ?? '',
+    isDefault: _isDefault,
+    action: _action,
+  );
 
   // MARK: Setters/set functions
 
@@ -137,8 +137,9 @@ class AddAddressProvider extends ChangeNotifier {
   // MARK: API Functions
   Future<DataState<bool>> saveAddress(BuildContext context) async {
     try {
-      final DataState<bool> result =
-          await _addAddressUsecase.call(addressParams);
+      final DataState<bool> result = await _addAddressUsecase.call(
+        addressParams,
+      );
       if (result is DataSuccess<bool>) {
         debugPrint(result.data);
         Navigator.pop(context);
@@ -161,8 +162,9 @@ class AddAddressProvider extends ChangeNotifier {
 
   Future<DataState<bool>> updateAddress(BuildContext context) async {
     try {
-      final DataState<bool> result =
-          await _updateAddressUsecase.call(addressParams);
+      final DataState<bool> result = await _updateAddressUsecase.call(
+        addressParams,
+      );
       debugPrint('add address data ${addressParams.toMap()}');
       if (result is DataSuccess<bool>) {
         debugPrint(result.data);

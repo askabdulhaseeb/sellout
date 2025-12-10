@@ -9,7 +9,7 @@ part of 'notification_metadata_entity.dart';
 class NotificationMetadataEntityAdapter
     extends TypeAdapter<NotificationMetadataEntity> {
   @override
-  final int typeId = 66;
+  final typeId = 66;
 
   @override
   NotificationMetadataEntity read(BinaryReader reader) {

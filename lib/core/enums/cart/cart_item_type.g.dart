@@ -8,7 +8,7 @@ part of 'cart_item_type.dart';
 
 class CartItemStatusTypeAdapter extends TypeAdapter<CartItemStatusType> {
   @override
-  final int typeId = 86;
+  final typeId = 86;
 
   @override
   CartItemStatusType read(BinaryReader reader) {
@@ -27,10 +27,8 @@ class CartItemStatusTypeAdapter extends TypeAdapter<CartItemStatusType> {
     switch (obj) {
       case CartItemStatusType.cart:
         writer.writeByte(0);
-        break;
       case CartItemStatusType.saveLater:
         writer.writeByte(1);
-        break;
     }
   }
 

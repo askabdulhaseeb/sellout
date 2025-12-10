@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../features/personal/basket/domain/entities/cart/postage_detail_response_entity.dart';
 import '../../../features/personal/basket/views/providers/cart_provider.dart';
+import '../../../features/postage/domain/entities/postage_detail_response_entity.dart';
 import 'widgets/postage_header.dart';
 import 'widgets/postage_item_card.dart';
 
@@ -17,8 +17,7 @@ class _PostageBottomSheetState extends State<PostageBottomSheet> {
   Widget build(BuildContext context) {
     final CartProvider cartPro = context.read<CartProvider>();
     final PostageDetailResponseEntity? postage = cartPro.postageResponseEntity;
-    final List<MapEntry<String, PostageItemDetailEntity>>? entries =
-        postage?.detail.entries.toList();
+    final List<PostageItemDetailEntity>? entries = postage?.detail;
 
     if (postage == null || entries == null || entries.isEmpty) {
       return SafeArea(
@@ -55,16 +54,16 @@ class _PostageBottomSheetState extends State<PostageBottomSheet> {
             const SizedBox(height: 8),
             Expanded(
               child: ListView.separated(
-                cacheExtent: 200,
+                cacheExtent: 5000,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 itemCount: entries.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 8),
                 itemBuilder: (BuildContext context, int index) {
-                  final String postId = entries[index].key;
-                  final PostageItemDetailEntity detail = entries[index].value;
+                  final String cartItemId = entries[index].cartItemId;
+                  final PostageItemDetailEntity detail = entries[index];
                   return PostageItemCard(
-                    postId: postId,
+                    cartItemId: cartItemId,
                     detail: detail,
                   );
                 },

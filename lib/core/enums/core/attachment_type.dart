@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 part 'attachment_type.g.dart';
@@ -19,7 +19,7 @@ enum AttachmentType {
   media('media', 'media'),
   @HiveField(6)
   contacts('contact', 'contact'),
-   @HiveField(7)
+  @HiveField(7)
   location('location', 'location');
 
   const AttachmentType(this.json, this.title);
@@ -38,9 +38,9 @@ enum AttachmentType {
         return AttachmentType.audio;
       case 'document':
         return AttachmentType.document;
-        case 'contact':
+      case 'contact':
         return AttachmentType.contacts;
-        case 'location':
+      case 'location':
         return AttachmentType.location;
       default:
         return AttachmentType.other;

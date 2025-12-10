@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import '../../../../../services/domain/entity/service_category_entity.dart';
 import '../../../data/models/sub_category_model.dart';
 import 'subentities/parent_dropdown_entity.dart';

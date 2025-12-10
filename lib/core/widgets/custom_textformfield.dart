@@ -38,6 +38,7 @@ class CustomTextFormField extends StatefulWidget {
     this.borderRadius,
     this.overlayChild,
     this.overlayPadding,
+    this.onTap,
     this.showOverlayWhenFocused = false,
     //
     this.focusNode,
@@ -78,6 +79,7 @@ class CustomTextFormField extends StatefulWidget {
   final double? borderRadius;
   final Widget? overlayChild;
   final EdgeInsetsGeometry? overlayPadding;
+  final VoidCallback? onTap;
   final bool showOverlayWhenFocused;
   final AutovalidateMode autovalidateMode;
 
@@ -128,6 +130,7 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
           Builder(
             builder: (BuildContext context) {
               Widget textField = TextFormField(
+                onTap: widget.onTap,
                 autovalidateMode: widget.autovalidateMode,
                 focusNode: widget.focusNode,
                 initialValue: widget.initialValue,
@@ -137,8 +140,8 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
                 keyboardType: widget.keyboardType == TextInputType.number
                     ? const TextInputType.numberWithOptions(decimal: true)
                     : widget.maxLines! > 1
-                        ? TextInputType.multiline
-                        : widget.keyboardType ?? TextInputType.text,
+                    ? TextInputType.multiline
+                    : widget.keyboardType ?? TextInputType.text,
                 textInputAction: widget.maxLines! > 1
                     ? TextInputAction.unspecified
                     : widget.textInputAction ?? TextInputAction.next,
@@ -150,8 +153,8 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
                 maxLines: widget.isExpanded
                     ? widget.maxLines
                     : (widget._controller?.text.isEmpty ?? true)
-                        ? 1
-                        : widget.maxLines,
+                    ? 1
+                    : widget.maxLines,
                 maxLength: widget.maxLength,
                 style: widget.style ?? TextTheme.of(context).bodyMedium,
                 validator: (String? value) =>
@@ -159,44 +162,50 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
                 onFieldSubmitted: widget.onFieldSubmitted,
                 cursorColor: Theme.of(context).colorScheme.secondary,
                 decoration: InputDecoration(
-                  prefixIconConstraints:
-                      const BoxConstraints(minWidth: 32, minHeight: 32),
+                  prefixIconConstraints: const BoxConstraints(
+                    minWidth: 32,
+                    minHeight: 32,
+                  ),
                   prefix: widget.prefix,
                   prefixText: widget.prefixText == null
                       ? null
                       : '${widget.prefixText!} ',
                   prefixIcon: widget.prefixIcon,
                   isDense: widget.dense ?? false,
-                  contentPadding: widget.contentPadding ??
+                  contentPadding:
+                      widget.contentPadding ??
                       const EdgeInsets.symmetric(horizontal: 12),
                   filled: true,
                   fillColor:
                       widget.color ?? Theme.of(context).scaffoldBackgroundColor,
                   hintText: widget.hint,
                   hintStyle: TextTheme.of(context).bodyMedium?.copyWith(
-                        color: ColorScheme.of(context)
-                            .onSurface
-                            .withValues(alpha: 0.2),
-                      ),
-                  suffixIcon: widget.suffixIcon ??
+                    color: ColorScheme.of(
+                      context,
+                    ).onSurface.withValues(alpha: 0.2),
+                  ),
+                  suffixIcon:
+                      widget.suffixIcon ??
                       (((widget._controller?.text.isEmpty ?? true) ||
                               !widget.showSuffixIcon ||
                               widget.showSuffixIcon == false ||
                               widget.readOnly)
                           ? (widget.maxLength == null
-                              ? null
-                              : Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      '${(widget._controller?.text ?? '').length}/${widget.maxLength}',
-                                      style: TextStyle(
-                                        color: Theme.of(context).disabledColor,
-                                        fontSize: 16,
+                                ? null
+                                : Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text(
+                                        '${(widget._controller?.text ?? '').length}/${widget.maxLength}',
+                                        style: TextStyle(
+                                          color: Theme.of(
+                                            context,
+                                          ).disabledColor,
+                                          fontSize: 16,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ))
+                                    ],
+                                  ))
                           : IconButton(
                               splashRadius: 16,
                               onPressed: () => setState(() {
@@ -207,24 +216,30 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
                   counter: const SizedBox.shrink(),
                   focusColor: Theme.of(context).primaryColor,
                   errorBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Theme.of(context).colorScheme.error),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
                     borderRadius: BorderRadius.circular(
-                        widget.borderRadius ?? AppSpacing.radiusSm),
+                      widget.borderRadius ?? AppSpacing.radiusSm,
+                    ),
                   ),
-                  border: widget.border ??
+                  border:
+                      widget.border ??
                       OutlineInputBorder(
                         borderSide: const BorderSide(color: Colors.transparent),
                         borderRadius: BorderRadius.circular(
-                            widget.borderRadius ?? AppSpacing.radiusSm),
+                          widget.borderRadius ?? AppSpacing.radiusSm,
+                        ),
                       ),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                        color: ColorScheme.of(context)
-                            .onSurface
-                            .withValues(alpha: 0.2)),
+                      color: ColorScheme.of(
+                        context,
+                      ).onSurface.withValues(alpha: 0.2),
+                    ),
                     borderRadius: BorderRadius.circular(
-                        widget.borderRadius ?? AppSpacing.radiusSm),
+                      widget.borderRadius ?? AppSpacing.radiusSm,
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
@@ -232,13 +247,15 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
                       color: Theme.of(context).primaryColor,
                     ),
                     borderRadius: BorderRadius.circular(
-                        widget.borderRadius ?? AppSpacing.radiusSm),
+                      widget.borderRadius ?? AppSpacing.radiusSm,
+                    ),
                   ),
                 ),
               );
 
               if (widget.overlayChild != null) {
-                final bool showOverlay = widget.showOverlayWhenFocused ||
+                final bool showOverlay =
+                    widget.showOverlayWhenFocused ||
                     !(widget.focusNode?.hasFocus ?? false);
                 textField = Stack(
                   alignment: Alignment.centerLeft,
@@ -247,7 +264,8 @@ class CustomTextFormFieldState extends State<CustomTextFormField> {
                     if (showOverlay)
                       IgnorePointer(
                         child: Padding(
-                          padding: widget.overlayPadding ??
+                          padding:
+                              widget.overlayPadding ??
                               (widget.contentPadding ??
                                   const EdgeInsets.symmetric(horizontal: 12)),
                           child: Align(

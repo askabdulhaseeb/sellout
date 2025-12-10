@@ -9,7 +9,7 @@ part of 'business_employee_entity.dart';
 class BusinessEmployeeEntityAdapter
     extends TypeAdapter<BusinessEmployeeEntity> {
   @override
-  final int typeId = 41;
+  final typeId = 41;
 
   @override
   BusinessEmployeeEntity read(BinaryReader reader) {

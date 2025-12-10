@@ -1,4 +1,5 @@
 {
+  "username_already_used": "This username is already taken.",
   "sellout": "SellOut",
   "skip": "Skip",
   "sign_up": "Sign Up",
@@ -73,6 +74,7 @@
   "location_is_required": "Location is required",
   "please_note_that_delivery_must_be_tracked": "Please note that delivery must be tracked and signed for. Thank You",
   "no_data_found": "No data found",
+  "no_supporters_found":"No supporters found",
   "post": "Post",
   "select_type": "Select Type",
   "orders": "Orders",
@@ -145,6 +147,7 @@
   "camera_permission_denied": "Camera usage permission is denied",
   "permission_gallery_title": "We need access to your gallery ",
   "permission_gallery_body": "to help you select media files.",
+  "open_settings":"Open Settings",
   "permission_gallery_grant": "Grant Permission",
   "your_message_here": "Your message here...",
   "edit": "Edit",
@@ -207,6 +210,8 @@
   "total": "Total",
   "subtotal": "Subtotal",
   "postage_fee": "Postage Fee",
+  "shipping_provider":"Shipping Provider",
+  "shipping_service":"Shipping Service",
   "business": "Business",
   "details": "Details",
   "calender": "Calender",
@@ -217,6 +222,7 @@
   "user": "User",
   "error": "Error",
   "type": "Type",
+  "start_order":"Start Order",
   "postage_return_and_payment": "Postage, Return and Payment",
   "inquiry":"Inquiry",
   "est_delivery": "Est. Delivery",
@@ -253,6 +259,7 @@
   "successfull_add_to_basket": "Successfully added to basket",
   "post_to": "Post to",
   "address": "Address",
+  "selling_address":"Selling Address",
   "add_address": "Add Address",
   "edit_address": "Edit Address",
   "recipient_name": "Recipient Name",
@@ -263,6 +270,7 @@
   "select_address": "Select Address",
   "add_a_delivery_or_pickup_address": "Add a delivery or pickup address",
   "add_a_new_address": "Add a new address",
+  "change_address": "Change Address",
   "find_pickup_location_near_you": "Find a pickup location near you",
   "no_services_available": "No services available",
   "add_service": "Add Service",
@@ -781,7 +789,7 @@
   "choose_members": "Choose Members",
   "start_chatting": "Start Chatting",
   "storageDenied": "Storage permission denied",
-  "Sellout_welcome_description": "The Social Marketplace that lets you buy & sell and provide services.",
+  "Sellout_welcome_description": "The social marketplace where you can Buy. Sell. Book. Anything.",
   "view_more": "View more",
   "item_removed_successfully": "Item removed successfully",
   "create_yours": "Create yours",
@@ -806,6 +814,7 @@
   "processing_payment":"Processing Payment",
   "no_item_available": "No item available",
   "invite": "Invite",
+
   "work":"Work",
   "show_in_maps":"Show in Maps",
   "no_supporters_to_invite": "No supporters to invite",
@@ -1091,6 +1100,8 @@
   "top_rated": "Top Rated",
   "service_categories": "Service Categories",
   "select_your_size_and_color": "Select your size and color",
+  "interior_color":"Interior color",
+  "exterior_color":"Exterior Color",
   "per_unit": "per unit",
   "offer_note": "Offer amount is per unit. Total amount will be calculated based on the selected quantity.",
   "how_many_units_you_want_to_make_offer": "How many units you want to make an offer for?",
@@ -1216,6 +1227,31 @@
   "services_coming_soon_subtitle": "Book appointments and discover amazing services available around you. Find what you need, right at your fingertips!",
   "business_employment_coming_soon": "Business and employment details are coming soon! Stay tuned for exciting updates.",
   "coming_soon": "Coming soon",
-  "employment_details": "Employment Details" 
+  "membership_coming_soon":"We are preparing exclusive plans that will give you better prices, premium features, priority support, and early access to new products and services. Stay tuned — something amazing is on the way!",
+  "employment_details": "Employment Details",
+  "buy_label":"Buy label",
+  "choose_postage":"Choose Postage",
+   "legal_documents": {
+    "title": "Legal Documents",
+    "search": "Search documents...",
+    "read": "Read",
+
+    "privacy_security": "Privacy & Security",
+    "privacy_policy": "Privacy Policy",
+    "facial_scan": "Facial Scan Privacy Notice",
+    "cookies_policy": "Cookies Policy",
+
+    "user_agreements": "User Agreements & Platform Rules",
+    "terms_conditions": "Terms & Conditions / User Agreement",
+    "community_standards": "Community Standards / Conduct Policy",
+
+    "seller_consumer": "Seller & Consumer Rights",
+    "selling_practices": "Selling Practices Policy",
+    "refund_cancellation": "Refund & Cancellation Policy",
+    "dispute_resolution": "Dispute Resolution Policy",
+
+    "intellectual_property": "Intellectual Property",
+    "ip_copyright": "Intellectual Property & Copyright Policy"
+  }
 
 }

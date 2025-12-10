@@ -5,13 +5,15 @@ import '../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../../../../core/widgets/app_snackbar.dart';
+import '../../../../postage/domain/entities/postage_detail_response_entity.dart';
+import '../../../../postage/domain/usecase/add_shipping_usecase.dart';
+import '../../../../postage/domain/usecase/get_postage_detail_usecase.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../auth/signin/domain/entities/address_entity.dart';
 import '../../data/models/cart/add_shipping_response_model.dart';
 import '../../data/models/cart/cart_model.dart';
 import '../../data/sources/local/local_cart.dart';
 import '../../domain/entities/cart/cart_entity.dart';
-import '../../domain/entities/cart/postage_detail_response_entity.dart';
 import '../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../domain/entities/checkout/payment_intent_entity.dart';
 import '../../domain/enums/cart_type.dart';
@@ -19,11 +21,9 @@ import '../../domain/enums/shopping_basket_type.dart';
 import '../../domain/param/cart_item_update_qty_param.dart';
 import '../../domain/param/get_postage_detail_params.dart';
 import '../../domain/param/submit_shipping_param.dart';
-import '../../domain/usecase/cart/add_shipping_usecase.dart';
 import '../../domain/usecase/cart/cart_item_status_update_usecase.dart';
 import '../../domain/usecase/cart/cart_update_qty_usecase.dart';
 import '../../domain/usecase/cart/get_cart_usecase.dart';
-import '../../domain/usecase/cart/get_postage_detail_usecase.dart';
 import '../../domain/usecase/cart/remove_from_cart_usecase.dart';
 import '../../domain/usecase/checkout/pay_intent_usecase.dart';
 import '../widgets/checkout/tile/payment_success_bottomsheet.dart';
@@ -81,14 +81,7 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  AddressEntity? _address = (LocalAuth.currentUser?.address != null &&
-          LocalAuth.currentUser!.address
-              .where((AddressEntity e) => e.isDefault)
-              .isNotEmpty)
-      ? LocalAuth.currentUser!.address
-          .where((AddressEntity e) => e.isDefault)
-          .first
-      : null;
+  AddressEntity? _address;
 
   // MARK: 🧭 Getters
   CartType get cartType => _cartType;
@@ -107,11 +100,10 @@ class CartProvider extends ChangeNotifier {
   bool get hasItemsRequiringRemoval {
     if (_postageResponseEntity == null) return false;
     for (final PostageItemDetailEntity detail
-        in _postageResponseEntity!.detail.values) {
-      final DeliveryType deliveryType =
-          DeliveryType.fromJson(detail.originalDeliveryType);
+        in _postageResponseEntity!.detail) {
+      final DeliveryType deliveryType = detail.originalDeliveryType;
       final bool isDeliveryNeeded = deliveryType == DeliveryType.paid ||
-          deliveryType == DeliveryType.fastDelivery;
+          detail.fastDelivery.requested == true;
       if (!isDeliveryNeeded) continue;
       final bool hasRates = detail.shippingDetails
           .expand((PostageDetailShippingDetailEntity sd) => sd.ratesBuffered)
@@ -124,18 +116,22 @@ class CartProvider extends ChangeNotifier {
   List<String> get itemsRequiringRemovalPostIds {
     if (_postageResponseEntity == null) return <String>[];
     final List<String> ids = <String>[];
-    _postageResponseEntity!.detail
-        .forEach((String postId, PostageItemDetailEntity detail) {
-      final DeliveryType deliveryType =
-          DeliveryType.fromJson(detail.originalDeliveryType);
+
+    final List<PostageItemDetailEntity> details =
+        _postageResponseEntity!.detail;
+    // List case
+    for (final PostageItemDetailEntity detail in details) {
+      final DeliveryType deliveryType = detail.originalDeliveryType;
       final bool isDeliveryNeeded = deliveryType == DeliveryType.paid ||
           deliveryType == DeliveryType.fastDelivery;
-      if (!isDeliveryNeeded) return;
+      if (!isDeliveryNeeded) continue;
+
       final bool hasRates = detail.shippingDetails
           .expand((PostageDetailShippingDetailEntity sd) => sd.ratesBuffered)
           .isNotEmpty;
-      if (!hasRates) ids.add(postId);
-    });
+      if (!hasRates) ids.add(detail.postId); // use postId from detail
+    }
+
     return ids;
   }
 
@@ -331,26 +327,33 @@ class CartProvider extends ChangeNotifier {
           await _getPostageDetailUsecase(params);
       if (result is DataSuccess) {
         _postageResponseEntity = result.entity;
-        // Automatically select first rate for each post and store shipmentId
+        // Refresh selectedShippingItems to match available rates for each cart item
+        _selectedShippingItems.clear();
         if (_postageResponseEntity != null) {
-          _postageResponseEntity!.detail.forEach(
-            (String postId, PostageItemDetailEntity detail) {
-              // Only auto-select if not already selected
-              if (!_selectedPostageRates.containsKey(postId)) {
-                final List<RateEntity> rates = detail.shippingDetails
-                    .expand((PostageDetailShippingDetailEntity sd) =>
-                        sd.ratesBuffered)
-                    .toList();
-                if (rates.isNotEmpty) {
-                  final RateEntity firstRate = rates.first;
-                  _selectedPostageRates[postId] = firstRate;
+          for (PostageItemDetailEntity detail in _postageResponseEntity!.detail) {
+              final List<RateEntity> rates = detail.shippingDetails
+                  .expand((PostageDetailShippingDetailEntity sd) =>
+                      sd.ratesBuffered)
+                  .toList();
+              final Set<String> seen = <String>{};
+              final List<RateEntity> uniqueRates = <RateEntity>[];
+              for (final RateEntity rate in rates) {
+                if (!seen.contains(rate.objectId)) {
+                  seen.add(rate.objectId);
+                  uniqueRates.add(rate);
                 }
               }
-            },
-          );
+              if (uniqueRates.isNotEmpty) {
+                _selectedShippingItems.add(
+                  ShippingItemParam(
+                    cartItemId: detail.cartItemId,
+                    objectId: uniqueRates.first.objectId,
+                  ),
+                );
+              }
+            }
         }
         setPostageLoading(false);
-
         return result;
       } else {
         setPostageLoading(false);
@@ -408,6 +411,7 @@ class CartProvider extends ChangeNotifier {
 
   // MARK:  PAYMENT
   Future<DataState<PaymentIntentEntity>> getBillingDetails() async {
+    setPostageLoading(true);
     try {
       final DataState<PaymentIntentEntity> state =
           await _payIntentUsecase.call('');
@@ -421,6 +425,8 @@ class CartProvider extends ChangeNotifier {
       AppLog.error('Billing details error',
           name: 'CartProvider.getBillingDetails', error: e, stackTrace: st);
       return DataFailer<PaymentIntentEntity>(CustomException(e.toString()));
+    } finally {
+      setPostageLoading(false);
     }
   }
 

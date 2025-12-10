@@ -1,4 +1,6 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
+
+import '../../../../listing/listing_form/domain/entities/color_options_entity.dart';
 part 'post_vehicle_entity.g.dart';
 
 @HiveType(typeId: 69)
@@ -46,11 +48,11 @@ class PostVehicleEntity {
   @HiveField(11)
   final String? transmission;
   @HiveField(12)
-  final String? interiorColor;
+  final ColorOptionEntity? interiorColor;
   @HiveField(13)
-  final String? exteriorColor;
+  final ColorOptionEntity? exteriorColor;
   @HiveField(14)
   final String? vehiclesCategory;
-    @HiveField(15)
+  @HiveField(15)
   final String address;
 }

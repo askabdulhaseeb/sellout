@@ -1,28 +1,21 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
+import '../../../../../../core/sources/local/local_hive_box.dart';
 import '../../../../../../core/utilities/app_string.dart';
 import '../../../domain/entities/notification_entity.dart';
 import '../../models/notification_model.dart';
 
-class LocalNotifications {
-  static final String boxTitle = AppStrings.localNotificationBox;
+class LocalNotifications extends LocalHiveBox<NotificationEntity> {
+  @override
+  String get boxName => AppStrings.localNotificationBox;
+
+  /// Notifications may contain sensitive information - encrypt them.
+  @override
+  bool get requiresEncryption => true;
   static Box<NotificationEntity> get _box =>
-      Hive.box<NotificationEntity>(boxTitle);
+      Hive.box<NotificationEntity>(AppStrings.localNotificationBox);
 
   static Future<Box<NotificationEntity>> get openBox async =>
-      await Hive.openBox<NotificationEntity>(boxTitle);
-
-  /// Opens the Hive box
-  Future<Box<NotificationEntity>> refresh() async {
-    final bool isOpen = Hive.isBoxOpen(boxTitle);
-    if (isOpen) {
-      return _box;
-    } else {
-      return await Hive.openBox(boxTitle);
-    }
-  }
-
-  /// Clears all notifications
-  Future<void> clear() async => await _box.clear();
+      await Hive.openBox<NotificationEntity>(AppStrings.localNotificationBox);
 
   /// Saves a notification based on its ID (updates if already exists)
   static Future<void> saveNotification(NotificationEntity notification) async {
@@ -34,18 +27,20 @@ class LocalNotifications {
   /// Get all notifications as a list
   static Future<List<NotificationEntity>> getAllNotifications() async {
     return _box.values
-        .map((NotificationEntity e) => NotificationModel(
-              notificationId: e.notificationId,
-              userId: e.userId,
-              type: e.type,
-              title: e.title,
-              deliverTo: e.deliverTo,
-              message: e.message,
-              isViewed: e.isViewed,
-              metadata: e.metadata,
-              notificationFor: e.notificationFor,
-              timestamps: e.timestamps,
-            ))
+        .map(
+          (NotificationEntity e) => NotificationModel(
+            notificationId: e.notificationId,
+            userId: e.userId,
+            type: e.type,
+            title: e.title,
+            deliverTo: e.deliverTo,
+            message: e.message,
+            isViewed: e.isViewed,
+            metadata: e.metadata,
+            notificationFor: e.notificationFor,
+            timestamps: e.timestamps,
+          ),
+        )
         .toList();
   }
 

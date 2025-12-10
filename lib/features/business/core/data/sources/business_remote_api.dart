@@ -19,19 +19,22 @@ class BusinessRemoteAPIImpl implements BusinessCoreAPI {
       final String endpoint = '/noAuth/entity/$businessID';
       final ApiRequestEntity? local = await LocalRequestHistory().request(
         endpoint: endpoint,
-        duration:
-            kDebugMode ? const Duration(hours: 1) : const Duration(minutes: 5),
+        duration: kDebugMode
+            ? const Duration(hours: 1)
+            : const Duration(minutes: 5),
       );
       if (local != null) {
-        final BusinessEntity business =
-            BusinessModel.fromRawJson(local.encodedData);
+        final BusinessEntity business = BusinessModel.fromRawJson(
+          local.encodedData,
+        );
         return DataSuccess<BusinessEntity?>(local.encodedData, business);
       }
       final DataState<String> result = await ApiCall<String>().call(
-          endpoint: endpoint,
-          requestType: ApiRequestType.get,
-          isAuth: false,
-          isConnectType: false);
+        endpoint: endpoint,
+        requestType: ApiRequestType.get,
+        isAuth: false,
+        isConnectType: false,
+      );
       if (result is DataSuccess) {
         final String raw = result.data ?? '';
         if (raw.isEmpty) {
@@ -40,10 +43,11 @@ class BusinessRemoteAPIImpl implements BusinessCoreAPI {
             name: 'BusinessRemoteAPIImpl.getBusiness - empty',
           );
           return DataFailer<BusinessEntity?>(
-              CustomException('something_wrong'));
+            CustomException('something_wrong'),
+          );
         }
         final BusinessEntity business = BusinessModel.fromRawJson(raw);
-        await LocalBusiness().save(business);
+        await LocalBusiness().save(businessID, business);
         return DataSuccess<BusinessEntity?>(raw, business);
       } else {
         AppLog.error(
@@ -52,7 +56,8 @@ class BusinessRemoteAPIImpl implements BusinessCoreAPI {
           name: 'BusinessRemoteAPIImpl.getBusiness - else',
         );
         return DataFailer<BusinessEntity?>(
-            result.exception ?? CustomException('something_wrong'));
+          result.exception ?? CustomException('something_wrong'),
+        );
       }
     } catch (e, stc) {
       AppLog.error(

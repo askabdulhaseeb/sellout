@@ -10,7 +10,7 @@ class AddressParams {
     required this.country,
     required this.isDefault,
     required this.addressId,
-     this.address2,
+    this.address2,
     this.action = '',
   });
   final String recipientName;
@@ -22,23 +22,23 @@ class AddressParams {
   final String postalCode;
   final String addressCategory;
   final String country;
-  final bool isDefault;
+  final bool? isDefault;
   final String addressId;
   final String action;
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      if (addressId != '') 'address_id': addressId,
+      if (addressId.isNotEmpty) 'address_id': addressId,
       'recipient_name': recipientName,
       'address_1': address1,
-     if(address2 != '') 'address_2': address2,
+      if (address2 != null && address2!.isNotEmpty) 'address_2': address2,
       'city': city,
       'state': state,
       'phone_number': phoneNumber,
       'postal_code': postalCode,
-      'address_category': addressCategory,
+      if (addressCategory.isNotEmpty) 'address_category': addressCategory,
       'country': country.toLowerCase(),
-      'is_default': isDefault,
+      if (isDefault != null) 'is_default': isDefault,
     };
   }
 }

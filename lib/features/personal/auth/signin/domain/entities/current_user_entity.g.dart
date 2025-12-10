@@ -8,7 +8,7 @@ part of 'current_user_entity.dart';
 
 class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
   @override
-  final int typeId = 0;
+  final typeId = 0;
 
   @override
   CurrentUserEntity read(BinaryReader reader) {
@@ -26,12 +26,13 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       displayName: fields[7] as String,
       bio: fields[8] as String,
       currency: fields[9] as String?,
-      privacyType: fields[10] as PrivacyType?,
+      stripeConnectAccount: fields[10] as StripeConnectAccountEntity?,
       countryAlpha3: fields[16] as String,
       countryCode: fields[17] as String,
       phoneNumber: fields[18] as String,
       language: fields[19] as String,
-      address: (fields[21] as List).cast<AddressEntity>(),
+      address: (fields[25] as List).cast<AddressEntity>(),
+      sellingAddress: fields[26] as AddressEntity?,
       chatIDs: (fields[31] as List).cast<String>(),
       businessIDs: (fields[32] as List).cast<String>(),
       imageVerified: fields[41] as bool,
@@ -55,10 +56,10 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       privacySettings: fields[151] as PrivacySettingsEntity?,
       timeAway: fields[150] as TimeAwayEntity?,
       accountStatus: fields[20] as String?,
-      accountType: fields[22] as String?,
-      dob: fields[23] as DateTime?,
-      saved: (fields[24] as List).cast<String>(),
-      listOfReviews: (fields[25] as List).cast<double>(),
+      accountType: fields[21] as String?,
+      dob: fields[22] as DateTime?,
+      saved: (fields[23] as List).cast<String>(),
+      listOfReviews: (fields[24] as List).cast<double>(),
       location: fields[155] as LocationEntity?,
     );
   }
@@ -66,7 +67,7 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
   @override
   void write(BinaryWriter writer, CurrentUserEntity obj) {
     writer
-      ..writeByte(43)
+      ..writeByte(44)
       ..writeByte(1)
       ..write(obj.message)
       ..writeByte(2)
@@ -86,7 +87,7 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       ..writeByte(9)
       ..write(obj.currency)
       ..writeByte(10)
-      ..write(obj.privacyType)
+      ..write(obj.stripeConnectAccount)
       ..writeByte(16)
       ..write(obj.countryAlpha3)
       ..writeByte(17)
@@ -97,16 +98,22 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       ..write(obj.language)
       ..writeByte(20)
       ..write(obj.accountStatus)
-      ..writeByte(22)
-      ..write(obj.accountType)
-      ..writeByte(23)
-      ..write(obj.dob)
-      ..writeByte(24)
-      ..write(obj.saved)
-      ..writeByte(25)
-      ..write(obj.listOfReviews)
       ..writeByte(21)
+      ..write(obj.accountType)
+      ..writeByte(22)
+      ..write(obj.dob)
+      ..writeByte(23)
+      ..write(obj.saved)
+      ..writeByte(24)
+      ..write(obj.listOfReviews)
+      ..writeByte(25)
       ..write(obj.address)
+      ..writeByte(26)
+      ..write(obj.sellingAddress)
+      ..writeByte(31)
+      ..write(obj.chatIDs)
+      ..writeByte(32)
+      ..write(obj.businessIDs)
       ..writeByte(40)
       ..write(obj.profileImage)
       ..writeByte(41)
@@ -129,18 +136,10 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       ..write(obj.businessName)
       ..writeByte(122)
       ..write(obj.businessID)
-      ..writeByte(125)
-      ..write(obj.employeeList)
-      ..writeByte(32)
-      ..write(obj.businessIDs)
       ..writeByte(123)
       ..write(obj.logindetail)
-      ..writeByte(154)
-      ..write(obj.loginActivity)
-      ..writeByte(155)
-      ..write(obj.location)
-      ..writeByte(31)
-      ..write(obj.chatIDs)
+      ..writeByte(125)
+      ..write(obj.employeeList)
       ..writeByte(140)
       ..write(obj.supporters)
       ..writeByte(141)
@@ -152,7 +151,11 @@ class CurrentUserEntityAdapter extends TypeAdapter<CurrentUserEntity> {
       ..writeByte(152)
       ..write(obj.notification)
       ..writeByte(153)
-      ..write(obj.twoStepAuthEnabled);
+      ..write(obj.twoStepAuthEnabled)
+      ..writeByte(154)
+      ..write(obj.loginActivity)
+      ..writeByte(155)
+      ..write(obj.location);
   }
 
   @override

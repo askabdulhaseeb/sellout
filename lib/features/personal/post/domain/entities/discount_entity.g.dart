@@ -8,7 +8,7 @@ part of 'discount_entity.dart';
 
 class DiscountEntityAdapter extends TypeAdapter<DiscountEntity> {
   @override
-  final int typeId = 21;
+  final typeId = 21;
 
   @override
   DiscountEntity read(BinaryReader reader) {

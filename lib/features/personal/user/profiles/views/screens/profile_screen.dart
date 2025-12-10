@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/widgets/scaffold/personal_scaffold.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../auth/signin/domain/repositories/signin_repository.dart';
 import '../../data/sources/local/local_user.dart';
 import '../providers/profile_provider.dart';
@@ -15,29 +16,35 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('Token ${LocalAuth.token}');
     return PersonalScaffold(
       body: FutureBuilder<DataState<UserEntity?>?>(
-        future:
-            Provider.of<ProfileProvider>(context, listen: false).getUserByUid(),
-        builder: (BuildContext context,
-            AsyncSnapshot<DataState<UserEntity?>?> snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
-          }
+        future: Provider.of<ProfileProvider>(
+          context,
+          listen: false,
+        ).getUserByUid(),
+        builder:
+            (
+              BuildContext context,
+              AsyncSnapshot<DataState<UserEntity?>?> snapshot,
+            ) {
+              if (snapshot.connectionState != ConnectionState.done) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-          final UserEntity? user = snapshot.data?.entity;
-          return SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Column(
-              children: <Widget>[
-                const ProfileHeaderSection(),
-                const ProfileScoreSection(),
-                ProfileGridTypeSelectionSection(user: user),
-                ProfileGridSection(user: user),
-              ],
-            ),
-          );
-        },
+              final UserEntity? user = snapshot.data?.entity;
+              return SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  children: <Widget>[
+                    const ProfileHeaderSection(),
+                    const ProfileScoreSection(),
+                    ProfileGridTypeSelectionSection(user: user),
+                    ProfileGridSection(user: user),
+                  ],
+                ),
+              );
+            },
       ),
     );
   }

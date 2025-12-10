@@ -8,7 +8,7 @@ part of 'cart_item_entity.dart';
 
 class CartItemEntityAdapter extends TypeAdapter<CartItemEntity> {
   @override
-  final int typeId = 38;
+  final typeId = 38;
 
   @override
   CartItemEntity read(BinaryReader reader) {
@@ -17,7 +17,7 @@ class CartItemEntityAdapter extends TypeAdapter<CartItemEntity> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return CartItemEntity(
-      quantity: fields[0] as int,
+      quantity: (fields[0] as num).toInt(),
       postID: fields[1] as String,
       listID: fields[2] as String,
       color: fields[3] as String?,

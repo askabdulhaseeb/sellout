@@ -8,7 +8,7 @@ part of 'post_entity.dart';
 
 class PostEntityAdapter extends TypeAdapter<PostEntity> {
   @override
-  final int typeId = 20;
+  final typeId = 20;
 
   @override
   PostEntity read(BinaryReader reader) {
@@ -22,25 +22,25 @@ class PostEntityAdapter extends TypeAdapter<PostEntity> {
       businessID: fields[2] as String?,
       title: fields[3] as String,
       description: fields[4] as String,
-      price: fields[5] as double,
-      quantity: fields[6] as int,
+      price: (fields[5] as num).toDouble(),
+      quantity: (fields[6] as num).toInt(),
       currency: fields[7] as String?,
       type: fields[8] as ListingType,
       acceptOffers: fields[10] as bool,
-      minOfferAmount: fields[11] as double,
+      minOfferAmount: (fields[11] as num).toDouble(),
       privacy: fields[12] as PrivacyType,
       condition: fields[13] as ConditionType,
       listOfReviews: (fields[15] as List?)?.cast<double>(),
       categoryType: fields[16] as String,
-      currentLongitude: fields[20] as double,
-      currentLatitude: fields[21] as double,
-      collectionLatitude: fields[22] as double,
-      collectionLongitude: fields[23] as double,
+      currentLongitude: (fields[20] as num).toDouble(),
+      currentLatitude: (fields[21] as num).toDouble(),
+      collectionLatitude: (fields[22] as num).toDouble(),
+      collectionLongitude: (fields[23] as num).toDouble(),
       collectionLocation: fields[24] as LocationEntity?,
       meetUpLocation: fields[25] as LocationEntity?,
       deliveryType: fields[14] as DeliveryType,
-      localDelivery: fields[26] as int?,
-      internationalDelivery: fields[27] as int?,
+      localDelivery: (fields[26] as num?)?.toInt(),
+      internationalDelivery: (fields[27] as num?)?.toInt(),
       availability: (fields[35] as List?)?.cast<AvailabilityEntity>(),
       fileUrls: (fields[17] as List).cast<AttachmentEntity>(),
       hasDiscount: fields[19] as bool,
