@@ -128,9 +128,10 @@ class AppDataService extends WidgetsBindingObserver {
     }
   }
 
-  // Top-level function for isolate
-  List<CountryEntity> _processCountries(List<CountryEntity> countries) {
-    // Do heavy processing here if needed
-    return countries;
-  }
+}
+
+/// Top-level function for isolate - must be outside class to avoid capturing instance state.
+List<CountryEntity> _processCountries(List<CountryEntity> countries) {
+  // Do heavy processing here if needed
+  return countries;
 }
