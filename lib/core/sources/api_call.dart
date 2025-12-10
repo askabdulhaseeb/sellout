@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:mime/mime.dart';
 import '../../features/attachment/domain/entities/picked_attachment.dart';
 import '../enums/core/api_request_type.dart';
+import '../extension/string_ext.dart';
 import '../functions/app_log.dart';
 import 'data_state.dart';
 import '../../features/personal/auth/signin/data/sources/local/local_auth.dart';
@@ -102,7 +103,7 @@ class ApiCall<T> {
             encodedData: data,
           );
           await LocalRequestHistory().save(
-            apiRequestEntity.url,
+            url.toSHA256(),
             apiRequestEntity,
           );
           return DataSuccess<T>(data, null);
@@ -231,7 +232,7 @@ class ApiCall<T> {
             encodedData: data,
           );
           await LocalRequestHistory().save(
-            apiRequestEntity.url,
+            url.toSHA256(),
             apiRequestEntity,
           );
           return DataSuccess<T>(data, null);

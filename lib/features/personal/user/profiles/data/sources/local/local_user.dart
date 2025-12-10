@@ -10,6 +10,10 @@ class LocalUser extends LocalHiveBox<UserEntity> {
   @override
   String get boxName => AppStrings.localUsersBox;
 
+  /// User profiles contain personal information - encrypt them.
+  @override
+  bool get requiresEncryption => true;
+
   UserEntity? userEntity(String value) => box.get(value);
 
   DataState<UserEntity?> userState(String value) {
