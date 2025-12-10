@@ -107,9 +107,9 @@ class LocalAuth {
 
   Future<void> signin(CurrentUserEntity currentUser) async {
     // Store token in secure storage (platform Keychain/Keystore)
-    if (currentUser.token != null && currentUser.token!.isNotEmpty) {
+    if (currentUser.token.isNotEmpty) {
       await SecureAuthStorage.saveCredentials(
-        token: currentUser.token!,
+        token: currentUser.token,
         userId: currentUser.userID,
       );
     }
@@ -156,16 +156,29 @@ class LocalAuth {
       return;
     }
 
+    // Update token in secure storage
+    await SecureAuthStorage.saveToken(token);
+
+    // Also update in Hive for backward compatibility
     final CurrentUserEntity updated = existing.copyWith(token: token);
     await _box.put(boxTitle, updated);
   }
 
   Future<void> signout() async {
     try {
+      // Clear secure storage first (most important)
+      await SecureAuthStorage.clearAll();
+
+      // Clear Hive box
       await _box.clear();
     } catch (e) {
-      debugPrint('LocalAuth: Error clearing box during signout: $e');
+      debugPrint('LocalAuth: Error clearing data during signout: $e');
     }
     uidNotifier.value = null;
+  }
+
+  /// Checks if user is authenticated using secure storage.
+  static Future<bool> isAuthenticated() async {
+    return await SecureAuthStorage.isAuthenticated();
   }
 }

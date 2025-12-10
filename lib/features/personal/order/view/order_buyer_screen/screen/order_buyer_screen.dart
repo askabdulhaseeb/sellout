@@ -22,12 +22,13 @@ class OrderBuyerScreen extends StatelessWidget {
   static String routeName = '/order-buyer-screen';
 
   Future<(OrderEntity, PostEntity?)> _loadData(OrderEntity order) async {
-    final DataState<PostEntity> postResult =
-        await GetSpecificPostUsecase(locator())
-            .call(GetSpecificPostParam(postId: order.postId));
+    final DataState<PostEntity> postResult = await GetSpecificPostUsecase(
+      locator(),
+    ).call(GetSpecificPostParam(postId: order.postId));
 
-    final PostEntity? post =
-        (postResult is DataSuccess<PostEntity>) ? postResult.entity : null;
+    final PostEntity? post = (postResult is DataSuccess<PostEntity>)
+        ? postResult.entity
+        : null;
 
     return (order, post);
   }
@@ -46,74 +47,82 @@ class OrderBuyerScreen extends StatelessWidget {
       ),
       body: FutureBuilder<(OrderEntity, PostEntity?)>(
         future: _loadData(order),
-        builder: (BuildContext context,
-            AsyncSnapshot<(OrderEntity, PostEntity?)> snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
+        builder:
+            (
+              BuildContext context,
+              AsyncSnapshot<(OrderEntity, PostEntity?)> snapshot,
+            ) {
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-          final (OrderEntity orderData, PostEntity? post) = snapshot.data!;
+              final (OrderEntity orderData, PostEntity? post) = snapshot.data!;
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                BuyerOrderHeaderWidget(orderData: orderData),
-                const SizedBox(height: 16),
-                StepProgressIndicator<StatusType>(
-                  stepsStrs: const <String>[
-                    'processing',
-                    'dispatched',
-                    'delivered'
-                  ],
-                  title: 'delivery_info'.tr(),
-                  currentStep: orderData.orderStatus,
-                  steps: const <StatusType>[
-                    StatusType.pending,
-                    StatusType.shipped,
-                    StatusType.completed,
-                  ],
-                ),
-                const SizedBox(height: 16),
-                // Product card
-                BuyerOrderProductDetailWidget(post: post, orderData: orderData),
-                const SizedBox(height: 16),
-                Column(
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text('tracking_details'.tr(),
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    _TwoStyleText(
-                        firstText: 'postal_service'.tr(),
-                        secondText: '**** ****'),
-                    _TwoStyleText(
-                        firstText: 'courier'.tr(), secondText: '*******'),
+                    BuyerOrderHeaderWidget(orderData: orderData),
+                    const SizedBox(height: 16),
+                    StepProgressIndicator<StatusType>(
+                      stepsStrs: const <String>[
+                        'processing',
+                        'dispatched',
+                        'delivered',
+                      ],
+                      title: 'delivery_info'.tr(),
+                      currentStep: orderData.orderStatus,
+                      steps: const <StatusType>[
+                        StatusType.pending,
+                        StatusType.shipped,
+                        StatusType.completed,
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    // Product card
+                    BuyerOrderProductDetailWidget(
+                      post: post,
+                      orderData: orderData,
+                    ),
+                    const SizedBox(height: 16),
+                    Column(
+                      children: <Widget>[
+                        Text(
+                          'tracking_details'.tr(),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        _TwoStyleText(
+                          firstText: 'postal_service'.tr(),
+                          secondText: '**** ****',
+                        ),
+                        _TwoStyleText(
+                          firstText: 'courier'.tr(),
+                          secondText: '*******',
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    OrderBuyerAddressWIdget(orderData: orderData),
+                    const SizedBox(height: 16),
+                    OrderBuyerPaymentInfoWidget(
+                      orderData: orderData,
+                      post: post,
+                    ),
+                    const SizedBox(height: 24),
+                    OrderBuyerScreenBottomButtons(order: orderData),
                   ],
                 ),
-                const SizedBox(height: 16),
-                OrderBuyerAddressWIdget(orderData: orderData),
-                const SizedBox(height: 16),
-                OrderBuyerPaymentInfoWidget(
-                  orderData: orderData,
-                  post: post,
-                ),
-                const SizedBox(height: 24),
-                OrderBuyerScreenBottomButtons(order: orderData),
-              ],
-            ),
-          );
-        },
+              );
+            },
       ),
     );
   }
 }
 
 class OrderBuyerScreenBottomButtons extends StatelessWidget {
-  const OrderBuyerScreenBottomButtons({
-    required this.order,
-    super.key,
-  });
+  const OrderBuyerScreenBottomButtons({required this.order, super.key});
   final OrderEntity order;
   @override
   Widget build(BuildContext context) {
@@ -125,8 +134,10 @@ class OrderBuyerScreenBottomButtons extends StatelessWidget {
             spacing: 8,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text('more_actions'.tr(),
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(
+                'more_actions'.tr(),
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 8),
               CustomElevatedButton(
                 padding: const EdgeInsets.all(0),
@@ -143,17 +154,14 @@ class OrderBuyerScreenBottomButtons extends StatelessWidget {
             ],
           ),
         ),
-        const Spacer()
+        const Spacer(),
       ],
     );
   }
 }
 
 class OrderBuyerAddressWIdget extends StatelessWidget {
-  const OrderBuyerAddressWIdget({
-    required this.orderData,
-    super.key,
-  });
+  const OrderBuyerAddressWIdget({required this.orderData, super.key});
 
   final OrderEntity orderData;
 
@@ -162,12 +170,14 @@ class OrderBuyerAddressWIdget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text('delivery_address'.tr(),
-            style: const TextStyle(fontWeight: FontWeight.bold)),
+        Text(
+          'delivery_address'.tr(),
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 8),
         Text(orderData.shippingAddress.address1),
         Text(orderData.shippingAddress.city),
-        Text(orderData.shippingAddress.state?.stateName ?? ''),
+        Text(orderData.shippingAddress.state.stateName),
         Text(orderData.shippingAddress.country.countryName),
       ],
     );
@@ -189,22 +199,23 @@ class OrderBuyerPaymentInfoWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text('payment_info'.tr(),
-            style: const TextStyle(fontWeight: FontWeight.bold)),
+        Text(
+          'payment_info'.tr(),
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             //TODO:different payment methods
             SizedBox(
-                height: 50,
-                width: 50,
-                child: Image.asset(
-                  AppStrings.visa,
-                  fit: BoxFit.contain,
-                )),
+              height: 50,
+              width: 50,
+              child: Image.asset(AppStrings.visa, fit: BoxFit.contain),
+            ),
             Text(
-                '${CountryHelper.currencySymbolHelper(post?.currency ?? '')}${orderData.totalAmount.toStringAsFixed(2)}'),
+              '${CountryHelper.currencySymbolHelper(post?.currency ?? '')}${orderData.totalAmount.toStringAsFixed(2)}',
+            ),
           ],
         ),
         const Divider(),
@@ -213,25 +224,26 @@ class OrderBuyerPaymentInfoWidget extends StatelessWidget {
           children: <Widget>[
             Text('1 ${'item'.tr()}'),
             Text(
-                '${CountryHelper.currencySymbolHelper(post?.currency ?? '')}${orderData.price.toStringAsFixed(2)}'),
+              '${CountryHelper.currencySymbolHelper(post?.currency ?? '')}${orderData.price.toStringAsFixed(2)}',
+            ),
           ],
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text('postage'.tr()),
-            const Text('*****'),
-          ],
+          children: <Widget>[Text('postage'.tr()), const Text('*****')],
         ),
         const Divider(),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Text('order_total'.tr(),
-                style: const TextStyle(fontWeight: FontWeight.bold)),
             Text(
-                '${CountryHelper.currencySymbolHelper(post?.currency ?? '')}${orderData.totalAmount.toStringAsFixed(2)}',
-                style: const TextStyle(fontWeight: FontWeight.bold)),
+              'order_total'.tr(),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(
+              '${CountryHelper.currencySymbolHelper(post?.currency ?? '')}${orderData.totalAmount.toStringAsFixed(2)}',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
           ],
         ),
       ],
@@ -282,8 +294,8 @@ class BuyerOrderProductDetailWidget extends StatelessWidget {
                     Text(
                       '\$${orderData.totalAmount}',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const Text(
                       'Returns accepted through ** ** ****',
@@ -295,21 +307,20 @@ class BuyerOrderProductDetailWidget extends StatelessWidget {
               ),
             ],
           ),
-          Divider(
-            color: Theme.of(context).dividerColor,
-          ),
+          Divider(color: Theme.of(context).dividerColor),
           PostBuyNowButton(
-              padding: const EdgeInsets.all(0),
-              margin: const EdgeInsets.all(0),
-              detailWidgetColor: null,
-              detailWidgetSize: null,
-              detailWidget: false,
-              post: post!,
-              buyNowText: 'buy_again'.tr(),
-              buyNowColor: Colors.transparent,
-              buyNowTextStyle: TextTheme.of(context)
-                  .bodyMedium
-                  ?.copyWith(color: Theme.of(context).primaryColor)),
+            padding: const EdgeInsets.all(0),
+            margin: const EdgeInsets.all(0),
+            detailWidgetColor: null,
+            detailWidgetSize: null,
+            detailWidget: false,
+            post: post!,
+            buyNowText: 'buy_again'.tr(),
+            buyNowColor: Colors.transparent,
+            buyNowTextStyle: TextTheme.of(
+              context,
+            ).bodyMedium?.copyWith(color: Theme.of(context).primaryColor),
+          ),
         ],
       ),
     );
@@ -317,10 +328,7 @@ class BuyerOrderProductDetailWidget extends StatelessWidget {
 }
 
 class BuyerOrderHeaderWidget extends StatelessWidget {
-  const BuyerOrderHeaderWidget({
-    required this.orderData,
-    super.key,
-  });
+  const BuyerOrderHeaderWidget({required this.orderData, super.key});
 
   final OrderEntity orderData;
 
@@ -330,13 +338,11 @@ class BuyerOrderHeaderWidget extends StatelessWidget {
       children: <Widget>[
         _TwoStyleText(
           firstText: 'Time placed',
-          secondText: DateFormat('d MMM yyyy \'at\' h:mm a')
-              .format(orderData.updatedAt),
+          secondText: DateFormat(
+            'd MMM yyyy \'at\' h:mm a',
+          ).format(orderData.updatedAt),
         ),
-        _TwoStyleText(
-          firstText: 'Order number',
-          secondText: orderData.orderId,
-        ),
+        _TwoStyleText(firstText: 'Order number', secondText: orderData.orderId),
         _TwoStyleText(
           firstText: 'Total',
           secondText:
@@ -353,25 +359,19 @@ class BuyerOrderHeaderWidget extends StatelessWidget {
 }
 
 class _TwoStyleText extends StatelessWidget {
-  const _TwoStyleText({
-    required this.firstText,
-    required this.secondText,
-  });
+  const _TwoStyleText({required this.firstText, required this.secondText});
 
   final String firstText;
   final String secondText;
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle? labelStyle = Theme.of(context)
-        .textTheme
-        .labelSmall
+    final TextStyle? labelStyle = Theme.of(context).textTheme.labelSmall
         ?.copyWith(
-            color: Theme.of(context).colorScheme.outline,
-            fontWeight: FontWeight.w400);
-    final TextStyle? valueStyle = Theme.of(context)
-        .textTheme
-        .labelMedium
+          color: Theme.of(context).colorScheme.outline,
+          fontWeight: FontWeight.w400,
+        );
+    final TextStyle? valueStyle = Theme.of(context).textTheme.labelMedium
         ?.copyWith(color: Theme.of(context).colorScheme.onSurface);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -386,12 +386,7 @@ class _TwoStyleText extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          Expanded(
-            child: Text(
-              secondText,
-              style: valueStyle,
-            ),
-          ),
+          Expanded(child: Text(secondText, style: valueStyle)),
         ],
       ),
     );
