@@ -19,6 +19,40 @@ class SimpleCheckoutAddressSection extends StatefulWidget {
 class SimpleCheckoutAddressSectionState
     extends State<SimpleCheckoutAddressSection> {
   bool _isLoading = false;
+
+  /// Formats the address details, handling empty state gracefully.
+  String _formatAddressDetails(AddressEntity address) {
+    final String city = address.city;
+    final String state = address.state.stateName;
+    final String country = address.country.displayName;
+    final String postalCode = address.postalCode;
+
+    // Build the first line: city, state (skip empty values)
+    final List<String> line1Parts = <String>[
+      if (city.isNotEmpty) city,
+      if (state.isNotEmpty) state,
+    ];
+    final String line1 = line1Parts.join(', ');
+
+    // Build the second line: country postalCode
+    final List<String> line2Parts = <String>[
+      if (country.isNotEmpty) country,
+      if (postalCode.isNotEmpty) postalCode,
+    ];
+    final String line2 = line2Parts.join(' ');
+
+    if (line1.isEmpty && line2.isEmpty) {
+      return '';
+    }
+    if (line1.isEmpty) {
+      return line2;
+    }
+    if (line2.isEmpty) {
+      return line1;
+    }
+    return '$line1\n$line2';
+  }
+
   Future<void> _onAddressTap(CartProvider cartPro) async {
     final AddressEntity? newAddress = await showModalBottomSheet<AddressEntity>(
       context: context,
@@ -90,8 +124,7 @@ class SimpleCheckoutAddressSectionState
                           style: const TextStyle(fontSize: 13, height: 1.4)),
                       if (cartPro.address != null)
                         Text(
-                          '${cartPro.address!.city}, ${cartPro.address?.state?.stateName ?? 'na'.tr()}'
-                          '\n${cartPro.address?.country.displayName} ${cartPro.address?.postalCode}',
+                          _formatAddressDetails(cartPro.address!),
                           style: const TextStyle(fontSize: 13, height: 1.4),
                         ),
                       if (_isLoading)

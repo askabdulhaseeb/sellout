@@ -116,7 +116,15 @@ class StateEntity {
   });
 
   factory StateEntity.empty() =>
-      StateEntity(stateName: 'na', stateCode: 'na', cities: const <String>[]);
+      StateEntity(stateName: '', stateCode: '', cities: const <String>[]);
+
+  /// Creates a StateEntity with the raw state name when lookup fails.
+  /// This preserves the original value from the API instead of showing empty.
+  factory StateEntity.fromRawName(String rawStateName) => StateEntity(
+        stateName: rawStateName.trim(),
+        stateCode: '',
+        cities: const <String>[],
+      );
 
   @HiveField(0)
   final String stateName;
@@ -124,6 +132,17 @@ class StateEntity {
   final String stateCode;
   @HiveField(2)
   final List<String> cities;
+
+  /// Returns true if this state entity is empty/not set.
+  bool get isEmpty => stateName.isEmpty || stateName == 'na';
+
+  /// Returns true if this state entity has valid data.
+  bool get isNotEmpty => !isEmpty;
+
+  /// Returns the display name for UI, handling empty states gracefully.
+  /// If state is empty/invalid, returns the fallback (defaults to empty string).
+  String displayNameOrFallback({String fallback = ''}) =>
+      isEmpty ? fallback : stateName;
 
   @override
   bool operator ==(Object other) {
