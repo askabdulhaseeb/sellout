@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:latlong2/latlong.dart';
 import '../../../../../../../core/sources/local/encryption_key_manager.dart';
+import '../../../../../../../core/sources/local/secure_auth_storage.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../domain/entities/address_entity.dart';
@@ -105,14 +106,35 @@ class LocalAuth {
   }
 
   Future<void> signin(CurrentUserEntity currentUser) async {
+    // Store token in secure storage (platform Keychain/Keystore)
+    if (currentUser.token != null && currentUser.token!.isNotEmpty) {
+      await SecureAuthStorage.saveCredentials(
+        token: currentUser.token!,
+        userId: currentUser.userID,
+      );
+    }
+
+    // Store user data in encrypted Hive box
     await _box.put(boxTitle, currentUser);
     uidNotifier.value = currentUser.userID;
-    debugPrint('[LocalAuth] Signed in as user: \\${currentUser.userID}');
+    debugPrint('[LocalAuth] Signed in as user: ${currentUser.userID}');
     notifySellingAddressChanged();
   }
 
   static CurrentUserEntity? get currentUser =>
       _box.isEmpty ? null : _box.get(boxTitle);
+
+  /// Gets token from secure storage (preferred) or falls back to Hive.
+  static Future<String?> getSecureToken() async {
+    final String? secureToken = await SecureAuthStorage.getToken();
+    if (secureToken != null && secureToken.isNotEmpty) {
+      return secureToken;
+    }
+    // Fallback to Hive for backward compatibility
+    return currentUser?.token;
+  }
+
+  /// Synchronous token getter (from Hive only - use getSecureToken() when possible).
   static String? get token => currentUser?.token;
   static String? get uid => currentUser?.userID;
   static String get currency => currentUser?.currency ?? 'GBP';

@@ -8,8 +8,8 @@ import '../../features/personal/chats/chat_dashboard/data/models/message/message
 import '../../features/personal/chats/chat_dashboard/data/sources/local/local_chat.dart';
 import '../../features/personal/notifications/data/models/notification_model.dart';
 import '../../features/personal/notifications/data/source/local/local_notification.dart';
-import '../functions/app_log.dart';
-import 'socket_implementations.dart';
+import '../functions/app_log.dart';  
+import 'socket_implementations.dart'; 
 
 class SocketService with WidgetsBindingObserver {
   SocketService(this._socketImplementations);
@@ -19,12 +19,8 @@ class SocketService with WidgetsBindingObserver {
   bool get isConnected => socket?.connected ?? false;
   void initAndListen() {
     if (_isInitialized) return;
-
     _isInitialized = true;
     WidgetsBinding.instance.addObserver(this);
-    
-
-    // 👂 Listen to UID changes
     LocalAuth.uidNotifier.addListener(() {
       final String? uid = LocalAuth.uidNotifier.value;
       if (uid != null) {
@@ -35,8 +31,6 @@ class SocketService with WidgetsBindingObserver {
         disconnect();
       }
     });
-
-    // 🔁 Handle first-time check
     if (LocalAuth.uid != null) {
       connect();
     } else {
@@ -44,28 +38,15 @@ class SocketService with WidgetsBindingObserver {
           name: 'socket');
     }
   }
-
   void connect() {
     final String? baseUrl = dotenv.env['baseURL'];
     final String? entityId = LocalAuth.uid;
-
     if (baseUrl == null || entityId == null) {
       AppLog.error('Missing baseURL or userId (entityId)',
           name: 'SocketService.connect');
       return;
     }
-
     if (socket != null && socket!.connected) return;
-
-    socket = io.io(baseUrl, <String, dynamic>{
-      'transports': <String>['websocket'],
-      'autoConnect': true,
-      'reconnection': true,
-      'reconnectionAttempts': 10,
-      'reconnectionDelay': 2000,
-      'query': <String, String>{'entity_id': entityId},
-      'withCredentials': true,
-    });
 
     socket!.connect();
     socket!.onConnect((_) {
