@@ -42,7 +42,6 @@ dependencies:
   video_player: ^2.10.1
   open_file: ^3.5.10
 
-
   flutter_sound: ^9.30.0
   audio_waveforms: ^2.0.0
   just_audio: ^0.10.5
@@ -74,6 +73,7 @@ dependencies:
   flutter_svg: ^2.2.3
 
   flutter_native_splash: ^2.4.7
+  flutter_secure_storage: ^4.2.1
 
 dev_dependencies:
   flutter_test:

@@ -9,14 +9,18 @@ import '../../../domain/entities/getted_message_entity.dart';
 
 // getOnlineUsers
 class LocalChatMessage extends LocalHiveBox<GettedMessageEntity> {
-   @override
+  @override
   String get boxName => AppStrings.localChatMessagesBox;
+
+  /// Chat messages contain sensitive private communications - encrypt them.
+  @override
+  bool get requiresEncryption => true;
 
   Box<GettedMessageEntity> get _box => box;
 
   static Future<Box<GettedMessageEntity>> get openBox async =>
       await Hive.openBox<GettedMessageEntity>(AppStrings.localChatMessagesBox);
-
+      
   @override
   Future<Box<GettedMessageEntity>> refresh() async {
     final bool isOpen = Hive.isBoxOpen(AppStrings.localChatMessagesBox);

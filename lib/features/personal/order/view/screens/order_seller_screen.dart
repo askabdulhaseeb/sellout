@@ -523,6 +523,20 @@ class _OrderRecieverNameAddressWidgetState
   final GlobalKey _rowKey = GlobalKey();
   OverlayEntry? _overlayEntry;
 
+  /// Formats state/country line, handling empty values gracefully.
+  String _formatStateCountry(String state, String country) {
+    if (state.isEmpty && country.isEmpty) {
+      return '';
+    }
+    if (state.isEmpty) {
+      return country;
+    }
+    if (country.isEmpty) {
+      return state;
+    }
+    return '$state / $country';
+  }
+
   void _toggleOverlay() {
     if (_overlayEntry != null) {
       _overlayEntry?.remove();

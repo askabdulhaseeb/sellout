@@ -7,6 +7,10 @@ import '../../models/notification_model.dart';
 class LocalNotifications extends LocalHiveBox<NotificationEntity> {
   @override
   String get boxName => AppStrings.localNotificationBox;
+
+  /// Notifications may contain sensitive information - encrypt them.
+  @override
+  bool get requiresEncryption => true;
   static Box<NotificationEntity> get _box =>
       Hive.box<NotificationEntity>(AppStrings.localNotificationBox);
 

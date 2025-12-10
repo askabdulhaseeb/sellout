@@ -1,5 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
+
+import 'encryption_key_manager.dart';
 
 abstract class LocalHiveBox<T> {
   LocalHiveBox();
@@ -7,10 +11,22 @@ abstract class LocalHiveBox<T> {
   String get boxName;
   Box<T> get box => Hive.box<T>(boxName);
 
+  /// Override this to return true for boxes containing sensitive data.
+  /// Sensitive boxes will be encrypted with AES-256.
+  bool get requiresEncryption => false;
+
   Future<Box<T>> refresh() async {
     if (Hive.isBoxOpen(boxName)) return box;
 
     try {
+      if (requiresEncryption) {
+        final Uint8List encryptionKey =
+            await EncryptionKeyManager.getEncryptionKey();
+        return await Hive.openBox<T>(
+          boxName,
+          encryptionCipher: HiveAesCipher(encryptionKey),
+        );
+      }
       return await Hive.openBox<T>(boxName);
     } catch (e) {
       debugPrint(
@@ -25,6 +41,14 @@ abstract class LocalHiveBox<T> {
         );
       }
 
+      if (requiresEncryption) {
+        final Uint8List encryptionKey =
+            await EncryptionKeyManager.getEncryptionKey();
+        return await Hive.openBox<T>(
+          boxName,
+          encryptionCipher: HiveAesCipher(encryptionKey),
+        );
+      }
       return await Hive.openBox<T>(boxName);
     }
   }
