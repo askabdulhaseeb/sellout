@@ -9,7 +9,7 @@ part of 'message_last_evaluated_key_entity.dart';
 class MessageLastEvaluatedKeyEntityAdapter
     extends TypeAdapter<MessageLastEvaluatedKeyEntity> {
   @override
-  final int typeId = 34;
+  final typeId = 34;
 
   @override
   MessageLastEvaluatedKeyEntity read(BinaryReader reader) {
@@ -20,7 +20,7 @@ class MessageLastEvaluatedKeyEntityAdapter
     return MessageLastEvaluatedKeyEntity(
       chatID: fields[0] as String,
       paginationKey: fields[1] as String?,
-      createdAt: fields[2] as String,
+      createdAt: fields[2] == null ? 'null' : fields[2] as String,
     );
   }
 

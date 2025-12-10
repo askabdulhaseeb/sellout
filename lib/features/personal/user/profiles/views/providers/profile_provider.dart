@@ -83,7 +83,7 @@ class ProfileProvider extends ChangeNotifier {
   ListingType? _viewingCategory;
   List<PostEntity>? _viewingPosts;
   //order gridview
-  StatusType _status = StatusType.processing;
+  StatusType _status = StatusType.pending;
   List<OrderEntity> _orders = <OrderEntity>[];
 
   //---------------------------------------------------------------------------------getters

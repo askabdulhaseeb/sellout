@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:html/dom.dart' hide dom, Text;
+import 'package:html/dom.dart' hide Text;
 import 'package:html/parser.dart' as html_parser;
 
 class ExpandableText extends StatefulWidget {

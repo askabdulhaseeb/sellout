@@ -31,10 +31,7 @@ class _PaymentSuccessSheetState extends State<PaymentSuccessSheet>
     );
 
     _scaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.elasticOut,
-      ),
+      CurvedAnimation(parent: _animationController, curve: Curves.elasticOut),
     );
 
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -78,8 +75,11 @@ class _PaymentSuccessSheetState extends State<PaymentSuccessSheet>
               scale: _scaleAnimation,
               child: FadeTransition(
                 opacity: _fadeAnimation,
-                child: Icon(Icons.check_circle_outline_rounded,
-                    color: Theme.of(context).primaryColor, size: 80),
+                child: Icon(
+                  Icons.check_circle_outline_rounded,
+                  color: Theme.of(context).primaryColor,
+                  size: 80,
+                ),
               ),
             ),
             Padding(
@@ -98,42 +98,46 @@ class _PaymentSuccessSheetState extends State<PaymentSuccessSheet>
                 });
               },
               icon: Icon(
-                  showOrderInfo
-                      ? Icons.keyboard_arrow_down_rounded
-                      : Icons.keyboard_arrow_up_rounded,
-                  color: showOrderInfo
-                      ? Theme.of(context).primaryColor
-                      : ColorScheme.of(context).outline),
+                showOrderInfo
+                    ? Icons.keyboard_arrow_down_rounded
+                    : Icons.keyboard_arrow_up_rounded,
+                color: showOrderInfo
+                    ? Theme.of(context).primaryColor
+                    : ColorScheme.of(context).outline,
+              ),
               label: Text(
                 showOrderInfo ? 'hide_order_info'.tr() : 'see_order_info'.tr(),
                 style: TextTheme.of(context).bodySmall?.copyWith(
-                    color: showOrderInfo
-                        ? Theme.of(context).primaryColor
-                        : ColorScheme.of(context).outline),
+                  color: showOrderInfo
+                      ? Theme.of(context).primaryColor
+                      : ColorScheme.of(context).outline,
+                ),
               ),
             ),
             if (showOrderInfo) CartPaymentSuccessDetailsSection(pro: pro),
           ],
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(
-              '${'order_total'.tr()}: ${CountryHelper.currencySymbolHelper(billing?.currency)}${billing?.grandTotal ?? ''}',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            CustomElevatedButton(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              title: 'continue'.tr(),
-              isLoading: false,
-            ),
-          ],
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(
+                '${'order_total'.tr()}: ${CountryHelper.currencySymbolHelper(billing?.currency)}${billing?.grandTotal ?? ''}',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              CustomElevatedButton(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                title: 'continue'.tr(),
+                isLoading: false,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -172,10 +176,7 @@ class _CustomAddressSection extends StatelessWidget {
 }
 
 class CartPaymentSuccessDetailsSection extends StatelessWidget {
-  const CartPaymentSuccessDetailsSection({
-    required this.pro,
-    super.key,
-  });
+  const CartPaymentSuccessDetailsSection({required this.pro, super.key});
 
   final CartProvider pro;
 
@@ -189,14 +190,11 @@ class CartPaymentSuccessDetailsSection extends StatelessWidget {
         _CustomAddressSection(
           name: pro.address?.address1 ?? '',
           street: pro.address?.city ?? '',
-          city: pro.address?.state?.stateName ?? '',
+          city: pro.address?.state.stateName ?? '',
           country: pro.address?.country.countryName ?? '',
         ),
         const SizedBox(height: 6),
-        Text(
-          '${'items'.tr()}:',
-          style: Theme.of(context).textTheme.titleSmall,
-        ),
+        Text('${'items'.tr()}:', style: Theme.of(context).textTheme.titleSmall),
         const SizedBox(height: 6),
         ListView.builder(
           shrinkWrap: true,
@@ -256,9 +254,7 @@ class OrderSuccessTile extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   'Quantity: ${item?.quantity ?? 0}',
-                  style: const TextStyle(
-                    fontSize: 12,
-                  ),
+                  style: const TextStyle(fontSize: 12),
                 ),
               ],
             ),

@@ -8,7 +8,7 @@ part of 'post_item_entity.dart';
 
 class PostItemEntityAdapter extends TypeAdapter<PostItemEntity> {
   @override
-  final int typeId = 73;
+  final typeId = 73;
 
   @override
   PostItemEntity read(BinaryReader reader) {
@@ -16,9 +16,7 @@ class PostItemEntityAdapter extends TypeAdapter<PostItemEntity> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return PostItemEntity(
-      address: fields[1] as String?,
-    );
+    return PostItemEntity(address: fields[1] as String?);
   }
 
   @override

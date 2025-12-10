@@ -1,5 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
@@ -26,6 +26,7 @@ part 'post_entity.g.dart';
 
 @HiveType(typeId: 20)
 class PostEntity {
+
   PostEntity({
     required this.listID,
     required this.postID,
@@ -70,6 +71,39 @@ class PostEntity {
     required this.accessCode,
     DateTime? inHiveAt,
   }) : inHiveAt = inHiveAt ?? DateTime.now();
+  /// Returns the offer price string in user's currency for a given offer price and quantity
+  Future<String> getOfferPriceStr({
+    required double offerPrice,
+    required int quantity,
+  }) async {
+    final double? converted = await getOfferLocalPrice(
+      offerPrice: offerPrice,
+      quantity: quantity,
+    );
+    if (converted == null) return 'na'.tr();
+    return '${CountryHelper.currencySymbolHelper(LocalAuth.currency)}${converted.toStringAsFixed(2)}';
+  }
+
+  Future<double?> getOfferLocalPrice({
+    required double offerPrice,
+    required int quantity,
+  }) async {
+    final String from = currency ?? 'GBP';
+    final String to = LocalAuth.currency;
+    final double total = offerPrice * quantity;
+    if (from == to) return total;
+    final GetExchangeRateParams params = GetExchangeRateParams(
+      from: from,
+      to: to,
+    );
+    final DataState<ExchangeRateEntity> result = await GetExchangeRateUsecase(
+      locator(),
+    ).call(params);
+    if (result is DataSuccess<ExchangeRateEntity> && result.entity != null) {
+      return total * result.entity!.rate;
+    }
+    return null;
+  }
 
   // 🔹 Base Fields
   @HiveField(0)
@@ -192,10 +226,13 @@ class PostEntity {
 
     if (from == to) return price;
 
-    final GetExchangeRateParams params =
-        GetExchangeRateParams(from: from, to: to);
-    final DataState<ExchangeRateEntity> result =
-        await GetExchangeRateUsecase(locator()).call(params);
+    final GetExchangeRateParams params = GetExchangeRateParams(
+      from: from,
+      to: to,
+    );
+    final DataState<ExchangeRateEntity> result = await GetExchangeRateUsecase(
+      locator(),
+    ).call(params);
 
     if (result is DataSuccess<ExchangeRateEntity>) {
       return price * result.entity!.rate;

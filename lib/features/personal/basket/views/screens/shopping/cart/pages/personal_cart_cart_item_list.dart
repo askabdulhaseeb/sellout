@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../data/models/cart/cart_item_model.dart';
@@ -23,8 +23,9 @@ class PersonalCartItemList extends HookWidget {
       return null;
     }, <Object?>[]);
 
-    final Box<CartEntity> cartBox =
-        useValueListenable(LocalCart().listenable());
+    final Box<CartEntity> cartBox = useValueListenable(
+      LocalCart().listenable(),
+    );
 
     final CartEntity cart = cartBox.values.firstWhere(
       (CartEntity element) => element.cartID == uid,

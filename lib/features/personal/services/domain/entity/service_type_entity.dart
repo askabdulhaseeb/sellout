@@ -1,12 +1,9 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 part 'service_type_entity.g.dart';
 
 @HiveType(typeId: 77)
 class ServiceTypeEntity {
-  ServiceTypeEntity({
-    required this.value,
-    required this.label,
-  });
+  ServiceTypeEntity({required this.value, required this.label});
 
   factory ServiceTypeEntity.fromMap(Map<String, dynamic> map) {
     return ServiceTypeEntity(
@@ -21,7 +18,7 @@ class ServiceTypeEntity {
   final String label;
 
   Map<String, dynamic> toMap() => <String, dynamic>{
-        'value': value,
-        'label': label,
-      };
+    'value': value,
+    'label': label,
+  };
 }

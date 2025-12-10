@@ -31,73 +31,79 @@ class SignInScreen extends StatelessWidget {
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Consumer<SigninProvider>(
-            builder: (BuildContext context, SigninProvider authPro, _) {
-          return Form(
-            key: signInFormKey,
-            child: AutofillGroup(
-              child: Column(
-                children: <Widget>[
-                  const SellOutTitle(),
-                  const SizedBox(height: 24),
-                  CustomTextFormField(
-                    controller: authPro.email,
-                    labelText: 'email'.tr(),
-                    hint: 'Ex: username@mail.com',
-                    autoFocus: true,
-                    autofillHints: const <String>[AutofillHints.email],
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (String? value) => AppValidator.email(value),
-                  ),
-                  PasswordTextFormField(controller: authPro.password),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () => Navigator.pushNamed(
-                          context, FindAccountScreen.routeName),
-                      child: Text(
-                        'forgot_password',
-                        style:
-                            TextStyle(color: Theme.of(context).disabledColor),
-                      ).tr(),
+          builder: (BuildContext context, SigninProvider authPro, _) {
+            return Form(
+              key: signInFormKey,
+              child: AutofillGroup(
+                child: Column(
+                  children: <Widget>[
+                    const SellOutTitle(),
+                    const SizedBox(height: 24),
+                    CustomTextFormField(
+                      controller: authPro.email,
+                      labelText: 'email'.tr(),
+                      hint: 'Ex: username@mail.com',
+                      autoFocus: true,
+                      autofillHints: const <String>[AutofillHints.email],
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (String? value) => AppValidator.email(value),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 400,
-                  )
-                ],
+                    PasswordTextFormField(controller: authPro.password),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () => Navigator.pushNamed(
+                          context,
+                          FindAccountScreen.routeName,
+                        ),
+                        child: Text(
+                          'forgot_password',
+                          style: TextStyle(
+                            color: Theme.of(context).disabledColor,
+                          ),
+                        ).tr(),
+                      ),
+                    ),
+                    const SizedBox(height: 400),
+                  ],
+                ),
               ),
-            ),
-          );
-        }),
+            );
+          },
+        ),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Consumer<SigninProvider>(
-          builder:
-              (BuildContext context, SigninProvider authPro, Widget? child) =>
-                  Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              CustomElevatedButton(
-                  padding: const EdgeInsets.all(0),
-                  title: 'dont_have_account'.tr(),
-                  textStyle: TextTheme.of(context).bodyMedium,
-                  isLoading: false,
-                  bgColor: Colors.transparent,
-                  border: Border.all(color: Colors.transparent),
-                  onTap: () async {
-                    if (!signInFormKey.currentState!.validate()) {
-                      return;
-                    }
-                    await Navigator.pushReplacementNamed(
-                        context, SignupScreen.routeName);
-                  }),
-              CustomElevatedButton(
-                title: 'login'.tr(),
-                isLoading: authPro.isLoading,
-                onTap: () async => await authPro.signIn(context),
-              ),
-            ],
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Consumer<SigninProvider>(
+            builder:
+                (BuildContext context, SigninProvider authPro, Widget? child) =>
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        CustomElevatedButton(
+                          padding: const EdgeInsets.all(0),
+                          title: 'dont_have_account'.tr(),
+                          isLoading: false,
+                          bgColor: Colors.transparent,
+                          border: Border.all(color: Colors.transparent),
+                          onTap: () async {
+                            if (!signInFormKey.currentState!.validate()) {
+                              return;
+                            }
+                            await Navigator.pushReplacementNamed(
+                              context,
+                              SignupScreen.routeName,
+                            );
+                          },
+                        ),
+                        CustomElevatedButton(
+                          title: 'login'.tr(),
+                          isLoading: authPro.isLoading,
+                          onTap: () async => await authPro.signIn(context),
+                        ),
+                      ],
+                    ),
           ),
         ),
       ),

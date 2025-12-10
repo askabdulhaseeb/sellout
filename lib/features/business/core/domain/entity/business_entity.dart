@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 
 import '../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../personal/location/domain/entities/location_entity.dart';
@@ -31,7 +31,7 @@ class BusinessEntity {
     required this.updatedAt,
     required this.logo,
     required this.supporters,
-    required this.supportings
+    required this.supportings,
   }) : inHiveAt = DateTime.now();
 
   @HiveField(0)
@@ -68,10 +68,10 @@ class BusinessEntity {
   final DateTime? updatedAt;
   @HiveField(16)
   final AttachmentEntity? logo;
-    @HiveField(20)
+  @HiveField(20)
   final List<SupporterDetailEntity>? supporters;
-    @HiveField(21)
- final List<SupporterDetailEntity>? supportings;
-   @HiveField(99)
+  @HiveField(21)
+  final List<SupporterDetailEntity>? supportings;
+  @HiveField(99)
   final DateTime? inHiveAt;
 }

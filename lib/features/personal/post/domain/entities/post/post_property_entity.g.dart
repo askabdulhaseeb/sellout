@@ -8,7 +8,7 @@ part of 'post_property_entity.dart';
 
 class PostPropertyEntityAdapter extends TypeAdapter<PostPropertyEntity> {
   @override
-  final int typeId = 71;
+  final typeId = 71;
 
   @override
   PostPropertyEntity read(BinaryReader reader) {
@@ -17,8 +17,8 @@ class PostPropertyEntityAdapter extends TypeAdapter<PostPropertyEntity> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return PostPropertyEntity(
-      bedroom: fields[0] as int?,
-      bathroom: fields[1] as int?,
+      bedroom: (fields[0] as num?)?.toInt(),
+      bathroom: (fields[1] as num?)?.toInt(),
       energyRating: fields[2] as String?,
       propertyType: fields[3] as String?,
       propertyCategory: fields[4] as String?,

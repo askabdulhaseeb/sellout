@@ -9,7 +9,7 @@ part of 'business_travel_detail_entity.dart';
 class BusinessTravelDetailEntityAdapter
     extends TypeAdapter<BusinessTravelDetailEntity> {
   @override
-  final int typeId = 40;
+  final typeId = 40;
 
   @override
   BusinessTravelDetailEntity read(BinaryReader reader) {
@@ -19,10 +19,10 @@ class BusinessTravelDetailEntityAdapter
     };
     return BusinessTravelDetailEntity(
       currency: fields[0] as String?,
-      maxTravelTime: fields[1] as int?,
+      maxTravelTime: (fields[1] as num?)?.toInt(),
       timeType: fields[2] as String?,
-      maxTravel: fields[3] as int?,
-      travelFee: fields[4] as double?,
+      maxTravel: (fields[3] as num?)?.toInt(),
+      travelFee: (fields[4] as num?)?.toDouble(),
       distance: fields[5] as String?,
     );
   }

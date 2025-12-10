@@ -1,37 +1,23 @@
-import 'package:hive_flutter/hive_flutter.dart';
 import '../../../../../../../core/sources/data_state.dart';
+import '../../../../../../../core/sources/local/local_hive_box.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../services/get_it.dart';
 import '../../../domain/entities/user_entity.dart';
 import '../../../domain/usecase/get_user_by_uid.dart';
 export '../../models/user_model.dart';
 
-class LocalUser {
-  static final String boxTitle = AppStrings.localUsersBox;
-  static Box<UserEntity> get _box => Hive.box<UserEntity>(boxTitle);
+class LocalUser extends LocalHiveBox<UserEntity> {
+  @override
+  String get boxName => AppStrings.localUsersBox;
 
-  static Future<Box<UserEntity>> get openBox async =>
-      await Hive.openBox<UserEntity>(boxTitle);
+  /// User profiles contain personal information - encrypt them.
+  @override
+  bool get requiresEncryption => true;
 
-  Future<Box<UserEntity>> refresh() async {
-    final bool isOpen = Hive.isBoxOpen(boxTitle);
-    if (isOpen) {
-      return _box;
-    } else {
-      return await Hive.openBox<UserEntity>(boxTitle);
-    }
-  }
-
-  Future<void> save(UserEntity user) async {
-    await _box.put(user.uid, user);
-  }
-
-  Future<void> clear() async => await _box.clear();
-
-  UserEntity? userEntity(String value) => _box.get(value);
+  UserEntity? userEntity(String value) => box.get(value);
 
   DataState<UserEntity?> userState(String value) {
-    final UserEntity? entity = _box.get(value);
+    final UserEntity? entity = box.get(value);
     if (entity != null) {
       return DataSuccess<UserEntity?>(value, entity);
     } else {
@@ -44,8 +30,9 @@ class LocalUser {
     if (entity != null) {
       return entity;
     } else {
-      final GetUserByUidUsecase getUserByUidUsecase =
-          GetUserByUidUsecase(locator());
+      final GetUserByUidUsecase getUserByUidUsecase = GetUserByUidUsecase(
+        locator(),
+      );
       final DataState<UserEntity?> user = await getUserByUidUsecase(id);
       if (user is DataSuccess) {
         return user.entity;

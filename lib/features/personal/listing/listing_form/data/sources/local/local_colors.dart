@@ -1,42 +1,31 @@
-import 'package:hive/hive.dart';
-import '../../../domain/entities/color_options_entity.dart';
+import 'package:hive_ce/hive.dart';
+import '../../../../../../../core/sources/local/local_hive_box.dart';
 import '../../../../../../../core/utilities/app_string.dart';
+import '../../../domain/entities/color_options_entity.dart';
 import '../../models/color_option_model.dart';
 
-class LocalColors {
-  static final String boxTitle = AppStrings.localColorBox;
+class LocalColors extends LocalHiveBox<ColorOptionEntity> {
+  @override
+  String get boxName => AppStrings.localColorBox;
+
   static Box<ColorOptionEntity> get _box =>
-      Hive.box<ColorOptionEntity>(boxTitle);
+      Hive.box<ColorOptionEntity>(AppStrings.localColorBox);
 
-  Future<Box<ColorOptionEntity>> refresh() async {
-    final bool isOpen = Hive.isBoxOpen(boxTitle);
-    if (isOpen) {
-      return _box;
-    } else {
-      return await Hive.openBox<ColorOptionEntity>(boxTitle);
-    }
-  }
-
-  Future<void> saveAll(List<ColorOptionEntity> values) async {
+  Future<void> saveAllColors(List<ColorOptionEntity> values) async {
     for (final ColorOptionEntity value in values) {
-      await save(value);
+      await save(value.value, value);
     }
   }
 
   static Future<Box<ColorOptionEntity>> get openBox async =>
-      await Hive.openBox<ColorOptionEntity>(boxTitle);
-
-  Future<void> save(ColorOptionEntity value) async =>
-      await _box.put(value.value, value); // Use color hex as key
-
-  Future<void> clear() async => await _box.clear();
+      await Hive.openBox<ColorOptionEntity>(AppStrings.localColorBox);
 
   /// Return all colors as models
   List<ColorOptionModel> get colors => _box.values
       .map((ColorOptionEntity e) => ColorOptionModel.fromEntity(e))
       .toList();
 
-ColorOptionEntity? getColor(String hexValue) {
-  return _box.get(hexValue);
-}
+  ColorOptionEntity? getColor(String hexValue) {
+    return _box.get(hexValue);
+  }
 }

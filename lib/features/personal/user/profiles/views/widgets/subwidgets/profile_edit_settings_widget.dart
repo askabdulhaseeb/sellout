@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../../../../../../routes/app_linking.dart';
+import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../setting/setting_dashboard/view/screens/personal_setting_screen.dart';
+import '../../../../../setting/setting_options/balance/balance_screen.dart';
 import '../../screens/edit_profile_screen.dart';
 
 class ProfileEditAndSettingsWidget extends StatefulWidget {
@@ -50,7 +52,9 @@ class _ProfileEditAndSettingsWidgetState
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 8),
+                              horizontal: 10,
+                              vertical: 8,
+                            ),
                             child: Row(
                               children: <Widget>[
                                 const CustomSvgIcon(
@@ -64,20 +68,19 @@ class _ProfileEditAndSettingsWidgetState
                             ),
                           ),
                         ),
-                        const Divider(
-                          height: 0,
-                          indent: 6,
-                          endIndent: 6,
-                        ),
+                        const Divider(height: 0, indent: 6, endIndent: 6),
                         InkWell(
                           onTap: () {
                             _removeOverlay();
-                            Navigator.of(context)
-                                .pushNamed(PersonalSettingScreen.routeName);
+                            Navigator.of(
+                              context,
+                            ).pushNamed(PersonalSettingScreen.routeName);
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 8),
+                              horizontal: 10,
+                              vertical: 8,
+                            ),
                             child: Row(
                               children: <Widget>[
                                 const CustomSvgIcon(
@@ -115,10 +118,14 @@ class _ProfileEditAndSettingsWidgetState
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        const CustomSvgIcon(
-          size: 18,
-          assetPath: AppStrings.selloutProfileBankIcon,
-        ),
+        if (LocalAuth.currentUser?.stripeConnectAccount != null)
+          InkWell(
+            onTap: () => AppNavigator.pushNamed(BalanceScreen.routeName),
+            child: const CustomSvgIcon(
+              size: 18,
+              assetPath: AppStrings.selloutProfileBankIcon,
+            ),
+          ),
         const SizedBox(width: 8),
         GestureDetector(
           onTap: () {

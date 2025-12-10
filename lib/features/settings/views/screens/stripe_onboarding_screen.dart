@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 
 class StripeOnboardingScreen extends StatefulWidget {
-  const StripeOnboardingScreen({super.key, required this.url});
+  const StripeOnboardingScreen({required this.url, super.key});
   final String url;
 
   @override
@@ -12,13 +12,12 @@ class StripeOnboardingScreen extends StatefulWidget {
 class _StripeOnboardingScreenState extends State<StripeOnboardingScreen> {
   Future<void> _openSecureStripeOnboarding() async {
     final Uri uri = Uri.parse(widget.url);
-
     try {
       await launchUrl(
         uri,
         customTabsOptions: CustomTabsOptions(
           browser: const CustomTabsBrowserConfiguration(
-            prefersDefaultBrowser: true, // ✅ opens Chrome if available
+            prefersDefaultBrowser: true,
           ),
           colorSchemes: CustomTabsColorSchemes.defaults(),
           showTitle: true,
@@ -31,11 +30,12 @@ class _StripeOnboardingScreenState extends State<StripeOnboardingScreen> {
           entersReaderIfAvailable: false,
         ),
       );
+      if (mounted) {
+        Navigator.of(context).pop(); // Optionally close after success
+      }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not open Stripe page: $e')),
-        );
+        Navigator.of(context).pop();
       }
     }
   }
@@ -45,16 +45,16 @@ class _StripeOnboardingScreenState extends State<StripeOnboardingScreen> {
     super.initState();
     // ✅ Delay ensures context is ready before calling
     Future.delayed(
-        const Duration(milliseconds: 300), _openSecureStripeOnboarding);
+      const Duration(milliseconds: 300),
+      _openSecureStripeOnboarding,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
       backgroundColor: Colors.black,
-      body: Center(
-        child: CircularProgressIndicator(color: Colors.white),
-      ),
+      body: Center(child: CircularProgressIndicator(color: Colors.white)),
     );
   }
 }

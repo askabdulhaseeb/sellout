@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 part 'cart_item_type.g.dart';
 
 @HiveType(typeId: 86)
@@ -9,7 +9,11 @@ enum CartItemStatusType {
   saveLater('save_later', 'saved_later', 'move_to_cart', 'save_later');
 
   const CartItemStatusType(
-      this.code, this.json, this.tileActionCode, this.action);
+    this.code,
+    this.json,
+    this.tileActionCode,
+    this.action,
+  );
   final String code;
   final String json;
   final String tileActionCode;

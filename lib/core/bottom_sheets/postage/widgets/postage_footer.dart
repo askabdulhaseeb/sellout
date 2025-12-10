@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../features/personal/basket/domain/entities/cart/postage_detail_response_entity.dart';
 import '../../../../features/personal/basket/views/providers/cart_provider.dart';
+import '../../../../features/postage/domain/entities/postage_detail_response_entity.dart';
 
 class PostageFooter extends StatelessWidget {
   const PostageFooter({

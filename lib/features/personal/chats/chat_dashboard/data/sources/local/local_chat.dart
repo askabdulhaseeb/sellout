@@ -1,5 +1,6 @@
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import '../../../../../../../core/sources/data_state.dart';
+import '../../../../../../../core/sources/local/local_hive_box.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../services/get_it.dart';
 import '../../../domain/entities/messages/message_entity.dart';
@@ -8,30 +9,24 @@ import '../../models/chat/chat_model.dart';
 
 // getOnlineUsers
 //
-class LocalChat {
-  static final String boxTitle = AppStrings.localChatsBox;
-  static Box<ChatEntity> get _box => Hive.box<ChatEntity>(boxTitle);
+class LocalChat extends LocalHiveBox<ChatEntity> {
+  @override
+  String get boxName => AppStrings.localChatsBox;
+
+  /// Chat conversations contain sensitive user data - encrypt them.
+  @override
+  bool get requiresEncryption => true;
+
+  static Box<ChatEntity> get _box => Hive.box<ChatEntity>(AppStrings.localChatsBox);
   static Box<ChatEntity> get boxLive => _box;
 
   static Future<Box<ChatEntity>> get openBox async =>
-      await Hive.openBox<ChatEntity>(boxTitle);
-
-  Future<Box<ChatEntity>> refresh() async {
-    final bool isOpen = Hive.isBoxOpen(boxTitle);
-    if (isOpen) {
-      return _box;
-    } else {
-      return await Hive.openBox<ChatEntity>(boxTitle);
-    }
-  }
+      await Hive.openBox<ChatEntity>(AppStrings.localChatsBox);
 
   List<ChatEntity> getAllChats() {
     return _box.values.toList();
   }
 
-  Future<void> save(ChatEntity value) async =>
-      await _box.put(value.chatId, value);
-  Future<void> clear() async => await _box.clear();
   ChatEntity? chatEntity(String value) => _box.get(value);
   DataState<ChatEntity?> chatState(String value) {
     final ChatEntity? entity = _box.get(value);
@@ -43,7 +38,7 @@ class LocalChat {
     }
   }
 
-//
+  //
   Future<void> updateLastMessage(String chatId, MessageEntity newMsg) async {
     final ChatEntity? existing = _box.get(chatId);
     if (existing == null) {
@@ -62,12 +57,12 @@ class LocalChat {
       // If chat does not exist locally, you might fetch it
       await GetMyChatsUsecase(locator()).call(<String>[newMsg.chatId]);
     } else {
-      final ChatEntity updated = existing.copyWith(
-        pinnedMessage: newMsg,
-      );
+      final ChatEntity updated = existing.copyWith(pinnedMessage: newMsg);
 
       await _box.put(
-          newMsg.chatId, updated); // This notifies listeners if UI is listening
+        newMsg.chatId,
+        updated,
+      ); // This notifies listeners if UI is listening
     }
   }
 }

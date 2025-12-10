@@ -8,7 +8,7 @@ part of 'group_into_entity.dart';
 
 class GroupInfoEntityAdapter extends TypeAdapter<GroupInfoEntity> {
   @override
-  final int typeId = 29;
+  final typeId = 29;
 
   @override
   GroupInfoEntity read(BinaryReader reader) {

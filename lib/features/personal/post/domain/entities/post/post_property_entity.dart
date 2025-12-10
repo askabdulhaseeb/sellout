@@ -1,18 +1,18 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 part 'post_property_entity.g.dart';
 
 @HiveType(typeId: 71)
 class PostPropertyEntity {
   PostPropertyEntity({
     required this.bedroom,
-       required  this.bathroom,
-      required   this.energyRating,
-      required   this.propertyType,
-      required   this.propertyCategory,
-      required   this.garden,
-      required   this.parking,
-      required   this.tenureType,
-      required   this.address,
+    required this.bathroom,
+    required this.energyRating,
+    required this.propertyType,
+    required this.propertyCategory,
+    required this.garden,
+    required this.parking,
+    required this.tenureType,
+    required this.address,
   });
 
   @HiveField(0)

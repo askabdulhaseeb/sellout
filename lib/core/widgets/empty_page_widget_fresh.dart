@@ -179,7 +179,7 @@ class _SixCategoryLoaderPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final double centerX = size.width / 2;
     final double centerY = size.height / 2;
-    final double radius = 35;
+    const double radius = 35;
 
     // Draw 6 category icons in a circle
     for (int i = 0; i < categoryIcons.length; i++) {

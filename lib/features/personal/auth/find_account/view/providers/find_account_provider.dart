@@ -10,7 +10,7 @@ import '../../../signin/views/screens/sign_in_screen.dart';
 import '../../domain/use_cases/find_account_usecase.dart';
 import '../../domain/use_cases/newpassword_usecase.dart';
 import '../../domain/use_cases/send_otp_usecase.dart';
-import '../../domain/use_cases/verify_otpUsecase.dart';
+import '../../domain/use_cases/verify_otp_usecase.dart';
 import '../params/new_password_params.dart';
 import '../params/verify_pin_params.dart';
 import '../screens/confirm_email_screen.dart';
@@ -18,8 +18,12 @@ import '../screens/enter_code_screen.dart';
 import '../screens/new_password_screen.dart';
 
 class FindAccountProvider with ChangeNotifier {
-  FindAccountProvider(this.findAccountUseCase, this.sendEmailForOtpUsecase,
-      this.newPasswordUsecase, this.verifyOtpUsecase);
+  FindAccountProvider(
+    this.findAccountUseCase,
+    this.sendEmailForOtpUsecase,
+    this.newPasswordUsecase,
+    this.verifyOtpUsecase,
+  );
   final FindAccountUsecase findAccountUseCase;
   final SendEmailForOtpUsecase sendEmailForOtpUsecase;
   final NewPasswordUsecase newPasswordUsecase;
@@ -61,8 +65,9 @@ class FindAccountProvider with ChangeNotifier {
     isLoading = true;
     try {
       final String phoneOrEmail = _phoneOrEmailController.text.trim();
-      final DataState<Map<String, dynamic>> result =
-          await findAccountUseCase(phoneOrEmail);
+      final DataState<Map<String, dynamic>> result = await findAccountUseCase(
+        phoneOrEmail,
+      );
       if (result is DataSuccess<Map<String, dynamic>>) {
         final String? rawData = result.data;
         if (rawData != null) {
@@ -74,16 +79,20 @@ class FindAccountProvider with ChangeNotifier {
                 email = phoneOrEmail;
                 Navigator.of(context).pushNamed(ConfirmEmailScreen.routeName);
               } else {
-                AppLog.error('${result.exception}',
-                    name: 'FindAccountProvider.findAccount - else');
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('something_wrong'.tr())),
+                AppLog.error(
+                  '${result.exception}',
+                  name: 'FindAccountProvider.findAccount - else',
                 );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text('something_wrong'.tr())));
               }
             }
           } catch (e) {
-            AppLog.error('something_wrong'.tr(),
-                name: 'FindAccountProvider.findAccount - catch $e');
+            AppLog.error(
+              'something_wrong'.tr(),
+              name: 'FindAccountProvider.findAccount - catch $e',
+            );
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Invalid API response format')),
             );
@@ -97,8 +106,10 @@ class FindAccountProvider with ChangeNotifier {
         throw Exception('Unexpected response type: ${result.runtimeType}');
       }
     } catch (e) {
-      AppLog.error('something_wrong'.tr(),
-          name: ' FindAccountProvider - catch Error: $e');
+      AppLog.error(
+        'something_wrong'.tr(),
+        name: ' FindAccountProvider - catch Error: $e',
+      );
     } finally {
       isLoading = false;
     }
@@ -112,8 +123,9 @@ class FindAccountProvider with ChangeNotifier {
     }
     isLoading = true;
     try {
-      final DataState<String> result =
-          await sendEmailForOtpUsecase(email ?? '');
+      final DataState<String> result = await sendEmailForOtpUsecase(
+        email ?? '',
+      );
 
       if (result is DataSuccess) {
         uid = result.entity;
@@ -142,10 +154,7 @@ class FindAccountProvider with ChangeNotifier {
 
   Future<bool> verifyOtp(BuildContext context) async {
     if (_uid == null) {
-      AppLog.error(
-        'uid_null',
-        name: 'FindAccountProvider.verifyOtp - uid',
-      );
+      AppLog.error('uid_null', name: 'FindAccountProvider.verifyOtp - uid');
       AppSnackBar.showSnackBar(context, 'uid_null'.tr());
       return false;
     }
@@ -159,8 +168,10 @@ class FindAccountProvider with ChangeNotifier {
     }
     isLoading = true;
     try {
-      final VerifyPinParams params =
-          VerifyPinParams(uid: _uid ?? '', otp: pin.text);
+      final VerifyPinParams params = VerifyPinParams(
+        uid: _uid ?? '',
+        otp: pin.text,
+      );
       final DataState<bool> result = await verifyOtpUsecase(params);
       if (result is DataSuccess) {
         AppNavigator.pushNamed(NewPasswordScreen.routeName);
@@ -172,8 +183,10 @@ class FindAccountProvider with ChangeNotifier {
         );
       }
     } catch (e) {
-      AppLog.error('something_wrong'.tr(),
-          name: 'FindAccountProvider.VerifyOtp - catch $e');
+      AppLog.error(
+        'something_wrong'.tr(),
+        name: 'FindAccountProvider.VerifyOtp - catch $e',
+      );
     }
     isLoading = false;
     return false;
@@ -181,8 +194,10 @@ class FindAccountProvider with ChangeNotifier {
 
   Future<bool> newpassword(BuildContext context) async {
     if (newPassword.text.isEmpty) {
-      AppLog.error('password_empty',
-          name: 'FindAccountProvider.newpassword - empty password');
+      AppLog.error(
+        'password_empty',
+        name: 'FindAccountProvider.newpassword - empty password',
+      );
       AppSnackBar.showSnackBar(context, 'password_requirement'.tr());
       return false;
     }
@@ -229,8 +244,9 @@ class FindAccountProvider with ChangeNotifier {
     _isLoading = false;
     _resendCodeTimer?.cancel();
     _resentCodeSeconds = _codeSendingTime;
-    _resendCodeTimer =
-        Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+    _resendCodeTimer = Timer.periodic(const Duration(seconds: 1), (
+      Timer timer,
+    ) {
       if (_resentCodeSeconds == 0) {
         timer.cancel();
       } else {

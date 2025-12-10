@@ -8,7 +8,7 @@ part of 'visiting_entity.dart';
 
 class VisitingEntityAdapter extends TypeAdapter<VisitingEntity> {
   @override
-  final int typeId = 14;
+  final typeId = 14;
 
   @override
   VisitingEntity read(BinaryReader reader) {
@@ -32,7 +32,7 @@ class VisitingEntityAdapter extends TypeAdapter<VisitingEntity> {
   @override
   void write(BinaryWriter writer, VisitingEntity obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.visitingID)
       ..writeByte(1)
@@ -50,9 +50,7 @@ class VisitingEntityAdapter extends TypeAdapter<VisitingEntity> {
       ..writeByte(7)
       ..write(obj.dateTime)
       ..writeByte(8)
-      ..write(obj.createdAt)
-      ..writeByte(9)
-      ..write(obj.inHiveAt);
+      ..write(obj.createdAt);
   }
 
   @override

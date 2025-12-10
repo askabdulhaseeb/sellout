@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 part 'package_detail_entity.g.dart';
 
 @HiveType(typeId: 75)
@@ -20,7 +20,6 @@ class PackageDetailEntity {
 
   @HiveField(3)
   final double height;
-
 
   // Copy with method for easy updates
   PackageDetailEntity copyWith({

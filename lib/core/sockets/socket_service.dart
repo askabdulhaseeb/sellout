@@ -8,8 +8,8 @@ import '../../features/personal/chats/chat_dashboard/data/models/message/message
 import '../../features/personal/chats/chat_dashboard/data/sources/local/local_chat.dart';
 import '../../features/personal/notifications/data/models/notification_model.dart';
 import '../../features/personal/notifications/data/source/local/local_notification.dart';
-import '../functions/app_log.dart';
-import 'socket_implementations.dart';
+import '../functions/app_log.dart';  
+import 'socket_implementations.dart'; 
 
 class SocketService with WidgetsBindingObserver {
   SocketService(this._socketImplementations);
@@ -19,12 +19,8 @@ class SocketService with WidgetsBindingObserver {
   bool get isConnected => socket?.connected ?? false;
   void initAndListen() {
     if (_isInitialized) return;
-
     _isInitialized = true;
     WidgetsBinding.instance.addObserver(this);
-    
-
-    // 👂 Listen to UID changes
     LocalAuth.uidNotifier.addListener(() {
       final String? uid = LocalAuth.uidNotifier.value;
       if (uid != null) {
@@ -35,8 +31,6 @@ class SocketService with WidgetsBindingObserver {
         disconnect();
       }
     });
-
-    // 🔁 Handle first-time check
     if (LocalAuth.uid != null) {
       connect();
     } else {
@@ -44,19 +38,27 @@ class SocketService with WidgetsBindingObserver {
           name: 'socket');
     }
   }
-
   void connect() {
     final String? baseUrl = dotenv.env['baseURL'];
     final String? entityId = LocalAuth.uid;
 
-    if (baseUrl == null || entityId == null) {
-      AppLog.error('Missing baseURL or userId (entityId)',
-          name: 'SocketService.connect');
+    if (baseUrl == null || baseUrl.isEmpty) {
+      AppLog.error('Missing baseURL', name: 'SocketService.connect');
       return;
     }
 
-    if (socket != null && socket!.connected) return;
+    if (entityId == null || entityId.isEmpty) {
+      AppLog.error('Missing userId (entityId)', name: 'SocketService.connect');
+      return;
+    }
 
+    // Already connected
+    if (socket != null && socket!.connected) {
+      AppLog.info('Socket already connected', name: 'SocketService.connect');
+      return;
+    }
+
+    // Create socket connection
     socket = io.io(baseUrl, <String, dynamic>{
       'transports': <String>['websocket'],
       'autoConnect': true,
@@ -67,38 +69,60 @@ class SocketService with WidgetsBindingObserver {
       'withCredentials': true,
     });
 
+    if (socket == null) {
+      AppLog.error('Failed to create socket', name: 'SocketService.connect');
+      return;
+    }
+
     socket!.connect();
+
     socket!.onConnect((_) {
-      AppLog.info('✅ Connected to server: ${socket!.id}');
+      AppLog.info('✅ Connected to server: ${socket?.id ?? 'unknown'}');
     });
+
     socket!.onConnectError((dynamic data) {
       AppLog.error('🚨 Connect error: $data');
     });
+
     socket!.onDisconnect((_) {
-      AppLog.error(' Disconnected from server');
+      AppLog.error('Disconnected from server', name: 'SocketService.disconnect');
     });
-    socket!.onDisconnect((_) {
-      AppLog.error(' Disconnected from server',
-          name: 'SocketService.disconnect');
-    });
+
     socket!.on('getOnlineUsers', (dynamic data) async {
       AppLog.info('📶 Online users: $data',
           name: 'SocketService.getOnlineUsers');
-      // Since `data` is already a list of strings, you can directly use it
-      List<String> onlineUsers = List<String>.from(data);
-      await _socketImplementations.handleOnlineUsers(onlineUsers);
-      debugPrint('Updated online users list: $onlineUsers');
+      if (data == null) return;
+      try {
+        final List<String> onlineUsers = List<String>.from(data);
+        await _socketImplementations.handleOnlineUsers(onlineUsers);
+        debugPrint('Updated online users list: $onlineUsers');
+      } catch (e) {
+        AppLog.error('Error parsing online users: $e');
+      }
     });
 
     socket!.on('new-notification', (dynamic data) async {
       AppLog.info('🔔 New notification: $data',
           name: 'SocketService.new-notification');
-      if (data['metadata'] != null && data['metadata']['booking_id'] != null) {
-        final Map<String, dynamic> metadata =
-            Map<String, dynamic>.from(data['metadata']);
-        await LocalBooking().update(metadata['booking_id'], metadata);
+      if (data == null) return;
+      try {
+        if (data is Map<String, dynamic>) {
+          final dynamic metadata = data['metadata'];
+          if (metadata != null && metadata is Map && metadata['booking_id'] != null) {
+            final Map<String, dynamic> metadataMap =
+                Map<String, dynamic>.from(metadata);
+            await LocalBooking().update(
+              metadataMap['booking_id'].toString(),
+              metadataMap,
+            );
+          }
+          await LocalNotifications.saveNotification(
+            NotificationModel.fromMap(data),
+          );
+        }
+      } catch (e) {
+        AppLog.error('Error handling notification: $e');
       }
-      LocalNotifications.saveNotification(NotificationModel.fromMap(data));
     });
 
     socket!.on('lastSeen', (dynamic data) {
@@ -108,25 +132,53 @@ class SocketService with WidgetsBindingObserver {
     socket!.on('newMessage', (dynamic data) async {
       AppLog.info('📨 New message received: $data',
           name: 'SocketService.newMessage');
-      await LocalChatMessage().saveMessage(MessageModel.fromMap(data));
+      if (data == null) return;
+      try {
+        if (data is Map<String, dynamic>) {
+          await LocalChatMessage().saveMessage(MessageModel.fromMap(data));
+        }
+      } catch (e) {
+        AppLog.error('Error saving new message: $e');
+      }
     });
 
     socket!.on('updatedMessage', (dynamic data) async {
       AppLog.info('📝 Message update arrived: $data',
           name: 'SocketService.updatedMessage');
-      await LocalChatMessage().saveMessage(MessageModel.fromMap(data));
+      if (data == null) return;
+      try {
+        if (data is Map<String, dynamic>) {
+          await LocalChatMessage().saveMessage(MessageModel.fromMap(data));
+        }
+      } catch (e) {
+        AppLog.error('Error updating message: $e');
+      }
     });
 
     socket!.on('update-pinned-message', (dynamic data) async {
-      AppLog.info('📝 Updated Pinned Message  arrived: $data',
+      AppLog.info('📝 Updated Pinned Message arrived: $data',
           name: 'SocketService.updatedPinnedMessage');
-      await LocalChat().updatePinnedMessage(MessageModel.fromMap(data));
+      if (data == null) return;
+      try {
+        if (data is Map<String, dynamic>) {
+          await LocalChat().updatePinnedMessage(MessageModel.fromMap(data));
+        }
+      } catch (e) {
+        AppLog.error('Error updating pinned message: $e');
+      }
     });
 
     socket!.on('new-pinned-message', (dynamic data) async {
       AppLog.info('📝 New Pinned Message arrived: $data',
           name: 'SocketService.newPinnedMessage');
-      await LocalChat().updatePinnedMessage(MessageModel.fromMap(data));
+      if (data == null) return;
+      try {
+        if (data is Map<String, dynamic>) {
+          await LocalChat().updatePinnedMessage(MessageModel.fromMap(data));
+        }
+      } catch (e) {
+        AppLog.error('Error saving new pinned message: $e');
+      }
     });
 
     socket!.onAny((String event, dynamic data) {

@@ -1,5 +1,6 @@
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import '../../../../../../../core/functions/app_log.dart';
+import '../../../../../../../core/sources/local/local_hive_box.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../chat_dashboard/data/sources/local/local_chat.dart';
 import '../../../../chat_dashboard/data/sources/local/local_unseen_messages.dart';
@@ -7,26 +8,30 @@ import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart'
 import '../../../domain/entities/getted_message_entity.dart';
 
 // getOnlineUsers
-class LocalChatMessage {
-  static final String boxTitle = AppStrings.localChatMessagesBox;
+class LocalChatMessage extends LocalHiveBox<GettedMessageEntity> {
+  @override
+  String get boxName => AppStrings.localChatMessagesBox;
 
-  static Box<GettedMessageEntity> get _box =>
-      Hive.box<GettedMessageEntity>(boxTitle);
+  /// Chat messages contain sensitive private communications - encrypt them.
+  @override
+  bool get requiresEncryption => true;
 
-  static Box<GettedMessageEntity> get boxLive => _box;
+  Box<GettedMessageEntity> get _box => box;
 
   static Future<Box<GettedMessageEntity>> get openBox async =>
-      await Hive.openBox<GettedMessageEntity>(boxTitle);
-
+      await Hive.openBox<GettedMessageEntity>(AppStrings.localChatMessagesBox);
+      
+  @override
   Future<Box<GettedMessageEntity>> refresh() async {
-    final bool isOpen = Hive.isBoxOpen(boxTitle);
+    final bool isOpen = Hive.isBoxOpen(AppStrings.localChatMessagesBox);
     if (isOpen) {
       return _box;
     } else {
-      return await Hive.openBox<GettedMessageEntity>(boxTitle);
+      return await Hive.openBox<GettedMessageEntity>(AppStrings.localChatMessagesBox);
     }
   }
 
+  @override
   Future<void> clear() async => await _box.clear();
 
   Future<void> saveMessage(MessageEntity message) async {
@@ -53,11 +58,13 @@ class LocalChatMessage {
     final GettedMessageEntity? entity = _box.get(chatId);
     if (entity == null) return;
 
-    final List<MessageEntity> updatedMessages =
-        List<MessageEntity>.from(entity.messages);
+    final List<MessageEntity> updatedMessages = List<MessageEntity>.from(
+      entity.messages,
+    );
 
     final int existingIndex = updatedMessages.indexWhere(
-        (MessageEntity msg) => msg.messageId == newMessage.messageId);
+      (MessageEntity msg) => msg.messageId == newMessage.messageId,
+    );
 
     if (existingIndex != -1) {
       updatedMessages[existingIndex] = newMessage;
@@ -69,12 +76,16 @@ class LocalChatMessage {
       AppLog.info('➕ Message added to existing chat');
     }
 
-    final GettedMessageEntity updatedEntity =
-        entity.copyWith(messages: updatedMessages);
+    final GettedMessageEntity updatedEntity = entity.copyWith(
+      messages: updatedMessages,
+    );
     await _box.put(chatId, updatedEntity);
   }
 
-  Future<void> save(GettedMessageEntity value, String chatID) async {
+  Future<void> saveGettedMessageEntity(
+    GettedMessageEntity value,
+    String chatID,
+  ) async {
     final String id = value.lastEvaluatedKey?.chatID ?? chatID;
     final GettedMessageEntity? result = entity(id);
     if (result == null) {
@@ -96,10 +107,7 @@ class LocalChatMessage {
         }
         // }
       }
-      AppLog.info(
-        'New Message - updated: ${old.length}',
-        name: chatID,
-      );
+      AppLog.info('New Message - updated: ${old.length}', name: chatID);
       final GettedMessageEntity newGettedMessage = GettedMessageEntity(
         chatID: id,
         messages: old,
@@ -126,8 +134,9 @@ class LocalChatMessage {
         .toList();
     if (getted.isEmpty) return <MessageEntity>[];
     final List<MessageEntity> msgs = getted[0].messages;
-    msgs.sort((MessageEntity a, MessageEntity b) =>
-        b.createdAt.compareTo(a.createdAt));
+    msgs.sort(
+      (MessageEntity a, MessageEntity b) => b.createdAt.compareTo(a.createdAt),
+    );
     return msgs;
   }
 }

@@ -75,7 +75,7 @@ class _PersonalCartTileState extends State<PersonalCartTile>
     _loadFuture = _loadData();
     final CartProvider provider =
         Provider.of<CartProvider>(context, listen: false);
-    isActive = provider.fastDeliveryProducts.contains(widget.item.postID);
+    isActive = provider.fastDeliveryProducts.contains(widget.item.cartItemID);
     if (isActive) {
       _deliveryType = DeliveryType.fastDelivery;
     }
@@ -268,7 +268,7 @@ class _PersonalCartTileState extends State<PersonalCartTile>
                               Provider.of<CartProvider>(context, listen: false);
                           setState(() {
                             debugPrint(
-                                'fast delivery for ${widget.item.postID}');
+                                'fast delivery for ${widget.item.cartItemID}');
                             isActive = val;
                             _deliveryType = val
                                 ? DeliveryType.fastDelivery
@@ -276,10 +276,11 @@ class _PersonalCartTileState extends State<PersonalCartTile>
                                     DeliveryType.collection);
                           });
                           if (val) {
-                            provider.addFastDeliveryProduct(widget.item.postID);
-                          } else {
                             provider
-                                .removeFastDeliveryProduct(widget.item.postID);
+                                .addFastDeliveryProduct(widget.item.cartItemID);
+                          } else {
+                            provider.removeFastDeliveryProduct(
+                                widget.item.cartItemID);
                           }
                           debugPrint('Item switch toggled: $val');
                         },
@@ -394,7 +395,8 @@ class _ProductInfo extends StatelessWidget {
                   /// RIGHT SIDE: PRICE
                   FutureBuilder<String>(
                     future: post?.getPriceStr(),
-                    builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                    builder:
+                        (BuildContext context, AsyncSnapshot<String> snapshot) {
                       if (!snapshot.hasData) {
                         return const Text('...');
                       }

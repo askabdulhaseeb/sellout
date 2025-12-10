@@ -89,48 +89,53 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
                 Consumer<AddAddressProvider>(
                   builder: (_, AddAddressProvider pro, __) =>
                       CountryDropdownField(
-                    initialValue: pro.selectedCountryEntity,
-                    onChanged: (CountryEntity value) {
-                      pro.setCountryEntity(value);
-                    },
-                    validator: AppValidator.requireSelection,
-                  ),
+                        initialValue: pro.selectedCountryEntity,
+                        onChanged: (CountryEntity value) {
+                          pro.setCountryEntity(value);
+                        },
+                        validator: AppValidator.requireSelection,
+                      ),
                 ),
                 Consumer<AddAddressProvider>(
                   builder: (_, AddAddressProvider pro, __) =>
                       CustomDropdown<StateEntity>(
-                    title: 'state'.tr(),
-                    items:
-                        (pro.selectedCountryEntity?.states ?? <StateEntity>[])
-                            .map((StateEntity state) =>
-                                DropdownMenuItem<StateEntity>(
-                                  value: state,
-                                  child: Text(state.stateName),
-                                ))
-                            .toList(),
-                    selectedItem: pro.state,
-                    onChanged: (StateEntity? value) {
-                      if (value != null) pro.setStateEntity(value);
-                    },
-                    validator: AppValidator.requireSelection,
-                  ),
+                        title: 'state'.tr(),
+                        items:
+                            (pro.selectedCountryEntity?.states ??
+                                    <StateEntity>[])
+                                .map(
+                                  (StateEntity state) =>
+                                      DropdownMenuItem<StateEntity>(
+                                        value: state,
+                                        child: Text(state.stateName),
+                                      ),
+                                )
+                                .toList(),
+                        selectedItem: pro.state,
+                        onChanged: (StateEntity? value) {
+                          if (value != null) pro.setStateEntity(value);
+                        },
+                        validator: AppValidator.requireSelection,
+                      ),
                 ),
                 Consumer<AddAddressProvider>(
                   builder: (_, AddAddressProvider pro, __) =>
                       CustomDropdown<String>(
-                    title: 'city'.tr(),
-                    items: (pro.state?.cities ?? <String>[])
-                        .map((String city) => DropdownMenuItem<String>(
-                              value: city,
-                              child: Text(city),
-                            ))
-                        .toList(),
-                    selectedItem: pro.city,
-                    onChanged: (String? value) {
-                      if (value != null) pro.setCity(value);
-                    },
-                    validator: AppValidator.requireSelection,
-                  ),
+                        title: 'city'.tr(),
+                        items: (pro.state?.cities ?? <String>[])
+                            .map(
+                              (String city) => DropdownMenuItem<String>(
+                                value: city,
+                                child: Text(city),
+                              ),
+                            )
+                            .toList(),
+                        selectedItem: pro.city,
+                        onChanged: (String? value) {
+                          if (value != null) pro.setCity(value);
+                        },
+                        validator: AppValidator.requireSelection,
+                      ),
                 ),
                 CustomTextFormField(
                   labelText: 'address_1'.tr(),
@@ -152,65 +157,69 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
                 Consumer<AddAddressProvider>(
                   builder: (_, AddAddressProvider pro, __) =>
                       CustomDropdown<String>(
-                    title: 'address_category'.tr(),
-                    items: <String>['home', 'work']
-                        .map((String value) => DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value.tr()),
-                            ))
-                        .toList(),
-                    selectedItem: pro.addressCategory,
-                    onChanged: (String? value) {
-                      if (value != null) pro.setaddressCategory(value);
-                    },
-                    validator: AppValidator.requireSelection,
-                  ),
+                        title: 'address_category'.tr(),
+                        items: <String>['home', 'work']
+                            .map(
+                              (String value) => DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value.tr()),
+                              ),
+                            )
+                            .toList(),
+                        selectedItem: pro.addressCategory,
+                        onChanged: (String? value) {
+                          if (value != null) pro.setaddressCategory(value);
+                        },
+                        validator: AppValidator.requireSelection,
+                      ),
                 ),
 
                 // 🟢 Consumer for Phone Number
                 Consumer<AddAddressProvider>(
                   builder: (_, AddAddressProvider pro, __) =>
                       PhoneNumberInputField(
-                    initialCountry: pro.selectedCountryEntity,
-                    initialValue: pro.phoneNumber,
-                    labelText: 'phone_number'.tr(),
-                    onChange: (PhoneNumberEntity? value) {
-                      pro.setPhoneNumber(value);
-                    },
-                  ),
+                        initialCountry: pro.selectedCountryEntity,
+                        initialValue: pro.phoneNumber,
+                        labelText: 'phone_number'.tr(),
+                        onChange: (PhoneNumberEntity? value) {
+                          pro.setPhoneNumber(value);
+                        },
+                      ),
                 ),
 
                 Consumer<AddAddressProvider>(
                   builder: (_, AddAddressProvider pro, __) =>
                       CustomRadioToggleTile(
-                    title: 'Make this default address',
-                    selectedValue: pro.isDefault,
-                    onChanged: pro.toggleDefault,
-                  ),
+                        title: 'Make this default address',
+                        selectedValue: pro.isDefault,
+                        onChanged: pro.toggleDefault,
+                      ),
                 ),
               ],
             ),
           ),
         ),
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Consumer<AddAddressProvider>(
-            builder: (_, AddAddressProvider pro, __) => CustomElevatedButton(
-              isLoading: false,
-              onTap: () {
-                if (_formKey.currentState?.validate() ?? false) {
-                  if (widget.initAddress?.addressID == null ||
-                      widget.initAddress?.addressID == '') {
-                    pro.saveAddress(context);
-                  } else {
-                    pro.action = 'update';
-                    pro.updateAddress(context);
+        bottomNavigationBar: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Consumer<AddAddressProvider>(
+              builder: (_, AddAddressProvider pro, __) => CustomElevatedButton(
+                isLoading: false,
+                onTap: () {
+                  if (_formKey.currentState?.validate() ?? false) {
+                    if (widget.initAddress?.addressID == null ||
+                        widget.initAddress?.addressID == '') {
+                      pro.saveAddress(context);
+                    } else {
+                      pro.action = 'update';
+                      pro.updateAddress(context);
+                    }
                   }
-                }
-              },
-              title: widget.initAddress?.addressID == null
-                  ? 'save_address'.tr()
-                  : 'update_address'.tr(),
+                },
+                title: widget.initAddress?.addressID == null
+                    ? 'save_address'.tr()
+                    : 'update_address'.tr(),
+              ),
             ),
           ),
         ),

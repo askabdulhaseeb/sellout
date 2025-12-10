@@ -8,7 +8,7 @@ part of 'boolean_status_type.dart';
 
 class BooleanStatusTypeAdapter extends TypeAdapter<BooleanStatusType> {
   @override
-  final int typeId = 31;
+  final typeId = 31;
 
   @override
   BooleanStatusType read(BinaryReader reader) {
@@ -27,10 +27,8 @@ class BooleanStatusTypeAdapter extends TypeAdapter<BooleanStatusType> {
     switch (obj) {
       case BooleanStatusType.yes:
         writer.writeByte(0);
-        break;
       case BooleanStatusType.no:
         writer.writeByte(1);
-        break;
     }
   }
 

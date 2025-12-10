@@ -8,7 +8,7 @@ part of 'color_options_entity.dart';
 
 class ColorOptionEntityAdapter extends TypeAdapter<ColorOptionEntity> {
   @override
-  final int typeId = 53;
+  final typeId = 53;
 
   @override
   ColorOptionEntity read(BinaryReader reader) {

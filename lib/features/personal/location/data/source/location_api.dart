@@ -1,21 +1,21 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/api_call.dart';
 import '../../../../../core/sources/local/local_request_history.dart';
-import '../models/nomination_location_model/nomination_location_model.dart';
-import '../../domain/entities/nomaintioon_location_entity/nomination_location_entity.dart';
+import '../models/location_model.dart';
 
 abstract class LocationApi {
-  Future<DataState<List<NominationLocationEntity>>> fetchNominationLocations(
-      String params);
+  Future<DataState<List<LocationModel>>> fetchNominationLocations(
+    String params,
+  );
 }
 
 class LocationApiImpl extends LocationApi {
   @override
-  Future<DataState<List<NominationLocationEntity>>> fetchNominationLocations(
-      String params) async {
+  Future<DataState<List<LocationModel>>> fetchNominationLocations(
+    String params,
+  ) async {
     final String baseURL = dotenv.env['NOMINATION_API_KEY'] ?? '';
     final String endPoint =
         '/search?q=$params&format=json&addressdetails=1&limit=5';
@@ -32,17 +32,19 @@ class LocationApiImpl extends LocationApi {
         try {
           final List<dynamic> cachedJson =
               jsonDecode(localData.encodedData) as List<dynamic>;
-          final List<NominationLocationModel> cachedLocations = cachedJson
-              .map((json) => NominationLocationModel.fromJson(json))
+          final List<LocationModel> cachedLocations = cachedJson
+              .map((json) => LocationModel.fromNominationJson(json))
               .toList();
 
-          return DataSuccess<List<NominationLocationModel>>(
+          return DataSuccess<List<LocationModel>>(
             'cached_data',
             cachedLocations,
           );
         } catch (e) {
-          AppLog.error('$e',
-              name: 'LocationApi.fetchNominationLocations - local decode');
+          AppLog.error(
+            '$e',
+            name: 'LocationApi.fetchNominationLocations - local decode',
+          );
         }
       }
       // ✅ No cache → hit API
@@ -52,9 +54,7 @@ class LocationApiImpl extends LocationApi {
         requestType: ApiRequestType.get,
         isAuth: false,
         isConnectType: false,
-        extraHeader: <String, String>{
-          'User-Agent': 'com.selleout.sellout',
-        },
+        extraHeader: <String, String>{'User-Agent': 'com.selleout.sellout'},
       );
 
       if (response is DataSuccess) {
@@ -63,26 +63,25 @@ class LocationApiImpl extends LocationApi {
             ? jsonDecode(rawData)
             : (rawData as List<dynamic>);
 
-        final List<NominationLocationModel> locationData = jsonData
-            .map((json) => NominationLocationModel.fromJson(json))
+        final List<LocationModel> locationData = jsonData
+            .map((json) => LocationModel.fromNominationJson(json))
             .toList();
-        return DataSuccess<List<NominationLocationModel>>(
-          'fresh_data',
-          locationData,
-        );
+        return DataSuccess<List<LocationModel>>('fresh_data', locationData);
       } else {
         AppLog.error(
           response.exception?.message ?? 'something_wrong'.tr(),
           name: 'LocationApi.fetchNominationLocations - else',
         );
-        return DataFailer<List<NominationLocationModel>>(
+        return DataFailer<List<LocationModel>>(
           CustomException('Location fetching Failed'),
         );
       }
     } catch (e, stc) {
-      AppLog.error('$e,$stc',
-          name: 'LocationApi.fetchNominationLocations - catch');
-      return DataFailer<List<NominationLocationModel>>(
+      AppLog.error(
+        '$e,$stc',
+        name: 'LocationApi.fetchNominationLocations - catch',
+      );
+      return DataFailer<List<LocationModel>>(
         CustomException('Location fetching Failed: $e'),
       );
     }

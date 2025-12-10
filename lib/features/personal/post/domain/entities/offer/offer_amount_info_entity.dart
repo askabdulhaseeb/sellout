@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 
 import '../../../../../../core/enums/chat/chat_type.dart';
 part 'offer_amount_info_entity.g.dart';

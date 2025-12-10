@@ -1,6 +1,8 @@
 import 'dart:io';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter/material.dart';
+import 'package:hive_ce_flutter/adapters.dart';
 import 'package:path_provider/path_provider.dart';
+import '../../utilities/app_string.dart';
 import '../../../features/attachment/domain/entities/attachment_entity.dart';
 import '../../../features/business/core/data/sources/local_business.dart';
 import '../../../features/business/core/data/sources/service/local_service.dart';
@@ -13,6 +15,7 @@ import '../../../features/business/core/domain/entity/service/service_entity.dar
 import '../../../features/personal/auth/signin/domain/entities/address_entity.dart';
 import '../../../features/personal/auth/signin/domain/entities/login_detail_entity.dart';
 import '../../../features/personal/auth/signin/domain/entities/login_info_entity.dart';
+import '../../../features/personal/auth/signin/domain/entities/stripe_connect_account_entity.dart';
 import '../../../features/personal/bookings/data/sources/local_booking.dart';
 import '../../../features/personal/bookings/domain/entity/booking_entity.dart';
 import '../../../features/personal/bookings/domain/entity/booking_payment_detail_entity.dart';
@@ -94,15 +97,25 @@ import '../../enums/message/message_type.dart';
 import '../../enums/routine/day_type.dart';
 import '../../widgets/phone_number/data/sources/local_country.dart';
 import '../../widgets/phone_number/domain/entities/country_entity.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'encryption_key_manager.dart';
 import 'local_request_history.dart';
 
 class HiveDB {
+  static const String _encryptionMigratedKey = 'sellout_encryption_migrated_v1';
+
   static Future<void> init() async {
-    // await LocalState.init();
     Directory directory = await getApplicationDocumentsDirectory();
     Hive.init(directory.path);
 
     await Hive.initFlutter();
+
+    // Pre-initialize encryption key for encrypted boxes
+    await EncryptionKeyManager.getEncryptionKey();
+
+    // Handle migration from unencrypted to encrypted storage
+    await _migrateToEncryptedStorage();
 
     // Hive
     Hive.registerAdapter(CurrentUserEntityAdapter()); // 0
@@ -190,16 +203,17 @@ class HiveDB {
     Hive.registerAdapter(StateEntityAdapter()); //85
     Hive.registerAdapter(CartItemStatusTypeAdapter()); //86
     Hive.registerAdapter(MessagePostDetailEntityAdapter()); //87
+    Hive.registerAdapter(StripeConnectAccountEntityAdapter()); //88
 
     // Hive box Open
     await refresh();
   }
 
   static Future<void> refresh() async {
-    await LocalPost().refresh();
     await LocalAuth().refresh();
-    await LocalUser().refresh();
+    await LocalPost().refresh();
     await LocalRequestHistory().refresh();
+    await LocalUser().refresh();
     await LocalListing().refresh();
     await LocalChat().refresh();
     await LocalChatMessage().refresh();
@@ -220,26 +234,79 @@ class HiveDB {
   }
 
   static Future<void> signout() async {
-    await LocalPost().clear();
-    await LocalAuth().signout();
-    await LocalUser().clear();
-    await LocalRequestHistory().clear();
-    await LocalListing().clear();
-    await LocalChat().clear();
-    await LocalChatMessage().clear();
-    await LocalVisit().clear();
-    await LocalCart().clear();
-    await LocalBusiness().clear();
-    await LocalService().clear();
-    await LocalReview().clear();
-    await LocalBooking().clear();
-    await LocalUnreadMessagesService().clear();
-    await LocalPromo().clear();
-    await LocalColors().clear();
-    await LocalOrders().clear();
-    await LocalNotifications().clear();
+    // Wrap each clear in try-catch to handle PathNotFoundException for lock files
+    Future<void> safeClear(Future<void> Function() clearFn, String name) async {
+      try {
+        await clearFn();
+      } catch (e) {
+        debugPrint('HiveDB.signout: Error clearing $name: $e');
+      }
+    }
+
+    await safeClear(() => LocalPost().clear(), 'LocalPost');
+    await safeClear(() => LocalAuth().signout(), 'LocalAuth');
+    await safeClear(() => LocalUser().clear(), 'LocalUser');
+    await safeClear(() => LocalRequestHistory().clear(), 'LocalRequestHistory');
+    await safeClear(() => LocalListing().clear(), 'LocalListing');
+    await safeClear(() => LocalChat().clear(), 'LocalChat');
+    await safeClear(() => LocalChatMessage().clear(), 'LocalChatMessage');
+    await safeClear(() => LocalVisit().clear(), 'LocalVisit');
+    await safeClear(() => LocalCart().clear(), 'LocalCart');
+    await safeClear(() => LocalBusiness().clear(), 'LocalBusiness');
+    await safeClear(() => LocalService().clear(), 'LocalService');
+    await safeClear(() => LocalReview().clear(), 'LocalReview');
+    await safeClear(() => LocalBooking().clear(), 'LocalBooking');
+    await safeClear(
+      () => LocalUnreadMessagesService().clear(),
+      'LocalUnreadMessagesService',
+    );
+    await safeClear(() => LocalPromo().clear(), 'LocalPromo');
+    await safeClear(() => LocalColors().clear(), 'LocalColors');
+    await safeClear(() => LocalOrders().clear(), 'LocalOrders');
+    await safeClear(() => LocalNotifications().clear(), 'LocalNotifications');
     // await LocalServiceCategory().clear();
     // await LocalCategoriesSource().clear();
     // await LocalCountry().clear();
+  }
+
+  /// Migrates existing unencrypted data to encrypted storage.
+  ///
+  /// On first run after encryption is enabled, this clears old unencrypted
+  /// boxes that will now use encryption. Users will need to re-login.
+  static Future<void> _migrateToEncryptedStorage() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final bool alreadyMigrated = prefs.getBool(_encryptionMigratedKey) ?? false;
+
+    if (alreadyMigrated) return;
+
+    debugPrint('HiveDB: Migrating to encrypted storage...');
+
+    // Delete old unencrypted boxes that will now be encrypted
+    // This ensures clean slate for encrypted boxes
+    final List<String> boxesToMigrate = <String>[
+      AppStrings.localAuthBox,
+      AppStrings.localChatsBox,
+      AppStrings.localChatMessagesBox,
+      AppStrings.localOrdersBox,
+      AppStrings.localCartBox,
+      AppStrings.localUsersBox,
+      AppStrings.localBookingsBox,
+      AppStrings.localNotificationBox,
+    ];
+
+    for (final String boxName in boxesToMigrate) {
+      try {
+        if (Hive.isBoxOpen(boxName)) {
+          await Hive.box(boxName).close();
+        }
+        await Hive.deleteBoxFromDisk(boxName);
+        debugPrint('HiveDB: Deleted old unencrypted box: $boxName');
+      } catch (e) {
+        debugPrint('HiveDB: Error migrating box $boxName: $e');
+      }
+    }
+
+    await prefs.setBool(_encryptionMigratedKey, true);
+    debugPrint('HiveDB: Migration to encrypted storage complete');
   }
 }

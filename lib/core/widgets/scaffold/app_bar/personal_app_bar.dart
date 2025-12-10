@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import '../../../../features/business/core/data/sources/local_business.dart';
 import '../../../../features/business/core/domain/entity/business_entity.dart';
 import '../../../../features/personal/auth/signin/data/sources/local/local_auth.dart';
@@ -27,106 +27,109 @@ AppBar personalAppbar(BuildContext context) {
       children: <Widget>[
         if (LocalAuth.currentUser != null)
           FutureBuilder<UserEntity?>(
-              future: LocalUser().user(me),
-              initialData: LocalUser().userEntity(me),
-              builder: (
-                BuildContext context,
-                AsyncSnapshot<UserEntity?> snapshot,
-              ) {
-                final UserEntity? user = snapshot.data;
-                return user == null
-                    ? const SizedBox()
-                    : _IconButton(
-                        icon: AppStrings.selloutMyUsersListIcon,
-                        onPressed: () async =>
-                            await showProfileMenu(context, user),
-                      );
-                // Container(
-                //   width: 62,
-                //   margin: const EdgeInsets.only(right: 8),
-                //   padding: const EdgeInsets.symmetric(
-                //     vertical: 7,
-                //     horizontal: 4,
-                //   ),
-                //   decoration: BoxDecoration(
-                //     borderRadius: BorderRadius.circular(10),
-                //     color: Theme.of(context).dividerColor,
-                //   ),
-                //   child: GestureDetector(
-                //     onTap: () async => await showProfileMenu(context, user),
-                //     onLongPress: () async =>
-                //         await showProfileMenu(context, user),
-                //     onDoubleTap: () async =>
-                //         await showProfileMenu(context, user),
-                //     child: Row(
-                //       children: <Widget>[
-                //         const SizedBox(width: 4),
-                //         CircleAvatar(
-                //           radius: 12,
-                //           backgroundColor: Theme.of(context).primaryColor,
-                //           child: ProfilePhoto(
-                //             url: user.profilePhotoURL,
-                //             isCircle: true,
-                //             size: 10,
-                //           ),
-                //         ),
-                //         const Icon(Icons.keyboard_arrow_down_rounded)
-                //       ],
-                //     ),
-                //   ),
-                // );
-              }),
+            future: LocalUser().user(me),
+            initialData: LocalUser().userEntity(me),
+            builder:
+                (BuildContext context, AsyncSnapshot<UserEntity?> snapshot) {
+                  final UserEntity? user = snapshot.data;
+                  return user == null
+                      ? const SizedBox()
+                      : _IconButton(
+                          icon: AppStrings.selloutMyUsersListIcon,
+                          onPressed: () async =>
+                              await showProfileMenu(context, user),
+                        );
+                  // Container(
+                  //   width: 62,
+                  //   margin: const EdgeInsets.only(right: 8),
+                  //   padding: const EdgeInsets.symmetric(
+                  //     vertical: 7,
+                  //     horizontal: 4,
+                  //   ),
+                  //   decoration: BoxDecoration(
+                  //     borderRadius: BorderRadius.circular(10),
+                  //     color: Theme.of(context).dividerColor,
+                  //   ),
+                  //   child: GestureDetector(
+                  //     onTap: () async => await showProfileMenu(context, user),
+                  //     onLongPress: () async =>
+                  //         await showProfileMenu(context, user),
+                  //     onDoubleTap: () async =>
+                  //         await showProfileMenu(context, user),
+                  //     child: Row(
+                  //       children: <Widget>[
+                  //         const SizedBox(width: 4),
+                  //         CircleAvatar(
+                  //           radius: 12,
+                  //           backgroundColor: Theme.of(context).primaryColor,
+                  //           child: ProfilePhoto(
+                  //             url: user.profilePhotoURL,
+                  //             isCircle: true,
+                  //             size: 10,
+                  //           ),
+                  //         ),
+                  //         const Icon(Icons.keyboard_arrow_down_rounded)
+                  //       ],
+                  //     ),
+                  //   ),
+                  // );
+                },
+          ),
         _IconButton(
-            icon: AppStrings.selloutSearchIcon,
-            onPressed: () {
-              AppNavigator.pushNamed(SearchScreen.routeName);
-            }),
+          icon: AppStrings.selloutSearchIcon,
+          onPressed: () {
+            AppNavigator.pushNamed(SearchScreen.routeName);
+          },
+        ),
       ],
     ),
     actions: <Widget>[
       _IconButton(
-          icon: AppStrings.selloutNotificationBellIcon,
-          onPressed: () {
-            AppNavigator.pushNamed(NotificationsScreen.routeName);
-          }),
+        icon: AppStrings.selloutNotificationBellIcon,
+        onPressed: () {
+          AppNavigator.pushNamed(NotificationsScreen.routeName);
+        },
+      ),
       if (me.isNotEmpty)
         ValueListenableBuilder<Box<CartEntity>>(
-            valueListenable: LocalCart().listenable(),
-            builder: (BuildContext context, Box<CartEntity> cartBox, __) {
-              final CartEntity cart = cartBox.values.firstWhere(
-                (CartEntity element) => element.cartID == me,
-                orElse: () => CartModel(),
-              );
-              return Stack(
-                clipBehavior: Clip.none,
-                children: <Widget>[
-                  _IconButton(
-                    icon: AppStrings.selloutShoppingCartIcon,
-                    onPressed: () => Navigator.of(context)
-                        .pushNamed(PersonalShoppingBasketScreen.routeName),
-                  ),
-                  if (cart.cartItemsCount > 0)
-                    Positioned(
-                      right: 0,
-                      top: -8,
-                      child: Container(
-                        height: 24,
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
-                          shape: BoxShape.circle,
-                        ),
-                        child: FittedBox(
-                          child: Text(
-                            cart.cartItemsCount.toString(),
-                            style: const TextStyle(color: Colors.white),
-                          ),
+          valueListenable: LocalCart().listenable(),
+          builder: (BuildContext context, Box<CartEntity> cartBox, __) {
+            final CartEntity cart = cartBox.values.firstWhere(
+              (CartEntity element) => element.cartID == me,
+              orElse: () => CartModel(),
+            );
+            return Stack(
+              clipBehavior: Clip.none,
+              children: <Widget>[
+                _IconButton(
+                  icon: AppStrings.selloutShoppingCartIcon,
+                  onPressed: () => Navigator.of(
+                    context,
+                  ).pushNamed(PersonalShoppingBasketScreen.routeName),
+                ),
+                if (cart.cartItemsCount > 0)
+                  Positioned(
+                    right: 0,
+                    top: -8,
+                    child: Container(
+                      height: 24,
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        shape: BoxShape.circle,
+                      ),
+                      child: FittedBox(
+                        child: Text(
+                          cart.cartItemsCount.toString(),
+                          style: const TextStyle(color: Colors.white),
                         ),
                       ),
                     ),
-                ],
-              );
-            }),
+                  ),
+              ],
+            );
+          },
+        ),
       const SizedBox(width: 8),
     ],
   );
@@ -136,11 +139,12 @@ Future<void> showProfileMenu(BuildContext context, UserEntity user) async {
   final String me = LocalAuth.uid ?? '';
   final List<ProfileBusinessDetailEntity> ids = <ProfileBusinessDetailEntity>[
     ProfileBusinessDetailEntity(
-        businessID: me,
-        roleSTR: 'personal',
-        statusSTR: 'active',
-        addedAt: DateTime.now()),
-    ...user.businessDetail
+      businessID: me,
+      roleSTR: 'personal',
+      statusSTR: 'active',
+      addedAt: DateTime.now(),
+    ),
+    ...user.businessDetail,
   ];
   //
   showMenu(
@@ -150,39 +154,47 @@ Future<void> showProfileMenu(BuildContext context, UserEntity user) async {
         .map(
           (ProfileBusinessDetailEntity e) =>
               PopupMenuItem<ProfileBusinessDetailEntity>(
-            value: e,
-            child: e.businessID == me
-                ? ListTile(
-                    contentPadding: const EdgeInsets.all(0),
-                    visualDensity:
-                        const VisualDensity(vertical: -4, horizontal: -4),
-                    leading: ProfilePhoto(
-                      url: user.profilePhotoURL,
-                      isCircle: true,
-                      size: 18,
-                    ),
-                    title: Text(user.displayName),
-                  )
-                : FutureBuilder<BusinessEntity?>(
-                    future: LocalBusiness().getBusiness(e.businessID),
-                    initialData: LocalBusiness().business(e.businessID),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<BusinessEntity?> snapshot) {
-                      final BusinessEntity? business = snapshot.data;
-                      return ListTile(
+                value: e,
+                child: e.businessID == me
+                    ? ListTile(
                         contentPadding: const EdgeInsets.all(0),
-                        visualDensity:
-                            const VisualDensity(vertical: -4, horizontal: -4),
+                        visualDensity: const VisualDensity(
+                          vertical: -4,
+                          horizontal: -4,
+                        ),
                         leading: ProfilePhoto(
-                          url: business?.logo?.url,
+                          url: user.profilePhotoURL,
                           isCircle: true,
                           size: 18,
                         ),
-                        title: Text(business?.displayName ?? ''),
-                        subtitle: Text(e.roleSTR),
-                      );
-                    }),
-          ),
+                        title: Text(user.displayName),
+                      )
+                    : FutureBuilder<BusinessEntity?>(
+                        future: LocalBusiness().getBusiness(e.businessID),
+                        initialData: LocalBusiness().business(e.businessID),
+                        builder:
+                            (
+                              BuildContext context,
+                              AsyncSnapshot<BusinessEntity?> snapshot,
+                            ) {
+                              final BusinessEntity? business = snapshot.data;
+                              return ListTile(
+                                contentPadding: const EdgeInsets.all(0),
+                                visualDensity: const VisualDensity(
+                                  vertical: -4,
+                                  horizontal: -4,
+                                ),
+                                leading: ProfilePhoto(
+                                  url: business?.logo?.url,
+                                  isCircle: true,
+                                  size: 18,
+                                ),
+                                title: Text(business?.displayName ?? ''),
+                                subtitle: Text(e.roleSTR),
+                              );
+                            },
+                      ),
+              ),
         )
         .toList(),
   );
@@ -206,10 +218,7 @@ class _IconButton extends StatelessWidget {
             color: Theme.of(context).colorScheme.outlineVariant,
             borderRadius: BorderRadius.circular(10),
           ),
-          child: CustomSvgIcon(
-            assetPath: icon,
-            size: 18,
-          ),
+          child: CustomSvgIcon(assetPath: icon, size: 18),
         ),
       ),
     );

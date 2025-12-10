@@ -18,10 +18,10 @@ class BillingDetailsEntity {
   }
 
   String get subTotalPriceString {
-    return '${CountryHelper.currencySymbolHelper(currency)} $deliveryTotal';
+    return '${CountryHelper.currencySymbolHelper(currency)} $subtotal';
   }
 
   String get totalPriceString {
-    return '${CountryHelper.currencySymbolHelper(currency)} $deliveryTotal';
+    return '${CountryHelper.currencySymbolHelper(currency)} $grandTotal';
   }
 }

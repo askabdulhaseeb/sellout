@@ -1,29 +1,19 @@
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
+
 import '../../../../../../../core/sources/data_state.dart';
+import '../../../../../../../core/sources/local/local_hive_box.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../post/domain/entities/visit/visiting_entity.dart';
 
-class LocalVisit {
-  static final String boxTitle = AppStrings.localVisitingsBox;
-  static Box<VisitingEntity> get _box => Hive.box<VisitingEntity>(boxTitle);
+class LocalVisit extends LocalHiveBox<VisitingEntity> {
+ @override
+  String get boxName => AppStrings.localVisitingsBox;
+  static Box<VisitingEntity> get _box =>
+      Hive.box<VisitingEntity>(AppStrings.localVisitingsBox);
 
   static Future<Box<VisitingEntity>> get openBox async =>
-      await Hive.openBox<VisitingEntity>(boxTitle);
-
-  Future<Box<VisitingEntity>> refresh() async {
-    final bool isOpen = Hive.isBoxOpen(boxTitle);
-    if (isOpen) {
-      return _box;
-    } else {
-      return await Hive.openBox<VisitingEntity>(boxTitle);
-    }
-  }
-
-  Future<void> save(VisitingEntity user) async =>
-      await _box.put(user.visitingID, user);
-
-  Future<void> clear() async => await _box.clear();
+      await Hive.openBox<VisitingEntity>(AppStrings.localVisitingsBox);
 
   VisitingEntity? visitingEntity(String value) => _box.get(value);
 
@@ -41,20 +31,25 @@ class LocalVisit {
     if (me.isEmpty) {
       return DataSuccess<List<VisitingEntity>>(me, <VisitingEntity>[]);
     }
-    final List<VisitingEntity> result =
-        _box.values.where((VisitingEntity e) => e.visiterID == me).toList();
+    final List<VisitingEntity> result = _box.values
+        .where((VisitingEntity e) => e.visiterID == me)
+        .toList();
     return DataSuccess<List<VisitingEntity>>(me, result);
   }
 
   Future<DataState<List<VisitingEntity>>> visitByPostId(String postID) async {
     if (postID.isEmpty) {
-      return DataSuccess('', <VisitingEntity>[]); // or your own empty state
+      return DataSuccess<List<VisitingEntity>>(
+        '',
+        <VisitingEntity>[],
+      ); // or your own empty state
     }
 
-    final List<VisitingEntity> result =
-        _box.values.where((VisitingEntity e) => e.postID == postID).toList();
+    final List<VisitingEntity> result = _box.values
+        .where((VisitingEntity e) => e.postID == postID)
+        .toList();
 
-    return DataSuccess('', result);
+    return DataSuccess<List<VisitingEntity>>('', result);
   }
 
   DataState<List<VisitingEntity>> iMhost() {
@@ -62,8 +57,9 @@ class LocalVisit {
     if (me.isEmpty) {
       return DataSuccess<List<VisitingEntity>>(me, <VisitingEntity>[]);
     }
-    final List<VisitingEntity> result =
-        _box.values.where((VisitingEntity e) => e.hostID == me).toList();
+    final List<VisitingEntity> result = _box.values
+        .where((VisitingEntity e) => e.hostID == me)
+        .toList();
     return DataSuccess<List<VisitingEntity>>(me, result);
   }
 }

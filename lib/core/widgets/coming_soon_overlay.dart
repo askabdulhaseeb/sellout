@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-
 import 'shadow_container.dart';
 
 class ComingSoonOverlay extends StatelessWidget {
@@ -47,11 +46,7 @@ class ComingSoonOverlay extends StatelessWidget {
                 ShadowContainer(
                   borderRadius: BorderRadius.circular(100),
                   padding: const EdgeInsets.all(20),
-                  child: Icon(
-                    icon,
-                    size: 50,
-                    color: colorScheme.primary,
-                  ),
+                  child: Icon(icon, size: 50, color: colorScheme.primary),
                 ),
                 const SizedBox(height: 28),
 

@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 part 'country_entity.g.dart';
 
 @HiveType(typeId: 51)
@@ -22,22 +22,22 @@ class CountryEntity {
   });
 
   factory CountryEntity.empty() => CountryEntity(
-        flag: '',
-        shortName: '',
-        displayName: '',
-        countryName: '',
-        countryCode: '',
-        countryCodes: const <String>[],
-        language: '',
-        iosCode: '',
-        isoCode: '',
-        alpha2: '',
-        alpha3: '',
-        numberFormat: NumberFormatEntity(format: '', regex: ''),
-        currency: '',
-        isActive: false,
-        states: const <StateEntity>[],
-      );
+    flag: '',
+    shortName: '',
+    displayName: '',
+    countryName: '',
+    countryCode: '',
+    countryCodes: const <String>[],
+    language: '',
+    iosCode: '',
+    isoCode: '',
+    alpha2: '',
+    alpha3: '',
+    numberFormat: NumberFormatEntity(format: '', regex: ''),
+    currency: '',
+    isActive: false,
+    states: const <StateEntity>[],
+  );
 
   @HiveField(0)
   final String flag;
@@ -109,12 +109,20 @@ class NumberFormatEntity {
 
 @HiveType(typeId: 85)
 class StateEntity {
-  StateEntity(
-      {required this.stateName, required this.stateCode, required this.cities});
+  StateEntity({
+    required this.stateName,
+    required this.stateCode,
+    required this.cities,
+  });
 
-  factory StateEntity.empty() => StateEntity(
-        stateName: 'na',
-        stateCode: 'na',
+  factory StateEntity.empty() =>
+      StateEntity(stateName: '', stateCode: '', cities: const <String>[]);
+
+  /// Creates a StateEntity with the raw state name when lookup fails.
+  /// This preserves the original value from the API instead of showing empty.
+  factory StateEntity.fromRawName(String rawStateName) => StateEntity(
+        stateName: rawStateName.trim(),
+        stateCode: '',
         cities: const <String>[],
       );
 
@@ -124,6 +132,17 @@ class StateEntity {
   final String stateCode;
   @HiveField(2)
   final List<String> cities;
+
+  /// Returns true if this state entity is empty/not set.
+  bool get isEmpty => stateName.isEmpty || stateName == 'na';
+
+  /// Returns true if this state entity has valid data.
+  bool get isNotEmpty => !isEmpty;
+
+  /// Returns the display name for UI, handling empty states gracefully.
+  /// If state is empty/invalid, returns the fallback (defaults to empty string).
+  String displayNameOrFallback({String fallback = ''}) =>
+      isEmpty ? fallback : stateName;
 
   @override
   bool operator ==(Object other) {

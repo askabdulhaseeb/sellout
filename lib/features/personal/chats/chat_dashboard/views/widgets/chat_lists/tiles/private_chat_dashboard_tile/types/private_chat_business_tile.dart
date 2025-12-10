@@ -54,7 +54,7 @@ class PrivateChatBusinessTile extends StatelessWidget {
                       CircleAvatar(
                         radius: 8,
                         backgroundColor: Theme.of(context).primaryColor,
-                        child: Text(
+                        child: const Text(
                           'B',
                           style: TextStyle(fontSize: 10, color: Colors.white),
                         ),

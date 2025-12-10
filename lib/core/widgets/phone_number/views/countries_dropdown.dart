@@ -1,12 +1,14 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import '../../../../services/get_it.dart';
 import '../../../usecase/usecase.dart';
 import '../../../utilities/app_validators.dart';
+import '../../custom_textformfield.dart';
 import '../data/sources/local_country.dart';
 import '../domain/entities/country_entity.dart';
 import '../domain/usecase/get_counties_usecase.dart';
-import '../../custom_dropdown.dart';
 import '../../../sources/data_state.dart';
 
 class CountryDropdownField extends StatefulWidget {
@@ -26,89 +28,152 @@ class CountryDropdownField extends StatefulWidget {
 }
 
 class _CountryDropdownFieldState extends State<CountryDropdownField> {
-  List<CountryEntity> countries = <CountryEntity>[];
+  @override
+  void didUpdateWidget(covariant CountryDropdownField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialValue != oldWidget.initialValue &&
+        widget.initialValue != selectedCountry) {
+      setState(() {
+        selectedCountry = widget.initialValue;
+      });
+      if (_controller != null) {
+        Future<void>.microtask(() {
+          if (mounted) {
+            _controller!.text = selectedCountry?.displayName ?? '';
+          }
+        });
+      }
+    }
+  }
+
   CountryEntity? selectedCountry;
+  TextEditingController? _controller;
+  late Future<List<CountryEntity>> _countriesFuture;
 
   @override
   void initState() {
     super.initState();
     selectedCountry = widget.initialValue;
-    _loadCountries();
+    _controller = TextEditingController(
+      text: selectedCountry?.displayName ?? '',
+    );
+    _countriesFuture = _loadCountries();
   }
 
-  Future<void> _loadCountries() async {
+  Future<List<CountryEntity>> _loadCountries() async {
     final GetCountiesUsecase getCountries = GetCountiesUsecase(locator());
     await LocalCountry().refresh();
-
-    final DataState<List<CountryEntity>> result =
-        await getCountries.call(const Duration(hours: 1));
-
-    final List<CountryEntity>? remote =
-        (result is DataSuccess) ? result.entity : null;
-    countries = (remote != null && remote.isNotEmpty)
+    final DataState<List<CountryEntity>> result = await getCountries.call(
+      const Duration(hours: 1),
+    );
+    final List<CountryEntity>? remote = (result is DataSuccess)
+        ? result.entity
+        : null;
+    final List<CountryEntity> countries = (remote != null && remote.isNotEmpty)
         ? remote
         : LocalCountry().activeCountries;
-
-    selectedCountry ??= countries
-            .where((CountryEntity e) => e.isActive)
-            .firstWhereOrNull((_) => true) ??
-        (countries.isNotEmpty ? countries.first : null);
-    if (mounted) setState(() {});
+    return countries.where((CountryEntity e) => e.isActive).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<CountryEntity> activeCountries =
-        countries.where((CountryEntity e) => e.isActive).toList();
-    final List<CountryEntity> sourceList =
-        activeCountries.isEmpty ? countries : activeCountries;
-
-    return CustomDropdown<CountryEntity>(
-      title: 'Country',
-      hint: '',
-      searchBy: (DropdownMenuItem<CountryEntity> item) {
-        final CountryEntity? country = item.value;
-        return country?.displayName ?? '';
-      },
-      selectedItemBuilder: (CountryEntity? country) {
-        if (country == null) return const SizedBox.shrink();
-        return Row(
-          children: <Widget>[
-            _CountryFlag(flag: country.flag),
-            const SizedBox(width: 8),
-            Text(
-              country.displayName,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        );
-      },
-      selectedItemPadding:
-          const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-      items: sourceList.map((CountryEntity country) {
-        return DropdownMenuItem<CountryEntity>(
-          value: country,
-          child: Row(
-            children: <Widget>[
-              _CountryFlag(flag: country.flag),
-              const SizedBox(width: 8),
-              Text(
-                country.displayName,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        );
-      }).toList(),
-      selectedItem: selectedCountry,
-      onChanged: (CountryEntity? value) {
-        if (value == null) return;
-        setState(() => selectedCountry = value);
-        widget.onChanged(value);
-      },
-      validator: (bool? val) => widget.validator != null
-          ? widget.validator!(val)
-          : AppValidator.requireSelection(val),
+    return FutureBuilder<List<CountryEntity>>(
+      future: _countriesFuture,
+      builder:
+          (BuildContext context, AsyncSnapshot<List<CountryEntity>> snapshot) {
+            final List<CountryEntity> countries =
+                snapshot.data ?? <CountryEntity>[];
+            return TypeAheadField<CountryEntity>(
+              suggestionsCallback: (String pattern) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return <CountryEntity>[];
+                }
+                if (snapshot.hasError || countries.isEmpty) {
+                  return <CountryEntity>[];
+                }
+                if (pattern.isEmpty) return countries;
+                return countries
+                    .where(
+                      (CountryEntity country) => country.displayName
+                          .toLowerCase()
+                          .contains(pattern.toLowerCase()),
+                    )
+                    .toList();
+              },
+              builder:
+                  (
+                    BuildContext context,
+                    TextEditingController controller,
+                    FocusNode focusNode,
+                  ) {
+                    _controller = controller;
+                    // Always show selected country in field
+                    if (selectedCountry != null &&
+                        controller.text != selectedCountry!.displayName) {
+                      controller.text = selectedCountry!.displayName;
+                    }
+                    return CustomTextFormField(
+                      labelText: 'country'.tr(),
+                      hint: 'country'.tr(),
+                      controller: controller,
+                      focusNode: focusNode,
+                      validator: (String? value) => widget.validator != null
+                          ? widget.validator!(selectedCountry != null)
+                          : AppValidator.requireSelection(
+                              selectedCountry != null,
+                            ),
+                      onTap: () {
+                        focusNode.requestFocus();
+                        controller.selection = TextSelection(
+                          baseOffset: 0,
+                          extentOffset: controller.text.length,
+                        );
+                      },
+                    );
+                  },
+              itemBuilder: (BuildContext context, CountryEntity country) {
+                return ListTile(
+                  leading: _CountryFlag(flag: country.flag),
+                  title: Text(
+                    country.displayName,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                );
+              },
+              onSelected: (CountryEntity country) {
+                setState(() {
+                  selectedCountry = country;
+                });
+                if (_controller != null) {
+                  _controller!.text = country.displayName;
+                  _controller!.selection = TextSelection.collapsed(
+                    offset: _controller!.text.length,
+                  );
+                }
+                widget.onChanged(country);
+              },
+              emptyBuilder: (BuildContext context) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const SizedBox(
+                    height: 40,
+                    child: Center(
+                      child: CircularProgressIndicator(strokeWidth: 1.5),
+                    ),
+                  );
+                }
+                if (snapshot.hasError) {
+                  return const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('No countries found'),
+                  );
+                }
+                return const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text('No countries found'),
+                );
+              },
+            );
+          },
     );
   }
 }
@@ -124,8 +189,9 @@ class _CountryFlag extends StatelessWidget {
             height: 16,
             width: 20,
             decoration: BoxDecoration(
-              color:
-                  Theme.of(context).colorScheme.outlineVariant.withOpacity(0.3),
+              color: Theme.of(
+                context,
+              ).colorScheme.outlineVariant.withOpacity(0.3),
               borderRadius: BorderRadius.circular(4),
             ),
           )
@@ -140,16 +206,12 @@ class _CountryFlag extends StatelessWidget {
                 placeholderBuilder: (BuildContext context) => const SizedBox(
                   width: 20,
                   height: 16,
-                  child:
-                      Center(child: CircularProgressIndicator(strokeWidth: 1)),
+                  child: Center(
+                    child: CircularProgressIndicator(strokeWidth: 1),
+                  ),
                 ),
               ),
             ),
           );
   }
-}
-
-extension _FirstWhereOrNull<T> on Iterable<T> {
-  T? firstWhereOrNull(bool Function(T) test) => fold<T?>(
-      null, (T? prev, T element) => prev ?? (test(element) ? element : null));
 }

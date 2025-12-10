@@ -8,7 +8,7 @@ part of 'chat_entity.dart';
 
 class ChatEntityAdapter extends TypeAdapter<ChatEntity> {
   @override
-  final int typeId = 10;
+  final typeId = 10;
 
   @override
   ChatEntity read(BinaryReader reader) {
@@ -36,7 +36,7 @@ class ChatEntityAdapter extends TypeAdapter<ChatEntity> {
   @override
   void write(BinaryWriter writer, ChatEntity obj) {
     writer
-      ..writeByte(14)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.updatedAt)
       ..writeByte(1)
@@ -62,9 +62,7 @@ class ChatEntityAdapter extends TypeAdapter<ChatEntity> {
       ..writeByte(11)
       ..write(obj.groupInfo)
       ..writeByte(14)
-      ..write(obj.pinnedMessage)
-      ..writeByte(99)
-      ..write(obj.inHiveAt);
+      ..write(obj.pinnedMessage);
   }
 
   @override

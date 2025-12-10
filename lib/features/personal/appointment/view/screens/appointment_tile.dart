@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
+
 import '../../../bookings/domain/entity/booking_entity.dart';
 import '../widgets/appointment_tile_booking_detail_section.dart';
 import '../widgets/appointment_tile_buttons/appointment_tile_payment_buttons.dart';
@@ -29,9 +30,8 @@ class AppointmentTile extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute<AppointmentDetailScreen>(
-                builder: (BuildContext context) => AppointmentDetailScreen(
-                  bookings: refreshed,
-                ),
+                builder: (BuildContext context) =>
+                    AppointmentDetailScreen(bookings: refreshed),
               ),
             );
           },
@@ -59,8 +59,9 @@ class AppointmentTile extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Expanded(
-                            child:
-                                AppointmentTileBookingDetailSection(booking: b),
+                            child: AppointmentTileBookingDetailSection(
+                              booking: b,
+                            ),
                           ),
                           const SizedBox(width: 8),
                           AppointmentTileDatetimeSection(booking: b),
@@ -70,9 +71,7 @@ class AppointmentTile extends StatelessWidget {
                   }).toList(),
                 ),
                 if (refreshed.length == 1)
-                  AppointmentTileUpdateButtonSection(
-                    booking: refreshed.first,
-                  ),
+                  AppointmentTileUpdateButtonSection(booking: refreshed.first),
                 AppointmentTilePaymentButtons(booking: refreshed),
               ],
             ),

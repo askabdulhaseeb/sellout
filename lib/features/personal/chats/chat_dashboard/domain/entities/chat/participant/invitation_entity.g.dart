@@ -8,7 +8,7 @@ part of 'invitation_entity.dart';
 
 class InvitationEntityAdapter extends TypeAdapter<InvitationEntity> {
   @override
-  final int typeId = 30;
+  final typeId = 30;
 
   @override
   InvitationEntity read(BinaryReader reader) {

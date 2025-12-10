@@ -8,7 +8,7 @@ part of 'promo_entity.dart';
 
 class PromoEntityAdapter extends TypeAdapter<PromoEntity> {
   @override
-  final int typeId = 56;
+  final typeId = 56;
 
   @override
   PromoEntity read(BinaryReader reader) {

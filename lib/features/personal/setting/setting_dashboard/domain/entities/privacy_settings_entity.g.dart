@@ -8,7 +8,7 @@ part of 'privacy_settings_entity.dart';
 
 class PrivacySettingsEntityAdapter extends TypeAdapter<PrivacySettingsEntity> {
   @override
-  final int typeId = 63;
+  final typeId = 63;
 
   @override
   PrivacySettingsEntity read(BinaryReader reader) {

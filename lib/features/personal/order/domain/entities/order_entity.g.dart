@@ -8,7 +8,7 @@ part of 'order_entity.dart';
 
 class OrderEntityAdapter extends TypeAdapter<OrderEntity> {
   @override
-  final int typeId = 61;
+  final typeId = 61;
 
   @override
   OrderEntity read(BinaryReader reader) {
@@ -23,9 +23,9 @@ class OrderEntityAdapter extends TypeAdapter<OrderEntity> {
       postId: fields[3] as String,
       orderStatus: fields[4] as StatusType,
       orderType: fields[5] as String,
-      price: fields[6] as double,
-      totalAmount: fields[7] as double,
-      quantity: fields[8] as int,
+      price: (fields[6] as num).toDouble(),
+      totalAmount: (fields[7] as num).toDouble(),
+      quantity: (fields[8] as num).toInt(),
       createdAt: fields[9] as DateTime,
       updatedAt: fields[10] as DateTime,
       paymentDetail: fields[11] as OrderPaymentDetailEntity,

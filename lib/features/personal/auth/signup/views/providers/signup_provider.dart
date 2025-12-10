@@ -223,10 +223,9 @@ class SignupProvider extends ChangeNotifier {
     }
     if (page == null) {
       isLoading = true;
-      await _loginUsecase(LoginParams(
-        email: email.text,
-        password: password.text,
-      ));
+      await _loginUsecase(
+        LoginParams(email: email.text, password: password.text),
+      );
       reset();
       AppNavigator.pushNamedAndRemoveUntil(
         DashboardScreen.routeName,
@@ -250,8 +249,9 @@ class SignupProvider extends ChangeNotifier {
     _isLoading = false;
     _resendCodeTimer?.cancel();
     _resentCodeSeconds = _codeSendingTime;
-    _resendCodeTimer =
-        Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+    _resendCodeTimer = Timer.periodic(const Duration(seconds: 1), (
+      Timer timer,
+    ) {
       if (_resentCodeSeconds == 0) {
         timer.cancel();
       } else {
@@ -264,8 +264,8 @@ class SignupProvider extends ChangeNotifier {
   Future<bool> enableLocation(BuildContext context) async {
     try {
       // Request permission (this will show the system dialog)
-      final PermissionStatus status =
-          await Permission.locationWhenInUse.request();
+      final PermissionStatus status = await Permission.locationWhenInUse
+          .request();
 
       if (status == PermissionStatus.granted) {
         // Permission granted
@@ -273,8 +273,10 @@ class SignupProvider extends ChangeNotifier {
       } else if (status == PermissionStatus.permanentlyDenied) {
         // Show message + open settings
         // ignore: use_build_context_synchronously
-        AppSnackBar.showSnackBar(context,
-            'Permission permanently denied. Please enable from settings.');
+        AppSnackBar.showSnackBar(
+          context,
+          'Permission permanently denied. Please enable from settings.',
+        );
         await openAppSettings();
       } else {
         // Permission denied or other status
@@ -330,8 +332,9 @@ class SignupProvider extends ChangeNotifier {
       final DataState<String> result = await _registerUserUsecase(params);
       if (result is DataSuccess) {
         _uid = result.entity?.toString();
-        _loginUsecase
-            .call(LoginParams(email: email.text, password: password.text));
+        _loginUsecase.call(
+          LoginParams(email: email.text, password: password.text),
+        );
         startResendCodeTimer();
         return true;
       } else {
@@ -343,7 +346,9 @@ class SignupProvider extends ChangeNotifier {
         AppSnackBar.showSnackBar(
           // ignore: use_build_context_synchronously
           context,
-          result.exception?.message ?? 'something_wrong'.tr(),
+          result.exception?.message ??
+              result.exception?.reason ??
+              'something_wrong'.tr(),
         );
       }
     } catch (e) {
@@ -400,18 +405,12 @@ class SignupProvider extends ChangeNotifier {
 
   Future<bool> verifyOtp(BuildContext context) async {
     if (_uid == null) {
-      AppLog.error(
-        'uid is null',
-        name: 'SignupProvider.verifyOtp - uid',
-      );
+      AppLog.error('uid is null', name: 'SignupProvider.verifyOtp - uid');
       AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
       return false;
     }
     if (otp.text.isEmpty) {
-      AppLog.error(
-        'otp is empty',
-        name: 'SignupProvider.verifyOtp - otp',
-      );
+      AppLog.error('otp is empty', name: 'SignupProvider.verifyOtp - otp');
       AppSnackBar.showSnackBar(context, 'otp_requirement'.tr());
       return false;
     }
@@ -447,33 +446,35 @@ class SignupProvider extends ChangeNotifier {
   }
 
   Future<bool> dateOfBirth(BuildContext context) async {
-    final UpdateUserParams params =
-        UpdateUserParams(dob: dob, gender: gender?.json ?? Gender.other.json);
+    final UpdateUserParams params = UpdateUserParams(
+      dob: dob,
+      gender: gender?.json ?? Gender.other.json,
+    );
     final DataState<String> result = await _updateProfileDetailUsecase(params);
     if (result is DataSuccess) {
       AppLog.info('profile_updated_successfully'.tr());
       return true;
     } else {
-      AppLog.error(result.exception!.message,
-          name: 'SignUpProvider.dateOfBirth - else');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('something_wrong'.tr())),
+      AppLog.error(
+        result.exception!.message,
+        name: 'SignUpProvider.dateOfBirth - else',
       );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('something_wrong'.tr())));
       return false;
     }
   }
 
   Future<bool> verifyImage(BuildContext context) async {
     if (_attachment == null) {
-      AppLog.error(
-        'image is null',
-        name: 'SignupProvider.verifyImage - uid',
-      );
+      AppLog.error('image is null', name: 'SignupProvider.verifyImage - uid');
       AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
       return false;
     }
-    final DataState<bool> result =
-        await _verifyUserByImageUsecase(_attachment!);
+    final DataState<bool> result = await _verifyUserByImageUsecase(
+      _attachment!,
+    );
     if (result is DataSuccess) {
       AppLog.info('image_verified_successfully'.tr());
       return true;
@@ -484,9 +485,9 @@ class SignupProvider extends ChangeNotifier {
           : 'Verification failed',
       name: 'SignupProvider.verifyImage - failure',
     );
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('something_wrong'.tr())),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('something_wrong'.tr())));
     return false;
   }
 
@@ -494,8 +495,8 @@ class SignupProvider extends ChangeNotifier {
   void reset() {
     _uid =
         (LocalAuth.uid != null && LocalAuth.currentUser?.otpVerified == false)
-            ? LocalAuth.uid
-            : null;
+        ? LocalAuth.uid
+        : null;
     _resendCodeTimer?.cancel();
     _resentCodeSeconds = 0;
     name.text = '';
@@ -512,8 +513,8 @@ class SignupProvider extends ChangeNotifier {
     _isLoading = false;
     _currentPage =
         (LocalAuth.uid != null && LocalAuth.currentUser?.otpVerified == false)
-            ? SignupPageType.otp
-            : SignupPageType.basicInfo;
+        ? SignupPageType.otp
+        : SignupPageType.basicInfo;
     _resendCodeTimer?.cancel();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();

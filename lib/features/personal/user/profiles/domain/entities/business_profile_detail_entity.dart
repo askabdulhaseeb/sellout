@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 part 'business_profile_detail_entity.g.dart';
 
 @HiveType(typeId: 48)

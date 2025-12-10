@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/functions/app_log.dart';
 import '../features/business/service/views/screens/add_service_screen.dart';
+import '../features/personal/address/shipping_address/view/screens/selling_address_screen.dart';
 import '../features/personal/auth/find_account/view/screens/confirm_email_screen.dart';
 import '../features/personal/auth/find_account/view/screens/enter_code_screen.dart';
 import '../features/personal/auth/find_account/view/screens/find_account_screen.dart';
@@ -8,6 +9,9 @@ import '../features/personal/auth/find_account/view/screens/new_password_screen.
 import '../features/personal/auth/find_account/view/screens/send_code_screen.dart';
 import '../features/personal/auth/signin/views/screens/verify_two_factor_screen.dart';
 import '../features/personal/auth/welcome_screen/view/screens/welcome_screen.dart';
+import '../features/personal/setting/setting_options/balance/balance_screen.dart';
+import '../features/personal/setting/setting_options/legal_docs/legal_docs_screen.dart';
+import '../features/personal/setting/setting_options/membership_subscription/screen/memberships_and_subscription_screen.dart';
 import '../features/personal/setting/setting_options/terms&policies/privacy_policy.dart';
 import '../features/personal/visits/view/visit_calender.dart/screens/visit_calender_screen.dart';
 import '../features/personal/basket/views/screens/personal_shopping_basket_screen.dart';
@@ -87,8 +91,8 @@ class AppRoutes {
     }
   }
 
-  static Map<String, Widget Function(BuildContext)> routes =
-      <String, WidgetBuilder>{
+  static Map<String, Widget Function(BuildContext)>
+  routes = <String, WidgetBuilder>{
     // AUTH
     WelcomeScreen.routeName: (_) => const WelcomeScreen(),
     SignInScreen.routeName: (_) => const SignInScreen(),
@@ -141,6 +145,10 @@ class AppRoutes {
     SettingSecurityScreen.routeName: (_) => const SettingSecurityScreen(),
     PersonalPrivacySettingScreen.routeName: (_) =>
         const PersonalPrivacySettingScreen(),
+    LegalDocumentsScreen.routeName: (_) => const LegalDocumentsScreen(),
+    MembershipsAndSubscriptionScreen.routeName: (_) =>
+        const MembershipsAndSubscriptionScreen(),
+    //
     AutomaticResponseScreen.routeName: (_) => const AutomaticResponseScreen(),
     TimeAwayScreen.routeName: (_) => const TimeAwayScreen(),
     PrivacyPolicyScreen.routeName: (_) => const PrivacyPolicyScreen(),
@@ -157,6 +165,8 @@ class AppRoutes {
     SavedPostsPage.routeName: (_) => const SavedPostsPage(),
     BuyAgainScreen.routeName: (_) => const BuyAgainScreen(),
     ConnectBankScreen.routeName: (_) => const ConnectBankScreen(),
+    BalanceScreen.routeName: (_) => const BalanceScreen(),
+    SellingAddressScreen.routeName: (_) => const SellingAddressScreen(),
     //
     VisitCalenderScreen.routeName: (_) => const VisitCalenderScreen(),
   };

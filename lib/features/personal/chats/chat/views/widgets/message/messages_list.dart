@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
+
 import 'package:provider/provider.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../core/widgets/empty_page_widget.dart';
@@ -67,8 +68,9 @@ class _MessagesListState extends State<MessagesList> {
         ),
       );
     }
-    final Box<GettedMessageEntity> box =
-        Hive.box<GettedMessageEntity>(AppStrings.localChatMessagesBox);
+    final Box<GettedMessageEntity> box = Hive.box<GettedMessageEntity>(
+      AppStrings.localChatMessagesBox,
+    );
     return ValueListenableBuilder<Box<GettedMessageEntity>>(
       valueListenable: box.listenable(keys: <dynamic>[chatId]),
       builder: (BuildContext context, Box<GettedMessageEntity> box, _) {
@@ -91,16 +93,19 @@ class _MessagesListState extends State<MessagesList> {
         final Map<String, Duration> timeDiffMap = <String, Duration>{};
         for (int i = 0; i < messages.length; i++) {
           final MessageEntity current = messages[i];
-          final MessageEntity? next =
-              i < messages.length - 1 ? messages[i + 1] : null;
+          final MessageEntity? next = i < messages.length - 1
+              ? messages[i + 1]
+              : null;
           final Duration diff = (next != null && current.sendBy == next.sendBy)
               ? next.createdAt.difference(current.createdAt).abs()
               : const Duration(days: 5);
           timeDiffMap[current.messageId] = diff;
         }
         // Build widgets (chat messages with labels)
-        final List<Widget> widgets =
-            DateLabelHelper.buildLabeledWidgets(messages, timeDiffMap);
+        final List<Widget> widgets = DateLabelHelper.buildLabeledWidgets(
+          messages,
+          timeDiffMap,
+        );
         // ✅ Scroll when new messages arrive
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _scrollToBottomIfNeeded();

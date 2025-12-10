@@ -14,12 +14,12 @@ class NominationLocationEntity {
   final double lon;
   final String displayName;
   final String type;
-  final AddressEntity? address;
+  final NominationAddressEntity? address;
   final BoundingBoxEntity? boundingBox;
 }
 
-class AddressEntity {
-  AddressEntity({
+class NominationAddressEntity {
+  NominationAddressEntity({
     this.city,
     this.county,
     this.state,

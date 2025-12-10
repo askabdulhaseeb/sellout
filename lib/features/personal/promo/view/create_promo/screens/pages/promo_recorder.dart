@@ -127,16 +127,17 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
   }
 
   void _attachFile(File file, AttachmentType type) {
-    Provider.of<PromoProvider>(context, listen: false).setAttachments(
-      PickedAttachment(file: file, type: type),
-    );
+    Provider.of<PromoProvider>(
+      context,
+      listen: false,
+    ).setAttachments(PickedAttachment(file: file, type: type));
   }
 
   Future<void> _pickFromGallery() async {
-    Provider.of<PromoProvider>(context, listen: false).pickFromGallery(
+    Provider.of<PromoProvider>(
       context,
-      type: AttachmentType.media,
-    );
+      listen: false,
+    ).pickFromGallery(context, type: AttachmentType.media);
   }
 
   Future<void> _toggleFlash() async {
@@ -160,9 +161,7 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
   @override
   Widget build(BuildContext context) {
     if (_controller == null || !_controller!.value.isInitialized) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return Scaffold(
@@ -212,58 +211,62 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
       bottom: 00,
       left: 00,
       right: 00,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          if (_isRecording)
-            Text(
-              _formatTime(_recordingSeconds),
-              style: const TextStyle(
-                color: Colors.red,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+      child: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            if (_isRecording)
+              Text(
+                _formatTime(_recordingSeconds),
+                style: const TextStyle(
+                  color: Colors.red,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: ColorScheme.of(context).onSurface.withValues(alpha: 0.2),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  if (!_isRecording)
+                    GestureDetector(
+                      onTap: _pickFromGallery,
+                      child: const CircleAvatar(
+                        backgroundColor: Colors.black45,
+                        child: Icon(Icons.photo_library, color: Colors.white),
+                      ),
+                    ),
+                  if (!_isRecording)
+                    GestureDetector(
+                      onTap: _capturePhoto,
+                      child: const CircleAvatar(
+                        radius: 30,
+                        backgroundColor: Colors.white,
+                        child: Icon(Icons.camera_alt, color: Colors.black),
+                      ),
+                    ),
+                  GestureDetector(
+                    onTap: _toggleRecording,
+                    child: CircleAvatar(
+                      radius: _isRecording ? 30 : 20,
+                      backgroundColor: _isRecording
+                          ? Colors.red
+                          : Colors.black45,
+                      child: Icon(
+                        _isRecording ? Icons.stop : Icons.videocam,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: ColorScheme.of(context).onSurface.withValues(alpha: 0.2),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                if (!_isRecording)
-                  GestureDetector(
-                    onTap: _pickFromGallery,
-                    child: const CircleAvatar(
-                      backgroundColor: Colors.black45,
-                      child: Icon(Icons.photo_library, color: Colors.white),
-                    ),
-                  ),
-                if (!_isRecording)
-                  GestureDetector(
-                    onTap: _capturePhoto,
-                    child: const CircleAvatar(
-                      radius: 30,
-                      backgroundColor: Colors.white,
-                      child: Icon(Icons.camera_alt, color: Colors.black),
-                    ),
-                  ),
-                GestureDetector(
-                  onTap: _toggleRecording,
-                  child: CircleAvatar(
-                    radius: _isRecording ? 30 : 20,
-                    backgroundColor: _isRecording ? Colors.red : Colors.black45,
-                    child: Icon(
-                      _isRecording ? Icons.stop : Icons.videocam,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

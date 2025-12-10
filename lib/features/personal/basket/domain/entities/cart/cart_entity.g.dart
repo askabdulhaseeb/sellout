@@ -8,7 +8,7 @@ part of 'cart_entity.dart';
 
 class CartEntityAdapter extends TypeAdapter<CartEntity> {
   @override
-  final int typeId = 37;
+  final typeId = 37;
 
   @override
   CartEntity read(BinaryReader reader) {
@@ -27,7 +27,7 @@ class CartEntityAdapter extends TypeAdapter<CartEntity> {
   @override
   void write(BinaryWriter writer, CartEntity obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.updatedAt)
       ..writeByte(1)
@@ -35,9 +35,7 @@ class CartEntityAdapter extends TypeAdapter<CartEntity> {
       ..writeByte(2)
       ..write(obj.cartID)
       ..writeByte(3)
-      ..write(obj.items)
-      ..writeByte(99)
-      ..write(obj.inHiveAt);
+      ..write(obj.items);
   }
 
   @override

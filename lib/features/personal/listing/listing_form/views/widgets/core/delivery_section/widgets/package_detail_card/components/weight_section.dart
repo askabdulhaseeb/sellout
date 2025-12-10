@@ -72,8 +72,11 @@ class WeightSection extends StatelessWidget {
 }
 
 class _UnitChip extends StatelessWidget {
-  const _UnitChip(
-      {required this.label, required this.selected, required this.onTap});
+  const _UnitChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
 
   final String label;
   final bool selected;
@@ -100,9 +103,9 @@ class _UnitChip extends StatelessWidget {
         child: Text(
           label,
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: selected ? scheme.primary : null,
-                fontWeight: FontWeight.w500,
-              ),
+            color: selected ? scheme.primary : null,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
     );

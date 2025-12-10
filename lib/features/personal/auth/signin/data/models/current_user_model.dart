@@ -1,15 +1,15 @@
 import 'dart:convert';
+import '../../../stripe/data/models/stripe_connect_account_model.dart';
+import '../sources/local/local_auth.dart';
 import 'address_model.dart';
 import 'login_info_model.dart';
 import 'login_detail_model.dart';
 import '../../domain/entities/address_entity.dart';
 import '../../domain/entities/login_info_entity.dart';
-import '../../domain/entities/current_user_entity.dart';
 export '../../domain/entities/current_user_entity.dart';
 import '../../../../../../core/extension/string_ext.dart';
 import '../../../../../attachment/data/attchment_model.dart';
 import '../../../../location/data/models/location_model.dart';
-import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../user/profiles/data/models/supporter_detail_model.dart';
 import '../../../../../business/core/data/models/business_employee_model.dart';
 import '../../../../setting/setting_dashboard/data/models/time_away_model.dart';
@@ -28,12 +28,13 @@ class CurrentUserModel extends CurrentUserEntity {
     required super.displayName,
     required super.bio,
     required super.currency,
-    required super.privacyType,
+    // required super.privacyType,
     required super.countryAlpha3,
     required super.countryCode,
     required super.phoneNumber,
     required super.language,
     required super.address,
+    required super.sellingAddress,
     required super.chatIDs,
     required super.businessIDs,
     required super.imageVerified,
@@ -61,6 +62,7 @@ class CurrentUserModel extends CurrentUserEntity {
     required super.accountStatus,
     required super.listOfReviews,
     required super.location,
+    super.stripeConnectAccount,
   }) : super(inHiveAt: DateTime.now());
 
   factory CurrentUserModel.fromRawJson(String str) =>
@@ -69,12 +71,21 @@ class CurrentUserModel extends CurrentUserEntity {
   factory CurrentUserModel.fromJson(Map<String, dynamic> json) {
     final userData = json['item'] ?? <String, dynamic>{};
     final dynamic addressData = userData['address'];
+    final dynamic sellingAddressData =
+        userData['selling_address'] ?? json['selling_address'];
 
     List<AddressEntity> addressList = <AddressEntity>[];
+    AddressModel? sellingAddressModel;
+
     if (addressData is List) {
       addressList = addressData.map((e) => AddressModel.fromJson(e)).toList();
     } else if (addressData is Map<String, dynamic>) {
       addressList.add(AddressModel.fromJson(addressData));
+    }
+
+    if (sellingAddressData != null &&
+        sellingAddressData is Map<String, dynamic>) {
+      sellingAddressModel = AddressModel.fromJson(sellingAddressData);
     }
 
     return CurrentUserModel(
@@ -90,25 +101,32 @@ class CurrentUserModel extends CurrentUserEntity {
       currency: userData['currency'] ?? 'gbp',
       accountStatus: userData['account_status'] ?? '',
       listOfReviews: _parseListOfReviews(userData['list_of_reviews']),
-      privacyType: PrivacyType.fromJson(userData['profile_type']),
+      // privacyType: PrivacyType.fromJson(userData['profile_type']),
       countryAlpha3: userData['country_alpha_3'] ?? '',
       countryCode: userData['country_code'] ?? '',
       phoneNumber: userData['phone_number'] ?? '',
       language: userData['language'] ?? 'en',
       address: addressList,
-      chatIDs: List<String>.from((userData['chat_ids'] ?? <dynamic>[])
-          .map((dynamic e) => e.toString())),
-      businessIDs: List<String>.from((userData['business_ids'] ?? <dynamic>[])
-          .map((dynamic e) => e.toString())),
+      sellingAddress: sellingAddressModel,
+      chatIDs: List<String>.from(
+        (userData['chat_ids'] ?? <dynamic>[]).map((dynamic e) => e.toString()),
+      ),
+      businessIDs: List<String>.from(
+        (userData['business_ids'] ?? <dynamic>[]).map(
+          (dynamic e) => e.toString(),
+        ),
+      ),
       imageVerified: userData['image_verified'] ?? false,
       verificationImage: userData['verification_pic'] != null
           ? AttachmentModel.fromJson(userData['verification_pic'])
           : null,
       profileImage: List<AttachmentModel>.from(
-        (userData['profile_pic'] ?? <dynamic>[])
-            .map((x) => AttachmentModel.fromJson(x)),
+        (userData['profile_pic'] ?? <dynamic>[]).map(
+          (x) => AttachmentModel.fromJson(x),
+        ),
       ),
-      lastLoginTime: userData['last_login_time']?.toString().toDateTime() ??
+      lastLoginTime:
+          userData['last_login_time']?.toString().toDateTime() ??
           DateTime.now(),
       createdAt:
           userData['created_at']?.toString().toDateTime() ?? DateTime.now(),
@@ -118,7 +136,8 @@ class CurrentUserModel extends CurrentUserEntity {
       businessName: userData['business_name']?.toString() ?? '',
       businessID: userData['business_id'] ?? '',
       logindetail: LoginDetailModel.fromJson(json['login_detail']),
-      loginActivity: (userData['login_activity'] as List<dynamic>?)
+      loginActivity:
+          (userData['login_activity'] as List<dynamic>?)
               ?.map((e) => DeviceLoginInfoModel.fromJson(e))
               .toList() ??
           <DeviceLoginInfoEntity>[],
@@ -127,19 +146,22 @@ class CurrentUserModel extends CurrentUserEntity {
           : null,
       location:
           (userData.containsKey('location') && userData['location'] != null)
-              ? LocationModel.fromJson(userData['location'])
-              : null,
+          ? LocationModel.fromJson(userData['location'])
+          : null,
       employeeList: List<BusinessEmployeeModel>.from(
-        (userData['employees'] ?? <dynamic>[])
-            .map((e) => BusinessEmployeeModel.fromJson(e)),
+        (userData['employees'] ?? <dynamic>[]).map(
+          (e) => BusinessEmployeeModel.fromJson(e),
+        ),
       ),
       twoStepAuthEnabled:
           userData['security']?['two_factor_authentication'] ?? false,
-      supporters: (userData['supporters'] as List<dynamic>?)
+      supporters:
+          (userData['supporters'] as List<dynamic>?)
               ?.map((e) => SupporterDetailModel.fromMap(e).toEntity())
               .toList() ??
           <SupporterDetailEntity>[],
-      supporting: (userData['supporting'] as List<dynamic>?)
+      supporting:
+          (userData['supporting'] as List<dynamic>?)
               ?.map((e) => SupporterDetailModel.fromMap(e).toEntity())
               .toList() ??
           <SupporterDetailEntity>[],
@@ -151,6 +173,11 @@ class CurrentUserModel extends CurrentUserEntity {
           : PrivacySettingsModel.fromJson(json),
       timeAway: userData['time_away'] != null
           ? TimeAwayModel.fromJson(userData['time_away'])
+          : null,
+      stripeConnectAccount: userData['stripe_connect_account'] != null
+          ? StripeConnectAccountModel.fromJson(
+              userData['stripe_connect_account'],
+            )
           : null,
     );
   }

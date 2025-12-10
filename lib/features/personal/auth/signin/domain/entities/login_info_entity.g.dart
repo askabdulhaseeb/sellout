@@ -8,7 +8,7 @@ part of 'login_info_entity.dart';
 
 class DeviceLoginInfoEntityAdapter extends TypeAdapter<DeviceLoginInfoEntity> {
   @override
-  final int typeId = 54;
+  final typeId = 54;
 
   @override
   DeviceLoginInfoEntity read(BinaryReader reader) {

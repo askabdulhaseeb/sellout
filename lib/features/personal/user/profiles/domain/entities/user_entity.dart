@@ -1,12 +1,10 @@
-import 'package:hive_flutter/hive_flutter.dart';
-
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../auth/signin/domain/entities/address_entity.dart';
 import 'business_profile_detail_entity.dart';
 import 'supporter_detail_entity.dart';
 import 'user_stripe_account_entity.dart';
-
 part 'user_entity.g.dart';
 
 @HiveType(typeId: 1)

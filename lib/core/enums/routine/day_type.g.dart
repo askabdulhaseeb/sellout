@@ -8,7 +8,7 @@ part of 'day_type.dart';
 
 class DayTypeAdapter extends TypeAdapter<DayType> {
   @override
-  final int typeId = 32;
+  final typeId = 32;
 
   @override
   DayType read(BinaryReader reader) {
@@ -37,25 +37,18 @@ class DayTypeAdapter extends TypeAdapter<DayType> {
     switch (obj) {
       case DayType.monday:
         writer.writeByte(0);
-        break;
       case DayType.tuesday:
         writer.writeByte(1);
-        break;
       case DayType.wednesday:
         writer.writeByte(2);
-        break;
       case DayType.thursday:
         writer.writeByte(3);
-        break;
       case DayType.friday:
         writer.writeByte(4);
-        break;
       case DayType.saturday:
         writer.writeByte(5);
-        break;
       case DayType.sunday:
         writer.writeByte(6);
-        break;
     }
   }
 

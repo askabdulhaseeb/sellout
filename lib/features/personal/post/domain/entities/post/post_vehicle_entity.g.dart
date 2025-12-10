@@ -8,7 +8,7 @@ part of 'post_vehicle_entity.dart';
 
 class PostVehicleEntityAdapter extends TypeAdapter<PostVehicleEntity> {
   @override
-  final int typeId = 69;
+  final typeId = 69;
 
   @override
   PostVehicleEntity read(BinaryReader reader) {
@@ -17,20 +17,20 @@ class PostVehicleEntityAdapter extends TypeAdapter<PostVehicleEntity> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return PostVehicleEntity(
-      year: fields[0] as int?,
-      doors: fields[1] as int?,
-      seats: fields[2] as int?,
-      mileage: fields[3] as int?,
+      year: (fields[0] as num?)?.toInt(),
+      doors: (fields[1] as num?)?.toInt(),
+      seats: (fields[2] as num?)?.toInt(),
+      mileage: (fields[3] as num?)?.toInt(),
       make: fields[4] as String?,
       model: fields[5] as String?,
       bodyType: fields[6] as String?,
       emission: fields[7] as String?,
       fuelType: fields[8] as String?,
-      engineSize: fields[9] as double?,
+      engineSize: (fields[9] as num?)?.toDouble(),
       mileageUnit: fields[10] as String?,
       transmission: fields[11] as String?,
-      interiorColor: fields[12] as String?,
-      exteriorColor: fields[13] as String?,
+      interiorColor: fields[12] as ColorOptionEntity?,
+      exteriorColor: fields[13] as ColorOptionEntity?,
       vehiclesCategory: fields[14] as String?,
       address: fields[15] as String,
     );
