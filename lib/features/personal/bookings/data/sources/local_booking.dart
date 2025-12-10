@@ -9,7 +9,11 @@ import '../../domain/entity/booking_entity.dart';
 
 class LocalBooking extends LocalHiveBox<BookingEntity> {
   @override
-  String get boxName =>  AppStrings.localBookingsBox;
+  String get boxName => AppStrings.localBookingsBox;
+
+  /// Bookings contain appointment and personal data - encrypt them.
+  @override
+  bool get requiresEncryption => true;
   
   Box<BookingEntity> get _box => box;
 

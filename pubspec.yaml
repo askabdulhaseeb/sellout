@@ -38,7 +38,8 @@ dependencies:
   get_it: ^8.0.0
   flutter_html: ^3.0.0-beta.2
   crypto: ^3.0.6
-  
+  flutter_secure_storage: ^9.2.2
+
   video_player: ^2.9.2
   open_file: ^3.2.1
 

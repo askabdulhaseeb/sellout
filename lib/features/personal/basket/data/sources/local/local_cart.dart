@@ -10,8 +10,12 @@ import '../../models/cart/cart_item_model.dart';
 export '../../../domain/entities/cart/cart_entity.dart';
 
 class LocalCart extends LocalHiveBox<CartEntity> {
- @override
+  @override
   String get boxName => AppStrings.localCartBox;
+
+  /// Cart may contain payment intent data - encrypt it.
+  @override
+  bool get requiresEncryption => true;
   CartEntity entity(String value) {
     try {
       return box.values.firstWhere(

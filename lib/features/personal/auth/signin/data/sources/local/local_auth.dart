@@ -1,6 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:latlong2/latlong.dart';
+import '../../../../../../../core/sources/local/encryption_key_manager.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../domain/entities/address_entity.dart';
@@ -11,6 +14,9 @@ class LocalAuth {
   static final String boxTitle = AppStrings.localAuthBox;
   static Box<CurrentUserEntity> get _box =>
       Hive.box<CurrentUserEntity>(boxTitle);
+
+  /// This box contains sensitive auth data and requires encryption.
+  static bool get requiresEncryption => true;
 
   static final ValueNotifier<List<AddressEntity>> addressListNotifier =
       ValueNotifier<List<AddressEntity>>(_getCurrentAddresses());
@@ -70,6 +76,14 @@ class LocalAuth {
       return Hive.box<CurrentUserEntity>(boxTitle);
     }
     try {
+      if (requiresEncryption) {
+        final Uint8List encryptionKey =
+            await EncryptionKeyManager.getEncryptionKey();
+        return await Hive.openBox<CurrentUserEntity>(
+          boxTitle,
+          encryptionCipher: HiveAesCipher(encryptionKey),
+        );
+      }
       return await Hive.openBox<CurrentUserEntity>(boxTitle);
     } catch (e) {
       debugPrint('LocalAuth: Error opening box, deleting corrupted data: $e');
@@ -77,6 +91,14 @@ class LocalAuth {
         await Hive.deleteBoxFromDisk(boxTitle);
       } catch (deleteError) {
         debugPrint('LocalAuth: Error deleting box from disk: $deleteError');
+      }
+      if (requiresEncryption) {
+        final Uint8List encryptionKey =
+            await EncryptionKeyManager.getEncryptionKey();
+        return await Hive.openBox<CurrentUserEntity>(
+          boxTitle,
+          encryptionCipher: HiveAesCipher(encryptionKey),
+        );
       }
       return await Hive.openBox<CurrentUserEntity>(boxTitle);
     }

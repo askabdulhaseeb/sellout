@@ -7,8 +7,12 @@ import '../../../domain/entities/order_entity.dart';
 export '../../models/order_model.dart';
 
 class LocalOrders extends LocalHiveBox<OrderEntity> {
-   @override
+  @override
   String get boxName => AppStrings.localOrdersBox;
+
+  /// Orders contain payment and transaction data - encrypt them.
+  @override
+  bool get requiresEncryption => true;
 
   Box<OrderEntity> get _box => box;
 
