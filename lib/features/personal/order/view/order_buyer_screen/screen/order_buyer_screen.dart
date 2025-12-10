@@ -167,8 +167,6 @@ class OrderBuyerAddressWIdget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String state = orderData.shippingAddress.state.stateName;
-    final String country = orderData.shippingAddress.country.countryName;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,7 +178,7 @@ class OrderBuyerAddressWIdget extends StatelessWidget {
         const SizedBox(height: 8),
         Text(orderData.shippingAddress.address1),
         Text(orderData.shippingAddress.city),
-        Text(orderData.shippingAddress.state.stateName ?? ''),
+        Text(orderData.shippingAddress.state.stateName),
         Text(orderData.shippingAddress.country.countryName),
       ],
     );
