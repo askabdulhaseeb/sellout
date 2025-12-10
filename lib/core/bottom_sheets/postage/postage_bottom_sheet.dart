@@ -58,7 +58,7 @@ class _PostageBottomSheetState extends State<PostageBottomSheet> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 itemCount: entries.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                separatorBuilder: (_, _) => const SizedBox(height: 8),
                 itemBuilder: (BuildContext context, int index) {
                   final String cartItemId = entries[index].cartItemId;
                   final PostageItemDetailEntity detail = entries[index];

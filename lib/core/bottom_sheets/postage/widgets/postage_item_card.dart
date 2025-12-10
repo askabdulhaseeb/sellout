@@ -153,6 +153,7 @@ class _RateList extends StatefulWidget {
 class _RateListState extends State<_RateList> {
   // Track which providers are expanded
   final Set<String> _expandedProviders = <String>{};
+  bool _cheapestRateCalculated = false;
 
   @override
   void initState() {
@@ -161,13 +162,57 @@ class _RateListState extends State<_RateList> {
     if (widget.rates.isNotEmpty) {
       _expandedProviders.add(widget.rates.first.provider);
     }
+    // Calculate and select cheapest rate on init
+    _findAndSelectCheapestRate();
   }
 
-  /// Groups rates by provider name
+  /// Finds the cheapest rate across all providers and selects it
+  Future<void> _findAndSelectCheapestRate() async {
+    if (widget.rates.isEmpty) return;
+
+    RateEntity? cheapest;
+    double? lowestPrice;
+
+    for (final RateEntity rate in widget.rates) {
+      final double? price = await rate.getLocalPrice();
+      if (price != null && (lowestPrice == null || price < lowestPrice)) {
+        lowestPrice = price;
+        cheapest = rate;
+      }
+    }
+
+    if (cheapest != null && mounted) {
+      setState(() {
+        _cheapestRateCalculated = true;
+        // Expand the provider that has the cheapest rate
+        _expandedProviders.clear();
+        _expandedProviders.add(cheapest!.provider);
+      });
+
+      // Update selection to cheapest rate
+      final CartProvider cartPro = Provider.of<CartProvider>(
+        context,
+        listen: false,
+      );
+      cartPro.updateShippingSelection(widget.cartItemId, cheapest.objectId);
+    }
+  }
+
+  /// Groups rates by provider (e.g., "DPD UK", "Royal Mail", etc.)
   Map<String, List<RateEntity>> _groupRatesByProvider() {
     final Map<String, List<RateEntity>> grouped = <String, List<RateEntity>>{};
     for (final RateEntity rate in widget.rates) {
-      grouped.putIfAbsent(rate.provider, () => <RateEntity>[]).add(rate);
+      grouped
+          .putIfAbsent(rate.serviceLevel.token, () => <RateEntity>[])
+          .add(rate);
+    }
+    // Sort each provider's rates by price (cheapest first)
+    for (final List<RateEntity> rates in grouped.values) {
+      rates.sort((RateEntity a, RateEntity b) {
+        final double priceA = double.tryParse(a.amountBuffered) ?? 0;
+        final double priceB = double.tryParse(b.amountBuffered) ?? 0;
+        return priceA.compareTo(priceB);
+      });
     }
     return grouped;
   }
@@ -183,7 +228,10 @@ class _RateListState extends State<_RateList> {
         .first;
 
     String selectedId = selectedItem.objectId;
-    if (selectedId.isEmpty && widget.rates.isNotEmpty) {
+    // Only use first rate as fallback if cheapest rate hasn't been calculated yet
+    if (selectedId.isEmpty &&
+        widget.rates.isNotEmpty &&
+        !_cheapestRateCalculated) {
       selectedId = widget.rates.first.objectId;
       WidgetsBinding.instance.addPostFrameCallback(
         (_) => cartPro.updateShippingSelection(widget.cartItemId, selectedId),
@@ -220,7 +268,7 @@ class _RateListState extends State<_RateList> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.sm,
-                  vertical: AppSpacing.xs,
+                  vertical: AppSpacing.sm,
                 ),
                 child: Row(
                   children: <Widget>[
@@ -229,34 +277,39 @@ class _RateListState extends State<_RateList> {
                         padding: const EdgeInsets.only(right: AppSpacing.sm),
                         child: Image.network(
                           providerImage,
-                          width: 24,
-                          height: 24,
-                          errorBuilder: (_, __, ___) => const Icon(
-                            Icons.local_shipping,
-                            size: 24,
-                          ),
+                          width: 32,
+                          height: 32,
+                          errorBuilder:
+                              (BuildContext _, Object e, StackTrace? s) =>
+                                  const Icon(Icons.local_shipping, size: 32),
                         ),
                       )
                     else
                       const Padding(
                         padding: EdgeInsets.only(right: AppSpacing.sm),
-                        child: Icon(Icons.local_shipping, size: 24),
+                        child: Icon(Icons.local_shipping, size: 32),
                       ),
                     Expanded(
-                      child: Text(
-                        provider,
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            provider,
+                            style: Theme.of(context).textTheme.titleSmall
+                                ?.copyWith(fontWeight: FontWeight.w600),
+                          ),
+                          Text(
+                            '${providerRates.length} ${'services'.tr()}',
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
+                          ),
+                        ],
                       ),
                     ),
-                    Text(
-                      '${providerRates.length} ${'options'.tr()}',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.xs),
                     Icon(
                       isExpanded
                           ? Icons.keyboard_arrow_up
@@ -267,52 +320,91 @@ class _RateListState extends State<_RateList> {
                 ),
               ),
             ),
-            // Rate options (collapsible)
+            // Service options (collapsible)
             if (isExpanded)
-              ...providerRates.map(
-                (RateEntity rate) => ListTile(
-                  dense: true,
-                  contentPadding: const EdgeInsets.only(
-                    left: AppSpacing.lg + AppSpacing.sm,
-                    right: AppSpacing.sm,
-                  ),
-                  leading: Radio<String>(
-                    value: rate.objectId,
-                    groupValue: selectedId,
-                    onChanged: (_) => cartPro.updateShippingSelection(
-                      widget.cartItemId,
-                      rate.objectId,
-                    ),
-                  ),
-                  title: Text(
-                    rate.serviceLevel.name,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  subtitle: rate.durationTerms.isNotEmpty
-                      ? Text(
-                          rate.durationTerms,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
-                        )
-                      : null,
-                  trailing: FutureBuilder<String>(
-                    future: rate.getPriceStr(),
-                    builder: (_, AsyncSnapshot<String> snapshot) => Text(
-                      snapshot.data ?? '...',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
+              ...providerRates.map((RateEntity rate) {
+                final bool isSelected = selectedId == rate.objectId;
+                return InkWell(
                   onTap: () => cartPro.updateShippingSelection(
                     widget.cartItemId,
                     rate.objectId,
                   ),
-                ),
-              ),
-            if (providerIndex < providers.length - 1)
-              const Divider(height: 1),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                      vertical: AppSpacing.sm,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? Theme.of(
+                              context,
+                            ).colorScheme.error.withValues(alpha: 0.1)
+                          : null,
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        // Selection indicator
+                        Container(
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: isSelected
+                                  ? Theme.of(context).colorScheme.error
+                                  : Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                              width: 2,
+                            ),
+                            color: isSelected
+                                ? Theme.of(context).colorScheme.error
+                                : Colors.transparent,
+                          ),
+                          child: isSelected
+                              ? const Icon(
+                                  Icons.check,
+                                  size: 14,
+                                  color: Colors.white,
+                                )
+                              : null,
+                        ),
+                        const SizedBox(width: AppSpacing.sm),
+                        // Service name
+                        Expanded(
+                          child: Text(
+                            rate.serviceLevel.name,
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  color: isSelected
+                                      ? Theme.of(context).colorScheme.error
+                                      : null,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w600
+                                      : FontWeight.normal,
+                                ),
+                          ),
+                        ),
+                        // Price
+                        FutureBuilder<String>(
+                          future: rate.getPriceStr(),
+                          builder: (_, AsyncSnapshot<String> snapshot) => Text(
+                            snapshot.data ?? '...',
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: isSelected
+                                      ? Theme.of(context).colorScheme.error
+                                      : null,
+                                ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+            if (providerIndex < providers.length - 1) const Divider(height: 1),
           ],
         );
       },

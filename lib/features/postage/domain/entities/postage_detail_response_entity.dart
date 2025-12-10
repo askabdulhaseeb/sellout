@@ -168,7 +168,8 @@ class RateEntity {
     final String to = LocalAuth.currency;
 
     // parse buffered amount to double
-    final double buffered = double.tryParse(amountBuffered) ??
+    final double buffered =
+        double.tryParse(amountBuffered) ??
         double.tryParse(bufferedAmount) ??
         0.0;
 
@@ -178,10 +179,13 @@ class RateEntity {
     }
 
     // different currency, get exchange rate
-    final GetExchangeRateParams params =
-        GetExchangeRateParams(from: from, to: to);
-    final DataState<ExchangeRateEntity> result =
-        await GetExchangeRateUsecase(locator()).call(params);
+    final GetExchangeRateParams params = GetExchangeRateParams(
+      from: from,
+      to: to,
+    );
+    final DataState<ExchangeRateEntity> result = await GetExchangeRateUsecase(
+      locator(),
+    ).call(params);
 
     if (result is DataSuccess<ExchangeRateEntity> && result.entity != null) {
       return buffered * result.entity!.rate; // convert to local currency
