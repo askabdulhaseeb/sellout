@@ -2,8 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
-import '../../../../postage/domain/params/add_label_params.dart';
-import '../../../../postage/domain/usecase/buy_label_usecase.dart';
 import '../../../chats/create_chat/view/provider/create_private_chat_provider.dart';
 import '../../../../../core/enums/core/status_type.dart';
 import '../../../../../core/helper_functions/country_helper.dart';
@@ -110,7 +108,7 @@ class _OrderDetailBody extends StatelessWidget {
             const Divider(),
             OrderDispatchedToWidget(order: order),
             const SizedBox(height: 16),
-            const OrderActionButtonsList(),
+            OrderActionButtonsList(),
           ],
         ),
       ),
@@ -207,7 +205,6 @@ class OrderInfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      spacing: 4,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
@@ -290,20 +287,48 @@ class OrderActionButtonsList extends StatelessWidget {
                   StatusType.processing,
                 ),
               ),
-            if (order.orderStatus == StatusType.processing &&
-                order.shippingDetails != null)
+            // non tappable
+            if (order.orderStatus == StatusType.readyToShip)
+              OrderActionButton(
+                isLoading: orderPro.isLoading,
+                keyName: 'ready_to_ship',
+                color: order.orderStatus.color,
+                onTap: () {},
+              ),
+            if (order.orderStatus == StatusType.delivered)
+              OrderActionButton(
+                isLoading: orderPro.isLoading,
+                keyName: 'delivered',
+                color: order.orderStatus.color,
+                onTap: () {},
+              ),
+            if (order.orderStatus == StatusType.shipped)
+              OrderActionButton(
+                isLoading: orderPro.isLoading,
+                keyName: 'shipped',
+                color: order.orderStatus.color,
+                onTap: () {},
+              ),
+            if (order.orderStatus == StatusType.cancelled)
               OrderActionButton(
                 isLoading: false,
+                keyName: 'cancelled',
+                color: order.orderStatus.color,
+                onTap: () {},
+              ),
+            // tappable
+            if (order.orderStatus == StatusType.processing &&
+                (order.shippingDetails?.postage.isNotEmpty ?? false))
+              OrderActionButton(
+                isLoading: orderPro.isBuyingLabel,
                 keyName: 'buy_label',
                 color: order.orderStatus.color,
-                onTap: () {
-                  BuyLabelUsecase(
-                    locator(),
-                  ).call(BuyLabelParams(orderId: order.orderId));
+                onTap: () async {
+                  await orderPro.buyLabel(order.orderId);
                 },
               ),
             if (order.orderStatus == StatusType.processing &&
-                order.shippingDetails == null)
+                (order.shippingDetails?.postage.isEmpty ?? true))
               OrderActionButton(
                 isLoading: false,
                 keyName: 'choose_postage',
@@ -316,20 +341,7 @@ class OrderActionButtonsList extends StatelessWidget {
                   );
                 },
               ),
-            if (order.orderStatus == StatusType.delivered)
-              OrderActionButton(
-                isLoading: false,
-                keyName: 'posted',
-                color: order.orderStatus.color,
-                onTap: () {},
-              ),
-            if (order.orderStatus == StatusType.cancelled)
-              OrderActionButton(
-                isLoading: false,
-                keyName: 'cancelled',
-                color: order.orderStatus.color,
-                onTap: () {},
-              ),
+
             if (order.orderStatus == StatusType.pending)
               OrderActionButton(
                 isLoading: orderPro.isLoading,
@@ -355,6 +367,7 @@ class OrderActionButtonsList extends StatelessWidget {
                 ).startPrivateChat(context, order.buyerId);
               },
             ),
+
             InDevMode(
               child: OrderActionButton(
                 isLoading: false,

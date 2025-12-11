@@ -1,7 +1,7 @@
 import '../../domain/entities/fast_delivery_entity.dart';
 
 class FastDeliveryModel extends FastDeliveryEntity {
-  FastDeliveryModel({required super.available, super.message, super.requested});
+  const FastDeliveryModel({super.available, super.message, super.requested});
 
   factory FastDeliveryModel.fromJson(Map<String, dynamic> json) {
     return FastDeliveryModel(

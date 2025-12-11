@@ -8,7 +8,7 @@ part of 'shipping_detail_entity.dart';
 
 class ShippingDetailEntityAdapter extends TypeAdapter<ShippingDetailEntity> {
   @override
-  final typeId = 100;
+  final typeId = 89;
 
   @override
   ShippingDetailEntity read(BinaryReader reader) {

@@ -1,7 +1,7 @@
 import 'package:hive_ce/hive.dart';
 part 'postage_entity.g.dart';
 
-@HiveType(typeId: 101)
+@HiveType(typeId: 90)
 class PostageEntity {
   @HiveField(0)
   final Map<String, dynamic>? parcel;
