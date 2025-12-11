@@ -12,12 +12,6 @@ import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../dashboard/views/screens/dashboard_screen.dart';
 import '../../../../user/profiles/domain/usecase/delete_user_usecase.dart';
 import '../../../setting_options/terms&policies/about_us_screen.dart';
-import '../../../setting_options/terms&policies/acceptable_user_policy.dart';
-import '../../../setting_options/terms&policies/community_standard_screen.dart';
-import '../../../setting_options/terms&policies/cookie_policy.dart';
-import '../../../setting_options/terms&policies/dispute_resolution_policy.dart';
-import '../../../setting_options/terms&policies/privacy_policy.dart';
-import '../../../setting_options/terms&policies/terms_condition_screen.dart';
 import '../../../setting_options/time_away/screens/time_away_screen.dart';
 import '../widgets/personal_setting_tile.dart';
 
@@ -36,48 +30,48 @@ class PersonalSettingMoreInformationScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         physics: const BouncingScrollPhysics(),
         children: <Widget>[
-          PersonalSettingTile(
-            icon: AppStrings.selloutPrivacyPolicyIcon,
-            title: 'privacy_policy'.tr(),
-            onTap: () {
-              AppNavigator.pushNamed(PrivacyPolicyScreen.routeName);
-            },
-          ),
-          PersonalSettingTile(
-            icon: AppStrings.selloutTermsConditionIcon,
-            title: 'terms_and_conditions'.tr(),
-            onTap: () {
-              AppNavigator.pushNamed(TermsOfServiceScreen.routeName);
-            },
-          ),
-          PersonalSettingTile(
-            icon: AppStrings.selloutCookiesPolicyIcon,
-            title: 'cookies_policy'.tr(),
-            onTap: () {
-              AppNavigator.pushNamed(CookiesPolicyScreen.routeName);
-            },
-          ),
-          PersonalSettingTile(
-            icon: AppStrings.selloutSupportPersonIcon,
-            title: 'acceptable_use_policy'.tr(),
-            onTap: () {
-              AppNavigator.pushNamed(AcceptableUsePolicyScreen.routeName);
-            },
-          ),
-          PersonalSettingTile(
-            icon: AppStrings.selloutSupportPersonIcon,
-            title: 'dispute_resolution_procedure'.tr(),
-            onTap: () {
-              AppNavigator.pushNamed(DisputeResolutionScreen.routeName);
-            },
-          ),
-          PersonalSettingTile(
-            icon: AppStrings.selloutCommunityGuidlinesIcon,
-            title: 'community_standards'.tr(),
-            onTap: () {
-              AppNavigator.pushNamed(CommunityStandardsScreen.routeName);
-            },
-          ),
+          // PersonalSettingTile(
+          //   icon: AppStrings.selloutPrivacyPolicyIcon,
+          //   title: 'privacy_policy'.tr(),
+          //   onTap: () {
+          //     AppNavigator.pushNamed(PrivacyPolicyScreen.routeName);
+          //   },
+          // ),
+          // PersonalSettingTile(
+          //   icon: AppStrings.selloutTermsConditionIcon,
+          //   title: 'terms_and_conditions'.tr(),
+          //   onTap: () {
+          //     AppNavigator.pushNamed(TermsOfServiceScreen.routeName);
+          //   },
+          // ),
+          // PersonalSettingTile(
+          //   icon: AppStrings.selloutCookiesPolicyIcon,
+          //   title: 'cookies_policy'.tr(),
+          //   onTap: () {
+          //     AppNavigator.pushNamed(CookiesPolicyScreen.routeName);
+          //   },
+          // ),
+          // PersonalSettingTile(
+          //   icon: AppStrings.selloutSupportPersonIcon,
+          //   title: 'acceptable_use_policy'.tr(),
+          //   onTap: () {
+          //     AppNavigator.pushNamed(AcceptableUsePolicyScreen.routeName);
+          //   },
+          // ),
+          // PersonalSettingTile(
+          //   icon: AppStrings.selloutSupportPersonIcon,
+          //   title: 'dispute_resolution_procedure'.tr(),
+          //   onTap: () {
+          //     AppNavigator.pushNamed(DisputeResolutionScreen.routeName);
+          //   },
+          // ),
+          // PersonalSettingTile(
+          //   icon: AppStrings.selloutCommunityGuidlinesIcon,
+          //   title: 'community_standards'.tr(),
+          //   onTap: () {
+          //     AppNavigator.pushNamed(CommunityStandardsScreen.routeName);
+          //   },
+          // ),
           PersonalSettingTile(
             icon: AppStrings.selloutSupportPersonIcon,
             title: 'time_away'.tr(),
@@ -141,12 +135,14 @@ class PersonalSettingMoreInformationScreen extends StatelessWidget {
                         child: Text(
                           'delete'.tr(),
                           style: TextStyle(
-                              color: Theme.of(context).colorScheme.error),
+                            color: Theme.of(context).colorScheme.error,
+                          ),
                         ),
                         onPressed: () async {
                           final DataState<bool?> result =
-                              await DeleteUserUsecase(locator())
-                                  .call(LocalAuth.uid ?? '');
+                              await DeleteUserUsecase(
+                                locator(),
+                              ).call(LocalAuth.uid ?? '');
 
                           if (result is DataSuccess) {
                             await HiveDB.signout();
@@ -157,7 +153,9 @@ class PersonalSettingMoreInformationScreen extends StatelessWidget {
                           } else {
                             if (context.mounted) {
                               AppSnackBar.error(
-                                  context, 'something_wrong'.tr());
+                                context,
+                                'something_wrong'.tr(),
+                              );
                             }
                           }
                         },
@@ -177,7 +175,9 @@ class PersonalSettingMoreInformationScreen extends StatelessWidget {
             onTap: () async {
               await HiveDB.signout();
               AppNavigator.pushNamedAndRemoveUntil(
-                  DashboardScreen.routeName, (_) => false);
+                DashboardScreen.routeName,
+                (_) => false,
+              );
             },
           ),
         ],

@@ -48,8 +48,8 @@ class PersonalPrivacySettingScreen extends StatelessWidget {
               subtitle: Text(
                 'download_account_data_subtitle'.tr(),
                 style: textTheme.bodySmall?.copyWith(
-                    color:
-                        ColorScheme.of(context).outline.withValues(alpha: 0.4)),
+                  color: ColorScheme.of(context).outline.withValues(alpha: 0.4),
+                ),
               ),
               trailing: const Icon(Icons.arrow_forward_ios_rounded),
             ),

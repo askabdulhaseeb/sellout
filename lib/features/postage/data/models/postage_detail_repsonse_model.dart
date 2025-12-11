@@ -101,7 +101,9 @@ class PostageItemDetailModel extends PostageItemDetailEntity {
           ? json['package_detail']
           : <String, dynamic>{},
       fromAddress: AddressModel.fromJson(
-          json['fromAddress']),
+          json['fromAddress'] is Map<String, dynamic>
+              ? json['fromAddress']
+              : <String, dynamic>{}),
       toAddress: AddressModel.fromJson(json['toAddress'] is Map<String, dynamic>
           ? json['toAddress']
           : <String, dynamic>{}),
