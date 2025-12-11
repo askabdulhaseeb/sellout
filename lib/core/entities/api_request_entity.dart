@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:hive_ce/hive.dart';
-import '../extension/string_ext.dart';
 import '../sources/local/local_request_history.dart';
 part 'api_request_entity.g.dart';
 
