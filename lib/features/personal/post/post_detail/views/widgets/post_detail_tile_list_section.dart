@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
 import '../../../domain/entities/post/post_entity.dart';
 
 class PostDetailTileListSection extends StatelessWidget {
