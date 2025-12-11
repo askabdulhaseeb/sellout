@@ -2,8 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
-import '../../../../postage/domain/params/add_lable_params.dart';
-import '../../../../postage/domain/usecase/buy_label_usecsae.dart';
+import '../../../../postage/domain/params/add_label_params.dart';
+import '../../../../postage/domain/usecase/buy_label_usecase.dart';
 import '../../../chats/create_chat/view/provider/create_private_chat_provider.dart';
 import '../../../../../core/enums/core/status_type.dart';
 import '../../../../../core/helper_functions/country_helper.dart';
@@ -291,7 +291,7 @@ class OrderActionButtonsList extends StatelessWidget {
                 ),
               ),
             if (order.orderStatus == StatusType.processing &&
-                order.deliveryPaidBy == 'buyer')
+                order.shippingDetails != null)
               OrderActionButton(
                 isLoading: false,
                 keyName: 'buy_label',

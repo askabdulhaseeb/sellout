@@ -161,6 +161,7 @@
   "completed": "Completed",
   "inprogress": "In Progress",
   "processing": "Processing",
+  "ready_to_ship": "Ready to Ship",
   "delivered": "Delivered",
   "shipped": "Shipped",
   "approved": "Approved",
@@ -1231,6 +1232,8 @@
   "employment_details": "Employment Details",
   "buy_label":"Buy label",
   "choose_postage":"Choose Postage",
+  "no_shipping_options_available": "No shipping options available.",
+  "no_rates_available": "No rates available for this item.",
    "legal_documents": {
     "title": "Legal Documents",
     "search": "Search documents...",

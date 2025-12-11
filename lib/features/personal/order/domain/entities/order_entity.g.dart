@@ -38,13 +38,14 @@ class OrderEntityAdapter extends TypeAdapter<OrderEntity> {
       transactionId: fields[18] as String?,
       trackId: fields[19] as String?,
       deliveryPaidBy: fields[20] as String?,
+      shippingDetails: fields[21] as ShippingDetailEntity?,
     );
   }
 
   @override
   void write(BinaryWriter writer, OrderEntity obj) {
     writer
-      ..writeByte(21)
+      ..writeByte(22)
       ..writeByte(0)
       ..write(obj.orderId)
       ..writeByte(1)
@@ -86,7 +87,9 @@ class OrderEntityAdapter extends TypeAdapter<OrderEntity> {
       ..writeByte(19)
       ..write(obj.trackId)
       ..writeByte(20)
-      ..write(obj.deliveryPaidBy);
+      ..write(obj.deliveryPaidBy)
+      ..writeByte(21)
+      ..write(obj.shippingDetails);
   }
 
   @override
