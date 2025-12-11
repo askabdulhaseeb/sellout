@@ -35,6 +35,7 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
         requestType: ApiRequestType.post,
         body: param.toJson(),
       );
+      debugPrint(result.data.toString());
       if (result is DataSuccess<String>) {
         AppLog.info(
           param.toJson().toString(),
@@ -73,11 +74,12 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
           CustomException('Failed to get postage details'),
         );
       }
-    } catch (e) {
+    } catch (e, stc) {
       AppLog.error(
-        e.toString(),
+        '',
         name: 'PostageRemoteApiImpl.getPostageDetails - Catch',
         error: e,
+        stackTrace: stc,
       );
       return DataFailer<PostageDetailResponseModel>(
         CustomException(e.toString()),
