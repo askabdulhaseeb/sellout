@@ -26,8 +26,6 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
         requestType: ApiRequestType.get,
       );
       if (result is DataSuccess<String>) {
-        AppLog.info('getOrderByQuery response: ${result.data ?? ''}');
-
         final String raw = result.data ?? '';
         final dynamic parsed = json.decode(raw);
         final List<dynamic> ordersJson = parsed['orders'] ?? <dynamic>[];
@@ -100,7 +98,6 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
       );
     }
   }
-
 
   @override
   Future<DataState<bool>> updateOrder(UpdateOrderParams params) async {

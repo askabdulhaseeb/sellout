@@ -946,7 +946,7 @@
   "view_invoice": "View Invoice",
   "dispatched_to": "Dispatched to",
   "post_now": "Post Now",
-  "add_tracking_number": "Add Tracking Number",
+  "tracking_number": "Tracking Number",
   "leave_feedback": "Leave Feedback",
   "cancel_order": "Cancel Order",
   "view_payment_details": "View Payment Details",
@@ -1234,6 +1234,9 @@
   "choose_postage":"Choose Postage",
   "no_shipping_options_available": "No shipping options available.",
   "no_rates_available": "No rates available for this item.",
+  "sold_by":"Sold by",
+  "time_placed":"Time placed",
+  
    "legal_documents": {
     "title": "Legal Documents",
     "search": "Search documents...",
