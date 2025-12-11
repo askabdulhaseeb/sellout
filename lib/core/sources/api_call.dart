@@ -17,6 +17,120 @@ export 'data_state.dart';
 import 'package:http_parser/http_parser.dart';
 
 class ApiCall<T> {
+  /// Validates and sanitizes a JSON body string before sending to API.
+  /// Returns null if validation fails, otherwise returns sanitized JSON.
+  static String? _validateAndSanitizeBody(String? body) {
+    if (body == null) return null;
+
+    final String trimmed = body.trim();
+    if (trimmed.isEmpty) return null;
+
+    // Validate JSON structure
+    try {
+      final dynamic decoded = jsonDecode(trimmed);
+      if (decoded == null) return null;
+
+      // Re-encode to ensure proper escaping and sanitization
+      final String sanitized = jsonEncode(_sanitizeValue(decoded));
+      return sanitized;
+    } catch (e) {
+      AppLog.error(
+        'Invalid JSON body provided',
+        name: 'ApiCall._validateAndSanitizeBody',
+        error: e,
+      );
+      return null;
+    }
+  }
+
+  /// Recursively sanitizes values in JSON structures.
+  static dynamic _sanitizeValue(dynamic value) {
+    if (value == null) return null;
+
+    if (value is String) {
+      return _sanitizeString(value);
+    } else if (value is Map) {
+      return value.map<String, dynamic>(
+        (dynamic key, dynamic val) => MapEntry<String, dynamic>(
+          _sanitizeString(key.toString()),
+          _sanitizeValue(val),
+        ),
+      );
+    } else if (value is List) {
+      return value.map(_sanitizeValue).toList();
+    } else if (value is num || value is bool) {
+      return value;
+    }
+
+    // Convert unexpected types to string representation
+    return _sanitizeString(value.toString());
+  }
+
+  /// Sanitizes a string value by escaping dangerous characters.
+  static String _sanitizeString(String value) {
+    // Remove null bytes and other control characters (except newline, tab)
+    String sanitized = value.replaceAll(RegExp(r'[\x00-\x08\x0B\x0C\x0E-\x1F]'), '');
+
+    // Trim excessive whitespace
+    sanitized = sanitized.trim();
+
+    return sanitized;
+  }
+
+  /// Validates and sanitizes field map values.
+  static Map<String, String>? _validateAndSanitizeFields(
+    Map<String, String>? fields,
+  ) {
+    if (fields == null || fields.isEmpty) return null;
+
+    final Map<String, String> sanitized = <String, String>{};
+    for (final MapEntry<String, String> entry in fields.entries) {
+      final String key = _sanitizeString(entry.key);
+      final String value = _sanitizeString(entry.value);
+
+      // Skip entries with empty keys
+      if (key.isEmpty) continue;
+
+      sanitized[key] = value;
+    }
+
+    return sanitized.isEmpty ? null : sanitized;
+  }
+
+  /// Extracts endpoint path from full URL for safe logging.
+  static String _extractEndpointForLogging(String url) {
+    try {
+      final Uri uri = Uri.parse(url);
+      return uri.path;
+    } catch (_) {
+      return '/unknown';
+    }
+  }
+
+  /// Returns a user-friendly error message without exposing sensitive details.
+  static String _getSafeErrorMessage(int statusCode) {
+    switch (statusCode) {
+      case 400:
+        return 'Invalid request';
+      case 401:
+        return 'Authentication required';
+      case 403:
+        return 'Access denied';
+      case 404:
+        return 'Resource not found';
+      case 422:
+        return 'Validation failed';
+      case 429:
+        return 'Too many requests';
+      case 500:
+      case 502:
+      case 503:
+        return 'Server error';
+      default:
+        return 'Request failed';
+    }
+  }
+
   Future<DataState<T>> call({
     required String endpoint,
     required ApiRequestType requestType,
@@ -43,9 +157,11 @@ class ApiCall<T> {
         Uri.parse(url),
       );
 
-      /// Request Fields
-      if (fieldsMap != null && fieldsMap.isNotEmpty) {
-        request.bodyFields = fieldsMap;
+      /// Request Fields (sanitized)
+      final Map<String, String>? sanitizedFields =
+          _validateAndSanitizeFields(fieldsMap);
+      if (sanitizedFields != null && sanitizedFields.isNotEmpty) {
+        request.bodyFields = sanitizedFields;
       }
 
       if (attachments != null && attachments.isNotEmpty) {
@@ -76,12 +192,21 @@ class ApiCall<T> {
       request.headers.addAll(headers);
       // debugPrint('👉🏻 API Call: header - $headers');
 
-      /// Request Body
-      if (body != null && body.isNotEmpty) {
-        request.body = body;
+      /// Request Body (validated and sanitized)
+      final String? sanitizedBody = _validateAndSanitizeBody(body);
+      if (sanitizedBody != null && sanitizedBody.isNotEmpty) {
+        request.body = sanitizedBody;
+      } else if (body != null && body.isNotEmpty) {
+        // Body was provided but failed validation
+        AppLog.error(
+          'Request body failed validation - rejecting request',
+          name: 'ApiCall.call - body validation',
+          error: CustomException('Invalid request body format'),
+        );
+        return DataFailer<T>(CustomException('Invalid request body format'));
       }
 
-      // debugPrint('👉🏻 API Call: body - $body');
+      // debugPrint('👉🏻 API Call: body - $sanitizedBody');
 
       /// Send Request
       http.StreamedResponse response = await request.send();
@@ -109,31 +234,38 @@ class ApiCall<T> {
           return DataSuccess<T>(data, null);
         }
       } else {
-        // Unauthorized
-        // Failer
-        final String data = await response.stream.bytesToString();
-        final Map<String, dynamic> decoded = jsonDecode(data);
+        // Request failed - log safely without sensitive data
+        final String safeEndpoint = _extractEndpointForLogging(url);
+        final String safeMessage = _getSafeErrorMessage(response.statusCode);
 
         AppLog.error(
-          '${response.statusCode} - API: message -> ${decoded['message']} - detail -> ${decoded['details']}',
-          name: 'ApiCall.call - else',
-          error: 'ERROR: ${decoded['error']}',
+          'Request failed: $safeEndpoint (${response.statusCode})',
+          name: 'ApiCall.call',
         );
-        return DataFailer<T>(
-          CustomException(
-            'ERROR: ${decoded['message']}',
-            detail: '${decoded['details']}',
-            reason: decoded['error'],
-          ),
-        );
+
+        // Parse response for user-facing message only
+        String userMessage = safeMessage;
+        try {
+          final String data = await response.stream.bytesToString();
+          final Map<String, dynamic> decoded = jsonDecode(data);
+          // Only use 'message' field if it exists and is non-empty
+          final String? apiMessage = decoded['message']?.toString();
+          if (apiMessage != null && apiMessage.isNotEmpty) {
+            userMessage = apiMessage;
+          }
+        } catch (_) {
+          // Ignore JSON parsing errors, use safe message
+        }
+
+        return DataFailer<T>(CustomException(userMessage));
       }
     } catch (e) {
+      // Log generic error without exposing internal details
       AppLog.error(
-        'Catch - call - API: $e',
-        name: 'ApiCall.call - Catch',
-        error: CustomException(e.toString()),
+        'Request failed: $endpoint',
+        name: 'ApiCall.call',
       );
-      return DataFailer<T>(CustomException(e.toString()));
+      return DataFailer<T>(CustomException('Request failed'));
     }
   }
 
@@ -163,8 +295,11 @@ class ApiCall<T> {
         Uri.parse(url),
       );
 
-      if (fieldsMap != null && fieldsMap.isNotEmpty) {
-        request.fields.addAll(fieldsMap);
+      /// Sanitize and add fields
+      final Map<String, String>? sanitizedFields =
+          _validateAndSanitizeFields(fieldsMap);
+      if (sanitizedFields != null && sanitizedFields.isNotEmpty) {
+        request.fields.addAll(sanitizedFields);
       }
 
       if (attachments != null && attachments.isNotEmpty) {
@@ -238,28 +373,38 @@ class ApiCall<T> {
           return DataSuccess<T>(data, null);
         }
       } else {
-        debugPrint('🔴 Status Code - ${response.statusCode}');
-        // Unauthorized
-        // Failer
-        final String data = await response.stream.bytesToString();
-        final Map<String, dynamic> decoded = jsonDecode(data);
+        // Request failed - log safely without sensitive data
+        final String safeEndpoint = _extractEndpointForLogging(url);
+        final String safeMessage = _getSafeErrorMessage(response.statusCode);
 
         AppLog.error(
-          'ApiCall.callFormData - else ERROR: ${response.statusCode} - API: message -> ${decoded['message']} -  detail -> ${decoded['details']}',
-          name: 'ApiCall.callFormData - else',
-          error: CustomException('ERROR: ${decoded['message']}'),
+          'Request failed: $safeEndpoint (${response.statusCode})',
+          name: 'ApiCall.callFormData',
         );
-        return DataFailer<T>(CustomException('ERROR: ${decoded['message']}'));
+
+        // Parse response for user-facing message only
+        String userMessage = safeMessage;
+        try {
+          final String data = await response.stream.bytesToString();
+          final Map<String, dynamic> decoded = jsonDecode(data);
+          // Only use 'message' field if it exists and is non-empty
+          final String? apiMessage = decoded['message']?.toString();
+          if (apiMessage != null && apiMessage.isNotEmpty) {
+            userMessage = apiMessage;
+          }
+        } catch (_) {
+          // Ignore JSON parsing errors, use safe message
+        }
+
+        return DataFailer<T>(CustomException(userMessage));
       }
-    } catch (e, stc) {
-      debugPrint('🔴 ERROR: $fieldsMap');
+    } catch (e) {
+      // Log generic error without exposing internal details
       AppLog.error(
-        'ApiCall.callFormData - Catch ERROR: ${e.toString()}',
-        name: 'ApiCall.callFormData - Catch',
-        error: e,
-        stackTrace: stc,
+        'Request failed: $endpoint',
+        name: 'ApiCall.callFormData',
       );
-      return DataFailer<T>(CustomException(e.toString()));
+      return DataFailer<T>(CustomException('Request failed'));
     }
   }
 }
