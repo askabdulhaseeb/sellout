@@ -3,6 +3,7 @@ import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../core/helper_functions/country_helper.dart';
 import '../../../personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../../personal/auth/signin/domain/entities/address_entity.dart';
+import '../../../personal/order/domain/entities/fast_delivery_entity.dart';
 import '../../../personal/payment/domain/entities/exchange_rate_entity.dart';
 import '../../../personal/payment/domain/params/get_exchange_rate_params.dart';
 import '../../../personal/payment/domain/usecase/get_exchange_rate_usecase.dart';
@@ -249,16 +250,4 @@ class ParcelEntity {
   final String distanceUnit;
   final String weight;
   final String massUnit;
-}
-
-class FastDeliveryEntity {
-  FastDeliveryEntity({
-    required this.requested,
-    required this.available,
-    required this.message,
-  });
-
-  final bool requested;
-  final bool available;
-  final String? message;
 }

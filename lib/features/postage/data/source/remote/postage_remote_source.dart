@@ -5,6 +5,9 @@ import '../../../../../../core/sources/api_call.dart';
 import '../../../../personal/basket/data/models/cart/add_shipping_response_model.dart';
 import '../../../../personal/basket/domain/param/get_postage_detail_params.dart';
 import '../../../../personal/basket/domain/param/submit_shipping_param.dart';
+import '../../../../personal/order/data/models/shipping_detail_model.dart';
+import '../../../../personal/order/data/source/local/local_orders.dart';
+import '../../../../personal/order/domain/entities/order_entity.dart';
 import '../../../domain/params/add_label_params.dart';
 import '../../../domain/params/add_order_label_params.dart';
 import '../../../domain/params/get_order_postage_detail_params.dart';
@@ -42,6 +45,23 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
       if (result is DataSuccess<String>) {
         final String raw = result.data ?? '';
         AppLog.info('addOrderShipping response: $raw');
+        // Parse response JSON
+        final dynamic parsed = jsonDecode(raw);
+        final String? orderId = parsed['order_id'];
+        final dynamic shippingDetailJson = parsed['shipping_detail'];
+        if (orderId != null && shippingDetailJson != null) {
+          // Get the existing order from LocalOrders
+          final OrderEntity? order = LocalOrders().get(orderId);
+          if (order != null) {
+            // Update the order with new shipping details
+            final OrderEntity updatedOrder = order.copyWith(
+              shippingDetail: ShippingDetailModel.fromJson(
+                shippingDetailJson,
+              ),
+            );
+            await LocalOrders().save(orderId, updatedOrder);
+          }
+        }
         return DataSuccess<bool>(raw, true);
       } else {
         AppLog.error(

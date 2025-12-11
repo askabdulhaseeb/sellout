@@ -2,54 +2,9 @@ import 'package:hive_ce/hive.dart';
 import '../../../../../core/enums/core/status_type.dart';
 import '../../../auth/signin/domain/entities/address_entity.dart';
 import 'order_payment_detail_entity.dart';
+import 'shipping_detail_entity.dart';
+
 part 'order_entity.g.dart';
-
-class ShippingDetailEntity {
-  const ShippingDetailEntity({
-    required this.postage,
-    this.fastDelivery,
-    this.fromAddress,
-    this.toAddress,
-  });
-  final List<PostageEntity> postage;
-  final FastDeliveryEntity? fastDelivery;
-  final AddressEntity? fromAddress;
-  final AddressEntity? toAddress;
-}
-
-class PostageEntity {
-  const PostageEntity({
-    this.parcel,
-    this.provider,
-    this.convertedBufferAmount,
-    this.serviceName,
-    this.rateObjectId,
-    this.nativeCurrency,
-    this.convertedCurrency,
-    this.nativeBufferAmount,
-    this.coreAmount,
-    this.shipmentId,
-    this.serviceToken,
-  });
-  final Map<String, dynamic>? parcel;
-  final String? provider;
-  final num? convertedBufferAmount;
-  final String? serviceName;
-  final String? rateObjectId;
-  final String? nativeCurrency;
-  final String? convertedCurrency;
-  final num? nativeBufferAmount;
-  final num? coreAmount;
-  final String? shipmentId;
-  final String? serviceToken;
-}
-
-class FastDeliveryEntity {
-  const FastDeliveryEntity({this.available, this.message, this.requested});
-  final bool? available;
-  final String? message;
-  final bool? requested;
-}
 
 @HiveType(typeId: 61)
 class OrderEntity {

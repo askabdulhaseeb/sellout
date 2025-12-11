@@ -1,5 +1,5 @@
-class ShippingDetailsEntity {
-  const ShippingDetailsEntity({
+class PaymentItemShippingDetailsEntity {
+  const PaymentItemShippingDetailsEntity({
     required this.convertedBufferAmount,
     required this.convertedCurrency,
     required this.exchangeRate,

@@ -8,7 +8,6 @@ import '../local/local_orders.dart';
 abstract interface class OrderByUserRemote {
   Future<DataState<List<OrderEntity>>> getOrderByQuery(GetOrderParams? userId);
   Future<DataState<List<OrderEntity>>> getOrderByOrderId(String? params);
-  Future<DataState<bool>> createOrder(List<OrderModel> orderData);
   Future<DataState<bool>> updateOrder(UpdateOrderParams params);
 }
 
@@ -28,6 +27,7 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
       );
       if (result is DataSuccess<String>) {
         AppLog.info('getOrderByQuery response: ${result.data ?? ''}');
+
         final String raw = result.data ?? '';
         final dynamic parsed = json.decode(raw);
         final List<dynamic> ordersJson = parsed['orders'] ?? <dynamic>[];
@@ -101,37 +101,6 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
     }
   }
 
-  @override
-  Future<DataState<bool>> createOrder(List<OrderModel> orderData) async {
-    try {
-      final List<Map<String, dynamic>> jsonOrders = orderData
-          .map((OrderModel e) => e.toJson())
-          .toList();
-
-      final DataState<bool> result = await ApiCall<bool>().call(
-        endpoint: '/orders/create',
-        requestType: ApiRequestType.post,
-        body: json.encode(jsonOrders),
-        isAuth: true,
-      );
-      AppLog.info('ceate order data ${result.data ?? ''}');
-      if (result is DataSuccess) {
-        return DataSuccess<bool>(result.data ?? '', true);
-      } else {
-        return DataFailer<bool>(
-          result.exception ?? CustomException('Failed to create order'),
-        );
-      }
-    } catch (e, stc) {
-      AppLog.error(
-        e.toString(),
-        name: 'PostByUserRemoteImpl.createOrder - catch',
-        error: e,
-        stackTrace: stc,
-      );
-      return DataFailer<bool>(CustomException('Failed to create order'));
-    }
-  }
 
   @override
   Future<DataState<bool>> updateOrder(UpdateOrderParams params) async {
