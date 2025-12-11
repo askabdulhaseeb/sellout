@@ -42,6 +42,8 @@ class StatusTypeAdapter extends TypeAdapter<StatusType> {
       case 37:
         return StatusType.processing;
       case 38:
+        return StatusType.readyToShip;
+      case 39:
         return StatusType.paid;
       default:
         return StatusType.pending;
@@ -79,8 +81,10 @@ class StatusTypeAdapter extends TypeAdapter<StatusType> {
         writer.writeByte(36);
       case StatusType.processing:
         writer.writeByte(37);
-      case StatusType.paid:
+      case StatusType.readyToShip:
         writer.writeByte(38);
+      case StatusType.paid:
+        writer.writeByte(39);
     }
   }
 
