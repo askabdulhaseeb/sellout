@@ -1,4 +1,4 @@
-import 'shipping_details_entity.dart';
+import 'payment_item_shipping_details_entity.dart';
 
 class PaymentItemEntity {
   const PaymentItemEntity({
@@ -23,5 +23,5 @@ class PaymentItemEntity {
   final List<String> imageUrls;
   final double currencyExchangeRate;
   final int deliveryPrice;
-  final List<ShippingDetailsEntity> shippingDetails;
+  final List<PaymentItemShippingDetailsEntity> shippingDetails;
 }

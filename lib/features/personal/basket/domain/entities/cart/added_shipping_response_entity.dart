@@ -1,5 +1,6 @@
 import '../../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../auth/signin/domain/entities/address_entity.dart';
+import '../../../../order/domain/entities/fast_delivery_entity.dart';
 
 class AddedShippingResponseEntity {
   AddedShippingResponseEntity({
@@ -94,15 +95,4 @@ class ParcelEntity {
   final String weight;
   final String massUnit;
   final String height;
-}
-
-class FastDeliveryEntity {
-  FastDeliveryEntity({
-    required this.available,
-    required this.requested,
-    this.message,
-  });
-  final bool available;
-  final String? message;
-  final bool requested;
 }

@@ -3,7 +3,7 @@ import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../../../core/widgets/shadow_container.dart';
 import '../../../../../domain/entities/checkout/payment_item_entity.dart';
-import '../../../../../domain/entities/checkout/shipping_details_entity.dart';
+import '../../../../../domain/entities/checkout/payment_item_shipping_details_entity.dart';
 import 'package:flutter/material.dart';
 
 class ReviewItemCard extends StatelessWidget {
@@ -33,7 +33,7 @@ class _ReviewItemContent extends StatelessWidget {
     final List<Widget> attributeChips = <Widget>[];
 
     // Get the first shipping detail if available
-    final ShippingDetailsEntity? shipping =
+    final PaymentItemShippingDetailsEntity? shipping =
         (detail?.shippingDetails.isNotEmpty ?? false)
         ? detail!.shippingDetails.first
         : null;

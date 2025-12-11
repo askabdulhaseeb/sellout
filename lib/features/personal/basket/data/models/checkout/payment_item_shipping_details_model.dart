@@ -1,7 +1,7 @@
-import '../../../domain/entities/checkout/shipping_details_entity.dart';
+import '../../../domain/entities/checkout/payment_item_shipping_details_entity.dart';
 
-class ShippingDetailsModel extends ShippingDetailsEntity {
-  const ShippingDetailsModel({
+class PaymentItemShippingDetailsModel extends PaymentItemShippingDetailsEntity {
+  const PaymentItemShippingDetailsModel({
     required super.convertedBufferAmount,
     required super.convertedCurrency,
     required super.exchangeRate,
@@ -16,8 +16,8 @@ class ShippingDetailsModel extends ShippingDetailsEntity {
     super.nativeCurrency,
   });
 
-  factory ShippingDetailsModel.fromJson(Map<String, dynamic> json) =>
-      ShippingDetailsModel(
+  factory PaymentItemShippingDetailsModel.fromJson(Map<String, dynamic> json) =>
+      PaymentItemShippingDetailsModel(
         provider: json['provider']?.toString() ?? '',
         parcel: json['parcel']?.toString() ?? '',
         serviceToken: json['service_token']?.toString() ?? '',
