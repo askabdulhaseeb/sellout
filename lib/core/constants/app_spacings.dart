@@ -31,7 +31,7 @@ class AppSpacing {
 
   // Border radius
   static const double radiusXs = 4.0;
-  static const double radiusSm = 8.0;
+  static const double radiusSm = 8.0; // zubair's recommended curve for all the corners in app
   static const double radiusMd = 16.0;
   static const double radiusLg = 24.0;
   static const double radiusXl = 32.0;

@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
-import '../../../../business/core/domain/usecase/get_business_by_id_usecase.dart';
 import '../../../../postage/domain/params/add_lable_params.dart';
 import '../../../../postage/domain/usecase/buy_label_usecsae.dart';
 import '../../../chats/create_chat/view/provider/create_private_chat_provider.dart';
@@ -16,7 +15,6 @@ import '../../../post/domain/usecase/get_specific_post_usecase.dart';
 import '../../domain/entities/order_entity.dart';
 import '../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../core/sources/data_state.dart';
-import '../../../user/profiles/domain/usecase/get_user_by_uid.dart';
 import '../provider/order_provider.dart';
 import 'order_postage_bottom_sheet.dart';
 
@@ -26,15 +24,16 @@ class OrderSellerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final String orderId = args['order-id'] ?? '';
+    final Object? args = ModalRoute.of(context)?.settings.arguments;
+    final String orderId = (args is Map<String, dynamic>)
+        ? (args['order-id'] ?? '')
+        : '';
 
     final OrderProvider orderPro = Provider.of<OrderProvider>(
       context,
       listen: false,
     );
-    if (orderPro.order?.orderId != orderId) {
+    if (orderPro.order?.orderId != orderId && orderId.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         orderPro.loadOrder(orderId);
       });
@@ -43,22 +42,9 @@ class OrderSellerScreen extends StatelessWidget {
     return Selector<OrderProvider, OrderEntity?>(
       selector: (_, OrderProvider provider) => provider.order,
       builder: (BuildContext context, OrderEntity? order, _) {
-        if (order == null) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
-
-        final bool isBusiness = order.sellerId.startsWith('BU');
         final GetSpecificPostUsecase getPostUsecase = GetSpecificPostUsecase(
           locator(),
         );
-        final GetUserByUidUsecase getUserUsecase = GetUserByUidUsecase(
-          locator(),
-        );
-        final GetBusinessByIdUsecase getBusinessUsecase =
-            GetBusinessByIdUsecase(locator());
-
         return Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: AppBar(
@@ -82,71 +68,88 @@ class OrderSellerScreen extends StatelessWidget {
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),
-          body: FutureBuilder<DataState<PostEntity>>(
-            future: getPostUsecase(GetSpecificPostParam(postId: order.postId)),
-            builder:
-                (
-                  BuildContext context,
-                  AsyncSnapshot<DataState<PostEntity>> postSnap,
-                ) {
-                  if (postSnap.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-
-                  final PostEntity? post = postSnap.data?.entity;
-                  if (post == null) {
-                    return Center(child: Text('something_wrong'.tr()));
-                  }
-
-                  return FutureBuilder<DataState<dynamic>>(
-                    future: isBusiness
-                        ? getBusinessUsecase(order.sellerId)
-                        : getUserUsecase(order.sellerId),
-                    builder:
-                        (
-                          BuildContext context,
-                          AsyncSnapshot<DataState<dynamic>> userSnap,
-                        ) {
-                          if (userSnap.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          return _buildOrderDetailBody(context, post);
-                        },
-                  );
-                },
-          ),
+          body: order == null
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Text(
+                      'No order found.',
+                      style: Theme.of(context).textTheme.titleMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                )
+              : _OrderDetailBody(order: order, getPostUsecase: getPostUsecase),
         );
       },
     );
   }
 }
 
-Widget _buildOrderDetailBody(BuildContext context, PostEntity post) {
-  final OrderEntity order = context.watch<OrderProvider>().order!;
-  return Container(
-    decoration: BoxDecoration(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      backgroundBlendMode: BlendMode.color,
-    ),
-    child: SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          OrderScreenPostInfo(order: order, post: post),
-          const Divider(),
-          OrderInfoWidget(order: order),
-          const Divider(),
-          OrderDispatchedToWidget(order: order),
-          const SizedBox(height: 16),
-          const OrderActionButtonsList(),
-        ],
+class _OrderDetailBody extends StatelessWidget {
+  const _OrderDetailBody({required this.order, required this.getPostUsecase});
+
+  final OrderEntity order;
+  final GetSpecificPostUsecase getPostUsecase;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        backgroundBlendMode: BlendMode.color,
       ),
-    ),
-  );
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            _PostInfoSection(order: order, getPostUsecase: getPostUsecase),
+            const Divider(),
+            OrderInfoWidget(order: order),
+            const Divider(),
+            OrderDispatchedToWidget(order: order),
+            const SizedBox(height: 16),
+            const OrderActionButtonsList(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PostInfoSection extends StatelessWidget {
+  const _PostInfoSection({required this.order, required this.getPostUsecase});
+
+  final OrderEntity order;
+  final GetSpecificPostUsecase getPostUsecase;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<DataState<PostEntity>>(
+      future: getPostUsecase(GetSpecificPostParam(postId: order.postId)),
+      builder:
+          (
+            BuildContext context,
+            AsyncSnapshot<DataState<PostEntity>> postSnap,
+          ) {
+            if (postSnap.connectionState == ConnectionState.waiting) {
+              // No loader, just empty
+              return const SizedBox.shrink();
+            }
+            final PostEntity? post = postSnap.data?.entity;
+            if (post == null) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text('something_wrong'.tr()),
+                ),
+              );
+            }
+            return OrderScreenPostInfo(order: order, post: post);
+          },
+    );
+  }
 }
 
 class OrderDispatchedToWidget extends StatelessWidget {
@@ -174,7 +177,7 @@ class OrderDispatchedToWidget extends StatelessWidget {
               'dispatched_to'.tr(),
               style: textTheme.labelMedium?.copyWith(
                 fontWeight: FontWeight.w500,
-                color: colorScheme.onSurface.withOpacity(0.7),
+                color: colorScheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
           ],
@@ -188,7 +191,7 @@ class OrderDispatchedToWidget extends StatelessWidget {
             color: colorScheme.onSurface,
           ),
           addressTextStyle: textTheme.bodySmall?.copyWith(
-            color: colorScheme.onSurface.withOpacity(0.7),
+            color: colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
       ],
@@ -522,7 +525,6 @@ class _OrderRecieverNameAddressWidgetState
     extends State<OrderRecieverNameAddressWidget> {
   final GlobalKey _rowKey = GlobalKey();
   OverlayEntry? _overlayEntry;
-
 
   void _toggleOverlay() {
     if (_overlayEntry != null) {
