@@ -60,7 +60,9 @@ class StepProgressIndicator<T> extends StatelessWidget {
               title!,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.outline,
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.8),
               ),
             ),
           ),
@@ -134,9 +136,9 @@ class StepProgressIndicator<T> extends StatelessWidget {
                     if (stepsStrs.isNotEmpty)
                       Text(
                         stepsStrs[stepIndex],
-                        maxLines: 2,
+                        maxLines: 1,
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           fontWeight: FontWeight.w500,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -166,7 +168,7 @@ class StepProgressIndicator<T> extends StatelessWidget {
                     borderRadius: BorderRadius.circular(2),
                     child: Stack(
                       children: <Widget>[
-                        Container(color: inactiveColor.withOpacity(0.3)),
+                        Container(color: inactiveColor),
                         AnimatedFractionallySizedBox(
                           duration: const Duration(milliseconds: 300),
                           widthFactor: fillValue,
