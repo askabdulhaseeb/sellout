@@ -16,7 +16,7 @@ class ShippingDetailModel extends ShippingDetailEntity {
         json['addresses'] as Map<String, dynamic>?;
     return ShippingDetailModel(
       postage:
-          (json['postage'] as List?)
+          (json['postage'] as List<dynamic>?)
               ?.map((e) => PostageModel.fromJson(e))
               .toList() ??
           <PostageModel>[],

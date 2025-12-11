@@ -8,7 +8,7 @@ part of 'postage_entity.dart';
 
 class PostageEntityAdapter extends TypeAdapter<PostageEntity> {
   @override
-  final typeId = 101;
+  final typeId = 90;
 
   @override
   PostageEntity read(BinaryReader reader) {

@@ -5,7 +5,7 @@ import '../../../auth/signin/domain/entities/address_entity.dart';
 
 part 'shipping_detail_entity.g.dart';
 
-@HiveType(typeId: 100)
+@HiveType(typeId: 89)
 class ShippingDetailEntity {
 
   const ShippingDetailEntity({

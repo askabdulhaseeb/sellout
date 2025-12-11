@@ -2,6 +2,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/adapters.dart';
 import 'package:path_provider/path_provider.dart';
+import '../../../features/personal/order/domain/entities/fast_delivery_entity.dart';
+import '../../../features/personal/order/domain/entities/postage_entity.dart';
+import '../../../features/personal/order/domain/entities/shipping_detail_entity.dart';
 import '../../utilities/app_string.dart';
 import '../../../features/attachment/domain/entities/attachment_entity.dart';
 import '../../../features/business/core/data/sources/local_business.dart';
@@ -204,6 +207,9 @@ class HiveDB {
     Hive.registerAdapter(CartItemStatusTypeAdapter()); //86
     Hive.registerAdapter(MessagePostDetailEntityAdapter()); //87
     Hive.registerAdapter(StripeConnectAccountEntityAdapter()); //88
+    Hive.registerAdapter(ShippingDetailEntityAdapter()); //89
+    Hive.registerAdapter(PostageEntityAdapter()); //90
+    Hive.registerAdapter(FastDeliveryEntityAdapter()); //91
 
     // Hive box Open
     await refresh();

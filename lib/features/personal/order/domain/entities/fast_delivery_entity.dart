@@ -1,7 +1,7 @@
 import 'package:hive_ce/hive.dart';
 part 'fast_delivery_entity.g.dart';
 
-@HiveType(typeId: 102)
+@HiveType(typeId: 91)
 class FastDeliveryEntity {
 
   const FastDeliveryEntity({this.available, this.message, this.requested});

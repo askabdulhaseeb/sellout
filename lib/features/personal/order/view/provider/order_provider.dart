@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import '../../../../../core/enums/core/status_type.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/data_state.dart';
+import '../../../../../services/get_it.dart';
+import '../../../../postage/domain/params/add_label_params.dart';
+import '../../../../postage/domain/usecase/buy_label_usecase.dart';
 import '../../data/source/local/local_orders.dart';
 import '../../domain/entities/order_entity.dart';
 import '../../../user/profiles/domain/params/update_order_params.dart';
@@ -24,7 +27,7 @@ class OrderProvider extends ChangeNotifier {
   void _onBoxEvent(event) {
     if (_currentOrderId != null && event.key == _currentOrderId) {
       // Order changed in box, reload and notify
-      final updated = LocalOrders().get(_currentOrderId!);
+      final OrderEntity? updated = LocalOrders().get(_currentOrderId!);
       if (updated != null) {
         _sellerOrder = updated;
         notifyListeners();
@@ -50,6 +53,14 @@ class OrderProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Separate loading state for buying label action
+  bool _isBuyingLabel = false;
+  bool get isBuyingLabel => _isBuyingLabel;
+  void _setBuyingLabel(bool value) {
+    _isBuyingLabel = value;
+    notifyListeners();
+  }
+
   Future<void> updateSellerOrder(String orderId, StatusType status) async {
     setLoading(true);
     final UpdateOrderParams params = UpdateOrderParams(
@@ -67,6 +78,34 @@ class OrderProvider extends ChangeNotifier {
         name: 'ProfileProvider.updateOrder - else',
       );
       setLoading(false);
+    }
+  }
+
+  Future<void> buyLabel(String orderId) async {
+    _setBuyingLabel(true);
+    try {
+      final DataState res = await BuyLabelUsecase(
+        locator(),
+      ).call(BuyLabelParams(orderId: orderId));
+      if (res is DataSuccess) {
+        // remote call should have updated LocalOrders; refresh local order
+        refreshOrder(orderId);
+        AppLog.info('buy_label_success'.tr());
+      } else {
+        AppLog.error(
+          res.exception?.message ?? 'buy_label_failed'.tr(),
+          name: 'OrderProvider.buyLabel - Else',
+        );
+      }
+    } catch (e, stc) {
+      AppLog.error(
+        e.toString(),
+        name: 'OrderProvider.buyLabel - Catch',
+        error: e,
+        stackTrace: stc,
+      );
+    } finally {
+      _setBuyingLabel(false);
     }
   }
 

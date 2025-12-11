@@ -8,7 +8,7 @@ part of 'fast_delivery_entity.dart';
 
 class FastDeliveryEntityAdapter extends TypeAdapter<FastDeliveryEntity> {
   @override
-  final typeId = 102;
+  final typeId = 91;
 
   @override
   FastDeliveryEntity read(BinaryReader reader) {
