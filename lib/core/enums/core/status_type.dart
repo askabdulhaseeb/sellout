@@ -52,6 +52,7 @@ enum StatusType {
   final Color bgColor;
 
   static StatusType fromJson(String? map) {
+    debugPrint('Mapping StatusType from json: $map');
     if (map == null) return StatusType.pending;
     switch (map) {
       case 'pending':
