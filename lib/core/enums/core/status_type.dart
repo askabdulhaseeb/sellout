@@ -41,6 +41,8 @@ enum StatusType {
   @HiveField(37)
   processing('processing', 'processing', Colors.red, _greenBG),
   @HiveField(38)
+  readyToShip('ready_to_ship', 'ready_to_ship', Colors.red, _greenBG),
+  @HiveField(39)
   paid('paid', 'paid', Colors.red, _greenBG);
 
   const StatusType(this.code, this.json, this.color, this.bgColor);
@@ -82,6 +84,8 @@ enum StatusType {
         return StatusType.processing;
       case 'paid':
         return StatusType.paid;
+      case 'ready_to_ship':
+        return StatusType.readyToShip;
       default:
         return StatusType.pending;
     }

@@ -449,16 +449,46 @@ class ProfileProvider extends ChangeNotifier {
     String? uid,
   ) async {
     setLoading(true);
-    final DataState<List<OrderEntity>> result = await _getOrderByIdUsecase(
-        GetOrderParams(
-            value: uid ?? _user?.entity?.uid ?? '',
+    final String userUid = uid ?? _user?.entity?.uid ?? '';
+
+    // For pending tab, fetch pending, processing, and ready_to_ship orders
+    if (_status == StatusType.pending) {
+      final List<StatusType> pendingStatuses = <StatusType>[
+        StatusType.pending,
+        StatusType.processing,
+        StatusType.readyToShip,
+      ];
+
+      final List<OrderEntity> allOrders = <OrderEntity>[];
+
+      for (final StatusType status in pendingStatuses) {
+        final DataState<List<OrderEntity>> result = await _getOrderByIdUsecase(
+          GetOrderParams(
+            value: userUid,
             user: GetOrderUserType.sellerId,
-            status: _status));
-    if (result is DataSuccess) {
-      setOrder(result.entity ?? <OrderEntity>[]);
+            status: status,
+          ),
+        );
+        if (result is DataSuccess) {
+          allOrders.addAll(result.entity ?? <OrderEntity>[]);
+        }
+      }
+
+      setOrder(allOrders);
     } else {
-      setOrder(<OrderEntity>[]);
-      AppLog.error(result.exception?.message ?? 'something_wrong'.tr());
+      final DataState<List<OrderEntity>> result = await _getOrderByIdUsecase(
+        GetOrderParams(
+          value: userUid,
+          user: GetOrderUserType.sellerId,
+          status: _status,
+        ),
+      );
+      if (result is DataSuccess) {
+        setOrder(result.entity ?? <OrderEntity>[]);
+      } else {
+        setOrder(<OrderEntity>[]);
+        AppLog.error(result.exception?.message ?? 'something_wrong'.tr());
+      }
     }
     setLoading(false);
   }
