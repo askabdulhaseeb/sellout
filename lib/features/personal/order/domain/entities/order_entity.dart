@@ -4,6 +4,53 @@ import '../../../auth/signin/domain/entities/address_entity.dart';
 import 'order_payment_detail_entity.dart';
 part 'order_entity.g.dart';
 
+class ShippingDetailEntity {
+  const ShippingDetailEntity({
+    required this.postage,
+    this.fastDelivery,
+    this.fromAddress,
+    this.toAddress,
+  });
+  final List<PostageEntity> postage;
+  final FastDeliveryEntity? fastDelivery;
+  final AddressEntity? fromAddress;
+  final AddressEntity? toAddress;
+}
+
+class PostageEntity {
+  const PostageEntity({
+    this.parcel,
+    this.provider,
+    this.convertedBufferAmount,
+    this.serviceName,
+    this.rateObjectId,
+    this.nativeCurrency,
+    this.convertedCurrency,
+    this.nativeBufferAmount,
+    this.coreAmount,
+    this.shipmentId,
+    this.serviceToken,
+  });
+  final Map<String, dynamic>? parcel;
+  final String? provider;
+  final num? convertedBufferAmount;
+  final String? serviceName;
+  final String? rateObjectId;
+  final String? nativeCurrency;
+  final String? convertedCurrency;
+  final num? nativeBufferAmount;
+  final num? coreAmount;
+  final String? shipmentId;
+  final String? serviceToken;
+}
+
+class FastDeliveryEntity {
+  const FastDeliveryEntity({this.available, this.message, this.requested});
+  final bool? available;
+  final String? message;
+  final bool? requested;
+}
+
 @HiveType(typeId: 61)
 class OrderEntity {
   const OrderEntity({
@@ -28,6 +75,7 @@ class OrderEntity {
     this.transactionId,
     this.trackId,
     this.deliveryPaidBy,
+    this.shippingDetails,
   });
 
   @HiveField(0)
@@ -92,6 +140,10 @@ class OrderEntity {
 
   @HiveField(20)
   final String? deliveryPaidBy;
+
+  @HiveField(21)
+  final ShippingDetailEntity? shippingDetails;
+
   OrderEntity copyWith({
     String? orderId,
     String? buyerId,
@@ -114,8 +166,10 @@ class OrderEntity {
     String? transactionId,
     String? trackId,
     String? deliveryPaidBy,
+    ShippingDetailEntity? shippingDetail,
   }) {
     return OrderEntity(
+      shippingDetails: shippingDetail ?? this.shippingDetails,
       orderId: orderId ?? this.orderId,
       buyerId: buyerId ?? this.buyerId,
       sellerId: sellerId ?? this.sellerId,

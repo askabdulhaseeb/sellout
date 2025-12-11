@@ -1,5 +1,5 @@
 import '../../../../../../core/usecase/usecase.dart';
-import '../params/add_lable_params.dart';
+import '../params/add_label_params.dart';
 import '../repository/postage_repository.dart';
 
 class BuyLabelUsecase implements UseCase<bool, BuyLabelParams> {

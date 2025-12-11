@@ -5,7 +5,8 @@ import '../../../../../../core/sources/api_call.dart';
 import '../../../../personal/basket/data/models/cart/add_shipping_response_model.dart';
 import '../../../../personal/basket/domain/param/get_postage_detail_params.dart';
 import '../../../../personal/basket/domain/param/submit_shipping_param.dart';
-import '../../../domain/params/add_lable_params.dart';
+import '../../../domain/params/add_label_params.dart';
+import '../../../domain/params/add_order_label_params.dart';
 import '../../../domain/params/get_order_postage_detail_params.dart';
 import '../../models/postage_detail_repsonse_model.dart';
 
@@ -20,9 +21,49 @@ abstract interface class PostageRemoteApi {
     GetOrderPostageDetailParam param,
   );
   Future<DataState<bool>> buylabel(BuyLabelParams param);
+
+  /// Adds shipping to an order
+  Future<DataState<bool>> addOrderShipping(AddOrderShippingParams params);
 }
 
 class PostageRemoteApiImpl implements PostageRemoteApi {
+  @override
+  Future<DataState<bool>> addOrderShipping(
+    AddOrderShippingParams params,
+  ) async {
+    try {
+      const String endpoint = '/orders/shipping/add';
+      final DataState<String> result = await ApiCall<String>().call(
+        endpoint: endpoint,
+        isAuth: true,
+        requestType: ApiRequestType.post,
+        body: jsonEncode(params.toJson()),
+      );
+      if (result is DataSuccess<String>) {
+        final String raw = result.data ?? '';
+        AppLog.info('addOrderShipping response: $raw');
+        return DataSuccess<bool>(raw, true);
+      } else {
+        AppLog.error(
+          params.toJson().toString(),
+          name: 'PostageRemoteApiImpl.addOrderShipping - Else',
+          error: result.exception?.reason ?? 'something_wrong'.tr(),
+        );
+        return DataFailer<bool>(
+          result.exception ?? CustomException('Failed to add order shipping'),
+        );
+      }
+    } catch (e, stc) {
+      AppLog.error(
+        e.toString(),
+        name: 'PostageRemoteApiImpl.addOrderShipping - Catch',
+        error: e,
+        stackTrace: stc,
+      );
+      return DataFailer<bool>(CustomException(e.toString()));
+    }
+  }
+
   @override
   Future<DataState<PostageDetailResponseModel>> getPostageDetails(
     GetPostageDetailParam param,
@@ -35,7 +76,6 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
         requestType: ApiRequestType.post,
         body: param.toJson(),
       );
-      debugPrint(result.data.toString());
       if (result is DataSuccess<String>) {
         AppLog.info(
           param.toJson().toString(),

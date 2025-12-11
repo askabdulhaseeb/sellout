@@ -26,8 +26,8 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
         endpoint: endpoint,
         requestType: ApiRequestType.get,
       );
-
       if (result is DataSuccess<String>) {
+        AppLog.info('getOrderByQuery response: ${result.data ?? ''}');
         final String raw = result.data ?? '';
         final dynamic parsed = json.decode(raw);
         final List<dynamic> ordersJson = parsed['orders'] ?? <dynamic>[];
@@ -37,6 +37,10 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
               (dynamic e) => OrderModel.fromJson(e as Map<String, dynamic>),
             )
             .toList();
+        // Save all fetched orders locally
+        for (final OrderEntity order in orders) {
+          await LocalOrders().save(order.orderId, order);
+        }
         return DataSuccess<List<OrderEntity>>(raw, orders);
       } else {
         return DataFailer<List<OrderEntity>>(
