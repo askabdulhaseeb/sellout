@@ -303,7 +303,7 @@ class OrderActionButtonsList extends StatelessWidget {
                 },
               ),
             if (order.orderStatus == StatusType.processing &&
-                order.deliveryPaidBy == 'seller')
+                order.shippingDetails == null)
               OrderActionButton(
                 isLoading: false,
                 keyName: 'choose_postage',

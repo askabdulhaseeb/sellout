@@ -293,7 +293,6 @@ class OrderModel extends OrderEntity {
     );
   }
   final ShippingDetailModel? shippingDetailModel;
-
   entity.ShippingDetailEntity? get shippingDetail =>
       shippingDetailModel?.toEntity();
 
