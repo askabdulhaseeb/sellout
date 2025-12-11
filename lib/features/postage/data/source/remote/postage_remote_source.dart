@@ -249,9 +249,12 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
         return DataSuccess<bool>(raw, true);
       } else {
         AppLog.error(
-          '',
+          param.toJson().toString(),
           name: 'PostageRemoteApiImpl.buylabel - Else',
-          error: result.exception?.reason ?? 'something_wrong'.tr(),
+          error:
+              result.exception?.reason ??
+              result.exception?.message ??
+              'something_wrong'.tr(),
         );
         return DataFailer<bool>(
           CustomException('Failed to get postage details'),

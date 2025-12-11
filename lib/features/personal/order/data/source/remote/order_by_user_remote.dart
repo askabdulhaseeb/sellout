@@ -1,6 +1,5 @@
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
-import '../../../../../../core/sources/local/local_request_history.dart';
 import '../../../domain/entities/order_entity.dart';
 import '../../../../user/profiles/domain/params/update_order_params.dart';
 import '../../../domain/params/get_order_params.dart';
@@ -22,25 +21,7 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
     if (endpoint.isEmpty) {
       return DataFailer<List<OrderEntity>>(CustomException('invalid_endpoint'));
     }
-
     try {
-      final ApiRequestEntity? local = await LocalRequestHistory().request(
-        endpoint: endpoint,
-        duration: const Duration(days: 1),
-      );
-      if (local != null) {
-        final dynamic parsed = json.decode(local.encodedData);
-        final List<dynamic> ordersJson = parsed['orders'] ?? <dynamic>[];
-        final List<OrderEntity> orders = ordersJson
-            .where((dynamic e) => e != null)
-            .map<OrderEntity>(
-              (dynamic e) => OrderModel.fromJson(e as Map<String, dynamic>),
-            )
-            .toList();
-
-        await LocalOrders().saveAllOrders(orders);
-        return DataSuccess<List<OrderEntity>>(local.encodedData, orders);
-      }
       final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,
         requestType: ApiRequestType.get,
@@ -56,14 +37,6 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
               (dynamic e) => OrderModel.fromJson(e as Map<String, dynamic>),
             )
             .toList();
-
-        // save fresh response to cache
-        await LocalRequestHistory().save(
-          endpoint,
-          ApiRequestEntity(url: endpoint, encodedData: raw),
-        );
-
-        await LocalOrders().saveAllOrders(orders);
         return DataSuccess<List<OrderEntity>>(raw, orders);
       } else {
         return DataFailer<List<OrderEntity>>(
