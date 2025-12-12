@@ -20,6 +20,10 @@ import '../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../domain/params/return_eligibility_params.dart';
 import '../../../domain/usecase/check_return_eligibility_usecase.dart';
 import '../../../domain/entities/return_eligibility_entity.dart';
+import '../../../domain/params/order_return_params.dart';
+import '../../../domain/usecase/order_return_usecase.dart';
+import '../../../../../../core/widgets/app_snackbar.dart';
+import '../../../../../../core/sources/data_state.dart';
 import '../widgets/cancel_order_button.dart';
 
 class OrderBuyerScreen extends StatelessWidget {
@@ -322,6 +326,74 @@ class OrderBuyerScreenBottomButtons extends StatelessWidget {
                   bgColor: Colors.transparent,
                   textStyle: TextStyle(color: Theme.of(context).primaryColor),
                 ),
+                const SizedBox(height: 8),
+                if (order.orderStatus == StatusType.completed ||
+                    order.orderStatus == StatusType.delivered)
+                  CustomElevatedButton(
+                    padding: const EdgeInsets.all(0),
+                    margin: const EdgeInsets.all(0),
+                    isLoading: false,
+                    onTap: () async {
+                      final TextEditingController reasonCtrl =
+                          TextEditingController();
+                      final String? reason = await showDialog<String>(
+                        context: context,
+                        builder: (BuildContext ctx) {
+                          return AlertDialog(
+                            title: Text('request_return'.tr()),
+                            content: TextField(
+                              controller: reasonCtrl,
+                              decoration: InputDecoration(
+                                hintText: 'reason_for_return'.tr(),
+                              ),
+                              minLines: 1,
+                              maxLines: 4,
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () => Navigator.of(ctx).pop(),
+                                child: Text('cancel'.tr()),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.of(
+                                  ctx,
+                                ).pop(reasonCtrl.text.trim()),
+                                child: Text('submit'.tr()),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                      if (reason == null || reason.isEmpty) return;
+                      // show loading
+                      showDialog<void>(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (BuildContext ctx) =>
+                            const Center(child: CircularProgressIndicator()),
+                      );
+
+                      final DataState<bool> res =
+                          await OrderReturnUsecase(locator()).call(
+                            OrderReturnParams(
+                              orderId: order.orderId,
+                              reason: reason,
+                            ),
+                          );
+                      Navigator.of(context).pop();
+                      if (res is DataSuccess<bool>) {
+                        AppSnackBar.success(context, 'return_requested'.tr());
+                      } else {
+                        AppSnackBar.error(
+                          context,
+                          'failed_to_request_return'.tr(),
+                        );
+                      }
+                    },
+                    title: 'request_return'.tr(),
+                    bgColor: Colors.transparent,
+                    textStyle: TextStyle(color: Theme.of(context).primaryColor),
+                  ),
                 if (order.orderStatus == StatusType.shipped ||
                     order.orderStatus == StatusType.pending ||
                     order.orderStatus == StatusType.processing)
