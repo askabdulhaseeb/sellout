@@ -1142,6 +1142,8 @@
   "delivery_info": "Delivery info",
   "payment_info": "Payment info",
   "tracking_details": "Tracking details",
+  "return_eligible": "Return eligible",
+  "return_not_eligible": "Return not eligible",
   "cancel_this_order": "cancel this order",
   "more_actions": "More actions",
   "courier": "Courier",
