@@ -7,6 +7,7 @@ import '../../../../features/personal/post/data/sources/local/local_post.dart';
 import '../../../../features/personal/post/domain/entities/post/post_entity.dart';
 import '../../../../features/postage/domain/entities/postage_detail_response_entity.dart';
 import '../../../enums/listing/core/delivery_type.dart';
+import '../../../enums/shipping_provider_enum.dart';
 import '../../../constants/app_spacings.dart';
 import '../../../widgets/shadow_container.dart';
 
@@ -158,9 +159,10 @@ class _RateListState extends State<_RateList> {
   @override
   void initState() {
     super.initState();
-    // Expand the first provider by default
-    if (widget.rates.isNotEmpty) {
-      _expandedProviders.add(widget.rates.first.provider);
+    // Expand the first provider by default initially
+    final Map<String, List<RateEntity>> grouped = _groupRatesByProvider();
+    if (grouped.isNotEmpty) {
+      _expandedProviders.add(grouped.keys.first);
     }
     // Calculate and select cheapest rate on init
     _findAndSelectCheapestRate();
@@ -182,11 +184,12 @@ class _RateListState extends State<_RateList> {
     }
 
     if (cheapest != null && mounted) {
+      final String cheapestKey = _getProviderKey(cheapest);
       setState(() {
         _cheapestRateCalculated = true;
         // Expand the provider that has the cheapest rate
         _expandedProviders.clear();
-        _expandedProviders.add(cheapest!.provider);
+        _expandedProviders.add(cheapestKey);
       });
 
       // Update selection to cheapest rate
@@ -198,14 +201,45 @@ class _RateListState extends State<_RateList> {
     }
   }
 
-  /// Groups rates by provider (e.g., "DPD UK", "Royal Mail", etc.)
+  /// Gets a display key for grouping a rate by provider
+  String _getProviderKey(RateEntity rate) {
+    // Try matching provider name first
+    ShippingProvider providerEnum = getProviderEnum(rate.provider);
+
+    // For sendcloud, also try carrier account and service token
+    if (providerEnum == ShippingProvider.sendcloud ||
+        providerEnum == ShippingProvider.other) {
+      // Try carrier account
+      final ShippingProvider fromCarrier = getProviderEnum(rate.carrierAccount);
+      if (fromCarrier != ShippingProvider.other) {
+        providerEnum = fromCarrier;
+      } else {
+        // Try service token
+        final ShippingProvider fromToken = getProviderEnum(
+          rate.serviceLevel.token,
+        );
+        if (fromToken != ShippingProvider.other) {
+          providerEnum = fromToken;
+        }
+      }
+    }
+
+    // Return display name from enum
+    return providerDisplayNames[providerEnum] ?? 'Other';
+  }
+
+  /// Groups rates by provider with enhanced logic
   Map<String, List<RateEntity>> _groupRatesByProvider() {
     final Map<String, List<RateEntity>> grouped = <String, List<RateEntity>>{};
+
+    // Filter out rates with empty objectId and group
     for (final RateEntity rate in widget.rates) {
-      grouped
-          .putIfAbsent(rate.serviceLevel.token, () => <RateEntity>[])
-          .add(rate);
+      if (rate.objectId.isEmpty) continue;
+
+      final String key = _getProviderKey(rate);
+      grouped.putIfAbsent(key, () => <RateEntity>[]).add(rate);
     }
+
     // Sort each provider's rates by price (cheapest first)
     for (final List<RateEntity> rates in grouped.values) {
       rates.sort((RateEntity a, RateEntity b) {
@@ -214,6 +248,7 @@ class _RateListState extends State<_RateList> {
         return priceA.compareTo(priceB);
       });
     }
+
     return grouped;
   }
 
@@ -241,6 +276,16 @@ class _RateListState extends State<_RateList> {
     final Map<String, List<RateEntity>> groupedRates = _groupRatesByProvider();
     final List<String> providers = groupedRates.keys.toList();
 
+    // Find which provider contains the selected rate
+    String? selectedProviderKey;
+    for (final MapEntry<String, List<RateEntity>> entry
+        in groupedRates.entries) {
+      if (entry.value.any((RateEntity r) => r.objectId == selectedId)) {
+        selectedProviderKey = entry.key;
+        break;
+      }
+    }
+
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -250,6 +295,7 @@ class _RateListState extends State<_RateList> {
         final List<RateEntity> providerRates = groupedRates[provider]!;
         final bool isExpanded = _expandedProviders.contains(provider);
         final String providerImage = providerRates.first.providerImage75;
+        final bool isProviderSelected = provider == selectedProviderKey;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -265,10 +311,18 @@ class _RateListState extends State<_RateList> {
                   }
                 });
               },
-              child: Padding(
+              child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.sm,
                   vertical: AppSpacing.sm,
+                ),
+                decoration: BoxDecoration(
+                  color: isProviderSelected
+                      ? Theme.of(
+                          context,
+                        ).colorScheme.primary.withValues(alpha: 0.08)
+                      : null,
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
                   children: <Widget>[
@@ -296,25 +350,43 @@ class _RateListState extends State<_RateList> {
                           Text(
                             provider,
                             style: Theme.of(context).textTheme.titleSmall
-                                ?.copyWith(fontWeight: FontWeight.w600),
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: isProviderSelected
+                                      ? Theme.of(context).colorScheme.primary
+                                      : null,
+                                ),
                           ),
                           Text(
                             '${providerRates.length} ${'services'.tr()}',
                             style: Theme.of(context).textTheme.bodySmall
                                 ?.copyWith(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurfaceVariant,
+                                  color: isProviderSelected
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
                                 ),
                           ),
                         ],
                       ),
                     ),
+                    if (isProviderSelected)
+                      Padding(
+                        padding: const EdgeInsets.only(right: AppSpacing.sm),
+                        child: Icon(
+                          Icons.check_circle,
+                          size: 18,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
                     Icon(
                       isExpanded
                           ? Icons.keyboard_arrow_up
                           : Icons.keyboard_arrow_down,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      color: isProviderSelected
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ],
                 ),
