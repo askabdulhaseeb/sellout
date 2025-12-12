@@ -105,6 +105,7 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
     if (_recorder.isRecording) await _recorder.stopRecorder();
     try {
       await _waveformController.stop();
+      _msgPro.stopRecording();
     } catch (_) {}
 
     _msgPro.stopRecording();

@@ -328,7 +328,6 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                       color: theme.colorScheme.primary,
                     ),
                     const Spacer(),
-                    // Invoice title + Order info
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: <Widget>[
@@ -340,15 +339,6 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                             letterSpacing: 1,
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Flexible(
-                          child: Text(
-                            '#${widget.order.orderId}',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: mutedText,
-                            ),
-                          ),
-                        ),
                         Text(
                           dateLabel,
                           style: theme.textTheme.bodySmall?.copyWith(
@@ -357,6 +347,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                         ),
                       ],
                     ),
+                    // Invoice title + Order info
                   ],
                 ),
 
@@ -390,11 +381,11 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                             ),
                             const SizedBox(height: 6),
                             Text(
-                              'Invoice#${widget.order.orderId}',
-                              style: theme.textTheme.bodyMedium?.copyWith(
+                              widget.order.orderId,
+                              style: theme.textTheme.labelMedium?.copyWith(
                                 color: mainText,
                               ),
-                              maxLines: 1,
+                              maxLines: 5,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ],
