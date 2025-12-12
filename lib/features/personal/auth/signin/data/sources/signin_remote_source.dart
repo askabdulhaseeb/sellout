@@ -14,6 +14,7 @@ abstract interface class SigninRemoteSource {
   Future<DataState<String>> refreshToken(RefreshTokenParams params);
   Future<DataState<bool>> verifyTwoFactorAuth(TwoFactorParams params);
   Future<DataState<bool>> resendTwoFactorCode(TwoFactorParams params);
+  Future<DataState<bool>> logout();
 }
 
 class SigninRemoteSourceImpl implements SigninRemoteSource {
@@ -183,6 +184,45 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
         stackTrace: stc,
       );
       return DataFailer<bool>(CustomException('Resend code failed: $e'));
+    }
+  }
+
+  @override
+  Future<DataState<bool>> logout() async {
+    try {
+      final DataState<bool> responce = await ApiCall<bool>().call(
+        endpoint: '/user/logout',
+        requestType: ApiRequestType.post,
+      );
+
+      if (responce is DataSuccess) {
+        // Clear all local data: Hive boxes, secure storage, and trigger socket disconnect
+        // HiveDB.signout() calls LocalAuth().signout() which:
+        // 1. Clears SecureAuthStorage (tokens, userId)
+        // 2. Clears LocalAuth Hive box
+        // 3. Sets uidNotifier.value = null (triggers socket disconnect via listener)
+        // Additionally, HiveDB.signout() clears all other feature Hive boxes
+        await HiveDB.signout();
+        return responce;
+      } else {
+        AppLog.error(
+          responce.exception?.message ?? 'something_wrong'.tr(),
+          name: 'SignInRemoteSourceImpl.logout - else',
+          error: responce.exception?.reason ?? '',
+        );
+        return DataFailer<bool>(
+          CustomException(
+            responce.exception?.message ?? 'something_wrong'.tr(),
+          ),
+        );
+      }
+    } catch (e, stc) {
+      AppLog.error(
+        e.toString(),
+        name: 'SignInRemoteSourceImpl.logout - catch',
+        stackTrace: stc,
+      );
+      return DataFailer<bool>(CustomException('Logout failed: $e'));
     }
   }
 }

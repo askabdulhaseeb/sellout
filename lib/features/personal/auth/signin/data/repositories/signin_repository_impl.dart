@@ -48,4 +48,13 @@ class SigninRepositoryImpl implements SigninRepository {
       return DataFailer<bool>(CustomException('Two Factor code Error: $e'));
     }
   }
+
+  @override
+  Future<DataState<bool>> logout() async {
+    try {
+      return await remoteSource.logout();
+    } catch (e) {
+      return DataFailer<bool>(CustomException('Logout Error: $e'));
+    }
+  }
 }

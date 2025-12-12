@@ -88,8 +88,9 @@ class SocketService with WidgetsBindingObserver {
       AppLog.error('Disconnected from server', name: 'SocketService.disconnect');
     });
 
+    // Initial full list when connecting
     socket!.on('getOnlineUsers', (dynamic data) async {
-      AppLog.info('📶 Online users: $data',
+      AppLog.info('📶 Initial online users: $data',
           name: 'SocketService.getOnlineUsers');
       if (data == null) return;
       try {
@@ -98,6 +99,37 @@ class SocketService with WidgetsBindingObserver {
         debugPrint('Updated online users list: $onlineUsers');
       } catch (e) {
         AppLog.error('Error parsing online users: $e');
+      }
+    });
+
+    // When someone comes online
+    socket!.on('userOnline', (dynamic data) {
+      AppLog.info('🟢 User came online: $data',
+          name: 'SocketService.userOnline');
+      if (data == null) return;
+      try {
+        final String entityId = data is String ? data : data.toString();
+        _socketImplementations.handleUserOnline(entityId);
+      } catch (e) {
+        AppLog.error('Error handling userOnline: $e');
+      }
+    });
+
+    // When someone goes offline
+    socket!.on('userOffline', (dynamic data) {
+      AppLog.info('🔴 User went offline: $data',
+          name: 'SocketService.userOffline');
+      if (data == null) return;
+      try {
+        if (data is Map<String, dynamic>) {
+          final String entityId = data['entityId']?.toString() ?? '';
+          final String lastSeen = data['lastSeen']?.toString() ?? '';
+          if (entityId.isNotEmpty) {
+            _socketImplementations.handleUserOffline(entityId, lastSeen);
+          }
+        }
+      } catch (e) {
+        AppLog.error('Error handling userOffline: $e');
       }
     });
 

@@ -16,10 +16,7 @@ import '../../domain/params/send_message_param.dart';
 import '../../domain/usecase/send_message_usecase.dart';
 
 class SendMessageProvider extends ChangeNotifier {
-  SendMessageProvider(
-    this._sendMessageUsecase,
-    this._searchUsecase,
-  );
+  SendMessageProvider(this._sendMessageUsecase, this._searchUsecase);
   final SendMessageUsecase _sendMessageUsecase;
   final SearchUsecase _searchUsecase;
 
@@ -27,7 +24,10 @@ class SendMessageProvider extends ChangeNotifier {
   bool _isLoading = false;
   ChatEntity? _chat;
   final ValueNotifier<bool> isRecordingAudio = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> isAttachmentMenuOpen = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> isEmojiPickerOpen = ValueNotifier<bool>(false);
   final TextEditingController _message = TextEditingController();
+  final FocusNode messageFocusNode = FocusNode();
   final List<PickedAttachment> _attachments = <PickedAttachment>[];
   final List<PickedAttachment> _document = <PickedAttachment>[];
   final List<PickedAttachment> _contact = <PickedAttachment>[];
@@ -70,6 +70,50 @@ class SendMessageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Opens attachment menu and closes emoji picker if open
+  void openAttachmentMenu() {
+    if (isEmojiPickerOpen.value) {
+      isEmojiPickerOpen.value = false;
+    }
+    isAttachmentMenuOpen.value = true;
+  }
+
+  /// Closes attachment menu
+  void closeAttachmentMenu() {
+    isAttachmentMenuOpen.value = false;
+  }
+
+  /// Opens emoji picker, closes attachment menu, and dismisses keyboard
+  void openEmojiPicker() {
+    if (isAttachmentMenuOpen.value) {
+      isAttachmentMenuOpen.value = false;
+    }
+    // Unfocus to dismiss keyboard
+    messageFocusNode.unfocus();
+    isEmojiPickerOpen.value = true;
+  }
+
+  /// Closes emoji picker and optionally focuses the text field
+  void closeEmojiPicker({bool focusTextField = false}) {
+    isEmojiPickerOpen.value = false;
+    if (focusTextField) {
+      messageFocusNode.requestFocus();
+    }
+  }
+
+  /// Called when text field gains focus - closes emoji picker
+  void onTextFieldFocused() {
+    if (isEmojiPickerOpen.value) {
+      isEmojiPickerOpen.value = false;
+    }
+  }
+
+  /// Closes both menus
+  void closeAllMenus() {
+    isAttachmentMenuOpen.value = false;
+    isEmojiPickerOpen.value = false;
+  }
+
   void onTextChange(String value) {
     lastSelection = _message.selection;
     notifyListeners();
@@ -110,29 +154,34 @@ class SendMessageProvider extends ChangeNotifier {
     BuildContext context, {
     required AttachmentType type,
   }) async {
-    final List<PickedAttachment> selectedMedia =
-        _attachments.where((PickedAttachment element) {
+    final List<PickedAttachment> selectedMedia = _attachments.where((
+      PickedAttachment element,
+    ) {
       return element.selectedMedia != null;
     }).toList();
-    final List<PickedAttachment>? files =
-        await Navigator.of(context).push<List<PickedAttachment>>(
-      MaterialPageRoute<List<PickedAttachment>>(builder: (_) {
-        return PickableAttachmentScreen(
-          option: PickableAttachmentOption(
-            maxAttachments: 10,
-            allowMultiple: true,
-            type: type,
-            selectedMedia: selectedMedia
-                .map((PickedAttachment e) => e.selectedMedia!)
-                .toList(),
+    final List<PickedAttachment>? files = await Navigator.of(context)
+        .push<List<PickedAttachment>>(
+          MaterialPageRoute<List<PickedAttachment>>(
+            builder: (_) {
+              return PickableAttachmentScreen(
+                option: PickableAttachmentOption(
+                  maxAttachments: 10,
+                  allowMultiple: true,
+                  type: type,
+                  selectedMedia: selectedMedia
+                      .map((PickedAttachment e) => e.selectedMedia!)
+                      .toList(),
+                ),
+              );
+            },
           ),
         );
-      }),
-    );
     if (files != null) {
       for (final PickedAttachment file in files) {
-        final int index = _attachments.indexWhere((PickedAttachment element) =>
-            element.selectedMedia == file.selectedMedia);
+        final int index = _attachments.indexWhere(
+          (PickedAttachment element) =>
+              element.selectedMedia == file.selectedMedia,
+        );
         if (index == -1) {
           _attachments.add(file);
         }
@@ -251,9 +300,10 @@ class SendMessageProvider extends ChangeNotifier {
       setLoading(false);
     } else {
       AppSnackBar.showSnackBar(
-          // ignore: use_build_context_synchronously
-          context,
-          result.exception?.message ?? 'something_wrong'.tr());
+        // ignore: use_build_context_synchronously
+        context,
+        result.exception?.message ?? 'something_wrong'.tr(),
+      );
     }
     setLoading(false);
   }
@@ -273,9 +323,10 @@ class SendMessageProvider extends ChangeNotifier {
       setLoading(false);
     } else {
       AppSnackBar.showSnackBar(
-          // ignore: use_build_context_synchronously
-          context,
-          result.exception?.message ?? 'something_wrong'.tr());
+        // ignore: use_build_context_synchronously
+        context,
+        result.exception?.message ?? 'something_wrong'.tr(),
+      );
     }
     setLoading(false);
   }
@@ -296,9 +347,10 @@ class SendMessageProvider extends ChangeNotifier {
       Navigator.pop(context);
     } else {
       AppSnackBar.showSnackBar(
-          // ignore: use_build_context_synchronously
-          context,
-          result.exception?.message ?? 'something_wrong'.tr());
+        // ignore: use_build_context_synchronously
+        context,
+        result.exception?.message ?? 'something_wrong'.tr(),
+      );
     }
     setLoading(false);
   }
@@ -314,13 +366,15 @@ class SendMessageProvider extends ChangeNotifier {
     );
     final DataState<bool> result = await _sendMessageUsecase(param);
     if (result is DataSuccess) {
+      debugPrint('Voice note sent successfully');
       _voiceNote.clear();
       setLoading(false);
     } else {
       AppSnackBar.showSnackBar(
-          // ignore: use_build_context_synchronously
-          context,
-          result.exception?.message ?? 'something_wrong'.tr());
+        // ignore: use_build_context_synchronously
+        context,
+        result.exception?.message ?? 'something_wrong'.tr(),
+      );
     }
     setLoading(false);
   }

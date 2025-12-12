@@ -9,4 +9,5 @@ abstract interface class SigninRepository {
   Future<DataState<String>> refreshToken(RefreshTokenParams params);
   Future<DataState<bool>> verifyTwoFactorAuth(TwoFactorParams params);
   Future<DataState<bool>> resendTwoFactorCode(TwoFactorParams params);
+  Future<DataState<bool>> logout();
 }

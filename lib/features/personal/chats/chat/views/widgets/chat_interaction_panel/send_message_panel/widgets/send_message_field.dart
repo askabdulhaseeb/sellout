@@ -4,8 +4,35 @@ import 'package:provider/provider.dart';
 import '../../../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../providers/send_message_provider.dart';
 
-class SendMessageFIeld extends StatelessWidget {
+class SendMessageFIeld extends StatefulWidget {
   const SendMessageFIeld({super.key});
+
+  @override
+  State<SendMessageFIeld> createState() => _SendMessageFIeldState();
+}
+
+class _SendMessageFIeldState extends State<SendMessageFIeld> {
+  late final SendMessageProvider _msgPro;
+
+  @override
+  void initState() {
+    super.initState();
+    _msgPro = Provider.of<SendMessageProvider>(context, listen: false);
+    // Listen to focus changes to close emoji picker when keyboard opens
+    _msgPro.messageFocusNode.addListener(_onFocusChange);
+  }
+
+  void _onFocusChange() {
+    if (_msgPro.messageFocusNode.hasFocus) {
+      _msgPro.onTextFieldFocused();
+    }
+  }
+
+  @override
+  void dispose() {
+    _msgPro.messageFocusNode.removeListener(_onFocusChange);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +43,8 @@ class SendMessageFIeld extends StatelessWidget {
               const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
           dense: true,
           keyboardType: TextInputType.multiline,
-          autoFocus: true,
+          autoFocus: false,
+          focusNode: msgPro.messageFocusNode,
           controller: msgPro.message,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(5),

@@ -267,14 +267,16 @@ class _PulsatingMicState extends State<_PulsatingMic>
       duration: const Duration(milliseconds: 600),
     );
 
-    _animation = TweenSequence<double>(
-      <TweenSequenceItem<double>>[
-        TweenSequenceItem<double>(
-            tween: Tween<double>(begin: 1.0, end: 1.3), weight: 10),
-        TweenSequenceItem<double>(
-            tween: Tween<double>(begin: 1.3, end: 1.0), weight: 10),
-      ],
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    _animation = TweenSequence<double>(<TweenSequenceItem<double>>[
+      TweenSequenceItem<double>(
+        tween: Tween<double>(begin: 1.0, end: 1.3),
+        weight: 10,
+      ),
+      TweenSequenceItem<double>(
+        tween: Tween<double>(begin: 1.3, end: 1.0),
+        weight: 10,
+      ),
+    ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     if (widget.isRecording) {
       _controller.repeat();
@@ -303,10 +305,7 @@ class _PulsatingMicState extends State<_PulsatingMic>
     return AnimatedBuilder(
       animation: _animation,
       builder: (BuildContext context, Widget? child) {
-        return Transform.scale(
-          scale: _animation.value,
-          child: child,
-        );
+        return Transform.scale(scale: _animation.value, child: child);
       },
       child: CustomIconButton(
         margin: const EdgeInsets.all(0),
