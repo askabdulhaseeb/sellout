@@ -21,6 +21,10 @@ class MessagesList extends StatefulWidget {
 }
 
 class _MessagesListState extends State<MessagesList> {
+  int _previousMessageCount = 0;
+  List<Widget> _cachedWidgets = <Widget>[];
+  String? _lastMessageHash;
+
   @override
   void initState() {
     super.initState();
@@ -53,10 +57,58 @@ class _MessagesListState extends State<MessagesList> {
     }
   }
 
+  void _onMessagesChanged(int newCount) {
+    if (newCount > _previousMessageCount) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToBottomIfNeeded();
+      });
+    }
+    _previousMessageCount = newCount;
+  }
+
+  /// Generates a hash based on message IDs and update times to detect changes
+  String _generateMessageHash(List<MessageEntity> messages) {
+    if (messages.isEmpty) return '';
+    final StringBuffer buffer = StringBuffer();
+    for (final MessageEntity m in messages) {
+      buffer.write('${m.messageId}:${m.updatedAt?.millisecondsSinceEpoch ?? 0},');
+    }
+    return buffer.toString();
+  }
+
+  /// Builds widgets only when messages have changed
+  List<Widget> _buildWidgetsIfNeeded(List<MessageEntity> messages) {
+    final String currentHash = _generateMessageHash(messages);
+
+    if (currentHash != _lastMessageHash) {
+      _lastMessageHash = currentHash;
+
+      // Calculate time gaps
+      final Map<String, Duration> timeDiffMap = <String, Duration>{};
+      for (int i = 0; i < messages.length; i++) {
+        final MessageEntity current = messages[i];
+        final MessageEntity? next =
+            i < messages.length - 1 ? messages[i + 1] : null;
+        final Duration diff = (next != null && current.sendBy == next.sendBy)
+            ? next.createdAt.difference(current.createdAt).abs()
+            : const Duration(days: 5);
+        timeDiffMap[current.messageId] = diff;
+      }
+
+      _cachedWidgets = DateLabelHelper.buildLabeledWidgets(
+        messages,
+        timeDiffMap,
+      );
+    }
+
+    return _cachedWidgets;
+  }
+
   @override
   Widget build(BuildContext context) {
     final ChatProvider chatProvider = context.watch<ChatProvider>();
     final String? chatId = chatProvider.chat?.chatId;
+    final bool isLoading = chatProvider.isLoading;
 
     if (chatId == null) {
       return Expanded(
@@ -78,43 +130,39 @@ class _MessagesListState extends State<MessagesList> {
         final List<MessageEntity> messages = stored == null
             ? <MessageEntity>[]
             : chatProvider.getFilteredMessages(stored);
-        // if (messages.isEmpty) {
-        //   return Expanded(
-        //     child: SingleChildScrollView(
-        //       child: EmptyPageWidget(
-        //         icon: CupertinoIcons.chat_bubble_2,
-        //         childBelow: const Text('no_messages_yet').tr(),
-        //       ),
-        //     ),
-        //   );
-        // }
 
-        // Calculate time gaps
-        final Map<String, Duration> timeDiffMap = <String, Duration>{};
-        for (int i = 0; i < messages.length; i++) {
-          final MessageEntity current = messages[i];
-          final MessageEntity? next = i < messages.length - 1
-              ? messages[i + 1]
-              : null;
-          final Duration diff = (next != null && current.sendBy == next.sendBy)
-              ? next.createdAt.difference(current.createdAt).abs()
-              : const Duration(days: 5);
-          timeDiffMap[current.messageId] = diff;
+        // Show loading indicator when loading and no messages yet
+        if (isLoading && messages.isEmpty) {
+          return const Expanded(
+            child: Center(
+              child: CupertinoActivityIndicator(),
+            ),
+          );
         }
-        // Build widgets (chat messages with labels)
-        final List<Widget> widgets = DateLabelHelper.buildLabeledWidgets(
-          messages,
-          timeDiffMap,
-        );
-        // ✅ Scroll when new messages arrive
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _scrollToBottomIfNeeded();
-        });
+
+        // Show empty state when not loading and no messages
+        if (!isLoading && messages.isEmpty) {
+          return Expanded(
+            child: SingleChildScrollView(
+              child: EmptyPageWidget(
+                icon: CupertinoIcons.chat_bubble_2,
+                childBelow: const Text('no_messages_yet').tr(),
+              ),
+            ),
+          );
+        }
+
+        // Build widgets only when messages change (cached)
+        final List<Widget> widgets = _buildWidgetsIfNeeded(messages);
+
+        // Scroll when new messages arrive (only triggers when count increases)
+        _onMessagesChanged(messages.length);
+
         return Expanded(
           child: ListView.builder(
-            padding: const EdgeInsets.all(0),
+            padding: EdgeInsets.zero,
             physics: const BouncingScrollPhysics(),
-            cacheExtent: 50,
+            cacheExtent: 500,
             controller: widget.controller,
             itemCount: widgets.length,
             itemBuilder: (BuildContext context, int index) {

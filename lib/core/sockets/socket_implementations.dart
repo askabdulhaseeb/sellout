@@ -143,9 +143,40 @@ class SocketImplementations {
 
   // ONLINE USERS
   final ValueNotifier<List<String>> onlineUsers = ValueNotifier(<String>[]);
+  final ValueNotifier<Map<String, String>> lastSeenMap =
+      ValueNotifier(<String, String>{});
+
   Future<void> handleOnlineUsers(List<String> users) async {
     onlineUsers.value = users;
-    debugPrint(onlineUsers.value.toString());
+    debugPrint('Online users: ${onlineUsers.value}');
+  }
+
+  void handleUserOnline(String entityId) {
+    final List<String> currentUsers = List<String>.from(onlineUsers.value);
+    if (!currentUsers.contains(entityId)) {
+      currentUsers.add(entityId);
+      onlineUsers.value = currentUsers;
+    }
+    // Remove from last seen map when user comes online
+    final Map<String, String> currentLastSeen =
+        Map<String, String>.from(lastSeenMap.value);
+    currentLastSeen.remove(entityId);
+    lastSeenMap.value = currentLastSeen;
+    debugPrint('User online: $entityId | Total online: ${onlineUsers.value.length}');
+  }
+
+  void handleUserOffline(String entityId, String lastSeen) {
+    final List<String> currentUsers = List<String>.from(onlineUsers.value);
+    currentUsers.remove(entityId);
+    onlineUsers.value = currentUsers;
+    // Add to last seen map
+    if (lastSeen.isNotEmpty) {
+      final Map<String, String> currentLastSeen =
+          Map<String, String>.from(lastSeenMap.value);
+      currentLastSeen[entityId] = lastSeen;
+      lastSeenMap.value = currentLastSeen;
+    }
+    debugPrint('User offline: $entityId at $lastSeen | Total online: ${onlineUsers.value.length}');
   }
 
   // Notifictions

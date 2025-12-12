@@ -49,6 +49,7 @@ class ChatProvider extends ChangeNotifier {
   GettedMessageEntity? get gettedMessage => _gettedMessage;
   DateTime? get chatAT => _chatAt;
   ChatEntity? get chat => _chat;
+  bool get isLoading => _isLoading;
   bool get expandVisitingMessage => _expandVisitingMessage;
   bool get showPinnedMessage => _showPinnedMessage;
 //

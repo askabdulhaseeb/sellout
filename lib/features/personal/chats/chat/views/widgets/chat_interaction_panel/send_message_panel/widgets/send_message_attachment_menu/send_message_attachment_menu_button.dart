@@ -1,7 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../../../../core/widgets/custom_svg_icon.dart';
+import '../../../../../providers/send_message_provider.dart';
 import '../send_message_attachment_bottomsheets/send_message_camera_bottomsheet.dart';
 import '../send_message_attachment_bottomsheets/send_contacts_bottomsheet/send_message_contacts_bottomsheet.dart';
 import '../send_message_attachment_bottomsheets/send_message_document_bottomsheet.dart';
@@ -59,9 +61,28 @@ class _SendMessageAttachmentMenuButtonState
     }
   }
 
+  /// Calculates dynamic offset based on screen size and keyboard visibility
+  Offset _calculateMenuOffset(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+    final double availableHeight = screenHeight - keyboardHeight;
+
+    // Menu has 4 items, approximately 56px each + padding
+    const double menuHeight = 240.0;
+
+    // Ensure menu doesn't go off screen
+    final double offset = availableHeight > menuHeight + 100
+        ? -menuHeight
+        : -(availableHeight * 0.4);
+
+    return Offset(0, offset);
+  }
+
   @override
   Widget build(BuildContext context) {
     final Color? iconColor = Theme.of(context).iconTheme.color;
+    final SendMessageProvider msgPro =
+        Provider.of<SendMessageProvider>(context, listen: false);
 
     final List<Map<String, dynamic>> menuItems = <Map<String, dynamic>>[
       <String, dynamic>{
@@ -90,14 +111,20 @@ class _SendMessageAttachmentMenuButtonState
       padding: EdgeInsets.zero,
       color: Theme.of(context).scaffoldBackgroundColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      offset: const Offset(0, -240),
+      offset: _calculateMenuOffset(context),
       onSelected: (SendMessagePopMenuOptions option) {
         _rotationController.reverse();
+        msgPro.closeAttachmentMenu();
         _handleAttachment(context, option);
       },
-      onCanceled: () => _rotationController.reverse(),
-      onOpened: () =>
-          _rotationController.forward(), // rotate slightly when open
+      onCanceled: () {
+        _rotationController.reverse();
+        msgPro.closeAttachmentMenu();
+      },
+      onOpened: () {
+        _rotationController.forward();
+        msgPro.openAttachmentMenu();
+      },
       itemBuilder: (_) => menuItems.map((Map<String, dynamic> item) {
         return _buildMenuItem(
           context,

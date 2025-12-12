@@ -51,7 +51,7 @@ class ChatRemoteSourceImpl implements ChatRemoteSource {
         AppLog.error(
           'get chats - ERROR',
           name: 'ChatRemoteSourceImpl.getChats - else',
-          error: result.exception,
+          error: result.exception?.message ?? result.exception?.reason,
         );
         return DataFailer<List<ChatEntity>>(
           result.exception ?? CustomException('something_wrong'.tr()),

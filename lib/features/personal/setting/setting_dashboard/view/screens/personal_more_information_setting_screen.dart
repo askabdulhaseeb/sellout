@@ -9,6 +9,7 @@ import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dar
 import '../../../../../../routes/app_linking.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../auth/signin/domain/usecase/logout_usecase.dart';
 import '../../../../dashboard/views/screens/dashboard_screen.dart';
 import '../../../../user/profiles/domain/usecase/delete_user_usecase.dart';
 import '../../../setting_options/terms&policies/about_us_screen.dart';
@@ -172,11 +173,66 @@ class PersonalSettingMoreInformationScreen extends StatelessWidget {
             textColor: Theme.of(context).primaryColor,
             displayTrailingIcon: false,
             title: 'logout'.tr(),
-            onTap: () async {
-              await HiveDB.signout();
-              AppNavigator.pushNamedAndRemoveUntil(
-                DashboardScreen.routeName,
-                (_) => false,
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    title: Text(
+                      'are_you_sure'.tr(),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                    content: Text(
+                      'do_you_want_to_logout'.tr(),
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text(
+                          'cancel'.tr(),
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        child: Text(
+                          'logout'.tr(),
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                        onPressed: () async {
+                          final NavigatorState navigator =
+                              Navigator.of(context);
+                          final DataState<bool> result =
+                              await locator<LogoutUsecase>().call(null);
+
+                          if (result is DataSuccess) {
+                            AppNavigator.pushNamedAndRemoveUntil(
+                              DashboardScreen.routeName,
+                              (_) => false,
+                            );
+                          } else {
+                            navigator.pop();
+                            if (context.mounted) {
+                              AppSnackBar.error(
+                                context,
+                                'something_wrong'.tr(),
+                              );
+                            }
+                          }
+                        },
+                      ),
+                    ],
+                  );
+                },
               );
             },
           ),

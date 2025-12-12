@@ -41,6 +41,18 @@ class _ChatScreenState extends State<ChatScreen> {
     return Consumer<ChatProvider>(
       builder: (BuildContext context, ChatProvider pro, _) {
         final ChatEntity? chat = pro.chat;
+
+        // Handle null chat state
+        if (chat == null) {
+          return Scaffold(
+            backgroundColor: Theme.of(context).canvasColor,
+            appBar: chatAppBar(context),
+            body: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+
         return PopScope(
           onPopInvokedWithResult: (bool didPop, Object? result) {
             LocalUnreadMessagesService().clearCount(chat.chatId);
@@ -52,12 +64,12 @@ class _ChatScreenState extends State<ChatScreen> {
             body: Stack(
               children: <Widget>[
                 Positioned.fill(
-                    child:
-                        Image.asset(AppStrings.chatBGJpg, fit: BoxFit.cover)),
+                  child: Image.asset(AppStrings.chatBGJpg, fit: BoxFit.cover),
+                ),
                 Positioned.fill(
                   child: Column(
                     children: <Widget>[
-                      ChatPinnedMessage(chatId: chat!.chatId),
+                      ChatPinnedMessage(chatId: chat.chatId),
                       MessagesList(
                         chat: chat,
                         controller: scrollController,
