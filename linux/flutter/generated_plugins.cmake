@@ -9,6 +9,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   flutter_sound
   gtk
   open_file_linux
+  printing
   url_launcher_linux
 )
 
