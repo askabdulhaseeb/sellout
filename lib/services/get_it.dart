@@ -729,8 +729,11 @@ void _addlisting() {
 }
 
 void _sockets() {
+  // SocketImplementations must be a singleton to share online status across the app
+  locator.registerLazySingleton<SocketImplementations>(
+    () => SocketImplementations(),
+  );
   locator.registerFactory<SocketService>(() => SocketService(locator()));
-  locator.registerFactory<SocketImplementations>(() => SocketImplementations());
 }
 
 void _addaddress() {

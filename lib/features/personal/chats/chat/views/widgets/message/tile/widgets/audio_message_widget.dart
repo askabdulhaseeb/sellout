@@ -399,9 +399,6 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
   Widget _buildPlayerUI(bool isMe, ColorScheme colorScheme, ThemeData theme) {
     final bool isPlaying = _audioState == AudioPlayerState.playing;
     final bool isCompleted = _audioState == AudioPlayerState.completed;
-    final double _ = _totalDur.inMilliseconds > 0
-        ? _currentPos.inMilliseconds / _totalDur.inMilliseconds
-        : 0.0;
 
     return Row(
       mainAxisSize: MainAxisSize.min,

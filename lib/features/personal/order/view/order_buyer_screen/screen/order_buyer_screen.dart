@@ -417,7 +417,7 @@ class OrderBuyerPaymentInfoWidget extends StatelessWidget {
               orderData.shippingDetails != null &&
                       orderData.shippingDetails!.postage.isNotEmpty
                   ? '${CountryHelper.currencySymbolHelper(post?.currency ?? orderData.paymentDetail.postCurrency)}${(orderData.shippingDetails!.postage.first.coreAmount ?? 0).toString()}'
-                  : '${CountryHelper.currencySymbolHelper(post?.currency ?? orderData.paymentDetail.postCurrency)}0',
+                  : '${CountryHelper.currencySymbolHelper(post?.currency ?? orderData.paymentDetail.postCurrency)}0.00',
               style: Theme.of(
                 context,
               ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),

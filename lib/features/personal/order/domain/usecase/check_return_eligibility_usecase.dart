@@ -1,4 +1,5 @@
 import '../../../../../core/usecase/usecase.dart';
+import '../../data/models/return_eligibility_model.dart';
 import '../params/return_eligibility_params.dart';
 import '../repo/order_repo.dart';
 import '../entities/return_eligibility_entity.dart';
@@ -10,9 +11,7 @@ class CheckReturnEligibilityUsecase
   final OrderRepository repository;
 
   @override
-  Future<DataState<ReturnEligibilityEntity>> call(
-    ReturnEligibilityParams params,
-  ) async {
+  Future<DataState<ReturnEligibilityModel>> call(ReturnEligibilityParams params) async {
     return await repository.checkReturnEligibility(params);
   }
 }

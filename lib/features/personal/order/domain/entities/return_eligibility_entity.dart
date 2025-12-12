@@ -1,11 +1,4 @@
 class ReturnEligibilityEntity {
-  final bool success;
-  final String? orderId;
-  final bool? allowed;
-  final String? reason;
-  final String? currentStatus;
-  final bool? returnAlreadyRequested;
-
   ReturnEligibilityEntity({
     required this.success,
     this.orderId,
@@ -14,6 +7,12 @@ class ReturnEligibilityEntity {
     this.currentStatus,
     this.returnAlreadyRequested,
   });
+  final bool success;
+  final String? orderId;
+  final bool? allowed;
+  final String? reason;
+  final String? currentStatus;
+  final bool? returnAlreadyRequested;
 
   @override
   String toString() {

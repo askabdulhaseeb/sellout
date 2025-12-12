@@ -6,6 +6,7 @@ import '../../../../user/profiles/domain/params/update_order_params.dart';
 import '../../../domain/params/get_order_params.dart';
 import '../local/local_orders.dart';
 import '../../../domain/params/return_eligibility_params.dart';
+import '../../../domain/params/order_return_params.dart';
 import '../../models/return_eligibility_model.dart';
 
 abstract interface class OrderByUserRemote {
@@ -13,8 +14,9 @@ abstract interface class OrderByUserRemote {
   Future<DataState<List<OrderEntity>>> getOrderByOrderId(String? params);
   Future<DataState<bool>> updateOrder(UpdateOrderParams params);
   Future<DataState<ReturnEligibilityModel>> checkReturnEligibility(
-    ReturnEligibilityParams params,
+    ReturnEligibilityParams params
   );
+  Future<DataState<bool>> orderReturn(OrderReturnParams params);
 }
 
 class OrderByUserRemoteImpl implements OrderByUserRemote {
@@ -188,6 +190,44 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
       return DataFailer<ReturnEligibilityModel>(
         CustomException('failed_to_check_return'),
       );
+    }
+  }
+
+  @override
+  Future<DataState<bool>> orderReturn(OrderReturnParams params) async {
+    // legacy: keep parity with checkReturnEligibility; consider simplifying
+    try {
+      final String endpoint = '/orders/return/requestpost';
+      final Map<String, dynamic> body = <String, dynamic>{
+        'order_id': params.orderId,
+        'reason': params.reason,
+        if (params.objectId != null) 'object_id': params.objectId,
+      };
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.post,
+        body: jsonEncode(body),
+        isAuth: true,
+      );
+      debugPrint(
+        'Order return response: ${result is DataSuccess ? result.data : result}',
+      );
+
+      if (result is DataSuccess<bool>) {
+        return DataSuccess<bool>(result.data ?? '', true);
+      } else {
+        return DataFailer<bool>(
+          result.exception ?? CustomException('failed_to_request_return'),
+        );
+      }
+    } catch (e, stc) {
+      AppLog.error(
+        e.toString(),
+        name: 'OrderByUserRemoteImpl.orderReturn - catch',
+        error: e,
+        stackTrace: stc,
+      );
+      return DataFailer<bool>(CustomException('failed_to_request_return'));
     }
   }
 }
