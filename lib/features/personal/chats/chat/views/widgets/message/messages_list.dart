@@ -71,7 +71,7 @@ class _MessagesListState extends State<MessagesList> {
     if (messages.isEmpty) return '';
     final StringBuffer buffer = StringBuffer();
     for (final MessageEntity m in messages) {
-      buffer.write('${m.messageId}:${m.updatedAt?.millisecondsSinceEpoch ?? 0},');
+      buffer.write('${m.messageId}:${m.updatedAt.millisecondsSinceEpoch}');
     }
     return buffer.toString();
   }
@@ -87,8 +87,9 @@ class _MessagesListState extends State<MessagesList> {
       final Map<String, Duration> timeDiffMap = <String, Duration>{};
       for (int i = 0; i < messages.length; i++) {
         final MessageEntity current = messages[i];
-        final MessageEntity? next =
-            i < messages.length - 1 ? messages[i + 1] : null;
+        final MessageEntity? next = i < messages.length - 1
+            ? messages[i + 1]
+            : null;
         final Duration diff = (next != null && current.sendBy == next.sendBy)
             ? next.createdAt.difference(current.createdAt).abs()
             : const Duration(days: 5);
@@ -134,9 +135,7 @@ class _MessagesListState extends State<MessagesList> {
         // Show loading indicator when loading and no messages yet
         if (isLoading && messages.isEmpty) {
           return const Expanded(
-            child: Center(
-              child: CupertinoActivityIndicator(),
-            ),
+            child: Center(child: CupertinoActivityIndicator()),
           );
         }
 
