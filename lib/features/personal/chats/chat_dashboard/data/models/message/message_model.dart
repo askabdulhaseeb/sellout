@@ -21,6 +21,7 @@ class MessageModel extends MessageEntity {
     super.visitingDetail,
     super.type,
     super.source,
+    super.fileStatus,
     super.offerDetail,
     super.quoteDetail,
     super.postDetail,
@@ -40,7 +41,8 @@ class MessageModel extends MessageEntity {
     }
     return MessageModel(
       persons: List<String>.from(
-          (json['persons'] ?? <dynamic>[]).map((dynamic x) => x)),
+        (json['persons'] ?? <dynamic>[]).map((dynamic x) => x),
+      ),
       fileUrl: fileUrlList,
       updatedAt:
           (json['updated_at']?.toString() ?? '').toDateTime() ?? DateTime.now(),
@@ -65,6 +67,7 @@ class MessageModel extends MessageEntity {
       postDetail: json['post_detail'] == null
           ? null
           : MessagePostDetailEntity.fromJson(json['post_detail']),
+      fileStatus: json['file_status']?.toString(),
     );
   }
 }
