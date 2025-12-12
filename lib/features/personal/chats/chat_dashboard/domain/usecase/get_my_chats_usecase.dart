@@ -8,6 +8,6 @@ class GetMyChatsUsecase implements UseCase<List<ChatEntity>, List<String>?> {
 
   @override
   Future<DataState<List<ChatEntity>>> call(List<String>? params) async {
-    return await repository.call(params);
+    return await repository.getchats(params);
   }
 }

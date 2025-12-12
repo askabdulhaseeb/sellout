@@ -1,45 +1,20 @@
 import 'dart:convert';
+import '../../domain/entities/return_eligibility_entity.dart';
 
-class ReturnEligibilityEligibilityModel {
-  final bool allowed;
-  final String? reason;
-
-  ReturnEligibilityEligibilityModel({required this.allowed, this.reason});
-
-  factory ReturnEligibilityEligibilityModel.fromJson(
-    Map<String, dynamic> json,
-  ) {
-    return ReturnEligibilityEligibilityModel(
-      allowed: json['allowed'] == true,
-      reason: json['reason'] as String?,
-    );
-  }
-}
-
-class ReturnEligibilityModel {
-  final bool success;
-  final String? orderId;
-  final ReturnEligibilityEligibilityModel? eligibility;
-  final String? currentStatus;
-  final bool? returnAlreadyRequested;
-
+class ReturnEligibilityModel extends ReturnEligibilityEntity {
   ReturnEligibilityModel({
-    required this.success,
-    this.orderId,
-    this.eligibility,
-    this.currentStatus,
-    this.returnAlreadyRequested,
+    required super.success,
+    super.orderId,
+    super.allowed,
+    super.currentStatus,
+    super.returnAlreadyRequested,
   });
 
   factory ReturnEligibilityModel.fromJson(Map<String, dynamic> json) {
     return ReturnEligibilityModel(
       success: json['success'] == true,
       orderId: json['order_id'] as String?,
-      eligibility: json['eligibility'] is Map<String, dynamic>
-          ? ReturnEligibilityEligibilityModel.fromJson(
-              json['eligibility'] as Map<String, dynamic>,
-            )
-          : null,
+      allowed: json['allowed'] as bool?,
       currentStatus: json['current_status'] as String?,
       returnAlreadyRequested: json['return_already_requested'] as bool?,
     );
