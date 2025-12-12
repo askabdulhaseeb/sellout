@@ -295,6 +295,18 @@ class OrderActionButtonsList extends StatelessWidget {
                 color: order.orderStatus.color,
                 onTap: () {},
               ),
+            // Download label button when ready to ship
+            if (order.orderStatus == StatusType.readyToShip)
+              OrderActionButton(
+                isLoading: orderPro.isDownloadingLabel,
+                keyName: 'download_label',
+                color: Theme.of(context).colorScheme.primary,
+                onTap: () async {
+                  await orderPro.downloadLabel(
+                    order.shippingDetails?.shippingLabelUrl
+                  );
+                },
+              ),
             if (order.orderStatus == StatusType.delivered)
               OrderActionButton(
                 isLoading: orderPro.isLoading,

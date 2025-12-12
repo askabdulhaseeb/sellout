@@ -2,9 +2,16 @@ import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
+
+import 'package:http/http.dart' as http;
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../../../../core/enums/core/status_type.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/data_state.dart';
+import '../../../../../core/sources/api_call.dart';
 import '../../../../../services/get_it.dart';
 import '../../../../postage/domain/params/add_label_params.dart';
 import '../../../../postage/domain/usecase/buy_label_usecase.dart';
@@ -61,6 +68,14 @@ class OrderProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Separate loading state for downloading label action
+  bool _isDownloadingLabel = false;
+  bool get isDownloadingLabel => _isDownloadingLabel;
+  void _setDownloadingLabel(bool value) {
+    _isDownloadingLabel = value;
+    notifyListeners();
+  }
+
   Future<void> updateSellerOrder(String orderId, StatusType status) async {
     setLoading(true);
     final UpdateOrderParams params = UpdateOrderParams(
@@ -106,6 +121,81 @@ class OrderProvider extends ChangeNotifier {
       );
     } finally {
       _setBuyingLabel(false);
+    }
+  }
+
+  Future<void> downloadLabel(String? url) async {
+    _setDownloadingLabel(true);
+    try {
+      final String? labelUrl = url;
+      if (labelUrl != null && labelUrl.isNotEmpty) {
+        final Uri uri = Uri.parse(labelUrl);
+
+        // Download the file
+        final http.Response response = await http.get(uri);
+        if (response.statusCode == 200) {
+          final String fileName = uri.pathSegments.isNotEmpty
+              ? uri.pathSegments.last
+              : 'label_${DateTime.now().millisecondsSinceEpoch}.pdf';
+
+          File file;
+
+          if (Platform.isAndroid) {
+            // Request storage permission on Android
+            PermissionStatus status = await Permission.storage.request();
+            if (!status.isGranted) {
+              // Try manage external storage for Android 11+
+              try {
+                status = await Permission.manageExternalStorage.request();
+              } catch (_) {}
+            }
+
+            if (!status.isGranted) {
+              AppLog.error(
+                'Storage permission denied',
+                name: 'OrderProvider.downloadLabel',
+              );
+              return;
+            }
+
+            // Attempt to save to public Downloads folder
+            final String downloadsPath = '/storage/emulated/0/Download';
+            final String filePath = '$downloadsPath/$fileName';
+            file = File(filePath);
+            await file.writeAsBytes(response.bodyBytes);
+          } else {
+            // Fallback for iOS and other platforms: app documents
+            final Directory dir = await getApplicationDocumentsDirectory();
+            final String filePath = '${dir.path}/$fileName';
+            file = File(filePath);
+            await file.writeAsBytes(response.bodyBytes);
+          }
+
+          AppLog.info('download_label_success'.tr());
+
+          // Open the downloaded file
+          await OpenFile.open(file.path);
+        } else {
+          AppLog.error(
+            'Failed to download label: ${response.statusCode}',
+            name: 'OrderProvider.downloadLabel',
+          );
+        }
+      } else {
+        AppLog.error(
+          'No label URL available',
+          name: 'OrderProvider.downloadLabel',
+        );
+      }
+    } catch (e, stc) {
+      AppLog.error(
+        e.toString(),
+        name: 'OrderProvider.downloadLabel - Catch',
+        error: e,
+        stackTrace: stc,
+      );
+    } finally {
+      _setDownloadingLabel(false);
     }
   }
 

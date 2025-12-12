@@ -7,12 +7,12 @@ part 'shipping_detail_entity.g.dart';
 
 @HiveType(typeId: 89)
 class ShippingDetailEntity {
-
   const ShippingDetailEntity({
     required this.postage,
     this.fastDelivery,
     this.fromAddress,
     this.toAddress,
+    this.shippingLabelUrl,
   });
   @HiveField(0)
   final List<PostageEntity> postage;
@@ -22,4 +22,6 @@ class ShippingDetailEntity {
   final AddressEntity? fromAddress;
   @HiveField(3)
   final AddressEntity? toAddress;
+  @HiveField(4)
+  final String? shippingLabelUrl;
 }
