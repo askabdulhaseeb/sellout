@@ -1,14 +1,20 @@
+import 'package:flutter/widgets.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
 import '../../../domain/entities/order_entity.dart';
 import '../../../../user/profiles/domain/params/update_order_params.dart';
 import '../../../domain/params/get_order_params.dart';
 import '../local/local_orders.dart';
+import '../../../domain/params/return_eligibility_params.dart';
+import '../../models/return_eligibility_model.dart';
 
 abstract interface class OrderByUserRemote {
   Future<DataState<List<OrderEntity>>> getOrderByQuery(GetOrderParams? userId);
   Future<DataState<List<OrderEntity>>> getOrderByOrderId(String? params);
   Future<DataState<bool>> updateOrder(UpdateOrderParams params);
+  Future<DataState<ReturnEligibilityModel>> checkReturnEligibility(
+    ReturnEligibilityParams params,
+  );
 }
 
 class OrderByUserRemoteImpl implements OrderByUserRemote {
@@ -140,6 +146,48 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
         stackTrace: stc,
       );
       return DataFailer<bool>(CustomException('Failed to update order'));
+    }
+  }
+
+  @override
+  Future<DataState<ReturnEligibilityModel>> checkReturnEligibility(
+    ReturnEligibilityParams params,
+  ) async {
+    try {
+      final String endpoint = '/orders/return/eligibility/${params.orderId}';
+      final Map<String, dynamic> body = <String, dynamic>{
+        'order_id': params.orderId,
+        'object_id': params.objectId,
+      };
+      final DataState<String> result = await ApiCall<String>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.post,
+        body: jsonEncode(body),
+        isAuth: true,
+      );
+      debugPrint('Return eligibility raw response: ${result.data}');
+
+      if (result is DataSuccess<String>) {
+        final String raw = result.data ?? '';
+        final ReturnEligibilityModel? model = ReturnEligibilityModel.fromRaw(
+          raw,
+        );
+        return DataSuccess<ReturnEligibilityModel>(raw, model);
+      } else {
+        return DataFailer<ReturnEligibilityModel>(
+          result.exception ?? CustomException('failed_to_check_return'),
+        );
+      }
+    } catch (e, stc) {
+      AppLog.error(
+        e.toString(),
+        name: 'OrderByUserRemoteImpl.checkReturnEligibility - catch',
+        error: e,
+        stackTrace: stc,
+      );
+      return DataFailer<ReturnEligibilityModel>(
+        CustomException('failed_to_check_return'),
+      );
     }
   }
 }

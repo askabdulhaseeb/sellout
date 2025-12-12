@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../core/utilities/app_string.dart';
@@ -16,6 +17,9 @@ import '../../../../post/domain/usecase/get_specific_post_usecase.dart';
 import '../../../../post/feed/views/widgets/post/widgets/section/buttons/type/widgets/post_buy_now_button.dart';
 import '../../../domain/entities/order_entity.dart';
 import '../../../../user/profiles/data/sources/local/local_user.dart';
+import '../../../domain/params/return_eligibility_params.dart';
+import '../../../domain/usecase/check_return_eligibility_usecase.dart';
+import '../../../domain/entities/return_eligibility_entity.dart';
 import '../widgets/cancel_order_button.dart';
 
 class OrderBuyerScreen extends StatelessWidget {
@@ -198,6 +202,78 @@ class OrderBuyerScreen extends StatelessWidget {
                                               .shipmentId ??
                                           '-')
                                     : '-'),
+                        ),
+                        const SizedBox(height: 8),
+                        Builder(
+                          builder: (BuildContext subCtx) {
+                            final String rateObjectId =
+                                (orderData.shippingDetails != null &&
+                                    orderData
+                                        .shippingDetails!
+                                        .postage
+                                        .isNotEmpty)
+                                ? (orderData
+                                          .shippingDetails!
+                                          .postage
+                                          .first
+                                          .rateObjectId ??
+                                      '')
+                                : '';
+
+                            return FutureBuilder<
+                              DataState<ReturnEligibilityEntity>
+                            >(
+                              future: CheckReturnEligibilityUsecase(locator())
+                                  .call(
+                                    ReturnEligibilityParams(
+                                      orderId: orderData.orderId,
+                                      objectId: rateObjectId,
+                                    ),
+                                  ),
+                              builder:
+                                  (
+                                    BuildContext ctx,
+                                    AsyncSnapshot<
+                                      DataState<ReturnEligibilityEntity>
+                                    >
+                                    snap,
+                                  ) {
+                                    if (!snap.hasData) return const SizedBox();
+                                    final DataState<ReturnEligibilityEntity>
+                                    state = snap.data!;
+                                    if (state
+                                        is DataSuccess<
+                                          ReturnEligibilityEntity
+                                        >) {
+                                      final ReturnEligibilityEntity? ent =
+                                          state.entity;
+                                      final bool allowed =
+                                          ent?.allowed ?? false;
+                                      final String? reason = ent?.reason;
+                                      return Text(
+                                        allowed
+                                            ? 'return_eligible'.tr()
+                                            : (reason ??
+                                                  'return_not_eligible'.tr()),
+                                        style: Theme.of(ctx)
+                                            .textTheme
+                                            .labelMedium
+                                            ?.copyWith(
+                                              color: allowed
+                                                  ? Theme.of(
+                                                      ctx,
+                                                    ).colorScheme.primary
+                                                  : Theme.of(
+                                                      ctx,
+                                                    ).colorScheme.error,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                      );
+                                    }
+                                    return const SizedBox();
+                                  },
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -384,6 +460,7 @@ class BuyerOrderProductDetailWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Row(
+            spacing: AppSpacing.hSm,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               ClipRRect(
