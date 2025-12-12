@@ -15,6 +15,7 @@ import '../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../provider/order_provider.dart';
 import 'order_postage_bottom_sheet.dart';
+import 'invoice_screen.dart';
 
 class OrderSellerScreen extends StatelessWidget {
   const OrderSellerScreen({super.key});
@@ -227,7 +228,7 @@ class OrderInfoWidget extends StatelessWidget {
                 ).textTheme.labelSmall?.copyWith(fontSize: 10),
               ),
             ),
-            // const ViewInvoiceButton()
+            const ViewInvoiceButton(),
           ],
         ),
       ],
@@ -245,12 +246,7 @@ class ViewInvoiceButton extends StatelessWidget {
         final OrderEntity order = pro.order!;
         return InkWell(
           onTap: () {
-            // Navigator.push(
-            //     context,
-            //     MaterialPageRoute<InvoiceScreen>(
-            //       builder: (BuildContext context) =>
-            //           InvoiceScreen(order: order),
-            //     ));
+            Navigator.push(context, InvoiceScreen.route(order));
           },
           child: Text(
             'view_invoice'.tr(),
@@ -303,7 +299,7 @@ class OrderActionButtonsList extends StatelessWidget {
                 color: Theme.of(context).colorScheme.primary,
                 onTap: () async {
                   await orderPro.downloadLabel(
-                    order.shippingDetails?.shippingLabelUrl
+                    order.shippingDetails?.shippingLabelUrl,
                   );
                 },
               ),

@@ -1,3 +1,100 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:pdf/pdf.dart';
+import 'package:printing/printing.dart';
+import 'package:path_provider/path_provider.dart';
+import '../../domain/entities/order_entity.dart';
+import '../../../../../../core/functions/app_log.dart';
+
+class InvoiceScreen extends StatelessWidget {
+  const InvoiceScreen({required this.order, super.key});
+
+  final OrderEntity order;
+
+  static Route route(OrderEntity order) =>
+      MaterialPageRoute(builder: (_) => InvoiceScreen(order: order));
+
+  Future<void> _generateAndSavePdf(BuildContext context) async {
+    try {
+      final pw.Document doc = pw.Document();
+
+      doc.addPage(
+        pw.Page(
+          build: (pw.Context ctx) => pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: <pw.Widget>[
+              pw.Text('Invoice', style: pw.TextStyle(fontSize: 24)),
+              pw.SizedBox(height: 12),
+              pw.Text('Order: ${order.orderId}'),
+              pw.Text('Buyer: ${order.buyerId}'),
+              pw.Text('Total: ${order.totalAmount.toStringAsFixed(2)}'),
+              pw.SizedBox(height: 12),
+              pw.Text('Items:'),
+              // Minimal line per item (if post title available)
+              pw.Bullet(text: order.postId),
+            ],
+          ),
+        ),
+      );
+
+      final List<int> bytes = await doc.save();
+
+      // Save to Downloads on Android or app documents on other platforms
+      final String fileName = 'invoice_${order.orderId}.pdf';
+      File file;
+      if (Platform.isAndroid) {
+        final String downloadsPath = '/storage/emulated/0/Download';
+        file = File('$downloadsPath/$fileName');
+        await file.writeAsBytes(bytes);
+      } else {
+        final dir = await getApplicationDocumentsDirectory();
+        file = File('${dir.path}/$fileName');
+        await file.writeAsBytes(bytes);
+      }
+
+      AppLog.info('Invoice saved: ${file.path}');
+
+      // Try to preview using Printing
+      await Printing.layoutPdf(
+        onLayout: (PdfPageFormat format) async => Uint8List.fromList(bytes),
+      );
+    } catch (e, st) {
+      AppLog.error('Failed to generate invoice PDF', error: e, stackTrace: st);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to generate invoice')),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('invoice'.tr())),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text('Order ID: ${order.orderId}'),
+            const SizedBox(height: 8),
+            Text('Buyer ID: ${order.buyerId}'),
+            const SizedBox(height: 8),
+            Text('Amount: ${order.totalAmount.toStringAsFixed(2)}'),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.picture_as_pdf),
+              label: const Text('Export as PDF'),
+              onPressed: () => _generateAndSavePdf(context),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 // import 'package:flutter/material.dart';
 // import 'package:pdf/widgets.dart' as pw;
 // import 'package:pdf/pdf.dart';
