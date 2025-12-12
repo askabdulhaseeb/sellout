@@ -8,7 +8,6 @@ import 'message_post_detail_entity.dart';
 part 'message_entity.g.dart';
 
 @HiveType(typeId: 13)
-@HiveType(typeId: 13)
 class MessageEntity {
   MessageEntity({
     required this.persons,
@@ -23,6 +22,7 @@ class MessageEntity {
     this.visitingDetail,
     this.type,
     this.source,
+    this.fileStatus,
     this.offerDetail,
     this.quoteDetail,
     this.postDetail,
@@ -52,6 +52,8 @@ class MessageEntity {
   final String chatId;
   @HiveField(11)
   final String? source;
+  @HiveField(15)
+  final String? fileStatus;
   @HiveField(12)
   final OfferDetailEntity? offerDetail;
   @HiveField(13)
@@ -76,6 +78,7 @@ class MessageEntity {
     VisitingEntity? visitingDetail,
     MessageType? type,
     String? source,
+    String? fileStatus,
     OfferDetailEntity? offerDetail,
     QuoteDetailEntity? quoteDetail,
     MessagePostDetailEntity? postDetail,
@@ -93,6 +96,7 @@ class MessageEntity {
       visitingDetail: visitingDetail ?? this.visitingDetail,
       type: type ?? this.type,
       source: source ?? this.source,
+      fileStatus: fileStatus ?? this.fileStatus,
       offerDetail: offerDetail ?? this.offerDetail,
       quoteDetail: quoteDetail ?? this.quoteDetail,
       postDetail: postDetail ?? this.postDetail,

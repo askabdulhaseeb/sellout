@@ -29,6 +29,7 @@ class MessageEntityAdapter extends TypeAdapter<MessageEntity> {
       visitingDetail: fields[3] as VisitingEntity?,
       type: fields[7] as MessageType?,
       source: fields[11] as String?,
+      fileStatus: fields[15] as String?,
       offerDetail: fields[12] as OfferDetailEntity?,
       quoteDetail: fields[13] as QuoteDetailEntity?,
       postDetail: fields[14] as MessagePostDetailEntity?,
@@ -38,7 +39,7 @@ class MessageEntityAdapter extends TypeAdapter<MessageEntity> {
   @override
   void write(BinaryWriter writer, MessageEntity obj) {
     writer
-      ..writeByte(15)
+      ..writeByte(16)
       ..writeByte(0)
       ..write(obj.persons)
       ..writeByte(1)
@@ -68,7 +69,9 @@ class MessageEntityAdapter extends TypeAdapter<MessageEntity> {
       ..writeByte(13)
       ..write(obj.quoteDetail)
       ..writeByte(14)
-      ..write(obj.postDetail);
+      ..write(obj.postDetail)
+      ..writeByte(15)
+      ..write(obj.fileStatus);
   }
 
   @override

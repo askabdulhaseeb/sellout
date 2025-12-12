@@ -408,3 +408,91 @@ class ApiCall<T> {
     }
   }
 }
+
+//   CSRF Protected Routes - Frontend Implementation Guide
+
+//   Required Header for ALL Protected Routes:
+
+//   Header Name: X-Requested-WithHeader Value: XMLHttpRequest
+
+//   ---
+//   Complete List of CSRF-Protected Endpoints
+
+//   :closed_lock_with_key: User Authentication & Management (10 routes)
+
+//   | Method | Endpoint                      | Description                | Required Headers                 |
+//   |--------|-------------------------------|----------------------------|----------------------------------|
+//   | POST   | /api/user/profilePic          | Upload profile picture     | Authorization + X-Requested-With |
+//   | POST   | /api/user/logout              | Logout from current device | Authorization + X-Requested-With |
+//   | POST   | /api/user/logout/all          | Logout from all devices    | Authorization + X-Requested-With |
+//   | POST   | /api/user/deactivate          | Deactivate account         | Authorization + X-Requested-With |
+//   | PATCH  | /api/user/switchAccount       | Switch account type        | Authorization + X-Requested-With |
+//   | PATCH  | /api/user/add/address         | Add new address            | Authorization + X-Requested-With |
+//   | PATCH  | /api/user/update/address      | Update existing address    | Authorization + X-Requested-With |
+//   | PATCH  | /api/user/update/:uid         | Update user profile        | Authorization + X-Requested-With |
+//   | DELETE | /api/user/delete/:uid         | Delete user account        | Authorization + X-Requested-With |
+//   | POST   | /api/userAuth/change/password | Change password            | Authorization + X-Requested-With |
+
+//   ---
+//   :office: Business Management (9 routes)
+
+//   | Method | Endpoint                          | Description                     | Required Headers                 |
+//   |--------|-----------------------------------|---------------------------------|----------------------------------|
+//   | PATCH  | /api/business/update/member       | Update employee details         | Authorization + X-Requested-With |
+//   | PATCH  | /api/business/reset/password      | Reset password                  | Authorization + X-Requested-With |
+//   | PATCH  | /api/business/change/password     | Change password                 | Authorization + X-Requested-With |
+//   | PATCH  | /api/business/add/member          | Add member to business          | Authorization + X-Requested-With |
+//   | PATCH  | /api/business/update/invite       | Handle business invites         | Authorization + X-Requested-With |
+//   | PATCH  | /api/business/profilePic          | Update business profile picture | Authorization + X-Requested-With |
+//   | PATCH  | /api/business/update              | Update business profile         | Authorization + X-Requested-With |
+//   | DELETE | /api/business/delete/:business_id | Delete business                 | Authorization + X-Requested-With |
+
+//   ---
+//   :package: Posts/Products (3 routes)
+
+//   | Method | Endpoint                  | Description             | Required Headers                 |
+//   |--------|---------------------------|-------------------------|----------------------------------|
+//   | POST   | /api/post/create          | Create new post/product | Authorization + X-Requested-With |
+//   | PATCH  | /api/post/update/:post_id | Update post/product     | Authorization + X-Requested-With |
+//   | DELETE | /api/post/delete/:post_id | Delete post/product     | Authorization + X-Requested-With |
+
+//   ---
+//   :hammer_and_wrench: Services (7 routes)
+
+//   | Method | Endpoint                        | Description                   | Required Headers                 |
+//   |--------|---------------------------------|-------------------------------|----------------------------------|
+//   | POST   | /api/service/create             | Create new service            | Authorization + X-Requested-With |
+//   | PATCH  | /api/service/update/:service_id | Update service                | Authorization + X-Requested-With |
+//   | PATCH  | /api/service/assign/employee    | Assign employees to service   | Authorization + X-Requested-With |
+//   | PATCH  | /api/service/assign/services    | Assign services to employee   | Authorization + X-Requested-With |
+//   | PATCH  | /api/service/remove/employees   | Remove employees from service | Authorization + X-Requested-With |
+//   | PATCH  | /api/service/remove/services    | Remove services from employee | Authorization + X-Requested-With |
+//   | DELETE | /api/service/delete/:service_id | Delete service                | Authorization + X-Requested-With |
+
+//   ---
+//   :moneybag: Offers (3 routes)
+
+//   | Method | Endpoint                    | Description      | Required Headers                 |
+//   |--------|-----------------------------|------------------|----------------------------------|
+//   | POST   | /api/offer/create           | Create new offer | Authorization + X-Requested-With |
+//   | PATCH  | /api/offer/update/:offer_id | Update offer     | Authorization + X-Requested-With |
+//   | DELETE | /api/offer/delete/:offer_id | Delete offer     | Authorization + X-Requested-With |
+
+//   ---
+//   :package: Orders (4 routes)
+
+//   | Method | Endpoint                 | Description           | Required Headers                 |
+//   |--------|--------------------------|-----------------------|----------------------------------|
+//   | POST   | /api/order/create        | Create new order      | Authorization + X-Requested-With |
+//   | POST   | /api/order/buy/label     | Buy shipping label    | Authorization + X-Requested-With |
+//   | POST   | /api/order/shipping/add  | Add shipping to order | Authorization + X-Requested-With |
+//   | PATCH  | /api/order/update/status | Update order status   | Authorization + X-Requested-With |
+
+//   ---
+//   :credit_card: Payments (3 routes)
+
+//   | Method | Endpoint               | Description                | Required Headers                 |
+//   |--------|------------------------|----------------------------|----------------------------------|
+//   | POST   | /api/payments/release  | Release payment            | Authorization + X-Requested-With |
+//   | POST   | /api/payments/transfer | Transfer to Stripe Connect | Authorization + X-Requested-With |
+//   | POST   | /api/payments/payout   | Payout to bank             | Authorization + X-Requested-With |

@@ -8,6 +8,7 @@
   "password": "Password",
   "forgot_password": "Forgot Password?",
   "logout": "Log Out",
+  "do_you_want_to_logout":"Do you want to logout?",
   "dont_have_account": "Don't have an account?",
   "create_account": "Create an account",
   "something_wrong": "Something Goes Wrong",
