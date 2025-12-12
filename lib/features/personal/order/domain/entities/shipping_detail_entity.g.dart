@@ -21,13 +21,14 @@ class ShippingDetailEntityAdapter extends TypeAdapter<ShippingDetailEntity> {
       fastDelivery: fields[1] as FastDeliveryEntity?,
       fromAddress: fields[2] as AddressEntity?,
       toAddress: fields[3] as AddressEntity?,
+      shippingLabelUrl: fields[4] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, ShippingDetailEntity obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.postage)
       ..writeByte(1)
@@ -35,7 +36,9 @@ class ShippingDetailEntityAdapter extends TypeAdapter<ShippingDetailEntity> {
       ..writeByte(2)
       ..write(obj.fromAddress)
       ..writeByte(3)
-      ..write(obj.toAddress);
+      ..write(obj.toAddress)
+      ..writeByte(4)
+      ..write(obj.shippingLabelUrl);
   }
 
   @override

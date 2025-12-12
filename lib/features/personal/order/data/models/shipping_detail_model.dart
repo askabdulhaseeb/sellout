@@ -10,15 +10,27 @@ class ShippingDetailModel extends ShippingDetailEntity {
     super.fastDelivery,
     super.fromAddress,
     super.toAddress,
+    super.shippingLabelUrl,
   });
+
   factory ShippingDetailModel.fromJson(Map<String, dynamic> json) {
     final Map<String, dynamic>? addresses =
         json['addresses'] as Map<String, dynamic>?;
+
+    // --------- FIXED: extract label URL from postage[0].url ----------
+    String? labelUrl;
+    final List<dynamic>? postageList = json['postage'] as List<dynamic>?;
+    if (postageList != null && postageList.isNotEmpty) {
+      final firstPostage = postageList.first;
+      if (firstPostage is Map<String, dynamic>) {
+        labelUrl = firstPostage['url'] as String?;
+      }
+    }
+    // ---------------------------------------------------------------
+
     return ShippingDetailModel(
       postage:
-          (json['postage'] as List<dynamic>?)
-              ?.map((e) => PostageModel.fromJson(e))
-              .toList() ??
+          postageList?.map((e) => PostageModel.fromJson(e)).toList() ??
           <PostageModel>[],
       fastDelivery: json['fast_delivery'] != null
           ? FastDeliveryModel.fromJson(json['fast_delivery'])
@@ -29,6 +41,9 @@ class ShippingDetailModel extends ShippingDetailEntity {
       toAddress: addresses != null && addresses['to_address'] != null
           ? AddressModel.fromJson(addresses['to_address'])
           : null,
+
+      // Correct source
+      shippingLabelUrl: labelUrl,
     );
   }
 
@@ -46,6 +61,7 @@ class ShippingDetailModel extends ShippingDetailEntity {
       toAddress: e.toAddress != null
           ? AddressModel.fromEntity(e.toAddress!)
           : null,
+      shippingLabelUrl: e.shippingLabelUrl,
     );
   }
 
@@ -63,6 +79,10 @@ class ShippingDetailModel extends ShippingDetailEntity {
         if (toAddress != null)
           'to_address': (toAddress as AddressModel).toShippingJson(),
       },
+
+      // Optional — your backend probably ignores it
+      if (shippingLabelUrl != null)
+        'shipping_label': <String, String?>{'url': shippingLabelUrl},
     };
   }
 }
