@@ -262,10 +262,7 @@ class HiveDB {
     await safeClear(() => LocalService().clear(), 'LocalService');
     await safeClear(() => LocalReview().clear(), 'LocalReview');
     await safeClear(() => LocalBooking().clear(), 'LocalBooking');
-    await safeClear(
-      () => LocalUnreadMessagesService().clear(),
-      'LocalUnreadMessagesService',
-    );
+    await safeClear(() => LocalUnreadMessagesService().clear(),'LocalUnreadMessagesService');
     await safeClear(() => LocalPromo().clear(), 'LocalPromo');
     await safeClear(() => LocalColors().clear(), 'LocalColors');
     await safeClear(() => LocalOrders().clear(), 'LocalOrders');

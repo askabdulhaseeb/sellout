@@ -503,18 +503,42 @@ class ProfileProvider extends ChangeNotifier {
 
       setOrder(allOrders);
     } else {
-      final DataState<List<OrderEntity>> result = await _getOrderByIdUsecase(
-        GetOrderParams(
-          value: userUid,
-          user: GetOrderUserType.sellerId,
-          status: _status,
-        ),
-      );
-      if (result is DataSuccess) {
-        setOrder(result.entity ?? <OrderEntity>[]);
+      final List<StatusType> cancelledStatuses = <StatusType>[
+        StatusType.canceled,
+        StatusType.cancelled,
+        StatusType.rejectedBySeller,
+      ];
+
+      if (cancelledStatuses.contains(_status)) {
+        final List<OrderEntity> allOrders = <OrderEntity>[];
+        for (final StatusType status in cancelledStatuses) {
+          final DataState<List<OrderEntity>> result =
+              await _getOrderByIdUsecase(
+                GetOrderParams(
+                  value: userUid,
+                  user: GetOrderUserType.sellerId,
+                  status: status,
+                ),
+              );
+          if (result is DataSuccess) {
+            allOrders.addAll(result.entity ?? <OrderEntity>[]);
+          }
+        }
+        setOrder(allOrders);
       } else {
-        setOrder(<OrderEntity>[]);
-        AppLog.error(result.exception?.message ?? 'something_wrong'.tr());
+        final DataState<List<OrderEntity>> result = await _getOrderByIdUsecase(
+          GetOrderParams(
+            value: userUid,
+            user: GetOrderUserType.sellerId,
+            status: _status,
+          ),
+        );
+        if (result is DataSuccess) {
+          setOrder(result.entity ?? <OrderEntity>[]);
+        } else {
+          setOrder(<OrderEntity>[]);
+          AppLog.error(result.exception?.message ?? 'something_wrong'.tr());
+        }
       }
     }
     setLoading(false);

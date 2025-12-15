@@ -95,14 +95,14 @@ flutter_launcher_icons:
   remove_alpha_ios: true
   web:
     generate: true
-  image_path: "assets/images/sellout_logo.png"
-  image_path_ios: "assets/images/sellout_logo.png"
+  image_path: assets/images/sellout_logo.png
+  image_path_ios: assets/images/sellout_logo.png
 
 flutter_icons:
   android: true
   ios: true
   remove_alpha_ios: true
-  image_path: "assets/images/sellout_logo.png"
+  image_path: assets/images/sellout_logo.png
 
 flutter_native_splash:
   android: true
@@ -138,8 +138,6 @@ flutter:
     - assets/images/marketplace_filters/
     - assets/images/sellout_team/
     - assets/jsons/
-    - assets/jsons/foot_brands.json
-    - assets/jsons/clothes_brands.json
     - assets/translations/
     - assets/docs/
     - assets/docs/privacy_security/
