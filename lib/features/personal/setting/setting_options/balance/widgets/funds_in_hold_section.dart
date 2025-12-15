@@ -1,14 +1,32 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
+import '../../../../order/data/source/local/local_orders.dart';
+import '../../../../order/domain/entities/order_entity.dart';
 import '../../../../payment/domain/entities/wallet_funds_in_hold_entity.dart';
-import 'balance_detail_row.dart';
-import 'balance_formatters.dart';
+import '../../../../post/data/sources/local/local_post.dart';
+import '../../../../post/domain/entities/post/post_entity.dart';
+import 'funds_in_hold_item_card.dart';
 
-class FundsInHoldSection extends StatelessWidget {
+class FundsInHoldSection extends StatefulWidget {
   const FundsInHoldSection({required this.fundsInHold, super.key});
 
   final List<WalletFundsInHoldEntity> fundsInHold;
+
+  @override
+  State<FundsInHoldSection> createState() => _FundsInHoldSectionState();
+}
+
+class _FundsInHoldSectionState extends State<FundsInHoldSection> {
+  late final Future<void> _openBoxesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _openBoxesFuture = Future.wait(<Future<dynamic>>[
+      LocalOrders().refresh(),
+      LocalPost().refresh(),
+    ]).then((_) {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,62 +40,39 @@ class FundsInHoldSection extends StatelessWidget {
           ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: 8),
-        if (fundsInHold.isEmpty)
+        if (widget.fundsInHold.isEmpty)
           Text('no_funds_in_hold'.tr())
         else
-          Column(
-            children: fundsInHold
-                .map(
-                  (WalletFundsInHoldEntity hold) => Container(
-                    width: double.infinity,
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: const <BoxShadow>[
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 6,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        BalanceDetailRow(
-                          labelKey: 'amount',
-                          value: BalanceFormatters.formatAmount(
-                            hold.amount,
-                            currencyCode: hold.currency,
-                          ),
-                        ),
-                        BalanceDetailRow(
-                          labelKey: 'status',
-                          value: hold.status,
-                        ),
-                        BalanceDetailRow(
-                          labelKey: 'release_at',
-                          value: hold.releaseAt,
-                        ),
-                        BalanceDetailRow(
-                          labelKey: 'order_id',
-                          value: hold.orderId,
-                        ),
-                        BalanceDetailRow(
-                          labelKey: 'post_id',
-                          value: hold.postId,
-                        ),
-                        BalanceDetailRow(
-                          labelKey: 'transaction_id',
-                          value: hold.transactionId,
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-                .toList(),
+          FutureBuilder<void>(
+            future: _openBoxesFuture,
+            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Text('loading'.tr());
+              }
+
+              return Column(
+                children: widget.fundsInHold.map((
+                  WalletFundsInHoldEntity hold,
+                ) {
+                  OrderEntity? order;
+                  PostEntity? post;
+
+                  try {
+                    order = LocalOrders().get(hold.orderId);
+                  } catch (_) {}
+
+                  try {
+                    post = LocalPost().post(hold.postId);
+                  } catch (_) {}
+
+                  return FundsInHoldItemCard(
+                    hold: hold,
+                    order: order,
+                    post: post,
+                  );
+                }).toList(),
+              );
+            },
           ),
       ],
     );

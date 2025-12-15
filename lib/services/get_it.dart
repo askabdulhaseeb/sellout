@@ -89,8 +89,10 @@ import '../features/personal/marketplace/data/source/marketplace_remote_source.d
 import '../features/personal/payment/data/repositories/payment_repository_impl.dart';
 import '../features/personal/payment/data/sources/remote/payment_remote_api.dart';
 import '../features/personal/payment/domain/repositories/payment_repository.dart';
+import '../features/personal/payment/domain/usecase/create_payouts_usecase.dart';
 import '../features/personal/payment/domain/usecase/get_exchange_rate_usecase.dart';
 import '../features/personal/payment/domain/usecase/get_wallet_usecase.dart';
+import '../features/personal/payment/domain/usecase/transfer_funds_usecase.dart';
 import '../features/personal/services/domain/usecase/get_service_categories_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/delete_user_usecase.dart';
 import '../features/personal/visits/domain/usecase/book_service_usecase.dart';
@@ -908,6 +910,12 @@ void _payment() {
     () => GetExchangeRateUsecase(locator()),
   );
   locator.registerFactory<GetWalletUsecase>(() => GetWalletUsecase(locator()));
+  locator.registerFactory<TransferFundsUsecase>(
+    () => TransferFundsUsecase(locator()),
+  );
+  locator.registerFactory<CreatePayoutsUsecase>(
+    () => CreatePayoutsUsecase(locator()),
+  );
 }
 
 void _postage() {

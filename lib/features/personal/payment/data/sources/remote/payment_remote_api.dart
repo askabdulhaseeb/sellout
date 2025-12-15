@@ -6,44 +6,10 @@ import '../../../../../../core/sources/api_call.dart';
 
 import '../../../domain/entities/exchange_rate_entity.dart';
 import '../../../domain/params/get_exchange_rate_params.dart';
+import '../../../domain/params/transfer_funds_params.dart';
+import '../../../domain/params/create_payout_params.dart';
 import '../../models/exchange_rate_model.dart';
 import '../../models/wallet_model.dart';
-
-class TransferFundsParams {
-  final String walletId;
-  final double amount;
-  final String currency;
-
-  TransferFundsParams({
-    required this.walletId,
-    required this.amount,
-    required this.currency,
-  });
-
-  Map<String, dynamic> toJson() => {
-    'wallet_id': walletId,
-    'amount': amount,
-    'currency': currency,
-  };
-}
-
-class CreatePayoutParams {
-  final String walletId;
-  final double amount;
-  final String currency;
-
-  CreatePayoutParams({
-    required this.walletId,
-    required this.amount,
-    required this.currency,
-  });
-
-  Map<String, dynamic> toJson() => {
-    'wallet_id': walletId,
-    'amount': amount,
-    'currency': currency,
-  };
-}
 
 abstract interface class PaymentRemoteApi {
   Future<DataState<ExchangeRateEntity>> getExchangeRate(
@@ -150,7 +116,7 @@ class PaymentRemoteApiImpl implements PaymentRemoteApi {
 
   @override
   Future<DataState<bool>> transferFunds(TransferFundsParams params) async {
-    const String endpoint = 'payment/transfer';
+    const String endpoint = '/payment/transfer';
     try {
       final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,
