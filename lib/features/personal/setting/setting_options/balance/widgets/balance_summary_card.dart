@@ -2,7 +2,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../payment/data/models/wallet_model.dart';
-import 'balance_formatters.dart';
+import '../../../../../../core/extension/datetime_ext.dart';
+import '../../../../../../core/extension/string_ext.dart';
+import '../../../../../../core/helper_functions/country_helper.dart';
 import 'balance_tile.dart';
 
 class BalanceSummaryCard extends StatelessWidget {
@@ -19,6 +21,12 @@ class BalanceSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String symbol = CountryHelper.currencySymbolHelper(wallet.currency);
+    final String balanceStr =
+        '$symbol${wallet.withdrawableBalance.toStringAsFixed(2)}';
+    final String updatedAtStr =
+        wallet.updatedAt.toDateTime()?.dateTime ?? wallet.updatedAt;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -47,10 +55,7 @@ class BalanceSummaryCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            BalanceFormatters.formatAmount(
-              wallet.withdrawableBalance,
-              currencyCode: wallet.currency,
-            ),
+            balanceStr,
             style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
           ),
           Row(
@@ -82,11 +87,7 @@ class BalanceSummaryCard extends StatelessWidget {
                 style: TextStyle(fontSize: 12, color: Colors.grey[700]),
               ),
               Text(
-                'updated_at'.tr(
-                  args: <String>[
-                    BalanceFormatters.formatDateTime(wallet.updatedAt),
-                  ],
-                ),
+                'updated_at'.tr(args: <String>[updatedAtStr]),
                 style: TextStyle(fontSize: 12, color: Colors.grey[700]),
               ),
             ],

@@ -1,11 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
 import '../../../../order/domain/entities/order_entity.dart';
 import '../../../../payment/domain/entities/wallet_funds_in_hold_entity.dart';
 import '../../../../post/domain/entities/post/post_entity.dart';
+import '../../../../../../core/extension/datetime_ext.dart';
+import '../../../../../../core/extension/string_ext.dart';
+import '../../../../../../core/helper_functions/country_helper.dart';
 import 'balance_detail_row.dart';
-import 'balance_formatters.dart';
 
 class FundsInHoldItemCard extends StatelessWidget {
   const FundsInHoldItemCard({
@@ -29,10 +30,11 @@ class FundsInHoldItemCard extends StatelessWidget {
         ? post!.fileUrls.first.url
         : null;
 
-    final String amountStr = BalanceFormatters.formatAmount(
-      hold.amount,
-      currencyCode: hold.currency,
-    );
+    final String symbol = CountryHelper.currencySymbolHelper(hold.currency);
+    final String amountStr = '$symbol${hold.amount.toStringAsFixed(2)}';
+
+    final String releaseAtStr =
+        hold.releaseAt.toDateTime()?.dateTime ?? hold.releaseAt;
 
     final String orderId = order?.orderId ?? hold.orderId;
 
@@ -117,7 +119,7 @@ class FundsInHoldItemCard extends StatelessWidget {
           const SizedBox(height: 8),
           BalanceDetailRow(labelKey: 'amount', value: amountStr),
           BalanceDetailRow(labelKey: 'status', value: hold.status),
-          BalanceDetailRow(labelKey: 'release_at', value: hold.releaseAt),
+          BalanceDetailRow(labelKey: 'release_at', value: releaseAtStr),
         ],
       ),
     );
