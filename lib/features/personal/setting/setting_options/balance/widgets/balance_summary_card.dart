@@ -9,11 +9,13 @@ class BalanceSummaryCard extends StatelessWidget {
   const BalanceSummaryCard({
     required this.wallet,
     required this.onWithdrawTap,
+    this.isWithdrawing = false,
     super.key,
   });
 
   final WalletModel wallet;
   final VoidCallback onWithdrawTap;
+  final bool isWithdrawing;
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +121,7 @@ class BalanceSummaryCard extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: onWithdrawTap,
+              onPressed: isWithdrawing ? null : onWithdrawTap,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.grey[300],
                 foregroundColor: Colors.black54,
@@ -128,10 +130,16 @@ class BalanceSummaryCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: Text(
-                'withdraw_to_bank_account'.tr(),
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
+              child: isWithdrawing
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Text(
+                      'withdraw_to_bank_account'.tr(),
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
             ),
           ),
           const SizedBox(height: 8),
