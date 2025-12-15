@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'balance_formatters.dart';
+import '../../../../../../core/helper_functions/country_helper.dart';
 
 class BalanceTile extends StatelessWidget {
   const BalanceTile({
@@ -16,6 +16,9 @@ class BalanceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String symbol = CountryHelper.currencySymbolHelper(currencyCode);
+    final String valueStr = '$symbol${value.toDouble().toStringAsFixed(2)}';
+
     return Expanded(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -28,10 +31,7 @@ class BalanceTile extends StatelessWidget {
           children: <Widget>[
             Text(label, style: const TextStyle(fontSize: 12)),
             const SizedBox(height: 4),
-            Text(
-              BalanceFormatters.formatAmount(value, currencyCode: currencyCode),
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
+            Text(valueStr, style: const TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
       ),
