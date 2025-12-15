@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-
 import '../../../../../services/get_it.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../payment/domain/usecase/get_wallet_usecase.dart';
 import '../../../payment/data/models/wallet_model.dart';
-import 'package:intl/intl.dart';
 import '../../../../../core/sources/data_state.dart';
 import 'balance_skeleton.dart';
 import 'package:easy_localization/easy_localization.dart';
+
+import 'widgets/balance_summary_card.dart';
+import 'widgets/funds_in_hold_section.dart';
+import 'widgets/transaction_history_section.dart';
+import 'widgets/wallet_details_card.dart';
 
 class BalanceScreen extends StatefulWidget {
   const BalanceScreen({super.key});
@@ -39,7 +42,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
     final DataState<WalletModel> result = await usecase.call(walletId);
     if (result is DataSuccess && result.data != null) {
       setState(() {
-        _wallet = result.entity as WalletModel;
+        _wallet = result.entity;
         _loading = false;
       });
     } else {
@@ -50,210 +53,50 @@ class _BalanceScreenState extends State<BalanceScreen> {
     }
   }
 
-  String _formatAmount(num? amount) {
-    final NumberFormat formatter = NumberFormat.currency(
-      symbol: '£',
-      decimalDigits: 2,
-    );
-    return formatter.format(amount ?? 0);
-  }
-
   @override
   Widget build(BuildContext context) {
+    final WalletModel? wallet = _wallet;
+
     return Scaffold(
       appBar: AppBar(title: Text('balance'.tr())),
-      body: _loading || _error != null || _wallet == null
+      body: _loading
           ? const BalanceSkeleton()
-          : Padding(
+          : _error != null
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(_error!, textAlign: TextAlign.center),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: _fetchWallet,
+                      child: Text('retry'.tr()),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : wallet == null
+          ? const BalanceSkeleton()
+          : SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: const <BoxShadow>[
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 8,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(
-                          children: <Widget>[
-                            const Icon(
-                              Icons.account_balance_wallet_outlined,
-                              color: Colors.red,
-                              size: 32,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'available_balance'.tr(),
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          _formatAmount(_wallet!.withdrawableBalance),
-                          style: const TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Row(
-                          children: <Widget>[
-                            Text(
-                              'approx_pkr'.tr(args: <String>['0.00']),
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: 12,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 6,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                'live_rates_apply'.tr(),
-                                style: const TextStyle(fontSize: 10),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              'currency'.tr(args: <String>[_wallet!.currency]),
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey[700],
-                              ),
-                            ),
-                            Text(
-                              'updated_at'.tr(
-                                args: <String>[
-                                  DateFormat.Hm().format(
-                                    DateTime.tryParse(_wallet!.updatedAt) ??
-                                        DateTime.now(),
-                                  ),
-                                ],
-                              ),
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey[700],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            _balanceTile(
-                              'pending'.tr(),
-                              _wallet!.pendingBalance,
-                            ),
-                            _balanceTile(
-                              'total_balance'.tr(),
-                              _wallet!.totalBalance,
-                            ),
-                            _balanceTile(
-                              'total_earned'.tr(),
-                              _wallet!.totalEarnings,
-                            ),
-                            _balanceTile(
-                              'withdrawn'.tr(),
-                              _wallet!.totalWithdrawn,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.grey[300],
-                              foregroundColor: Colors.black54,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            child: Text(
-                              'withdraw_to_bank_account'.tr(),
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.info_outline,
-                              size: 16,
-                              color: Colors.grey[600],
-                            ),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                'balance_note'.tr(),
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                  BalanceSummaryCard(wallet: wallet, onWithdrawTap: () {}),
+                  const SizedBox(height: 16),
+                  WalletDetailsCard(wallet: wallet),
+                  const SizedBox(height: 16),
+                  FundsInHoldSection(fundsInHold: wallet.fundsInHold),
+                  const SizedBox(height: 16),
+                  TransactionHistorySection(
+                    transactionHistory: wallet.transactionHistory,
                   ),
                 ],
               ),
             ),
-    );
-  }
-
-  Widget _balanceTile(String label, num value) {
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Column(
-          children: <Widget>[
-            Text(label, style: const TextStyle(fontSize: 12)),
-            const SizedBox(height: 4),
-            Text(
-              _formatAmount(value),
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

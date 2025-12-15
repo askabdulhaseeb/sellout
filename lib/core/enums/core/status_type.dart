@@ -10,132 +10,89 @@ const Color _redBG = Color.fromARGB(255, 252, 223, 221);
 @HiveType(typeId: 35)
 enum StatusType {
   @HiveField(0)
-  pending('pending', 'pending', <String>['pending'], Colors.blue, _blueBG),
+  pending('pending', 'pending', Colors.blue, _blueBG),
   //
   @HiveField(11)
-  inprogress(
-    'inprogress',
-    'inprogress',
-    <String>['inprogress'],
-    Colors.orange,
-    _orangeBG,
-  ),
+  inprogress('inprogress', 'inprogress', Colors.orange, _orangeBG),
   @HiveField(12)
-  inActive(
-    'in_active',
-    'in_active',
-    <String>['in_active', 'inactive'],
-    Colors.orange,
-    _orangeBG,
-  ),
+  inActive('in_active', 'in_active', Colors.orange, _orangeBG),
   //
   @HiveField(21)
-  blocked('blocked', 'blocked', <String>['blocked'], Colors.red, _redBG),
+  blocked('blocked', 'blocked', Colors.red, _redBG),
   @HiveField(22)
-  rejected(
-    'rejected',
-    'rejected',
-    <String>['rejected', 'reject'],
-    Colors.red,
-    _redBG,
-  ),
+  rejected('rejected', 'rejected', Colors.red, _redBG),
   @HiveField(23)
-  cancelled(
-    'cancelled',
-    'cancelled',
-    <String>['cancel', 'cancelled', 'cancelled_by_seller'],
-    Colors.black,
-    _redBG,
-  ),
+  cancelled('cancelled', 'cancelled', Colors.black, _redBG),
   @HiveField(24)
-  canceled('canceled', 'canceled', <String>['canceled'], Colors.black, _redBG),
+  canceled('canceled', 'canceled', Colors.black, _redBG),
   @HiveField(25)
-  rejectedBySeller(
-    'rejected_by_seller',
-    'rejected_by_seller',
-    <String>['rejected_by_seller'],
-    Colors.red,
-    _redBG,
-  ),
+  rejectedBySeller('cancelled_by_seller', 'cancelled_by_seller', Colors.red, _redBG),
   @HiveField(26)
-  returned('returned', 'returned', <String>['returned'], Colors.black, _redBG),
+  returned('returned', 'returned', Colors.black, _redBG),
   //
   @HiveField(31)
-  accepted(
-    'accepted',
-    'accepted',
-    <String>['accepted', 'accept', 'approve', 'approved'],
-    Colors.green,
-    _greenBG,
-  ),
+  accepted('accepted', 'accepted', Colors.green, _greenBG),
   @HiveField(32)
-  completed(
-    'completed',
-    'completed',
-    <String>['completed', 'complet'],
-    Colors.green,
-    _greenBG,
-  ),
+  completed('completed', 'completed', Colors.green, _greenBG),
   @HiveField(33)
-  delivered(
-    'delivered',
-    'delivered',
-    <String>['delivered', 'deliver'],
-    Colors.teal,
-    _greenBG,
-  ),
+  delivered('delivered', 'delivered', Colors.teal, _greenBG),
   @HiveField(34)
-  shipped(
-    'shipped',
-    'shipped',
-    <String>['shipped', 'dispatched'],
-    Colors.blue,
-    _greenBG,
-  ),
+  shipped('shipped', 'shipped', Colors.blue, _greenBG),
   @HiveField(35)
-  active('active', 'active', <String>['active'], Colors.green, _greenBG),
+  active('active', 'active', Colors.green, _greenBG),
   @HiveField(36)
-  onHold('on-hold', 'on-hold', <String>['on-hold'], Colors.green, _greenBG),
+  onHold('on-hold', 'on-hold', Colors.green, _greenBG),
   @HiveField(37)
-  processing(
-    'processing',
-    'processing',
-    <String>['processing'],
-    Colors.red,
-    _greenBG,
-  ),
+  processing('processing', 'processing', Colors.red, _greenBG),
   @HiveField(38)
-  readyToShip(
-    'ready_to_ship',
-    'ready_to_ship',
-    <String>['ready_to_ship'],
-    Colors.red,
-    _greenBG,
-  ),
+  readyToShip('ready_to_ship', 'ready_to_ship', Colors.red, _greenBG),
   @HiveField(39)
-  paid('paid', 'paid', <String>['paid'], Colors.red, _greenBG);
+  paid('paid', 'paid', Colors.red, _greenBG);
 
-  const StatusType(
-    this.code,
-    this.json,
-    this.aliases,
-    this.color,
-    this.bgColor,
-  );
+  const StatusType(this.code, this.json, this.color, this.bgColor);
   final String code;
   final String json;
-  final List<String> aliases;
   final Color color;
   final Color bgColor;
 
   static StatusType fromJson(String? map) {
     debugPrint('Mapping StatusType from json: $map');
     if (map == null) return StatusType.pending;
-    for (final StatusType s in StatusType.values) {
-      if (s.code == map || s.json == map || s.aliases.contains(map)) {
-        return s;
-      }
+    switch (map) {
+      case 'pending':
+        return StatusType.pending;
+      case 'accept' || 'accepted' || 'approve' || 'approved':
+        return StatusType.accepted;
+      case 'reject' || 'rejected':
+        return StatusType.rejected;
+      case 'cancel' || 'cancelled' || 'cancelled_by_seller':
+        return StatusType.cancelled;
+      case 'canceled':
+        return StatusType.canceled;
+      case 'complet' || 'completed' || 'delivered':
+        return StatusType.completed;
+      case 'inprogress':
+        return StatusType.inprogress;
+      case 'deliver' || 'delivered':
+        return StatusType.delivered;
+      case 'shipped' || 'dispatched':
+        return StatusType.shipped;
+      case 'active':
+        return StatusType.active;
+      case 'inactive':
+        return StatusType.inActive;
+      case 'blocked':
+        return StatusType.blocked;
+      case 'on-hold':
+        return StatusType.onHold;
+      case 'processing':
+        return StatusType.processing;
+      case 'paid':
+        return StatusType.paid;
+      case 'ready_to_ship':
+        return StatusType.readyToShip;
+      default:
+        return StatusType.pending;
     }
-    return StatusType.pending;
   }
 }

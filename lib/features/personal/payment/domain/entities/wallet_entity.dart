@@ -1,5 +1,7 @@
-abstract class WalletEntity {
+import 'wallet_funds_in_hold_entity.dart';
+import 'wallet_transaction_entity.dart';
 
+abstract class WalletEntity {
   const WalletEntity({
     required this.withdrawableBalance,
     required this.nextReleaseAt,
@@ -23,13 +25,13 @@ abstract class WalletEntity {
   final String createdAt;
   final String status;
   final double totalEarnings;
-  final List<dynamic> transactionHistory;
+  final List<WalletTransactionEntity> transactionHistory;
   final double pendingBalance;
   final double totalBalance;
   final String updatedAt;
   final String entityId;
   final double totalRefunded;
-  final List<dynamic> fundsInHold;
+  final List<WalletFundsInHoldEntity> fundsInHold;
   final double totalWithdrawn;
   final String walletId;
 }

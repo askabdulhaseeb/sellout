@@ -14,7 +14,7 @@ abstract interface class OrderByUserRemote {
   Future<DataState<List<OrderEntity>>> getOrderByOrderId(String? params);
   Future<DataState<bool>> updateOrder(UpdateOrderParams params);
   Future<DataState<ReturnEligibilityModel>> checkReturnEligibility(
-    ReturnEligibilityParams params
+    ReturnEligibilityParams params,
   );
   Future<DataState<bool>> orderReturn(OrderReturnParams params);
 }
@@ -161,6 +161,9 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
         'order_id': params.orderId,
         'object_id': params.objectId,
       };
+      debugPrint(
+        'checkReturnEligibility: POST $endpoint (orderId=${params.orderId}, objectId=${params.objectId})',
+      );
       final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,
         requestType: ApiRequestType.post,
@@ -174,8 +177,14 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
         final ReturnEligibilityModel? model = ReturnEligibilityModel.fromRaw(
           raw,
         );
+        debugPrint(
+          'checkReturnEligibility: returning success (allowed=${model?.allowed}, reason=${model?.reason})',
+        );
         return DataSuccess<ReturnEligibilityModel>(raw, model);
       } else {
+        debugPrint(
+          'checkReturnEligibility: returning failure (${result.exception?.message ?? 'unknown_error'})',
+        );
         return DataFailer<ReturnEligibilityModel>(
           result.exception ?? CustomException('failed_to_check_return'),
         );
@@ -187,6 +196,7 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
         error: e,
         stackTrace: stc,
       );
+      debugPrint('checkReturnEligibility: returning failure (catch)');
       return DataFailer<ReturnEligibilityModel>(
         CustomException('failed_to_check_return'),
       );
@@ -197,25 +207,30 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
   Future<DataState<bool>> orderReturn(OrderReturnParams params) async {
     // legacy: keep parity with checkReturnEligibility; consider simplifying
     try {
-      final String endpoint = '/orders/return/requestpost';
+      final String endpoint = '/orders/return/request';
       final Map<String, dynamic> body = <String, dynamic>{
         'order_id': params.orderId,
         'reason': params.reason,
         if (params.objectId != null) 'object_id': params.objectId,
       };
+      debugPrint(
+        'orderReturn: POST $endpoint (orderId=${params.orderId}, objectId=${params.objectId}, reasonLength=${params.reason.length})',
+      );
       final DataState<bool> result = await ApiCall<bool>().call(
         endpoint: endpoint,
         requestType: ApiRequestType.post,
         body: jsonEncode(body),
         isAuth: true,
       );
-      debugPrint(
-        'Order return response: ${result is DataSuccess ? result.data : result}',
-      );
+      debugPrint('Order return response: ${result.data}');
 
       if (result is DataSuccess<bool>) {
+        debugPrint('orderReturn: returning success');
         return DataSuccess<bool>(result.data ?? '', true);
       } else {
+        debugPrint(
+          'orderReturn: returning failure (${result.exception?.message ?? 'unknown_error'})',
+        );
         return DataFailer<bool>(
           result.exception ?? CustomException('failed_to_request_return'),
         );
@@ -227,6 +242,7 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
         error: e,
         stackTrace: stc,
       );
+      debugPrint('orderReturn: returning failure (catch)');
       return DataFailer<bool>(CustomException('failed_to_request_return'));
     }
   }

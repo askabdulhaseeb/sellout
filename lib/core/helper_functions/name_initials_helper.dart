@@ -1,3 +1,4 @@
+
 class GetInitialsHelper {
   /// Returns initials from a name.
   /// Examples:
