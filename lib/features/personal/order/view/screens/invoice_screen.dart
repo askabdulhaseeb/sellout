@@ -506,7 +506,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
     ).format(widget.order.createdAt);
     final Color cardColor = theme.colorScheme.surface;
     final Color borderColor = Theme.of(context).dividerColor;
-    final Color mutedText = theme.colorScheme.onSurface.withOpacity(0.6);
+    final Color mutedText = theme.colorScheme.onSurface.withValues(alpha: 0.6);
     final Color mainText = theme.colorScheme.onSurface;
 
     return Container(
@@ -516,7 +516,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
         border: Border.all(color: borderColor),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -999,7 +999,7 @@ class _ReceiptSuccessCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color mutedText = theme.colorScheme.onSurface.withOpacity(0.65);
+    final Color mutedText = theme.colorScheme.onSurface.withValues(alpha: 0.65);
 
     return Container(
       margin: const EdgeInsets.all(16),
