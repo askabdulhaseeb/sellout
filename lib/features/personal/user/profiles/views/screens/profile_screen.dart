@@ -16,6 +16,7 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('LocalAuth.userId ${LocalAuth.uid}');
     debugPrint('Token ${LocalAuth.token}');
     return PersonalScaffold(
       body: FutureBuilder<DataState<UserEntity?>?>(

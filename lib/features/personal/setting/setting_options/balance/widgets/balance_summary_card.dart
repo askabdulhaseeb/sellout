@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
 import '../../../../payment/data/models/wallet_model.dart';
 import '../../../../../../core/extension/datetime_ext.dart';
 import '../../../../../../core/extension/string_ext.dart';
@@ -60,9 +59,13 @@ class BalanceSummaryCard extends StatelessWidget {
           ),
           Row(
             children: <Widget>[
-              Text(
-                'approx_pkr'.tr(args: <String>['0.00']),
-                style: TextStyle(color: Colors.grey[600], fontSize: 12),
+              Flexible(
+                child: Text(
+                  'approx_pkr'.tr(args: <String>['0.00']),
+                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
               const SizedBox(width: 8),
               Container(
@@ -74,6 +77,8 @@ class BalanceSummaryCard extends StatelessWidget {
                 child: Text(
                   'live_rates_apply'.tr(),
                   style: const TextStyle(fontSize: 10),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
@@ -82,39 +87,59 @@ class BalanceSummaryCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text(
-                'currency'.tr(args: <String>[wallet.currency]),
-                style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+              Flexible(
+                child: Text(
+                  'currency'.tr(args: <String>[wallet.currency]),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-              Text(
-                'updated_at'.tr(args: <String>[updatedAtStr]),
-                style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  'updated_at'.tr(args: <String>[updatedAtStr]),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.end,
+                ),
               ),
             ],
           ),
           const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              BalanceTile(
-                label: 'pending'.tr(),
-                value: wallet.pendingBalance,
-                currencyCode: wallet.currency,
+              Expanded(
+                child: BalanceTile(
+                  label: 'pending'.tr(),
+                  value: wallet.pendingBalance,
+                  currencyCode: wallet.currency,
+                ),
               ),
-              BalanceTile(
-                label: 'total_balance'.tr(),
-                value: wallet.totalBalance,
-                currencyCode: wallet.currency,
+              const SizedBox(width: 8),
+              Expanded(
+                child: BalanceTile(
+                  label: 'total_balance'.tr(),
+                  value: wallet.totalBalance,
+                  currencyCode: wallet.currency,
+                ),
               ),
-              BalanceTile(
-                label: 'total_earned'.tr(),
-                value: wallet.totalEarnings,
-                currencyCode: wallet.currency,
+              const SizedBox(width: 8),
+              Expanded(
+                child: BalanceTile(
+                  label: 'total_earned'.tr(),
+                  value: wallet.totalEarnings,
+                  currencyCode: wallet.currency,
+                ),
               ),
-              BalanceTile(
-                label: 'withdrawn'.tr(),
-                value: wallet.totalWithdrawn,
-                currencyCode: wallet.currency,
+              const SizedBox(width: 8),
+              Expanded(
+                child: BalanceTile(
+                  label: 'withdrawn'.tr(),
+                  value: wallet.totalWithdrawn,
+                  currencyCode: wallet.currency,
+                ),
               ),
             ],
           ),

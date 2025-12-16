@@ -22,7 +22,7 @@ class _HomePromoListSectionState extends State<HomePromoListSection> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future<void>.delayed(const Duration(milliseconds: 200), () {
         // ignore: use_build_context_synchronously
-        Provider.of<PromoProvider>(context, listen: false).getPromoOfFollower();
+        Provider.of<PromoProvider>(context, listen: false).fetchAllPromos();
       });
     });
   }
@@ -30,9 +30,13 @@ class _HomePromoListSectionState extends State<HomePromoListSection> {
   @override
   Widget build(BuildContext context) {
     final PromoProvider promoProvider = Provider.of<PromoProvider>(context);
-    final List<PromoEntity>? pro = promoProvider.promoList;
+    final List<PromoEntity>? followersPromos = promoProvider.promoList;
+    final List<PromoEntity>? myPromos = promoProvider.myPromoList;
     final bool isLoading = promoProvider.isLoadig;
-    final bool showMore = (pro?.length ?? 0) <= 3;
+    final bool isLoadingMyPromos = promoProvider.isLoadingMyPromos;
+    final int totalFollowerPromos = followersPromos?.length ?? 0;
+    final bool showMore = totalFollowerPromos > 3;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -41,22 +45,22 @@ class _HomePromoListSectionState extends State<HomePromoListSection> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              if (!showMore && !isLoading)
+              if (showMore && !isLoading)
                 GestureDetector(
                   onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute<PromoHomeGridView>(
-                        builder: (BuildContext context) => PromoHomeGridView(
-                          promos: pro,
-                        ),
-                      )),
+                    context,
+                    MaterialPageRoute<PromoHomeGridView>(
+                      builder: (BuildContext context) =>
+                          PromoHomeGridView(promos: followersPromos),
+                    ),
+                  ),
                   child: Text(
                     'view_more'.tr(),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).primaryColor,
-                          decoration: TextDecoration.underline,
-                          decorationColor: Theme.of(context).primaryColor,
-                        ),
+                      color: Theme.of(context).primaryColor,
+                      decoration: TextDecoration.underline,
+                      decorationColor: Theme.of(context).primaryColor,
+                    ),
                   ),
                 ),
             ],
@@ -64,11 +68,11 @@ class _HomePromoListSectionState extends State<HomePromoListSection> {
         ),
         SizedBox(
           height: 130,
-          child: isLoading
+          child: isLoading && isLoadingMyPromos
               ? ListView.builder(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 12),
-                  itemCount: 4, // Number of shimmer placeholders
+                  itemCount: 5,
                   itemBuilder: (BuildContext context, int index) {
                     return const PromoTileLoader();
                   },
@@ -76,18 +80,38 @@ class _HomePromoListSectionState extends State<HomePromoListSection> {
               : ListView.builder(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 12),
-                  itemCount: (pro == null || pro.isEmpty) ? 1 : pro.length + 1,
+                  itemCount: _calculateItemCount(followersPromos),
                   itemBuilder: (BuildContext context, int index) {
+                    // First item: Add promo card (with my promos preview if any)
                     if (index == 0) {
-                      return const AddPromoCard();
-                    } else {
-                      final PromoEntity promo = pro![index - 1];
-                      return PromoItemCard(title: promo.title, promo: promo);
+                      return AddPromoCard(
+                        myPromos: myPromos,
+                        isLoading: isLoadingMyPromos,
+                      );
                     }
+                    // Remaining items: Followers' promos
+                    if (followersPromos != null &&
+                        followersPromos.isNotEmpty &&
+                        index - 1 < followersPromos.length) {
+                      final PromoEntity promo = followersPromos[index - 1];
+                      return PromoItemCard(
+                        title: promo.title,
+                        promo: promo,
+                        promos: followersPromos,
+                        initialIndex: index - 1,
+                      );
+                    }
+                    return const SizedBox.shrink();
                   },
                 ),
         ),
       ],
     );
+  }
+
+  int _calculateItemCount(List<PromoEntity>? followersPromos) {
+    // 1 for MyPromoCard + followers promos count
+    final int followersCount = followersPromos?.length ?? 0;
+    return 1 + followersCount;
   }
 }

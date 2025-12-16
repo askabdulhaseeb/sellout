@@ -7,10 +7,7 @@ import '../../../domain/entities/promo_entity.dart';
 import 'promo_gridview_tile.dart';
 
 class PromoHomeGridView extends StatefulWidget {
-  const PromoHomeGridView({
-    required this.promos,
-    super.key,
-  });
+  const PromoHomeGridView({required this.promos, super.key});
 
   final List<PromoEntity>? promos;
 
@@ -73,21 +70,24 @@ class _PromoHomeGridViewState extends State<PromoHomeGridView> {
                         crossAxisCount: 3, // 3 columns
                         mainAxisSpacing: 8,
                         crossAxisSpacing: 8,
-                        children: List.generate(
-                          filteredList.length,
-                          (int index) {
-                            final PromoEntity promo = filteredList[index];
+                        children: List.generate(filteredList.length, (
+                          int index,
+                        ) {
+                          final PromoEntity promo = filteredList[index];
 
-                            // Make every 5th tile "big" (2x2)
-                            final bool isBig = index % 5 == 0;
+                          // Make every 5th tile "big" (2x2)
+                          final bool isBig = index % 5 == 0;
 
-                            return StaggeredGridTile.count(
-                              crossAxisCellCount: isBig ? 2 : 1,
-                              mainAxisCellCount: isBig ? 2 : 1,
-                              child: PromoHomeGridViewTile(promo: promo),
-                            );
-                          },
-                        ),
+                          return StaggeredGridTile.count(
+                            crossAxisCellCount: isBig ? 2 : 1,
+                            mainAxisCellCount: isBig ? 2 : 1,
+                            child: PromoHomeGridViewTile(
+                              promo: promo,
+                              promos: filteredList,
+                              initialIndex: index,
+                            ),
+                          );
+                        }),
                       ),
                     ),
             ),
