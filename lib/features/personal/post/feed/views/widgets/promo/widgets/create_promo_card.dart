@@ -117,8 +117,8 @@ class AddPromoCard extends StatelessWidget {
 
                   if (hasPromos)
                     Positioned(
-                      bottom: 6,
-                      right: 6,
+                      bottom: 0,
+                      right: 0,
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
@@ -130,7 +130,7 @@ class AddPromoCard extends StatelessWidget {
                           ),
                         ),
                         child: Icon(
-                          Icons.add,
+                          Icons.add_circle,
                           size: 18,
                           color: theme.primaryColor,
                         ),
