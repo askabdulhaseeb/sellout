@@ -20,8 +20,10 @@ class _ChatDashboardScreenState extends State<ChatDashboardScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final ChatDashboardProvider pro =
-          Provider.of<ChatDashboardProvider>(context, listen: false);
+      final ChatDashboardProvider pro = Provider.of<ChatDashboardProvider>(
+        context,
+        listen: false,
+      );
       pro.getChats();
     });
   }
@@ -37,7 +39,7 @@ class _ChatDashboardScreenState extends State<ChatDashboardScreen> {
             SizedBox(height: 8),
             ChatSelectablePageTypeWidget(),
             ChatDashboardSearchableWidget(),
-            ChatDashboardListSeaction(),
+            ChatDashboardListSection(),
           ],
         ),
       ),

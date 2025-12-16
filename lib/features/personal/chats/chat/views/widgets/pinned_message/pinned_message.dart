@@ -58,7 +58,7 @@ class _OfferMessageTileAnimatedState extends State<OfferMessageTileAnimated>
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
         ),
-        duration: const Duration(microseconds: 1000),
+        duration: const Duration(milliseconds: 300),
         child: Column(
           children: <Widget>[
             Container(

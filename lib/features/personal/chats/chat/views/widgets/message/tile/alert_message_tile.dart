@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 
-class AlartMessageTile extends StatelessWidget {
-  const AlartMessageTile({required this.message, super.key});
+class AlertMessageTile extends StatelessWidget {
+  const AlertMessageTile({required this.message, super.key});
   final MessageEntity message;
   @override
   Widget build(BuildContext context) {
@@ -27,9 +27,9 @@ class AlartMessageTile extends StatelessWidget {
                   message.displayText,
                   textAlign: TextAlign.center,
                   style: TextTheme.of(context).labelSmall?.copyWith(
-                        color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ),

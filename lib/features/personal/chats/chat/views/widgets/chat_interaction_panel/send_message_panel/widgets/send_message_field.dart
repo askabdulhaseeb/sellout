@@ -4,14 +4,14 @@ import 'package:provider/provider.dart';
 import '../../../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../providers/send_message_provider.dart';
 
-class SendMessageFIeld extends StatefulWidget {
-  const SendMessageFIeld({super.key});
+class SendMessageField extends StatefulWidget {
+  const SendMessageField({super.key});
 
   @override
-  State<SendMessageFIeld> createState() => _SendMessageFIeldState();
+  State<SendMessageField> createState() => _SendMessageFieldState();
 }
 
-class _SendMessageFIeldState extends State<SendMessageFIeld> {
+class _SendMessageFieldState extends State<SendMessageField> {
   late final SendMessageProvider _msgPro;
 
   @override
@@ -39,8 +39,10 @@ class _SendMessageFIeldState extends State<SendMessageFIeld> {
     return Consumer<SendMessageProvider>(
       builder: (_, SendMessageProvider msgPro, __) {
         return CustomTextFormField(
-          contentPadding:
-              const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 10,
+            horizontal: 4,
+          ),
           dense: true,
           keyboardType: TextInputType.multiline,
           autoFocus: false,

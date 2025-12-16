@@ -52,7 +52,7 @@ class SendMessagePanel extends StatelessWidget {
                                 if (!hasText)
                                   const SendMessageAttachmentMenuButton(),
                                 const EmojiPickerIconButton(),
-                                const Expanded(child: SendMessageFIeld()),
+                                const Expanded(child: SendMessageField()),
                               ],
                             ),
                           ),
