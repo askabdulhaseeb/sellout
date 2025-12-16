@@ -9,9 +9,16 @@ class OrderReturnParams {
   final String reason;
   final String? objectId;
 
-  Map<String, dynamic> toMap() => <String, dynamic>{
-    'order_id': orderId,
-    'reason': reason,
-    if (objectId != null) 'object_id': objectId,
-  };
+  Map<String, dynamic> toMap() {
+    final String sanitizedOrderId = orderId.trim();
+    final String sanitizedReason = reason.trim();
+    final String? sanitizedObjectId = objectId?.trim();
+
+    return <String, dynamic>{
+      'order_id': sanitizedOrderId,
+      'reason': sanitizedReason,
+      if (sanitizedObjectId != null && sanitizedObjectId.isNotEmpty)
+        'object_id': sanitizedObjectId,
+    };
+  }
 }

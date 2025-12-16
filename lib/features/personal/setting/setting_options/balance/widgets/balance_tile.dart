@@ -19,21 +19,31 @@ class BalanceTile extends StatelessWidget {
     final String symbol = CountryHelper.currencySymbolHelper(currencyCode);
     final String valueStr = '$symbol${value.toDouble().toStringAsFixed(2)}';
 
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Column(
-          children: <Widget>[
-            Text(label, style: const TextStyle(fontSize: 12)),
-            const SizedBox(height: 4),
-            Text(valueStr, style: const TextStyle(fontWeight: FontWeight.bold)),
-          ],
-        ),
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(
+            label,
+            style: const TextStyle(fontSize: 12),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 4),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              valueStr,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+              maxLines: 1,
+            ),
+          ),
+        ],
       ),
     );
   }

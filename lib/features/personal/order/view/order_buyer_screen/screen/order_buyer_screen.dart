@@ -21,11 +21,9 @@ class OrderBuyerScreen extends StatelessWidget {
     final DataState<PostEntity> postResult = await GetSpecificPostUsecase(
       locator(),
     ).call(GetSpecificPostParam(postId: order.postId));
-
     final PostEntity? post = (postResult is DataSuccess<PostEntity>)
         ? postResult.entity
         : null;
-
     return (order, post);
   }
 
@@ -33,9 +31,7 @@ class OrderBuyerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final Map<String, dynamic> args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-
     final OrderEntity order = args['order'];
-
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -63,7 +59,6 @@ class OrderBuyerScreen extends StatelessWidget {
                     const SizedBox(height: 16),
                     OrderBuyerStatusSection(orderData: orderData),
                     const SizedBox(height: 16),
-                    // Product card
                     BuyerOrderProductDetailWidget(
                       post: post,
                       orderData: orderData,

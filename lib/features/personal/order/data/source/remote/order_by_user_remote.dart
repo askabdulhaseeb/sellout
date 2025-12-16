@@ -208,11 +208,7 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
     // legacy: keep parity with checkReturnEligibility; consider simplifying
     try {
       final String endpoint = '/orders/return/request';
-      final Map<String, dynamic> body = <String, dynamic>{
-        'order_id': params.orderId,
-        'reason': params.reason,
-        if (params.objectId != null) 'object_id': params.objectId,
-      };
+      final Map<String, dynamic> body = params.toMap();
       debugPrint(
         'orderReturn: POST $endpoint (orderId=${params.orderId}, objectId=${params.objectId}, reasonLength=${params.reason.length})',
       );
