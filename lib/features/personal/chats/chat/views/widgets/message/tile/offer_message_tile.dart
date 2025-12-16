@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
-import '../../pinned_message.dart/widgets/offer_buttons/offer_message_tile_buttons.dart';
+import '../../pinned_message/widgets/offer_buttons/offer_message_tile_buttons.dart';
 
 class OfferMessageTile extends StatelessWidget {
   const OfferMessageTile({
@@ -92,7 +92,8 @@ class OfferMessageTileDetail extends StatelessWidget {
                   child: Text(
                     '${CountryHelper.currencySymbolHelper(message.offerDetail?.currency)}.${message.offerDetail?.price} X ${message.offerDetail?.quantity}',
                     key: ValueKey(
-                        '${message.offerDetail?.price}-${message.offerDetail?.quantity}'),
+                      '${message.offerDetail?.price}-${message.offerDetail?.quantity}',
+                    ),
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       color: ColorScheme.of(context).outline,
@@ -107,14 +108,17 @@ class OfferMessageTileDetail extends StatelessWidget {
                       ? Container(
                           key: const ValueKey('counter'),
                           padding: const EdgeInsets.symmetric(
-                              vertical: 2, horizontal: 4),
+                            vertical: 2,
+                            horizontal: 4,
+                          ),
                           decoration: BoxDecoration(
-                            color: ColorScheme.of(context)
-                                .outlineVariant
-                                .withValues(alpha: 0.4),
+                            color: ColorScheme.of(
+                              context,
+                            ).outlineVariant.withValues(alpha: 0.4),
                             borderRadius: BorderRadius.circular(4),
                             border: Border.all(
-                                color: ColorScheme.of(context).outlineVariant),
+                              color: ColorScheme.of(context).outlineVariant,
+                            ),
                           ),
                           child: Wrap(
                             crossAxisAlignment: WrapCrossAlignment.center,
@@ -162,10 +166,9 @@ class OfferMessageTileDetail extends StatelessWidget {
                     child: Text(
                       '${CountryHelper.currencySymbolHelper(message.offerDetail?.currency)} ${message.offerDetail?.offerPrice ?? ''}',
                       key: ValueKey(message.offerDetail?.offerPrice),
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelSmall
-                          ?.copyWith(fontWeight: FontWeight.w700),
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
                       maxLines: 2,
                     ),
                   ),
@@ -176,8 +179,8 @@ class OfferMessageTileDetail extends StatelessWidget {
                       '${CountryHelper.currencySymbolHelper(message.offerDetail?.currency)} ${message.offerDetail?.price}',
                       key: ValueKey(message.offerDetail?.price),
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            decoration: TextDecoration.lineThrough,
-                          ),
+                        decoration: TextDecoration.lineThrough,
+                      ),
                     ),
                   ),
                 ],

@@ -6,7 +6,7 @@ import '../../../chat_dashboard/data/sources/local/local_unseen_messages.dart';
 import '../providers/chat_provider.dart';
 import '../widgets/app_bar/chat_app_bar.dart';
 import '../widgets/chat_interaction_panel/chat_interaction_panel.dart';
-import '../widgets/pinned_message.dart/pinned_message.dart';
+import '../widgets/pinned_message/pinned_message.dart';
 import '../widgets/message/messages_list.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -24,9 +24,9 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
 
-    Future<void>.delayed(const Duration(milliseconds: 300), () {
-      // ignore: use_build_context_synchronously
-      Provider.of<ChatProvider>(context, listen: false).getMessages();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<ChatProvider>().getMessages();
     });
   }
 
@@ -47,9 +47,7 @@ class _ChatScreenState extends State<ChatScreen> {
           return Scaffold(
             backgroundColor: Theme.of(context).canvasColor,
             appBar: chatAppBar(context),
-            body: const Center(
-              child: CircularProgressIndicator(),
-            ),
+            body: const Center(child: CircularProgressIndicator()),
           );
         }
 
@@ -70,10 +68,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: Column(
                     children: <Widget>[
                       ChatPinnedMessage(chatId: chat.chatId),
-                      MessagesList(
-                        chat: chat,
-                        controller: scrollController,
-                      ),
+                      MessagesList(chat: chat, controller: scrollController),
                       const ChatInteractionPanel(),
                     ],
                   ),
