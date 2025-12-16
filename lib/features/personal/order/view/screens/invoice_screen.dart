@@ -5,10 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:photo_manager/photo_manager.dart';
+import '../../../../../core/constants/app_spacings.dart';
 import '../../../../../core/widgets/sellout_title.dart';
 import '../../domain/entities/order_entity.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/helper_functions/country_helper.dart';
+import '../../../auth/signin/domain/entities/address_entity.dart';
 import '../../../post/data/sources/local/local_post.dart';
 import '../../../post/domain/entities/post/post_entity.dart';
 import '../../../user/profiles/data/sources/local/local_user.dart';
@@ -115,6 +118,228 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
     return getApplicationDocumentsDirectory();
   }
 
+  Future<bool> _saveToGallery(
+    Uint8List pngBytes, {
+    required String title,
+  }) async {
+    final PermissionState ps = await PhotoManager.requestPermissionExtend();
+    if (!ps.isAuth) return false;
+
+    try {
+      final String safeTitle = title.replaceAll(
+        RegExp(r'\.(png|jpg|jpeg)$', caseSensitive: false),
+        '',
+      );
+      final AssetEntity? entity = await PhotoManager.editor.saveImage(
+        filename: safeTitle,
+        pngBytes,
+        title: safeTitle,
+      );
+      return entity != null;
+    } catch (e, st) {
+      AppLog.error(
+        'Failed to save invoice to gallery',
+        error: e,
+        stackTrace: st,
+      );
+      return false;
+    }
+  }
+
+  String _compactId(String value, {int start = 10, int end = 6}) {
+    final String trimmed = value.trim();
+    if (trimmed.length <= start + end + 1) return trimmed;
+    return '${trimmed.substring(0, start)}…${trimmed.substring(trimmed.length - end)}';
+  }
+
+  List<String> _addressLines(
+    AddressEntity? address, {
+    required String fallbackName,
+  }) {
+    final List<String> lines = <String>[];
+
+    final String resolvedName = (address?.recipientName ?? '').trim().isNotEmpty
+        ? address!.recipientName
+        : fallbackName;
+    if (resolvedName.trim().isNotEmpty) {
+      lines.add(resolvedName.trim());
+    }
+
+    void addIfNotEmpty(String value) {
+      final String v = value.trim();
+      if (v.isNotEmpty) lines.add(v);
+    }
+
+    addIfNotEmpty(address?.address1 ?? '');
+    addIfNotEmpty(address?.address2 ?? '');
+
+    final String cityPostal = <String?>[address?.city, address?.postalCode]
+        .whereType<String>()
+        .map((String e) => e.trim())
+        .where((String e) => e.isNotEmpty)
+        .join(' ');
+    addIfNotEmpty(cityPostal);
+
+    final String stateCountry =
+        <String?>[address?.state.stateName, address?.country.countryName]
+            .whereType<String>()
+            .map((String e) => e.trim())
+            .where((String e) => e.isNotEmpty)
+            .join(', ');
+    addIfNotEmpty(stateCountry);
+
+    if (lines.isEmpty) return <String>[fallbackName];
+    return lines;
+  }
+
+  List<String> _getToAddressLines() {
+    final AddressEntity? toAddress =
+        widget.order.shippingDetails?.toAddress ?? widget.order.shippingAddress;
+    final String fallbackName =
+        _buyerUser?.displayName ?? widget.order.shippingAddress.recipientName;
+    return _addressLines(toAddress, fallbackName: fallbackName);
+  }
+
+  List<String> _getFromAddressLines() {
+    final String sellerName =
+        _sellerBusiness?.displayName ??
+        _sellerUser?.displayName ??
+        widget.order.sellerId;
+
+    final AddressEntity? fromAddress =
+        widget.order.shippingDetails?.fromAddress;
+    if (fromAddress == null) {
+      return <String>[sellerName];
+    }
+
+    return _addressLines(fromAddress, fallbackName: sellerName);
+  }
+
+  Future<void> _showInvoiceGlassPreview({
+    required File file,
+    required String title,
+  }) async {
+    if (!mounted) return;
+
+    await showGeneralDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(context).closeButtonTooltip,
+      barrierColor: Colors.black.withValues(alpha: 0.25),
+      transitionDuration: const Duration(milliseconds: 220),
+      pageBuilder: (BuildContext context, _, __) {
+        final ThemeData theme = Theme.of(context);
+
+        const Duration receiptAnimDuration = Duration(milliseconds: 420);
+
+        return SafeArea(
+          child: Material(
+            type: MaterialType.transparency,
+            child: Stack(
+              children: <Widget>[
+                BackdropFilter(
+                  filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: const SizedBox.expand(),
+                ),
+                Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 460),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Row(
+                            children: <Widget>[
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.surface,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: theme.dividerColor),
+                                ),
+                                child: IconButton(
+                                  icon: const Icon(
+                                    Icons.arrow_back_ios_new,
+                                    size: 18,
+                                  ),
+                                  onPressed: () => Navigator.of(context).pop(),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  title,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: theme.textTheme.titleMedium,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        TweenAnimationBuilder<double>(
+                          tween: Tween<double>(begin: 0, end: 1),
+                          duration: receiptAnimDuration,
+                          curve: Curves.easeOutCubic,
+                          builder:
+                              (BuildContext context, double t, Widget? child) {
+                                return Opacity(
+                                  opacity: t,
+                                  child: Transform.translate(
+                                    offset: Offset(0, (1 - t) * 18),
+                                    child: Transform.scale(
+                                      scale: 0.98 + (0.02 * t),
+                                      child: child,
+                                    ),
+                                  ),
+                                );
+                              },
+                          child: _ReceiptSuccessCard(
+                            theme: theme,
+                            file: file,
+                            successText: 'invoice_saved_successfully'.tr(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+      transitionBuilder:
+          (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+            Widget child,
+          ) {
+            final Animation<double> curved = CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOutCubic,
+              reverseCurve: Curves.easeInCubic,
+            );
+
+            return FadeTransition(
+              opacity: curved,
+              child: SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(0, 0.05),
+                  end: Offset.zero,
+                ).animate(curved),
+                child: ScaleTransition(
+                  scale: Tween<double>(begin: 0.985, end: 1.0).animate(curved),
+                  child: child,
+                ),
+              ),
+            );
+          },
+    );
+  }
+
   Future<void> _captureAndSavePng() async {
     if (_isSaving) return;
 
@@ -146,31 +371,29 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
       final File file = File('${dir.path}/$fileName');
       await file.writeAsBytes(pngBytes, flush: true);
 
-      AppLog.info('Invoice image saved: ${file.path}');
-
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: <Widget>[
-              const Icon(Icons.check_circle, color: Colors.white),
-              const SizedBox(width: 8),
-              Expanded(child: Text('invoice_saved_successfully'.tr())),
-            ],
-          ),
-          backgroundColor: Colors.green.shade600,
-          behavior: SnackBarBehavior.floating,
-        ),
+      final bool savedToGallery = await _saveToGallery(
+        pngBytes,
+        title: fileName,
       );
 
-      // Show an in-app preview (receipt-style) after download.
-      await Navigator.of(context).push<void>(
-        MaterialPageRoute<void>(
-          builder: (_) => _InvoiceDownloadedPreviewScreen(
-            file: file,
-            title: 'invoice_saved_successfully'.tr(),
+      if (!savedToGallery) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('photos_permission_required'.tr()),
+            backgroundColor: Colors.red.shade600,
+            behavior: SnackBarBehavior.floating,
           ),
-        ),
+        );
+        return;
+      }
+
+      AppLog.info('Invoice image saved to gallery and cached at: ${file.path}');
+
+      if (!mounted) return;
+      await _showInvoiceGlassPreview(
+        file: file,
+        title: 'invoice_saved_successfully'.tr(),
       );
     } catch (e, st) {
       AppLog.error(
@@ -304,7 +527,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
         children: <Widget>[
           // Header Row (logo left, invoice info right) + small info boxes
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
             child: Column(
               children: <Widget>[
                 Row(
@@ -315,13 +538,14 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                       borderRadius: BorderRadius.circular(6),
                       child: Image.asset(
                         AppStrings.selloutLogo,
-                        width: 40,
-                        height: 40,
+                        width: 32,
+                        height: 32,
                         fit: BoxFit.cover,
                       ),
                     ),
+                    const SizedBox(width: 8),
                     SellOutTitle(
-                      size: 20,
+                      size: 18,
                       fontWeight: FontWeight.w600,
                       color: theme.colorScheme.primary,
                     ),
@@ -349,85 +573,42 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                   ],
                 ),
 
-                const SizedBox(height: 12),
+                const SizedBox(height: 10),
 
-                // Small info boxes (INFO / TAX ID)
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 10,
-                          horizontal: 12,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? Colors.grey.shade900
-                              : Colors.grey.shade50,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: borderColor),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              'info'.tr(),
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                color: mutedText,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              widget.order.orderId,
-                              style: theme.textTheme.labelMedium?.copyWith(
-                                color: mainText,
-                              ),
-                              maxLines: 5,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
+                // Order ID (simple, no tax)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.grey.shade900 : Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: borderColor),
+                  ),
+                  child: Row(
+                    children: <Widget>[
+                      Text(
+                        'order_id'.tr(),
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: mutedText,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 10,
-                          horizontal: 12,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? Colors.grey.shade900
-                              : Colors.grey.shade50,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: borderColor),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              'tax_id'.tr(),
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                color: mutedText,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              widget.order.paymentDetail.paymentIndentId,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: mainText,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          _compactId(widget.order.orderId),
+                          style: theme.textTheme.labelMedium?.copyWith(
+                            color: mainText,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -437,15 +618,15 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
 
           // Addresses Row
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                // Bill To
+                // To
                 Expanded(
                   child: _buildAddressBlock(
-                    title: 'bill_to'.tr(),
-                    lines: _getBuyerAddressLines(),
+                    title: 'to'.tr(),
+                    lines: _getToAddressLines(),
                     isDark: isDark,
                   ),
                 ),
@@ -454,7 +635,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                 Expanded(
                   child: _buildAddressBlock(
                     title: 'from'.tr(),
-                    lines: _getSellerAddressLines(),
+                    lines: _getFromAddressLines(),
                     isDark: isDark,
                   ),
                 ),
@@ -467,7 +648,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
 
           // Totals Section
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
@@ -538,8 +719,8 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
         ),
         const SizedBox(width: 8),
         SizedBox(
-          height: 32,
-          child: OutlinedButton.icon(
+          height: 34,
+          child: ElevatedButton.icon(
             onPressed: _isSaving ? null : _captureAndSavePng,
             icon: _isSaving
                 ? SizedBox(
@@ -547,31 +728,16 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                     height: 14,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: theme.colorScheme.primary,
+                      color: theme.colorScheme.onPrimary,
                     ),
                   )
-                : const Icon(Icons.download_outlined, size: 16),
+                : const Icon(Icons.download_outlined, size: 15),
             label: Text(
               _isSaving ? 'saving'.tr() : 'save'.tr(),
               style: const TextStyle(fontSize: 12),
             ),
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(6),
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 8),
-        SizedBox(
-          height: 32,
-          child: OutlinedButton.icon(
-            onPressed: _isSaving ? null : _captureAndSavePng,
-            icon: const Icon(Icons.print_outlined, size: 16),
-            label: Text('print'.tr(), style: const TextStyle(fontSize: 12)),
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(6),
               ),
@@ -616,54 +782,19 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
     );
   }
 
-  List<String> _getBuyerAddressLines() {
-    final String name =
-        _buyerUser?.displayName ?? widget.order.shippingAddress.recipientName;
-    final List<String> lines = <String>[name];
-
-    if (widget.order.shippingAddress.address1.isNotEmpty) {
-      lines.add(widget.order.shippingAddress.address1);
-    }
-
-    final List<String> cityStateParts = <String>[];
-    if (widget.order.shippingAddress.city.isNotEmpty) {
-      cityStateParts.add(widget.order.shippingAddress.city);
-    }
-    if (widget.order.shippingAddress.postalCode.isNotEmpty) {
-      cityStateParts.add(widget.order.shippingAddress.postalCode);
-    }
-    if (cityStateParts.isNotEmpty) {
-      lines.add(cityStateParts.join(' '));
-    }
-
-    if (widget.order.shippingAddress.country.countryName.isNotEmpty) {
-      lines.add(widget.order.shippingAddress.country.countryName);
-    }
-
-    return lines;
-  }
-
-  List<String> _getSellerAddressLines() {
-    final String name =
-        _sellerBusiness?.displayName ??
-        _sellerUser?.displayName ??
-        widget.order.sellerId;
-    return <String>[name];
-  }
-
   Widget _buildItemsTable(bool isDark, Color borderColor) {
     final Color headerBg = isDark ? Colors.grey.shade800 : Colors.grey.shade50;
     final Color mutedText = isDark
         ? Colors.grey.shade400
         : Colors.grey.shade600;
     final Color mainText = isDark ? Colors.grey.shade200 : Colors.grey.shade800;
-    final theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
 
     return Column(
       children: <Widget>[
         // Header
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
             color: headerBg,
             border: Border.symmetric(
@@ -671,21 +802,21 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
             ),
           ),
           child: Row(
+            spacing: AppSpacing.hSm,
             children: <Widget>[
               Expanded(
-                flex: 5,
                 child: Text(
-                  'item'.tr().toUpperCase(),
+                  'item'.tr(),
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: mutedText,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
-              SizedBox(
-                width: 40,
+              Expanded(
                 child: Text(
-                  'quantity'.tr().toUpperCase(),
+                  maxLines: 1,
+                  'quantity'.tr(),
                   textAlign: TextAlign.center,
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: mutedText,
@@ -693,10 +824,9 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                   ),
                 ),
               ),
-              SizedBox(
-                width: 70,
+              Expanded(
                 child: Text(
-                  'price'.tr().toUpperCase(),
+                  'price'.tr(),
                   textAlign: TextAlign.right,
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: mutedText,
@@ -704,10 +834,9 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                   ),
                 ),
               ),
-              SizedBox(
-                width: 80,
+              Expanded(
                 child: Text(
-                  'amount'.tr().toUpperCase(),
+                  'amount'.tr(),
                   textAlign: TextAlign.right,
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: mutedText,
@@ -720,11 +849,11 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
         ),
         // Item Row
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           child: Row(
+            spacing: AppSpacing.hSm,
             children: <Widget>[
               Expanded(
-                flex: 5,
                 child: Text(
                   _post?.title ?? widget.order.postId,
                   style: TextStyle(fontSize: 12, color: mainText),
@@ -732,39 +861,28 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              SizedBox(
-                width: 40,
+              Expanded(
                 child: Text(
                   '${widget.order.quantity}',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 12, color: mainText),
                 ),
               ),
-              SizedBox(
-                width: 70,
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    _formatCurrency(widget.order.price),
-                    textAlign: TextAlign.right,
-                    style: TextStyle(fontSize: 12, color: mainText),
-                  ),
+              Expanded(
+                child: Text(
+                  _formatCurrency(widget.order.price),
+                  textAlign: TextAlign.right,
+                  style: TextStyle(fontSize: 12, color: mainText),
                 ),
               ),
-              SizedBox(
-                width: 80,
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    _formatCurrency(widget.order.price * widget.order.quantity),
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: mainText,
-                      fontWeight: FontWeight.w500,
-                    ),
+              Expanded(
+                child: Text(
+                  _formatCurrency(widget.order.price * widget.order.quantity),
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: mainText,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -799,7 +917,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
             Text(
-              'grand_total'.tr().toUpperCase(),
+              'grand_total'.tr(),
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
@@ -836,47 +954,171 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
   }
 }
 
-class _InvoiceDownloadedPreviewScreen extends StatelessWidget {
-  const _InvoiceDownloadedPreviewScreen({
-    required this.file,
-    required this.title,
-  });
+class _PreviewCardShell extends StatelessWidget {
+  const _PreviewCardShell({required this.theme, this.child});
 
-  final File file;
-  final String title;
+  final ThemeData theme;
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
+    return Container(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: theme.dividerColor),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
 
-    return Scaffold(
-      appBar: AppBar(elevation: 0, centerTitle: true, title: Text(title)),
-      body: SafeArea(
-        child: Center(
-          child: Container(
-            margin: const EdgeInsets.all(16),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: theme.dividerColor),
+      child: AspectRatio(
+        aspectRatio: 3 / 4,
+        child: child ?? const SizedBox.shrink(),
+      ),
+    );
+  }
+}
+
+class _ReceiptSuccessCard extends StatelessWidget {
+  const _ReceiptSuccessCard({
+    required this.theme,
+    required this.file,
+    required this.successText,
+  });
+
+  final ThemeData theme;
+  final File file;
+  final String successText;
+
+  @override
+  Widget build(BuildContext context) {
+    final Color mutedText = theme.colorScheme.onSurface.withOpacity(0.65);
+
+    return Container(
+      margin: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: theme.dividerColor),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 12, 14, 10),
+            child: Row(
+              children: <Widget>[
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary.withValues(alpha: 0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.check,
+                    size: 18,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        successText,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'order_invoice'.tr(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: mutedText,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            child: _DashedLine(
+              color: theme.dividerColor.withValues(alpha: 0.9),
+            ),
+          ),
+          _PreviewCardShell(
+            theme: theme,
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
               child: Image.file(
                 file,
                 fit: BoxFit.contain,
-                errorBuilder: (_, __, ___) => Center(
-                  child: Text(
-                    'failed_to_load_invoice_data'.tr(),
-                    textAlign: TextAlign.center,
+                errorBuilder: (_, _, _) => Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Text(
+                      'failed_to_load_invoice_data'.tr(),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
+        ],
       ),
+    );
+  }
+}
+
+class _DashedLine extends StatelessWidget {
+  const _DashedLine({required this.color});
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        const double dashWidth = 7;
+        const double dashGap = 5;
+        final int dashCount = (constraints.maxWidth / (dashWidth + dashGap))
+            .floor();
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: List<Widget>.generate(dashCount, (int _) {
+            return SizedBox(
+              width: dashWidth,
+              height: 1,
+              child: DecoratedBox(decoration: BoxDecoration(color: color)),
+            );
+          }),
+        );
+      },
     );
   }
 }
