@@ -26,7 +26,12 @@ enum StatusType {
   @HiveField(24)
   canceled('canceled', 'canceled', Colors.black, _redBG),
   @HiveField(25)
-  rejectedBySeller('cancelled_by_seller', 'cancelled_by_seller', Colors.red, _redBG),
+  rejectedBySeller(
+    'cancelled_by_seller',
+    'cancelled_by_seller',
+    Colors.red,
+    _redBG,
+  ),
   @HiveField(26)
   returned('returned', 'returned', Colors.black, _redBG),
   //
@@ -69,7 +74,7 @@ enum StatusType {
         return StatusType.cancelled;
       case 'canceled':
         return StatusType.canceled;
-      case 'complet' || 'completed' || 'delivered':
+      case 'complet' || 'completed':
         return StatusType.completed;
       case 'inprogress':
         return StatusType.inprogress;

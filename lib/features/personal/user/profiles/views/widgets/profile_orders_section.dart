@@ -67,7 +67,7 @@ class _ProfileOrdersSectionState extends State<ProfileOrdersSection> {
                   'new_order'.tr(),
                   'dispatched'.tr(),
                   'delivered'.tr(),
-                  'canceled'.tr(),
+                  'return'.tr(),
                 ],
                 initialValue: pro.status,
                 onToggle: (StatusType val) {

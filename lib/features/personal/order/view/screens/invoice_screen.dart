@@ -4,8 +4,6 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/rendering.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../../../core/widgets/sellout_title.dart';
 import '../../domain/entities/order_entity.dart';
@@ -108,26 +106,21 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
     return '$symbol$integerPart.${parts[1]}';
   }
 
+  Future<Directory> _getInvoiceSaveDirectory() async {
+    if (Platform.isAndroid) {
+      // App-specific external storage (scoped-storage safe, no runtime permission).
+      final Directory? dir = await getExternalStorageDirectory();
+      if (dir != null) return dir;
+    }
+    return getApplicationDocumentsDirectory();
+  }
+
   Future<void> _captureAndSavePng() async {
     if (_isSaving) return;
 
     setState(() => _isSaving = true);
 
     try {
-      if (Platform.isAndroid) {
-        final PermissionStatus status = await Permission.storage.request();
-        if (!status.isGranted) {
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('storage_permission_required'.tr()),
-              backgroundColor: Colors.red.shade600,
-            ),
-          );
-          return;
-        }
-      }
-
       final RenderRepaintBoundary? boundary =
           _invoiceKey.currentContext?.findRenderObject()
               as RenderRepaintBoundary?;
@@ -149,16 +142,9 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
       final Uint8List pngBytes = byteData.buffer.asUint8List();
       final String fileName = 'invoice_${widget.order.orderId}.png';
 
-      File file;
-      if (Platform.isAndroid) {
-        const String downloadsPath = '/storage/emulated/0/Download';
-        file = File('$downloadsPath/$fileName');
-        await file.writeAsBytes(pngBytes);
-      } else {
-        final Directory dir = await getApplicationDocumentsDirectory();
-        file = File('${dir.path}/$fileName');
-        await file.writeAsBytes(pngBytes);
-      }
+      final Directory dir = await _getInvoiceSaveDirectory();
+      final File file = File('${dir.path}/$fileName');
+      await file.writeAsBytes(pngBytes, flush: true);
 
       AppLog.info('Invoice image saved: ${file.path}');
 
@@ -177,9 +163,15 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
         ),
       );
 
-      try {
-        await OpenFile.open(file.path);
-      } catch (_) {}
+      // Show an in-app preview (receipt-style) after download.
+      await Navigator.of(context).push<void>(
+        MaterialPageRoute<void>(
+          builder: (_) => _InvoiceDownloadedPreviewScreen(
+            file: file,
+            title: 'invoice_saved_successfully'.tr(),
+          ),
+        ),
+      );
     } catch (e, st) {
       AppLog.error(
         'Failed to capture/save invoice image',
@@ -269,11 +261,17 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
-      child: Center(
-        child: RepaintBoundary(
-          key: _invoiceKey,
-          child: _buildInvoiceCard(isDark),
-        ),
+      child: Column(
+        children: <Widget>[
+          Center(
+            child: RepaintBoundary(
+              key: _invoiceKey,
+              child: _buildInvoiceCard(isDark),
+            ),
+          ),
+          const SizedBox(height: 12),
+          _buildActionsRow(),
+        ],
       ),
     );
   }
@@ -508,69 +506,79 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
 
           Divider(height: 1, color: borderColor),
 
-          // Footer / Actions
+          // Footer text only (actions are outside RepaintBoundary so they
+          // don't appear in the saved image).
           Padding(
             padding: const EdgeInsets.all(12),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: Text(
-                    'thank_you_for_purchase'.tr(),
-                    style: TextStyle(fontSize: 11, color: mutedText),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                SizedBox(
-                  height: 32,
-                  child: OutlinedButton.icon(
-                    onPressed: _isSaving ? null : _captureAndSavePng,
-                    icon: _isSaving
-                        ? SizedBox(
-                            width: 14,
-                            height: 14,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          )
-                        : const Icon(Icons.download_outlined, size: 16),
-                    label: Text(
-                      _isSaving ? 'saving'.tr() : 'save'.tr(),
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                SizedBox(
-                  height: 32,
-                  child: OutlinedButton.icon(
-                    onPressed: _isSaving ? null : _captureAndSavePng,
-                    icon: const Icon(Icons.print_outlined, size: 16),
-                    label: Text(
-                      'print'.tr(),
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+            child: Text(
+              'thank_you_for_purchase'.tr(),
+              style: TextStyle(fontSize: 11, color: mutedText),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildActionsRow() {
+    final ThemeData theme = Theme.of(context);
+    final Color mutedText = theme.colorScheme.onSurface.withOpacity(0.6);
+
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: Text(
+            'download'.tr(),
+            style: TextStyle(fontSize: 11, color: mutedText),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        const SizedBox(width: 8),
+        SizedBox(
+          height: 32,
+          child: OutlinedButton.icon(
+            onPressed: _isSaving ? null : _captureAndSavePng,
+            icon: _isSaving
+                ? SizedBox(
+                    width: 14,
+                    height: 14,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: theme.colorScheme.primary,
+                    ),
+                  )
+                : const Icon(Icons.download_outlined, size: 16),
+            label: Text(
+              _isSaving ? 'saving'.tr() : 'save'.tr(),
+              style: const TextStyle(fontSize: 12),
+            ),
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        SizedBox(
+          height: 32,
+          child: OutlinedButton.icon(
+            onPressed: _isSaving ? null : _captureAndSavePng,
+            icon: const Icon(Icons.print_outlined, size: 16),
+            label: Text('print'.tr(), style: const TextStyle(fontSize: 12)),
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -824,6 +832,51 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
         const SizedBox(width: 12),
         Text(value, style: TextStyle(fontSize: 11, color: color)),
       ],
+    );
+  }
+}
+
+class _InvoiceDownloadedPreviewScreen extends StatelessWidget {
+  const _InvoiceDownloadedPreviewScreen({
+    required this.file,
+    required this.title,
+  });
+
+  final File file;
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
+    return Scaffold(
+      appBar: AppBar(elevation: 0, centerTitle: true, title: Text(title)),
+      body: SafeArea(
+        child: Center(
+          child: Container(
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: theme.dividerColor),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.file(
+                file,
+                fit: BoxFit.contain,
+                errorBuilder: (_, __, ___) => Center(
+                  child: Text(
+                    'failed_to_load_invoice_data'.tr(),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
