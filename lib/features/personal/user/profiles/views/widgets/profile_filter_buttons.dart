@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/utilities/app_string.dart';
 import '../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../core/widgets/custom_svg_icon.dart';
@@ -33,11 +34,34 @@ class ProfileFilterSection extends StatelessWidget {
           Expanded(
             child: CustomFilterButton(
               iconFirst: false,
-              onPressed: () => showModalBottomSheet(
-                context: context,
-                builder: (BuildContext context) =>
-                    StoreCategoryBottomSheet(isStore: isStore),
-              ),
+              onPressed: () {
+                if (isStore) {
+                  final ProfileStorePostsProvider provider = context
+                      .read<ProfileStorePostsProvider>();
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (_) => StoreCategoryBottomSheet(
+                      selectedCategory: provider.category,
+                      categoryOptions: ListingType.storeList,
+                      onReset: provider.resetCategory,
+                      onSelect: provider.setCategory,
+                    ),
+                  );
+                  return;
+                }
+
+                final ProfileViewingPostsProvider provider = context
+                    .read<ProfileViewingPostsProvider>();
+                showModalBottomSheet(
+                  context: context,
+                  builder: (_) => StoreCategoryBottomSheet(
+                    selectedCategory: provider.category,
+                    categoryOptions: ListingType.viewingList,
+                    onReset: provider.resetCategory,
+                    onSelect: provider.setCategory,
+                  ),
+                );
+              },
               label: 'category'.tr(),
               icon: AppStrings.selloutDropDownIcon,
             ),
@@ -45,15 +69,53 @@ class ProfileFilterSection extends StatelessWidget {
           Expanded(
             child: CustomFilterButton(
               iconFirst: true,
-              onPressed: () => showModalBottomSheet(
-                context: context,
-                showDragHandle: false,
-                isDismissible: false,
-                useSafeArea: true,
-                isScrollControlled: true,
-                builder: (BuildContext context) =>
-                    StoreFilterBottomSheet(isStore: isStore),
-              ),
+              onPressed: () {
+                if (isStore) {
+                  final ProfileStorePostsProvider provider = context
+                      .read<ProfileStorePostsProvider>();
+                  showModalBottomSheet(
+                    context: context,
+                    showDragHandle: false,
+                    isDismissible: false,
+                    useSafeArea: true,
+                    isScrollControlled: true,
+                    builder: (_) => StoreFilterBottomSheet(
+                      sort: provider.sort,
+                      onSortChanged: provider.setSort,
+                      minPriceController: provider.minPriceController,
+                      maxPriceController: provider.maxPriceController,
+                      showStoreFields: true,
+                      selectedConditionType: provider.selectedConditionType,
+                      onConditionChanged: provider.setConditionType,
+                      selectedDeliveryType: provider.selectedDeliveryType,
+                      onDeliveryTypeChanged: provider.setDeliveryType,
+                      onReset: provider.filterSheetReset,
+                      onApply: provider.filterSheetApply,
+                      isLoading: provider.isLoading,
+                    ),
+                  );
+                  return;
+                }
+
+                final ProfileViewingPostsProvider provider = context
+                    .read<ProfileViewingPostsProvider>();
+                showModalBottomSheet(
+                  context: context,
+                  showDragHandle: false,
+                  isDismissible: false,
+                  useSafeArea: true,
+                  isScrollControlled: true,
+                  builder: (_) => StoreFilterBottomSheet(
+                    sort: provider.sort,
+                    onSortChanged: provider.setSort,
+                    minPriceController: provider.minPriceController,
+                    maxPriceController: provider.maxPriceController,
+                    onReset: provider.filterSheetReset,
+                    onApply: provider.filterSheetApply,
+                    isLoading: provider.isLoading,
+                  ),
+                );
+              },
               label: 'filter'.tr(),
               icon: AppStrings.selloutFilterIcon,
             ),
