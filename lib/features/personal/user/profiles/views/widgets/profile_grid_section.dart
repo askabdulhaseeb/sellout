@@ -21,16 +21,14 @@ class ProfileGridSection extends StatelessWidget {
         return profile.displayType == ProfilePageTabType.orders
             ? ProfileOrdersSection(user: user)
             : profile.displayType == ProfilePageTabType.store
-                ? ProfileStoreGridview(user: user)
-                : profile.displayType == ProfilePageTabType.promos
-                    ? ProfilePromoGridview(user: user)
-                    : profile.displayType == ProfilePageTabType.viewing
-                        ? ProfileMyViewingGridview(
-                            user: user,
-                          )
-                        : profile.displayType == ProfilePageTabType.saved
-                            ? const ProfileMySavedGridview()
-                            : ProfileReviewSection(user: user);
+            ? ProfileStoreGridview(user: user)
+            : profile.displayType == ProfilePageTabType.promos
+            ? ProfilePromoGridview(user: user)
+            : profile.displayType == ProfilePageTabType.viewing
+            ? ProfileMyViewingGridview(user: user)
+            : profile.displayType == ProfilePageTabType.saved
+            ? const ProfileMySavedGridview()
+            : ProfileReviewSection(user: user);
       },
     );
   }

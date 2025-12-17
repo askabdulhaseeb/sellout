@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../user/profiles/data/sources/local/local_user.dart';
-import '../../../../../user/profiles/views/screens/user_profile_screen.dart';
+import '../../../../../user/profiles/views/user_profile/screens/user_profile_screen.dart';
 import '../../../../../../business/business_page/views/screens/user_business_profile_screen.dart';
 import '../../../../../../business/core/data/sources/local_business.dart';
 import '../../../../../../business/core/domain/entity/business_entity.dart';

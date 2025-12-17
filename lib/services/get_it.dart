@@ -208,6 +208,7 @@ import '../features/personal/user/profiles/domain/usecase/get_post_by_id_usecase
 import '../features/personal/user/profiles/domain/usecase/get_user_by_uid.dart';
 import '../features/personal/order/domain/usecase/update_order_usecase.dart';
 import '../features/personal/user/profiles/views/providers/profile_provider.dart';
+import '../features/personal/user/profiles/views/user_profile/providers/user_profile_provider.dart';
 import '../features/postage/data/repository/postage_repository_impl.dart';
 import '../features/postage/data/source/remote/postage_remote_source.dart';
 import '../features/postage/domain/repository/postage_repository.dart';
@@ -385,8 +386,10 @@ void _profile() {
       locator(),
       locator(),
       locator(),
-      locator(),
     ),
+  );
+  locator.registerLazySingleton<UserProfileProvider>(
+    () => UserProfileProvider(locator(), locator(), locator()),
   );
 }
 

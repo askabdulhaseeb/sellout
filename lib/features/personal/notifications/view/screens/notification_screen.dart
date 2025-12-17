@@ -66,25 +66,27 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     provider.fetchNotificationsByType();
                   },
                   selectedColors: List<Color>.filled(
-                      NotificationType.values.length,
-                      Theme.of(context).primaryColor),
+                    NotificationType.values.length,
+                    Theme.of(context).primaryColor,
+                  ),
                 ),
                 if (notifications.isEmpty)
                   Expanded(
                     child: Center(
-                        child: EmptyPageWidget(
-                      icon: CupertinoIcons.bell,
-                      childBelow: Text(
-                        'no_results'.tr(),
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withValues(alpha: 0.5),
-                            ),
-                        textAlign: TextAlign.center,
+                      child: EmptyPageWidget(
+                        icon: CupertinoIcons.bell,
+                        childBelow: Text(
+                          'no_results'.tr(),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.5),
+                              ),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
-                    )),
+                    ),
                   ),
                 if (notifications.isNotEmpty)
                   Expanded(
@@ -107,10 +109,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 }
 
 class NotificationWidget extends StatefulWidget {
-  const NotificationWidget({
-    required this.notification,
-    super.key,
-  });
+  const NotificationWidget({required this.notification, super.key});
 
   final NotificationEntity notification;
 
@@ -139,7 +138,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
         }
         final UserEntity? user = snapshot.data;
         return Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Row(
             children: <Widget>[
               ClipRRect(
@@ -147,6 +146,9 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                 child: CustomNetworkImage(
                   imageURL: user?.profilePhotoURL ?? '',
                   size: 60,
+                  placeholder: user?.displayName.isNotEmpty == true
+                      ? user!.displayName
+                      : 'na'.tr(),
                 ),
               ),
               const SizedBox(width: 8),
@@ -162,11 +164,10 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                     Text(
                       widget.notification.title,
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withValues(alpha: 0.5),
-                          ),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.5),
+                      ),
                     ),
                     Row(
                       children: <Widget>[
@@ -175,14 +176,15 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                             borderRadius: BorderRadius.circular(6),
                             margin: const EdgeInsets.all(2),
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 14, vertical: 4),
-                            textStyle: Theme.of(context)
-                                .textTheme
-                                .bodySmall
+                              horizontal: 14,
+                              vertical: 4,
+                            ),
+                            textStyle: Theme.of(context).textTheme.bodySmall
                                 ?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimary),
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimary,
+                                ),
                             title: 'view'.tr(),
                             isLoading: false,
                             onTap: () {
