@@ -22,78 +22,91 @@ class MarketPlaceHeaderButtons extends StatelessWidget {
     return Consumer<MarketPlaceProvider>(
       builder: (BuildContext context, MarketPlaceProvider pro, Widget? child) =>
           SizedBox(
-        height: 40,
-        child: Row(
-          spacing: 4,
-          children: <Widget>[
-            _HeaderButton(
-                onPressed: () => Navigator.push(
+            height: 40,
+            child: Row(
+              spacing: 4,
+              children: <Widget>[
+                _HeaderButton(
+                  onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute<LocationRadiusBottomSheet>(
                       builder: (BuildContext context) =>
                           LocationRadiusBottomSheet(
-                        selectedLocation: pro.bottomsheetLocation,
-                        initialLatLng: pro.bottomsheetLatLng,
-                        initialRadius: pro.selectedRadius,
-                        initialRadiusType: pro.radiusType,
-                        onReset: () => pro.resetLocationBottomsheet(),
-                        onUpdateLocation: (RadiusType radiusType, double radius,
-                                LatLng latlng, LocationEntity? location) =>
-                            pro.updateLocationSheet(
-                                latlng, location, radiusType, radius),
-                      ),
-                    )),
-                icon: AppStrings.selloutMarketplaceLocationIcon,
-                label: pro.bottomsheetLocation == null
-                    ? 'location'.tr()
-                    : '${pro.bottomsheetLocation?.title}'),
-            if (pro.queryController.text.isEmpty)
-              _HeaderButton(
-                onPressed: () =>
-                    Navigator.pushNamed(context, YourOrdersScreen.routeName),
-                icon: null,
-                label: 'your_orders'.tr(),
-              ),
-            if (pro.queryController.text.isEmpty)
-              _HeaderButton(
-                onPressed: () =>
-                    Navigator.pushNamed(context, SavedPostsPage.routeName),
-                icon: null,
-                label: 'saved'.tr(),
-              ),
-            if (pro.queryController.text.isEmpty)
-              _HeaderButton(
-                onPressed: () =>
-                    Navigator.pushNamed(context, BuyAgainScreen.routeName),
-                icon: null,
-                label: 'buy_again'.tr(),
-              ),
-            if (pro.queryController.text.isNotEmpty)
-              _HeaderButton(
-                onPressed: () => showModalBottomSheet(
-                  context: context,
-                  builder: (BuildContext context) => const SortBottomSheet(),
+                            selectedLocation: pro.bottomsheetLocation,
+                            initialLatLng: pro.bottomsheetLatLng,
+                            initialRadius: pro.selectedRadius,
+                            initialRadiusType: pro.radiusType,
+                            onReset: () => pro.resetLocationBottomsheet(),
+                            onUpdateLocation:
+                                (
+                                  RadiusType radiusType,
+                                  double radius,
+                                  LatLng latlng,
+                                  LocationEntity? location,
+                                ) => pro.updateLocationSheet(
+                                  latlng,
+                                  location,
+                                  radiusType,
+                                  radius,
+                                ),
+                          ),
+                    ),
+                  ),
+                  icon: AppStrings.selloutMarketplaceLocationIcon,
+                  label: pro.bottomsheetLocation == null
+                      ? 'location'.tr()
+                      : '${pro.bottomsheetLocation?.title}',
                 ),
-                icon: AppStrings.selloutMarketplaceSortIcon,
-                label: 'sort'.tr(),
-              ),
-            if (pro.queryController.text.isNotEmpty)
-              _HeaderButton(
-                onPressed: () => showModalBottomSheet(
-                  showDragHandle: false,
-                  isDismissible: false,
-                  useSafeArea: true,
-                  isScrollControlled: true,
-                  context: context,
-                  builder: (BuildContext context) =>
-                      const MarketPlaceFilterBottomSheet(),
-                ),
-                icon: AppStrings.selloutMarketplaceFilterIcon,
-                label: 'filter'.tr(),
-              ),
-          ],
-        ),
-      ),
+                if (pro.queryController.text.isEmpty)
+                  _HeaderButton(
+                    onPressed: () => Navigator.pushNamed(
+                      context,
+                      YourOrdersScreen.routeName,
+                    ),
+                    icon: null,
+                    label: 'your_orders'.tr(),
+                  ),
+                if (pro.queryController.text.isEmpty)
+                  _HeaderButton(
+                    onPressed: () =>
+                        Navigator.pushNamed(context, SavedPostsPage.routeName),
+                    icon: null,
+                    label: 'saved'.tr(),
+                  ),
+                if (pro.queryController.text.isEmpty)
+                  _HeaderButton(
+                    onPressed: () =>
+                        Navigator.pushNamed(context, BuyAgainScreen.routeName),
+                    icon: null,
+                    label: 'buy_again'.tr(),
+                  ),
+                if (pro.queryController.text.isNotEmpty)
+                  _HeaderButton(
+                    onPressed: () => showModalBottomSheet(
+                      context: context,
+                      builder: (BuildContext context) =>
+                          const SortBottomSheet(),
+                    ),
+                    icon: AppStrings.selloutMarketplaceSortIcon,
+                    label: 'sort'.tr(),
+                  ),
+                if (pro.queryController.text.isNotEmpty)
+                  _HeaderButton(
+                    onPressed: () => showModalBottomSheet(
+                      showDragHandle: false,
+                      isDismissible: false,
+                      useSafeArea: true,
+                      isScrollControlled: true,
+                      context: context,
+                      builder: (BuildContext context) =>
+                          const MarketPlaceFilterBottomSheet(),
+                    ),
+                    icon: AppStrings.selloutMarketplaceFilterIcon,
+                    label: 'filter'.tr(),
+                  ),
+              ],
+            ),
+          ),
     );
   }
 }
@@ -112,8 +125,10 @@ class _HeaderButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final TextStyle? textStyle = theme.textTheme.labelSmall
-        ?.copyWith(fontWeight: FontWeight.w400, fontSize: 10);
+    final TextStyle? textStyle = theme.textTheme.labelSmall?.copyWith(
+      fontWeight: FontWeight.w400,
+      fontSize: 10,
+    );
 
     return Expanded(
       child: InkWell(
@@ -124,8 +139,10 @@ class _HeaderButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: theme.scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(8),
-            border:
-                Border.all(color: theme.colorScheme.outlineVariant, width: 1),
+            border: Border.all(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
+              width: 1,
+            ),
           ),
           child: Row(
             spacing: 4,

@@ -19,8 +19,10 @@ class _MarketplaceChoiceChipsState extends State<MarketplaceChoiceChips> {
     super.initState();
     selectedJson = null;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<MarketPlaceProvider>(context, listen: false)
-          .choiceChipsCategory('');
+      Provider.of<MarketPlaceProvider>(
+        context,
+        listen: false,
+      ).choiceChipsCategory('');
     });
   }
 
@@ -30,7 +32,7 @@ class _MarketplaceChoiceChipsState extends State<MarketplaceChoiceChips> {
       builder: (_, __, ___) {
         final List<String?> jsons = <String?>[
           null,
-          ...ListingType.values.map((ListingType e) => e.json)
+          ...ListingType.values.map((ListingType e) => e.json),
         ];
         return SizedBox(
           height: 40,
@@ -44,17 +46,24 @@ class _MarketplaceChoiceChipsState extends State<MarketplaceChoiceChips> {
               final bool isSelected = selectedJson == json;
               final String label = json?.tr() ?? 'all'.tr();
               return ChoiceChip(
+                side: BorderSide(
+                  strokeAlign: BorderSide.strokeAlignCenter,
+                  width: 1,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.2),
+                ),
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 showCheckmark: false,
                 label: Text(
                   label,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: isSelected
-                            ? Theme.of(context).colorScheme.surface
-                            : Theme.of(context).colorScheme.onSurface,
-                      ),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: isSelected
+                        ? Theme.of(context).colorScheme.surface
+                        : Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
                 selected: isSelected,
                 selectedColor: Theme.of(context).colorScheme.onSurface,

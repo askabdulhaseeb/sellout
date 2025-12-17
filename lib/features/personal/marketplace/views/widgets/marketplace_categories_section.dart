@@ -36,9 +36,12 @@ class MarketPlaceCategoriesSection extends StatelessWidget {
               return InkWell(
                 onTap: () {
                   marketPro.setMarketplaceCategory(
-                      ListingType.fromJson(category.json));
+                    ListingType.fromJson(category.json),
+                  );
                   Navigator.pushNamed(
-                      context, MarketCategorizedFilterationPage.routeName);
+                    context,
+                    MarketCategorizedFilterationPage.routeName,
+                  );
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -77,7 +80,7 @@ class MarketPlaceCategoriesSection extends StatelessWidget {
               );
             },
           ),
-          const Divider(),
+          Divider(color: theme.colorScheme.onSurface.withValues(alpha: 0.2)),
         ],
       ),
     );
