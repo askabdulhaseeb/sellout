@@ -6,58 +6,59 @@ import '../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../data/models/user_model.dart';
 import '../enums/profile_page_tab_type.dart';
-import '../providers/profile_provider.dart';
+import '../providers/profile_store_posts_provider.dart';
+import '../providers/profile_viewing_posts_provider.dart';
 import 'gridview_filter_bottomsheets/store_category_bottomsheet.dart';
 import 'gridview_filter_bottomsheets/store_filter_bottomsheet.dart';
 import 'dart:async';
 
 class ProfileFilterSection extends StatelessWidget {
-  const ProfileFilterSection(
-      {required this.user, required this.pageType, super.key});
+  const ProfileFilterSection({
+    required this.user,
+    required this.pageType,
+    super.key,
+  });
   final UserEntity? user;
   final ProfilePageTabType? pageType;
 
   @override
   Widget build(BuildContext context) {
     final bool isStore = (pageType!.code == ProfilePageTabType.store.code);
-    return Consumer<ProfileProvider>(
-      builder: (BuildContext context, ProfileProvider pro, Widget? child) =>
-          Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Row(
-          spacing: 4,
-          children: <Widget>[
-            Flexible(child: ProfilePostSearchField(isStore: isStore)),
-            Expanded(
-                child: CustomFilterButton(
-                    iconFirst: false,
-                    onPressed: () => showModalBottomSheet(
-                          context: context,
-                          builder: (BuildContext context) =>
-                              StoreCategoryBottomSheet(
-                            isStore: isStore,
-                          ),
-                        ),
-                    label: 'category'.tr(),
-                    icon: AppStrings.selloutDropDownIcon)),
-            Expanded(
-                child: CustomFilterButton(
-                    iconFirst: true,
-                    onPressed: () => showModalBottomSheet(
-                          context: context,
-                          showDragHandle: false,
-                          isDismissible: false,
-                          useSafeArea: true,
-                          isScrollControlled: true,
-                          builder: (BuildContext context) =>
-                              StoreFilterBottomSheet(
-                            isStore: isStore,
-                          ),
-                        ),
-                    label: 'filter'.tr(),
-                    icon: AppStrings.selloutFilterIcon)),
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Row(
+        spacing: 4,
+        children: <Widget>[
+          Flexible(child: ProfilePostSearchField(isStore: isStore)),
+          Expanded(
+            child: CustomFilterButton(
+              iconFirst: false,
+              onPressed: () => showModalBottomSheet(
+                context: context,
+                builder: (BuildContext context) =>
+                    StoreCategoryBottomSheet(isStore: isStore),
+              ),
+              label: 'category'.tr(),
+              icon: AppStrings.selloutDropDownIcon,
+            ),
+          ),
+          Expanded(
+            child: CustomFilterButton(
+              iconFirst: true,
+              onPressed: () => showModalBottomSheet(
+                context: context,
+                showDragHandle: false,
+                isDismissible: false,
+                useSafeArea: true,
+                isScrollControlled: true,
+                builder: (BuildContext context) =>
+                    StoreFilterBottomSheet(isStore: isStore),
+              ),
+              label: 'filter'.tr(),
+              icon: AppStrings.selloutFilterIcon,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -84,38 +85,36 @@ class CustomFilterButton extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
-            color: ColorScheme.of(context).onSurface.withValues(alpha: 0.2)),
+          color: ColorScheme.of(context).onSurface.withValues(alpha: 0.2),
+        ),
         borderRadius: BorderRadius.circular(8),
       ),
       padding: const EdgeInsets.all(6),
       child: GestureDetector(
         onTap: onPressed,
         child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 6,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              if (iconFirst) CustomSvgIcon(assetPath: icon, size: 12),
-              Text(
-                label,
-                style: textTheme.labelMedium?.copyWith(
-                  color:
-                      ColorScheme.of(context).onSurface.withValues(alpha: 0.2),
-                  overflow: TextOverflow.ellipsis,
-                ),
+          mainAxisAlignment: MainAxisAlignment.center,
+          spacing: 6,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            if (iconFirst) CustomSvgIcon(assetPath: icon, size: 12),
+            Text(
+              label,
+              style: textTheme.labelMedium?.copyWith(
+                color: ColorScheme.of(context).onSurface.withValues(alpha: 0.2),
+                overflow: TextOverflow.ellipsis,
               ),
-              if (!iconFirst) CustomSvgIcon(assetPath: icon, size: 12),
-            ]),
+            ),
+            if (!iconFirst) CustomSvgIcon(assetPath: icon, size: 12),
+          ],
+        ),
       ),
     );
   }
 }
 
 class ProfilePostSearchField extends StatefulWidget {
-  const ProfilePostSearchField({
-    required this.isStore,
-    super.key,
-  });
+  const ProfilePostSearchField({required this.isStore, super.key});
   final bool isStore;
 
   @override
@@ -125,14 +124,18 @@ class ProfilePostSearchField extends StatefulWidget {
 class _ProfilePostSearchFieldState extends State<ProfilePostSearchField> {
   Timer? _debounce;
 
-  void _onSearchChanged(ProfileProvider pro, String value) {
+  void _onSearchChanged({
+    required String value,
+    ProfileStorePostsProvider? storeProvider,
+    ProfileViewingPostsProvider? viewingProvider,
+  }) {
     // Debounce to prevent too many API calls
     if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(const Duration(milliseconds: 600), () {
       if (widget.isStore) {
-        pro.loadStorePosts(); // ← Add query to API if needed
+        storeProvider?.loadPosts();
       } else {
-        pro.loadViewingPosts(); // ← Add query to API if needed
+        viewingProvider?.loadPosts();
       }
     });
   }
@@ -145,10 +148,9 @@ class _ProfilePostSearchFieldState extends State<ProfilePostSearchField> {
 
   @override
   Widget build(BuildContext context) {
-    final ProfileProvider pro =
-        Provider.of<ProfileProvider>(context, listen: false);
-    final TextEditingController controller =
-        widget.isStore ? pro.storeQueryController : pro.viewingQueryController;
+    final TextEditingController controller = widget.isStore
+        ? context.read<ProfileStorePostsProvider>().queryController
+        : context.read<ProfileViewingPostsProvider>().queryController;
 
     return CustomTextFormField(
       dense: true,
@@ -157,7 +159,19 @@ class _ProfilePostSearchFieldState extends State<ProfilePostSearchField> {
       controller: controller,
       hint: 'search'.tr(),
       style: TextTheme.of(context).bodyMedium,
-      onChanged: (String value) => _onSearchChanged(pro, value),
+      onChanged: (String value) {
+        if (widget.isStore) {
+          _onSearchChanged(
+            value: value,
+            storeProvider: context.read<ProfileStorePostsProvider>(),
+          );
+        } else {
+          _onSearchChanged(
+            value: value,
+            viewingProvider: context.read<ProfileViewingPostsProvider>(),
+          );
+        }
+      },
     );
   }
 }

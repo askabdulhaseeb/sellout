@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../attachment/domain/entities/attachment_entity.dart';
-import '../../../../../../user/profiles/views/screens/user_profile_screen.dart';
+import '../../../../../../user/profiles/views/user_profile/screens/user_profile_screen.dart';
 
 class ContactMessageTile extends StatefulWidget {
   const ContactMessageTile({
