@@ -294,6 +294,8 @@
   "post_to": "Post to",
   "address": "Address",
   "selling_address":"Selling Address",
+  "selling_address_required": "Selling address required",
+  "selling_address_required_desc": "Add a selling address to start selling.",
   "add_address": "Add Address",
   "edit_address": "Edit Address",
   "recipient_name": "Recipient Name",
