@@ -27,6 +27,7 @@ class PromoRemoteDataSourceImpl implements PromoRemoteDataSource {
         isConnectType: false,
         isAuth: true,
       );
+      debugPrint(param.toMap().toString());
       if (result is DataSuccess<String>) {
         AppLog.info(
           'Promo created successfully: ${result.data}',
@@ -37,7 +38,7 @@ class PromoRemoteDataSourceImpl implements PromoRemoteDataSource {
         AppLog.error(
           result.exception?.message ?? 'Unknown error during promo creation',
           name: 'PromoRemoteDataSourceImpl.createPromo - else if',
-          error: result.exception?.reason ?? 'something_wrong',
+          error: result.exception?.reason ?? 'something_wrong'.tr(),
         );
         return DataFailer<bool>(
           result.exception ?? CustomException('Something went wrong'),
@@ -63,7 +64,8 @@ class PromoRemoteDataSourceImpl implements PromoRemoteDataSource {
   @override
   Future<DataState<List<PromoEntity>>> getPromoOfFollower() async {
     String endpoint = '/promo/followers/get';
-    final List<String> supporterIds = LocalAuth.currentUser?.supporters
+    final List<String> supporterIds =
+        LocalAuth.currentUser?.supporters
             .map((SupporterDetailEntity supporter) => supporter.userID)
             .toList() ??
         <String>[];
@@ -73,13 +75,13 @@ class PromoRemoteDataSourceImpl implements PromoRemoteDataSource {
     try {
       final DataState<List<PromoEntity>> result =
           await ApiCall<List<PromoEntity>>().call(
-        endpoint: endpoint,
-        requestType: ApiRequestType.post,
-        isAuth: true,
-        body: json.encode(<String, List<String>>{
-          'follower_ids': supporterIds,
-        }),
-      );
+            endpoint: endpoint,
+            requestType: ApiRequestType.post,
+            isAuth: true,
+            body: json.encode(<String, List<String>>{
+              'follower_ids': supporterIds,
+            }),
+          );
 
       if (result is DataSuccess) {
         debugPrint(result.data);
@@ -122,10 +124,10 @@ class PromoRemoteDataSourceImpl implements PromoRemoteDataSource {
     try {
       final DataState<List<PromoEntity>> result =
           await ApiCall<List<PromoEntity>>().call(
-        endpoint: endpoint,
-        requestType: ApiRequestType.get,
-        isAuth: true,
-      );
+            endpoint: endpoint,
+            requestType: ApiRequestType.get,
+            isAuth: true,
+          );
 
       if (result is DataSuccess) {
         // Decode the full response body
