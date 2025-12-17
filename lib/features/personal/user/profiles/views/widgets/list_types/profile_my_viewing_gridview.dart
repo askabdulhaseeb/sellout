@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../../services/get_it.dart';
+import '../../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../../dashboard/views/providers/personal_bottom_nav_provider.dart';
+import '../../../../../listing/start_listing/views/screens/start_listing_screen.dart';
 import '../../../domain/entities/user_entity.dart';
 import '../../enums/profile_page_tab_type.dart';
 import '../../providers/profile_viewing_posts_provider.dart';
@@ -14,9 +17,11 @@ class ProfileMyViewingGridview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isOwnProfile = user?.uid == LocalAuth.uid;
     return ChangeNotifierProvider<ProfileViewingPostsProvider>(
-      create: (_) => ProfileViewingPostsProvider(locator(), userUid: user?.uid)
-        ..loadPosts(),
+      create: (_) =>
+          ProfileViewingPostsProvider(locator(), userUid: user?.uid)
+            ..loadPosts(),
       child: Column(
         spacing: 8,
         children: <Widget>[
@@ -24,8 +29,27 @@ class ProfileMyViewingGridview extends StatelessWidget {
             user: user,
             pageType: ProfilePageTabType.viewing,
           ),
-          const ProfilePostsGridView<ProfileViewingPostsProvider>(
+          ProfilePostsGridView<ProfileViewingPostsProvider>(
             childAspectRatio: 0.66,
+            showStartSellingButton: isOwnProfile,
+            onStartSelling: isOwnProfile
+                ? () {
+                    final PersonalBottomNavProvider? nav =
+                        Provider.of<PersonalBottomNavProvider?>(
+                          context,
+                          listen: false,
+                        );
+                    if (nav != null) {
+                      nav.setCurrentTabIndex(3);
+                      return;
+                    }
+                    Navigator.of(context).push(
+                      MaterialPageRoute<StartListingScreen>(
+                        builder: (_) => const StartListingScreen(),
+                      ),
+                    );
+                  }
+                : null,
           ),
         ],
       ),
