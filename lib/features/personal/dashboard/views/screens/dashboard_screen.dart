@@ -24,8 +24,6 @@ class DashboardScreen extends StatelessWidget {
         final CurrentUserEntity? uid = LocalAuth.currentUser;
         final bool otpVerified = LocalAuth.currentUser?.otpVerified ?? false;
 
-
-
         final List<Widget> screens = <Widget>[
           const HomeScreen(),
           const MarketPlaceScreen(),
@@ -33,8 +31,8 @@ class DashboardScreen extends StatelessWidget {
           (uid == null && !otpVerified)
               ? const WelcomeScreen()
               : (sellingAddress != null
-                    ?const StartListingScreen(): const SellingAddressScreen()
-                     ),
+                    ? const StartListingScreen()
+                    : const SellingAddressScreen()),
           (uid == null && !otpVerified)
               ? const WelcomeScreen()
               : const ChatDashboardScreen(),

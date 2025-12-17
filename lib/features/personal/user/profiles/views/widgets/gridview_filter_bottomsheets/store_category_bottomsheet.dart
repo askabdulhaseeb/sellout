@@ -1,21 +1,22 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../../../../../../core/enums/listing/core/listing_type.dart';
-import '../../providers/profile_store_posts_provider.dart';
-import '../../providers/profile_viewing_posts_provider.dart';
 
 class StoreCategoryBottomSheet extends StatelessWidget {
-  const StoreCategoryBottomSheet({required this.isStore, super.key});
-  final bool isStore;
+  const StoreCategoryBottomSheet({
+    required this.selectedCategory,
+    required this.categoryOptions,
+    required this.onReset,
+    required this.onSelect,
+    super.key,
+  });
+
+  final ListingType? selectedCategory;
+  final List<ListingType> categoryOptions;
+  final VoidCallback onReset;
+  final ValueChanged<ListingType> onSelect;
   @override
   Widget build(BuildContext context) {
-    final ListingType? selectedCategory = isStore
-        ? context.watch<ProfileStorePostsProvider>().category
-        : context.watch<ProfileViewingPostsProvider>().category;
-    final List<ListingType> categoryOptions = isStore
-        ? ListingType.storeList
-        : ListingType.viewingList;
     return Container(
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
@@ -36,11 +37,7 @@ class StoreCategoryBottomSheet extends StatelessWidget {
               ),
               TextButton(
                 onPressed: () {
-                  if (isStore) {
-                    context.read<ProfileStorePostsProvider>().resetCategory();
-                  } else {
-                    context.read<ProfileViewingPostsProvider>().resetCategory();
-                  }
+                  onReset();
                   Navigator.pop(context);
                 },
                 child: Text(
@@ -62,11 +59,7 @@ class StoreCategoryBottomSheet extends StatelessWidget {
               leading: _buildLeadingIcon(context, isSelected),
               title: Text(type.code.tr()),
               onTap: () {
-                if (isStore) {
-                  context.read<ProfileStorePostsProvider>().setCategory(type);
-                } else {
-                  context.read<ProfileViewingPostsProvider>().setCategory(type);
-                }
+                onSelect(type);
                 Navigator.pop(context);
               },
             );

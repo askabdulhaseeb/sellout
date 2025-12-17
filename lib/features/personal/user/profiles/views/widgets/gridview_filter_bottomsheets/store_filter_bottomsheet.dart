@@ -1,17 +1,71 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:provider/provider.dart';
-import '../../../../../../../../../../core/enums/listing/core/delivery_type.dart';
+import '../../../../../../../core/enums/listing/core/delivery_type.dart';
+import '../../../../../../../core/enums/listing/core/item_condition_type.dart';
+import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../core/widgets/custom_textformfield.dart';
-import '../../../../../../../../../../core/enums/listing/core/item_condition_type.dart';
-import '../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../marketplace/views/enums/sort_enums.dart';
-import '../../providers/profile_store_posts_provider.dart';
-import '../../providers/profile_viewing_posts_provider.dart';
 
-class StoreFilterBottomSheet extends StatelessWidget {
-  const StoreFilterBottomSheet({required this.isStore, super.key});
-  final bool isStore;
+class StoreFilterBottomSheet extends StatefulWidget {
+  const StoreFilterBottomSheet({
+    required this.sort,
+    required this.onSortChanged,
+    required this.minPriceController,
+    required this.maxPriceController,
+    required this.onReset,
+    required this.onApply,
+    required this.isLoading,
+    this.showStoreFields = false,
+    this.selectedConditionType,
+    this.onConditionChanged,
+    this.selectedDeliveryType,
+    this.onDeliveryTypeChanged,
+    super.key,
+  });
+
+  final SortOption? sort;
+  final ValueChanged<SortOption?> onSortChanged;
+  final TextEditingController minPriceController;
+  final TextEditingController maxPriceController;
+  final VoidCallback onReset;
+  final VoidCallback onApply;
+  final bool isLoading;
+
+  /// When true, shows store-only fields like condition and delivery type.
+  final bool showStoreFields;
+  final ConditionType? selectedConditionType;
+  final ValueChanged<ConditionType?>? onConditionChanged;
+  final DeliveryType? selectedDeliveryType;
+  final ValueChanged<DeliveryType?>? onDeliveryTypeChanged;
+
+  @override
+  State<StoreFilterBottomSheet> createState() => _StoreFilterBottomSheetState();
+}
+
+class _StoreFilterBottomSheetState extends State<StoreFilterBottomSheet> {
+  SortOption? _sort;
+  ConditionType? _condition;
+  DeliveryType? _delivery;
+
+  @override
+  void initState() {
+    super.initState();
+    _sort = widget.sort;
+    _condition = widget.selectedConditionType;
+    _delivery = widget.selectedDeliveryType;
+  }
+
+  void _handleReset() {
+    setState(() {
+      _sort = null;
+      _condition = null;
+      _delivery = null;
+    });
+    widget.minPriceController.clear();
+    widget.maxPriceController.clear();
+    widget.onReset();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BottomSheet(
@@ -28,24 +82,56 @@ class StoreFilterBottomSheet extends StatelessWidget {
           ),
           child: Column(
             children: <Widget>[
-              StoreFilterSheetHeaderSection(isStore: isStore),
+              StoreFilterSheetHeaderSection(onReset: _handleReset),
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     spacing: 8,
                     children: <Widget>[
-                      StoreFilterSheetCustomerReviewTile(isStore: isStore),
-                      ExpandablePriceRangeTile(isStore: isStore),
-                      if (isStore == true)
-                        StoreFilterSheetConditionTile(isStore: isStore),
-                      if (isStore == true)
-                        StoreFilterSheetDeliveryTypeTile(isStore: isStore),
+                      StoreFilterSheetCustomerReviewTile(
+                        sort: _sort,
+                        onChanged: (SortOption? value) {
+                          
+                          setState(() {
+                            _sort = value;
+                          });
+                          widget.onSortChanged(value);
+                        },
+                      ),
+                      ExpandablePriceRangeTile(
+                        minPriceController: widget.minPriceController,
+                        maxPriceController: widget.maxPriceController,
+                      ),
+
+                      if (widget.showStoreFields)
+                        StoreFilterSheetConditionTile(
+                          selectedConditionType: _condition,
+                          onChanged: (ConditionType? value) {
+                            setState(() {
+                              _condition = value;
+                            });
+                            widget.onConditionChanged?.call(value);
+                          },
+                        ),
+                      if (widget.showStoreFields)
+                        StoreFilterSheetDeliveryTypeTile(
+                          selectedDeliveryType: _delivery,
+                          onChanged: (DeliveryType? value) {
+                            setState(() {
+                              _delivery = value;
+                            });
+                            widget.onDeliveryTypeChanged?.call(value);
+                          },
+                        ),
                     ],
                   ),
                 ),
               ),
-              StoreFilterSheetApplyButton(isStore: isStore),
+              StoreFilterSheetApplyButton(
+                isLoading: widget.isLoading,
+                onApply: widget.onApply,
+              ),
             ],
           ),
         );
@@ -55,8 +141,14 @@ class StoreFilterBottomSheet extends StatelessWidget {
 }
 
 class StoreFilterSheetCustomerReviewTile extends StatelessWidget {
-  const StoreFilterSheetCustomerReviewTile({required this.isStore, super.key});
-  final bool isStore;
+  const StoreFilterSheetCustomerReviewTile({
+    required this.sort,
+    required this.onChanged,
+    super.key,
+  });
+
+  final SortOption? sort;
+  final ValueChanged<SortOption?> onChanged;
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -65,9 +157,7 @@ class StoreFilterSheetCustomerReviewTile extends StatelessWidget {
         style: Theme.of(context).textTheme.titleMedium,
       ),
       subtitle: DropdownButtonFormField<SortOption>(
-        initialValue: isStore
-            ? context.watch<ProfileStorePostsProvider>().sort
-            : context.watch<ProfileViewingPostsProvider>().sort,
+        initialValue: sort,
         isExpanded: true,
         hint: Text(
           'sort_by_choice'.tr(),
@@ -97,21 +187,21 @@ class StoreFilterSheetCustomerReviewTile extends StatelessWidget {
             ),
           );
         }).toList(),
-        onChanged: (SortOption? newValue) {
-          if (isStore) {
-            context.read<ProfileStorePostsProvider>().setSort(newValue);
-          } else {
-            context.read<ProfileViewingPostsProvider>().setSort(newValue);
-          }
-        },
+        onChanged: onChanged,
       ),
     );
   }
 }
 
 class ExpandablePriceRangeTile extends StatefulWidget {
-  const ExpandablePriceRangeTile({required this.isStore, super.key});
-  final bool isStore;
+  const ExpandablePriceRangeTile({
+    required this.minPriceController,
+    required this.maxPriceController,
+    super.key,
+  });
+
+  final TextEditingController minPriceController;
+  final TextEditingController maxPriceController;
 
   @override
   State<ExpandablePriceRangeTile> createState() =>
@@ -123,14 +213,6 @@ class _ExpandablePriceRangeTileState extends State<ExpandablePriceRangeTile> {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController minPriceController = widget.isStore
-        ? context.watch<ProfileStorePostsProvider>().minPriceController
-        : context.watch<ProfileViewingPostsProvider>().minPriceController;
-
-    final TextEditingController maxPriceController = widget.isStore
-        ? context.watch<ProfileStorePostsProvider>().maxPriceController
-        : context.watch<ProfileViewingPostsProvider>().maxPriceController;
-
     return Column(
       children: <Widget>[
         ListTile(
@@ -168,7 +250,7 @@ class _ExpandablePriceRangeTileState extends State<ExpandablePriceRangeTile> {
               children: <Widget>[
                 Expanded(
                   child: CustomTextFormField(
-                    controller: minPriceController,
+                    controller: widget.minPriceController,
                     keyboardType: TextInputType.number,
                     labelText: 'min_price'.tr(),
                   ),
@@ -176,7 +258,7 @@ class _ExpandablePriceRangeTileState extends State<ExpandablePriceRangeTile> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: CustomTextFormField(
-                    controller: maxPriceController,
+                    controller: widget.maxPriceController,
                     keyboardType: TextInputType.number,
                     labelText: 'max_price'.tr(),
                   ),
@@ -191,8 +273,14 @@ class _ExpandablePriceRangeTileState extends State<ExpandablePriceRangeTile> {
 }
 
 class StoreFilterSheetConditionTile extends StatelessWidget {
-  const StoreFilterSheetConditionTile({required this.isStore, super.key});
-  final bool isStore;
+  const StoreFilterSheetConditionTile({
+    required this.selectedConditionType,
+    required this.onChanged,
+    super.key,
+  });
+
+  final ConditionType? selectedConditionType;
+  final ValueChanged<ConditionType?>? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -206,9 +294,7 @@ class StoreFilterSheetConditionTile extends StatelessWidget {
           Icons.keyboard_arrow_down_rounded,
           color: Theme.of(context).colorScheme.outline,
         ),
-        initialValue: context
-            .watch<ProfileStorePostsProvider>()
-            .selectedConditionType,
+        initialValue: selectedConditionType,
         isExpanded: true,
         dropdownColor: Theme.of(context).cardColor,
         decoration: const InputDecoration(
@@ -235,17 +321,21 @@ class StoreFilterSheetConditionTile extends StatelessWidget {
             ),
           );
         }).toList(),
-        onChanged: (ConditionType? newValue) {
-          context.read<ProfileStorePostsProvider>().setConditionType(newValue);
-        },
+        onChanged: onChanged,
       ),
     );
   }
 }
 
 class StoreFilterSheetDeliveryTypeTile extends StatelessWidget {
-  const StoreFilterSheetDeliveryTypeTile({required this.isStore, super.key});
-  final bool isStore;
+  const StoreFilterSheetDeliveryTypeTile({
+    required this.selectedDeliveryType,
+    required this.onChanged,
+    super.key,
+  });
+
+  final DeliveryType? selectedDeliveryType;
+  final ValueChanged<DeliveryType?>? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -259,9 +349,7 @@ class StoreFilterSheetDeliveryTypeTile extends StatelessWidget {
           Icons.keyboard_arrow_down_rounded,
           color: Theme.of(context).colorScheme.outline,
         ),
-        initialValue: context
-            .watch<ProfileStorePostsProvider>()
-            .selectedDeliveryType,
+        initialValue: selectedDeliveryType,
         isExpanded: true,
         hint: Text(
           'select_delivery_type'.tr(),
@@ -287,17 +375,16 @@ class StoreFilterSheetDeliveryTypeTile extends StatelessWidget {
             ),
           );
         }).toList(),
-        onChanged: (DeliveryType? newValue) {
-          context.read<ProfileStorePostsProvider>().setDeliveryType(newValue);
-        },
+        onChanged: onChanged,
       ),
     );
   }
 }
 
 class StoreFilterSheetHeaderSection extends StatelessWidget {
-  const StoreFilterSheetHeaderSection({required this.isStore, super.key});
-  final bool isStore;
+  const StoreFilterSheetHeaderSection({required this.onReset, super.key});
+
+  final VoidCallback onReset;
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -316,11 +403,7 @@ class StoreFilterSheetHeaderSection extends StatelessWidget {
         ),
         TextButton(
           onPressed: () {
-            if (isStore) {
-              context.read<ProfileStorePostsProvider>().filterSheetReset();
-            } else {
-              context.read<ProfileViewingPostsProvider>().filterSheetReset();
-            }
+            onReset();
           },
           child: Text(
             'reset'.tr(),
@@ -337,24 +420,22 @@ class StoreFilterSheetHeaderSection extends StatelessWidget {
 class StoreFilterSheetApplyButton extends StatelessWidget {
   // <-- control variable
 
-  const StoreFilterSheetApplyButton({required this.isStore, super.key});
-  final bool isStore;
+  const StoreFilterSheetApplyButton({
+    required this.onApply,
+    required this.isLoading,
+    super.key,
+  });
+
+  final VoidCallback onApply;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
-    final bool isLoading = isStore
-        ? context.watch<ProfileStorePostsProvider>().isLoading
-        : context.watch<ProfileViewingPostsProvider>().isLoading;
-
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: CustomElevatedButton(
         onTap: () {
-          if (isStore) {
-            context.read<ProfileStorePostsProvider>().filterSheetApply();
-          } else {
-            context.read<ProfileViewingPostsProvider>().filterSheetApply();
-          }
+          onApply();
           Navigator.pop(context);
         },
         title: 'apply'.tr(),
