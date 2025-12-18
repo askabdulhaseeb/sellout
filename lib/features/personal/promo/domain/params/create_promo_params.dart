@@ -7,6 +7,7 @@ class CreatePromoParams {
     required this.referenceID,
     required this.title,
     required this.price,
+    required this.listId,
     required this.attachments,
     required this.thumbNail,
   });
@@ -15,6 +16,7 @@ class CreatePromoParams {
   final String referenceID;
   final String title;
   final String price;
+  final String listId;
   final PickedAttachment? attachments;
   final PickedAttachment? thumbNail;
 
@@ -22,6 +24,7 @@ class CreatePromoParams {
     final Map<String, String> map = <String, String>{
       if (referenceID.isNotEmpty) 'reference_type': referenceType.trim(),
       if (referenceID.isNotEmpty) 'reference_id': referenceID.trim(),
+      if (referenceID.isNotEmpty) 'list_id': listId.trim(),
       'title': title.trim(),
       'price': price.trim(),
     };

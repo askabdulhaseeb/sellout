@@ -47,11 +47,14 @@ class PromoProvider extends ChangeNotifier {
   String referenceType = '';
   String _referenceId = '';
   String get referenceId => _referenceId;
+  String _listId = '';
+  String get listId => _listId;
   bool _isLoading = false;
   bool get isLoadig => _isLoading;
   String? errorMessage;
-  void setRefernceID(String refID, String refType) {
+  void setRefernceID(String refID, String refType,String listId) {
     _referenceId = refID;
+    _listId = listId;
     referenceType = refType;
   }
 
@@ -78,7 +81,9 @@ class PromoProvider extends ChangeNotifier {
       referenceID: _referenceId,
       title: title.text,
       price: price.text,
+      listId: _listId,
       attachments: attachment,
+
     );
   }
 
