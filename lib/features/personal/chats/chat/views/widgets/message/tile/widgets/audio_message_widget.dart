@@ -198,8 +198,8 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
   }
 
   Future<void> _playPause() async {
-    final SendMessageProvider messageProvider =
-        context.read<SendMessageProvider>();
+    final SendMessageProvider messageProvider = context
+        .read<SendMessageProvider>();
 
     if (messageProvider.isRecordingAudio.value) return;
 
@@ -275,7 +275,7 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        width: 300,
+        width: MediaQuery.of(context).size.width * 0.6,
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
         child: _buildContent(isMe, theme, colorScheme),
       ),
@@ -311,9 +311,15 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
                     value: _downloadProgress > 0 ? _downloadProgress : null,
                     strokeWidth: 2.5,
                     color: theme.primaryColor,
-                    backgroundColor: colorScheme.outline.withValues(alpha: 0.2),
+                    backgroundColor: colorScheme.onSurface.withValues(
+                      alpha: 0.2,
+                    ),
                   ),
-                  Icon(Icons.mic_rounded, color: colorScheme.outline, size: 18),
+                  Icon(
+                    Icons.mic_rounded,
+                    color: colorScheme.onSurface,
+                    size: 18,
+                  ),
                 ],
               ),
             ),
@@ -325,7 +331,7 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
                   Container(
                     height: 30,
                     decoration: BoxDecoration(
-                      color: colorScheme.outline.withValues(alpha: 0.15),
+                      color: colorScheme.onSurface.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -335,7 +341,7 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
                         ? '${(_downloadProgress * 100).toInt()}%'
                         : 'Loading...',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: colorScheme.outline,
+                      color: colorScheme.onSurface,
                       fontSize: 11,
                     ),
                   ),
@@ -425,47 +431,46 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
             const SizedBox(width: 4),
             // Waveform with seek gesture
             Expanded(
-              child: GestureDetector(
-                onTapDown: (TapDownDetails details) {
-                  final RenderBox box =
-                      context.findRenderObject()! as RenderBox;
-                  final double localX = details.localPosition.dx;
-                  // Account for play button width (46) and spacing (4)
-                  final double waveformWidth = box.size.width - 46 - 4 - 24;
-                  final double progress = (localX / waveformWidth).clamp(
-                    0.0,
-                    1.0,
+              child: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  final double waveformWidth = constraints.maxWidth;
+
+                  return GestureDetector(
+                    onTapDown: (TapDownDetails details) {
+                      final double localX = details.localPosition.dx;
+                      final double progress = waveformWidth <= 0
+                          ? 0.0
+                          : (localX / waveformWidth).clamp(0.0, 1.0);
+                      _seekTo(progress);
+                    },
+                    onHorizontalDragUpdate: (DragUpdateDetails details) {
+                      final double localX = details.localPosition.dx;
+                      final double progress = waveformWidth <= 0
+                          ? 0.0
+                          : (localX / waveformWidth).clamp(0.0, 1.0);
+                      _seekTo(progress);
+                    },
+                    child: AudioFileWaveforms(
+                      enableSeekGesture: true,
+                      continuousWaveform: true,
+                      waveformType: WaveformType.fitWidth,
+                      size: Size(waveformWidth, 36),
+                      playerController: _playerController,
+                      playerWaveStyle: PlayerWaveStyle(
+                        scaleFactor: 80,
+                        fixedWaveColor: colorScheme.onSurface.withValues(
+                          alpha: 0.8,
+                        ),
+                        liveWaveColor: theme.primaryColor,
+                        showSeekLine: false,
+                        seekLineColor: Colors.transparent,
+                        spacing: 4,
+                        waveThickness: 3,
+                        waveCap: StrokeCap.round,
+                      ),
+                    ),
                   );
-                  _seekTo(progress);
                 },
-                onHorizontalDragUpdate: (DragUpdateDetails details) {
-                  final RenderBox box =
-                      context.findRenderObject()! as RenderBox;
-                  final double localX = details.localPosition.dx;
-                  final double waveformWidth = box.size.width - 46 - 4 - 24;
-                  final double progress = (localX / waveformWidth).clamp(
-                    0.0,
-                    1.0,
-                  );
-                  _seekTo(progress);
-                },
-                child: AudioFileWaveforms(
-                  enableSeekGesture: true,
-                  continuousWaveform: true,
-                  waveformType: WaveformType.fitWidth,
-                  size: const Size(double.infinity, 36),
-                  playerController: _playerController,
-                  playerWaveStyle: PlayerWaveStyle(
-                    scaleFactor: 80,
-                    fixedWaveColor: colorScheme.outline.withValues(alpha: 0.4),
-                    liveWaveColor: theme.primaryColor,
-                    showSeekLine: false,
-                    seekLineColor: Colors.transparent,
-                    spacing: 4,
-                    waveThickness: 3,
-                    waveCap: StrokeCap.round,
-                  ),
-                ),
               ),
             ),
             const SizedBox(width: 4),
@@ -494,7 +499,7 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
                   : CustomSvgIcon(
                       color: isPlaying
                           ? theme.primaryColor
-                          : colorScheme.outline,
+                          : colorScheme.onSurface.withValues(alpha: 0.4),
                       assetPath: AppStrings.selloutVoiceNoteSpeakerIcon,
                       size: 20,
                     ),
@@ -511,7 +516,7 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
                   ? DurationFormatHelper.format(_currentPos)
                   : DurationFormatHelper.format(_totalDur),
               style: theme.textTheme.bodySmall?.copyWith(
-                color: colorScheme.outline,
+                color: colorScheme.onSurface,
                 fontSize: 11,
                 fontFeatures: const <FontFeature>[FontFeature.tabularFigures()],
               ),
@@ -520,14 +525,14 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
               Text(
                 ' / ',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: colorScheme.outline.withValues(alpha: 0.5),
+                  color: colorScheme.onSurface.withValues(alpha: 0.5),
                   fontSize: 11,
                 ),
               ),
               Text(
                 DurationFormatHelper.format(_totalDur),
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: colorScheme.outline.withValues(alpha: 0.5),
+                  color: colorScheme.onSurface.withValues(alpha: 0.5),
                   fontSize: 11,
                   fontFeatures: const <FontFeature>[
                     FontFeature.tabularFigures(),
@@ -546,13 +551,13 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
-                    color: colorScheme.outline.withValues(alpha: 0.1),
+                    color: colorScheme.onSurface.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
                     '${_playbackSpeed}x',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: colorScheme.outline,
+                      color: colorScheme.onSurface,
                       fontWeight: FontWeight.w500,
                       fontSize: 10,
                     ),
