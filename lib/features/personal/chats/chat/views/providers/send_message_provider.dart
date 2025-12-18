@@ -20,6 +20,12 @@ class SendMessageProvider extends ChangeNotifier {
   final SendMessageUsecase _sendMessageUsecase;
   final SearchUsecase _searchUsecase;
 
+  static const String _tag = 'SendMessageProvider';
+
+  void _log(String message) {
+    debugPrint('[$_tag] $message');
+  }
+
   //varibales
   bool _isLoading = false;
   ChatEntity? _chat;
@@ -61,11 +67,13 @@ class SendMessageProvider extends ChangeNotifier {
   }
 
   void startRecording() {
+    _log('startRecording()');
     isRecordingAudio.value = true;
     notifyListeners();
   }
 
   void stopRecording() {
+    _log('stopRecording()');
     isRecordingAudio.value = false;
     notifyListeners();
   }
@@ -280,7 +288,13 @@ class SendMessageProvider extends ChangeNotifier {
   }
 
   void addVoiceNote(PickedAttachment attachment) {
-    _voiceNote.add(attachment);
+    _log(
+      'addVoiceNote(): before clear len=${_voiceNote.length} type=${attachment.type} file=${attachment.file?.path}',
+    );
+    _voiceNote
+      ..clear()
+      ..add(attachment);
+    _log('addVoiceNote(): after add len=${_voiceNote.length}');
     notifyListeners();
   }
 
@@ -356,6 +370,9 @@ class SendMessageProvider extends ChangeNotifier {
   }
 
   Future<void> sendVoiceNote(BuildContext context) async {
+    _log(
+      'sendVoiceNote(): begin chatId=${_chat?.chatId} persons=${_chat?.persons.length ?? 0} files=${_voiceNote.length}',
+    );
     setLoading(true);
     final SendMessageParam param = SendMessageParam(
       chatID: _chat?.chatId ?? '',
@@ -364,12 +381,23 @@ class SendMessageProvider extends ChangeNotifier {
       files: _voiceNote,
       source: 'application',
     );
-    final DataState<bool> result = await _sendMessageUsecase(param);
+    DataState<bool> result;
+    try {
+      result = await _sendMessageUsecase(param);
+    } catch (e, st) {
+      _log('sendVoiceNote(): usecase THREW: $e');
+      _log('sendVoiceNote(): STACK: $st');
+      setLoading(false);
+      return;
+    }
     if (result is DataSuccess) {
-      debugPrint('Voice note sent successfully');
+      _log('sendVoiceNote(): success');
       _voiceNote.clear();
       setLoading(false);
     } else {
+      _log(
+        'sendVoiceNote(): failure type=${result.runtimeType} message=${result.exception?.message}',
+      );
       AppSnackBar.showSnackBar(
         // ignore: use_build_context_synchronously
         context,
@@ -377,5 +405,6 @@ class SendMessageProvider extends ChangeNotifier {
       );
     }
     setLoading(false);
+    _log('sendVoiceNote(): end (voiceNoteLen=${_voiceNote.length})');
   }
 }
