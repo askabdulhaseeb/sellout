@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
@@ -20,11 +21,7 @@ class SendMessageProvider extends ChangeNotifier {
   final SendMessageUsecase _sendMessageUsecase;
   final SearchUsecase _searchUsecase;
 
-  static const String _tag = 'SendMessageProvider';
-
-  void _log(String message) {
-    debugPrint('[$_tag] $message');
-  }
+  static const String tag = 'SendMessageProvider';
 
   //varibales
   bool _isLoading = false;
@@ -67,13 +64,13 @@ class SendMessageProvider extends ChangeNotifier {
   }
 
   void startRecording() {
-    _log('startRecording()');
+    AppLog.info('startRecording()', name: tag);
     isRecordingAudio.value = true;
     notifyListeners();
   }
 
   void stopRecording() {
-    _log('stopRecording()');
+    AppLog.info('stopRecording()', name: tag);
     isRecordingAudio.value = false;
     notifyListeners();
   }
@@ -288,13 +285,17 @@ class SendMessageProvider extends ChangeNotifier {
   }
 
   void addVoiceNote(PickedAttachment attachment) {
-    _log(
-      'addVoiceNote(): before clear len=${_voiceNote.length} type=${attachment.type} file=${attachment.file?.path}',
+    AppLog.info(
+      'addVoiceNote(): before clear len=${_voiceNote.length} type=${attachment.type} file=${attachment.file.path}',
+      name: tag,
     );
     _voiceNote
       ..clear()
       ..add(attachment);
-    _log('addVoiceNote(): after add len=${_voiceNote.length}');
+    AppLog.info(
+      'addVoiceNote(): after add len=${_voiceNote.length}',
+      name: tag,
+    );
     notifyListeners();
   }
 
@@ -370,8 +371,9 @@ class SendMessageProvider extends ChangeNotifier {
   }
 
   Future<void> sendVoiceNote(BuildContext context) async {
-    _log(
+    AppLog.info(
       'sendVoiceNote(): begin chatId=${_chat?.chatId} persons=${_chat?.persons.length ?? 0} files=${_voiceNote.length}',
+      name: tag,
     );
     setLoading(true);
     final SendMessageParam param = SendMessageParam(
@@ -385,18 +387,23 @@ class SendMessageProvider extends ChangeNotifier {
     try {
       result = await _sendMessageUsecase(param);
     } catch (e, st) {
-      _log('sendVoiceNote(): usecase THREW: $e');
-      _log('sendVoiceNote(): STACK: $st');
+      AppLog.error(
+        'sendVoiceNote(): usecase THREW',
+        name: tag,
+        error: e,
+        stackTrace: st,
+      );
       setLoading(false);
       return;
     }
     if (result is DataSuccess) {
-      _log('sendVoiceNote(): success');
+      AppLog.info('sendVoiceNote(): success', name: tag);
       _voiceNote.clear();
       setLoading(false);
     } else {
-      _log(
+      AppLog.info(
         'sendVoiceNote(): failure type=${result.runtimeType} message=${result.exception?.message}',
+        name: tag,
       );
       AppSnackBar.showSnackBar(
         // ignore: use_build_context_synchronously
@@ -405,6 +412,9 @@ class SendMessageProvider extends ChangeNotifier {
       );
     }
     setLoading(false);
-    _log('sendVoiceNote(): end (voiceNoteLen=${_voiceNote.length})');
+    AppLog.info(
+      'sendVoiceNote(): end (voiceNoteLen=${_voiceNote.length})',
+      name: tag,
+    );
   }
 }
