@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
-class CustomElevatedButton extends StatelessWidget {
+class CustomElevatedButton extends StatefulWidget {
   const CustomElevatedButton({
     required this.title,
     required this.isLoading,
     required this.onTap,
+    this.isSuccess = false,
     this.isDisable = false,
     this.prefix,
     this.suffix,
@@ -19,6 +20,10 @@ class CustomElevatedButton extends StatelessWidget {
     this.textColor,
     this.prefixSuffixPadding,
     this.fontWeight = FontWeight.w400,
+    this.loadingWidget,
+    this.successWidget,
+    this.successDuration = const Duration(seconds: 1),
+    this.onSuccessComplete,
     super.key,
   });
 
@@ -26,6 +31,7 @@ class CustomElevatedButton extends StatelessWidget {
   final VoidCallback onTap;
   final bool isDisable;
   final bool isLoading;
+  final bool isSuccess;
   final double? mWidth;
   final Widget? prefix;
   final Widget? suffix;
@@ -39,63 +45,105 @@ class CustomElevatedButton extends StatelessWidget {
   final Color? textColor;
   final FontWeight fontWeight;
   final EdgeInsetsGeometry? prefixSuffixPadding;
+  final Widget? loadingWidget;
+  final Widget? successWidget;
+  final Duration successDuration;
+  final VoidCallback? onSuccessComplete;
+
+  @override
+  State<CustomElevatedButton> createState() => _CustomElevatedButtonState();
+}
+
+class _CustomElevatedButtonState extends State<CustomElevatedButton> {
+  bool _showSuccess = false;
+
+  @override
+  void didUpdateWidget(CustomElevatedButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isSuccess && !oldWidget.isSuccess) {
+      _showSuccess = true;
+      Future<void>.delayed(widget.successDuration, () {
+        if (mounted) {
+          setState(() {
+            _showSuccess = false;
+          });
+          widget.onSuccessComplete?.call();
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final Color bgColorCore = isDisable
+    final Color successColor = Colors.green;
+    final bool isInSuccessState = widget.isSuccess || _showSuccess;
+    final Color bgColorCore = widget.isDisable
         ? colorScheme.outlineVariant
-        : bgColor ?? colorScheme.primary;
+        : isInSuccessState
+            ? successColor
+            : widget.bgColor ?? colorScheme.primary;
 
     return Container(
-      margin: margin ?? const EdgeInsets.symmetric(vertical: 16),
+      margin: widget.margin ?? const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
         color: bgColorCore,
-        borderRadius: borderRadius ?? BorderRadius.circular(8),
-        border: border ?? Border.all(color: bgColorCore),
+        borderRadius: widget.borderRadius ?? BorderRadius.circular(8),
+        border: widget.border ?? Border.all(color: bgColorCore),
       ),
       child: Material(
-        borderRadius: borderRadius ?? BorderRadius.circular(8),
+        borderRadius: widget.borderRadius ?? BorderRadius.circular(8),
         color: bgColorCore,
         child: InkWell(
-          borderRadius: borderRadius ?? BorderRadius.circular(8),
-          onTap: (isDisable || isLoading) ? null : onTap,
+          borderRadius: widget.borderRadius ?? BorderRadius.circular(8),
+          onTap: (widget.isDisable || widget.isLoading || isInSuccessState)
+              ? null
+              : widget.onTap,
           child: Padding(
-            padding: padding ?? const EdgeInsets.symmetric(vertical: 6),
+            padding:
+                widget.padding ?? const EdgeInsets.symmetric(vertical: 6),
             child: Row(
-              mainAxisAlignment: rowAlignment ?? MainAxisAlignment.center,
+              mainAxisAlignment:
+                  widget.rowAlignment ?? MainAxisAlignment.center,
               children: <Widget>[
-                if (!isLoading && prefix != null)
+                if (!widget.isLoading && !isInSuccessState && widget.prefix != null)
                   Padding(
-                    padding: prefixSuffixPadding ?? const EdgeInsets.all(8.0),
-                    child: prefix!,
+                    padding:
+                        widget.prefixSuffixPadding ?? const EdgeInsets.all(8.0),
+                    child: widget.prefix!,
                   ),
-                if (isLoading)
-                  _PulsingDots(
-                    color:
-                        textColor ??
-                        (bgColor == Colors.transparent
-                            ? colorScheme.onSurface
-                            : colorScheme.onPrimary),
-                  )
+                if (widget.isLoading)
+                  widget.loadingWidget ??
+                      _PulsingDots(
+                        color: widget.textColor ??
+                            (widget.bgColor == Colors.transparent
+                                ? colorScheme.onSurface
+                                : colorScheme.onPrimary),
+                      )
+                else if (isInSuccessState)
+                  widget.successWidget ??
+                      Icon(
+                        Icons.check,
+                        color: widget.textColor ?? colorScheme.onPrimary,
+                        size: 24,
+                      )
                 else
                   Text(
-                    title,
-                    style:
-                        textStyle ??
+                    widget.title,
+                    style: widget.textStyle ??
                         TextTheme.of(context).bodyLarge?.copyWith(
-                          color:
-                              textColor ??
-                              (bgColor == Colors.transparent
-                                  ? colorScheme.onSurface
-                                  : colorScheme.onPrimary),
-                          fontWeight: fontWeight,
-                        ),
+                              color: widget.textColor ??
+                                  (widget.bgColor == Colors.transparent
+                                      ? colorScheme.onSurface
+                                      : colorScheme.onPrimary),
+                              fontWeight: widget.fontWeight,
+                            ),
                   ),
-                if (!isLoading && suffix != null)
+                if (!widget.isLoading && !isInSuccessState && widget.suffix != null)
                   Padding(
-                    padding: prefixSuffixPadding ?? const EdgeInsets.all(8.0),
-                    child: suffix!,
+                    padding:
+                        widget.prefixSuffixPadding ?? const EdgeInsets.all(8.0),
+                    child: widget.suffix!,
                   ),
               ],
             ),

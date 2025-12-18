@@ -32,11 +32,12 @@ class PostAddToBasketButton extends StatefulWidget {
 }
 
 class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
-  bool isLoading = false;
+  bool _isLoading = false;
+  bool _isSuccess = false;
 
   Future<void> _addToBasket(BuildContext context) async {
-    if (isLoading) return;
-    setState(() => isLoading = true);
+    if (_isLoading || _isSuccess) return;
+    setState(() => _isLoading = true);
 
     try {
       if (widget.post.type == ListingType.clothAndFoot &&
@@ -48,6 +49,7 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
             actionType: PostTileClothFootType.add,
           ),
         );
+        if (mounted) setState(() => _isLoading = false);
       } else if (widget.post.listID == ListingType.clothAndFoot.json) {
         final AddToCartUsecase usecase = AddToCartUsecase(locator());
         final DataState<bool> result = await usecase(
@@ -59,10 +61,10 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
         );
         if (result is DataSuccess) {
           if (mounted) {
-            AppSnackBar.info(
-              context,
-              'successfull_add_to_basket'.tr(),
-            );
+            setState(() {
+              _isLoading = false;
+              _isSuccess = true;
+            });
           }
         } else {
           AppLog.error(
@@ -70,7 +72,8 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
             name: 'post_add_to_basket_button.dart',
             error: result.exception,
           );
-          if (context.mounted) {
+          if (mounted) {
+            setState(() => _isLoading = false);
             AppSnackBar.showSnackBar(
               context,
               result.exception?.detail ?? 'something_wrong'.tr(),
@@ -84,18 +87,19 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
         );
         if (result is DataSuccess) {
           if (mounted) {
-            AppSnackBar.success(
-              context,
-              'successfull_add_to_basket'.tr(),
-            );
+            setState(() {
+              _isLoading = false;
+              _isSuccess = true;
+            });
           }
         } else {
           AppLog.error(
             result.exception?.message ?? 'AddToCartError',
             name: 'post_add_to_basket_button.dart',
-            error: result.exception, 
+            error: result.exception,
           );
           if (mounted) {
+            setState(() => _isLoading = false);
             AppSnackBar.error(
               context,
               result.exception?.detail ?? 'something_wrong'.tr(),
@@ -111,22 +115,51 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
         stackTrace: stackTrace,
       );
       if (mounted) {
+        setState(() => _isLoading = false);
         AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
       }
     }
-
-    if (mounted) setState(() => isLoading = false);
   }
 
   @override
   Widget build(BuildContext context) {
-    final Color color = Theme.of(context).primaryColor;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final Color color = colorScheme.primary;
 
     return CustomElevatedButton(
       margin: const EdgeInsets.symmetric(vertical: 8),
       onTap: () => _addToBasket(context),
       title: 'add_to_basket'.tr(),
-      isLoading: isLoading,
+      isLoading: _isLoading,
+      isSuccess: _isSuccess,
+      successWidget: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Icon(
+            Icons.check,
+            color: colorScheme.onSecondary,
+            size: 18,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            'added_to_basket'.tr(),
+            style: TextStyle(
+              fontWeight: FontWeight.w400,
+              color: colorScheme.onSecondary,
+            ),
+          ),
+        ],
+      ),
+      onSuccessComplete: () {
+        if (mounted) setState(() => _isSuccess = false);
+      },
+      loadingWidget: Text(
+        'adding_to_basket'.tr(),
+        style: TextStyle(
+          fontWeight: FontWeight.w400,
+          color: color,
+        ),
+      ),
       bgColor: Colors.transparent,
       border: Border.all(color: color, width: 2),
       textColor: color,
