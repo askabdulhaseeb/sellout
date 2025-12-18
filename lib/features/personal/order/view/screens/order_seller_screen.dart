@@ -278,7 +278,7 @@ class OrderActionButtonsList extends StatelessWidget {
                 isLoading: orderPro.isLoading,
                 keyName: 'start_order',
                 color: order.orderStatus.color,
-                onTap: () => orderPro.updateSellerOrder(
+                onTap: () async => await orderPro.updateSellerOrder(
                   order.orderId,
                   StatusType.processing,
                 ),
@@ -289,7 +289,7 @@ class OrderActionButtonsList extends StatelessWidget {
                 isLoading: orderPro.isLoading,
                 keyName: 'ready_to_ship',
                 color: order.orderStatus.color,
-                onTap: () {},
+                onTap: () async => false,
               ),
             // Download label button when ready to ship
             if (order.orderStatus == StatusType.readyToShip)
@@ -298,7 +298,7 @@ class OrderActionButtonsList extends StatelessWidget {
                 keyName: 'download_label',
                 color: Theme.of(context).colorScheme.primary,
                 onTap: () async {
-                  await orderPro.downloadLabel(
+                  return await orderPro.downloadLabel(
                     order.shippingDetails?.shippingLabelUrl,
                   );
                 },
@@ -308,21 +308,21 @@ class OrderActionButtonsList extends StatelessWidget {
                 isLoading: orderPro.isLoading,
                 keyName: 'delivered',
                 color: order.orderStatus.color,
-                onTap: () {},
+                onTap: () async => false,
               ),
             if (order.orderStatus == StatusType.shipped)
               OrderActionButton(
                 isLoading: orderPro.isLoading,
                 keyName: 'shipped',
                 color: order.orderStatus.color,
-                onTap: () {},
+                onTap: () async => false,
               ),
             if (order.orderStatus == StatusType.cancelled)
               OrderActionButton(
                 isLoading: false,
                 keyName: 'cancelled',
                 color: order.orderStatus.color,
-                onTap: () {},
+                onTap: () async => false,
               ),
             // tappable
             if (order.orderStatus == StatusType.processing &&
@@ -332,7 +332,7 @@ class OrderActionButtonsList extends StatelessWidget {
                 keyName: 'buy_label',
                 color: order.orderStatus.color,
                 onTap: () async {
-                  await orderPro.buyLabel(order.orderId);
+                  return await orderPro.buyLabel(order.orderId);
                 },
               ),
             if (order.orderStatus == StatusType.processing &&
@@ -341,12 +341,14 @@ class OrderActionButtonsList extends StatelessWidget {
                 isLoading: false,
                 keyName: 'choose_postage',
                 color: order.orderStatus.color,
-                onTap: () {
+                onTap: () async {
                   showModalBottomSheet(
                     context: context,
                     builder: (BuildContext context) =>
                         OrderPostageBottomSheet(orderId: order.orderId),
                   );
+
+                  return false;
                 },
               ),
 
@@ -357,7 +359,7 @@ class OrderActionButtonsList extends StatelessWidget {
                 color: Theme.of(
                   context,
                 ).colorScheme.onSurface.withValues(alpha: 0.4),
-                onTap: () => orderPro.updateSellerOrder(
+                onTap: () async => await orderPro.updateSellerOrder(
                   order.orderId,
                   StatusType.cancelled,
                 ),
@@ -368,11 +370,13 @@ class OrderActionButtonsList extends StatelessWidget {
               color: Theme.of(
                 context,
               ).colorScheme.onSurface.withValues(alpha: 0.4),
-              onTap: () {
+              onTap: () async {
                 Provider.of<CreatePrivateChatProvider>(
                   context,
                   listen: false,
                 ).startPrivateChat(context, order.buyerId);
+
+                return false;
               },
             ),
 
@@ -383,7 +387,7 @@ class OrderActionButtonsList extends StatelessWidget {
                 color: Theme.of(
                   context,
                 ).colorScheme.onSurface.withValues(alpha: 0.4),
-                onTap: () {},
+                onTap: () async => false,
               ),
             ),
             InDevMode(
@@ -393,7 +397,7 @@ class OrderActionButtonsList extends StatelessWidget {
                 color: Theme.of(
                   context,
                 ).colorScheme.onSurface.withValues(alpha: 0.4),
-                onTap: () {},
+                onTap: () async => false,
               ),
             ),
             InDevMode(
@@ -403,7 +407,7 @@ class OrderActionButtonsList extends StatelessWidget {
                 color: Theme.of(
                   context,
                 ).colorScheme.onSurface.withValues(alpha: 0.4),
-                onTap: () {},
+                onTap: () async => false,
               ),
             ),
             InDevMode(
@@ -413,7 +417,7 @@ class OrderActionButtonsList extends StatelessWidget {
                 color: Theme.of(
                   context,
                 ).colorScheme.onSurface.withValues(alpha: 0.4),
-                onTap: () {},
+                onTap: () async => false,
               ),
             ),
           ],
@@ -423,7 +427,7 @@ class OrderActionButtonsList extends StatelessWidget {
   }
 }
 
-class OrderActionButton extends StatelessWidget {
+class OrderActionButton extends StatefulWidget {
   const OrderActionButton({
     required this.keyName,
     required this.color,
@@ -434,20 +438,62 @@ class OrderActionButton extends StatelessWidget {
 
   final String keyName;
   final Color color;
-  final VoidCallback onTap;
+  final Future<bool> Function() onTap;
   final bool isLoading;
 
   @override
+  State<OrderActionButton> createState() => _OrderActionButtonState();
+}
+
+class _OrderActionButtonState extends State<OrderActionButton> {
+  bool _isSuccess = false;
+
+  Future<void> _handleTap() async {
+    if (widget.isLoading || _isSuccess) return;
+
+    final bool ok = await widget.onTap();
+    if (!mounted) return;
+    if (ok) {
+      setState(() => _isSuccess = true);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return CustomElevatedButton(
       padding: const EdgeInsets.all(4),
-      isLoading: isLoading,
-      onTap: onTap,
-      textStyle: TextTheme.of(context).bodyMedium?.copyWith(color: color),
+      isLoading: widget.isLoading,
+      isSuccess: _isSuccess,
+      loadingTitle: 'loading'.tr(),
+      successWidget: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Icon(Icons.check, color: colorScheme.onSecondary, size: 18),
+          const SizedBox(width: 6),
+          Text(
+            widget.keyName == 'download_label'
+                ? 'downloaded'.tr()
+                : widget.keyName.tr(),
+            style: TextTheme.of(context).bodyMedium?.copyWith(
+              fontWeight: FontWeight.w400,
+              color: colorScheme.onSecondary,
+            ),
+          ),
+        ],
+      ),
+      onSuccessComplete: () {
+        if (mounted) setState(() => _isSuccess = false);
+      },
+      onTap: _handleTap,
+      textStyle: TextTheme.of(
+        context,
+      ).bodyMedium?.copyWith(color: widget.color),
       bgColor: Colors.transparent,
-      textColor: color,
-      border: Border.all(color: color),
-      title: keyName.tr(),
+      textColor: widget.color,
+      border: Border.all(color: widget.color),
+      title: widget.keyName.tr(),
     );
   }
 }
