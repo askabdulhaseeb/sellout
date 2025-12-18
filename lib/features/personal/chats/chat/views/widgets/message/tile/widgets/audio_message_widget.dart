@@ -275,7 +275,7 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.6,
+        width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
         child: _buildContent(isMe, theme, colorScheme),
       ),
@@ -431,46 +431,49 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
             const SizedBox(width: 4),
             // Waveform with seek gesture
             Expanded(
-              child: LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraints) {
-                  final double waveformWidth = constraints.maxWidth;
-
-                  return GestureDetector(
-                    onTapDown: (TapDownDetails details) {
-                      final double localX = details.localPosition.dx;
-                      final double progress = waveformWidth <= 0
-                          ? 0.0
-                          : (localX / waveformWidth).clamp(0.0, 1.0);
-                      _seekTo(progress);
-                    },
-                    onHorizontalDragUpdate: (DragUpdateDetails details) {
-                      final double localX = details.localPosition.dx;
-                      final double progress = waveformWidth <= 0
-                          ? 0.0
-                          : (localX / waveformWidth).clamp(0.0, 1.0);
-                      _seekTo(progress);
-                    },
-                    child: AudioFileWaveforms(
-                      enableSeekGesture: true,
-                      continuousWaveform: true,
-                      waveformType: WaveformType.fitWidth,
-                      size: Size(waveformWidth, 36),
-                      playerController: _playerController,
-                      playerWaveStyle: PlayerWaveStyle(
-                        scaleFactor: 80,
-                        fixedWaveColor: colorScheme.onSurface.withValues(
-                          alpha: 0.8,
-                        ),
-                        liveWaveColor: theme.primaryColor,
-                        showSeekLine: false,
-                        seekLineColor: Colors.transparent,
-                        spacing: 4,
-                        waveThickness: 3,
-                        waveCap: StrokeCap.round,
-                      ),
-                    ),
+              child: GestureDetector(
+                onTapDown: (TapDownDetails details) {
+                  final RenderBox box =
+                      context.findRenderObject()! as RenderBox;
+                  final double localX = details.localPosition.dx;
+                  // Account for play button width (46) and spacing (4)
+                  final double waveformWidth = box.size.width - 46 - 4 - 24;
+                  final double progress = (localX / waveformWidth).clamp(
+                    0.0,
+                    1.0,
                   );
+                  _seekTo(progress);
                 },
+                onHorizontalDragUpdate: (DragUpdateDetails details) {
+                  final RenderBox box =
+                      context.findRenderObject()! as RenderBox;
+                  final double localX = details.localPosition.dx;
+                  final double waveformWidth = box.size.width - 46 - 4 - 24;
+                  final double progress = (localX / waveformWidth).clamp(
+                    0.0,
+                    1.0,
+                  );
+                  _seekTo(progress);
+                },
+                child: AudioFileWaveforms(
+                  enableSeekGesture: true,
+                  continuousWaveform: true,
+                  waveformType: WaveformType.fitWidth,
+                  size: const Size(double.infinity, 36),
+                  playerController: _playerController,
+                  playerWaveStyle: PlayerWaveStyle(
+                    scaleFactor: 80,
+                    fixedWaveColor: colorScheme.onSurface.withValues(
+                      alpha: 0.6,
+                    ),
+                    liveWaveColor: theme.primaryColor,
+                    showSeekLine: false,
+                    seekLineColor: Colors.transparent,
+                    spacing: 4,
+                    waveThickness: 3,
+                    waveCap: StrokeCap.round,
+                  ),
+                ),
               ),
             ),
             const SizedBox(width: 4),
