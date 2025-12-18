@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
@@ -21,131 +22,268 @@ class VoiceRecordTrigger extends StatefulWidget {
 }
 
 class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
+  static const String _tag = 'VoiceRecordTrigger';
+
+  void _log(String message) {
+    debugPrint('[$_tag] $message');
+  }
+
+  // Recorder & waveform
   final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
   late final RecorderController _waveformController;
+
+  StreamSubscription<RecordingDisposition>? _progressSub;
+  bool _recorderReady = false;
+  bool _isActionInFlight = false;
+
+  // Send message provider
   late final SendMessageProvider _msgPro;
 
+  // State
   bool _isRecording = false;
   String? _recordPath;
   Duration _duration = Duration.zero;
-  bool _recorderInitialized = false;
 
   @override
   void initState() {
     super.initState();
+
     _msgPro = Provider.of<SendMessageProvider>(context, listen: false);
     _waveformController = RecorderController();
+    _log('initState: starting recorder init');
+    _initializeRecorder();
   }
 
-  /// Ensures recorder is ready after permission is granted
   Future<void> _initializeRecorder() async {
-    if (_recorderInitialized) return;
-    await _recorder.openRecorder();
-    await _recorder.setSubscriptionDuration(const Duration(milliseconds: 100));
-    _recorderInitialized = true;
+    if (_recorderReady) return;
+    try {
+      final PermissionStatus status = await Permission.microphone.request();
+      _log('microphone permission: $status');
+      if (!status.isGranted) {
+        _log('microphone permission not granted; recorder not ready');
+        return;
+      }
+      await _recorder.openRecorder();
+      await _recorder.setSubscriptionDuration(
+        const Duration(milliseconds: 100),
+      );
+      _recorderReady = true;
+      _log('recorder initialized successfully');
+    } catch (e, st) {
+      _log('initializeRecorder ERROR: $e');
+      _log('initializeRecorder STACK: $st');
+      _recorderReady = false;
+    }
+  }
+
+  Future<bool> _ensureRecorderReady() async {
+    await _initializeRecorder();
+    return _recorderReady;
   }
 
   Future<void> _playSound(String assetPath) async {
     final AudioPlayer player = AudioPlayer();
     try {
-      await player.setAsset(assetPath);
+      _log('playSound: $assetPath');
+      await player.setAsset(assetPath); // Load asset
       await player.play();
+      await player.processingStateStream.firstWhere(
+        (ProcessingState s) => s == ProcessingState.completed,
+      );
     } catch (e) {
-      debugPrint('Error playing sound $assetPath: $e');
+      _log('playSound ERROR ($assetPath): $e');
     } finally {
-      player.dispose();
+      player.dispose(); // Dispose after playing
     }
   }
 
   Future<void> _startRecording() async {
-    // Check permission first
-    PermissionStatus status = await Permission.microphone.status;
+    if (_isActionInFlight) return;
+    _isActionInFlight = true;
 
-    if (!status.isGranted) {
-      status = await Permission.microphone.request();
-    }
+    _log(
+      'startRecording: begin (ready=$_recorderReady, isRecording=$_isRecording, recorder.isRecording=${_recorder.isRecording})',
+    );
 
-    if (status.isPermanentlyDenied) {
-      openAppSettings();
+    final bool ready = await _ensureRecorderReady();
+    if (!ready) {
+      _log('startRecording: recorder not ready; abort');
+      _isActionInFlight = false;
       return;
     }
 
-    if (!status.isGranted) {
-      // Permission denied but not permanent → stop here
+    try {
+      final Directory dir = await getApplicationDocumentsDirectory();
+      _recordPath =
+          '${dir.path}/audio_${DateTime.now().millisecondsSinceEpoch}.aac';
+      _log('startRecording: path=$_recordPath');
+      await _recorder.startRecorder(toFile: _recordPath, codec: Codec.aacADTS);
+      _log('startRecording: recorder started');
+    } catch (e, st) {
+      _log('startRecording ERROR: $e');
+      _log('startRecording STACK: $st');
+      _isActionInFlight = false;
       return;
     }
 
-    // Permission granted → initialize recorder if not already
-    await _initializeRecorder();
+    try {
+      _waveformController.record();
+    } catch (_) {}
 
-    // Prepare file path
-    final Directory dir = await getApplicationDocumentsDirectory();
-    _recordPath =
-        '${dir.path}/audio_${DateTime.now().millisecondsSinceEpoch}.aac';
-
-    // Start recording
-    await _recorder.startRecorder(toFile: _recordPath, codec: Codec.aacADTS);
-    _waveformController.record();
-    _playSound(AppStrings.recordingStartSound);
+    unawaited(_playSound(AppStrings.recordingStartSound));
     _msgPro.startRecording();
-
-    // Track duration
-    _recorder.onProgress?.listen((RecordingDisposition event) {
+    // Listen to real duration
+    await _progressSub?.cancel();
+    _progressSub = _recorder.onProgress?.listen((RecordingDisposition event) {
+      if (!mounted) return;
       setState(() {
         _duration = event.duration;
       });
     });
+    _log('startRecording: progress listener attached=${_progressSub != null}');
 
-    setState(() {
-      _isRecording = true;
-    });
+    if (mounted) {
+      setState(() {
+        _isRecording = true;
+      });
+    }
+
+    _isActionInFlight = false;
+    _log('startRecording: done');
   }
 
   Future<void> _stopRecording() async {
-    if (_recorder.isRecording) await _recorder.stopRecorder();
+    _log(
+      'stopRecording: begin (isRecording=$_isRecording, recorder.isRecording=${_recorder.isRecording}, path=$_recordPath)',
+    );
     try {
-      await _waveformController.stop();
-      _msgPro.stopRecording();
-    } catch (_) {}
+      await _progressSub?.cancel();
+    } catch (e, st) {
+      _log('stopRecording: cancel progress ERROR: $e');
+      _log('stopRecording: cancel progress STACK: $st');
+    }
+    _progressSub = null;
+
+    try {
+      if (_recorder.isRecording) {
+        _log('stopRecording: calling stopRecorder()');
+        final String? stoppedPath = await _recorder
+            .stopRecorder()
+            .timeout(const Duration(seconds: 4));
+        _log('stopRecording: stopRecorder returned=$stoppedPath');
+        if (stoppedPath != null && stoppedPath.isNotEmpty) {
+          _recordPath = stoppedPath;
+        }
+      } else {
+        _log('stopRecording: recorder was not recording');
+      }
+    } on TimeoutException catch (e, st) {
+      _log('stopRecording: stopRecorder TIMEOUT: $e');
+      _log('stopRecording: stopRecorder TIMEOUT STACK: $st');
+    } catch (e, st) {
+      _log('stopRecording ERROR: $e');
+      _log('stopRecording STACK: $st');
+    }
+
+    try {
+      _log('stopRecording: stopping waveform controller');
+      await _waveformController
+          .stop()
+          .timeout(const Duration(seconds: 2));
+      _log('stopRecording: waveform controller stopped');
+    } on TimeoutException catch (e, st) {
+      _log('stopRecording: waveform stop TIMEOUT: $e');
+      _log('stopRecording: waveform stop TIMEOUT STACK: $st');
+    } catch (e, st) {
+      _log('stopRecording: waveform stop ERROR: $e');
+      _log('stopRecording: waveform stop STACK: $st');
+    }
 
     _msgPro.stopRecording();
+    _log('stopRecording: provider stopRecording called');
 
-    setState(() {
-      _isRecording = false;
-      _duration = Duration.zero;
-    });
+    if (mounted) {
+      setState(() {
+        _isRecording = false;
+        _duration = Duration.zero;
+      });
+    }
+    _log('stopRecording: end (path=$_recordPath)');
   }
 
   Future<void> _sendRecording() async {
+    if (_isActionInFlight) return;
+    _isActionInFlight = true;
+    _log('sendRecording: begin');
     await _stopRecording();
     if (_recordPath != null) {
       final File file = File(_recordPath!);
-      if (await file.exists()) {
-        _msgPro.addVoiceNote(
-          PickedAttachment(file: file, type: AttachmentType.audio),
-        );
-        _playSound(AppStrings.recordingShareSound);
-        _msgPro.sendVoiceNote(context);
+      try {
+        final bool exists = await file.exists();
+        _log('sendRecording: file exists=$exists path=$_recordPath');
+        if (exists) {
+          final int length = await file.length();
+          _log('sendRecording: file length=$length bytes');
+          if (length == 0) {
+            _log('sendRecording: file length is 0; abort');
+            _isActionInFlight = false;
+            return;
+          }
+          _msgPro.addVoiceNote(
+            PickedAttachment(file: file, type: AttachmentType.audio),
+          );
+          _log('sendRecording: provider addVoiceNote called');
+          unawaited(_playSound(AppStrings.recordingShareSound));
+          await _msgPro.sendVoiceNote(context);
+          _log('sendRecording: provider sendVoiceNote finished');
+        }
+      } catch (e, st) {
+        _log('sendRecording ERROR: $e');
+        _log('sendRecording STACK: $st');
       }
     }
     _recordPath = null;
+    _isActionInFlight = false;
+    _log('sendRecording: end');
   }
 
   Future<void> _deleteRecording() async {
+    if (_isActionInFlight) return;
+    _isActionInFlight = true;
+
+    _log('deleteRecording: begin (path=$_recordPath)');
+
     await _stopRecording();
     if (_recordPath != null) {
       final File file = File(_recordPath!);
-      if (await file.exists()) await file.delete();
+      try {
+        final bool exists = await file.exists();
+        _log('deleteRecording: file exists=$exists path=$_recordPath');
+        if (exists) {
+          // Give the OS a moment to release the handle.
+          await Future<void>.delayed(const Duration(milliseconds: 80));
+          await file.delete();
+          _log('deleteRecording: file deleted');
+        }
+      } catch (e, st) {
+        _log('deleteRecording ERROR: $e');
+        _log('deleteRecording STACK: $st');
+      }
     }
-    _playSound(AppStrings.recordingDeleteSound);
+    unawaited(_playSound(AppStrings.recordingDeleteSound));
     _recordPath = null;
+    _isActionInFlight = false;
+    _log('deleteRecording: end');
   }
 
   @override
   void dispose() {
+    _log('dispose: begin');
+    _progressSub?.cancel();
     _recorder.closeRecorder();
     _waveformController.dispose();
     _duration = Duration.zero;
+    _log('dispose: end');
     super.dispose();
   }
 
@@ -268,14 +406,14 @@ class _PulsatingMicState extends State<_PulsatingMic>
       duration: const Duration(milliseconds: 600),
     );
 
-    _animation = TweenSequence<double>(<TweenSequenceItem<double>>[
+    _animation = TweenSequence<double>([
       TweenSequenceItem<double>(
         tween: Tween<double>(begin: 1.0, end: 1.3),
-        weight: 10,
+        weight: 50,
       ),
       TweenSequenceItem<double>(
         tween: Tween<double>(begin: 1.3, end: 1.0),
-        weight: 10,
+        weight: 50,
       ),
     ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
