@@ -19,7 +19,7 @@ class HomePostListSection extends StatelessWidget {
     if (feedProvider.feedLoading && posts.isEmpty) {
       return SliverList(
         delegate: SliverChildBuilderDelegate(
-          (_, __) => const HomePostLoader(),
+          (_, _) => const HomePostLoader(),
           childCount: 2,
         ),
       );
@@ -36,17 +36,17 @@ class HomePostListSection extends StatelessWidget {
               text: TextSpan(
                 text: '${'something_wrong'.tr()}? ',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w500,
+                ),
                 children: <InlineSpan>[
                   TextSpan(
                     text: 'retry'.tr(),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.underline,
-                        ),
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold,
+                      decoration: TextDecoration.underline,
+                    ),
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
                         context.read<FeedProvider>().loadInitialFeed('post');
@@ -61,26 +61,23 @@ class HomePostListSection extends StatelessWidget {
     }
 
     return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (BuildContext context, int index) {
-          if (index == posts.length) {
-            // Bottom loader or “no more posts”
-            if (feedProvider.feedLoadingMore) {
-              return const Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
-                child: Center(child: CircularProgressIndicator()),
-              );
-            } else if (feedProvider.noMorePosts) {
-              return const SizedBox.shrink();
-            } else {
-              return const SizedBox.shrink(); // safeguard fallback
-            }
+      delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+        if (index == posts.length) {
+          // Bottom loader or “no more posts”
+          if (feedProvider.feedLoadingMore) {
+            return const Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: Center(child: CircularProgressIndicator()),
+            );
+          } else if (feedProvider.noMorePosts) {
+            return const SizedBox.shrink();
+          } else {
+            return const SizedBox.shrink(); // safeguard fallback
           }
+        }
 
-          return HomePostTile(post: posts[index]);
-        },
-        childCount: posts.length + 1,
-      ),
+        return HomePostTile(post: posts[index]);
+      }, childCount: posts.length + 1),
     );
   }
 }
