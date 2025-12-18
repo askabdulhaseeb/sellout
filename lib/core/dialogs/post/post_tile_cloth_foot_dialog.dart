@@ -40,6 +40,18 @@ class _PostTileClothFootDialogState extends State<PostTileClothFootDialog> {
   ColorEntity? selectedColor;
   bool isLoading = false;
 
+  Widget _colorTile(String code) {
+    return Container(
+      width: double.infinity,
+      height: 32,
+      decoration: BoxDecoration(
+        color: code.toColor(),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+      ),
+    );
+  }
+
   String get _buttonTitle {
     switch (widget.actionType) {
       case PostTileClothFootType.buy:
@@ -174,8 +186,10 @@ class _PostTileClothFootDialogState extends State<PostTileClothFootDialog> {
                             .toList() ??
                         <DropdownMenuItem<SizeColorEntity>>[],
                     selectedItem: selectedSize,
-                    onChanged: (SizeColorEntity? value) =>
-                        setState(() => selectedSize = value),
+                    onChanged: (SizeColorEntity? value) => setState(() {
+                      selectedSize = value;
+                      selectedColor = null;
+                    }),
                     validator: (_) => null,
                   ),
                 ),
@@ -184,15 +198,14 @@ class _PostTileClothFootDialogState extends State<PostTileClothFootDialog> {
                   child: CustomDropdown<ColorEntity>(
                     title: 'color'.tr(),
                     hint: 'color'.tr(),
+                    selectedItemBuilder: (ColorEntity? value) =>
+                        value == null ? null : _colorTile(value.code),
                     items: (selectedSize?.colors ?? <ColorEntity>[])
                         .where((ColorEntity e) => e.quantity > 0)
                         .map(
                           (ColorEntity e) => DropdownMenuItem<ColorEntity>(
                             value: e,
-                            child: Text(
-                              e.code,
-                              style: TextStyle(color: e.code.toColor()),
-                            ),
+                            child: _colorTile(e.code),
                           ),
                         )
                         .toList(),
