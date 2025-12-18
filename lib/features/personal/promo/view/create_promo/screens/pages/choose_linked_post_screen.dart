@@ -65,11 +65,11 @@ class _ChooseLinkedPromoPostState extends State<ChooseLinkedPromoPost> {
                 containerHeight: 40,
                 labels: const <ProfilePageTabType>[
                   ProfilePageTabType.store,
-                  ProfilePageTabType.viewing
+                  ProfilePageTabType.viewing,
                 ],
                 labelStrs: <String>[
                   ProfilePageTabType.store.code.tr(),
-                  ProfilePageTabType.viewing.code.tr()
+                  ProfilePageTabType.viewing.code.tr(),
                 ],
                 labelText: '',
                 initialValue: currentPage,
@@ -82,23 +82,23 @@ class _ChooseLinkedPromoPostState extends State<ChooseLinkedPromoPost> {
               const SizedBox(height: 12),
               FutureBuilder<DataState<List<PostEntity>>>(
                 future: postsFuture, // always same future
-                builder: (BuildContext context,
-                    AsyncSnapshot<DataState<List<PostEntity>>> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  }
-                  if (!snapshot.hasData || snapshot.data?.entity == null) {
-                    return Center(child: Text('no_posts_found'.tr()));
-                  }
-                  final List<PostEntity> posts = snapshot.data!.entity!;
-                  return PromoGridView(
-                    posts: posts,
-                    pageType: currentPage,
-                  );
-                },
+                builder:
+                    (
+                      BuildContext context,
+                      AsyncSnapshot<DataState<List<PostEntity>>> snapshot,
+                    ) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      }
+                      if (!snapshot.hasData || snapshot.data?.entity == null) {
+                        return Center(child: Text('no_posts_found'.tr()));
+                      }
+                      final List<PostEntity> posts = snapshot.data!.entity!;
+                      return PromoGridView(posts: posts, pageType: currentPage);
+                    },
               ),
             ],
           ),
@@ -109,20 +109,16 @@ class _ChooseLinkedPromoPostState extends State<ChooseLinkedPromoPost> {
 }
 
 class PromoGridView extends StatelessWidget {
-  const PromoGridView({
-    required this.posts,
-    required this.pageType,
-    super.key,
-  });
+  const PromoGridView({required this.posts, required this.pageType, super.key});
 
   final List<PostEntity> posts;
   final ProfilePageTabType pageType;
 
   @override
   Widget build(BuildContext context) {
-    final List<PostEntity> sorted = List.of(posts)
-      ..sort(
-          (PostEntity a, PostEntity b) => b.createdAt.compareTo(a.createdAt));
+    final List<PostEntity> sorted = List.of(
+      posts,
+    )..sort((PostEntity a, PostEntity b) => b.createdAt.compareTo(a.createdAt));
 
     final List<PostEntity> filteredPosts = sorted.where((PostEntity post) {
       final ListingType listing = ListingType.fromJson(post.listID);
@@ -157,6 +153,7 @@ class PromoGridView extends StatelessWidget {
             pro.setRefernceID(
               filteredPosts[index].postID,
               'post_attachment',
+              filteredPosts[index].listID,
             );
             Navigator.pop(context);
           },

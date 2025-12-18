@@ -93,7 +93,7 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
           AppLog.error(
             result.exception?.message ?? 'AddToCartError',
             name: 'post_add_to_basket_button.dart',
-            error: result.exception,
+            error: result.exception, 
           );
           if (mounted) {
             AppSnackBar.error(
