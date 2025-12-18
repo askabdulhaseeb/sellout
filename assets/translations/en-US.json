@@ -1276,6 +1276,7 @@
   "buy_label":"Buy label",
   "download_label":"Download Label",
   "download_label_success":"Label downloaded successfully",
+  "downloaded": "Downloaded",
   "download_label_failed":"Failed to download label",
   "choose_postage":"Choose Postage",
   "no_shipping_options_available": "No shipping options available.",

@@ -76,7 +76,7 @@ class OrderProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateSellerOrder(String orderId, StatusType status) async {
+  Future<bool> updateSellerOrder(String orderId, StatusType status) async {
     setLoading(true);
     final UpdateOrderParams params = UpdateOrderParams(
       orderId: orderId,
@@ -87,16 +87,18 @@ class OrderProvider extends ChangeNotifier {
       AppLog.info('order_updated_successfully'.tr());
       loadOrder(orderId);
       setLoading(false);
+      return true;
     } else {
       AppLog.error(
         result.exception!.message,
         name: 'ProfileProvider.updateOrder - else',
       );
       setLoading(false);
+      return false;
     }
   }
 
-  Future<void> buyLabel(String orderId) async {
+  Future<bool> buyLabel(String orderId) async {
     _setBuyingLabel(true);
     try {
       final DataState res = await BuyLabelUsecase(
@@ -106,11 +108,13 @@ class OrderProvider extends ChangeNotifier {
         // remote call should have updated LocalOrders; refresh local order
         refreshOrder(orderId);
         AppLog.info('buy_label_success'.tr());
+        return true;
       } else {
         AppLog.error(
           res.exception?.message ?? 'buy_label_failed'.tr(),
           name: 'OrderProvider.buyLabel - Else',
         );
+        return false;
       }
     } catch (e, stc) {
       AppLog.error(
@@ -119,12 +123,13 @@ class OrderProvider extends ChangeNotifier {
         error: e,
         stackTrace: stc,
       );
+      return false;
     } finally {
       _setBuyingLabel(false);
     }
   }
 
-  Future<void> downloadLabel(String? url) async {
+  Future<bool> downloadLabel(String? url) async {
     _setDownloadingLabel(true);
     try {
       final String? labelUrl = url;
@@ -155,7 +160,7 @@ class OrderProvider extends ChangeNotifier {
                 'Storage permission denied',
                 name: 'OrderProvider.downloadLabel',
               );
-              return;
+              return false;
             }
 
             // Attempt to save to public Downloads folder
@@ -175,17 +180,21 @@ class OrderProvider extends ChangeNotifier {
 
           // Open the downloaded file
           await OpenFile.open(file.path);
+
+          return true;
         } else {
           AppLog.error(
             'Failed to download label: ${response.statusCode}',
             name: 'OrderProvider.downloadLabel',
           );
+          return false;
         }
       } else {
         AppLog.error(
           'No label URL available',
           name: 'OrderProvider.downloadLabel',
         );
+        return false;
       }
     } catch (e, stc) {
       AppLog.error(
@@ -194,6 +203,7 @@ class OrderProvider extends ChangeNotifier {
         error: e,
         stackTrace: stc,
       );
+      return false;
     } finally {
       _setDownloadingLabel(false);
     }
