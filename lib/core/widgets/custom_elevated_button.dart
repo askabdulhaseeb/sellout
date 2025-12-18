@@ -20,6 +20,7 @@ class CustomElevatedButton extends StatefulWidget {
     this.textColor,
     this.prefixSuffixPadding,
     this.fontWeight = FontWeight.w400,
+    this.loadingTitle,
     this.loadingWidget,
     this.successWidget,
     this.successDuration = const Duration(seconds: 1),
@@ -45,6 +46,7 @@ class CustomElevatedButton extends StatefulWidget {
   final Color? textColor;
   final FontWeight fontWeight;
   final EdgeInsetsGeometry? prefixSuffixPadding;
+  final String? loadingTitle;
   final Widget? loadingWidget;
   final Widget? successWidget;
   final Duration successDuration;
@@ -76,37 +78,91 @@ class _CustomElevatedButtonState extends State<CustomElevatedButton> {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final Color successColor = Colors.green;
+    final Color successColor = colorScheme.secondary;
+    final Color onSuccessColor = colorScheme.onSecondary;
     final bool isInSuccessState = widget.isSuccess || _showSuccess;
     final Color bgColorCore = widget.isDisable
         ? colorScheme.outlineVariant
         : isInSuccessState
-            ? successColor
-            : widget.bgColor ?? colorScheme.primary;
+        ? successColor
+        : widget.bgColor ?? colorScheme.primary;
+
+    final Color? overlayColor = widget.isDisable
+        ? null
+        : colorScheme.secondary.withValues(alpha: 0.12);
+
+    final TextStyle effectiveTextStyle =
+        (widget.textStyle ??
+                (TextTheme.of(context).bodyLarge ?? const TextStyle()))
+            .copyWith(
+              fontWeight: widget.fontWeight,
+              // Keep previous behavior: if textStyle is provided, don't inject a
+              // computed color unless textColor is explicitly set.
+              color:
+                  widget.textColor ??
+                  widget.textStyle?.color ??
+                  (widget.textStyle != null
+                      ? null
+                      : (widget.bgColor == Colors.transparent
+                            ? colorScheme.onSurface
+                            : colorScheme.onPrimary)),
+            );
+
+    final BoxBorder? resolvedBorder = () {
+      if (widget.border == null) {
+        return Border.all(color: bgColorCore);
+      }
+
+      if (isInSuccessState && widget.border is Border) {
+        final Border b = widget.border! as Border;
+        return Border(
+          top: b.top.copyWith(color: successColor),
+          right: b.right.copyWith(color: successColor),
+          bottom: b.bottom.copyWith(color: successColor),
+          left: b.left.copyWith(color: successColor),
+        );
+      }
+
+      if (widget.isDisable && widget.border is Border) {
+        final Border b = widget.border! as Border;
+        return Border(
+          top: b.top.copyWith(color: bgColorCore),
+          right: b.right.copyWith(color: bgColorCore),
+          bottom: b.bottom.copyWith(color: bgColorCore),
+          left: b.left.copyWith(color: bgColorCore),
+        );
+      }
+
+      return widget.border;
+    }();
 
     return Container(
       margin: widget.margin ?? const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
         color: bgColorCore,
         borderRadius: widget.borderRadius ?? BorderRadius.circular(8),
-        border: widget.border ?? Border.all(color: bgColorCore),
+        border: resolvedBorder,
       ),
       child: Material(
         borderRadius: widget.borderRadius ?? BorderRadius.circular(8),
         color: bgColorCore,
         child: InkWell(
           borderRadius: widget.borderRadius ?? BorderRadius.circular(8),
+          hoverColor: overlayColor,
+          highlightColor: overlayColor,
+          splashColor: overlayColor,
           onTap: (widget.isDisable || widget.isLoading || isInSuccessState)
               ? null
               : widget.onTap,
           child: Padding(
-            padding:
-                widget.padding ?? const EdgeInsets.symmetric(vertical: 6),
+            padding: widget.padding ?? const EdgeInsets.symmetric(vertical: 6),
             child: Row(
               mainAxisAlignment:
                   widget.rowAlignment ?? MainAxisAlignment.center,
               children: <Widget>[
-                if (!widget.isLoading && !isInSuccessState && widget.prefix != null)
+                if (!widget.isLoading &&
+                    !isInSuccessState &&
+                    widget.prefix != null)
                   Padding(
                     padding:
                         widget.prefixSuffixPadding ?? const EdgeInsets.all(8.0),
@@ -114,32 +170,22 @@ class _CustomElevatedButtonState extends State<CustomElevatedButton> {
                   ),
                 if (widget.isLoading)
                   widget.loadingWidget ??
-                      _PulsingDots(
-                        color: widget.textColor ??
-                            (widget.bgColor == Colors.transparent
-                                ? colorScheme.onSurface
-                                : colorScheme.onPrimary),
+                      Text(
+                        widget.loadingTitle ?? 'Loading...',
+                        style: effectiveTextStyle,
                       )
                 else if (isInSuccessState)
                   widget.successWidget ??
                       Icon(
                         Icons.check,
-                        color: widget.textColor ?? colorScheme.onPrimary,
+                        color: widget.textColor ?? onSuccessColor,
                         size: 24,
                       )
                 else
-                  Text(
-                    widget.title,
-                    style: widget.textStyle ??
-                        TextTheme.of(context).bodyLarge?.copyWith(
-                              color: widget.textColor ??
-                                  (widget.bgColor == Colors.transparent
-                                      ? colorScheme.onSurface
-                                      : colorScheme.onPrimary),
-                              fontWeight: widget.fontWeight,
-                            ),
-                  ),
-                if (!widget.isLoading && !isInSuccessState && widget.suffix != null)
+                  Text(widget.title, style: effectiveTextStyle),
+                if (!widget.isLoading &&
+                    !isInSuccessState &&
+                    widget.suffix != null)
                   Padding(
                     padding:
                         widget.prefixSuffixPadding ?? const EdgeInsets.all(8.0),
