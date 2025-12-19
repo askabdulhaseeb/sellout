@@ -24,7 +24,10 @@ class AttachmentMessageWidget extends StatelessWidget {
         },
         child: ClipRRect(
           borderRadius: BorderRadius.circular(4),
-          child: _buildMediaContent(attachments.first, context),
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: _buildMediaContent(attachments.first, context),
+          ),
         ),
       );
     }
@@ -67,9 +70,12 @@ class AttachmentMessageWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Center(
-                    child: Text('+$remaining',
-                        style: TextTheme.of(context).titleLarge?.copyWith(
-                            color: ColorScheme.of(context).onPrimary)),
+                    child: Text(
+                      '+$remaining',
+                      style: TextTheme.of(context).titleLarge?.copyWith(
+                        color: ColorScheme.of(context).onPrimary,
+                      ),
+                    ),
                   ),
                 ),
             ],
@@ -81,19 +87,28 @@ class AttachmentMessageWidget extends StatelessWidget {
 
   Widget _buildMediaContent(AttachmentEntity attachment, BuildContext context) {
     if (attachment.type == AttachmentType.image) {
-      return CustomNetworkImage(
-          size: 200, imageURL: attachment.url, fit: BoxFit.cover);
+      return SizedBox.expand(
+        child: CustomNetworkImage(imageURL: attachment.url, fit: BoxFit.cover),
+      );
     } else {
       return Container(
-          decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              border: Border.all(color: Theme.of(context).dividerColor),
-              borderRadius: BorderRadius.circular(4)),
+        height: 200,
+        width: 200,
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          border: Border.all(color: Theme.of(context).dividerColor),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: ClipRect(
           child: VideoWidget(
+            fit: BoxFit.cover,
+            square: true,
             videoSource: attachment.url,
             play: false,
             showTime: true,
-          ));
+          ),
+        ),
+      );
     }
   }
 }
