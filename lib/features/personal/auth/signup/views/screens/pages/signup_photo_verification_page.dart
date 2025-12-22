@@ -110,12 +110,20 @@ class SignupPhotoVerificationPage extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextTheme.of(context).bodySmall,
               ).tr(),
-              CustomElevatedButton(
-                title: 'verify_photo'.tr(),
-                isLoading: pro.isLoading,
-                onTap: () => pro.onNext(context),
+              SafeArea(
+                top: false,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    CustomElevatedButton(
+                      title: 'verify_photo'.tr(),
+                      isLoading: pro.isLoading,
+                      onTap: () => pro.onNext(context),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
               ),
-              const SizedBox(height: 16),
             ],
           ),
         );
