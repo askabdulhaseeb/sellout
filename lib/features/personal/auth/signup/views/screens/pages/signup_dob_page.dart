@@ -24,7 +24,11 @@ class _SignupDobPageState extends State<SignupDobPage> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) {
-        DateTime tempDate = pro.dob ?? DateTime(2000);
+        final DateTime now = DateUtils.dateOnly(DateTime.now());
+        final DateTime maxDob = DateTime(now.year - 18, now.month, now.day);
+
+        DateTime tempDate = DateUtils.dateOnly(pro.dob ?? DateTime(2000));
+        if (tempDate.isAfter(maxDob)) tempDate = maxDob;
         return Container(
           height: 300,
           decoration: BoxDecoration(
@@ -52,9 +56,9 @@ class _SignupDobPageState extends State<SignupDobPage> {
               Expanded(
                 child: CupertinoDatePicker(
                   mode: CupertinoDatePickerMode.date,
-                  initialDateTime: pro.dob ?? DateTime(2000),
+                  initialDateTime: tempDate,
                   minimumDate: DateTime(1900),
-                  maximumDate: DateTime(DateTime.now().year - 10),
+                  maximumDate: maxDob,
                   onDateTimeChanged: (DateTime newDate) {
                     tempDate = newDate;
                   },
@@ -86,6 +90,14 @@ class _SignupDobPageState extends State<SignupDobPage> {
               FormField<DateTime>(
                 validator: (_) {
                   if (pro.dob == null) return 'please_select_dob'.tr();
+                  final DateTime now = DateUtils.dateOnly(DateTime.now());
+                  final DateTime maxDob = DateTime(
+                    now.year - 18,
+                    now.month,
+                    now.day,
+                  );
+                  final DateTime dob = DateUtils.dateOnly(pro.dob!);
+                  if (dob.isAfter(maxDob)) return 'must_be_18'.tr();
                   return null;
                 },
                 builder: (FormFieldState<DateTime> field) => Column(
@@ -96,21 +108,24 @@ class _SignupDobPageState extends State<SignupDobPage> {
                       child: Container(
                         width: double.infinity,
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                         decoration: BoxDecoration(
                           border: Border.all(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withValues(alpha: 0.2)),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.2),
+                          ),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
                           pro.dob?.dateWithFullMonth ?? 'select_dob'.tr(),
                           style: TextStyle(
-                              color: pro.dob == null
-                                  ? Theme.of(context).hintColor
-                                  : null),
+                            color: pro.dob == null
+                                ? Theme.of(context).hintColor
+                                : null,
+                          ),
                         ),
                       ),
                     ),
@@ -120,8 +135,9 @@ class _SignupDobPageState extends State<SignupDobPage> {
                         child: Text(
                           field.errorText!,
                           style: TextStyle(
-                              color: Theme.of(context).colorScheme.error,
-                              fontSize: 12),
+                            color: Theme.of(context).colorScheme.error,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                   ],
@@ -134,8 +150,12 @@ class _SignupDobPageState extends State<SignupDobPage> {
               CustomDropdown<Gender>(
                 title: 'gender'.tr(),
                 items: Gender.values
-                    .map((Gender g) => DropdownMenuItem<Gender>(
-                        value: g, child: Text(g.code.tr())))
+                    .map(
+                      (Gender g) => DropdownMenuItem<Gender>(
+                        value: g,
+                        child: Text(g.code.tr()),
+                      ),
+                    )
                     .toList(),
                 selectedItem: pro.gender,
                 onChanged: (Gender? g) => pro.setGender(g),

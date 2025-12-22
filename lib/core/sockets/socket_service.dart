@@ -8,8 +8,8 @@ import '../../features/personal/chats/chat_dashboard/data/models/message/message
 import '../../features/personal/chats/chat_dashboard/data/sources/local/local_chat.dart';
 import '../../features/personal/notifications/data/models/notification_model.dart';
 import '../../features/personal/notifications/data/source/local/local_notification.dart';
-import '../functions/app_log.dart';  
-import 'socket_implementations.dart'; 
+import '../functions/app_log.dart';
+import 'socket_implementations.dart';
 
 class SocketService with WidgetsBindingObserver {
   SocketService(this._socketImplementations);
@@ -34,10 +34,13 @@ class SocketService with WidgetsBindingObserver {
     if (LocalAuth.uid != null) {
       connect();
     } else {
-      AppLog.info('🔒 No UID at startup. Socket will not connect.',
-          name: 'socket');
+      AppLog.info(
+        '🔒 No UID at startup. Socket will not connect.',
+        name: 'socket',
+      );
     }
   }
+
   void connect() {
     final String? baseUrl = dotenv.env['baseURL'];
     final String? entityId = LocalAuth.uid;
@@ -85,13 +88,18 @@ class SocketService with WidgetsBindingObserver {
     });
 
     socket!.onDisconnect((_) {
-      AppLog.error('Disconnected from server', name: 'SocketService.disconnect');
+      AppLog.error(
+        'Disconnected from server',
+        name: 'SocketService.disconnect',
+      );
     });
 
     // Initial full list when connecting
     socket!.on('getOnlineUsers', (dynamic data) async {
-      AppLog.info('📶 Initial online users: $data',
-          name: 'SocketService.getOnlineUsers');
+      AppLog.info(
+        '📶 Initial online users: $data',
+        name: 'SocketService.getOnlineUsers',
+      );
       if (data == null) return;
       try {
         final List<String> onlineUsers = List<String>.from(data);
@@ -104,8 +112,10 @@ class SocketService with WidgetsBindingObserver {
 
     // When someone comes online
     socket!.on('userOnline', (dynamic data) {
-      AppLog.info('🟢 User came online: $data',
-          name: 'SocketService.userOnline');
+      AppLog.info(
+        '🟢 User came online: $data',
+        name: 'SocketService.userOnline',
+      );
       if (data == null) return;
       try {
         final String entityId = data is String ? data : data.toString();
@@ -114,11 +124,19 @@ class SocketService with WidgetsBindingObserver {
         AppLog.error('Error handling userOnline: $e');
       }
     });
+    socket!.on('walletUpdated', (dynamic data) {
+      AppLog.info(
+        '🟢 User creted its wallet: $data',
+        name: 'SocketService.walletUpdated',
+      );
+    });
 
     // When someone goes offline
     socket!.on('userOffline', (dynamic data) {
-      AppLog.info('🔴 User went offline: $data',
-          name: 'SocketService.userOffline');
+      AppLog.info(
+        '🔴 User went offline: $data',
+        name: 'SocketService.userOffline',
+      );
       if (data == null) return;
       try {
         if (data is Map<String, dynamic>) {
@@ -134,15 +152,20 @@ class SocketService with WidgetsBindingObserver {
     });
 
     socket!.on('new-notification', (dynamic data) async {
-      AppLog.info('🔔 New notification: $data',
-          name: 'SocketService.new-notification');
+      AppLog.info(
+        '🔔 New notification: $data',
+        name: 'SocketService.new-notification',
+      );
       if (data == null) return;
       try {
         if (data is Map<String, dynamic>) {
           final dynamic metadata = data['metadata'];
-          if (metadata != null && metadata is Map && metadata['booking_id'] != null) {
-            final Map<String, dynamic> metadataMap =
-                Map<String, dynamic>.from(metadata);
+          if (metadata != null &&
+              metadata is Map &&
+              metadata['booking_id'] != null) {
+            final Map<String, dynamic> metadataMap = Map<String, dynamic>.from(
+              metadata,
+            );
             await LocalBooking().update(
               metadataMap['booking_id'].toString(),
               metadataMap,
@@ -162,8 +185,10 @@ class SocketService with WidgetsBindingObserver {
     });
 
     socket!.on('newMessage', (dynamic data) async {
-      AppLog.info('📨 New message received: $data',
-          name: 'SocketService.newMessage');
+      AppLog.info(
+        '📨 New message received: $data',
+        name: 'SocketService.newMessage',
+      );
       if (data == null) return;
       try {
         if (data is Map<String, dynamic>) {
@@ -175,8 +200,10 @@ class SocketService with WidgetsBindingObserver {
     });
 
     socket!.on('updatedMessage', (dynamic data) async {
-      AppLog.info('📝 Message update arrived: $data',
-          name: 'SocketService.updatedMessage');
+      AppLog.info(
+        '📝 Message update arrived: $data',
+        name: 'SocketService.updatedMessage',
+      );
       if (data == null) return;
       try {
         if (data is Map<String, dynamic>) {
@@ -188,8 +215,10 @@ class SocketService with WidgetsBindingObserver {
     });
 
     socket!.on('update-pinned-message', (dynamic data) async {
-      AppLog.info('📝 Updated Pinned Message arrived: $data',
-          name: 'SocketService.updatedPinnedMessage');
+      AppLog.info(
+        '📝 Updated Pinned Message arrived: $data',
+        name: 'SocketService.updatedPinnedMessage',
+      );
       if (data == null) return;
       try {
         if (data is Map<String, dynamic>) {
@@ -201,8 +230,10 @@ class SocketService with WidgetsBindingObserver {
     });
 
     socket!.on('new-pinned-message', (dynamic data) async {
-      AppLog.info('📝 New Pinned Message arrived: $data',
-          name: 'SocketService.newPinnedMessage');
+      AppLog.info(
+        '📝 New Pinned Message arrived: $data',
+        name: 'SocketService.newPinnedMessage',
+      );
       if (data == null) return;
       try {
         if (data is Map<String, dynamic>) {
@@ -219,8 +250,10 @@ class SocketService with WidgetsBindingObserver {
     });
 
     socket!.onAnyOutgoing((String event, dynamic data) {
-      AppLog.info('📤 Outgoing: $event → $data',
-          name: 'SocketService.outgoing');
+      AppLog.info(
+        '📤 Outgoing: $event → $data',
+        name: 'SocketService.outgoing',
+      );
     });
   }
 
