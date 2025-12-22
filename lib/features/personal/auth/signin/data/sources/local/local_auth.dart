@@ -9,6 +9,7 @@ import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../domain/entities/address_entity.dart';
 import '../../../domain/entities/current_user_entity.dart';
+import '../../../domain/entities/stripe_connect_account_entity.dart';
 export '../../../domain/entities/current_user_entity.dart';
 
 class LocalAuth {
@@ -180,5 +181,17 @@ class LocalAuth {
   /// Checks if user is authenticated using secure storage.
   static Future<bool> isAuthenticated() async {
     return await SecureAuthStorage.isAuthenticated();
+  }
+
+  /// Updates the stripe connect account for the current user.
+  static Future<void> updateStripeConnectAccount(
+    StripeConnectAccountEntity stripeConnectAccount,
+  ) async {
+    final CurrentUserEntity? existing = currentUser;
+    if (existing == null) return;
+    final CurrentUserEntity updated = existing.copyWith(
+      stripeConnectAccount: stripeConnectAccount,
+    );
+    await _box.put(boxTitle, updated);
   }
 }

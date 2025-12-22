@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
+import '../../features/personal/auth/signin/data/models/stripe_connect_account_model.dart';
 import '../../features/personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../features/personal/bookings/data/sources/local_booking.dart';
 import '../../features/personal/chats/chat/data/sources/local/local_message.dart';
@@ -129,6 +130,26 @@ class SocketService with WidgetsBindingObserver {
         '🟢 User creted its wallet: $data',
         name: 'SocketService.walletUpdated',
       );
+    });
+
+    socket!.on('onboarding-success', (dynamic data) async {
+      AppLog.info(
+        '🎉 Onboarding success: $data',
+        name: 'SocketService.onboarding-success',
+      );
+      if (data == null) return;
+      try {
+        if (data is Map<String, dynamic>) {
+          final dynamic stripeData = data['stripe_connect_account'];
+          if (stripeData != null && stripeData is Map<String, dynamic>) {
+            final StripeConnectAccountModel account =
+                StripeConnectAccountModel.fromJson(stripeData);
+            await LocalAuth.updateStripeConnectAccount(account);
+          }
+        }
+      } catch (e) {
+        AppLog.error('Error handling onboarding-success: $e');
+      }
     });
 
     // When someone goes offline
