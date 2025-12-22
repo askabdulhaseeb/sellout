@@ -35,15 +35,16 @@ class SignupPhotoVerificationPage extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 child: AspectRatio(
                   aspectRatio: 1 / 1,
-                  child: pro.attachment == null
-                      ? Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Column(
+                  child: Container(
+                    clipBehavior: Clip.antiAlias,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: pro.attachment == null
+                        ? Column(
                             spacing: 8,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
@@ -52,7 +53,6 @@ class SignupPhotoVerificationPage extends StatelessWidget {
                                   color: Theme.of(
                                     context,
                                   ).primaryColor.withValues(alpha: 0.3),
-                                  // border: Border.all(color: Theme.of(context).primaryColor),
                                   borderRadius: BorderRadius.circular(15),
                                 ),
                                 padding: const EdgeInsets.all(16),
@@ -100,11 +100,57 @@ class SignupPhotoVerificationPage extends StatelessWidget {
                                 ),
                               ),
                             ],
+                          )
+                        : GestureDetector(
+                            onTap: () {
+                              pro.setImage(context, type: AttachmentType.image);
+                            },
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: <Widget>[
+                                Image.file(
+                                  File(pro.attachment!.file.path),
+                                  fit: BoxFit.cover,
+                                ),
+                                Positioned(
+                                  top: 8,
+                                  right: 8,
+                                  child: DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withValues(
+                                        alpha: 0.45,
+                                      ),
+                                      borderRadius: BorderRadius.circular(999),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8),
+                                      child: Icon(
+                                        Icons.edit,
+                                        size: 18,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        )
-                      : Image.file(File(pro.attachment?.file.path ?? '')),
+                  ),
                 ),
               ),
+              if (pro.attachment != null)
+                SizedBox(
+                  width: 160,
+                  child: CustomElevatedButton(
+                    title: 'change_photo'.tr(),
+                    isLoading: false,
+                    bgColor: Colors.transparent,
+                    border: Border.all(color: Theme.of(context).disabledColor),
+                    onTap: () {
+                      pro.setImage(context, type: AttachmentType.image);
+                    },
+                  ),
+                ),
               Text(
                 'photo_verification_policy',
                 textAlign: TextAlign.center,
