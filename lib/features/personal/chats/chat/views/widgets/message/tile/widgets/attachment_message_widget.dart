@@ -11,7 +11,6 @@ class AttachmentMessageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final int totalCount = attachments.length;
-
     if (totalCount == 1) {
       return GestureDetector(
         onTap: () {
@@ -73,8 +72,7 @@ class AttachmentMessageWidget extends StatelessWidget {
                     child: Text(
                       '+$remaining',
                       style: TextTheme.of(context).titleLarge?.copyWith(
-                        color: ColorScheme.of(context).onPrimary,
-                      ),
+                        color: ColorScheme.of(context).onPrimary),
                     ),
                   ),
                 ),
