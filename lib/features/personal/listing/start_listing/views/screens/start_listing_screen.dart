@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/scaffold/personal_scaffold.dart';
@@ -69,17 +70,22 @@ class _StartListingScreenState extends State<StartListingScreen> {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        ConstrainedBox(
-                          constraints: const BoxConstraints(minWidth: 140),
+                        SizedBox(
+                          width: 100,
                           child: CustomElevatedButton(
-                            title: 'add_a_new_address'.tr(),
+                            mWidth: 100,
+                            title: 'add_address'.tr(),
+                            textStyle: TextTheme.of(context).labelMedium
+                                ?.copyWith(color: colorScheme.onPrimary),
                             isLoading: false,
                             margin: EdgeInsets.zero,
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
+                              horizontal: 6,
+                              vertical: 6,
                             ),
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(
+                              AppSpacing.radiusSm,
+                            ),
                             onTap: () => Navigator.of(
                               context,
                             ).pushNamed(SellingAddressScreen.routeName),
