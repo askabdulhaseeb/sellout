@@ -73,7 +73,6 @@ class _StartListingScreenState extends State<StartListingScreen> {
                         SizedBox(
                           width: 100,
                           child: CustomElevatedButton(
-                            mWidth: 100,
                             title: 'add_address'.tr(),
                             textStyle: TextTheme.of(context).labelMedium
                                 ?.copyWith(color: colorScheme.onPrimary),

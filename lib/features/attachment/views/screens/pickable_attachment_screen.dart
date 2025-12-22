@@ -5,16 +5,14 @@ import '../../domain/entities/picked_attachment_option.dart';
 import '../providers/picked_media_provider.dart';
 import '../widgets/app_bar_components/back_button.dart';
 import '../widgets/app_bar_components/progress_bar.dart';
-import '../widgets/app_bar_components/selection_counter.dart'
-    show SelectionCounter;
+import '../widgets/app_bar_components/selection_counter.dart';
 import '../widgets/app_bar_components/submit_button.dart';
 import '../widgets/media_grid.dart';
 import '../widgets/picked_media_strip.dart';
-import '../widgets/scroll_to_top_button.dart';
 import '../widgets/empty_gallery_state.dart';
-import '../widgets/permission_denied_state.dart';
-import '../widgets/initial_loading_state.dart';
 import '../widgets/load_more_indicator.dart';
+import '../widgets/scroll_to_top_button.dart';
+import '../widgets/initial_loading_state.dart';
 import '../widgets/end_of_list_indicator.dart';
 
 class PickableAttachmentScreen extends StatefulWidget {
@@ -29,6 +27,8 @@ class PickableAttachmentScreen extends StatefulWidget {
 class _PickableAttachmentScreenState extends State<PickableAttachmentScreen>
     with WidgetsBindingObserver {
   late final ScrollController _scrollController;
+
+  bool _poppedForPermissionDenied = false;
 
   final GlobalKey _gridKey = GlobalKey();
   final Map<int, GlobalKey> _tileKeys =
@@ -83,6 +83,13 @@ class _PickableAttachmentScreenState extends State<PickableAttachmentScreen>
   Widget build(BuildContext context) {
     return Consumer<PickedMediaProvider>(
       builder: (BuildContext context, PickedMediaProvider provider, _) {
+        if (provider.permissionDenied && !_poppedForPermissionDenied) {
+          _poppedForPermissionDenied = true;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted) return;
+            Navigator.of(context).pop();
+          });
+        }
         final int selectedCount = provider.pickedMedia.length;
         final int maxCount = provider.option.maxAttachments;
         final double progress = (selectedCount / maxCount).clamp(0.0, 1.0);
@@ -129,7 +136,7 @@ class _PickableAttachmentScreenState extends State<PickableAttachmentScreen>
             ),
           ),
           body: provider.permissionDenied
-              ? const PermissionDeniedState()
+              ? const SizedBox.shrink()
               : provider.initialLoading
               ? const InitialLoadingState()
               : provider.mediaList.isEmpty
