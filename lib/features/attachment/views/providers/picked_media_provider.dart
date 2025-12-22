@@ -1,7 +1,7 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'dart:typed_data';
 import '../../../../core/enums/core/attachment_type.dart';
 import '../../domain/entities/picked_attachment.dart';
 import '../../domain/entities/picked_attachment_option.dart';
@@ -44,25 +44,19 @@ class PickedMediaProvider extends ChangeNotifier {
   }
 
   Future<void> refreshPermissionAndReloadIfNeeded() async {
-    final PermissionState ps = await PhotoManager.requestPermissionExtend();
+    // IMPORTANT: Don't call `requestPermissionExtend()` here.
+    // On Android, repeated requests after denial can surface extra system
+    // options (like "Never ask again"). Instead, do a silent reload attempt;
+    // if the user granted permission in Settings, loading will succeed.
     if (!mounted) return;
 
-    if (ps.isAuth) {
-      final bool shouldReload = _permissionDenied || _mediaList.isEmpty;
-      _permissionDenied = false;
-      if (mounted) notifyListeners();
-      if (shouldReload) {
-        await _loadAlbumsAndInitialMedia();
+    if (_permissionDenied || _mediaList.isEmpty) {
+      final bool loaded = await _loadAlbumsAndInitialMedia();
+      if (!mounted) return;
+      if (loaded) {
+        _permissionDenied = false;
+        if (mounted) notifyListeners();
       }
-    } else {
-      if (_permissionDenied) return;
-      _permissionDenied = true;
-      _initialLoading = false;
-      _hasMoreMedia = false;
-      _currentAlbum = null;
-      _mediaList.clear();
-      if (mounted) notifyListeners();
-      AppLog.error('Permission denied');
     }
   }
 
@@ -85,7 +79,7 @@ class PickedMediaProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> _loadAlbumsAndInitialMedia() async {
+  Future<bool> _loadAlbumsAndInitialMedia() async {
     try {
       final List<AssetPathEntity> albums = await PhotoManager.getAssetPathList(
         type: _option.type.requestType,
@@ -113,15 +107,23 @@ class PickedMediaProvider extends ChangeNotifier {
         _hasMoreMedia = false;
         if (mounted) notifyListeners();
       }
+      return true;
     } catch (e, s) {
       AppLog.error(
         'Error loading albums: $e',
         name: '_loadAlbumsAndInitialMedia',
         error: s,
       );
+
+      // If permission is missing, PhotoManager may throw. Treat that as denied
+      // and avoid further prompts.
+      _permissionDenied = true;
       _initialLoading = false;
       _hasMoreMedia = false;
+      _currentAlbum = null;
+      _mediaList.clear();
       if (mounted) notifyListeners();
+      return false;
     }
   }
 
