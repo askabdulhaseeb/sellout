@@ -5,6 +5,7 @@ import '../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../post/domain/usecase/get_specific_post_usecase.dart';
 import '../../../domain/entities/order_entity.dart';
 import '../../../../../../core/sources/data_state.dart';
+import '../../../data/source/local/local_orders.dart';
 import '../widgets/buyer_order_header_widget.dart';
 import '../widgets/buyer_order_product_detail_widget.dart';
 import '../widgets/order_buyer_address_widget.dart';
@@ -32,13 +33,14 @@ class OrderBuyerScreen extends StatelessWidget {
     final Map<String, dynamic> args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final OrderEntity order = args['order'];
+    final OrderEntity initialOrder = LocalOrders().get(order.orderId) ?? order;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: const AppBarTitle(titleKey: 'order_details'),
       ),
       body: FutureBuilder<(OrderEntity, PostEntity?)>(
-        future: _loadData(order),
+        future: _loadData(initialOrder),
         builder:
             (
               BuildContext context,
@@ -48,42 +50,54 @@ class OrderBuyerScreen extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               }
 
-              final (OrderEntity orderData, PostEntity? post) = snapshot.data!;
-              final bool hasTrackingDetails =
-                  (orderData.trackId?.trim().isNotEmpty ?? false) ||
-                  ((orderData.shippingDetails?.postage.isNotEmpty ?? false) &&
-                      (orderData.shippingDetails!.postage.first.shipmentId
-                              ?.trim()
-                              .isNotEmpty ??
-                          false));
+              final (OrderEntity baseOrderData, PostEntity? post) =
+                  snapshot.data!;
 
-              return SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    BuyerOrderHeaderWidget(orderData: orderData),
-                    const SizedBox(height: 16),
-                    OrderBuyerStatusSection(orderData: orderData),
-                    const SizedBox(height: 16),
-                    BuyerOrderProductDetailWidget(
-                      post: post,
-                      orderData: orderData,
+              return StreamBuilder<dynamic>(
+                stream: LocalOrders().watch(key: baseOrderData.orderId),
+                builder: (BuildContext context, _) {
+                  final OrderEntity orderData =
+                      LocalOrders().get(baseOrderData.orderId) ?? baseOrderData;
+                  final bool hasTrackingDetails =
+                      (orderData.trackId?.trim().isNotEmpty ?? false) ||
+                      ((orderData.shippingDetails?.postage.isNotEmpty ??
+                              false) &&
+                          (orderData.shippingDetails!.postage.first.shipmentId
+                                  ?.trim()
+                                  .isNotEmpty ??
+                              false));
+
+                  return SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        BuyerOrderHeaderWidget(orderData: orderData),
+                        const SizedBox(height: 16),
+                        OrderBuyerStatusSection(orderData: orderData),
+                        const SizedBox(height: 16),
+                        BuyerOrderProductDetailWidget(
+                          post: post,
+                          orderData: orderData,
+                        ),
+                        if (hasTrackingDetails) const SizedBox(height: 16),
+                        if (hasTrackingDetails)
+                          OrderBuyerTrackingDetailsSection(
+                            orderData: orderData,
+                          ),
+                        if (hasTrackingDetails) const SizedBox(height: 16),
+                        OrderBuyerAddressWIdget(orderData: orderData),
+                        const SizedBox(height: 16),
+                        OrderBuyerPaymentInfoWidget(
+                          orderData: orderData,
+                          post: post,
+                        ),
+                        const SizedBox(height: 24),
+                        OrderBuyerScreenBottomButtons(order: orderData),
+                      ],
                     ),
-                    if (hasTrackingDetails) const SizedBox(height: 16),
-                    if (hasTrackingDetails)
-                      OrderBuyerTrackingDetailsSection(orderData: orderData),
-                    if (hasTrackingDetails) const SizedBox(height: 16),
-                    OrderBuyerAddressWIdget(orderData: orderData),
-                    const SizedBox(height: 16),
-                    OrderBuyerPaymentInfoWidget(
-                      orderData: orderData,
-                      post: post,
-                    ),
-                    const SizedBox(height: 24),
-                    OrderBuyerScreenBottomButtons(order: orderData),
-                  ],
-                ),
+                  );
+                },
               );
             },
       ),

@@ -101,16 +101,6 @@ class _OrderBuyerScreenBottomButtonsState
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              CustomElevatedButton(
-                padding: const EdgeInsets.all(0),
-                margin: const EdgeInsets.all(0),
-                isLoading: false,
-                onTap: () {},
-                title: 'tell_us_what_you_think'.tr(),
-                bgColor: Colors.transparent,
-                textStyle: TextStyle(color: Theme.of(context).primaryColor),
-              ),
-              const SizedBox(height: 8),
               if (_isCheckingEligibility)
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 8.0),

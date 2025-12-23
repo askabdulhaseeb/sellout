@@ -90,5 +90,5 @@ abstract class LocalHiveBox<T> {
 
   int get length => box.length;
 
-  Stream<BoxEvent> watch() => box.watch();
+  Stream<BoxEvent> watch({dynamic key}) => box.watch(key: key);
 }
