@@ -39,23 +39,6 @@ class TransactionHistorySection extends StatelessWidget {
     }
   }
 
-  IconData _getIconForStatus(String status) {
-    switch (status.toLowerCase()) {
-      case 'authorized':
-      case 'pending':
-        return Icons.schedule_rounded;
-      case 'completed':
-      case 'released':
-      case 'paid':
-        return Icons.check_circle_rounded;
-      case 'failed':
-      case 'cancelled':
-        return Icons.cancel_rounded;
-      default:
-        return Icons.receipt_long_rounded;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final List<WalletTransactionEntity> previewList =

@@ -164,6 +164,8 @@
   "completed": "Completed",
   "inprogress": "In Progress",
   "processing": "Processing",
+  "ordered": "Ordered",
+  "ready": "Ready",
   "ready_to_ship": "Ready to Ship",
   "delivered": "Delivered",
   "shipped": "Shipped",
