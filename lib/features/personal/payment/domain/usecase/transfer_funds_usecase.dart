@@ -1,5 +1,4 @@
 import '../../../../../core/usecase/usecase.dart';
-import '../../../../../core/sources/data_state.dart';
 import '../params/transfer_funds_params.dart';
 import '../repositories/payment_repository.dart';
 

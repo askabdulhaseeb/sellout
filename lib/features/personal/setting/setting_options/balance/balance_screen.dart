@@ -39,11 +39,10 @@ class _BalanceScreenState extends State<BalanceScreen> {
       _loading = true;
       _error = null;
     });
-    final String walletId =
-        LocalAuth.currentUser?.stripeConnectAccount?.id ?? '';
+    final String walletId = LocalAuth.stripeAccountId ?? '';
     final GetWalletUsecase usecase = GetWalletUsecase(locator());
     final DataState<WalletModel> result = await usecase.call(walletId);
-    if (result is DataSuccess && result.data != null) {
+    if (result is DataSuccess && result.entity != null) {
       setState(() {
         _wallet = result.entity;
         _loading = false;
@@ -67,8 +66,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
     final WalletModel? wallet = _wallet;
     if (wallet == null) return;
 
-    final String walletId =
-        LocalAuth.currentUser?.stripeConnectAccount?.id ?? '';
+    final String walletId = LocalAuth.stripeAccountId ?? '';
     if (walletId.isEmpty) {
       _showSnack('something_wrong'.tr());
       return;
