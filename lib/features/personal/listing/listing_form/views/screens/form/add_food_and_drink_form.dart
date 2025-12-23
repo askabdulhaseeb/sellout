@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
+import '../../../../../../../core/widgets/in_dev_mode.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../../widgets/add_listing_price_and_quantity_widget.dart';
 import '../../widgets/category/subcateogry_selectable_widget.dart';
@@ -40,7 +41,7 @@ class _AddFoodAndDrinkFormState extends State<AddFoodAndDrinkForm> {
                 ),
                 const AddListingPriceAndQuantityWidget(),
                 const AddListingConditionOfferSection(),
-                const AddListingDiscountSection(),
+                InDevMode(child: const AddListingDiscountSection()),
                 const AddListingDeliverySelectionWidget(),
                 if (formPro.post == null) const AddListingPostButtonWidget(),
                 if (formPro.post != null) const AddListingUpdateButtons(),

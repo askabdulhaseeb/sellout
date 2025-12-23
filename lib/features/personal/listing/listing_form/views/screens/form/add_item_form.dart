@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
+import '../../../../../../../core/widgets/in_dev_mode.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../../widgets/category/subcateogry_selectable_widget.dart';
 import '../../widgets/core/add_listing_basic_info_section.dart';
@@ -38,7 +39,7 @@ class _AddItemFormState extends State<AddItemForm> {
                   onSelected: formPro.setSelectedCategory,
                 ),
                 const AddListingPriceAndQuantityWidget(),
-                const AddListingDiscountSection(),
+                InDevMode(child: const AddListingDiscountSection()),
                 const AddListingConditionOfferSection(),
                 const AddListingDeliverySelectionWidget(),
                 if (formPro.post == null) const AddListingPostButtonWidget(),
