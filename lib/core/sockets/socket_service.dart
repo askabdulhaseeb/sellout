@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
-import '../../features/personal/auth/signin/data/models/stripe_connect_account_model.dart';
 import '../../features/personal/auth/signin/data/sources/local/local_auth.dart';
+import '../../features/personal/auth/stripe/data/models/stripe_connect_account_model.dart';
 import '../../features/personal/bookings/data/sources/local_booking.dart';
 import '../../features/personal/chats/chat/data/sources/local/local_message.dart';
 import '../../features/personal/chats/chat_dashboard/data/models/message/message_model.dart';

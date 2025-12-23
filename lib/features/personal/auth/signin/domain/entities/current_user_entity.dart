@@ -10,7 +10,7 @@ import 'package:hive_ce/hive.dart';
 import 'address_entity.dart';
 import 'login_detail_entity.dart';
 import 'login_info_entity.dart';
-import 'stripe_connect_account_entity.dart';
+import '../../../stripe/domain/entities/stripe_connect_account_entity.dart';
 part 'current_user_entity.g.dart';
 
 @HiveType(typeId: 0)
