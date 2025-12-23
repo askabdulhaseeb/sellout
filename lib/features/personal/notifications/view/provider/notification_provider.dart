@@ -10,6 +10,7 @@ class NotificationProvider extends ChangeNotifier {
   final GetAllNotificationsUseCase getAllNotificationsUsecase;
 
   bool _isLoading = false;
+  List<NotificationEntity> _allNotifications = <NotificationEntity>[];
   List<NotificationEntity> notifications = <NotificationEntity>[];
   NotificationType _selectedNotificationType = NotificationType.all;
 
@@ -23,22 +24,41 @@ class NotificationProvider extends ChangeNotifier {
 
   void setNotificationType(NotificationType val) {
     _selectedNotificationType = val;
+    _applyFilter();
+    notifyListeners();
+  }
+
+  void _applyFilter() {
+    notifications = _allNotifications.where((NotificationEntity n) {
+      if (_selectedNotificationType == NotificationType.all) return true;
+
+      if (_selectedNotificationType == NotificationType.share) {
+        final String postId = (n.metadata['post_id'] as String?)?.trim() ?? '';
+        return postId.isNotEmpty;
+      }
+
+      return _selectedNotificationType.containsCid(n.type);
+    }).toList();
+  }
+
+  void applyFilterOnly() {
+    _applyFilter();
     notifyListeners();
   }
 
   Future<void> fetchNotificationsByType() async {
+    if (_isLoading) return;
     setLoading(true);
     final DataState<List<NotificationEntity>> result =
         await getAllNotificationsUsecase(null);
     if (result is DataSuccess<List<NotificationEntity>>) {
-      notifications = (result.entity ?? <NotificationEntity>[])
-          .where((NotificationEntity n) =>
-              _selectedNotificationType == NotificationType.all ||
-              n.type == _selectedNotificationType.jsonKey)
-          .toList();
+      _allNotifications = result.entity ?? <NotificationEntity>[];
+      _applyFilter();
     } else {
-      AppLog.error('NotificationProvider.fetchNotificationsByType',
-          error: result.exception?.message ?? 'something_wrong');
+      AppLog.error(
+        'NotificationProvider.fetchNotificationsByType',
+        error: result.exception?.message ?? 'something_wrong',
+      );
     }
     setLoading(false);
   }

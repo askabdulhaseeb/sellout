@@ -1,9 +1,6 @@
 enum NotificationType {
-  all(
-    code: 'all',
-    jsonKey: '',
-    cids: <String>[],
-  ),
+  all(code: 'all', jsonKey: '', cids: <String>[]),
+  share(code: 'share', jsonKey: '', cids: <String>[]),
   orders(
     code: 'orders',
     jsonKey: 'new_order',
@@ -17,17 +14,12 @@ enum NotificationType {
   services(
     code: 'services',
     jsonKey: 'booking_created',
-    cids: <String>[
-      'business_removed',
-      'business_left',
-    ],
+    cids: <String>['business_removed', 'business_left'],
   ),
   requests(
     code: 'requests',
     jsonKey: 'new_chat_message',
-    cids: <String>[
-      'new_chat_message',
-    ],
+    cids: <String>['new_chat_message'],
   );
 
   final String code;
