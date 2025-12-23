@@ -249,6 +249,7 @@
   "size": "Size",
   "color": "Color",
   "total": "Total",
+  "status": "Status",
   "subtotal": "Subtotal",
   "postage_fee": "Postage Fee",
   "shipping_provider":"Shipping Provider",

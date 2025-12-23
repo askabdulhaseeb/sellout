@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../../../../../../core/enums/core/status_type.dart';
 import '../../../domain/entities/order_entity.dart';
 import '../../../../user/profiles/data/sources/local/local_user.dart';
 import 'two_style_text.dart';
@@ -11,6 +12,10 @@ class BuyerOrderHeaderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final StatusType rawStatus = orderData.orderStatus;
+    final bool isCancelled =
+        rawStatus == StatusType.cancelled || rawStatus == StatusType.canceled;
+
     return Column(
       children: <Widget>[
         TwoStyleText(
@@ -19,6 +24,37 @@ class BuyerOrderHeaderWidget extends StatelessWidget {
             'd MMM yyyy \'at\' h:mm a',
           ).format(orderData.updatedAt),
         ),
+        if (isCancelled)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(
+                  width: 120,
+                  child: Text(
+                    '${'status'.tr()}:',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.7),
+                      fontWeight: FontWeight.w400,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    'cancelled'.tr(),
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.error,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         TwoStyleText(
           firstText: 'order_number'.tr(),
           secondText: orderData.orderId,
