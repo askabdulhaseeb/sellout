@@ -59,8 +59,8 @@ class _ProfileOrdersSectionState extends State<ProfileOrdersSection> {
                 labelText: '',
                 labels: const <StatusType>[
                   StatusType.pending,
+                  StatusType.shipped,
                   StatusType.delivered,
-                  StatusType.completed,
                   StatusType.canceled,
                 ],
                 labelStrs: <String>[

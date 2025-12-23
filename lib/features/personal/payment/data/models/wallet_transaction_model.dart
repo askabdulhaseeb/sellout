@@ -3,7 +3,8 @@ import '../../domain/entities/wallet_transaction_entity.dart';
 class WalletTransactionModel extends WalletTransactionEntity {
   const WalletTransactionModel({
     required super.id,
-    required super.amount,
+    required super.transferAmount,
+    required super.payoutAmount,
     required super.currency,
     required super.status,
     required super.type,
@@ -17,7 +18,8 @@ class WalletTransactionModel extends WalletTransactionEntity {
   factory WalletTransactionModel.fromJson(Map<String, dynamic> json) {
     return WalletTransactionModel(
       id: (json['id'] ?? '').toString(),
-      amount: (json['amount'] ?? 0).toDouble(),
+      transferAmount: (json['transfer_amount'] ?? 0).toDouble(),
+      payoutAmount: (json['payout_amount'] ?? 0).toDouble(),
       currency: (json['currency'] ?? '').toString().toUpperCase(),
       status: (json['status'] ?? '').toString(),
       type: (json['type'] ?? '').toString(),
