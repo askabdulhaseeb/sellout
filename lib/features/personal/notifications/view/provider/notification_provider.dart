@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/usecase/usecase.dart';
+import '../../data/source/local/local_notification.dart';
 import '../../domain/entities/notification_entity.dart';
 import '../../domain/enums/notification_type.dart';
 import '../../domain/usecase/get_all_notifications_usecase.dart';
@@ -16,6 +17,31 @@ class NotificationProvider extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
   NotificationType get selectedNotificationType => _selectedNotificationType;
+
+  Future<void> bootstrap() async {
+    await refreshFromLocal();
+    // Fire-and-forget remote refresh.
+    fetchNotificationsByType();
+  }
+
+  Future<void> refreshFromLocal() async {
+    try {
+      final List<NotificationEntity> local =
+          await LocalNotifications.getAllNotifications();
+      _allNotifications = local;
+      _allNotifications.sort(
+        (NotificationEntity a, NotificationEntity b) =>
+            b.timestamps.compareTo(a.timestamps),
+      );
+      _applyFilter();
+      notifyListeners();
+    } catch (e) {
+      AppLog.error(
+        'NotificationProvider.refreshFromLocal',
+        error: e.toString(),
+      );
+    }
+  }
 
   void setLoading(bool val) {
     _isLoading = val;
@@ -52,8 +78,21 @@ class NotificationProvider extends ChangeNotifier {
     final DataState<List<NotificationEntity>> result =
         await getAllNotificationsUsecase(null);
     if (result is DataSuccess<List<NotificationEntity>>) {
-      _allNotifications = result.entity ?? <NotificationEntity>[];
-      _applyFilter();
+      final List<NotificationEntity> fetched =
+          result.entity ?? <NotificationEntity>[];
+      try {
+        for (final NotificationEntity n in fetched) {
+          await LocalNotifications.saveNotification(n);
+        }
+      } catch (e) {
+        AppLog.error(
+          'NotificationProvider.fetchNotificationsByType.saveLocal',
+          error: e.toString(),
+        );
+      }
+
+      // Always render from local so UI is consistent with what's stored.
+      await refreshFromLocal();
     } else {
       AppLog.error(
         'NotificationProvider.fetchNotificationsByType',

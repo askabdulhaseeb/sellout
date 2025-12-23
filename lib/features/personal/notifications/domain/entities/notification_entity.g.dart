@@ -27,13 +27,14 @@ class NotificationEntityAdapter extends TypeAdapter<NotificationEntity> {
       metadata: (fields[7] as Map).cast<String, dynamic>(),
       notificationFor: fields[8] as String,
       timestamps: fields[9] as DateTime,
+      status: fields[10] as StatusType? ?? StatusType.pending,
     );
   }
 
   @override
   void write(BinaryWriter writer, NotificationEntity obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.notificationId)
       ..writeByte(1)
@@ -53,7 +54,9 @@ class NotificationEntityAdapter extends TypeAdapter<NotificationEntity> {
       ..writeByte(8)
       ..write(obj.notificationFor)
       ..writeByte(9)
-      ..write(obj.timestamps);
+      ..write(obj.timestamps)
+      ..writeByte(10)
+      ..write(obj.status);
   }
 
   @override

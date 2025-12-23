@@ -1,4 +1,5 @@
 import 'package:hive_ce/hive.dart';
+import '../../../../../core/enums/core/status_type.dart';
 part 'notification_entity.g.dart';
 
 @HiveType(typeId: 65)
@@ -14,6 +15,7 @@ class NotificationEntity {
     required this.metadata,
     required this.notificationFor,
     required this.timestamps,
+    required this.status,
   });
   @HiveField(0)
   final String notificationId;
@@ -45,6 +47,11 @@ class NotificationEntity {
   @HiveField(9)
   final DateTime timestamps;
 
+  /// Typed status for notifications that carry a status update (e.g. order status).
+  /// Defaults to [StatusType.pending] when not provided.
+  @HiveField(10)
+  final StatusType status;
+
   String? get chatId => metadata['chat_id']?.toString();
   String? get postId => metadata['post_id']?.toString();
   String? get orderId => metadata['order_id']?.toString();
@@ -68,6 +75,7 @@ class NotificationEntity {
     Map<String, dynamic>? metadata,
     String? notificationFor,
     DateTime? timestamps,
+    StatusType? status,
   }) {
     return NotificationEntity(
       notificationId: notificationId ?? this.notificationId,
@@ -80,6 +88,7 @@ class NotificationEntity {
       metadata: metadata ?? this.metadata,
       notificationFor: notificationFor ?? this.notificationFor,
       timestamps: timestamps ?? this.timestamps,
+      status: status ?? this.status,
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:hive_ce/hive.dart';
 part 'status_type.g.dart';
 
@@ -61,7 +62,9 @@ enum StatusType {
   final Color bgColor;
 
   static StatusType fromJson(String? map) {
-    debugPrint('Mapping StatusType from json: $map');
+    if (kDebugMode) {
+      debugPrint('Mapping StatusType from json: $map');
+    }
     if (map == null) return StatusType.pending;
     switch (map) {
       case 'pending':
