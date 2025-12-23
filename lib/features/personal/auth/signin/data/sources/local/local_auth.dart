@@ -9,7 +9,7 @@ import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../domain/entities/address_entity.dart';
 import '../../../domain/entities/current_user_entity.dart';
-import '../../../domain/entities/stripe_connect_account_entity.dart';
+import '../../../../stripe/domain/entities/stripe_connect_account_entity.dart';
 export '../../../domain/entities/current_user_entity.dart';
 
 class LocalAuth {
@@ -146,6 +146,9 @@ class LocalAuth {
 
   /// Static getter for selling address
   static AddressEntity? get sellingAddress => currentUser?.sellingAddress;
+
+  /// Static getter for stripe connect account ID
+  static String? get stripeAccountId => currentUser?.stripeConnectAccount?.id;
 
   static Future<void> updateToken(String? token) async {
     final CurrentUserEntity? existing = currentUser;

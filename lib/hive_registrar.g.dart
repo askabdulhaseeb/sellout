@@ -28,7 +28,7 @@ import 'package:sellout/features/personal/auth/signin/domain/entities/address_en
 import 'package:sellout/features/personal/auth/signin/domain/entities/current_user_entity.dart';
 import 'package:sellout/features/personal/auth/signin/domain/entities/login_detail_entity.dart';
 import 'package:sellout/features/personal/auth/signin/domain/entities/login_info_entity.dart';
-import 'package:sellout/features/personal/auth/signin/domain/entities/stripe_connect_account_entity.dart';
+import 'package:sellout/features/personal/auth/stripe/domain/entities/stripe_connect_account_entity.dart';
 import 'package:sellout/features/personal/basket/domain/entities/cart/cart_entity.dart';
 import 'package:sellout/features/personal/basket/domain/entities/cart/cart_item_entity.dart';
 import 'package:sellout/features/personal/bookings/domain/entity/booking_entity.dart';

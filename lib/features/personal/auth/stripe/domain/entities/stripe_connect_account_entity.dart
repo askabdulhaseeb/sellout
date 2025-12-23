@@ -1,5 +1,5 @@
 import 'package:hive_ce/hive.dart';
-part 'stripe_connect_account_entity.g.dart';
+part '../../../signin/domain/entities/stripe_connect_account_entity.g.dart';
 
 @HiveType(typeId: 88)
 class StripeConnectAccountEntity {

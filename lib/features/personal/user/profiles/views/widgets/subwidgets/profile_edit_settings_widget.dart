@@ -118,7 +118,7 @@ class _ProfileEditAndSettingsWidgetState
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        if (LocalAuth.currentUser?.stripeConnectAccount?.id != null)
+        if (LocalAuth.stripeAccountId != null )
           InkWell(
             onTap: () => AppNavigator.pushNamed(BalanceScreen.routeName),
             child: const CustomSvgIcon(
