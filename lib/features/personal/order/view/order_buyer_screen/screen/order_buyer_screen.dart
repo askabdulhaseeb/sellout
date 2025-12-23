@@ -49,6 +49,13 @@ class OrderBuyerScreen extends StatelessWidget {
               }
 
               final (OrderEntity orderData, PostEntity? post) = snapshot.data!;
+              final bool hasTrackingDetails =
+                  (orderData.trackId?.trim().isNotEmpty ?? false) ||
+                  ((orderData.shippingDetails?.postage.isNotEmpty ?? false) &&
+                      (orderData.shippingDetails!.postage.first.shipmentId
+                              ?.trim()
+                              .isNotEmpty ??
+                          false));
 
               return SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
@@ -63,9 +70,10 @@ class OrderBuyerScreen extends StatelessWidget {
                       post: post,
                       orderData: orderData,
                     ),
-                    const SizedBox(height: 16),
-                    OrderBuyerTrackingDetailsSection(orderData: orderData),
-                    const SizedBox(height: 16),
+                    if (hasTrackingDetails) const SizedBox(height: 16),
+                    if (hasTrackingDetails)
+                      OrderBuyerTrackingDetailsSection(orderData: orderData),
+                    if (hasTrackingDetails) const SizedBox(height: 16),
                     OrderBuyerAddressWIdget(orderData: orderData),
                     const SizedBox(height: 16),
                     OrderBuyerPaymentInfoWidget(

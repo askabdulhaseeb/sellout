@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../domain/entities/order_entity.dart';
 import '../../../domain/entities/return_eligibility_entity.dart';
@@ -92,55 +91,53 @@ class _OrderBuyerScreenBottomButtonsState
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        InDevMode(
-          child: SizedBox(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  'more_actions'.tr(),
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
+        SizedBox(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                'more_actions'.tr(),
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              CustomElevatedButton(
+                padding: const EdgeInsets.all(0),
+                margin: const EdgeInsets.all(0),
+                isLoading: false,
+                onTap: () {},
+                title: 'tell_us_what_you_think'.tr(),
+                bgColor: Colors.transparent,
+                textStyle: TextStyle(color: Theme.of(context).primaryColor),
+              ),
+              const SizedBox(height: 8),
+              if (_isCheckingEligibility)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8.0),
+                  child: SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                )
+              else if (_canShowReturnButton)
                 CustomElevatedButton(
                   padding: const EdgeInsets.all(0),
                   margin: const EdgeInsets.all(0),
                   isLoading: false,
-                  onTap: () {},
-                  title: 'tell_us_what_you_think'.tr(),
+                  onTap: () async {
+                    await showRequestReturnBottomSheet(
+                      context: context,
+                      order: widget.order,
+                    );
+                  },
+                  title: 'request_return'.tr(),
                   bgColor: Colors.transparent,
                   textStyle: TextStyle(color: Theme.of(context).primaryColor),
                 ),
-                const SizedBox(height: 8),
-                if (_isCheckingEligibility)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                    child: SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                  )
-                else if (_canShowReturnButton)
-                  CustomElevatedButton(
-                    padding: const EdgeInsets.all(0),
-                    margin: const EdgeInsets.all(0),
-                    isLoading: false,
-                    onTap: () async {
-                      await showRequestReturnBottomSheet(
-                        context: context,
-                        order: widget.order,
-                      );
-                    },
-                    title: 'request_return'.tr(),
-                    bgColor: Colors.transparent,
-                    textStyle: TextStyle(color: Theme.of(context).primaryColor),
-                  ),
-                if (widget.order.orderStatus == StatusType.pending)
-                  CancelOrderButton(order: widget.order),
-              ],
-            ),
+              if (widget.order.orderStatus == StatusType.pending)
+                CancelOrderButton(order: widget.order),
+            ],
           ),
         ),
         const Spacer(),

@@ -9,10 +9,7 @@ import '../../../domain/entities/order_entity.dart';
 import '../../../domain/usecase/update_order_usecase.dart';
 
 class CancelOrderButton extends StatefulWidget {
-  const CancelOrderButton({
-    required this.order,
-    super.key,
-  });
+  const CancelOrderButton({required this.order, super.key});
 
   final OrderEntity order;
 
@@ -35,22 +32,23 @@ class _CancelOrderButtonState extends State<CancelOrderButton> {
           status: StatusType.cancelled,
         ),
       );
-
       if (!mounted) return;
 
-      if (result is DataSuccess<bool> && result.data == true) {
+      final bool ok = result is DataSuccess && result.entity == true;
+      if (ok) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('order_cancelled_success'.tr()),
             backgroundColor: Colors.green,
           ),
         );
-      } else if (result is DataFailer<bool>) {
+      } else if (result is DataFailer) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'order_cancel_failed'
-                  .tr(args: <String>[result.exception?.message ?? 'Unknown error']),
+              'order_cancel_failed'.tr(
+                args: <String>[result.exception?.message ?? 'Unknown error'],
+              ),
             ),
             backgroundColor: Colors.red,
           ),
@@ -58,8 +56,9 @@ class _CancelOrderButtonState extends State<CancelOrderButton> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text('order_cancel_failed'.tr(args: <String>['Unexpected response'])),
+            content: Text(
+              'order_cancel_failed'.tr(args: <String>['Unexpected response']),
+            ),
             backgroundColor: Colors.red,
           ),
         );
