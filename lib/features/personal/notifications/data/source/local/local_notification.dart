@@ -26,7 +26,7 @@ class LocalNotifications extends LocalHiveBox<NotificationEntity> {
 
   /// Get all notifications as a list
   static Future<List<NotificationEntity>> getAllNotifications() async {
-    return _box.values
+    final List<NotificationEntity> list = _box.values
         .map(
           (NotificationEntity e) => NotificationModel(
             notificationId: e.notificationId,
@@ -39,9 +39,16 @@ class LocalNotifications extends LocalHiveBox<NotificationEntity> {
             metadata: e.metadata,
             notificationFor: e.notificationFor,
             timestamps: e.timestamps,
+            status: e.status,
           ),
         )
         .toList();
+
+    list.sort(
+      (NotificationEntity a, NotificationEntity b) =>
+          b.timestamps.compareTo(a.timestamps),
+    );
+    return list;
   }
 
   /// Deletes a single notification by ID
@@ -64,6 +71,7 @@ class LocalNotifications extends LocalHiveBox<NotificationEntity> {
         metadata: notification.metadata,
         notificationFor: notification.notificationFor,
         timestamps: notification.timestamps,
+        status: notification.status,
       );
       await _box.put(id, updated);
     }

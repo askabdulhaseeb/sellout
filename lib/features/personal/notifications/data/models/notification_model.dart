@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../../../../../core/enums/core/status_type.dart';
 import '../../domain/entities/notification_entity.dart';
 
 class NotificationModel extends NotificationEntity {
@@ -15,6 +16,7 @@ class NotificationModel extends NotificationEntity {
     required super.metadata,
     required super.notificationFor,
     required super.timestamps,
+    required super.status,
   });
 
   static String _asString(dynamic value) => value?.toString() ?? '';
@@ -46,6 +48,10 @@ class NotificationModel extends NotificationEntity {
     final dynamic timestampsValue =
         map['timestamps'] ?? map['timestamp'] ?? metadata['created_at'];
 
+    final String statusRaw = _asString(
+      map['status'] ?? metadata['status'] ?? metadata['order_status'],
+    );
+
     return NotificationModel(
       notificationId: _asString(
         map['notification_id'] ?? map['notificationId'],
@@ -61,6 +67,7 @@ class NotificationModel extends NotificationEntity {
         map['notification_for'] ?? map['notificationFor'],
       ),
       timestamps: _asDateTime(timestampsValue),
+      status: StatusType.fromJson(statusRaw.isEmpty ? null : statusRaw),
     );
   }
 
@@ -76,6 +83,7 @@ class NotificationModel extends NotificationEntity {
       'metadata': metadata,
       'notification_for': notificationFor,
       'timestamps': timestamps.toIso8601String(),
+      'status': status.json,
     };
   }
 
