@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
 import '../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
@@ -49,11 +48,11 @@ class _OrderBuyerScreenBottomButtonsState
     try {
       final DataState<ReturnEligibilityEntity> result =
           await CheckReturnEligibilityUsecase(locator()).call(
-        ReturnEligibilityParams(
-          orderId: widget.order.orderId,
-          objectId: objectId,
-        ),
-      );
+            ReturnEligibilityParams(
+              orderId: widget.order.orderId,
+              objectId: objectId,
+            ),
+          );
 
       if (mounted) {
         setState(() {
@@ -138,9 +137,7 @@ class _OrderBuyerScreenBottomButtonsState
                     bgColor: Colors.transparent,
                     textStyle: TextStyle(color: Theme.of(context).primaryColor),
                   ),
-                if (widget.order.orderStatus == StatusType.shipped ||
-                    widget.order.orderStatus == StatusType.pending ||
-                    widget.order.orderStatus == StatusType.processing)
+                if (widget.order.orderStatus == StatusType.pending)
                   CancelOrderButton(order: widget.order),
               ],
             ),

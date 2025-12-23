@@ -11,16 +11,31 @@ class OrderBuyerStatusSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Map processing / readyToShip into the pending step so they
-    // display under the same initial step in the UI. If the
-    // order is cancelled show a clear banner above the indicator.
     final StatusType rawStatus = orderData.orderStatus;
-    final StatusType displayStatus =
-        (rawStatus == StatusType.processing ||
-            rawStatus == StatusType.readyToShip)
-        ? StatusType.pending
-        : rawStatus;
-    final bool isCancelled = rawStatus == StatusType.cancelled;
+    // If the order is cancelled show a clear banner above the indicator.
+    final bool isCancelled =
+        rawStatus == StatusType.cancelled || rawStatus == StatusType.canceled;
+
+    // Buyer UI displays a 5-step flow. Some backend statuses (like `completed`)
+    // should map to the final delivered step for display.
+    const List<StatusType> steps = <StatusType>[
+      StatusType.pending,
+      StatusType.processing,
+      StatusType.readyToShip,
+      StatusType.shipped,
+      StatusType.delivered,
+    ];
+
+    final StatusType displayStatus;
+    if (rawStatus == StatusType.delivered ||
+        rawStatus == StatusType.completed) {
+      displayStatus = StatusType.delivered;
+    } else if (steps.contains(rawStatus)) {
+      displayStatus = rawStatus;
+    } else {
+      // Fallback for statuses not part of this delivery pipeline.
+      displayStatus = StatusType.pending;
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -55,17 +70,28 @@ class OrderBuyerStatusSection extends StatelessWidget {
         if (isCancelled) const SizedBox(height: 8),
         StepProgressIndicator<StatusType>(
           stepsStrs: <String>[
-            'pending'.tr(),
-            'dispatched'.tr(),
+            'ordered'.tr(),
+            'processing'.tr(),
+            'ready'.tr(),
+            'shipped'.tr(),
             'delivered'.tr(),
           ],
           title: 'delivery_info'.tr(),
           currentStep: displayStatus,
-          steps: const <StatusType>[
-            StatusType.pending,
-            StatusType.shipped,
-            StatusType.completed,
-          ],
+          steps: steps,
+          pointSize: 16,
+          checkIconSize: 10,
+          lineThickness: 2,
+          labelSpacing: 3,
+          labelTextStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
+            fontSize: 9,
+            fontWeight: FontWeight.w500,
+          ),
+          showStepNumbers: true,
+          showCheckOnActive: false,
+          showActiveDot: true,
+          colorizeLabels: true,
+          stepProgress: 1.0,
         ),
       ],
     );
