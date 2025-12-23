@@ -5,10 +5,7 @@ import '../../../../../../core/helper_functions/country_helper.dart';
 import 'balance_detail_row.dart';
 
 class TransactionItemCard extends StatelessWidget {
-  const TransactionItemCard({
-    required this.transaction,
-    super.key,
-  });
+  const TransactionItemCard({required this.transaction, super.key});
 
   final WalletTransactionEntity transaction;
 
@@ -145,16 +142,23 @@ class TransactionItemCard extends StatelessWidget {
                         Icon(
                           _getIconForStatus(transaction.status),
                           size: 14,
-                          color: _getColorForStatus(transaction.status, context),
+                          color: _getColorForStatus(
+                            transaction.status,
+                            context,
+                          ),
                         ),
                         const SizedBox(width: 4),
                         Text(
                           _capitalize(transaction.status),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: _getColorForStatus(transaction.status, context),
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: _getColorForStatus(
+                                  transaction.status,
+                                  context,
+                                ),
+                              ),
                         ),
                       ],
                     ),
@@ -175,7 +179,10 @@ class TransactionItemCard extends StatelessWidget {
           const Divider(height: 1),
           const SizedBox(height: 8),
           BalanceDetailRow(labelKey: 'amount', value: amountStr),
-          BalanceDetailRow(labelKey: 'status', value: _capitalize(transaction.status)),
+          BalanceDetailRow(
+            labelKey: 'status',
+            value: _capitalize(transaction.status),
+          ),
           if (createdAtStr.isNotEmpty)
             BalanceDetailRow(labelKey: 'created_at', value: createdAtStr),
           if (paidAtStr.isNotEmpty)

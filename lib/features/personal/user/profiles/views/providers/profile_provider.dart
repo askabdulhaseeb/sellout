@@ -218,7 +218,44 @@ class ProfileProvider extends ChangeNotifier {
       }
 
       setOrder(allOrders);
+    } else if (_status == StatusType.shipped) {
+      // Dispatched tab - only shipped orders
+      final DataState<List<OrderEntity>> result = await _getOrderByIdUsecase(
+        GetOrderParams(
+          value: userUid,
+          user: GetOrderUserType.sellerId,
+          status: StatusType.shipped,
+        ),
+      );
+      if (result is DataSuccess) {
+        setOrder(result.entity ?? <OrderEntity>[]);
+      } else {
+        setOrder(<OrderEntity>[]);
+        AppLog.error(result.exception?.message ?? 'something_wrong'.tr());
+      }
+    } else if (_status == StatusType.delivered) {
+      // Delivered tab - both delivered and completed orders
+      final List<StatusType> deliveredStatuses = <StatusType>[
+        StatusType.delivered,
+        StatusType.completed,
+      ];
+
+      final List<OrderEntity> allOrders = <OrderEntity>[];
+      for (final StatusType status in deliveredStatuses) {
+        final DataState<List<OrderEntity>> result = await _getOrderByIdUsecase(
+          GetOrderParams(
+            value: userUid,
+            user: GetOrderUserType.sellerId,
+            status: status,
+          ),
+        );
+        if (result is DataSuccess) {
+          allOrders.addAll(result.entity ?? <OrderEntity>[]);
+        }
+      }
+      setOrder(allOrders);
     } else {
+      // Cancelled/Return tab
       final List<StatusType> cancelledStatuses = <StatusType>[
         StatusType.canceled,
         StatusType.cancelled,

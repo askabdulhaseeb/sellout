@@ -1,7 +1,8 @@
 class WalletTransactionEntity {
   const WalletTransactionEntity({
     required this.id,
-    required this.amount,
+    required this.transferAmount,
+    required this.payoutAmount,
     required this.currency,
     required this.status,
     required this.type,
@@ -13,7 +14,8 @@ class WalletTransactionEntity {
   });
 
   final String id;
-  final double amount;
+  final double transferAmount;
+  final double payoutAmount;
   final String currency;
   final String status;
   final String type;
@@ -22,4 +24,11 @@ class WalletTransactionEntity {
   final String stripePayoutId;
   final String paidAt;
   final String payoutType;
+
+  double get amount {
+    if (type.toLowerCase() == 'payout-to-bank') {
+      return payoutAmount;
+    }
+    return transferAmount;
+  }
 }
