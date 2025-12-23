@@ -44,4 +44,42 @@ class NotificationEntity {
 
   @HiveField(9)
   final DateTime timestamps;
+
+  String? get chatId => metadata['chat_id']?.toString();
+  String? get postId => metadata['post_id']?.toString();
+  String? get orderId => metadata['order_id']?.toString();
+  String? get bookingId => metadata['booking_id']?.toString();
+
+  DateTime? get createdAt {
+    final dynamic value = metadata['created_at'];
+    if (value is DateTime) return value;
+    if (value is String) return DateTime.tryParse(value);
+    return null;
+  }
+
+  NotificationEntity copyWith({
+    String? notificationId,
+    String? userId,
+    String? type,
+    String? title,
+    String? deliverTo,
+    String? message,
+    bool? isViewed,
+    Map<String, dynamic>? metadata,
+    String? notificationFor,
+    DateTime? timestamps,
+  }) {
+    return NotificationEntity(
+      notificationId: notificationId ?? this.notificationId,
+      userId: userId ?? this.userId,
+      type: type ?? this.type,
+      title: title ?? this.title,
+      deliverTo: deliverTo ?? this.deliverTo,
+      message: message ?? this.message,
+      isViewed: isViewed ?? this.isViewed,
+      metadata: metadata ?? this.metadata,
+      notificationFor: notificationFor ?? this.notificationFor,
+      timestamps: timestamps ?? this.timestamps,
+    );
+  }
 }

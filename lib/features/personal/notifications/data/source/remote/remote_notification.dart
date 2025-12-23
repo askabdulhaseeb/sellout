@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import '../../../../../../../core/sources/api_call.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/local/local_request_history.dart';
@@ -22,10 +21,10 @@ class NotificationRemoteImpl implements NotificationRemote {
 
     // If local data exists, use it directly
     if (localData?.encodedData != null) {
-      debugPrint(localData?.encodedData);
       final List<dynamic> decoded = json.decode(localData!.encodedData);
-      final List<NotificationEntity> list =
-          decoded.map((e) => NotificationModel.fromMap(e)).toList();
+      final List<NotificationEntity> list = decoded
+          .map((e) => NotificationModel.fromMap(e))
+          .toList();
       return DataSuccess<List<NotificationEntity>>('Success', list);
     }
 
@@ -38,10 +37,10 @@ class NotificationRemoteImpl implements NotificationRemote {
 
     if (result is DataSuccess<String>) {
       final String raw = result.data ?? '';
-      debugPrint(raw);
       final List<dynamic> decoded = json.decode(raw);
-      final List<NotificationEntity> list =
-          decoded.map((e) => NotificationModel.fromMap(e)).toList();
+      final List<NotificationEntity> list = decoded
+          .map((e) => NotificationModel.fromMap(e))
+          .toList();
       return DataSuccess<List<NotificationEntity>>('Success', list);
     } else {
       AppLog.error('NotificationRemote.getAllNotifications');

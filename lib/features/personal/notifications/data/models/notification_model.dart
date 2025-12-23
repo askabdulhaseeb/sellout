@@ -17,18 +17,50 @@ class NotificationModel extends NotificationEntity {
     required super.timestamps,
   });
 
+  static String _asString(dynamic value) => value?.toString() ?? '';
+
+  static bool _asBool(dynamic value) {
+    if (value is bool) return value;
+    if (value is num) return value != 0;
+    if (value is String) {
+      final String v = value.trim().toLowerCase();
+      return v == 'true' || v == '1' || v == 'yes';
+    }
+    return false;
+  }
+
+  static Map<String, dynamic> _asStringKeyedMap(dynamic value) {
+    if (value is Map<String, dynamic>) return value;
+    if (value is Map) return Map<String, dynamic>.from(value);
+    return <String, dynamic>{};
+  }
+
+  static DateTime _asDateTime(dynamic value) {
+    if (value is DateTime) return value;
+    if (value is String) return DateTime.tryParse(value) ?? DateTime.now();
+    return DateTime.now();
+  }
+
   factory NotificationModel.fromMap(Map<String, dynamic> map) {
+    final Map<String, dynamic> metadata = _asStringKeyedMap(map['metadata']);
+    final dynamic timestampsValue =
+        map['timestamps'] ?? map['timestamp'] ?? metadata['created_at'];
+
     return NotificationModel(
-      notificationId: map['notification_id'] ?? '',
-      userId: map['user_id'] ?? '',
-      type: map['type'] ?? '',
-      title: map['title'] ?? '',
-      deliverTo: map['deliver_to'] ?? '',
-      message: map['message'] ?? '',
-      isViewed: map['is_viewed'] ?? false,
-      metadata: map['metadata'] ?? <dynamic, dynamic>{},
-      notificationFor: map['notification_for'] ?? '',
-      timestamps: DateTime.tryParse(map['timestamps'] ?? '') ?? DateTime.now(),
+      notificationId: _asString(
+        map['notification_id'] ?? map['notificationId'],
+      ),
+      userId: _asString(map['user_id'] ?? map['userId']),
+      type: _asString(map['type']),
+      title: _asString(map['title']),
+      deliverTo: _asString(map['deliver_to'] ?? map['deliverTo']),
+      message: _asString(map['message']),
+      isViewed: _asBool(map['is_viewed'] ?? map['isViewed']),
+      metadata: metadata,
+      notificationFor: _asString(
+        map['notification_for'] ?? map['notificationFor'],
+      ),
+      timestamps: _asDateTime(timestampsValue),
     );
   }
 

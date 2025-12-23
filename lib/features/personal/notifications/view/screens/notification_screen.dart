@@ -1,20 +1,25 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../../../core/sources/api_call.dart';
-import '../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../core/widgets/custom_toggle_switch.dart';
 import '../../../../../core/widgets/empty_page_widget.dart';
 import '../../../../../core/widgets/loaders/notification_loader_list.dart';
 import '../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
+import '../../../../../routes/app_linking.dart';
+import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../chats/chat/views/providers/chat_provider.dart';
+import '../../../order/data/source/local/local_orders.dart';
+import '../../../order/domain/entities/order_entity.dart';
+import '../../../order/view/order_buyer_screen/screen/order_buyer_screen.dart';
+import '../../../order/view/screens/order_seller_screen.dart';
+import '../../../post/post_detail/views/screens/post_detail_screen.dart';
 import '../../../user/profiles/data/sources/local/local_user.dart';
 import '../../domain/entities/notification_entity.dart';
 import '../../domain/enums/notification_type.dart';
 import 'package:provider/provider.dart';
 import '../provider/notification_provider.dart';
-import '../../../../../core/usecase/usecase.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -63,7 +68,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   initialValue: provider.selectedNotificationType,
                   onToggle: (NotificationType value) {
                     provider.setNotificationType(value);
-                    provider.fetchNotificationsByType();
                   },
                   selectedColors: List<Color>.filled(
                     NotificationType.values.length,
@@ -118,14 +122,86 @@ class NotificationWidget extends StatefulWidget {
 }
 
 class _NotificationWidgetState extends State<NotificationWidget> {
-  late Future<DataState<UserEntity?>> userFuture;
+  void _openNotification(
+    BuildContext context, {
+    required ChatProvider chatProvider,
+    required String? chatId,
+    required String orderId,
+    required String postId,
+  }) {
+    if (orderId.isNotEmpty) {
+      final OrderEntity? order = LocalOrders().get(orderId);
+      final String? uid = LocalAuth.uid;
+
+      // Prefer a definitive role check using the order entity when available.
+      if (order != null && uid != null && uid.isNotEmpty) {
+        if (uid == order.sellerId) {
+          AppNavigator.pushNamed(
+            OrderSellerScreen.routeName,
+            arguments: <String, dynamic>{'order-id': orderId},
+          );
+          return;
+        }
+
+        if (uid == order.buyerId) {
+          AppNavigator.pushNamed(
+            OrderBuyerScreen.routeName,
+            arguments: <String, dynamic>{'order': order},
+          );
+          return;
+        }
+      }
+
+      // Fallback: use notificationFor hint when we can't determine role.
+      final String notificationFor = widget.notification.notificationFor
+          .toLowerCase();
+      final bool forSeller =
+          notificationFor.contains('seller') ||
+          notificationFor.contains('business');
+
+      if (forSeller) {
+        AppNavigator.pushNamed(
+          OrderSellerScreen.routeName,
+          arguments: <String, dynamic>{'order-id': orderId},
+        );
+        return;
+      }
+
+      if (order != null) {
+        AppNavigator.pushNamed(
+          OrderBuyerScreen.routeName,
+          arguments: <String, dynamic>{'order': order},
+        );
+        return;
+      }
+
+      AppSnackBar.showSnackBar(context, 'no_data_found'.tr());
+      return;
+    }
+
+    if (postId.isNotEmpty) {
+      AppNavigator.pushNamed(
+        PostDetailScreen.routeName,
+        arguments: <String, String>{'pid': postId},
+      );
+      return;
+    }
+
+    if (chatId != null && chatId.trim().isNotEmpty) {
+      chatProvider.createOrOpenChatById(context, chatId);
+      return;
+    }
+
+    AppSnackBar.showSnackBar(context, 'no_data_found'.tr());
+  }
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(widget.notification.type);
     final ChatProvider pro = Provider.of<ChatProvider>(context, listen: false);
     final Map<String, dynamic> metadata = widget.notification.metadata;
     final String? chatId = metadata['chat_id'] as String?;
+    final String postId = (metadata['post_id'] as String?)?.trim() ?? '';
+    final String orderId = (metadata['order_id'] as String?)?.trim() ?? '';
 
     return FutureBuilder<UserEntity?>(
       future: LocalUser().user(widget.notification.userId),
@@ -137,80 +213,89 @@ class _NotificationWidgetState extends State<NotificationWidget> {
           return const SizedBox();
         }
         final UserEntity? user = snapshot.data;
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Row(
-            children: <Widget>[
-              ClipRRect(
-                borderRadius: BorderRadius.circular(6),
-                child: CustomNetworkImage(
-                  imageURL: user?.profilePhotoURL ?? '',
-                  size: 60,
-                  placeholder: user?.displayName.isNotEmpty == true
-                      ? user!.displayName
-                      : 'na'.tr(),
+        final bool hasAnyAction =
+            orderId.isNotEmpty ||
+            postId.isNotEmpty ||
+            (chatId != null && chatId.trim().isNotEmpty);
+        return InkWell(
+          onTap: () => _openNotification(
+            context,
+            chatProvider: pro,
+            chatId: chatId,
+            orderId: orderId,
+            postId: postId,
+          ),
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Row(
+              children: <Widget>[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: CustomNetworkImage(
+                    imageURL: user?.profilePhotoURL ?? '',
+                    size: 60,
+                    placeholder: user?.displayName.isNotEmpty == true
+                        ? user!.displayName
+                        : 'na'.tr(),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      user?.displayName ?? 'na'.tr(),
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(),
-                    ),
-                    Text(
-                      widget.notification.title,
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: Theme.of(
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        user?.displayName ?? 'na'.tr(),
+                        style: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.5),
+                        ).textTheme.bodySmall?.copyWith(),
+                      ),
+                      Text(
+                        widget.notification.title,
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.5),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (hasAnyAction)
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      minimumSize: const Size(0, 28),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      visualDensity: VisualDensity.compact,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
                       ),
                     ),
-                    Row(
-                      children: <Widget>[
-                        if (chatId != null)
-                          CustomElevatedButton(
-                            borderRadius: BorderRadius.circular(6),
-                            margin: const EdgeInsets.all(2),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 4,
-                            ),
-                            textStyle: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onPrimary,
-                                ),
-                            title: 'view'.tr(),
-                            isLoading: false,
-                            onTap: () {
-                              pro.createOrOpenChatById(context, chatId);
-                            },
-                          ),
-                        // CustomElevatedButton(
-                        //   margin: const EdgeInsets.all(3),
-                        //   padding: const EdgeInsets.symmetric(
-                        //       horizontal: 24, vertical: 4),
-                        //   textStyle: Theme.of(context)
-                        //       .textTheme
-                        //       .bodySmall
-                        //       ?.copyWith(
-                        //           color:
-                        //               Theme.of(context).colorScheme.onPrimary),
-                        //   title: 'view'.tr(),
-                        //   isLoading: false,
-                        //   onTap: () {},
-                        // ),
-                      ],
+                    onPressed: () => _openNotification(
+                      context,
+                      chatProvider: pro,
+                      chatId: chatId,
+                      orderId: orderId,
+                      postId: postId,
                     ),
-                  ],
-                ),
-              ),
-            ],
+                    child: Text(
+                      'view'.tr(),
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
         );
       },
