@@ -1,11 +1,10 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
-import '../../domain/entities/notification_entity.dart';
 import 'package:provider/provider.dart';
+import '../screens/widgets/notifications_list_section.dart';
+import '../../domain/entities/notification_entity.dart';
 import '../provider/notification_provider.dart';
 import '../screens/widgets/notifications_filter_toggle.dart';
-import '../screens/widgets/notifications_list_section.dart';
+import '../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});

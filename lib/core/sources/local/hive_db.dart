@@ -77,7 +77,7 @@ import '../../../features/personal/review/domain/entities/review_entity.dart';
 import '../../../features/personal/services/data/sources/local/local_service_categories.dart';
 import '../../../features/personal/services/domain/entity/service_category_entity.dart';
 import '../../../features/personal/services/domain/entity/service_type_entity.dart';
-import '../../../features/personal/setting/setting_dashboard/domain/entities/notification_entity.dart';
+import '../../../features/personal/setting/setting_dashboard/domain/entities/notification_setting_entity.dart';
 import '../../../features/personal/setting/setting_dashboard/domain/entities/privacy_settings_entity.dart';
 import '../../../features/personal/setting/setting_dashboard/domain/entities/time_away_entity.dart';
 import '../../../features/personal/order/data/source/local/local_orders.dart';

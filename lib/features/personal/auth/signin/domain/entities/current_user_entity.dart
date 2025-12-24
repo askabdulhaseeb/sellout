@@ -2,7 +2,7 @@ import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../business/core/domain/entity/business_employee_entity.dart';
 import '../../../../location/domain/entities/location_entity.dart';
-import '../../../../setting/setting_dashboard/domain/entities/notification_entity.dart';
+import '../../../../setting/setting_dashboard/domain/entities/notification_setting_entity.dart';
 import '../../../../setting/setting_dashboard/domain/entities/privacy_settings_entity.dart';
 import '../../../../setting/setting_dashboard/domain/entities/time_away_entity.dart';
 import '../../../../user/profiles/domain/entities/supporter_detail_entity.dart';

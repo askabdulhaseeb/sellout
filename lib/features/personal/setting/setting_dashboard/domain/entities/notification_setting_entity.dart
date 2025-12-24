@@ -1,5 +1,5 @@
 import 'package:hive_ce/hive.dart';
-part 'notification_entity.g.dart';
+part 'notification_setting_entity.g.dart';
 
 @HiveType(typeId: 57)
 class NotificationSettingsEntity {
