@@ -1,4 +1,5 @@
 import 'package:hive_ce/hive.dart';
+import '../../../../../core/enums/core/status_type.dart';
 
 part 'notification_metadata_entity.g.dart';
 
@@ -47,7 +48,7 @@ class NotificationMetadataEntity {
   final Map<String, dynamic>? postageDetail;
 
   @HiveField(9)
-  final String? status;
+  final StatusType? status;
 
   @HiveField(10)
   final DateTime? createdAt;
