@@ -19,7 +19,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<NotificationProvider>().bootstrap();
+      final NotificationProvider provider = context.read<NotificationProvider>();
+      provider.bootstrap();
+      // Mark all notifications as viewed when screen opens
+      provider.viewAllNotifications();
     });
   }
 
