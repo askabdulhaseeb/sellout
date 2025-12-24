@@ -5,10 +5,15 @@ import '../../data/source/local/local_notification.dart';
 import '../../domain/entities/notification_entity.dart';
 import '../../domain/enums/notification_type.dart';
 import '../../domain/usecase/get_all_notifications_usecase.dart';
+import '../../domain/usecase/view_all_notifications_usecase.dart';
 
 class NotificationProvider extends ChangeNotifier {
-  NotificationProvider(this.getAllNotificationsUsecase);
+  NotificationProvider(
+    this.getAllNotificationsUsecase,
+    this.viewAllNotificationsUsecase,
+  );
   final GetAllNotificationsUseCase getAllNotificationsUsecase;
+  final ViewAllNotificationsUseCase viewAllNotificationsUsecase;
 
   bool _isLoading = false;
   List<NotificationEntity> _allNotifications = <NotificationEntity>[];
@@ -100,5 +105,27 @@ class NotificationProvider extends ChangeNotifier {
       );
     }
     setLoading(false);
+  }
+
+  /// Marks all notifications as viewed on the server and locally.
+  Future<bool> viewAllNotifications() async {
+    final DataState<bool> result = await viewAllNotificationsUsecase(null);
+
+    if (result is DataSuccess<bool>) {
+      // Mark all local notifications as viewed
+      for (final NotificationEntity n in _allNotifications) {
+        if (!n.isViewed) {
+          await LocalNotifications.markAsViewed(n.notificationId);
+        }
+      }
+      await refreshFromLocal();
+      return true;
+    } else {
+      AppLog.error(
+        'NotificationProvider.viewAllNotifications',
+        error: result.exception?.message ?? 'something_wrong',
+      );
+      return false;
+    }
   }
 }

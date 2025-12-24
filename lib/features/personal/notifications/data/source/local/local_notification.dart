@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:hive_ce/hive.dart';
 import '../../../../../../core/sources/local/local_hive_box.dart';
 import '../../../../../../core/utilities/app_string.dart';
@@ -11,8 +12,19 @@ class LocalNotifications extends LocalHiveBox<NotificationEntity> {
   /// Notifications may contain sensitive information - encrypt them.
   @override
   bool get requiresEncryption => true;
+
+  /// Notifier that fires whenever the unread count changes.
+  /// Listen to this to update badges in the UI.
+  static final ValueNotifier<int> unreadCountNotifier = ValueNotifier<int>(0);
+
   static Box<NotificationEntity> get _box =>
       Hive.box<NotificationEntity>(AppStrings.localNotificationBox);
+
+  /// Updates the unread count notifier with the current count
+  static void _updateUnreadCountNotifier() {
+    unreadCountNotifier.value =
+        _box.values.where((NotificationEntity e) => !e.isViewed).length;
+  }
 
   static Future<Box<NotificationEntity>> get openBox async =>
       await Hive.openBox<NotificationEntity>(AppStrings.localNotificationBox);
@@ -20,6 +32,7 @@ class LocalNotifications extends LocalHiveBox<NotificationEntity> {
   /// Saves a notification based on its ID (updates if already exists)
   static Future<void> saveNotification(NotificationEntity notification) async {
     await _box.put(notification.notificationId, notification);
+    _updateUnreadCountNotifier();
   }
 
   Future<void> handleNotificationData() async {}
@@ -54,12 +67,19 @@ class LocalNotifications extends LocalHiveBox<NotificationEntity> {
   /// Deletes a single notification by ID
   static Future<void> deleteNotification(String id) async {
     await _box.delete(id);
+    _updateUnreadCountNotifier();
+  }
+
+  /// Initializes the unread count notifier. Call this at app startup
+  /// after Hive boxes are opened.
+  static void initializeUnreadCount() {
+    _updateUnreadCountNotifier();
   }
 
   /// Marks a notification as viewed
   static Future<void> markAsViewed(String id) async {
     final NotificationEntity? notification = _box.get(id);
-    if (notification != null) {
+    if (notification != null && !notification.isViewed) {
       final NotificationModel updated = NotificationModel(
         notificationId: notification.notificationId,
         userId: notification.userId,
@@ -74,6 +94,7 @@ class LocalNotifications extends LocalHiveBox<NotificationEntity> {
         status: notification.status,
       );
       await _box.put(id, updated);
+      _updateUnreadCountNotifier();
     }
   }
 

@@ -6,6 +6,9 @@ import '../../models/notification_model.dart';
 
 abstract interface class NotificationRemote {
   Future<DataState<List<NotificationEntity>>> getAllNotifications();
+
+  /// Marks all notifications as viewed on the server.
+  Future<DataState<bool>> viewAllNotifications();
 }
 
 class NotificationRemoteImpl implements NotificationRemote {
@@ -23,7 +26,7 @@ class NotificationRemoteImpl implements NotificationRemote {
     if (localData?.encodedData != null) {
       final List<dynamic> decoded = json.decode(localData!.encodedData);
       final List<NotificationEntity> list = decoded
-          .map((e) => NotificationModel.fromMap(e))
+          .map((dynamic e) => NotificationModel.fromMap(e))
           .toList();
       return DataSuccess<List<NotificationEntity>>('Success', list);
     }
@@ -39,12 +42,30 @@ class NotificationRemoteImpl implements NotificationRemote {
       final String raw = result.data ?? '';
       final List<dynamic> decoded = json.decode(raw);
       final List<NotificationEntity> list = decoded
-          .map((e) => NotificationModel.fromMap(e))
+          .map((dynamic e) => NotificationModel.fromMap(e))
           .toList();
       return DataSuccess<List<NotificationEntity>>('Success', list);
     } else {
       AppLog.error('NotificationRemote.getAllNotifications');
       return DataFailer<List<NotificationEntity>>(CustomException('Failed'));
+    }
+  }
+
+  @override
+  Future<DataState<bool>> viewAllNotifications() async {
+    const String endpoint = '/notification/view/all';
+
+    final DataState<String> result = await ApiCall<String>().call(
+      endpoint: endpoint,
+      requestType: ApiRequestType.post,
+      isAuth: true,
+    );
+
+    if (result is DataSuccess<String>) {
+      return DataSuccess<bool>('Success', true);
+    } else {
+      AppLog.error('NotificationRemote.viewAllNotifications');
+      return DataFailer<bool>(CustomException('Failed'));
     }
   }
 }
