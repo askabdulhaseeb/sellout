@@ -2,8 +2,10 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/sources/local/local_hive_box.dart';
 import '../../../../../../core/utilities/app_string.dart';
+import '../../../../../../services/get_it.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../domain/entities/order_entity.dart';
+import '../../../domain/usecase/get_order_by_order_id.dart';
 export '../../models/order_model.dart';
 
 class LocalOrders extends LocalHiveBox<OrderEntity> {
@@ -15,6 +17,44 @@ class LocalOrders extends LocalHiveBox<OrderEntity> {
   bool get requiresEncryption => true;
 
   Box<OrderEntity> get _box => box;
+
+  /// Fetches order from local storage first, then from API if not found
+  Future<OrderEntity?> fetchOrder(String orderId) async {
+    print('🔍 Fetching order: $orderId');
+
+    // Try local first
+    final OrderEntity? localOrder = get(orderId);
+    if (localOrder != null) {
+      print('   ✅ Found in local storage');
+      return localOrder;
+    }
+
+    print('   ⚠️ Not in local storage, fetching from API...');
+
+    try {
+      // Get the usecase from your DI container
+      final GetOrderByOrderIdUsecase usecase =
+          locator<GetOrderByOrderIdUsecase>();
+
+      final DataState<List<OrderEntity>> result = await usecase.call(orderId);
+
+      if (result is DataSuccess<List<OrderEntity>>) {
+        final List<OrderEntity> orders = result.entity ?? <OrderEntity>[];
+        if (orders.isNotEmpty) {
+          print('   ✅ Fetched from API successfully');
+          // Save to local storage
+          await _box.put(orderId, orders.first);
+          return orders.first;
+        }
+      }
+
+      print('   ❌ Failed to fetch order');
+      return null;
+    } catch (e) {
+      print('   ❌ Exception: $e');
+      return null;
+    }
+  }
 
   DataState<List<OrderEntity>> orderBySeller(String? value) {
     final String id = value ?? LocalAuth.uid ?? '';

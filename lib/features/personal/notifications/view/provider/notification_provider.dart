@@ -59,7 +59,7 @@ class NotificationProvider extends ChangeNotifier {
       if (_selectedNotificationType == NotificationType.all) return true;
 
       if (_selectedNotificationType == NotificationType.share) {
-        final String postId = (n.metadata['post_id'] as String?)?.trim() ?? '';
+        final String postId = (n.metadata.postId)?.trim() ?? '';
         return postId.isNotEmpty;
       }
 

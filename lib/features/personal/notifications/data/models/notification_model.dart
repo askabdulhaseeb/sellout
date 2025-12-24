@@ -1,10 +1,9 @@
 import 'dart:convert';
 import '../../../../../core/enums/core/status_type.dart';
 import '../../domain/entities/notification_entity.dart';
+import 'notification_metadata_model.dart';
 
 class NotificationModel extends NotificationEntity {
-  factory NotificationModel.fromRawJson(String str) =>
-      NotificationModel.fromMap(json.decode(str));
   NotificationModel({
     required super.notificationId,
     required super.userId,
@@ -16,8 +15,64 @@ class NotificationModel extends NotificationEntity {
     required super.metadata,
     required super.notificationFor,
     required super.timestamps,
-    required super.status,
+    super.status,
   });
+
+  factory NotificationModel.fromRawJson(String str) =>
+      NotificationModel.fromMap(json.decode(str) as Map<String, dynamic>);
+
+  factory NotificationModel.fromMap(Map<String, dynamic> map) {
+    final Map<String, dynamic> metadataMap = _asStringKeyedMap(map['metadata']);
+    final NotificationMetadataModel metadata =
+        NotificationMetadataModel.fromMap(metadataMap);
+
+    final dynamic timestampsValue =
+        map['timestamps'] ??
+        map['timestamp'] ??
+        metadata.createdAt ??
+        metadata.paymentDetail?['timestamp'];
+
+    final String? statusRaw =
+        map['status'] ?? metadata.status ?? metadata.paymentDetail?['status'];
+
+    return NotificationModel(
+      notificationId: _asString(
+        map['notification_id'] ?? map['notificationId'],
+      ),
+      userId: _asString(map['user_id'] ?? map['userId']),
+      type: _asString(map['type']),
+      title: _asString(map['title']),
+      deliverTo: _asString(map['deliver_to'] ?? map['deliverTo']),
+      message: _asString(map['message']),
+      isViewed: _asBool(map['is_viewed'] ?? map['isViewed']),
+      metadata: metadata,
+      notificationFor: _asString(
+        map['notification_for'] ?? map['notificationFor'],
+      ),
+      timestamps: _asDateTime(timestampsValue),
+      status: StatusType.fromJson(
+        statusRaw == null || statusRaw.isEmpty ? null : statusRaw,
+      ),
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'notification_id': notificationId,
+      'user_id': userId,
+      'type': type,
+      'title': title,
+      'deliver_to': deliverTo,
+      'message': message,
+      'is_viewed': isViewed,
+      'metadata': (metadata as NotificationMetadataModel).toMap(),
+      'notification_for': notificationFor,
+      'timestamps': timestamps.toIso8601String(),
+      if (status != null) 'status': status?.json,
+    };
+  }
+
+  String toRawJson() => json.encode(toMap());
 
   static String _asString(dynamic value) => value?.toString() ?? '';
 
@@ -40,52 +95,11 @@ class NotificationModel extends NotificationEntity {
   static DateTime _asDateTime(dynamic value) {
     if (value is DateTime) return value;
     if (value is String) return DateTime.tryParse(value) ?? DateTime.now();
+    if (value is num) {
+      try {
+        return DateTime.fromMillisecondsSinceEpoch(value.toInt());
+      } catch (_) {}
+    }
     return DateTime.now();
   }
-
-  factory NotificationModel.fromMap(Map<String, dynamic> map) {
-    final Map<String, dynamic> metadata = _asStringKeyedMap(map['metadata']);
-    final dynamic timestampsValue =
-        map['timestamps'] ?? map['timestamp'] ?? metadata['created_at'];
-
-    final String statusRaw = _asString(
-      map['status'] ?? metadata['status'] ?? metadata['order_status'],
-    );
-
-    return NotificationModel(
-      notificationId: _asString(
-        map['notification_id'] ?? map['notificationId'],
-      ),
-      userId: _asString(map['user_id'] ?? map['userId']),
-      type: _asString(map['type']),
-      title: _asString(map['title']),
-      deliverTo: _asString(map['deliver_to'] ?? map['deliverTo']),
-      message: _asString(map['message']),
-      isViewed: _asBool(map['is_viewed'] ?? map['isViewed']),
-      metadata: metadata,
-      notificationFor: _asString(
-        map['notification_for'] ?? map['notificationFor'],
-      ),
-      timestamps: _asDateTime(timestampsValue),
-      status: StatusType.fromJson(statusRaw.isEmpty ? null : statusRaw),
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'notification_id': notificationId,
-      'user_id': userId,
-      'type': type,
-      'title': title,
-      'deliver_to': deliverTo,
-      'message': message,
-      'is_viewed': isViewed,
-      'metadata': metadata,
-      'notification_for': notificationFor,
-      'timestamps': timestamps.toIso8601String(),
-      'status': status.json,
-    };
-  }
-
-  String toRawJson() => json.encode(toMap());
 }

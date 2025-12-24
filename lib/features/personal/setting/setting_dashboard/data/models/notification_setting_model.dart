@@ -1,4 +1,4 @@
-import '../../domain/entities/notification_entity.dart';
+import '../../domain/entities/notification_setting_entity.dart';
 
 class NotificationSettingsModel extends NotificationSettingsEntity {
   factory NotificationSettingsModel.fromMap(Map<String, dynamic> map) {

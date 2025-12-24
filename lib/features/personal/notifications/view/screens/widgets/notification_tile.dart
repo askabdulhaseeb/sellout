@@ -27,42 +27,92 @@ class NotificationTile extends StatefulWidget {
 }
 
 class _NotificationTileState extends State<NotificationTile> {
-  void _openNotification(
-    BuildContext context, {
-    required ChatProvider chatProvider,
-    required String? chatId,
-    required String orderId,
-    required String postId,
-  }) {
-    if (orderId.isNotEmpty) {
-      final OrderEntity? order = LocalOrders().get(orderId);
-      final String? uid = LocalAuth.uid;
+  /// Determines the primary action based on notification type
+  String get _primaryAction {
+    final String type = widget.notification.type.toLowerCase();
 
-      if (order != null && uid != null && uid.isNotEmpty) {
-        if (uid == order.sellerId) {
-          AppNavigator.pushNamed(
-            OrderSellerScreen.routeName,
-            arguments: <String, dynamic>{'order-id': orderId},
-          );
-          return;
-        }
+    // Order-related notifications
+    if (type.contains('order')) {
+      return 'order';
+    }
 
-        if (uid == order.buyerId) {
-          AppNavigator.pushNamed(
-            OrderBuyerScreen.routeName,
-            arguments: <String, dynamic>{'order': order},
-          );
-          return;
-        }
+    // Chat/Message notifications
+    if (type.contains('chat') || type.contains('message')) {
+      return 'chat';
+    }
+
+    // Post-related notifications (like, comment, follow, etc.)
+    if (type.contains('post') ||
+        type.contains('like') ||
+        type.contains('comment') ||
+        type.contains('follow')) {
+      return 'post';
+    }
+
+    // Fallback to first available
+    if (widget.notification.hasOrder) return 'order';
+    if (widget.notification.hasChat) return 'chat';
+    if (widget.notification.hasPost) return 'post';
+
+    return 'none';
+  }
+
+  /// Opens the appropriate screen based on notification content
+  Future<void> _openNotification(BuildContext context) async {
+    final String? chatId = widget.notification.chatId;
+    final String? postId = widget.notification.postId;
+    final String? orderId = widget.notification.orderId;
+
+    // Mark as viewed
+    await LocalNotifications.markAsViewed(widget.notification.notificationId);
+    if (context.mounted) {
+      context.read<NotificationProvider>().refreshFromLocal();
+    }
+
+    // Handle based on primary action
+    switch (_primaryAction) {
+      case 'order':
+        await _handleOrderNotification(context, orderId);
+        break;
+      case 'chat':
+        await _handleChatNotification(context, chatId);
+        break;
+      case 'post':
+        await _handlePostNotification(context, postId);
+        break;
+      default:
+        print('❌ NO ACTION - No valid data found');
+    }
+
+    print('═══════════════════════════════════════════════════════');
+  }
+
+  /// Handles order-related notifications
+  Future<void> _handleOrderNotification(
+    BuildContext context,
+    String? orderId,
+  ) async {
+    if (orderId == null || orderId.isEmpty) {
+      print('❌ Order ID is empty');
+      if (context.mounted) {
+        AppSnackBar.showSnackBar(context, 'order_not_found'.tr());
       }
+      return;
+    }
 
-      final String notificationFor = widget.notification.notificationFor
-          .toLowerCase();
-      final bool forSeller =
-          notificationFor.contains('seller') ||
-          notificationFor.contains('business');
+    print('✅ Processing ORDER: $orderId');
 
-      if (forSeller) {
+    // Fetch order (from local or API)
+    final OrderEntity? order = await LocalOrders().fetchOrder(orderId);
+    final String? uid = LocalAuth.uid;
+
+    print('   Order found: ${order != null}');
+    print('   Current UID: $uid');
+
+    if (order != null && uid != null && uid.isNotEmpty) {
+      // Navigate based on user role in the order
+      if (uid == order.sellerId) {
+        print('   ✅ Navigating to SELLER view');
         AppNavigator.pushNamed(
           OrderSellerScreen.routeName,
           arguments: <String, dynamic>{'order-id': orderId},
@@ -70,59 +120,126 @@ class _NotificationTileState extends State<NotificationTile> {
         return;
       }
 
-      if (order != null) {
+      if (uid == order.buyerId) {
+        print('   ✅ Navigating to BUYER view');
         AppNavigator.pushNamed(
           OrderBuyerScreen.routeName,
           arguments: <String, dynamic>{'order': order},
         );
         return;
       }
-
-      AppSnackBar.showSnackBar(context, 'no_data_found'.tr());
-      return;
     }
 
-    if (postId.isNotEmpty) {
+    // Fallback: Use notificationFor to determine screen
+    final String notificationFor = widget.notification.notificationFor
+        .toLowerCase();
+    final bool forSeller =
+        notificationFor.contains('seller') ||
+        notificationFor.contains('business');
+
+    print('   notificationFor: "$notificationFor" | forSeller: $forSeller');
+
+    if (forSeller) {
+      print('   ✅ Navigating to SELLER view (from notificationFor)');
       AppNavigator.pushNamed(
-        PostDetailScreen.routeName,
-        arguments: <String, String>{'pid': postId},
+        OrderSellerScreen.routeName,
+        arguments: <String, dynamic>{'order-id': orderId},
       );
       return;
     }
 
-    if (chatId != null && chatId.trim().isNotEmpty) {
-      chatProvider.createOrOpenChatById(context, chatId);
+    if (order != null) {
+      print('   ✅ Navigating to BUYER view (default)');
+      AppNavigator.pushNamed(
+        OrderBuyerScreen.routeName,
+        arguments: <String, dynamic>{'order': order},
+      );
       return;
     }
 
-    AppSnackBar.showSnackBar(context, 'no_data_found'.tr());
+    print('   ❌ Could not fetch order data');
+    if (context.mounted) {
+      AppSnackBar.showSnackBar(context, 'order_not_found'.tr());
+    }
+  }
+
+  /// Handles chat/message notifications
+  Future<void> _handleChatNotification(
+    BuildContext context,
+    String? chatId,
+  ) async {
+    if (chatId == null || chatId.trim().isEmpty) {
+      print('❌ Chat ID is empty');
+      if (context.mounted) {
+        AppSnackBar.showSnackBar(context, 'chat_not_found'.tr());
+      }
+      return;
+    }
+
+    print('✅ Opening CHAT: $chatId');
+
+    if (!context.mounted) return;
+
+    final ChatProvider chatProvider = context.read<ChatProvider>();
+    await chatProvider.createOrOpenChatById(context, chatId);
+  }
+
+  /// Handles post-related notifications
+  Future<void> _handlePostNotification(
+    BuildContext context,
+    String? postId,
+  ) async {
+    if (postId == null || postId.isEmpty) {
+      print('❌ Post ID is empty');
+      if (context.mounted) {
+        AppSnackBar.showSnackBar(context, 'post_not_found'.tr());
+      }
+      return;
+    }
+
+    print('✅ Opening POST: $postId');
+    AppNavigator.pushNamed(
+      PostDetailScreen.routeName,
+      arguments: <String, String>{'pid': postId},
+    );
+  }
+
+  /// Gets the button text based on primary action
+  String _getButtonText() {
+    switch (_primaryAction) {
+      case 'order':
+        return 'order'.tr();
+      case 'chat':
+        return 'chat'.tr();
+      case 'post':
+        return 'view'.tr();
+      default:
+        return 'open'.tr();
+    }
+  }
+
+  /// Gets the button icon based on primary action
+  IconData? _getButtonIcon() {
+    switch (_primaryAction) {
+      case 'order':
+        return Icons.receipt_long;
+      case 'chat':
+        return Icons.chat_bubble_outline;
+      case 'post':
+        return Icons.visibility_outlined;
+      default:
+        return Icons.arrow_forward;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final ChatProvider chatProvider = Provider.of<ChatProvider>(
-      context,
-      listen: false,
-    );
-
-    final String? chatId = widget.notification.chatId;
-    final String postId = (widget.notification.postId ?? '').trim();
-    final String orderId = (widget.notification.orderId ?? '').trim();
     final bool isUnread = !widget.notification.isViewed;
-
     final String timeText = DateFormat(
       'dd MMM',
     ).format(widget.notification.timestamps.toLocal());
 
-    final Color borderColor = Theme.of(context).colorScheme.outlineVariant;
-    final Color unreadBg = Theme.of(
-      context,
-    ).colorScheme.primary.withValues(alpha: 0.06);
-
-    final bool hasAnyAction =
-        orderId.isNotEmpty ||
-        postId.isNotEmpty ||
-        (chatId?.trim().isNotEmpty ?? false);
+    final bool hasAction = _primaryAction != 'none';
 
     return FutureBuilder<UserEntity?>(
       future: LocalUser().user(widget.notification.userId),
@@ -137,33 +254,22 @@ class _NotificationTileState extends State<NotificationTile> {
         final UserEntity user = snapshot.data!;
 
         return InkWell(
-          onTap: () async {
-            await LocalNotifications.markAsViewed(
-              widget.notification.notificationId,
-            );
-            if (context.mounted) {
-              context.read<NotificationProvider>().refreshFromLocal();
-            }
-            if (!context.mounted) return;
-            _openNotification(
-              context,
-              chatProvider: chatProvider,
-              chatId: chatId,
-              orderId: orderId,
-              postId: postId,
-            );
-          },
+          onTap: hasAction ? () => _openNotification(context) : null,
           borderRadius: BorderRadius.circular(8),
           child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 6),
-            padding: const EdgeInsets.all(10),
+            margin: const EdgeInsets.symmetric(vertical: 4),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: isUnread ? unreadBg : null,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: borderColor, width: 1),
+              color: isUnread
+                  ? Theme.of(
+                      context,
+                    ).colorScheme.primary.withValues(alpha: 0.05)
+                  : null,
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
               children: <Widget>[
+                // User Avatar
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: CustomNetworkImage(
@@ -175,11 +281,14 @@ class _NotificationTileState extends State<NotificationTile> {
                   ),
                 ),
                 const SizedBox(width: 10),
+
+                // Content
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
+                      // User name and time
                       Row(
                         children: <Widget>[
                           Expanded(
@@ -209,6 +318,8 @@ class _NotificationTileState extends State<NotificationTile> {
                         ],
                       ),
                       const SizedBox(height: 2),
+
+                      // Title with unread indicator
                       Row(
                         children: <Widget>[
                           if (isUnread)
@@ -231,15 +342,20 @@ class _NotificationTileState extends State<NotificationTile> {
                                     color: Theme.of(
                                       context,
                                     ).colorScheme.onSurface,
+                                    fontWeight: isUnread
+                                        ? FontWeight.w600
+                                        : FontWeight.w500,
                                   ),
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 2),
+
+                      // Message
                       Text(
                         widget.notification.message,
-                        maxLines: 1,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: Theme.of(
@@ -250,13 +366,15 @@ class _NotificationTileState extends State<NotificationTile> {
                     ],
                   ),
                 ),
-                if (hasAnyAction) ...<Widget>[
+
+                // Action Button
+                if (hasAction) ...[
                   const SizedBox(width: 8),
-                  TextButton(
+                  TextButton.icon(
                     style: TextButton.styleFrom(
-                      minimumSize: const Size(0, 28),
+                      minimumSize: const Size(0, 32),
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
+                        horizontal: 12,
                         vertical: 6,
                       ),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -267,15 +385,10 @@ class _NotificationTileState extends State<NotificationTile> {
                         borderRadius: BorderRadius.circular(6),
                       ),
                     ),
-                    onPressed: () => _openNotification(
-                      context,
-                      chatProvider: chatProvider,
-                      chatId: chatId,
-                      orderId: orderId,
-                      postId: postId,
-                    ),
-                    child: Text(
-                      'view'.tr(),
+                    onPressed: () => _openNotification(context),
+                    icon: Icon(_getButtonIcon(), size: 16),
+                    label: Text(
+                      _getButtonText(),
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
                         color: Theme.of(context).colorScheme.onPrimary,
                         fontWeight: FontWeight.w600,

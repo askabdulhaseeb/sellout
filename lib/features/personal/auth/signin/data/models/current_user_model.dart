@@ -14,7 +14,7 @@ import '../../../../user/profiles/data/models/supporter_detail_model.dart';
 import '../../../../../business/core/data/models/business_employee_model.dart';
 import '../../../../setting/setting_dashboard/data/models/time_away_model.dart';
 import '../../../../user/profiles/domain/entities/supporter_detail_entity.dart';
-import '../../../../setting/setting_dashboard/data/models/notification_model.dart';
+import '../../../../setting/setting_dashboard/data/models/notification_setting_model.dart';
 import '../../../../setting/setting_dashboard/data/models/privacy_setting_model.dart';
 
 class CurrentUserModel extends CurrentUserEntity {

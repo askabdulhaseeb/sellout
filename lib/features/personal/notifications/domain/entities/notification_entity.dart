@@ -1,5 +1,7 @@
 import 'package:hive_ce/hive.dart';
 import '../../../../../core/enums/core/status_type.dart';
+import 'notification_metadata_entity.dart';
+
 part 'notification_entity.g.dart';
 
 @HiveType(typeId: 65)
@@ -15,8 +17,9 @@ class NotificationEntity {
     required this.metadata,
     required this.notificationFor,
     required this.timestamps,
-    required this.status,
+    this.status,
   });
+
   @HiveField(0)
   final String notificationId;
 
@@ -39,7 +42,7 @@ class NotificationEntity {
   final bool isViewed;
 
   @HiveField(7)
-  final Map<String, dynamic> metadata;
+  final NotificationMetadataEntity metadata;
 
   @HiveField(8)
   final String notificationFor;
@@ -47,48 +50,27 @@ class NotificationEntity {
   @HiveField(9)
   final DateTime timestamps;
 
-  /// Typed status for notifications that carry a status update (e.g. order status).
-  /// Defaults to [StatusType.pending] when not provided.
   @HiveField(10)
-  final StatusType status;
+  final StatusType? status;
 
-  String? get chatId => metadata['chat_id']?.toString();
-  String? get postId => metadata['post_id']?.toString();
-  String? get orderId => metadata['order_id']?.toString();
-  String? get bookingId => metadata['booking_id']?.toString();
+  /// Convenience getters that delegate to metadata
+  String? get postId => metadata.postId;
+  String? get orderId => metadata.orderId;
+  String? get chatId => metadata.chatId;
+  String? get trackId => metadata.trackId;
+  String? get senderId => metadata.senderId;
+  String? get messageId => metadata.messageId;
+  List<String>? get recipients => metadata.recipients;
+  Map<String, dynamic>? get paymentDetail => metadata.paymentDetail;
+  Map<String, dynamic>? get postageDetail => metadata.postageDetail;
 
-  DateTime? get createdAt {
-    final dynamic value = metadata['created_at'];
-    if (value is DateTime) return value;
-    if (value is String) return DateTime.tryParse(value);
-    return null;
-  }
-
-  NotificationEntity copyWith({
-    String? notificationId,
-    String? userId,
-    String? type,
-    String? title,
-    String? deliverTo,
-    String? message,
-    bool? isViewed,
-    Map<String, dynamic>? metadata,
-    String? notificationFor,
-    DateTime? timestamps,
-    StatusType? status,
-  }) {
-    return NotificationEntity(
-      notificationId: notificationId ?? this.notificationId,
-      userId: userId ?? this.userId,
-      type: type ?? this.type,
-      title: title ?? this.title,
-      deliverTo: deliverTo ?? this.deliverTo,
-      message: message ?? this.message,
-      isViewed: isViewed ?? this.isViewed,
-      metadata: metadata ?? this.metadata,
-      notificationFor: notificationFor ?? this.notificationFor,
-      timestamps: timestamps ?? this.timestamps,
-      status: status ?? this.status,
-    );
-  }
+  /// Helper getters for common checks
+  bool get hasOrder => metadata.hasOrder;
+  bool get hasPost => metadata.hasPost;
+  bool get hasChat => metadata.hasChat;
+  bool get hasPayment => metadata.hasPayment;
+  bool get isOrderNotification => type.toLowerCase().contains('order');
+  bool get isChatNotification =>
+      type.toLowerCase().contains('chat') ||
+      type.toLowerCase().contains('message');
 }

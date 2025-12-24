@@ -80,7 +80,7 @@ import 'package:sellout/features/personal/promo/domain/entities/promo_entity.dar
 import 'package:sellout/features/personal/review/domain/entities/review_entity.dart';
 import 'package:sellout/features/personal/services/domain/entity/service_category_entity.dart';
 import 'package:sellout/features/personal/services/domain/entity/service_type_entity.dart';
-import 'package:sellout/features/personal/setting/setting_dashboard/domain/entities/notification_entity.dart';
+import 'package:sellout/features/personal/setting/setting_dashboard/domain/entities/notification_setting_entity.dart';
 import 'package:sellout/features/personal/setting/setting_dashboard/domain/entities/privacy_settings_entity.dart';
 import 'package:sellout/features/personal/setting/setting_dashboard/domain/entities/time_away_entity.dart';
 import 'package:sellout/features/personal/user/profiles/domain/entities/business_profile_detail_entity.dart';
