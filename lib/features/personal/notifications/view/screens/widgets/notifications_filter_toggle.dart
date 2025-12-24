@@ -19,7 +19,7 @@ class NotificationsFilterToggle extends StatelessWidget {
     return CustomToggleSwitch<NotificationType>(
       isShaded: false,
       borderWidth: 1,
-      unseletedBorderColor: ColorScheme.of(context).outlineVariant,
+      unseletedBorderColor: ColorScheme.of(context).onSurface.withValues(alpha: 0.2),
       unseletedTextColor: ColorScheme.of(context).onSurface,
       borderRad: 6,
       labels: NotificationType.values.toList(),

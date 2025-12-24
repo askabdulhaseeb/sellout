@@ -1,3 +1,4 @@
+import '../../../../../core/enums/core/status_type.dart';
 import '../../domain/entities/notification_metadata_entity.dart';
 
 class NotificationMetadataModel extends NotificationMetadataEntity {
@@ -17,6 +18,9 @@ class NotificationMetadataModel extends NotificationMetadataEntity {
   });
 
   factory NotificationMetadataModel.fromMap(Map<String, dynamic> map) {
+    final String? statusRaw = _asStringOrNull(
+      map['status'] ?? map['order_status'] ?? map['payment_detail']?['status'],
+    );
     return NotificationMetadataModel(
       postId: _asStringOrNull(map['post_id']),
       orderId: _asStringOrNull(map['order_id']),
@@ -27,11 +31,7 @@ class NotificationMetadataModel extends NotificationMetadataEntity {
       recipients: _asStringList(map['recipients']),
       paymentDetail: _asStringKeyedMapOrNull(map['payment_detail']),
       postageDetail: _asStringKeyedMapOrNull(map['postage_detail']),
-      status: _asStringOrNull(
-        map['status'] ??
-            map['order_status'] ??
-            map['payment_detail']?['status'],
-      ),
+      status: statusRaw != null ? StatusType.fromJson(statusRaw) : null,
       createdAt: _asDateTimeOrNull(map['created_at'] ?? map['timestamp']),
       rawData: Map<String, dynamic>.from(map),
     );
@@ -48,7 +48,7 @@ class NotificationMetadataModel extends NotificationMetadataEntity {
       if (recipients != null) 'recipients': recipients,
       if (paymentDetail != null) 'payment_detail': paymentDetail,
       if (postageDetail != null) 'postage_detail': postageDetail,
-      if (status != null) 'status': status,
+      if (status != null) 'status': status!.json,
       if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
       ...?rawData,
     };

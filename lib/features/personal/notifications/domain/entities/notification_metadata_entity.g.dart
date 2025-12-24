@@ -27,7 +27,7 @@ class NotificationMetadataEntityAdapter
       recipients: (fields[6] as List?)?.cast<String>(),
       paymentDetail: (fields[7] as Map?)?.cast<String, dynamic>(),
       postageDetail: (fields[8] as Map?)?.cast<String, dynamic>(),
-      status: fields[9] as String?,
+      status: fields[9] as StatusType?,
       createdAt: fields[10] as DateTime?,
       rawData: (fields[11] as Map?)?.cast<String, dynamic>(),
     );
