@@ -18,7 +18,14 @@ class OrderBuyerScreen extends StatelessWidget {
   const OrderBuyerScreen({super.key});
   static String routeName = '/order-buyer-screen';
 
-  Future<(OrderEntity, PostEntity?)> _loadData(OrderEntity order) async {
+  Future<(OrderEntity, PostEntity?)> _loadData(String orderId) async {
+    // Fetch order first
+    final OrderEntity? order = await LocalOrders().fetchOrder(orderId);
+    if (order == null) {
+      throw Exception('Order not found');
+    }
+
+    // Then fetch post
     final DataState<PostEntity> postResult = await GetSpecificPostUsecase(
       locator(),
     ).call(GetSpecificPostParam(postId: order.postId));
@@ -32,15 +39,15 @@ class OrderBuyerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final Map<String, dynamic> args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final OrderEntity order = args['order'];
-    final OrderEntity initialOrder = LocalOrders().get(order.orderId) ?? order;
+    final String orderId = args['order-id'];
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: const AppBarTitle(titleKey: 'order_details'),
       ),
       body: FutureBuilder<(OrderEntity, PostEntity?)>(
-        future: _loadData(initialOrder),
+        future: _loadData(orderId),
         builder:
             (
               BuildContext context,

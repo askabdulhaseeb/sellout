@@ -86,6 +86,7 @@ import '../features/personal/location/domain/repo/location_repo.dart';
 import '../features/personal/location/domain/usecase/location_name_usecase.dart';
 import '../features/personal/location/view/provider/location_field_provider.dart';
 import '../features/personal/marketplace/data/source/marketplace_remote_source.dart';
+import '../features/personal/order/domain/usecase/get_order_by_order_id.dart';
 import '../features/personal/payment/data/repositories/payment_repository_impl.dart';
 import '../features/personal/payment/data/sources/remote/payment_remote_api.dart';
 import '../features/personal/payment/domain/repositories/payment_repository.dart';
@@ -147,6 +148,7 @@ import '../features/personal/notifications/data/repo/notification_repo_impl.dart
 import '../features/personal/notifications/data/source/remote/remote_notification.dart';
 import '../features/personal/notifications/domain/repo/notification_repo.dart';
 import '../features/personal/notifications/domain/usecase/get_all_notifications_usecase.dart';
+import '../features/personal/notifications/domain/usecase/view_all_notifications_usecase.dart';
 import '../features/personal/notifications/view/provider/notification_provider.dart';
 import '../features/personal/order/data/repo/order_repo_impl.dart';
 import '../features/personal/order/domain/repo/order_repo.dart';
@@ -827,6 +829,10 @@ void _order() {
   locator.registerFactory<GetOrderByUidUsecase>(
     () => GetOrderByUidUsecase(locator()),
   );
+    locator.registerFactory<GetOrderByOrderIdUsecase>(
+    () => GetOrderByOrderIdUsecase(locator()),
+  );
+
   locator.registerFactory<UpdateOrderUsecase>(
     () => UpdateOrderUsecase(locator()),
   );
@@ -848,10 +854,13 @@ void _notification() {
   locator.registerFactory<GetAllNotificationsUseCase>(
     () => GetAllNotificationsUseCase(locator()),
   );
+  locator.registerFactory<ViewAllNotificationsUseCase>(
+    () => ViewAllNotificationsUseCase(locator()),
+  );
 
   // Providers
   locator.registerFactory<NotificationProvider>(
-    () => NotificationProvider(locator()),
+    () => NotificationProvider(locator(), locator()),
   );
 }
 

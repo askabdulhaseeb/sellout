@@ -5,10 +5,7 @@ import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../core/widgets/loaders/notification_loader_list.dart';
 import '../../../../../../routes/app_linking.dart';
-import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../chats/chat/views/providers/chat_provider.dart';
-import '../../../../order/data/source/local/local_orders.dart';
-import '../../../../order/domain/entities/order_entity.dart';
 import '../../../../order/view/order_buyer_screen/screen/order_buyer_screen.dart';
 import '../../../../order/view/screens/order_seller_screen.dart';
 import '../../../../post/post_detail/views/screens/post_detail_screen.dart';
@@ -31,17 +28,7 @@ class _NotificationTileState extends State<NotificationTile> {
   String get _primaryAction {
     final String type = widget.notification.type.toLowerCase();
 
-    // Order-related notifications
-    if (type.contains('order')) {
-      return 'order';
-    }
-
-    // Chat/Message notifications
-    if (type.contains('chat') || type.contains('message')) {
-      return 'chat';
-    }
-
-    // Post-related notifications (like, comment, follow, etc.)
+    // Post-related notifications (priority)
     if (type.contains('post') ||
         type.contains('like') ||
         type.contains('comment') ||
@@ -49,10 +36,20 @@ class _NotificationTileState extends State<NotificationTile> {
       return 'post';
     }
 
+    // Chat/Message notifications
+    if (type.contains('chat') || type.contains('message')) {
+      return 'chat';
+    }
+
+    // Order-related notifications
+    if (type.contains('order')) {
+      return 'order';
+    }
+
     // Fallback to first available
-    if (widget.notification.hasOrder) return 'order';
-    if (widget.notification.hasChat) return 'chat';
     if (widget.notification.hasPost) return 'post';
+    if (widget.notification.hasChat) return 'chat';
+    if (widget.notification.hasOrder) return 'order';
 
     return 'none';
   }
@@ -70,15 +67,17 @@ class _NotificationTileState extends State<NotificationTile> {
     }
 
     // Handle based on primary action
+    if (!context.mounted) return;
+
     switch (_primaryAction) {
-      case 'order':
-        await _handleOrderNotification(context, orderId);
+      case 'post':
+        await _handlePostNotification(context, postId);
         break;
       case 'chat':
         await _handleChatNotification(context, chatId);
         break;
-      case 'post':
-        await _handlePostNotification(context, postId);
+      case 'order':
+        await _handleOrderNotification(context, orderId);
         break;
       default:
         print('❌ NO ACTION - No valid data found');
@@ -102,35 +101,6 @@ class _NotificationTileState extends State<NotificationTile> {
 
     print('✅ Processing ORDER: $orderId');
 
-    // Fetch order (from local or API)
-    final OrderEntity? order = await LocalOrders().fetchOrder(orderId);
-    final String? uid = LocalAuth.uid;
-
-    print('   Order found: ${order != null}');
-    print('   Current UID: $uid');
-
-    if (order != null && uid != null && uid.isNotEmpty) {
-      // Navigate based on user role in the order
-      if (uid == order.sellerId) {
-        print('   ✅ Navigating to SELLER view');
-        AppNavigator.pushNamed(
-          OrderSellerScreen.routeName,
-          arguments: <String, dynamic>{'order-id': orderId},
-        );
-        return;
-      }
-
-      if (uid == order.buyerId) {
-        print('   ✅ Navigating to BUYER view');
-        AppNavigator.pushNamed(
-          OrderBuyerScreen.routeName,
-          arguments: <String, dynamic>{'order': order},
-        );
-        return;
-      }
-    }
-
-    // Fallback: Use notificationFor to determine screen
     final String notificationFor = widget.notification.notificationFor
         .toLowerCase();
     final bool forSeller =
@@ -139,8 +109,10 @@ class _NotificationTileState extends State<NotificationTile> {
 
     print('   notificationFor: "$notificationFor" | forSeller: $forSeller');
 
+    if (!context.mounted) return;
+
     if (forSeller) {
-      print('   ✅ Navigating to SELLER view (from notificationFor)');
+      print('   ✅ Navigating to SELLER view');
       AppNavigator.pushNamed(
         OrderSellerScreen.routeName,
         arguments: <String, dynamic>{'order-id': orderId},
@@ -148,19 +120,11 @@ class _NotificationTileState extends State<NotificationTile> {
       return;
     }
 
-    if (order != null) {
-      print('   ✅ Navigating to BUYER view (default)');
-      AppNavigator.pushNamed(
-        OrderBuyerScreen.routeName,
-        arguments: <String, dynamic>{'order': order},
-      );
-      return;
-    }
-
-    print('   ❌ Could not fetch order data');
-    if (context.mounted) {
-      AppSnackBar.showSnackBar(context, 'order_not_found'.tr());
-    }
+    print('   ✅ Navigating to BUYER view');
+    AppNavigator.pushNamed(
+      OrderBuyerScreen.routeName,
+      arguments: <String, dynamic>{'order-id': orderId},
+    );
   }
 
   /// Handles chat/message notifications
@@ -198,10 +162,12 @@ class _NotificationTileState extends State<NotificationTile> {
     }
 
     print('✅ Opening POST: $postId');
-    AppNavigator.pushNamed(
-      PostDetailScreen.routeName,
-      arguments: <String, String>{'pid': postId},
-    );
+    if (context.mounted) {
+      AppNavigator.pushNamed(
+        PostDetailScreen.routeName,
+        arguments: <String, String>{'pid': postId},
+      );
+    }
   }
 
   /// Gets the button text based on primary action
@@ -291,7 +257,7 @@ class _NotificationTileState extends State<NotificationTile> {
                       // User name and time
                       Row(
                         children: <Widget>[
-                          Expanded(
+                          Flexible(
                             child: Text(
                               user.displayName.isNotEmpty
                                   ? user.displayName

@@ -85,6 +85,14 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
               (dynamic e) => OrderModel.fromJson(e as Map<String, dynamic>),
             )
             .toList();
+
+        // Check if orders list is empty
+        if (orders.isEmpty) {
+          return DataFailer<List<OrderEntity>>(
+            CustomException('order_not_found'),
+          );
+        }
+
         // 🔄 Optional: still save locally
         await LocalOrders().save(orders.first.orderId, orders.first);
 

@@ -46,12 +46,16 @@ class LocalOrders extends LocalHiveBox<OrderEntity> {
           await _box.put(orderId, orders.first);
           return orders.first;
         }
+        print('   ❌ Failed to fetch order: No orders found in response');
+      } else if (result is DataFailer<List<OrderEntity>>) {
+        print(
+          '   ❌ Failed to fetch order: ${result.exception?.message ?? "Unknown error"}',
+        );
       }
 
-      print('   ❌ Failed to fetch order');
       return null;
     } catch (e) {
-      print('   ❌ Exception: $e');
+      print('   ❌ Failed to fetch order - Exception: $e');
       return null;
     }
   }
