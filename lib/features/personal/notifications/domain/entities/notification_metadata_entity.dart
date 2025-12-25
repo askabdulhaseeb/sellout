@@ -12,12 +12,8 @@ class NotificationMetadataEntity {
     this.trackId,
     this.senderId,
     this.messageId,
-    this.recipients,
-    this.paymentDetail,
-    this.postageDetail,
     this.status,
     this.createdAt,
-    this.rawData,
   });
 
   @HiveField(0)
@@ -39,26 +35,12 @@ class NotificationMetadataEntity {
   final String? messageId;
 
   @HiveField(6)
-  final List<String>? recipients;
-
-  @HiveField(7)
-  final Map<String, dynamic>? paymentDetail;
-
-  @HiveField(8)
-  final Map<String, dynamic>? postageDetail;
-
-  @HiveField(9)
   final StatusType? status;
 
-  @HiveField(10)
+  @HiveField(7)
   final DateTime? createdAt;
-
-  /// Raw metadata for any additional fields
-  @HiveField(11)
-  final Map<String, dynamic>? rawData;
 
   bool get hasOrder => orderId != null && orderId!.isNotEmpty;
   bool get hasPost => postId != null && postId!.isNotEmpty;
   bool get hasChat => chatId != null && chatId!.isNotEmpty;
-  bool get hasPayment => paymentDetail != null && paymentDetail!.isNotEmpty;
 }

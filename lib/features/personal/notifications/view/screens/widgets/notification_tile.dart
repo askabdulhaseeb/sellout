@@ -43,7 +43,7 @@ class _NotificationTileState extends State<NotificationTile> {
 
     // Order-related notifications
     if (type.contains('order')) {
-      return 'order';
+      return 'view';
     }
 
     // Fallback to first available
@@ -180,21 +180,7 @@ class _NotificationTileState extends State<NotificationTile> {
       case 'post':
         return 'view'.tr();
       default:
-        return 'open'.tr();
-    }
-  }
-
-  /// Gets the button icon based on primary action
-  IconData? _getButtonIcon() {
-    switch (_primaryAction) {
-      case 'order':
-        return Icons.receipt_long;
-      case 'chat':
-        return Icons.chat_bubble_outline;
-      case 'post':
-        return Icons.visibility_outlined;
-      default:
-        return Icons.arrow_forward;
+        return 'view'.tr();
     }
   }
 
@@ -334,7 +320,7 @@ class _NotificationTileState extends State<NotificationTile> {
                 ),
 
                 // Action Button
-                if (hasAction) ...[
+                if (hasAction) ...<Widget>[
                   const SizedBox(width: 8),
                   TextButton.icon(
                     style: TextButton.styleFrom(
@@ -352,7 +338,6 @@ class _NotificationTileState extends State<NotificationTile> {
                       ),
                     ),
                     onPressed: () => _openNotification(context),
-                    icon: Icon(_getButtonIcon(), size: 16),
                     label: Text(
                       _getButtonText(),
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
