@@ -112,22 +112,6 @@ class BalanceSummaryCard extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: BalanceTile(
-                  label: 'pending'.tr(),
-                  value: wallet.pendingBalance,
-                  currencyCode: wallet.currency,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: BalanceTile(
-                  label: 'total_balance'.tr(),
-                  value: wallet.totalBalance,
-                  currencyCode: wallet.currency,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: BalanceTile(
                   label: 'total_earned'.tr(),
                   value: wallet.totalEarnings,
                   currencyCode: wallet.currency,
@@ -138,6 +122,26 @@ class BalanceSummaryCard extends StatelessWidget {
                 child: BalanceTile(
                   label: 'withdrawn'.tr(),
                   value: wallet.totalWithdrawn,
+                  currencyCode: wallet.currency,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: BalanceTile(
+                  label: 'total_balance'.tr(),
+                  value: wallet.totalBalance,
+                  currencyCode: wallet.currency,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: BalanceTile(
+                  label: 'pending'.tr(),
+                  value: wallet.pendingBalance,
                   currencyCode: wallet.currency,
                 ),
               ),

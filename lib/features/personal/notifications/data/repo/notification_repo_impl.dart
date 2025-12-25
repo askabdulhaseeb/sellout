@@ -16,4 +16,9 @@ class NotificationRepositoryImpl implements NotificationRepository {
   Future<DataState<bool>> viewAllNotifications() {
     return remote.viewAllNotifications();
   }
+
+  @override
+  Future<DataState<bool>> viewSingleNotification(String notificationId) {
+    return remote.viewSingleNotification(notificationId);
+  }
 }

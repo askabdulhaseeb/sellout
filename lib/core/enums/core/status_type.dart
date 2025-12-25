@@ -80,7 +80,7 @@ enum StatusType {
         return StatusType.cancelled;
       case 'canceled':
         return StatusType.canceled;
-      case 'complet' || 'completed':
+      case 'complet' || 'completed' || 'succeeded' || 'released':
         return StatusType.completed;
       case 'inprogress':
         return StatusType.inprogress;
@@ -102,6 +102,8 @@ enum StatusType {
         return StatusType.paid;
       case 'ready_to_ship':
         return StatusType.readyToShip;
+      case 'authorized':
+        return StatusType.pending;
       default:
         return StatusType.pending;
     }

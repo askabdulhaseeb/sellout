@@ -9,6 +9,9 @@ abstract interface class NotificationRemote {
 
   /// Marks all notifications as viewed on the server.
   Future<DataState<bool>> viewAllNotifications();
+
+  /// Marks a single notification as viewed on the server.
+  Future<DataState<bool>> viewSingleNotification(String notificationId);
 }
 
 class NotificationRemoteImpl implements NotificationRemote {
@@ -110,6 +113,39 @@ class NotificationRemoteImpl implements NotificationRemote {
       );
       return DataFailer<bool>(
         CustomException('Failed to view all notifications: $errorMsg'),
+      );
+    }
+  }
+
+  @override
+  Future<DataState<bool>> viewSingleNotification(String notificationId) async {
+    final String endpoint = '/notification/view/$notificationId';
+    AppLog.info(
+      'Marking single notification as viewed. ID: $notificationId, Endpoint: $endpoint',
+      name: 'NotificationRemote.viewSingleNotification',
+    );
+
+    final DataState<bool> result = await ApiCall<bool>().call(
+      endpoint: endpoint,
+      requestType: ApiRequestType.post,
+      isAuth: true,
+    );
+
+    if (result is DataSuccess) {
+      AppLog.info(
+        'Successfully marked notification as viewed. ID: $notificationId',
+        name: 'NotificationRemote.viewSingleNotification',
+      );
+      return DataSuccess<bool>('Success', true);
+    } else {
+      final String errorMsg = result.exception?.message ?? 'Unknown error';
+      AppLog.error(
+        'Failed to mark notification as viewed. ID: $notificationId',
+        name: 'NotificationRemote.viewSingleNotification',
+        error: result.exception?.reason,
+      );
+      return DataFailer<bool>(
+        CustomException('Failed to view notification: $errorMsg'),
       );
     }
   }

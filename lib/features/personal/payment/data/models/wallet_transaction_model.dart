@@ -1,3 +1,4 @@
+import '../../../../../../core/enums/core/status_type.dart';
 import '../../domain/entities/wallet_transaction_entity.dart';
 
 class WalletTransactionModel extends WalletTransactionEntity {
@@ -16,12 +17,17 @@ class WalletTransactionModel extends WalletTransactionEntity {
   });
 
   factory WalletTransactionModel.fromJson(Map<String, dynamic> json) {
+    // Handle both old format (transfer_amount/payout_amount) and new format (amount)
+    final double amount = (json['amount'] ?? 0).toDouble();
+    final double transferAmt = (json['transfer_amount'] ?? amount).toDouble();
+    final double payoutAmt = (json['payout_amount'] ?? amount).toDouble();
+
     return WalletTransactionModel(
       id: (json['id'] ?? '').toString(),
-      transferAmount: (json['transfer_amount'] ?? 0).toDouble(),
-      payoutAmount: (json['payout_amount'] ?? 0).toDouble(),
+      transferAmount: transferAmt,
+      payoutAmount: payoutAmt,
       currency: (json['currency'] ?? '').toString().toUpperCase(),
-      status: (json['status'] ?? '').toString(),
+      status: StatusType.fromJson((json['status'] ?? '').toString()),
       type: (json['type'] ?? '').toString(),
       createdAt: (json['created_at'] ?? '').toString(),
       stripeTransferId: (json['stripe_transfer_id'] ?? '').toString(),

@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../payment/domain/entities/wallet_transaction_entity.dart';
+import '../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../core/helper_functions/country_helper.dart';
 import 'balance_detail_row.dart';
 
@@ -20,9 +21,16 @@ class TransactionItemCard extends StatelessWidget {
         return 'transfer'.tr();
       case 'payout-to-bank':
         return 'payout_to_bank'.tr();
+      case 'release':
+        return 'release'.tr();
       default:
         return type.split('-').map(_capitalize).join(' ');
     }
+  }
+
+  String _formatStatus(StatusType status) {
+    // Use code for localization when available
+    return status.code.tr();
   }
 
   String _formatDate(String dateStr) {
@@ -41,39 +49,55 @@ class TransactionItemCard extends StatelessWidget {
         return Icons.swap_horiz_rounded;
       case 'payout-to-bank':
         return Icons.account_balance_rounded;
+      case 'release':
+        return Icons.lock_open_rounded;
       default:
         return Icons.receipt_long_rounded;
     }
   }
 
-  IconData _getIconForStatus(String status) {
-    switch (status.toLowerCase()) {
-      case 'authorized':
-      case 'pending':
+  IconData _getIconForStatus(StatusType status) {
+    switch (status) {
+      case StatusType.pending:
+      case StatusType.inprogress:
+      case StatusType.processing:
         return Icons.schedule_rounded;
-      case 'completed':
-      case 'released':
-      case 'paid':
+      case StatusType.accepted:
+      case StatusType.completed:
+      case StatusType.delivered:
+      case StatusType.shipped:
+      case StatusType.active:
+      case StatusType.paid:
         return Icons.check_circle_rounded;
-      case 'failed':
-      case 'cancelled':
+      case StatusType.cancelled:
+      case StatusType.canceled:
+      case StatusType.rejected:
+      case StatusType.blocked:
+      case StatusType.returned:
         return Icons.cancel_rounded;
       default:
         return Icons.receipt_long_rounded;
     }
   }
 
-  Color _getColorForStatus(String status, BuildContext context) {
-    switch (status.toLowerCase()) {
-      case 'completed':
-      case 'released':
-      case 'paid':
+  Color _getColorForStatus(StatusType status, BuildContext context) {
+    switch (status) {
+      case StatusType.completed:
+      case StatusType.accepted:
+      case StatusType.delivered:
+      case StatusType.shipped:
+      case StatusType.active:
+      case StatusType.paid:
         return Colors.green;
-      case 'pending':
-      case 'authorized':
+      case StatusType.pending:
+      case StatusType.inprogress:
+      case StatusType.processing:
         return Colors.orange;
-      case 'failed':
-      case 'cancelled':
+      case StatusType.cancelled:
+      case StatusType.canceled:
+      case StatusType.rejected:
+      case StatusType.blocked:
+      case StatusType.returned:
         return Colors.red;
       default:
         return Theme.of(context).colorScheme.onSurfaceVariant;
@@ -86,7 +110,10 @@ class TransactionItemCard extends StatelessWidget {
     final String symbol = CountryHelper.currencySymbolHelper(
       transaction.currency,
     );
-    final String amountStr = '$symbol${transaction.amount.toStringAsFixed(2)}';
+    final bool isOutgoing = transaction.type.toLowerCase() == 'payout-to-bank';
+    final String sign = isOutgoing ? '-' : '+';
+    final String amountStr = '$sign$symbol${transaction.payoutAmount}';
+    final Color amountColor = isOutgoing ? Colors.red : Colors.green;
     final String createdAtStr = _formatDate(transaction.createdAt);
     final String paidAtStr = _formatDate(transaction.paidAt);
 
@@ -149,7 +176,7 @@ class TransactionItemCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          _capitalize(transaction.status),
+                          _formatStatus(transaction.status),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context).textTheme.bodySmall
@@ -167,10 +194,10 @@ class TransactionItemCard extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Text(
-                '+$amountStr',
+                amountStr,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w800,
-                  color: Colors.green,
+                  color: amountColor,
                 ),
               ),
             ],
@@ -181,7 +208,7 @@ class TransactionItemCard extends StatelessWidget {
           BalanceDetailRow(labelKey: 'amount', value: amountStr),
           BalanceDetailRow(
             labelKey: 'status',
-            value: _capitalize(transaction.status),
+            value: _formatStatus(transaction.status),
           ),
           if (createdAtStr.isNotEmpty)
             BalanceDetailRow(labelKey: 'created_at', value: createdAtStr),

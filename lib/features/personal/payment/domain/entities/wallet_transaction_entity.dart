@@ -1,3 +1,5 @@
+import '../../../../../../core/enums/core/status_type.dart';
+
 class WalletTransactionEntity {
   const WalletTransactionEntity({
     required this.id,
@@ -17,7 +19,7 @@ class WalletTransactionEntity {
   final double transferAmount;
   final double payoutAmount;
   final String currency;
-  final String status;
+  final StatusType status;
   final String type;
   final String createdAt;
   final String stripeTransferId;
@@ -26,8 +28,13 @@ class WalletTransactionEntity {
   final String payoutType;
 
   double get amount {
-    if (type.toLowerCase() == 'payout-to-bank') {
+    final String typeL = type.toLowerCase();
+    if (typeL == 'payout-to-bank') {
       return payoutAmount;
+    }
+    if (typeL == 'release') {
+      // For release type, both amounts should be the same
+      return transferAmount > 0 ? transferAmount : payoutAmount;
     }
     return transferAmount;
   }
