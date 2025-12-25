@@ -1,7 +1,67 @@
 import 'package:hive_ce/hive.dart';
 import '../../../../../core/enums/core/status_type.dart';
-
+import '../../../order/domain/entities/order_payment_detail_entity.dart';
 part 'notification_metadata_entity.g.dart';
+
+class NotificationPaymentDetail {
+  final double? originalPrice;
+  final int? quantity;
+  final String? paymentIntentId;
+  final String? method;
+  final String? transactionChargeCurrency;
+  final double? transactionChargePerItem;
+  final double? convertedDeliveryPrice;
+  final double? coreDeliveryPrice;
+  final double? convertedPrice;
+  final double? netChargePerItem;
+  final String? buyerCurrency;
+  final String? sellerId;
+  final String? postCurrency;
+  final String? status;
+  final DateTime? timestamp;
+
+  NotificationPaymentDetail({
+    this.originalPrice,
+    this.quantity,
+    this.paymentIntentId,
+    this.method,
+    this.transactionChargeCurrency,
+    this.transactionChargePerItem,
+    this.convertedDeliveryPrice,
+    this.coreDeliveryPrice,
+    this.convertedPrice,
+    this.netChargePerItem,
+    this.buyerCurrency,
+    this.sellerId,
+    this.postCurrency,
+    this.status,
+    this.timestamp,
+  });
+
+  factory NotificationPaymentDetail.fromJson(Map<String, dynamic> json) {
+    return NotificationPaymentDetail(
+      originalPrice: (json['original_price'] as num?)?.toDouble(),
+      quantity: json['quantity'] as int?,
+      paymentIntentId: json['payment_intent_id'] as String?,
+      method: json['method'] as String?,
+      transactionChargeCurrency: json['transaction_charge_currency'] as String?,
+      transactionChargePerItem: (json['transaction_charge_per_item'] as num?)
+          ?.toDouble(),
+      convertedDeliveryPrice: (json['converted_delivery_price'] as num?)
+          ?.toDouble(),
+      coreDeliveryPrice: (json['core_delivery_price'] as num?)?.toDouble(),
+      convertedPrice: (json['converted_price'] as num?)?.toDouble(),
+      netChargePerItem: (json['net_charge_per_item'] as num?)?.toDouble(),
+      buyerCurrency: json['buyer_currency'] as String?,
+      sellerId: json['seller_id'] as String?,
+      postCurrency: json['post_currency'] as String?,
+      status: json['status'] as String?,
+      timestamp: json['timestamp'] != null
+          ? DateTime.tryParse(json['timestamp'])
+          : null,
+    );
+  }
+}
 
 @HiveType(typeId: 66)
 class NotificationMetadataEntity {
@@ -14,6 +74,7 @@ class NotificationMetadataEntity {
     this.messageId,
     this.status,
     this.createdAt,
+    this.paymentDetail,
   });
 
   @HiveField(0)
@@ -39,6 +100,9 @@ class NotificationMetadataEntity {
 
   @HiveField(7)
   final DateTime? createdAt;
+
+  @HiveField(8)
+  final OrderPaymentDetailEntity? paymentDetail;
 
   bool get hasOrder => orderId != null && orderId!.isNotEmpty;
   bool get hasPost => postId != null && postId!.isNotEmpty;

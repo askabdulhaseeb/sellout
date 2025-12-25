@@ -50,24 +50,6 @@ class NotificationModel extends NotificationEntity {
     );
   }
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'notification_id': notificationId,
-      'user_id': userId,
-      'type': type,
-      'title': title,
-      'deliver_to': deliverTo,
-      'message': message,
-      'is_viewed': isViewed,
-      'metadata': (metadata as NotificationMetadataModel).toMap(),
-      'notification_for': notificationFor,
-      'timestamps': timestamps.toIso8601String(),
-      if (status != null) 'status': status?.json,
-    };
-  }
-
-  String toRawJson() => json.encode(toMap());
-
   static String _asString(dynamic value) => value?.toString() ?? '';
 
   static bool _asBool(dynamic value) {
