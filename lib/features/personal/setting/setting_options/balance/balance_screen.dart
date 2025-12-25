@@ -27,11 +27,18 @@ class _BalanceScreenState extends State<BalanceScreen> {
   bool _loading = true;
   String? _error;
   bool _withdrawing = false;
+  final TextEditingController _amountController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _fetchWallet();
+  }
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    super.dispose();
   }
 
   Future<void> _fetchWallet() async {
@@ -72,9 +79,9 @@ class _BalanceScreenState extends State<BalanceScreen> {
       return;
     }
 
-    final double amount = wallet.withdrawableBalance;
-    if (amount <= 0) {
-      _showSnack('nothing_to_withdraw'.tr());
+    final double? amount = double.tryParse(_amountController.text);
+    if (amount == null || amount <= 0 || amount > wallet.withdrawableBalance) {
+      _showSnack('Invalid amount to withdraw.');
       return;
     }
 
@@ -168,6 +175,15 @@ class _BalanceScreenState extends State<BalanceScreen> {
                   const SizedBox(height: 16),
                   TransactionHistorySection(
                     transactionHistory: wallet.transactionHistory,
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _amountController,
+                    decoration: InputDecoration(
+                      labelText: 'Enter amount to withdraw',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
                   ),
                 ],
               ),

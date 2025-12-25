@@ -112,14 +112,31 @@ class NotificationProvider extends ChangeNotifier {
     final DataState<bool> result = await viewAllNotificationsUsecase(null);
 
     if (result is DataSuccess<bool>) {
-      // Mark all local notifications as viewed immediately
-      await LocalNotifications.markAllAsViewed();
-      await refreshFromLocal();
-      return true;
+      try {
+        // Mark all local notifications as viewed immediately
+        await LocalNotifications.markAllAsViewed();
+        AppLog.info(
+          'Local notifications marked as viewed. Refreshing from local storage...',
+          name: 'NotificationProvider.viewAllNotifications',
+        );
+        await refreshFromLocal();
+        return true;
+      } catch (e) {
+        AppLog.error(
+          'Server update succeeded but local update failed. Error: $e',
+          name: 'NotificationProvider.viewAllNotifications',
+        );
+        return false;
+      }
     } else {
+      final String errorMsg = result.exception?.message ?? 'something_wrong';
+      final String errorDetails = result.exception.toString();
       AppLog.error(
-        'NotificationProvider.viewAllNotifications',
-        error: result.exception?.message ?? 'something_wrong',
+        'Failed to mark notifications as viewed on server. '
+        'Error: $errorMsg, '
+        'Details: $errorDetails, '
+        'Total notifications: ${_allNotifications.length}',
+        name: 'NotificationProvider.viewAllNotifications',
       );
       return false;
     }
