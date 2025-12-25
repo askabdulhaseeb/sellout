@@ -27,13 +27,9 @@ class NotificationModel extends NotificationEntity {
         NotificationMetadataModel.fromMap(metadataMap);
 
     final dynamic timestampsValue =
-        map['timestamps'] ??
-        map['timestamp'] ??
-        metadata.createdAt ??
-        metadata.paymentDetail?['timestamp'];
+        map['timestamps'] ?? map['timestamp'] ?? metadata.createdAt;
 
-    final String? statusRaw =
-        map['status'] ?? metadata.status ?? metadata.paymentDetail?['status'];
+    final String? statusRaw = map['status']?.toString();
 
     return NotificationModel(
       notificationId: _asString(
@@ -50,9 +46,7 @@ class NotificationModel extends NotificationEntity {
         map['notification_for'] ?? map['notificationFor'],
       ),
       timestamps: _asDateTime(timestampsValue),
-      status: StatusType.fromJson(
-        statusRaw == null || statusRaw.isEmpty ? null : statusRaw,
-      ),
+      status: statusRaw != null ? StatusType.fromJson(statusRaw) : null,
     );
   }
 

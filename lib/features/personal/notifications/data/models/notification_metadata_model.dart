@@ -9,17 +9,13 @@ class NotificationMetadataModel extends NotificationMetadataEntity {
     super.trackId,
     super.senderId,
     super.messageId,
-    super.recipients,
-    super.paymentDetail,
-    super.postageDetail,
     super.status,
     super.createdAt,
-    super.rawData,
   });
 
   factory NotificationMetadataModel.fromMap(Map<String, dynamic> map) {
     final String? statusRaw = _asStringOrNull(
-      map['status'] ?? map['order_status'] ?? map['payment_detail']?['status'],
+      map['status'] ?? map['order_status'],
     );
     return NotificationMetadataModel(
       postId: _asStringOrNull(map['post_id']),
@@ -28,12 +24,8 @@ class NotificationMetadataModel extends NotificationMetadataEntity {
       trackId: _asStringOrNull(map['track_id']),
       senderId: _asStringOrNull(map['sender']),
       messageId: _asStringOrNull(map['message_id']),
-      recipients: _asStringList(map['recipients']),
-      paymentDetail: _asStringKeyedMapOrNull(map['payment_detail']),
-      postageDetail: _asStringKeyedMapOrNull(map['postage_detail']),
       status: statusRaw != null ? StatusType.fromJson(statusRaw) : null,
       createdAt: _asDateTimeOrNull(map['created_at'] ?? map['timestamp']),
-      rawData: Map<String, dynamic>.from(map),
     );
   }
 
@@ -45,12 +37,8 @@ class NotificationMetadataModel extends NotificationMetadataEntity {
       if (trackId != null) 'track_id': trackId,
       if (senderId != null) 'sender': senderId,
       if (messageId != null) 'message_id': messageId,
-      if (recipients != null) 'recipients': recipients,
-      if (paymentDetail != null) 'payment_detail': paymentDetail,
-      if (postageDetail != null) 'postage_detail': postageDetail,
       if (status != null) 'status': status!.json,
       if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
-      ...?rawData,
     };
   }
 
@@ -58,21 +46,6 @@ class NotificationMetadataModel extends NotificationMetadataEntity {
     if (value == null) return null;
     final String str = value.toString().trim();
     return str.isEmpty ? null : str;
-  }
-
-  static Map<String, dynamic>? _asStringKeyedMapOrNull(dynamic value) {
-    if (value == null) return null;
-    if (value is Map<String, dynamic>) return value;
-    if (value is Map) return Map<String, dynamic>.from(value);
-    return null;
-  }
-
-  static List<String>? _asStringList(dynamic value) {
-    if (value == null) return null;
-    if (value is List) {
-      return value.map((e) => e.toString()).toList();
-    }
-    return null;
   }
 
   static DateTime? _asDateTimeOrNull(dynamic value) {
