@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../core/widgets/loaders/notification_loader_list.dart';
@@ -11,6 +12,7 @@ import '../../../../order/view/screens/order_seller_screen.dart';
 import '../../../../post/post_detail/views/screens/post_detail_screen.dart';
 import '../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../domain/entities/notification_entity.dart';
+import '../../provider/notification_provider.dart';
 
 class NotificationTile extends StatefulWidget {
   const NotificationTile({required this.notification, super.key});
@@ -22,6 +24,21 @@ class NotificationTile extends StatefulWidget {
 }
 
 class _NotificationTileState extends State<NotificationTile> {
+  bool _hasBeenMarkedAsViewed = false;
+
+  void _onVisibilityChanged(VisibilityInfo info) {
+    // Mark as viewed when 50% or more of the tile is visible
+    if (info.visibleFraction >= 0.5 &&
+        !_hasBeenMarkedAsViewed &&
+        !widget.notification.isViewed) {
+      _hasBeenMarkedAsViewed = true;
+      // Mark notification as viewed in background
+      context.read<NotificationProvider>().viewSingleNotification(
+        widget.notification.notificationId,
+      );
+    }
+  }
+
   /// Determines the primary action based on notification type
   String get _primaryAction {
     final String type = widget.notification.type.toLowerCase();
@@ -282,40 +299,44 @@ class _NotificationTileState extends State<NotificationTile> {
 
         final UserEntity user = snapshot.data!;
 
-        return InkWell(
-          onTap: hasAction ? () => _openNotification(context) : null,
-          borderRadius: BorderRadius.circular(8),
-          child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 4),
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: isUnread
-                  ? Theme.of(
-                      context,
-                    ).colorScheme.primary.withValues(alpha: 0.05)
-                  : null,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: <Widget>[
-                _buildAvatar(user),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      _buildHeader(user, timeText, isUnread),
-                      const SizedBox(height: 2),
-                      _buildTitleRow(isUnread),
-                      const SizedBox(height: 2),
-                      _buildMessage(),
-                    ],
+        return VisibilityDetector(
+          key: Key('notification_${widget.notification.notificationId}'),
+          onVisibilityChanged: _onVisibilityChanged,
+          child: InkWell(
+            onTap: hasAction ? () => _openNotification(context) : null,
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 4),
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: isUnread
+                    ? Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.05)
+                    : null,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: <Widget>[
+                  _buildAvatar(user),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        _buildHeader(user, timeText, isUnread),
+                        const SizedBox(height: 2),
+                        _buildTitleRow(isUnread),
+                        const SizedBox(height: 2),
+                        _buildMessage(),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                _buildActionButton(hasAction),
-              ],
+                  const SizedBox(width: 8),
+                  _buildActionButton(hasAction),
+                ],
+              ),
             ),
           ),
         );

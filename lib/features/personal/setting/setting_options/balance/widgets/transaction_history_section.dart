@@ -23,6 +23,8 @@ class TransactionHistorySection extends StatelessWidget {
         return 'transfer'.tr();
       case 'payout-to-bank':
         return 'payout_to_bank'.tr();
+      case 'release':
+        return 'release'.tr();
       default:
         return type.split('-').map(_capitalize).join(' ');
     }
@@ -34,6 +36,8 @@ class TransactionHistorySection extends StatelessWidget {
         return Icons.swap_horiz_rounded;
       case 'payout-to-bank':
         return Icons.account_balance_rounded;
+      case 'release':
+        return Icons.lock_open_rounded;
       default:
         return Icons.receipt_long_rounded;
     }
@@ -41,8 +45,9 @@ class TransactionHistorySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<WalletTransactionEntity> previewList =
-        transactionHistory.take(3).toList();
+    final List<WalletTransactionEntity> previewList = transactionHistory
+        .take(3)
+        .toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -80,7 +85,11 @@ class TransactionHistorySection extends StatelessWidget {
               final String symbol = CountryHelper.currencySymbolHelper(
                 tx.currency,
               );
-              final String amountStr = '$symbol${tx.amount.toStringAsFixed(2)}';
+              final bool isOutgoing = tx.type.toLowerCase() == 'payout-to-bank';
+              final String sign = isOutgoing ? '-' : '+';
+              final String amountStr =
+                  '$sign$symbol${tx.amount.toStringAsFixed(2)}';
+              final Color amountColor = isOutgoing ? Colors.red : Colors.green;
 
               return InkWell(
                 onTap: () => Navigator.push(
@@ -122,9 +131,7 @@ class TransactionHistorySection extends StatelessWidget {
                         ),
                         child: Icon(
                           _getIconForType(tx.type),
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurfaceVariant,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           size: 20,
                         ),
                       ),
@@ -137,32 +144,26 @@ class TransactionHistorySection extends StatelessWidget {
                               title,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: Theme.of(
-                                context,
-                              ).textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(fontWeight: FontWeight.w600),
                             ),
                             Text(
-                              _capitalize(tx.status),
-                              style: Theme.of(
-                                context,
-                              ).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurfaceVariant,
-                              ),
+                             tx.status.code.tr(),
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                                  ),
                             ),
                           ],
                         ),
                       ),
                       Text(
-                        '+$amountStr',
-                        style: Theme.of(
-                          context,
-                        ).textTheme.bodyMedium?.copyWith(
+                        amountStr,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: Colors.green,
+                          color: amountColor,
                         ),
                       ),
                     ],

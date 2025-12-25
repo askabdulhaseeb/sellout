@@ -20,6 +20,16 @@ class FundsInHoldItemCard extends StatelessWidget {
   final OrderEntity? order;
   final PostEntity? post;
 
+  String _formatStatus(String status) {
+    final String key = status.toLowerCase();
+    // Try to get localized version, fallback to capitalized
+    try {
+      return key.tr();
+    } catch (_) {
+      return status[0].toUpperCase() + status.substring(1).toLowerCase();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final String title = post?.title.trim().isNotEmpty == true
@@ -118,7 +128,10 @@ class FundsInHoldItemCard extends StatelessWidget {
           const Divider(height: 1),
           const SizedBox(height: 8),
           BalanceDetailRow(labelKey: 'amount', value: amountStr),
-          BalanceDetailRow(labelKey: 'status', value: hold.status),
+          BalanceDetailRow(
+            labelKey: 'status',
+            value: _formatStatus(hold.status),
+          ),
           BalanceDetailRow(labelKey: 'release_at', value: releaseAtStr),
         ],
       ),

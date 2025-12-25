@@ -6,14 +6,17 @@ import '../../domain/entities/notification_entity.dart';
 import '../../domain/enums/notification_type.dart';
 import '../../domain/usecase/get_all_notifications_usecase.dart';
 import '../../domain/usecase/view_all_notifications_usecase.dart';
+import '../../domain/usecase/view_single_notification_usecase.dart';
 
 class NotificationProvider extends ChangeNotifier {
   NotificationProvider(
     this.getAllNotificationsUsecase,
     this.viewAllNotificationsUsecase,
+    this.viewSingleNotificationUsecase,
   );
   final GetAllNotificationsUseCase getAllNotificationsUsecase;
   final ViewAllNotificationsUseCase viewAllNotificationsUsecase;
+  final ViewSingleNotificationUseCase viewSingleNotificationUsecase;
 
   bool _isLoading = false;
   List<NotificationEntity> _allNotifications = <NotificationEntity>[];
@@ -137,6 +140,44 @@ class NotificationProvider extends ChangeNotifier {
         'Details: $errorDetails, '
         'Total notifications: ${_allNotifications.length}',
         name: 'NotificationProvider.viewAllNotifications',
+      );
+      return false;
+    }
+  }
+
+  /// Marks a single notification as viewed on the server and locally.
+  Future<bool> viewSingleNotification(String notificationId) async {
+    AppLog.info(
+      'Marking single notification as viewed. ID: $notificationId',
+      name: 'NotificationProvider.viewSingleNotification',
+    );
+
+    final DataState<bool> result = await viewSingleNotificationUsecase(
+      notificationId,
+    );
+
+    if (result is DataSuccess<bool>) {
+      try {
+        // Mark local notification as viewed without refreshing UI
+        await LocalNotifications.markAsViewed(notificationId);
+        AppLog.info(
+          'Successfully marked notification as viewed. ID: $notificationId',
+          name: 'NotificationProvider.viewSingleNotification',
+        );
+        // Don't refresh to avoid UI glitches during scroll
+        return true;
+      } catch (e) {
+        AppLog.error(
+          'Server update succeeded but local update failed. Error: $e',
+          name: 'NotificationProvider.viewSingleNotification',
+        );
+        return false;
+      }
+    } else {
+      final String errorMsg = result.exception?.message ?? 'something_wrong';
+      AppLog.error(
+        'Failed to mark notification as viewed. ID: $notificationId, Error: $errorMsg',
+        name: 'NotificationProvider.viewSingleNotification',
       );
       return false;
     }

@@ -6,4 +6,7 @@ abstract interface class NotificationRepository {
 
   /// Marks all notifications as viewed on the server.
   Future<DataState<bool>> viewAllNotifications();
+
+  /// Marks a single notification as viewed on the server.
+  Future<DataState<bool>> viewSingleNotification(String notificationId);
 }

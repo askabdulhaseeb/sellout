@@ -149,6 +149,7 @@ import '../features/personal/notifications/data/source/remote/remote_notificatio
 import '../features/personal/notifications/domain/repo/notification_repo.dart';
 import '../features/personal/notifications/domain/usecase/get_all_notifications_usecase.dart';
 import '../features/personal/notifications/domain/usecase/view_all_notifications_usecase.dart';
+import '../features/personal/notifications/domain/usecase/view_single_notification_usecase.dart';
 import '../features/personal/notifications/view/provider/notification_provider.dart';
 import '../features/personal/order/data/repo/order_repo_impl.dart';
 import '../features/personal/order/domain/repo/order_repo.dart';
@@ -829,7 +830,7 @@ void _order() {
   locator.registerFactory<GetOrderByUidUsecase>(
     () => GetOrderByUidUsecase(locator()),
   );
-    locator.registerFactory<GetOrderByOrderIdUsecase>(
+  locator.registerFactory<GetOrderByOrderIdUsecase>(
     () => GetOrderByOrderIdUsecase(locator()),
   );
 
@@ -857,10 +858,13 @@ void _notification() {
   locator.registerFactory<ViewAllNotificationsUseCase>(
     () => ViewAllNotificationsUseCase(locator()),
   );
+  locator.registerFactory<ViewSingleNotificationUseCase>(
+    () => ViewSingleNotificationUseCase(locator()),
+  );
 
   // Providers
   locator.registerFactory<NotificationProvider>(
-    () => NotificationProvider(locator(), locator()),
+    () => NotificationProvider(locator(), locator(), locator()),
   );
 }
 
