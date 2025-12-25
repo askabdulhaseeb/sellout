@@ -1,5 +1,6 @@
 import '../../../../../core/enums/core/status_type.dart';
 import '../../domain/entities/notification_metadata_entity.dart';
+import '../../../order/data/models/order_payment_detail_model.dart';
 
 class NotificationMetadataModel extends NotificationMetadataEntity {
   NotificationMetadataModel({
@@ -11,7 +12,28 @@ class NotificationMetadataModel extends NotificationMetadataEntity {
     super.messageId,
     super.status,
     super.createdAt,
+    super.paymentDetail,
   });
+
+  factory NotificationMetadataModel.fromJson(Map<String, dynamic> json) {
+    return NotificationMetadataModel(
+      postId: json['postId'] as String?,
+      orderId: json['orderId'] as String?,
+      chatId: json['chatId'] as String?,
+      trackId: json['trackId'] as String?,
+      senderId: json['senderId'] as String?,
+      messageId: json['messageId'] as String?,
+      status: json['status'] as StatusType?,
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt'])
+          : null,
+      paymentDetail: json['payment_detail'] != null
+          ? OrderPaymentDetailModel.fromJson(
+              json['payment_detail'] as Map<String, dynamic>,
+            )
+          : null,
+    );
+  }
 
   factory NotificationMetadataModel.fromMap(Map<String, dynamic> map) {
     final String? statusRaw = _asStringOrNull(
@@ -26,21 +48,14 @@ class NotificationMetadataModel extends NotificationMetadataEntity {
       messageId: _asStringOrNull(map['message_id']),
       status: statusRaw != null ? StatusType.fromJson(statusRaw) : null,
       createdAt: _asDateTimeOrNull(map['created_at'] ?? map['timestamp']),
+      paymentDetail: map['payment_detail'] != null
+          ? OrderPaymentDetailModel.fromJson(
+              map['payment_detail'] as Map<String, dynamic>,
+            )
+          : null,
     );
   }
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      if (postId != null) 'post_id': postId,
-      if (orderId != null) 'order_id': orderId,
-      if (chatId != null) 'chat_id': chatId,
-      if (trackId != null) 'track_id': trackId,
-      if (senderId != null) 'sender': senderId,
-      if (messageId != null) 'message_id': messageId,
-      if (status != null) 'status': status!.json,
-      if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
-    };
-  }
 
   static String? _asStringOrNull(dynamic value) {
     if (value == null) return null;
