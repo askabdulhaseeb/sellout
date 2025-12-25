@@ -112,12 +112,8 @@ class NotificationProvider extends ChangeNotifier {
     final DataState<bool> result = await viewAllNotificationsUsecase(null);
 
     if (result is DataSuccess<bool>) {
-      // Mark all local notifications as viewed
-      for (final NotificationEntity n in _allNotifications) {
-        if (!n.isViewed) {
-          await LocalNotifications.markAsViewed(n.notificationId);
-        }
-      }
+      // Mark all local notifications as viewed immediately
+      await LocalNotifications.markAllAsViewed();
       await refreshFromLocal();
       return true;
     } else {

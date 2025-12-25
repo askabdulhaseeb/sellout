@@ -17,13 +17,21 @@ class LocalNotifications extends LocalHiveBox<NotificationEntity> {
   /// Listen to this to update badges in the UI.
   static final ValueNotifier<int> unreadCountNotifier = ValueNotifier<int>(0);
 
+  static Box<NotificationEntity>? get _boxOrNull {
+    if (!Hive.isBoxOpen(AppStrings.localNotificationBox)) return null;
+    return Hive.box<NotificationEntity>(AppStrings.localNotificationBox);
+  }
+
   static Box<NotificationEntity> get _box =>
       Hive.box<NotificationEntity>(AppStrings.localNotificationBox);
 
   /// Updates the unread count notifier with the current count
   static void _updateUnreadCountNotifier() {
-    unreadCountNotifier.value =
-        _box.values.where((NotificationEntity e) => !e.isViewed).length;
+    final Box<NotificationEntity>? box = _boxOrNull;
+    if (box == null) return;
+    unreadCountNotifier.value = box.values
+        .where((NotificationEntity e) => !e.isViewed)
+        .length;
   }
 
   static Future<Box<NotificationEntity>> get openBox async =>
@@ -101,5 +109,30 @@ class LocalNotifications extends LocalHiveBox<NotificationEntity> {
   /// Get count of unread notifications
   static Future<int> getUnreadCount() async {
     return _box.values.where((NotificationEntity e) => !e.isViewed).length;
+  }
+
+  /// Marks all notifications as viewed
+  static Future<void> markAllAsViewed() async {
+    final List<NotificationEntity> unviewed = _box.values
+        .where((NotificationEntity e) => !e.isViewed)
+        .toList();
+
+    for (final NotificationEntity notification in unviewed) {
+      final NotificationModel updated = NotificationModel(
+        notificationId: notification.notificationId,
+        userId: notification.userId,
+        type: notification.type,
+        title: notification.title,
+        deliverTo: notification.deliverTo,
+        message: notification.message,
+        isViewed: true,
+        metadata: notification.metadata,
+        notificationFor: notification.notificationFor,
+        timestamps: notification.timestamps,
+        status: notification.status,
+      );
+      await _box.put(notification.notificationId, updated);
+    }
+    _updateUnreadCountNotifier();
   }
 }
