@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import '../../../../../../core/widgets/app_snackbar.dart';
@@ -28,8 +27,27 @@ class NotificationTile extends StatefulWidget {
   State<NotificationTile> createState() => _NotificationTileState();
 }
 
-class _NotificationTileState extends State<NotificationTile> {
+class _NotificationTileState extends State<NotificationTile>
+    with SingleTickerProviderStateMixin {
   bool _hasBeenMarkedAsViewed = false;
+  double _dragOffset = 0.0;
+  bool _isDismissing = false;
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   void _onVisibilityChanged(VisibilityInfo info) {
     if (info.visibleFraction >= 0.5 &&
@@ -178,6 +196,26 @@ class _NotificationTileState extends State<NotificationTile> {
     );
   }
 
+  void _onHorizontalDragUpdate(DragUpdateDetails details) {
+    if (_isDismissing) return;
+    setState(() {
+      _dragOffset += details.delta.dx;
+      // Only allow left swipe
+      if (_dragOffset > 0) _dragOffset = 0;
+    });
+  }
+
+  void _onHorizontalDragEnd(DragEndDetails details) async {
+    if (_isDismissing) return;
+    if (_dragOffset.abs() > 100) {
+      setState(() => _isDismissing = true);
+      await _controller.forward();
+      await _handleDelete(context);
+    } else {
+      setState(() => _dragOffset = 0);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool isUnread = !widget.notification.isViewed;
@@ -198,57 +236,70 @@ class _NotificationTileState extends State<NotificationTile> {
         return VisibilityDetector(
           key: Key('notification_${widget.notification.notificationId}'),
           onVisibilityChanged: _onVisibilityChanged,
-          child: Slidable(
-            key: ValueKey(widget.notification.notificationId),
-            endActionPane: ActionPane(
-              motion: const DrawerMotion(),
-              dismissible: DismissiblePane(
-                onDismissed: () => _handleDelete(context),
-              ),
-              children: <Widget>[
-                SlidableAction(
-                  onPressed: (BuildContext _) => _handleDelete(context),
-                  backgroundColor: Theme.of(context).colorScheme.error,
-                  foregroundColor: Theme.of(context).colorScheme.onError,
-                  icon: Icons.delete_outline,
-                  label: 'delete'.tr(),
-                ),
-              ],
-            ),
-            child: InkWell(
-              onTap: hasAction ? _handleAction : null,
-              borderRadius: BorderRadius.circular(8),
-              child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 4),
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: isUnread
-                      ? Theme.of(
-                          context,
-                        ).colorScheme.primary.withValues(alpha: 0.05)
-                      : null,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  children: <Widget>[
-                    _buildAvatar(user),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          _buildHeader(user, timeText, isUnread),
-                          const SizedBox(height: 4),
-                          _buildMessage(),
-                        ],
+          child: AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              final slide = _isDismissing
+                  ? -MediaQuery.of(context).size.width * _controller.value
+                  : _dragOffset;
+              return Stack(
+                children: [
+                  // Red background with delete icon
+                  Positioned.fill(
+                    child: Container(
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.only(right: 24),
+                      color: Theme.of(context).colorScheme.error,
+                      child: Icon(
+                        Icons.delete_outline,
+                        color: Theme.of(context).colorScheme.onError,
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    _buildActionButton(hasAction),
-                  ],
-                ),
-              ),
-            ),
+                  ),
+                  Transform.translate(
+                    offset: Offset(slide, 0),
+                    child: GestureDetector(
+                      onHorizontalDragUpdate: _onHorizontalDragUpdate,
+                      onHorizontalDragEnd: _onHorizontalDragEnd,
+                      child: InkWell(
+                        onTap: hasAction ? _handleAction : null,
+                        borderRadius: BorderRadius.circular(8),
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 4),
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: isUnread
+                                ? Theme.of(
+                                    context,
+                                  ).colorScheme.primary.withValues(alpha: 0.05)
+                                : null,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: <Widget>[
+                              _buildAvatar(user),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    _buildHeader(user, timeText, isUnread),
+                                    const SizedBox(height: 4),
+                                    _buildMessage(),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              _buildActionButton(hasAction),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         );
       },
