@@ -26,13 +26,14 @@ class NotificationMetadataEntityAdapter
       messageId: fields[5] as String?,
       status: fields[6] as StatusType?,
       createdAt: fields[7] as DateTime?,
+      paymentDetail: fields[8] as OrderPaymentDetailEntity?,
     );
   }
 
   @override
   void write(BinaryWriter writer, NotificationMetadataEntity obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.postId)
       ..writeByte(1)
@@ -48,7 +49,9 @@ class NotificationMetadataEntityAdapter
       ..writeByte(6)
       ..write(obj.status)
       ..writeByte(7)
-      ..write(obj.createdAt);
+      ..write(obj.createdAt)
+      ..writeByte(8)
+      ..write(obj.paymentDetail);
   }
 
   @override
