@@ -4,6 +4,7 @@ import '../../../../../core/usecase/usecase.dart';
 import '../../data/source/local/local_notification.dart';
 import '../../domain/entities/notification_entity.dart';
 import '../../domain/enums/notification_type.dart';
+import '../../domain/usecase/delete_notifications_usecase.dart';
 import '../../domain/usecase/get_all_notifications_usecase.dart';
 import '../../domain/usecase/view_all_notifications_usecase.dart';
 import '../../domain/usecase/view_single_notification_usecase.dart';
@@ -13,10 +14,12 @@ class NotificationProvider extends ChangeNotifier {
     this.getAllNotificationsUsecase,
     this.viewAllNotificationsUsecase,
     this.viewSingleNotificationUsecase,
+    this.deleteNotificationsUsecase,
   );
   final GetAllNotificationsUseCase getAllNotificationsUsecase;
   final ViewAllNotificationsUseCase viewAllNotificationsUsecase;
   final ViewSingleNotificationUseCase viewSingleNotificationUsecase;
+  final DeleteNotificationsUseCase deleteNotificationsUsecase;
 
   bool _isLoading = false;
   List<NotificationEntity> _allNotifications = <NotificationEntity>[];
@@ -178,6 +181,45 @@ class NotificationProvider extends ChangeNotifier {
       AppLog.error(
         'Failed to mark notification as viewed. ID: $notificationId, Error: $errorMsg',
         name: 'NotificationProvider.viewSingleNotification',
+      );
+      return false;
+    }
+  }
+
+  /// Deletes one or more notifications by their IDs
+  Future<bool> deleteNotifications(List<String> notificationIds) async {
+    AppLog.info(
+      'Deleting ${notificationIds.length} notifications',
+      name: 'NotificationProvider.deleteNotifications',
+    );
+
+    final DataState<bool> result = await deleteNotificationsUsecase(
+      notificationIds,
+    );
+
+    if (result is DataSuccess<bool>) {
+      try {
+        // Delete from local storage
+        await LocalNotifications.deleteNotifications(notificationIds);
+        AppLog.info(
+          'Successfully deleted ${notificationIds.length} notifications',
+          name: 'NotificationProvider.deleteNotifications',
+        );
+        // Refresh the list
+        await refreshFromLocal();
+        return true;
+      } catch (e) {
+        AppLog.error(
+          'Server deletion succeeded but local deletion failed. Error: $e',
+          name: 'NotificationProvider.deleteNotifications',
+        );
+        return false;
+      }
+    } else {
+      final String errorMsg = result.exception?.message ?? 'something_wrong';
+      AppLog.error(
+        'Failed to delete notifications. Error: $errorMsg',
+        name: 'NotificationProvider.deleteNotifications',
       );
       return false;
     }

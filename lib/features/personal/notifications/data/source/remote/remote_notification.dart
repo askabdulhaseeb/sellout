@@ -12,6 +12,9 @@ abstract interface class NotificationRemote {
 
   /// Marks a single notification as viewed on the server.
   Future<DataState<bool>> viewSingleNotification(String notificationId);
+
+  /// Deletes one or more notifications by their IDs.
+  Future<DataState<bool>> deleteNotifications(List<String> notificationIds);
 }
 
 class NotificationRemoteImpl implements NotificationRemote {
@@ -146,6 +149,46 @@ class NotificationRemoteImpl implements NotificationRemote {
       );
       return DataFailer<bool>(
         CustomException('Failed to view notification: $errorMsg'),
+      );
+    }
+  }
+
+  @override
+  Future<DataState<bool>> deleteNotifications(
+    List<String> notificationIds,
+  ) async {
+    const String endpoint = '/notification/delete';
+    AppLog.info(
+      'Deleting notifications. Count: ${notificationIds.length}, Endpoint: $endpoint',
+      name: 'NotificationRemote.deleteNotifications',
+    );
+
+    final Map<String, dynamic> body = <String, dynamic>{
+      'notification_ids': notificationIds,
+    };
+
+    final DataState<bool> result = await ApiCall<bool>().call(
+      endpoint: endpoint,
+      requestType: ApiRequestType.post,
+      body: json.encode(body),
+      isAuth: true,
+    );
+
+    if (result is DataSuccess) {
+      AppLog.info(
+        'Successfully deleted ${notificationIds.length} notifications',
+        name: 'NotificationRemote.deleteNotifications',
+      );
+      return DataSuccess<bool>('Success', true);
+    } else {
+      final String errorMsg = result.exception?.message ?? 'Unknown error';
+      AppLog.error(
+        'Failed to delete notifications. Count: ${notificationIds.length}',
+        name: 'NotificationRemote.deleteNotifications',
+        error: result.exception?.reason,
+      );
+      return DataFailer<bool>(
+        CustomException('Failed to delete notifications: $errorMsg'),
       );
     }
   }

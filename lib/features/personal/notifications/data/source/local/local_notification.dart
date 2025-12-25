@@ -135,4 +135,12 @@ class LocalNotifications extends LocalHiveBox<NotificationEntity> {
     }
     _updateUnreadCountNotifier();
   }
+
+  /// Deletes notifications by their IDs
+  static Future<void> deleteNotifications(List<String> notificationIds) async {
+    for (final String id in notificationIds) {
+      await _box.delete(id);
+    }
+    _updateUnreadCountNotifier();
+  }
 }

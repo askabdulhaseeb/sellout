@@ -150,6 +150,7 @@ import '../features/personal/notifications/domain/repo/notification_repo.dart';
 import '../features/personal/notifications/domain/usecase/get_all_notifications_usecase.dart';
 import '../features/personal/notifications/domain/usecase/view_all_notifications_usecase.dart';
 import '../features/personal/notifications/domain/usecase/view_single_notification_usecase.dart';
+import '../features/personal/notifications/domain/usecase/delete_notifications_usecase.dart';
 import '../features/personal/notifications/view/provider/notification_provider.dart';
 import '../features/personal/order/data/repo/order_repo_impl.dart';
 import '../features/personal/order/domain/repo/order_repo.dart';
@@ -861,10 +862,13 @@ void _notification() {
   locator.registerFactory<ViewSingleNotificationUseCase>(
     () => ViewSingleNotificationUseCase(locator()),
   );
+  locator.registerFactory<DeleteNotificationsUseCase>(
+    () => DeleteNotificationsUseCase(locator()),
+  );
 
   // Providers
   locator.registerFactory<NotificationProvider>(
-    () => NotificationProvider(locator(), locator(), locator()),
+    () => NotificationProvider(locator(), locator(), locator(), locator()),
   );
 }
 

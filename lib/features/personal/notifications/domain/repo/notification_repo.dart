@@ -9,4 +9,7 @@ abstract interface class NotificationRepository {
 
   /// Marks a single notification as viewed on the server.
   Future<DataState<bool>> viewSingleNotification(String notificationId);
+
+  /// Deletes one or more notifications by their IDs.
+  Future<DataState<bool>> deleteNotifications(List<String> notificationIds);
 }
