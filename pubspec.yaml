@@ -74,6 +74,7 @@ dependencies:
   # url_launcher: ^6.2.5
   flutter_svg: ^2.2.3
   visibility_detector: ^0.4.0+2
+  flutter_slidable: ^3.1.1
 
   flutter_native_splash: ^2.4.7
   flutter_secure_storage: ^9.2.2

@@ -21,4 +21,9 @@ class NotificationRepositoryImpl implements NotificationRepository {
   Future<DataState<bool>> viewSingleNotification(String notificationId) {
     return remote.viewSingleNotification(notificationId);
   }
+
+  @override
+  Future<DataState<bool>> deleteNotifications(List<String> notificationIds) {
+    return remote.deleteNotifications(notificationIds);
+  }
 }

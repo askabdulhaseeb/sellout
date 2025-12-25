@@ -1,18 +1,23 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../core/widgets/loaders/notification_loader_list.dart';
-import '../../../../../../routes/app_linking.dart';
-import '../../../../chats/chat/views/providers/chat_provider.dart';
-import '../../../../order/view/order_buyer_screen/screen/order_buyer_screen.dart';
-import '../../../../order/view/screens/order_seller_screen.dart';
-import '../../../../post/post_detail/views/screens/post_detail_screen.dart';
 import '../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../domain/entities/notification_entity.dart';
 import '../../provider/notification_provider.dart';
+import 'notification_chat_action.dart';
+import 'notification_order_action.dart';
+import 'notification_post_action.dart';
+import 'notification_order_header.dart';
+import 'notification_order_message.dart';
+import 'notification_chat_header.dart';
+import 'notification_chat_message.dart';
+import 'notification_post_header.dart';
+import 'notification_post_message.dart';
 
 class NotificationTile extends StatefulWidget {
   const NotificationTile({required this.notification, super.key});
@@ -63,84 +68,45 @@ class _NotificationTileState extends State<NotificationTile> {
 
     switch (_primaryAction) {
       case 'post':
-        await _navigateToPost();
+        await NotificationPostAction.navigate(
+          context: context,
+          postId: widget.notification.postId,
+        );
       case 'chat':
-        await _navigateToChat();
+        await NotificationChatAction.navigate(
+          context: context,
+          chatId: widget.notification.chatId,
+        );
       case 'order':
-        await _navigateToOrder();
+        await NotificationOrderAction.navigate(
+          context: context,
+          orderId: widget.notification.orderId,
+          notificationFor: widget.notification.notificationFor,
+        );
       default:
         break;
     }
   }
 
-  Future<void> _navigateToPost() async {
-    final String? postId = widget.notification.postId;
-    if (postId == null || postId.isEmpty) {
-      if (context.mounted) {
-        AppSnackBar.showSnackBar(context, 'post_not_found'.tr());
-      }
-      return;
-    }
+  Future<void> _handleDelete(BuildContext context) async {
+    final bool success = await context
+        .read<NotificationProvider>()
+        .deleteNotifications(<String>[widget.notification.notificationId]);
 
     if (context.mounted) {
-      AppNavigator.pushNamed(
-        PostDetailScreen.routeName,
-        arguments: <String, String>{'pid': postId},
-      );
-    }
-  }
-
-  Future<void> _navigateToChat() async {
-    final String? chatId = widget.notification.chatId;
-    if (chatId == null || chatId.trim().isEmpty) {
-      if (context.mounted) {
-        AppSnackBar.showSnackBar(context, 'chat_not_found'.tr());
+      if (success) {
+        AppSnackBar.showSnackBar(context, 'notification_deleted'.tr());
+      } else {
+        AppSnackBar.showSnackBar(context, 'failed_to_delete'.tr());
       }
-      return;
     }
-
-    if (context.mounted) {
-      final ChatProvider chatProvider = context.read<ChatProvider>();
-      await chatProvider.createOrOpenChatById(context, chatId);
-    }
-  }
-
-  Future<void> _navigateToOrder() async {
-    final String? orderId = widget.notification.orderId;
-    if (orderId == null || orderId.isEmpty) {
-      if (context.mounted) {
-        AppSnackBar.showSnackBar(context, 'order_not_found'.tr());
-      }
-      return;
-    }
-
-    if (!context.mounted) return;
-
-    final bool forSeller = widget.notification.notificationFor
-        .toLowerCase()
-        .contains(RegExp(r'seller|business'));
-
-    AppNavigator.pushNamed(
-      forSeller ? OrderSellerScreen.routeName : OrderBuyerScreen.routeName,
-      arguments: <String, dynamic>{'order-id': orderId},
-    );
   }
 
   String _getButtonText() => switch (_primaryAction) {
-    'order' => 'order'.tr(),
-    'chat' => 'chat'.tr(),
-    _ => 'view'.tr(),
+    'order' => NotificationOrderAction.getButtonText(),
+    'chat' => NotificationChatAction.getButtonText(),
+    _ => NotificationPostAction.getButtonText(),
   };
-
-  Widget _buildUnreadIndicator() => Container(
-    width: 8,
-    height: 8,
-    margin: const EdgeInsets.only(right: 6),
-    decoration: BoxDecoration(
-      color: Theme.of(context).colorScheme.primary,
-      shape: BoxShape.circle,
-    ),
-  );
 
   Widget _buildAvatar(UserEntity user) => ClipRRect(
     borderRadius: BorderRadius.circular(8),
@@ -151,53 +117,43 @@ class _NotificationTileState extends State<NotificationTile> {
     ),
   );
 
-  Widget _buildHeader(UserEntity user, String timeText, bool isUnread) => Row(
-    children: <Widget>[
-      Flexible(
-        child: Text(
-          user.displayName.isNotEmpty ? user.displayName : 'na'.tr(),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            fontWeight: isUnread ? FontWeight.w700 : FontWeight.w600,
-          ),
-        ),
-      ),
-      const SizedBox(width: 8),
-      Text(
-        timeText,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-        ),
-      ),
-    ],
-  );
+  Widget _buildHeader(UserEntity user, String timeText, bool isUnread) {
+    switch (_primaryAction) {
+      case 'order':
+        return NotificationOrderHeader(
+          notification: widget.notification,
+          timeText: timeText,
+          isUnread: isUnread,
+        );
+      case 'chat':
+        return NotificationChatHeader(
+          notification: widget.notification,
+          timeText: timeText,
+          isUnread: isUnread,
+        );
+      case 'post':
+        return NotificationPostHeader(
+          notification: widget.notification,
+          timeText: timeText,
+          isUnread: isUnread,
+        );
+      default:
+        return Row();
+    }
+  }
 
-  Widget _buildTitle(bool isUnread) => Row(
-    children: <Widget>[
-      if (isUnread) _buildUnreadIndicator(),
-      Expanded(
-        child: Text(
-          widget.notification.title,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface,
-            fontWeight: isUnread ? FontWeight.w600 : FontWeight.w500,
-          ),
-        ),
-      ),
-    ],
-  );
-
-  Widget _buildMessage() => Text(
-    widget.notification.message,
-    maxLines: 2,
-    overflow: TextOverflow.ellipsis,
-    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.55),
-    ),
-  );
+  Widget _buildMessage() {
+    switch (_primaryAction) {
+      case 'order':
+        return NotificationOrderMessage(notification: widget.notification);
+      case 'chat':
+        return NotificationChatMessage(notification: widget.notification);
+      case 'post':
+        return NotificationPostMessage(notification: widget.notification);
+      default:
+        return Text(widget.notification.message);
+    }
+  }
 
   Widget _buildActionButton(bool hasAction) {
     if (!hasAction) return const SizedBox.shrink();
@@ -242,37 +198,55 @@ class _NotificationTileState extends State<NotificationTile> {
         return VisibilityDetector(
           key: Key('notification_${widget.notification.notificationId}'),
           onVisibilityChanged: _onVisibilityChanged,
-          child: InkWell(
-            onTap: hasAction ? _handleAction : null,
-            borderRadius: BorderRadius.circular(8),
-            child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 4),
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: isUnread
-                    ? Theme.of(
-                        context,
-                      ).colorScheme.primary.withValues(alpha: 0.05)
-                    : null,
-                borderRadius: BorderRadius.circular(8),
+          child: Slidable(
+            key: ValueKey(widget.notification.notificationId),
+            endActionPane: ActionPane(
+              motion: const DrawerMotion(),
+              dismissible: DismissiblePane(
+                onDismissed: () => _handleDelete(context),
               ),
-              child: Row(
-                children: <Widget>[
-                  _buildAvatar(user),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        _buildHeader(user, timeText, isUnread),
-                        const SizedBox(height: 4),
-                        _buildMessage(),
-                      ],
+              children: <Widget>[
+                SlidableAction(
+                  onPressed: (BuildContext _) => _handleDelete(context),
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                  foregroundColor: Theme.of(context).colorScheme.onError,
+                  icon: Icons.delete_outline,
+                  label: 'delete'.tr(),
+                ),
+              ],
+            ),
+            child: InkWell(
+              onTap: hasAction ? _handleAction : null,
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                margin: const EdgeInsets.symmetric(vertical: 4),
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: isUnread
+                      ? Theme.of(
+                          context,
+                        ).colorScheme.primary.withValues(alpha: 0.05)
+                      : null,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: <Widget>[
+                    _buildAvatar(user),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          _buildHeader(user, timeText, isUnread),
+                          const SizedBox(height: 4),
+                          _buildMessage(),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  _buildActionButton(hasAction),
-                ],
+                    const SizedBox(width: 8),
+                    _buildActionButton(hasAction),
+                  ],
+                ),
               ),
             ),
           ),

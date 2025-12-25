@@ -177,7 +177,7 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
     value: VisitCalenderProvider(locator()),
   ),
   ChangeNotifierProvider<NotificationProvider>.value(
-    value: NotificationProvider(locator(), locator(), locator()),
+    value: NotificationProvider(locator(), locator(), locator(), locator()),
   ),
   ChangeNotifierProvider<QuoteProvider>.value(
     value: QuoteProvider(locator(), locator(), locator(), locator()),

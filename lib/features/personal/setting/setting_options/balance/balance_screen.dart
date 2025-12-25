@@ -8,8 +8,8 @@ import '../../../payment/domain/usecase/get_wallet_usecase.dart';
 import '../../../payment/domain/usecase/transfer_funds_usecase.dart';
 import '../../../payment/data/models/wallet_model.dart';
 import '../../../../../core/sources/data_state.dart';
-import 'balance_skeleton.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'balance_skeleton.dart';
 import 'widgets/balance_summary_card.dart';
 import 'widgets/funds_in_hold_section.dart';
 import 'widgets/transaction_history_section.dart';
@@ -173,7 +173,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
                   const SizedBox(height: 16),
                   TransactionHistorySection(
                     transactionHistory: wallet.transactionHistory,
-                  ),
+                  )
                 ],
               ),
             ),
