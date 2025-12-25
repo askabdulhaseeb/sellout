@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../../../../../../core/widgets/shadow_container.dart';
 import '../../../../payment/data/models/wallet_model.dart';
 import '../../../../../../core/extension/datetime_ext.dart';
 import '../../../../../../core/extension/string_ext.dart';
@@ -26,15 +27,9 @@ class BalanceSummaryCard extends StatelessWidget {
     final String updatedAtStr =
         wallet.updatedAt.toDateTime()?.dateTime ?? wallet.updatedAt;
 
-    return Container(
+    return ShadowContainer(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const <BoxShadow>[
-          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 2)),
-        ],
-      ),
+    
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
