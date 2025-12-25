@@ -9,6 +9,7 @@ import 'core/sockets/socket_service.dart';
 import 'core/theme/app_theme.dart';
 import 'services/app_data_service.dart';
 import 'services/app_providers.dart';
+import 'services/system_notification_service.dart';
 import 'core/sources/local/hive_db.dart';
 import 'core/utilities/app_localization.dart';
 import 'services/get_it.dart';
@@ -35,8 +36,9 @@ void main() async {
     ),
   );
   // Remove splash and defer non-critical initializations until after first frame
-  WidgetsBinding.instance.addPostFrameCallback((_) {
+  WidgetsBinding.instance.addPostFrameCallback((_) async {
     FlutterNativeSplash.remove();
+    await SystemNotificationService().init();
     SocketService(locator()).initAndListen();
     AppDataService().fetchAllData();
   });

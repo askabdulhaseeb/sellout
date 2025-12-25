@@ -9,6 +9,7 @@ import '../../features/personal/chats/chat_dashboard/data/models/message/message
 import '../../features/personal/chats/chat_dashboard/data/sources/local/local_chat.dart';
 import '../../features/personal/notifications/data/models/notification_model.dart';
 import '../../features/personal/notifications/data/source/local/local_notification.dart';
+import '../../services/system_notification_service.dart';
 import '../functions/app_log.dart';
 import 'socket_implementations.dart';
 
@@ -192,9 +193,12 @@ class SocketService with WidgetsBindingObserver {
               metadataMap,
             );
           }
-          await LocalNotifications.saveNotification(
-            NotificationModel.fromMap(data),
-          );
+          final NotificationModel notification =
+              NotificationModel.fromMap(data);
+          await LocalNotifications.saveNotification(notification);
+
+          // Show system notification
+          await SystemNotificationService().showNotification(notification);
         }
       } catch (e) {
         AppLog.error('Error handling notification: $e');
