@@ -31,7 +31,7 @@ class TransactionItemCard extends StatelessWidget {
 
   String _formatStatus(StatusType status) {
     // Use code for localization when available
-    return status.code.tr ();
+    return status.code.tr();
   }
 
   String _formatDate(String dateStr) {
@@ -129,8 +129,6 @@ class TransactionItemCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       color: Theme.of(context).cardColor,
-      borderRadius: BorderRadius.circular(12),
-      showShadow: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[

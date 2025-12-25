@@ -107,7 +107,6 @@ class TransactionHistorySection extends StatelessWidget {
                   padding: const EdgeInsets.all(12),
                   color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(12),
-                  showShadow: true,
                   child: Row(
                     children: <Widget>[
                       Container(

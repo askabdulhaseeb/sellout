@@ -6,6 +6,7 @@ import '../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../../core/extension/datetime_ext.dart';
 import '../../../../../../core/extension/string_ext.dart';
 import '../../../../../../core/helper_functions/country_helper.dart';
+import '../../../../../../core/widgets/shadow_container.dart';
 import 'balance_detail_row.dart';
 
 class FundsInHoldItemCard extends StatelessWidget {
@@ -48,17 +49,10 @@ class FundsInHoldItemCard extends StatelessWidget {
 
     final String orderId = order?.orderId ?? hold.orderId;
 
-    return Container(
-      width: double.infinity,
+    return ShadowContainer(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: const <BoxShadow>[
-          BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2)),
-        ],
-      ),
+      borderRadius: BorderRadius.circular(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
