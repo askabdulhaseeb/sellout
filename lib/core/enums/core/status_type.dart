@@ -53,7 +53,15 @@ enum StatusType {
   @HiveField(38)
   readyToShip('ready_to_ship', 'ready_to_ship', Colors.red, _greenBG),
   @HiveField(39)
-  paid('paid', 'paid', Colors.red, _greenBG);
+  paid('paid', 'paid', Colors.red, _greenBG),
+
+  // Newly added explicit statuses for finance flows
+  @HiveField(40)
+  succeeded('succeeded', 'succeeded', Colors.green, _greenBG),
+  @HiveField(41)
+  released('released', 'released', Colors.green, _greenBG),
+  @HiveField(42)
+  authorized('authorized', 'authorized', Colors.orange, _orangeBG);
 
   const StatusType(this.code, this.json, this.color, this.bgColor);
   final String code;
@@ -80,8 +88,12 @@ enum StatusType {
         return StatusType.cancelled;
       case 'canceled':
         return StatusType.canceled;
-      case 'complet' || 'completed' || 'succeeded' || 'released':
+      case 'complet' || 'completed':
         return StatusType.completed;
+      case 'succeeded':
+        return StatusType.succeeded;
+      case 'released':
+        return StatusType.released;
       case 'inprogress':
         return StatusType.inprogress;
       case 'deliver' || 'delivered':
@@ -103,7 +115,7 @@ enum StatusType {
       case 'ready_to_ship':
         return StatusType.readyToShip;
       case 'authorized':
-        return StatusType.pending;
+        return StatusType.authorized;
       default:
         return StatusType.pending;
     }

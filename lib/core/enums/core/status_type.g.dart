@@ -49,6 +49,12 @@ class StatusTypeAdapter extends TypeAdapter<StatusType> {
         return StatusType.readyToShip;
       case 39:
         return StatusType.paid;
+      case 40:
+        return StatusType.succeeded;
+      case 41:
+        return StatusType.released;
+      case 42:
+        return StatusType.authorized;
       default:
         return StatusType.pending;
     }
@@ -93,6 +99,12 @@ class StatusTypeAdapter extends TypeAdapter<StatusType> {
         writer.writeByte(38);
       case StatusType.paid:
         writer.writeByte(39);
+      case StatusType.succeeded:
+        writer.writeByte(40);
+      case StatusType.released:
+        writer.writeByte(41);
+      case StatusType.authorized:
+        writer.writeByte(42);
     }
   }
 
